@@ -55,6 +55,7 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGRocket.h"
 #include "FGSimTurbine.h"
+#include "FGTurbine.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGPiston.h"
@@ -72,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.99 2004/04/24 17:12:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.100 2004/04/30 01:32:43 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -263,6 +264,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGPiston(FDMExec, Cfg_ptr));
         } else if (engType == "FG_SIMTURBINE") {
           Engines.push_back(new FGSimTurbine(FDMExec, Cfg_ptr));
+        } else if (engType == "FG_TURBINE") {
+          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_ELECTRIC") {
           Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
         } else {
@@ -419,6 +422,8 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += (Engines[i]->GetName() + "_ChamberPress[" + buffer + "]");
       break;
     case FGEngine::etTurbine:
+      PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
+      PropulsionStrings += (Engines[i]->GetName() + "_N2[" + buffer + "]");
       break;
     case FGEngine::etSimTurbine:
       PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
@@ -482,6 +487,8 @@ string FGPropulsion::GetPropulsionValues(void)
       PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
       break;
     case FGEngine::etTurbine:
+      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
+      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN2(), 10, buff)));
       break;
     case FGEngine::etSimTurbine:
       PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
