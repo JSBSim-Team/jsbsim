@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.30 2000/10/02 20:46:59 jsb Exp $
+// $Id: JSBSim.cxx,v 1.31 2000/10/02 22:35:00 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -31,7 +31,7 @@
 
 #include <simgear/constants.h>
 #include <simgear/debug/logstream.hxx>
-#include <simgear/math/fg_geodesy.hxx>
+#include <simgear/math/sg_geodesy.hxx>
 #include <simgear/misc/fgpath.hxx>
 
 #include <Scenery/scenery.hxx>
@@ -50,6 +50,7 @@
 #include <FDM/JSBSim/FGAuxiliary.h>
 #include <FDM/JSBSim/FGDefs.h>
 #include <FDM/JSBSim/FGInitialCondition.h>
+#include <FDM/JSBSim/FGTrim.h>
 #include <FDM/JSBSim/FGAtmosphere.h>
 
 #include "JSBSim.hxx"
@@ -92,13 +93,17 @@ int FGJSBsim::init( double dt ) {
   FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
                                       get_V_east_airmass(),
                                       get_V_down_airmass());
-  
+ 
   FDMExec.GetAtmosphere()->UseInternal();
+  
+ 
+  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
+  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
-
+  
   FGInitialCondition *fgic = new FGInitialCondition(&FDMExec);
-  fgic->SetAltitudeFtIC(get_Altitude());
+  fgic->SetAltitudeAGLFtIC(get_Altitude());
   if((current_options.get_mach() < 0) && (current_options.get_vc() < 0 )) {
     fgic->SetUBodyFpsIC(current_options.get_uBody());
     fgic->SetVBodyFpsIC(current_options.get_vBody());
@@ -116,36 +121,42 @@ int FGJSBsim::init( double dt ) {
     //current_options.get_vc() will return zero by default
   }
 
-
+  //fgic->SetFlightPathAngleDegIC(current_options.get_Gamma());
   fgic->SetRollAngleRadIC(get_Phi());
   fgic->SetPitchAngleRadIC(get_Theta());
   fgic->SetHeadingRadIC(get_Psi());
-//  fgic->SetLatitudeRadIC(get_Latitude());
   fgic->SetLatitudeRadIC(get_Lat_geocentric());
   fgic->SetLongitudeRadIC(get_Longitude());
 
-  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
-  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
-  FDMExec.GetPosition()->SetRunwayNormal( scenery.cur_normal[0],
-                                          scenery.cur_normal[1],
-                                          scenery.cur_normal[2] );
-
+  
+  
+  
+  //FG_LOG( FG_FLIGHT, FG_INFO, "  gamma: " <<  current_options.get_Gamma());
   FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi());
-  FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
+  //FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  psi: " <<  get_Psi() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  lat: " <<  get_Latitude() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  lon: " <<  get_Longitude() );
-  FG_LOG( FG_FLIGHT, FG_INFO, "  alt: " <<  get_Altitude() );
-
+  
+  FG_LOG( FG_FLIGHT, FG_INFO, "  Pressure Altiude: " <<  get_Altitude() );
+  FG_LOG( FG_FLIGHT, FG_INFO, "  Terrain Altitude: " 
+          <<  scenery.cur_radius*METER_TO_FEET );
+  FG_LOG( FG_FLIGHT, FG_INFO, "      AGL Altitude: " 
+          <<  get_Altitude() + get_Sea_level_radius()
+                - scenery.cur_radius*METER_TO_FEET );
+  
+  FG_LOG( FG_FLIGHT, FG_INFO, "      current_options.get_altitude(): " 
+          <<  current_options.get_altitude() );
   //must check > 0, != 0 will give bad result if --notrim set
   if(current_options.get_trim_mode() > 0) {
     FDMExec.RunIC(fgic);
     FG_LOG( FG_FLIGHT, FG_INFO, "  Starting trim..." );
-//    FGTrimLong *fgtrim=new FGTrimLong(&FDMExec,fgic);
-//    fgtrim->DoTrim();
-//    fgtrim->Report();
-//    fgtrim->TrimStats();
-//    fgtrim->ReportState();
+    FGTrim *fgtrim=new FGTrim(&FDMExec,fgic,tLongitudinal);
+    fgtrim->DoTrim();
+    fgtrim->Report();
+    fgtrim->TrimStats();
+    fgtrim->ReportState();
+
 
     controls.set_elevator_trim(FDMExec.GetFCS()->GetPitchTrimCmd());
     controls.set_throttle(FGControls::ALL_ENGINES,FDMExec.GetFCS()->GetThrottleCmd(0)/100);
@@ -180,41 +191,15 @@ int FGJSBsim::update( int multiloop ) {
   double save_alt = 0.0;
   double time_step = (1.0 / current_options.get_model_hz()) * multiloop;
   double start_elev = get_Altitude();
-
+ 
+  
   // lets try to avoid really screwing up the JSBsim model
   if ( get_Altitude() < -9000 ) {
     save_alt = get_Altitude();
     set_Altitude( 0.0 );
   }
 
-  // copy control positions into the JSBsim structure
-
-  FDMExec.GetFCS()->SetDaCmd( controls.get_aileron());
-  FDMExec.GetFCS()->SetDeCmd( controls.get_elevator());
-  FDMExec.GetFCS()->SetPitchTrimCmd(controls.get_elevator_trim());
-  FDMExec.GetFCS()->SetDrCmd( controls.get_rudder());
-  FDMExec.GetFCS()->SetDfCmd( controls.get_flaps() );
-  FDMExec.GetFCS()->SetDsbCmd( 0.0 ); //speedbrakes
-  FDMExec.GetFCS()->SetDspCmd( 0.0 ); //spoilers
-  FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
-                                    controls.get_throttle( 0 ) * 100.0 );
-
-  // FCS->SetBrake( controls.get_brake( 0 ) );
-
-  // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
-  //  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
-  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
-  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
-  FDMExec.GetPosition()->SetRunwayNormal( scenery.cur_normal[0],
-                                          scenery.cur_normal[1],
-                                          scenery.cur_normal[2] );
-
-  FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
-  FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
-  FDMExec.GetAtmosphere()->SetExDensity(get_Density());
-  FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
-                                      get_V_east_airmass(),
-                                      get_V_down_airmass());
+  copy_to_JSBsim();
 
   for ( int i = 0; i < multiloop; i++ ) {
     FDMExec.Run();
@@ -235,10 +220,6 @@ int FGJSBsim::update( int multiloop ) {
   }
 
   double end_elev = get_Altitude();
-  //if ( time_step > 0.0 ) {
-    // feet per second
-  //  set_Climb_Rate( (end_elev - start_elev) / time_step );
-  //}
 
   return 1;
 }
@@ -248,6 +229,32 @@ int FGJSBsim::update( int multiloop ) {
 // Convert from the FGInterface struct to the JSBsim generic_ struct
 
 int FGJSBsim::copy_to_JSBsim() {
+  // copy control positions into the JSBsim structure
+
+  FDMExec.GetFCS()->SetDaCmd( controls.get_aileron());
+  FDMExec.GetFCS()->SetDeCmd( controls.get_elevator());
+  FDMExec.GetFCS()->SetPitchTrimCmd(controls.get_elevator_trim());
+  FDMExec.GetFCS()->SetDrCmd( controls.get_rudder());
+  FDMExec.GetFCS()->SetDfCmd( controls.get_flaps() );
+  FDMExec.GetFCS()->SetDsbCmd( 0.0 ); //speedbrakes
+  FDMExec.GetFCS()->SetDspCmd( 0.0 ); //spoilers
+  FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
+                                    controls.get_throttle( 0 ) * 100.0 );
+
+  // FCS->SetBrake( controls.get_brake( 0 ) );
+
+  // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
+  //  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
+  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
+  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
+
+  FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
+  FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
+  FDMExec.GetAtmosphere()->SetExDensity(get_Density());
+  FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
+                                      get_V_east_airmass(),
+                                      get_V_down_airmass());
+
   return 1;
 }
 
@@ -315,9 +322,9 @@ int FGJSBsim::copy_from_JSBsim() {
                   FDMExec.GetState()->GetParameter(FG_PITCHRATE),
                   FDMExec.GetState()->GetParameter(FG_YAWRATE) );
 
-  /* HUH!?! */ set_Euler_Rates( FDMExec.GetRotation()->Getphi(),
-                   FDMExec.GetRotation()->Gettht(),
-                   FDMExec.GetRotation()->Getpsi() );
+  set_Euler_Rates( FDMExec.GetRotation()->GetEulerRates()(2),
+                   FDMExec.GetRotation()->GetEulerRates()(1),
+                   FDMExec.GetRotation()->GetEulerRates()(3));
 
   // ***FIXME*** set_Geocentric_Rates( Latitude_dot, Longitude_dot, Radius_dot );
 
@@ -330,9 +337,9 @@ int FGJSBsim::copy_from_JSBsim() {
   double alt = FDMExec.GetPosition()->Geth();
   double lat_geod, tmp_alt, sl_radius1, sl_radius2, tmp_lat_geoc;
 
-  fgGeocToGeod( lat_geoc, EQUATORIAL_RADIUS_M + alt * FEET_TO_METER,
+  sgGeocToGeod( lat_geoc, EQUATORIAL_RADIUS_M + alt * FEET_TO_METER,
                 &lat_geod, &tmp_alt, &sl_radius1 );
-  fgGeodToGeoc( lat_geod, alt * FEET_TO_METER, &sl_radius2, &tmp_lat_geoc );
+  sgGeodToGeoc( lat_geod, alt * FEET_TO_METER, &sl_radius2, &tmp_lat_geoc );
 
   FG_LOG( FG_FLIGHT, FG_DEBUG, "lon = " << lon << " lat_geod = " << lat_geod
           << " lat_geoc = " << lat_geoc
