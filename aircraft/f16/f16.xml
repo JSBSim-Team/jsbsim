@@ -3,7 +3,7 @@
 <!--                                                                                             -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.11 2002/09/11 03:49:02 apeden Exp $
+  CVS Version: $Id: f16.xml,v 1.12 2002/09/12 11:05:23 apeden Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 -->
@@ -45,7 +45,7 @@
     AC_IXZ        982.0
     AC_EMPTYWT  17400.0	 <!-- w. oil, oxygen, unusable fuel and tip missile launchers -->
     AC_CGLOC        0.0  0.0   0.0
-    AC_AERORP       0.0  0.0   0.0<!-- location of the center of the front of the nozzle -->
+    AC_AERORP       1.1  0.0   0.0
     AC_EYEPTLOC   228.5  0.0  23.2
     AC_POINTMASS  228.5  0.0  23.2 160.0 <!-- pilot -->
 
@@ -310,7 +310,7 @@
          Lift_due_to_pitch_rate
          20
          FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_AEROQ|FG_CI2VEL
+         FG_QBAR|FG_WINGAREA|FG_CI2VEL|FG_AEROQ
         -0.3491 22.132
         -0.2618 23.856
         -0.1745 24.273
@@ -337,7 +337,7 @@
         Lift_due_to_Elevator_Deflection
         20 5
         FG_ALPHA FG_ELEVATOR_POS
-        FG_QBAR|FG_WINGAREA
+        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
                 -0.4363 -0.1745 0.0     0.1745  0.4363
         -0.3491 -0.128  -0.079  0.000   0.072   0.398   
         -0.2618 -0.156  -0.079  0.000   0.107   0.475   
@@ -397,7 +397,7 @@
          Drag_due_to_pitch_rate
          20
          FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_AEROQ
+         FG_QBAR|FG_WINGAREA|FG_AEROQ|FG_CI2VEL
         -0.3491 -9.071
         -0.2618 -7.576
         -0.1745 -5.431
@@ -452,7 +452,7 @@
         Drag_due_to_elevator_Deflection
         20 5
         FG_ALPHA FG_ELEVATOR_POS
-        FG_QBAR|FG_WINGAREA
+        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
                 -0.4363 -0.1745 0.0     0.1745  0.4363
         -0.3491 0.142   0.060   0.000   -0.031  -0.125
         -0.2618 0.132   0.043   0.000   -0.025  -0.085
@@ -566,7 +566,7 @@
         Side_force_due_to_beta
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_BETA|FG_AILERON_POS
         -0.3491 0.6101
         -0.2618 0.5979
         -0.1745 0.7722
@@ -594,7 +594,7 @@
         20 3
         FG_ALPHA FG_BETA
         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
-                -30.0   0.0     30.0
+                -0.5326   0.0    0.5326
         -0.3491 -3.430  -0.054  -3.883
         -0.2618 -3.787  -0.045  -3.672
         -0.1745 -4.264  -0.046  -4.331
