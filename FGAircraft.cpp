@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.67 2001/04/09 05:28:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.68 2001/04/11 12:40:50 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -264,8 +264,8 @@ bool FGAircraft::Run(void) {
     MassChange();
     FMProp();
     FMAero();
-    FMGear();
     FMMass();
+    FMGear();
 
     nlf = 0;
     if (fabs(Position->GetGamma()) < 1.57) {

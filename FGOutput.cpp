@@ -49,7 +49,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.27 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.28 2001/04/11 12:40:50 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -161,7 +161,8 @@ void FGOutput::DelimitedOutput(void)
     }
     if (SubSystems & FGAircraft::ssForces) {
       cout << ", ";
-      cout << "XsForce, YsForce, ZsForce, ";
+      cout << "Drag, Side, Lift, ";
+      cout << "L/D, ";
       cout << "Xforce, Yforce, Zforce";
     }
     if (SubSystems & FGAircraft::ssMoments) {
@@ -235,6 +236,7 @@ void FGOutput::DelimitedOutput(void)
   if (SubSystems & FGAircraft::ssForces) {
     cout << ", ";
     cout << Aircraft->GetvFs() << ", ";
+    cout << Aircraft->GetvFs(3)/Aircraft->GetvFs(1) << ", ";
     cout << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {
@@ -313,7 +315,8 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & FGAircraft::ssForces) {
       datafile << ", ";
-      datafile << "XsForce, YsForce, ZsForce, ";
+      datafile << "Drag, Side, Lift, ";
+      datafile << "L/D, ";
       datafile << "Xforce, Yforce, Zforce";
     }
     if (SubSystems & FGAircraft::ssMoments) {
@@ -390,6 +393,7 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & FGAircraft::ssForces) {
     datafile << ", ";
     datafile << Aircraft->GetvFs() << ", ";
+    datafile << Aircraft->GetvFs(3)/Aircraft->GetvFs(1) << ", ";
     datafile << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {

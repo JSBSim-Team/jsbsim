@@ -1,10 +1,9 @@
 <FDM_CONFIG NAME="X-15" VERSION="1.38">
-
   <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.25 2001/04/11 00:46:57 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.26 2001/04/11 12:40:51 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
@@ -40,7 +39,7 @@
 
     <!--
     The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-    
+
     AC_GEAR
     <name>                           name of gear entry - no spaces allowed
     <X> <Y> <Z>                      Gear location in aircraft body coords in inches

@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.49 2001/04/09 05:28:31 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.50 2001/04/11 12:40:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.49 2001/04/09 05:28:31 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.50 2001/04/11 12:40:50 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -161,7 +161,9 @@ public:
   inline float GetMass(void) { return Mass; }
   inline FGColumnVector GetMoments(void) { return vMoments; }
   inline FGColumnVector GetForces(void) { return vForces; }
+  inline FGColumnVector GetAeroBodyForces(void) { return vAeroBodyForces; }
   inline FGColumnVector GetvFs(void) { return vFs; }
+  inline float GetvFs(int axis) { return vFs(axis); }
   inline float GetIxx(void) { return Ixx; }
   inline float GetIyy(void) { return Iyy; }
   inline float GetIzz(void) { return Izz; }

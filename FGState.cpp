@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.53 2001/04/09 23:36:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.54 2001/04/11 12:40:50 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -116,6 +116,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_PITCHRATE,      " pitch_rate "     );
   RegisterVariable(FG_ROLLRATE,       " roll_rate "      );
   RegisterVariable(FG_YAWRATE,        " yaw_rate "       );
+  RegisterVariable(FG_CL_SQRD,        " Clift_sqrd "     );
   RegisterVariable(FG_MACH,           " mach "           );
   RegisterVariable(FG_ALTITUDE,       " altitude "       );
   RegisterVariable(FG_BI2VEL,         " BI2Vel "         );
@@ -186,6 +187,8 @@ float FGState::GetParameter(eParam val_idx) {
     return FDMExec->GetRotation()->GetPQR(1);
   case FG_YAWRATE:
     return FDMExec->GetRotation()->GetPQR(3);
+//  case FG_CL_SQRD:
+//    return FDMExec->GetAircraft->Get;
   case FG_ELEVATOR_POS:
     return FDMExec->GetFCS()->GetDePos();
   case FG_AILERON_POS:
