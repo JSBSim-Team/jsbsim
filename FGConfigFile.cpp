@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.27 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.28 2001/11/15 23:57:28 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,6 +36,7 @@ FGConfigFile::FGConfigFile(string cfgFileName)
   cfgfile.open(cfgFileName.c_str(), ios::in | ios::binary );
 #endif
   CommentsOn = false;
+  DelayedComments = false;
   CurrentIndex = 0;
   Opened = true;
 #if defined ( sgi ) && !defined( __GNUC__ )
@@ -60,26 +61,41 @@ FGConfigFile::~FGConfigFile()
 
 string FGConfigFile::GetNextConfigLine(void)
 {
-  int deblank;
+  // New logic for this function should be created:
+  // If this is a partially commented line:
+  //   save the line-comment or begin the Comment
+  //   remove the line_comment
+  //   return the string
+  // otherwise if this is an entire comment
+  //   append the comment to Comment
+  //   Call this function interatively
+  // otherwise if there is no comment just
+  //   return the line
+
+  int deblank, not_found = string::npos;
 
   do {
     CurrentLine = GetLine();
-    if (CurrentLine.find("<!--") != CurrentLine.npos) {
+    if (DelayedComments) {
+      DelayedComments = false;
+      CommentsOn = true;
+    }
+    if (CurrentLine.find("<!--") != not_found) {
       CommentsOn = true;
       CommentString = "";
-      if (CurrentLine.find("<!--") != CurrentLine.npos)
+      if (CurrentLine.find("<!--") != not_found)
         CurrentLine.erase(CurrentLine.find("<!--"),4);
-      while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
+      while((deblank = CurrentLine.find(" ")) != not_found) CurrentLine.erase(deblank,1);
       if (CurrentLine.size() <= 2) CurrentLine = "";
     }
 
-    if (CurrentLine.find("-->") != CurrentLine.npos) {
+    if (CurrentLine.find("-->") != not_found) {
       CommentsOn = false;
 
-      if (CurrentLine.find("-->") != CurrentLine.npos)
+      if (CurrentLine.find("-->") != not_found)
         CurrentLine.erase(CurrentLine.find("-->"),4);
 
-      while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
+      while((deblank = CurrentLine.find(" ")) != not_found) CurrentLine.erase(deblank,1);
       if (CurrentLine.size() <= 2) CurrentLine = "";
 
       CommentString += CurrentLine;
