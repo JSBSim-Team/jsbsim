@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.32 2001/08/02 22:33:39 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.33 2001/09/28 02:07:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.32 2001/08/02 22:33:39 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.33 2001/09/28 02:07:03 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -196,7 +196,7 @@ public:
   /** Gets the throttle command.
       @param engine engine ID number
       @return throttle command in percent ( 0 - 100) for the given engine */
-  inline float GetThrottleCmd(int engine);
+  float GetThrottleCmd(int engine);
 
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
@@ -232,7 +232,7 @@ public:
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
-  inline float GetThrottlePos(int engine);
+  float GetThrottlePos(int engine);
   //@}
 
   /** Retrieves the State object pointer.

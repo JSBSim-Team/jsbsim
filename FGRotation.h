@@ -67,17 +67,12 @@ INCLUDES
 #  endif
 #endif
 
-#ifndef M_PI
-#  include <simgear/constants.h>
-#  define M_PI SG_PI
-#endif
-
 #include "FGModel.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.28 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.29 2001/09/28 02:07:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

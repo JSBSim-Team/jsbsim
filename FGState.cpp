@@ -47,14 +47,9 @@ INCLUDES
 #  endif
 #endif
 
-#ifndef M_PI 
-#  include <simgear/constants.h>
-#  define M_PI SG_PI
-#endif
-
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.74 2001/08/30 11:06:50 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.75 2001/09/28 02:07:03 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,12 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.17 2001/06/04 19:52:14 jberndt Exp $";
-
-#ifndef M_PI
-#  include <simgear/constants.h>
-#  define M_PI SG_PI
-#endif
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.18 2001/09/28 02:07:03 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
