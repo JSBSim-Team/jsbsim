@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.32 2003/01/22 15:53:31 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.33 2003/03/16 21:14:09 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.32 2003/01/22 15:53:31 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.33 2003/03/16 21:14:09 dmegginson Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -161,7 +161,7 @@ public:
 private:
   double rho;
 
-  enum tType {ttBerndt, ttNone} turbType;
+  enum tType {ttStandard, ttBerndt, ttNone} turbType;
 
   int lastIndex;
   double h;

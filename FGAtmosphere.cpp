@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.48 2003/02/26 19:19:48 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.49 2003/03/16 21:14:09 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
 //   turbType = ttNone;
-  turbType = ttBerndt;
+  turbType = ttStandard;
+//   turbType = ttBerndt;
   TurbGain = 0.0;
   
   bind();
@@ -261,6 +262,53 @@ void FGAtmosphere::Calculate(double altitude)
 void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
+  case ttStandard: {
+    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+
+    
+    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
+    MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
+    Magnitude         += MagnitudeAccel*rate*State->Getdt();
+
+    vDirectiondAccelDt.Normalize();
+    vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
+    vDirectionAccel.Normalize();
+    vDirection      += vDirectionAccel*rate*State->Getdt();
+
+    vDirection.Normalize();
+    
+                                // Diminish turbulence within three wingspans
+                                // of the ground
+    vTurbulence = TurbGain*Magnitude * vDirection;
+    double HOverBMAC = Position->GetHOverBMAC();
+    if (HOverBMAC < 3.0)
+        vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
+
+    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
+
+    vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
+    vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
+//     if (Aircraft->GetHTailArm() != 0.0)
+//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
+//     else
+//       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
+
+    if (Aircraft->GetVTailArm())
+      vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
+    else
+      vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
+
+                                // Clear the horizontal forces
+                                // actually felt by the plane, now
+                                // that we've used them to calculate
+                                // moments.
+    vTurbulence(eX) = 0.0;
+    vTurbulence(eY) = 0.0;
+
+    break;
+  }
   case ttBerndt: {
     vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
