@@ -57,7 +57,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.27 2001/10/29 17:47:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.28 2001/11/11 22:26:47 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,76 +158,6 @@ void FGTrim::Report(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTrim::ReportState(void) {
-  char out[80], flap[10], gear[10];
-  
-  cout << endl << "  JSBSim State" << endl;
-  snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
-                   fdmex->GetMassBalance()->GetWeight(),
-                   fdmex->GetMassBalance()->GetXYZcg(1),
-                   fdmex->GetMassBalance()->GetXYZcg(2),
-                   fdmex->GetMassBalance()->GetXYZcg(3));
-  cout << out;             
-  if( fdmex->GetFCS()->GetDfPos() <= 0.01)
-    snprintf(flap,10,"Up");
-  else
-    snprintf(flap,10,"%2.0f",fdmex->GetFCS()->GetDfPos());
-  if(fdmex->GetGroundReactions()->GetGearUp() == true)
-    snprintf(gear,10,"Up");
-  else
-    snprintf(gear,10,"Down");
-  snprintf(out,80, "    Flaps: %3s  Gear: %4s\n",flap,gear);
-  cout << out;
-  snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
-                    fdmex->GetAuxiliary()->GetVcalibratedKTS(),
-                    fdmex->GetState()->GetParameter(FG_MACH) );
-  cout << out;
-  snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
-                    fdmex->GetPosition()->Geth(),
-                    fdmex->GetPosition()->GetDistanceAGL() );
-  cout << out;
-  snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
-                    fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG,
-                    fdmex->GetRotation()->Gettht()*RADTODEG );
-  cout << out;
-  snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
-                    fdmex->GetPosition()->GetGamma()*RADTODEG,
-                    fdmex->GetPosition()->Gethdot()*60 );
-  cout << out;                  
-  snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
-                    fdmex->GetAerodynamics()->GetNlf(),
-                    fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG );
-  cout << out;
-  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
-                    fdmex->GetRotation()->Getpsi()*RADTODEG,
-                    fdmex->GetState()->GetParameter(FG_BETA)*RADTODEG );                  
-  cout << out;
-  snprintf(out,80, "    Bank Angle: %5.2f deg\n",
-                    fdmex->GetRotation()->Getphi()*RADTODEG );
-  cout << out;
-  snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
-                    fdmex->GetState()->GetParameter(FG_ELEVATOR_POS)*RADTODEG,
-                    fdmex->GetState()->GetParameter(FG_AILERON_POS)*RADTODEG,
-                    fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG );
-  cout << out;                  
-  snprintf(out,80, "    Throttle: %5.2f%c\n",
-                    fdmex->GetFCS()->GetThrottlePos(0),'%' );
-  cout << out;
-  
-  snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
-                    fdmex->GetAuxiliary()->GetHeadWind()*jsbFPSTOKTS,
-                    fdmex->GetAuxiliary()->GetCrossWind()*jsbFPSTOKTS );
-  cout << out; 
-  
-  snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
-                    fdmex->GetPosition()->GetVground()*jsbFPSTOKTS,
-                    fdmex->GetPosition()->GetGroundTrack()*RADTODEG );
-  cout << out;                                   
-
-}                  
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGTrim::ClearStates(void) {
     FGTrimAxis* ta;
     
@@ -317,7 +247,6 @@ bool FGTrim::EditState( State state, Control new_control ){
       }
       iAxes++;
   }
-  cout << "Exit FGTrim::EditState(...)" << endl;
   return result;
 }  
        
@@ -452,12 +381,11 @@ bool FGTrim::solve(void) {
       x1=xhi;f1=ahi;
       x3=xlo;f3=alo;
     }   */
-
     d0=fabs(x3-x1);
     //iterations
     //max_sub_iterations=TrimAxes[current_axis]->GetIterationLimit();
-    while (!TrimAxes[current_axis]->InTolerance() && (fabs(d) > eps) 
-              && (Nsub < max_sub_iterations)) {
+    while ( (TrimAxes[current_axis]->InTolerance() == false )
+             && (fabs(d) > eps) && (Nsub < max_sub_iterations)) {
       Nsub++;
       d=(x3-x1)/d0;
       x2=x1-d*d0*f1/(f3-f1);

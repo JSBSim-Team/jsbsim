@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.17 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.18 2001/11/11 22:26:47 apeden Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 
@@ -129,7 +129,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.17 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.18 2001/11/11 22:26:47 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,11 +198,6 @@ public:
       @return true if trim succeeds
   */     
   void Report(void);
-  
-  /** Prints a summary of simulator state (speed, altitude, 
-      configuration, etc.)
-  */
-  void ReportState(void);
   
   /** Iteration statistics
   */

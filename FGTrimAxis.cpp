@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.23 2001/11/06 12:50:28 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.24 2001/11/11 22:26:47 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -54,7 +54,6 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   fgic=ic;
   state=st;
   control=ctrl;
-  solver_eps=tolerance;
   max_iterations=10;
   control_value=0;
   its_to_stable_value=0;
@@ -63,6 +62,17 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   state_convert=1.0;
   control_convert=1.0;
   state_value=0;
+    switch(state) {
+    case tUdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tVdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tWdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tQdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tPdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tRdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tHmgt: tolerance = 0.01; break;
+  }  
+  
+  solver_eps=tolerance;
   switch(control) {
   case tThrottle:
     control_min=0;
@@ -126,15 +136,6 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     break;
   }
   
-  switch(state) {
-    case tUdot: tolerance = DEFAULT_TOLERANCE; break;
-    case tVdot: tolerance = DEFAULT_TOLERANCE; break;
-    case tWdot: tolerance = DEFAULT_TOLERANCE; break;
-    case tQdot: tolerance = DEFAULT_TOLERANCE / 10; break;
-    case tPdot: tolerance = DEFAULT_TOLERANCE / 10; break;
-    case tRdot: tolerance = DEFAULT_TOLERANCE / 10; break;
-    case tHmgt: tolerance = 0.01; break;
-  }  
   
   if (debug_lvl & 2) cout << "Instantiated: FGTrimAxis" << endl;
 }
