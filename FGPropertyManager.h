@@ -29,7 +29,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline FGPropertyManager* 
     GetNode (const string &path, bool create = false)
     {
-      SGPropertyNode* node=this->getNode(path, create);
+      SGPropertyNode* node=this->getNode(path.c_str(), create);
       if(node == 0) 
         cout << "FGPropertyManager::GetNode() No node found for " 
              << path << endl;
@@ -39,7 +39,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline FGPropertyManager* 
     GetNode (const string &relpath, int index, bool create = false)
     {
-        return (FGPropertyManager*)getNode(relpath,index,create);
+        return (FGPropertyManager*)getNode(relpath.c_str(),index,create);
     }    
 
 
@@ -72,7 +72,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool GetBool (const string &name, bool defaultValue = false)
     {
-      return getBoolValue(name, defaultValue);
+      return getBoolValue(name.c_str(), defaultValue);
     }
 
 
@@ -92,7 +92,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline int GetInt (const string &name, int defaultValue = 0)
     {
-      return getIntValue(name, defaultValue);
+      return getIntValue(name.c_str(), defaultValue);
     }
 
 
@@ -112,7 +112,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline int GetLong (const string &name, long defaultValue = 0L)
     {
-      return getLongValue(name, defaultValue);
+      return getLongValue(name.c_str(), defaultValue);
     }
 
 
@@ -132,7 +132,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline float GetFloat (const string &name, float defaultValue = 0.0)
     {
-      return getFloatValue(name, defaultValue);
+      return getFloatValue(name.c_str(), defaultValue);
     }
 
 
@@ -152,7 +152,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline double GetDouble (const string &name, double defaultValue = 0.0)
     {
-      return getDoubleValue(name, defaultValue);
+      return getDoubleValue(name.c_str(), defaultValue);
     }
 
 
@@ -172,7 +172,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline string GetString (const string &name, string defaultValue = "")
     {
-      return getStringValue(name, defaultValue);
+      return string(getStringValue(name.c_str(), defaultValue.c_str()));
     }
 
 
@@ -191,7 +191,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetBool (const string &name, bool val)
     {
-      return setBoolValue(name, val);
+      return setBoolValue(name.c_str(), val);
     }
 
 
@@ -210,7 +210,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetInt (const string &name, int val)
     {
-      return setIntValue(name, val);
+      return setIntValue(name.c_str(), val);
     }
 
 
@@ -229,7 +229,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetLong (const string &name, long val)
     {
-      return setLongValue(name, val);
+      return setLongValue(name.c_str(), val);
     }
 
 
@@ -248,7 +248,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetFloat (const string &name, float val)
     {
-      return setFloatValue(name, val);
+      return setFloatValue(name.c_str(), val);
     }
 
 
@@ -267,7 +267,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetDouble (const string &name, double val)
     {
-      return setDoubleValue(name, val);
+      return setDoubleValue(name.c_str(), val);
     }
 
 
@@ -286,7 +286,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     inline bool SetString (const string &name, const string &val)
     {
-      return setStringValue(name, val);
+      return setStringValue(name.c_str(), val.c_str());
     }
 
 
@@ -311,7 +311,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     SetArchivable (const string &name, bool state = true)
     {
-      SGPropertyNode * node = getNode(name);
+      SGPropertyNode * node = getNode(name.c_str());
       if (node == 0)
         cout <<
 	       "Attempt to set archive flag for non-existant property "
@@ -336,7 +336,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     SetReadable (const string &name, bool state = true)
     {
-      SGPropertyNode * node = getNode(name);
+      SGPropertyNode * node = getNode(name.c_str());
       if (node == 0)
         cout <<
 	       "Attempt to set read flag for non-existant property "
@@ -361,7 +361,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     SetWritable (const string &name, bool state = true)
     {
-      SGPropertyNode * node = getNode(name);
+      SGPropertyNode * node = getNode(name.c_str());
       if (node == 0)
         cout <<
 	       "Attempt to set write flag for non-existant property "
@@ -386,7 +386,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Untie (const string &name)
     {
-      if (!untie(name))
+      if (!untie(name.c_str()))
         cout << "Failed to untie property " << name;
     }
 
@@ -408,7 +408,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Tie (const string &name, bool *pointer, bool useDefault = true)
     {
-      if (!tie(name, SGRawValuePointer<bool>(pointer),
+      if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to a pointer";
@@ -430,7 +430,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Tie (const string &name, int *pointer, bool useDefault = true)
     {
-      if (!tie(name, SGRawValuePointer<int>(pointer),
+      if (!tie(name.c_str(), SGRawValuePointer<int>(pointer),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to a pointer";
@@ -452,7 +452,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Tie (const string &name, long *pointer, bool useDefault = true)
     {
-      if (!tie(name, SGRawValuePointer<long>(pointer),
+      if (!tie(name.c_str(), SGRawValuePointer<long>(pointer),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to a pointer";
@@ -474,7 +474,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Tie (const string &name, float *pointer, bool useDefault = true)
     {
-      if (!tie(name, SGRawValuePointer<float>(pointer),
+      if (!tie(name.c_str(), SGRawValuePointer<float>(pointer),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to a pointer";
@@ -496,29 +496,7 @@ class FGPropertyManager:public SGPropertyNode {
     inline void
     Tie (const string &name, double *pointer, bool useDefault = true)
     {
-      if (!tie(name, SGRawValuePointer<double>(pointer),
-				     useDefault))
-        cout <<
-	       "Failed to tie property " << name << " to a pointer";
-    }
-
-
-    /**
-     * Tie a property to an external string variable.
-     *
-     * The property's value will automatically mirror the variable's
-     * value, and vice-versa, until the property is untied.
-     *
-     * @param name The property name to tie (full path).
-     * @param pointer A pointer to the variable.
-     * @param useDefault true if any existing property value should be
-     *        copied to the variable; false if the variable should not
-     *        be modified; defaults to true.
-     */
-    inline void
-    Tie (const string &name, string *pointer, bool useDefault = true)
-    {
-      if (!tie(name, SGRawValuePointer<string>(pointer),
+      if (!tie(name.c_str(), SGRawValuePointer<double>(pointer),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to a pointer";
@@ -562,7 +540,7 @@ class FGPropertyManager:public SGPropertyNode {
     FGPropertyManager::Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
            bool useDefault = true)
     {
-      if (!tie(name, SGRawValueFunctions<V>(getter, setter),
+      if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter),
 				     useDefault))
         cout <<
 	       "Failed to tie property " << name << " to functions";
@@ -592,7 +570,7 @@ class FGPropertyManager:public SGPropertyNode {
     FGPropertyManager::Tie (const string &name, int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true)
     {
-      if (!tie(name,
+      if (!tie(name.c_str(),
 				     SGRawValueFunctionsIndexed<V>(index,
 							           getter,
 							           setter),
@@ -626,7 +604,7 @@ class FGPropertyManager:public SGPropertyNode {
     FGPropertyManager::Tie (const string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
-      if (!tie(name,
+      if (!tie(name.c_str(),
 				     SGRawValueMethods<T,V>(*obj, getter, setter),
 				     useDefault))
         cout <<
@@ -659,7 +637,7 @@ class FGPropertyManager:public SGPropertyNode {
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
            bool useDefault = true)
     {
-      if (!tie(name,
+      if (!tie(name.c_str(),
 				     SGRawValueMethodsIndexed<T,V>(*obj,
 							           index,
 							           getter,
