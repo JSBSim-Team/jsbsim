@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.43 2001/11/14 23:53:26 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.44 2001/11/28 13:29:35 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.43 2001/11/14 23:53:26 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.44 2001/11/28 13:29:35 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,6 +181,9 @@ public:
 
   /// Sets engine placement information
   void SetPlacement(double x, double y, double z, double pitch, double yaw);
+
+  /// Sets the engine number
+  void SetEngineNumber(int nn) {EngineNumber == nn;}
 
   virtual double GetPowerAvailable(void) {return 0.0;};
 
