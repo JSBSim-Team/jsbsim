@@ -26,13 +26,16 @@ INCLUDES
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
 #    include <cmath>
+#    include <iostream>
 #  else
 #    include <fstream.h>
 #    include <math.h>
+#    include <iostream.h>
 #  endif
 #else
 #  include <fstream>
 #  include <cmath>
+#  include <iostream>
 #endif
 
 #include <string>
@@ -50,6 +53,8 @@ DECLARATION: MatrixException
 using std::string;
 using std::ostream;
 using std::istream;
+using std::cerr;
+using std::endl;
 
 class MatrixException /* :  public exception */  
 {

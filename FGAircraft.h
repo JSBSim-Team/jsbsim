@@ -213,8 +213,8 @@ private:
   unsigned int numEngines;
   unsigned int numSelectedOxiTanks;
   unsigned int numSelectedFuelTanks;
-  FGTank* Tank[MAX_TANKS];
-  FGEngine *Engine[MAX_ENGINES];
+  FGTank* Tank[MAX_TANKS];           // need to make a vector
+  FGEngine *Engine[MAX_ENGINES];     // need to make a vector
 
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;

@@ -89,25 +89,14 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       cout << endl;
 
       *AC_cfg >> multparms;
-      if (multparms.substr(0,1) == "F") {
-        LookupR = State->GetParameterIndex(multparms);
-        cout << "   Row indexing parameter: " << multparms << endl;
-      } else {
-        LookupR = atoi(multparms.c_str());
-        cout << "   Row indexing parameter: " << LookupR << endl;
-      }
-
+      LookupR = State->GetParameterIndex(multparms);
+      cout << "   Row indexing parameter: " << multparms << endl;
     }
 
     if (type == TABLE) {
       *AC_cfg >> multparms;
-      if (multparms.substr(0,1) == "F") {
-        LookupC = State->GetParameterIndex(multparms);
-        cout << "   Column indexing parameter: " << multparms << endl;
-      } else {
-        LookupC = atoi(multparms.c_str());
-        cout << "   Column indexing parameter: " << LookupC << endl;
-      }
+      LookupC = State->GetParameterIndex(multparms);
+      cout << "   Column indexing parameter: " << multparms << endl;
     }
 
     // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
