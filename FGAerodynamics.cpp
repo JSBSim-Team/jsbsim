@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.18 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.19 2001/08/30 11:01:29 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,12 +107,12 @@ bool FGAerodynamics::Run(void)
 
     vForces = State->GetTs2b(alpha, beta)*vFs;
 
-    // see http://home.earthlink.net/~apeden/jsbsim_moments_due_to_forces.txt
-    // for details on this
-
-    vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) - MassBalance->GetXYZcg(eX))/12.0;
-    vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) - MassBalance->GetXYZcg(eY))/12.0;
-    vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) - MassBalance->GetXYZcg(eZ))/12.0;
+    vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
+                      - MassBalance->GetXYZcg(eX))*INCHTOFT;
+    vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) 
+                      - MassBalance->GetXYZcg(eY))*INCHTOFT;
+    vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) 
+                      - MassBalance->GetXYZcg(eZ))*INCHTOFT;
 
     vMoments = vDXYZcg*vForces; // M = r X F
 
