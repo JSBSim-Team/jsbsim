@@ -1,0 +1,657 @@
+<FDM_CONFIG NAME="Space Shuttle" VERSION="1.4">
+
+  <!--
+
+  File:        shuttle.xml
+  Author:      Jon S. Berndt
+  CVS Version: $Id: shuttle.xml,v 1.1 2001/07/10 22:36:11 jberndt Exp $
+
+  Function: Models the U.S. Space Shuttle
+  Notes:    Try running FlightGear using this command line,
+            fgfs --fdm=jsb --aircraft=shuttle --altitude=60000 --uBody=3000 --wBody=120
+  -->
+
+  <METRICS>
+
+    <!--
+    Center of gravity location, empty weight, in aircraft's own structural coord
+    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+    right wing.
+
+    Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+    X, Y, Z, in inches
+    -->
+
+    AC_WINGAREA 2690
+    AC_WINGSPAN 78
+    AC_CHORD    39.6
+    AC_IXX      953159
+    AC_IYY      7465084
+    AC_IZZ      7747582
+    AC_IXZ      -140307
+    AC_EMPTYWT  231300
+    AC_CGLOC    1076  0    373
+    AC_EYEPTLOC 500  -24   460
+    AC_AERORP   1076  0    373
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    <!--
+    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
+    <max steer angle>                Maximum steerable angle in degrees
+    -->
+
+    AC_GEAR     NOSE         380    0 -48 150000  10000  0.02  0.5 0.02 STEERABLE NOSE 15
+    AC_GEAR     LEFT_WHEEL  1152 -140 160 150000  10000  0.02  0.5 0.02 FIXED LEFT 0
+    AC_GEAR     RIGHT_WHEEL 1152  140 210 150000  10000  0.02  0.5 0.02 FIXED RIGHT 0
+
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+
+    <!--
+      Not modeling any propulsive forces yet
+    -->
+
+  </PROPULSION>
+
+  <!--
+  In the following section for flight controls the TYPE parameter may be one of
+  the following:
+
+    LAG_FILTER
+    LEAD_LAG_FILTER
+    SECOND_ORDER_FILTER
+    WASHOUT_FILTER
+    INTEGRATOR
+    PURE_GAIN
+    SCHEDULED_GAIN
+    HYSTERESIS
+    SUMMER
+    DEADBAND
+    GRADIENT
+    AEROSURFACE_SCALE
+
+  Most flight control systems should be able to be modeled by the above
+  components.
+
+  According to Etkin, (From the Flight Safety Foundation Human Engineering
+  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
+  are as follows (averaged, for a right-handed pilot):
+
+  Stick Pull:  50 lbs.
+        Push:  50
+        Right: 20
+        Left:  20
+
+  Pedal Push: 300 lbs.
+
+  It is assumed that most flight control systems will list the pilot input in
+  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
+  will all have limits specified, and that the joystick inputs from FlightGear will be
+  from -1 to 0 to +1. Given all those parameters, it should be possible to
+  calculate a scaling factor that will convert the +/-1 range into a push/pull
+  force command ready for input to the FCS.
+
+  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
+  pounds.
+  -->
+
+  <FLIGHT_CONTROL NAME="X-15 SAS">
+
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           1
+      INPUT        0
+      MIN         -50
+      MAX          50
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
+      ID           2
+      INPUT        1
+      GAIN         -0.36
+    </COMPONENT>
+
+    <!--
+      In the following component, the GAIN value is actually in addition to the
+      scheduled gain in the next component. If the GAIN in a scheduled component
+      is not required, it may be ignored and not specified here - it is initialized
+      to one in the contructor.
+    -->
+
+    <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
+      ID           3
+      INPUT        2
+      GAIN         0.017
+      ROWS         22
+      SCHEDULED_BY FG_ELEVATOR_POS
+      -0.68  -26.548
+      -0.595 -20.513
+      -0.51  -15.328
+      -0.425 -10.993
+      -0.34   -7.508
+      -0.255  -4.873
+      -0.17   -3.088
+      -0.085  -2.153
+       0      -2.068
+       0.085  -2.833
+       0.102  -3.088
+       0.119  -3.377
+       0.136  -3.7
+       0.153  -4.057
+       0.17   -4.448
+       0.187  -4.873
+       0.272  -7.508
+       0.357 -10.993
+       0.442 -15.328
+       0.527 -20.513
+       0.612 -26.548
+       0.697 -33.433
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           4
+      INPUT        FG_AILERON_CMD
+      MIN         -20
+      MAX          20
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 1" TYPE="PURE_GAIN">
+      ID           5
+      INPUT        4
+      GAIN         0.42
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 2" TYPE="PURE_GAIN">
+      ID           6
+      INPUT        5
+      GAIN         0.027
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           7
+      INPUT        FG_RUDDER_CMD
+      MIN         -250
+      MAX          250
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 1" TYPE="PURE_GAIN">
+      ID           8
+      INPUT        7
+      GAIN         0.082
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 2" TYPE="PURE_GAIN">
+      ID           9
+      INPUT        8
+      GAIN         0.040
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch SAS Feedback" TYPE="PURE_GAIN">
+      ID           10
+      INPUT        FG_PITCHRATE
+      GAIN         0.75
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw-Roll Crossover Gain" TYPE="PURE_GAIN">
+      ID           11
+      INPUT        FG_YAWRATE
+      GAIN         -0.90
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Coupled Aileron Feedback Sum" TYPE="SUMMER">
+      ID           12
+      INPUT        FG_ROLLRATE
+      INPUT        11
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll SAS Gain" TYPE="PURE_GAIN">
+      ID           13
+      INPUT        12
+      GAIN         -0.50
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw SAS Gain" TYPE="PURE_GAIN">
+      ID           14
+      INPUT        FG_YAWRATE
+      GAIN         0.30
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
+      ID           15
+      INPUT         3
+      INPUT        10
+      CLIPTO       -0.26 0.61
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
+      ID           16
+      INPUT        15
+      C1           600
+      OUTPUT       FG_ELEVATOR_POS
+    </COMPONENT>
+
+    <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
+      ID           17
+      INPUT         6
+      INPUT        13
+      OUTPUT       FG_AILERON_POS
+      CLIPTO       -0.35 0.35
+    </COMPONENT>
+
+    <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
+      ID           18
+      INPUT         9
+      INPUT        14
+      OUTPUT       FG_RUDDER_POS
+      CLIPTO       -0.52 0.52
+    </COMPONENT>
+
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+
+    <!--
+    For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
+
+    The aerodynamics section is arranged as follows:
+
+     <AERODYNAMICS>
+       <AXIS NAME="LIFT">                   // {LIFT|DRAG|SIDE|ROLL|PITCH|YAW}
+
+         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">   // example for CLalpha
+
+           Lift_due_to_alpha                // e.g. Lift_at_zero_alpha (no embedded spaces)
+           [[rows] cols]                    // calc_type: {TABLE|VECTOR|TABLE|EQUATION}
+                                            // number of rows and number of columns
+                                            // are present depending on calc_type
+           row_lookup column_lookup         // the lookup parameters for row and column
+                                            // based on the above chart, i.e. if the
+                                            // row and column lookups are 16384 &
+                                            // 32768 that means the rows are indexed
+                                            // by mach and the columns by altitude
+                                            // if the type is VECTOR, then the table
+                                            // is referenced only by a single lookup.
+           multipliers                      // this is an OR'ed value of all the
+                                            // parameters this coefficient must be
+                                            // multiplied by to get a force or moment,
+                                            // i.e., these are the non-dimensionalizing
+                                            // values. Alternatively, the values can
+                                            // be given as the FG_* descriptors
+                                            // delimited with the "|" pipe character.
+           column_value                     // if a TABLE, the row values for _this_
+                                            // column follow. I.e., if the column
+                                            // represents altitude and this value is
+                                            // 40,000, then what follows are the rows
+                                            // of data for this coefficient at this
+                                            // altitude
+           row_value coeff_value            // The actual value for the data at this
+                                            // row, where for instance, 0.0 might
+                                            // a mach number of 0; and the second value
+                                            // represents the coefficient value for
+                                            // this column at this row. Using the
+                                            // example mentioned: 2.4 0.98 would mean,
+                                            // for this column of data and at mach 2.4,
+                                            // the value of the coefficient is 0.98.
+           <...> <...>                      // a <row> <coeff> value entry is present
+                                            // each row of data. ADDITIONALLY, for each
+                                            // column, the row_value series must be
+                                            // identical.
+           column_value2                    // repeat row/coeff value mapping for
+           row_value coeff_value            // each column in the table
+            ,...> <...>                      //
+           </COEFFICIENT>
+
+         </AXIS>
+    -->
+
+    <AXIS NAME="LIFT">
+
+      <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
+        Lift_due_to_alpha
+        8
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_ALPHA
+        0.00 4.50
+        0.40 3.80
+        0.60 3.60
+        1.05 4.50
+        1.40 4.00
+        2.80 2.50
+        6.00 1.10
+        9.00 1.00
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CLDe" TYPE="VECTOR">
+        Lift_due_to_Elevator_Deflection
+        11
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+        0.0 1.00
+        0.6 1.05
+        1.0 1.15
+        1.2 1.00
+        1.6 0.66
+        2.0 0.50
+        2.4 0.40
+        3.0 0.31
+        5.6 0.21
+        6.0 0.20
+        9.0 0.20
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CLM" TYPE="TABLE">
+        Lift_due_to_Mach
+        8 4
+        FG_MACH FG_ALTITUDE
+        FG_QBAR|FG_WINGAREA|FG_MACH
+             0.00  40000  60000  80000
+        0.0  0.00   0.00   0.00   0.00
+        0.6  0.00   0.00   0.00   0.00
+        0.8  0.00   0.00   0.20   0.00
+        1.0  0.01   0.04   0.60   0.00
+        1.2  0.00   0.02   0.15   0.00
+        1.4  0.00   0.00   0.00   0.00
+        1.6  0.00   0.00   0.00   0.00
+        9.0  0.00   0.00   0.00   0.00
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+
+      <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
+        Drag_minimum
+        22
+        FG_MACH
+        FG_QBAR|FG_WINGAREA
+        0.000	0.061
+        0.100	0.061
+        0.500	0.061
+        0.700	0.062
+        0.800	0.065
+        0.900	0.068
+        0.990	0.090
+        1.000	0.090
+        1.010	0.090
+        1.100	0.130
+        1.200	0.120
+        1.300	0.110
+        1.400	0.100
+        1.500	0.093
+        2.000	0.080
+        3.000	0.062
+        4.000	0.048
+        5.000	0.040
+        6.000	0.038
+        7.000	0.037
+        8.000	0.037
+        9.000	0.037
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+        Drag_induced
+        10
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_CL_SQRD
+        0.0 0.20
+        0.5 0.20
+        1.0 0.23
+        1.5 0.40
+        2.0 0.50
+        3.0 0.80
+        4.0 0.93
+        5.0 1.05
+        6.0 1.15
+        9.0 1.33
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+
+      <COEFFICIENT NAME="CYb" TYPE="VALUE">
+        Side_force_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_BETA
+        -1.4
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYda" TYPE="VALUE">
+        Side_force_due_to_aileron
+        FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+        -0.05
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+        Side_force_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+        0.45
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+        Side_force_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+        0.45
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+
+      <COEFFICIENT NAME="Clb" TYPE="VALUE">
+        Roll_moment_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        -0.01
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clp" TYPE="VALUE">
+        Roll_moment_due_to_roll_rate_(roll_damping)
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -0.35
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clr" TYPE="VALUE">
+
+        Roll_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        0.04
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clda" TYPE="TABLE">
+        Roll_moment_due_to_aileron
+        8 2
+        FG_MACH FG_ALTITUDE
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+             0.0   80000
+        0.0  0.05  0.05
+        0.4  0.07  0.05
+        0.6  0.08  0.05
+        1.0  0.11  0.05
+        1.4  0.08  0.06
+        1.6  0.07  0.06
+        2.4  0.06  0.05
+        6.0  0.03  0.02
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cldr" TYPE="VALUE">
+        Roll_moment_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        0.012
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="PITCH">
+
+      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+        Pitch_moment_due_to_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+        -1.2
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+        Pitch_moment_due_to_pitch_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
+        -6.2
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+        0.0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CmM" TYPE="TABLE">
+        Pitch_moment_due_to_Mach
+        10 4
+        FG_MACH FG_ALTITUDE
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_MACH
+              0.00  40000  60000  80000
+        0.00  0.00   0.00   0.00   0.00
+        0.60  0.00  -0.01  -0.01   0.00
+        0.80  0.00  -0.13  -0.13   0.00
+        1.00  0.00  -0.11  -0.18   0.00
+        1.10  0.00  -0.16  -0.18   0.00
+        1.20  0.00  -0.25  -0.17   0.00
+        1.40  0.00  -0.06  -0.15   0.00
+        1.70  0.00  -0.03  -0.03   0.00
+        2.00  0.00  -0.01  -0.01   0.00
+        9.00  0.00   0.00   0.00   0.00
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmde" TYPE="VECTOR">
+        Pitch_moment_due_to_elevator_deflection
+        7
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+        0.00 -1.50
+        0.80 -1.60
+        1.00 -1.75
+        1.60 -1.30
+        2.80 -0.60
+        6.00 -0.25
+        9.00 -0.20
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+
+      <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+        Yaw_moment_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        0.5
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+        Yaw_moment_due_to_roll_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        0.0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnr" TYPE="VALUE">
+        Yaw_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -1.5
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnda" TYPE="VALUE">
+        Yaw_moment_due_to_aileron
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+        0.04
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cndr" TYPE="VALUE">
+        Yaw_moment_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        -0.3
+      </COEFFICIENT>
+
+    </AXIS>
+
+  </AERODYNAMICS>
+
+  <!--
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+  -->
+
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+    RATE_IN_HZ       5
+    SIMULATION       ON
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       OFF
+  </OUTPUT>
+
+</FDM_CONFIG>
+
