@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.72 2001/08/18 12:03:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.73 2001/08/18 15:46:18 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,7 +349,7 @@ bool FGState::Reset(string path, string acname, string fname)
   float U, V, W;
   float phi, tht, psi;
   float latitude, longitude, h;
-  float wdir, wmag;
+  float wdir, wmag, wnorth, weast;
 
 # ifndef macintosh
   resetDef = path + "/" + acname + "/" + fname + ".xml";
@@ -385,13 +385,17 @@ bool FGState::Reset(string path, string acname, string fname)
 
     resetfile >> token;
   }
-
+  
+  
   Position->SetLatitude(latitude*DEGTORAD);
   Position->SetLongitude(longitude*DEGTORAD);
   Position->Seth(h);
 
+  wnorth = wmag*KTSTOFPS*cos(wdir*DEGTORAD);
+  weast = wmag*KTSTOFPS*sin(wdir*DEGTORAD);
+  
   Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
-               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag, 0.0);
+               latitude*DEGTORAD, longitude*DEGTORAD, h, wnorth, weast, 0.0);
 
   return true;
 }
@@ -404,7 +408,7 @@ bool FGState::Reset(string path, string acname, string fname)
 void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
                          float Latitude, float Longitude, float H,
-                         float wdir, float wmag, float wdown)
+                         float wnorth, float weast, float wdown)
 {
   float alpha, beta;
   float qbar, Vt;
@@ -424,9 +428,7 @@ void FGState::Initialize(float U, float V, float W,
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
   
-  Atmosphere->SetWindNED(wmag*cos(wdir*DEGTORAD),
-                          wmag*sin(wdir*DEGTORAD),
-                            wdown);
+  Atmosphere->SetWindNED(wnorth, weast, wdown);
   
   vAero = vUVW + mTl2b*Atmosphere->GetWindNED();
   
@@ -460,7 +462,7 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   float tht,psi,phi;
   float U, V, W, h;
   float latitude, longitude;
-  float wmag, wdir, wdown;
+  float wnorth,weast, wdown;
   
   latitude = FGIC->GetLatitudeRadIC();
   longitude = FGIC->GetLongitudeRadIC();
@@ -471,8 +473,8 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   tht = FGIC->GetThetaRadIC();
   phi = FGIC->GetPhiRadIC();
   psi = FGIC->GetPsiRadIC();
-  wmag = FGIC->GetWindFpsIC();
-  wdir = FGIC->GetWindDirDegIC();
+  wnorth = FGIC->GetWindNFpsIC();
+  weast = FGIC->GetWindEFpsIC();
   wdown = FGIC->GetWindDFpsIC();
   
   Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
@@ -480,7 +482,7 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
                                              FGIC->GetTerrainAltitudeFtIC() );
 
   // need to fix the wind speed args, here.  
-  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wdir, wmag, wdown);
+  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
