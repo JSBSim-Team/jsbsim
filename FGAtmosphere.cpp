@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.45 2003/02/12 00:26:59 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.46 2003/02/12 18:33:11 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,7 +261,7 @@ void FGAtmosphere::Calculate(double altitude)
 void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
-  case ttBerndt:
+  case ttBerndt: {
     vDirectiondAccelDt(eX) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
     vDirectiondAccelDt(eY) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
     vDirectiondAccelDt(eZ) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
@@ -270,6 +270,16 @@ void FGAtmosphere::Turbulence(void)
     MagnitudedAccelDt = 1 - 2.0*(((double)(rand()))/RAND_MAX) - Magnitude;
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
+
+                                // Fade the magnitude within two wingspans
+                                // of the ground (WAG)
+    double AdjustedMagnitude = Magnitude;
+    double AdjustedMagnitudeAccel = MagnitudeAccel;
+    double HOverBMAC = Position->GetHOverBMAC();
+    if (HOverBMAC < 2.0) {
+        AdjustedMagnitude *= (HOverBMAC / 2.0);
+        AdjustedMagnitudeAccel *= (HOverBMAC / 2.0);
+    }
     
     vDirectiondAccelDt.Normalize();
     vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
@@ -277,8 +287,8 @@ void FGAtmosphere::Turbulence(void)
     vDirection      += vDirectionAccel*rate*State->Getdt();
     vDirection.Normalize();
     
-    vTurbulence = TurbGain*Magnitude * vDirection;
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
+    vTurbulence = TurbGain*AdjustedMagnitude * vDirection;
+    vTurbulenceGrad = TurbGain*AdjustedMagnitudeAccel * vDirection;
 
     vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
@@ -293,6 +303,7 @@ void FGAtmosphere::Turbulence(void)
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
 
     break;
+  }
   default:
     break;
   }
