@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.113 2002/03/20 11:40:50 apeden Exp $
+// $Id: JSBSim.cxx,v 1.114 2002/03/21 01:27:05 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -518,7 +518,7 @@ bool FGJSBsim::copy_from_JSBsim() {
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
     right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
     rudder_pos_pct->setDoubleValue( FCS->GetDrPos(ofNorm) );
-    flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
+    flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofRad) );
 
     
     return true;
