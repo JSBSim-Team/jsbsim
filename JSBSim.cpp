@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.81 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.82 2004/04/17 22:01:14 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -92,14 +92,103 @@ void options(int, char**);
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Standalone JSBSim main program
-    This is the wrapper program used to instantiate the JSBSim system and control
-    it. Use this program to build a version of JSBSim that can be run from the
-    command line. To get any use out of this, you will have to create a script
-    to run a test case and specify what kind of output you would like.
-    @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.81 2004/04/17 21:21:26 jberndt Exp $
-*/
+/** \mainpage JSBSim
+ * The Open Source, Object-Oriented, Cross-Platform Flight Dynamics Model in C++
+
+ * \section intro Introduction
+ *
+ * JSBSim is an open source, multi-platform, object-oriented flight dynamics
+ * model (FDM) framework written in the C++ programming language.  It is
+ * designed to support simulation modeling of any aerospace craft without the
+ * need for specific compiled and linked program code, instead relying on a
+ * relatively simple model specification written in a pseudo-XML format.
+ *
+ * JSBSim (www.jsbsim.org) was created initially for the open source FlightGear
+ * flight simulator (www.flightgear.org), where it replaced LaRCSim (Langley
+ * Research Center Simulation) as the default FDM.  JSBSim also maintains the
+ * ability to run in a standalone, batch mode.  This is useful for running tests
+ * or sets of tests automatically using the internal scripting capability.
+ *
+ * Differently from LaRCSim, JSBSim does not model specific aircraft in program
+ * code. The aircraft itself is defined in a file written in an XML-based format
+ * where the aircraft mass and geometric properties are specified.  Additional
+ * statements define:
+ *
+ * - Landing gear location and properties.
+ * - Pilot eyepoint
+ * - Additional point masses (passengers, cargo, etc.)
+ * - Propulsion system (engines, fuel tanks, and “thrusters”)
+ * - Flight control system
+ * - Autopilot
+ * - Aerodynamic stability derivatives and coefficients
+ *
+ * The configuration file format is set up to be easily comprehensible, for
+ * instance featuring textbook-like coefficients, which enables newcomers to
+ * become immediately fluent in describing vehicles, and requiring only prior
+ * basic theoretical aero knowledge.
+ *
+ * One of the more unique features of JSBSim is its method of modeling flight
+ * control systems and the autopilot.  These are modeled by assembling strings
+ * of components that represent filters, switches, summers, gains, etc.  The
+ * components are listed in the configuration file in the order they are to be
+ * executed.
+ *
+ * Another unique feature is displayed in the use of “properties”.  Properties
+ * essentially expose chosen variables as nodes in a tree, in a directory-like
+ * hierarchy.  This approach facilitates plugging in different FDMs into
+ * FlightGear, but it also is a fundamental tool in allowing a wide range of
+ * aircraft to be modeled, each having its own unique control system,
+ * aerosurfaces, and flight deck instrument panel.  The use of properties allows
+ * all these items for a craft to be modeled and integrated without the need for
+ * specific and unique program source code.
+ *
+ * The equations of motion are modeled essentially as they are presented in
+ * aerospace textbooks for the benefit of student users, but quaternions are
+ * used to track orientation, avoiding “gimbal lock”. While JSBSim is currently
+ * designed to model primarily atmospheric flight at lower speeds, coriolis and
+ * centripetal accelerations will be incorporated into the EOM in the future to
+ * permit a wider range of vehicles to be simulated.
+ *
+ * Currently under development is an expansion of the atmospheric modeling for
+ * JSBSim.  The existing model approximates the standard atmosphere of 1976.
+ * Recently, source code for the NRLMSISE-00 model was obtained and this is
+ * being implemented as a C++ class that can optionally be used.  Also, a simple
+ *  Mars atmosphere is being implemented.
+ *
+ * JSBSim can output (log) data in a configurable way.  Sets of data that are
+ * logically related can be selected to be output at a chosen rate, and
+ * individual properties can be selected for output.  The output can be streamed
+ * to the console, or to a file, and can also be transmitted through a socket.
+ *
+ * JSBSim has been used in a variety of ways:
+ *
+ * - For developing control laws for a sounding rocket
+ * - For crafting an aircraft autopilot as part of a thesis project
+ * - As a flight model for FlightGear
+ * - As an FDM that drives motion base simulators for some
+ *   commercial/entertainment simulators
+ *
+ * \section Supported Platforms:
+ * JSBSim has been built on the following platforms:
+ *
+ *   - Linux (x86)
+ *   - Windows (MSVC, Cygwin, Mingwin)
+ *   - SGI (native compilers)
+ *   - Mac OS X
+ *   - FreeBSD
+ *
+ * \section depends Dependencies
+ *
+ * JSBSim has no dependencies at present.
+ *
+ * \section license Licensing
+ *
+ * JSBSim is licensed under the terms of the GPL
+ *
+ * \section website Website
+ *
+ * For more information, see the JSBSim web site: www.jsbsim.org.
+ */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 IMPLEMENTATION
