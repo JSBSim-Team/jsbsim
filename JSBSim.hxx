@@ -67,8 +67,8 @@ CLASS DOCUMENTATION
     structures and JSBSim and its data structures.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.6 2000/10/23 12:56:37 jsb Exp $
-    @see -
+    @version $Id: JSBSim.hxx,v 1.7 2000/10/23 21:07:53 jsb Exp $
+    @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,9 @@ CLASS DECLARATION
 class FGJSBsim: public FGInterface {
 
 public:
+    /// Constructor
     FGJSBsim::FGJSBsim(void);
+    /// Destructor
     FGJSBsim::~FGJSBsim();
 
     /// copy FDM state to LaRCsim structures
@@ -87,43 +89,83 @@ public:
     /// copy FDM state from LaRCsim structures
     bool copy_from_JSBsim();
 
-    /// reset flight params to a specific position
+    /// Reset flight params to a specific position
     bool init( double dt );
 
-    /// Positions
-    void set_Latitude(double lat);  //geocentric
-    void set_Longitude(double lon);
-    void set_Altitude(double alt);        // triggers re-calc of AGL altitude
+    /** Set geocentric latitude
+        @param lat latitude in radians measured from the 0 meridian where
+	                 the westerly direction is positive and east is negative */
+    void set_Latitude(double lat); 
+    /** Set longitude
+        @param long longitude in radians measured from the equator where
+	                 the northerly direction is positive and south is negative */
+    void set_Longitude(double long);
+    /** Set altitude
+        Note: this triggers a recalculation of AGL altitude
+	      @param alt altitude in feet */
+    void set_Altitude(double alt);
 
-    //void set_AltitudeAGL(double altagl); // and vice-versa
-
-    //Speeds -- setting any of these will trigger a re-calc of the rest
-
-    void set_V_calibrated_kts(double vc);
+    /** Sets calibrated airspeed
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param Vc Calibrated airspeed in ft/sec */
+    void set_V_calibrated_kts(double Vc);
+    /** Sets Mach number.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param mach Mach number */
     void set_Mach_number(double mach);
+    /** Sets velocity in N-E-D coordinates.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param north velocity northward in ft/sec 
+	      @param east velocity eastward in ft/sec 
+	      @param down velocity downward in ft/sec */
     void set_Velocities_Local( double north, double east, double down );
+    /** Sets aircraft velocity in stability frame.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param u X velocity in ft/sec 
+	      @param v Y velocity  in ft/sec 
+	      @param w Z velocity in ft/sec */
     void set_Velocities_Wind_Body( double u, double v, double w);
 
-    /// Euler angles
+    /** Euler angles
+        @param phi roll angle in radians
+	      @param theta pitch angle in radians 
+	      @param psi heading angle in radians */  
     void set_Euler_Angles( double phi, double theta, double psi );
 
-    /// Flight Path
+    /** Sets rate of climb
+        @param roc Rate of climb in ft/sec */
     void set_Climb_Rate( double roc);
+    /** Sets the flight path angle in radians
+        @param gamma flight path angle in radians. */
     void set_Gamma_vert_rad( double gamma);
 
-    /// Earth
+    /** Sets the sea level radius in feet.
+        @param slr Sea Level Radius in feet */
     void set_Sea_level_radius(double slr);
+    /** Sets the runway altitude in feet above sea level.
+        @param ralt Runway altitude in feet above sea level. */
     void set_Runway_altitude(double ralt);
 
-    /// Atmosphere
+    /** Sets the atmospheric static pressure
+        @param p pressure in psf */
     void set_Static_pressure(double p);
+    /** Sets the atmospheric temperature
+        @param T temperature in degrees rankine */
     void set_Static_temperature(double T);
+    /** Sets the atmospheric density.
+        @param rho air density slugs/cubic foot */
     void set_Density(double rho);
+    /** Sets the velocity of the local airmass for wind modeling.
+        @param wnorth velocity north in fps 
+        @param weast velocity east in fps 
+        @param wdown velocity down in fps*/
     void set_Velocities_Local_Airmass (double wnorth,
                                          double weast,
                                            double wdown );
 
-    /// update position based on inputs, positions, velocities, etc.
+    /** Update the position
+        @param multiloop number of times to loop through the FDM
+	      @return true if successful */
     bool update( int multiloop );
 
 private:
