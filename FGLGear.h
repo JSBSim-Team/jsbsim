@@ -156,7 +156,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.27 2000/11/03 12:45:19 jsb Exp $
+    @version $Id: FGLGear.h,v 1.28 2000/12/27 23:44:44 jsb Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -223,7 +223,7 @@ private:
   float bDamp;
   float compressLength;
   float compressSpeed;
-  float staticFCoeff, dynamicFCoeff;
+  float staticFCoeff, dynamicFCoeff, rollingFCoeff;
   float brakePct;
   float maxCompLen;
   double SinkRate;

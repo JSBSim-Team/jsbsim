@@ -64,7 +64,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.19 2000/11/22 23:49:01 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.20 2000/12/27 23:44:44 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,7 @@ bool FGFDMExec::Allocate(void) {
   if (!Auxiliary->InitModel())  {cerr << "Auxiliary model init failed"; Error+=128;}
   if (!Output->InitModel())     {cerr << "Output model init failed"; Error+=256;}
   
-  if(Error > 0) result=false;
+  if (Error > 0) result = false;
   
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
