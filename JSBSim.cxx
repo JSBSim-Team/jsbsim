@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.43 2000/11/01 12:15:19 jsb Exp $
+// $Id: JSBSim.cxx,v 1.44 2000/11/12 14:13:05 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -202,7 +202,7 @@ bool FGJSBsim::update( int multiloop ) {
     int i;
   
     double save_alt = 0.0;
- 
+    
   
     // lets try to avoid really screwing up the JSBsim model
     if ( get_Altitude() < -9000 ) {
@@ -210,7 +210,11 @@ bool FGJSBsim::update( int multiloop ) {
 	set_Altitude( 0.0 );
     }
 
+    copy_to_JSBsim();
+    
     if(needTrim && (globals->get_options()->get_trim_mode() > 0)) {
+	//fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
+	//fgic->SetTerrainAltitudeFtIC( scenery.cur_elev * METER_TO_FEET );
 	FGTrim *fgtrim;
 	if(fgic->GetVcalibratedKtsIC() < 10 ) {
 		fgic->SetVcalibratedKtsIC(0.0);
@@ -242,7 +246,7 @@ bool FGJSBsim::update( int multiloop ) {
 	get_engine(i)->set_RPM( controls.get_throttle(i)*2700 );
 	get_engine(i)->set_Throttle( controls.get_throttle(i) );
     }
-    copy_to_JSBsim();
+    
   
     for ( int i = 0; i < multiloop; i++ ) {
 	fdmex->Run();
@@ -289,9 +293,10 @@ bool FGJSBsim::copy_to_JSBsim() {
     fdmex->GetFCS()->SetRBrake( controls.get_brake( 1 ) );
     fdmex->GetFCS()->SetCBrake( controls.get_brake( 2 ) );
 
-    fdmex->GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
-    fdmex->GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
-
+    fdmex->GetPosition()->SetSeaLevelRadius( get_Sea_level_radius() );
+    fdmex->GetPosition()->SetRunwayRadius( scenery.cur_elev*METER_TO_FEET
+    						+ get_Sea_level_radius() );
+    
     fdmex->GetAtmosphere()->SetExTemperature(get_Static_temperature());
     fdmex->GetAtmosphere()->SetExPressure(get_Static_pressure());
     fdmex->GetAtmosphere()->SetExDensity(get_Density());
@@ -555,6 +560,7 @@ void FGJSBsim::set_Runway_altitude(double ralt) {
     
     snap_shot();
     _set_Runway_altitude( ralt );
+    fgic->SetTerrainAltitudeFtIC( ralt );
     fdmex->RunIC(fgic); //loop JSBSim once
     copy_from_JSBsim(); //update the bus 
     needTrim=true;  
