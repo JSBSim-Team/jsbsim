@@ -1,0 +1,50 @@
+Here are some useful numbers for a Cessna 310 with two 470HP engines,
+taken from a French Web page at
+
+  http://www.infomaniak.ch/~tmandrey/flyerboy/avions5.html
+
+(Please forgive any mistranslations.)
+
+Performance
+-----------
+
+Rotation speed (Vr): 80 KIAS
+Normal climb: 115-130 KIAS
+Best climb angle (Vx): 81 KIAS
+Best climb speed (Vy): 107 KIAS
+Minimum single-engine control speed (Vmca): 75 KIAS
+Best single-engine climb angle (Vxa): 94 KIAS
+Best single-engine climb speed (Vya): 101 KIAS
+Climb rate (Vs): 1,495 fpm
+Single-engine climb rate: 327 fpm
+Take-off distance: 1,519 ft
+Take-off distance to clear a 50 ft obstacle: 1,795 ft
+Maximum cruise speed: 189 KTAS at 8,000 ft
+Econo-cruise speed: 144 KTAS at 7,500 ft
+Econo-cruise fuel consumption: 17.1 USGal/hr
+Econo-cruise range: 2,583 km (1,395 nm)
+Ceiling: 19,500 ft
+Single-engine ceiling: 6,680 ft
+Approach speed (Vref): 110 KIAS
+Landing speed: 90 KIAS
+Stall speed, full flaps (Vso): 63 KIAS
+Landing distance over a 50 ft obstacle: 1,697 ft
+Rolling distance after touch-down: 582 ft
+
+Limits
+------
+
+Gear-down operating range (white arc): 63-139 KIAS
+Regular operating range (green arc): 75-183 KIAS
+Warning range (yellow arc): 183-223 KIAS
+Maximum operating speed (red line, Vne): 223 KIAS
+Stall speeds (VS):
+  0 deg flaps: 75 KIAS
+  15 deg flaps: 70 KIAS
+  35 deg flaps: 63 KIAS
+Manoeuvering speed (Va): 148 KIAS
+Maximum gear landing speed (Vlo): 139 KIAS
+Maximum gear-down speed (Vle): 139 KIAS
+
+
+
