@@ -44,7 +44,7 @@
    AC_EYEPTLOC  154.0  0.0 36.0
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   140.0   0.0 -60.0 5000   500 0.5 0.8 0.02 STEERABLE NONE  80 RETRACT
+  AC_GEAR NOSE_LG   140.0   0.0 -60.0 5000   500 0.5 0.8 0.02 STEERABLE NONE  5  RETRACT
   AC_GEAR LEFT_MLG  335.0 -65.0 -60.0 37870 3787 0.5 0.8 0.02 FIXED     LEFT  0  RETRACT
   AC_GEAR RIGHT_MLG 335.0  65.0 -60.0 37870 3787 0.5 0.8 0.02 FIXED     RIGHT 0  RETRACT
  </UNDERCARRIAGE>
@@ -223,9 +223,9 @@
       fcs/components/flaps-control/output-norm
       aero/qbar-psf|metrics/Sw-sqft
                    0     1.0
-      -0.20   -0.571     0.379
-       0.00    0.000     0.950
-       0.25    0.716     1.666
+      -0.20   -0.571     0.279
+       0.00    0.000     0.850
+       0.25    0.716     1.564
        0.33    0.945     0.700
        0.60    0.174     0.000 
     </COEFFICIENT>
@@ -250,7 +250,7 @@
     <COEFFICIENT NAME="CDi" TYPE="VALUE">
        Induced_drag
        aero/qbar-psf|metrics/Sw-sqft|aero/cl-squared-norm
-       0.1
+       0.11
     </COEFFICIENT>
     <COEFFICIENT NAME="CDmach" TYPE="VECTOR">
        Drag_due_to_mach
@@ -307,8 +307,8 @@
        2
        aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
-       0.00    -0.05
-       0.52    -0.12
+       0.00    -0.07
+       0.52    -0.13
     </COEFFICIENT>
     <COEFFICIENT NAME="Clp" TYPE="VALUE">
        Roll_moment_due_to_roll_rate
@@ -323,12 +323,12 @@
     <COEFFICIENT NAME="CldaL" TYPE="VALUE">
        Roll_moment_due_to_left_aileron
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-       0.055
+       0.065
     </COEFFICIENT>
     <COEFFICIENT NAME="CldaR" TYPE="VALUE">
        Roll_moment_due_to_right_aileron
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/right-aileron-pos-rad
-       -0.055
+       -0.065
     </COEFFICIENT>
     <COEFFICIENT NAME="Cldr" TYPE="VALUE">
        Roll_moment_due_to_rudder
@@ -345,7 +345,7 @@
     <COEFFICIENT NAME="Cmde" TYPE="VALUE">
        Pitch_moment_due_to_elevator
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-       -0.65
+       -0.9
     </COEFFICIENT>
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
@@ -367,7 +367,7 @@
     <COEFFICIENT NAME="Cnb" TYPE="VALUE">
        Yaw_moment_due_to_beta
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
-       0.16
+       0.18
     </COEFFICIENT>
     <COEFFICIENT NAME="Cnr" TYPE="VALUE">
        Yaw_moment_due_to_yaw_rate
