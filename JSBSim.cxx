@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.155 2004/02/17 09:04:30 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.156 2004/02/20 17:00:27 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -633,6 +633,7 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setBoolValue("ignition", eng->GetIgnition());
         node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
         node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
+        node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
         node->setBoolValue("reversed", eng->GetReversed());
         node->setBoolValue("cutoff", eng->GetCutoff());
         globals->get_controls()->set_reverser(i, eng->GetReversed() );
