@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.8 2002/04/01 12:52:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.9 2002/08/30 11:37:55 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +108,7 @@ bool FGScript::LoadScript(string script)
   ScriptName = Script.GetValue("name");
   Scripted = true;
 
-  if (debug_lvl > 0) cout << "Reading Script File " << ScriptName << endl;
+  if (debug_lvl > 0) cout << "Reading and running from script file " << ScriptName << endl << endl;
 
   while (Script.GetNextConfigLine() != string("EOF") && Script.GetValue() != string("/runscript")) {
     token = Script.GetValue();

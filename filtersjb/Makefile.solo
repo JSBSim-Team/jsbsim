@@ -10,22 +10,22 @@ libFCSComponents.a: $(libFCSComponents_OBJECTS)
 	ranlib libFCSComponents.a
 
 FGDeadBand.o: FGDeadBand.cpp FGDeadBand.h FGFCSComponent.h \
- ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
- ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
- ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
- ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
- ../FGTranslation.h ../FGRotation.h ../FGPosition.h \
- ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
- ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
- ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
+ ../FGJSBBase.h ../FGPropertyManager.h ../FGFCS.h \
+ ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
+ ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
+ ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
+ ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
+ ../FGPosition.h ../FGAerodynamics.h ../FGMassBalance.h \
+ ../FGCoefficient.h ../FGTable.h ../FGFactorGroup.h ../FGOutput.h \
+ ../FGfdmSocket.h ../FGGroundReactions.h ../FGInertial.h \
+ ../FGAuxiliary.h ../FGPiston.h ../FGTurbine.h ../FGTank.h \
  ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGDeadBand.o -c FGDeadBand.cpp
 
 FGFCSComponent.o: FGFCSComponent.cpp FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -33,13 +33,13 @@ FGFCSComponent.o: FGFCSComponent.cpp FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCSComponent.o -c FGFCSComponent.cpp
 
 FGFilter.o: FGFilter.cpp FGFilter.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -47,13 +47,13 @@ FGFilter.o: FGFilter.cpp FGFilter.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFilter.o -c FGFilter.cpp
 
 FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -61,27 +61,27 @@ FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGain.o -c FGGain.cpp
 
 FGGradient.o: FGGradient.cpp FGGradient.h FGFCSComponent.h \
- ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
- ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
- ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
- ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
- ../FGTranslation.h ../FGRotation.h ../FGPosition.h \
- ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
- ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
- ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
+ ../FGJSBBase.h ../FGPropertyManager.h ../FGFCS.h \
+ ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
+ ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
+ ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
+ ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
+ ../FGPosition.h ../FGAerodynamics.h ../FGMassBalance.h \
+ ../FGCoefficient.h ../FGTable.h ../FGFactorGroup.h ../FGOutput.h \
+ ../FGfdmSocket.h ../FGGroundReactions.h ../FGInertial.h \
+ ../FGAuxiliary.h ../FGPiston.h ../FGTurbine.h ../FGTank.h \
  ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGradient.o -c FGGradient.cpp
 
 FGKinemat.o: FGKinemat.cpp FGKinemat.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -89,13 +89,13 @@ FGKinemat.o: FGKinemat.cpp FGKinemat.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGKinemat.o -c FGKinemat.cpp
 
 FGSummer.o: FGSummer.cpp FGSummer.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -103,13 +103,13 @@ FGSummer.o: FGSummer.cpp FGSummer.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGSummer.o -c FGSummer.cpp
 
 FGSwitch.o: FGSwitch.cpp FGSwitch.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
- ../FGPropertyManager.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
+ ../FGPropertyManager.h ../FGFCS.h ../filtersjb/FGFCSComponent.h \
+ ../FGModel.h ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h \
  ../FGColumnVector3.h ../FGColumnVector4.h ../FGFDMExec.h \
  ../FGInitialCondition.h ../FGAtmosphere.h ../FGAircraft.h \
  ../FGPropulsion.h ../FGRocket.h ../FGEngine.h ../FGState.h \
@@ -117,8 +117,8 @@ FGSwitch.o: FGSwitch.cpp FGSwitch.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGAerodynamics.h ../FGMassBalance.h ../FGCoefficient.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
- ../FGTurboShaft.h ../FGTurboJet.h ../FGTurboProp.h ../FGTank.h \
- ../FGPropeller.h ../FGThruster.h ../FGForce.h ../FGNozzle.h
+ ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGSwitch.o -c FGSwitch.cpp
 
 clean:

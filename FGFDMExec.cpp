@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.89 2002/08/20 13:45:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.90 2002/08/30 11:37:55 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,7 +117,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   IdFDM = FDMctr;
   FDMctr++;
-  
+
   try {
     char* num = getenv("JSBSIM_DEBUG");
     if (!num) debug_lvl = 1;
@@ -332,9 +332,9 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
-  for (unsigned int i=0; i<SlaveFDMList.size(); i++) {
-    // TransferState(i);
-    // Run(i)
+  for (unsigned int i=1; i<SlaveFDMList.size(); i++) {
+//    SlaveFDMList[i]->exec->State->Initialize(); // Transfer state to the slave FDM
+//    SlaveFDMList[i]->exec->Run();
   }
 
   while (model_iterator != 0L) {
@@ -617,7 +617,7 @@ void FGFDMExec::Debug(int from)
 {
   if (debug_lvl <= 0) return;
 
-  if (debug_lvl & 1) { // Standard console startup message output
+  if (debug_lvl & 1 && IdFDM == 0) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
                                      << JSBSim_version << underoff << normint << endl;

@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.84 2002/08/18 14:58:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.85 2002/08/30 11:37:55 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -697,87 +697,87 @@ void FGFCS::bind(void)
                        &FGFCS::SetGearPos,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/elevator_cmd", this,
+  PropertyManager->Tie("ap/elevator_cmd", this,
                        &FGFCS::GetAPDeCmd,
                        &FGFCS::SetAPDeCmd,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/aileron_cmd", this,
+  PropertyManager->Tie("ap/aileron_cmd", this,
                        &FGFCS::GetAPDaCmd,
                        &FGFCS::SetAPDaCmd,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/rudder_cmd", this,
+  PropertyManager->Tie("ap/rudder_cmd", this,
                        &FGFCS::GetAPDrCmd,
                        &FGFCS::SetAPDrCmd,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/throttle_cmd", this,
+  PropertyManager->Tie("ap/throttle_cmd", this,
                        &FGFCS::GetAPThrottleCmd,
                        &FGFCS::SetAPThrottleCmd,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/attitude_setpoint", this,
+  PropertyManager->Tie("ap/attitude_setpoint", this,
                        &FGFCS::GetAPAttitudeSetPt,
                        &FGFCS::SetAPAttitudeSetPt,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/altitude_setpoint", this,
+  PropertyManager->Tie("ap/altitude_setpoint", this,
                        &FGFCS::GetAPAltitudeSetPt,
                        &FGFCS::SetAPAltitudeSetPt,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/heading_setpoint", this,
+  PropertyManager->Tie("ap/heading_setpoint", this,
                        &FGFCS::GetAPHeadingSetPt,
                        &FGFCS::SetAPHeadingSetPt,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/airspeed_setpoint", this,
+  PropertyManager->Tie("ap/airspeed_setpoint", this,
                        &FGFCS::GetAPAirspeedSetPt,
                        &FGFCS::SetAPAirspeedSetPt,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/acquire_attitude", this,
+  PropertyManager->Tie("ap/acquire_attitude", this,
                        &FGFCS::GetAPAcquireAttitude,
                        &FGFCS::SetAPAcquireAttitude,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/acquire_altitude", this,
+  PropertyManager->Tie("ap/acquire_altitude", this,
                        &FGFCS::GetAPAcquireAltitude,
                        &FGFCS::SetAPAcquireAltitude,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/acquire_heading", this,
+  PropertyManager->Tie("ap/acquire_heading", this,
                        &FGFCS::GetAPAcquireHeading,
                        &FGFCS::SetAPAcquireHeading,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/acquire_airspeed", this,
+  PropertyManager->Tie("ap/acquire_airspeed", this,
                        &FGFCS::GetAPAcquireAirspeed,
                        &FGFCS::SetAPAcquireAirspeed,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/attitude_hold", this,
+  PropertyManager->Tie("ap/attitude_hold", this,
                        &FGFCS::GetAPAttitudeHold,
                        &FGFCS::SetAPAttitudeHold,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/altitude_hold", this,
+  PropertyManager->Tie("ap/altitude_hold", this,
                        &FGFCS::GetAPAltitudeHold,
                        &FGFCS::SetAPAltitudeHold,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/heading_hold", this,
+  PropertyManager->Tie("ap/heading_hold", this,
                        &FGFCS::GetAPHeadingHold,
                        &FGFCS::SetAPHeadingHold,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/airspeed_hold", this,
+  PropertyManager->Tie("ap/airspeed_hold", this,
                        &FGFCS::GetAPAirspeedHold,
                        &FGFCS::SetAPAirspeedHold,
                        true);
 
-  PropertyManager->Tie("jsbsim/ap/wingslevel_hold", this,
+  PropertyManager->Tie("ap/wingslevel_hold", this,
                        &FGFCS::GetAPWingsLevelHold,
                        &FGFCS::SetAPWingsLevelHold,
                        true);
@@ -863,23 +863,23 @@ void FGFCS::unbind(void)
   PropertyManager->Untie("fcs/mag-spoiler-pos-rad");
   PropertyManager->Untie("fcs/spoiler-pos-norm");
   PropertyManager->Untie("gear/gear-pos-norm");
-  PropertyManager->Untie("jsbsim/ap/elevator_cmd");
-  PropertyManager->Untie("jsbsim/ap/aileron_cmd");
-  PropertyManager->Untie("jsbsim/ap/rudder_cmd");
-  PropertyManager->Untie("jsbsim/ap/throttle_cmd");
-  PropertyManager->Untie("jsbsim/ap/attitude_setpoint");
-  PropertyManager->Untie("jsbsim/ap/altitude_setpoint");
-  PropertyManager->Untie("jsbsim/ap/heading_setpoint");
-  PropertyManager->Untie("jsbsim/ap/airspeed_setpoint");
-  PropertyManager->Untie("jsbsim/ap/acquire_attitude");
-  PropertyManager->Untie("jsbsim/ap/acquire_altitude");
-  PropertyManager->Untie("jsbsim/ap/acquire_heading");
-  PropertyManager->Untie("jsbsim/ap/acquire_airspeed");
-  PropertyManager->Untie("jsbsim/ap/attitude_hold");
-  PropertyManager->Untie("jsbsim/ap/altitude_hold");
-  PropertyManager->Untie("jsbsim/ap/heading_hold");
-  PropertyManager->Untie("jsbsim/ap/airspeed_hold");
-  PropertyManager->Untie("jsbsim/ap/wingslevel_hold");
+  PropertyManager->Untie("ap/elevator_cmd");
+  PropertyManager->Untie("ap/aileron_cmd");
+  PropertyManager->Untie("ap/rudder_cmd");
+  PropertyManager->Untie("ap/throttle_cmd");
+  PropertyManager->Untie("ap/attitude_setpoint");
+  PropertyManager->Untie("ap/altitude_setpoint");
+  PropertyManager->Untie("ap/heading_setpoint");
+  PropertyManager->Untie("ap/airspeed_setpoint");
+  PropertyManager->Untie("ap/acquire_attitude");
+  PropertyManager->Untie("ap/acquire_altitude");
+  PropertyManager->Untie("ap/acquire_heading");
+  PropertyManager->Untie("ap/acquire_airspeed");
+  PropertyManager->Untie("ap/attitude_hold");
+  PropertyManager->Untie("ap/altitude_hold");
+  PropertyManager->Untie("ap/heading_hold");
+  PropertyManager->Untie("ap/airspeed_hold");
+  PropertyManager->Untie("ap/wingslevel_hold");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
