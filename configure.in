@@ -53,20 +53,28 @@ CXXFLAGS="$CXXFLAGS $WFLAG"
 AC_OUTPUT([
 Makefile
 aircraft/737/Makefile \
+aircraft/A320/Makefile \
+aircraft/LM/Makefile \
+aircraft/OV10/Makefile \
+aircraft/SGS/Makefile \
+aircraft/T38/Makefile \
+aircraft/X15/Makefile \
 aircraft/c172p/Makefile \
 aircraft/c172r/Makefile \
+aircraft/c172x/Makefile \
 aircraft/c182/Makefile \
 aircraft/c310/Makefile \
-aircraft/f104/Makefile \
 aircraft/f15/Makefile \
 aircraft/f16/Makefile \
+aircraft/f22/Makefile \
+aircraft/f104/Makefile \
+aircraft/minisgs/Makefile \
 aircraft/mk82/Makefile \
+aircraft/p51d/Makefile \
 aircraft/pa28/Makefile \
 aircraft/shuttle/Makefile \
-aircraft/t38/Makefile \
-aircraft/SGS/Makefile \
-aircraft/minisgs/Makefile \
-aircraft/X15/Makefile \
+aircraft/t6texan2/Makefile \
+aircraft/x24b/Makefile \
 aircraft/Makefile \
 engine/Makefile \
 filtersjb/Makefile \

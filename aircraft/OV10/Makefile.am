@@ -1,0 +1,2 @@
+EXTRA_DIST = \
+	OV10.xml
