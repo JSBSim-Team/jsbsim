@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.19 2003/02/28 11:04:51 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.20 2003/02/28 15:22:22 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -14,6 +14,10 @@
      NASA TP-1538 wind tunnel data. (Dec. 1979)
      and Richard Murray's F16 Model page:
        http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/
+
+     Dryden Technical Reports Server documents:
+         H-1999: Dynamic ground effects flight test of an F-15 aircraft.
+         H-2177: Dynamic ground effect for a Cranked Arrow Wing Airplane.
 
    Related information:
      Harry Hillaker - Father of the F-16:
@@ -46,7 +50,7 @@
        -    WT   Wing Tip           VFT   Ventral Fin Tip
        -    VS   Vertical Stabilizer
       -->
-    AC_GEAR NOSE_LG   332.2    0.0 -73.0 15000  4500 0.5 0.8 0.2 STEERABLE NOSE 72.0 RETRACT
+    AC_GEAR NOSE_LG   332.2    0.0 -73.0 15000  5000 0.5 0.8 0.2 STEERABLE NOSE 72.0 RETRACT
     AC_GEAR LEFT_MLG  171.9  -46.7 -73.0 22704 10000 0.5 0.8 0.2 FIXED     LEFT    0 RETRACT
     AC_GEAR RIGHT_MLG 171.9   46.7 -73.0 22704 10000 0.5 0.8 0.2 FIXED     RIGHT   0 RETRACT
 <!--
@@ -152,6 +156,13 @@
        GAIN         0.01745
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
+     <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
+       INPUT        gear/gear-cmd-norm
+       DETENTS      2
+                    0    0
+                    1    5
+       OUTPUT       gear/gear-pos-norm
+      </COMPONENT>
   </FLIGHT_CONTROL>
 
   <AERODYNAMICS>
@@ -159,27 +170,48 @@
     AC_ALPHALIMITS -0.175 0.785
 
     <AXIS NAME="LIFT">
-
-      <COEFFICIENT NAME="CLDh" TYPE="TABLE">
-         Lift_due_to_horizontal_tail_deflection
-         12 5
-         aero/alpha-rad
-         fcs/elevator-pos-rad
-         aero/qbar-psf|metrics/Sw-sqft
-                -0.436 -0.218  0.0    0.218  0.436
-         -0.175 -0.659 -0.709 -0.754 -0.792 -0.825
-         -0.087 -0.151 -0.196 -0.238 -0.278 -0.316
-          0.000  0.183  0.141  0.100  0.059  0.017
-          0.087  0.491  0.454  0.414  0.371  0.326
-          0.175  0.797  0.763  0.725  0.680  0.630
-          0.262  1.108  1.079  1.041  0.993  0.940
-          0.349  1.395  1.366  1.327  1.274  1.214
-          0.436  1.615  1.587  1.547  1.490  1.427
-          0.524  1.804  1.777  1.737  1.674  1.610
-          0.611  1.900  1.872  1.829  1.766  1.699
-          0.698  1.898  1.869  1.822  1.757  1.689
-          0.785  1.753  1.724  1.674  1.612  1.546
-      </COEFFICIENT>
+      <GROUP NAME="CLb">
+      Basic_lift
+        <FACTOR NAME="kCLge" TYPE="VECTOR">
+           Change_in_lift_due_to_ground_effect
+           13
+           aero/h_b-mac-ft
+           none
+           0.0   1.229
+           0.1   1.124
+           0.15  1.116
+           0.2   1.124
+           0.3   1.105
+           0.4   1.041
+           0.5   1.034
+           0.6   1.019
+           0.7   1.008
+           0.8   1.003
+           0.9   1.001
+           1.0   1.000
+           1.1   1.000
+        </FACTOR>
+        <COEFFICIENT NAME="CLDh" TYPE="TABLE">
+           Lift_due_to_horizontal_tail_deflection
+           12 5
+           aero/alpha-rad
+           fcs/elevator-pos-rad
+           aero/qbar-psf|metrics/Sw-sqft
+                  -0.436 -0.218  0.0    0.218  0.436
+           -0.175 -0.659 -0.709 -0.754 -0.792 -0.825
+           -0.087 -0.151 -0.196 -0.238 -0.278 -0.316
+            0.000  0.183  0.141  0.100  0.059  0.017
+            0.087  0.491  0.454  0.414  0.371  0.326
+            0.175  0.797  0.763  0.725  0.680  0.630
+            0.262  1.108  1.079  1.041  0.993  0.940
+            0.349  1.395  1.366  1.327  1.274  1.214
+            0.436  1.615  1.587  1.547  1.490  1.427
+            0.524  1.804  1.777  1.737  1.674  1.610
+            0.611  1.900  1.872  1.829  1.766  1.699
+            0.698  1.898  1.869  1.822  1.757  1.689
+            0.785  1.753  1.724  1.674  1.612  1.546
+        </COEFFICIENT>
+      </GROUP>
 
       <COEFFICIENT NAME="CLq" TYPE="VECTOR">
          Lift_due_to_pitch_rate
