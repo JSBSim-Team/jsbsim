@@ -54,7 +54,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.18 2001/08/29 17:56:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.19 2001/08/30 11:04:41 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,7 +171,7 @@ float FGAuxiliary::GetHeadWind(void)
   psi = Rotation->Getpsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return -vw*cos(psiw - psi);
+  return vw*cos(psiw - psi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
