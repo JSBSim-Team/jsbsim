@@ -16,9 +16,39 @@ U, V, W (ft/sec)
 auto
 Time
 UBody|VBody|WBody
+Aero Velocities
+Time (sec)
+U, V, W (ft/sec)
+auto
+Time
+UAero|VAero|WAero
 Elevator Response
 Time (sec)
 Elevator/Pitch (rad)
 auto
 Time
 Elevator Cmd|Elevator Pos|Tht|Q
+Altitude
+Time (sec)
+Altitude (ft)
+auto
+Time
+Altitude
+Euler Angles
+Time (sec)
+Phi, Theta, Psi (rad)
+auto
+Time
+Phi|Tht|Psi
+Body Forces
+Time
+Forces (lbs)
+auto
+Time
+Xforce|Yforce|Zforce
+Body Moments
+Time
+Moments (ft-lbs)
+auto
+Time
+L|M|N

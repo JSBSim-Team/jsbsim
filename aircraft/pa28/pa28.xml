@@ -1,0 +1,551 @@
+<FDM_CONFIG NAME="PA28-180" VERSION="1.57">
+<!--
+
+  File:        PA28-180.xml
+  Author:      Cameron Munro & Cameron Moore
+  CVS Version: $Id: pa28.xml,v 1.1 2001/12/20 13:29:41 jberndt Exp $
+
+  Function: Models a Piper PA28-180 Cherokee
+  Notes:    Try running FlightGear using this command line,
+            fgfs -fdm=jsb -aircraft=PA28-180
+-->
+
+  <METRICS>
+    <!-- 
+    The XYZorigin for measurements is the nose of the propeller spinner. 
+    
+    Positive values in the X axis move back towards the tail of the
+    plane, positive values in the Y axis move out towards the right
+    wing, and positive values in the Z axis move up.
+
+    Wing area (ft^2)
+    Wing span (ft)
+    Wing avg. chord (ft)
+    H. Tail Area (ft^2)
+    Wing MAC to H.Tail MAC (ft)
+    V. Tail Area (ft^2)
+    Wing MAC to V.Tail MAC (ft)
+    Ixx (slug-ft^2)
+    Iyy (slug-ft^2)
+    Izz (slug-ft^2)
+    Ixz (slug-ft^2)
+    Empty weight (lbs)
+    Aerodynamic reference point (close to CG), in aircraft's own
+      structural coord system. X, Y, Z, in inches.
+    Center of gravity location, empty weight, in aircraft's own
+      structural coord system. X, Y, Z, in inches
+    Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+     X, Y, Z, in inches
+    AC_AERORP   43.2  0.0    59.4
+    -->
+
+    AC_WINGAREA   160
+    AC_WINGSPAN    30
+    AC_CHORD       5.25 <!-- Approximately, ignores root LE extension -->
+    AC_HTAILAREA   24.4
+    AC_HTAILARM    12.9
+    AC_VTAILAREA   11.4
+    AC_LV          12.7
+    AC_IXX       1070
+    AC_IYY       1249
+    AC_IZZ       2312
+    AC_IXZ          0
+    AC_EMPTYWT   1650
+    AC_AERORP      102   0.0 -6 <!-- Set at wing AC approx. -->
+    AC_CGLOC       88.32  0.0  0.0
+    AC_POINTMASS 180.0 81.6 -9.6 0
+    AC_EYEPTLOC    81.6 -9.6 21
+    AC_ALPHALIMITS -0.175 0.349
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    <!--
+    The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <rolling friction coefficient>   Self-explanatory: rolling friction coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
+    <max steer angle>                Maximum steerable angle in degrees
+    <retractable>                    One of RETRACT or FIXED
+    -->
+
+     AC_GEAR  NOSE        35.8   0.0 -50.0  1500  100  0.5  0.8 0.02 STEERABLE NONE  30  FIXED
+     AC_GEAR  LEFT_MAIN  111.1 -60.0 -42.4  5000  150  0.5  0.8 0.02 CASTERED  LEFT   0  FIXED
+     AC_GEAR  RIGHT_MAIN 111.1  60.0 -42.4  5000  150  0.5  0.8 0.02 CASTERED  RIGHT  0  FIXED
+     AC_GEAR  TAIL_SKID  271.9   0.0  -1.6 20000 1000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+     AC_GEAR  VTAIL_TOP  264.3   0.0  70.4 20000 1000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+     AC_GEAR  VTAIL_TIP  281.4   0.0  64.1 20000 1000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+     AC_GEAR  LEFT_TIP   106.5 -180.0  5.2 10000 2000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+     AC_GEAR  RIGHT_TIP  106.5  180.0  5.2 10000 2000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+     AC_GEAR  NOSE_TIP     0.0   0.0   0.0 10000 2000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+
+    <!--
+      TANKS SECTION
+
+      Tank locations and characteristics, empty weight, in aircraft's own coord system:
+      X, Y, Z, in inches
+      effective radius of tank, in inches (for fuel slosh, if/when modeled)
+      capacity in pounds
+      Current contents, in pounds
+
+      ENGINE[S] SECTION
+
+      Engine[s] is|are specified by giving engine name (which corresponds to an engine
+      definition file in the "engines" directory) followed by x, y, z placement and
+      pitch and yaw orientation. Coordinates are given in inches in the structural
+      coordinate frame. Angles for pitch and yaw are specified in radians.
+
+      AC_ENGINE name x y z pitch yaw
+
+      THRUSTER[S] SECTION
+
+      AC_THRUSTER name x y z pitch yaw
+    -->
+
+<!-- NEED TO UPDATE ENGOINE/PROP GEOMETRY -->
+
+    <AC_ENGINE FILE="engIO360C">
+      XLOC   35.0
+      YLOC    0.0
+      ZLOC    0.0
+      PITCH   0.0
+      YAW     0.0
+      FEED      0
+    </AC_ENGINE>
+
+    <AC_THRUSTER FILE="propC8v">
+      XLOC    4.0
+      YLOC    0.0
+      ZLOC    0.0
+      PITCH   0.0
+      YAW     0.0
+      P_FACTOR 0.1
+      SENSE   1.0
+    </AC_THRUSTER>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC   90.0
+      YLOC    0.0
+      ZLOC    0.0
+      RADIUS 29.4
+      CAPACITY 336.0
+      CONTENTS 336.0
+    </AC_TANK>
+
+  </PROPULSION>
+
+  <FLIGHT_CONTROL NAME="PA28-180">
+     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+     </COMPONENT>
+    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
+       ID            1
+       INPUT         0
+       MIN           -28
+       MAX            23
+       OUTPUT        FG_ELEVATOR_POS
+       GAIN          0.01745
+     </COMPONENT>
+     <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID             2
+       INPUT          FG_AILERON_CMD
+       MIN            -30
+       MAX             15
+       GAIN           0.01745
+       OUTPUT        FG_AILERON_POS
+     </COMPONENT>
+     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+       ID            3
+       INPUT        FG_RUDDER_CMD
+       MIN         -27
+       MAX          27
+       GAIN         0.01745
+       OUTPUT       FG_RUDDER_POS
+     </COMPONENT>
+     <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
+       ID           4
+       INPUT        FG_FLAPS_CMD
+       DETENTS      4
+                    0    0
+                    15   2
+                    25   1
+                    40   1
+       OUTPUT      FG_FLAPS_POS
+     </COMPONENT>
+   </FLIGHT_CONTROL>
+   <AERODYNAMICS>
+     <AXIS NAME="LIFT">
+       <GROUP NAME="CLb">
+         Basic_lift
+         <FACTOR NAME="kCLge" TYPE="VECTOR">
+            Change_in_lift_due_to_ground_effect
+            13
+            FG_HOVERB
+            FG_NONE
+            0.0   1.203 
+            0.1   1.127
+            0.15  1.090
+            0.2   1.073
+            0.3   1.046
+            0.4   1.055
+            0.5   1.019
+            0.6   1.013
+            0.7   1.008
+            0.8   1.006
+            0.9   1.003
+            1.0   1.002
+            1.1   1.0
+         </FACTOR>
+         <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
+            Lift_due_to_alpha
+            16
+            FG_ALPHA
+            FG_QBAR|FG_WINGAREA
+           -0.175  -0.439
+           -0.140  -0.248
+           -0.105  -0.063
+           -0.070   0.126
+           -0.035   0.321
+            0.000   0.522
+            0.035   0.729
+            0.070   0.941
+            0.105   1.155
+            0.140   1.366
+            0.175   1.544
+            0.209   1.688
+            0.244   1.799
+            0.279   1.874
+            0.314   1.911
+            0.349   1.884
+          </COEFFICIENT>
+          <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
+            Delta_lift_due_to_flap_deflection
+            4
+            FG_FLAPS_POS
+            FG_QBAR|FG_WINGAREA
+            0   0
+            15  0.065
+            25  0.016
+            40  0.254
+          </COEFFICIENT>
+       </GROUP>
+       <COEFFICIENT NAME="CLDe" TYPE="VALUE">
+         Lift_due_to_Elevator_Deflection
+         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         0.81
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CLadot" TYPE="VECTOR">
+         Lift_due_to_alpha_rate
+         16
+         FG_ALPHA
+         FG_QBAR|FG_WINGAREA|FG_ALPHADOT|FG_CI2VEL
+       -0.175   2.350
+       -0.140  -0.446
+       -0.105  -0.445
+       -0.070  -0.464
+       -0.035  -0.482
+        0.000  -0.498
+        0.035  -0.510
+        0.070  -0.518
+        0.105  -0.515
+        0.140  -0.457
+        0.175  -0.361
+        0.209  -0.275
+        0.244  -0.182
+        0.279  -0.075
+        0.314   0.071
+        0.349   0.253
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CLq" TYPE="VECTOR">
+         Lift_due_to_pitch_rate
+         16
+         FG_ALPHA
+         FG_QBAR|FG_WINGAREA|FG_PITCHRATE|FG_CI2VEL
+       -0.175  10.690
+       -0.140   2.354
+       -0.105   2.420
+       -0.070   2.540
+       -0.035   2.667
+        0.000   2.694
+        0.035   2.611
+        0.070   2.538
+        0.105   2.431
+        0.140   2.176
+        0.175   1.756
+        0.209   1.352
+        0.244   0.984
+        0.279   0.432
+        0.314  -0.093
+        0.349  -0.271
+       </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="DRAG">
+      <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+         Drag_at_zero_lift
+         FG_QBAR|FG_WINGAREA
+         0.019
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CDDf" TYPE="VECTOR">
+         Delta_drag_due_to_flap_deflection
+         4
+         FG_FLAPS_POS
+         FG_QBAR|FG_WINGAREA
+         0   0
+         15  0.01
+         25  0.03
+         40  0.05
+       </COEFFICIENT>
+      <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+         Drag_induced
+         16
+         FG_ALPHA
+         FG_QBAR|FG_WINGAREA
+        -0.175   0.013
+        -0.140   0.005
+        -0.105   0.001
+        -0.070   0   
+        -0.035   0.005
+         0.000   0.015
+         0.035   0.029
+         0.070   0.05 
+         0.105   0.076
+         0.140   0.106
+         0.175   0.134
+         0.209   0.159
+         0.244   0.181
+         0.279   0.196
+         0.314   0.205
+         0.349   0.201
+        </COEFFICIENT>
+       <COEFFICIENT NAME="CDDe" TYPE="VALUE">
+         Drag_due_to_Elevator_Deflection
+         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         0.06
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
+         Drag_due_to_sideslip
+         FG_QBAR|FG_WINGAREA|FG_ABETA
+         0.14
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CDgear" TYPE="VALUE">
+         Drag_due_to_landing_gear
+         FG_QBAR|FG_WINGAREA|FG_GEAR_POS
+         0.03
+       </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+
+       <COEFFICIENT NAME="CYb" TYPE="VALUE">
+         Side_force_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_BETA
+        -0.2904
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="CYda" TYPE="VALUE">
+         Side_force_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+         0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+         Side_force_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+         0.23
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CYp" TYPE="VALUE">
+        Side_force_due_to_roll_rate
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_ROLLRATE
+        -0.0342
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CYr" TYPE="VALUE">
+         Side_force_due_to_yaw_rate
+         FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_YAWRATE
+         0.2166
+      </COEFFICIENT>
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+
+       <COEFFICIENT NAME="Clb" TYPE="VALUE">
+         Roll_moment_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN
+         -0.01067
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Clp" TYPE="VALUE">
+         Roll_moment_due_to_roll_rate_(roll_damping)
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -0.4704
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Clr" TYPE="VALUE">
+         Roll_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -0.1665
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Clda" TYPE="VALUE">
+         Roll_moment_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         0.09
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Cldr" TYPE="VALUE">
+         Roll_moment_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         -0.0192
+        </COEFFICIENT>
+
+      </AXIS>
+
+    <AXIS NAME="PITCH">
+
+      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+        Pitch_moment_due_to_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+        -1.023 <!-- McCormick p609 -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CmDf" TYPE="VECTOR">
+         Delta_pitching_moment_due_to_flap_deflection
+         4
+         FG_FLAPS_POS
+         FG_QBAR|FG_WINGAREA|FG_CBAR
+         0    0<!-- NEEDS WORK -->
+         15  -0.0654
+         25  -0.0981
+         35  -0.1140
+       </COEFFICIENT>
+      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+         Pitch_moment_due_to_pitch_rate
+         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
+         -6.348 <!-- McCormick p609 -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+        -0.084 <!-- McCormick p609 -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+        Pitching_moment_at_zero_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR
+        0.07 <!-- NEEDS WORK -->
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+        Pitch_moment_due_to_elevator_deflection
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+        -0.603 <!-- McCormick p609 -->
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+       <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+         Yaw_moment_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+         0.0921 <!-- McCormick p609 -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+         Yaw_moment_due_to_roll_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -0.0691 <!-- McCormick p609 -->
+        </COEFFICIENT>
+
+       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
+        Yaw_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -0.0930 <!-- McCormick p609 -->
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Cnda" TYPE="VALUE">
+         Yaw_moment_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         0.0068 <!-- NEEDS WORK -->
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="Cndr" TYPE="VALUE">
+         Yaw_moment_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         -0.043 <!-- NEEDS WORK -->
+       </COEFFICIENT>
+
+    </AXIS>
+  </AERODYNAMICS>
+  <!--
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+  -->
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+    RATE_IN_HZ       20
+    SIMULATION       ON
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+</FDM_CONFIG>
