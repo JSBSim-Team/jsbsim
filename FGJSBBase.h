@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.44 2004/01/10 22:10:30 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.45 2004/01/13 17:32:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.44 2004/01/10 22:10:30 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.45 2004/01/13 17:32:14 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,6 +214,10 @@ public:
   static short debug_lvl;
   double KelvinToFahrenheit (double kelvin) {
     return 1.8*kelvin - 459.4;
+  }
+
+  double RankineToCelsius (double rankine) {
+    return (rankine - 491.67)/1.8;
   }
 
 protected:
