@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.59 2003/06/03 09:53:47 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.60 2003/06/11 05:39:48 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ FGPiston::~FGPiston()
 
 double FGPiston::Calculate(double PowerRequired)
 {
-  ConsumeFuel();
+  if (FuelFlow_gph > 0.0) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
   Mixture = FCS->GetMixturePos(EngineNumber);
