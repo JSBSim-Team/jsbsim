@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.17 2003/02/23 15:05:49 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.18 2003/02/23 17:55:43 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -103,7 +103,7 @@
     </COMPONENT>
     <COMPONENT NAME="Pitch Damper Gain" TYPE="PURE_GAIN">
        INPUT        velocities/q-rad_sec
-       GAIN         0.5
+       GAIN         4.0
     </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/pitch-trim-sum
@@ -132,6 +132,10 @@
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
+     <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
+      INPUT          velocities/p-rad_sec
+      GAIN           0.5
+     </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
@@ -139,7 +143,7 @@
      </COMPONENT>
      <COMPONENT NAME="Yaw Damper Gain" TYPE="PURE_GAIN">
        INPUT        velocities/r-rad_sec
-       GAIN         8.727e-3
+       GAIN         0.5
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT        fcs/yaw-trim-sum
