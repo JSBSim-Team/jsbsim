@@ -16,7 +16,7 @@ FDM for FlightGear. JSBSim can also be run in a standalone batch mode
 for testing and study. More information on JSBSim can be found at the
 JSBSim home page here:
 
-http://jsbsim.sourceforge.net
+http://www.jsbsim.org
 
 The standalone version of JSBSim can be easily built from the command
 line of a unix or unix-like (CygWin/Linux/Unix/IRIX, etc.) system like
@@ -71,5 +71,5 @@ install 'JSBSim.a' into '/usr/local/lib'.
 3) Contact
 ----------
 
-For more information on JSBSim contact Jon Berndt at jsbsim@hal-pc.org.
+For more information on JSBSim contact Jon Berndt at jon@jsbsim.org.
 

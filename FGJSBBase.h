@@ -61,7 +61,6 @@ SG_USING_STD(string);
 #    include <math.h>
 #  else
 #    include <cmath>
-#    include <math>
 #  endif
 
 using std::string;
@@ -80,7 +79,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.61 2004/06/20 16:14:50 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.62 2004/06/23 12:16:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.61 2004/06/20 16:14:50 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.62 2004/06/23 12:16:29 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

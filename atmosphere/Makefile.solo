@@ -1,0 +1,47 @@
+CC = g++
+libAtmosphere_OBJECTS = FGMSIS.o FGMars.o FGMSISData.o
+
+INCLUDES = -I../
+
+libAtmosphere.a: $(libAtmosphere_OBJECTS)
+	-rm -f libAtmosphere.a
+	ar cru libAtmosphere.a $(libAtmosphere_OBJECTS)
+	ranlib libAtmosphere.a
+
+FGMars.o: FGMars.cpp FGMars.h ../FGAtmosphere.h ../FGModel.h \
+  ../FGJSBBase.h ../FGPropertyManager.h ../simgear/props/props.hxx \
+  ../FGColumnVector3.h ../FGState.h ../FGInitialCondition.h \
+  ../FGFDMExec.h ../FGTrim.h ../FGTrimAxis.h ../FGMatrix33.h \
+  ../FGQuaternion.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGLGear.h \
+  ../FGConfigFile.h ../FGAircraft.h ../FGPropagate.h ../FGLocation.h \
+  ../FGAuxiliary.h ../FGMassBalance.h ../FGAerodynamics.h \
+  ../FGCoefficient.h ../FGTable.h ../FGOutput.h ../FGfdmSocket.h \
+  ../FGGroundReactions.h ../FGPropulsion.h ../FGEngine.h ../FGThruster.h \
+  ../FGForce.h ../FGTank.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGMars.o -c FGMars.cpp
+
+FGMSIS.o: FGMSIS.cpp FGMSIS.h ../FGAtmosphere.h ../FGModel.h \
+  ../FGJSBBase.h ../FGPropertyManager.h ../simgear/props/props.hxx \
+  ../FGColumnVector3.h ../FGState.h ../FGInitialCondition.h \
+  ../FGFDMExec.h ../FGTrim.h ../FGTrimAxis.h ../FGMatrix33.h \
+  ../FGQuaternion.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGLGear.h \
+  ../FGConfigFile.h ../FGAircraft.h ../FGPropagate.h ../FGLocation.h \
+  ../FGAuxiliary.h ../FGMassBalance.h ../FGAerodynamics.h \
+  ../FGCoefficient.h ../FGTable.h ../FGOutput.h ../FGfdmSocket.h \
+  ../FGGroundReactions.h ../FGPropulsion.h ../FGEngine.h ../FGThruster.h \
+  ../FGForce.h ../FGTank.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGMSIS.o -c FGMSIS.cpp
+
+FGMSISData.o: FGMSISData.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGMSISData.o -c FGMSISData.cpp
+
+clean:
+	-rm -f *.o
+	-rm -f *.a
+
+all:
+	touch *.cpp
+	make libAtmosphere.a -fMakefile.solo
+
+debug:
+	make all CCOPTS=-g -fMakefile.solo

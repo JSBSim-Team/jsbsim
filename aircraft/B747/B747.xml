@@ -551,7 +551,7 @@ Aerodynamics:
     </COEFFICIENT>
   </AXIS>
  </AERODYNAMICS>
-  <OUTPUT NAME="JSBoutB747.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBoutB747.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
