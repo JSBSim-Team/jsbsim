@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.81 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.82 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ CLASS IMPLEMENTATION
 //
 // For every term registered here there must be a corresponding handler in
 // GetParameter() below that retrieves that parameter. Also, there must be an
-// entry in the enum eParam definition in FGDefs.h. The ID is what must be used
+// entry in the enum eParam definition in FGJSBBase.h. The ID is what must be used
 // in any config file entry which references that item.
 
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
@@ -448,8 +448,8 @@ bool FGState::Reset(string path, string acname, string fname)
   Position->SetLongitude(longitude*degtorad);
   Position->Seth(h);
 
-  wnorth = wmag*KTSTOFPS*cos(wdir*degtorad);
-  weast = wmag*KTSTOFPS*sin(wdir*degtorad);
+  wnorth = wmag*ktstofps*cos(wdir*degtorad);
+  weast = wmag*ktstofps*sin(wdir*degtorad);
   
   Initialize(U, V, W, phi*degtorad, tht*degtorad, psi*degtorad,
                latitude*degtorad, longitude*degtorad, h, wnorth, weast, 0.0);
@@ -746,12 +746,12 @@ void FGState::ReportState(void) {
   cout << out;
   
   snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
-                    FDMExec->GetAuxiliary()->GetHeadWind()*jsbFPSTOKTS,
-                    FDMExec->GetAuxiliary()->GetCrossWind()*jsbFPSTOKTS );
+                    FDMExec->GetAuxiliary()->GetHeadWind()*fpstokts,
+                    FDMExec->GetAuxiliary()->GetCrossWind()*fpstokts );
   cout << out; 
   
   snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
-                    Position->GetVground()*jsbFPSTOKTS,
+                    Position->GetVground()*fpstokts,
                     Position->GetGroundTrack()*radtodeg );
   cout << out;                                   
 

@@ -53,10 +53,9 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
-#include "FGDefs.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.38 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.39 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -106,13 +105,13 @@ FGInitialCondition::~FGInitialCondition()
 
 void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
 
-  if(getMachFromVcas(&mach,tt*jsbKTSTOFPS)) {
+  if(getMachFromVcas(&mach,tt*ktstofps)) {
     //cout << "Mach: " << mach << endl;
     lastSpeedSet=setvc;
-    vc=tt*jsbKTSTOFPS;
+    vc=tt*ktstofps;
     vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
     ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-    //cout << "Vt: " << vt*jsbFPSTOKTS << " Vc: " << vc*jsbFPSTOKTS << endl;
+    //cout << "Vt: " << vt*fpstokts << " Vc: " << vc*fpstokts << endl;
   }
   else {
     cout << "Failed to get Mach number for given Vc and altitude, Vc unchanged." << endl;
@@ -123,7 +122,7 @@ void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetVequivalentKtsIC(float tt) {
-  ve=tt*jsbKTSTOFPS;
+  ve=tt*ktstofps;
   lastSpeedSet=setve;
   vt=ve*1/sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
@@ -169,7 +168,7 @@ void FGInitialCondition::SetMachIC(float tt) {
   vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-  //cout << "Vt: " << vt*jsbFPSTOKTS << " Vc: " << vc*jsbFPSTOKTS << endl;
+  //cout << "Vt: " << vt*fpstokts << " Vc: " << vc*fpstokts << endl;
 }
 
 //******************************************************************************
@@ -305,7 +304,7 @@ void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
 
 // positive from left
 void FGInitialCondition::SetHeadWindKtsIC(float head){ 
-    whead=head*KTSTOFPS;
+    whead=head*ktstofps;
     lastWindSet=setwhc; 
     calcWindUVW();
     if(lastSpeedSet == setvg)
@@ -316,7 +315,7 @@ void FGInitialCondition::SetHeadWindKtsIC(float head){
 //******************************************************************************
 
 void FGInitialCondition::SetCrossWindKtsIC(float cross){ 
-    wcross=cross*KTSTOFPS; 
+    wcross=cross*ktstofps; 
     lastWindSet=setwhc; 
     calcWindUVW();
     if(lastSpeedSet == setvg)
@@ -336,7 +335,7 @@ void FGInitialCondition::SetWindDownKtsIC(float wD) {
 //******************************************************************************
 
 void FGInitialCondition::SetWindMagKtsIC(float mag) {
-  wmag=mag*KTSTOFPS;
+  wmag=mag*ktstofps;
   lastWindSet=setwmd;
   calcWindUVW();    
   if(lastSpeedSet == setvg)
@@ -400,13 +399,13 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
   case setned:
   case setuvw:
   case setvt:
-    SetVtrueKtsIC(vt*jsbFPSTOKTS);
+    SetVtrueKtsIC(vt*fpstokts);
     break;
   case setvc:
-    SetVcalibratedKtsIC(vc*jsbFPSTOKTS);
+    SetVcalibratedKtsIC(vc*fpstokts);
     break;
   case setve:
-    SetVequivalentKtsIC(ve*jsbFPSTOKTS);
+    SetVequivalentKtsIC(ve*fpstokts);
     break;
   case setmach:
     SetMachIC(mach);
@@ -600,7 +599,7 @@ float FGInitialCondition::calcVcas(float Mach) {
 
   A = pow(((pt-p)/psl+1),0.28571);
   vcas = sqrt(7*psl/rhosl*(A-1));
-  //cout << "calcVcas: vcas= " << vcas*jsbFPSTOKTS << " mach= " << Mach << " pressure: " << pt << endl;
+  //cout << "calcVcas: vcas= " << vcas*fpstokts << " mach= " << Mach << " pressure: " << pt << endl;
   return vcas;
 }
 
@@ -690,7 +689,7 @@ bool FGInitialCondition::solve(float *y,float x)
     *y=x2;
   }
 
-  //cout << "Success= " << success << " Vcas: " << vcas*jsbFPSTOKTS << " Mach: " << x2 << endl;
+  //cout << "Success= " << success << " Vcas: " << vcas*fpstokts << " Mach: " << x2 << endl;
   return success;
 }
 

@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.19 2001/08/30 11:01:29 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.20 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,11 +108,11 @@ bool FGAerodynamics::Run(void)
     vForces = State->GetTs2b(alpha, beta)*vFs;
 
     vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
-                      - MassBalance->GetXYZcg(eX))*INCHTOFT;
+                      - MassBalance->GetXYZcg(eX))*inchtoft;
     vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) 
-                      - MassBalance->GetXYZcg(eY))*INCHTOFT;
+                      - MassBalance->GetXYZcg(eY))*inchtoft;
     vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) 
-                      - MassBalance->GetXYZcg(eZ))*INCHTOFT;
+                      - MassBalance->GetXYZcg(eZ))*inchtoft;
 
     vMoments = vDXYZcg*vForces; // M = r X F
 

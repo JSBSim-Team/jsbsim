@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.5 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.6 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,10 +59,17 @@ char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 const double FGJSBBase::radtodeg = 57.29578;
 const double FGJSBBase::degtorad = 1.745329E-2;
 const double FGJSBBase::hptoftlbssec = 550.0;
+const double FGJSBBase::fpstokts = 0.592484;
+const double FGJSBBase::ktstofps = 1.68781;
+const double FGJSBBase::inchtoft = 0.08333333;
+const double FGJSBBase::Reng = 1716.0;
+const double FGJSBBase::SHRatio = 1.40;
+const string FGJSBBase::needed_cfg_version = "1.55";
+const string FGJSBBase::JSBSim_version = "0.9.1";
 
-queue <struct Message*> FGJSBBase::Messages;
-struct Message FGJSBBase::localMsg;
-unsigned int FGJSBBase::messageId = 0;
+queue <struct FGJSBBase::Message*> FGJSBBase::Messages;
+struct FGJSBBase::Message FGJSBBase::localMsg;
+unsigned int FGJSBBase::messageId = 0; 
 
 short FGJSBBase::debug_lvl  = 0;
 
@@ -74,7 +81,7 @@ FGJSBBase::FGJSBBase()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::PutMessage(struct Message* msg)
+struct FGJSBBase::Message* FGJSBBase::PutMessage(struct Message* msg)
 {
   Messages.push(msg);
   return msg;
@@ -82,7 +89,7 @@ struct Message* FGJSBBase::PutMessage(struct Message* msg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::PutMessage(string text)
+struct FGJSBBase::Message* FGJSBBase::PutMessage(string text)
 {
   struct Message *msg = new Message();
   msg->text = text;
@@ -95,7 +102,7 @@ struct Message* FGJSBBase::PutMessage(string text)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::PutMessage(string text, bool bVal)
+struct FGJSBBase::Message* FGJSBBase::PutMessage(string text, bool bVal)
 {
   struct Message *msg = new Message();
   msg->text = text;
@@ -109,7 +116,7 @@ struct Message* FGJSBBase::PutMessage(string text, bool bVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::PutMessage(string text, int iVal)
+struct FGJSBBase::Message* FGJSBBase::PutMessage(string text, int iVal)
 {
   struct Message *msg = new Message();
   msg->text = text;
@@ -123,7 +130,7 @@ struct Message* FGJSBBase::PutMessage(string text, int iVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::PutMessage(string text, double dVal)
+struct FGJSBBase::Message* FGJSBBase::PutMessage(string text, double dVal)
 {
   struct Message *msg = new Message();
   msg->text = text;
@@ -137,7 +144,7 @@ struct Message* FGJSBBase::PutMessage(string text, double dVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::ReadMessage(void)
+struct FGJSBBase::Message* FGJSBBase::ReadMessage(void)
 {
   if (!Messages.empty()) return Messages.front();
   else                   return NULL;
@@ -145,7 +152,7 @@ struct Message* FGJSBBase::ReadMessage(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-struct Message* FGJSBBase::ProcessMessage(void)
+struct FGJSBBase::Message* FGJSBBase::ProcessMessage(void)
 {
   if (!Messages.empty())
     localMsg = *(Messages.front());

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.79 2001/11/05 18:24:21 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.80 2001/11/12 05:06:28 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -49,7 +49,6 @@
 #include <FDM/JSBSim/FGState.h>
 #include <FDM/JSBSim/FGTranslation.h>
 #include <FDM/JSBSim/FGAuxiliary.h>
-#include <FDM/JSBSim/FGDefs.h>
 #include <FDM/JSBSim/FGInitialCondition.h>
 #include <FDM/JSBSim/FGTrim.h>
 #include <FDM/JSBSim/FGAtmosphere.h>

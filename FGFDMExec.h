@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.44 2001/11/11 23:06:26 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.45 2001/11/12 05:06:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,26 +71,6 @@ class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
 
-struct condition {
-  vector <eParam>  TestParam;
-  vector <eParam>  SetParam;
-  vector <float>   TestValue;
-  vector <float>   SetValue;
-  vector <string>  Comparison;
-  vector <float>   TC;
-  vector <bool>    Persistent;
-  vector <eAction> Action;
-  vector <eType>   Type;
-  vector <bool>    Triggered;
-  vector <float>   newValue;
-  vector <float>   OriginalValue;
-  vector <float>   StartTime;
-  vector <float>   EndTime;
-
-  condition() {
-  }
-};
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -101,7 +81,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.44 2001/11/11 23:06:26 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.45 2001/11/12 05:06:27 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -299,6 +279,38 @@ public:
   inline string GetAircraftPath(void)        {return AircraftPath;}
 
 private:
+  enum eAction {
+    FG_RAMP  = 1,
+    FG_STEP  = 2,
+    FG_EXP   = 3
+  };
+
+  enum eType {
+    FG_VALUE = 1,
+    FG_DELTA = 2,
+    FG_BOOL  = 3
+  };
+
+  struct condition {
+    vector <eParam>  TestParam;
+    vector <eParam>  SetParam;
+    vector <float>   TestValue;
+    vector <float>   SetValue;
+    vector <string>  Comparison;
+    vector <float>   TC;
+    vector <bool>    Persistent;
+    vector <eAction> Action;
+    vector <eType>   Type;
+    vector <bool>    Triggered;
+    vector <float>   newValue;
+    vector <float>   OriginalValue;
+    vector <float>   StartTime;
+    vector <float>   EndTime;
+
+    condition() {
+    }
+  };
+
   FGModel* FirstModel;
 
   bool frozen;

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.23 2001/11/12 05:06:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.23 2001/11/12 05:06:27 jberndt Exp $
     @see -
 */
 
@@ -86,9 +86,9 @@ public:
 
   // Use FGInitialCondition to set these speeds
   inline float GetVcalibratedFPS(void) { return vcas; }
-  inline float GetVcalibratedKTS(void) { return vcas*FPSTOKTS; }
+  inline float GetVcalibratedKTS(void) { return vcas*fpstokts; }
   inline float GetVequivalentFPS(void) { return veas; }
-  inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
+  inline float GetVequivalentKTS(void) { return veas*fpstokts; }
   
   inline FGColumnVector3& GetPilotAccel(void) { return vPilotAccel; }
   inline float GetPilotAccel(int idx) { return vPilotAccel(idx); }

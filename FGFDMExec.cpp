@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.61 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.62 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,8 +148,8 @@ FGFDMExec::FGFDMExec(void)
 
   if (debug_lvl > 0) {
     cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
-                                   << JSBSIM_VERSION << underoff << normint << endl;
-    cout << halfint << "            [cfg file spec v" << NEEDED_CFG_VERSION << "]\n\n";
+                                   << JSBSim_version << underoff << normint << endl;
+    cout << halfint << "            [cfg file spec v" << needed_cfg_version << "]\n\n";
     cout << normint << "JSBSim startup beginning ...\n\n";
   }
 

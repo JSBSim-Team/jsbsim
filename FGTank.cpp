@@ -36,10 +36,9 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGDefs.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.17 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.18 2001/11/12 05:06:28 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

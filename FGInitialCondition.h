@@ -58,9 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.31 2001/11/11 23:06:26 jberndt Exp $"
-#define jsbFPSTOKTS 0.5924838
-#define jsbKTSTOFPS 1.6878099
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.32 2001/11/12 05:06:27 jberndt Exp $"
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 typedef enum { setwned, setwmd, setwhc } windset; 
@@ -127,7 +125,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.31 2001/11/11 23:06:26 jberndt Exp $
+   @version $Id: FGInitialCondition.h,v 1.32 2001/11/12 05:06:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,8 +142,8 @@ public:
 
   void SetVcalibratedKtsIC(float tt);
   void SetVequivalentKtsIC(float tt);
-  inline void SetVtrueKtsIC(float tt)   { SetVtrueFpsIC(tt*jsbKTSTOFPS);   }
-  inline void SetVgroundKtsIC(float tt) { SetVgroundFpsIC(tt*jsbKTSTOFPS); }
+  inline void SetVtrueKtsIC(float tt)   { SetVtrueFpsIC(tt*ktstofps);   }
+  inline void SetVgroundKtsIC(float tt) { SetVgroundFpsIC(tt*ktstofps); }
   void SetMachIC(float tt);
   
   inline void SetAlphaDegIC(float tt)      { SetAlphaRadIC(tt*degtorad); }
@@ -168,10 +166,10 @@ public:
   inline void SetLongitudeDegIC(float tt) { longitude=tt*degtorad; }
 
   
-  inline float GetVcalibratedKtsIC(void) { return vc*jsbFPSTOKTS; }
-  inline float GetVequivalentKtsIC(void) { return ve*jsbFPSTOKTS; }
-  inline float GetVgroundKtsIC(void) { return vg*jsbFPSTOKTS; }
-  inline float GetVtrueKtsIC(void) { return vt*jsbFPSTOKTS; }
+  inline float GetVcalibratedKtsIC(void) { return vc*fpstokts; }
+  inline float GetVequivalentKtsIC(void) { return ve*fpstokts; }
+  inline float GetVgroundKtsIC(void) { return vg*fpstokts; }
+  inline float GetVtrueKtsIC(void) { return vt*fpstokts; }
   inline float GetMachIC(void) { return mach; }
   
   inline float GetClimbRateFpmIC(void) { return hdot*60; }

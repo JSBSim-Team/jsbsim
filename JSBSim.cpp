@@ -77,7 +77,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.58 2001/11/10 14:55:15 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.59 2001/11/12 05:06:28 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.58 2001/11/10 14:55:15 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.59 2001/11/12 05:06:28 jberndt Exp $
     @see -
 */
 
@@ -148,25 +148,27 @@ int main(int argc, char** argv)
     	cerr << "Aircraft file " << argv[1] << " was not found" << endl;
 	    exit(-1);
     }
-    if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
-                   FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000, 0, 0, 0);
+    if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2]))) {
+    	cerr << "JSBSim could not be started" << endl;
+	    exit(-1);
+    }                   
   }
 
-  struct Message* msg;
+  struct FGJSBBase::Message* msg;
   while (FDMExec->Run()) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
-      case Message::eText:
+      case FGJSBBase::Message::eText:
         cout << msg->messageId << ": " << msg->text << endl;
         break;
-      case Message::eBool:
+      case FGJSBBase::Message::eBool:
         cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
         break;
-      case Message::eInteger:
+      case FGJSBBase::Message::eInteger:
         cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
         break;
-      case Message::eDouble:
+      case FGJSBBase::Message::eDouble:
         cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
         break;
       default:

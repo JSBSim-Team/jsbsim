@@ -46,10 +46,9 @@ and the cg.
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
-#include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.21 2001/11/08 13:29:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.22 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,9 +88,9 @@ FGColumnVector3& FGForce::GetBodyForces(void) {
 
   //find the distance from this vector's location to the cg
   //needs to be done like this to convert from structural to body coords
-  vDXYZ(1) = -(vXYZn(1) - fdmex->GetMassBalance()->GetXYZcg(1))*INCHTOFT;
-  vDXYZ(2) =  (vXYZn(2) - fdmex->GetMassBalance()->GetXYZcg(2))*INCHTOFT;  //cg and rp values are in inches
-  vDXYZ(3) = -(vXYZn(3) - fdmex->GetMassBalance()->GetXYZcg(3))*INCHTOFT;
+  vDXYZ(1) = -(vXYZn(1) - fdmex->GetMassBalance()->GetXYZcg(1))*inchtoft;
+  vDXYZ(2) =  (vXYZn(2) - fdmex->GetMassBalance()->GetXYZcg(2))*inchtoft;  //cg and rp values are in inches
+  vDXYZ(3) = -(vXYZn(3) - fdmex->GetMassBalance()->GetXYZcg(3))*inchtoft;
 
   vM = vMn + vDXYZ*vFb;
 

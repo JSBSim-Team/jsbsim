@@ -58,7 +58,6 @@ INCLUDES
 
 #include <string>
 #include <map>
-#include "FGDefs.h"
 #include "FGJSBBase.h"
 #include "FGInitialCondition.h"
 #include "FGMatrix33.h"
@@ -69,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.48 2001/10/30 00:23:55 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.49 2001/11/12 05:06:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.48 2001/10/30 00:23:55 jberndt Exp $
+    @version $Id: FGState.h,v 1.49 2001/11/12 05:06:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,14 +186,14 @@ public:
   inline void Resume(void)  {dt = saved_dt;}
 
   /** Retrieves a parameter.
-      The parameters that can be retrieved are enumerated in FGDefs.h.
+      The parameters that can be retrieved are enumerated in FGJSBBase.h.
       @param val_idx one of the enumerated JSBSim parameters.
       @return the value of the parameter.
       */
   float GetParameter(eParam val_idx);
 
   /** Retrieves a parameter.
-      The parameters that can be retrieved are enumerated in FGDefs.h.
+      The parameters that can be retrieved are enumerated in FGJSBBase.h.
       @param val_string a string representing one of the enumerated JSBSim parameters,
              i.e. "FG_QBAR".
       @return the value of the parameter.

@@ -72,14 +72,13 @@ INCLUDES
     using std::string;
 #endif
 
-#include "FGDefs.h"
 #include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.27 2001/11/10 18:44:21 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.28 2001/11/12 05:06:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.27 2001/11/10 18:44:21 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.28 2001/11/12 05:06:27 jberndt Exp $
     @see -
 */
 

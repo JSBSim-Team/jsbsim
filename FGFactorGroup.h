@@ -45,7 +45,6 @@ INCLUDES
 #include <vector>
 #include <string>
 #include "FGConfigFile.h"
-#include "FGDefs.h"
 #include "FGTable.h"
 #include "FGCoefficient.h"
 #include "FGAerodynamics.h"
@@ -55,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.4 2001/08/09 23:46:46 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.5 2001/11/12 05:06:27 jberndt Exp $"
 
 using std::vector;
 

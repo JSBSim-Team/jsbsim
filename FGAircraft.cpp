@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.96 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.97 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,10 +414,10 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg)
   if (debug_lvl > 0)
     cout << "                            Version: " << highint << CFGVersion
                                                              << normint << endl;
-  if (CFGVersion != NEEDED_CFG_VERSION) {
+  if (CFGVersion != needed_cfg_version) {
     cerr << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
             " RESULTS WILL BE UNPREDICTABLE !!" << endl;
-    cerr << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
+    cerr << "Current version needed is: " << needed_cfg_version << endl;
     cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
   }
 }

@@ -41,8 +41,9 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include <math.h>
-#  include <queue.h>
-#  include <string.h>
+#  include <queue>
+#  include STL_STRING
+  SG_USING_STD(queue);
 #else
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
@@ -64,21 +65,70 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.10 2001/11/11 23:06:26 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.11 2001/11/12 05:06:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-struct Message {
-  unsigned int fdmId;
-  unsigned int messageId;
-  string text;
-  string subsystem;
-  enum mType {eText, eInteger, eDouble, eBool} type;
-  bool bVal;
-  int  iVal;
-  double dVal;
+enum eParam {
+  FG_UNDEF = 0,
+  FG_TIME,
+  FG_QBAR,
+  FG_WINGAREA,
+  FG_WINGSPAN,
+  FG_CBAR,
+  FG_ALPHA,
+  FG_ALPHADOT,
+  FG_BETA,
+  FG_ABETA,
+  FG_BETADOT,
+  FG_PHI,
+  FG_THT,
+  FG_PSI,
+  FG_PITCHRATE,
+  FG_ROLLRATE,
+  FG_YAWRATE,
+  FG_CL_SQRD,
+  FG_MACH,
+  FG_ALTITUDE,
+  FG_BI2VEL,
+  FG_CI2VEL,
+  FG_ELEVATOR_POS,
+  FG_AILERON_POS,
+  FG_RUDDER_POS,
+  FG_SPDBRAKE_POS,
+  FG_SPOILERS_POS,
+  FG_FLAPS_POS,
+  FG_ELEVATOR_CMD,
+  FG_AILERON_CMD,
+  FG_RUDDER_CMD,
+  FG_SPDBRAKE_CMD,
+  FG_SPOILERS_CMD,
+  FG_FLAPS_CMD,
+  FG_THROTTLE_CMD,
+  FG_THROTTLE_POS,
+  FG_MIXTURE_CMD,
+  FG_MIXTURE_POS,
+  FG_MAGNETO_CMD,
+  FG_STARTER_CMD,
+  FG_ACTIVE_ENGINE,
+  FG_HOVERB,
+  FG_PITCH_TRIM_CMD,
+  FG_YAW_TRIM_CMD,
+  FG_ROLL_TRIM_CMD,
+  FG_LEFT_BRAKE_CMD,
+  FG_CENTER_BRAKE_CMD,
+  FG_RIGHT_BRAKE_CMD,
+  FG_SET_LOGGING,
+  FG_ALPHAH,
+  FG_ALPHAW,
+  FG_LBARH,     //normalized horizontal tail arm
+  FG_LBARV,     //normalized vertical tail arm
+  FG_HTAILAREA,
+  FG_VTAILAREA,
+  FG_VBARH,    //horizontal tail volume 
+  FG_VBARV     //vertical tail volume 
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +141,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.10 2001/11/11 23:06:26 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.11 2001/11/12 05:06:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +155,17 @@ public:
 
   /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
+
+  struct Message {
+    unsigned int fdmId;
+    unsigned int messageId;
+    string text;
+    string subsystem;
+    enum mType {eText, eInteger, eDouble, eBool} type;
+    bool bVal;
+    int  iVal;
+    double dVal;
+  };
 
   ///@name JSBSim Enums.
   //@{
@@ -186,7 +247,7 @@ public:
   //@}
 
 protected:
-  static struct Message  localMsg;
+  static struct Message localMsg;
   
   static queue <struct Message*> Messages;
 
@@ -199,6 +260,13 @@ protected:
   static const double radtodeg;
   static const double degtorad;
   static const double hptoftlbssec;
+  static const double fpstokts;
+  static const double ktstofps;
+  static const double inchtoft;
+  static const double Reng;         // Specific Gas Constant,ft^2/(sec^2*R)
+  static const double SHRatio;
+  static const string needed_cfg_version;
+  static const string JSBSim_version;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

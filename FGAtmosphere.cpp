@@ -56,12 +56,11 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
-#include "FGDefs.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.22 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.23 2001/11/12 05:06:27 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +103,7 @@ bool FGAtmosphere::InitModel(void)
   SLtemperature = temperature;
   SLpressure    = pressure;
   SLdensity     = density;
-  SLsoundspeed  = sqrt(SHRATIO*Reng*temperature);
+  SLsoundspeed  = sqrt(SHRatio*Reng*temperature);
   rSLtemperature = 1.0/temperature;
   rSLpressure    = 1.0/pressure;
   rSLdensity     = 1.0/density;
@@ -133,7 +132,7 @@ bool FGAtmosphere::Run(void)
 
     if (psiw < 0) psiw += 2*M_PI;
 
-    soundspeed = sqrt(SHRATIO*Reng*temperature);
+    soundspeed = sqrt(SHRatio*Reng*temperature);
 
     State->Seta(soundspeed);
 
