@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.45 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.46 2001/12/12 11:51:01 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -365,6 +365,8 @@ void FGInitialCondition::calcWindUVW(void) {
       case setwhc:
         wnorth=whead*cos(psi) + wcross*cos(psi+M_PI/2);
         weast=whead*sin(psi) + wcross*sin(psi+M_PI/2);
+      break;
+      case setwned:
       break;
     }    
     uw=wnorth*ctheta*cpsi +
