@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.3 2002/04/30 11:24:18 apeden Exp $
+// $Id: props.cxx,v 1.4 2002/06/23 11:27:59 apeden Exp $
 
 #include "props.hxx"
 
@@ -17,6 +17,7 @@
 #include <iostream>
 using std::cerr;
 using std::endl;
+using std::find;
 using std::sort;
 
 #else
@@ -40,7 +41,7 @@ SG_USING_STD(sort);
 class CompareIndices
 {
 public:
-  int operator() (const SGPropertyNode * n1, const SGPropertyNode *n2) const {
+  int operator() (const SGPropertyNode_ptr n1, const SGPropertyNode_ptr n2) const {
     return (n1->getIndex() < n2->getIndex());
   }
 };
@@ -236,7 +237,7 @@ compare_strings (const char * s1, const char * s2)
  * Locate a child node by name and index.
  */
 static int
-find_child (const char * name, int index, vector<SGPropertyNode *> nodes)
+find_child (const char * name, int index, vector<SGPropertyNode_ptr> nodes)
 {
   int nNodes = nodes.size();
   for (int i = 0; i < nNodes; i++) {
@@ -360,9 +361,15 @@ inline bool
 SGPropertyNode::set_bool (bool val)
 {
   if (_tied) {
-    return _value.bool_val->setValue(val);
+    if (_value.bool_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     _local_val.bool_val = val;
+    fireValueChanged();
     return true;
   }
 }
@@ -371,9 +378,15 @@ inline bool
 SGPropertyNode::set_int (int val)
 {
   if (_tied) {
-    return _value.int_val->setValue(val);
+    if (_value.int_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     _local_val.int_val = val;
+    fireValueChanged();
     return true;
   }
 }
@@ -382,9 +395,15 @@ inline bool
 SGPropertyNode::set_long (long val)
 {
   if (_tied) {
-    return _value.long_val->setValue(val);
+    if (_value.long_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     _local_val.long_val = val;
+    fireValueChanged();
     return true;
   }
 }
@@ -393,9 +412,15 @@ inline bool
 SGPropertyNode::set_float (float val)
 {
   if (_tied) {
-    return _value.float_val->setValue(val);
+    if (_value.float_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     _local_val.float_val = val;
+    fireValueChanged();
     return true;
   }
 }
@@ -404,9 +429,15 @@ inline bool
 SGPropertyNode::set_double (double val)
 {
   if (_tied) {
-    return _value.double_val->setValue(val);
+    if (_value.double_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     _local_val.double_val = val;
+    fireValueChanged();
     return true;
   }
 }
@@ -415,10 +446,16 @@ inline bool
 SGPropertyNode::set_string (const char * val)
 {
   if (_tied) {
-    return _value.string_val->setValue(val);
+    if (_value.string_val->setValue(val)) {
+      fireValueChanged();
+      return true;
+    } else {
+      return false;
+    }
   } else {
     delete [] _local_val.string_val;
     _local_val.string_val = copy_string(val);
+    fireValueChanged();
     return true;
   }
 }
@@ -551,11 +588,35 @@ SGPropertyNode::trace_read () const
 #endif
 }
 
+/**
+ * Increment reference counter
+ */
+void
+SGPropertyNode::incrementRef()
+{
+  ++_count;
+}
+
+/**
+ * Decrement reference counter
+ */
+int
+SGPropertyNode::decrementRef()
+{
+  return --_count;
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////
 // Public methods from SGPropertyNode.
 ////////////////////////////////////////////////////////////////////////
+
+/**
+ * Last used attribute
+ * Update as needed when enum Attribute is changed
+ */
+const int SGPropertyNode::LAST_USED_ATTRIBUTE = TRACE_WRITE;
 
 /**
  * Default constructor: always creates a root node.
@@ -567,7 +628,9 @@ SGPropertyNode::SGPropertyNode ()
     _path_cache(0),
     _type(NONE),
     _tied(false),
-    _attr(READ|WRITE)
+    _attr(READ|WRITE),
+    _count(0),
+    _listeners(0)
 {
   _local_val.string_val = 0;
 }
@@ -582,7 +645,9 @@ SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
     _path_cache(0),
     _type(node._type),
     _tied(node._tied),
-    _attr(node._attr)
+    _attr(node._attr),
+    _count(0),
+    _listeners(0)		// CHECK!!
 {
   _name = copy_string(node._name);
   _local_val.string_val = 0;
@@ -663,7 +728,9 @@ SGPropertyNode::SGPropertyNode (const char * name,
     _path_cache(0),
     _type(NONE),
     _tied(false),
-    _attr(READ|WRITE)
+    _attr(READ|WRITE),
+    _count(0),
+    _listeners(0)
 {
   _name = copy_string(name);
   _local_val.string_val = 0;
@@ -676,11 +743,9 @@ SGPropertyNode::SGPropertyNode (const char * name,
 SGPropertyNode::~SGPropertyNode ()
 {
   delete [] _name;
-  for (int i = 0; i < (int)_children.size(); i++) {
-    delete _children[i];
-  }
   delete _path_cache;
   clear_value();
+  delete _listeners;
 }
 
 
@@ -776,8 +841,20 @@ SGPropertyNode::getChild (const char * name, int index, bool create)
   if (pos >= 0) {
     return _children[pos];
   } else if (create) {
-    _children.push_back(new SGPropertyNode(name, index, this));
-    return _children[_children.size()-1];
+    SGPropertyNode_ptr node;
+    pos = find_child(name, index, _removedChildren);
+    if (pos >= 0) {
+      std::vector<SGPropertyNode_ptr>::iterator it = _removedChildren.begin();
+      it += pos;
+      node = _removedChildren[pos];
+      _removedChildren.erase(it);
+      node->setAttribute(REMOVED, false);
+    } else {
+      node = new SGPropertyNode(name, index, this);
+    }
+    _children.push_back(node);
+    fireChildAdded(node);
+    return node;
   } else {
     return 0;
   }
@@ -801,10 +878,10 @@ SGPropertyNode::getChild (const char * name, int index) const
 /**
  * Get all children with the same name (but different indices).
  */
-vector<SGPropertyNode *>
-SGPropertyNode::getChildren (const char * name)
+vector<SGPropertyNode_ptr>
+SGPropertyNode::getChildren (const char * name) const
 {
-  vector<SGPropertyNode *> children;
+  vector<SGPropertyNode_ptr> children;
   int max = _children.size();
 
   for (int i = 0; i < max; i++)
@@ -817,20 +894,26 @@ SGPropertyNode::getChildren (const char * name)
 
 
 /**
- * Get all children const with the same name (but different indices).
+ * Remove a child node
  */
-vector<const SGPropertyNode *>
-SGPropertyNode::getChildren (const char * name) const
+SGPropertyNode_ptr 
+SGPropertyNode::removeChild (const char * name, int index, bool keep)
 {
-  vector<const SGPropertyNode *> children;
-  int max = _children.size();
-
-  for (int i = 0; i < max; i++)
-    if (compare_strings(_children[i]->getName(), name))
-      children.push_back(_children[i]);
-
-  sort(children.begin(), children.end(), CompareIndices());
-  return children;
+  SGPropertyNode_ptr ret;
+  int pos = find_child(name, index, _children);
+  if (pos >= 0) {
+    std::vector<SGPropertyNode_ptr>::iterator it = _children.begin();
+    it += pos;
+    SGPropertyNode_ptr node = _children[pos];
+    _children.erase(it);
+    if (keep) {
+      _removedChildren.push_back(node);
+    }
+    node->setAttribute(REMOVED, true);
+    ret = node;
+    fireChildRemoved(node);
+  }
+  return ret;
 }
 
 
@@ -1476,10 +1559,9 @@ SGPropertyNode::tie (const SGRawValue<float> &rawValue, bool useDefault)
 bool
 SGPropertyNode::tie (const SGRawValue<double> &rawValue, bool useDefault)
 {
-  
-  
   if (_type == ALIAS || _tied)
     return false;
+
   useDefault = useDefault && hasValue();
   double old_val = 0.0;
   if (useDefault)
@@ -1900,6 +1982,87 @@ SGPropertyNode::untie (const char * relative_path)
   return (node == 0 ? false : node->untie());
 }
 
+void
+SGPropertyNode::addChangeListener (SGPropertyChangeListener * listener)
+{
+  if (_listeners == 0)
+    _listeners = new vector<SGPropertyChangeListener *>;
+  _listeners->push_back(listener);
+  listener->register_property(this);
+}
+
+void
+SGPropertyNode::removeChangeListener (SGPropertyChangeListener * listener)
+{
+  vector<SGPropertyChangeListener *>::iterator it =
+    find(_listeners->begin(), _listeners->end(), listener);
+  if (it != _listeners->end()) {
+    _listeners->erase(it);
+    listener->unregister_property(this);
+    if (_listeners->empty()) {
+      vector<SGPropertyChangeListener *> * tmp = _listeners;
+      _listeners = 0;
+      delete tmp;
+    }
+  }
+}
+
+void
+SGPropertyNode::fireValueChanged ()
+{
+  fireValueChanged(this);
+}
+
+void
+SGPropertyNode::fireChildAdded (SGPropertyNode * child)
+{
+  fireChildAdded(this, child);
+}
+
+void
+SGPropertyNode::fireChildRemoved (SGPropertyNode * child)
+{
+  fireChildRemoved(this, child);
+}
+
+void
+SGPropertyNode::fireValueChanged (SGPropertyNode * node)
+{
+  if (_listeners != 0) {
+    for (unsigned i = 0; i < _listeners->size(); i++) {
+      (*_listeners)[i]->valueChanged(node);
+    }
+  }
+  if (_parent != 0)
+    _parent->fireValueChanged(node);
+}
+
+void
+SGPropertyNode::fireChildAdded (SGPropertyNode * parent,
+				SGPropertyNode * child)
+{
+  if (_listeners != 0) {
+    for (unsigned i = 0; i < _listeners->size(); i++) {
+      (*_listeners)[i]->childAdded(parent, child);
+    }
+  }
+  if (_parent != 0)
+    _parent->fireChildAdded(parent, child);
+}
+
+void
+SGPropertyNode::fireChildRemoved (SGPropertyNode * parent,
+				  SGPropertyNode * child)
+{
+  if (_listeners != 0) {
+    for (unsigned i = 0; i < _listeners->size(); i++) {
+      (*_listeners)[i]->childRemoved(parent, child);
+    }
+  }
+  if (_parent != 0)
+    _parent->fireChildRemoved(parent, child);
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -1918,7 +2081,7 @@ SGPropertyNode::hash_table::entry::~entry ()
 {
 				// Don't delete the value; we don't own
 				// the pointer.
-  delete _key;
+  delete [] _key;
 }
 
 void
@@ -1958,7 +2121,7 @@ SGPropertyNode::hash_table::bucket::get_entry (const char * key, bool create)
     for (i = 0; i < _length; i++) {
       new_entries[i] = _entries[i];
     }
-    delete _entries;
+    delete [] _entries;
     _entries = new_entries;
     _entries[_length] = new entry;
     _entries[_length]->set_key(key);
@@ -1978,7 +2141,7 @@ SGPropertyNode::hash_table::hash_table ()
 
 SGPropertyNode::hash_table::~hash_table ()
 {
-  for (int i = 0; i < _data_length; i++)
+  for (unsigned int i = 0; i < _data_length; i++)
     delete _data[i];
 }
 
@@ -2024,5 +2187,154 @@ SGPropertyNode::hash_table::hashcode (const char * key)
   }
   return hash;
 }
+
+
+
+/**
+ * Default constructor
+ */
+SGPropertyNode_ptr::SGPropertyNode_ptr()
+{
+  _ptr = 0;
+}
+
+/**
+ * Copy constructor
+ */
+SGPropertyNode_ptr::SGPropertyNode_ptr( const SGPropertyNode_ptr &r )
+{
+  _ptr = r._ptr;
+  if (_ptr)
+     _ptr->incrementRef();
+}
+
+/**
+ * Constructor from a pointer to a node
+ */
+SGPropertyNode_ptr::SGPropertyNode_ptr( SGPropertyNode *p )
+{
+  _ptr = p;
+  if (_ptr)
+     _ptr->incrementRef();
+}
+
+/**
+ * Destructor
+ */
+SGPropertyNode_ptr::~SGPropertyNode_ptr()
+{
+  if (_ptr && _ptr->decrementRef() == 0)
+    delete _ptr;
+}
+
+/**
+ * Assignement operator
+ */
+SGPropertyNode_ptr &
+SGPropertyNode_ptr::operator=( const SGPropertyNode_ptr &r )
+{
+  if (_ptr && _ptr->decrementRef() == 0)
+    delete _ptr;
+  _ptr = r._ptr;
+  if (_ptr)
+     _ptr->incrementRef();
+
+  return *this;
+}
+
+/**
+ * Pointer access operator
+ */
+SGPropertyNode *
+SGPropertyNode_ptr::operator->()
+{
+  return _ptr;
+}
+
+/**
+ * Pointer access operator (const)
+ */
+const SGPropertyNode *
+SGPropertyNode_ptr::operator->() const
+{
+  return _ptr;
+}
+
+/**
+ * Conversion to SGPropertyNode * operator
+ */
+SGPropertyNode_ptr::operator SGPropertyNode *()
+{
+  return _ptr;
+}
+
+/**
+ * Conversion to const SGPropertyNode * operator
+ */
+SGPropertyNode_ptr::operator const SGPropertyNode *() const
+{
+  return _ptr;
+}
+
+/**
+ * Validity test
+ */
+bool 
+SGPropertyNode_ptr::valid() const
+{
+  return _ptr != 0;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////
+// Implementation of SGPropertyChangeListener.
+////////////////////////////////////////////////////////////////////////
+
+SGPropertyChangeListener::~SGPropertyChangeListener ()
+{
+				// This will come back and remove
+				// the current item each time.  Is
+				// that OK?
+  vector<SGPropertyNode *>::iterator it;
+  for (it = _properties.begin(); it != _properties.end(); it++)
+    (*it)->removeChangeListener(this);
+}
+
+void
+SGPropertyChangeListener::valueChanged (SGPropertyNode * node)
+{
+  // NO-OP
+}
+
+void
+SGPropertyChangeListener::childAdded (SGPropertyNode * node,
+				      SGPropertyNode * child)
+{
+  // NO-OP
+}
+
+void
+SGPropertyChangeListener::childRemoved (SGPropertyNode * parent,
+					SGPropertyNode * child)
+{
+  // NO-OP
+}
+
+void
+SGPropertyChangeListener::register_property (SGPropertyNode * node)
+{
+  _properties.push_back(node);
+}
+
+void
+SGPropertyChangeListener::unregister_property (SGPropertyNode * node)
+{
+  vector<SGPropertyNode *>::iterator it =
+    find(_properties.begin(), _properties.end(), node);
+  if (it != _properties.end())
+    _properties.erase(it);
+}
+
 
 // end of props.cxx

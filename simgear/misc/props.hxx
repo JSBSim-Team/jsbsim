@@ -6,14 +6,16 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.3 2002/04/30 11:24:18 apeden Exp $
+ * $Id: props.hxx,v 1.4 2002/06/23 11:27:59 apeden Exp $
  */
 
 #ifndef __PROPS_HXX
 #define __PROPS_HXX
 
-#ifndef PROPS_STANDALONE
 #define PROPS_STANDALONE 1
+
+#ifndef PROPS_STANDALONE
+#define PROPS_STANDALONE 0
 #endif
 
 #include <vector>
@@ -449,6 +451,100 @@ private:
   setter_t _setter;
 };
 
+
+/**
+ * The smart pointer that manage reference counting
+ */
+class SGPropertyNode;
+class SGPropertyNode_ptr
+{
+public:
+
+  /**
+   * Default constructor
+   */
+  SGPropertyNode_ptr();
+
+  /**
+   * Copy constructor
+   */
+  SGPropertyNode_ptr( const SGPropertyNode_ptr &r );
+
+  /**
+   * Constructor from a pointer to a node
+   */
+  SGPropertyNode_ptr( SGPropertyNode *p );
+
+  /**
+   * Destructor
+   */
+  ~SGPropertyNode_ptr();
+
+  /**
+   * Assignement operator
+   */
+  SGPropertyNode_ptr &operator=( const SGPropertyNode_ptr &r );
+
+  /**
+   * Pointer access operator
+   */
+  SGPropertyNode *operator->();
+
+  /**
+   * Pointer access operator (const)
+   */
+  const SGPropertyNode *operator->() const;
+
+  /**
+   * Conversion to SGPropertyNode * operator
+   */
+  operator SGPropertyNode *();
+
+  /**
+   * Conversion to const SGPropertyNode * operator
+   */
+  operator const SGPropertyNode *() const;
+
+  /**
+   * Return the pointer.
+   */
+  SGPropertyNode * ptr () { return _ptr; }
+
+  /**
+   * Validity test
+   */
+  bool valid() const;
+
+private:
+
+  SGPropertyNode *_ptr;
+};
+
+
+
+/**
+ * The property change listener interface.
+ *
+ * <p>Any class that needs to listen for property changes must implement
+ * this interface.</p>
+ */
+class SGPropertyChangeListener
+{
+public:
+  virtual ~SGPropertyChangeListener ();
+  virtual void valueChanged (SGPropertyNode * node);
+  virtual void childAdded (SGPropertyNode * parent, SGPropertyNode * child);
+  virtual void childRemoved (SGPropertyNode * parent, SGPropertyNode * child);
+
+protected:
+  friend class SGPropertyNode;
+  virtual void register_property (SGPropertyNode * node);
+  virtual void unregister_property (SGPropertyNode * node);
+
+private:
+  vector<SGPropertyNode *> _properties;
+};
+
 
 
 /**
@@ -491,9 +587,17 @@ public:
     READ = 1,
     WRITE = 2,
     ARCHIVE = 4,
-    TRACE_READ = 8,
-    TRACE_WRITE = 16
+    REMOVED = 8,
+    TRACE_READ = 16,
+    TRACE_WRITE = 32
   };
+
+
+  /**
+   * Last used attribute
+   * Update as needed when enum Attribute is changed
+   */
+  static const int LAST_USED_ATTRIBUTE;
 
 
   /**
@@ -534,7 +638,7 @@ public:
   /**
    * Get the node's integer index.
    */
-  const int getIndex () const { return _index; }
+  int getIndex () const { return _index; }
 
 
   /**
@@ -557,7 +661,7 @@ public:
   /**
    * Get the number of child nodes.
    */
-  const int nChildren () const { return _children.size(); }
+  int nChildren () const { return _children.size(); }
 
 
   /**
@@ -588,13 +692,14 @@ public:
   /**
    * Get a vector of all children with the specified name.
    */
-  vector<SGPropertyNode *> getChildren (const char * name);
+  vector<SGPropertyNode_ptr> getChildren (const char * name) const;
 
 
   /**
-   * Get a vector all all children (const) with the specified name.
+   * Remove a child node
    */
-  vector<const SGPropertyNode *> getChildren (const char * name) const;
+  SGPropertyNode_ptr removeChild (const char * name, int index = 0,
+                                  bool keep = true);
 
 
   //
@@ -1026,8 +1131,41 @@ public:
   bool untie (const char * relative_path);
 
 
+  /**
+   * Add a change listener to the property.
+   */
+  void addChangeListener (SGPropertyChangeListener * listener);
+
+
+  /**
+   * Remove a change listener from the property.
+   */
+  void removeChangeListener (SGPropertyChangeListener * listener);
+
+
+  /**
+   * Fire a value change event to all listeners.
+   */
+  void fireValueChanged ();
+
+
+  /**
+   * Fire a child-added event to all listeners.
+   */
+  void fireChildAdded (SGPropertyNode * child);
+
+
+  /**
+   * Fire a child-removed event to all listeners.
+   */
+  void fireChildRemoved (SGPropertyNode * child);
+
+
 protected:
 
+  void fireValueChanged (SGPropertyNode * node);
+  void fireChildAdded (SGPropertyNode * parent, SGPropertyNode * child);
+  void fireChildRemoved (SGPropertyNode * parent, SGPropertyNode * child);
 
   /**
    * Protected constructor for making new nodes on demand.
@@ -1077,6 +1215,20 @@ private:
    */
   void trace_write () const;
 
+
+  /**
+   * Increment reference counter
+   */
+  void incrementRef();
+
+  /**
+   * Decrement reference counter
+   */
+  int decrementRef();
+
+  friend class SGPropertyNode_ptr;
+
+
   mutable char _buffer[MAX_STRING_LEN+1];
 
   class hash_table;
@@ -1084,11 +1236,13 @@ private:
   char * _name;
   int _index;
   SGPropertyNode * _parent;
-  vector<SGPropertyNode *> _children;
+  vector<SGPropertyNode_ptr> _children;
+  vector<SGPropertyNode_ptr> _removedChildren;
   hash_table * _path_cache;
   Type _type;
   bool _tied;
   int _attr;
+  int _count;
 
 				// The right kind of pointer...
   union {
@@ -1109,6 +1263,8 @@ private:
     double double_val;
     char * string_val;
   } _local_val;
+
+  vector <SGPropertyChangeListener *> * _listeners;
 
 
 
