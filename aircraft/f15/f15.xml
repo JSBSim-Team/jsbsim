@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.4 2002/12/27 13:04:51 jberndt Exp $
+  CVS Version: $Id: f15.xml,v 1.5 2003/02/17 20:28:54 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Beta
@@ -47,25 +47,25 @@
     AC_IZZ     187900
     AC_IXZ       -520
     AC_EMPTYWT  30035
-    AC_AERORP    223.89   0.0   13.2
-    AC_CGLOC     221.65   0.0    4.1
-    AC_EYEPTLOC  447.0    0.0   45.0
-    AC_POINTMASS 230.0  447.0    0.0   36.0
+    AC_AERORP    236.39   0.0    9.96
+    AC_CGLOC     234.15   0.0   -9.96
+    AC_EYEPTLOC  398.45   0.0   37.0
+    AC_POINTMASS 230.0  398.45   0.0   20.0
 
   </METRICS>
 
   <UNDERCARRIAGE>
 
-     AC_GEAR  NOSE      408.4    0.0 -77.5  2500  800 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
-     AC_GEAR  MLG_LEFT  195.0  -54.0 -77.5  5400 1600 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
-     AC_GEAR  MLG_RIGHT 195.0   54.0 -77.5  5400 1600 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
+     AC_GEAR  NOSE      393.2    0.0 -89.2  4500 1200 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
+     AC_GEAR  MLG_LEFT  187.0  -54.0 -85.4  7500 2400 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
+     AC_GEAR  MLG_RIGHT 187.0   54.0 -85.4  7500 2400 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
 
-     AC_GEAR  WT_LEFT   128.5 -257.0   0.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-     AC_GEAR  WT_RIGHT  128.5  257.0   0.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-     AC_GEAR  VT_LEFT     0.0  -57.0 131.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-     AC_GEAR  VT_RIGHT    0.0   57.0 131.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-     AC_GEAR  RADOME    664.4    0.0 -19.5 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-     AC_GEAR  BELLY     128.5    0.0 -46.5 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  WT_LEFT    92.2 -257.0  10.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  WT_RIGHT   92.2  257.0  10.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  VT_LEFT   -47.4  -69.7 133.8 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  VT_RIGHT  -47.4   69.7 133.8 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  RADOME    648.7    0.0 -17.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+     AC_GEAR  BELLY     187.0    0.0 -37.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
 
   </UNDERCARRIAGE>
 
@@ -74,7 +74,7 @@
     <AC_ENGINE FILE="low_bypass_turbofan">
       XLOC       0.0
       YLOC     -25.5
-      ZLOC       0.0
+      ZLOC     -10.0
       PITCH      0.0
       YAW        0.0
       FEED         0
@@ -84,7 +84,7 @@
     <AC_ENGINE FILE="low_bypass_turbofan">
       XLOC       0.0
       YLOC      25.5
-      ZLOC       0.0
+      ZLOC     -10.0
       PITCH      0.0
       YAW        0.0
       FEED         0
@@ -92,35 +92,35 @@
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="direct">
-      XLOC       0.0
+      XLOC     -50.0
       YLOC     -25.5
-      ZLOC       0.0
+      ZLOC     -10.0
       PITCH      0.0
       YAW        0
     </AC_THRUSTER>
 
     <AC_THRUSTER FILE="direct">
-      XLOC       0.0
+      XLOC     -50.0
       YLOC      25.5
-      ZLOC       0.0
+      ZLOC     -10.0
       PITCH      0.0
       YAW        0
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
-      XLOC     195.0
-      YLOC    -108.0
-      ZLOC      13.2
-      RADIUS    29.4
+      XLOC     224.0
+      YLOC    -114.0
+      ZLOC      10.0
+      RADIUS    29.0
       CAPACITY 185.0
       CONTENTS 100.0
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC     195.0
-      YLOC     108.0
-      ZLOC      13.2
-      RADIUS     0.0
+      XLOC     224.0
+      YLOC     114.0
+      ZLOC      10.0
+      RADIUS    29.0
       CAPACITY 185.0
       CONTENTS 100.0
     </AC_TANK>
@@ -137,7 +137,7 @@
     </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/pitch-trim-sum
-       MIN          -26
+       MIN          -15
        MAX           15
        OUTPUT        fcs/elevator-pos-rad
        GAIN          0.01745
@@ -149,15 +149,15 @@
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/roll-trim-sum
-       MIN          -20
-       MAX           20
+       MIN          -10
+       MAX           10
        GAIN          0.01745
        OUTPUT        fcs/left-aileron-pos-rad
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/roll-trim-sum
-       MIN          -20
-       MAX           20
+       MIN          -10
+       MAX           10
        INVERT
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
@@ -169,8 +169,8 @@
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT        fcs/yaw-trim-sum
-       MIN         -30
-       MAX          30
+       MIN         -20
+       MAX          20
        GAIN         0.01745
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
@@ -239,13 +239,40 @@
            0.785	0.93	0.25
            0.873	0.81	0.22
          </COEFFICIENT>
+<!--
+         <COEFFICIENT NAME="CLmin" TYPE="VALUE">
+           Lift_minimum
+           aero/qbar-psf | metrics/Sw-sqft
+           0.20709
+         </COEFFICIENT>
+-->
        </GROUP>
 
        <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_Elevator_Deflection
-         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad | aero/beta-rad
-         0.0
+         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad
+         0.572957
        </COEFFICIENT>
+
+       <COEFFICIENT NAME="CLadot"  TYPE="VALUE">
+         Lift_due_to_alpha_rate
+         aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
+         17.2232
+       </COEFFICIENT>
+
+       <COEFFICIENT NAME="CLq" TYPE="VALUE">
+         Lift_due_to_pitch_rate
+         aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
+         -17.2232
+       </COEFFICIENT>
+
+<!--
+       <COEFFICIENT NAME="CLM" TYPE="VALUE">
+         Lift_due_to_Mach
+         aero/qbar-psf | metrics/Sw-sqft | velocities/mach-norm
+         7.45058e-6
+       </COEFFICIENT>
+-->
 
     </AXIS>
 
@@ -284,6 +311,7 @@
            0.5	0.01468
            1.4	0.00308
          </COEFFICIENT>
+
          <COEFFICIENT NAME="CDi" TYPE="VECTOR">
            Drag_induced
            16
@@ -306,6 +334,7 @@
            0.785        0.913
            0.873        0.721
          </COEFFICIENT>
+
          <!--
               CDalpha is calculated based on CL and CNb and therefore is accurate
               for alpha of 0 ... 0.558
@@ -337,7 +366,7 @@
       <COEFFICIENT NAME="CDDe" TYPE="VALUE">
         Drag_due_to_Elevator_Deflection
         aero/qbar-psf | metrics/Sw-sqft | fcs/mag-elevator-pos-rad
-        0.0
+        4.38308e-2
       </COEFFICIENT>
 
     </AXIS>
@@ -358,7 +387,7 @@
        <COEFFICIENT NAME="CYda" TYPE="VALUE">
          Side_force_due_to_aileron
          aero/qbar-psf | metrics/Sw-sqft | fcs/left-aileron-pos-rad
-         0.00
+         -1.1516e-3
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
@@ -457,6 +486,18 @@
           0.873		-0.5157
         </COEFFICIENT>
       </GROUP>
+
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
+        -11.887
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CmM" TYPE="VALUE">
+        Pitch_moment_due_to_Mach
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | velocities/mach-norm
+        -7.05586e-6
+      </COEFFICIENT>
 
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
          Pitch_moment_due_to_pitch_rate
