@@ -54,6 +54,7 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
+#include "FGConfigFile.h"
 
 /*******************************************************************************
 CLASS DECLARATION

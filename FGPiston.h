@@ -52,7 +52,7 @@ class FGPiston : public FGEngine
 {
 
 public:
-  FGPiston();
+  FGPiston(FGFDMExec*, string, string, int);
   ~FGPiston();
 
 };

@@ -45,7 +45,8 @@ INCLUDES
 *******************************************************************************/
 
 
-FGTurboJet::FGTurboJet() : FGEngine()
+FGTurboJet::FGTurboJet(FGFDMExec* fdex, string enginePath, string engineName, int num) :
+                                 FGEngine(fdex, enginePath, engineName, num)
 {
   //
 }

@@ -45,7 +45,8 @@ INCLUDES
 *******************************************************************************/
 
 
-FGPiston::FGPiston() : FGEngine()
+FGPiston::FGPiston(FGFDMExec* fdex, string enginePath, string engineName, int num) :
+                                 FGEngine(fdex, enginePath, engineName, num)
 {
   //
 }

@@ -52,7 +52,7 @@ class FGTurboJet : public FGEngine
 {
 
 public:
-  FGTurboJet();
+  FGTurboJet(FGFDMExec*, string, string, int);
   ~FGTurboJet();
 
 };

@@ -45,7 +45,7 @@ INCLUDES
 *******************************************************************************/
 
 
-FGMassBalance::FGMassBalance() : FGModel()
+FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   //
 }

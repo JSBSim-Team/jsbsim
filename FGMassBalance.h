@@ -52,7 +52,7 @@ class FGMassBalance : public FGModel
 {
 
 public:
-  FGMassBalance();
+  FGMassBalance(FGFDMExec*);
   ~FGMassBalance();
 
   bool Run(void);

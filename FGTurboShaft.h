@@ -52,7 +52,7 @@ class FGTurboShaft : public FGEngine
 {
 
 public:
-  FGTurboShaft();
+  FGTurboShaft(FGFDMExec*, string, string, int);
   ~FGTurboShaft();
 
 };

@@ -19,10 +19,10 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
   FGTranslation.obj FGAircraft.obj FGfcsComponent.obj FGSwitch.obj FGFilter.obj \
-  FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGTrimLong.obj \
-  FGFlaps.obj FGForce.obj FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj \
-  FGThruster.obj FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj \
-  FGTurboShaft.obj FGPropulsion.obj FGGroundReactions.obj FGAerodynamics.obj
+  FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
+  FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj FGThruster.obj \
+  FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj FGTurboShaft.obj \
+  FGPropulsion.obj FGGroundReactions.obj FGAerodynamics.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =

@@ -45,7 +45,8 @@ INCLUDES
 *******************************************************************************/
 
 
-FGRocket::FGRocket() : FGEngine()
+FGRocket::FGRocket(FGFDMExec* fdex, string enginePath, string engineName, int num) :
+                                 FGEngine(fdex, enginePath, engineName, num)
 {
   //
 }

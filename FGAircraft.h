@@ -100,13 +100,16 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
+#    include <iterator>
 #    include <map>
 #  else
 #    include <vector.h>
+#    include <iterator.h>
 #    include <map.h>
 #  endif
 #else
 #  include <vector>
+#  include <iterator>
 #  include <map>
 #endif
 
@@ -174,6 +177,8 @@ public:
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
 
+  vector <FGLGear>::iterator iGear;
+
   enum { ssSimulation      = 1,
          ssAerosurfaces    = 2,
          ssRates           = 4,
@@ -231,6 +236,7 @@ private:
 
   string Axis[6];
   vector <FGLGear*> lGear;
+
   string AircraftPath;
   string EnginePath;
   void ReadMetrics(FGConfigFile*);

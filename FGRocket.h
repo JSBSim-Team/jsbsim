@@ -52,7 +52,7 @@ class FGRocket : public FGEngine
 {
 
 public:
-  FGRocket();
+  FGRocket(FGFDMExec*, string, string, int);
   ~FGRocket();
 
 };
