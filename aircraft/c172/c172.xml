@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.66 2001/12/02 16:00:36 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.67 2001/12/06 20:56:54 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -42,10 +42,11 @@
     AC_IYY    1346
     AC_IZZ    1967
     AC_IXZ    0
-    AC_EMPTYWT  1700
-    AC_AERORP   43.2  0.0 59.4
-    AC_CGLOC    41.0  0.0 36.5
-    AC_EYEPTLOC 37.0  0.0 48.0
+    AC_EMPTYWT   1700
+    AC_AERORP    43.2  0.0 59.4
+    AC_CGLOC     41.0  0.0 36.5
+    AC_POINTMASS 180.0 36.0 -14.0 24.0
+    AC_EYEPTLOC  37.0  0.0 48.0
     AC_ALPHALIMITS -0.087 0.28
 
   </METRICS>
@@ -491,7 +492,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF

@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.45 2001/11/30 13:46:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.46 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,10 +95,7 @@ extern double globalTriNormal[3];
 extern double globalSceneryAltitude;
 extern double globalSeaLevelRadius;
 
-FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
-    vVel(3),
-    vVelDot(3),
-    vRunwayNormal(3)
+FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;

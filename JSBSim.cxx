@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.88 2001/12/04 13:08:17 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.89 2001/12/06 20:56:54 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -263,7 +263,7 @@ bool FGJSBsim::update( int multiloop ) {
         fdmex->Run();
     }
 
-    struct FGJSBBase::Message* msg;
+    FGJSBBase::Message* msg;
     while (fdmex->ReadMessage()) {
       msg = fdmex->ProcessMessage();
       switch (msg->type) {

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.60 2001/12/04 13:08:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.61 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,9 +62,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec),
-                                              Forces(3),
-                                              Moments(3)
+FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
   Name = "FGPropulsion";
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
@@ -90,16 +88,16 @@ bool FGPropulsion::Run(void)
   double PowerAvailable;
   dt = State->Getdt();
 
-  Forces.InitMatrix();
-  Moments.InitMatrix();
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
 
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
       Thrusters[i]->SetdeltaT(dt*rate);
       PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
       Thrusters[i]->Calculate(PowerAvailable);
-      Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
-      Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+      vForces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+      vMoments += Thrusters[i]->GetMoments();     // sum body frame moments
     }
     return false;
   } else {
@@ -117,8 +115,8 @@ bool FGPropulsion::GetSteadyState(void)
   int steady_count,j=0;
   bool steady=false;
 
-  Forces.InitMatrix();
-  Moments.InitMatrix();
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
 
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
@@ -138,8 +136,8 @@ bool FGPropulsion::GetSteadyState(void)
         }
         j++;    
       }
-      Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
-      Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+      vForces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+      vMoments += Thrusters[i]->GetMoments();     // sum body frame moments
       Engines[i]->SetTrimMode(false);
     }
 
@@ -158,8 +156,8 @@ bool FGPropulsion::ICEngineStart(void)
   int j;
   dt = State->Getdt();
 
-  Forces.InitMatrix();
-  Moments.InitMatrix();
+  vForces.InitMatrix();
+  vMoments.InitMatrix();
     
   for (unsigned int i=0; i<numEngines; i++) {
     Engines[i]->SetTrimMode(true);
@@ -170,8 +168,8 @@ bool FGPropulsion::ICEngineStart(void)
       Thrusters[i]->Calculate(PowerAvailable);
       j++;    
     }
-    Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
-    Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+    vForces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+    vMoments += Thrusters[i]->GetMoments();     // sum body frame moments
     Engines[i]->SetTrimMode(false);
   }
   return true;

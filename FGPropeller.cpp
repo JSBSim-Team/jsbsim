@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.38 2001/12/04 20:03:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.39 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,8 +155,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   if (P_Factor > 0.0001) {
     alpha = fdmex->GetTranslation()->Getalpha();
     beta  = fdmex->GetTranslation()->Getbeta();
-    SetLocationY( GetLocationY() + P_Factor*alpha*fabs(Sense)/Sense);
-    SetLocationZ( GetLocationZ() + P_Factor*beta*fabs(Sense)/Sense);
+    SetActingLocationY( GetLocationY() + P_Factor*alpha*fabs(Sense)/Sense);
+    SetActingLocationZ( GetLocationZ() + P_Factor*beta*fabs(Sense)/Sense);
   } else if (P_Factor < 0.000) {
     cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
@@ -175,10 +175,10 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   if (omega <= 5) omega = 1.0;
 
-  Torque = PowerAvailable / omega;
-  RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+  Torque(eX) = -(PowerAvailable / omega) * Sense;
 
-  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque*Sense;
+  RPM = (RPS + ((fabs(Torque(eX)) / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque;
 
   return Thrust; // return thrust in pounds
 }

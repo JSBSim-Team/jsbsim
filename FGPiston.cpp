@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.38 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.39 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,9 +68,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   Cycles=2;
   IdleRPM=600;
   // Set constants
- 
-  
-  
+
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
   while (Eng_cfg->GetValue() != string("/FG_PISTON")) {

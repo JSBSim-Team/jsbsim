@@ -1,9 +1,9 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Module: FGMatrix33.cpp
+Module: FGColumnVector3.cpp
 Author: Originally by Tony Peden [formatted here (and broken??) by JSB]
 Date started: 1998
-Purpose: FGMatrix33 class
+Purpose: FGColumnVector3 class
 Called by: Various
 
 FUNCTIONAL DESCRIPTION
@@ -19,10 +19,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGColumnVector3.h"
-#include "FGMatrix33.h"
 
-
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.11 2001/12/06 14:14:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.12 2001/12/06 20:56:53 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,10 +37,10 @@ FGColumnVector3::FGColumnVector3(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3::FGColumnVector3(int m)
+FGColumnVector3::FGColumnVector3(double X, double Y, double Z)
 {
   rowCtr = 1;
-  data[0]=0; data[1]=0; data[2]=0; data[3]=0;
+  data[0] = 0; data[eX] = X; data[eY] = Y; data[eZ] = Z;
 
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }

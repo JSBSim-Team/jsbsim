@@ -48,24 +48,14 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.25 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.26 2001/12/06 20:56:53 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
-    ttype(tNone),
-    fdmex(FDMExec),
-    vFn(3),
-    vMn(3),
-    vH(3),
-    vFb(3),
-    vM(3),
-    vXYZn(3),
-    vDXYZ(3),
-    vSense(3),
-    mT(3,3)
-    
+                 ttype(tNone),
+                 fdmex(FDMExec)
 {
   mT(1,1) = 1; //identity matrix
   mT(2,2) = 1;
@@ -83,15 +73,17 @@ FGForce::~FGForce()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGForce::GetBodyForces(void) {
-
+FGColumnVector3& FGForce::GetBodyForces(void)
+{
   vFb = Transform()*(vFn.multElementWise(vSense));
 
-  //find the distance from this vector's location to the cg
-  //needs to be done like this to convert from structural to body coords
-  vDXYZ(1) = -(vXYZn(1) - fdmex->GetMassBalance()->GetXYZcg(1))*inchtoft;
-  vDXYZ(2) =  (vXYZn(2) - fdmex->GetMassBalance()->GetXYZcg(2))*inchtoft;  //cg and rp values are in inches
-  vDXYZ(3) = -(vXYZn(3) - fdmex->GetMassBalance()->GetXYZcg(3))*inchtoft;
+  // Find the distance from this vector's acting location to the cg; this
+  // needs to be done like this to convert from structural to body coords.
+  // CG and RP values are in inches
+
+  vDXYZ(eX) = -(vActingXYZn(eX) - fdmex->GetMassBalance()->GetXYZcg(eX))*inchtoft;
+  vDXYZ(eY) =  (vActingXYZn(eY) - fdmex->GetMassBalance()->GetXYZcg(eY))*inchtoft;
+  vDXYZ(eZ) = -(vActingXYZn(eZ) - fdmex->GetMassBalance()->GetXYZcg(eZ))*inchtoft;
 
   vM = vMn + vDXYZ*vFb;
 
@@ -100,7 +92,8 @@ FGColumnVector3& FGForce::GetBodyForces(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGForce::Transform(void) {
+FGMatrix33 FGForce::Transform(void)
+{
   switch(ttype) {
   case tWindBody:
     return fdmex->GetState()->GetTs2b();
@@ -118,9 +111,9 @@ FGMatrix33 FGForce::Transform(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw) {
-
-  if(ttype == tCustom) {
+void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw)
+{
+  if (ttype == tCustom) {
     double cp,sp,cr,sr,cy,sy;
 
     cp=cos(bpitch); sp=sin(bpitch);
@@ -139,7 +132,6 @@ void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw) {
     mT(3,2)=cr*sp*sy-sr*cy;
     mT(3,3)=cr*cp;
   }
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

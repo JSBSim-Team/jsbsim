@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.92 2001/12/02 15:58:53 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.93 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,19 +73,7 @@ CLASS IMPLEMENTATION
 // entry in the enum eParam definition in FGJSBBase.h. The ID is what must be used
 // in any config file entry which references that item.
 
-FGState::FGState(FGFDMExec* fdex) : 
-    mTb2l(3,3),
-    mTl2b(3,3),
-    mTs2b(3,3),
-    mTb2s(3,3),
-    vQtrn(4),
-    vlastQdot(4),
-    vQdot(4),
-    vUVW(3),
-    vLocalVelNED(3),
-    vLocalEuler(3),
-    vTmp(4),
-    vEuler(3)
+FGState::FGState(FGFDMExec* fdex)
 {
   FDMExec = fdex;
 
@@ -323,13 +311,17 @@ double FGState::GetParameter(string val_string) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-eParam FGState::GetParameterIndex(string val_string) {
+eParam FGState::GetParameterIndex(string val_string)
+{
   return coeffdef[val_string];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::SetParameter(eParam val_idx, double val) {
+void FGState::SetParameter(eParam val_idx, double val)
+{
+  int i;
+
   switch(val_idx) {
   case FG_ELEVATOR_POS:
     FCS->SetDePos(val);
@@ -350,10 +342,22 @@ void FGState::SetParameter(eParam val_idx, double val) {
     FCS->SetDfPos(val);
     break;
   case FG_THROTTLE_POS:
-    FCS->SetThrottlePos(ActiveEngine,val);
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        FCS->SetThrottlePos(i,val);
+	    }
+	  } else {
+      FCS->SetThrottlePos(ActiveEngine,val);
+	  }
     break;
   case FG_MIXTURE_POS:
-    FCS->SetMixturePos(ActiveEngine,val);
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        FCS->SetMixturePos(i,val);
+	    }
+	  } else {
+      FCS->SetMixturePos(ActiveEngine,val);
+	  }
     break;
 
   case FG_ELEVATOR_CMD:
@@ -375,19 +379,43 @@ void FGState::SetParameter(eParam val_idx, double val) {
     FCS->SetDfCmd(val);
     break;
   case FG_THROTTLE_CMD:
-    FCS->SetThrottleCmd(ActiveEngine,val);
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        FCS->SetThrottleCmd(i,val);
+	    }
+	  } else {
+      FCS->SetThrottleCmd(ActiveEngine,val);
+	  }
     break;
   case FG_MIXTURE_CMD:
-    FCS->SetMixtureCmd(ActiveEngine,val);
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        FCS->SetMixtureCmd(i,val);
+	    }
+	  } else {
+      FCS->SetMixtureCmd(ActiveEngine,val);
+	  }
     break;
   case FG_MAGNETO_CMD:
-    Propulsion->GetEngine(ActiveEngine)->SetMagnetos((int)val); // need to account for -1
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        Propulsion->GetEngine(i)->SetMagnetos((int)val);
+      }
+    } else {
+      Propulsion->GetEngine(ActiveEngine)->SetMagnetos((int)val);
+    }
     break;
   case FG_STARTER_CMD:
-    if      (val < 0.001) 
-      Propulsion->GetEngine(ActiveEngine)->SetStarter(false); // need to account for -1
-    else if (val >=  0.001)
-      Propulsion->GetEngine(ActiveEngine)->SetStarter(true); // need to account for -1
+    if (ActiveEngine == -1) {
+      for (i=0; i<Propulsion->GetNumEngines(); i++) {
+        if (val < 0.001) 
+          Propulsion->GetEngine(i)->SetStarter(false);
+        else if (val >=  0.001)
+          Propulsion->GetEngine(i)->SetStarter(true);
+      }
+    } else {
+      Propulsion->GetEngine(ActiveEngine)->SetStarter(true);
+    }
     break;
   case FG_ACTIVE_ENGINE:
     ActiveEngine = (int)val;

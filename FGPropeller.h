@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.21 2001/12/04 20:03:40 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.22 2001/12/06 20:56:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.21 2001/12/04 20:03:40 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.22 2001/12/06 20:56:54 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -129,7 +129,7 @@ public:
   double GetIxx(void)           { return Ixx;           }
   
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
-  double GetTorque(void)        { return Torque;        }
+  double GetTorque(void)        { return Torque(eX);    }
   
   /** Retrieves the power required (or "absorbed") by the propeller -
       i.e. the power required to keep spinning the propeller at the current
@@ -159,7 +159,7 @@ private:
   double P_Factor;
   double Sense;
   double Pitch;
-  double Torque;
+  FGColumnVector3 Torque;
   FGTable *cThrust;
   FGTable *cPower;
   void Debug(void);

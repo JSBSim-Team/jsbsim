@@ -44,8 +44,9 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGPropulsion.h"
+#include <vector>
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.13 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.14 2001/12/06 20:56:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -65,8 +66,8 @@ public:
   inline double GetIxx(void) {return Ixx;}
   inline double GetIyy(void) {return Iyy;}
   inline double GetIzz(void) {return Izz;}
+  inline double GetIxy(void) {return Ixy;}
   inline double GetIxz(void) {return Ixz;}
-  inline double GetIyz(void) {return Iyz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) {return vXYZcg(axis);}
 
@@ -74,9 +75,18 @@ public:
   inline void SetBaseIxx(double bixx)   { baseIxx = bixx;}
   inline void SetBaseIyy(double biyy)   { baseIyy = biyy;}
   inline void SetBaseIzz(double bizz)   { baseIzz = bizz;}
+  inline void SetBaseIxy(double bixy)   { baseIxy = bixy;}
   inline void SetBaseIxz(double bixz)   { baseIxz = bixz;}
-  inline void SetBaseIyz(double biyz)   { baseIyz = biyz;}
   inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = CG;}
+  
+  void AddPointMass(double weight, double X, double Y, double Z);
+  double GetPointMassWeight(void);
+  FGColumnVector3& GetPointMassCG(void);
+  double GetPMIxx(void);
+  double GetPMIyy(void);
+  double GetPMIzz(void);
+  double GetPMIxy(void);
+  double GetPMIxz(void);
 
 private:
   double Weight;
@@ -85,16 +95,19 @@ private:
   double Ixx;
   double Iyy;
   double Izz;
+  double Ixy;
   double Ixz;
-  double Iyz;
   double baseIxx;
   double baseIyy;
   double baseIzz;
+  double baseIxy;
   double baseIxz;
-  double baseIyz;
   FGColumnVector3 vXYZcg;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;
+  vector <FGColumnVector3> PointMassLoc;
+  vector <double> PointMassWeight;
+  FGColumnVector3 PointMassCG;
   void Debug(void);
 };
 

@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.21 2001/12/01 17:58:42 apeden Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.22 2001/12/06 20:56:53 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.21 2001/12/01 17:58:42 apeden Exp $
+    @version $Id: FGForce.h,v 1.22 2001/12/06 20:56:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -244,27 +244,49 @@ public:
   inline FGColumnVector3& GetNativeForces(void) { return vFn; }
   inline FGColumnVector3& GetNativeMoments(void) { return vMn; }
 
-
   FGColumnVector3& GetBodyForces(void);
 
   inline FGColumnVector3& GetMoments(void) { return vM; }
 
-  //point of application, JSBsim structural coords
-  //(inches, x +back, y +right, z +up)
+  // Normal point of application, JSBsim structural coords
+  // (inches, x +back, y +right, z +up)
   inline void SetLocation(double x, double y, double z) {
-    vXYZn(1) = x;
-    vXYZn(2) = y;
-    vXYZn(3) = z;
+    vXYZn(eX) = x;
+    vXYZn(eY) = y;
+    vXYZn(eZ) = z;
+    SetActingLocation(x, y, z);
   }
-  inline void SetLocationX(double x) {vXYZn(1) = x;}
-  inline void SetLocationY(double y) {vXYZn(2) = y;}
-  inline void SetLocationZ(double z) {vXYZn(3) = z;}
-  inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; }
   
-  inline double GetLocationX( void ) { return vXYZn(1);}
-  inline double GetLocationY( void ) { return vXYZn(2);}
-  inline double GetLocationZ( void ) { return vXYZn(3);}
+  /** Acting point of application.
+      JSBsim structural coords used (inches, x +back, y +right, z +up).
+      This function sets the point at which the force acts - this may
+      not be the same as where the object resides. One area where this
+      is true is P-Factor modeling.
+      @param x acting location of force
+      @param y acting location of force
+      @param z acting location of force    */
+  inline void SetActingLocation(double x, double y, double z) {
+    vActingXYZn(eX) = x;
+    vActingXYZn(eY) = y;
+    vActingXYZn(eZ) = z;
+  }
+  inline void SetLocationX(double x) {vXYZn(eX) = x; vActingXYZn(eX) = x;}
+  inline void SetLocationY(double y) {vXYZn(eY) = y; vActingXYZn(eY) = y;}
+  inline void SetLocationZ(double z) {vXYZn(eZ) = z; vActingXYZn(eZ) = z;}
+  inline void SetActingLocationX(double x) {vActingXYZn(eX) = x;}
+  inline void SetActingLocationY(double y) {vActingXYZn(eY) = y;}
+  inline void SetActingLocationZ(double z) {vActingXYZn(eZ) = z;}
+  inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; SetActingLocation(vv);}
+  inline void SetActingLocation(FGColumnVector3 vv) { vActingXYZn = vv; }
+  
+  inline double GetLocationX( void ) { return vXYZn(eX);}
+  inline double GetLocationY( void ) { return vXYZn(eY);}
+  inline double GetLocationZ( void ) { return vXYZn(eZ);}
+  inline double GetActingLocationX( void ) { return vActingXYZn(eX);}
+  inline double GetActingLocationY( void ) { return vActingXYZn(eY);}
+  inline double GetActingLocationZ( void ) { return vActingXYZn(eZ);}
   FGColumnVector3& GetLocation(void) { return vXYZn; }
+  FGColumnVector3& GetActingLocation(void) { return vActingXYZn; }
 
   //these angles are relative to body axes, not earth!!!!!
   //I'm using these because pitch, roll, and yaw are easy to visualize,
@@ -274,9 +296,11 @@ public:
   //They are in radians.
 
   void SetAnglesToBody(double broll, double bpitch, double byaw);
-  inline void  SetAnglesToBody(FGColumnVector3 vv) { SetAnglesToBody(vv(1), vv(2), vv(3));}
+  inline void  SetAnglesToBody(FGColumnVector3 vv) {
+    SetAnglesToBody(vv(eRoll), vv(ePitch), vv(eYaw));
+  }
 
-  inline void SetSense(double x, double y, double z) { vSense(1)=x, vSense(2)=y, vSense(3)=z; }
+  inline void SetSense(double x, double y, double z) { vSense(eX)=x, vSense(eY)=y, vSense(eZ)=z; }
   inline void SetSense(FGColumnVector3 vv) { vSense=vv; }
 
   inline FGColumnVector3& GetSense(void) { return vSense; }
@@ -298,6 +322,7 @@ private:
   FGColumnVector3 vFb;
   FGColumnVector3 vM;
   FGColumnVector3 vXYZn;
+  FGColumnVector3 vActingXYZn;
   FGColumnVector3 vDXYZ;
   FGColumnVector3 vSense;
 

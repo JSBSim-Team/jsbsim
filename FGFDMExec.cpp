@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.68 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.69 2001/12/06 20:56:53 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -640,6 +640,7 @@ void FGFDMExec::RunScript(void)
             iC->newValue[i] = iC->OriginalValue[i] + iC->SetValue[i];
             break;
           case FG_BOOL:
+            iC->newValue[i] = iC->SetValue[i];
             break;
           default:
             cerr << "Invalid Type specified" << endl;
@@ -651,7 +652,7 @@ void FGFDMExec::RunScript(void)
 
         switch (iC->Action[i]) {
         case FG_RAMP:
-          newSetValue = (currentTime - iC->StartTime[i])/(iC->TC[i])
+        newSetValue = (currentTime - iC->StartTime[i])/(iC->TC[i])
                       * (iC->newValue[i] - iC->OriginalValue[i]) + iC->OriginalValue[i];
           if (newSetValue > iC->newValue[i]) newSetValue = iC->newValue[i];
           break;
@@ -667,9 +668,6 @@ void FGFDMExec::RunScript(void)
           break;
         }
         State->SetParameter(iC->SetParam[i], newSetValue);
-        if ((unsigned long int)Propulsion->GetTank(0) == 0) {
-          cout << "Param # getting set: " << iC->SetParam[i] << " Value: " << newSetValue << endl;
-        }
       }
     }
     iC++;

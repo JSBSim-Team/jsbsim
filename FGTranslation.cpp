@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.34 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.35 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,12 +77,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
-    vUVW(3),
-    vUVWdot(3),
-    vlastUVWdot(3),
-    mVel(3,3),
-    vAeroUVW(3)
+FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGTranslation";
   qbar = 0;

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.46 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.47 2001/12/06 20:56:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.46 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.47 2001/12/06 20:56:53 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -294,18 +294,18 @@ private:
   struct condition {
     vector <eParam>  TestParam;
     vector <eParam>  SetParam;
-    vector <double>   TestValue;
-    vector <double>   SetValue;
+    vector <double>  TestValue;
+    vector <double>  SetValue;
     vector <string>  Comparison;
-    vector <double>   TC;
+    vector <double>  TC;
     vector <bool>    Persistent;
     vector <eAction> Action;
     vector <eType>   Type;
     vector <bool>    Triggered;
-    vector <double>   newValue;
-    vector <double>   OriginalValue;
-    vector <double>   StartTime;
-    vector <double>   EndTime;
+    vector <double>  newValue;
+    vector <double>  OriginalValue;
+    vector <double>  StartTime;
+    vector <double>  EndTime;
 
     condition() {
     }

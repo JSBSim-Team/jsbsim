@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.30 2001/12/01 17:58:41 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.31 2001/12/06 20:56:53 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,15 +68,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                               vDirectiondAccelDt(3),
-                                               vDirectionAccel(3),
-                                               vDirection(3),
-                                               vTurbulence(3),
-                                               vTurbulenceGrad(3),
-                                               vBodyTurbGrad(3),
-                                               vTurbPQR(3),
-                                               vWindNED(3)
+FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAtmosphere";
   lastIndex=0;

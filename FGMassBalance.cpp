@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.15 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.16 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,20 +68,22 @@ bool FGMassBalance::Run(void)
 {
   if (!FGModel::Run()) {
 
-    Weight = EmptyWeight + Propulsion->GetTanksWeight();
+    Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
 
     Mass = Weight / Inertial->gravity();
 
 // Calculate new CG here.
 
-    vXYZcg = (Propulsion->GetTanksCG() + EmptyWeight*vbaseXYZcg) / Weight;
+    vXYZcg = (Propulsion->GetTanksCG() + EmptyWeight*vbaseXYZcg
+                                       + GetPointMassCG()       ) / Weight;
 
 // Calculate new moments of inertia here
 
-    Ixx = baseIxx + Propulsion->GetTanksIxx(vXYZcg);
-    Iyy = baseIyy + Propulsion->GetTanksIyy(vXYZcg);
-    Izz = baseIzz + Propulsion->GetTanksIzz(vXYZcg);
-    Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg);
+    Ixx = baseIxx + Propulsion->GetTanksIxx(vXYZcg) + GetPMIxx();
+    Iyy = baseIyy + Propulsion->GetTanksIyy(vXYZcg) + GetPMIyy();
+    Izz = baseIzz + Propulsion->GetTanksIzz(vXYZcg) + GetPMIzz();
+    Ixy = baseIxy + Propulsion->GetTanksIxy(vXYZcg) + GetPMIxy();
+    Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg) + GetPMIxz();
 
     if (debug_lvl > 1) Debug();
 
@@ -89,6 +91,103 @@ bool FGMassBalance::Run(void)
   } else {
     return true;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGMassBalance::AddPointMass(double weight, double X, double Y, double Z)
+{
+  PointMassLoc.push_back(*(new FGColumnVector3(X, Y, Z)));
+  PointMassWeight.push_back(weight);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPointMassWeight(void)
+{
+  double PM_total_weight = 0.0;
+
+  for (unsigned int i=0; i<PointMassWeight.size(); i++) {
+    PM_total_weight += PointMassWeight[i];
+  }
+  return PM_total_weight;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGMassBalance::GetPointMassCG(void)
+{
+  PointMassCG.InitMatrix();
+
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    PointMassCG += PointMassWeight[i]*PointMassLoc[i];
+  }
+  if (PointMassWeight.size() == 0) {
+    return PointMassCG;
+  } else {
+    PointMassCG /= GetPointMassWeight();
+    return PointMassCG;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPMIxx(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += PointMassLoc[i](eX)*PointMassLoc[i](eX)*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPMIyy(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += PointMassLoc[i](eY)*PointMassLoc[i](eY)*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPMIzz(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += PointMassLoc[i](eZ)*PointMassLoc[i](eZ)*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPMIxy(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += PointMassLoc[i](eX)*PointMassLoc[i](eY)*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGMassBalance::GetPMIxz(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += PointMassLoc[i](eX)*PointMassLoc[i](eZ)*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

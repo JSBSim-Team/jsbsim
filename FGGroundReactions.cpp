@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.18 2001/12/02 15:55:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.19 2001/12/06 20:56:54 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,11 +45,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
-                                                        vForces(3),
-                                                        vMoments(3),
-                                                        vMaxStaticGrip(3),
-                                                        vMaxMomentResist(3)
+FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 {
   Name = "FGGroundReactions";
 
