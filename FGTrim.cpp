@@ -57,7 +57,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.28 2001/11/11 22:26:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.29 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,8 +104,8 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     break;
   }
   //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
-  sub_iterations=new float[TrimAxes.size()];
-  successful=new float[TrimAxes.size()];
+  sub_iterations=new double[TrimAxes.size()];
+  successful=new double[TrimAxes.size()];
   solution=new bool[TrimAxes.size()];
   current_axis=0;
   
@@ -138,7 +138,7 @@ void FGTrim::TrimStats() {
       snprintf(out,80,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
                   TrimAxes[current_axis]->GetStateName().c_str(),
                   sub_iterations[current_axis],
-                  sub_iterations[current_axis]/float(total_its),
+                  sub_iterations[current_axis]/double(total_its),
                   successful[current_axis],
                   TrimAxes[current_axis]->GetAvgStability() );
       cout << out;
@@ -192,8 +192,8 @@ bool FGTrim::AddState( State state, Control control ) {
     delete[] sub_iterations;
     delete[] successful;
     delete[] solution;
-    sub_iterations=new float[TrimAxes.size()];
-    successful=new float[TrimAxes.size()];
+    sub_iterations=new double[TrimAxes.size()];
+    successful=new double[TrimAxes.size()];
     solution=new bool[TrimAxes.size()];
   }
   return result;
@@ -221,8 +221,8 @@ bool FGTrim::RemoveState( State state ) {
     delete[] sub_iterations;
     delete[] successful;
     delete[] solution;
-    sub_iterations=new float[TrimAxes.size()];
-    successful=new float[TrimAxes.size()];
+    sub_iterations=new double[TrimAxes.size()];
+    successful=new double[TrimAxes.size()];
     solution=new bool[TrimAxes.size()];
   }  
   return result;
@@ -365,9 +365,9 @@ bool FGTrim::DoTrim(void) {
 
 bool FGTrim::solve(void) {
 
-  float x1,x2,x3,f1,f2,f3,d,d0;
-  const float relax =0.9;
-  float eps=TrimAxes[current_axis]->GetSolverEps();
+  double x1,x2,x3,f1,f2,f3,d,d0;
+  const double relax =0.9;
+  double eps=TrimAxes[current_axis]->GetSolverEps();
 
   x1=x2=x3=0;
   d=1;
@@ -446,12 +446,12 @@ bool FGTrim::solve(void) {
 */
 bool FGTrim::findInterval(void) {
   bool found=false;
-  float step;
-  float current_control=TrimAxes[current_axis]->GetControl();
-  float current_accel=TrimAxes[current_axis]->GetState();;
-  float xmin=TrimAxes[current_axis]->GetControlMin();
-  float xmax=TrimAxes[current_axis]->GetControlMax();
-  float lastxlo,lastxhi,lastalo,lastahi;
+  double step;
+  double current_control=TrimAxes[current_axis]->GetControl();
+  double current_accel=TrimAxes[current_axis]->GetState();;
+  double xmin=TrimAxes[current_axis]->GetControlMin();
+  double xmax=TrimAxes[current_axis]->GetControlMax();
+  double lastxlo,lastxhi,lastalo,lastahi;
   
   step=0.025*fabs(xmax);
   xlo=xhi=current_control;
@@ -516,8 +516,8 @@ bool FGTrim::findInterval(void) {
 
 bool FGTrim::checkLimits(void) {
   bool solutionExists;
-  float current_control=TrimAxes[current_axis]->GetControl();
-  float current_accel=TrimAxes[current_axis]->GetState();
+  double current_control=TrimAxes[current_axis]->GetControl();
+  double current_accel=TrimAxes[current_axis]->GetState();
   xlo=TrimAxes[current_axis]->GetControlMin();
   xhi=TrimAxes[current_axis]->GetControlMax();
 

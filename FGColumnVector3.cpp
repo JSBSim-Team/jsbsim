@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.8 2001/10/15 11:49:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.9 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,7 +218,7 @@ FGColumnVector3 operator*(const double scalar, const FGColumnVector3& C)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGColumnVector3::Magnitude(void)
+double FGColumnVector3::Magnitude(void)
 {
   double num;
 
@@ -307,7 +307,7 @@ ostream& operator<<(ostream& os, const FGColumnVector3& col)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGColumnVector3::operator<<(const float ff)
+FGColumnVector3& FGColumnVector3::operator<<(const double ff)
 {
   data[rowCtr] = ff;
   if (++rowCtr > 3 )

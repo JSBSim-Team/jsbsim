@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.23 2001/11/14 23:53:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.23 2001/11/14 23:53:25 jberndt Exp $
 */
 
 /******************************************************************************
@@ -91,32 +91,32 @@ public:
   bool InitModel(void);
 
   /// Returns the temperature in degrees Rankine.
-  inline float GetTemperature(void) {return temperature;}
+  inline double GetTemperature(void) {return temperature;}
   /** Returns the density in slugs/ft^3.
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  inline float GetDensity(void)    {return density;}
+  inline double GetDensity(void)    {return density;}
   /// Returns the pressure in psf.
-  inline float GetPressure(void)   {return pressure;}
+  inline double GetPressure(void)   {return pressure;}
   /// Returns the speed of sound in ft/sec.
-  inline float GetSoundSpeed(void) {return soundspeed;}
+  inline double GetSoundSpeed(void) {return soundspeed;}
 
   /// Returns the sea level temperature in degrees Rankine.
-  inline float GetTemperatureSL(void) { return SLtemperature; }
+  inline double GetTemperatureSL(void) { return SLtemperature; }
   /// Returns the sea level density in slugs/ft^3
-  inline float GetDensitySL(void)     { return SLdensity; }
+  inline double GetDensitySL(void)     { return SLdensity; }
   /// Returns the sea level pressure in psf.
-  inline float GetPressureSL(void)    { return SLpressure; }
+  inline double GetPressureSL(void)    { return SLpressure; }
   /// Returns the sea level speed of sound in ft/sec.
-  inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }
+  inline double GetSoundSpeedSL(void)  { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
-  inline float GetTemperatureRatio(void)  { return temperature*rSLtemperature; }
+  inline double GetTemperatureRatio(void)  { return temperature*rSLtemperature; }
   /// Returns the ratio of at-altitude density over the sea level value.
-  inline float GetDensityRatio(void) 	  { return density*rSLdensity; }
+  inline double GetDensityRatio(void) 	  { return density*rSLdensity; }
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  inline float GetPressureRatio(void)     { return pressure*rSLpressure; }
+  inline double GetPressureRatio(void)     { return pressure*rSLpressure; }
   /// Returns the ratio of at-altitude sound speed over the sea level value.
-  inline float GetSoundSpeedRatio(void)   { return soundspeed*rSLsoundspeed; }
+  inline double GetSoundSpeedRatio(void)   { return soundspeed*rSLsoundspeed; }
 
   /// Tells the simulator to use an externally calculated atmosphere model.
   inline void UseExternal(void)          { useExternal=true;  }
@@ -126,21 +126,21 @@ public:
   bool External(void) { return useExternal; }
 
   /// Provides the external atmosphere model with an interface to set the temperature.
-  inline void SetExTemperature(float t)  { exTemperature=t; }
+  inline void SetExTemperature(double t)  { exTemperature=t; }
   /// Provides the external atmosphere model with an interface to set the density.
-  inline void SetExDensity(float d)      { exDensity=d; }
+  inline void SetExDensity(double d)      { exDensity=d; }
   /// Provides the external atmosphere model with an interface to set the pressure.
-  inline void SetExPressure(float p)     { exPressure=p; }
+  inline void SetExPressure(double p)     { exPressure=p; }
 
   /// Sets the wind components in NED frame.
-  inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
+  inline void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
   /// Retrieves the wind components in NED frame.
   inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
   
   /** Retrieves the wind direction. The direction is defined as north=0 and
       increases counterclockwise. The wind heading is returned in radians.*/
-  inline float GetWindPsi(void) { return psiw; }
+  inline double GetWindPsi(void) { return psiw; }
   
 private:
   double rho;
@@ -157,7 +157,7 @@ private:
   FGColumnVector3 vWindNED;
   double psiw;
 
-  void Calculate(float altitude);
+  void Calculate(double altitude);
   void Debug(void);
 };
 

@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.23 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.24 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,11 +143,11 @@ bool FGAtmosphere::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAtmosphere::Calculate(float altitude)
+void FGAtmosphere::Calculate(double altitude)
 {
   //see reference [1]
 
-  float slope,reftemp,refpress;
+  double slope,reftemp,refpress;
   int i=0; bool lookup = false;
   // cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
   i=lastIndex;

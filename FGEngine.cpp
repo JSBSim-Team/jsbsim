@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.41 2001/11/08 19:22:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.42 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,7 @@ FGEngine::~FGEngine()
 // and sets the starved flag if necessary.
 
 void FGEngine::ConsumeFuel(void) {
-  float Fshortage, Oshortage;
+  double Fshortage, Oshortage;
   FGTank* Tank;
 
   if (TrimMode) return;
@@ -123,21 +123,21 @@ void FGEngine::ConsumeFuel(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGEngine::CalcFuelNeed(void) {
+double FGEngine::CalcFuelNeed(void) {
   FuelNeed = SLFuelFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return FuelNeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGEngine::CalcOxidizerNeed(void) {
+double FGEngine::CalcOxidizerNeed(void) {
   OxidizerNeed = SLOxiFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return OxidizerNeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
+void FGEngine::SetPlacement(double x, double y, double z, double pitch, double yaw) {
   X = x;
   Y = y;
   Z = z;

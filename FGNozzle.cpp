@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.22 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.23 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,10 +92,10 @@ FGNozzle::~FGNozzle()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGNozzle::Calculate(float CfPc)
+double FGNozzle::Calculate(double CfPc)
 {
-  float pAtm = fdmex->GetAtmosphere()->GetPressure();
-  Thrust = max((float)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
+  double pAtm = fdmex->GetAtmosphere()->GetPressure();
+  Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
   vFn(1) = Thrust;
 
   return Thrust;
@@ -103,7 +103,7 @@ float FGNozzle::Calculate(float CfPc)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGNozzle::GetPowerRequired(void)
+double FGNozzle::GetPowerRequired(void)
 {
   return PE;
 }

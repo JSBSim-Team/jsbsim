@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.26 2001/11/12 05:06:28 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.27 2001/11/14 23:53:27 jberndt Exp $"
 
 using std::string;
 
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.26 2001/11/12 05:06:28 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.27 2001/11/14 23:53:27 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -99,7 +99,7 @@ public:
 
   virtual bool Run(void);
   virtual void SetOutput(void);
-  inline float GetOutput (void) {return Output;}
+  inline double GetOutput (void) {return Output;}
   inline string GetName(void) {return Name;}
 
 protected:
@@ -110,10 +110,10 @@ protected:
   string Name;
   int ID;
   eParam InputIdx;
-  float Input;
+  double Input;
   string sOutputIdx;
   eParam OutputIdx;
-  float Output;
+  double Output;
   bool IsOutput;
   virtual void Debug(void);
 };

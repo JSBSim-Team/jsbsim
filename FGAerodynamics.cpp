@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.21 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.22 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGAerodynamics::~FGAerodynamics()
 
 bool FGAerodynamics::Run(void)
 {
-  float alpha, beta;
+  double alpha, beta;
   unsigned int axis_ctr,ctr;
 
   if (!FGModel::Run()) {
@@ -202,7 +202,7 @@ string FGAerodynamics::GetCoefficientValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGAerodynamics::GetNlf(void)
+double FGAerodynamics::GetNlf(void)
 {
   if (fabs(Position->GetGamma()) < 1.57) {
     return (vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma())));
@@ -213,9 +213,9 @@ float FGAerodynamics::GetNlf(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGAerodynamics::GetLoD(void)
+double FGAerodynamics::GetLoD(void)
 {
-  float LoD;
+  double LoD;
 
   if (vFs(1) != 0.00) return vFs(3)/vFs(1);
   else                return 0.00;

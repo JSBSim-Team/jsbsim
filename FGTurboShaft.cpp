@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.15 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.16 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGTurboShaft::~FGTurboShaft()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGTurboShaft::Calculate(float dummy) {
+double FGTurboShaft::Calculate(double dummy) {
   ConsumeFuel();
   return 0.0;
 }

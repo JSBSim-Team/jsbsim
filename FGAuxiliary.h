@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.23 2001/11/12 05:06:27 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.24 2001/11/14 23:53:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.23 2001/11/12 05:06:27 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.24 2001/11/14 23:53:25 jberndt Exp $
     @see -
 */
 
@@ -85,26 +85,26 @@ public:
   bool Run(void);
 
   // Use FGInitialCondition to set these speeds
-  inline float GetVcalibratedFPS(void) { return vcas; }
-  inline float GetVcalibratedKTS(void) { return vcas*fpstokts; }
-  inline float GetVequivalentFPS(void) { return veas; }
-  inline float GetVequivalentKTS(void) { return veas*fpstokts; }
+  inline double GetVcalibratedFPS(void) { return vcas; }
+  inline double GetVcalibratedKTS(void) { return vcas*fpstokts; }
+  inline double GetVequivalentFPS(void) { return veas; }
+  inline double GetVequivalentKTS(void) { return veas*fpstokts; }
   
   inline FGColumnVector3& GetPilotAccel(void) { return vPilotAccel; }
-  inline float GetPilotAccel(int idx) { return vPilotAccel(idx); }
+  inline double GetPilotAccel(int idx) { return vPilotAccel(idx); }
   FGColumnVector3 GetNpilot(void);
-  float GetNpilot(int idx);
+  double GetNpilot(int idx);
 
-  inline float GetEarthPositionAngle(void) { return earthPosAngle; }
+  inline double GetEarthPositionAngle(void) { return earthPosAngle; }
   
-  float GetHeadWind(void);
-  float GetCrossWind(void);
+  double GetHeadWind(void);
+  double GetCrossWind(void);
  
 private:
-  float vcas;
-  float veas;
-  float mach;
-  float qbar,rhosl,rho,p,psl,pt;
+  double vcas;
+  double veas;
+  double mach;
+  double qbar,rhosl,rho,p,psl,pt;
 
   // Don't add a getter for pt!
   // pt above is freestream total pressure for subsonic only
@@ -116,7 +116,7 @@ private:
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vToEyePt;
   
-  float earthPosAngle;
+  double earthPosAngle;
 
   void GetState(void);
   void Debug(void);

@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.31 2001/10/31 12:35:02 apeden Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.32 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -88,31 +88,31 @@ public:
   ~FGTranslation();
 
   inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
-  inline float            GetUVW   (int idx) { return vUVW(idx); }
+  inline double            GetUVW   (int idx) { return vUVW(idx); }
   inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
-  inline float            GetUVWdot(int idx) { return vUVWdot(idx); }
+  inline double            GetUVWdot(int idx) { return vUVWdot(idx); }
   inline FGColumnVector3& GetvAero (void)    { return vAero; }
-  inline float            GetvAero (int idx) { return vAero(idx); }
+  inline double            GetvAero (int idx) { return vAero(idx); }
 
-  inline float Getalpha(void) { return alpha; }
-  inline float Getbeta (void) { return beta; }
-  inline float Getqbar (void) { return qbar; }
-  inline float GetVt   (void) { return Vt; }
-  inline float GetMach (void) { return Mach; }
-  inline float Getadot (void) { return adot; }
-  inline float Getbdot (void) { return bdot; }
+  inline double Getalpha(void) { return alpha; }
+  inline double Getbeta (void) { return beta; }
+  inline double Getqbar (void) { return qbar; }
+  inline double GetVt   (void) { return Vt; }
+  inline double GetMach (void) { return Mach; }
+  inline double Getadot (void) { return adot; }
+  inline double Getbdot (void) { return bdot; }
 
   void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
 
-  inline void Setalpha(float tt) { alpha = tt; }
-  inline void Setbeta (float tt) { beta  = tt; }
-  inline void Setqbar (float tt) { qbar = tt; }
-  inline void SetVt   (float tt) { Vt = tt; }
-  inline void SetMach (float tt) { Mach=tt; }
-  inline void Setadot (float tt) { adot = tt; }
-  inline void Setbdot (float tt) { bdot = tt; }
+  inline void Setalpha(double tt) { alpha = tt; }
+  inline void Setbeta (double tt) { beta  = tt; }
+  inline void Setqbar (double tt) { qbar = tt; }
+  inline void SetVt   (double tt) { Vt = tt; }
+  inline void SetMach (double tt) { Mach=tt; }
+  inline void Setadot (double tt) { adot = tt; }
+  inline void Setbdot (double tt) { bdot = tt; }
 
-  inline void SetAB(float t1, float t2) { alpha=t1; beta=t2; }
+  inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
   
   bool Run(void);
 
@@ -123,10 +123,10 @@ private:
   FGMatrix33       mVel;
   FGColumnVector3 vAero;
 
-  float Vt, qbar, Mach;
-  float dt;
-  float alpha, beta;
-  float adot,bdot;
+  double Vt, qbar, Mach;
+  double dt;
+  double alpha, beta;
+  double adot,bdot;
 
   void Debug(void);
 };

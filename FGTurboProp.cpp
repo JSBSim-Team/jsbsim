@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboProp.h"
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.11 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.12 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGTurboProp::~FGTurboProp()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGTurboProp::Calculate(float dummy)
+double FGTurboProp::Calculate(double dummy)
 {
   ConsumeFuel();
   return 0.0;

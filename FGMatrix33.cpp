@@ -21,7 +21,7 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.6 2001/10/15 11:49:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.7 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +93,7 @@ ostream& operator<<(ostream& os, const FGMatrix33& M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGMatrix33::operator<<(const float ff)
+FGMatrix33& FGMatrix33::operator<<(const double ff)
 {
   data[rowCtr][colCtr] = ff;
   if (++colCtr > Cols()) {
@@ -304,7 +304,7 @@ FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
 
 void FGMatrix33::operator*=(const FGMatrix33& M)
 {
-  float a,b,c;
+  double a,b,c;
   
   a = data[1][1]; b=data[1][2]; c=data[1][3];
   data[1][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);

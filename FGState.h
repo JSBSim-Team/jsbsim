@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.49 2001/11/12 05:06:28 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.50 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.49 2001/11/12 05:06:28 jberndt Exp $
+    @version $Id: FGState.h,v 1.50 2001/11/14 23:53:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,18 +147,18 @@ public:
       @param weast eastward velocity in feet per second
       @param wdown downward velocity in feet per second
       */
-  void Initialize(float U,
-                  float V,
-                  float W,
-                  float lat,
-                  float lon,
-                  float phi,
-                  float tht,
-                  float psi,
-                  float h,
-                  float wnorth,
-                  float weast,
-                  float wdown);
+  void Initialize(double U,
+                  double V,
+                  double W,
+                  double lat,
+                  double lon,
+                  double phi,
+                  double tht,
+                  double psi,
+                  double h,
+                  double wnorth,
+                  double weast,
+                  double wdown);
 
   /** Initializes the simulation state based on parameters from an Initial Conditions object.
       @param FGIC pointer to an initial conditions object.
@@ -173,12 +173,12 @@ public:
   bool StoreData(string filename);
 
   /// returns the speed of sound in feet per second.
-  inline float Geta(void) { return a; }
+  inline double Geta(void) { return a; }
 
   /// Returns the simulation time in seconds.
-  inline float Getsim_time(void) { return sim_time; }
+  inline double Getsim_time(void) { return sim_time; }
   /// Returns the simulation delta T.
-  inline float Getdt(void) { return dt; }
+  inline double Getdt(void) { return dt; }
 
   /// Suspends the simulation and sets the delta T to zero.
   inline void Suspend(void) {saved_dt = dt; dt = 0.0;}
@@ -190,7 +190,7 @@ public:
       @param val_idx one of the enumerated JSBSim parameters.
       @return the value of the parameter.
       */
-  float GetParameter(eParam val_idx);
+  double GetParameter(eParam val_idx);
 
   /** Retrieves a parameter.
       The parameters that can be retrieved are enumerated in FGJSBBase.h.
@@ -198,7 +198,7 @@ public:
              i.e. "FG_QBAR".
       @return the value of the parameter.
       */
-  float GetParameter(string val_string);
+  double GetParameter(string val_string);
 
   /** Retrieves the JSBSim parameter enumerated item given the text string.
       @param val_string the parameter string, i.e. "FG_QBAR".
@@ -209,13 +209,13 @@ public:
   /** Sets the speed of sound.
       @param speed the speed of sound in feet per second.
       */
-  inline void Seta(float speed) { a = speed; }
+  inline void Seta(double speed) { a = speed; }
 
   /** Sets the current sim time.
       @param cur_time the current time
       @return the current time.
       */
-  inline float Setsim_time(float cur_time) {
+  inline double Setsim_time(double cur_time) {
     sim_time = cur_time;
     return sim_time;
   }
@@ -223,18 +223,18 @@ public:
   /** Sets the integration time step for the simulation executive.
       @param delta_t the time step in seconds.
       */
-  inline void  Setdt(float delta_t) { dt = delta_t; }
+  inline void  Setdt(double delta_t) { dt = delta_t; }
 
   /** Sets the JSBSim parameter to the supplied value.
       @param prm the JSBSim parameter to set, i.e. FG_RUDDER_POS.
       @param val the value to give the parameter.
       */
-  void SetParameter(eParam prm, float val);
+  void SetParameter(eParam prm, double val);
 
   /** Increments the simulation time.
       @return the new simulation time.
       */
-  inline float IncrTime(void) {
+  inline double IncrTime(void) {
     sim_time+=dt;
     return sim_time;
   }
@@ -244,7 +244,7 @@ public:
       @param tht the pitch angle in radians.
       @param psi the heading angle in radians
       */
-  void InitMatrices(float phi, float tht, float psi);
+  void InitMatrices(double phi, double tht, double psi);
 
   /** Calculates the local-to-body and body-to-local conversion matrices.
       */
@@ -269,7 +269,7 @@ public:
       @param beta angle of sideslip in radians.
       @return a reference to the stability-to-body transformation matrix.
       */
-  FGMatrix33& GetTs2b(float alpha, float beta);
+  FGMatrix33& GetTs2b(double alpha, double beta);
 
   /** Retrieves the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.
@@ -281,7 +281,7 @@ public:
       @param c matrix column index.
       @return the matrix element described by the row and column supplied.
       */
-  float GetTl2b(int r, int c) { return mTl2b(r,c);}
+  double GetTl2b(int r, int c) { return mTl2b(r,c);}
 
   /** Retrieves the body-to-local transformation matrix.
       @return a reference to the body-to-local matrix.
@@ -293,7 +293,7 @@ public:
       @param c matrix column index.
       @return the matrix element described by the row and column supplied.
       */
-  float GetTb2l(int i, int j) { return mTb2l(i,j);}
+  double GetTb2l(int i, int j) { return mTb2l(i,j);}
   
   /** Prints a summary of simulator state (speed, altitude, 
       configuration, etc.)
@@ -305,9 +305,9 @@ public:
   ParamMap paramdef;
 
 private:
-  float a;                          // speed of sound
-  float sim_time, dt;
-  float saved_dt;
+  double a;                          // speed of sound
+  double sim_time, dt;
+  double saved_dt;
 
   FGFDMExec* FDMExec;
   FGMatrix33 mTb2l;

@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.25 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.26 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -186,8 +186,8 @@ void FGTrimAxis::getControl(void) {
 
 /*****************************************************************************/
 
-float FGTrimAxis::computeHmgt(void) {
-  float diff;
+double FGTrimAxis::computeHmgt(void) {
+  double diff;
   
   diff   = fdmex->GetRotation()->Getpsi() - 
              fdmex->GetPosition()->GetGroundTrack();
@@ -236,7 +236,7 @@ void FGTrimAxis::setControl(void) {
 // new center of rotation, pick a gear unit as a reference and use its
 // location vector to calculate the new height change. i.e. new altitude =
 // earth z component of that vector (which is in body axes )  
-void FGTrimAxis::SetThetaOnGround(float ff) {
+void FGTrimAxis::SetThetaOnGround(double ff) {
   int center,i,ref;
 
   // favor an off-center unit so that the same one can be used for both
@@ -257,12 +257,12 @@ void FGTrimAxis::SetThetaOnGround(float ff) {
   }
   cout << "SetThetaOnGround ref gear: " << ref << endl;
   if(ref >= 0) {
-    float sp=fdmex->GetRotation()->GetSinphi();
-    float cp=fdmex->GetRotation()->GetCosphi();
-    float lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
-    float ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
-    float lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
-    float hagl = -1*lx*sin(ff) +
+    double sp=fdmex->GetRotation()->GetSinphi();
+    double cp=fdmex->GetRotation()->GetCosphi();
+    double lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
+    double ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
+    double lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
+    double hagl = -1*lx*sin(ff) +
                     ly*sp*cos(ff) +
                     lz*cp*cos(ff);
    
@@ -277,9 +277,9 @@ void FGTrimAxis::SetThetaOnGround(float ff) {
 
 bool FGTrimAxis::initTheta(void) {
   int i,N,iAft, iForward;
-  float zAft,zForward,zDiff,theta;
+  double zAft,zForward,zDiff,theta;
   bool level;  
-  float saveAlt;
+  double saveAlt;
   
   saveAlt=fgic->GetAltitudeAGLFtIC();
   fgic->SetAltitudeAGLFtIC(100);
@@ -337,7 +337,7 @@ bool FGTrimAxis::initTheta(void) {
 
 /*****************************************************************************/
 
-void FGTrimAxis::SetPhiOnGround(float ff) {
+void FGTrimAxis::SetPhiOnGround(double ff) {
   int i,ref;
 
   i=0; ref=-1;
@@ -349,12 +349,12 @@ void FGTrimAxis::SetPhiOnGround(float ff) {
     i++; 
   }
   if(ref >= 0) {
-    float st=fdmex->GetRotation()->GetSintht();
-    float ct=fdmex->GetRotation()->GetCostht();
-    float lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
-    float ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
-    float lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
-    float hagl = -1*lx*st +
+    double st=fdmex->GetRotation()->GetSintht();
+    double ct=fdmex->GetRotation()->GetCostht();
+    double lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
+    double ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
+    double lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
+    double hagl = -1*lx*st +
                     ly*sin(ff)*ct +
                     lz*cos(ff)*ct;
    
@@ -368,7 +368,7 @@ void FGTrimAxis::SetPhiOnGround(float ff) {
 
 void FGTrimAxis::Run(void) {
 
-  float last_state_value;
+  double last_state_value;
   int i;
   setControl();
   //cout << "FGTrimAxis::Run: " << control_value << endl;
@@ -393,7 +393,7 @@ void FGTrimAxis::Run(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::setThrottlesPct(void) {
-  float tMin,tMax;
+  double tMin,tMax;
   for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++) {
       tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
       tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
@@ -419,9 +419,9 @@ void FGTrimAxis::AxisReport(void) {
 
 /*****************************************************************************/
 
-float FGTrimAxis::GetAvgStability( void ) {
+double FGTrimAxis::GetAvgStability( void ) {
   if(total_iterations > 0) {
-    return float(total_stability_iterations)/float(total_iterations);
+    return double(total_stability_iterations)/double(total_iterations);
   }
   return 0;
 }

@@ -84,14 +84,14 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.42 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.43 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-extern float globalTriNormal[3];
+extern double globalTriNormal[3];
 extern double globalSceneryAltitude;
 extern double globalSeaLevelRadius;
 

@@ -57,7 +57,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.15 2001/04/19 22:05:21 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.16 2001/11/14 23:53:27 jberndt Exp $"
 
 class FGFCS;
 
@@ -77,8 +77,8 @@ private:
   FGConfigFile* AC_cfg;
   FGTable* Table;
   FGState* State;
-  float Gain;
-  float Min, Max;
+  double Gain;
+  double Min, Max;
   int Rows;
   eParam ScheduledBy;
 

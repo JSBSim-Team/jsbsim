@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.17 2001/10/01 22:47:06 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.18 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.17 2001/10/01 22:47:06 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.18 2001/11/14 23:53:27 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,22 +98,22 @@ public:
   enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
 
 private:
-  float dt;
-  float ca;
-  float cb;
-  float cc;
-  float cd;
-  float ce;
-  float C1;
-  float C2;
-  float C3;
-  float C4;
-  float C5;
-  float C6;
-  float PreviousInput1;
-  float PreviousInput2;
-  float PreviousOutput1;
-  float PreviousOutput2;
+  double dt;
+  double ca;
+  double cb;
+  double cc;
+  double cd;
+  double ce;
+  double C1;
+  double C2;
+  double C3;
+  double C4;
+  double C5;
+  double C6;
+  double PreviousInput1;
+  double PreviousInput2;
+  double PreviousOutput1;
+  double PreviousOutput2;
   FGConfigFile* AC_cfg;
   void Debug(void);
 };

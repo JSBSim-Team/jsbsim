@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.32 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.33 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,13 +135,13 @@ FGPropeller::~FGPropeller()
 //
 // Because RPM could be zero, we need to be creative about what RPM is stated as.
 
-float FGPropeller::Calculate(float PowerAvailable)
+double FGPropeller::Calculate(double PowerAvailable)
 {
-  float J, C_Thrust, omega;
-  float Vel = (fdmex->GetTranslation()->GetvAero())(1);
-  float rho = fdmex->GetAtmosphere()->GetDensity();
-  float RPS = RPM/60.0;
-  float alpha, beta;
+  double J, C_Thrust, omega;
+  double Vel = (fdmex->GetTranslation()->GetvAero())(1);
+  double rho = fdmex->GetAtmosphere()->GetDensity();
+  double RPS = RPM/60.0;
+  double alpha, beta;
 
   if (RPM > 0.10) {
     J = Vel / (Diameter * RPM / 60.0);
@@ -188,14 +188,14 @@ float FGPropeller::Calculate(float PowerAvailable)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGPropeller::GetPowerRequired(void)
+double FGPropeller::GetPowerRequired(void)
 {
   if (RPM <= 0.10) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
 
-  float cPReq, RPS = RPM / 60.0;
+  double cPReq, RPS = RPM / 60.0;
 
-  float J = (fdmex->GetTranslation()->GetvAero())(1) / (Diameter * RPS);
-  float rho = fdmex->GetAtmosphere()->GetDensity();
+  double J = (fdmex->GetTranslation()->GetvAero())(1) / (Diameter * RPS);
+  double rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
     cPReq = cPower->GetValue(J);

@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.18 2001/11/06 13:17:47 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -138,7 +138,7 @@ vector vFs and need to be passed to FGForce:</p>
 
 <p>Note that storing the native forces and moments outside of this class is not
 strictly necessary, overloaded SetNativeForces() and SetNativeMoments() methods
-which each accept three floats (rather than a vector) are provided and can be
+which each accept three doubles (rather than a vector) are provided and can be
 repeatedly called without incurring undue overhead. The body axes force vector
 can now be retrieved by calling:</p>
 
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.18 2001/11/06 13:17:47 jberndt Exp $
+    @version $Id: FGForce.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,14 +227,14 @@ public:
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom } ttype;
 
-  inline void SetNativeForces(float Fnx, float Fny, float Fnz) {
+  inline void SetNativeForces(double Fnx, double Fny, double Fnz) {
     vFn(1)=Fnx;
     vFn(2)=Fny;
     vFn(3)=Fnz;
   }
   inline void SetNativeForces(FGColumnVector3 vv) { vFn = vv; };
 
-  inline void SetNativeMoments(float Ln,float Mn, float Nn) {
+  inline void SetNativeMoments(double Ln,double Mn, double Nn) {
     vMn(1)=Ln;
     vMn(2)=Mn;
     vMn(3)=Nn;
@@ -251,14 +251,14 @@ public:
 
   //point of application, JSBsim structural coords
   //(inches, x +back, y +right, z +up)
-  inline void SetLocation(float x, float y, float z) {
+  inline void SetLocation(double x, double y, double z) {
     vXYZn(1) = x;
     vXYZn(2) = y;
     vXYZn(3) = z;
   }
-  inline void SetLocationX(float x) {vXYZn(1) = x;}
-  inline void SetLocationY(float y) {vXYZn(2) = y;}
-  inline void SetLocationZ(float z) {vXYZn(3) = z;}
+  inline void SetLocationX(double x) {vXYZn(1) = x;}
+  inline void SetLocationY(double y) {vXYZn(2) = y;}
+  inline void SetLocationZ(double z) {vXYZn(3) = z;}
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; }
   FGColumnVector3& GetLocation(void) { return vXYZn; }
 
@@ -269,10 +269,10 @@ public:
   //are going to get confused.
   //They are in radians.
 
-  void SetAnglesToBody(float broll, float bpitch, float byaw);
+  void SetAnglesToBody(double broll, double bpitch, double byaw);
   inline void  SetAnglesToBody(FGColumnVector3 vv) { SetAnglesToBody(vv(1), vv(2), vv(3));}
 
-  inline void SetSense(float x, float y, float z) { vSense(1)=x, vSense(2)=y, vSense(3)=z; }
+  inline void SetSense(double x, double y, double z) { vSense(1)=x, vSense(2)=y, vSense(3)=z; }
   inline void SetSense(FGColumnVector3 vv) { vSense=vv; }
 
   inline FGColumnVector3& GetSense(void) { return vSense; }

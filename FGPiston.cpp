@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.35 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.36 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,9 +156,9 @@ FGPiston::~FGPiston()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGPiston::Calculate(float PowerRequired)
+double FGPiston::Calculate(double PowerRequired)
 {
-  float h,EngineMaxPower;
+  double h,EngineMaxPower;
 
         // FIXME: calculate from actual fuel flow
   ConsumeFuel();
@@ -328,10 +328,10 @@ void FGPiston::doManifoldPressure(void)
 void FGPiston::doAirFlow(void)
 {
   rho_air = p_amb / (R_air * T_amb);
-  float rho_air_manifold = rho_air * ManifoldPressure_inHg / 29.6;
-  float displacement_SI = Displacement * CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
-  float swept_volume = (displacement_SI * (RPM/60)) / 2;
-  float v_dot_air = swept_volume * volumetric_efficiency;
+  double rho_air_manifold = rho_air * ManifoldPressure_inHg / 29.6;
+  double displacement_SI = Displacement * CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
+  double swept_volume = (displacement_SI * (RPM/60)) / 2;
+  double v_dot_air = swept_volume * volumetric_efficiency;
   m_dot_air = v_dot_air * rho_air_manifold;
 }
 
@@ -346,7 +346,7 @@ void FGPiston::doAirFlow(void)
 
 void FGPiston::doFuelFlow(void)
 {
-  float thi_sea_level = 1.3 * Mixture;
+  double thi_sea_level = 1.3 * Mixture;
   equivalence_ratio = thi_sea_level * p_amb_sea_level / p_amb;
   m_dot_fuel = m_dot_air / 14.7 * equivalence_ratio;
 }
@@ -368,15 +368,15 @@ void FGPiston::doFuelFlow(void)
 
 void FGPiston::doEnginePower(void)
 {
-  float True_ManifoldPressure_inHg = ManifoldPressure_inHg * p_amb / p_amb_sea_level;
-  float ManXRPM = True_ManifoldPressure_inHg * RPM;
+  double True_ManifoldPressure_inHg = ManifoldPressure_inHg * p_amb / p_amb_sea_level;
+  double ManXRPM = True_ManifoldPressure_inHg * RPM;
         // FIXME: this needs to be generalized
   Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
-  float T_amb_degF = (T_amb * 1.8) - 459.67;
-  float T_amb_sea_lev_degF = (288 * 1.8) - 459.67; 
+  double T_amb_degF = (T_amb * 1.8) - 459.67;
+  double T_amb_sea_lev_degF = (288 * 1.8) - 459.67; 
   Percentage_Power =
     Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
-  float Percentage_of_best_power_mixture_power =
+  double Percentage_of_best_power_mixture_power =
     Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
   Percentage_Power =
     Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
@@ -417,10 +417,10 @@ void FGPiston::doEnginePower(void)
 void FGPiston::doEGT(void)
 {
   combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
-  float enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * 
+  double enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * 
     combustion_efficiency * 0.33;
-  float heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
-  float delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
+  double heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
+  double delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
   ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
   ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * Percentage_Power / 100.0);
 }
@@ -437,26 +437,26 @@ void FGPiston::doEGT(void)
 
 void FGPiston::doCHT(void)
 {
-  float h1 = -95.0;
-  float h2 = -3.95;
-  float h3 = -0.05;
+  double h1 = -95.0;
+  double h2 = -3.95;
+  double h3 = -0.05;
 
-  float arbitary_area = 1.0;
-  float CpCylinderHead = 800.0;
-  float MassCylinderHead = 8.0;
+  double arbitary_area = 1.0;
+  double CpCylinderHead = 800.0;
+  double MassCylinderHead = 8.0;
 
-  float temperature_difference = CylinderHeadTemp_degK - T_amb;
-  float v_apparent = IAS * 0.5144444;
-  float v_dot_cooling_air = arbitary_area * v_apparent;
-  float m_dot_cooling_air = v_dot_cooling_air * rho_air;
-  float dqdt_from_combustion = 
+  double temperature_difference = CylinderHeadTemp_degK - T_amb;
+  double v_apparent = IAS * 0.5144444;
+  double v_dot_cooling_air = arbitary_area * v_apparent;
+  double m_dot_cooling_air = v_dot_cooling_air * rho_air;
+  double dqdt_from_combustion = 
     m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
-  float dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) + 
+  double dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) + 
     (h3 * RPM * temperature_difference);
-  float dqdt_free = h1 * temperature_difference;
-  float dqdt_cylinder_head = dqdt_from_combustion + dqdt_forced + dqdt_free;
+  double dqdt_free = h1 * temperature_difference;
+  double dqdt_cylinder_head = dqdt_from_combustion + dqdt_forced + dqdt_free;
     
-  float HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
+  double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
     
   CylinderHeadTemp_degK = dqdt_cylinder_head / HeatCapacityCylinderHead;
 }
@@ -472,9 +472,9 @@ void FGPiston::doCHT(void)
 
 void FGPiston::doOilTemperature(void)
 {
-  float idle_percentage_power = 2.3;        // approximately
-  float target_oil_temp;        // Steady state oil temp at the current engine conditions
-  float time_constant;          // The time constant for the differential equation
+  double idle_percentage_power = 2.3;        // approximately
+  double target_oil_temp;        // Steady state oil temp at the current engine conditions
+  double time_constant;          // The time constant for the differential equation
 
   if (Running) {
     target_oil_temp = 363;
@@ -488,7 +488,7 @@ void FGPiston::doOilTemperature(void)
                            // that oil is no longer getting circulated
   }
 
-  float dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
+  double dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
 
   OilTemp_degK += (dOilTempdt * dt);
 }
@@ -504,11 +504,11 @@ void FGPiston::doOilTemperature(void)
 
 void FGPiston::doOilPressure(void)
 {
-  float Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
-  float Oil_Press_RPM_Max = 1800;    // FIXME: may vary by engine
-  float Design_Oil_Temp = 85;        // FIXME: may vary by engine
+  double Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
+  double Oil_Press_RPM_Max = 1800;    // FIXME: may vary by engine
+  double Design_Oil_Temp = 85;        // FIXME: may vary by engine
              // FIXME: WRONG!!! (85 degK???)
-  float Oil_Viscosity_Index = 0.25;
+  double Oil_Viscosity_Index = 0.25;
 
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;
 

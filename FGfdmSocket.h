@@ -82,7 +82,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.20 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.21 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -97,7 +97,7 @@ public:
   ~FGfdmSocket();
   void Send(void);
   void Append(const char*);
-  void Append(float);
+  void Append(double);
   void Append(long);
   void Clear(void);
 

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.29 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.30 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,8 +132,8 @@ FGGain::~FGGain()
 
 bool FGGain::Run(void )
 {
-  float SchedGain = 1.0;
-  float LookupVal = 0;
+  double SchedGain = 1.0;
+  double LookupVal = 0;
 
   FGFCSComponent::Run(); // call the base class for initialization of Input
 

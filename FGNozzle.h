@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.18 2001/09/28 02:07:03 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,16 +73,16 @@ public:
   /// Destructor
   ~FGNozzle();
 
-  float Calculate(float CfPc);
-  float GetPowerRequired(void);
+  double Calculate(double CfPc);
+  double GetPowerRequired(void);
   
 private:
-  float PE;
-  float ExpR;
-  float nzlEff;
-  float Diameter;
-  float AreaT;
-  float Area2;
+  double PE;
+  double ExpR;
+  double nzlEff;
+  double Diameter;
+  double AreaT;
+  double Area2;
   void Debug(void);
 };
 

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.21 2001/08/18 23:46:07 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.22 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -57,7 +57,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.21 2001/08/18 23:46:07 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.22 2001/11/14 23:53:27 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,21 +74,21 @@ public:
 
   enum eType {ttNozzle, ttRotor, ttPropeller};
 
-  virtual float Calculate(float) {return 0.0;}
+  virtual double Calculate(double) {return 0.0;}
   void SetName(string name) {Name = name;}
-  virtual float GetPowerRequired(void) {return 0.0;}
-  virtual void SetdeltaT(float dt) {deltaT = dt;}
-  float GetThrust(void) {return Thrust;}
+  virtual double GetPowerRequired(void) {return 0.0;}
+  virtual void SetdeltaT(double dt) {deltaT = dt;}
+  double GetThrust(void) {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
-  virtual float GetRPM(void) { return 0.0; };
+  virtual double GetRPM(void) { return 0.0; };
 
 protected:
   eType Type;
   string Name;
-  float Thrust;
-  float PowerRequired;
-  float deltaT;
+  double Thrust;
+  double PowerRequired;
+  double deltaT;
   virtual void Debug(void);
 };
 

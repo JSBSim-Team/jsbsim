@@ -48,7 +48,7 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.22 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.23 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,10 +117,10 @@ FGMatrix33 FGForce::Transform(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGForce::SetAnglesToBody(float broll, float bpitch, float byaw) {
+void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw) {
 
   if(ttype == tCustom) {
-    float cp,sp,cr,sr,cy,sy;
+    double cp,sp,cr,sr,cy,sy;
 
     cp=cos(bpitch); sp=sin(bpitch);
     cr=cos(broll);  sr=sin(broll);

@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.13 2001/11/13 16:36:09 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.13 2001/11/13 16:36:09 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

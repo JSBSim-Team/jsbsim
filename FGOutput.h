@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.19 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.20 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -79,6 +79,24 @@ public:
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }
   inline bool Toggle(void) {enabled = !enabled; return enabled;}
+  bool Load(FGConfigFile* AC_cfg);
+
+  /// Subsystem types for specifying which will be output in the FDM data logging
+  enum  SubSystems {
+    /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
+    /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
+    /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
+    /** Subsystem: Velocities (= 8)          */ ssVelocities      = 8,
+    /** Subsystem: Forces (= 16)             */ ssForces          = 16,
+    /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
+    /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
+    /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
+    /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
+    /** Subsystem: Position (= 512)          */ ssPosition        = 512,
+    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
+    /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
+    /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
+  } subsystems;
 
 private:
   bool sFirstPass, dFirstPass, enabled;

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.40 2001/11/11 23:06:26 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.41 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.40 2001/11/11 23:06:26 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.41 2001/11/14 23:53:27 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,10 +104,10 @@ public:
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
   
   inline double GetGamma(void) { return gamma; }
-  inline void SetGamma(float tt) { gamma = tt; }
+  inline void SetGamma(double tt) { gamma = tt; }
   inline double GetHOverB(void) { return hoverb; }
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
-  void SetLatitude(float tt) { Latitude = tt; }
+  void SetLatitude(double tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
   void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
@@ -127,13 +127,13 @@ private:
   double LatitudeDot, LongitudeDot, RadiusDot;
   double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
   double Longitude, Latitude;
-  float dt;
+  double dt;
   double RunwayRadius;
   double DistanceAGL;
   double SeaLevelRadius;
   double gamma;
   double Vt, Vground;
-  float hoverb,b;
+  double hoverb,b;
 
   double psigt;
 

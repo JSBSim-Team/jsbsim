@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.21 2001/08/07 23:05:46 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.22 2001/11/14 23:53:25 jberndt Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.21 2001/08/07 23:05:46 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.22 2001/11/14 23:53:25 jberndt Exp $
     @see -
 */
 
@@ -112,18 +112,18 @@ public:
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
   FGColumnVector3& GetForces(void) {return vForces;}
-  inline float GetForces(int n) {return vForces(n);}
+  inline double GetForces(int n) {return vForces(n);}
 
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
   FGColumnVector3& GetMoments(void) {return vMoments;}
-  inline float GetMoments(int n) {return vMoments(n);}
+  inline double GetMoments(int n) {return vMoments(n);}
 
   inline FGColumnVector3& GetvLastFs(void) { return vLastFs; }
-  inline float GetvLastFs(int axis) { return vLastFs(axis); }
+  inline double GetvLastFs(int axis) { return vLastFs(axis); }
   inline FGColumnVector3& GetvFs(void) { return vFs; }
-  inline float GetvFs(int axis) { return vFs(axis); }
-  float GetLoD(void);
+  inline double GetvFs(int axis) { return vFs(axis); }
+  double GetLoD(void);
 
     /** Gets the strings for the current set of coefficients.
       @return a string containing the descriptive names for all coefficients */
@@ -135,7 +135,7 @@ public:
   string GetCoefficientValues(void);
 
   /// Gets the Normal Load Factor
-  float GetNlf(void);
+  double GetNlf(void);
 
 private:
   typedef map<string,int> AxisIndex;

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.40 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.41 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -103,7 +103,7 @@ FGInitialCondition::~FGInitialCondition()
 
 //******************************************************************************
 
-void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
+void FGInitialCondition::SetVcalibratedKtsIC(double tt) {
 
   if(getMachFromVcas(&mach,tt*ktstofps)) {
     //cout << "Mach: " << mach << endl;
@@ -121,7 +121,7 @@ void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVequivalentKtsIC(float tt) {
+void FGInitialCondition::SetVequivalentKtsIC(double tt) {
   ve=tt*ktstofps;
   lastSpeedSet=setve;
   vt=ve*1/sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
@@ -131,9 +131,9 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVgroundFpsIC(float tt) {
-  float ua,va,wa;
-  float vxz;
+void FGInitialCondition::SetVgroundFpsIC(double tt) {
+  double ua,va,wa;
+  double vxz;
 
   vg=tt;
   lastSpeedSet=setvg;
@@ -152,7 +152,7 @@ void FGInitialCondition::SetVgroundFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVtrueFpsIC(float tt) {
+void FGInitialCondition::SetVtrueFpsIC(double tt) {
   vt=tt;
   lastSpeedSet=setvt;
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
@@ -162,7 +162,7 @@ void FGInitialCondition::SetVtrueFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetMachIC(float tt) {
+void FGInitialCondition::SetMachIC(double tt) {
   mach=tt;
   lastSpeedSet=setmach;
   vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
@@ -173,13 +173,13 @@ void FGInitialCondition::SetMachIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetClimbRateFpmIC(float tt) {
+void FGInitialCondition::SetClimbRateFpmIC(double tt) {
   SetClimbRateFpsIC(tt/60.0);
 }
 
 //******************************************************************************
 
-void FGInitialCondition::SetClimbRateFpsIC(float tt) {
+void FGInitialCondition::SetClimbRateFpsIC(double tt) {
 
   if(vt > 0.1) {
     hdot=tt;
@@ -190,7 +190,7 @@ void FGInitialCondition::SetClimbRateFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
+void FGInitialCondition::SetFlightPathAngleRadIC(double tt) {
   gamma=tt;
   sgamma=sin(gamma); cgamma=cos(gamma);
   getTheta();
@@ -199,7 +199,7 @@ void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetAlphaRadIC(float tt) {
+void FGInitialCondition::SetAlphaRadIC(double tt) {
   alpha=tt;
   salpha=sin(alpha); calpha=cos(alpha);
   getTheta();
@@ -207,7 +207,7 @@ void FGInitialCondition::SetAlphaRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetPitchAngleRadIC(float tt) {
+void FGInitialCondition::SetPitchAngleRadIC(double tt) {
   theta=tt;
   stheta=sin(theta); ctheta=cos(theta);
   getAlpha();
@@ -215,7 +215,7 @@ void FGInitialCondition::SetPitchAngleRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetBetaRadIC(float tt) {
+void FGInitialCondition::SetBetaRadIC(double tt) {
   beta=tt;
   sbeta=sin(beta); cbeta=cos(beta);
   getTheta();
@@ -224,7 +224,7 @@ void FGInitialCondition::SetBetaRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetRollAngleRadIC(float tt) {
+void FGInitialCondition::SetRollAngleRadIC(double tt) {
   phi=tt;
   sphi=sin(phi); cphi=cos(phi);
   getTheta();
@@ -232,7 +232,7 @@ void FGInitialCondition::SetRollAngleRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetTrueHeadingRadIC(float tt) {
+void FGInitialCondition::SetTrueHeadingRadIC(double tt) {
     psi=tt;
     spsi=sin(psi); cpsi=cos(psi);
     calcWindUVW();
@@ -240,7 +240,7 @@ void FGInitialCondition::SetTrueHeadingRadIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetUBodyFpsIC(float tt) {
+void FGInitialCondition::SetUBodyFpsIC(double tt) {
   u=tt;
   vt=sqrt(u*u + v*v + w*w);
   lastSpeedSet=setuvw;
@@ -248,7 +248,7 @@ void FGInitialCondition::SetUBodyFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVBodyFpsIC(float tt) {
+void FGInitialCondition::SetVBodyFpsIC(double tt) {
   v=tt;
   vt=sqrt(u*u + v*v + w*w);
   lastSpeedSet=setuvw;
@@ -256,7 +256,7 @@ void FGInitialCondition::SetVBodyFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetWBodyFpsIC(float tt) {
+void FGInitialCondition::SetWBodyFpsIC(double tt) {
   w=tt;
   vt=sqrt( u*u + v*v + w*w );
   lastSpeedSet=setuvw;
@@ -264,7 +264,7 @@ void FGInitialCondition::SetWBodyFpsIC(float tt) {
 
 //******************************************************************************
 
-float FGInitialCondition::GetUBodyFpsIC(void) {
+double FGInitialCondition::GetUBodyFpsIC(void) {
     if(lastSpeedSet == setvg )
       return u;
     else
@@ -273,7 +273,7 @@ float FGInitialCondition::GetUBodyFpsIC(void) {
 
 //******************************************************************************
 
-float FGInitialCondition::GetVBodyFpsIC(void) {
+double FGInitialCondition::GetVBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return v;
     else {
@@ -283,7 +283,7 @@ float FGInitialCondition::GetVBodyFpsIC(void) {
 
 //******************************************************************************
 
-float FGInitialCondition::GetWBodyFpsIC(void) {
+double FGInitialCondition::GetWBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return w;
     else 
@@ -292,7 +292,7 @@ float FGInitialCondition::GetWBodyFpsIC(void) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
+void FGInitialCondition::SetWindNEDFpsIC(double wN, double wE, double wD ) {
   wnorth = wN; weast = wE; wdown = wD;
   lastWindSet = setwned;
   calcWindUVW();
@@ -303,7 +303,7 @@ void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
 //******************************************************************************
 
 // positive from left
-void FGInitialCondition::SetHeadWindKtsIC(float head){ 
+void FGInitialCondition::SetHeadWindKtsIC(double head){ 
     whead=head*ktstofps;
     lastWindSet=setwhc; 
     calcWindUVW();
@@ -314,7 +314,7 @@ void FGInitialCondition::SetHeadWindKtsIC(float head){
 
 //******************************************************************************
 
-void FGInitialCondition::SetCrossWindKtsIC(float cross){ 
+void FGInitialCondition::SetCrossWindKtsIC(double cross){ 
     wcross=cross*ktstofps; 
     lastWindSet=setwhc; 
     calcWindUVW();
@@ -325,7 +325,7 @@ void FGInitialCondition::SetCrossWindKtsIC(float cross){
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindDownKtsIC(float wD) { 
+void FGInitialCondition::SetWindDownKtsIC(double wD) { 
     wdown=wD; 
     calcWindUVW();
     if(lastSpeedSet == setvg)
@@ -334,7 +334,7 @@ void FGInitialCondition::SetWindDownKtsIC(float wD) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindMagKtsIC(float mag) {
+void FGInitialCondition::SetWindMagKtsIC(double mag) {
   wmag=mag*ktstofps;
   lastWindSet=setwmd;
   calcWindUVW();    
@@ -344,7 +344,7 @@ void FGInitialCondition::SetWindMagKtsIC(float mag) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindDirDegIC(float dir) {
+void FGInitialCondition::SetWindDirDegIC(double dir) {
   wdir=dir*degtorad;
   lastWindSet=setwmd;
   calcWindUVW();    
@@ -389,7 +389,7 @@ void FGInitialCondition::calcWindUVW(void) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetAltitudeFtIC(float tt) {
+void FGInitialCondition::SetAltitudeFtIC(double tt) {
   altitude=tt;
   fdmex->GetPosition()->Seth(altitude);
   fdmex->GetAtmosphere()->Run();
@@ -418,7 +418,7 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetAltitudeAGLFtIC(float tt) {
+void FGInitialCondition::SetAltitudeAGLFtIC(double tt) {
   fdmex->GetPosition()->SetDistanceAGL(tt);
   altitude=fdmex->GetPosition()->Geth();
   SetAltitudeFtIC(altitude);
@@ -452,7 +452,7 @@ void FGInitialCondition::calcUVWfromNED(void) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVnorthFpsIC(float tt) {
+void FGInitialCondition::SetVnorthFpsIC(double tt) {
   vnorth=tt;
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
@@ -461,7 +461,7 @@ void FGInitialCondition::SetVnorthFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVeastFpsIC(float tt) {
+void FGInitialCondition::SetVeastFpsIC(double tt) {
   veast=tt;
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
@@ -470,7 +470,7 @@ void FGInitialCondition::SetVeastFpsIC(float tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetVdownFpsIC(float tt) {
+void FGInitialCondition::SetVdownFpsIC(double tt) {
   vdown=tt;
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
@@ -480,10 +480,10 @@ void FGInitialCondition::SetVdownFpsIC(float tt) {
 
 //******************************************************************************
 
-bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
+bool FGInitialCondition::getMachFromVcas(double *Mach,double vcas) {
 
   bool result=false;
-  float guess=1.5;
+  double guess=1.5;
   xlo=xhi=0;
   xmin=0;xmax=50;
   sfunc=&FGInitialCondition::calcVcas;
@@ -498,7 +498,7 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
 
 bool FGInitialCondition::getAlpha(void) {
   bool result=false;
-  float guess=theta-gamma;
+  double guess=theta-gamma;
   xlo=xhi=0;
   xmin=fdmex->GetAircraft()->GetAlphaCLMin();
   xmax=fdmex->GetAircraft()->GetAlphaCLMax();
@@ -518,7 +518,7 @@ bool FGInitialCondition::getAlpha(void) {
 
 bool FGInitialCondition::getTheta(void) {
   bool result=false;
-  float guess=alpha+gamma;
+  double guess=alpha+gamma;
   xlo=xhi=0;
   xmin=-89;xmax=89;
   sfunc=&FGInitialCondition::GammaEqOfTheta;
@@ -535,9 +535,9 @@ bool FGInitialCondition::getTheta(void) {
 
 //******************************************************************************
 
-float FGInitialCondition::GammaEqOfTheta(float Theta) {
-  float a,b,c,d;
-  float sTheta,cTheta;
+double FGInitialCondition::GammaEqOfTheta(double Theta) {
+  double a,b,c,d;
+  double sTheta,cTheta;
 
   //theta=Theta; stheta=sin(theta); ctheta=cos(theta);
   sTheta=sin(Theta); cTheta=cos(Theta);
@@ -550,9 +550,9 @@ float FGInitialCondition::GammaEqOfTheta(float Theta) {
 
 //******************************************************************************
 
-float FGInitialCondition::GammaEqOfAlpha(float Alpha) {
-  float a,b,c,d;
-  float sAlpha,cAlpha;
+double FGInitialCondition::GammaEqOfAlpha(double Alpha) {
+  double a,b,c,d;
+  double sAlpha,cAlpha;
 
   sAlpha=sin(Alpha); cAlpha=cos(Alpha);
   a=wdown + vt*cAlpha*cbeta + uw;
@@ -564,12 +564,12 @@ float FGInitialCondition::GammaEqOfAlpha(float Alpha) {
 
 //******************************************************************************
 
-float FGInitialCondition::calcVcas(float Mach) {
+double FGInitialCondition::calcVcas(double Mach) {
 
-  float p=fdmex->GetAtmosphere()->GetPressure();
-  float psl=fdmex->GetAtmosphere()->GetPressureSL();
-  float rhosl=fdmex->GetAtmosphere()->GetDensitySL();
-  float pt,A,B,D,vcas;
+  double p=fdmex->GetAtmosphere()->GetPressure();
+  double psl=fdmex->GetAtmosphere()->GetPressureSL();
+  double rhosl=fdmex->GetAtmosphere()->GetDensitySL();
+  double pt,A,B,D,vcas;
   if(Mach < 0) Mach=0;
   if(Mach < 1)    //calculate total pressure assuming isentropic flow
     pt=p*pow((1 + 0.2*Mach*Mach),3.5);
@@ -605,13 +605,13 @@ float FGInitialCondition::calcVcas(float Mach) {
 
 //******************************************************************************
 
-bool FGInitialCondition::findInterval(float x,float guess) {
-  //void find_interval(inter_params &ip,eqfunc f,float y,float constant, int &flag){
+bool FGInitialCondition::findInterval(double x,double guess) {
+  //void find_interval(inter_params &ip,eqfunc f,double y,double constant, int &flag){
 
   int i=0;
   bool found=false;
-  float flo,fhi,fguess;
-  float lo,hi,step;
+  double flo,fhi,fguess;
+  double lo,hi,step;
   step=0.1;
   fguess=(this->*sfunc)(guess)-x;
   lo=hi=guess;
@@ -644,11 +644,11 @@ bool FGInitialCondition::findInterval(float x,float guess) {
 
 //******************************************************************************
 
-bool FGInitialCondition::solve(float *y,float x)
+bool FGInitialCondition::solve(double *y,double x)
 {
-  float x1,x2,x3,f1,f2,f3,d,d0;
-  float eps=1E-5;
-  float const relax =0.9;
+  double x1,x2,x3,f1,f2,f3,d,d0;
+  double eps=1E-5;
+  double const relax =0.9;
   int i;
   bool success=false;
 
@@ -695,7 +695,7 @@ bool FGInitialCondition::solve(float *y,float x)
 
 //******************************************************************************
 
-float FGInitialCondition::GetWindDirDegIC(void) {
+double FGInitialCondition::GetWindDirDegIC(void) {
   if(weast != 0.0) 
     return atan2(weast,wnorth)*radtodeg;
   else if(wnorth > 0) 
@@ -711,7 +711,7 @@ bool FGInitialCondition::Load(string path, string acname, string fname)
   string resetDef;
   string token="";
 
-  float temp;
+  double temp;
 
 # ifndef macintosh
   resetDef = path + "/" + acname + "/" + fname + ".xml";

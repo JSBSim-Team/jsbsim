@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.15 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.16 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -79,7 +79,7 @@ private:
   vector <eParam> InputIndices;
   vector <int> InputTypes;
   bool clip;
-  float clipmin,clipmax;
+  double clipmin,clipmax;
   void Debug(void);
 };
 

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.42 2001/11/12 13:01:20 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.43 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.42 2001/11/12 13:01:20 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.43 2001/11/14 23:53:27 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -200,22 +200,22 @@ public:
 
   /// Gets the location of the gear in Body axes
   FGColumnVector3& GetBodyLocation(void) { return vWhlBodyVec; }
-  float GetBodyLocation(int idx) { return vWhlBodyVec(idx); }
+  double GetBodyLocation(int idx) { return vWhlBodyVec(idx); }
 
   FGColumnVector3& GetLocalGear(void) { return vLocalGear; }
-  float GetLocalGear(int idx) { return vLocalGear(idx); }
+  double GetLocalGear(int idx) { return vLocalGear(idx); }
 
   /// Gets the name of the gear
   inline string GetName(void)      {return name;          }
   /// Gets the Weight On Wheels flag value
   inline bool   GetWOW(void)       {return WOW;           }
   /// Gets the current compressed length of the gear in feet
-  inline float  GetCompLen(void)   {return compressLength;}
+  inline double  GetCompLen(void)   {return compressLength;}
   /// Gets the current gear compression velocity in ft/sec
-  inline float  GetCompVel(void)   {return compressSpeed; }
+  inline double  GetCompVel(void)   {return compressSpeed; }
   /// Gets the gear compression force in pounds
-  inline float  GetCompForce(void) {return Force()(3);    }
-  inline float  GetBrakeFCoeff(void) {return BrakeFCoeff;}
+  inline double  GetCompForce(void) {return Force()(3);    }
+  inline double  GetBrakeFCoeff(void) {return BrakeFCoeff;}
   
   /// Sets the brake value in percent (0 - 100)
   inline void SetBrake(double bp) {brakePct = bp;}
@@ -226,8 +226,8 @@ public:
   /** Get the console touchdown reporting feature
       @return true if reporting is turned on */
   inline bool GetReport(void)    { return ReportEnable; }
-  inline float GetSteerAngle(void) { return SteerAngle;}
-  inline float GetstaticFCoeff(void) { return staticFCoeff;}
+  inline double GetSteerAngle(void) { return SteerAngle;}
+  inline double GetstaticFCoeff(void) { return staticFCoeff;}
   
   inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
   inline int GetSteerType(void)  { return (int)eSteerType; }
@@ -240,15 +240,15 @@ private:
   FGColumnVector3 vForce;
   FGColumnVector3 vLocalForce;
   FGColumnVector3 vWhlVelVec;     // Velocity of this wheel (Local)
-  float SteerAngle;
-  float kSpring;
-  float bDamp;
-  float compressLength;
-  float compressSpeed;
-  float staticFCoeff, dynamicFCoeff, rollingFCoeff;
-  float brakePct;
-  float BrakeFCoeff;
-  float maxCompLen;
+  double SteerAngle;
+  double kSpring;
+  double bDamp;
+  double compressLength;
+  double compressSpeed;
+  double staticFCoeff, dynamicFCoeff, rollingFCoeff;
+  double brakePct;
+  double BrakeFCoeff;
+  double maxCompLen;
   double SinkRate;
   double GroundSpeed;
   double DistanceTraveled;
@@ -264,7 +264,7 @@ private:
   string sBrakeGroup;
   BrakeGroup eBrakeGrp;
   SteerType  eSteerType;
-  float  maxSteerAngle;
+  double  maxSteerAngle;
 
   FGFDMExec*  Exec;
   FGState*    State;

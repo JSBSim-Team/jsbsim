@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.9 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.10 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -56,7 +56,7 @@ public:
   FGRotor(FGFDMExec *FDMExec);
   ~FGRotor();
 
-  float Calculate(float);
+  double Calculate(double);
 
 private:
   void Debug(void);

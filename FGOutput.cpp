@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.40 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.41 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,10 +145,10 @@ void FGOutput::DelimitedOutput(string fname)
 
   if (dFirstPass) {
     outstream << "Time";
-    if (SubSystems & FGAircraft::ssSimulation) {
+    if (SubSystems & ssSimulation) {
       // Nothing here, yet
     }
-    if (SubSystems & FGAircraft::ssAerosurfaces) {
+    if (SubSystems & ssAerosurfaces) {
       outstream << ", ";
       outstream << "Throttle, ";
       outstream << "Mixture, ";
@@ -159,11 +159,11 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Elevator Pos, ";
       outstream << "Rudder Pos";
     }
-    if (SubSystems & FGAircraft::ssRates) {
+    if (SubSystems & ssRates) {
       outstream << ", ";
       outstream << "P, Q, R";
     }
-    if (SubSystems & FGAircraft::ssVelocities) {
+    if (SubSystems & ssVelocities) {
       outstream << ", ";
       outstream << "QBar, ";
       outstream << "Vtotal, ";
@@ -171,21 +171,21 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "UAero, VAero, WAero, ";
       outstream << "Vn, Ve, Vd";
     }
-    if (SubSystems & FGAircraft::ssForces) {
+    if (SubSystems & ssForces) {
       outstream << ", ";
       outstream << "Drag, Side, Lift, ";
       outstream << "L/D, ";
       outstream << "Xforce, Yforce, Zforce";
     }
-    if (SubSystems & FGAircraft::ssMoments) {
+    if (SubSystems & ssMoments) {
       outstream << ", ";
       outstream << "L, M, N";
     }
-    if (SubSystems & FGAircraft::ssAtmosphere) {
+    if (SubSystems & ssAtmosphere) {
       outstream << ", ";
       outstream << "Rho";
     }
-    if (SubSystems & FGAircraft::ssMassProps) {
+    if (SubSystems & ssMassProps) {
       outstream << ", ";
       outstream << "Ixx, ";
       outstream << "Iyy, ";
@@ -194,7 +194,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Mass, ";
       outstream << "Xcg, Ycg, Zcg";
     }
-    if (SubSystems & FGAircraft::ssPosition) {
+    if (SubSystems & ssPosition) {
       outstream << ", ";
       outstream << "Altitude, ";
       outstream << "Phi, Tht, Psi, ";
@@ -204,15 +204,15 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Distance AGL, ";
       outstream << "Runway Radius";
     }
-    if (SubSystems & FGAircraft::ssCoefficients) {
+    if (SubSystems & ssCoefficients) {
       outstream << ", ";
       outstream << Aerodynamics->GetCoefficientStrings();
     }
-    if (SubSystems & FGAircraft::ssGroundReactions) {
+    if (SubSystems & ssGroundReactions) {
       outstream << ", ";
       outstream << GroundReactions->GetGroundReactionStrings();
     }
-    if (SubSystems & FGAircraft::ssPropulsion) {
+    if (SubSystems & ssPropulsion) {
       outstream << ", ";
       outstream << Propulsion->GetPropulsionStrings();
     }
@@ -222,9 +222,9 @@ void FGOutput::DelimitedOutput(string fname)
   }
 
   outstream << State->Getsim_time();
-  if (SubSystems & FGAircraft::ssSimulation) {
+  if (SubSystems & ssSimulation) {
   }
-  if (SubSystems & FGAircraft::ssAerosurfaces) {
+  if (SubSystems & ssAerosurfaces) {
     outstream << ", ";
     outstream << FCS->GetThrottlePos(0) << ", ";
     outstream << FCS->GetMixturePos(0) << ", ";
@@ -235,11 +235,11 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << FCS->GetDePos() << ", ";
     outstream << FCS->GetDrPos();
   }
-  if (SubSystems & FGAircraft::ssRates) {
+  if (SubSystems & ssRates) {
     outstream << ", ";
     outstream << Rotation->GetPQR();
   }
-  if (SubSystems & FGAircraft::ssVelocities) {
+  if (SubSystems & ssVelocities) {
     outstream << ", ";
     outstream << Translation->Getqbar() << ", ";
     outstream << Translation->GetVt() << ", ";
@@ -247,21 +247,21 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Translation->GetvAero() << ", ";
     outstream << Position->GetVel();
   }
-  if (SubSystems & FGAircraft::ssForces) {
+  if (SubSystems & ssForces) {
     outstream << ", ";
     outstream << Aerodynamics->GetvFs() << ", ";
     outstream << Aerodynamics->GetLoD() << ", ";
     outstream << Aircraft->GetForces();
   }
-  if (SubSystems & FGAircraft::ssMoments) {
+  if (SubSystems & ssMoments) {
     outstream << ", ";
     outstream << Aircraft->GetMoments();
   }
-  if (SubSystems & FGAircraft::ssAtmosphere) {
+  if (SubSystems & ssAtmosphere) {
     outstream << ", ";
     outstream << Atmosphere->GetDensity();
   }
-  if (SubSystems & FGAircraft::ssMassProps) {
+  if (SubSystems & ssMassProps) {
     outstream << ", ";
     outstream << MassBalance->GetIxx() << ", ";
     outstream << MassBalance->GetIyy() << ", ";
@@ -270,7 +270,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << MassBalance->GetMass() << ", ";
     outstream << MassBalance->GetXYZcg();
   }
-  if (SubSystems & FGAircraft::ssPosition) {
+  if (SubSystems & ssPosition) {
     outstream << ", ";
     outstream << Position->Geth() << ", ";
     outstream << Rotation->GetEuler() << ", ";
@@ -280,15 +280,15 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Position->GetDistanceAGL() << ", ";
     outstream << Position->GetRunwayRadius();
   }
-  if (SubSystems & FGAircraft::ssCoefficients) {
+  if (SubSystems & ssCoefficients) {
     outstream << ", ";
     outstream << Aerodynamics->GetCoefficientValues();
   }
-  if (SubSystems & FGAircraft::ssGroundReactions) {
+  if (SubSystems & ssGroundReactions) {
     outstream << ", ";
     outstream << GroundReactions->GetGroundReactionValues();
   }
-  if (SubSystems & FGAircraft::ssPropulsion) {
+  if (SubSystems & ssPropulsion) {
     outstream << ", ";
     outstream << Propulsion->GetPropulsionValues();
   }
@@ -406,6 +406,82 @@ void FGOutput::SocketStatusOutput(string out_str)
   asciiData = string("<STATUS>") + out_str;
   socket->Append(asciiData.c_str());
   socket->Send();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGOutput::Load(FGConfigFile* AC_cfg)
+{
+  string token, parameter;
+  int OutRate = 0;
+
+  token = AC_cfg->GetValue("NAME");
+  Output->SetFilename(token);
+  token = AC_cfg->GetValue("TYPE");
+  Output->SetType(token);
+  AC_cfg->GetNextConfigLine();
+
+  while ((token = AC_cfg->GetValue()) != string("/OUTPUT")) {
+    *AC_cfg >> parameter;
+    if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
+    if (parameter == "SIMULATION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssSimulation;
+    }
+    if (parameter == "AEROSURFACES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssAerosurfaces;
+    }
+    if (parameter == "RATES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssRates;
+    }
+    if (parameter == "VELOCITIES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssVelocities;
+    }
+    if (parameter == "FORCES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssForces;
+    }
+    if (parameter == "MOMENTS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssMoments;
+    }
+    if (parameter == "ATMOSPHERE") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssAtmosphere;
+    }
+    if (parameter == "MASSPROPS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssMassProps;
+    }
+    if (parameter == "POSITION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssPosition;
+    }
+    if (parameter == "COEFFICIENTS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssCoefficients;
+    }
+    if (parameter == "GROUND_REACTIONS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssGroundReactions;
+    }
+    if (parameter == "FCS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssFCS;
+    }
+    if (parameter == "PROPULSION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") SubSystems += ssPropulsion;
+    }
+  }
+
+  OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
+  rate = (int)(0.5 + 1.0/(State->Getdt()*OutRate));
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

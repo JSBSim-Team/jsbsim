@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.32 2001/10/31 12:35:02 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.33 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,7 @@ FGTranslation::~FGTranslation()
 
 bool FGTranslation::Run(void)
 {
-  float Tc = 0.5*State->Getdt()*rate;
+  double Tc = 0.5*State->Getdt()*rate;
 
   if (!FGModel::Run()) {
 
@@ -133,8 +133,8 @@ bool FGTranslation::Run(void)
                sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
 
       // stolen, quite shamelessly, from LaRCsim
-      float mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
-      float signU=1;
+      double mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
+      double signU=1;
       if (vAero(eU) != 0.0)
         signU = vAero(eU)/fabs(vAero(eU));
 

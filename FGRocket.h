@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.19 2001/04/05 23:05:30 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.20 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.19 2001/04/05 23:05:30 jberndt Exp $
+    @version $Id: FGRocket.h,v 1.20 2001/11/14 23:53:27 jberndt Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce
@@ -116,19 +116,19 @@ public:
       coefficient times the chamber pressure.
       @param pe nozzle exit pressure
       @return thrust coefficient times chamber pressure */
-  float Calculate(float pe);
+  double Calculate(double pe);
   
   /** Gets the chamber pressure.
       @return chamber pressure in psf. */
-  float GetChamberPressure(void) {return PC;}
+  double GetChamberPressure(void) {return PC;}
 
 private:
-  float SHR;
-  float maxPC;
-  float propEff;
-  float kFactor;
-  float Variance;
-  float PC;
+  double SHR;
+  double maxPC;
+  double propEff;
+  double kFactor;
+  double Variance;
+  double PC;
   void Debug(void);
 };
 

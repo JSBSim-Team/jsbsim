@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.26 2001/11/12 19:30:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.27 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +208,7 @@ string FGConfigFile::GetLine(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*
 FGConfigFile& FGConfigFile::operator>>(double& val)
 {
   unsigned int pos, end;
@@ -223,10 +223,10 @@ FGConfigFile& FGConfigFile::operator>>(double& val)
   if (CurrentIndex >= CurrentLine.length()) GetNextConfigLine();
   return *this;
 }
-
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGConfigFile& FGConfigFile::operator>>(float& val)
+FGConfigFile& FGConfigFile::operator>>(double& val)
 {
   unsigned int pos, end;
 

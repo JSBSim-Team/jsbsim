@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.13 2001/10/04 23:10:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.14 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,11 +78,11 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float** FGTable::Allocate(void)
+double** FGTable::Allocate(void)
 {
-  Data = new float*[nRows+1];
+  Data = new double*[nRows+1];
   for (int r=0; r<=nRows; r++) {
-    Data[r] = new float[nCols+1];
+    Data[r] = new double[nCols+1];
     for (int c=0; c<=nCols; c++) {
       Data[r][c] = 0.0;
     }
@@ -101,9 +101,9 @@ FGTable::~FGTable()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGTable::GetValue(float key)
+double FGTable::GetValue(double key)
 {
-  float Factor, Value, Span;
+  double Factor, Value, Span;
   int r;
 
   for (r=1; r<=nRows; r++) if (Data[r][0] >= key) break;
@@ -126,9 +126,9 @@ float FGTable::GetValue(float key)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGTable::GetValue(float rowKey, float colKey)
+double FGTable::GetValue(double rowKey, double colKey)
 {
-  float rFactor, cFactor, col1temp, col2temp, Value;
+  double rFactor, cFactor, col1temp, col2temp, Value;
   int r, c;
 
   for (r=1;r<=nRows;r++) if (Data[r][0] >= rowKey) break;
@@ -195,13 +195,13 @@ FGTable& FGTable::operator<<(const int n)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGTable& FGTable::operator<<(const float n)
+/*
+FGTable& FGTable::operator<<(const double n)
 {
   *this << (double)n;
   return *this;
 }
-
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTable::Print(void)

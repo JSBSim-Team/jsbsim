@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.5 2001/10/15 11:49:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.6 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR4;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,7 +204,7 @@ FGColumnVector4 operator*(const double scalar, const FGColumnVector4& C)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGColumnVector4::Magnitude(void)
+double FGColumnVector4::Magnitude(void)
 {
   double num;
 
@@ -299,7 +299,7 @@ ostream& operator<<(ostream& os, FGColumnVector4& col)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector4& FGColumnVector4::operator<<(const float ff)
+FGColumnVector4& FGColumnVector4::operator<<(const double ff)
 {
   data[rowCtr] = ff;
   if (++rowCtr > 4 )

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.18 2001/11/08 13:24:25 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.18 2001/11/08 13:24:25 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -104,7 +104,7 @@ public:
       equation for rotational acceleration "a": a = Q/I , where Q is Torque and
       I is moment of inertia for the propeller.
       @param rpm the rotational velocity of the propeller */
-  void SetRPM(float rpm) {RPM = rpm;}
+  void SetRPM(double rpm) {RPM = rpm;}
 
   /** This commands the pitch of the blade to change to the value supplied.
       This call is meant to be issued either from the cockpit or by the flight
@@ -114,28 +114,28 @@ public:
       indices to the power, thrust, and efficiency tables for variable-pitch
       propellers.
       @param pitch the pitch of the blade in degrees. */
-  void SetPitch(float pitch) {Pitch = pitch;}
+  void SetPitch(double pitch) {Pitch = pitch;}
   
   void SetPFactor(double pf) {P_Factor = pf;}
   
   void SetSense(double s) { Sense = s;}
 
   /// Retrieves the pitch of the propeller in degrees.
-  float GetPitch(void)         { return Pitch;         }
+  double GetPitch(void)         { return Pitch;         }
   
   /// Retrieves the RPMs of the propeller
-  float GetRPM(void)           { return RPM;           }
+  double GetRPM(void)           { return RPM;           }
   
   /// Retrieves the propeller moment of inertia
-  float GetIxx(void)           { return Ixx;           }
+  double GetIxx(void)           { return Ixx;           }
   
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
-  float GetTorque(void)        { return Torque;        }
+  double GetTorque(void)        { return Torque;        }
   
   /** Retrieves the power required (or "absorbed") by the propeller -
       i.e. the power required to keep spinning the propeller at the current
       velocity, air density,  and rotational rate. */
-  float GetPowerRequired(void);
+  double GetPowerRequired(void);
   
   /** Calculates and returns the thrust produced by this propeller.
       Given the excess power available from the engine (in foot-pounds), the thrust is
@@ -146,19 +146,19 @@ public:
       accelerate the prop. It could be negative, dictating that the propeller
       would be slowed.
 		  @return the thrust in pounds */
-  float Calculate(float PowerAvailable);
+  double Calculate(double PowerAvailable);
 
 private:
   int   numBlades;
-  float RPM;
-  float Ixx;
-  float Diameter;
-  float MaxPitch;
-  float MinPitch;
-  float P_Factor;
-  float Sense;
-  float Pitch;
-  float Torque;
+  double RPM;
+  double Ixx;
+  double Diameter;
+  double MaxPitch;
+  double MinPitch;
+  double P_Factor;
+  double Sense;
+  double Pitch;
+  double Torque;
   FGTable *Efficiency;
   FGTable *cThrust;
   FGTable *cPower;

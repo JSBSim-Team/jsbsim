@@ -52,7 +52,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.13 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -82,10 +82,10 @@ public:
 
   void Run(void);
  
-  float GetState(void) { getState(); return state_value; }
+  double GetState(void) { getState(); return state_value; }
   //Accels are not settable
-  inline void SetControl(float value ) { control_value=value; }
-  inline float GetControl(void) { return control_value; }
+  inline void SetControl(double value ) { control_value=value; }
+  inline double GetControl(void) { return control_value; }
 
   inline State GetStateType(void) { return state; }
   inline Control GetControlType(void) { return control; }
@@ -93,32 +93,32 @@ public:
   inline string GetStateName(void) { return StateNames[state]; }
   inline string GetControlName(void) { return ControlNames[control]; }
 
-  inline float GetControlMin(void) { return control_min; }
-  inline float GetControlMax(void) { return control_max; }
+  inline double GetControlMin(void) { return control_min; }
+  inline double GetControlMax(void) { return control_max; }
 
   inline void SetControlToMin(void) { control_value=control_min; }
   inline void SetControlToMax(void) { control_value=control_max; }
   
-  inline void SetControlLimits(float min, float max) { 
+  inline void SetControlLimits(double min, double max) { 
       control_min=min;
       control_max=max;
   }    
 
-  inline void  SetTolerance(float ff) { tolerance=ff;}
-  inline float GetTolerance(void) { return tolerance; }
+  inline void  SetTolerance(double ff) { tolerance=ff;}
+  inline double GetTolerance(void) { return tolerance; }
 
-  inline float GetSolverEps(void) { return solver_eps; }
-  inline void SetSolverEps(float ff) { solver_eps=ff; }
+  inline double GetSolverEps(void) { return solver_eps; }
+  inline void SetSolverEps(double ff) { solver_eps=ff; }
 
   inline int  GetIterationLimit(void) { return max_iterations; }
   inline void SetIterationLimit(int ii) { max_iterations=ii; }
 
   inline int GetStability(void) { return its_to_stable_value; }
   inline int GetRunCount(void) { return total_stability_iterations; }
-  float GetAvgStability( void );
+  double GetAvgStability( void );
   
-  void SetThetaOnGround(float ff);
-  void SetPhiOnGround(float ff);
+  void SetThetaOnGround(double ff);
+  void SetPhiOnGround(double ff);
   
   bool initTheta(void);
   
@@ -133,18 +133,18 @@ private:
   State   state;
   Control control;
 
-  float state_value;
-  float control_value;
+  double state_value;
+  double control_value;
 
-  float control_min;
-  float control_max;
+  double control_min;
+  double control_max;
 
-  float tolerance;
+  double tolerance;
 
-  float solver_eps;
+  double solver_eps;
 
-  float state_convert;
-  float control_convert;
+  double state_convert;
+  double control_convert;
 
   int max_iterations;
 
@@ -158,7 +158,7 @@ private:
   void getControl(void);
   void setControl(void);
   
-  float computeHmgt(void);
+  double computeHmgt(void);
   
   void Debug(void);
 };

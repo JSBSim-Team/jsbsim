@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.35 2001/11/11 12:42:36 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.36 2001/11/14 23:53:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.35 2001/11/11 12:42:36 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.36 2001/11/14 23:53:26 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -171,78 +171,78 @@ public:
   //@{
   /** Gets the aileron command.
       @return aileron command in radians */
-  inline float GetDaCmd(void) { return DaCmd; }
+  inline double GetDaCmd(void) { return DaCmd; }
 
   /** Gets the elevator command.
       @return elevator command in radians */
-  inline float GetDeCmd(void) { return DeCmd; }
+  inline double GetDeCmd(void) { return DeCmd; }
 
   /** Gets the rudder command.
       @return rudder command in radians */
-  inline float GetDrCmd(void) { return DrCmd; }
+  inline double GetDrCmd(void) { return DrCmd; }
 
   /** Gets the flaps command.
       @return flaps command in radians */
-  inline float GetDfCmd(void) { return DfCmd; }
+  inline double GetDfCmd(void) { return DfCmd; }
 
   /** Gets the speedbrake command.
       @return speedbrake command in radians */
-  inline float GetDsbCmd(void) { return DsbCmd; }
+  inline double GetDsbCmd(void) { return DsbCmd; }
 
   /** Gets the spoiler command.
       @return spoiler command in radians */
-  inline float GetDspCmd(void) { return DspCmd; }
+  inline double GetDspCmd(void) { return DspCmd; }
 
   /** Gets the throttle command.
       @param engine engine ID number
       @return throttle command in percent ( 0 - 100) for the given engine */
-  float GetThrottleCmd(int engine);
+  double GetThrottleCmd(int engine);
 
   /** Gets the mixture command.
       @param engine engine ID number
       @return mixture command in percent ( 0 - 100) for the given engine */
-  inline float GetMixtureCmd(int engine) { return MixtureCmd[engine]; }
+  inline double GetMixtureCmd(int engine) { return MixtureCmd[engine]; }
 
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
-  inline float GetPitchTrimCmd(void) { return PTrimCmd; }
+  inline double GetPitchTrimCmd(void) { return PTrimCmd; }
   //@}
 
   /// @name Aerosurface position retrieval
   //@{
   /** Gets the aileron position.
       @return aileron position in radians */
-  inline float GetDaPos(void) { return DaPos; }
+  inline double GetDaPos(void) { return DaPos; }
 
   /** Gets the elevator position.
       @return elevator position in radians */
-  inline float GetDePos(void) { return DePos; }
+  inline double GetDePos(void) { return DePos; }
 
   /** Gets the rudder position.
       @return rudder position in radians */
-  inline float GetDrPos(void) { return DrPos; }
+  inline double GetDrPos(void) { return DrPos; }
 
   /** Gets the flaps position.
       @return flaps position in radians */
-  inline float GetDfPos(void) { return DfPos; }
+  inline double GetDfPos(void) { return DfPos; }
 
   /** Gets the speedbrake position.
       @return speedbrake position in radians */
-  inline float GetDsbPos(void) { return DsbPos; }
+  inline double GetDsbPos(void) { return DsbPos; }
 
   /** Gets the spoiler position.
       @return spoiler position in radians */
-  inline float GetDspPos(void) { return DspPos; }
+  inline double GetDspPos(void) { return DspPos; }
 
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
-  float GetThrottlePos(int engine);
+  double GetThrottlePos(int engine);
 
   /** Gets the mixture position.
       @param engine engine ID number
       @return mixture position for the given engine in percent ( 0 - 100)*/
-  inline float GetMixturePos(int engine) { return MixturePos[engine]; }
+  inline double GetMixturePos(int engine) { return MixturePos[engine]; }
   //@}
 
   /** Retrieves the State object pointer.
@@ -253,7 +253,7 @@ public:
   /** Retrieves a components output value
       @param idx the index of the component (the component ID)
       @return output value from the component */
-  float GetComponentOutput(eParam idx);
+  double GetComponentOutput(eParam idx);
 
   /** Retrieves the component name
       @param idx the index of the component (the component ID)
@@ -270,98 +270,98 @@ public:
   //@{
   /** Sets the aileron command
       @param cmd aileron command in radians*/
-  inline void SetDaCmd(float cmd) { DaCmd = cmd; }
+  inline void SetDaCmd(double cmd) { DaCmd = cmd; }
 
   /** Sets the elevator command
       @param cmd elevator command in radians*/
-  inline void SetDeCmd(float cmd) { DeCmd = cmd; }
+  inline void SetDeCmd(double cmd) { DeCmd = cmd; }
 
   /** Sets the rudder command
       @param cmd rudder command in radians*/
-  inline void SetDrCmd(float cmd) { DrCmd = cmd; }
+  inline void SetDrCmd(double cmd) { DrCmd = cmd; }
 
   /** Sets the flaps command
       @param cmd flaps command in radians*/
-  inline void SetDfCmd(float cmd) { DfCmd = cmd; }
+  inline void SetDfCmd(double cmd) { DfCmd = cmd; }
 
   /** Sets the speedbrake command
       @param cmd speedbrake command in radians*/
-  inline void SetDsbCmd(float cmd) { DsbCmd = cmd; }
+  inline void SetDsbCmd(double cmd) { DsbCmd = cmd; }
 
   /** Sets the spoilers command
       @param cmd spoilers command in radians*/
-  inline void SetDspCmd(float cmd) { DspCmd = cmd; }
+  inline void SetDspCmd(double cmd) { DspCmd = cmd; }
 
   /** Sets the pitch trim command
       @param cmd pitch trim command in radians*/
-  inline void SetPitchTrimCmd(float cmd) { PTrimCmd = cmd; }
+  inline void SetPitchTrimCmd(double cmd) { PTrimCmd = cmd; }
 
   /** Sets the throttle command for the specified engine
       @param engine engine ID number
       @param cmd throttle command in percent (0 - 100)*/
-  void SetThrottleCmd(int engine, float cmd);
+  void SetThrottleCmd(int engine, double cmd);
 
   /** Sets the mixture command for the specified engine
       @param engine engine ID number
       @param cmd mixture command in percent (0 - 100)*/
-  void SetMixtureCmd(int engine, float cmd);
+  void SetMixtureCmd(int engine, double cmd);
   //@}
 
   /// @name Aerosurface position setting
   //@{
   /** Sets the aileron position
       @param cmd aileron position in radians*/
-  inline void SetDaPos(float cmd) { DaPos = cmd; }
+  inline void SetDaPos(double cmd) { DaPos = cmd; }
 
   /** Sets the elevator position
       @param cmd elevator position in radians*/
-  inline void SetDePos(float cmd) { DePos = cmd; }
+  inline void SetDePos(double cmd) { DePos = cmd; }
 
   /** Sets the rudder position
       @param cmd rudder position in radians*/
-  inline void SetDrPos(float cmd) { DrPos = cmd; }
+  inline void SetDrPos(double cmd) { DrPos = cmd; }
 
   /** Sets the flaps position
       @param cmd flaps position in radians*/
-  inline void SetDfPos(float cmd) { DfPos = cmd; }
+  inline void SetDfPos(double cmd) { DfPos = cmd; }
 
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
-  inline void SetDsbPos(float cmd) { DsbPos = cmd; }
+  inline void SetDsbPos(double cmd) { DsbPos = cmd; }
 
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
-  inline void SetDspPos(float cmd) { DspPos = cmd; }
+  inline void SetDspPos(double cmd) { DspPos = cmd; }
 
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
       @param cmd throttle setting in percent (0 - 100)*/
-  void SetThrottlePos(int engine, float cmd);
+  void SetThrottlePos(int engine, double cmd);
 
   /** Sets the actual mixture setting for the specified engine
       @param engine engine ID number
       @param cmd mixture setting in percent (0 - 100)*/
-  void SetMixturePos(int engine, float cmd);
+  void SetMixturePos(int engine, double cmd);
   //@}
 
   /// @name Landing Gear brakes
   //@{
   /** Sets the left brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetLBrake(float cmd) {LeftBrake = cmd;}
+  void SetLBrake(double cmd) {LeftBrake = cmd;}
 
   /** Sets the right brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetRBrake(float cmd) {RightBrake = cmd;}
+  void SetRBrake(double cmd) {RightBrake = cmd;}
 
   /** Sets the center brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
-  void SetCBrake(float cmd) {CenterBrake = cmd;}
+  void SetCBrake(double cmd) {CenterBrake = cmd;}
 
   /** Gets the brake for a specified group.
       @param bg which brakegroup to retrieve the command for
       @return the brake setting for the supplied brake group argument */
-  float GetBrake(FGLGear::BrakeGroup bg);
+  double GetBrake(FGLGear::BrakeGroup bg);
   //@}
 
   /** Loads the Flight Control System.
@@ -375,14 +375,14 @@ public:
   void AddThrottle(void);
 
 private:
-  float DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
-  float DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
-  float PTrimCmd;
-  vector <float> ThrottleCmd;
-  vector <float> ThrottlePos;
-  vector <float> MixtureCmd;
-  vector <float> MixturePos;
-  float LeftBrake, RightBrake, CenterBrake; // Brake settings
+  double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
+  double DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
+  double PTrimCmd;
+  vector <double> ThrottleCmd;
+  vector <double> ThrottlePos;
+  vector <double> MixtureCmd;
+  vector <double> MixturePos;
+  double LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;
   void Debug(void);

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.7 2001/10/15 11:49:32 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.8 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ public:
   FGMatrix33 operator*(const FGMatrix33& B);
   FGMatrix33 operator*(const double scalar);
   FGMatrix33 operator/(const double scalar);
-  FGMatrix33& operator<<(const float ff);
+  FGMatrix33& operator<<(const double ff);
 
   friend ostream& operator<<(ostream& os, const FGMatrix33& M);
   friend istream& operator>>(istream& is, FGMatrix33& M);

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.29 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.30 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,9 +97,9 @@ FGRocket::~FGRocket()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGRocket::Calculate(float pe)
+double FGRocket::Calculate(double pe)
 {
-  float Cf;
+  double Cf;
 
   ConsumeFuel();
 
@@ -111,7 +111,7 @@ float FGRocket::Calculate(float pe)
     PC = 0.0;
   } else {
     PctPower = Throttle / MaxThrottle;
-    PC = maxPC*PctPower * (1.0 + Variance * ((float)rand()/(float)RAND_MAX - 0.5));
+    PC = maxPC*PctPower * (1.0 + Variance * ((double)rand()/(double)RAND_MAX - 0.5));
     Cf = sqrt(kFactor*(1 - pow(pe/(PC), (SHR-1)/SHR)));
     Flameout = false;
   }

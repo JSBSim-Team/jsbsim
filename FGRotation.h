@@ -72,7 +72,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.30 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.31 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -87,27 +87,27 @@ public:
   bool Run(void);
 
   inline FGColumnVector3& GetPQR(void) {return vPQR;}
-  inline float GetPQR(int axis) {return vPQR(axis);}
+  inline double GetPQR(int axis) {return vPQR(axis);}
   inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
-  inline float GetPQRdot(int idx) {return vPQRdot(idx);}
+  inline double GetPQRdot(int idx) {return vPQRdot(idx);}
   inline FGColumnVector3& GetEuler(void) {return vEuler;}
-  inline float GetEuler(int axis) {return vEuler(axis);}
+  inline double GetEuler(int axis) {return vEuler(axis);}
   inline FGColumnVector3& GetEulerRates(void) { return vEulerRates; }
-  inline float GetEulerRates(int axis) { return vEulerRates(axis); }
+  inline double GetEulerRates(int axis) { return vEulerRates(axis); }
   inline void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector3 tt) {vEuler = tt;}
   
-  inline float Getphi(void) {return vEuler(1);}
-  inline float Gettht(void) {return vEuler(2);}
-  inline float Getpsi(void) {return vEuler(3);}
+  inline double Getphi(void) {return vEuler(1);}
+  inline double Gettht(void) {return vEuler(2);}
+  inline double Getpsi(void) {return vEuler(3);}
   
-  inline float GetCosphi(void) {return cPhi;}
-  inline float GetCostht(void) {return cTht;}
-  inline float GetCospsi(void) {return cPsi;}
+  inline double GetCosphi(void) {return cPhi;}
+  inline double GetCostht(void) {return cTht;}
+  inline double GetCospsi(void) {return cPsi;}
 
-  inline float GetSinphi(void) {return sPhi;}
-  inline float GetSintht(void) {return sTht;}
-  inline float GetSinpsi(void) {return sPsi;}
+  inline double GetSinphi(void) {return sPhi;}
+  inline double GetSintht(void) {return sTht;}
+  inline double GetSinpsi(void) {return sPsi;}
 
 private:
   FGColumnVector3 vPQR;
@@ -117,12 +117,12 @@ private:
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vlastPQRdot;
   
-  float cTht,sTht;
-  float cPhi,sPhi;
-  float cPsi,sPsi;
+  double cTht,sTht;
+  double cPhi,sPhi;
+  double cPsi,sPsi;
   
-  float Ixx, Iyy, Izz, Ixz;
-  float dt;
+  double Ixx, Iyy, Izz, Ixz;
+  double dt;
 
   void GetState(void);
 

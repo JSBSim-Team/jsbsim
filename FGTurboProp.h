@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.10 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.11 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -57,7 +57,7 @@ public:
   FGTurboProp(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGTurboProp();
 
-  float Calculate(float);
+  double Calculate(double);
 private:
   void Debug(void);
 };

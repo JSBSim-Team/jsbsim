@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.62 2001/11/13 13:51:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.63 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,10 +185,10 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  float SteerGain;
-  float SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
-  float RudderPedal, RollingForce, SideForce, FCoeff;
-  float WheelSlip;
+  double SteerGain;
+  double SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
+  double RudderPedal, RollingForce, SideForce, FCoeff;
+  double WheelSlip;
 
   vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
@@ -338,7 +338,7 @@ FGColumnVector3& FGLGear::Force(void)
 // case. NOTE: SQUARE LAW DAMPING NO GOOD!
 
     vLocalForce(eZ) =  min(-compressLength * kSpring
-                           - compressSpeed * bDamp, (float)0.0);
+                           - compressSpeed * bDamp, (double)0.0);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
     MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));

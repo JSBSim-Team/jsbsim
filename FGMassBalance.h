@@ -45,7 +45,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGPropulsion.h"
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.12 2001/07/28 15:32:35 apeden Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.13 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -60,38 +60,38 @@ public:
 
   bool Run(void);
 
-  inline float GetMass(void) {return Mass;}
-  inline float GetWeight(void) {return Weight;}
-  inline float GetIxx(void) {return Ixx;}
-  inline float GetIyy(void) {return Iyy;}
-  inline float GetIzz(void) {return Izz;}
-  inline float GetIxz(void) {return Ixz;}
-  inline float GetIyz(void) {return Iyz;}
+  inline double GetMass(void) {return Mass;}
+  inline double GetWeight(void) {return Weight;}
+  inline double GetIxx(void) {return Ixx;}
+  inline double GetIyy(void) {return Iyy;}
+  inline double GetIzz(void) {return Izz;}
+  inline double GetIxz(void) {return Ixz;}
+  inline double GetIyz(void) {return Iyz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
-  inline float GetXYZcg(int axis) {return vXYZcg(axis);}
+  inline double GetXYZcg(int axis) {return vXYZcg(axis);}
 
-  inline void SetEmptyWeight(float EW) { EmptyWeight = EW;}
-  inline void SetBaseIxx(float bixx)   { baseIxx = bixx;}
-  inline void SetBaseIyy(float biyy)   { baseIyy = biyy;}
-  inline void SetBaseIzz(float bizz)   { baseIzz = bizz;}
-  inline void SetBaseIxz(float bixz)   { baseIxz = bixz;}
-  inline void SetBaseIyz(float biyz)   { baseIyz = biyz;}
+  inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
+  inline void SetBaseIxx(double bixx)   { baseIxx = bixx;}
+  inline void SetBaseIyy(double biyy)   { baseIyy = biyy;}
+  inline void SetBaseIzz(double bizz)   { baseIzz = bizz;}
+  inline void SetBaseIxz(double bixz)   { baseIxz = bixz;}
+  inline void SetBaseIyz(double biyz)   { baseIyz = biyz;}
   inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = CG;}
 
 private:
-  float Weight;
-  float EmptyWeight;
-  float Mass;
-  float Ixx;
-  float Iyy;
-  float Izz;
-  float Ixz;
-  float Iyz;
-  float baseIxx;
-  float baseIyy;
-  float baseIzz;
-  float baseIxz;
-  float baseIyz;
+  double Weight;
+  double EmptyWeight;
+  double Mass;
+  double Ixx;
+  double Iyy;
+  double Izz;
+  double Ixz;
+  double Iyz;
+  double baseIxx;
+  double baseIyy;
+  double baseIzz;
+  double baseIxz;
+  double baseIyz;
   FGColumnVector3 vXYZcg;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;

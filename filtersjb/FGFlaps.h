@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGFlaps.h,v 1.13 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_FLAPS "$Id: FGFlaps.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -74,12 +74,12 @@ public:
   
 private:
   FGConfigFile* AC_cfg;
-  vector<float> Detents;
-  vector<float> TransitionTimes;
+  vector<double> Detents;
+  vector<double> TransitionTimes;
   int NumDetents,fi;
-  float lastFlapHandle;
-  float Flap_Handle;
-  float Flap_Position;
+  double lastFlapHandle;
+  double Flap_Handle;
+  double Flap_Position;
   bool  Flaps_In_Transit;
 
   void Debug(void);

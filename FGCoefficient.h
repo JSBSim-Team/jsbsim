@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.32 2001/11/12 05:06:27 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.33 2001/11/14 23:53:25 jberndt Exp $"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.32 2001/11/12 05:06:27 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.33 2001/11/14 23:53:25 jberndt Exp $
     @see -
 */
 
@@ -104,9 +104,9 @@ public:
   virtual bool Load(FGConfigFile* AC_cfg);
   
   typedef vector <eParam> MultVec;
-  virtual float TotalValue(void);
+  virtual double TotalValue(void);
   virtual inline string Getname(void) {return name;}
-  virtual inline float GetSD(void) { return SD;}
+  virtual inline double GetSD(void) { return SD;}
   inline MultVec Getmultipliers(void) {return multipliers;}
   void DumpSD(void);  
   
@@ -126,15 +126,15 @@ private:
   string description;
   string name;
   string method;
-  float Value(float, float);
-  float Value(float);
-  float Value(void);
-  float StaticValue;
+  double Value(double, double);
+  double Value(double);
+  double Value(void);
+  double StaticValue;
   eParam LookupR, LookupC;
   MultVec multipliers;
   int rows, columns;
   Type type;
-  float SD; // Actual stability derivative (or other coefficient) value
+  double SD; // Actual stability derivative (or other coefficient) value
   FGTable *Table;
 
   FGFDMExec*      FDMExec;

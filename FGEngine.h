@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.42 2001/11/12 05:06:27 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.43 2001/11/14 23:53:26 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.42 2001/11/12 05:06:27 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.43 2001/11/14 23:53:26 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,13 +113,13 @@ public:
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurboProp, etTurboJet, etTurboShaft};
 
-  virtual float  GetThrottleMin(void) { return MinThrottle; }
-  virtual float  GetThrottleMax(void) { return MaxThrottle; }
-  float  GetThrottle(void) { return Throttle; }
-  float  GetMixture(void) { return Mixture; }
+  virtual double  GetThrottleMin(void) { return MinThrottle; }
+  virtual double  GetThrottleMax(void) { return MaxThrottle; }
+  double  GetThrottle(void) { return Throttle; }
+  double  GetMixture(void) { return Mixture; }
   int    GetMagnetos(void) { return Magnetos; }
   bool    GetStarter(void) { return Starter; }
-  float  GetThrust(void) { return Thrust; }
+  double  GetThrust(void) { return Thrust; }
   bool   GetStarved(void) { return Starved; }
   bool   GetFlameout(void) { return Flameout; }
   bool   GetRunning(void) { return Running; }
@@ -127,19 +127,19 @@ public:
   int    GetType(void) { return Type; }
   string GetName(void) { return Name; }
 
-  virtual float getManifoldPressure_inHg () const {
+  virtual double getManifoldPressure_inHg () const {
     return ManifoldPressure_inHg;
   }
-  virtual float getExhaustGasTemp_degF () const {
+  virtual double getExhaustGasTemp_degF () const {
     return (ExhaustGasTemp_degK - 273) * (9.0 / 5.0) + 32.0;
   }
-  virtual float getCylinderHeadTemp_degF () const {
+  virtual double getCylinderHeadTemp_degF () const {
     return (CylinderHeadTemp_degK - 273) * (9.0 / 5.0) + 32.0;
   }
-  virtual float getOilPressure_psi () const {
+  virtual double getOilPressure_psi () const {
     return OilPressure_psi;
   }
-  virtual float getOilTemp_degF () const {
+  virtual double getOilTemp_degF () const {
     return (OilTemp_degK - 273.0) * (9.0 / 5.0) + 32.0;
   }
 
@@ -158,7 +158,7 @@ public:
              such as a propeller. This resisting effect must be provided to the 
              engine model.
       @return Thrust in pounds */
-  virtual float Calculate(float PowerRequired) {return 0.0;};
+  virtual double Calculate(double PowerRequired) {return 0.0;};
 
   /** Reduces the fuel in the active tanks by the amount required.
       This function should be called from within the
@@ -171,18 +171,18 @@ public:
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total fuel requirement for this engine in pounds. */
-  float CalcFuelNeed(void);
+  double CalcFuelNeed(void);
 
   /** The oxidizer need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total oxidizer requirement for this engine in pounds. */
-  float CalcOxidizerNeed(void);
+  double CalcOxidizerNeed(void);
 
   /// Sets engine placement information
-  void SetPlacement(float x, float y, float z, float pitch, float yaw);
+  void SetPlacement(double x, double y, double z, double pitch, double yaw);
 
-  virtual float GetPowerAvailable(void) {return 0.0;};
+  virtual double GetPowerAvailable(void) {return 0.0;};
 
   bool GetTrimMode(void) {return TrimMode;}
   void SetTrimMode(bool state) {TrimMode = state;}
@@ -190,33 +190,33 @@ public:
 protected:
   string Name;
   EngineType Type;
-  float X, Y, Z;
-  float EnginePitch;
-  float EngineYaw;
-  float SLFuelFlowMax;
-  float SLOxiFlowMax;
-  float MaxThrottle;
-  float MinThrottle;
+  double X, Y, Z;
+  double EnginePitch;
+  double EngineYaw;
+  double SLFuelFlowMax;
+  double SLOxiFlowMax;
+  double MaxThrottle;
+  double MinThrottle;
 
-  float Thrust;
-  float Throttle;
-  float Mixture;
+  double Thrust;
+  double Throttle;
+  double Mixture;
   int   Magnetos;
   bool  Starter;
-  float FuelNeed, OxidizerNeed;
+  double FuelNeed, OxidizerNeed;
   bool  Starved;
   bool  Flameout;
   bool  Running;
   bool  Cranking;
-  float PctPower;
+  double PctPower;
   int   EngineNumber;
   bool  TrimMode;
 
-  float ManifoldPressure_inHg;
-  float ExhaustGasTemp_degK;
-  float CylinderHeadTemp_degK;
-  float OilPressure_psi;
-  float OilTemp_degK;
+  double ManifoldPressure_inHg;
+  double ExhaustGasTemp_degK;
+  double CylinderHeadTemp_degK;
+  double OilPressure_psi;
+  double OilTemp_degK;
 
   FGFDMExec*      FDMExec;
   FGState*        State;

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.71 2001/11/03 17:01:28 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.72 2001/11/14 23:53:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.71 2001/11/03 17:01:28 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.72 2001/11/14 23:53:25 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -172,52 +172,35 @@ public:
   inline string GetAircraftName(void) { return AircraftName; }
   
   /// Gets the wing area
-  inline float GetWingArea(void) { return WingArea; }
+  inline double GetWingArea(void) { return WingArea; }
   /// Gets the wing span
-  inline float GetWingSpan(void) { return WingSpan; }
+  inline double GetWingSpan(void) { return WingSpan; }
   /// Gets the average wing chord
-  inline float Getcbar(void) { return cbar; }
-  inline float GetWingIncidence(void) { return WingIncidence; }
-  inline float GetHTailArea(void) { return HTailArea; }
-  inline float GetHTailArm(void)  { return HTailArm; }
-  inline float GetVTailArea(void) { return VTailArea; }
-  inline float GetVTailArm(void)  { return VTailArm; }
-  inline float Getlbarh(void) { return lbarh; } // HTailArm / cbar
-  inline float Getlbarv(void) { return lbarv; } // VTailArm / cbar
-  inline float Getvbarh(void) { return vbarh; } // H. Tail Volume
-  inline float Getvbarv(void) { return vbarv; } // V. Tail Volume
+  inline double Getcbar(void) { return cbar; }
+  inline double GetWingIncidence(void) { return WingIncidence; }
+  inline double GetHTailArea(void) { return HTailArea; }
+  inline double GetHTailArm(void)  { return HTailArm; }
+  inline double GetVTailArea(void) { return VTailArea; }
+  inline double GetVTailArm(void)  { return VTailArm; }
+  inline double Getlbarh(void) { return lbarh; } // HTailArm / cbar
+  inline double Getlbarv(void) { return lbarv; } // VTailArm / cbar
+  inline double Getvbarh(void) { return vbarh; } // H. Tail Volume
+  inline double Getvbarv(void) { return vbarv; } // V. Tail Volume
   inline FGColumnVector3& GetMoments(void) { return vMoments; }
   inline FGColumnVector3& GetForces(void) { return vForces; }
   inline FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
   inline FGColumnVector3& GetNcg   (void)    { return vNcg; }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
-  inline float GetXYZrp(int idx) { return vXYZrp(idx); }
-  inline float GetXYZep(int idx) { return vXYZep(idx); }
-  inline float GetAlphaCLMax(void) { return alphaclmax; }
-  inline float GetAlphaCLMin(void) { return alphaclmin; }
+  inline double GetXYZrp(int idx) { return vXYZrp(idx); }
+  inline double GetXYZep(int idx) { return vXYZep(idx); }
+  inline double GetAlphaCLMax(void) { return alphaclmax; }
+  inline double GetAlphaCLMin(void) { return alphaclmin; }
 
-  inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
-  inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
+  inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
+  inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
   
   inline bool GetStallWarn(void) { return impending_stall; }
-
-  /// Subsystem types for specifying which will be output in the FDM data logging
-  enum  SubSystems {
-    /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
-    /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
-    /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
-    /** Subsystem: Velocities (= 8)          */ ssVelocities      = 8,
-    /** Subsystem: Forces (= 16)             */ ssForces          = 16,
-    /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
-    /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
-    /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
-    /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
-    /** Subsystem: Position (= 512)          */ ssPosition        = 512,
-    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
-    /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
-    /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
-  } subsystems;
 
 private:
   FGColumnVector3 vMoments;
@@ -229,11 +212,11 @@ private:
   FGColumnVector3 vBodyAccel;
   FGColumnVector3 vNcg;
 
-  float WingArea, WingSpan, cbar, WingIncidence;
-  float HTailArea, VTailArea, HTailArm, VTailArm;
-  float lbarh,lbarv,vbarh,vbarv;
-  float alphaclmax,alphaclmin;
-  float impending_stall;
+  double WingArea, WingSpan, cbar, WingIncidence;
+  double HTailArea, VTailArea, HTailArm, VTailArm;
+  double lbarh,lbarv,vbarh,vbarv;
+  double alphaclmax,alphaclmin;
+  double impending_stall;
   string CFGVersion;
   string AircraftName;
 

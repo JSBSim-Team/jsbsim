@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.6 2001/10/15 11:49:32 jberndt Exp $"
+#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.7 2001/11/14 23:53:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,12 +95,12 @@ public:
   inline double operator()(int m) const { return data[m]; }
   inline double& operator()(int m) { return data[m]; }
   
-  FGColumnVector4& operator<<(const float ff);
+  FGColumnVector4& operator<<(const double ff);
 
   inline void InitMatrix(void) { data[1]=0; data[2]=0; data[3]=0; }
-  inline void InitMatrix(float ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
+  inline void InitMatrix(double ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
 
-  float Magnitude(void);
+  double Magnitude(void);
   FGColumnVector4 Normalize(void);
 
   friend FGColumnVector4 operator*(const double scalar, const FGColumnVector4& A);

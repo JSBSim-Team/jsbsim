@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.22 2001/11/08 19:22:09 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.23 2001/11/14 23:53:27 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,7 +69,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.22 2001/11/08 19:22:09 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.23 2001/11/14 23:53:27 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,18 +84,18 @@ public:
   /// Destructor
   ~FGPiston();
 
-  float Calculate(float PowerRequired);
-  float GetPowerAvailable(void) {return PowerAvailable;}
+  double Calculate(double PowerRequired);
+  double GetPowerAvailable(void) {return PowerAvailable;}
 
 private:
-  float BrakeHorsePower;
-  float SpeedSlope;
-  float SpeedIntercept;
-  float AltitudeSlope;
-  float PowerAvailable;
+  double BrakeHorsePower;
+  double SpeedSlope;
+  double SpeedIntercept;
+  double AltitudeSlope;
+  double PowerAvailable;
 
   // timestep
-  float dt;
+  double dt;
 
   void doEngineStartup(void);
   void doManifoldPressure(void);
@@ -110,13 +110,13 @@ private:
   //
   // constants
   //
-  const float CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
+  const double CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
 
-  const float R_air;
-  const float rho_fuel;    // kg/m^3
-  const float calorific_value_fuel;  // W/Kg (approximate)
-  const float Cp_air;      // J/KgK
-  const float Cp_fuel;     // J/KgK
+  const double R_air;
+  const double rho_fuel;    // kg/m^3
+  const double calorific_value_fuel;  // W/Kg (approximate)
+  const double Cp_air;      // J/KgK
+  const double Cp_fuel;     // J/KgK
 
   FGTable *Lookup_Combustion_Efficiency;
   FGTable *Power_Mixture_Correlation;
@@ -124,35 +124,35 @@ private:
   //
   // Configuration
   //
-  float MinManifoldPressure_inHg; // Inches Hg
-  float MaxManifoldPressure_inHg; // Inches Hg
-  float Displacement;             // cubic inches
-  float MaxHP;                    // horsepower
-  float Cycles;                   // cycles/power stroke
-  float IdleRPM;                  // revolutions per minute
+  double MinManifoldPressure_inHg; // Inches Hg
+  double MaxManifoldPressure_inHg; // Inches Hg
+  double Displacement;             // cubic inches
+  double MaxHP;                    // horsepower
+  double Cycles;                   // cycles/power stroke
+  double IdleRPM;                  // revolutions per minute
 
   //
   // Inputs (in addition to those in FGEngine).
   //
-  float p_amb;              // Pascals
-  float p_amb_sea_level;    // Pascals
-  float T_amb;              // degrees Kelvin
-  float RPM;                // revolutions per minute
-  float IAS;                // knots
+  double p_amb;              // Pascals
+  double p_amb_sea_level;    // Pascals
+  double T_amb;              // degrees Kelvin
+  double RPM;                // revolutions per minute
+  double IAS;                // knots
 
   //
   // Outputs (in addition to those in FGEngine).
   //
   bool Magneto_Left;
   bool Magneto_Right;
-  float rho_air;
-  float volumetric_efficiency;
-  float m_dot_air;
-  float equivalence_ratio;
-  float m_dot_fuel;
-  float Percentage_Power;
-  float HP;
-  float combustion_efficiency;
+  double rho_air;
+  double volumetric_efficiency;
+  double m_dot_air;
+  double equivalence_ratio;
+  double m_dot_fuel;
+  double Percentage_Power;
+  double HP;
+  double combustion_efficiency;
 
   void Debug(void);
 };

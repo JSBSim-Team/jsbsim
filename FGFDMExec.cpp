@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.63 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.64 2001/11/14 23:53:26 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -413,7 +413,7 @@ bool FGFDMExec::LoadScript(string script)
   string aircraft="";
   string initialize="";
   bool result=false;
-  float dt=0.0;
+  double dt=0.0;
   int i;
   struct condition *newCondition;
 
@@ -599,8 +599,8 @@ void FGFDMExec::RunScript(void)
 
   int count=0;
 
-  float currentTime = State->Getsim_time();
-  float newSetValue;
+  double currentTime = State->Getsim_time();
+  double newSetValue;
 
   while (iC < Conditions.end()) {
     // determine whether the set of conditional tests for this condition equate

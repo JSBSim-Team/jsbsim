@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.41 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.42 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,9 +179,9 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGCoefficient::Value(float rVal, float cVal)
+double FGCoefficient::Value(double rVal, double cVal)
 {
-  float Value;
+  double Value;
   unsigned int midx;
 
   SD = Value = Table->GetValue(rVal, cVal);
@@ -194,9 +194,9 @@ float FGCoefficient::Value(float rVal, float cVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGCoefficient::Value(float Val)
+double FGCoefficient::Value(double Val)
 {
-  float Value;
+  double Value;
 
   SD = Value = Table->GetValue(Val);
   
@@ -208,9 +208,9 @@ float FGCoefficient::Value(float Val)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGCoefficient::Value(void)
+double FGCoefficient::Value(void)
 {
-	float Value;
+	double Value;
 
   SD = Value = StaticValue;
 
@@ -222,7 +222,7 @@ float FGCoefficient::Value(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGCoefficient::TotalValue()
+double FGCoefficient::TotalValue()
 {
   
   switch(type) {

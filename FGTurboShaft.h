@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_TURBOSHAFT "$Id: FGTurboShaft.h,v 1.13 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_TURBOSHAFT "$Id: FGTurboShaft.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -57,7 +57,7 @@ public:
   FGTurboShaft(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGTurboShaft();
 
-  float Calculate(float);
+  double Calculate(double);
 private:
   void Debug(void);
 };

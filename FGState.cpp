@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.82 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.83 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,8 +166,8 @@ FGState::~FGState()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGState::GetParameter(eParam val_idx) {
-  float scratch;
+double FGState::GetParameter(eParam val_idx) {
+  double scratch;
   
   switch(val_idx) {
   case FG_TIME:
@@ -296,7 +296,7 @@ float FGState::GetParameter(eParam val_idx) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGState::GetParameter(string val_string) {
+double FGState::GetParameter(string val_string) {
   return GetParameter(coeffdef[val_string]);
 }
 
@@ -308,7 +308,7 @@ eParam FGState::GetParameterIndex(string val_string) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::SetParameter(eParam val_idx, float val) {
+void FGState::SetParameter(eParam val_idx, double val) {
   switch(val_idx) {
   case FG_ELEVATOR_POS:
     FCS->SetDePos(val);
@@ -403,10 +403,10 @@ bool FGState::Reset(string path, string acname, string fname)
   string resetDef;
   string token="";
 
-  float U, V, W;
-  float phi, tht, psi;
-  float latitude, longitude, h;
-  float wdir, wmag, wnorth, weast;
+  double U, V, W;
+  double phi, tht, psi;
+  double latitude, longitude, h;
+  double wdir, wmag, wnorth, weast;
 
 # ifndef macintosh
   resetDef = path + "/" + acname + "/" + fname + ".xml";
@@ -462,13 +462,13 @@ bool FGState::Reset(string path, string acname, string fname)
 // Initialize: Assume all angles GIVEN IN RADIANS !!
 //
 
-void FGState::Initialize(float U, float V, float W,
-                         float phi, float tht, float psi,
-                         float Latitude, float Longitude, float H,
-                         float wnorth, float weast, float wdown)
+void FGState::Initialize(double U, double V, double W,
+                         double phi, double tht, double psi,
+                         double Latitude, double Longitude, double H,
+                         double wnorth, double weast, double wdown)
 {
-  float alpha, beta;
-  float qbar, Vt;
+  double alpha, beta;
+  double qbar, Vt;
   FGColumnVector3 vAero;
 
   Position->SetLatitude(Latitude);
@@ -516,10 +516,10 @@ void FGState::Initialize(float U, float V, float W,
 
 void FGState::Initialize(FGInitialCondition *FGIC) {
 
-  float tht,psi,phi;
-  float U, V, W, h;
-  float latitude, longitude;
-  float wnorth,weast, wdown;
+  double tht,psi,phi;
+  double U, V, W, h;
+  double latitude, longitude;
+  double wnorth,weast, wdown;
   
   latitude = FGIC->GetLatitudeRadIC();
   longitude = FGIC->GetLongitudeRadIC();
@@ -567,14 +567,14 @@ bool FGState::StoreData(string fname) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::InitMatrices(float phi, float tht, float psi) {
-  float thtd2, psid2, phid2;
-  float Sthtd2, Spsid2, Sphid2;
-  float Cthtd2, Cpsid2, Cphid2;
-  float Cphid2Cthtd2;
-  float Cphid2Sthtd2;
-  float Sphid2Sthtd2;
-  float Sphid2Cthtd2;
+void FGState::InitMatrices(double phi, double tht, double psi) {
+  double thtd2, psid2, phid2;
+  double Sthtd2, Spsid2, Sphid2;
+  double Cthtd2, Cpsid2, Cphid2;
+  double Cphid2Cthtd2;
+  double Cphid2Sthtd2;
+  double Sphid2Sthtd2;
+  double Sphid2Cthtd2;
 
   thtd2 = tht/2.0;
   psid2 = psi/2.0;
@@ -604,9 +604,9 @@ void FGState::InitMatrices(float phi, float tht, float psi) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGState::CalcMatrices(void) {
-  float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
-  float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
-  float Q1Q3, Q2Q3;
+  double Q0Q0, Q1Q1, Q2Q2, Q3Q3;
+  double Q0Q1, Q0Q2, Q0Q3, Q1Q2;
+  double Q1Q3, Q2Q3;
 
   Q0Q0 = vQtrn(1)*vQtrn(1);
   Q1Q1 = vQtrn(2)*vQtrn(2);
@@ -664,9 +664,9 @@ FGColumnVector3& FGState::CalcEuler(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGState::GetTs2b(float alpha, float beta)
+FGMatrix33& FGState::GetTs2b(double alpha, double beta)
 {
-  float ca, cb, sa, sb;
+  double ca, cb, sa, sb;
 
   ca = cos(alpha);
   sa = sin(alpha);

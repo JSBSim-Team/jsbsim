@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.57 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.58 2001/11/14 23:53:26 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,7 @@ bool FGFCS::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetThrottleCmd(int engineNum, float setting)
+void FGFCS::SetThrottleCmd(int engineNum, double setting)
 {
   unsigned int ctr;
 
@@ -126,7 +126,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetThrottlePos(int engineNum, float setting)
+void FGFCS::SetThrottlePos(int engineNum, double setting)
 {
   unsigned int ctr;
 
@@ -145,7 +145,7 @@ void FGFCS::SetThrottlePos(int engineNum, float setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGFCS::GetThrottleCmd(int engineNum)
+double FGFCS::GetThrottleCmd(int engineNum)
 {
   if ((int)ThrottleCmd.size() > engineNum) {
     if (engineNum < 0) {
@@ -162,7 +162,7 @@ float FGFCS::GetThrottleCmd(int engineNum)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGFCS::GetThrottlePos(int engineNum)
+double FGFCS::GetThrottlePos(int engineNum)
 {
   if ((int)ThrottlePos.size() > engineNum) {
     if (engineNum < 0) {
@@ -179,7 +179,7 @@ float FGFCS::GetThrottlePos(int engineNum)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetMixtureCmd(int engineNum, float setting)
+void FGFCS::SetMixtureCmd(int engineNum, double setting)
 {
   unsigned int ctr;
 
@@ -192,7 +192,7 @@ void FGFCS::SetMixtureCmd(int engineNum, float setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetMixturePos(int engineNum, float setting)
+void FGFCS::SetMixturePos(int engineNum, double setting)
 {
   unsigned int ctr;
 
@@ -252,7 +252,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGFCS::GetComponentOutput(eParam idx) {
+double FGFCS::GetComponentOutput(eParam idx) {
   return Components[idx]->GetOutput();
 }
 
@@ -264,7 +264,7 @@ string FGFCS::GetComponentName(int idx) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGFCS::GetBrake(FGLGear::BrakeGroup bg) {
+double FGFCS::GetBrake(FGLGear::BrakeGroup bg) {
   switch (bg) {
   case FGLGear::bgLeft:
     return LeftBrake;

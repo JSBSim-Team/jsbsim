@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.16 2001/11/13 16:36:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.17 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,8 +61,8 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
 
 bool FGGroundReactions::Run(void)
 {
-  float steerAngle = 0.0;
-  float xForces = 0.0, yForces = 0.0;
+  double steerAngle = 0.0;
+  double xForces = 0.0, yForces = 0.0;
 
   if (!FGModel::Run()) {
     vForces.InitMatrix();

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.21 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.22 2001/11/14 23:53:25 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ FGAuxiliary::~FGAuxiliary()
 
 bool FGAuxiliary::Run()
 {
-  float A,B,D;
+  double A,B,D;
 
   if (!FGModel::Run()) {
     GetState();
@@ -164,9 +164,9 @@ bool FGAuxiliary::Run()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGAuxiliary::GetHeadWind(void)
+double FGAuxiliary::GetHeadWind(void)
 {
-  float psiw,vw,psi;
+  double psiw,vw,psi;
 
   psiw = Atmosphere->GetWindPsi();
   psi = Rotation->Getpsi();
@@ -177,9 +177,9 @@ float FGAuxiliary::GetHeadWind(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGAuxiliary::GetCrossWind(void)
+double FGAuxiliary::GetCrossWind(void)
 {
-  float psiw,vw,psi;
+  double psiw,vw,psi;
 
   psiw = Atmosphere->GetWindPsi();
   psi = Rotation->Getpsi();
@@ -197,7 +197,7 @@ FGColumnVector3 FGAuxiliary::GetNpilot(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGAuxiliary::GetNpilot(int idx)
+double FGAuxiliary::GetNpilot(int idx)
 {
   return (vPilotAccel/Inertial->gravity())(idx);
 }

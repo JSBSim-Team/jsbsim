@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.21 2001/10/01 22:47:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.22 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
   string token;
-  float denom;
+  double denom;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");

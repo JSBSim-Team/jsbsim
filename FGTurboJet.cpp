@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboJet.h"
 
-static const char *IdSrc = "$Id: FGTurboJet.cpp,v 1.16 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboJet.cpp,v 1.17 2001/11/14 23:53:27 jberndt Exp $";
 static const char *IdHdr = ID_TURBOJET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,7 @@ FGTurboJet::~FGTurboJet()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGTurboJet::Calculate(float dummy)
+double FGTurboJet::Calculate(double dummy)
 {
   ConsumeFuel();
   return 0.0;
