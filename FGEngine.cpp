@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.67 2004/06/07 13:45:08 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.68 2004/06/14 11:44:04 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,10 +210,10 @@ bool FGEngine::LoadThruster(FGConfigFile* AC_cfg)
 
 # ifndef macintosh
       fullpath = enginePath + "/";
-      localpath = aircraftPath + "/" + FDMExec->GetModelName() + "/Engines/";
+      localpath = aircraftPath + "/"  + "/Engines/";
 # else
       fullpath = enginePath + ";";
-      localpath = aircraftPath + ";" + FDMExec->GetModelName() + ";Engines;";
+      localpath = aircraftPath + ";" + ";Engines;";
 # endif
 
   // Look in the Aircraft/Engines directory first

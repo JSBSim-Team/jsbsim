@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.110 2004/06/07 13:45:08 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.111 2004/06/14 11:44:18 ehofman Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -193,10 +193,10 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
 
 # ifndef macintosh
       fullpath = enginePath + "/";
-      localpath = aircraftPath + "/" + FDMExec->GetModelName() + "/Engines/";
+      localpath = aircraftPath + "/Engines/";
 # else
       fullpath = enginePath + ";";
-      localpath = aircraftPath + ";" + FDMExec->GetModelName() + ";Engines;";
+      localpath = aircraftPath +  ";Engines;";
 # endif
 
   AC_cfg->GetNextConfigLine();

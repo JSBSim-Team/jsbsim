@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.178 2004/06/07 13:45:08 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.179 2004/06/14 11:44:19 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -125,10 +125,9 @@ FGJSBsim::FGJSBsim( double dt )
     fgic=fdmex->GetIC();
     needTrim=true;
 
-    SGPath aircraft_path( globals->get_fg_root() );
-    aircraft_path.append( "Aircraft" );
+    SGPath aircraft_path( fgGetString("/sim/aircraft-dir") );
 
-    SGPath engine_path( globals->get_fg_root() );
+    SGPath engine_path( fgGetString("/sim/aircraft-dir") );
     engine_path.append( "Engine" );
     State->Setdt( dt );
 
