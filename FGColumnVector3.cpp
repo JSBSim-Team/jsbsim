@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.4 2001/07/28 15:29:36 apeden Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.5 2001/07/29 01:05:21 apeden Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 extern short debug_lvl;
@@ -186,9 +186,10 @@ FGColumnVector3 FGColumnVector3::operator/(const double scalar)
   FGColumnVector3 Quotient;
 
   if (scalar != 0) {
-    Quotient(1) = data[1] / scalar;
-    Quotient(2) = data[2] / scalar;
-    Quotient(3) = data[3] / scalar;
+	  double tmp = 1.0/scalar;
+    Quotient(1) = data[1] * tmp;
+    Quotient(2) = data[2] * tmp;
+    Quotient(3) = data[3] * tmp;
   } else {
     cerr << "Attempt to divide by zero in method FGColumnVector3::operator/(const double scalar), object " << this << endl; 
   }
@@ -202,9 +203,10 @@ void FGColumnVector3::operator/=(const double scalar)
   FGColumnVector3 Quotient;
 
   if (scalar != 0) {
-    data[1] /= scalar;
-    data[2] /= scalar;
-    data[3] /= scalar;
+	  double tmp = 1.0/scalar;
+    data[1] *= tmp;
+    data[2] *= tmp;
+    data[3] *= tmp;
   } else {
     cerr << "Attempt to divide by zero in method FGColumnVector3::operator/=(const double scalar), object " << this << endl; 
   }
@@ -249,9 +251,10 @@ FGColumnVector3 FGColumnVector3::Normalize(void)
   double Mag = Magnitude();
 
   if (Mag != 0) {
-     data[1] /= Mag;
-     data[2] /= Mag;
-     data[3] /= Mag;
+	  Mag = 1.0/Mag;
+     data[1] *= Mag;
+     data[2] *= Mag;
+     data[3] *= Mag;
   }    
 
   return *this;
