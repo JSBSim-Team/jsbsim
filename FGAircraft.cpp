@@ -1,36 +1,36 @@
 /*******************************************************************************
-
+ 
  Module:       FGAircraft.cpp
  Author:       Jon S. Berndt
  Date started: 12/12/98                                   
  Purpose:      Encapsulates an aircraft
  Called by:    FGFDMExec
-
+ 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
-
+ 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
-
+ 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
-
+ 
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
-
+ 
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
-
+ 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 Models the aircraft reactions and forces. This class is instantiated by the
 FGFDMExec class and scheduled as an FDM entry. LoadAircraft() is supplied with a
 name of a valid, registered aircraft, and the data file is parsed.
-
+ 
 HISTORY
 --------------------------------------------------------------------------------
 12/12/98   JSB   Created
@@ -40,7 +40,7 @@ HISTORY
 9/17/99     TP   Combined force and moment functions. Added aero reference 
                  point to config file. Added calculations for moments due to 
                  difference in cg and aero reference point
-
+ 
 ********************************************************************************
 COMMENTS, REFERENCES,  and NOTES
 ********************************************************************************
@@ -55,9 +55,9 @@ COMMENTS, REFERENCES,  and NOTES
       Wiley & Sons, 1979 ISBN 0-471-03032-5
 [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
       1982 ISBN 0-471-08936-2
-
+ 
 The aerodynamic coefficients used in this model are:
-
+ 
 Longitudinal
   CL0 - Reference lift at zero alpha
   CD0 - Reference drag at zero alpha
@@ -67,36 +67,36 @@ Longitudinal
   CLq - Lift due to pitch rate
   CLM - Lift due to Mach
   CLadt - Lift due to alpha rate
-
+ 
   Cmadt - Pitching Moment due to alpha rate
   Cm0 - Reference Pitching moment at zero alpha
   Cma - Pitching moment slope (w.r.t. alpha)
   Cmq - Pitch damping (pitch moment due to pitch rate)
   CmM - Pitch Moment due to Mach
-
+ 
 Lateral
   Cyb - Side force due to sideslip
   Cyr - Side force due to yaw rate
-
+ 
   Clb - Dihedral effect (roll moment due to sideslip)
   Clp - Roll damping (roll moment due to roll rate)
   Clr - Roll moment due to yaw rate
   Cnb - Weathercocking stability (yaw moment due to sideslip)
   Cnp - Rudder adverse yaw (yaw moment due to roll rate)
   Cnr - Yaw damping (yaw moment due to yaw rate)
-
+ 
 Control
   CLDe - Lift due to elevator
   CDDe - Drag due to elevator
   CyDr - Side force due to rudder
   CyDa - Side force due to aileron
-
+ 
   CmDe - Pitch moment due to elevator
   ClDa - Roll moment due to aileron
   ClDr - Roll moment due to rudder
   CnDr - Yaw moment due to rudder
   CnDa - Yaw moment due to aileron
-
+ 
 ********************************************************************************
 INCLUDES
 *******************************************************************************/
@@ -133,15 +133,14 @@ INCLUDES
 *******************************************************************************/
 
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
-                                           vMoments(3),
-                                           vForces(3),
-                                           vXYZrp(3),
-                                           vbaseXYZcg(3),
-                                           vXYZcg(3),
-                                           vXYZep(3),
-                                           vEuler(3),
-                                           vFs(3)
-{
+    vMoments(3),
+    vForces(3),
+    vXYZrp(3),
+    vbaseXYZcg(3),
+    vXYZcg(3),
+    vXYZep(3),
+    vEuler(3),
+vFs(3) {
   Name = "FGAircraft";
 
   AxisIdx["DRAG"]  = 0;
@@ -158,14 +157,11 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 /******************************************************************************/
 
 
-FGAircraft::~FGAircraft(void)
-{
-}
+FGAircraft::~FGAircraft(void) {}
 
 /******************************************************************************/
 
-bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string fname)
-{
+bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string fname) {
   string path;
   string filename;
   string aircraftCfgFileName;
@@ -181,8 +177,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   ReadPrologue(&AC_cfg);
 
   while ((AC_cfg.GetNextConfigLine() != "EOF") &&
-                                   (token = AC_cfg.GetValue()) != "/FDM_CONFIG")
-  {
+         (token = AC_cfg.GetValue()) != "/FDM_CONFIG") {
     if (token == "METRICS") {
       cout << "  Reading Metrics" << endl;
       ReadMetrics(&AC_cfg);
@@ -208,8 +203,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 
 /******************************************************************************/
 
-bool FGAircraft::Run(void)
-{
+bool FGAircraft::Run(void) {
   if (!FGModel::Run()) {                 // if false then execute this Run()
     GetState();
 
@@ -221,17 +215,17 @@ bool FGAircraft::Run(void)
     FMAero();
     FMGear();
     FMMass();
-	
-	nlf=vFs(eZ)/Weight;
+
+    nlf=vFs(eZ)/Weight;
   } else {                               // skip Run() execution this time
   }
+
   return false;
 }
 
 /******************************************************************************/
 
-void FGAircraft::MassChange()
-{
+void FGAircraft::MassChange() {
   static FGColumnVector vXYZtank(3);
   float Tw;
   float IXXt, IYYt, IZZt, IXZt;
@@ -325,8 +319,7 @@ void FGAircraft::MassChange()
 
 /******************************************************************************/
 
-void FGAircraft::FMAero(void)
-{
+void FGAircraft::FMAero(void) {
   static FGColumnVector vDXYZcg(3);
   unsigned int axis_ctr,ctr;
 
@@ -363,11 +356,11 @@ void FGAircraft::FMAero(void)
 
 /******************************************************************************/
 
-void FGAircraft::FMGear(void)
-{
+void FGAircraft::FMGear(void) {
   if (GearUp) {
     // crash routine
-  } else {
+  }
+  else {
     for (unsigned int i=0;i<lGear.size();i++) {
       vForces += lGear[i]->Force();
     }
@@ -376,8 +369,7 @@ void FGAircraft::FMGear(void)
 
 /******************************************************************************/
 
-void FGAircraft::FMMass(void)
-{
+void FGAircraft::FMMass(void) {
   vForces(eX) += -GRAVITY*sin(vEuler(eTht)) * Mass;
   vForces(eY) +=  GRAVITY*sin(vEuler(ePhi))*cos(vEuler(eTht)) * Mass;
   vForces(eZ) +=  GRAVITY*cos(vEuler(ePhi))*cos(vEuler(eTht)) * Mass;
@@ -385,8 +377,7 @@ void FGAircraft::FMMass(void)
 
 /******************************************************************************/
 
-void FGAircraft::FMProp(void)
-{
+void FGAircraft::FMProp(void) {
   for (int i=0;i<numEngines;i++) {
     vForces(eX) += Engine[i]->CalcThrust();
   }
@@ -394,8 +385,7 @@ void FGAircraft::FMProp(void)
 
 /******************************************************************************/
 
-void FGAircraft::GetState(void)
-{
+void FGAircraft::GetState(void) {
   dt = State->Getdt();
 
   alpha = Translation->Getalpha();
@@ -405,8 +395,7 @@ void FGAircraft::GetState(void)
 
 /******************************************************************************/
 
-void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
   string token = "";
   string parameter;
 
@@ -430,8 +419,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   string token;
   string engine_name;
   string parameter;
@@ -465,8 +453,7 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
   string token;
 
   FCS->LoadFCS(AC_cfg);
@@ -474,8 +461,7 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
   string token, axis;
 
   AC_cfg->GetNextConfigLine();
@@ -502,8 +488,7 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg) {
   string token;
 
   AC_cfg->GetNextConfigLine();
@@ -515,8 +500,7 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
   string token, parameter;
   int OutRate = 0;
   int subsystems = 0;
@@ -580,31 +564,30 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg)
-{
+void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   string token = AC_cfg->GetValue();
   string scratch;
   AircraftName = AC_cfg->GetValue("NAME");
   cout << "Reading Aircraft Configuration File: " << AircraftName << endl;
   scratch=AC_cfg->GetValue("VERSION").c_str();
- 
+
   CFGVersion = strtod(AC_cfg->GetValue("VERSION").c_str(),NULL);
   CFGVersion=1.3;
   cout << "                            Version: " << CFGVersion << endl;
   cout << CFGVersion - NEEDED_CFG_VERSION  << endl;
   if (CFGVersion < NEEDED_CFG_VERSION) {
     cout << endl << "YOU HAVE AN OLD CFG FILE FOR THIS AIRCRAFT."
-                    " RESULTS WILL BE UNPREDICTABLE !!" << endl;
+    " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
     cout << "         You have version: " << CFGVersion << endl << endl;
     //exit(-1);
   }
+
 }
 
 /******************************************************************************/
 
-void FGAircraft::DisplayCoeffFactors(int multipliers)
-{
+void FGAircraft::DisplayCoeffFactors(int multipliers) {
   cout << "   Non-Dimensionalized by: ";
 
   if (multipliers & FG_QBAR)      cout << "qbar ";
@@ -643,8 +626,7 @@ void FGAircraft::DisplayCoeffFactors(int multipliers)
 
 /******************************************************************************/
 
-string FGAircraft::GetCoefficientStrings(void)
-{
+string FGAircraft::GetCoefficientStrings(void) {
   string CoeffStrings = "";
   bool firstime = true;
 
@@ -664,8 +646,7 @@ string FGAircraft::GetCoefficientStrings(void)
 
 /******************************************************************************/
 
-string FGAircraft::GetCoefficientValues(void)
-{
+string FGAircraft::GetCoefficientValues(void) {
   string SDValues = "";
   char buffer[10];
   bool firstime = true;
@@ -682,7 +663,8 @@ string FGAircraft::GetCoefficientValues(void)
     }
   }
 
-  return SDValues;;
+  return SDValues;
+  ;
 }
 
 
