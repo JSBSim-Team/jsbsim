@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.71 2002/02/14 23:41:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.72 2002/02/27 14:33:31 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,9 +69,10 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
-  DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
+  DaLPos = DaRPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
+  DoNormalize=true;
 
   Debug(0);
 }
@@ -104,6 +105,7 @@ bool FGFCS::Run(void)
     for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
     for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
     for (i=0; i<Components.size(); i++)  Components[i]->Run();
+    if(DoNormalize) Normalize();
   } else {
   }
 
@@ -249,9 +251,14 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 bool FGFCS::Load(FGConfigFile* AC_cfg)
 {
   string token;
-
+  unsigned i;
+  
   Name = Name + ":" + AC_cfg->GetValue("NAME");
   if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
+  if( AC_cfg->GetValue("NORMALIZE") == "FALSE") {
+      DoNormalize=false;
+      cout << "    Automatic Control Surface Normalization Disabled" << endl;
+  }    
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != string("/FLIGHT_CONTROL")) {
     if (token == "COMPONENT") {
@@ -288,6 +295,28 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
       AC_cfg->GetNextConfigLine();
     }
   }
+  //collect information for normalizing control surfaces
+  for(i=0;i<Components.size();i++) {
+    if(Components[i]->GetType() == "AEROSURFACE_SCALE" 
+        || Components[i]->GetType() == "KINEMAT"  ) {
+      if( Components[i]->GetOutputIdx() == FG_ELEVATOR_POS ) {
+        ToNormalize[iNDe]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_LEFT_AILERON_POS ) {
+        ToNormalize[iNDaL]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_RIGHT_AILERON_POS ) {
+        ToNormalize[iNDaR]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_RUDDER_POS ) {
+        ToNormalize[iNDr]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_SPDBRAKE_POS ) {
+        ToNormalize[iNDsb]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_SPOILERS_POS ) {
+        ToNormalize[iNDsp]=i;
+      } else if ( Components[i]->GetOutputIdx() == FG_FLAPS_POS ) {
+        ToNormalize[iNDf]=i;
+      }
+    }
+  }     
+  
   return true;
 }
 
@@ -370,6 +399,63 @@ void FGFCS::AddThrottle(void)
   PropAdvance.push_back(0.0);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::Normalize(void) {
+  if(DePos < 0) {
+    DePosN = DePos/(Components[ToNormalize[iNDe]]->GetMin()
+               *Components[ToNormalize[iNDe]]->GetGain());
+  } else {
+    DePosN = DePos/(Components[ToNormalize[iNDe]]->GetMax()
+               *Components[ToNormalize[iNDe]]->GetGain()); 
+    cout << "DePosN, Max=" << Components[ToNormalize[iNDe]]->GetMax() 
+         << " Gain: " << Components[ToNormalize[iNDe]]->GetGain()
+         << endl;
+  }
+  if(DaLPos < 0) 
+    DaLPosN = DaLPos/(Components[ToNormalize[iNDaL]]->GetMin()
+                *Components[ToNormalize[iNDaL]]->GetGain());
+  else
+    DaLPosN = DaLPos/(Components[ToNormalize[iNDaL]]->GetMax()
+                *Components[ToNormalize[iNDaL]]->GetGain());
+  
+  if(DaRPos < 0) 
+    DaRPosN = DaRPos/(Components[ToNormalize[iNDaR]]->GetMin()
+                *Components[ToNormalize[iNDaR]]->GetGain());
+  else
+    DaRPosN = DaRPos/(Components[ToNormalize[iNDaR]]->GetMax()
+                *Components[ToNormalize[iNDaR]]->GetGain());
+  
+  if(DrPos < 0) 
+    DrPosN = DrPos/(Components[ToNormalize[iNDr]]->GetMin()
+                *Components[ToNormalize[iNDr]]->GetGain());
+  else
+    DrPosN = DrPos/(Components[ToNormalize[iNDr]]->GetMax()
+                *Components[ToNormalize[iNDr]]->GetGain());
+      
+  if(DsbPos < 0) 
+    DsbPosN = DsbPos/(Components[ToNormalize[iNDsb]]->GetMin()
+                *Components[ToNormalize[iNDsb]]->GetGain());
+  else
+    DsbPosN = DsbPos/(Components[ToNormalize[iNDsb]]->GetMax()
+                *Components[ToNormalize[iNDsb]]->GetGain());
+  
+  if(DspPos < 0) 
+    DspPosN = DspPos/(Components[ToNormalize[iNDsp]]->GetMin()
+                *Components[ToNormalize[iNDsp]]->GetGain());
+  else
+    DspPosN = DspPos/(Components[ToNormalize[iNDsp]]->GetMax()
+              *Components[ToNormalize[iNDsp]]->GetGain());
+  
+  if(DfPos < 0) 
+    DfPosN = DfPos/(Components[ToNormalize[iNDf]]->GetMin()
+              *Components[ToNormalize[iNDf]]->GetGain());
+  else
+    DfPosN = DfPos/(Components[ToNormalize[iNDf]]->GetMax()
+              *Components[ToNormalize[iNDf]]->GetGain());
+  
+}  
+    
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

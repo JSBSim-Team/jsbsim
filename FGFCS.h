@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.43 2001/12/18 22:06:55 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.44 2002/02/27 14:33:31 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.43 2001/12/18 22:06:55 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.44 2002/02/27 14:33:31 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -152,6 +152,8 @@ CLASS DOCUMENTATION
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+typedef enum { iNDe=0, iNDaL, iNDaR, iNDr, iNDsb, iNDsp, iNDf } NormalizeIdx;
 
 class FGFCS : public FGModel {
 
@@ -171,7 +173,7 @@ public:
   /** Gets the aileron command.
       @return aileron command in percent */
   inline double GetDaCmd(void) { return DaCmd; }
-
+  
   /** Gets the elevator command.
       @return elevator command in percent */
   inline double GetDeCmd(void) { return DeCmd; }
@@ -227,29 +229,67 @@ public:
 
   /// @name Aerosurface position retrieval
   //@{
-  /** Gets the aileron position.
+  /** Gets the left aileron position.
       @return aileron position in radians */
-  inline double GetDaPos(void) { return DaPos; }
+  inline double GetDaLPos(void) { return DaLPos; }
+
+  /// @name Aerosurface position retrieval
+  //@{
+  /** Gets the normalized left aileron position.
+      @return aileron position in radians */
+  inline double GetDaLPosN(void) { return DaLPosN; }
+
+  /// @name Aerosurface position retrieval
+  //@{
+  /** Gets the right aileron position.
+      @return aileron position in radians */
+  inline double GetDaRPos(void) { return DaRPos; }
+
+  /// @name Aerosurface position retrieval
+  //@{
+  /** Gets the normalized right aileron position.
+      @return right aileron position in percent (-1..1) */
+  inline double GetDaRPosN(void) { return DaRPosN; }
 
   /** Gets the elevator position.
       @return elevator position in radians */
   inline double GetDePos(void) { return DePos; }
+ 
+  /** Gets the normalized elevator position.
+      @return  elevator position in percent (-1..1) */
+  inline double GetDePosN(void) { return DePosN; }
 
   /** Gets the rudder position.
       @return rudder position in radians */
   inline double GetDrPos(void) { return DrPos; }
 
+  /** Gets the normalized rudder position.
+      @return rudder position in percent (-1..1) */
+  inline double GetDrPosN(void) { return DrPosN; }
+
   /** Gets the flaps position.
       @return flaps position in radians */
   inline double GetDfPos(void) { return DfPos; }
+
+  /** Gets the normalized flaps position.
+      @return flaps position in percent (-1..1) */
+  inline double GetDfPosN(void) { return DfPosN; }
 
   /** Gets the speedbrake position.
       @return speedbrake position in radians */
   inline double GetDsbPos(void) { return DsbPos; }
 
+  /** Gets the normalized speedbrake position.
+      @return speedbrake position in percent (-1..1) */
+  inline double GetDsbPosN(void) { return DsbPosN; }
+
   /** Gets the spoiler position.
       @return spoiler position in radians */
   inline double GetDspPos(void) { return DspPos; }
+  
+  /** Gets the normalized spoiler position.
+      @return spoiler position in percent (-1..1) */
+  inline double GetDspPosN(void) { return DspPosN; }
 
   /** Gets the throttle position.
       @param engine engine ID number
@@ -352,29 +392,61 @@ public:
 
   /// @name Aerosurface position setting
   //@{
-  /** Sets the aileron position
-      @param cmd aileron position in radians*/
-  inline void SetDaPos(double cmd) { DaPos = cmd; }
+  /** Sets the left aileron position
+      @param cmd left aileron position in radians*/
+  inline void SetDaLPos(double cmd) { DaLPos = cmd; }
+
+  /** Sets the normalized left aileron position
+      @param cmd left aileron position in percent (-1..1)*/
+  inline void SetDaLPosN(double cmd) { DaLPosN = cmd; }
+
+  /** Sets the right aileron position
+      @param cmd right aileron position in radians*/
+  inline void SetDaRPos(double cmd) { DaRPos = cmd; }
+
+  /** Sets the normalized right aileron position
+      @param cmd right aileron position in percent (-1..1)*/
+  inline void SetDaRPosN(double cmd) { DaRPosN = cmd; }
 
   /** Sets the elevator position
       @param cmd elevator position in radians*/
   inline void SetDePos(double cmd) { DePos = cmd; }
 
+  /** Sets the normalized elevator position
+      @param cmd elevator position in percent (-1..1) */
+  inline void SetDePosN(double cmd) { DePosN = cmd; }
+
   /** Sets the rudder position
       @param cmd rudder position in radians*/
   inline void SetDrPos(double cmd) { DrPos = cmd; }
+ 
+  /** Sets the normalized rudder position
+      @param cmd rudder position in percent (-1..1)*/
+  inline void SetDrPosN(double cmd) { DrPosN = cmd; }
 
   /** Sets the flaps position
       @param cmd flaps position in radians*/
   inline void SetDfPos(double cmd) { DfPos = cmd; }
+  
+  /** Sets the flaps position
+      @param cmd flaps position in radians*/
+  inline void SetDfPosN(double cmd) { DfPosN = cmd; }
 
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
   inline void SetDsbPos(double cmd) { DsbPos = cmd; }
+ 
+  /** Sets the normalized speedbrake position
+      @param cmd normalized speedbrake position in percent (-1..1)*/
+  inline void SetDsbPosN(double cmd) { DsbPosN = cmd; }
 
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
   inline void SetDspPos(double cmd) { DspPos = cmd; }
+ 
+  /** Sets the normalized spoiler position
+      @param cmd normalized spoiler position in percent (-1..1)*/
+  inline void SetDspPosN(double cmd) { DspPosN = cmd; }
 
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
@@ -428,8 +500,9 @@ public:
   void AddThrottle(void);
 
 private:
-  double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
-  double DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
+  double DaCmd,  DeCmd,   DrCmd,  DfCmd,  DsbCmd, DspCmd;
+  double DaLPos,  DaRPos,  DePos,  DrPos,  DfPos,  DsbPos,  DspPos;
+  double DaLPosN, DaRPosN, DePosN, DrPosN, DfPosN, DsbPosN, DspPosN;
   double PTrimCmd, YTrimCmd, RTrimCmd;
   vector <double> ThrottleCmd;
   vector <double> ThrottlePos;
@@ -439,8 +512,12 @@ private:
   vector <double> PropAdvance;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
+  
+  bool DoNormalize;
+  void Normalize(void);
 
   vector <FGFCSComponent*> Components;
+  int ToNormalize[7];
   void Debug(int from);
 };
 
