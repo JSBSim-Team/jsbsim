@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.1 2004/09/27 11:50:29 jberndt Exp $"
+#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.2 2004/09/28 11:38:59 jberndt Exp $"
 #define VALID_CHARS """`!@#$%^&*()_+`1234567890-={}[];':,.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,23 +78,55 @@ public:
   string GetName(void) {return name;}
 
   string GetDataLine(int i) {return data_lines[i];}
-  Element* GetElement(int el) {return children[el];}
-  Element* FindElement(string el) {
+  Element* GetElement(int el=0) {
+    if (children.size() > el) {
+      element_index = el;
+      return children[el];
+    }
+    else {
+      element_index = 0;
+      return 0L;
+    }
+  }
+  Element* GetNextElement(void) {
+    if (children.size() > element_index+1) {
+      element_index++;
+      return children[element_index];
+    } else {
+      element_index = 0;
+      return 0L;
+    }
+  }
+  Element* FindElement(string el="") {
+    if (el.empty() && children.size() >= 1) {
+      element_index = 1;
+      return children[0];
+    }
     for (int i=0; i<children.size(); i++) {
       if (el == children[i]->GetName()) {
         element_index = i;
         return children[i];
       }
     }
+    element_index = 0;
     return 0L;
   }
-  Element* FindNextElement(string el) {
-    for (int i=element_index+1; i<children.size(); i++) {
+  Element* FindNextElement(string el="") {
+    if (el.empty()) {
+      if (element_index < children.size()) {
+        return children[element_index++];
+      } else {
+        element_index = 0;
+        return 0L;
+      }
+    }
+    for (int i=element_index; i<children.size(); i++) {
       if (el == children[i]->GetName()) {
-        element_index = i;
+        element_index = i+1;
         return children[i];
       }
     }
+    element_index = 0;
     return 0L;
   }
   Element* GetParent(void) {return parent;}
@@ -121,7 +153,7 @@ public:
     cout << endl;
     for (int i=0; i<data_lines.size(); i++) {
       for (int spaces=0; spaces<=level; spaces++) cout << " "; // format output
-      cout << "  " << data_lines[i] << endl;
+      cout << data_lines[i] << endl;
     }
     for (int i=0; i<children.size(); i++) {
       children[i]->Print(level);
@@ -144,7 +176,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
     @author Jon S. Berndt
-    @version $Id: FGXMLParse.h,v 1.1 2004/09/27 11:50:29 jberndt Exp $
+    @version $Id: FGXMLParse.h,v 1.2 2004/09/28 11:38:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
