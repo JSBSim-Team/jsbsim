@@ -81,8 +81,6 @@ typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
    //or to loop the sim w/o integrating
    FDMExec->RunIC(fgic)
    
-   
-   
    Speed:
 	 Since vc, ve, vt, and mach all represent speed, the remaining
 	 three are recalculated each time one of them is set (using the
@@ -113,7 +111,6 @@ public:
 
   FGInitialCondition(FGFDMExec *fdmex);
   ~FGInitialCondition(void);
-  
 
   void SetVcalibratedKtsIC(float tt);
   void SetVequivalentKtsIC(float tt);
@@ -166,8 +163,6 @@ public:
   inline float GetSeaLevelRadiusFtIC(void)  { return sea_level_radius; }
   inline float GetTerrainAltitudeFtIC(void) { return terrain_altitude; }
 
-  
-  
   void SetVgroundFpsIC(float tt);
   void SetVtrueFpsIC(float tt);
   void SetUBodyFpsIC(float tt);
@@ -192,8 +187,8 @@ public:
   float GetWBodyFpsIC(void);
   void SetFlightPathAngleRadIC(float tt);
   void SetAlphaRadIC(float tt);
-  void SetPitchAngleRadIC(float tt); 
-  void SetBetaRadIC(float tt);   
+  void SetPitchAngleRadIC(float tt);
+  void SetBetaRadIC(float tt);
   void SetRollAngleRadIC(float tt);
   void SetTrueHeadingRadIC(float tt);
   inline void SetLatitudeRadIC(float tt)  { latitude=tt; }
@@ -224,31 +219,30 @@ private:
   double sea_level_radius;
   double terrain_altitude;
   double radius_to_vehicle;
-  
+
   float  alpha, beta, theta, phi, psi, gamma;
   float salpha,sbeta,stheta,sphi,spsi,sgamma;
-  float calpha,cbeta,ctheta,cphi,cpsi,cgamma; 
+  float calpha,cbeta,ctheta,cphi,cpsi,cgamma;
 
   float xlo, xhi,xmin,xmax;
-  
+
   typedef float (FGInitialCondition::*fp)(float x);
   fp sfunc;
 
   speedset lastSpeedSet;
 
   FGFDMExec *fdmex;
-  
-  
+
   bool getAlpha(void);
   bool getTheta(void);
   bool getMachFromVcas(float *Mach,float vcas);
-  
+
   float GammaEqOfTheta(float Theta);
   float GammaEqOfAlpha(float Alpha);
   float calcVcas(float Mach);
   void calcUVWfromNED(void);
   void calcWindUVW(void);
-  
+
   bool findInterval(float x,float guess);
   bool solve(float *y, float x);
 };

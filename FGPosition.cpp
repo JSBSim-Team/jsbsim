@@ -29,11 +29,11 @@ FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 This class encapsulates the integration of rates and accelerations to get the
 current position of the aircraft.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 01/05/99   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,7 +48,7 @@ COMMENTS, REFERENCES,  and NOTES
     Wiley & Sons, 1979 ISBN 0-471-03032-5
 [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
     1982 ISBN 0-471-08936-2
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -78,7 +78,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.27 2001/01/28 14:01:18 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.28 2001/01/29 02:54:36 jsb Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,8 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
 
 FGPosition::~FGPosition(void) {}
 
-/*************************************************************************** Run
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
 Purpose: Called on a schedule to perform Positioning algorithms
 Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
          be the case
@@ -129,9 +130,9 @@ bool FGPosition:: Run(void) {
 
     Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
     psigt =  atan2(vVel(eEast), vVel(eNorth));
-    if(psigt < 0.0) 
+    if(psigt < 0.0)
       psigt += 2*M_PI;
-    
+
     invMass   = 1.0 / Aircraft->GetMass();
     Radius    = h + SeaLevelRadius;
     invRadius = 1.0 / Radius;
@@ -181,17 +182,23 @@ void FGPosition::GetState(void) {
   vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
 
   b = Aircraft->GetWingSpan();
-  
 }
 
-void FGPosition::Seth(double tt) { 
- h=tt;
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPosition::Seth(double tt) {
+ h = tt;
  Radius    = h + SeaLevelRadius;
- DistanceAGL = Radius - RunwayRadius;   // Geocentric 
-}  
+ DistanceAGL = Radius - RunwayRadius;   // Geocentric
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPosition::SetDistanceAGL(double tt) {
   DistanceAGL=tt;
   Radius = RunwayRadius + DistanceAGL;
   h = Radius - SeaLevelRadius;
-}  
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.10 2001/01/28 14:01:54 jsb Exp $"
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.11 2001/01/29 02:54:36 jsb Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
@@ -109,10 +109,7 @@ private:
   float psiw;
 
   void Calculate(float altitude);
-
 };
-
-
 
 /******************************************************************************/
 #endif
