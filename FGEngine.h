@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.26 2001/02/04 13:16:13 jsb Exp $ 
+    @version $Id: FGEngine.h,v 1.27 2001/03/13 08:49:13 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ public:
       @param PowerRequired this is the power required to run the thrusting device
              such as a propeller. This resisting effect must be provided to the 
 	           engine model.
-      @return   */
+      @return Thrust in pounds */
   virtual float Calculate(float PowerRequired) {return 0.0;};
 
   /** Reduces the fuel in the active tanks by the amount required.
@@ -158,6 +158,9 @@ public:
 
   virtual float GetPowerAvailable(void) {return 0.0;};
 
+  bool GetTrimMode(void) {return TrimMode;}
+  void SetTrimMode(bool state) {TrimMode = state;}
+
 protected:
   string Name;
   EngineType Type;
@@ -177,6 +180,7 @@ protected:
   bool  Running;
   float PctPower;
   int   EngineNumber;
+  bool  TrimMode;
 
   FGFDMExec*      FDMExec;
   FGState*        State;

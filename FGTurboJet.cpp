@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboJet.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboJet.cpp,v 1.11 2001/02/04 13:16:18 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboJet.cpp,v 1.12 2001/03/13 08:49:13 jberndt Exp $";
 static const char *IdHdr = ID_TURBOJET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,5 +58,6 @@ FGTurboJet::FGTurboJet(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 float FGTurboJet::Calculate(float dummy)
 {
   ConsumeFuel();
+
   return 0.0;
 }

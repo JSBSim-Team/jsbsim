@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.33 2001/03/07 23:41:10 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.34 2001/03/13 08:49:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,6 +102,36 @@ bool FGPropulsion::Run(void) {
       Thrusters[i]->Calculate(PowerAvailable);
       *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+    }
+
+    return false;
+  } else {
+    return true;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGPropulsion::GetSteadyState(void) {
+  float PowerAvailable;
+  float currentThrust = 0, lastThrust=-1;
+  dt = State->Getdt();
+
+  Forces->InitMatrix();
+  Moments->InitMatrix();
+
+  if (!FGModel::Run()) {
+    for (unsigned int i=0; i<numEngines; i++) {
+      Engines[i]->SetTrimMode(true);
+      Thrusters[i]->SetdeltaT(dt*rate);
+      while (pow(currentThrust - lastThrust, 2.0) > currentThrust*0.00010) {
+        PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
+        lastThrust = currentThrust;
+        currentThrust = Thrusters[i]->Calculate(PowerAvailable);
+      }
+      *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+      *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+      Engines[i]->SetTrimMode(false);
     }
 
     return false;

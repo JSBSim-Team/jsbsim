@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.37 2001/02/04 13:16:14 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.38 2001/03/13 08:49:13 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   FCS         = Exec->GetFCS();
   
   WOW = false;
-  ReportEnable=true;
+  ReportEnable = true;
   FirstContact = false;
   Reported = false;
   DistanceTraveled = 0.0;
@@ -278,7 +278,6 @@ FGColumnVector FGLGear::Force(void)
     SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
 // Calculate tire slip angle.
-// Note to Jon: Please substitute the correct variable for Rad2Deg conversion.
 
     if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
       WheelSlip = 0.0;

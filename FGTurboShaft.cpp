@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.10 2001/02/04 13:16:18 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.11 2001/03/13 08:49:13 jberndt Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,4 +58,3 @@ float FGTurboShaft::Calculate(float dummy) {
   ConsumeFuel();
   return 0.0;
 }
-

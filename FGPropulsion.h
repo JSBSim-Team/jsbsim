@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.20 2001/02/04 13:16:16 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.21 2001/03/13 08:49:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.20 2001/02/04 13:16:16 jsb Exp $
+    @version $Id: FGPropulsion.h,v 1.21 2001/03/13 08:49:13 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -154,6 +154,9 @@ public:
 
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
   inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
+
+  bool GetSteadyState(void);
+
 
   inline FGColumnVector& GetForces(void)  {return *Forces; }
   inline FGColumnVector& GetMoments(void) {return *Moments;}

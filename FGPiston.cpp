@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.17 2001/02/04 13:16:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.18 2001/03/13 08:49:13 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,3 @@ float FGPiston::Calculate(float PowerRequired)
   
   return PowerAvailable;
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
