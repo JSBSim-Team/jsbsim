@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.93 2002/09/10 01:54:15 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.94 2002/09/29 13:19:00 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,19 @@ FGPropertyManager* FGFDMExec::master=0;
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+void checkTied( FGPropertyManager *node ) {
+  int N = node->nChildren();
+  string name;
+  for(int i=0;i<N;i++) {
+    if(node->getChild(i)->nChildren() ) {
+      checkTied( (FGPropertyManager*)node->getChild(i) );
+    } else if( node->getChild(i)->isTied() ) {
+      name=((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
+      cerr << name << " is tied" << endl;
+    } 
+  }
+}        
 
 // Constructor
 
@@ -132,7 +145,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   else            master = root;
 
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
-  instance->SetDouble("zero",0);  
+
   
   Debug(0);
   
@@ -152,13 +165,14 @@ FGFDMExec::~FGFDMExec()
 {
   try {
     DeAllocate();
+    checkTied( instance );
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;
   }    
-
+  
   for (unsigned int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
   SlaveFDMList.clear();
- 
+  
   Debug(1);
 }
 
@@ -281,7 +295,9 @@ bool FGFDMExec::DeAllocate(void) {
   
   delete IC;
   delete Trim;
-
+  
+  
+    
   FirstModel  = 0L;
   Error       = 0;
 
