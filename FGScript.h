@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.3 2002/01/19 16:27:56 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.4 2002/04/01 11:58:43 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim scripting capability.
     @author Jon S. Berndt
-    @version $Id: FGScript.h,v 1.3 2002/01/19 16:27:56 jberndt Exp $
+    @version $Id: FGScript.h,v 1.4 2002/04/01 11:58:43 apeden Exp $
 
     <h4>Scripting support provided via FGScript.</h4>
 
@@ -163,8 +163,8 @@ private:
   };
 
   struct condition {
-    vector <eParam>  TestParam;
-    vector <eParam>  SetParam;
+    vector <FGPropertyManager*>  TestParam;
+    vector <FGPropertyManager*>  SetParam;
     vector <double>  TestValue;
     vector <double>  SetValue;
     vector <string>  Comparison;
@@ -191,6 +191,7 @@ private:
 
   FGFDMExec* FDMExec;
   FGState* State;
+  FGPropertyManager* PropertyManager;
   void Debug(int from);
 };
 

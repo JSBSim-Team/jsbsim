@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.50 2002/03/22 12:50:12 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.51 2002/04/01 11:58:43 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.50 2002/03/22 12:50:12 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.51 2002/04/01 11:58:43 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -198,7 +198,7 @@ public:
   /** Gets the throttle command.
       @param engine engine ID number
       @return throttle command in percent ( 0 - 100) for the given engine */
-  double GetThrottleCmd(int engine);
+  double GetThrottleCmd(int engine) const;
 
   /** Gets the mixture command.
       @param engine engine ID number
@@ -270,7 +270,7 @@ public:
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
-  double GetThrottlePos(int engine);
+  double GetThrottlePos(int engine) const;
 
   /** Gets the mixture position.
       @param engine engine ID number
@@ -295,7 +295,7 @@ public:
   /** Retrieves a components output value
       @param idx the index of the component (the component ID)
       @return output value from the component */
-  double GetComponentOutput(eParam idx);
+  double GetComponentOutput(int idx);
 
   /** Retrieves the component name
       @param idx the index of the component (the component ID)
@@ -454,7 +454,10 @@ public:
 
   void AddThrottle(void);
   
+  FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
+  
   void bind(void);
+  void bindModel(void);
   void unbind(void);
   
 private:

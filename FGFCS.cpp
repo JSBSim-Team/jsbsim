@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.75 2002/03/18 12:12:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.76 2002/04/01 11:58:43 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +162,7 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGFCS::GetThrottleCmd(int engineNum)
+double FGFCS::GetThrottleCmd(int engineNum) const
 {
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
@@ -180,7 +180,7 @@ double FGFCS::GetThrottleCmd(int engineNum)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGFCS::GetThrottlePos(int engineNum)
+double FGFCS::GetThrottlePos(int engineNum) const
 {
   if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
@@ -306,36 +306,40 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
     }
   }
   //collect information for normalizing control surfaces
-  
+  string nodeName;
   for(i=0;i<Components.size();i++) {
     
-    if(Components[i]->GetType() == "AEROSURFACE_SCALE" 
-        || Components[i]->GetType() == "KINEMAT"  ) {
-      if( Components[i]->GetOutputIdx() == FG_ELEVATOR_POS ) {
+    if( (Components[i]->GetType() == "AEROSURFACE_SCALE" 
+          || Components[i]->GetType() == "KINEMAT")  
+                    && Components[i]->GetOutputNode() ) { 
+      nodeName= Components[i]->GetOutputNode()->GetName();  
+      if( nodeName == "elevator-pos-rad" ) {
         ToNormalize[iDe]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_LEFT_AILERON_POS 
-                      || Components[i]->GetOutputIdx() == FG_AILERON_POS ) {
+      } else if ( nodeName  == "left-aileron-pos-rad" 
+                   || nodeName == "aileron-pos-rad" ) {
         ToNormalize[iDaL]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_RIGHT_AILERON_POS ) {
+      } else if ( nodeName == "right-aileron-pos-rad" ) {
         ToNormalize[iDaR]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_RUDDER_POS ) {
+      } else if ( nodeName == "rudder-pos-rad" ) {
         ToNormalize[iDr]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_SPDBRAKE_POS ) {
+      } else if ( nodeName == "speedbrake-pos-rad" ) {
         ToNormalize[iDsb]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_SPOILERS_POS ) {
+      } else if ( nodeName == "spoiler-pos-rad" ) {
         ToNormalize[iDsp]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_FLAPS_POS ) {
+      } else if ( nodeName == "flaps-pos-deg" ) {
         ToNormalize[iDf]=i;
       }
     }
   }     
+  
+  bindModel();
   
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGFCS::GetComponentOutput(eParam idx) {
+double FGFCS::GetComponentOutput(int idx) {
   return Components[idx]->GetOutput();
 }
 
@@ -594,7 +598,42 @@ void FGFCS::bind(void){
                        &FGFCS::SetGearPos,
                        true);
 }
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFCS::bindModel(void){
+  unsigned i;
+  for(i=0;i<ThrottleCmd.size();i++) {
+    PropertyManager->Tie("fcs/throttle-cmd-norm",this,i,
+                          &FGFCS::GetThrottleCmd,
+                          &FGFCS::SetThrottleCmd,
+                          true );
+    PropertyManager->Tie("fcs/throttle-pos-norm",this,i,
+                          &FGFCS::GetThrottlePos,
+                          &FGFCS::SetThrottlePos,
+                          true );
+    if( MixtureCmd.size() > i ) {
+      PropertyManager->Tie("fcs/mixture-cmd-norm",this,i,
+                            &FGFCS::GetMixtureCmd,
+                            &FGFCS::SetMixtureCmd,
+                            true );
+      PropertyManager->Tie("fcs/mixture-pos-norm",this,i,
+                            &FGFCS::GetMixturePos,
+                            &FGFCS::SetMixturePos,
+                            true );
+    }
+    if( PropAdvanceCmd.size() > i ) {
+      PropertyManager->Tie("fcs/advance-cmd-norm",this,i,
+                            &FGFCS::GetPropAdvanceCmd,
+                            &FGFCS::SetPropAdvanceCmd,
+                            true );
+      PropertyManager->Tie("fcs/advance-pos-norm",this,i,
+                            &FGFCS::GetPropAdvance,
+                            &FGFCS::SetPropAdvance,
+                            true );
+    }
+  }
+}                            
+                          
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFCS::unbind(void){
