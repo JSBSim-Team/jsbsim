@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.45 2001/04/10 13:07:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.46 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = "ID_FCS";
 
 extern short debug_lvl;
@@ -137,12 +137,14 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   string token;
 
   FCSName = AC_cfg->GetValue("NAME");
-  cout << "    Control System Name: " << FCSName << endl;
+  if (debug_lvl > 0) cout << "    Control System Name: " << FCSName << endl;
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
       token = AC_cfg->GetValue("TYPE");
-      cout << "    Loading Component \"" << AC_cfg->GetValue("NAME") << "\" of type: " << token << endl;
+      if (debug_lvl > 0) cout << "    Loading Component \""
+                              << AC_cfg->GetValue("NAME")
+			                        << "\" of type: " << token << endl;
       if ((token == "LAG_FILTER") ||
           (token == "LEAD_LAG_FILTER") ||
           (token == "SECOND_ORDER_FILTER") ||

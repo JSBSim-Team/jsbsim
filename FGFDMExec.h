@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.37 2001/04/19 22:05:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,7 +107,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.37 2001/04/19 22:05:21 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -192,6 +192,8 @@ CLASS DOCUMENTATION
        FGModel object executes its Run() method</li>
     <li><b>8</b>: When this value is set, various runtime state variables
        are printed out periodically</li>
+    <li><b>16</b>: When set various parameters are sanity checked and
+       a message is printed out when they go out of bounds</li>
     </ol>
 
 */

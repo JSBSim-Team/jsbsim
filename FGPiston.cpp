@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.22 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.23 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 extern short debug_lvl;
@@ -54,34 +54,28 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
   string token;
 
   Name = Eng_cfg->GetValue("NAME");
-  cout << "\n    Engine Name: " << Name << endl;
   Eng_cfg->GetNextConfigLine();
   while (Eng_cfg->GetValue() != "/FG_PISTON") {
     *Eng_cfg >> token;
-    if (token == "BRAKEHORSEPOWER") {
-      *Eng_cfg >> BrakeHorsePower;
-      cout << "      BrakeHorsePower = " << BrakeHorsePower << endl;
-    } else if (token == "MAXTHROTTLE") {
-      *Eng_cfg >> MaxThrottle;
-      cout << "      MaxThrottle = " << MaxThrottle << endl;
-    } else if (token == "MINTHROTTLE") {
-      *Eng_cfg >> MinThrottle;
-      cout << "      MinThrottle = " << MinThrottle << endl;
-    } else if (token == "SLFUELFLOWMAX") {
-      *Eng_cfg >> SLFuelFlowMax;
-      cout << "      SLFuelFlowMax = " << SLFuelFlowMax << endl;
-    } else if (token == "SPEEDSLOPE") {
-      *Eng_cfg >> SpeedSlope;
-      cout << "      SpeedSlope = " << SpeedSlope << endl;
-    } else if (token == "SPEEDINTERCEPT") {
-      *Eng_cfg >> SpeedIntercept;
-      cout << "      SpeedIntercept = " << SpeedIntercept << endl;
-    } else if (token == "ALTITUDESLOPE") {
-      *Eng_cfg >> AltitudeSlope;
-      cout << "      AltitudeSlope = " << AltitudeSlope << endl;
-    } else {
-      cout << "Unhandled token in Engine config file: " << token << endl;
-    }
+    if      (token == "BRAKEHORSEPOWER") *Eng_cfg >> BrakeHorsePower;
+    else if (token == "MAXTHROTTLE")     *Eng_cfg >> MaxThrottle;
+    else if (token == "MINTHROTTLE")     *Eng_cfg >> MinThrottle;
+    else if (token == "SLFUELFLOWMAX")   *Eng_cfg >> SLFuelFlowMax;
+    else if (token == "SPEEDSLOPE")      *Eng_cfg >> SpeedSlope;
+    else if (token == "SPEEDINTERCEPT")  *Eng_cfg >> SpeedIntercept;
+    else if (token == "ALTITUDESLOPE")   *Eng_cfg >> AltitudeSlope;
+    else cerr << "Unhandled token in Engine config file: " << token << endl;
+  }
+
+  if (debug_lvl > 0) {
+    cout << "\n    Engine Name: " << Name << endl;
+    cout << "      BrakeHorsePower = " << BrakeHorsePower << endl;
+    cout << "      MaxThrottle = " << MaxThrottle << endl;
+    cout << "      MinThrottle = " << MinThrottle << endl;
+    cout << "      SLFuelFlowMax = " << SLFuelFlowMax << endl;
+    cout << "      SpeedSlope = " << SpeedSlope << endl;
+    cout << "      SpeedIntercept = " << SpeedIntercept << endl;
+    cout << "      AltitudeSlope = " << AltitudeSlope << endl;
   }
 
   Type = etPiston;

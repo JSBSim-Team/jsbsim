@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.15 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.16 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 extern short debug_lvl;
@@ -52,25 +52,22 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
   string token;
 
   Name = Nzl_cfg->GetValue("NAME");
-  cout << "      Nozzle Name: " << Name << endl;
   Nzl_cfg->GetNextConfigLine();
   while (Nzl_cfg->GetValue() != "/FG_NOZZLE") {
     *Nzl_cfg >> token;
-    if (token == "PE") {
-      *Nzl_cfg >> PE;
-      cout << "      Nozzle Exit Pressure = " << PE << endl;
-    } else if (token == "EXPR") {
-      *Nzl_cfg >> ExpR;
-      cout << "      Nozzle Expansion Ratio = " << ExpR << endl;
-    } else if (token == "NZL_EFF") {
-      *Nzl_cfg >> nzlEff;
-      cout << "      Nozzle Efficiency = " << nzlEff << endl;
-    } else if (token == "DIAM") {
-      *Nzl_cfg >> Diameter;
-      cout << "      Nozzle Diameter = " << Diameter << endl;
-    } else {
-      cout << "Unhandled token in Nozzle config file: " << token << endl;
-    }
+    if      (token == "PE")      *Nzl_cfg >> PE;
+    else if (token == "EXPR")    *Nzl_cfg >> ExpR;
+    else if (token == "NZL_EFF") *Nzl_cfg >> nzlEff;
+    else if (token == "DIAM")    *Nzl_cfg >> Diameter;
+    else cerr << "Unhandled token in Nozzle config file: " << token << endl;
+  }
+
+  if (debug_lvl > 0) {
+    cout << "      Nozzle Name: " << Name << endl;
+    cout << "      Nozzle Exit Pressure = " << PE << endl;
+    cout << "      Nozzle Expansion Ratio = " << ExpR << endl;
+    cout << "      Nozzle Efficiency = " << nzlEff << endl;
+    cout << "      Nozzle Diameter = " << Diameter << endl;
   }
 
   Thrust = 0;

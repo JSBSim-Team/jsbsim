@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.52 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.53 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -69,16 +69,18 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
                   >> rollingFCoeff >> sSteerType >> sBrakeGroup >> maxSteerAngle;
 
-  cout << "    Name: " << name << endl;
-  cout << "      Location: " << vXYZ << endl;
-  cout << "      Spring Constant:  " << kSpring << endl;
-  cout << "      Damping Constant: " << bDamp << endl;
-  cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
-  cout << "      Static Friction:  " << staticFCoeff << endl;
-  cout << "      Rolling Friction: " << rollingFCoeff << endl;
-  cout << "      Steering Type:    " << sSteerType << endl;
-  cout << "      Grouping:         " << sBrakeGroup << endl;
-  cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
+  if (debug_lvl > 0) {
+    cout << "    Name: " << name << endl;
+    cout << "      Location: " << vXYZ << endl;
+    cout << "      Spring Constant:  " << kSpring << endl;
+    cout << "      Damping Constant: " << bDamp << endl;
+    cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
+    cout << "      Static Friction:  " << staticFCoeff << endl;
+    cout << "      Rolling Friction: " << rollingFCoeff << endl;
+    cout << "      Steering Type:    " << sSteerType << endl;
+    cout << "      Grouping:         " << sBrakeGroup << endl;
+    cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
+  }
 
   if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
   else if (sBrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
@@ -115,6 +117,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Reported = false;
   DistanceTraveled = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
+  SinkRate = GroundSpeed = 0.0;
 
   vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
@@ -382,6 +385,8 @@ FGColumnVector FGLGear::Force(void)
       MaximumStrutForce = MaximumStrutTravel = 0.0;
     }
 
+    compressLength = 0.0; // reset compressLength to zero for data output validity
+
     vForce.InitMatrix();
     vMoment.InitMatrix();
   }
@@ -391,7 +396,7 @@ FGColumnVector FGLGear::Force(void)
   }
 
   if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
-    Report();
+    if (debug_lvl > 0) Report();
   }
 
   return vForce;

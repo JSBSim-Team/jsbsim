@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.27 2001/03/29 22:26:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.28 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 extern short debug_lvl;
@@ -55,10 +55,11 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   string token;
   string strScheduledBy;
 
-  lookup = NULL;
-  Schedule.clear();
+  State = fcs->GetState();
+
   Gain = 1.000;
-  Min = Max = 0;
+  Rows = 0;
+  Min = Max = 0.0;
   ScheduledBy = FG_UNDEF;
 
   Type = AC_cfg->GetValue("TYPE");
@@ -69,13 +70,11 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;
-      cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      cout << "      INPUT: " << token << endl;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
-        InputIdx = fcs->GetState()->GetParameterIndex(token);
+        InputIdx = State->GetParameterIndex(token);
         InputType = itPilotAC;
       } else {
         *AC_cfg >> InputIdx;
@@ -83,34 +82,41 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       }
     } else if (token == "GAIN") {
       *AC_cfg >> Gain;
-      cout << "      GAIN: " << Gain << endl;
     } else if (token == "MIN") {
       *AC_cfg >> Min;
-      cout << "      MIN: " << Min << endl;
     } else if (token == "MAX") {
       *AC_cfg >> Max;
-      cout << "      MAX: " << Max << endl;
+    } else if (token == "ROWS") {
+      *AC_cfg >> Rows;
+      Table = new FGTable(Rows);
     } else if (token == "SCHEDULED_BY") {
       token = AC_cfg->GetValue("SCHEDULED_BY");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> strScheduledBy;
-        ScheduledBy = fcs->GetState()->GetParameterIndex(strScheduledBy);
-        cout << "      Scheduled by parameter: " << token << endl;
+        ScheduledBy = State->GetParameterIndex(strScheduledBy);
       } else {
         *AC_cfg >> ScheduledBy;
-        cout << "      Scheduled by FCS output: " << ScheduledBy << endl;
       }
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
-      cout << "      OUTPUT: " << sOutputIdx << endl;
+      OutputIdx = State->GetParameterIndex(sOutputIdx);
     } else {
       AC_cfg->ResetLineIndexToZero();
-      lookup = new float[2];
-      *AC_cfg >> lookup[0] >> lookup[1];
-      cout << "        " << lookup[0] << "  " << lookup[1] << endl;
-      Schedule.push_back(lookup);
+      *Table << *AC_cfg;
+    }
+  }
+
+  if (debug_lvl > 0) {
+    cout << "      ID: " << ID << endl;
+    cout << "      INPUT: " << InputIdx << endl;
+    cout << "      GAIN: " << Gain << endl;
+    if (IsOutput) cout << "      OUTPUT: " << sOutputIdx << endl;
+    cout << "      MIN: " << Min << endl;
+    cout << "      MAX: " << Max << endl;
+    if (ScheduledBy != FG_UNDEF) {
+      cout << "      Scheduled by parameter: " << ScheduledBy << endl;
+      Table->Print();
     }
   }
 
@@ -129,40 +135,19 @@ FGGain::~FGGain()
 bool FGGain::Run(void )
 {
   float SchedGain = 1.0;
+  float LookupVal = 0;
 
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   if (Type == "PURE_GAIN") {
-
     Output = Gain * Input;
-
   } else if (Type == "SCHEDULED_GAIN") {
-
-    float LookupVal = fcs->GetState()->GetParameter(ScheduledBy);
-    unsigned int last = Schedule.size()-1;
-    float lowVal = Schedule[0][0], hiVal = Schedule[last][0];
-    float factor = 1.0;
-
-    if (LookupVal <= lowVal) Output = Gain * Schedule[0][1] * Input;
-    else if (LookupVal >= hiVal) Output = Gain * Schedule[last][1] * Input;
-    else {
-      for (unsigned int ctr = 1; ctr < last; ctr++) {
-        if (LookupVal < Schedule[ctr][0]) {
-          hiVal = Schedule[ctr][0];
-          lowVal = Schedule[ctr-1][0];
-          factor = (LookupVal - lowVal) / (hiVal - lowVal);
-          SchedGain = Schedule[ctr-1][1] + factor*(Schedule[ctr][1] - Schedule[ctr-1][1]);
-          Output = Gain * SchedGain * Input;
-          break;
-        }
-      }
-    }
-
+    LookupVal = State->GetParameter(ScheduledBy);
+	  SchedGain = Table->GetValue(LookupVal);
+    Output = Gain * SchedGain * Input;
   } else if (Type == "AEROSURFACE_SCALE") {
-
     if (Output >= 0.0) Output = Input * Max;
     else Output = Input * (-Min);
-
     Output *= Gain;
   }
 

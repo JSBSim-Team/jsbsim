@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.18 2001/03/30 23:53:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.19 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 extern short debug_lvl;
@@ -70,10 +70,15 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
-    if (token == "ID") {
-      *AC_cfg >> ID;
-      cout << "      ID: " << ID << endl;
-    } else if (token == "INPUT") {
+    if      (token == "ID")     *AC_cfg >> ID;
+    else if (token == "C1")     *AC_cfg >> C1;
+    else if (token == "C2")     *AC_cfg >> C2;
+    else if (token == "C3")     *AC_cfg >> C3;
+    else if (token == "C4")     *AC_cfg >> C4;
+    else if (token == "C5")     *AC_cfg >> C5;
+    else if (token == "C6")     *AC_cfg >> C6;
+    else if (token == "INPUT")
+    {
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
@@ -83,31 +88,14 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
         *AC_cfg >> InputIdx;
         InputType = itFCS;
       }
-      cout << "      INPUT: " << token << endl;
-    } else if (token == "C1") {
-      *AC_cfg >> C1;
-      cout << "      C1: " << C1 << endl;
-    } else if (token == "C2") {
-      *AC_cfg >> C2;
-      cout << "      C2: " << C2 << endl;
-    } else if (token == "C3") {
-      *AC_cfg >> C3;
-      cout << "      C3: " << C3 << endl;
-    } else if (token == "C4") {
-      *AC_cfg >> C4;
-      cout << "      C4: " << C4 << endl;
-    } else if (token == "C5") {
-      *AC_cfg >> C5;
-      cout << "      C5: " << C5 << endl;
-    } else if (token == "C6") {
-      *AC_cfg >> C6;
-      cout << "      C6: " << C6 << endl;
-    } else if (token == "OUTPUT") {
+    }
+    else if (token == "OUTPUT")
+    {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
-      cout << "      OUTPUT: " << sOutputIdx << endl;
     }
+    else cerr << "Unknown filter type: " << token << endl;
   }
 
   Initialize = true;
@@ -134,6 +122,18 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     case eIntegrator:
       ca = dt*C1 / 2.00;
       break;
+  }
+
+  if (debug_lvl > 0) {
+      cout << "      ID: " << ID << endl;
+      cout << "      INPUT: " << InputIdx << endl;
+      cout << "      C1: " << C1 << endl;
+      cout << "      C2: " << C2 << endl;
+      cout << "      C3: " << C3 << endl;
+      cout << "      C4: " << C4 << endl;
+      cout << "      C5: " << C5 << endl;
+      cout << "      C6: " << C6 << endl;
+      if (IsOutput) cout << "      OUTPUT: " << sOutputIdx << endl;
   }
 
   if (debug_lvl & 2) cout << "Instantiated: FGFilter" << endl;

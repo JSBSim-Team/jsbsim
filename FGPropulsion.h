@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.27 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.28 2001/04/19 22:05:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.27 2001/04/17 23:00:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.28 2001/04/19 22:05:21 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -178,7 +178,7 @@ public:
 private:
   vector <FGEngine*>   Engines;
   vector <FGTank*>     Tanks;
-  vector <FGTank>::iterator iTank;
+  vector <FGTank*>::iterator iTank;
   vector <FGThruster*> Thrusters;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;

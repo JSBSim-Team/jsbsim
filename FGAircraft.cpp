@@ -138,7 +138,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.71 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.72 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -229,22 +229,22 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   while ((AC_cfg.GetNextConfigLine() != string("EOF")) &&
          (token = AC_cfg.GetValue()) != string("/FDM_CONFIG")) {
     if (token == "METRICS") {
-      cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
       ReadMetrics(&AC_cfg);
     } else if (token == "AERODYNAMICS") {
-      cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
       ReadAerodynamics(&AC_cfg);
     } else if (token == "UNDERCARRIAGE") {
-      cout << fgcyan << "\n  Reading Landing Gear" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Landing Gear" << fgdef << endl;
       ReadUndercarriage(&AC_cfg);
     } else if (token == "PROPULSION") {
-      cout << fgcyan << "\n  Reading Propulsion" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Propulsion" << fgdef << endl;
       ReadPropulsion(&AC_cfg);
     } else if (token == "FLIGHT_CONTROL") {
-      cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
       ReadFlightControls(&AC_cfg);
     } else if (token == "OUTPUT") {
-      cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;
       ReadOutput(&AC_cfg);
     }
   }
@@ -356,7 +356,7 @@ void FGAircraft::GetState(void) {
 void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
   string token = "";
   string parameter;
-  float EW, bixx, biyy, bizz, bixz, biyz, xcg, ycg, zcg;
+  float EW, bixx, biyy, bizz, bixz, biyz;
   FGColumnVector vbaseXYZcg(3);
 
   AC_cfg->GetNextConfigLine();
@@ -365,50 +365,50 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
     *AC_cfg >> parameter;
     if (parameter == string("AC_WINGAREA")) {
         *AC_cfg >> WingArea;
-        cout << "    WingArea: " << WingArea  << endl; 
+        if (debug_lvl > 0) cout << "    WingArea: " << WingArea  << endl; 
     } else if (parameter == "AC_WINGSPAN") {
         *AC_cfg >> WingSpan;
-        cout << "    WingSpan: " << WingSpan  << endl;
+        if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
     } else if (parameter == "AC_CHORD") {
         *AC_cfg >> cbar;
-        cout << "    Chord: " << cbar << endl;
+        if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
     } else if (parameter == "AC_IXX") {
         *AC_cfg >> bixx;
-        cout << "    baseIxx: " << bixx << endl;
+        if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
 	MassBalance->SetBaseIxx(bixx);
     } else if (parameter == "AC_IYY") {
         *AC_cfg >> biyy;
-        cout << "    baseIyy: " << biyy << endl;
+        if (debug_lvl > 0) cout << "    baseIyy: " << biyy << endl;
 	MassBalance->SetBaseIyy(biyy);
     } else if (parameter == "AC_IZZ") { 
         *AC_cfg >> bizz;
-        cout << "    baseIzz: " << bizz << endl;
+        if (debug_lvl > 0) cout << "    baseIzz: " << bizz << endl;
 	MassBalance->SetBaseIzz(bizz);
     } else if (parameter == "AC_IXZ") { 
         *AC_cfg >> bixz;
-        cout << "    baseIxz: " << bixz  << endl;
+        if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
 	MassBalance->SetBaseIxz(bixz);
     } else if (parameter == "AC_IYZ") { 
         *AC_cfg >> biyz;
-        cout << "    baseIyz: " << biyz  << endl;
+        if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
 	MassBalance->SetBaseIyz(biyz);
     } else if (parameter == "AC_EMPTYWT") {
         *AC_cfg >> EW;
 	MassBalance->SetEmptyWeight(EW);
-        cout << "    EmptyWeight: " << EW  << endl;
+        if (debug_lvl > 0) cout << "    EmptyWeight: " << EW  << endl;
     } else if (parameter == "AC_CGLOC") {
         *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
 	MassBalance->SetBaseCG(vbaseXYZcg);
-        cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
+        if (debug_lvl > 0) cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
     } else if (parameter == "AC_EYEPTLOC") {
         *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
-        cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
+        if (debug_lvl > 0) cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
     } else if (parameter == "AC_AERORP") {
         *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
-        cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
+        if (debug_lvl > 0) cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
     } else if (parameter == "AC_ALPHALIMITS") {
         *AC_cfg >> alphaclmin >> alphaclmax;
-        cout << "    Maximum Alpha: " << alphaclmax
+        if (debug_lvl > 0) cout << "    Maximum Alpha: " << alphaclmax
              << "    Minimum Alpha: " << alphaclmin 
              << endl;
     }         
@@ -445,7 +445,7 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
       AC_cfg->GetNextConfigLine();
       while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
         ca.push_back(new FGCoefficient(FDMExec, AC_cfg));
-        DisplayCoeffFactors(ca.back()->Getmultipliers());
+        if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
       }
       Coeff[AxisIdx[axis]]=ca;
       AC_cfg->GetNextConfigLine();
@@ -547,22 +547,21 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   string token = AC_cfg->GetValue();
   string scratch;
   AircraftName = AC_cfg->GetValue("NAME");
-  cout << underon << "Reading Aircraft Configuration File" << underoff << ": "
-                       << highint << AircraftName << normint << endl;
+  if (debug_lvl > 0) cout << underon << "Reading Aircraft Configuration File"
+            << underoff << ": " << highint << AircraftName << normint << endl;
   scratch = AC_cfg->GetValue("VERSION").c_str();
 
   CFGVersion = AC_cfg->GetValue("VERSION");
-  cout << "                            Version: " << highint << CFGVersion
+
+  if (debug_lvl > 0) 
+    cout << "                            Version: " << highint << CFGVersion
                                                              << normint << endl;
   if (CFGVersion != string(NEEDED_CFG_VERSION)) {
-    cout << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
-    " RESULTS WILL BE UNPREDICTABLE !!" << endl;
-    cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
-    cout << "         You have version: " << CFGVersion << endl << fgdef << endl;
-    //exit(-1);
+    cerr << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
+            " RESULTS WILL BE UNPREDICTABLE !!" << endl;
+    cerr << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
+    cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
   }
-
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

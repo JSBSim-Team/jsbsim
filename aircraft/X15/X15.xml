@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.38">
+<FDM_CONFIG NAME="X-15" VERSION="1.40">
   <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.27 2001/04/11 22:34:10 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.28 2001/04/19 22:05:21 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
@@ -196,6 +196,7 @@
       ID           3
       INPUT        2
       GAIN         0.017
+      ROWS         22
       SCHEDULED_BY FG_ELEVATOR_POS
       -0.68  -26.548
       -0.595 -20.513

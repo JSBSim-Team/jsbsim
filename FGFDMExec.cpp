@@ -73,7 +73,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.43 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.44 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -109,6 +109,8 @@ short debug_lvl;  // This describes to any interested entity the debug level
                   //    FGModel object executes its Run() method
                   // f) 8: When this value is set, various runtime state variables
                   //    are printed out periodically
+		  // g) 16: When set various parameters are sanity checked and
+		  //    a message is printed out when they go out of bounds.
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -138,17 +140,19 @@ FGFDMExec::FGFDMExec(void)
   modelLoaded = false;
   Scripted = false;
 
-  cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
-                                 << JSBSIM_VERSION << underoff << normint << endl;
-  cout << halfint << "            [cfg file spec v" << NEEDED_CFG_VERSION << "]\n\n";
-  cout << normint << "JSBSim startup beginning ...\n\n";
-
   try {
     char* num = getenv("JSBSIM_DEBUG");
     if (!num) debug_lvl = 1;
     else debug_lvl = atoi(num); // set debug level
   } catch (...) {               // if error set to 1
     debug_lvl = 1;
+  }
+
+  if (debug_lvl > 0) {
+    cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
+                                   << JSBSIM_VERSION << underoff << normint << endl;
+    cout << halfint << "            [cfg file spec v" << NEEDED_CFG_VERSION << "]\n\n";
+    cout << normint << "JSBSim startup beginning ...\n\n";
   }
 
   if (debug_lvl & 2) cout << "Instantiated: FGFDMExec" << endl;
@@ -226,7 +230,7 @@ bool FGFDMExec::Allocate(void) {
   Schedule(Atmosphere,   1);
   Schedule(FCS,          1);
   Schedule(Propulsion,   1);
-  Schedule(MassBalance, 10);
+  Schedule(MassBalance,  1);
   Schedule(Aircraft,     1);
   Schedule(Rotation,     1);
   Schedule(Translation,  1);
@@ -365,7 +369,7 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
          << fgdef << endl;
   }
 
-  cout << "\n\nJSBSim startup complete\n\n";
+  if (debug_lvl > 0) cout << "\n\nJSBSim startup complete\n\n";
   return result;
 }
 
@@ -386,17 +390,17 @@ bool FGFDMExec::LoadScript(string script)
   Script.GetNextConfigLine();
   ScriptName = Script.GetValue("name");
   Scripted = true;
-  cout << "Reading Script File " << ScriptName << endl;
+  if (debug_lvl > 0) cout << "Reading Script File " << ScriptName << endl;
 
   while (Script.GetNextConfigLine() != "EOF" && Script.GetValue() != "/runscript") {
     token = Script.GetValue();
     if (token == "use") {
       if ((token = Script.GetValue("aircraft")) != "") {
         aircraft = token;
-        cout << "  Use aircraft: " << token << endl;
+        if (debug_lvl > 0) cout << "  Use aircraft: " << token << endl;
       } else if ((token = Script.GetValue("initialize")) != "") {
         initialize = token;
-        cout << "  Use reset file: " << token << endl;
+        if (debug_lvl > 0) cout << "  Use reset file: " << token << endl;
       } else {
         cerr << "Unknown 'use' keyword: \"" << token << "\"" << endl;
       }
@@ -470,75 +474,76 @@ bool FGFDMExec::LoadScript(string script)
     exit(-1);
   }
 
-  // print out conditions for double-checking
+  // print out conditions for double-checking if requested
 
-  vector <struct condition>::iterator iterConditions = Conditions.begin();
+  if (debug_lvl > 0) {
+    vector <struct condition>::iterator iterConditions = Conditions.begin();
+    int count=0;
 
-  int count=0;
+    cout << "\n  Script goes from " << StartTime << " to " << EndTime
+         << " with dt = " << dt << endl << endl;
 
-  cout << "\n  Script goes from " << StartTime << " to " << EndTime
-       << " with dt = " << dt << endl << endl;
+    while (iterConditions < Conditions.end()) {
+      cout << "  Condition: " << count++ << endl;
+      cout << "    if (";
 
-  while (iterConditions < Conditions.end()) {
-    cout << "  Condition: " << count++ << endl;
-    cout << "    if (";
-
-    for (int i=0; i<iterConditions->TestValue.size(); i++) {
-      if (i>0) cout << " and" << endl << "        ";
-      cout << "(" << State->paramdef[iterConditions->TestParam[i]]
-                  << iterConditions->Comparison[i] << " "
-                  << iterConditions->TestValue[i] << ")";
-    }
-    cout << ") then {" << endl;
-
-    for (int i=0; i<iterConditions->SetValue.size(); i++) {
-      cout << "      set" << State->paramdef[iterConditions->SetParam[i]]
-           << "to " << iterConditions->SetValue[i];
-
-      switch (iterConditions->Type[i]) {
-      case FG_VALUE:
-        cout << " (constant";
-        break;
-      case FG_DELTA:
-        cout << " (delta";
-        break;
-      case FG_BOOL:
-        cout << " (boolean";
-        break;
-      default:
-        cout << " (unspecified type";
+      for (int i=0; i<iterConditions->TestValue.size(); i++) {
+        if (i>0) cout << " and" << endl << "        ";
+        cout << "(" << State->paramdef[iterConditions->TestParam[i]]
+                    << iterConditions->Comparison[i] << " "
+                    << iterConditions->TestValue[i] << ")";
       }
+      cout << ") then {" << endl;
 
-      switch (iterConditions->Action[i]) {
-      case FG_RAMP:
-        cout << " via ramp";
-        break;
-      case FG_STEP:
-        cout << " via step";
-        break;
-      case FG_EXP:
-        cout << " via exponential approach";
-        break;
-      default:
-        cout << " via unspecified action";
+      for (int i=0; i<iterConditions->SetValue.size(); i++) {
+        cout << "      set" << State->paramdef[iterConditions->SetParam[i]]
+             << "to " << iterConditions->SetValue[i];
+
+        switch (iterConditions->Type[i]) {
+        case FG_VALUE:
+          cout << " (constant";
+          break;
+        case FG_DELTA:
+          cout << " (delta";
+          break;
+        case FG_BOOL:
+          cout << " (boolean";
+          break;
+        default:
+          cout << " (unspecified type";
+        }
+
+        switch (iterConditions->Action[i]) {
+        case FG_RAMP:
+          cout << " via ramp";
+          break;
+        case FG_STEP:
+          cout << " via step";
+          break;
+        case FG_EXP:
+          cout << " via exponential approach";
+          break;
+        default:
+          cout << " via unspecified action";
+        }
+
+        if (!iterConditions->Persistent[i]) cout << endl
+                           << "                              once";
+        else cout << endl
+                           << "                              repeatedly";
+
+        if (iterConditions->Action[i] == FG_RAMP ||
+            iterConditions->Action[i] == FG_EXP) cout << endl
+                           << "                              with time constant "
+                           << iterConditions->TC[i];
       }
+      cout << ")" << endl << "    }" << endl << endl;
 
-      if (!iterConditions->Persistent[i]) cout << endl
-                         << "                              once";
-      else cout << endl
-                         << "                              repeatedly";
-
-      if (iterConditions->Action[i] == FG_RAMP ||
-          iterConditions->Action[i] == FG_EXP) cout << endl
-                         << "                              with time constant "
-                         << iterConditions->TC[i];
+      iterConditions++;
     }
-    cout << ")" << endl << "    }" << endl << endl;
 
-    iterConditions++;
+    cout << endl;
   }
-
-  cout << endl;
 
   result = LoadModel("aircraft", "engine", aircraft);
   if (!result) {

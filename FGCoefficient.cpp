@@ -54,7 +54,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.31 2001/04/10 13:07:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.32 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
@@ -91,9 +91,11 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
 
-    cout << "\n   " << highint << underon << name << underoff << normint << endl;
-    cout << "   " << description << endl;
-    cout << "   " << method << endl;
+    if (debug_lvl > 0) {
+      cout << "\n   " << highint << underon << name << underoff << normint << endl;
+      cout << "   " << description << endl;
+      cout << "   " << method << endl;
+    }
 
     if      (method == "EQUATION") type = EQUATION;
     else if (method == "TABLE")    type = TABLE;
@@ -103,26 +105,26 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
     if (type == VECTOR || type == TABLE) {
       *AC_cfg >> rows;
-      cout << "   Rows: " << rows << " ";
+      if (debug_lvl > 0) cout << "   Rows: " << rows << " ";
       if (type == TABLE) {
         *AC_cfg >> columns;
-        cout << "Cols: " << columns;
+        if (debug_lvl > 0) cout << "Cols: " << columns;
         Table = new FGTable(rows, columns);
       } else {
         Table = new FGTable(rows);
       }
 
-      cout << endl;
+      if (debug_lvl > 0) cout << endl;
 
       *AC_cfg >> multparms;
       LookupR = State->GetParameterIndex(multparms);
-      cout << "   Row indexing parameter: " << multparms << endl;
+      if (debug_lvl > 0) cout << "   Row indexing parameter: " << multparms << endl;
     }
 
     if (type == TABLE) {
       *AC_cfg >> multparms;
       LookupC = State->GetParameterIndex(multparms);
-      cout << "   Column indexing parameter: " << multparms << endl;
+      if (debug_lvl > 0) cout << "   Column indexing parameter: " << multparms << endl;
     }
 
     // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
@@ -149,12 +151,12 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     switch(type) {
     case VALUE:
       *AC_cfg >> StaticValue;
-      cout << "      Value = " << StaticValue << endl;
+      if (debug_lvl > 0) cout << "      Value = " << StaticValue << endl;
       break;
     case VECTOR:
     case TABLE:
       *Table << *AC_cfg;
-      Table->Print();
+      if (debug_lvl > 0) Table->Print();
 
       break;
     case EQUATION:

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.13 2001/03/29 22:26:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.14 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 extern short debug_lvl;
@@ -65,10 +65,8 @@ AC_cfg(AC_cfg) {
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;
-      cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      cout << "      INPUT: " << token << endl;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
         InputIdx = fcs->GetState()->GetParameterIndex(token);
@@ -76,21 +74,28 @@ AC_cfg(AC_cfg) {
       }
     } else if ( token == "DETENTS" ) {
       *AC_cfg >> NumDetents;
-      cout << "      DETENTS: " << NumDetents << endl;
       for(int i=0;i<NumDetents;i++) {
         *AC_cfg >> tmpDetent;
         *AC_cfg >> tmpTime;
         Detents.push_back(tmpDetent);
         TransitionTimes.push_back(tmpTime);
-        cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
     } else if (token == "OUTPUT") {
 
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      cout << "      OUTPUT: " <<sOutputIdx << endl;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     }
+  }
+
+  if (debug_lvl > 1) {
+    cout << "      ID: " << ID << endl;
+    cout << "      INPUT: " << InputIdx << endl;
+    cout << "      DETENTS: " << NumDetents << endl;
+    for(int i=0;i<NumDetents;i++) {
+      cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
+    }
+    if (IsOutput) cout << "      OUTPUT: " <<sOutputIdx << endl;
   }
 
   if (debug_lvl & 2) cout << "Instantiated: FGFlaps" << endl;

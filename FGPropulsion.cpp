@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.43 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.44 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -167,8 +167,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
       engineFileName = AC_cfg->GetValue("FILE");
 
-      cout << "\n    Reading engine from file: " << fullpath
-                                                   + engineFileName + ".xml"<< endl;
+      if (debug_lvl > 0) cout << "\n    Reading engine from file: " << fullpath
+                                                + engineFileName + ".xml"<< endl;
       FGConfigFile Eng_cfg(fullpath + engineFileName + ".xml");
 
       if (Eng_cfg.IsOpen()) {
@@ -194,19 +194,27 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         AC_cfg->GetNextConfigLine();
         while ((token = AC_cfg->GetValue()) != "/AC_ENGINE") {
           *AC_cfg >> token;
-          if (token == "XLOC") { *AC_cfg >> xLoc; cout << "      X = " << xLoc << endl;}
-          else if (token == "YLOC") { *AC_cfg >> yLoc; cout << "      Y = " << yLoc << endl;}
-          else if (token == "ZLOC") { *AC_cfg >> zLoc; cout << "      Z = " << zLoc << endl;}
-          else if (token == "PITCH") { *AC_cfg >> Pitch; cout << "      Pitch = " << Pitch << endl;}
-          else if (token == "YAW") { *AC_cfg >> Yaw; cout << "      Yaw = " << Yaw << endl;}
-          else if (token == "FEED") {
+          if      (token == "XLOC")  { *AC_cfg >> xLoc; }
+          else if (token == "YLOC")  { *AC_cfg >> yLoc; }
+          else if (token == "ZLOC")  { *AC_cfg >> zLoc; }
+          else if (token == "PITCH") { *AC_cfg >> Pitch;}
+          else if (token == "YAW")   { *AC_cfg >> Yaw;}
+          else if (token == "FEED")  {
             *AC_cfg >> Feed;
             Engines[numEngines]->AddFeedTank(Feed);
-            cout << "      Feed tank: " << Feed << endl;
+            if (debug_lvl > 0) cout << "      Feed tank: " << Feed << endl;
           } else cerr << "Unknown identifier: " << token << " in engine file: "
                                                         << engineFileName << endl;
         }
 
+        if (debug_lvl > 0)  {
+          cout << "      X = " << xLoc << endl;
+          cout << "      Y = " << yLoc << endl;
+          cout << "      Z = " << zLoc << endl;
+          cout << "      Pitch = " << Pitch << endl;
+          cout << "      Yaw = " << Yaw << endl;
+	}
+	
         Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, Pitch, Yaw);
         numEngines++;
 
@@ -219,7 +227,7 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
     } else if (token == "AC_TANK") {              // ============== READING TANKS
 
-      cout << "\n    Reading tank definition" << endl;
+      if (debug_lvl > 0) cout << "\n    Reading tank definition" << endl;
       Tanks.push_back(new FGTank(AC_cfg));
       switch(Tanks[numTanks]->GetType()) {
       case FGTank::ttFUEL:
@@ -238,8 +246,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
       thrusterFileName = AC_cfg->GetValue("FILE");
 
-      cout << "\n    Reading thruster from file: " <<
-                                       fullpath + thrusterFileName + ".xml" << endl;
+      if (debug_lvl > 0) cout << "\n    Reading thruster from file: " <<
+                                    fullpath + thrusterFileName + ".xml" << endl;
       FGConfigFile Thruster_cfg(fullpath + thrusterFileName + ".xml");
 
       if (Thruster_cfg.IsOpen()) {
@@ -384,12 +392,12 @@ string FGPropulsion::GetPropulsionValues(void)
 
 FGColumnVector& FGPropulsion::GetTanksCG(void)
 {
-  iTank = *Tanks.begin();
+  iTank = Tanks.begin();
   vXYZtank.InitMatrix();
-  while (iTank < *Tanks.end()) {
-    vXYZtank(eX) += iTank->GetX()*iTank->GetContents();
-    vXYZtank(eY) += iTank->GetY()*iTank->GetContents();
-    vXYZtank(eZ) += iTank->GetZ()*iTank->GetContents();
+  while (iTank < Tanks.end()) {
+    vXYZtank(eX) += (*iTank)->GetX()*(*iTank)->GetContents();
+    vXYZtank(eY) += (*iTank)->GetY()*(*iTank)->GetContents();
+    vXYZtank(eZ) += (*iTank)->GetZ()*(*iTank)->GetContents();
     iTank++;
   }
   return vXYZtank;
@@ -401,9 +409,9 @@ float FGPropulsion::GetTanksWeight(void)
 {
   float Tw = 0.0;
 
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    Tw += iTank->GetContents();
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    Tw += (*iTank)->GetContents();
     iTank++;
   }
   return Tw;
@@ -414,9 +422,9 @@ float FGPropulsion::GetTanksWeight(void)
 float FGPropulsion::GetTanksIxx(const FGColumnVector& vXYZcg)
 {
   float I = 0.0;
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetX() - vXYZcg(eX)) * iTank->GetContents()/(144.0*GRAVITY);
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetX() - vXYZcg(eX)) * (*iTank)->GetContents()/(144.0*GRAVITY);
     iTank++;
   }
   return I;
@@ -427,9 +435,9 @@ float FGPropulsion::GetTanksIxx(const FGColumnVector& vXYZcg)
 float FGPropulsion::GetTanksIyy(const FGColumnVector& vXYZcg)
 {
   float I = 0.0;
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    I += (iTank->GetY() - vXYZcg(eY))*(iTank->GetY() - vXYZcg(eY)) * iTank->GetContents()/(144.0*GRAVITY);
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    I += ((*iTank)->GetY() - vXYZcg(eY))*((*iTank)->GetY() - vXYZcg(eY)) * (*iTank)->GetContents()/(144.0*GRAVITY);
     iTank++;
   }
   return I;
@@ -440,9 +448,9 @@ float FGPropulsion::GetTanksIyy(const FGColumnVector& vXYZcg)
 float FGPropulsion::GetTanksIzz(const FGColumnVector& vXYZcg)
 {
   float I = 0.0;
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    I += (iTank->GetZ() - vXYZcg(eZ))*(iTank->GetZ() - vXYZcg(eZ)) * iTank->GetContents()/(144.0*GRAVITY);
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    I += ((*iTank)->GetZ() - vXYZcg(eZ))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*GRAVITY);
     iTank++;
   }
   return I;
@@ -453,9 +461,9 @@ float FGPropulsion::GetTanksIzz(const FGColumnVector& vXYZcg)
 float FGPropulsion::GetTanksIxz(const FGColumnVector& vXYZcg)
 {
   float I = 0.0;
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetZ() - vXYZcg(eZ)) * iTank->GetContents()/(144.0*GRAVITY);
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*GRAVITY);
     iTank++;
   }
   return I;
@@ -466,9 +474,9 @@ float FGPropulsion::GetTanksIxz(const FGColumnVector& vXYZcg)
 float FGPropulsion::GetTanksIxy(const FGColumnVector& vXYZcg)
 {
   float I = 0.0;
-  iTank = *Tanks.begin();
-  while (iTank < *Tanks.end()) {
-    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetY() - vXYZcg(eY)) * iTank->GetContents()/(144.0*GRAVITY);
+  iTank = Tanks.begin();
+  while (iTank != Tanks.end()) {
+    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetY() - vXYZcg(eY)) * (*iTank)->GetContents()/(144.0*GRAVITY);
     iTank++;
   }
   return I;

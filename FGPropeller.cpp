@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.24 2001/04/12 21:19:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.25 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 extern short debug_lvl;
@@ -52,48 +52,59 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   string token;
   int rows, cols;
 
+  MaxPitch = MinPitch = 0.0;
+
   Name = Prop_cfg->GetValue("NAME");
-  cout << "\n    Propeller Name: " << Name << endl;
   Prop_cfg->GetNextConfigLine();
   while (Prop_cfg->GetValue() != "/FG_PROPELLER") {
     *Prop_cfg >> token;
     if (token == "IXX") {
       *Prop_cfg >> Ixx;
-      cout << "      IXX = " << Ixx << endl;
     } else if (token == "DIAMETER") {
       *Prop_cfg >> Diameter;
       Diameter /= 12.0;
-      cout << "      Diameter = " << Diameter << " ft." << endl;
     } else if (token == "NUMBLADES") {
       *Prop_cfg >> numBlades;
-      cout << "      Number of Blades  = " << numBlades << endl;
+    } else if (token == "MINPITCH") {
+      *Prop_cfg >> MinPitch;
+    } else if (token == "MAXPITCH") {
+      *Prop_cfg >> MaxPitch;
     } else if (token == "EFFICIENCY") {
-       *Prop_cfg >> rows >> cols;
-       if (cols == 1) Efficiency = new FGTable(rows);
-	     else           Efficiency = new FGTable(rows, cols);
-       *Efficiency << *Prop_cfg;
-       cout << "      Efficiency: " <<  endl;
-       Efficiency->Print();
+      *Prop_cfg >> rows >> cols;
+      if (cols == 1) Efficiency = new FGTable(rows);
+	    else           Efficiency = new FGTable(rows, cols);
+      *Efficiency << *Prop_cfg;
     } else if (token == "C_THRUST") {
-       *Prop_cfg >> rows >> cols;
-       if (cols == 1) cThrust = new FGTable(rows);
-	     else           cThrust = new FGTable(rows, cols);
-       *cThrust << *Prop_cfg;
-       cout << "      Thrust Coefficient: " <<  endl;
-       cThrust->Print();
+      *Prop_cfg >> rows >> cols;
+      if (cols == 1) cThrust = new FGTable(rows);
+	    else           cThrust = new FGTable(rows, cols);
+      *cThrust << *Prop_cfg;
     } else if (token == "C_POWER") {
-       *Prop_cfg >> rows >> cols;
-       if (cols == 1) cPower = new FGTable(rows);
-	     else           cPower = new FGTable(rows, cols);
-       *cPower << *Prop_cfg;
-       cout << "      Power Coefficient: " <<  endl;
-       cPower->Print();
+      *Prop_cfg >> rows >> cols;
+      if (cols == 1) cPower = new FGTable(rows);
+	    else           cPower = new FGTable(rows, cols);
+      *cPower << *Prop_cfg;
     } else if (token == "EOF") {
-       cout << "      End of file reached" <<  endl;
-       break;
+      cerr << "      End of file reached" <<  endl;
+      break;
     } else {
-      cout << "Unhandled token in Propeller config file: " << token << endl;
+      cerr << "Unhandled token in Propeller config file: " << token << endl;
     }
+  }
+
+  if (debug_lvl > 0) {
+    cout << "\n    Propeller Name: " << Name << endl;
+    cout << "      IXX = " << Ixx << endl;
+    cout << "      Diameter = " << Diameter << " ft." << endl;
+    cout << "      Number of Blades  = " << numBlades << endl;
+    cout << "      Minimum Pitch  = " << MinPitch << endl;
+    cout << "      Maximum Pitch  = " << MaxPitch << endl;
+    cout << "      Efficiency: " <<  endl;
+    Efficiency->Print();
+    cout << "      Thrust Coefficient: " <<  endl;
+    cThrust->Print();
+    cout << "      Power Coefficient: " <<  endl;
+    cPower->Print();
   }
 
   Type = ttPropeller;

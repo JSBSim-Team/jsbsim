@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.19 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.20 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 extern short debug_lvl;
@@ -103,60 +103,70 @@ FGRotation::~FGRotation()
 
 bool FGRotation::Run(void)
 {
-    float L2, N1;
-    float tTheta;
+  float L2, N1;
+  float tTheta;
 
-    if (!FGModel::Run()) {
-        GetState();
+  if (!FGModel::Run()) {
+    GetState();
 
-        L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
-        N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
+    L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
+    N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
 
-        vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
-        vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
-        vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
+    vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
+    vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
+    vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
-        vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
+    vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
 
-        State->IntegrateQuat(vPQR, rate);
-        State->CalcMatrices();
-        vEuler = State->CalcEuler();
-        
-        cTht = cos(vEuler(eTht));   sTht = sin(vEuler(eTht));
-        cPhi = cos(vEuler(ePhi));   sPhi = sin(vEuler(ePhi));
-        cPsi = cos(vEuler(ePsi));   sPsi = sin(vEuler(ePsi));
+    State->IntegrateQuat(vPQR, rate);
+    State->CalcMatrices();
+    vEuler = State->CalcEuler();
 
-        vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
-        if (cTht != 0.0) {
-          tTheta = sTht/cTht;       // what's cheaper: / or tan() ?
-          vEulerRates(ePhi) = vPQR(1) + (vPQR(2)*sPhi + vPQR(3)*cPhi)*tTheta;
-          vEulerRates(ePsi) = (vPQR(2)*sPhi + vPQR(3)*cPhi)/cTht;
-        }
-        
-        vlastPQRdot = vPQRdot;
+    cTht = cos(vEuler(eTht));   sTht = sin(vEuler(eTht));
+    cPhi = cos(vEuler(ePhi));   sPhi = sin(vEuler(ePhi));
+    cPsi = cos(vEuler(ePsi));   sPsi = sin(vEuler(ePsi));
 
-    } else {
+    vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
+    if (cTht != 0.0) {
+      tTheta = sTht/cTht;       // what's cheaper: / or tan() ?
+      vEulerRates(ePhi) = vPQR(1) + (vPQR(2)*sPhi + vPQR(3)*cPhi)*tTheta;
+      vEulerRates(ePsi) = (vPQR(2)*sPhi + vPQR(3)*cPhi)/cTht;
     }
+
+    vlastPQRdot = vPQRdot;
+
+    if (debug_lvl > 1) Debug();
+
     return false;
+  } else {
+    return true;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGRotation::GetState(void)
 {
-    dt = State->Getdt();
-    vMoments = Aircraft->GetMoments();
+  dt = State->Getdt();
+  vMoments = Aircraft->GetMoments();
 
-    Ixx = MassBalance->GetIxx();
-    Iyy = MassBalance->GetIyy();
-    Izz = MassBalance->GetIzz();
-    Ixz = MassBalance->GetIxz();
+  Ixx = MassBalance->GetIxx();
+  Iyy = MassBalance->GetIyy();
+  Izz = MassBalance->GetIzz();
+  Ixz = MassBalance->GetIxz();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGRotation::Debug(void)
 {
-    //TODO: Add your source code here
+  if (debug_lvl & 16) { // Sanity check variables
+    if (fabs(vPQR(eP)) > 100)
+      cout << "FGRotation::P (Roll Rate) out of bounds: " << vPQR(eP) << endl;
+    if (fabs(vPQR(eQ)) > 100)
+      cout << "FGRotation::Q (Pitch Rate) out of bounds: " << vPQR(eQ) << endl;
+    if (fabs(vPQR(eR)) > 100)
+      cout << "FGRotation::R (Yaw Rate) out of bounds: " << vPQR(eR) << endl;
+  }
 }
 

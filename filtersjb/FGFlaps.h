@@ -60,13 +60,19 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGFlaps.h,v 1.11 2001/03/22 17:58:19 jberndt Exp $"
+#define ID_FLAPS "$Id: FGFlaps.h,v 1.12 2001/04/19 22:05:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGFlaps  : public FGFCSComponent {
+public:
+  FGFlaps(FGFCS* fcs, FGConfigFile* AC_cfg);
+  ~FGFlaps();
+  bool Run (void );
+  
+private:
   FGConfigFile* AC_cfg;
   vector<float> Detents;
   vector<float> TransitionTimes;
@@ -76,12 +82,6 @@ class FGFlaps  : public FGFCSComponent {
   float Flap_Position;
   bool  Flaps_In_Transit;
 
-public:
-  FGFlaps(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGFlaps();
-  bool Run (void );
-  
-private:
   void Debug(void);
 };
 

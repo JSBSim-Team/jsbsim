@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.10 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.11 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 extern short debug_lvl;
@@ -59,6 +59,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance(void)
 {
+  if (debug_lvl & 2) cout << "Destroyed:    FGMassBalance" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +83,8 @@ bool FGMassBalance::Run(void)
     Izz = baseIzz + Propulsion->GetTanksIzz(vXYZcg);
     Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg);
 
+    if (debug_lvl > 1) Debug();
+
     return false;
   } else {
     return true;
@@ -92,6 +95,13 @@ bool FGMassBalance::Run(void)
 
 void FGMassBalance::Debug(void)
 {
-  // TODO: Add user code here
+  if (debug_lvl & 16) { // Sanity check variables
+    if (EmptyWeight <= 0.0 || EmptyWeight > 1e9)
+      cout << "MassBalance::EmptyWeight out of bounds: " << EmptyWeight << endl;
+    if (Weight <= 0.0 || Weight > 1e9)
+      cout << "MassBalance::Weight out of bounds: " << Weight << endl;
+    if (Mass <= 0.0 || Mass > 1e9)
+      cout << "MassBalance::Mass out of bounds: " << Mass << endl;
+  }
 }
 

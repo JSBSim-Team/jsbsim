@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c172" VERSION="1.38">
+<FDM_CONFIG NAME="c172" VERSION="1.40">
 <!--
 
   File:        c172.xml.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.32 2001/04/17 23:00:31 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.33 2001/04/19 22:05:21 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -65,9 +65,9 @@
     -->
     </COMMENT>
 
-     AC_GEAR	NOSE        -6.8   0.0 -24.2  900   300  0.01  0.6 0.02 STEERABLE NONE 20
-     AC_GEAR	LEFT_MAIN   58.2 -43.0 -17.9  2700  800  0.01  0.6 0.02 CASTERED  LEFT  0
-     AC_GEAR	RIGHT_MAIN  58.2  43.0 -17.9  2700  800  0.01  0.6 0.02 CASTERED  RIGHT 0
+     AC_GEAR	NOSE        -6.8   0.0 -24.2  1800  600  0.01  0.6 0.02 STEERABLE NONE 20
+     AC_GEAR	LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.01  0.6 0.02 CASTERED  LEFT  0
+     AC_GEAR	RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.01  0.6 0.02 CASTERED  RIGHT 0
      AC_GEAR	TAIL_SKID  188.0  0.0    8.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0
      AC_GEAR	LEFT_TIP    43.2 -214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0
      AC_GEAR	RIGHT_TIP   43.2  214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0
@@ -463,7 +463,7 @@
     MOMENTS          ON
     POSITION         ON
     COEFFICIENTS     ON
-    GROUND_REACTIONS OFF
+    GROUND_REACTIONS ON
     FCS              OFF
     PROPULSION       ON
   </OUTPUT>

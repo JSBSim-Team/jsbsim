@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.14 2001/03/22 12:49:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.15 2001/04/19 22:05:21 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 extern short debug_lvl;
@@ -80,10 +80,12 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     PctFull  = 0;
   }     
 
-  cout << "      " << type << " tank holds " << Capacity << " lbs. " << type << endl;
-  cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
-  cout << "      Tank location (X, Y, Z): " << X << ", " << Y << ", " << Z << endl;
-  cout << "      Effective radius: " << Radius << " inches" << endl;
+  if (debug_lvl > 0) {
+    cout << "      " << type << " tank holds " << Capacity << " lbs. " << type << endl;
+    cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
+    cout << "      Tank location (X, Y, Z): " << X << ", " << Y << ", " << Z << endl;
+    cout << "      Effective radius: " << Radius << " inches" << endl;
+  }
 
   if (debug_lvl & 2) cout << "Instantiated: FGTank" << endl;
 }
