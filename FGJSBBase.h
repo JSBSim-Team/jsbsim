@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.39 2003/11/17 12:50:56 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.40 2003/11/24 18:22:12 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +106,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.39 2003/11/17 12:50:56 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.40 2003/11/24 18:22:12 dmegginson Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,6 +215,7 @@ public:
   
   void disableHighLighting(void);
 
+  static short debug_lvl;
   double KelvinToFahrenheit (double kelvin) {
     return 1.8*kelvin - 459.4;
   }
@@ -226,7 +227,6 @@ protected:
 
   virtual void Debug(int from) {};
 
-  static short debug_lvl;
   static unsigned int frame;
   static unsigned int messageId;
   

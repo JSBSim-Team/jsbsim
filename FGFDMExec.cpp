@@ -75,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.99 2003/11/09 21:54:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.100 2003/11/24 18:22:12 dmegginson Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,8 +140,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
-    if (!num) debug_lvl = 1;
-    else debug_lvl = atoi(num); // set debug level
+    if (num) debug_lvl = atoi(num); // set debug level
   } catch (...) {               // if error set to 1
     debug_lvl = 1;
   }

@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.40 2003/07/17 02:31:53 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.41 2003/11/24 18:22:12 dmegginson Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -337,8 +337,10 @@ bool FGTrimAxis::initTheta(void) {
 	  i++;   
   }	    	    	
   //cout << i << endl;
-  cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
-  cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
+  if (debug_lvl > 0) {
+      cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
+      cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
+  }
   control_min=(theta+5)*degtorad;
   control_max=(theta-5)*degtorad;
   fgic->SetAltitudeAGLFtIC(saveAlt);

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.149 2003/11/24 14:31:09 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.150 2003/11/24 18:22:12 dmegginson Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -78,6 +78,31 @@ FGJSBsim::FGJSBsim( double dt )
 {
     bool result;
    
+                                // Set up the debugging level
+                                // FIXME: this will not respond to
+                                // runtime changes
+
+                                // if flight is excluded, don't bother
+    if ((logbuf::get_log_classes() & SG_FLIGHT) != 0) {
+
+                                // do a rough-and-ready mapping to
+                                // the levels documented in FGFDMExec.h
+        switch (logbuf::get_log_priority()) {
+        case SG_BULK:
+            FGJSBBase::debug_lvl = 0x1f;
+            break;
+        case SG_DEBUG:
+            FGJSBBase::debug_lvl = 0x0f;
+        case SG_INFO:
+            FGJSBBase::debug_lvl = 0x01;
+            break;
+        case SG_WARN:
+        case SG_ALERT:
+            FGJSBBase::debug_lvl = 0x00;
+            break;
+        }
+    }
+
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
     
     State           = fdmex->GetState();
@@ -912,8 +937,8 @@ void FGJSBsim::do_trim(void)
   } else {
     trimmed->setBoolValue(true);
   }
-
-  State->ReportState();
+  if (FGJSBBase::debug_lvl > 0)
+      State->ReportState();
 
   delete fgtrim;
 
