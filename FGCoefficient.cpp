@@ -102,7 +102,7 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     if (type == TABLE) {
       *AC_cfg >> multparms;
       if (multparms.substr(0,1) == "F") {
-        LookupR = State->GetParameterIndex(multparms);
+        LookupC = State->GetParameterIndex(multparms);
         cout << "   Column indexing parameter: " << multparms << endl;
       } else {
         LookupC = atoi(multparms.c_str());
@@ -120,7 +120,7 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     n     = multparms.find("|");
     start = mult_count = multipliers = 0;
 
-    while(n < end && n >= 0) {
+    while (n < end && n >= 0) {
       n -= start;
       mult_idx[mult_count] = State->GetParameterIndex(multparms.substr(start,n));
       multipliers += mult_idx[mult_count];
