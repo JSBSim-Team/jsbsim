@@ -85,10 +85,10 @@ SENTRY
 #define FG_SPDBRAKE_CMD   16777216L
 #define FG_SPOILERS_CMD   33554432L
 #define FG_FLAPS_CMD      67108864L
-#define FG_SPARE3         134217728L
-#define FG_SPARE4         268435456L
-#define FG_SPARE5         536870912L
-#define FG_SPARE6         1073741824L
+#define FG_THROTTLE_CMD   134217728L
+#define FG_THROTTLE_POS   268435456L
+#define FG_HOVERB         536870912L
+#define FG_PITCH_TRIM_CMD  1073741824L
 
 /******************************************************************************/
 #endif
