@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.123 2002/06/08 00:15:17 apeden Exp $
+// $Id: JSBSim.cxx,v 1.124 2002/06/08 01:31:18 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -553,7 +553,7 @@ bool FGJSBsim::copy_from_JSBsim() {
 
     update_gear();
     
-    stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
+    stall_warning->setDoubleValue( Aerodynamics->GetStallWarn() );
     
     /* elevator_pos_deg->setDoubleValue( FCS->GetDePos()*SG_RADIANS_TO_DEGREES );
     left_aileron_pos_deg->setDoubleValue( FCS->GetDaLPos()*SG_RADIANS_TO_DEGREES );
