@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 
   FDMExec = new FGFDMExec();
 
-  FDMExec->GetAircraft()->LoadAircraft("aircraft", "engine", string(argv[1]));
+  FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
   if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
     FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
 

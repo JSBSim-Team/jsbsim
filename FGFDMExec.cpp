@@ -188,3 +188,12 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 }
   
 
+bool FGFDMExec::LoadModel(string model)
+{
+  LoadAircraft(AircraftPath, EnginePath, model);
+}
+
+
+bool FGFDMExec::RunScript(string script)
+{
+}

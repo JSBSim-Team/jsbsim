@@ -70,9 +70,16 @@ public:
   bool Initialize(void);
   int  Schedule(FGModel* model, int rate);
   bool Run(void);
-  bool RunIC(FGInitialCondition *fgic); 
+  bool RunIC(FGInitialCondition *fgic);
   void Freeze(void) {frozen = true;}
   void Resume(void) {frozen = false;}
+
+  bool SetEnginePath(string path)   {EnginePath = path;}
+  bool SetAircraftPath(string path) {AircraftPath = path;}
+  bool SetScriptPath(string path);  {ScriptPath = path;}
+
+  bool LoadModel(string name);
+  bool RunScript(string script);
 
   inline FGState* GetState(void)             {return State;}
   inline FGAtmosphere* GetAtmosphere(void)   {return Atmosphere;}
@@ -88,6 +95,10 @@ private:
   bool frozen;
   bool terminate;
   int Error;
+
+  string AircraftPath;
+  string EnginePath;
+  string ScriptPath;
 
   FGState*       State;
   FGAtmosphere*  Atmosphere;
