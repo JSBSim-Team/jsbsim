@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.16 2001/02/14 15:41:25 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.17 2001/02/22 17:25:20 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
        *cPower << *Prop_cfg;
        cout << "      Power Coefficient: " <<  endl;
        cPower->Print();
+    } else if (token == "EOF") {
+       cout << "      End of file reached" <<  endl;
+       break;
     } else {
       cout << "Unhandled token in Propeller config file: " << token << endl;
     }

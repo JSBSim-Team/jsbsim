@@ -107,6 +107,7 @@ private:
   string AircraftPath;
   string EnginePath;
   string ScriptPath;
+  string ScriptName;
 
   FGState*       State;
   FGAtmosphere*  Atmosphere;

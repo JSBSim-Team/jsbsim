@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.12 2001/02/04 13:16:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.13 2001/02/22 17:25:20 jberndt Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,8 +49,10 @@ string FGConfigFile::GetNextConfigLine(void)
 {
   do {
     CurrentLine = GetLine();
-    if (CurrentLine.find("<COMMENT>") != CurrentLine.npos) CommentsOn = true;
-    if (CurrentLine.find("</COMMENT>") != CurrentLine.npos) {
+    if ((CurrentLine.find("<COMMENT>") != CurrentLine.npos) ||
+        (CurrentLine.find("<!--") != CurrentLine.npos)) CommentsOn = true;
+    if ((CurrentLine.find("</COMMENT>") != CurrentLine.npos) ||
+        (CurrentLine.find("-->") != CurrentLine.npos)) {
       CommentsOn = false;
       GetNextConfigLine();
     }

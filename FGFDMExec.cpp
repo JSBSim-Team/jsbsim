@@ -65,7 +65,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.25 2001/02/22 13:29:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.26 2001/02/22 17:25:20 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -302,9 +302,9 @@ bool FGFDMExec::RunScript(string script)
   FGConfigFile Script(script);
   if (!Script.IsOpen()) return false;
 
-  string token = Script->GetValue();
+  string token = Script.GetValue();
   string scratch;
-  ScriptName = Script->GetValue("NAME");
+  ScriptName = Script.GetValue("NAME");
 
 
   return true;
