@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.24 2002/01/31 21:17:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.25 2002/04/16 06:31:01 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,7 +115,8 @@ double FGTable::GetValue(double key)
   int r;
 
   for (r=1; r<=nRows; r++) if (Data[r][0] >= key) break;
-  r = r < 2 ? 2 : (r > nRows ? nRows : r);
+  r   = Clamp(2, r, nRows);
+  key = Clamp(Data[1][0], key, Data[nRows][0]);
 
   // make sure denominator below does not go to zero.
 
@@ -140,10 +141,12 @@ double FGTable::GetValue(double rowKey, double colKey)
   int r, c;
 
   for (r=1;r<=nRows;r++) if (Data[r][0] >= rowKey) break;
-  for (c=1;c<=nCols;c++) if (Data[0][c] >= colKey) break;
+  r = Clamp(2, r, nRows);
+  rowKey = Clamp(Data[1][0], rowKey, Data[nRows][0]);
 
-  c = c < 2 ? 2 : (c > nCols ? nCols : c);
-  r = r < 2 ? 2 : (r > nRows ? nRows : r);
+  for (c=1;c<=nCols;c++) if (Data[0][c] >= colKey) break;
+  c = Clamp(2, c, nCols);
+  colKey = Clamp(Data[0][1], colKey, Data[0][nCols]);
 
   rFactor = (rowKey - Data[r-1][0]) / (Data[r][0] - Data[r-1][0]);
   cFactor = (colKey - Data[0][c-1]) / (Data[0][c] - Data[0][c-1]);
