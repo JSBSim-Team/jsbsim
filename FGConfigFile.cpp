@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.25 2001/11/10 18:44:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.26 2001/11/12 19:30:33 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,14 +186,18 @@ string FGConfigFile::GetLine(void)
   int test;
 
   while ((test = cfgfile.get()) != EOF) {
-    if (test >= 0x20) {
-      scratch += (char)test;
+    if (test >= 0x20 || test == 0x09) {
+      if (test == 0x09) {
+        scratch += (char)0x20;
+      } else {
+        scratch += (char)test;
+      }
     } else {
-      if ((test = cfgfile.get()) != EOF) {
+      if ((test = cfgfile.get()) != EOF) { // get *next* character
 #if defined ( sgi ) && !defined( __GNUC__ )
-        if (test >= 0x20) cfgfile.putback(test);
+        if (test >= 0x20 || test == 0x09) cfgfile.putback(test);
 #else
-        if (test >= 0x20) cfgfile.unget();
+        if (test >= 0x20 || test == 0x09) cfgfile.unget();
 #endif
         break;
       }
