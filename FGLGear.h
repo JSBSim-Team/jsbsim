@@ -103,6 +103,7 @@ private:
   double GroundSpeed;
   double DistanceTraveled;
   double MaximumStrutForce;
+  double MaximumStrutTravel;
   bool WOW;
   bool FirstContact;
   bool Reported;

@@ -82,7 +82,6 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
 
 
 FGInitialCondition::~FGInitialCondition(void) {}
-;
 
 
 void FGInitialCondition::SetVcalibratedKtsIC(float tt) {

@@ -60,7 +60,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   FirstContact = false;
   Reported = false;
   DistanceTraveled = 0.0;
-  MaximumStrutForce = 0.0;
+  MaximumStrutForce = MaximumStrutTravel = 0.0;
 }
 
 
@@ -110,6 +110,7 @@ FGColumnVector FGLGear::Force(void)
     vLocalForce(eY) =  fabs(vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eY);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
+    MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
 
     vForce  = State->GetTl2b() * vLocalForce ;
     vMoment = vWhlBodyVec * vForce;
@@ -117,6 +118,14 @@ FGColumnVector FGLGear::Force(void)
   } else {
 
     WOW = false;
+
+    if (Position->GetDistanceAGL() > 200.0) {
+      FirstContact = false;
+      Reported = false;
+      DistanceTraveled = 0.0;
+      MaximumStrutForce = MaximumStrutTravel = 0.0;
+    }
+
     vForce.InitMatrix();
     vMoment.InitMatrix();
   }
@@ -137,10 +146,16 @@ FGColumnVector FGLGear::Force(void)
 void FGLGear::Report(void)
 {
   cout << endl << "Touchdown report for " << name << endl;
-  cout << "  Contact rate of descent: " << SinkRate << endl;
-  cout << "  Contact ground speed:    " << GroundSpeed << endl;
-  cout << "  Maximum contact force:   " << MaximumStrutForce << endl;
-  cout << "  Distance traveled:     " << DistanceTraveled << endl;
+  cout << "  Sink rate at contact:  " << SinkRate                << " fps,    "
+                              << SinkRate*0.3408          << " mps"     << endl;
+  cout << "  Contact ground speed:  " << GroundSpeed*.5925       << " knots,  "
+                              << GroundSpeed*0.3408       << " mps"     << endl;
+  cout << "  Maximum contact force: " << MaximumStrutForce       << " lbs,    "
+                              << MaximumStrutForce*4.448  << " Newtons" << endl;
+  cout << "  Maximum strut travel:  " << MaximumStrutTravel*12.0 << " inches, "
+                              << MaximumStrutTravel*30.48 << " cm"      << endl;
+  cout << "  Distance traveled:     " << DistanceTraveled        << " ft,     "
+                              << DistanceTraveled*0.3408  << " meters"  << endl;
   Reported = true;
 }
 
