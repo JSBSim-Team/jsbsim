@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.25 2002/02/22 12:14:46 apeden Exp $
+  CVS Version: $Id: c310.xml,v 1.26 2002/04/14 15:50:06 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -194,7 +194,7 @@
 
     <AC_TANK TYPE="FUEL" NUMBER="2">
       XLOC   49.0
-      YLOC   41.6
+      YLOC   -41.6
       ZLOC   11.7
       RADIUS 29.4
       CAPACITY 135.0
