@@ -360,7 +360,7 @@ float FGCoefficient::Value(float rVal, float cVal)
   SD = Value = col1temp + cFactor*(col2temp - col1temp);
 
   for (midx=0;midx<mult_count;midx++) {
-    Value *= GetCoeffVal(mult_idx[midx]);
+    Value *= State->GetParameter(mult_idx[midx]);
   }
 
   return Value;
@@ -387,7 +387,7 @@ float FGCoefficient::Value(float Val)
   SD = Value = Factor*(Table3D[r][1] - Table3D[r-1][1]) + Table3D[r-1][1];
 
   for (midx=0;midx<mult_count;midx++) {
-    Value *= GetCoeffVal(mult_idx[midx]);
+    Value *= State->GetParameter(mult_idx[midx]);
   }
 
   return Value;
@@ -402,7 +402,7 @@ float FGCoefficient::Value(void)
 	SD = Value = StaticValue;
 
   for (midx=0;midx<mult_count;midx++) {
-    Value *= GetCoeffVal(mult_idx[midx]);
+    Value *= State->GetParameter(mult_idx[midx]);
   }
 
   return Value;
@@ -416,58 +416,14 @@ float FGCoefficient::TotalValue()
   case 1:
     return (Value());
   case 2:
-    return (Value(GetCoeffVal(LookupR)));
+    return (Value(State->GetParameter(LookupR)));
   case 3:
-    return (Value(GetCoeffVal(LookupR),GetCoeffVal(LookupC)));
+    return (Value(State->GetParameter(LookupR),State->GetParameter(LookupC)));
   case 4:
     return 0.0;
   }
   return 0;
 }
-
-float FGCoefficient::GetCoeffVal(int val_idx)
-{
-  switch(val_idx) {
-  case FG_QBAR:
-    return State->Getqbar();
-  case FG_WINGAREA:
-    return Aircraft->GetWingArea();
-  case FG_WINGSPAN:
-    return Aircraft->GetWingSpan();
-  case FG_CBAR:
-    return Aircraft->Getcbar();
-  case FG_ALPHA:
-    return Translation->Getalpha();
-  case FG_ALPHADOT:
-    return State->Getadot();
-  case FG_BETA:
-    return Translation->Getbeta();
-  case FG_BETADOT:
-    return State->Getbdot();
-  case FG_PITCHRATE:
-    return Rotation->GetQ();
-  case FG_ROLLRATE:
-    return Rotation->GetP();
-  case FG_YAWRATE:
-    return Rotation->GetR();
-  case FG_ELEVATOR:
-    return FCS->GetDe();
-  case FG_AILERON:
-    return FCS->GetDa();
-  case FG_RUDDER:
-    return FCS->GetDr();
-  case FG_MACH:
-    return State->GetMach();
-  case FG_ALTITUDE:
-    return State->Geth();
-  case FG_BI2VEL:
-    return Aircraft->GetWingSpan()/(2.0 * State->GetVt());
-  case FG_CI2VEL:
-    return Aircraft->Getcbar()/(2.0 * State->GetVt());
-  }
-  return 0;
-}
-
 
 void FGCoefficient::DumpSD(void)
 {

@@ -104,6 +104,7 @@ public:
   inline float Getdt(void) {return dt;}
 
   inline float Getqbar(void) {return qbar;}
+  float GetParameter(int val_idx);
 
   inline void SetVt(float tt) {Vt = tt;}
 

@@ -47,31 +47,13 @@ INCLUDES
 
 #include <map>
 #include "FGConfigFile.h"
+#include "FGDefs.h"
 
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
 
 using namespace std;
-
-#define FG_QBAR         1
-#define FG_WINGAREA     2
-#define FG_WINGSPAN     4
-#define FG_CBAR         8
-#define FG_ALPHA       16
-#define FG_ALPHADOT    32
-#define FG_BETA        64
-#define FG_BETADOT    128
-#define FG_PITCHRATE  256
-#define FG_ROLLRATE   512
-#define FG_YAWRATE   1024
-#define FG_ELEVATOR  2048
-#define FG_AILERON   4096
-#define FG_RUDDER    8192
-#define FG_MACH     16384
-#define FG_ALTITUDE 32768L
-#define FG_BI2VEL   65536L
-#define FG_CI2VEL  131072L
 
 /*******************************************************************************
 FORWARD DECLARATIONS
@@ -113,6 +95,8 @@ FG_ALTITUDE 32768L
 FG_BI2VEL   65536L
 FG_CI2VEL  131072L
 
+The above definitions are found in FGDefs.h
+
 ********************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
@@ -153,8 +137,6 @@ private:
   int multipliers;
   int mult_count;
   float SD; // Actual stability derivative (or other coefficient) value
-
-  float GetCoeffVal(int);
 
   FGFDMExec*      FDMExec;
   FGState*        State;

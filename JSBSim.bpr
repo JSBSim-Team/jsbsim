@@ -46,7 +46,7 @@ CFLAG1 = -I$(BCB)\include -Od -w -Tkh30000 -r- -a8 -6 -k -y -v -vi- -c -tWM -tWC
 IDLCFLAGS = -src_suffixcpp
 PFLAGS = -U$(BCB)\lib;$(DEBUGLIBPATH) -I$(BCB)\include -$YD -$W -$O- -v -JPHN -M
 RFLAGS = -i$(BCB)\include
-AFLAGS = /i$(BCB)\include /mx /w2 /zd
+AFLAGS = /i$(BCB)\include /mx /w2 /zd /la /z /x /n /c
 LFLAGS = -L$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj $(OBJFILES)
@@ -61,7 +61,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=5
+Build=6
 Debug=0
 PreRelease=0
 Special=0
@@ -73,7 +73,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.5
+FileVersion=0.7.2.6
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt

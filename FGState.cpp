@@ -333,3 +333,48 @@ bool FGState::DisplayData(void)
 
   return true;
 }
+
+
+float FGState::GetParameter(int val_idx)
+{
+  switch(val_idx) {
+  case FG_QBAR:
+    return Getqbar();
+  case FG_WINGAREA:
+    return FDMExec->GetAircraft()->GetWingArea();
+  case FG_WINGSPAN:
+    return FDMExec->GetAircraft()->GetWingSpan();
+  case FG_CBAR:
+    return FDMExec->GetAircraft()->Getcbar();
+  case FG_ALPHA:
+    return FDMExec->GetTranslation()->Getalpha();
+  case FG_ALPHADOT:
+    return Getadot();
+  case FG_BETA:
+    return FDMExec->GetTranslation()->Getbeta();
+  case FG_BETADOT:
+    return Getbdot();
+  case FG_PITCHRATE:
+    return FDMExec->GetRotation()->GetQ();
+  case FG_ROLLRATE:
+    return FDMExec->GetRotation()->GetP();
+  case FG_YAWRATE:
+    return FDMExec->GetRotation()->GetR();
+  case FG_ELEVATOR:
+    return FDMExec->GetFCS()->GetDe();
+  case FG_AILERON:
+    return FDMExec->GetFCS()->GetDa();
+  case FG_RUDDER:
+    return FDMExec->GetFCS()->GetDr();
+  case FG_MACH:
+    return GetMach();
+  case FG_ALTITUDE:
+    return Geth();
+  case FG_BI2VEL:
+    return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * GetVt());
+  case FG_CI2VEL:
+    return FDMExec->GetAircraft()->Getcbar()/(2.0 * GetVt());
+  }
+  return 0;
+}
+
