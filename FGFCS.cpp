@@ -118,7 +118,8 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
-// TEST
+
+#if 1 // TEST
        if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
             (token == "RECT_LAG_FILTER") ||
             (token == "LEAD_LAG_FILTER") ||
@@ -141,7 +142,9 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
        } else if (token == "SWITCH") {
          Components.push_back(new FGSwitch(this, AC_cfg));
        }
-// END TEST
+#else // END TEST
+
+#endif
       AC_cfg->GetNextConfigLine();
     }
   }

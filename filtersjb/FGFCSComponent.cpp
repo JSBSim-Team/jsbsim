@@ -45,6 +45,20 @@ INCLUDES
 *******************************************************************************/
 
 // *****************************************************************************
+//  Function:   Constructor
+//  Purpose:
+//  Parameters: void
+//  Comments:
+
+FGFCSComponent::FGFCSComponent(void )
+{
+  Type = "";
+  ID = 0;
+  QueueOrder = 0;
+  Input = Output = 0;
+}
+
+// *****************************************************************************
 //  Function:   Run
 //  Purpose:    
 //  Parameters: void 

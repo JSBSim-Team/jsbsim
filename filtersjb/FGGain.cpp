@@ -53,33 +53,36 @@ INCLUDES
 
 FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
 {
-  string type = AC_cfg->GetValue("TYPE");
-  string token = "";
+  Type = AC_cfg->GetValue("TYPE");
   AC_cfg->GetNextConfigLine();
+  string token;
+
+  Gain = 0;
+  Min = Max = 0;
+  ScheduledBy = 0;
+
   while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+    *AC_cfg >> token;
     if (token == "ID") {
+      *AC_cfg >> ID;
     } else if (token == "QUEUE_ORDER") {
+      *AC_cfg >> QueueOrder;
     } else if (token == "INPUT") {
+      *AC_cfg >> Input;
     } else if (token == "GAIN") {
+      *AC_cfg >> Gain;
     } else if (token == "MIN") {
+      *AC_cfg >> Min;
     } else if (token == "MAX") {
+      *AC_cfg >> Max;
     } else if (token == "SCHEDULED_BY") {
+      *AC_cfg >> ScheduledBy;
     } else {
       lookup = new float[2];
       *AC_cfg >> lookup[0] >> lookup[1];
       Schedule.push_back(lookup);
     }
-    AC_cfg->GetNextConfigLine();
   }
-
-  if (type == "PURE_GAIN") {
-
-  } else if (type == "SCHEDULED_GAIN") {
-
-  } else if (type == "AEROSURFACE_SCALE") {
-
-  }
-
 }
 
 // *****************************************************************************

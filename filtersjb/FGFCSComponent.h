@@ -42,6 +42,14 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 
+#ifdef FGFS
+#  include <Include/compiler.h>
+#  include STL_STRING
+   FG_USING_STD(string);
+#else
+#  include <string>
+#endif
+
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
@@ -52,13 +60,14 @@ CLASS DECLARATION
 
 class FGFCSComponent
 {
-  int Type;
+protected:
+  string Type;
   int ID;
   int QueueOrder;
   float Input, Output;
 
 public:
-  FGFCSComponent(void) {}
+  FGFCSComponent(void);
 
   bool Run (void) {return true;}
   float GetOutput (void) {return 0.0;}
