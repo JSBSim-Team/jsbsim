@@ -50,3 +50,14 @@ FGMassBalance::FGMassBalance() : FGModel()
   //
 }
 
+
+bool FGMassBalance:: Run(void) {
+
+  if (!FGModel::Run()) {
+
+    return false;
+  } else {
+    return true;
+  }
+}
+

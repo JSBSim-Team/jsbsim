@@ -27,6 +27,26 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
+The Propulsion class is the container for the entire propulsion system, which is
+comprised of engines, tanks, and "thrusters" (the device that transforms the
+engine power into a force that acts on the aircraft, such as a nozzle or
+propeller). Once the Propulsion class gets the config file, it reads in
+information which is specific to a type of engine. Then:
+
+1) The appropriate engine type instance is created
+2) At least one thruster object is instantiated, and is linked to the engine
+3) At least one tank object is created, and is linked to an engine.
+
+Note: Thusters can be linked to more than one engine and engines can be linked
+to more than one thruster. It is the same with tanks - a many to many
+relationship can be established.
+
+At Run time each engines Calculate() method is called to return the excess power
+generated during that iteration. The drag from the previous iteration is sub-
+tracted to give the excess power available for thrust this pass. That quantity
+is passed to the thrusters associated with a particular engine - perhaps with a
+scaling mechanism (gearing?) to allow the engine to give its associated thrust-
+ers specific distributed portions of the excess power.
 
 HISTORY
 --------------------------------------------------------------------------------
@@ -58,6 +78,7 @@ bool FGPropulsion:: Run(void) {
     return true;
   }
 }
+
 
 bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
