@@ -43,14 +43,17 @@ INCLUDES
 *******************************************************************************/
 
 
-FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3), Exec(fdmex)
+FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
+                                                           vMoment(3),
+                                                           Exec(fdmex)
 {
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3) >> kSpring >> bDamp
                                                     >> statFCoeff >> brakeCoeff;
   State = Exec->GetState();
   Aircraft = Exec->GetAircraft();
-  Position = Exec->GetPosition();                                                  
+  Position = Exec->GetPosition();
+  WOW = false;                                                  
 }
 
 
@@ -65,19 +68,36 @@ FGLGear::~FGLGear(void)
 FGColumnVector FGLGear::Force(void)
 {
   static FGColumnVector vForce(3);
+  static FGColumnVector vLocalForce(3);
   static FGColumnVector vLocalGear(3);
   static FGColumnVector vTmpRot(3);
 
   vTmpRot = vXYZ - Aircraft->GetXYZcg();
-  vTmpRot(1) = -vTmpRot(1);
-  vTmpRot(3) = -vTmpRot(3);
+  vTmpRot(eX) = -vTmpRot(eX);
+  vTmpRot(eZ) = -vTmpRot(eZ);
   vTmpRot = vTmpRot/12.0;
 
   vLocalGear = State->GetTb2l() * vTmpRot;
-  vLocalGear(3) = -vLocalGear(3);
 
-  cout << name << " Z Gear Local: " << vLocalGear(3);
-  cout << " Distance AGL: " << Position->GetDistanceAGL() << endl;
+  compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
+
+  if (compressLength > 0.00) {
+    WOW = true;
+    vLocalForce(eZ) = -compressLength * kSpring;
+    vForce = State->GetTl2b() * vLocalForce;
+
+    // currently only aircraft body axis Z-force modeled
+    vMoment(eX) = vForce(eZ) * vTmpRot(eY);
+    vMoment(eY) = vForce(eZ) * vTmpRot(eX);
+    vMoment(eZ) = 0.0;
+
+  } else {
+
+    WOW = false;
+    vForce.InitMatrix();
+    vMoment.InitMatrix();
+  }
+
 
   return vForce;
 }

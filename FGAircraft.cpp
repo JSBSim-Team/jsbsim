@@ -366,7 +366,8 @@ void FGAircraft::FMGear(void) {
   }
   else {
     for (unsigned int i=0;i<lGear.size();i++) {
-      vForces += lGear[i]->Force();
+      vForces  += lGear[i]->Force();
+      vMoments += lGear[i]->Moment();
     }
   }
 }

@@ -82,13 +82,17 @@ public:
   ~FGLGear(void);
 
   FGColumnVector Force(void);
+  FGColumnVector Moment(void) {return vMoment;}
 
 private:
+  enum {eX=1, eY, eZ};
   FGColumnVector vXYZ;
+  FGColumnVector vMoment;
   float kSpring, bDamp, compressLength;
   float statFCoeff, rollFCoeff, skidFCoeff;
   float frictionForce, compForce;
   float brakePct, brakeForce, brakeCoeff;
+  bool WOW;
   string name;
   FGState* State;
   FGAircraft* Aircraft;
