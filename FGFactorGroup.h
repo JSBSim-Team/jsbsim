@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.8 2002/03/18 12:12:47 apeden Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.9 2002/03/22 11:50:12 apeden Exp $"
 
 using std::vector;
 
@@ -105,6 +105,8 @@ class FGFactorGroup: public FGCoefficient {
     inline double GetSD(void) { return SDtotal; }
     inline double GetFactorSD(void) { return FGCoefficient::GetSD(); }
     
+    void bind(FGPropertyManager* parent);
+    void unbind(void);
   private:
     FGFDMExec *FDMExec;
     string name;
@@ -113,6 +115,7 @@ class FGFactorGroup: public FGCoefficient {
     CoeffArray sum;
     double SDtotal;
     double totalValue;
+    FGPropertyManager* node;
     void Debug(int from);
 };
     

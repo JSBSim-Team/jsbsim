@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.17 2002/03/18 12:12:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.18 2002/03/22 11:50:12 apeden Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +126,35 @@ double FGFactorGroup::TotalValue(void)
   SDtotal *= FGCoefficient::GetSD();
   Debug(2);
   return totalValue;
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+void FGFactorGroup::bind(FGPropertyManager* parent) {
+  
+  cout << "In FGFactorGroup::bind" << endl;
+  cout << parent->getName() << endl;
+  unsigned i;
+  node=parent->GetNode(name,true);
+  cout << node->getName() << endl;
+  node->SetString("description",description);
+  FGCoefficient::bind(node);
+  for (i=0; i < sum.size(); i++) { 
+    sum[i]->bind(node);
+  } 
+  node=(FGPropertyManager*)node->getParent();                                         
+
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+  
+void FGFactorGroup::unbind(void) {
+  unsigned i;
+  
+  FGCoefficient::unbind();
+  for (i=0; i < sum.size(); i++) { 
+    sum[i]->unbind();
+  } 
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
