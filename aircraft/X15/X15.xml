@@ -1,8 +1,10 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.40">  <!--
+<FDM_CONFIG NAME="X-15" VERSION="1.40">
+
+  <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.30 2001/04/23 19:35:48 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.31 2001/06/06 17:30:43 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
