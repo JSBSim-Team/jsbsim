@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.1 2004/09/29 12:24:26 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.2 2004/10/03 13:43:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates an XML element.
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.1 2004/09/29 12:24:26 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.2 2004/10/03 13:43:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,15 +80,21 @@ public:
   Element(string nm);
   ~Element(void);
 
-  string GetAttributeValue(string key) {return attributes[key];}
+  string GetAttributeValue(string key);
   string GetName(void) {return name;}
-  string GetDataLine(int i) {return data_lines[i];}
-
+  string GetDataLine(int i=0);
+  double GetDataAsNumber(void);
   Element* GetElement(int el=0);
   Element* GetNextElement(void);
+  Element* GetParent(void) {return parent;}
+
   Element* FindElement(string el="");
   Element* FindNextElement(string el="");
-  Element* GetParent(void) {return parent;}
+  double FindElementValueAsNumber(string el="");
+  double FindElementValueAsNumberConvertTo(string el, string target_units);
+  double FindElementValueAsNumberConvertFromTo( string el,
+                                                string supplied_units,
+		                                            string target_units);
 
   void SetParent(Element* p) {parent = p;}
   void AddChildElement(Element* el) {children.push_back(el);}
@@ -105,6 +111,8 @@ private:
   vector <string> attribute_key;
   Element *parent;
   int element_index;
+  typedef map <string, map <string, double> > tMapConvert;
+  tMapConvert convert;
 };
 
 } // namespace JSBSim
