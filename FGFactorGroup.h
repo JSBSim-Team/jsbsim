@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.19 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.20 2005/01/26 04:08:59 jberndt Exp $"
 
 using std::vector;
 
@@ -102,8 +102,8 @@ public:
   void unbind(void);
 
 private:
-  typedef vector<FGCoefficient*> CoeffArray;
-  CoeffArray sum;
+//  typedef vector<FGCoefficient*> CoeffArray;
+//  CoeffArray sum;
   double SDtotal;
   double totalValue;
   string description;

@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.72 2005/01/20 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.73 2005/01/26 04:08:44 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,7 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
   FDMExec = fdex;
   State   = FDMExec->GetState();
   Table   = 0;
+  IsFactor = false;
 
   PropertyManager = FDMExec->GetPropertyManager();
 
@@ -386,7 +387,7 @@ FGPropertyManager* FGCoefficient::resolveSymbol(string name)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCoefficient::convert(void)
+void FGCoefficient::convert(string prop)
 {
   cout << "            <function name=\"" << name << "\">" << endl;
   cout << "                <description>" << description << "</description>" << endl;
@@ -394,6 +395,9 @@ void FGCoefficient::convert(void)
 
   for (int i=0; i<multipliers.size(); i++)
     cout << "                    <property>" << multipliers[i]->GetName() << "</property>" << endl;
+
+  if (!prop.empty())
+    cout << "                    <property>" << prop << "</property>" << endl;
 
   switch (type) {
   case VALUE:
@@ -434,6 +438,13 @@ void FGCoefficient::convert(void)
 
   cout << "                </product>" << endl;
   cout << "            </function>" << endl;
+
+  if (IsFactor) {
+  cout << " === MOVE THE ABOVE FACTOR " << name << " OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===" << endl;
+    for (int i=0; i<sum.size(); i++) {
+      sum[i]->convert(name);
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.57 2005/01/20 12:45:00 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.58 2005/01/26 04:08:57 jberndt Exp $"
 
 using std::vector;
 
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.57 2005/01/20 12:45:00 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.58 2005/01/26 04:08:57 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,10 +150,13 @@ public:
 
   virtual void bind(FGPropertyManager *parent);
   virtual void unbind(void);
-  void convert(void);
+  void convert(string prop="");
 
 protected:
   FGFDMExec* FDMExec;
+  bool IsFactor;
+  typedef vector<FGCoefficient*> CoeffArray;
+  CoeffArray sum;
 
 private:
   int numInstances;

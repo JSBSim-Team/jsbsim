@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.93 2005/01/20 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.94 2005/01/26 04:08:59 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -544,9 +544,9 @@ void convert(JSBSim::FGFDMExec* FDMExec)
       cout << "        <tank type=\"OXIDIZER\">    <!-- Tank number " << t << " --> " << endl;
 
     cout << "            <location unit=\"IN\">" << endl;
-    cout << "                <X> " << tank->GetXYZ(1) << " </X>" << endl;
-    cout << "                <y> " << tank->GetXYZ(2) << " </Y>" << endl;
-    cout << "                <Z> " << tank->GetXYZ(3) << " </Z>" << endl;
+    cout << "                <x> " << tank->GetXYZ(1) << " </x>" << endl;
+    cout << "                <y> " << tank->GetXYZ(2) << " </y>" << endl;
+    cout << "                <z> " << tank->GetXYZ(3) << " </z>" << endl;
     cout << "            </location>" << endl;
     // cout << "            <radius unit=\"IN\"> 1 </radius>" << endl;  // Superfluous?
     cout << "            <capacity unit=\"LBS\"> " << tank->GetContents()/tank->GetPctFull()*100.0 << " </capacity>" << endl;
@@ -572,4 +572,5 @@ void convert(JSBSim::FGFDMExec* FDMExec)
 
   cout << "    </aerodynamics>" << endl;
 
+  cout << "</fdm_config>" << endl;
 }

@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.23 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.24 2005/01/26 04:08:59 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +73,7 @@ FGFactorGroup::FGFactorGroup( FGFDMExec* fdmex ) : FGCoefficient( fdmex)
 {
   FDMExec = fdmex;
   totalValue = 0;
+  IsFactor = true;
   Debug(0);
 }  
 
