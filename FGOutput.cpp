@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.64 2003/01/26 06:58:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.65 2003/05/31 14:34:30 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,6 +485,7 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
 
   while ((token = Output_cfg->GetValue()) != string("/OUTPUT")) {
     *Output_cfg >> parameter;
+cout << "Parameter: " << parameter << endl;
     if (parameter == "RATE_IN_HZ") {
       *Output_cfg >> OutRate;
     }
@@ -545,7 +546,7 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
       OutputProperties.push_back(PropertyManager->GetNode(property));
     }
 
-    if (Output_cfg->GetNextConfigLine() == "EOF") break;
+    if (parameter == "EOF") break;
   }
 
   OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
@@ -590,6 +591,7 @@ void FGOutput::Debug(int from)
         cout << "  " << "Output parameters read inline" << endl;
       else
         cout << "    Output parameters read from file: " << outputInFileName << endl;
+
       if (Filename == "cout" || Filename == "COUT") {
         scratch = "    Log output goes to screen console";
       } else if (!Filename.empty()) {
@@ -603,6 +605,20 @@ void FGOutput::Debug(int from)
         cout << "  No log output" << endl;
         break;
       }
+      
+      if (SubSystems & ssSimulation)      cout << "    Simulation parameters logged" << endl;
+      if (SubSystems & ssAerosurfaces)    cout << "    Aerosurface parameters logged" << endl;
+      if (SubSystems & ssRates)           cout << "    Rate parameters logged" << endl;
+      if (SubSystems & ssVelocities)      cout << "    Velocity parameters logged" << endl;
+      if (SubSystems & ssForces)          cout << "    Force parameters logged" << endl;
+      if (SubSystems & ssMoments)         cout << "    Moments parameters logged" << endl;
+      if (SubSystems & ssAtmosphere)      cout << "    Atmosphere parameters logged" << endl;
+      if (SubSystems & ssMassProps)       cout << "    Mass parameters logged" << endl;
+      if (SubSystems & ssCoefficients)    cout << "    Coefficient parameters logged" << endl;
+      if (SubSystems & ssPosition)        cout << "    Position parameters logged" << endl;
+      if (SubSystems & ssGroundReactions) cout << "    Ground parameters logged" << endl;
+      if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
+      if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

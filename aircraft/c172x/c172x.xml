@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.8 2003/01/25 16:10:51 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.9 2003/05/31 14:34:31 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -161,13 +161,6 @@
        MAX           23
        OUTPUT        fcs/elevator-pos-rad
        GAIN          0.01745
-     </COMPONENT>
-     <COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
-       <TEST LOGIC="DEFAULT" VALUE="0.0">
-       </TEST>
-       <TEST LOGIC="AND" VALUE="ap/aileron_cmd">
-         position/h-agl-ft > 6.0
-       </TEST>
      </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
        INPUT        ap/aileron_cmd
@@ -575,7 +568,21 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" FILE="output" TYPE="CSV">
+  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+    RATE_IN_HZ       20
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
   </OUTPUT>
 </FDM_CONFIG>
 

@@ -22,9 +22,14 @@
       <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="0.005" action="FG_EXP" persistent="false" tc ="3.0">
     </when>
 
-    <when> <!-- Set the Elevator to takeoff -->
+    <when>
       <parameter name="attitude/theta-rad" comparison="ge" value="0.0435">      <!-- if theta is greater than 2.5 degrees -->
       <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.001" action="FG_EXP" persistent="true" tc ="1.0">
+    </when>
+
+    <when>
+      <parameter name="position/h-agl-ft" comparison="ge" value="6.0">
+      <set name="ap/attitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
     </when>
 
   </run>

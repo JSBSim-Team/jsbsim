@@ -29,6 +29,9 @@
           ap/wingslevel_hold_on
 
 -->
+
+<!-- Wing leveler -->
+
 <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
    INPUT         attitude/phi-rad
    GAIN          1.0
@@ -45,8 +48,20 @@
    INPUT         fcs/roll-ap-error-integrator
    CLIPTO       -1 1
 </COMPONENT>
+<COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="0.0">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/roll-ap-error-summer">
+    ap/attitude_hold == 1
+  </TEST>
+</COMPONENT>
 <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
-   INPUT         fcs/roll-ap-error-summer
+   INPUT         fcs/roll-ap-autoswitch
    GAIN          -1
    OUTPUT        ap/aileron_cmd
 </COMPONENT>
+
+
+<!-- Altitude hold -->
+
+

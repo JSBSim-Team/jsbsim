@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.23 2003/02/17 20:49:21 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.24 2003/05/31 14:34:31 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,4 +266,6 @@ void FGSwitch::Debug(int from)
     }
   }
 }
-}
+
+} //namespace JSBSim
+

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.38 2003/01/22 15:53:37 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.39 2003/05/31 14:34:31 jberndt Exp $"
 
 using std::string;
 
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.38 2003/01/22 15:53:37 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.39 2003/05/31 14:34:31 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -114,21 +114,22 @@ public:
   FGPropertyManager* resolveSymbol(string token);
   
 protected:
-   /// Pilot/Aircraft, FCS, Autopilot inputs
-  enum eInputType {itPilotAC, itFCS, itAP, itBias} InputType;
   FGFCS* fcs;
   FGPropertyManager* PropertyManager;
   FGPropertyManager* treenode;
   string Type;
   string Name;
   vector <FGPropertyManager*> InputNodes;
+  vector <float> InputSigns;
   double Input;
   FGPropertyManager* OutputNode;
   double Output;
   bool IsOutput;
   virtual void Debug(int from);
 };
-}
+
+} //namespace JSBSim
+
 #include "../FGFCS.h"
 
 #endif

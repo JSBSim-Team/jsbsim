@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.39 2003/01/22 15:53:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.40 2003/05/31 14:34:31 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,14 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       *AC_cfg >> token;
+
+      if (token[0] == '-') {
+        InputSigns.push_back(-1.0);
+        token.erase(0,1);
+      } else {
+        InputSigns.push_back( 1.0);
+      }
+      
       InputNodes.push_back( resolveSymbol(token) );
     } else if (token == "CLIPTO") {
       *AC_cfg >> clipmin >> clipmax;
@@ -105,7 +113,7 @@ bool FGSummer::Run(void )
   Output = 0.0;
 
   for (idx=0; idx<InputNodes.size(); idx++) {
-    Output += InputNodes[idx]->getDoubleValue();
+    Output += InputNodes[idx]->getDoubleValue()*InputSigns[idx];
   }
 
   if (clip) {
@@ -169,4 +177,6 @@ void FGSummer::Debug(int from)
     }
   }
 }
-}
+
+} //namespace JSBSim
+
