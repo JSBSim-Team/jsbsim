@@ -1,10 +1,10 @@
-<FDM_CONFIG NAME="MK-82" VERSION="1.58">
+<FDM_CONFIG NAME="MK-82" VERSION="1.60">
 
   <!--
 
   File:        mk82.xml
   Author:      Cameron Munro
-  CVS Version: $Id: mk82.xml,v 1.3 2002/08/20 13:45:02 jberndt Exp $
+  CVS Version: $Id: mk82.xml,v 1.4 2002/09/22 18:06:03 apeden Exp $
 
   Function: Models a 500 lb. Mk-82 bomb
   Notes:    Try running JSBSim using this command line,
@@ -85,8 +85,8 @@
         Lift_due_to_alpha
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_ALPHA
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
                 0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
         0.000   0       0       0       0       0       0       0       0       0       0       0       0       0
         0.175   0.892   0.853   0.605   0.596   0.583   0.577   0.578   0.572   0.564   0.551   0.629   0       0
@@ -107,8 +107,8 @@
       <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
         Drag_minimum
         13
-        FG_MACH
-        FG_QBAR|FG_WINGAREA
+        velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft
         0.2     0.14
         0.4     0.139
         0.8     0.144
@@ -128,8 +128,8 @@
         Drag_induced
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_CL_SQRD
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | aero/cl-squared-norm
                 0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
         0       0       0       0       0       0       0       0       0       0       0       0       0       0
         0.175   0.156   0.15    0.107   0.105   0.103   0.102   0.102   0.101   0.099   0.098   0.111   0.16    0.119
@@ -151,8 +151,8 @@
         Side_force_due_to_beta
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_BETA
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | aero/beta-rad
                 0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
         0.000  -4.572  -4.778  -2.839  -2.783  -2.782  -2.782  -2.802  -2.788  -2.726  -2.624  -2.127  -3.751  -1.868
         0.175  -3.465  -3.462  -2.539  -2.570  -2.592  -2.622  -2.662  -2.674  -2.687  -2.699  -3.240  -5.087  -3.530
@@ -173,8 +173,8 @@
         Roll_moment_due_to_beta
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
                 0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
         0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000
         0.175   0.150   0.089   0.005   0.011   0.014   0.016   0.017   0.017   0.018   0.019   0.021   0.037   0.040
@@ -196,8 +196,8 @@
         Pitch_moment_due_to_alpha
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
                  0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
         0.000   -1.372  -1.783  -1.325  -0.261  -0.267  -0.053  -0.228  -0.111  0.398   -0.001  -1.693  -3.622   9.024
         0.175   -3.699  -3.767  -2.384  -1.263  -1.168  -0.921  -1.039  -0.873  -0.330  -0.507  -1.538  -2.550   8.734
@@ -213,13 +213,13 @@
 
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
          Pitch_moment_due_to_pitch_rate
-         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_AEROQ
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
          -50
       </COEFFICIENT>
 
       <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
         Pitch_moment_due_to_alpha_rate
-        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
         -3.46
       </COEFFICIENT>
 
@@ -231,8 +231,8 @@
         Yaw_moment_due_to_beta
         10
         13
-        FG_ALPHA FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_BETA
+        aero/alpha-rad velocities/mach-norm
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/beta-rad
                 0.2    0.4    0.8    0.9    0.95   0.98   1      1.02    1.05  1.1    1.2    1.4     1.6
         0.000   1.372  1.783  1.325  0.261  0.267  0.053  0.228  0.111 -0.398  0.001  1.693  3.622  -9.024
         0.175   3.699  3.767  2.384  1.263  1.168  0.921  1.039  0.873  0.330  0.507  1.538  2.550  -8.734
@@ -248,7 +248,7 @@
 
        <COEFFICIENT NAME="Cnr" TYPE="VALUE">
          Yaw_moment_due_to_yaw_rate
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
          -60
        </COEFFICIENT>
 

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="Lunar Module" VERSION="1.58">
+<FDM_CONFIG NAME="Lunar Module" VERSION="1.60">
   <!--
 
   File:        LM.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: LM.xml,v 1.2 2002/08/18 15:36:44 jberndt Exp $
+  CVS Version: $Id: LM.xml,v 1.3 2002/09/22 18:06:01 apeden Exp $
 
   Function: Models a Grumman Aerospace Lunar Module
   -->
@@ -166,22 +166,19 @@
   <FLIGHT_CONTROL NAME="X-15 SAS">
 
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       ID            0
-       INPUT        FG_ELEVATOR_CMD
-       INPUT        FG_PITCH_TRIM_CMD
+       INPUT        fcs/elevator-cmd-norm
+       INPUT        fcs/pitch-trim-cmd-norm
        CLIPTO       -1 1
     </COMPONENT>
 
     <COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
-      ID           1
-      INPUT        0
+      INPUT        fcs/pitch-trim-sum
       MIN         -50
       MAX          50
     </COMPONENT>
 
     <COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
-      ID           2
-      INPUT        1
+      INPUT        fcs/pitch-command-scale
       GAIN         -0.36
     </COMPONENT>
 
@@ -193,11 +190,10 @@
     -->
 
     <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
-      ID           3
-      INPUT        2
+      INPUT        fcs/pitch-gain-1
       GAIN         0.017
       ROWS         22
-      SCHEDULED_BY FG_ELEVATOR_POS
+      SCHEDULED_BY fcs/elevator-pos-rad
       -0.68  -26.548
       -0.595 -20.513
       -0.51  -15.328
@@ -223,100 +219,85 @@
     </COMPONENT>
 
     <COMPONENT NAME="Roll Command Scale" TYPE="AEROSURFACE_SCALE">
-      ID           4
-      INPUT        FG_AILERON_CMD
+      INPUT        fcs/aileron-cmd-norm
       MIN         -20
       MAX          20
     </COMPONENT>
 
     <COMPONENT NAME="Roll Gain 1" TYPE="PURE_GAIN">
-      ID           5
-      INPUT        4
+      INPUT        fcs/roll-command-scale
       GAIN         0.42
     </COMPONENT>
 
     <COMPONENT NAME="Roll Gain 2" TYPE="PURE_GAIN">
-      ID           6
-      INPUT        5
+      INPUT        fcs/roll-gain-1
       GAIN         0.027
     </COMPONENT>
 
     <COMPONENT NAME="Yaw Command Scale" TYPE="AEROSURFACE_SCALE">
-      ID           7
-      INPUT        FG_RUDDER_CMD
+      INPUT        fcs/rudder-cmd-norm
       MIN         -250
       MAX          250
     </COMPONENT>
 
     <COMPONENT NAME="Yaw Gain 1" TYPE="PURE_GAIN">
-      ID           8
-      INPUT        7
+      INPUT        fcs/yaw-command-scale
       GAIN         0.082
     </COMPONENT>
 
     <COMPONENT NAME="Yaw Gain 2" TYPE="PURE_GAIN">
-      ID           9
-      INPUT        8
+      INPUT        fcs/yaw-gain-1
       GAIN         0.040
     </COMPONENT>
 
     <COMPONENT NAME="Pitch SAS Feedback" TYPE="PURE_GAIN">
-      ID           10
-      INPUT        FG_PITCHRATE
+      INPUT        velocities/q-rad_sec
       GAIN         0.75
     </COMPONENT>
 
     <COMPONENT NAME="Yaw-Roll Crossover Gain" TYPE="PURE_GAIN">
-      ID           11
-      INPUT        FG_YAWRATE
+      INPUT        velocities/r-rad_sec
       GAIN         -0.90
     </COMPONENT>
 
     <COMPONENT NAME="Yaw Coupled Aileron Feedback Sum" TYPE="SUMMER">
-      ID           12
-      INPUT        FG_ROLLRATE
-      INPUT        11
+      INPUT        velocities/p-rad_sec
+      INPUT        fcs/yaw-roll-crossover-gain
     </COMPONENT>
 
     <COMPONENT NAME="Roll SAS Gain" TYPE="PURE_GAIN">
-      ID           13
-      INPUT        12
+      INPUT        fcs/yaw-coupled-aileron-feedback-sum
       GAIN         -0.50
     </COMPONENT>
 
     <COMPONENT NAME="Yaw SAS Gain" TYPE="PURE_GAIN">
-      ID           14
-      INPUT        FG_YAWRATE
+      INPUT        velocities/r-rad_sec
       GAIN         0.30
     </COMPONENT>
 
     <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
-      ID           15
-      INPUT         3
-      INPUT        10
+      INPUT         fcs/pitch-scheduled-gain-1
+      INPUT        fcs/pitch-sas-feedback
       CLIPTO       -0.26 0.61
     </COMPONENT>
 
     <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
-      ID           16
-      INPUT        15
+      INPUT        fcs/elevator-positioning
       C1           600
-      OUTPUT       FG_ELEVATOR_POS
+      OUTPUT       fcs/elevator-pos-rad
     </COMPONENT>
 
     <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
-      ID           17
-      INPUT         6
-      INPUT        13
-      OUTPUT       FG_AILERON_POS
+      INPUT         fcs/roll-gain-2
+      INPUT        fcs/roll-sas-gain
+      OUTPUT       fcs/left-aileron-pos-rad
       CLIPTO       -0.35 0.35
     </COMPONENT>
 
     <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
-      ID           18
-      INPUT         9
-      INPUT        14
-      OUTPUT       FG_RUDDER_POS
+      INPUT         fcs/yaw-gain-2
+      INPUT        fcs/yaw-sas-gain
+      OUTPUT       fcs/rudder-pos-rad
       CLIPTO       -0.52 0.52
     </COMPONENT>
 

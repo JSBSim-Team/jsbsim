@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c182" VERSION="1.58">
+<FDM_CONFIG NAME="c182" VERSION="1.60">
 <!--
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.10 2002/08/18 15:36:44 jberndt Exp $
+  CVS Version: $Id: c182.xml,v 1.11 2002/09/22 18:06:02 apeden Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -146,62 +146,55 @@
   <FLIGHT_CONTROL NAME="c182">
 
      <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       ID           0
-       INPUT        FG_ELEVATOR_CMD
-       INPUT        FG_PITCH_TRIM_CMD
+       INPUT        fcs/elevator-cmd-norm
+       INPUT        fcs/pitch-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
 
      <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
-       ID           1
-       INPUT        0
+       INPUT        fcs/pitch-trim-sum
        MIN          -28
        MAX          23
-       OUTPUT       FG_ELEVATOR_POS
+       OUTPUT       fcs/elevator-pos-rad
        GAIN         0.01745
      </COMPONENT>
 
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
-       ID           2
-       INPUT        FG_AILERON_CMD
-       INPUT        FG_ROLL_TRIM_CMD
+       INPUT        fcs/aileron-cmd-norm
+       INPUT        fcs/roll-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
 
      <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID           3
-       INPUT        2
+       INPUT        fcs/roll-trim-sum
        MIN          -20
        MAX          15
        GAIN         0.01745
-       OUTPUT       FG_AILERON_POS
+       OUTPUT       fcs/left-aileron-pos-rad
      </COMPONENT>
 
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
-       ID           4
-       INPUT        FG_RUDDER_CMD
-       INPUT        FG_YAW_TRIM_CMD
+       INPUT        fcs/rudder-cmd-norm
+       INPUT        fcs/yaw-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
 
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-       ID           5
-       INPUT        4
+       INPUT        fcs/yaw-trim-sum
        MIN         -16
        MAX          16
        GAIN         0.01745
-       OUTPUT       FG_RUDDER_POS
+       OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
 
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       ID           6
-       INPUT        FG_FLAPS_CMD
+       INPUT        fcs/flap-cmd-norm
        DETENTS      4
                     0    0
                     10   2
                     20   1
                     30   1
-       OUTPUT       FG_FLAPS_POS
+       OUTPUT       fcs/flap-pos-deg
      </COMPONENT>
 
    </FLIGHT_CONTROL>
@@ -221,8 +214,8 @@
          <FACTOR NAME="kCLge" TYPE="VECTOR">
             Change_in_lift_due_to_ground_effect
             13
-            FG_HOVERB
-            FG_NONE
+            aero/h_b-mac-ft
+            none
              0.0   1.203
              0.1   1.127
              0.15  1.090
@@ -243,7 +236,7 @@
          -->
          <COEFFICIENT NAME="CLo" TYPE="VALUE">
             Lift_at_zero_alpha
-            FG_QBAR|FG_WINGAREA
+            aero/qbar-psf | metrics/Sw-sqft
              0.307
          </COEFFICIENT>
 
@@ -253,8 +246,8 @@
          <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
             Lift_due_to_alpha
             11
-            FG_ALPHA
-            FG_QBAR|FG_WINGAREA
+            aero/alpha-rad
+            aero/qbar-psf | metrics/Sw-sqft
             -0.09  -0.527
              0.00  -0.057
              0.14   0.713
@@ -274,8 +267,8 @@
           <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
             Lift_due_to_flap_deflection
             4
-            FG_FLAPS_POS
-            FG_QBAR|FG_WINGAREA
+            fcs/flap-pos-deg
+            aero/qbar-psf | metrics/Sw-sqft
              0   0
              10  0.20
              20  0.30
@@ -289,7 +282,7 @@
        -->
        <COEFFICIENT NAME="CLadot" TYPE="VALUE">
          Lift_due_to_alpha_rate
-         FG_QBAR|FG_WINGAREA|FG_ALPHADOT|FG_CI2VEL
+         aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
           1.7
        </COEFFICIENT>
 
@@ -298,7 +291,7 @@
        -->
        <COEFFICIENT NAME="CLq" TYPE="VALUE">
          Lift_due_to_pitch_rate
-         FG_QBAR|FG_WINGAREA|FG_AEROQ|FG_CI2VEL
+         aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
           3.9
        </COEFFICIENT>
 
@@ -307,7 +300,7 @@
        -->
        <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_elevator_deflection
-         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad
           0.43
        </COEFFICIENT>
 
@@ -320,7 +313,7 @@
        -->
        <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
-         FG_QBAR|FG_WINGAREA
+         aero/qbar-psf | metrics/Sw-sqft
           0.0270
        </COEFFICIENT>
 
@@ -330,8 +323,8 @@
        <COEFFICIENT NAME="CDalpha" TYPE="VECTOR">
          Drag_due_to_alpha
          26
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft
          -0.0872664   0.00407143
          -0.0698132   0.0013424
          -0.0523599   8.96747e-05
@@ -365,7 +358,7 @@
        -->
        <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
          Drag_due_to_sideslip
-         FG_QBAR|FG_WINGAREA|FG_ABETA
+         aero/qbar-psf | metrics/Sw-sqft | aero/mag-beta-rad
           0.17
        </COEFFICIENT>
 
@@ -376,9 +369,9 @@
          Drag_due_to_flap_deflection
          26
          4
-         FG_ALPHA
-         FG_FLAPS_POS
-         FG_QBAR|FG_WINGAREA
+         aero/alpha-rad
+         fcs/flap-pos-deg
+         aero/qbar-psf | metrics/Sw-sqft
                       0          10          20          30
          -0.087266    0.000000    0.002967    0.008441    0.015301
          -0.069813    0.000000    0.006098    0.013138    0.020781
@@ -413,7 +406,7 @@
        -->
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
-         FG_QBAR|FG_WINGAREA|FG_AELEVATOR_POS
+         aero/qbar-psf | metrics/Sw-sqft | fcs/mag-elevator-pos-rad
           0.00
        </COEFFICIENT>
 
@@ -427,8 +420,8 @@
        <COEFFICIENT NAME="CYb" TYPE="VECTOR">
          Side_force_due_to_beta
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_BETA
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | aero/beta-rad
           0.0000  -0.393
           0.0943  -0.404
        </COEFFICIENT>
@@ -439,8 +432,8 @@
        <COEFFICIENT NAME="CYp" TYPE="VECTOR">
          Side_force_due_to_roll_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_AEROP
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/p-aero-rad_sec
           0.0000  -0.075
           0.0943  -0.145
        </COEFFICIENT>
@@ -451,8 +444,8 @@
        <COEFFICIENT NAME="CYr" TYPE="VECTOR">
          Side_force_due_to_yaw_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_AEROR
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/r-aero-rad_sec
           0.0000   0.214
           0.0943   0.267
        </COEFFICIENT>
@@ -462,7 +455,7 @@
        -->
        <COEFFICIENT NAME="CYDa" TYPE="VALUE">
          Side_force_due_to_aileron
-         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+         aero/qbar-psf | metrics/Sw-sqft | fcs/left-aileron-pos-rad
           0.0
       </COEFFICIENT>
 
@@ -471,7 +464,7 @@
        -->
        <COEFFICIENT NAME="CYDr" TYPE="VALUE">
           Side_force_due_to_rudder
-          FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+          aero/qbar-psf | metrics/Sw-sqft | fcs/rudder-pos-rad
            0.187
        </COEFFICIENT>
 
@@ -486,9 +479,9 @@
          Roll_moment_due_to_beta
          3
          2
-         FG_BETA
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN
+         aero/beta-rad
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
                  0.0000  0.0943
          -0.349  0.0322  0.0312
           0      0       0
@@ -501,8 +494,8 @@
        <COEFFICIENT NAME="Clp" TYPE="VECTOR">
          Roll_moment_due_to_roll_rate_(roll_damping)
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROP
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
           0.0000  -0.484
           0.0943  -0.487
        </COEFFICIENT>
@@ -513,8 +506,8 @@
        <COEFFICIENT NAME="Clr" TYPE="VECTOR">
          Roll_moment_due_to_yaw_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
           0.0000   0.0798
           0.0943   0.1869
        </COEFFICIENT>
@@ -524,7 +517,7 @@
        -->
        <COEFFICIENT NAME="ClDa" TYPE="VALUE">
          Roll_moment_due_to_aileron
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
           0.229
        </COEFFICIENT>
 
@@ -533,7 +526,7 @@
        -->
        <COEFFICIENT NAME="ClDr" TYPE="VALUE">
          Roll_moment_due_to_rudder
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
          -0.0147
        </COEFFICIENT>
 
@@ -546,7 +539,7 @@
        -->
        <COEFFICIENT NAME="Cmo" TYPE="VALUE">
          Pitching_moment_at_zero_alpha
-         FG_QBAR|FG_WINGAREA|FG_CBAR
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
           0.04
        </COEFFICIENT>
 
@@ -556,8 +549,8 @@
        <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
          Pitch_moment_due_to_alpha
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
           0.0000  -0.613
           0.0943  -0.650
        </COEFFICIENT>
@@ -568,8 +561,8 @@
        <COEFFICIENT NAME="Cmadot" TYPE="VECTOR">
          Pitch_moment_due_to_alpha_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
           0.0000  -7.27
           0.0943  -5.57
        </COEFFICIENT>
@@ -579,7 +572,7 @@
        -->
        <COEFFICIENT NAME="Cmq" TYPE="VALUE">
           Pitch_moment_due_to_pitch_rate
-          FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_AEROQ
+          aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
           -12.4
        </COEFFICIENT>
 
@@ -589,8 +582,8 @@
        <COEFFICIENT NAME="CmDf" TYPE="VECTOR">
           Pitch_moment_due_to_flap_deflection
           4
-          FG_FLAPS_POS
-          FG_QBAR|FG_WINGAREA|FG_CBAR
+          fcs/flap-pos-deg
+          aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
           0    0
           10  -0.0654
           20  -0.0981
@@ -603,8 +596,8 @@
        <COEFFICIENT NAME="CmDe" TYPE="VECTOR">
          Pitch_moment_due_to_elevator_deflection
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
           0.0000  -1.122
           0.0943  -1.369
        </COEFFICIENT>
@@ -619,8 +612,8 @@
        <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
          Yaw_moment_due_to_beta
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
           0.0000   0.0587
           0.0943   0.0907
        </COEFFICIENT>
@@ -631,8 +624,8 @@
        <COEFFICIENT NAME="Cnp" TYPE="VECTOR">
          Yaw_moment_due_to_roll_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROP
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
           0.0000  -0.0278
           0.0943  -0.0649
        </COEFFICIENT>
@@ -643,8 +636,8 @@
        <COEFFICIENT NAME="Cnr" TYPE="VECTOR">
          Yaw_moment_due_to_yaw_rate
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
           0.0000  -0.0937
           0.0943  -0.1199
        </COEFFICIENT>
@@ -655,8 +648,8 @@
        <COEFFICIENT NAME="CnDa" TYPE="VECTOR">
          Yaw_moment_due_to_aileron
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
           0.0000  -0.0216
           0.0943  -0.0504
        </COEFFICIENT>
@@ -667,8 +660,8 @@
        <COEFFICIENT NAME="CnDr" TYPE="VECTOR">
          Yaw_moment_due_to_rudder
          2
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         aero/alpha-rad
+         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
           0.0000  -0.0645
           0.0943  -0.0805
        </COEFFICIENT>
