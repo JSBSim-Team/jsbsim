@@ -71,8 +71,9 @@ using std::queue;
 
 #endif
 
-
+#if !defined(WIN32) || defined(__GNUC__)
 using std::max;
+#endif
 
 #ifdef __FreeBSD__ // define gcvt on FreeBSD
 
@@ -89,7 +90,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.34 2003/03/17 13:47:46 apeden Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.35 2003/04/13 21:31:19 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +107,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.34 2003/03/17 13:47:46 apeden Exp $
+    @version $Id: FGJSBBase.h,v 1.35 2003/04/13 21:31:19 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
