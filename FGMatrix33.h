@@ -47,7 +47,6 @@ INCLUDES
 #    else
 #      include <cmath>
 #    endif
-#    include <iostream>
      using std::ostream;
      using std::istream;
      using std::cerr;
@@ -64,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.14 2003/12/29 10:57:39 ehofman Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.15 2004/01/19 18:41:52 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
