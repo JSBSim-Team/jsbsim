@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.43 2002/06/05 05:12:04 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.44 2002/06/06 09:22:53 jberndt Exp $"
 
 using std::vector;
 
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.43 2002/06/05 05:12:04 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.44 2002/06/06 09:22:53 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -104,7 +104,7 @@ class FGCoefficient : public FGJSBBase
 {
 public:
   /** Constructor.
-      @param exec a pointer to the main FGFDMExecutive instance. */
+      @param exec a pointer to the FGFDMExec instance. */
   FGCoefficient(FGFDMExec* exec);
   /// Destructor.
   virtual ~FGCoefficient();

@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.33 2002/04/14 15:49:13 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.34 2002/06/06 09:22:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.33 2002/04/14 15:49:13 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.34 2002/06/06 09:22:53 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -115,14 +115,20 @@ public:
   /// Destructor
   ~FGConfigFile();
 
-  string GetLine(void);
+  /** Returns the next line from the currently open config file.
+      Comments are bypassed and ignored.
+      @return the next valid line from the config file OR "EOF" if end of file is
+      reached.*/
   string GetNextConfigLine(void);
+
+  /** Returns the value of the tag supplied.
+      @param 
+      @return */
   string GetValue(string);
   string GetValue(void);
   string GetCommentString(void) {return CommentString;}
   string GetLineComment(void) {return LineComment;}
   bool IsOpen(void) {return Opened;}
-//  FGConfigFile& operator>>(double&);
   FGConfigFile& operator>>(double&);
   FGConfigFile& operator>>(int&);
   FGConfigFile& operator>>(string&);
@@ -137,6 +143,8 @@ private:
   bool     CommentsOn;
   bool     Opened;
   unsigned int CurrentIndex;
+  string GetLine(void);
+
   void Debug(int from);
 };
 

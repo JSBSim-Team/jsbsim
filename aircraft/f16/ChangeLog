@@ -1,0 +1,60 @@
+  File:        f16.xml
+  Author:      Erik Hofman
+  CVS Version: $Id: ChangeLog,v 1.1 2002/06/06 09:22:53 jberndt Exp $
+
+  Function: Models an F-16A Block-32 (Basic US configuration)
+
+  Source: Richard Murray's F16 Model page, NASA TP-1538 wind tunnel data. (Dec. 1979)
+              http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/
+          "Observers Aircraft" by William Green, 1987 Edition (ISBN 0-7232-3458-2)
+          ACM 3.0 configuration files (very unreliable, but it gives a head start)
+          General Dynamics F-16 Dash-1 (basic drag and weight data only)
+
+  Todo: 
+        Better spring and damping factors for the gear?
+
+  History: 
+  1.00	Initial revision.
+  1.01	Figured CXq, CYr, CYp, CZq, Clr, Clp, Cmq, CNr and Cnp
+        were all in one table. Split them up.
+        More accurate placement of CG and its relations (gear, tanks etc).
+        Correct AC_CHORD which turned out to be CBAR (in feet)
+  1.02	Add comments to the appropriate tables.
+        Add General Metrics data at the end of the file.
+        Add horizontal tail, vertical tail and engine data.
+        Fixed gear Y location.
+        Fixed a typo in the DLDA table.
+  1.03  Fixed a typo in the Cmde table.
+        Minor engine location updates.
+        Added some extra metrics data at the end of the file.
+  1.04  Updated the source of the information.
+        Turned out XML doesn't allow "--" inside comments, changed that.
+        Better location of CG, Tanks, Pilot eyepoint and Gear (still not exact).
+        Updated fuel capacity to Dash-1 data.
+  1.1   Added CZ, Roll due to elevator deflection table.
+        Updated CG-X location to match Richard Murray's data.
+        Added AC_LV and AC_HTAILARM.
+        Reference point is now at the tail of the aircraft.
+        Changed CBAR which was incorrect because of a feet to meter
+        misunderstanding.
+  1.2   Changed static and dynamic friction coefficients for Main landing gear.
+        Removed unknow values for S, B, G, HE and Rtod. They ware already in place.
+        Added left and right wingtips and ventral fins, vertical tail tip and nose.
+        Moved CG-Z location to 0.0, centre of chord of main wing.
+        Updated TODO to reflect the current state.
+        Moved nozzle to new location.
+  1.3   I got aa hold on a detailed F-16 metrics scheme, updated CG, RP and it's relatives.
+        Complete reorganization of tables. I *think* they are in the proper place now.
+        Added CZq (Lift_due_to_pitch_rate) and CXq (Drag_due_to_pitch_rate).
+        Added air intake location as a fixed point.
+  1.4   Minor changes (e.g. The location of the EYEPT wasn't relative to CG).
+        Changed |BETA| to use FG_ABETA (Thanks to Tony Peden).
+  1.5   Changes by Jon Berndt to prefent parser errors.
+          Comments are not allowed within coefficients.
+  1.6   Extra metrics data at the end of the file.
+	Changed alpha from degrees to radians.
+        Fixed a typo for inlet X-location.
+        Added pilot pointmass.
+  1.7	Split file up into ChangeLog, README and f16.xml.
+        Updated all tables to confirm to the NASA TP-1538 document.
+
