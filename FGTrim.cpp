@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.44 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.45 2004/04/08 19:53:46 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,6 +242,8 @@ bool FGTrim::DoTrim(void) {
   }
 
   fdmex->GetOutput()->Disable();
+  
+  fdmex->GetRotation()->SetPQR(0,0,0);
 
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<TrimAxes.size();current_axis++) {
