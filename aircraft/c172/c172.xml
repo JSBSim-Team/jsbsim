@@ -124,7 +124,7 @@
      <AXIS NAME="LIFT">
       <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
          Lift_due_to_alpha
-         9
+         11
          FG_ALPHA
          FG_QBAR|FG_WINGAREA
          -0.087  -0.22
@@ -134,8 +134,10 @@
           0.24    1.354
           0.26    1.44
           0.28    1.466
-          0.31    1.298
-          0.35    0.97
+          0.30    1.432
+          0.32    1.381
+          0.34    1.298
+          0.36    0.97
        </COEFFICIENT>
        <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
          Delta_lift_due_to_flap_deflection
