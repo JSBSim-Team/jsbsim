@@ -52,7 +52,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.7 2000/10/16 12:32:43 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.8 2001/01/28 14:02:50 jsb Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,7 @@ FGAuxiliary::~FGAuxiliary() {}
 
 bool FGAuxiliary::Run() {
   float A,B,D;
-
+  
   if (!FGModel::Run()) {
     GetState();
     if(mach < 1)    //calculate total pressure assuming isentropic flow
@@ -98,15 +98,34 @@ bool FGAuxiliary::Run() {
     
     vPilotAccel = Translation->GetUVWdot() + Aircraft->GetXYZep() * Rotation->GetPQRdot();
     
-    
-    
     earthPosAngle += State->Getdt()*OMEGA_EARTH;
+    
 
   } else {
   }
 
-
+  
   return false;
+}
+
+float FGAuxiliary::GetHeadWind(void) { 
+  
+  float psiw,vw,psi;
+
+  psiw = Atmosphere->GetWindPsi();
+  psi = Rotation->Getpsi();
+  vw = Atmosphere->GetWindNED().Magnitude();
+  return -vw*cos(psiw - psi);
+}
+  
+float FGAuxiliary::GetCrossWind(void) {
+  
+  float psiw,vw,psi;
+
+  psiw = Atmosphere->GetWindPsi();
+  psi = Rotation->Getpsi();
+  vw = Atmosphere->GetWindNED().Magnitude();
+  return  vw*sin(psiw - psi); 
 }
 
 void FGAuxiliary::GetState(void) {

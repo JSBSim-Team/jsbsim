@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.11 2000/10/18 12:19:06 jsb Exp $
+    @version $Id: FGAuxiliary.h,v 1.12 2001/01/28 14:02:50 jsb Exp $
     @see -
 */
 
@@ -93,6 +93,9 @@ public:
   
   inline float GetEarthPositionAngle(void) { return earthPosAngle; }
   
+  float GetHeadWind(void);
+  float GetCrossWind(void);
+  
  
 protected:
 
@@ -112,6 +115,7 @@ private:
   FGColumnVector vPilotAccel;
   
   float earthPosAngle;
+  
 
   void GetState(void);
 };
