@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.164 2004/04/08 01:10:33 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.165 2004/04/08 22:11:56 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -558,7 +558,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_V_calibrated_kts( Auxiliary->GetVcalibratedKTS() );
 
-    _set_V_ground_speed( Position->GetVground() );
+    _set_V_ground_speed( Auxiliary->GetVground() );
 
     _set_Omega_Body( Rotation->GetPQR(1),
                      Rotation->GetPQR(2),
@@ -595,7 +595,7 @@ bool FGJSBsim::copy_from_JSBsim()
     _set_Beta( Auxiliary->Getbeta() );
 
 
-    _set_Gamma_vert_rad( Position->GetGamma() );
+    _set_Gamma_vert_rad( Auxiliary->GetGamma() );
 
     _set_Earth_position_angle( Auxiliary->GetEarthPositionAngle() );
 
