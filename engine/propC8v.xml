@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <FG_PROPELLER  NAME="Clark Y 0.08 thickness/chord ratio variable pitch">
-  IXX       5
+  IXX       1.8
   DIAMETER  84
   NUMBLADES  2
   MINPITCH 11

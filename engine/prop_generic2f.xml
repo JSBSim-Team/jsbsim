@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <FG_PROPELLER  NAME="generic2f">
-  IXX       5
+  IXX       1.8
   DIAMETER  76
   NUMBLADES  2
   C_THRUST 12 1
