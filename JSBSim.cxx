@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.29 2000/09/26 22:28:36 jsb Exp $
+// $Id: JSBSim.cxx,v 1.30 2000/10/02 20:46:59 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -50,7 +50,6 @@
 #include <FDM/JSBSim/FGAuxiliary.h>
 #include <FDM/JSBSim/FGDefs.h>
 #include <FDM/JSBSim/FGInitialCondition.h>
-#include <FDM/JSBSim/FGTrimLong.h>
 #include <FDM/JSBSim/FGAtmosphere.h>
 
 #include "JSBSim.hxx"
@@ -75,7 +74,7 @@ int FGJSBsim::init( double dt ) {
 
   FDMExec.GetState()->Setdt( dt );
 
-  result = FDMExec->LoadModel( aircraft_path.str(),
+  result = FDMExec.LoadModel( aircraft_path.str(),
                                        engine_path.str(),
                                        current_options.get_aircraft() );
 
@@ -142,18 +141,17 @@ int FGJSBsim::init( double dt ) {
   if(current_options.get_trim_mode() > 0) {
     FDMExec.RunIC(fgic);
     FG_LOG( FG_FLIGHT, FG_INFO, "  Starting trim..." );
-    FGTrimLong *fgtrim=new FGTrimLong(&FDMExec,fgic);
-    fgtrim->DoTrim();
-    fgtrim->Report();
-    fgtrim->TrimStats();
-    fgtrim->ReportState();
+//    FGTrimLong *fgtrim=new FGTrimLong(&FDMExec,fgic);
+//    fgtrim->DoTrim();
+//    fgtrim->Report();
+//    fgtrim->TrimStats();
+//    fgtrim->ReportState();
 
     controls.set_elevator_trim(FDMExec.GetFCS()->GetPitchTrimCmd());
     controls.set_throttle(FGControls::ALL_ENGINES,FDMExec.GetFCS()->GetThrottleCmd(0)/100);
     //the trimming routine only knows how to get 1 value for throttle
-
     
-    delete fgtrim;
+//    delete fgtrim;
     FG_LOG( FG_FLIGHT, FG_INFO, "  Trim complete." );
   } else {
     FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing without trim" );
