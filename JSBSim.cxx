@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.26 2000/07/28 11:58:07 jsb Exp $
+// $Id: JSBSim.cxx,v 1.27 2000/08/04 08:06:23 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -87,6 +87,13 @@ int FGJSBsim::init( double dt ) {
     return 0;
   }
 
+  FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
+  FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
+  FDMExec.GetAtmosphere()->SetExDensity(get_Density());
+  FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
+                                      get_V_east_airmass(),
+                                      get_V_down_airmass());
+ 
   FDMExec.GetAtmosphere()->UseInternal();
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
@@ -160,8 +167,7 @@ int FGJSBsim::init( double dt ) {
   FG_LOG( FG_FLIGHT, FG_INFO, "Finished initializing JSBSim" );
 
   copy_from_JSBsim();
-  
-  
+
   return 1;
 }
 
@@ -257,11 +263,6 @@ int FGJSBsim::copy_from_JSBsim() {
                     FDMExec.GetAircraft()->GetXYZcg()(2),
                     FDMExec.GetAircraft()->GetXYZcg()(3) );
   
-  
-  set_Accels_Local( FDMExec.GetPosition()->GetVelDot()(1),
-                    FDMExec.GetPosition()->GetVelDot()(2),
-                    FDMExec.GetPosition()->GetVelDot()(3) );
-                    
   set_Accels_Body ( FDMExec.GetTranslation()->GetUVWdot()(1),
                     FDMExec.GetTranslation()->GetUVWdot()(2),
                     FDMExec.GetTranslation()->GetUVWdot()(3) );
@@ -274,7 +275,6 @@ int FGJSBsim::copy_from_JSBsim() {
   //                       FDMExec.GetTranslation()->GetNcg()(2),
   //                       FDMExec.GetTranslation()->GetNcg()(3) );
   //
-  
   set_Accels_Pilot_Body( FDMExec.GetAuxiliary()->GetPilotAccel()(1),
                          FDMExec.GetAuxiliary()->GetPilotAccel()(2),
                          FDMExec.GetAuxiliary()->GetPilotAccel()(3) );
@@ -311,13 +311,11 @@ int FGJSBsim::copy_from_JSBsim() {
                   FDMExec.GetState()->GetParameter(FG_PITCHRATE),
                   FDMExec.GetState()->GetParameter(FG_YAWRATE) );
 
-  set_Euler_Rates( FDMExec.GetRotation()->GetEulerRates()(1),
-                   FDMExec.GetRotation()->GetEulerRates()(2),
-                   FDMExec.GetRotation()->GetEulerRates()(3) );
+  /* HUH!?! */ set_Euler_Rates( FDMExec.GetRotation()->Getphi(),
+                   FDMExec.GetRotation()->Gettht(),
+                   FDMExec.GetRotation()->Getpsi() );
 
-  set_Geocentric_Rates( FDMExec.GetPosition()->GetLatitudeDot(),
-                        FDMExec.GetPosition()->GetLongitudeDot(),
-                        FDMExec.GetPosition()->Gethdot() );
+  // ***FIXME*** set_Geocentric_Rates( Latitude_dot, Longitude_dot, Radius_dot );
 
   set_Mach_number( FDMExec.GetTranslation()->GetMach());
 
@@ -345,35 +343,13 @@ int FGJSBsim::copy_from_JSBsim() {
   set_Euler_Angles( FDMExec.GetRotation()->Getphi(),
                     FDMExec.GetRotation()->Gettht(),
                     FDMExec.GetRotation()->Getpsi() );
-                    
-  for(int i=0; i<3; i++ ) {
-    for (int j=0; j<3; j++ ) {
-      set_T_Local_to_Body(i,j,FDMExec.GetState()->GetTl2b()(i,j));
-    }
-  }     
 
   set_Alpha( FDMExec.GetTranslation()->Getalpha() );
   set_Beta( FDMExec.GetTranslation()->Getbeta() );
-  
-  set_Cos_phi( FDMExec.GetRotation()->GetCosphi() );
-  //set_Sin_phi ( FDMExec.GetRotation()->GetSinpphi() );
-  
-  set_Cos_theta( FDMExec.GetRotation()->GetCostht() );
-  //set_Sin_theta ( FDMExec.GetRotation()->GetSintht() );
-  
-  //set_Cos_psi( FDMExec.GetRotation()->GetCospsi() );
-  //set_Sin_psi ( FDMExec.GetRotation()->GetSinpsi() );
-  
+
   set_Gamma_vert_rad( FDMExec.GetPosition()->GetGamma() );
   // set_Gamma_horiz_rad( Gamma_horiz_rad );
 
-
-  set_Density( FDMExec.GetAtmosphere()->GetDensity() );
-  set_Static_pressure( FDMExec.GetAtmosphere()->GetPressure() );
-  set_Static_temperature ( FDMExec.GetAtmosphere()->GetTemperature() );
-  
-  set_Earth_position_angle( FDMExec.GetAuxiliary()->GetEarthPositionAngle() );
-  
   /* **FIXME*** */ set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
   /* **FIXME*** */ set_Earth_position_angle( 0.0 );
 
