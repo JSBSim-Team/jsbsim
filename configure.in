@@ -18,6 +18,10 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
+AC_CHECK_HEADER(dislin.h)
+AM_CONDITIONAL(ENABLE_SIMPLOT, test "x$ac_cv_header_dislin_h" = "xyes")  
+
+
 AC_OUTPUT([
 Makefile
 aircraft/X15/Makefile

@@ -1,4 +1,10 @@
-SUBDIRS = aircraft engine filtersjb scripts simgear utilities
+if ENABLE_SIMPLOT
+UTILITIES_DIR = utilities
+endif
+
+# if this line is broken into multiple, make sure an actual directory
+# follows $(UTILITIES_DIR) on the same line
+SUBDIRS = aircraft engine filtersjb scripts simgear $(UTILITIES_DIR)
 
 INCLUDES = -I. \
 	-Wall
