@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.51 2001/02/24 13:26:37 apeden Exp $
+// $Id: JSBSim.cxx,v 1.52 2001/03/05 12:12:48 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -76,11 +76,24 @@ FGJSBsim::FGJSBsim( double dt ) {
     result = fdmex->LoadModel( aircraft_path.str(),
 			       engine_path.str(),
 			       fgGetString("/sim/aircraft") );
-    int Neng=fdmex->GetPropulsion()->GetNumEngines();
+    //int Neng=fdmex->GetPropulsion()->GetNumEngines();
+    int Neng=fdmex->GetAircraft()->GetNumEngines();
     FG_LOG(FG_FLIGHT,FG_INFO, "Neng: " << Neng );
     for(int i=0;i<Neng;i++) {
 	add_engine( FGEngInterface() );
     }  
+    
+    fgSetDouble("/fdm/trim/pitch-trim",
+		fdmex->GetFCS()->GetPitchTrimCmd());
+    fgSetDouble("/fdm/trim/throttle",
+		fdmex->GetFCS()->GetThrottleCmd(0)/100.0);
+    fgSetDouble("/fdm/trim/aileron",
+		fdmex->GetFCS()->GetDaCmd());
+    fgSetDouble("/fdm/trim/rudder",
+		fdmex->GetFCS()->GetDrCmd());
+
+    trimmed = fgGetValue("/fdm/trim/trimmed",true);
+    trimmed->setBoolValue(false);
 
 }
 
@@ -203,7 +216,9 @@ bool FGJSBsim::update( int multiloop ) {
     
 
     copy_to_JSBsim();
-    
+
+    trimmed->setBoolValue(false);
+
     if(needTrim && fgGetBool("/sim/startup/trim")) {
 	//fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
 	//fgic->SetTerrainAltitudeFtIC( scenery.cur_elev * METER_TO_FEET );
@@ -217,15 +232,24 @@ bool FGJSBsim::update( int multiloop ) {
 	if(!fgtrim->DoTrim()) {
 	    fgtrim->Report();
 	    fgtrim->TrimStats();
-	}  
+	} else {
+	    trimmed->setBoolValue(true);
+	}    
 	fgtrim->ReportState();
 	delete fgtrim;
   
-	
-  	needTrim=false;
-    
-         
-	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
+	needTrim=false;
+  
+  	fgSetDouble("/fdm/trim/pitch-trim",
+		fdmex->GetFCS()->GetPitchTrimCmd());
+	fgSetDouble("/fdm/trim/throttle",
+		fdmex->GetFCS()->GetThrottleCmd(0)/100.0);
+	fgSetDouble("/fdm/trim/aileron",
+		fdmex->GetFCS()->GetDaCmd());
+	fgSetDouble("/fdm/trim/rudder",
+		fdmex->GetFCS()->GetDrCmd());
+  
+  	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
 	controls.set_elevator(fdmex->GetFCS()->GetDeCmd());
 	controls.set_throttle(FGControls::ALL_ENGINES,
 			      fdmex->GetFCS()->GetThrottleCmd(0)/100.0);

@@ -21,9 +21,6 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
- Further information about the GNU General Public License can also be found on
- the world wide web at http://www.gnu.org.
-
 HISTORY
 --------------------------------------------------------------------------------
 02/01/1999   CLO   Created
@@ -70,7 +67,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.12 2000/10/27 13:55:43 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.13 2001/03/05 12:12:48 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -82,7 +79,7 @@ class FGJSBsim: public FGInterface {
 
 public:
     /// Constructor
-    FGJSBsim::FGJSBsim(void);
+    FGJSBsim::FGJSBsim( double dt );
     /// Destructor
     FGJSBsim::~FGJSBsim();
 
@@ -93,7 +90,7 @@ public:
     bool copy_from_JSBsim();
 
     /// Reset flight params to a specific position
-    bool init( double dt );
+    void init();
 
     /// @name Position Parameter Set
     //@{
@@ -203,9 +200,11 @@ private:
     FGInitialCondition *fgic;
     bool needTrim;
 
-    bool trimmed;
+    int runcount;
     float trim_elev;
     float trim_throttle;
+    
+    SGValue *trimmed;
     
     void snap_shot(void);
 };
