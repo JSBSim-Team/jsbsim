@@ -2,15 +2,9 @@
 <HTML>
 <HEAD><TITLE>Aeromatic v 0.7</TITLE>
 </HEAD>
-<body background="fgbackground2.jpg">
-<P style="MARGIN-LEFT: 0.5in">
-<h1>Aeromatic</h1>
-<b>version 0.7</b>
-<!-- 03 July 2003, David P. Culp, davidculp2@comcast.net -->
-<!-- update: 26 July 2003, DPC, new aero.php with flap changes -->
-<!-- update:  5 Sept 2003, DPC, added multi-engine prop transport -->
-<!-- update: 29 Sept 2003, DPC, added high-alpha/beta drag -->
-<!-- update: 16  Oct 2003, DPC, better FCS, version 0.7 -->
+<body background="fgbackground2.jpg" leftMargin=50 topMargin=50 rightMargin=15>
+<P><FONT face=Arial size=4><STRONG>Aeromatic</STRONG></FONT></P>
+<b>version 0.7</b> <!-- 03 July 2003, David P. Culp, davidculp2@comcast.net --><!-- update: 26 July 2003, DPC, new aero.php with flap changes --><!-- update:  5 Sept 2003, DPC, added multi-engine prop transport --><!-- update: 29 Sept 2003, DPC, added high-alpha/beta drag --><!-- update: 16  Oct 2003, DPC, better FCS, version 0.7 -->
 <br><hr>
 
 This form can be used to create aircraft configuration files for
@@ -28,14 +22,10 @@ to be defined per aircraft.  If you want to mix engine types you'll have to
 make the necessary changes by hand.  Also note that all turbine, turboprop and
 rocket engines use the default "direct" thruster. 
 <br><br>
-For more detailed instructions see the <B><A HREF="readme-aeromatic.html">How-to</A></B>
+For more detailed instructions see the <B><A href="readme-aeromatic.html">How-to</A></B>
 
-<br><br><hr><br>
-
-<!-- *************************************************************************** -->
-<!-- *  Engine Form                                                            * -->
-<!-- *************************************************************************** -->
-<form action="engine.php" method="POST">
+<br><br><hr><br><!-- *************************************************************************** --><!-- *  Engine Form                                                            * --><!-- *************************************************************************** -->
+<form action="engine.php" method="post">
 <font color=red size=5>Step 1: The Engine configuration ...</font>
 
 This step is not necessary if you are using an already existing engine 
@@ -43,31 +33,31 @@ configuration file.  In any case you will have to edit the propulsion
 section of the aero configuration file to ensure that the engine name 
 is the same as the name of the engine configuration file. 
 <br><br><br>
-<b>Engine Name</b><br>&nbsp
-<input type="text" name="ac_enginename" value="my_engine">
+<b>Engine Name</b><br>&nbsp;
+<input name="ac_enginename" value="my_engine" >
 
-<br><hr align=left width="%50">
-<b>Engine Type</b><br>&nbsp
-<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp
-<input type="radio" name="ac_enginetype" value="1">turbine&nbsp
-<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp
-<input type="radio" name="ac_enginetype" value="3">rocket&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Engine Type</b><br>&nbsp;
+<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp;
+<input type="radio" name="ac_enginetype" value="1">turbine&nbsp;
+<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp;
+<input type="radio" name="ac_enginetype" value="3">rocket&nbsp;
 
-<br><hr align=left width="%50">
-<b>Engine Power or Thrust</b>&nbsp(per engine, without afterburning)<br>&nbsp
-<input type="text" name="ac_enginepower" value="1000.0"><br>&nbsp
-<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp
-<input type="radio" name="ac_engineunits" value="1">kw&nbsp
-<input type="radio" name="ac_engineunits" value="2">pounds&nbsp
-<input type="radio" name="ac_engineunits" value="3">newtons&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Engine Power or Thrust</b>&nbsp;(per engine, without afterburning)<br>&nbsp;
+<input name="ac_enginepower" value="1000.0" ><br>&nbsp;
+<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp;
+<input type="radio" name="ac_engineunits" value="1">kw&nbsp;
+<input type="radio" name="ac_engineunits" value="2">pounds&nbsp;
+<input type="radio" name="ac_engineunits" value="3">newtons&nbsp;
 
-<br><hr align=left width="%50">
-<b>Augmentation (afterburning) Installed?</b><br>&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Augmentation (afterburning) Installed?</b><br>&nbsp;
 <input type="radio" name="ac_augmented" value="1">yes
 <input type="radio" name="ac_augmented" value="0" checked>no
 
-<br><hr align=left width="%50">
-<b>Water Injection Installed?</b><br>&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Water Injection Installed?</b><br>&nbsp;
 <input type="radio" name="ac_injected" value="1">yes
 <input type="radio" name="ac_injected" value="0" checked>no
 
@@ -77,116 +67,108 @@ You are now ready to have Aeromatic generate your file.  Aeromatic will create a
  this file with a filename of the form <i>engine_name.xml</i>.<br><br>    
 <center><input type="submit" name="generate" value="Generate"></center>
 <br><br><br><hr><br>
-</form>
-
-<!-- *************************************************************************** -->
-<!-- *  Propeller Form                                                         * -->
-<!-- *************************************************************************** -->
-<form action="prop.php" method="POST">
+</form><!-- *************************************************************************** --><!-- *  Propeller Form                                                         * --><!-- *************************************************************************** -->
+<form action="prop.php" method="post">
 <font color=red size=5>Step 2: The Prop configuration (if applicable)...</font>
 <br><br>
-<b>Engine Power</b>&nbsp(per engine)<br>&nbsp
-<input type="text" name="ac_enginepower" value="1000.0"><br>&nbsp
-<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp
-<input type="radio" name="ac_engineunits" value="1">kw&nbsp
-<br><hr align=left width="%50">
-<b>Pitch</b><br>&nbsp
-<input type="radio" name="ac_prop_pitch" value="0" checked>fixed&nbsp
-<input type="radio" name="ac_prop_pitch" value="1">variable&nbsp
+<b>Engine Power</b>&nbsp;(per engine)<br>&nbsp;
+<input name="ac_enginepower" value="1000.0" ><br>&nbsp;
+<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp;
+<input type="radio" name="ac_engineunits" value="1">kw&nbsp;
+<br><hr align=left width="'%"50"'">
+<b>Pitch</b><br>&nbsp;
+<input type="radio" name="ac_prop_pitch" value="0" checked>fixed&nbsp;
+<input type="radio" name="ac_prop_pitch" value="1">variable&nbsp;
 <br><br><br>
 You are now ready to have Aeromatic generate your file.  Aeromatic will create a file called
 <i>prop.php</i>, which is your propeller configuration file. You will need to save
  this file with a filename of the form <i>prop_name.xml</i>.<br><br>    
 <center><input type="submit" name="generate" value="Generate"></center>
 <br><br><br><hr><br>
-</form>
-
-<!-- *************************************************************************** -->
-<!-- *  Aero Form                                                              * -->
-<!-- *************************************************************************** -->
-<form action="aero.php" method="POST">
+</form><!-- *************************************************************************** --><!-- *  Aero Form                                                              * --><!-- *************************************************************************** -->
+<form action="aero.php" method="post">
 <font color=red size=5>Step 3: The Aero configuration ...</font>
 <br><br>
-<b>Chose a system of measurement</b><br>&nbsp
+<b>Chose a system of measurement</b><br>&nbsp;
 <input type="radio" name="ac_units" value="0" checked>English (feet, pounds)
-&nbsp
+&nbsp;
 <input type="radio" name="ac_units" value="1">Metric (meters, kilograms)
 
-<br><hr align=left width="%50">
-<b>Name of aircraft</b>&nbsp
-<input type="text" name="ac_name" value="unnamed" maxlength=100>
+<br><hr align=left width="'%"50"'">
+<b>Name of aircraft</b>&nbsp;
+<input name="ac_name" value="unnamed" maxlength=100 >
 
-<br><hr align=left width="%50">
-<b>Type of aircraft</b> (Select closest <i>aerodynamic</i> type)<br>&nbsp
-<input type="radio" name="ac_type" value="0">Glider<br>&nbsp
-<input type="radio" name="ac_type" value="1" checked>Light Single<br>&nbsp
-<input type="radio" name="ac_type" value="2">Light Twin<br>&nbsp
-<input type="radio" name="ac_type" value="3">WWII Fighter (or subsonic racer/aerobatic)<br>&nbsp
-<input type="radio" name="ac_type" value="4">Single-engine Transonic or Supersonic Fighter<br>&nbsp
-<input type="radio" name="ac_type" value="5">Two-engine Transonic or Supersonic Fighter<br>&nbsp
-<input type="radio" name="ac_type" value="6">Two-engine Transonic Transport<br>&nbsp
-<input type="radio" name="ac_type" value="7">Three-engine Transonic Transport<br>&nbsp
-<input type="radio" name="ac_type" value="8">Four+-engine Transonic Transport<br>&nbsp
-<input type="radio" name="ac_type" value="9">Multi-engine Prop Transport<br>&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Type of aircraft</b> (Select closest <i>aerodynamic</i> type)<br>&nbsp;
+<input type="radio" name="ac_type" value="0">Glider<br>&nbsp;
+<input type="radio" name="ac_type" value="1" checked>Light Single<br>&nbsp;
+<input type="radio" name="ac_type" value="2">Light Twin<br>&nbsp;
+<input type="radio" name="ac_type" value="3">WWII Fighter (or subsonic racer/aerobatic)<br>&nbsp;
+<input type="radio" name="ac_type" value="4">Single-engine Transonic or Supersonic Fighter<br>&nbsp;
+<input type="radio" name="ac_type" value="5">Two-engine Transonic or Supersonic Fighter<br>&nbsp;
+<input type="radio" name="ac_type" value="6">Two-engine Transonic Transport<br>&nbsp;
+<input type="radio" name="ac_type" value="7">Three-engine Transonic Transport<br>&nbsp;
+<input type="radio" name="ac_type" value="8">Four+-engine Transonic Transport<br>&nbsp;
+<input type="radio" name="ac_type" value="9">Multi-engine Prop Transport<br>&nbsp;
 
-<br><hr align=left width="%50">
-<b>Maximum Takeoff Weight</b><br>&nbsp
-<input type="text" name="ac_weight" value=10000.0>
+<br><hr align=left width="'%"50"'">
+<b>Maximum Takeoff Weight</b><br>&nbsp;
+<input name="ac_weight" value=10000.0 >
 
-<br><hr align=left width="%50">
-<b>Wing span</b><br>&nbsp
-<input type="text" name="ac_wingspan" value=40.0>
+<br><hr align=left width="'%"50"'">
+<b>Wing span</b><br>&nbsp;
+<input name="ac_wingspan" value=40.0 >
 
-<br><hr align=left width="%50">
-<b>Length</b><br>&nbsp
-<input type="text" name="ac_length" value=40.0>
+<br><hr align=left width="'%"50"'">
+<b>Length</b><br>&nbsp;
+<input name="ac_length" value=40.0 >
 
-<br><hr align=left width="%50">
-<b>Wing area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp
-<input type="text" name="ac_wingarea" value=0>
+<br><hr align=left width="'%"50"'">
+<b>Wing area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp;
+<input name="ac_wingarea" value=0 >
 
-<br><hr align=left width="%50">
-<b>Landing Gear Layout</b><br>&nbsp
-<input type="radio" name="ac_geartype" value="0" checked>tricycle&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Landing Gear Layout</b><br>&nbsp;
+<input type="radio" name="ac_geartype" value="0" checked>tricycle&nbsp;
 <input type="radio" name="ac_geartype" value="1">taildragger
 
-<br><hr align=left width="%50">
-<b>Is the Landing Gear Retractable?</b><br>&nbsp
-<input type="radio" name="ac_gearretract" value="1" checked>yes&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Is the Landing Gear Retractable?</b><br>&nbsp;
+<input type="radio" name="ac_gearretract" value="1" checked>yes&nbsp;
 <input type="radio" name="ac_gearretract" value="0">no
 
-<br><hr align=left width="%50">
-<b>Number of Engines</b><br>&nbsp
-<input type="radio" name="ac_numengines" value=0>0&nbsp
-<input type="radio" name="ac_numengines" value=1 checked>1&nbsp
-<input type="radio" name="ac_numengines" value=2>2&nbsp
-<input type="radio" name="ac_numengines" value=3>3&nbsp
-<input type="radio" name="ac_numengines" value=4>4&nbsp
-<input type="radio" name="ac_numengines" value=5>5&nbsp
-<input type="radio" name="ac_numengines" value=6>6&nbsp
-<input type="radio" name="ac_numengines" value=7>7&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Number of Engines</b><br>&nbsp;
+<input type="radio" name="ac_numengines" value=0>0&nbsp;
+<input type="radio" name="ac_numengines" value=1 checked>1&nbsp;
+<input type="radio" name="ac_numengines" value=2>2&nbsp;
+<input type="radio" name="ac_numengines" value=3>3&nbsp;
+<input type="radio" name="ac_numengines" value=4>4&nbsp;
+<input type="radio" name="ac_numengines" value=5>5&nbsp;
+<input type="radio" name="ac_numengines" value=6>6&nbsp;
+<input type="radio" name="ac_numengines" value=7>7&nbsp;
 <input type="radio" name="ac_numengines" value=8>8
 
-<br><hr align=left width="%50">
-<b>Engine Type</b><br>&nbsp
-<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp
-<input type="radio" name="ac_enginetype" value="1">turbine&nbsp
-<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp
-<input type="radio" name="ac_enginetype" value="3">rocket&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Engine Type</b><br>&nbsp;
+<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp;
+<input type="radio" name="ac_enginetype" value="1">turbine&nbsp;
+<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp;
+<input type="radio" name="ac_enginetype" value="3">rocket&nbsp;
 
 
-<br><hr align=left width="%50">
-<b>Engine Layout</b><br>&nbsp
-<input type="radio" name="ac_enginelayout" value="0" checked>fwd_fuselage&nbsp
-<input type="radio" name="ac_enginelayout" value="1">mid_fuselage&nbsp
-<input type="radio" name="ac_enginelayout" value="2">aft_fuselage&nbsp
-<input type="radio" name="ac_enginelayout" value="3">wings&nbsp
-<input type="radio" name="ac_enginelayout" value="4">wings and tail&nbsp
-<input type="radio" name="ac_enginelayout" value="5">wings and nose&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Engine Layout</b><br>&nbsp;
+<input type="radio" name="ac_enginelayout" value="0" checked>fwd_fuselage&nbsp;
+<input type="radio" name="ac_enginelayout" value="1">mid_fuselage&nbsp;
+<input type="radio" name="ac_enginelayout" value="2">aft_fuselage&nbsp;
+<input type="radio" name="ac_enginelayout" value="3">wings&nbsp;
+<input type="radio" name="ac_enginelayout" value="4">wings and tail&nbsp;
+<input type="radio" name="ac_enginelayout" value="5">wings and nose&nbsp;
 
-<br><hr align=left width="%50">
-<b>Yaw Damper Installed?</b>&nbsp(Almost all jets will need one)<br>&nbsp
-<input type="radio" name="ac_yawdamper" value="1">yes&nbsp
+<br><hr align=left width="'%"50"'">
+<b>Yaw Damper Installed?</b>&nbsp;(Almost all jets will need one)<br>&nbsp;
+<input type="radio" name="ac_yawdamper" value="1">yes&nbsp;
 <input type="radio" name="ac_yawdamper" value="0" checked>no
 
 <br><br><br>
@@ -206,7 +188,6 @@ the same as the propeller configuration file name.<br><br>
 
 
 <br><br><hr>
-29 Oct 2003 <A HREF="presets.html">[.]</A>
-</P>
-</BODY>
+29 Oct 2003 <A href="presets.html">[.]</A>
+</body>
 </HTML>
