@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.22 2001/12/01 17:58:42 apeden Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.23 2001/12/22 15:09:41 apeden Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
@@ -135,7 +135,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.22 2001/12/01 17:58:42 apeden Exp $
+    @version $Id: FGTrim.h,v 1.23 2001/12/22 15:09:41 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,6 +168,8 @@ private:
   double xlo,xhi,alo,ahi;
   double targetNlf;
   int debug_axis;
+  
+  double psidot,thetadot;
 
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
@@ -188,6 +190,8 @@ private:
   void setupPullup(void);
   void setupTurn(void);
   
+  void updateRates(void);
+
   void setDebug(void);
 
 public:
