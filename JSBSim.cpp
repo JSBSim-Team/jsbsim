@@ -52,25 +52,17 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGTrim.h"
 
-#ifdef FGFS
-#include <simgear/compiler.h>
-#include STL_IOSTREAM
-#include STL_TIME
+#if !defined(__GNUC__)
+#  include <time>
 #else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#    include <iostream.h>
-#  else
-#    include <iostream>
-#  endif
+#  include <time.h>
 #endif
-
-#include <time.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.86 2004/11/02 05:19:43 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.87 2004/11/17 12:40:17 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA

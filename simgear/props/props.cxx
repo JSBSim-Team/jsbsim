@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.4 2004/02/26 02:45:16 jberndt Exp $
+// $Id: props.cxx,v 1.5 2004/11/17 12:40:17 jberndt Exp $
 
 #include "props.hxx"
 
@@ -24,6 +24,14 @@
 
 using std::cerr;
 using std::endl;
+
+#ifdef _MSC_VER
+// MSVC is buggy, and needs something strange here
+using std::vector<SGPropertyNode_ptr>;
+using std::vector<SGPropertyChangeListener *>;
+using std::vector<SGPropertyNode *>;
+#endif
+
 #endif
 
 using std::find;

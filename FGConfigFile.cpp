@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.46 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.47 2004/11/17 12:40:17 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,7 +214,7 @@ string FGConfigFile::GetLine(void)
       }
     } else {
       if ((test = cfgfile.get()) != EOF) { // get *next* character
-#if defined ( sgi ) && !defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
+#if defined ( sgi ) && !defined( __GNUC__ ) && (_COMPILER_VERSION < 740) || defined (_MSC_VER)
         if (test >= 0x20 || test == 0x09) cfgfile.putback(test);
 #else
         if (test >= 0x20 || test == 0x09) cfgfile.unget();

@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.72 2004/11/02 05:19:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.73 2004/11/17 12:40:17 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +120,7 @@ FGEngine::~FGEngine()
 
 void FGEngine::ConsumeFuel(void)
 {
+  unsigned int i;
   double Fshortage, Oshortage, TanksWithFuel;
   FGTank* Tank;
 
@@ -127,7 +128,7 @@ void FGEngine::ConsumeFuel(void)
   Fshortage = Oshortage = TanksWithFuel = 0.0;
 
   // count how many assigned tanks have fuel
-  for (unsigned int i=0; i<SourceTanks.size(); i++) {
+  for (i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetContents() > 0.0) {
       ++TanksWithFuel;
@@ -135,7 +136,7 @@ void FGEngine::ConsumeFuel(void)
   }
   if (!TanksWithFuel) return;
 
-  for (unsigned int i=0; i<SourceTanks.size(); i++) {
+  for (i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetType() == FGTank::ttFUEL) {
        Fshortage += Tank->Drain(CalcFuelNeed()/TanksWithFuel);
