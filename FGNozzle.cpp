@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.16 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.17 2001/04/20 13:11:02 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 extern short debug_lvl;
@@ -72,6 +72,8 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
 
   Thrust = 0;
   Type = ttNozzle;
+  Area2 = (Diameter*Diameter/4.0)*M_PI;
+  AreaT = Area2/ExpR;
 
   if (debug_lvl & 2) cout << "Instantiated: FGNozzle" << endl;
 }
@@ -88,8 +90,7 @@ FGNozzle::~FGNozzle()
 float FGNozzle::Calculate(float CfPc)
 {
   float pAtm = fdmex->GetAtmosphere()->GetPressure();
-  
-  Thrust = (CfPc + (PE - pAtm)*ExpR) * (Diameter / ExpR) * nzlEff;
+  Thrust = (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff;
 
   return Thrust;
 }

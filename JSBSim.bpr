@@ -68,7 +68,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=8
 Release=0
-Build=4
+Build=5
 Debug=0
 PreRelease=0
 Special=0
@@ -80,7 +80,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=Executable (Console)
-FileVersion=0.8.0.4
+FileVersion=0.8.0.5
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -102,14 +102,16 @@ Count=1
 Item0=J:\JSBSim\JSBSim.exe
 
 [HistoryLists\hlRunParameters]
-Count=1
-Item0=c172 reset00
+Count=3
+Item0=scripts/c1721.xml
+Item1=scripts/c172.xml
+Item2=c172 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=c172 reset00
+RunParams=scripts/c1721.xml
 HostApplication=J:\JSBSim\JSBSim.exe
 RemoteHost=
 RemotePath=

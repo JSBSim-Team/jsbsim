@@ -1,9 +1,8 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.40">
-  <!--
+<FDM_CONFIG NAME="X-15" VERSION="1.40">  <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.28 2001/04/19 22:05:21 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.29 2001/04/20 13:11:03 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
@@ -435,8 +434,8 @@
 
       <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
         Drag_minimum
-	22
-	FG_MACH
+        22
+        FG_MACH
         FG_QBAR|FG_WINGAREA
         0.000	0.061
         0.100	0.061
@@ -464,8 +463,8 @@
 
       <COEFFICIENT NAME="CDi" TYPE="VECTOR">
         Drag_induced
-	10
-	FG_MACH
+        10
+        FG_MACH
         FG_QBAR|FG_WINGAREA|FG_CL_SQRD
         0.0 0.20
         0.5 0.20
@@ -479,46 +478,6 @@
         9.0 1.33
       </COEFFICIENT>
 
-<!--
-      <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
-        Drag_due_to_alpha
-        12 5
-        FG_MACH FG_ALTITUDE
-        FG_QBAR|FG_WINGAREA|FG_ALPHA
-              0.00  20000  40000  60000  80000
-        0.0   2.00   3.00   4.00   5.60   8.00
-        0.4   0.60   1.40   2.00   3.40   6.00
-        0.6   0.20   0.50   1.10   2.20   4.00
-        0.8   0.15   0.35   0.80   1.70   3.50
-        1.2   0.10   0.20   0.50   1.30   2.60
-        1.6   0.10   0.15   0.40   0.80   2.20
-        2.0   0.10   0.12   0.20   0.60   1.70
-        2.4   0.10   0.12   0.17   0.45   1.20
-        2.8   0.10   0.12   0.15   0.40   0.90
-        3.2   0.10   0.12   0.14   0.30   0.70
-        6.0   0.10   0.12   0.13   0.14   0.15
-        9.0   0.10   0.12   0.12   0.14   0.15
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="CDM" TYPE="VECTOR">
-        Drag_due_to_Mach
-        12
-        FG_MACH
-        FG_QBAR|FG_WINGAREA|FG_MACH
-        0.00  0.00
-        0.60  0.00
-        1.00  0.20
-        1.10  0.40
-        1.11  0.40
-        1.16  0.00
-        1.20 -0.07
-        1.40 -0.11
-        1.60 -0.06
-        2.00 -0.03
-        3.00 -0.01
-        9.00 -0.01
-      </COEFFICIENT>
--->
     </AXIS>
 
     <AXIS NAME="SIDE">

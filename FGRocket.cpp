@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.24 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.25 2001/04/20 13:11:02 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 extern short debug_lvl;
@@ -84,6 +84,7 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
   EngineNumber = 0;
   Type = etRocket;
 
+  PC = 0.0;
   kFactor = (2.0*SHR*SHR/(SHR-1.0))*pow(2.0/(SHR+1), (SHR+1)/(SHR-1));
 
   if (debug_lvl & 2) cout << "Instantiated: FGRocket" << endl;
@@ -100,17 +101,16 @@ FGRocket::~FGRocket()
 
 float FGRocket::Calculate(float pe)
 {
-  float lastThrust;
   float Cf;
 
   ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
-  lastThrust = Thrust;                 // last actual thrust
 
   if (Throttle < MinThrottle || Starved) {
     PctPower = Thrust = 0.0; // desired thrust
     Flameout = true;
+    PC = 0.0;
   } else {
     PctPower = Throttle / MaxThrottle;
     PC = maxPC*PctPower * (1.0 + Variance * ((float)rand()/(float)RAND_MAX - 0.5));
@@ -118,11 +118,7 @@ float FGRocket::Calculate(float pe)
     Flameout = false;
   }
 
-  if (State->Getdt() > 0.0) {  // actual thrust - if not in freeze
-    Thrust -= 0.8*(Thrust - lastThrust);
-  }
-
-  return Cf*maxPC*PctPower;
+  return Cf*maxPC*PctPower*propEff;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

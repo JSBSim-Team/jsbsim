@@ -342,13 +342,6 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h \
  FGPropeller.h FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
 
-
-x15trim.o:x15trim.cpp
-	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
-
-x15trim:$(JSBSim_objects) x15trim.o libFCSComponents.a
-	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) x15trim.o -ox15trim -lm -lFCSComponents
-
 clean:
 	-mv *.*~ backup
 	-rm *.o

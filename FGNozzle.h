@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.14 2001/03/23 00:53:32 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.15 2001/04/20 13:11:02 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -64,6 +64,8 @@ private:
   float ExpR;
   float nzlEff;
   float Diameter;
+  float AreaT;
+  float Area2;
   void Debug(void);
 };
 
