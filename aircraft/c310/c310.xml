@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.21 2001/12/19 22:28:28 dmegginson Exp $
+  CVS Version: $Id: c310.xml,v 1.22 2002/01/25 18:18:27 dmegginson Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -129,6 +129,9 @@
       PITCH   0.0
       YAW     0.0
       FEED      0
+      FEED      1
+      FEED      2
+      FEED      3
     </AC_ENGINE>
 
     <AC_ENGINE FILE="engIO470D">
@@ -138,6 +141,9 @@
       PITCH   0.0
       YAW     0.0
       FEED      0
+      FEED      1
+      FEED      2
+      FEED      3
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="propC8v">
@@ -160,13 +166,48 @@
       SENSE   1.0
     </AC_THRUSTER>
 
-    <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC   48.0
-      YLOC    0.0
-      ZLOC   59.4
-      RADIUS 29.4
+    <!--
+      Wing tip tanks
+    -->
+
+    <AC_TANK TYPE="FUEL" NUMBER="0">
+      XLOC   35.0
+      YLOC -209.8
+      ZLOC   28.3
+      RADIUS 13.3
       CAPACITY 336.0
-      CONTENTS 336.0
+      CONTENTS 225.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC   35.0
+      YLOC  209.8
+      ZLOC   28.3
+      RADIUS 13.3
+      CAPACITY 336.0
+      CONTENTS 225.0
+    </AC_TANK>
+
+    <!--
+      Wing locker tanks
+    -->
+
+    <AC_TANK TYPE="FUEL" NUMBER="2">
+      XLOC   49.0
+      YLOC   41.6
+      ZLOC   11.7
+      RADIUS 29.4
+      CAPACITY 135.0
+      CONTENTS 95.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="3">
+      XLOC   49.0
+      YLOC   41.6
+      ZLOC   11.7
+      RADIUS 29.4
+      CAPACITY 135.0
+      CONTENTS 95.0
     </AC_TANK>
 
   </PROPULSION>
