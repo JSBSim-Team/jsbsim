@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.40 2002/04/14 15:49:13 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.41 2002/04/20 14:06:51 apeden Exp $"
 
 using std::vector;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.40 2002/04/14 15:49:13 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.41 2002/04/20 14:06:51 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -133,14 +133,14 @@ public:
 
 protected:
   FGFDMExec* FDMExec;
-  string description;
-  string name;
-  FGPropertyManager *node;
+  
 
 private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
 
   int numInstances;
+  string description;
+  string name;
   string filename;
   string method;
   string multparms;
@@ -153,6 +153,8 @@ private:
   double totalValue;
   double bias,gain;
   FGPropertyManager *LookupR, *LookupC;
+  
+  FGPropertyManager *node; // must be private!!
   
   MultVec multipliers;
   int rows, columns;
