@@ -71,7 +71,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.39 2001/08/10 12:21:07 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.40 2001/08/11 13:03:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.39 2001/08/10 12:21:07 jberndt Exp $
+    @version $Id: FGState.h,v 1.40 2001/08/11 13:03:33 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,36 +202,106 @@ public:
       @return the value of the parameter.
       */
   float GetParameter(string val_string);
+
+  /** Retrieves the JSBSim parameter enumerated item given the text string.
+      @param val_string the parameter string, i.e. "FG_QBAR".
+      @return the JSBSim parameter index (an enumerated type) for the supplied string.
+      */
   eParam GetParameterIndex(string val_string);
 
-  inline void Seta(float tt) { a = tt; }
+  /** Sets the speed of sound.
+      @param speed the speed of sound in feet per second.
+      */
+  inline void Seta(float speed) { a = speed; }
 
-  inline float Setsim_time(float tt) {
-    sim_time = tt;
+  /** Sets the current sim time.
+      @param cur_time the current time
+      @return the current time.
+      */
+  inline float Setsim_time(float cur_time) {
+    sim_time = cur_time;
     return sim_time;
   }
-  inline void  Setdt(float tt) { dt = tt; }
+  
+  /** Sets the integration time step for the simulation executive.
+      @param delta_t the time step in seconds.
+      */
+  inline void  Setdt(float delta_t) { dt = delta_t; }
 
-  void SetParameter(eParam, float);
+  /** Sets the JSBSim parameter to the supplied value.
+      @param prm the JSBSim parameter to set, i.e. FG_RUDDER_POS.
+      @param val the value to give the parameter.
+      */
+  void SetParameter(eParam prm, float val);
 
+  /** Increments the simulation time.
+      @return the new simulation time.
+      */
   inline float IncrTime(void) {
     sim_time+=dt;
     return sim_time;
   }
+
+  /** Initializes the transformation matrices.
+      @param phi the roll angle in radians.
+      @param tht the pitch angle in radians.
+      @param psi the heading angle in radians
+      */
   void InitMatrices(float phi, float tht, float psi);
+
+  /** Calculates the local-to-body and body-to-local conversion matrices.
+      */
   void CalcMatrices(void);
+
+  /** Integrates the quaternion.
+      Given the supplied rotational rate vector and integration rate, the quaternion
+      is integrated. The quaternion is later used to update the transformation
+      matrices.
+      @param vPQR the body rotational rate column vector.
+      @param rate the integration rate in seconds.
+      */
   void IntegrateQuat(FGColumnVector3 vPQR, int rate);
+
+  /** Calculates Euler angles from the local-to-body matrix.
+      @return a reference to the vEuler column vector.
+      */
   FGColumnVector3& CalcEuler(void);
+
+  /** Calculates and returns the stability-to-body axis transformation matrix.
+      @param alpha angle of attack in radians.
+      @param beta angle of sideslip in radians.
+      @return a reference to the stability-to-body transformation matrix.
+      */
   FGMatrix33& GetTs2b(float alpha, float beta);
+
+  /** Retrieves the local-to-body transformation matrix.
+      @return a reference to the local-to-body transformation matrix.
+      */
   FGMatrix33& GetTl2b(void) { return mTl2b; }
-  float GetTl2b(int i, int j) { return mTl2b(i,j);}
+
+  /** Retrieves a specific local-to-body matrix element.
+      @param r matrix row index.
+      @param c matrix column index.
+      @return the matrix element described by the row and column supplied.
+      */
+  float GetTl2b(int r, int c) { return mTl2b(r,c);}
+
+  /** Retrieves the body-to-local transformation matrix.
+      @return a reference to the body-to-local matrix.
+      */
   FGMatrix33& GetTb2l(void) { return mTb2l; }
+
+  /** Retrieves a specific body-to-local matrix element.
+      @param r matrix row index.
+      @param c matrix column index.
+      @return the matrix element described by the row and column supplied.
+      */
   float GetTb2l(int i, int j) { return mTb2l(i,j);}
+
   typedef map<eParam, string> ParamMap;
   ParamMap paramdef;
 
 private:
-
   float a;                          // speed of sound
   float sim_time, dt;
   float saved_dt;
@@ -245,6 +315,9 @@ private:
   FGColumnVector3 vUVW;
   FGColumnVector3 vLocalVelNED;
   FGColumnVector3 vLocalEuler;
+  FGColumnVector4 vQdot;
+  FGColumnVector4 vTmp;
+  FGColumnVector3 vEuler;
 
   FGAircraft* Aircraft;
   FGPosition* Position;
@@ -259,10 +332,6 @@ private:
   CoeffMap coeffdef;
   void Debug(void);
   int ActiveEngine;
-
-  FGColumnVector4 vQdot;
-  FGColumnVector4 vTmp;
-  FGColumnVector3 vEuler;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
