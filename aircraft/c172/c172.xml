@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.74 2001/12/17 01:41:45 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.75 2001/12/17 12:07:08 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -322,7 +322,7 @@
        <COEFFICIENT NAME="CYo" TYPE="VALUE">
          Side_force_due_to_vertical_tail_incidence
          FG_QBAR|FG_WINGAREA
-         0.002
+         -0.0025
        </COEFFICIENT>
        <COEFFICIENT NAME="CYb" TYPE="VALUE">
          Side_force_due_to_beta
@@ -357,7 +357,7 @@
        <COEFFICIENT NAME="Clo" TYPE="VALUE">
          Roll_moment_due_to_vertical_tail_incidence
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN
-         0.000068
+         -0.000084
        </COEFFICIENT>
        <COEFFICIENT NAME="Clb" TYPE="VECTOR">
          Roll_moment_due_to_beta
@@ -390,7 +390,7 @@
        <COEFFICIENT NAME="Cldr" TYPE="VALUE">
          Roll_moment_due_to_rudder
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
-         -0.0147
+         0.0147
         </COEFFICIENT>
 
       </AXIS>
@@ -440,7 +440,7 @@
        <COEFFICIENT NAME="Cno" TYPE="VALUE">
          Yaw_moment_due_to_vertical_tail_incidence
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN
-         0.00089
+         0.0011
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cnb" TYPE="VALUE">
