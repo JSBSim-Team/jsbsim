@@ -165,7 +165,7 @@ void FGPosition::GetState(void) {
 
   vUVW      = Translation->GetUVW();
   Vt        = Translation->GetVt();
-  vVel      = State->GetTl2b()*vUVW;
+  vVel      = State->GetTb2l()*vUVW;
 
   b = Aircraft->GetWingSpan();
 }
