@@ -58,7 +58,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.50 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.51 2001/08/02 22:33:39 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 extern short debug_lvl;
@@ -112,10 +112,14 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
 {
   unsigned int ctr;
 
-  if (engineNum < 0) {
-    for (ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
+  if (ThrottleCmd.size() > engineNum) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
+    } else {
+      ThrottleCmd[engineNum] = setting;
+    }
   } else {
-    ThrottleCmd[engineNum] = setting;
+    cerr << "Throttle " << engineNum << " does not exist!" << endl;
   }
 }
 
@@ -125,10 +129,44 @@ void FGFCS::SetThrottlePos(int engineNum, float setting)
 {
   unsigned int ctr;
 
-  if (engineNum < 0) {
-    for (ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+  if (ThrottlePos.size() > engineNum) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<=ThrottlePos.size();ctr++) ThrottlePos[ctr] = setting;
+    } else {
+      ThrottlePos[engineNum] = setting;
+    }
   } else {
-    ThrottlePos[engineNum] = setting;
+    cerr << "Throttle " << engineNum << " does not exist!" << endl;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGFCS::GetThrottleCmd(int engineNum)
+{
+  if (ThrottleCmd.size() > engineNum) {
+    if (engineNum < 0) {
+       cerr << "Cannot get throttle value for ALL engines" << endl;
+    } else {
+      return ThrottleCmd[engineNum];
+    }
+  } else {
+    cerr << "Throttle " << engineNum << " does not exist!" << endl;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGFCS::GetThrottlePos(int engineNum)
+{
+  if (ThrottlePos.size() > engineNum) {
+    if (engineNum < 0) {
+       cerr << "Cannot get throttle value for ALL engines" << endl;
+    } else {
+      return ThrottlePos[engineNum];
+    }
+  } else {
+    cerr << "Throttle " << engineNum << " does not exist!" << endl;
   }
 }
 
