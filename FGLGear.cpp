@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.115 2004/05/29 17:27:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.116 2004/06/15 09:30:18 frohlich Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,9 +353,9 @@ FGColumnVector3& FGLGear::Force(void)
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else if (fabs(RollingWhlVel) < 1.0) {
-        WheelSlip = 0.05*radtodeg*atan2(SideWhlVel, RollingWhlVel) + 0.95*WheelSlip;
+        WheelSlip = 0.05*radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel)) + 0.95*WheelSlip;
       } else {
-        WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
+        WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
       }
 /*
       double maxdeltaSlip = 0.5*deltaT;
