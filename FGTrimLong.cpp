@@ -70,6 +70,7 @@ FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
     alphaMax=20;
     alphaMin=-5;
   }
+  cout << "FGTrimLong::alphaMax= " << alphaMax << "  FGTrimLong::alphaMax= " << alphaMin << endl;
   udotf=&FGTrimLong::udot_func;
   wdotf=&FGTrimLong::wdot_func;
   qdotf=&FGTrimLong::qdot_func;
@@ -340,8 +341,10 @@ bool FGTrimLong::DoTrim(void) {
 
   if(fgic->GetVtrueKtsIC() < 1) {
     cout << "Trim failed, on-ground trimming not yet implemented." << endl;
-    cout << "Or did you *really* mean to start in-air"
-         << " with less than 1 knot airspeed?" << endl;
+    fdmex -> GetFCS() -> SetDeCmd(0);
+    fdmex -> GetFCS() -> SetPitchTrimCmd(0);
+    setThrottlesPct(0.0);
+    fdmex -> RunIC(fgic);
     return false;
   }
 
