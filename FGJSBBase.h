@@ -45,7 +45,6 @@ INCLUDES
 #  include STL_STRING
 
 SG_USING_STD(string);
-SG_USING_STD(queue);
 
 # ifndef M_PI
 #  include <simgear/constants.h>
@@ -63,7 +62,6 @@ SG_USING_STD(queue);
 #  endif
 
 using std::string;
-using std::queue;
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -90,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.36 2003/06/03 09:53:45 ehofman Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.37 2003/07/01 16:06:22 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,7 +105,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.36 2003/06/03 09:53:45 ehofman Exp $
+    @version $Id: FGJSBBase.h,v 1.37 2003/07/01 16:06:22 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,7 +219,7 @@ public:
 protected:
   static Message localMsg;
   
-  static queue <Message*> Messages;
+  static std::queue <Message*> Messages;
 
   virtual void Debug(int from) {};
 
