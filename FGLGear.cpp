@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.74 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.75 2002/01/18 17:30:21 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,16 +326,6 @@ FGColumnVector3& FGLGear::Force(void)
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
 
-// The following code normalizes the wheel velocity vector, reverses it, and zeroes out
-// the z component of the velocity. The question is, should the Z axis velocity be zeroed
-// out first before the normalization takes place or not? Subsequent to that, the Wheel
-// Velocity vector now points as a unit vector backwards and parallel to the wheel
-// velocity vector. It acts AT the wheel.
-
-// Note to Jon: I commented out this line because I wasn't sure we want to do this.
-//    vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
-//    vWhlVelVec(eZ)  =  0.00;
-
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
 // transition from static to dynamic friction.  There are more complicated formulations
@@ -351,7 +341,7 @@ FGColumnVector3& FGLGear::Force(void)
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
 // allowing for both square and linear damping force calculation. Also need to
 // possibly give a "rebound damping factor" that differs from the compression
-// case. NOTE: SQUARE LAW DAMPING NO GOOD!
+// case.
 
       vLocalForce(eZ) =  min(-compressLength * kSpring
                              - compressSpeed * bDamp, (double)0.0);
