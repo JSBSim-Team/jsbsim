@@ -59,7 +59,7 @@ INCLUDES
 #else
 # include <string>
   using std::string;
-# if !defined(sgi) || defined(_GNUC_)
+# if !defined(sgi) || defined(__GNUC__)
    using std::cerr;
    using std::endl;
    using std::cout;
@@ -70,7 +70,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.16 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.17 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

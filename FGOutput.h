@@ -45,7 +45,7 @@ INCLUDES
 #  include STL_IOSTREAM
 #  include STL_FSTREAM
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <iostream.h>
 #    include <fstream.h>
 #  else
@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.18 2001/08/31 22:56:41 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.19 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

@@ -50,7 +50,7 @@ INCLUDES
 #include "FGFDMExec.h"
 
 #ifndef FGFS
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <iomanip.h>
 #  else
 #    include <iomanip>
@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.38 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.39 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

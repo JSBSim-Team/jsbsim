@@ -61,7 +61,7 @@ INCLUDES
 #    include <math.h>
 #  endif
 #else
-#  if defined (sgi) && !defined(_GNUC_)
+#  if defined (sgi) && !defined(__GNUC__)
 #    include <math.h>
 #  else
 #    include <cmath>
@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.90 2001/09/07 11:56:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.91 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,7 +55,7 @@ INCLUDES
 #  endif
 #else
 #  include <string>
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <iostream.h>
 #    include <fstream.h>
 #  else
@@ -82,7 +82,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.19 2001/08/30 10:45:35 apeden Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.20 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

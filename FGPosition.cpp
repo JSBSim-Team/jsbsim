@@ -63,7 +63,7 @@ INCLUDES
 #    include <iomanip.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
 #    include <iomanip.h>
 #  else
@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.40 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.41 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -60,7 +60,7 @@ INCLUDES
 #    include <time.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <iostream.h>
 #    include <time.h>
 #  else
@@ -77,7 +77,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.56 2001/08/20 12:14:05 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.57 2001/09/28 02:33:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.56 2001/08/20 12:14:05 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.57 2001/09/28 02:33:44 jberndt Exp $
     @see -
 */
 

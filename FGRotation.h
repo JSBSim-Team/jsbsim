@@ -60,7 +60,7 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  include <math.h>
 #else
-#  if defined (sgi) && !defined(_GNUC_)
+#  if defined (sgi) && !defined(__GNUC__)
 #    include <math.h>
 #  else
 #    include <cmath>
@@ -72,7 +72,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.29 2001/09/28 02:07:03 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.30 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

@@ -49,7 +49,7 @@ INCLUDES
 #    include <iostream.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <iostream.h>
 #  else
 #    include <iostream>
@@ -58,7 +58,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.26 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.27 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS

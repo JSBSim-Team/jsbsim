@@ -40,7 +40,7 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  include <math.h>
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
 #  else
 #    include <cmath>
@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.75 2001/09/28 02:07:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.76 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

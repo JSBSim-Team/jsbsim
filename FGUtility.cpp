@@ -50,7 +50,7 @@ INCLUDES
 #    include <math.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
 #  else
 #    include <cmath>
@@ -61,7 +61,7 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Id: FGUtility.cpp,v 1.15 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGUtility.cpp,v 1.16 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_UTILITY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

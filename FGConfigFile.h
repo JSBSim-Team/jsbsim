@@ -55,7 +55,7 @@ INCLUDES
 #  endif
 #else
 #  include <string>
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <fstream.h>
 #    include <iostream.h>
 #  else
@@ -79,7 +79,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.24 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.25 2001/09/28 02:33:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.24 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.25 2001/09/28 02:33:44 jberndt Exp $
     @see -
 */
 

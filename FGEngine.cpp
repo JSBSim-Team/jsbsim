@@ -46,7 +46,7 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(_GNUC_)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <fstream.h>
 #  else
 #    include <fstream>
@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.36 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.37 2001/09/28 02:33:44 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
