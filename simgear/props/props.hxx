@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.1 2003/06/03 10:00:13 ehofman Exp $
+ * $Id: props.hxx,v 1.2 2003/09/23 03:54:42 jberndt Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -98,8 +98,6 @@ SG_USING_STD(ostream);
 #undef STRING
 #endif
 
-
-
 ////////////////////////////////////////////////////////////////////////
 // A raw value.
 //
@@ -458,7 +456,6 @@ private:
   setter_t _setter;
 };
 
-
 /**
  * The smart pointer that manage reference counting
  */
@@ -527,8 +524,6 @@ private:
   SGPropertyNode *_ptr;
 };
 
-
-
 /**
  * The property change listener interface.
  *
@@ -552,8 +547,6 @@ private:
   vector<SGPropertyNode *> _properties;
 };
 
-
-
 /**
  * A node in a property tree.
  */
@@ -1291,7 +1284,6 @@ private:
   vector <SGPropertyChangeListener *> * _listeners;
 
 
-
   /**
    * A very simple hash table with no remove functionality.
    */
@@ -1346,3 +1338,4 @@ private:
 #endif // __PROPS_HXX
 
 // end of props.hxx
+

@@ -64,66 +64,6 @@ INCLUDES
 #  endif
 #endif
 
-#if __BCPLUSPLUS__ == 0x540
-#pragma hdrstop
-#include <condefs.h>
-//---------------------------------------------------------------------------
-USERES("JSBSim.res");
-USEUNIT("FGUtility.cpp");
-USEUNIT("FGAircraft.cpp");
-USEUNIT("FGAtmosphere.cpp");
-USEUNIT("FGAuxiliary.cpp");
-USEUNIT("FGCoefficient.cpp");
-USEUNIT("FGColumnVector3.cpp");
-USEUNIT("FGColumnVector4.cpp");
-USEUNIT("FGConfigFile.cpp");
-USEUNIT("FGEngine.cpp");
-USEUNIT("FGFactorGroup.cpp");
-USEUNIT("FGFCS.cpp");
-USEUNIT("FGFDMExec.cpp");
-USEUNIT("FGfdmSocket.cpp");
-USEUNIT("FGForce.cpp");
-USEUNIT("FGGroundReactions.cpp");
-USEUNIT("FGInertial.cpp");
-USEUNIT("FGInitialCondition.cpp");
-USEUNIT("FGJSBBase.cpp");
-USEUNIT("FGLGear.cpp");
-USEUNIT("FGMassBalance.cpp");
-USEUNIT("FGMatrix33.cpp");
-USEUNIT("FGModel.cpp");
-USEUNIT("FGNozzle.cpp");
-USEUNIT("FGOutput.cpp");
-USEUNIT("FGPiston.cpp");
-USEUNIT("FGPosition.cpp");
-USEUNIT("FGPropeller.cpp");
-USEUNIT("FGPropulsion.cpp");
-USEUNIT("FGRocket.cpp");
-USEUNIT("FGRotation.cpp");
-USEUNIT("FGRotor.cpp");
-USEUNIT("FGScript.cpp");
-USEUNIT("FGState.cpp");
-USEUNIT("FGTable.cpp");
-USEUNIT("FGTank.cpp");
-USEUNIT("FGThruster.cpp");
-USEUNIT("FGTranslation.cpp");
-USEUNIT("FGTrim.cpp");
-USEUNIT("FGTrimAxis.cpp");
-USEUNIT("FGTurboJet.cpp");
-USEUNIT("FGTurboProp.cpp");
-USEUNIT("FGTurboShaft.cpp");
-USEUNIT("FGAerodynamics.cpp");
-USEUNIT("filtersjb\FGSwitch.cpp");
-USEUNIT("filtersjb\FGFCSComponent.cpp");
-USEUNIT("filtersjb\FGFilter.cpp");
-USEUNIT("filtersjb\FGGain.cpp");
-USEUNIT("filtersjb\FGGradient.cpp");
-USEUNIT("filtersjb\FGKinemat.cpp");
-USEUNIT("filtersjb\FGSummer.cpp");
-USEUNIT("filtersjb\FGDeadBand.cpp");
-//---------------------------------------------------------------------------
-#pragma argsused
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -132,7 +72,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.74 2003/01/22 15:53:37 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.75 2003/09/23 03:54:42 jberndt Exp $";
 
 string ScriptName;
 string AircraftName;
@@ -161,7 +101,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.74 2003/01/22 15:53:37 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.75 2003/09/23 03:54:42 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Source File </a>
 */

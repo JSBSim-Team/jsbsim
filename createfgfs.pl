@@ -191,10 +191,10 @@ if ($UPDATE) { #start update code
     if (!$result) {
       print "\n\n--------------------------------\n\n";
       print "Checking out flightgear base from cvs\n\n";
-      print "Enter 'cvsguest' when requested for cvs password\n";
+      print "Enter 'guest' when requested for cvs password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvsguest\@rockfish.net:/home/cvsroot login");
-      system("cvs -d :pserver:cvsguest\@rockfish.net:/home/cvsroot co fgfsbase");
+      system("cvs -d :pserver:cvsguest@cvs.flightgear.org:/var/cvs/FlightGear-0.9 login");
+      system("cvs -d :pserver:cvsguest@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co data");
     } else {
       if (!chdir "fgfsbase") {die "Cannot chdir to ~/fgfsbase\n";}
       print "\n\n--------------------------------\n\n";

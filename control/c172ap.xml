@@ -44,8 +44,21 @@
    C1            0.125
 </COMPONENT>
 
+<COMPONENT NAME="Roll A/P Derivative Error" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="velocities/p-rad_sec">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="-velocities/p-rad_sec">
+    attitude/phi-rad < 0
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="Roll A/P Deriv Gain" TYPE="PURE_GAIN">
+   INPUT       fcs/roll-ap-derivative-error
+   GAIN        0.1
+</COMPONENT>
+
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
-   INPUT         velocities/p-rad_sec
+   INPUT         fcs/roll-ap-deriv-gain
    INPUT         fcs/roll-ap-wing-leveler
    INPUT         fcs/roll-ap-error-integrator
    CLIPTO       -1 1
