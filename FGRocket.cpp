@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.43 2004/05/27 11:52:47 frohlich Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.44 2004/06/18 03:35:12 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,10 @@ double FGRocket::Calculate(void)
   } else {
     PctPower = Throttle / MaxThrottle;
     PC = maxPC*PctPower * (1.0 + Variance * ((double)rand()/(double)RAND_MAX - 0.5));
+    // The Cf (below) is CF from Eqn. 3-30, "Rocket Propulsion Elements", Fifth Edition,
+    // George P. Sutton. Note that the thruster function GetPowerRequired() might
+    // be better called GetResistance() or something; this function returns the
+    // nozzle exit pressure.
     Cf = sqrt(kFactor*(1 - pow(Thruster->GetPowerRequired()/(PC), (SHR-1)/SHR)));
     Flameout = false;
   }
