@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.53 2002/03/20 14:27:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.54 2002/04/12 15:23:59 dmegginson Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,6 +176,12 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   ExcessTorque = PowerAvailable / omega;
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+
+				// The friction from the engine should
+				// stop it somewhere; I chose an
+				// arbitrary point.
+  if (RPM < 5.0)
+    RPM = 0;
 
   vMn = fdmex->GetRotation()->GetPQR()*vH + vTorque*Sense;
 
