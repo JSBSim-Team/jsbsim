@@ -19,19 +19,7 @@
     <when> <!-- Set the Elevator to takeoff -->
       <parameter name="FG_QBAR" comparison="ge" value="17.0">
       <parameter name="FG_ALTITUDE" comparison="le" value="2000">
-      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.005" action="FG_EXP" persistent="false" tc ="2.0">
-    </when>
-
-    <when>
-      <parameter name="FG_ALTITUDE" comparison="le" value="2000">
-      <parameter name="FG_THT" comparison="ge" value="0.30">
-      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="0.06" action="FG_EXP" persistent="true" tc ="12.0">
-    </when>
-
-    <when>
-      <parameter name="FG_ALTITUDE" comparison="le" value="2000">
-      <parameter name="FG_THT" comparison="le" value="0.25">
-      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="-0.06" action="FG_EXP" persistent="true" tc ="12.0">
+      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.5" action="FG_STEP" persistent="false" tc ="2.0">
     </when>
 
     <when>

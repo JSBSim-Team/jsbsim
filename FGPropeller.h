@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.22 2001/12/06 20:56:54 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.23 2001/12/07 13:51:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.22 2001/12/06 20:56:54 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.23 2001/12/07 13:51:03 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -159,6 +159,7 @@ private:
   double P_Factor;
   double Sense;
   double Pitch;
+  double ExcessTorque;
   FGColumnVector3 Torque;
   FGTable *cThrust;
   FGTable *cPower;

@@ -1,4 +1,4 @@
-#! perl
+#! /usr/bin/perl
 if (length($ENV{CC}) gt 0) {
   print "CC = $ENV{CC}\n";
 } else {

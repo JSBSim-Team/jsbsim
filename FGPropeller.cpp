@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.40 2001/12/07 00:45:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.41 2001/12/07 13:51:03 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,9 +176,11 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   if (omega <= 5) omega = 1.0;
 
-  Torque(eX) = -(PowerAvailable / omega) * Sense;
-  RPM = (RPS + ((fabs(Torque(eX)) / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
-  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque;
+  ExcessTorque = PowerAvailable / omega;
+  RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+
+  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque*Sense;
+
   return Thrust; // return thrust in pounds
 }
 
@@ -215,6 +217,8 @@ double FGPropeller::GetPowerRequired(void)
 
   PowerRequired = cPReq*RPS*RPS*RPS*Diameter*Diameter*Diameter*Diameter
                                                        *Diameter*rho;
+  Torque(eX) = PowerRequired / ((RPM/60)*2.0*M_PI);
+
   return PowerRequired;
 }
 
