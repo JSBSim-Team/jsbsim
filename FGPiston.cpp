@@ -41,10 +41,11 @@ INCLUDES
 
 #include "FGPiston.h"
 #include "FGPropulsion.h"
+#include "FGPropeller.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.64 2004/04/30 12:06:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.65 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +81,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   EGT_degC = 0.0;
 
   dt = State->Getdt();
-  
+
   // Supercharging
   BoostSpeeds = 0;  // Default to no supercharging
   BoostSpeed = 0;
@@ -162,10 +163,10 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
     else if (token == "RATEDALTITUDE3") *Eng_cfg >> RatedAltitude[2];
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
-  
+
   minMAP = MinManifoldPressure_inHg * 3376.85;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * 3376.85;
-  
+
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if(TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
   for(i=0; i<BoostSpeeds; ++i) {
@@ -204,18 +205,18 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
       bTakeoffBoost = false;
     }
     BoostMul[i] = RatedMAP[i] / (Atmosphere->GetPressure(RatedAltitude[i]) * 47.88);
-    
+
     // TODO - get rid of the debugging output before sending it to Jon
     //cout << "Speed " << i+1 << '\n';
     //cout << "BoostMul = " << BoostMul[i] << ", RatedMAP = " << RatedMAP[i] << ", TakeoffMAP = " << TakeoffMAP[i] << '\n';
   }
 
-  if(BoostSpeeds > 0) {  
+  if(BoostSpeeds > 0) {
     Boosted = true;
     BoostSpeed = 0;
   }
   bBoostOverride = (BoostOverride == 1 ? true : false);
-  
+
   //cout << "Engine is " << (Boosted ? "supercharged" : "naturally aspirated") << '\n';
 
   Debug(0); // Call Debug() routine from constructor if needed
@@ -230,7 +231,7 @@ FGPiston::~FGPiston()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPiston::Calculate(double PowerRequired)
+double FGPiston::Calculate(void)
 {
   if (FuelFlow_gph > 0.0) ConsumeFuel();
 
@@ -245,9 +246,8 @@ double FGPiston::Calculate(double PowerRequired)
   p_amb_sea_level = Atmosphere->GetPressureSL() * 47.88;
   T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
 
-  RPM = Propulsion->GetThruster(EngineNumber)->GetRPM() *
-        Propulsion->GetThruster(EngineNumber)->GetGearRatio();
-    
+  RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
+
   IAS = Auxiliary->GetVcalibratedKTS();
 
   doEngineStartup();
@@ -269,8 +269,13 @@ double FGPiston::Calculate(double PowerRequired)
   doOilTemperature();
   doOilPressure();
 
-  PowerAvailable = (HP * hptoftlbssec) - PowerRequired;
-  return PowerAvailable;
+  if (Thruster->GetType() == FGThruster::ttPropeller) {
+    ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
+  }
+
+  PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
+
+  return Thruster->Calculate(PowerAvailable);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,7 +285,7 @@ double FGPiston::Calculate(double PowerRequired)
 
 void FGPiston::doEngineStartup(void)
 {
-  // Check parameters that may alter the operating state of the engine. 
+  // Check parameters that may alter the operating state of the engine.
   // (spark, fuel, starter motor etc)
   bool spark;
   bool fuel;
@@ -298,7 +303,7 @@ void FGPiston::doEngineStartup(void)
   } else {
     spark = false;
   }  // neglects battery voltage, master on switch, etc for now.
-  
+
   if ((Magnetos == 1) || (Magnetos > 2)) Magneto_Left = true;
   if (Magnetos > 1)  Magneto_Right = true;
 
@@ -314,7 +319,7 @@ void FGPiston::doEngineStartup(void)
   }
 
   if (Cranking) crank_counter++;  //Check mode of engine operation
-  
+
   if (!Running && spark && fuel) {  // start the engine if revs high enough
     if (Cranking) {
       if ((RPM > 450) && (crank_counter > 175)) // Add a little delay to startup
@@ -331,7 +336,7 @@ void FGPiston::doEngineStartup(void)
   if ( Running && (!spark || !fuel) ) Running = false;
 
   // Check for stalling (RPM = 0).
-  if (Running) { 
+  if (Running) {
     if (RPM == 0) {
       Running = false;
     } else if ((RPM <= 480) && (Cranking)) {
@@ -365,7 +370,7 @@ void FGPiston::doBoostControl(void)
     if(p_amb > BoostSwitchPressure[BoostSpeed - 1] + BoostSwitchHysteresis) {
       BoostSpeed--;
     }
-  } 
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -433,7 +438,7 @@ void FGPiston::doMAP(void)
     // TODO - add a better variation of MAP with engine speed
     MAP = Atmosphere->GetPressure() * 47.88; // psf to Pa
   }
-  
+
   // And set the value in American units as well
   ManifoldPressure_inHg = MAP / 3376.85;
 }
@@ -441,7 +446,7 @@ void FGPiston::doMAP(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /**
  * Calculate the air flow through the engine.
- * Also calculates ambient air density 
+ * Also calculates ambient air density
  * (used in CHT calculation for air-cooled engines).
  *
  * Inputs: p_amb, R_air, T_amb, MAP, Displacement,
@@ -491,7 +496,7 @@ void FGPiston::doFuelFlow(void)
  * When tested with sufficient RPM, it has no trouble reaching
  * 200HP.
  *
- * Inputs: ManifoldPressure_inHg, p_amb, p_amb_sea_level, RPM, T_amb, 
+ * Inputs: ManifoldPressure_inHg, p_amb, p_amb_sea_level, RPM, T_amb,
  *   equivalence_ratio, Cycles, MaxHP
  *
  * Outputs: Percentage_Power, HP
@@ -499,9 +504,9 @@ void FGPiston::doFuelFlow(void)
 
 void FGPiston::doEnginePower(void)
 {
-  if (Running) {	
+  if (Running) {
     double T_amb_degF = KelvinToFahrenheit(T_amb);
-    double T_amb_sea_lev_degF = KelvinToFahrenheit(288); 
+    double T_amb_sea_lev_degF = KelvinToFahrenheit(288);
 
     // FIXME: this needs to be generalized
     double ManXRPM;  // Convienience term for use in the calculations
@@ -526,7 +531,7 @@ void FGPiston::doEnginePower(void)
       if (Percentage_Power < 0.0) Percentage_Power = 0.0;
       else if (Percentage_Power > 100.0) Percentage_Power = 100.0;
     }
-    
+
     double Percentage_of_best_power_mixture_power =
       Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
 
@@ -547,7 +552,7 @@ void FGPiston::doEnginePower(void)
                     // the first time step. It may possibly need to be changed
                     // if the prop model is changed.
       } else if (RPM < 480) {
-        HP = 3.0 + ((480 - RPM) / 10.0);  
+        HP = 3.0 + ((480 - RPM) / 10.0);
         // This is a guess - would be nice to find a proper starter moter torque curve
       } else {
         HP = 3.0;
@@ -567,7 +572,7 @@ void FGPiston::doEnginePower(void)
 /**
  * Calculate the exhaust gas temperature.
  *
- * Inputs: equivalence_ratio, m_dot_fuel, calorific_value_fuel, 
+ * Inputs: equivalence_ratio, m_dot_fuel, calorific_value_fuel,
  *   Cp_air, m_dot_air, Cp_fuel, m_dot_fuel, T_amb, Percentage_Power
  *
  * Outputs: combustion_efficiency, ExhaustGasTemp_degK
@@ -582,7 +587,7 @@ void FGPiston::doEGT(void)
 
   if ((Running) && (m_dot_air > 0.0)) {  // do the energy balance
     combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
-    enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * 
+    enthalpy_exhaust = m_dot_fuel * calorific_value_fuel *
                               combustion_efficiency * 0.33;
     heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
     delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
@@ -619,15 +624,15 @@ void FGPiston::doCHT(void)
   double v_apparent = IAS * 0.5144444;
   double v_dot_cooling_air = arbitary_area * v_apparent;
   double m_dot_cooling_air = v_dot_cooling_air * rho_air;
-  double dqdt_from_combustion = 
+  double dqdt_from_combustion =
     m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
-  double dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) + 
+  double dqdt_forced = (h2 * m_dot_cooling_air * temperature_difference) +
     (h3 * RPM * temperature_difference);
   double dqdt_free = h1 * temperature_difference;
   double dqdt_cylinder_head = dqdt_from_combustion + dqdt_forced + dqdt_free;
-    
+
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
-    
+
   CylinderHeadTemp_degK +=
     (dqdt_cylinder_head / HeatCapacityCylinderHead) * dt;
 }
@@ -651,7 +656,7 @@ void FGPiston::doOilTemperature(void)
     target_oil_temp = 363;
     time_constant = 500;        // Time constant for engine-on idling.
     if (Percentage_Power > idle_percentage_power) {
-      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0); // adjust for power 
+      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0); // adjust for power
     }
   } else {
     target_oil_temp = 298;
@@ -687,6 +692,24 @@ void FGPiston::doOilPressure(void)
   }
 
   OilPressure_psi += (Design_Oil_Temp - OilTemp_degK) * Oil_Viscosity_Index;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPiston::GetEngineLabels(void)
+{
+  char buff[11];
+  return (Name + "_PwrAvail[" + itoa(EngineNumber, buff, 10) + "]" + ", " +
+          Thruster->GetThrusterLabels(EngineNumber));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPiston::GetEngineValues(void)
+{
+  char buff[11];
+  return (string(gcvt(PowerAvailable, 10, buff)) + ", " +
+          Thruster->GetThrusterValues(EngineNumber));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

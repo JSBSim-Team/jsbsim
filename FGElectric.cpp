@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.1 2004/04/08 01:00:25 dpculp Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.2 2004/05/26 12:29:53 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,19 +81,32 @@ FGElectric::~FGElectric()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGElectric::Calculate(double PowerRequired)
+double FGElectric::Calculate(void)
 {
   Throttle = FCS->GetThrottlePos(EngineNumber);
 
-  RPM = Propulsion->GetThruster(EngineNumber)->GetRPM() *
-        Propulsion->GetThruster(EngineNumber)->GetGearRatio();
+  RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
 
   HP = PowerWatts * Throttle / hptowatts;
 
-  PowerAvailable = (HP * hptoftlbssec) - PowerRequired;
-  return PowerAvailable;
+  PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
+
+  return Thruster->Calculate(PowerAvailable);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGElectric::GetEngineLabels(void)
+{
+  return ""; // currently no labels are returned for this engine
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGElectric::GetEngineValues(void)
+{
+  return ""; // currently no values are returned for this engine
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //

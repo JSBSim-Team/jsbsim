@@ -1,10 +1,10 @@
-<FDM_CONFIG NAME="sgstest" VERSION="1.61">
+<FDM_CONFIG NAME="sgstest" VERSION="1.65">
 <!--
 
   File:        sgstest.xml
   Author:      Mark Boslough
 
-  Function: Models a Schweizer SGS 1-36 Sailplane 
+  Function: Models a Schweizer SGS 1-36 Sailplane
   Notes:    Aerodynamic derivatives from NASA Technical Paper 3022
             Scaled to 8-foot wingspan (r/c scale) glider
             With 3 times the scaled weight distributed evenly
@@ -57,7 +57,7 @@
     <!-- AC_EMPTYWT   900  SGS weight of research vehicle -->
     <!-- AC_EMPTYWT   710  SGS -->
     AC_EMPTYWT   11.07  <!-- three times what pure scaling would be -->
-    AC_AERORP    0.0  0.0 2.08 
+    AC_AERORP    0.0  0.0 2.08
     AC_CGLOC     0.0 0.0 0.0      <!-- SGS inches -->
     AC_POINTMASS 0.0 0.0 0.0 0.0  <!-- no pilot -->
     AC_EYEPTLOC  0.0  0.0 0.0     <!-- made up -->
@@ -94,9 +94,9 @@
 
 </UNDERCARRIAGE>
 
-  <!-- PROPULSION -->
+  <!-- PROPULSION
     MINISGS has no propulsion system!!
-  <!-- /PROPULSION-->
+  /PROPULSION-->
 
   <FLIGHT_CONTROL NAME="c172">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">

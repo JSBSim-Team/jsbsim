@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.34 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.35 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.34 2004/02/26 15:03:56 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.35 2004/05/26 12:29:54 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -114,6 +114,8 @@ public:
       @param pitch the pitch of the blade in degrees. */
   void SetPitch(double pitch) {Pitch = pitch;}
 
+  void SetAdvance(double advance) {Advance = advance;}
+
   /// Sets the P-Factor constant
   void SetPFactor(double pf) {P_Factor = pf;}
 
@@ -125,21 +127,21 @@ public:
 
   /// Retrieves the pitch of the propeller in degrees.
   double GetPitch(void)         { return Pitch;         }
-  
+
   /// Retrieves the RPMs of the propeller
   double GetRPM(void)           { return RPM;           }
-  
+
   /// Retrieves the propeller moment of inertia
   double GetIxx(void)           { return Ixx;           }
-  
+
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   double GetTorque(void)        { return vTorque(eX);    }
-  
+
   /** Retrieves the power required (or "absorbed") by the propeller -
       i.e. the power required to keep spinning the propeller at the current
       velocity, air density,  and rotational rate. */
   double GetPowerRequired(void);
-  
+
   /** Calculates and returns the thrust produced by this propeller.
       Given the excess power available from the engine (in foot-pounds), the thrust is
       calculated, as well as the current RPM. The RPM is calculated by integrating
@@ -151,6 +153,8 @@ public:
       @return the thrust in pounds */
   double Calculate(double PowerAvailable);
   FGColumnVector3 GetPFactor(void);
+  string GetThrusterLabels(int id);
+  string GetThrusterValues(int id);
 
 private:
   int   numBlades;
@@ -164,6 +168,7 @@ private:
   double P_Factor;
   double Sense;
   double Pitch;
+  double Advance;
   double ExcessTorque;
   FGColumnVector3 vTorque;
   FGTable *cThrust;

@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="B747-400" VERSION="1.61" RELEASE="ALPHA">
+<FDM_CONFIG NAME="B747-400" VERSION="1.65" RELEASE="ALPHA">
 <!--
   File:     B747.xml
   Author:   Aero-Matic v 0.7
@@ -25,12 +25,12 @@
     K:             0.042
 
   Additional Information:
-  
+
   [from: http://www.bh.com/companions/034074152X/appendices/data-a/table-3/table.htm]
   [and:http://www.boeing.com/commercial/747family/technical.html]
   [and: http://www.boeing.com/assocproducts/aircompat/747.htm]
   [and: http://www.aerospace-technology.com/projects/747/]
-  
+
   Maker: Boeing
   Model: 747-400
   Price (2002) $185.0 - $211.0 million U.S. dollars (source: www.boeing.com)
@@ -39,7 +39,7 @@
   Max operating altitude: 45,100 ft. (from FAA TCDS)
   Cruise speed: 0.855 mach at 35,000 ft. (567 mph)
   CLmax 2.8  Vstall 145 mph [academic resource]
-  
+
             Length   Height  Width   Fineness Ratio
   Fuselage: 231.9'   26.57'  21.32'  10.56
 
@@ -48,21 +48,21 @@
   Wing:    5648.0   211.5    31.75    7.39      0.28     9.4
   V. Tail   829.5    33.32            1.34      0.33               45      98.4
   H. Tail  1469.6    72.42            3.57      0.27               32     106.60
-  
+
   High Lift Devices:
            Area      Flap Span/
-	         (ft^2)    Wing Span
+           (ft^2)    Wing Span
   T.E. S3: 856.7     0.64
   L.E. kr: 517.48
-  
+
   Undercarriage: Track 36.08 ft   Wheelbase 83.97 ft   Turn radius 140.38 ft
-  
+
   Nacelle: Length 18.50 ft   Max width 9.51 ft    Spanwise location[s] 0.376 / 0.667
 
   Weights (in lbs):
   Ramp    Max TO  Max Land  Zero Fuel  Max Payload  Design Fuel  Op. Empty
   875006  873026  628672    533874     134609       387653.2     399264.8
-  
+
   Fuel capacity 53,760 U.S. gallons (204,350 litres)
 
 Aerodynamics:
@@ -92,34 +92,34 @@ Aerodynamics:
        .25  0.0461   0.0064    0.175    0.007   -0.109
        .90  0.014    0.003     0.075    0.005   -0.09
 
-	W = 636,600 lb
-	CG @ 25%MAC
-	S = 5500 ft sq
-	b = 195.68 ft sq
-	c-bar = 27.31 ft
+  W = 636,600 lb
+  CG @ 25%MAC
+  S = 5500 ft sq
+  b = 195.68 ft sq
+  c-bar = 27.31 ft
 
-	Ix  18.2 E6 slug-ft sq
-	Iy  33.1 E6 slug-ft sq
-	Iz  49.7 E6 slug-ft sq
-	Ixz 0.97 E6 slug-ft sq
+  Ix  18.2 E6 slug-ft sq
+  Iy  33.1 E6 slug-ft sq
+  Iz  49.7 E6 slug-ft sq
+  Ixz 0.97 E6 slug-ft sq
 
-	All derivatives are per radian.
+  All derivatives are per radian.
 
   From FAA TCDS [http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/0/4c9c7463776c92e386256d1d0052113f/$FILE/a20we.pdf]
 
   B747-400 datum (structural reference point) is 90 inches ahead of the nose.
-  
+
   MAC is 327.8 inches long, with MAC leading edge at 1258 inches aft of datum
   Nose gear jack point is at 384.7 inches
-  
+
   From http://www.aoe.vt.edu/~mason/Mason_f/M96SC02.pdf
-  
+
   CG range for B747:
-  
+
   Estimated (permissible): between 4% and 63% MAC
   Actual (operational): between 13% and 33% MAC
   Loaded typical 21% MAC
-  
+
   From: http://www.boeing.com/assocproducts/aircompat/acaps/7474sec4.pdf
 
   Pilot eyepoint 28 ft 5 in above runway, 18 ft 2 in behind nose tip, 21 inches left of center.
@@ -131,20 +131,20 @@ Aerodynamics:
   http://www.boeing.com/assocproducts/aircompat/acaps/7474sec2.pdf
 
   Nose tip appears to be at about 17 feet from ground level.
-  
+
   Fuel tanks shown here:
   http://www.chevron.com/prodserv/fuels/bulletin/aviationfuel/images/chp6_fueltanks6_3.gif
-  
+
   From http://www.boeing.com/assocproducts/aircompat/acaps/7474sec7.pdf:
-  
+
   ~93% of weight on main gear at taxi
-  
+
   Nose gear back 25'5" from nose tip
   Center of main bogies back 84' from nose gear
   Forward and aft pairs of main bogies 10'1" staggered in X
   Outer main bogies are 36'1" apart in Y
   Inner main bogies are 12'7" apart in Y
-  
+
   Recall that datum is 90" forward of nose tip.
 -->
 
@@ -172,7 +172,7 @@ Aerodynamics:
   AC_GEAR RIGHT_MLG 1554.0  216.5 -216.0 150000.0 174605.2  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
-  <!-- 
+  <!--
     Position of engines (forward edge of nacelle, #1 being on the left side) in inches
        XLOC   YLOC   ZLOC
     1  1356   -820    -97
@@ -188,14 +188,14 @@ Aerodynamics:
     PITCH 0
     YAW 0
     FEED 0
+    <AC_THRUSTER FILE="direct">
+      XLOC 1356
+      YLOC -820
+      ZLOC -97
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 1356
-    YLOC -820
-    ZLOC -97
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <!-- Engine #2 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
     XLOC 996
@@ -204,14 +204,14 @@ Aerodynamics:
     PITCH 0
     YAW 0
     FEED 1
+    <AC_THRUSTER FILE="direct">
+      XLOC 996
+      YLOC -460
+      ZLOC -121
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 996
-    YLOC -460
-    ZLOC -121
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <!-- Engine #3 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
     XLOC 996
@@ -220,14 +220,14 @@ Aerodynamics:
     PITCH 0
     YAW 0
     FEED 2
+    <AC_THRUSTER FILE="direct">
+      XLOC 996
+      YLOC 460
+      ZLOC -121
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 996
-    YLOC 460
-    ZLOC -121
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <!-- Engine #4 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
     XLOC 1356
@@ -236,51 +236,51 @@ Aerodynamics:
     PITCH 0
     YAW 0
     FEED 3
+    <AC_THRUSTER FILE="direct">
+      XLOC 1356
+      YLOC 820
+      ZLOC -97
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 1356
-    YLOC 820
-    ZLOC -97
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
     XLOC 1327
-    YLOC 0 
-    ZLOC -69.57 
-    RADIUS 1 
+    YLOC 0
+    ZLOC -69.57
+    RADIUS 1
     CAPACITY 10912.8
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
     XLOC 1327
-    YLOC 0 
-    ZLOC -69.57 
-    RADIUS 1 
+    YLOC 0
+    ZLOC -69.57
+    RADIUS 1
     CAPACITY 10912.8
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
     XLOC 1327
-    YLOC 0 
-    ZLOC -69.57 
-    RADIUS 1 
+    YLOC 0
+    ZLOC -69.57
+    RADIUS 1
     CAPACITY 10912.8
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="3">
     XLOC 1327
-    YLOC 0 
-    ZLOC -69.57 
-    RADIUS 1 
+    YLOC 0
+    ZLOC -69.57
+    RADIUS 1
     CAPACITY 10912.8
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="4">
     XLOC 1327
-    YLOC 0 
-    ZLOC -69.57 
-    RADIUS 1 
+    YLOC 0
+    ZLOC -69.57
+    RADIUS 1
     CAPACITY 10912.8
     CONTENTS  5456.4
   </AC_TANK>

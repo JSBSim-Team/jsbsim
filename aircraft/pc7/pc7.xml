@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="pc7" VERSION="1.61">
+<FDM_CONFIG NAME="pc7" VERSION="1.65">
 <!--
   File:     pc7.xml
   Author:   Aero-Matic v 0.71
@@ -25,9 +25,9 @@
     CD-0:          0.02
     K:             0.045
 
-  
+
   Refferences:
-    http://www.flug-revue.rotor.com/FRTypen/FRPC-7.htm 
+    http://www.flug-revue.rotor.com/FRTypen/FRPC-7.htm
 
 -->
 
@@ -63,27 +63,27 @@
     YAW 0
     FEED 0
     FEED 1
+    <AC_THRUSTER FILE="direct">
+      XLOC 36
+      YLOC 0
+      ZLOC 0
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 36
-    YLOC 0
-    ZLOC 0
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 154.023264 
-    YLOC 0 
-    ZLOC -9.626454 
-    RADIUS 1 
+    XLOC 154.023264
+    YLOC 0
+    ZLOC -9.626454
+    RADIUS 1
     CAPACITY   118.0
     CONTENTS   100.0
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 154.023264 
-    YLOC 0 
-    ZLOC -9.626454 
-    RADIUS 1 
+    XLOC 154.023264
+    YLOC 0
+    ZLOC -9.626454
+    RADIUS 1
     CAPACITY   118.0
     CONTENTS   100.0
   </AC_TANK>

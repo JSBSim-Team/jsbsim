@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.59 2004/05/25 11:46:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.60 2004/05/26 12:29:53 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -353,14 +353,14 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("aero/qbarUV-psf");
   PropertyManager->Untie("aero/alpha-rad");
   PropertyManager->Untie("aero/beta-rad");
-//  PropertyManager->Untie("aero/alpha-deg");
-//  PropertyManager->Untie("aero/beta-deg");
+  PropertyManager->Untie("aero/alpha-deg");
+  PropertyManager->Untie("aero/beta-deg");
   PropertyManager->Untie("aero/alphadot-rad_sec");
   PropertyManager->Untie("aero/betadot-rad_sec");
   PropertyManager->Untie("aero/mag-beta-rad");
-//  PropertyManager->Untie("aero/alphadot-deg_sec");
-//  PropertyManager->Untie("aero/betadot-deg_sec");
-//  PropertyManager->Untie("aero/mag-beta-deg");
+  PropertyManager->Untie("aero/alphadot-deg_sec");
+  PropertyManager->Untie("aero/betadot-deg_sec");
+  PropertyManager->Untie("aero/mag-beta-deg");
   PropertyManager->Untie("aero/h_b-cg-ft");
   PropertyManager->Untie("aero/h_b-mac-ft");
   PropertyManager->Untie("flight-path/gamma-rad");

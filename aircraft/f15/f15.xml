@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="f15" VERSION="1.61">
+<FDM_CONFIG NAME="f15" VERSION="1.65" RELEASE="BETA">
 
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.18 2004/05/01 12:38:24 dpculp Exp $
+  CVS Version: $Id: f15.xml,v 1.19 2004/05/26 12:30:00 jberndt Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -15,7 +15,7 @@
     Dryden Technical Reports Server documents:
         H-823:  Initial results from flight testing a large, remotely piloted
                 airplane model.
-	H-889:	Summary of flight tests to determine the spin and
+  H-889:	Summary of flight tests to determine the spin and
                 controllability characteristics of a remotely piloted,
                 large-scale (3/8) fighter airplane model.
         H-905:  Subsonic stability and control deratives for an unpowered,
@@ -23,7 +23,7 @@
                 from flight test.
         H-1999:	Dynamic ground effects flight test of an F-15 aircraft.
 
-  
+
   Maximum lift:		1.2
   AOA for zero lift:	-2 degrees
   Maximum AOA:		31.3 degrees
@@ -81,6 +81,13 @@
       YAW        0.0
       FEED         0
       FEED         1
+      <AC_THRUSTER FILE="direct">
+        XLOC      50.0
+        YLOC     -25.5
+        ZLOC       0.0
+        PITCH      0.0
+        YAW        0
+      </AC_THRUSTER>
     </AC_ENGINE>
 
     <AC_ENGINE FILE="F100-PW-229">
@@ -91,23 +98,14 @@
       YAW        0.0
       FEED         0
       FEED         1
+      <AC_THRUSTER FILE="direct">
+        XLOC      50.0
+        YLOC      25.5
+        ZLOC       0.0
+        PITCH      0.0
+        YAW        0
+      </AC_THRUSTER>
     </AC_ENGINE>
-
-    <AC_THRUSTER FILE="direct">
-      XLOC      50.0
-      YLOC     -25.5
-      ZLOC       0.0
-      PITCH      0.0
-      YAW        0
-    </AC_THRUSTER>
-
-    <AC_THRUSTER FILE="direct">
-      XLOC      50.0
-      YLOC      25.5
-      ZLOC       0.0
-      PITCH      0.0
-      YAW        0
-    </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
       XLOC    -236.39

@@ -55,14 +55,13 @@ INCLUDES
 #include "FGModel.h"
 #include "FGEngine.h"
 #include "FGTank.h"
-#include "FGThruster.h"
 #include "FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.60 2004/03/05 04:53:12 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.61 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,27 +75,18 @@ CLASS DOCUMENTATION
 
 /** Propulsion management class.
     The Propulsion class is the container for the entire propulsion system, which is
-    comprised of engines, tanks, and "thrusters" (the device that transforms the
-    engine power into a force that acts on the aircraft, such as a nozzle or
-    propeller). Once the Propulsion class gets the config file, it reads in
-    information which is specific to a type of engine. Then:
+    comprised of engines, and tanks. Once the Propulsion class gets the config file,
+    it reads in information which is specific to a type of engine. Then:
 
     -# The appropriate engine type instance is created
-    -# A thruster object is instantiated, and is linked to the engine
     -# At least one tank object is created, and is linked to an engine.
 
-    At Run time each engines Calculate() method is called to return the excess power
-    generated during that iteration. The drag from the previous iteration is sub-
-    tracted to give the excess power available for thrust this pass. That quantity
-    is passed to the thrusters associated with a particular engine - perhaps with a
-    scaling mechanism (gearing?) to allow the engine to give its associated thrust-
-    ers specific distributed portions of the excess power.
+    At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.60 2004/03/05 04:53:12 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.61 2004/05/26 12:29:54 jberndt Exp $
     @see
     FGEngine
     FGTank
-    FGThruster
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,22 +103,12 @@ public:
 
   /** Executes the propulsion model.
       The initial plan for the FGPropulsion class calls for Run() to be executed,
-      performing the following tasks:
-      <ol>
-  <li>Determine the drag - or power required - for the attached thrust effector
-      for this engine so that any feedback to the engine can be performed. This
-      is done by calling FGThruster::CalculatePReq()</li>
-  <li>Given 1, above, calculate the power available from the engine. This is
-      done by calling FGEngine::CalculatePAvail()</li>
-  <li>Next, calculate the thrust output from the thruster model given the power
-      available and the power required. This may also result in new performance
-      numbers for the thruster in the case of the propeller, at least. This
-      result is returned from a call to Calculate().</li></ol>
+      calculating the power available from the engine.
 
       [Note: Should we be checking the Starved flag here?] */
   bool Run(void);
 
-  /** Loads the propulsion system (engine[s], tank[s], thruster[s]).
+  /** Loads the propulsion system (engine[s] and tank[s]).
       Characteristics of the propulsion system are read in from the config file.
       @param AC_cfg pointer to the config file instance that describes the
              aircraft being modeled.
@@ -157,21 +137,13 @@ public:
                       if (index <= Tanks.size()-1) return Tanks[index];
                       else                         return 0L;        }
 
-  /** Retrieves a thruster object pointer from the list of thrusters.
-      @param index the thruster index within the vector container
-      @return the address of the specific thruster, or zero if no such thruster is
-              available */
-  inline FGThruster* GetThruster(unsigned int index) {
-                      if (index <= Thrusters.size()-1) return Thrusters[index];
-                      else                             return 0L;    }
-
   /** Returns the number of fuel tanks currently actively supplying fuel */
   inline int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
 
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
   inline int GetnumSelectedOxiTanks(void) const {return numSelectedOxiTanks;}
 
-  /** Loops the engines/thrusters until thrust output steady (used for trimming) */
+  /** Loops the engines until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
 
   /** starts the engines in IC mode (dt=0).  All engine-specific setup must
@@ -209,14 +181,12 @@ private:
   vector <FGEngine*>   Engines;
   vector <FGTank*>     Tanks;
   vector <FGTank*>::iterator iTank;
-  vector <FGThruster*> Thrusters;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;
   unsigned int numFuelTanks;
   unsigned int numOxiTanks;
   unsigned int numEngines;
   unsigned int numTanks;
-  unsigned int numThrusters;
   int ActiveEngine;
   double dt;
   FGColumnVector3 vForces;
@@ -224,6 +194,7 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
+
   void Debug(int from);
 };
 }

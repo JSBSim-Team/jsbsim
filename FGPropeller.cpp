@@ -37,12 +37,12 @@ INCLUDES
 
 #include "FGPropeller.h"
 #include "FGPropagate.h"
-#include "FGFCS.h"
 #include "FGAtmosphere.h"
+#include "FGAuxiliary.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.64 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.65 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   string token;
   int rows, cols;
 
-  MaxPitch = MinPitch = P_Factor = Sense = Pitch = 0.0;
+  MaxPitch = MinPitch = P_Factor = Sense = Pitch = Advance = 0.0;
   GearRatio = 1.0;
 
   Name = Prop_cfg->GetValue("NAME");
@@ -204,10 +204,9 @@ double FGPropeller::GetPowerRequired(void)
     Pitch = MinPitch;
     cPReq = cPower->GetValue(J);
   } else {                    // Variable pitch prop
-    double advance = fdmex->GetFCS()->GetPropAdvance(ThrusterNumber);
 
     if (MaxRPM != MinRPM) {   // fixed-speed prop
-      double rpmReq = MinRPM + (MaxRPM - MinRPM) * advance;
+      double rpmReq = MinRPM + (MaxRPM - MinRPM) * Advance;
       double dRPM = rpmReq - RPM;
 
       Pitch -= dRPM / 10;
@@ -216,7 +215,7 @@ double FGPropeller::GetPowerRequired(void)
       else if (Pitch > MaxPitch)  Pitch = MaxPitch;
 
     } else {
-      Pitch = MinPitch + (MaxPitch - MinPitch) * advance;
+      Pitch = MinPitch + (MaxPitch - MinPitch) * Advance;
     }
     cPReq = cPower->GetValue(J, Pitch);
   }
@@ -238,6 +237,45 @@ FGColumnVector3 FGPropeller::GetPFactor()
   pz = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
 
   return FGColumnVector3(px, py, pz);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPropeller::GetThrusterLabels(int id)
+{
+  string PropulsionStrings;
+  char buffer[11];
+
+  itoa(id, buffer, 10);
+  PropulsionStrings = Name + "_Torque[" + buffer + "], ";
+  PropulsionStrings += Name + "_PFactor_Pitch[" + buffer + "], ";
+  PropulsionStrings += Name + "_PFactor_Yaw[" + buffer + "], ";
+  PropulsionStrings += Name + "_Thrust[" + buffer + "], ";
+  if (IsVPitch())
+    PropulsionStrings += Name + "_Pitch[" + buffer + "], ";
+  PropulsionStrings += Name + "_RPM[" + buffer + "]";
+
+  return PropulsionStrings;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPropeller::GetThrusterValues(int id)
+{
+  string PropulsionValues;
+  char buffer[11];
+
+  itoa(id, buffer, 10);
+  FGColumnVector3 vPFactor = GetPFactor();
+  PropulsionValues += string(gcvt(vTorque(eX), 10, buffer)) + ", ";
+  PropulsionValues += string(gcvt(vPFactor(ePitch), 10, buffer)) + ", ";
+  PropulsionValues += string(gcvt(vPFactor(eYaw), 10, buffer)) + ", ";
+  PropulsionValues += string(gcvt(Thrust, 10, buffer)) + ", ";
+  if (IsVPitch())
+    PropulsionValues += string(gcvt(Pitch, 10, buffer)) + ", ";
+  PropulsionValues += string(gcvt(RPM, 10, buffer));
+
+  return PropulsionValues;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.2 2004/04/08 01:18:39 dpculp Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.3 2004/05/26 12:29:53 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,12 +58,12 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models and electric motor.
-    FGElectric models an electric motor based on the configuration file 
+    FGElectric models an electric motor based on the configuration file
     POWER_WATTS parameter.  The throttle controls motor output linearly from
     zero to POWER_WATTS.  This power value (converted internally to horsepower)
     is then used by FGPropeller to apply torque to the propeller.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.2 2004/04/08 01:18:39 dpculp Exp $"
+    @version "$Id: FGElectric.h,v 1.3 2004/05/26 12:29:53 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,10 +78,12 @@ public:
   /// Destructor
   ~FGElectric();
 
-  double Calculate(double PowerRequired);
+  double Calculate(void);
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
-  double getRPM(void) {return RPM;} 
+  double getRPM(void) {return RPM;}
+  string GetEngineLabels(void);
+  string GetEngineValues(void);
 
 private:
 
@@ -93,7 +95,6 @@ private:
 
   // constants
   double hptowatts;
-
 
   double PowerWatts;         // maximum engine power
   double RPM;                // revolutions per minute

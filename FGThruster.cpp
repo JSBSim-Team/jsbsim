@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.24 2003/11/25 17:51:16 dpculp Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.25 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,8 +47,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
-                                             ThrusterNumber(0)
+FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
 {
   Type = ttDirect;
   SetTransformType(FGForce::tCustom);
@@ -61,19 +60,37 @@ FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
 FGThruster::FGThruster(FGFDMExec *FDMExec,
                        FGConfigFile *Eng_cfg ): FGForce(FDMExec)
 {
-  ThrusterNumber = 0;
   Type = ttDirect;
   SetTransformType(FGForce::tCustom);
   Name = Eng_cfg->GetValue();
   GearRatio = 1.0;
   Debug(0);
-}   
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGThruster::~FGThruster()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGThruster::GetThrusterLabels(int id)
+{
+  char buffer[11];
+
+  itoa(id, buffer, 10);
+  return Name + "_Thrust[" + buffer + "]";
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGThruster::GetThrusterValues(int id)
+{
+  char buffer[11];
+
+  return string(gcvt(Thrust, 10, buffer));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

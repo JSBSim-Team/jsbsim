@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.39 2004/04/30 12:46:46 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.40 2004/05/26 12:29:54 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.39 2004/04/30 12:46:46 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.40 2004/05/26 12:29:54 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,10 @@ public:
   /// Destructor
   ~FGPiston();
 
-  double Calculate(double PowerRequired);
+  string GetEngineLabels(void);
+  string GetEngineValues(void);
+
+  double Calculate(void);
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
 

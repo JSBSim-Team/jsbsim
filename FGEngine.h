@@ -59,13 +59,14 @@ INCLUDES
 #endif
 
 #include "FGJSBBase.h"
+#include "FGThruster.h"
 #include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.65 2004/05/25 11:46:45 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.66 2004/05/26 12:29:53 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -85,6 +86,8 @@ class FGPropagate;
 class FGPropulsion;
 class FGAuxiliary;
 class FGOutput;
+class FGThruster;
+class FGConfigFile;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -94,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.65 2004/05/25 11:46:45 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.66 2004/05/26 12:29:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,11 +139,8 @@ public:
   virtual void SetStarter(bool s) { Starter = s; }
 
   /** Calculates the thrust of the engine, and other engine functions.
-      @param PowerRequired this is the power required to run the thrusting device
-             such as a propeller. This resisting effect must be provided to the
-             engine model.
       @return Thrust in pounds */
-  virtual double Calculate(double PowerRequired) {return 0.0;}
+  virtual double Calculate(void) {return 0.0;}
 
   /** Reduces the fuel in the active tanks by the amount required.
       This function should be called from within the
@@ -171,6 +171,15 @@ public:
 
   virtual bool GetTrimMode(void) {return TrimMode;}
   virtual void SetTrimMode(bool state) {TrimMode = state;}
+
+  virtual FGColumnVector3& GetBodyForces(void);
+  virtual FGColumnVector3& GetMoments(void);
+
+  bool LoadThruster(FGConfigFile* AC_cfg);
+  FGThruster* GetThruster(void) {return Thruster;}
+
+  virtual string GetEngineLabels(void) = 0;
+  virtual string GetEngineValues(void) = 0;
 
 protected:
   FGPropertyManager* PropertyManager;
@@ -209,6 +218,7 @@ protected:
   FGPropagate*    Propagate;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
+  FGThruster*     Thruster;
 
   vector <int> SourceTanks;
   void Debug(int from);
@@ -223,6 +233,8 @@ protected:
 #include "FGPropulsion.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGThruster.h"
+#include "FGConfigFile.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

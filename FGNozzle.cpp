@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.32 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.33 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,6 +102,24 @@ double FGNozzle::Calculate(double CfPc)
 double FGNozzle::GetPowerRequired(void)
 {
   return PE;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGNozzle::GetThrusterLabels(int id)
+{
+  char buff[11];
+
+  return Name + "_Thrust[" + itoa(id, buff, 10) + "]";
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGNozzle::GetThrusterValues(int id)
+{
+  char buff[11];
+
+  return string(gcvt(Thrust, 10, buff));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

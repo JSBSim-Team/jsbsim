@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="C130" VERSION="1.61" RELEASE="ALPHA">
+<FDM_CONFIG NAME="C130" VERSION="1.65" RELEASE="ALPHA">
 <!--
   File:     C130.xml
   Author:   Aero-Matic v 0.71
@@ -58,14 +58,14 @@
     PITCH 0
     YAW 0
     FEED 0
+    <AC_THRUSTER FILE="t56_prop">
+      XLOC 586.5
+      YLOC -265
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="t56_prop">
-    XLOC 586.5
-    YLOC -265
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="t56">
     XLOC 586.5
     YLOC -265
@@ -73,14 +73,14 @@
     PITCH 0
     YAW 0
     FEED 1
+    <AC_THRUSTER FILE="t56_prop">
+      XLOC 586.5
+      YLOC -265
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="t56_prop">
-    XLOC 586.5
-    YLOC -265
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="t56">
     XLOC 586.5
     YLOC 265
@@ -88,14 +88,14 @@
     PITCH 0
     YAW 0
     FEED 2
+    <AC_THRUSTER FILE="t56_prop">
+      XLOC 586.5
+      YLOC 265
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="t56_prop">
-    XLOC 586.5
-    YLOC 265
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="t56">
     XLOC 586.5
     YLOC 265
@@ -103,51 +103,51 @@
     PITCH 0
     YAW 0
     FEED 3
+    <AC_THRUSTER FILE="t56_prop">
+      XLOC 586.5
+      YLOC 265
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="t56_prop">
-    XLOC 586.5
-    YLOC 265
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 586.5 
-    YLOC 0 
-    ZLOC -29.325 
-    RADIUS 1 
+    XLOC 586.5
+    YLOC 0
+    ZLOC -29.325
+    RADIUS 1
     CAPACITY  1944.4
     CONTENTS   972.2
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 586.5 
-    YLOC 0 
-    ZLOC -29.325 
-    RADIUS 1 
+    XLOC 586.5
+    YLOC 0
+    ZLOC -29.325
+    RADIUS 1
     CAPACITY  1944.4
     CONTENTS   972.2
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 586.5 
-    YLOC 0 
-    ZLOC -29.325 
-    RADIUS 1 
+    XLOC 586.5
+    YLOC 0
+    ZLOC -29.325
+    RADIUS 1
     CAPACITY  1944.4
     CONTENTS   972.2
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="3">
-    XLOC 586.5 
-    YLOC 0 
-    ZLOC -29.325 
-    RADIUS 1 
+    XLOC 586.5
+    YLOC 0
+    ZLOC -29.325
+    RADIUS 1
     CAPACITY  1944.4
     CONTENTS   972.2
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="4">
-    XLOC 586.5 
-    YLOC 0 
-    ZLOC -29.325 
-    RADIUS 1 
+    XLOC 586.5
+    YLOC 0
+    ZLOC -29.325
+    RADIUS 1
     CAPACITY  1944.4
     CONTENTS   972.2
   </AC_TANK>

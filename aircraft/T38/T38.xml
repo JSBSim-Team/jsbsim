@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="T38" VERSION="1.61">
+<FDM_CONFIG NAME="T38" VERSION="1.65">
 <!--
   File:     T38.xml
   Author:   Aero-Matic v 0.4, modified 15 Sep 2003, David Culp
@@ -57,14 +57,14 @@
     PITCH 0
     YAW 0
     FEED 0
+    <AC_THRUSTER FILE="direct">
+      XLOC 551.0
+      YLOC -20
+      ZLOC 0
+      PITCH 0.03
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 551.0
-    YLOC -20
-    ZLOC 0
-    PITCH 0.03
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="J85-GE-5">
     XLOC 452.0
     YLOC 20
@@ -72,29 +72,29 @@
     PITCH 0
     YAW 0
     FEED 1
+    <AC_THRUSTER FILE="direct">
+      XLOC 551.0
+      YLOC 20
+      ZLOC 0
+      PITCH 0.03
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 551.0
-    YLOC 20
-    ZLOC 0
-    PITCH 0.03
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0"> <!-- left/fwd -->
-    XLOC 298.0 
-    YLOC 0 
-    ZLOC 0 
-    RADIUS 1 
-    CAPACITY 1953 
-    CONTENTS 1900 
+    XLOC 298.0
+    YLOC 0
+    ZLOC 0
+    RADIUS 1
+    CAPACITY 1953
+    CONTENTS 1900
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1"> <!-- right/aft -->
-    XLOC 370.0 
-    YLOC 0 
-    ZLOC 0 
-    RADIUS 1 
+    XLOC 370.0
+    YLOC 0
+    ZLOC 0
+    RADIUS 1
     CAPACITY 2029
-    CONTENTS 2000 
+    CONTENTS 2000
   </AC_TANK>
  </PROPULSION>
  <FLIGHT_CONTROL NAME="T38-FCS">
@@ -109,7 +109,7 @@
       SCHEDULED_BY velocities/mach-norm
       ROWS         2
        0.2         1.0
-       1.4         0.2 
+       1.4         0.2
    </COMPONENT>
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/pitch-feel
@@ -128,7 +128,7 @@
       SCHEDULED_BY velocities/mach-norm
       ROWS         2
        0.4         1.0
-       1.4         0.4 
+       1.4         0.4
    </COMPONENT>
    <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/roll-feel
@@ -183,7 +183,7 @@
    <COMPONENT NAME="Throttle1" TYPE="PURE_GAIN">
       INPUT        fcs/throttle-cmd-norm[0]
       GAIN         2.0
-      OUTPUT       fcs/throttle-pos-norm[0] 
+      OUTPUT       fcs/throttle-pos-norm[0]
    </COMPONENT>
    <COMPONENT NAME="Throttle2" TYPE="PURE_GAIN">
       INPUT        fcs/throttle-cmd-norm[1]
@@ -231,7 +231,7 @@
        0.00    0.000     0.600
        0.25    0.716     1.300
        0.33    0.945     0.300
-       0.60    0.174     0.000 
+       0.60    0.174     0.000
     </COEFFICIENT>
     <COEFFICIENT NAME="CLde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
@@ -288,9 +288,9 @@
        aero/qbar-psf|metrics/Sw-sqft
        -1.57     1.23
        -0.26     0.05
-        0.00     0.00  
+        0.00     0.00
         0.26     0.05
-        1.57     1.23       
+        1.57     1.23
     </COEFFICIENT>
     <COEFFICIENT NAME="CDde" TYPE="VALUE">
        Drag_due_to_Elevator_Deflection

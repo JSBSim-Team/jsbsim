@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c182" VERSION="1.61">
+<FDM_CONFIG NAME="c182" VERSION="1.65">
 <!--
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.14 2004/02/14 09:58:44 ehofman Exp $
+  CVS Version: $Id: c182.xml,v 1.15 2004/05/26 12:30:00 jberndt Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -112,17 +112,16 @@
       YAW     0.0
       FEED      0
       FEED      1
+      <AC_THRUSTER FILE="prop_81in2v">
+        XLOC  -37.7
+        YLOC    0.0
+        ZLOC   26.6
+        PITCH   0.0
+        YAW     0.0
+        P_FACTOR 10.0
+        SENSE   1.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-
-    <AC_THRUSTER FILE="prop_81in2v">
-      XLOC  -37.7
-      YLOC    0.0
-      ZLOC   26.6
-      PITCH   0.0
-      YAW     0.0
-      P_FACTOR 10.0
-      SENSE   1.0
-    </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
       XLOC   56.0

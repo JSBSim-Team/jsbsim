@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.15 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.16 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,6 +70,8 @@ public:
   ~FGRotor();
 
   double Calculate(double);
+  string GetThrusterLabels(int id);
+  string GetThrusterValues(int id);
 
 private:
   void Debug(int from);

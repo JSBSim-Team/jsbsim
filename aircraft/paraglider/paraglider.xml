@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="paraglider" VERSION="1.61">
+<FDM_CONFIG NAME="paraglider" VERSION="1.65">
 <!--
   File:     paraglider.xml
   Author:   David Culp
@@ -14,21 +14,21 @@
 
 -->
  <METRICS>
-   AC_WINGAREA  160.0 
-   AC_WINGSPAN  20.0 
-   AC_CHORD     8.0 
-   AC_HTAILAREA 1.0 
-   AC_HTAILARM  1.0 
-   AC_VTAILAREA 1.0 
-   AC_LV        1.0 
-   AC_IXX       2000.0 
-   AC_IYY       2000.0 
-   AC_IZZ       100.0 
-   AC_IXZ       0 
-   AC_EMPTYWT   200.0 
-   AC_CGLOC     48.0 0 -144.0 
-   AC_AERORP    48.0 0 0 
-   AC_EYEPTLOC  48.0 0 -120.0 
+   AC_WINGAREA  160.0
+   AC_WINGSPAN  20.0
+   AC_CHORD     8.0
+   AC_HTAILAREA 1.0
+   AC_HTAILARM  1.0
+   AC_VTAILAREA 1.0
+   AC_LV        1.0
+   AC_IXX       2000.0
+   AC_IYY       2000.0
+   AC_IZZ       100.0
+   AC_IXZ       0
+   AC_EMPTYWT   200.0
+   AC_CGLOC     48.0 0 -144.0
+   AC_AERORP    48.0 0 0
+   AC_EYEPTLOC  48.0 0 -120.0
  </METRICS>
  <UNDERCARRIAGE>
   AC_GEAR LMLG       48.0 -10 -180.0 200.0 50.0 0.5 0.8 0.5 FIXED NONE 0 FIXED

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.28 2003/12/17 12:27:07 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.29 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.28 2003/12/17 12:27:07 jberndt Exp $
+    $Id: FGRocket.h,v 1.29 2004/05/26 12:29:54 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -110,21 +110,20 @@ public:
   ~FGRocket(void);
 
   /** Determines the thrust coefficient.
-      This routine takes the nozzle exit pressure and calculates the thrust
-      coefficient times the chamber pressure.
-      @param pe nozzle exit pressure
       @return thrust coefficient times chamber pressure */
-  double Calculate(double pe);
-  
+  double Calculate(void);
+
   /** Gets the chamber pressure.
       @return chamber pressure in psf. */
   double GetChamberPressure(void) {return PC;}
 
   /** Gets the flame-out status.
-      The engine will "flame out" if the throttle is set below the minimum 
+      The engine will "flame out" if the throttle is set below the minimum
       sustainable setting.
       @return true if engine has flamed out. */
   bool GetFlameout(void) {return Flameout;}
+  string GetEngineLabels(void);
+  string GetEngineValues(void);
 
 private:
   double SHR;

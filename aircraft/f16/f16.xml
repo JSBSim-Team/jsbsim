@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="F-16" VERSION="1.61" RELEASE="BETA">
+<FDM_CONFIG NAME="F-16" VERSION="1.65" RELEASE="BETA">
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.36 2004/05/01 12:38:24 dpculp Exp $
+  CVS Version: $Id: f16.xml,v 1.37 2004/05/26 12:30:15 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -64,14 +64,14 @@
       YAW         0.0
       FEED          0
       FEED          1
+      <AC_THRUSTER FILE="direct">
+        XLOC        0.0
+        YLOC        0.0
+        ZLOC        0.0
+        PITCH       0.0
+        YAW         0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC        0.0
-      YLOC        0.0
-      ZLOC        0.0
-      PITCH       0.0
-      YAW         0.0
-    </AC_THRUSTER>
     <AC_TANK TYPE="FUEL" NUMBER="0">
       XLOC     -163.0
       YLOC       88.2

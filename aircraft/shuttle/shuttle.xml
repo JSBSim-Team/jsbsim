@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="Space Shuttle" VERSION="1.61">
+<FDM_CONFIG NAME="Space Shuttle" VERSION="1.65">
 
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.16 2004/02/14 09:58:47 ehofman Exp $
+  CVS Version: $Id: shuttle.xml,v 1.17 2004/05/26 12:30:20 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -310,7 +310,7 @@
       <COEFFICIENT NAME="CLalpha" TYPE="VALUE">
         Lift_due_to_alpha
         aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
-	      6.0
+        6.0
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CLDe" TYPE="VECTOR">

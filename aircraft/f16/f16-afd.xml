@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="F-16" VERSION="1.61" RELEASE="ALPHA">
+<FDM_CONFIG NAME="F-16" VERSION="1.65" RELEASE="ALPHA">
 
 <!--                                                                                       -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16-afd.xml,v 1.4 2004/02/14 09:58:45 ehofman Exp $
+  CVS Version: $Id: f16-afd.xml,v 1.5 2004/05/26 12:30:00 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 
@@ -73,15 +73,14 @@
       YAW         0.0
       FEED          0
       FEED          1
+      <AC_THRUSTER FILE="direct">
+        XLOC        0.0
+        YLOC        0.0
+        ZLOC        0.0
+        PITCH       0.0
+        YAW         0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-
-    <AC_THRUSTER FILE="direct">
-      XLOC        0.0
-      YLOC        0.0
-      ZLOC        0.0
-      PITCH       0.0
-      YAW         0.0
-    </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
       XLOC      173.0
@@ -93,13 +92,13 @@
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="2">
-      XLOC      173.0 
+      XLOC      173.0
       YLOC     -127.5
       ZLOC        0.0
       RADIUS     78.8
       CAPACITY 3486.0
       CONTENTS 3486.0
-    </AC_TANK>	
+    </AC_TANK>
 
   </PROPULSION>
 
@@ -763,7 +762,7 @@
       <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
         Yaw_moment_due_to_beta
         20
-        aero/alpha-rad 
+        aero/alpha-rad
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
         -0.3491  0.0853
         -0.2618  0.1172

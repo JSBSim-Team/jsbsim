@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.10 2004/05/03 16:22:40 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.11 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGTurbine::~FGTurbine()
 // The main purpose of Calculate() is to determine what phase the engine should
 // be in, then call the corresponding function.
 
-double FGTurbine::Calculate(double dummy)
+double FGTurbine::Calculate(void)
 {
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   dt = State->Getdt() * Propulsion->GetRate();
@@ -120,7 +120,7 @@ double FGTurbine::Calculate(double dummy)
     default: Thrust = Off();
   }
 
-  return Thrust;
+  return Thruster->Calculate(Thrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +162,7 @@ double FGTurbine::Run(void)
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    double correctedTSFC = TSFC + TSFC - (N2norm * TSFC); 
+    double correctedTSFC = TSFC + TSFC - (N2norm * TSFC);
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 100000);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
@@ -189,7 +189,7 @@ double FGTurbine::Run(void)
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   } else {
     Augmentation = false;
-  }    
+  }
 
   if ((Injected == 1) && Injection)
     thrust = thrust * ThrustTables[3]->TotalValue();
@@ -284,7 +284,7 @@ double FGTurbine::Trim(void)
     if (AugmentCmd > 0.0) {
       tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
       thrust += (tdiff * AugmentCmd);
-      }     
+      }
     return thrust;
 }
 
@@ -372,7 +372,7 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
     if      (token == "MILTHRUST") *Eng_cfg >> MilThrust;
     else if (token == "MAXTHRUST") *Eng_cfg >> MaxThrust;
     else if (token == "BYPASSRATIO") *Eng_cfg >> BypassRatio;
-    else if (token == "BLEED") *Eng_cfg >> BleedDemand; 
+    else if (token == "BLEED") *Eng_cfg >> BleedDemand;
     else if (token == "TSFC") *Eng_cfg >> TSFC;
     else if (token == "ATSFC") *Eng_cfg >> ATSFC;
     else if (token == "IDLEN1") *Eng_cfg >> IdleN1;
@@ -402,6 +402,31 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGTurbine::GetEngineLabels(void)
+{
+  string PropulsionStrings;
+  char buff[11];
+
+  PropulsionStrings = Name + "_N1[" + itoa(EngineNumber, buff, 10) + "], ";
+  PropulsionStrings += Name + "_N2[" + itoa(EngineNumber, buff, 10) + "]";
+
+  return (PropulsionStrings + ", " + Thruster->GetThrusterLabels(EngineNumber));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGTurbine::GetEngineValues(void)
+{
+  string PropulsionValues;
+  char buff[11];
+
+  PropulsionValues = string(gcvt(N1, 10, buff)) + ", ";
+  PropulsionValues += gcvt(N2, 10, buff);
+
+  return (PropulsionValues + ", " + Thruster->GetThrusterValues(EngineNumber));
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

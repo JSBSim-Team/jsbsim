@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.28 2004/04/29 07:20:20 frohlich Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.29 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,7 @@ const double FGJSBBase::SHRatio = 1.40;
 const double FGJSBBase::slugtolb = 32.174049;
 const double FGJSBBase::lbtoslug = 1.0/slugtolb;
 
-const string FGJSBBase::needed_cfg_version = "1.61";
+const string FGJSBBase::needed_cfg_version = "1.65";
 const string FGJSBBase::JSBSim_version = "0.9.5";
 
 std::queue <FGJSBBase::Message*> FGJSBBase::Messages;

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="F-104" VERSION="1.61">
+<FDM_CONFIG NAME="F-104" VERSION="1.65">
 
 <!--                                                                                   - -
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.13 2004/04/30 15:47:36 dpculp Exp $
+  CVS Version: $Id: f104.xml,v 1.14 2004/05/26 12:30:00 jberndt Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -22,7 +22,7 @@
       H-1999: Dynamic ground effects flight test of an F-15 aircraft.
 
   NOTE: The aileron deflection is gear deflection dependent:
- 	               max aileron deflection
+                 max aileron deflection
       Gear extended:   +/- 20.0 degrees
       Gear retracted:  +/-  9.5 degrees
  -->
@@ -42,7 +42,7 @@
    AC_EMPTYWT 16300
    AC_AERORP          -245.5   0.0   0.0
    AC_CGLOC           -273.0   0.0   0.0
-   AC_EYEPTLOC        -467.3   0.0  29.1 
+   AC_EYEPTLOC        -467.3   0.0  29.1
    AC_POINTMASS 230.0 -467.3   0.0   9.4
    AC_VRP             -275.1   0.0   0.1
   </METRICS>
@@ -65,14 +65,14 @@
     YAW       0.0
     FEED      0
     FEED      1
+     <AC_THRUSTER FILE="direct">
+      XLOC      0.0
+      YLOC      0.0
+      ZLOC      0.0
+      PITCH     0.0
+      YAW       0.0
+     </AC_THRUSTER>
    </AC_ENGINE>
-   <AC_THRUSTER FILE="direct">
-    XLOC      0.0
-    YLOC      0.0
-    ZLOC      0.0
-    PITCH     0.0
-    YAW       0.0
-   </AC_THRUSTER>
    <AC_TANK TYPE="FUEL" NUMBER="1">
     XLOC     -273.8
     YLOC        0.0

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.61">
+<FDM_CONFIG NAME="X-15" VERSION="1.65">
   <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.43 2004/02/14 09:58:43 ehofman Exp $
+  CVS Version: $Id: X15.xml,v 1.44 2004/05/26 12:29:58 jberndt Exp $
 
   Function: Models an X-15
   -->
@@ -119,15 +119,14 @@
       YAW    0.0
       FEED     0
       FEED     1
+      <AC_THRUSTER FILE="xlr99_nozzle">
+        XLOC  600.0
+        YLOC    0.0
+        ZLOC    0.0
+        PITCH   0.0
+        YAW     0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-
-    <AC_THRUSTER FILE="xlr99_nozzle">
-      XLOC  600.0
-      YLOC    0.0
-      ZLOC    0.0
-      PITCH   0.0
-      YAW     0.0
-    </AC_THRUSTER>
   </PROPULSION>
 
   <!--

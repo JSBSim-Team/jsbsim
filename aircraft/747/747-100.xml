@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="boeing747-jsbsim" VERSION="1.61">
+<FDM_CONFIG NAME="boeing747-jsbsim" VERSION="1.65">
 
 <!--
   ***********************************************************************************
@@ -52,8 +52,8 @@
     <!-- origin is nose, x,y,z in inches -->
     AC_CGLOC             1340    0   -39  <!-- EW CG at 25% MAC -->
     AC_AERORP            1340    0   -39  <!-- Ref. point at 25% MAC -->
-    AC_POINTMASS  95500  1455    0   -39  <!-- Cargo and Pax --> 
-    AC_EYEPTLOC           236  -40   118  
+    AC_POINTMASS  95500  1455    0   -39  <!-- Cargo and Pax -->
+    AC_EYEPTLOC           236  -40   118
     AC_VRP		 1340    0   -39
   </METRICS>
   <!-- ************************************************************************** -->
@@ -86,14 +86,14 @@
       YAW      -0.035
       FEED      0
       FEED      1
+      <AC_THRUSTER FILE="direct">
+        XLOC   1525
+        YLOC   -839
+        ZLOC    -47
+        PITCH     0.044
+        YAW      -0.035
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC   1525
-      YLOC   -839
-      ZLOC    -47
-      PITCH     0.044
-      YAW      -0.035
-    </AC_THRUSTER>
 
     <!-- Left Inboard -->
     <AC_ENGINE FILE="JT9D-3">
@@ -104,14 +104,14 @@
       YAW      -0.035
       FEED      1
       FEED      2
+      <AC_THRUSTER FILE="direct">
+        XLOC   1194
+        YLOC   -477
+        ZLOC    -95
+        PITCH     0.044
+        YAW      -0.035
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC   1194
-      YLOC   -477
-      ZLOC    -95
-      PITCH     0.044
-      YAW      -0.035
-    </AC_THRUSTER>
 
     <!-- Right Inboard -->
     <AC_ENGINE FILE="JT9D-3">
@@ -122,14 +122,14 @@
       YAW       0.035
       FEED      2
       FEED      3
+      <AC_THRUSTER FILE="direct">
+        XLOC   1194
+        YLOC    477
+        ZLOC    -95
+        PITCH     0.044
+        YAW       0.035
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC   1194
-      YLOC    477
-      ZLOC    -95
-      PITCH     0.044
-      YAW       0.035
-    </AC_THRUSTER>
 
     <!-- Right Outboard -->
     <AC_ENGINE FILE="JT9D-3">
@@ -140,14 +140,14 @@
       YAW       0.035
       FEED      3
       FEED      4
+      <AC_THRUSTER FILE="direct">
+        XLOC   1525
+        YLOC    839
+        ZLOC    -47
+        PITCH     0.044
+        YAW       0.035
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC   1525
-      YLOC    839
-      ZLOC    -47
-      PITCH     0.044
-      YAW       0.035
-    </AC_THRUSTER>
 
     <!-- Left Outboard -->
     <AC_TANK TYPE="FUEL" NUMBER="0">
@@ -260,7 +260,7 @@
        INPUT        fcs/yaw-trim-sum
        INPUT        fcs/yaw-damper-rate
        CLIPTO       -1 1
-     </COMPONENT>      
+     </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/rudder-sum
        MIN           -25
@@ -290,12 +290,12 @@
   <!-- ************************************************************************** -->
    <AERODYNAMICS>
 
-     AC_ALPHALIMITS  -0.13  0.33 
-     AC_HYSTLIMITS    0.06  0.26  
+     AC_ALPHALIMITS  -0.13  0.33
+     AC_HYSTLIMITS    0.06  0.26
 
     <AXIS NAME="LIFT">
 
-      <!-- Hanke 2.0-7/8 --> 
+      <!-- Hanke 2.0-7/8 -->
       <COEFFICIENT NAME="CLo" TYPE="VECTOR">
         Lift_at_zero_alpha
         4
@@ -388,7 +388,7 @@
         aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
         0.00  6.70
         0.20  6.70
-        0.65  6.50        
+        0.65  6.50
         0.90  5.50
       </COEFFICIENT>
 
@@ -466,7 +466,7 @@
            0.90  0.5
         </COEFFICIENT>
 
-      </GROUP>  
+      </GROUP>
 
       <!-- Roskam p636 -->
       <COEFFICIENT NAME="CDDe" TYPE="VECTOR">
@@ -541,7 +541,7 @@
         0.90  0.10
       </COEFFICIENT>
 
-      <!-- Hanke 7.0-8/9 -->      
+      <!-- Hanke 7.0-8/9 -->
       <COEFFICIENT NAME="CYr" TYPE="VECTOR">
         Side_force_due_to_yaw_rate
         4
@@ -557,7 +557,7 @@
 
     <AXIS NAME="ROLL">
 
-      <!-- Hanke 5.0-7/8 -->      
+      <!-- Hanke 5.0-7/8 -->
       <COEFFICIENT NAME="Clb" TYPE="VECTOR">
         Roll_moment_due_to_beta
         4

@@ -40,12 +40,13 @@ INCLUDES
 
 #include "FGForce.h"
 #include "FGConfigFile.h"
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.33 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.34 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.33 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.34 2004/05/26 12:29:54 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,21 +80,20 @@ public:
 
   virtual double Calculate(double tt) { Thrust = tt; vFn(1) = Thrust; return 0.0; }
   void SetName(string name) {Name = name;}
-  void SetThrusterNumber(int nn) {ThrusterNumber = nn;}
   virtual void SetRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(double dt) {deltaT = dt;}
   double GetThrust(void) {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
-  int GetThrusterNumber(void) {return ThrusterNumber;}
   virtual double GetRPM(void) { return 0.0; };
-  double GetGearRatio(void) {return GearRatio; } 
+  double GetGearRatio(void) {return GearRatio; }
+  virtual string GetThrusterLabels(int id);
+  virtual string GetThrusterValues(int id);
 
 protected:
   eType Type;
   string Name;
-  int ThrusterNumber;
   double Thrust;
   double PowerRequired;
   double deltaT;

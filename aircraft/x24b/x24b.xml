@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="X-24B" VERSION="1.61">
+<FDM_CONFIG NAME="X-24B" VERSION="1.65">
   <!--
 
   File:        x24b.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: x24b.xml,v 1.6 2004/02/14 09:58:47 ehofman Exp $
+  CVS Version: $Id: x24b.xml,v 1.7 2004/05/26 12:30:21 jberndt Exp $
 
   Function: Models an X-24B
   -->
@@ -108,15 +108,15 @@
       YAW    0.0
       FEED     0
       FEED     1
+      <AC_THRUSTER FILE="xlr99_nozzle">
+        XLOC  450.0
+        YLOC    0.0
+        ZLOC    0.0
+        PITCH   0.0
+        YAW     0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="xlr99_nozzle">
-      XLOC  450.0
-      YLOC    0.0
-      ZLOC    0.0
-      PITCH   0.0
-      YAW     0.0
-    </AC_THRUSTER>
   </PROPULSION>
 
   <!--
@@ -414,7 +414,7 @@
     <AXIS NAME="ROLL">
 
       <COEFFICIENT NAME="Clb" TYPE="VECTOR">
-        Roll_moment_due_to_beta           
+        Roll_moment_due_to_beta
         3
         aero/alpha-rad
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad

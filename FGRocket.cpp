@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.41 2003/12/17 12:27:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.42 2004/05/26 12:29:54 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGRocket::~FGRocket(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGRocket::Calculate(double pe)
+double FGRocket::Calculate(void)
 {
   double Cf=0;
 
@@ -103,11 +103,28 @@ double FGRocket::Calculate(double pe)
   } else {
     PctPower = Throttle / MaxThrottle;
     PC = maxPC*PctPower * (1.0 + Variance * ((double)rand()/(double)RAND_MAX - 0.5));
-    Cf = sqrt(kFactor*(1 - pow(pe/(PC), (SHR-1)/SHR)));
+    Cf = sqrt(kFactor*(1 - pow(Thruster->GetPowerRequired()/(PC), (SHR-1)/SHR)));
     Flameout = false;
   }
 
-  return Cf*maxPC*PctPower*propEff;
+  return Thruster->Calculate(Cf*maxPC*PctPower*propEff);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGRocket::GetEngineLabels(void)
+{
+  char buff[11];
+  return (Name + "_ChamberPress[" + itoa(EngineNumber, buff, 10) + "]" + ", " +
+          Thruster->GetThrusterLabels(EngineNumber));
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGRocket::GetEngineValues(void)
+{
+  char buff[11];
+  return (string(gcvt(PC, 10, buff)) + ", " + Thruster->GetThrusterValues(EngineNumber));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

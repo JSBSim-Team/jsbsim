@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="F22" VERSION="1.61" RELEASE="BETA">
+<FDM_CONFIG NAME="F22" VERSION="1.65" RELEASE="BETA">
 <!--
   File:     F22.xml
   Author:   Aero-Matic v 0.7
@@ -53,7 +53,7 @@
    AC_CGLOC     446.5  0.0 -18.6
    AC_AERORP    446.5  0.0  0.0
    AC_EYEPTLOC  148.8  0.0 38.0
-<!--   AC_VRP     No visual model up to now ... ->
+   AC_VRP       100 0 0
  </METRICS>
  <UNDERCARRIAGE>
   AC_GEAR NOSE_LG   96.7  0.0 -89.3 18603.4 6201.1  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
@@ -68,14 +68,14 @@
     PITCH 0
     YAW 0
     FEED 0
+    <AC_THRUSTER FILE="direct">
+      XLOC 684.1308
+      YLOC -20
+      ZLOC 0
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 684.1308
-    YLOC -20
-    ZLOC 0
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="F119-PW1">
     XLOC 684.1308
     YLOC 20
@@ -83,35 +83,35 @@
     PITCH 0
     YAW 0
     FEED 1
+    <AC_THRUSTER FILE="direct">
+      XLOC 684.1308
+      YLOC 20
+      ZLOC 0
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 684.1308
-    YLOC 20
-    ZLOC 0
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 446.47848 
-    YLOC 0 
-    ZLOC -18.60327 
-    RADIUS 1 
+    XLOC 446.47848
+    YLOC 0
+    ZLOC -18.60327
+    RADIUS 1
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 446.47848 
-    YLOC 0 
-    ZLOC -18.60327 
-    RADIUS 1 
+    XLOC 446.47848
+    YLOC 0
+    ZLOC -18.60327
+    RADIUS 1
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 446.47848 
-    YLOC 0 
-    ZLOC -18.60327 
-    RADIUS 1 
+    XLOC 446.47848
+    YLOC 0
+    ZLOC -18.60327
+    RADIUS 1
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>

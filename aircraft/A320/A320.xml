@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="A320-200" VERSION="1.61">
+<FDM_CONFIG NAME="A320-200" VERSION="1.65">
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.9 2004/04/30 15:20:23 dpculp Exp $
+  CVS Version: $Id: A320.xml,v 1.10 2004/05/26 12:29:56 jberndt Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 
@@ -22,7 +22,7 @@
     AC_EMPTYWT 111000.0	 <!-- light cargo and passenger load  -->
     <!-- origin is nose, x,y,z in inches -->
     AC_CGLOC      672.0   0.0 -40.0
-    AC_AERORP     672.0   0.0  20.0 
+    AC_AERORP     672.0   0.0  20.0
     AC_EYEPTLOC    80.0 -30.0  70.0
     AC_VRP        661.1   0.0 -37.0
   </METRICS>
@@ -48,14 +48,14 @@
       PITCH       0.0
       YAW         0.0
       FEED          0
+      <AC_THRUSTER FILE="direct">
+        XLOC      670.0
+        YLOC     -200.0
+        ZLOC      -45.0
+        PITCH       0.0
+        YAW         0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC      670.0
-      YLOC     -200.0
-      ZLOC      -45.0
-      PITCH       0.0
-      YAW         0.0
-    </AC_THRUSTER>
     <AC_ENGINE FILE="CFM56_5">
       XLOC      540.0
       YLOC      200.0
@@ -63,14 +63,14 @@
       PITCH       0.0
       YAW         0.0
       FEED          1
+      <AC_THRUSTER FILE="direct">
+        XLOC      670.0
+        YLOC      200.0
+        ZLOC      -45.0
+        PITCH       0.0
+        YAW         0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-    <AC_THRUSTER FILE="direct">
-      XLOC      670.0
-      YLOC      200.0
-      ZLOC      -45.0
-      PITCH       0.0
-      YAW         0.0
-    </AC_THRUSTER>
     <AC_TANK TYPE="FUEL" NUMBER="0">  <!-- left -->
       XLOC       600.0
       YLOC       -90.0
@@ -86,7 +86,7 @@
       RADIUS       1.0
       CAPACITY 23940.0
       CONTENTS 15000.0
-    </AC_TANK>	
+    </AC_TANK>
   </PROPULSION>
   <FLIGHT_CONTROL NAME="A320">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
@@ -208,7 +208,7 @@
        0.32  1.47  1.61  1.60  1.70  2.03
        0.34  1.35  1.50  1.41  1.50  1.53
        0.36  1.15  1.20  1.20  1.20  1.20
-     </COEFFICIENT> 
+     </COEFFICIENT>
      <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_Elevator_Deflection
          aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-rad

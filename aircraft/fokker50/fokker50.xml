@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="fokker50" VERSION="1.61" RELEASE="ALPHA">
+<FDM_CONFIG NAME="fokker50" VERSION="1.65" RELEASE="ALPHA">
 <!--
   File:     fokker50.xml
   Author:   Aero-Matic v 0.7
@@ -62,14 +62,14 @@
     PITCH 0
     YAW 0
     FEED 0
+    <AC_THRUSTER FILE="direct">
+      XLOC 497.0715
+      YLOC -190.298
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 497.0715
-    YLOC -190.298
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_ENGINE FILE="PW125B">
     XLOC 497.0715
     YLOC 190.298
@@ -77,35 +77,35 @@
     PITCH 0
     YAW 0
     FEED 1
+    <AC_THRUSTER FILE="direct">
+      XLOC 497.0715
+      YLOC 190.298
+      ZLOC -40
+      PITCH 0
+      YAW 0
+    </AC_THRUSTER>
   </AC_ENGINE>
-  <AC_THRUSTER FILE="direct">
-    XLOC 497.0715
-    YLOC 190.298
-    ZLOC -40
-    PITCH 0
-    YAW 0
-  </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 497.0715 
-    YLOC 0 
-    ZLOC -24.853575 
-    RADIUS 1 
+    XLOC 497.0715
+    YLOC 0
+    ZLOC -24.853575
+    RADIUS 1
     CAPACITY   814.6
     CONTENTS   407.3
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 497.0715 
-    YLOC 0 
-    ZLOC -24.853575 
-    RADIUS 1 
+    XLOC 497.0715
+    YLOC 0
+    ZLOC -24.853575
+    RADIUS 1
     CAPACITY   814.6
     CONTENTS   407.3
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 497.0715 
-    YLOC 0 
-    ZLOC -24.853575 
-    RADIUS 1 
+    XLOC 497.0715
+    YLOC 0
+    ZLOC -24.853575
+    RADIUS 1
     CAPACITY   814.6
     CONTENTS   407.3
   </AC_TANK>

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.174 2004/05/21 12:52:54 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.175 2004/05/26 12:29:54 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -222,8 +222,8 @@ FGJSBsim::FGJSBsim( double dt )
 
     for (unsigned int i = 0; i < Propulsion->GetNumEngines(); i++) {
       SGPropertyNode * node = fgGetNode("engines/engine", i, true);
-      Propulsion->GetThruster(i)->SetRPM(node->getDoubleValue("rpm") /
-                     Propulsion->GetThruster(i)->GetGearRatio());
+      Propulsion->GetEngine(i)->GetThruster()->SetRPM(node->getDoubleValue("rpm") /
+                     Propulsion->GetEngine(i)->GetThruster()->GetGearRatio());
     }
 }
 
@@ -600,7 +600,7 @@ bool FGJSBsim::copy_from_JSBsim()
       char buf[30];
       sprintf(buf, "engines/engine[%d]/thruster", i);
       SGPropertyNode * tnode = fgGetNode(buf, true);
-      FGThruster * thruster = Propulsion->GetThruster(i);
+      FGThruster * thruster = Propulsion->GetEngine(i)->GetThruster();
 
       switch (Propulsion->GetEngine(i)->GetType()) {
       case FGEngine::etPiston:

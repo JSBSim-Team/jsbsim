@@ -55,10 +55,12 @@ INCLUDES
 
 #include "FGEngine.h"
 #include "FGTank.h"
+#include "FGPropeller.h"
+#include "FGNozzle.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.63 2004/04/26 16:39:57 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.64 2004/05/26 12:29:53 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +92,7 @@ FGEngine::FGEngine(FGFDMExec* exec)
   FDMExec = exec;
   State = FDMExec->GetState();
   Atmosphere = FDMExec->GetAtmosphere();
-  FCS = FDMExec->GetFCS();
+//  FCS = FDMExec->GetFCS();
   Propulsion = FDMExec->GetPropulsion();
   Aircraft = FDMExec->GetAircraft();
   Propagate = FDMExec->GetPropagate();
@@ -167,6 +169,102 @@ void FGEngine::SetPlacement(double x, double y, double z, double pitch, double y
 void FGEngine::AddFeedTank(int tkID)
 {
   SourceTanks.push_back(tkID);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGEngine::GetBodyForces(void)
+{
+  return Thruster->GetBodyForces();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGEngine::GetMoments(void)
+{
+  return Thruster->GetMoments();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGEngine::LoadThruster(FGConfigFile* AC_cfg)
+{
+  string token, fullpath, localpath;
+  string thrusterFileName, thrType, engineFileName;
+  FGConfigFile* Cfg_ptr = 0;
+  double xLoc, yLoc, zLoc, Pitch, Yaw;
+  double P_Factor = 0, Sense = 0.0;
+  string enginePath = FDMExec->GetEnginePath();
+  string aircraftPath = FDMExec->GetAircraftPath();
+  thrusterFileName = AC_cfg->GetValue("FILE");
+
+# ifndef macintosh
+      fullpath = enginePath + "/";
+      localpath = aircraftPath + "/" + FDMExec->GetModelName() + "/Engines/";
+# else
+      fullpath = enginePath + ";";
+      localpath = aircraftPath + ";" + FDMExec->GetModelName() + ";Engines;";
+# endif
+
+  // Look in the Aircraft/Engines directory first
+  FGConfigFile Local_Thruster_cfg(localpath + thrusterFileName + ".xml");
+  FGConfigFile Thruster_cfg(fullpath + thrusterFileName + ".xml");
+
+  if (Local_Thruster_cfg.IsOpen()) {
+    Cfg_ptr = &Local_Thruster_cfg;
+    if (debug_lvl > 0) cout << "\n    Reading thruster from file: " << localpath
+                                      + thrusterFileName + ".xml"<< endl;
+  } else {
+    if (Thruster_cfg.IsOpen()) {
+      Cfg_ptr = &Thruster_cfg;
+      if (debug_lvl > 0) cout << "\n    Reading thruster from file: " << fullpath
+                                        + thrusterFileName + ".xml"<< endl;
+    }
+  }
+
+  if (Cfg_ptr) {
+    Cfg_ptr->GetNextConfigLine();
+    thrType = Cfg_ptr->GetValue();
+
+    if (thrType == "FG_PROPELLER") {
+      Thruster = new FGPropeller(FDMExec, Cfg_ptr);
+    } else if (thrType == "FG_NOZZLE") {
+      Thruster = new FGNozzle(FDMExec, Cfg_ptr);
+    } else if (thrType == "FG_DIRECT") {
+      Thruster = new FGThruster( FDMExec, Cfg_ptr);
+    }
+
+    AC_cfg->GetNextConfigLine();
+    while ((token = AC_cfg->GetValue()) != string("/AC_THRUSTER")) {
+      *AC_cfg >> token;
+      if (token == "XLOC") *AC_cfg >> xLoc;
+      else if (token == "YLOC") *AC_cfg >> yLoc;
+      else if (token == "ZLOC") *AC_cfg >> zLoc;
+      else if (token == "PITCH") *AC_cfg >> Pitch;
+      else if (token == "YAW") *AC_cfg >> Yaw;
+      else if (token == "P_FACTOR") *AC_cfg >> P_Factor;
+      else if (token == "SENSE")   *AC_cfg >> Sense;
+      else cerr << "Unknown identifier: " << token << " in engine file: "
+                << engineFileName << endl;
+    }
+
+    Thruster->SetLocation(xLoc, yLoc, zLoc);
+    Thruster->SetAnglesToBody(0, Pitch, Yaw);
+    if (thrType == "FG_PROPELLER" && P_Factor > 0.001) {
+      ((FGPropeller*)Thruster)->SetPFactor(P_Factor);
+      if (debug_lvl > 0) cout << "      P-Factor: " << P_Factor << endl;
+      ((FGPropeller*)Thruster)->SetSense(fabs(Sense)/Sense);
+      if (debug_lvl > 0) cout << "      Sense: " << Sense <<  endl;
+    }
+    Thruster->SetdeltaT(State->Getdt() * Propulsion->GetRate());
+    return true;
+  } else {
+
+    cerr << "Could not read thruster config file: " << fullpath
+              + thrusterFileName + ".xml" << endl;
+    return false;
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

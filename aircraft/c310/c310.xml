@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c310" VERSION="1.61">
+<FDM_CONFIG NAME="c310" VERSION="1.65">
 <!--
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.37 2004/04/01 12:24:01 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.38 2004/05/26 12:30:00 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -141,6 +141,15 @@
       FEED      1
       FEED      2
       FEED      3
+      <AC_THRUSTER FILE="propC10v">
+        XLOC  -27.5
+        YLOC  -70.0
+        ZLOC   15.5
+        PITCH   0.0
+        YAW     0.0
+        P_FACTOR 0.1
+        SENSE   1.0
+      </AC_THRUSTER>
     </AC_ENGINE>
 
     <AC_ENGINE FILE="engIO470D">
@@ -153,27 +162,16 @@
       FEED      1
       FEED      2
       FEED      3
+      <AC_THRUSTER FILE="propC10v">
+        XLOC  -27.5
+        YLOC   70.0
+        ZLOC   15.5
+        PITCH   0.0
+        YAW     0.0
+        P_FACTOR 0.1
+        SENSE   1.0
+      </AC_THRUSTER>
     </AC_ENGINE>
-
-    <AC_THRUSTER FILE="propC10v">
-      XLOC  -27.5
-      YLOC  -70.0
-      ZLOC   15.5
-      PITCH   0.0
-      YAW     0.0
-      P_FACTOR 0.1
-      SENSE   1.0
-    </AC_THRUSTER>
-
-    <AC_THRUSTER FILE="propC10v">
-      XLOC  -27.5
-      YLOC   70.0
-      ZLOC   15.5
-      PITCH   0.0
-      YAW     0.0
-      P_FACTOR 0.1
-      SENSE   1.0
-    </AC_THRUSTER>
 
     <!--
       Wing tip tanks

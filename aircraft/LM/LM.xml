@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="Lunar Module" VERSION="1.61">
+<FDM_CONFIG NAME="Lunar Module" VERSION="1.65" RELEASE="ALPHA">
   <!--
 
   File:        LM.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: LM.xml,v 1.5 2004/02/14 09:58:35 ehofman Exp $
+  CVS Version: $Id: LM.xml,v 1.6 2004/05/26 12:29:57 jberndt Exp $
 
   Function: Models a Grumman Aerospace Lunar Module
   -->
@@ -111,15 +111,15 @@
       YAW    0.0
       FEED     0
       FEED     1
+      <AC_THRUSTER FILE="LM_descent_nozzle">
+        XLOC  600.0
+        YLOC    0.0
+        ZLOC    0.0
+        PITCH   0.0
+        YAW     0.0
+      </AC_THRUSTER>
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="LM_descent_nozzle">
-      XLOC  600.0
-      YLOC    0.0
-      ZLOC    0.0
-      PITCH   0.0
-      YAW     0.0
-    </AC_THRUSTER>
   </PROPULSION>
 
   <!--

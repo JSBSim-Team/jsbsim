@@ -26,7 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 03/11/2003  DPC  Created, based on FGTurbine
-09/22/2003  DPC  Added starting, stopping, new framework 
+09/22/2003  DPC  Added starting, stopping, new framework
 04/29/2004  DPC  Renamed from FGSimTurbine to FGTurbine
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.9 2004/04/29 23:46:55 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.10 2004/05/26 12:29:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
          the starter may be used to assist.
       -# Place the control FGEngine::Cutoff to false.
 <P>
-    Ignition is assumed to be on anytime the Cutoff control is set to false, 
+    Ignition is assumed to be on anytime the Cutoff control is set to false,
     therefore a seperate ignition system is not modeled.
 
 Configuration File Format
@@ -112,7 +112,7 @@ Definition of the turbine engine configuration file parameters:
 [this value will be ignored when AUGMENTED is zero (false)]
 <b>IDLEN1</b> - Fan rotor rpm (% of max) at idle
 <b>IDLEN2</b> - Core rotor rpm (% of max) at idle
-<b>MAXN1</b> - Fan rotor rpm (% of max) at full throttle [not always 100!] 
+<b>MAXN1</b> - Fan rotor rpm (% of max) at full throttle [not always 100!]
 <b>MAXN2</b> - Core rotor rpm (% of max) at full throttle [not always 100!]
 <b>AUGMENTED</b>
   0 == afterburner not installed
@@ -120,14 +120,14 @@ Definition of the turbine engine configuration file parameters:
 <b>AUGMETHOD</b>
   0 == afterburner activated by property /engines/engine[n]/augmentation
   1 == afterburner activated by pushing throttle above 99% position
-  2 == throttle range is expanded in the FCS, and values above 1.0 are afterburner range 
+  2 == throttle range is expanded in the FCS, and values above 1.0 are afterburner range
   [this item will be ignored when AUGMENTED == 0]
 <b>INJECTED</b>
   0 == Water injection not installed
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.9 2004/04/29 23:46:55 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.10 2004/05/26 12:29:54 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,7 @@ public:
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
 
-  double Calculate(double PowerRequired);
+  double Calculate(void);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
   double Seek(double* var, double target, double accel, double decel);
@@ -162,7 +162,7 @@ public:
   int GetIgnition(void) {return Ignition;}
 
   double GetInlet(void) { return InletPosition; }
-  double GetNozzle(void) { return NozzlePosition; } 
+  double GetNozzle(void) { return NozzlePosition; }
   double GetBleedDemand(void) {return BleedDemand;}
   double GetN1(void) {return N1;}
   double GetN2(void) {return N2;}
@@ -180,6 +180,9 @@ public:
   void SetBleedDemand(double bleedDemand) {BleedDemand = bleedDemand;}
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
+
+  string GetEngineLabels(void);
+  string GetEngineValues(void);
 
 private:
 
