@@ -168,35 +168,20 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 FGAircraft::~FGAircraft(void) { 
   unsigned int i,j;
 
-  cout << " ~FGAircraft" << endl;
   if (Engine != NULL) {
     for (i=0; i<numEngines; i++)
       delete Engine[i];
   }    
-  cout << "  Engine" << endl;
-
   if (Tank != NULL) {
     for (i=0; i<numTanks; i++)
       delete Tank[i];
   }    
-  cout << "  Tank" << endl;
-
-  cout << "  NumAxes: " << 6 << endl;
   for (i=0; i<6; i++) {
-    cout << "  NumCoeffs: " << Coeff[i].size() << "  " << &Coeff[i] << endl;
     for (j=0; j<Coeff[i].size(); j++) {
-      
-      cout << "  Coeff[" << i << "][" << j << "]: " << Coeff[i][j] << endl;
       delete Coeff[i][j];
     }
   }
-
   delete[] Coeff;
-  cout << "  Coeffs" << endl;
-
-//  for (i=0; i<lGear.size(); i++) {
-//      delete lGear[i];
-//  }  
 }
 
 /******************************************************************************/
