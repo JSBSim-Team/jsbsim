@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.29 2004/03/15 09:20:03 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.30 2004/03/18 12:50:41 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,6 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   string token, value;
   struct test *current_test;
-  struct FGCondition *current_condition;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");

@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.43 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.44 2004/03/18 12:50:41 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,7 +186,7 @@ bool FGAuxiliary::Run()
 
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
-    double cTht = cos(vEuler(eTht)),   sTht = sin(vEuler(eTht));
+    double cTht = cos(vEuler(eTht));
     double cPhi = cos(vEuler(ePhi)),   sPhi = sin(vEuler(ePhi));
 
     vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
@@ -308,6 +308,7 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("velocities/p-aero-rad_sec");
   PropertyManager->Untie("velocities/q-aero-rad_sec");
   PropertyManager->Untie("velocities/r-aero-rad_sec");
+  PropertyManager->Untie("velocities/pt-lbs_sqft");
   PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
