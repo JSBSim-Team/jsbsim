@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.20 2000/10/21 15:18:02 jsb Exp $
+    @version $Id: FGLGear.h,v 1.21 2000/10/22 18:42:39 jsb Exp $
     @see -
 */
 
@@ -98,7 +98,7 @@ class FGLGear
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object
-      @param File a pointer top the config file instance */
+      @param File a pointer to the config file instance */
   FGLGear(FGConfigFile* File, FGFDMExec* Executive);
   /// Destructor
   ~FGLGear(void);
