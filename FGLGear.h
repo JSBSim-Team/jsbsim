@@ -99,7 +99,13 @@ private:
   float statFCoeff, rollFCoeff, skidFCoeff;
   float frictionForce, compForce;
   float brakePct, brakeForce, brakeCoeff;
+  double SinkRate;
+  double GroundSpeed;
+  double DistanceTraveled;
+  double MaximumStrutForce;
   bool WOW;
+  bool FirstContact;
+  bool Reported;
   string name;
 
   FGFDMExec*     Exec;
@@ -107,6 +113,8 @@ private:
   FGAircraft*    Aircraft;
   FGPosition*    Position;
   FGRotation*    Rotation;
+
+  void Report(void);
 };
 
 #include "FGAircraft.h"
