@@ -97,7 +97,7 @@ public:
     Starved = true;
   }
   
-  bool SetRunning(bool bb) { Running=bb; }
+  void SetRunning(bool bb) { Running=bb; }
   
   float CalcThrust(void);
   float CalcFuelNeed(void);

@@ -98,6 +98,10 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
     else                         Type = etUnknown;
 
     switch(Type) {
+    case etTurboProp:
+    case etTurboJet: 
+      cerr << "Unsupported Engine type" << tag << endl;
+      break;
     case etUnknown:
       cerr << "Unknown engine type: " << tag << endl;
       break;
