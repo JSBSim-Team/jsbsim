@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.80 2001/11/12 05:06:28 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.81 2001/11/14 00:17:41 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -257,6 +257,28 @@ bool FGJSBsim::update( int multiloop ) {
 
     for ( i=0; i < multiloop; i++ ) {
         fdmex->Run();
+    }
+
+    struct FGJSBBase::Message* msg;
+    while (fdmex->ReadMessage()) {
+      msg = fdmex->ProcessMessage();
+      switch (msg->type) {
+      case FGJSBBase::Message::eText:
+        cout << msg->messageId << ": " << msg->text << endl;
+        break;
+      case FGJSBBase::Message::eBool:
+        cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
+        break;
+      case FGJSBBase::Message::eInteger:
+        cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
+        break;
+      case FGJSBBase::Message::eDouble:
+        cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
+        break;
+      default:
+        cerr << "Unrecognized message type." << endl;
+              break;
+      }
     }
 
     for( i=0; i<get_num_engines(); i++ ) {
