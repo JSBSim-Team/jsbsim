@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.83 2004/10/05 14:08:54 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.84 2004/10/05 14:17:43 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -117,7 +117,7 @@ CLASS DOCUMENTATION
  * - Landing gear location and properties.
  * - Pilot eyepoint
  * - Additional point masses (passengers, cargo, etc.)
- * - Propulsion system (engines, fuel tanks, and “thrusters”)
+ * - Propulsion system (engines, fuel tanks, and "thrusters")
  * - Flight control system
  * - Autopilot
  * - Aerodynamic stability derivatives and coefficients
@@ -133,7 +133,7 @@ CLASS DOCUMENTATION
  * components are listed in the configuration file in the order they are to be
  * executed.
  *
- * Another unique feature is displayed in the use of “properties”.  Properties
+ * Another unique feature is displayed in the use of "properties".  Properties
  * essentially expose chosen variables as nodes in a tree, in a directory-like
  * hierarchy.  This approach facilitates plugging in different FDMs into
  * FlightGear, but it also is a fundamental tool in allowing a wide range of
@@ -144,7 +144,7 @@ CLASS DOCUMENTATION
  *
  * The equations of motion are modeled essentially as they are presented in
  * aerospace textbooks for the benefit of student users, but quaternions are
- * used to track orientation, avoiding “gimbal lock”. While JSBSim is currently
+ * used to track orientation, avoiding "gimbal lock". While JSBSim is currently
  * designed to model primarily atmospheric flight at lower speeds, coriolis and
  * centripetal accelerations will be incorporated into the EOM in the future to
  * permit a wider range of vehicles to be simulated.
