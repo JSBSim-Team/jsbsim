@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------------------
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGPosition.h
  Author:       Jon S. Berndt
@@ -27,67 +27,60 @@ HISTORY
 --------------------------------------------------------------------------------
 01/05/99   JSB   Created
  
---------------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
--------------------------------------------------------------------------------*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifndef FGPOSITION_H
 #define FGPOSITION_H
 
-/*------------------------------------------------------------------------------
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
--------------------------------------------------------------------------------*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-/*------------------------------------------------------------------------------
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
--------------------------------------------------------------------------------*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.26 2000/10/16 12:32:46 jsb Exp $"
+#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.27 2000/10/18 19:18:36 jsb Exp $"
 
-/*------------------------------------------------------------------------------
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
-------------------------------------------------------------------------------*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.26 2000/10/16 12:32:46 jsb Exp $
+    @version $Id: FGPosition.h,v 1.27 2000/10/18 19:18:36 jsb Exp $
   */
 
-/*------------------------------------------------------------------------------
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
--------------------------------------------------------------------------------*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGPosition : public FGModel {
-  
-  /** Body axis U, V, W velocities
-    */
-  FGColumnVector vUVW;
-  FGColumnVector vVel;
-  FGColumnVector vVelDot;
-  FGColumnVector vRunwayNormal;
-  
-  double Vee, invMass, invRadius;
-  double Radius, h;
-  double LatitudeDot, LongitudeDot, RadiusDot;
-  double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
-  double Longitude, Latitude;
-  float dt;
-  double RunwayRadius;
-  double DistanceAGL;
-  double SeaLevelRadius;
-  double gamma;
-  double Vt, Vground;
-  double hoverb,b;
-
-  void GetState(void);
-
 public:
+  /** Constructor
+      @param Executive a pointer to the parent executive object */
   FGPosition(FGFDMExec*);
+  /// Destructor
   ~FGPosition(void);
 
+  /** Runs the Position model; called by the Executive
+      @see JSBSim.cpp documentation
+      @return false if no error */
+  bool Run(void);
+  
   inline FGColumnVector GetVel(void) { return vVel; }
   inline FGColumnVector GetVelDot(void) { return vVelDot; }
   inline FGColumnVector GetUVW(void) { return vUVW; }
@@ -119,7 +112,28 @@ public:
       vRunwayNormal << fgx << fgy << fgz;
   }
   
-  bool Run(void);
+private:  
+  FGColumnVector vUVW;
+  FGColumnVector vVel;
+  FGColumnVector vVelDot;
+  FGColumnVector vRunwayNormal;
+  
+  double Vee, invMass, invRadius;
+  double Radius, h;
+  double LatitudeDot, LongitudeDot, RadiusDot;
+  double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
+  double Longitude, Latitude;
+  float dt;
+  double RunwayRadius;
+  double DistanceAGL;
+  double SeaLevelRadius;
+  double gamma;
+  double Vt, Vground;
+  double hoverb,b;
+
+  void GetState(void);
+
+  
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
