@@ -46,7 +46,7 @@
     <max steer angle>                Maximum steerable angle in degrees
 
     </COMMENT>
-    
+
     AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 FIXED NO_BRAKE CENTER 0
     AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE LEFT   0
     AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE RIGHT  0

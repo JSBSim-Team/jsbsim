@@ -34,6 +34,8 @@
 
   <UNDERCARRIAGE>
 
+    <COMMENT>
+
     The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
 
     AC_GEAR
