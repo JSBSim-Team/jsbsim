@@ -17,12 +17,12 @@
   BYPASSRATIO    0.0
   TSFC           0.55
   ATSFC          0.0
-  IDLEN1        30.0
+  IDLEN1         0.0
   IDLEN2        60.0
-  MAXN1        100.0
+  MAXN1          0.0
   MAXN2        100.0
   AUGMENTED      0
-  AUGMETHOD      1
+  AUGMETHOD      0
   INJECTED       0
 
 <TABLE NAME="IdleThrust" TYPE="TABLE">

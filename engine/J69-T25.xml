@@ -14,9 +14,9 @@
 <FG_TURBINE NAME="J69-T25">
   MILTHRUST 1025
   MAXTHRUST 1025
-  BYPASSRATIO    1.0
+  BYPASSRATIO    0.0
   TSFC           0.8
-  ATSFC          1.7
+  ATSFC          1.14
   IDLEN1        30.0
   IDLEN2        60.0
   MAXN1        100.0
