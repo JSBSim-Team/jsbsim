@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.29 2001/11/16 23:24:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.30 2001/11/17 12:58:37 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,17 +60,6 @@ FGConfigFile::~FGConfigFile()
 
 string FGConfigFile::GetNextConfigLine(void)
 {
-  // New logic for this function should be created:
-  // If this is a partially commented line:
-  //   save the line-comment or begin the Comment
-  //   remove the line_comment
-  //   return the string
-  // otherwise if this is an entire comment
-  //   append the comment to Comment
-  //   Call this function interatively
-  // otherwise if there is no comment just
-  //   return the line
-
   int deblank, not_found = string::npos;
   int comment_starts_at;
   int comment_ends_at;

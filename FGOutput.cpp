@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.41 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.42 2001/11/17 12:58:37 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,18 +130,16 @@ void FGOutput::SetType(string type)
 
 void FGOutput::DelimitedOutput(string fname)
 {
-# if defined(sgi) && !defined(__GNUC__)
-  ostream_withassign outstream;
-# else
-  _IO_ostream_withassign outstream;
-# endif
+  streambuf* buffer;
 
   if (fname == "COUT" || fname == "cout") {
-    outstream = cout;
+    buffer = cout.rdbuf();
   } else {
     datafile.open(fname.c_str());
-    outstream = datafile;
+    buffer = datafile.rdbuf();
   }
+
+  ostream outstream(buffer);
 
   if (dFirstPass) {
     outstream << "Time";
