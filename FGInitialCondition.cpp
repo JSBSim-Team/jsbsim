@@ -38,12 +38,6 @@ angles, and altitude.  This class does not attempt to trim the model i.e.
 the sim will most likely start in a very dynamic state (unless, of course,
 you have chosen your IC's wisely) even after setting it up with this class.
  
-CAVEAT: This class makes use of alpha=theta-gamma. This means that setting
-        any of the three with this class is only valid for steady state
-        (all accels zero) and zero pitch rate.  One example where this
-        would produce invalid results is setting up for a trim in a pull-up
-        or pushover (both have nonzero pitch rate).  Maybe someday...
- 
 ********************************************************************************
 INCLUDES
 *******************************************************************************/
@@ -137,7 +131,7 @@ void FGInitialCondition::SetClimbRateFpmIC(float tt) {
 
 void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
   gamma=tt;
-  theta=alpha+gamma;
+  getTheta();
   hdot=vt*sin(tt);
 }
 
@@ -191,6 +185,70 @@ void FGInitialCondition::SetAltitudeAGLFtIC(float tt) {
   altitude=fdmex->GetPosition()->Geth();
   SetAltitudeFtIC(altitude);
 }  
+
+bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
+ 
+  bool result=false;
+  float guess=1.5;
+  xlo=xhi=0;
+  xmin=0;xmax=50;
+  sfunc=&FGInitialCondition::calcVcas;
+  if(findInterval(vcas,guess)) {
+    if(solve(&mach,vcas))
+      result=true;
+  }    
+  return result;
+}
+
+bool FGInitialCondition::getAlpha(void) {
+  bool result=false;
+  float guess=theta-gamma;
+  xlo=xhi=0;
+  xmin=fdmex->GetAircraft()->GetAlphaCLMin();
+  xmax=fdmex->GetAircraft()->GetAlphaCLMax();
+  sfunc=&FGInitialCondition::GammaEqOfAlpha;
+  if(findInterval(0,guess)){
+    if(solve(&alpha,0)){
+      result=true;
+    }
+  }
+  return result;
+}      
+    
+bool FGInitialCondition::getTheta(void) {
+  bool result=false;
+  float guess=alpha+gamma;
+  xlo=xhi=0;
+  xmin=-89;xmax=89;
+  sfunc=&FGInitialCondition::GammaEqOfTheta;
+  if(findInterval(0,guess)){
+    if(solve(&theta,0)){
+      result=true;
+    }
+  }
+  return result;
+}      
+  
+
+
+float FGInitialCondition::GammaEqOfTheta(float Theta) {
+  float a,b,c;
+  
+  a=cos(alpha)*cos(beta)*sin(Theta);
+  b=sin(beta)*sin(phi);
+  c=sin(alpha)*cos(beta)*cos(phi);
+  return sin(gamma)-a+(b+c)*cos(Theta);
+}
+
+float FGInitialCondition::GammaEqOfAlpha(float Alpha) {
+  float a,b,c;
+  
+  a=cos(Alpha)*cos(beta)*sin(theta);
+  b=sin(beta)*sin(phi);
+  c=sin(Alpha)*cos(beta)*cos(phi);
+  return sin(gamma)-a+(b+c)*cos(theta);
+}
+
   
 float FGInitialCondition::calcVcas(float Mach) {
 
@@ -198,7 +256,7 @@ float FGInitialCondition::calcVcas(float Mach) {
   float psl=fdmex->GetAtmosphere()->GetPressureSL();
   float rhosl=fdmex->GetAtmosphere()->GetDensitySL();
   float pt,A,B,D,vcas;
-
+  if(Mach < 0) Mach=0;
   if(Mach < 1)    //calculate total pressure assuming isentropic flow
     pt=p*pow((1 + 0.2*Mach*Mach),3.5);
   else {
@@ -231,26 +289,25 @@ float FGInitialCondition::calcVcas(float Mach) {
   return vcas;
 }
 
-bool FGInitialCondition::findMachInterval(float *mlo, float *mhi, float vcas) {
+bool FGInitialCondition::findInterval(float x,float guess) {
   //void find_interval(inter_params &ip,eqfunc f,float y,float constant, int &flag){
 
   int i=0;
   bool found=false;
   float flo,fhi,fguess;
-  float lo,hi,guess,step;
+  float lo,hi,step;
   step=0.1;
-  guess=1.5;
-  fguess=calcVcas(guess)-vcas;
+  fguess=(this->*sfunc)(guess)-x;
   lo=hi=guess;
   do {
     step=2*step;
     lo-=step;
-    if(lo < 0)
-      lo=0;
     hi+=step;
+    if(lo < xmin) lo=xmin;
+    if(hi > xmax) hi=xmax;
     i++;
-    flo=calcVcas(lo)-vcas;
-    fhi=calcVcas(hi)-vcas;
+    flo=(this->*sfunc)(lo)-x;
+    fhi=(this->*sfunc)(hi)-x;
     if(flo*fhi <=0) {  //found interval with root
       found=true;
       if(flo*fguess <= 0) {  //narrow interval down a bit
@@ -261,48 +318,45 @@ bool FGInitialCondition::findMachInterval(float *mlo, float *mhi, float vcas) {
         lo=hi-step;
       }
     }
-    //cout << "findMachInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
+    cout << "findInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
   }
   while((found == 0) && (i <= 100));
-  *mlo=lo;
-  *mhi=hi;
+  xlo=lo;
+  xhi=hi;
   return found;
 }
 
 
 
-bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
 
-
+bool FGInitialCondition::solve(float *y,float x) {  
   float x1,x2,x3,f1,f2,f3,d,d0;
-  float eps=1E-3;
+  float eps=1E-5;
   float const relax =0.9;
   int i;
   bool success=false;
   
-  if(vcas < 0.1) {
-    Mach=0;
-    success=true;
-    return success;
-  }  
-  //initializations
+   //initializations
   d=1;
-  if(findMachInterval(&x1,&x3,vcas)) {
-
-
-    f1=calcVcas(x1)-vcas;
-    f3=calcVcas(x3)-vcas;
+  
+    x1=xlo;x3=xhi;
+    f1=(this->*sfunc)(x1)-x;
+    f3=(this->*sfunc)(x3)-x;
     d0=fabs(x3-x1);
-
+  
     //iterations
     i=0;
     while ((fabs(d) > eps) && (i < 100)) {
-      //cout << "getMachFromVcas x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
       d=(x3-x1)/d0;
       x2=x1-d*d0*f1/(f3-f1);
       
-      f2=calcVcas(x2)-vcas;
-      if(f1*f2 <= 0.0) {
+      f2=(this->*sfunc)(x2)-x;
+      cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
+      cout << "                " << f1 << "," << f2 << "," << f3 << endl;
+
+      if(fabs(f2) <= 0.001) {
+        x1=x3=x2;
+      } else if(f1*f2 <= 0.0) {
         x3=x2;
         f3=f2;
         f1=relax*f1;
@@ -316,10 +370,9 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
     }//end while
     if(i < 100) {
       success=true;
-      *Mach=x2;
+      *y=x2;
     }
 
-  }
   //cout << "Success= " << success << " Vcas: " << vcas*FPSTOKTS << " Mach: " << x2 << endl;
   return success;
 }

@@ -38,12 +38,6 @@ angles, and altitude.  This class does not attempt to trim the model i.e.
 the sim will most likely start in a very dynamic state (unless, of course,
 you have chosen your IC's wisely) even after setting it up with this class.
  
-CAVEAT: This class makes use of alpha=theta-gamma. This means that setting
-        any of the three with this class is only valid for steady state
-        (all accels zero) and zero pitch rate.  One example where this
-        would produce invalid results is setting up for a trim in a pull-up
-        or pushover (both have nonzero pitch rate).  Maybe someday...
- 
 ********************************************************************************
 SENTRY
 *******************************************************************************/
@@ -64,6 +58,7 @@ CLASS DECLARATION
 *******************************************************************************/
 
 typedef enum { setvt, setvc, setve, setmach } speedset;
+
 
 /* USAGE NOTES
    With a valid object of FGFDMExec and an aircraft model loaded
@@ -134,11 +129,11 @@ public:
   //set speed first
   void SetClimbRateFpmIC(float tt);
   //use currently stored gamma, recalcualte theta
-  inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD; theta=alpha+gamma; }
-  inline void SetAlphaRadIC(float tt)      { alpha=tt; theta=alpha+gamma; }
+  inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD; getTheta(); }
+  inline void SetAlphaRadIC(float tt)      { alpha=tt; getTheta(); }
   //use currently stored gamma, recalcualte alpha
-  inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD; alpha=theta-gamma; }
-  inline void SetPitchAngleRadIC(float tt) { theta=tt; alpha=theta-gamma; }
+  inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD; getAlpha(); }
+  inline void SetPitchAngleRadIC(float tt) { theta=tt; getAlpha(); }
 
   inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; }
   inline void SetBetaRadIC(float tt)       { beta=tt; }
@@ -208,14 +203,27 @@ private:
   float altitude,hdot;
   float latitude,longitude;
   float u,v,w;
+  
+  float xlo, xhi,xmin,xmax;
+  
+  typedef float (FGInitialCondition::*fp)(float x);
+  fp sfunc;
 
   speedset lastSpeedSet;
 
   FGFDMExec *fdmex;
-
-  float calcVcas(float Mach);
-  bool findMachInterval(float *mlo, float *mhi,float vcas);
+  
+  
+  bool getAlpha(void);
+  bool getTheta(void);
   bool getMachFromVcas(float *Mach,float vcas);
+  
+  float GammaEqOfTheta(float Theta);
+  float GammaEqOfAlpha(float Alpha);
+  float calcVcas(float Mach);
+  
+  bool findInterval(float x,float guess);
+  bool solve(float *y, float x);
 };
 
 #endif
