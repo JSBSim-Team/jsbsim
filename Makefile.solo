@@ -11,116 +11,323 @@ FGTable.o FGPropeller.o FGNozzle.o
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
 	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
 
-libFCSComponents.a :
+libFCSComponents.a:
 	cd filtersjb; make -fMakefile.solo; cd ..
 
-FGAircraft.o : FGAircraft.cpp FGAircraft.h
+FGAerodynamics.o: FGAerodynamics.cpp FGAerodynamics.h FGModel.h \
+ FGDefs.h FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGAerodynamics.cpp
+
+FGAircraft.o: FGAircraft.cpp FGAircraft.h FGModel.h FGDefs.h \
+ FGCoefficient.h FGConfigFile.h FGTable.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h \
+ FGMatrix.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGPosition.h FGRotation.h \
+ FGTranslation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAircraft.cpp
 
-FGAtmosphere.o : FGAtmosphere.cpp FGAtmosphere.h
+FGAtmosphere.o: FGAtmosphere.cpp FGAtmosphere.h FGModel.h FGDefs.h \
+ FGMatrix.h FGState.h FGInitialCondition.h FGFDMExec.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h filtersjb/../FGFCS.h \
+ FGLGear.h FGConfigFile.h FGAircraft.h FGCoefficient.h FGTable.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAtmosphere.cpp
 
-FGAuxiliary.o : FGAuxiliary.cpp FGAuxiliary.h
+FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGDefs.h \
+ FGMatrix.h FGTranslation.h FGRotation.h FGAtmosphere.h FGState.h \
+ FGInitialCondition.h FGFDMExec.h FGFCS.h filtersjb/FGFCSComponent.h \
+ filtersjb/../FGDefs.h filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h \
+ FGAircraft.h FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGPosition.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAuxiliary.cpp
 
-FGCoefficient.o : FGCoefficient.cpp FGCoefficient.h
+FGCoefficient.o: FGCoefficient.cpp FGCoefficient.h FGConfigFile.h \
+ FGDefs.h FGTable.h FGState.h FGInitialCondition.h FGFDMExec.h \
+ FGModel.h FGAtmosphere.h FGMatrix.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGCoefficient.cpp
 
-FGFCS.o : FGFCS.cpp FGFCS.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGFCS.cpp
-
-FGFDMExec.o : FGFDMExec.cpp FGFDMExec.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGFDMExec.cpp
-
-FGModel.o : FGModel.cpp FGModel.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGModel.cpp
-
-FGNozzle.o : FGNozzle.cpp FGNozzle.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGNozzle.cpp
-FGOutput.o : FGOutput.cpp FGOutput.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
-
-FGPosition.o : FGPosition.cpp FGPosition.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGPosition.cpp
-
-FGRotation.o : FGRotation.cpp FGRotation.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGRotation.cpp
-
-FGState.o : FGState.cpp FGState.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGState.cpp
-
-FGTable.o : FGTable.cpp FGTable.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTable.cpp
-
-FGTranslation.o : FGTranslation.cpp FGTranslation.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTranslation.cpp
-
-FGUtility.o : FGUtility.cpp FGUtility.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGUtility.cpp
-
-FGEngine.o : FGEngine.cpp FGEngine.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGEngine.cpp
-
-FGTank.o : FGTank.cpp FGTank.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTank.cpp
-
-FGInitialCondition.o : FGInitialCondition.cpp FGInitialCondition.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGInitialCondition.cpp
-
-FGfdmSocket.o : FGfdmSocket.cpp FGfdmSocket.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGfdmSocket.cpp
-
-FGConfigFile.o : FGConfigFile.cpp FGConfigFile.h
+FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGDefs.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
 
-FGLGear.o : FGLGear.cpp FGLGear.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGLGear.cpp
+FGControls.o: FGControls.cpp FGControls.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGControls.cpp
 
-FGMatrix.o : FGMatrix.cpp FGMatrix.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGMatrix.cpp
-  
-FGTrim.o : FGTrim.cpp FGTrim.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrim.cpp
-  
-FGTrimAxis.o : FGTrimAxis.cpp FGTrimAxis.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrimAxis.cpp
+FGEngine.o: FGEngine.cpp FGEngine.h FGState.h FGDefs.h \
+ FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGTranslation.h FGNozzle.h FGPosition.h \
+ FGRotation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGEngine.cpp
 
-FGPropeller.o : FGPropeller.cpp FGPropeller.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropeller.cpp
+FGFCS.o: FGFCS.cpp FGFCS.h filtersjb/FGFCSComponent.h \
+ filtersjb/../FGDefs.h filtersjb/../FGFCS.h FGModel.h FGDefs.h \
+ FGLGear.h FGConfigFile.h FGMatrix.h FGFDMExec.h FGInitialCondition.h \
+ FGAtmosphere.h FGState.h FGAircraft.h FGCoefficient.h FGTable.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h filtersjb/FGFilter.h \
+ filtersjb/../FGConfigFile.h filtersjb/FGDeadBand.h filtersjb/FGGain.h \
+ filtersjb/FGGradient.h filtersjb/FGSwitch.h filtersjb/FGSummer.h \
+ filtersjb/FGFlaps.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGFCS.cpp
 
-FGPropulsion.o : FGPropulsion.cpp FGPropulsion.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropulsion.cpp
+FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGDefs.h \
+ FGInitialCondition.h FGAtmosphere.h FGMatrix.h FGState.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h filtersjb/../FGFCS.h \
+ FGLGear.h FGConfigFile.h FGAircraft.h FGCoefficient.h FGTable.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGFDMExec.cpp
 
-FGRocket.o : FGRocket.cpp FGRocket.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGRocket.cpp
-
-FGPiston.o : FGPiston.cpp FGPiston.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGPiston.cpp
-
-FGTurboShaft.o : FGTurboShaft.cpp FGTurboShaft.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboShaft.cpp
-
-FGTurboJet.o : FGTurboJet.cpp FGTurboJet.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboJet.cpp
-
-FGTurboProp.o : FGTurboProp.cpp FGTurboProp.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboProp.cpp
-	
-FGThruster.o : FGThruster.cpp FGThruster.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGThruster.cpp
-  
-FGForce.o : FGForce.cpp FGForce.h
+FGForce.o: FGForce.cpp FGFDMExec.h FGModel.h FGDefs.h \
+ FGInitialCondition.h FGAtmosphere.h FGMatrix.h FGAircraft.h \
+ FGCoefficient.h FGConfigFile.h FGTable.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGState.h FGFCS.h filtersjb/FGFCSComponent.h \
+ filtersjb/../FGDefs.h filtersjb/../FGFCS.h FGLGear.h FGPosition.h \
+ FGRotation.h FGTranslation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGForce.cpp
 
-x15trim.o : x15trim.cpp
-	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
+FGGroundReactions.o: FGGroundReactions.cpp FGGroundReactions.h \
+ FGModel.h FGDefs.h FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGGroundReactions.cpp
 
-JSBSim.o : JSBSim.cpp
+FGInertial.o: FGInertial.cpp FGInertial.h FGModel.h FGDefs.h \
+ FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGInertial.cpp
+
+FGInitialCondition.o: FGInitialCondition.cpp FGInitialCondition.h \
+ FGFDMExec.h FGModel.h FGDefs.h FGAtmosphere.h FGMatrix.h FGState.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h FGOutput.h \
+ FGfdmSocket.h FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
+ FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGInitialCondition.cpp
+
+FGLGear.o: FGLGear.cpp FGLGear.h FGConfigFile.h FGDefs.h FGMatrix.h \
+ FGFDMExec.h FGModel.h FGInitialCondition.h FGAtmosphere.h FGState.h \
+ FGAircraft.h FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGTranslation.h FGRotation.h FGPosition.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h FGTurboShaft.h \
+ FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGLGear.cpp
+
+FGMassBalance.o: FGMassBalance.cpp FGMassBalance.h FGModel.h FGDefs.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGMassBalance.cpp
+
+FGMatrix.o: FGMatrix.cpp FGMatrix.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGMatrix.cpp
+
+FGModel.o: FGModel.cpp FGModel.h FGDefs.h FGState.h \
+ FGInitialCondition.h FGFDMExec.h FGAtmosphere.h FGMatrix.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h filtersjb/../FGFCS.h \
+ FGLGear.h FGConfigFile.h FGAircraft.h FGCoefficient.h FGTable.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGModel.cpp
+
+FGNozzle.o: FGNozzle.cpp FGNozzle.h FGThruster.h FGForce.h FGFDMExec.h \
+ FGModel.h FGDefs.h FGInitialCondition.h FGAtmosphere.h FGMatrix.h \
+ FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGNozzle.cpp
+
+FGOutput.o: FGOutput.cpp FGOutput.h FGModel.h FGDefs.h FGfdmSocket.h \
+ FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h FGMatrix.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
+
+FGPiston.o: FGPiston.cpp FGPiston.h FGEngine.h FGState.h FGDefs.h \
+ FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGTurboShaft.h \
+ FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGTranslation.h FGNozzle.h FGPosition.h FGRotation.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGPiston.cpp
+
+FGPosition.o: FGPosition.cpp FGPosition.h FGModel.h FGDefs.h \
+ FGMatrix.h FGAtmosphere.h FGState.h FGInitialCondition.h FGFDMExec.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGRotation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGPosition.cpp
+
+FGPropeller.o: FGPropeller.cpp FGPropeller.h FGThruster.h FGForce.h \
+ FGFDMExec.h FGModel.h FGDefs.h FGInitialCondition.h FGAtmosphere.h \
+ FGMatrix.h FGConfigFile.h FGTable.h FGTranslation.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropeller.cpp
+
+FGPropulsion.o: FGPropulsion.cpp FGPropulsion.h FGModel.h FGDefs.h \
+ FGRocket.h FGEngine.h FGState.h FGInitialCondition.h FGFDMExec.h \
+ FGAtmosphere.h FGMatrix.h FGFCS.h filtersjb/FGFCSComponent.h \
+ filtersjb/../FGDefs.h filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h \
+ FGAircraft.h FGCoefficient.h FGTable.h FGPosition.h FGRotation.h \
+ FGTranslation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropulsion.cpp
+
+FGRocket.o: FGRocket.cpp FGRocket.h FGEngine.h FGState.h FGDefs.h \
+ FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGPiston.h FGTurboShaft.h \
+ FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGTranslation.h FGNozzle.h FGPosition.h FGRotation.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGRocket.cpp
+
+FGRotation.o: FGRotation.cpp FGRotation.h FGModel.h FGDefs.h \
+ FGMatrix.h FGAtmosphere.h FGState.h FGInitialCondition.h FGFDMExec.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGRotation.cpp
+
+FGRotor.o: FGRotor.cpp FGRotor.h FGThruster.h FGForce.h FGFDMExec.h \
+ FGModel.h FGDefs.h FGInitialCondition.h FGAtmosphere.h FGMatrix.h \
+ FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGRotor.cpp
+
+FGState.o: FGState.cpp FGState.h FGDefs.h FGInitialCondition.h \
+ FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h filtersjb/../FGFCS.h \
+ FGLGear.h FGConfigFile.h FGAircraft.h FGCoefficient.h FGTable.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGState.cpp
+
+FGTable.o: FGTable.cpp FGTable.h FGConfigFile.h FGDefs.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTable.cpp
+
+FGTank.o: FGTank.cpp FGTank.h FGConfigFile.h FGDefs.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTank.cpp
+
+FGThruster.o: FGThruster.cpp FGThruster.h FGForce.h FGFDMExec.h \
+ FGModel.h FGDefs.h FGInitialCondition.h FGAtmosphere.h FGMatrix.h \
+ FGConfigFile.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGThruster.cpp
+
+FGTranslation.o: FGTranslation.cpp FGTranslation.h FGModel.h FGDefs.h \
+ FGMatrix.h FGRotation.h FGAtmosphere.h FGState.h FGInitialCondition.h \
+ FGFDMExec.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTranslation.cpp
+
+FGTrim.o: FGTrim.cpp FGFDMExec.h FGModel.h FGDefs.h \
+ FGInitialCondition.h FGAtmosphere.h FGMatrix.h FGTrim.h FGRotation.h \
+ FGState.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h FGTrimAxis.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrim.cpp
+
+FGTrimAxis.o: FGTrimAxis.cpp FGFDMExec.h FGModel.h FGDefs.h \
+ FGInitialCondition.h FGAtmosphere.h FGMatrix.h FGTrimAxis.h \
+ FGRotation.h FGState.h FGFCS.h filtersjb/FGFCSComponent.h \
+ filtersjb/../FGDefs.h filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h \
+ FGAircraft.h FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h \
+ FGfdmSocket.h FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
+ FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrimAxis.cpp
+
+FGTurboJet.o: FGTurboJet.cpp FGTurboJet.h FGEngine.h FGState.h \
+ FGDefs.h FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h \
+ FGMatrix.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGTranslation.h FGNozzle.h FGPosition.h FGRotation.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboJet.cpp
+
+FGTurboProp.o: FGTurboProp.cpp FGTurboProp.h FGEngine.h FGState.h \
+ FGDefs.h FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h \
+ FGMatrix.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGTranslation.h FGNozzle.h FGPosition.h FGRotation.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboProp.cpp
+
+FGTurboShaft.o: FGTurboShaft.cpp FGTurboShaft.h FGEngine.h FGState.h \
+ FGDefs.h FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h \
+ FGMatrix.h FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGPiston.h \
+ FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGTranslation.h FGNozzle.h FGPosition.h FGRotation.h \
+ FGAuxiliary.h FGOutput.h FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTurboShaft.cpp
+
+FGUtility.o: FGUtility.cpp FGUtility.h FGState.h FGDefs.h \
+ FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGUtility.cpp
+
+FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGfdmSocket.cpp
+
+JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h \
+ FGInitialCondition.h FGAtmosphere.h FGMatrix.h FGRotation.h FGState.h \
+ FGFCS.h filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGCoefficient.h FGTable.h FGPropulsion.h FGRocket.h FGEngine.h \
+ FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
 
-x15trim : $(JSBSim_objects) x15trim.o libFCSComponents.a
+
+x15trim.o:x15trim.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
+
+JSBSim.o:JSBSim.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
+
+x15trim:$(JSBSim_objects) x15trim.o libFCSComponents.a
 	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) x15trim.o -ox15trim -lm -lFCSComponents
-  
 
 clean:
 	-mv *.*~ backup
