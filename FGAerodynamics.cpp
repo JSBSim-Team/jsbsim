@@ -39,8 +39,9 @@ INCLUDES
 #include "FGAerodynamics.h"
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.29 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.30 2002/03/09 11:52:30 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +61,8 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   AxisIdx["YAW"]   = 5;
 
   Coeff = new CoeffArray[6];
+  
+  bind();
 
   Debug(0);
 }
@@ -75,6 +78,8 @@ FGAerodynamics::~FGAerodynamics()
     }
   }
   delete[] Coeff;
+  
+  unbind();
 
   Debug(1);
 }
@@ -248,3 +253,40 @@ void FGAerodynamics::Debug(int from)
   }
 }
 
+void FGAerodynamics::bind(void){
+  PropertyManager->Tie("forces/fbx-aero-lbs", this,1,
+                       &FGAerodynamics::GetForces);
+  PropertyManager->Tie("forces/fby-aero-lbs", this,2,
+                       &FGAerodynamics::GetForces);
+  PropertyManager->Tie("forces/fbz-aero-lbs", this,3,
+                       &FGAerodynamics::GetForces);
+  PropertyManager->Tie("moments/l-aero-lbsft", this,1,
+                       &FGAerodynamics::GetMoments);
+  PropertyManager->Tie("moments/m-aero-lbsft", this,2,
+                       &FGAerodynamics::GetMoments);
+  PropertyManager->Tie("moments/n-aero-lbsft", this,3,
+                       &FGAerodynamics::GetMoments);
+  PropertyManager->Tie("forces/fwx-aero-lbs", this,1,
+                       &FGAerodynamics::GetvFs);
+  PropertyManager->Tie("forces/fwy-aero-lbs", this,2,
+                       &FGAerodynamics::GetvFs);
+  PropertyManager->Tie("forces/fwz-aero-lbs", this,3,
+                       &FGAerodynamics::GetvFs);
+ /*  PropertyManager->Tie("forces/lod-norm", this,
+                       &FGAerodynamics::GetLoD); */
+
+}
+
+void FGAerodynamics::unbind(void){
+  PropertyManager->Untie("forces/fbx-aero-lbs");
+  PropertyManager->Untie("forces/fby-aero-lbs");
+  PropertyManager->Untie("forces/fbz-aero-lbs");
+  PropertyManager->Untie("moments/l-aero-lbsft");
+  PropertyManager->Untie("moments/m-aero-lbsft");
+  PropertyManager->Untie("moments/n-aero-lbsft");
+  PropertyManager->Untie("forces/fwx-aero-lbs");
+  PropertyManager->Untie("forces/fwy-aero-lbs");
+  PropertyManager->Untie("forces/fwz-aero-lbs");
+  /* PropertyManager->Untie("forces/lod-norm"); */
+
+}

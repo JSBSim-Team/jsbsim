@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.26 2001/12/17 01:43:34 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.27 2002/03/09 11:52:31 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.26 2001/12/17 01:43:34 apeden Exp $
+    @version $Id: FGAerodynamics.h,v 1.27 2002/03/09 11:52:31 apeden Exp $
     @see -
 */
 
@@ -112,17 +112,17 @@ public:
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
   FGColumnVector3& GetForces(void) {return vForces;}
-  inline double GetForces(int n) {return vForces(n);}
+  inline double GetForces(int n) const {return vForces(n);}
 
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
   FGColumnVector3& GetMoments(void) {return vMoments;}
-  inline double GetMoments(int n) {return vMoments(n);}
+  inline double GetMoments(int n) const {return vMoments(n);}
 
   inline FGColumnVector3& GetvLastFs(void) { return vLastFs; }
-  inline double GetvLastFs(int axis) { return vLastFs(axis); }
+  inline double GetvLastFs(int axis) const { return vLastFs(axis); }
   inline FGColumnVector3& GetvFs(void) { return vFs; }
-  inline double GetvFs(int axis) { return vFs(axis); }
+  inline double GetvFs(int axis) const { return vFs(axis); }
   double GetLoD(void);
 
     /** Gets the strings for the current set of coefficients.
@@ -136,7 +136,9 @@ public:
   
   inline FGCoefficient* GetCoefficient(string name) { return cm[name]; }
 
-
+  void bind(void);
+  void unbind(void);
+  
 private:
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
