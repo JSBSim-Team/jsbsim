@@ -63,6 +63,7 @@ class FGPosition : public FGModel {
   double DistanceAGL;
   double gamma;
   double Vt;
+  double hoverb,b;
 
   void GetState(void);
 
@@ -70,61 +71,25 @@ public:
   FGPosition(FGFDMExec*);
   ~FGPosition(void);
 
-  inline FGColumnVector GetVel(void) {
-    return vVel;
-  }
-  inline FGColumnVector GetUVW(void) {
-    return vUVW;
-  }
-  inline double GetVn(void)  {
-    return vVel(1);
-  }
-  inline double GetVe(void)  {
-    return vVel(2);
-  }
-  inline double GetVd(void)  {
-    return vVel(3);
-  }
-  inline double Geth(void)  {
-    return h;
-  }
-  inline double Gethdot(void) {
-    return RadiusDot;
-  }
-  inline double GetLatitude(void) {
-    return Latitude;
-  }
-  inline double GetLongitude(void) {
-    return Longitude;
-  }
-  inline double GetRunwayElevation(void) {
-    return RunwayElevation;
-  }
-  inline double GetDistanceAGL(void)  {
-    return DistanceAGL;
-  }
-  inline double GetGamma(void) {
-    return gamma;
-  }
-
-  void SetvVel(const FGColumnVector& v) {
-    vVel = v;
-  }
-  void SetLatitude(float tt) {
-    Latitude = tt;
-  }
-  void SetLongitude(double tt) {
-    Longitude = tt;
-  }
-  void Seth(double tt) {
-    h = tt;
-  }
-  void SetRunwayElevation(double tt) {
-    RunwayElevation = tt;
-  }
-  void SetDistanceAGL(double tt) {
-    DistanceAGL = tt;
-  }
+  inline FGColumnVector GetVel(void) { return vVel; }
+  inline FGColumnVector GetUVW(void) { return vUVW; }
+  inline double GetVn(void)  { return vVel(1); }
+  inline double GetVe(void)  { return vVel(2); }
+  inline double GetVd(void)  { return vVel(3); }
+  inline double Geth(void)  { return h; }
+  inline double Gethdot(void) { return RadiusDot; }
+  inline double GetLatitude(void) { return Latitude; }
+  inline double GetLongitude(void) { return Longitude; }
+  inline double GetRunwayElevation(void) { return RunwayElevation; }
+  inline double GetDistanceAGL(void)  { return DistanceAGL; }
+  inline double GetGamma(void) { return gamma; }
+  inline double GetHOverB(void) { return hoverb; }
+  void SetvVel(const FGColumnVector& v) { vVel = v; }
+  void SetLatitude(float tt) { Latitude = tt; }
+  void SetLongitude(double tt) { Longitude = tt; }
+  void Seth(double tt) { h = tt; }
+  void SetRunwayElevation(double tt) { RunwayElevation = tt; }
+  void SetDistanceAGL(double tt) { DistanceAGL = tt; }
 
   bool Run(void);
 };

@@ -124,6 +124,8 @@ bool FGPosition:: Run(void) {
 
     DistanceAGL = h - RunwayElevation;
 
+    hoverb=h/b;
+
     if(Vt > 0) {
       hdot_Vt=RadiusDot/Vt;
       //make sure that -Vt <= hdot <= Vt, which, of course, should always be the case
@@ -152,5 +154,6 @@ void FGPosition::GetState(void) {
   invMass = 1.0 / Aircraft->GetMass();
   invRadius = 1.0 / (h + EARTHRAD);
   Radius = h + EARTHRAD;
+  b = Aircraft->GetWingSpan();
 }
 
