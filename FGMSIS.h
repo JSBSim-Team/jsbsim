@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.2 2003/12/17 12:37:44 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.3 2003/12/18 16:43:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +72,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.2 2003/12/17 12:37:44 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.3 2003/12/18 16:43:14 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,14 +122,22 @@ public:
   ~MSIS();
   bool Run(void);
   bool InitModel(void);
-  void Calculate(int day, double sec, double alt, double lat, double lon,
-                 double lst);
+  void Calculate(int day, double sec, double alt, double lat, double lon);
 
-  /// Returns the temperature in degrees Kelvin.
-  inline double GetTemperature(void) const {return output.t[1];}
+  /// Returns the temperature in Kelvins.
+  inline double GetTemperature_K(void) const {return output.t[1];}
+
+  /// Returns the temperature in degrees Celcius.
+  inline double GetTemperature_C(void) const {return output.t[1] - 273.15;}
+
+  /// Returns the temperature in degrees Rankine.
+  inline double GetTemperature_R(void) const {return output.t[1] * 1.8;}
 
   /// Returns the density in grams/cm^3.
-  inline double GetDensity(void)  const {return output.d[5];}
+  inline double GetDensity_SI(void)  const {return output.d[5];}
+
+  /// Returns the density in slugs/ft^3.
+  inline double GetDensity_en(void)  const {return output.d[5] * 1.940321;}
   
 private:
 

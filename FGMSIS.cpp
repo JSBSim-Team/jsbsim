@@ -67,7 +67,7 @@ using namespace JSBSim;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.2 2003/12/17 12:37:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.3 2003/12/18 16:43:14 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,8 +133,7 @@ bool MSIS::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void MSIS::Calculate(int day, double sec, double alt, double lat, double lon,
-                     double lst)
+void MSIS::Calculate(int day, double sec, double alt, double lat, double lon)
 {
   input.year = 2000;
   input.doy = day;
@@ -142,7 +141,9 @@ void MSIS::Calculate(int day, double sec, double alt, double lat, double lon,
   input.alt = alt;
   input.g_lat = lat;
   input.g_long = lon;
-  input.lst = lst;
+
+  input.lst = (sec/3600) + (lon/15);
+  if (input.lst > 24.0) input.lst -= 24.0;
 
   gtd7d(&input, &flags, &output);
 }
