@@ -1,0 +1,779 @@
+<FDM_CONFIG NAME="F-16" VERSION="1.57">
+
+  File:        F16.xml
+  Author:      Erik Hofman
+  CVS Version: $Id: f16.xml,v 1.1 2001/12/28 19:50:39 jberndt Exp $
+
+  Function: Models an F-16A Block-32 (Basic US configuration)
+
+  Source: Richard Murray's F16 Model page, NASA TP-1538 wind tunnel data. (Dec. 1979)
+              http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/
+          "Observers Aircraft" by William Green, 1987 Edition (ISBN 0-7232-3458-2)
+          ACM 3.0 configuration files
+          General Dynamics F-16 Dash-1
+
+  Todo: properly locate the gear, pilot eye point, fuel tanks and engine
+  Todo: better spring and damping factors for the gear
+
+  History: 
+  1.00	Initial revision.
+  1.01	Figured CXq, CYr, CYp, CZq, Clr, Clp, Cmq, CNr and Cnp
+        were all in one table. Split them up.
+        More accurate placement of CG and its relations (gear, tanks etc).
+        Correct AC_CHORD which turned out to be CBAR (in feet)
+  1.02	Add comments to the appropriate tables.
+        Add General Metrics data at the end of the file.
+        Add horizontal tail, vertical tail and engine data.
+        Fixed gear Y location.
+        Fixed a typo in the DLDA table.
+  1.03  Fixed a typo in the Cmde table.
+        Minor engine location updates.
+        Added some extra metrics data at the end of the file.
+  1.04  Updated the source of the information.
+	Turned out XML doesn't allow "--" inside comments, changed that.
+	Better location of CG, Tanks, Pilot eyepoint and Gear (still not exact).
+	Updated fuel capacity to Dash-1 data.
+ 
+  The following values still may not have a proper place:
+     S = 300.0 (wing area?)       B = 30.0  (wing span?)
+     G = 32.174 (gravitation?)    Rtod = 57.29578
+     HE = 0.35 (location of center of mass?)
+
+   (alpha) 10.0  -5.0   0.0   5.0   10.0  15.0  20.0  25.0  30.0  35.0  40.0  45.0
+     CXq: -0.267 -0.110 0.308 1.34  2.08  2.91  2.76  2.05  1.50  1.49  1.83  1.21
+     CZq: -8.80  -25.8  -28.9 -31.4 -31.2 -30.7 -27.7 -28.2 -29.0 -29.8 -38.3 -35.3
+  -->
+
+  <METRICS>
+
+    <!--
+    Wing area (ft^2)
+    Wing span (ft)
+    Wing avg. chord (ft)
+    H. Tail Area (ft^2)
+    Wing MAC to H.Tail MAC (ft)
+    V. Tail Area (ft^2)
+    Wing MAC to V.Tail MAC (ft)
+    Ixx
+    Iyy
+    Izz
+    Ixz
+    Empty weight
+
+    Center of gravity location, empty weight, in aircraft's own structural coord
+    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+    right wing.
+
+    Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+    X, Y, Z, in inches
+    -->
+
+    AC_WINGAREA   300.0
+    AC_WINGSPAN    30.0   <!-- without tip missile launchers -->  
+    AC_CHORD        0.943 <!-- CBAR (in ft.) = 11.32" -->
+    AC_HTAILAREA   63.7  <!-- square feet -->
+    AC_HTAILARM      .   <!-- ft          -->
+    AC_VTAILAREA   54.75 <!-- square feet -->
+    AC_LV            .   <!-- ft          -->
+    AC_IXX       9496.0
+    AC_IYY      55814.0
+    AC_IZZ      63100.0
+    AC_IXZ        982.0
+    AC_EMPTYWT  17400.0	<!-- w. pilot, oil, oxygen, unusable fuel and tip missile launchers -->
+    AC_CGLOC      268.2   0.0   90.2
+    AC_AERORP     268.2   0.0   90.2
+    AC_EYEPTLOC   157.25  0.0   12.59
+    AC_POINTMASS     .     .      .     .
+    AC_ALPHALIMITS   .     .
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    <!--
+    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
+    <max steer angle>                Maximum steerable angle in degrees
+    -->
+
+    AC_GEAR NOSE_NLG  -111.55   0.0 -88.5  1621   700 0.05   0.08   0.2 STEERABLE NOSE 72 RETRACT
+    AC_GEAR LEFT_MLG    44.35 -46.5 -88.5 22704 10000 0.0397 0.0397 0.2 FIXED     LEFT  0 RETRACT
+    AC_GEAR RIGHT_MLG   44.35  46.5 -88.5 22704 10000 0.0397 0.0397 0.2 FIXED     RIGHT 0 RETRACT
+
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+
+    <!--
+      TANKS SECTION
+
+      Tank locations and characteristics, empty weight, in aircraft's own coord system:
+      X, Y, Z, in inches
+      effective radius of tank, in inches (for fuel slosh, if/when modeled)
+      capacity in pounds
+      Current contents, in pounds
+
+      ENGINE[S] SECTION
+
+      Engine[s] is|are specified by giving engine name (which corresponds to an engine
+      definition file in the "engines" directory) followed by x, y, z placement and
+      pitch and yaw orientation. Coordinates are given in inches in the structural
+      coordinate frame. Angles for pitch and yaw are specified in radians.
+
+      AC_ENGINE name x y z pitch yaw
+
+      THRUSTER[S] SECTION
+
+      AC_THRUSTER name x y z pitch yaw
+    -->
+
+    <AC_ENGINE FILE="F100PW220">
+      XLOC       77.04
+      YLOC        0.0
+      ZLOC        0.2
+      PITCH       0.0
+      YAW         0.0
+      FEED          0
+      FEED          1
+    </AC_ENGINE>
+
+    <AC_THRUSTER FILE="F100PW220_nozzle">
+      XLOC       77.04
+      YLOC        0.0
+      ZLOC        0.2
+      PITCH       0.0
+      YAW         0.0
+    </AC_THRUSTER>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC       68.52
+      YLOC       94.22
+      ZLOC      -22.84
+      RADIUS     78.8 <!-- FIXME -->
+      CAPACITY 3486.0
+      CONTENTS 3486.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="2">
+      XLOC       68.52
+      YLOC      -94.22
+      ZLOC      -22.84
+      RADIUS     78.8 <!-- FIXME -->
+      CAPACITY 3486.0
+      CONTENTS 3486.0
+    </AC_TANK>	
+
+  </PROPULSION>
+
+  <!--
+  In the following section for flight controls the TYPE parameter may be one of
+  the following:
+
+    LAG_FILTER
+    LEAD_LAG_FILTER
+    SECOND_ORDER_FILTER
+    WASHOUT_FILTER
+    INTEGRATOR
+    PURE_GAIN
+    SCHEDULED_GAIN
+    HYSTERESIS
+    SUMMER
+    DEADBAND
+    GRADIENT
+    AEROSURFACE_SCALE
+
+  Most flight control systems should be able to be modeled by the above
+  components.
+
+  According to Etkin, (From the Flight Safety Foundation Human Engineering
+  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
+  are as follows (averaged, for a right-handed pilot):
+
+  Stick Pull:  50 lbs.
+        Push:  50
+        Right: 20
+        Left:  20
+
+  Pedal Push: 300 lbs.
+
+  It is assumed that most flight control systems will list the pilot input in
+  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
+  will all have limits specified, and that the joystick inputs from FlightGear will be
+  from -1 to 0 to +1. Given all those parameters, it should be possible to
+  calculate a scaling factor that will convert the +/-1 range into a push/pull
+  force command ready for input to the FCS.
+
+  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
+  pounds.
+  -->
+
+  <FLIGHT_CONTROL NAME="F-16 FC">
+
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+
+    <!--
+    For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
+
+    The aerodynamics section is arranged as follows:
+
+     <AERODYNAMICS>
+       <AXIS NAME="LIFT">                   // {LIFT|DRAG|SIDE|ROLL|PITCH|YAW}
+
+         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">   // example for CLalpha
+
+           Lift_due_to_alpha                // e.g. Lift_at_zero_alpha (no embedded spaces)
+           [[rows] cols]                    // calc_type: {TABLE|VECTOR|TABLE|EQUATION}
+                                            // number of rows and number of columns
+                                            // are present depending on calc_type
+           row_lookup column_lookup         // the lookup parameters for row and column
+                                            // based on the above chart, i.e. if the
+                                            // row and column lookups are 16384 &
+                                            // 32768 that means the rows are indexed
+                                            // by mach and the columns by altitude
+                                            // if the type is VECTOR, then the table
+                                            // is referenced only by a single lookup.
+           multipliers                      // this is an OR'ed value of all the
+                                            // parameters this coefficient must be
+                                            // multiplied by to get a force or moment,
+                                            // i.e.0  these are the non-dimensionalizing
+                                            // values. Alternatively, the values can
+                                            // be given as the FG_* descriptors
+                                            // delimited with the "|" pipe character.
+           column_value                     // if a TABLE, the row values for _this_
+                                            // column follow. I.e.0  if the column
+                                            // represents altitude and this value is
+                                            // 40,000, then what follows are the rows
+                                            // of data for this coefficient at this
+                                            // altitude
+           row_value coeff_value            // The actual value for the data at this
+                                            // row, where for instance, 0.0 might
+                                            // a mach number of 0; and the second value
+                                            // represents the coefficient value for
+                                            // this column at this row. Using the
+                                            // example mentioned: 2.4 0.98 would mean,
+                                            // for this column of data and at mach 2.4,
+                                            // the value of the coefficient is 0.98.
+           <...> <...>                      // a <row> <coeff> value entry is present
+                                            // each row of data. ADDITIONALLY, for each
+                                            // column, the row_value series must be
+                                            // identical.
+           column_value2                    // repeat row/coeff value mapping for
+           row_value coeff_value            // each column in the table
+              0...> <...>                      //
+           </COEFFICIENT>
+
+         </AXIS>
+    -->
+
+    <AXIS NAME="LIFT">
+
+      <!--
+         - X body axis aerodynamic moment coefficient (CL)
+         - ALPHA  = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - |BETA| = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="CLalpha" TYPE="TABLE">
+        Lift_due_to_alpha
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_ALPHA
+        	0.0	5.0	10.0	15.0	20.0	25.0	30.0
+        -10.0	0.0	-0.001	-0.003	-0.001	0.000	0.007	0.009
+        -5.0	0.0	-0.004	-0.009	-0.010	-0.010	-0.010	-0.011
+        0.0	0.0	-0.008	-0.017	-0.020	-0.022	-0.023	-0.023
+        5.0	0.0	-0.012	-0.024	-0.030	-0.034	-0.034	-0.037
+        10.0	0.0	-0.016	-0.030	-0.039	-0.047	-0.049	-0.050
+        15.0	0.0	-0.022	-0.041	-0.054	-0.060	-0.063	-0.068
+        20.0	0.0	-0.022	-0.045	-0.057	-0.069	-0.081	-0.089
+        25.0	0.0	-0.021	-0.040	-0.054	-0.067	-0.079	-0.088
+        30.0	0.0	-0.015	-0.016	-0.023	-0.033	-0.060	-0.091
+        35.0	0.0	-0.008	-0.002	-0.006	-0.036	-0.058	-0.076
+        40.0	0.0	-0.013	-0.010	-0.014	-0.035	-0.062	-0.077
+        45.0	0.0	-0.015	-0.019	-0.027	-0.035	-0.059	-0.076
+      </COEFFICIENT>
+
+      <!--
+         - X body axis aerodynamic force coefficient (CX)
+         - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Elevator deflection in degrees (-25 <= BETA <= 25)
+        -->
+      <COEFFICIENT NAME="CLDe" TYPE="TABLE">
+        Lift_due_to_elevator_deflection
+        12 5
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+                -25.0   -12.5   0.0     12.5    25
+        -10.0   -0.099  -0.048  -0.022  -0.040  -0.083
+        -5.0    -0.081  -0.038  -0.020  -0.038  -0.073
+        0.0     -0.081  -0.040  -0.021  -0.039  -0.076
+        5.0     -0.063  -0.021  -0.004  -0.025  -0.072
+        10.0    -0.025  0.016   0.032   0.006   -0.046
+        15.0    0.044   0.083   0.094   0.062   0.012
+        20.0    0.097   0.127   0.128   0.087   0.024
+        25.0    0.113   0.137   0.130   0.085   0.025
+        30.0    0.145   0.162   0.154   0.100   0.043
+        35.0    0.167   0.177   0.161   0.110   0.053
+        40.0    0.174   0.179   0.155   0.104   0.047
+        45.0    0.166   0.167   0.138   0.091   0.040
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+
+      <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+         Drag_induced
+         3
+         FG_MACH
+         FG_QBAR|FG_WINGAREA
+         0.0  -4.0
+         0.99 -4.0 <!-- subsonic -->
+         2.05  2.0 <!-- supersonic -->
+         <!-- drag index for clean aircraft, using D1=0 gives conservative results -->
+         <!-- add 5.0 for every Mk-82 mounted at station 3,4,5,6 or 7 -->
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+
+      <COEFFICIENT NAME="CYb" TYPE="VALUE">
+        Side_force_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_BETA
+        -0.02
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYda" TYPE="VALUE">
+        Side_force_due_to_aileron
+        FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+        -0.021  	<!-- -0.21*AIL/20.0 -->
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+        Side_force_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+        0.086   	<!-- 0.086*RDR/30.0 -->
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYp" TYPE="VECTOR">
+        Side_force_due_to_roll_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_ROLLRATE
+        -10.0	-0.108
+        -5.0	-0.108
+        0.0	-0.188
+        5.0	0.110
+        10.0	0.258
+        15.0	0.226
+        20.0	0.344
+        25.0	0.362
+        30.0	0.611
+        35.0	0.529
+        40.0	0.298
+        45.0	-0.227
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYr" TYPE="VECTOR">
+        Side_force_due_to_yaw_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_YAWRATE
+        -10.0	0.882
+        -5.0	0.852
+        0.0 	0.876
+        5.0	0.958
+        10.0	0.962
+        15.0	0.974
+        20.0	0.819
+        25.0	0.483
+        30.0	0.590
+        35.0	1.21
+        40.0	-0.493
+        45.0	-1.04
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+
+      <!--
+         - Z body axis aerodynamic moment coefficient (CN)
+         - ALPHA  = Angel Of Attack in degrees (-10 <= ALPHA <= 24)
+         - |BETA| = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="Clb" TYPE="TABLE">
+        Roll_moment_due_to_beta
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        	0.0	5.0	10.0	15.0	20.0	25.0	30.0
+        -10.0	0.0	0.018	0.038	0.056	0.064	0.074	0.079
+        -5.0	0.0	0.019	0.042	0.057	0.077	0.086	0.090
+        0.0	0.0	0.018	0.042	0.059	0.076	0.093	0.106
+        5.0	0.0	0.019	0.042	0.058	0.074	0.089	0.106
+        10.0	0.0	0.019	0.043	0.058	0.073	0.080	0.096
+        15.0	0.0	0.018	0.039	0.053	0.057	0.062	0.080
+        20.0	0.0	0.013	0.030	0.032	0.029	0.049	0.068
+        25.0	0.0	0.007	0.017	0.012	0.007	0.022	0.030
+        30.0	0.0	0.004	0.004	0.002	0.012	0.028	0.064
+        35.0	0.0	-0.014	-0.035	-0.046	-0.034	-0.012	0.015
+        40.0	0.0	-0.017	-0.047	-0.071	-0.065	-0.002	0.011
+        45.0	0.0	-0.033	-0.057	-0.073	-0.041	-0.013	-0.001
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clp" TYPE="VECTOR">
+        Roll_moment_due_to_roll_rate_(roll_damping)
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -10.0	-0.360
+        -5.0	-0.359
+        0.0	-0.443
+        5.0	-0.420
+        10.0	-0.383
+        15.0	-0.375
+        20.0	-0.329
+        25.0	-0.294
+        30.0	-0.230
+        35.0	-0.210
+        40.0	-0.120
+        45.0	-0.100
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clr" TYPE="VECTOR">
+        Roll_moment_due_to_yaw_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -10.0	-0.126
+        -5.0	-0.026
+        0.0	0.063
+        5.0	0.113
+        10.0	0.208
+        15.0	0.230
+        20.0	0.319
+        25.0	0.437
+        30.0	0.680
+        35.0	0.100
+        40.0	0.447
+        45.0	-0.330
+      </COEFFICIENT>
+
+      <!--
+         - Roling moment due to ailleron deflection (DLDA)
+         - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="Clda" TYPE="TABLE">
+        Roll_moment_due_to_aileron
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+        	-30.0	-20.0	-10.0	0.0	10.0	20.0	30.0
+        -10.0	-0.041	-0.041	-0.042	-0.040	-0.043	-0.044	-0.043
+        -5.0	-0.052	-0.053	-0.053	-0.052	-0.049	-0.048	-0.049
+        0.0	-0.053	-0.053	-0.052	-0.051	-0.048	-0.048	-0.047
+        5.0	-0.056	-0.053	-0.051	-0.052	-0.049	-0.047	-0.045
+        10.0	-0.050	-0.050	-0.049	-0.048	-0.043	-0.042	-0.042
+        15.0	-0.056	-0.051	-0.049	-0.048	-0.042	-0.041	-0.037
+        20.0	-0.082	-0.066	-0.043	-0.042	-0.042	-0.020	-0.003
+        25.0	-0.059	-0.043	-0.035	-0.037	-0.036	-0.028	-0.013
+        30.0	-0.042	-0.038	-0.026	-0.031	-0.025	-0.013	-0.010
+        35.0	-0.038	-0.027	-0.016	-0.026	-0.021	-0.014	-0.003
+        40.0	-0.027	-0.023	-0.018	-0.017	-0.016	-0.011	-0.007
+        45.0	-0.017	-0.016	-0.014	-0.012	-0.011	0.010	-0.008
+      </COEFFICIENT>
+
+      <!--
+         - Rolling moment due to ruder deflection (DLDR)
+         - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="Cldr" TYPE="TABLE">
+        Roll_moment_due_to_rudder
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        	-30.0	-20.0	-10.0	0.0	10.0	20.0	30.0
+        -10.0	0.005	0.007	0.013	0.018	0.015	0.021	0.023
+        -5.0	0.017	0.016	0.013	0.015	0.014	0.011	0.010
+        0.0	0.014	0.014	0.011	0.015	0.013	0.010	0.011
+        5.0	0.010	0.014	0.012	0.014	0.013	0.011	0.011
+        10.0	-0.005	0.013	0.011	0.014	0.012	0.010	0.011
+        15.0	0.009	0.009	0.009	0.014	0.011	0.009	0.010
+        20.0	0.019	0.012	0.008	0.014	0.011	0.008	0.008
+        25.0	0.005	0.005	0.005	0.015	0.010	0.010	0.010
+        30.0	0.000	0.000	0.000	0.013	0.008	0.006	0.006
+        35.0	-0.005	0.004	0.005	0.011	0.008	0.005	0.014
+        40.0	-0.011	0.009	0.003	0.006	0.007	0.000	0.020
+        45.0	0.008	0.007	0.005	0.001	0.003	0.001	0.000
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="PITCH">
+
+      <!--
+         - Y body axis aerodynamic moment coefficient (CM)
+         - ALPHA = Angel Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Elevator devlection in degrees (-25 <= BETA <= 25)
+        -->
+      <COEFFICIENT NAME="Cmde" TYPE="TABLE">
+        Pitch_moment_due_to_elevator_deflection
+        12 5
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+        	-25.0	-12.5	0.0	12.5	25.0
+        -10.0	0.205	0.081	-0.046	-0.174	-0.259
+        -5.0	0.168	0.077	-0.020	-0.145	-0.202
+        0.0	0.186	0.107	-0.009	-0.121	-0.184
+        5.0	0.196	0.110	-0.005	-0.127	-0.193
+        10.0	0.213	0.110	-0.006	-0.129	-0.199
+        15.0	0.251	0.141	0.010	-0.102	-0.150
+        20.0	0.245	0.127	0.006	-0.097	-0.160
+        25.0	0.238	0.119	-0.001	-0.113	-0.167
+        30.0	0.252	0.133	0.014	-0.087	-0.104
+        35.0	0.231	0.108	0.000	-0.084	-0.076
+        40.0	0.198	0.081	-0.013	-0.069	-0.041
+        45.0	0.192	0.093	0.032	-0.006	-0.005
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmq" TYPE="VECTOR">
+        Pitch_moment_due_to_pitch_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
+        -10.0	-7.21
+        -5.0	-5.40
+        0.0	-5.23
+        5.0	-5.26
+        10.0	-6.11
+        15.0	-6.64
+        20.0	-5.69
+        25.0	-6.00
+        30.0	-6.20
+        35.0	-6.40
+        40.0	-6.60
+        45.0	-6.00
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+
+      <COEFFICIENT NAME="Cnp" TYPE="VECTOR">
+        Yaw_moment_due_to_roll_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -10.0	0.061
+        -5.0	0.052
+        0.0	0.052
+        5.0	-0.012
+        10.0	-0.013
+        15.0	-0.024
+        20.0	0.050
+        25.0	0.150
+        30.0	0.130
+        35.0	0.158
+        40.0	0.240
+        45.0	0.150
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnr" TYPE="VECTOR">
+        Yaw_moment_due_to_yaw_rate
+        12
+        FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -10.0	-0.380
+        -5.0	-0.363
+        0.0	-0.378
+        5.0	-0.386
+        10.0	-0.370
+        15.0	-0.453
+        20.0	-0.550
+        25.0	-0.582
+        30.0	-0.595
+        35.0	-0.637
+        40.0	-1.02
+        45.0	-0.840
+      </COEFFICIENT>
+
+      <!--
+         - Yawing moment due to aileron deflection (DNDA)
+         - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="CnDa" TYPE="TABLE">
+        Yaw_moment_due_to_aileron
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+        	-30.0	-20.0	-10.0	0.0	10.0	20.0	30.0
+        -10.0	0.001	0.002	-0.006	-0.011	-0.015	-0.024	-0.022
+        -5.0	-0.027	-0.014	-0.008	-0.011	-0.015	-0.010	0.002
+        0.0	-0.017	-0.016	-0.006	-0.010	-0.014	-0.004	-0.003
+        5.0	-0.013	-0.016	-0.006	-0.009	-0.012	-0.002	-0.005
+        10.0	-0.012	-0.014	-0.005	-0.008	-0.011	-0.001	-0.003
+        15.0	-0.016	-0.019	-0.008	-0.006	-0.008	0.003	-0.001
+        20.0	0.001	-0.021	-0.005	0.000	-0.002	0.014	-0.009
+        25.0	0.017	0.002	0.007	0.004	0.002	0.006	-0.009
+        30.0	0.011	0.012	0.004	0.007	0.006	-0.001	-0.001
+        35.0	0.017	0.016	0.007	0.010	0.012	0.004	0.003
+        40.0	0.008	0.015	0.006	0.004	0.011	0.004	-0.002
+        45.0	0.016	0.011	0.006	0.010	0.011	0.006	0.001
+      </COEFFICIENT>
+
+      <!--
+         - Yawing moment due to rudder deflection (DNDR)
+         - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Sideslip angle in degrees (-30 <= BETA <= 30)
+        -->
+      <COEFFICIENT NAME="Cndr" TYPE="TABLE">
+        Yaw_moment_due_to_rudder
+        12 7
+        FG_BETA FG_ALPHA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        	-30.0	-20.0	-10.0	0.0	10.0	20.0	30.0
+        -10.0	-0.018	-0.028	-0.037	-0.048	-0.043	-0.052	-0.062
+        -5.0	-0.052	-0.051	-0.041	-0.045	-0.044	-0.034	-0.034
+        0.0	-0.052	-0.043	-0.038	-0.045	-0.041	-0.036	-0.027
+        5.0	-0.052	-0.046	-0.040	-0.045	-0.041	-0.036	-0.028
+        10.0	-0.054	-0.045	-0.040	-0.044	-0.040	-0.035	-0.027
+        15.0	-0.049	-0.049	-0.038	-0.045	-0.038	-0.028	-0.027
+        20.0	-0.059	-0.057	-0.037	-0.047	-0.034	-0.024	-0.023
+        25.0	-0.051	-0.052	-0.030	-0.048	-0.035	-0.023	-0.023
+        30.0	-0.030	-0.030	-0.027	-0.049	-0.035	-0.020	-0.019
+        35.0	-0.037	-0.033	-0.024	-0.045	-0.029	-0.016	-0.009
+        40.0	-0.026	-0.030	-0.019	-0.033	-0.022	-0.010	-0.025
+        45.0	-0.013	-0.008	-0.013	-0.016	-0.009	-0.014	-0.010
+      </COEFFICIENT>
+
+    </AXIS>
+
+  </AERODYNAMICS>
+
+  <!--
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+  -->
+
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+    RATE_IN_HZ       20
+    SIMULATION       ON
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+
+</FDM_CONFIG>
+
+
+<!--
+   General Dynamics F-16A Block 15(+) Metrics Data.
+
+    Max speed:   Mach 2.05 at 12,000 meters
+    Ceiling:     60,000 Ft.
+    Climb speed: 315 meters/second
+    Max Trust:   6,645 Kg. Mill power
+                 10,810 Kg. Max power
+
+
+   * Wing
+        Area:		300 Sq Ft	* Vertical Fin (Each)
+        Span:		30 Ft o In.	    Area:		8.03 Sq Ft
+        Aspect Ratio:	3.0		    Span:		23.356 In. Theo (27.5 In. Actual)
+        Taper ratio:	0.2275		    Aspect Ratio:	0.472 (Theo)
+        Sweep(LE)	40 degrees	    Taper Ratio:	0.760 (Theo)
+        Dihedral:	0 degrees	    Sweep(LE):		30 degrees
+        Airfoil:	NACA 64A204	    Dihedral (Cant):	15 degrees Outbd
+        Incidence:	0 degrees	    Airfoil
+        Twist:					at Root:	3.886% Modified Wedge
+           at SS 54.0:	0 degrees		at Tip:		Constant 0.03R
+           at SS 180.0:	3 degrees
+        Flaperon Area:	31.32 Sq Ft	* Speed Brake
+        LEF Area:	36.71 Sq Ft	    Area:		14.26 Sq Ft (3.565 Sq Ft Ea)
+        							(4 Element Clamshell)
+    * Horizontal Tail (Movable)
+        Area:		63.70 Sq Ft	* Landing Gear
+        Aspect Ratio:	2.114		    Main Gear (MLG)
+        Taper Ratio:	0.390 (Theo)		Tire Size:	25.5 * 8-14	18 Ply
+        Sweep(LE):	40 degrees		Stroke:		10.5 In.
+        Dihedral:	-10 degrees		Static Rolling Radius:	11.0 In.
+        Airfoil
+           at Root:	6% Biconvex	    Nose Gear (NLG)
+           at Tip:	3.5 Biconvex		Tire Size:	18 * 5.5-8	18 Ply
+        					Stroke:		10.0 In.
+    * Vertical Tail				Static Rolling Radius:	7.5 In.
+        Area:		54.75 Sq Ft
+        Aspect Ratio:	1.294		* Propulsion
+        Taper Ratio:	0.437		    Engine:		F-100-PW-200/220
+        Sweep(LE):	47.5 degrees	    Trhust:		25,000 Lb Class
+        Airfoil				    Engine Compressor
+           at Root:	5.3% Biconvex		Face Dia:	34.8 In.
+           at Tip:	3.0% Bicobvex		Engine Length:	191.16 In.
+        Rudder Area:	11.65 Sq Ft
+
+-->
