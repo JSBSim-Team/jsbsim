@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.44 2001/11/30 12:46:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.45 2001/11/30 13:46:49 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,7 +177,6 @@ bool FGPosition::Run(void) {
     
     vMac=State->GetTb2l()*Aircraft->GetXYZrp();
     
-    cout << "vMac: " << vMac*inchtoft << endl;
     vMac *= inchtoft;
     hoverbmac = (DistanceAGL + vMac(3))/b;
 
