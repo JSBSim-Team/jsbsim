@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.39 2003/12/06 18:01:36 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.40 2003/12/06 18:05:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
     \</AERODYNAMICS> </pre>
     
     @author Jon S. Berndt, Tony Peden
-    @version "$Id: FGAerodynamics.h,v 1.39 2003/12/06 18:01:36 jberndt Exp $"
+    $Id: FGAerodynamics.h,v 1.40 2003/12/06 18:05:20 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
