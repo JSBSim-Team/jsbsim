@@ -72,7 +72,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.41 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.42 2001/08/18 12:03:46 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.41 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGState.h,v 1.42 2001/08/18 12:03:46 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,7 +158,8 @@ public:
                   float psi,
                   float h,
                   float windir,
-                  float winmag);
+                  float winmag,
+                  float wdown);
 
   /** Initializes the simulation state based on parameters from an Initial Conditions object.
       @param FGIC pointer to an initial conditions object.

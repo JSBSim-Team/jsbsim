@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.71 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.72 2001/08/18 12:03:46 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,7 +391,7 @@ bool FGState::Reset(string path, string acname, string fname)
   Position->Seth(h);
 
   Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
-               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag);
+               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag, 0.0);
 
   return true;
 }
@@ -404,33 +404,40 @@ bool FGState::Reset(string path, string acname, string fname)
 void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
                          float Latitude, float Longitude, float H,
-                         float wdir, float wmag)
+                         float wdir, float wmag, float wdown)
 {
   float alpha, beta;
   float qbar, Vt;
+  FGColumnVector3 vAero;
 
   Position->SetLatitude(Latitude);
   Position->SetLongitude(Longitude);
   Position->Seth(H);
 
   Atmosphere->Run();
+  
+  vLocalEuler << phi << tht << psi;
+  Rotation->SetEuler(vLocalEuler);
 
-  if (W != 0.0)
-    alpha = U*U > 0.0 ? atan2(W, U) : 0.0;
-  else
-    alpha = 0.0;
-  if (V != 0.0)
-    beta = U*U+W*W > 0.0 ? atan2(V, (fabs(U)/U)*sqrt(U*U + W*W)) : 0.0;
-  else
-    beta = 0.0;
-
+  InitMatrices(phi, tht, psi);
+  
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
   
-  Atmosphere->SetWindNED(wmag*cos(wdir*DEGTORAD),wmag*sin(wdir*DEGTORAD),0.0);
-
-  vLocalEuler << phi << tht << psi;
-  Rotation->SetEuler(vLocalEuler);
+  Atmosphere->SetWindNED(wmag*cos(wdir*DEGTORAD),
+                          wmag*sin(wdir*DEGTORAD),
+                            wdown);
+  
+  vAero = vUVW + mTl2b*Atmosphere->GetWindNED();
+  
+  if (vAero(eW) != 0.0)
+    alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
+  else
+    alpha = 0.0;
+  if (vAero(eV) != 0.0)
+    beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV), (fabs(vAero(eU))/vAero(eU))*sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
+  else
+    beta = 0.0;
 
   Translation->SetAB(alpha, beta);
 
@@ -441,8 +448,6 @@ void FGState::Initialize(float U, float V, float W,
 
   qbar = 0.5*(U*U + V*V + W*W)*Atmosphere->GetDensity();
   Translation->Setqbar(qbar);
-
-  InitMatrices(phi, tht, psi);
 
   vLocalVelNED = mTb2l*vUVW;
   Position->SetvVel(vLocalVelNED);
@@ -455,7 +460,8 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   float tht,psi,phi;
   float U, V, W, h;
   float latitude, longitude;
-
+  float wmag, wdir, wdown;
+  
   latitude = FGIC->GetLatitudeRadIC();
   longitude = FGIC->GetLongitudeRadIC();
   h = FGIC->GetAltitudeFtIC();
@@ -465,14 +471,16 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   tht = FGIC->GetThetaRadIC();
   phi = FGIC->GetPhiRadIC();
   psi = FGIC->GetPsiRadIC();
-
+  wmag = FGIC->GetWindFpsIC();
+  wdir = FGIC->GetWindDirDegIC();
+  wdown = FGIC->GetWindDFpsIC();
   
   Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
   Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() + 
                                              FGIC->GetTerrainAltitudeFtIC() );
 
   // need to fix the wind speed args, here.  
-  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, 0, 0);
+  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wdir, wmag, wdown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
