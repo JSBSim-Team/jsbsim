@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.30 2001/04/09 05:28:31 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.31 2001/04/09 13:03:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -115,7 +115,9 @@ public:
   FGColumnVector CalcEuler(void);
   FGMatrix GetTs2b(float alpha, float beta);
   FGMatrix GetTl2b(void) { return mTl2b; }
+  float GetTl2b(int i, int j) { return mTl2b(i,j);}
   FGMatrix GetTb2l(void) { return mTb2l; }
+  float GetTb2l(int i, int j) { return mTb2l(i,j);}
   typedef map<eParam, string> ParamMap;
   ParamMap paramdef;
 

@@ -67,7 +67,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.13 2001/03/05 12:12:48 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.14 2001/04/09 13:03:51 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -194,13 +194,25 @@ public:
         @param multiloop number of times to loop through the FDM
 	      @return true if successful */
     bool update( int multiloop );
+    bool ToggleDataLogging(bool state);
+    bool ToggleDataLogging(void);
 
 private:
     FGFDMExec *fdmex;
     FGInitialCondition *fgic;
     bool needTrim;
 
-    int runcount;
+	FGState*       State;
+	FGAtmosphere*  Atmosphere;
+	FGFCS*         FCS;
+	FGPropulsion*  Propulsion;
+	FGAircraft*    Aircraft;
+	FGTranslation* Translation;
+	FGRotation*    Rotation;
+	FGPosition*    Position;
+	FGAuxiliary*   Auxiliary;
+
+	int runcount;
     float trim_elev;
     float trim_throttle;
     
