@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.30 2001/11/06 23:48:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.31 2001/11/08 13:24:25 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,8 +168,10 @@ float FGPropeller::Calculate(float PowerAvailable)
   vFn(1) = Thrust;
   omega = RPS*2.0*M_PI;
 
-  // Must consider rotated axis for propeller (V-22, helicopter case)
-  // FIX THIS !!
+  // The Ixx value and rotation speed given below are for rotation about the
+  // natural axis of the engine. The transform takes place in the base class
+  // FGForce::GetBodyForces() function.
+
   vH(eX) = Ixx*omega*fabs(Sense)/Sense;
   vH(eY) = 0.0;
   vH(eZ) = 0.0;
@@ -178,6 +180,9 @@ float FGPropeller::Calculate(float PowerAvailable)
 
   Torque = PowerAvailable / omega;
   RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
+
+  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque*Sense;
+
   return Thrust; // return thrust in pounds
 }
 

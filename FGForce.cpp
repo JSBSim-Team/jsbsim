@@ -49,7 +49,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.19 2001/11/06 13:17:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.20 2001/11/08 13:24:25 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ FGColumnVector3& FGForce::GetBodyForces(void) {
 
   // include rotational effects. vH will be set in descendent class such as
   // FGPropeller, and in most other cases will be zero.
-  vM = vMn + vDXYZ*vFb + fdmex->GetRotation()->GetPQR()*vH;
+  vM = vMn + vDXYZ*vFb;
 
   return vFb;
 }
