@@ -44,7 +44,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.17 2003/12/04 05:12:53 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.18 2004/04/09 20:49:37 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -125,7 +125,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGSimTurbine.h,v 1.17 2003/12/04 05:12:53 jberndt Exp $"
+    @version "$Id: FGSimTurbine.h,v 1.18 2004/04/09 20:49:37 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,6 +202,7 @@ private:
   double N1_factor;        ///< factor to tie N1 and throttle
   double N2_factor;        ///< factor to tie N2 and throttle
   double ThrottleCmd;      ///< FCS-supplied throttle position
+  double AugmentCmd;       ///< modulated afterburner command (0.0 to 1.0)
   double TAT;              ///< total air temperature (deg C)
   bool Stalled;            ///< true if engine is compressor-stalled
   bool Seized;             ///< true if inner spool is seized

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.19 2004/04/09 12:22:16 dpculp Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.20 2004/04/09 20:49:37 dpculp Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,12 @@ double FGSimTurbine::Calculate(double dummy)
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   dt = State->Getdt() * Propulsion->GetRate();
   ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
+  if (ThrottleCmd > 1.0) {
+    AugmentCmd = ThrottleCmd - 1.0;
+    ThrottleCmd -= AugmentCmd;
+  } else {
+    AugmentCmd = 0.0;
+  }
 
   // When trimming is finished check if user wants engine OFF or RUNNING
   if ((phase == tpTrim) && (dt > 0)) {
@@ -174,6 +180,11 @@ double FGSimTurbine::Run(void)
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   }
 
+  if (AugmentCmd > 0.0) {
+    double tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
+    thrust += (tdiff * AugmentCmd);
+  }     
+
   if ((Injected == 1) && Injection)
     thrust = thrust * ThrustTables[3]->TotalValue();
 
@@ -261,10 +272,14 @@ double FGSimTurbine::Seize(void)
 
 double FGSimTurbine::Trim(void)
 {
-    double idlethrust, milthrust, thrust;
+    double idlethrust, milthrust, thrust, tdiff;
     idlethrust = MilThrust * ThrustTables[0]->TotalValue();
     milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
     thrust = idlethrust + (milthrust * ThrottleCmd * ThrottleCmd);
+    if (AugmentCmd > 0.0) {
+      tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
+      thrust += (tdiff * AugmentCmd);
+      }     
     return thrust;
 }
 
@@ -319,6 +334,7 @@ void FGSimTurbine::SetDefaults(void)
   Injected = 0;
   BleedDemand = 0.0;
   ThrottleCmd = 0.0;
+  AugmentCmd = 0.0;
   InletPosition = 1.0;
   NozzlePosition = 1.0;
   Augmentation = false;
