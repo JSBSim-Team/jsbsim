@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="c172" VERSION="1.35">
+<FDM_CONFIG NAME="c172" VERSION="1.36">
   <METRICS>
 
     <COMMENT>
@@ -46,15 +46,14 @@
     <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
     <static friction coefficient>    Self-explanatory: "onset" friction coefficient
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brakeable>                      One of <NO_BRAKE | HAS_BRAKE>
-    <group membership>               One of <LEFT | CENTER | RIGHT >
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
 
     </COMMENT>
 
-    AC_GEAR    NOSE        -6.8   0.0  -24.2 1400  300  0.01  0.05 STEERABLE NO_BRAKE CENTER 20
-    AC_GEAR    LEFT_MAIN   58.2 -43.0 -17.9  2500  800  0.01  0.05 CASTERED  HAS_BRAKE LEFT  0
-    AC_GEAR    RIGHT_MAIN  58.2  43.0 -17.9  2500  800  0.01  0.05 CASTERED  HAS_BRAKE RIGHT 0
+    AC_GEAR    NOSE        -6.8   0.0  -24.2 1400  300  0.01  0.05 STEERABLE NONE 20
+    AC_GEAR    LEFT_MAIN   58.2 -43.0 -17.9  2500  800  0.01  0.05 CASTERED  LEFT  0
+    AC_GEAR    RIGHT_MAIN  58.2  43.0 -17.9  2500  800  0.01  0.05 CASTERED  RIGHT 0
 
   </UNDERCARRIAGE>
   

@@ -66,18 +66,6 @@ class FGRotation;
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-	   School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-	   JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-	   NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-	   Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-	   1982 ISBN 0-471-08936-2
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -85,8 +73,12 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.22 2000/10/23 12:56:37 jsb Exp $
+    @version $Id: FGLGear.h,v 1.23 2000/10/24 12:21:11 jsb Exp $
     @see -
+    @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+	   NASA-Ames", NASA CR-2497, January 1975
+    @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+	   Wiley & Sons, 1979 ISBN 0-471-03032-5
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +125,7 @@ public:
 
 private:
   enum {eX=1, eY, eZ};
+  enum eBrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
   FGColumnVector vXYZ;
   FGColumnVector vMoment;
   FGColumnVector vWhlBodyVec;
@@ -153,9 +146,9 @@ private:
   bool Reported;
   bool ReportEnable;
   string name;
-  string BrakeType;
   string SteerType;
-  string GroupMember;
+  string BrakeGroup;
+  eBrakeGroup eBrakeGrp;
   float  maxSteerAngle;
 
   FGFDMExec*     Exec;

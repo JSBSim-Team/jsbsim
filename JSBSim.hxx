@@ -64,10 +64,12 @@ CLASS DOCUMENTATION
 
 /** FGFS / JSBSim interface (aka "The Bus")
     This class provides for an interface between FlightGear and its data
-    structures and JSBSim and its data structures.
+    structures and JSBSim and its data structures. This is the class which is
+    used to command JSBSim when integrated with FlightGear. See the
+    documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.7 2000/10/23 21:07:53 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.8 2000/10/24 12:21:11 jsb Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 

@@ -47,7 +47,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.27 2000/10/23 12:56:36 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.28 2000/10/24 12:21:11 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)  
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
-	          >> SteerType >> BrakeType >> GroupMember >> maxSteerAngle;
+	          >> SteerType >> BrakeGroup >> maxSteerAngle;
     
   cout << "    Name: " << name << endl;
   cout << "      Location: " << vXYZ << endl;
@@ -70,11 +70,24 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   cout << "      Damping Constant: " << bDamp << endl;
   cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
   cout << "      Static Friction:  " << staticFCoeff << endl;
-  cout << "      Brake Type:       " << BrakeType << endl;
-  cout << "      Grouping:         " << GroupMember << endl;
+  cout << "      Grouping:         " << BrakeGroup << endl;
   cout << "      Steering Type:    " << SteerType << endl;
   cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
-  
+
+  if      (BrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
+  else if (BrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
+  else if (BrakeGroup == "CENTER") eBrakeGrp = bgCenter;
+  else if (BrakeGroup == "NOSE"  ) eBrakeGrp = bgNose;
+  else if (BrakeGroup == "TAIL"  ) eBrakeGrp = bgTail;
+  else if (BrakeGroup == "NONE"  ) eBrakeGrp = bgNone;
+  else {
+    cerr << "Improper braking group specification in config file: "
+         << BrakeGroup << " is undefined." << endl;
+  }
+
+// add some AI here to determine if gear is located properly according to its
+// brake group type
+
   State       = Exec->GetState();
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
@@ -137,6 +150,25 @@ FGColumnVector FGLGear::Force(void)
     vWhlVelVec(eZ)  =  0.00;
 
 // the following needs work regarding friction coefficients and braking and steering
+
+    switch (eBrakeGrp) {
+    case bgLeft:
+      break;
+    case bgRight:
+      break;
+    case bgCenter:
+      break;
+    case bgNose:
+      break;
+    case bgTail:
+      break;
+    case bgNone:
+      break;
+    default:
+      cerr << "Improper brake group membership detected for this gear." << endl;
+      break;
+    }
+//
 
     vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
     vLocalForce(eX) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eX);

@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.35">
+<FDM_CONFIG NAME="X-15" VERSION="1.36">
 
   <METRICS>
 
@@ -41,15 +41,14 @@
     <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
     <static friction coefficient>    Self-explanatory: "onset" friction coefficient
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brakeable>                      One of <NO_BRAKE | HAS_BRAKE>
-    <group membership>               One of <LEFT | CENTER | RIGHT >
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
 
     </COMMENT>
 
-    AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 FIXED NO_BRAKE CENTER 0
-    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE LEFT   0
-    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE RIGHT  0
+    AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 FIXED NONE 0
+    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 FIXED NONE 0
+    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 FIXED NONE 0
 
   </UNDERCARRIAGE>
 
