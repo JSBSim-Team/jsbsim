@@ -81,52 +81,30 @@ public:
   void Initialize(FGInitialCondition *FGIC);
   bool StoreData(string);
 
-  inline float Getadot(void) {
-    return adot;
-  }
-  inline float Getbdot(void) {
-    return bdot;
-  }
+  inline float Getadot(void) { return adot; }
+  inline float Getbdot(void) { return bdot; }
 
-  inline float GetLocalAltitudeOverRunway(void) {
-    return LocalAltitudeOverRunway;
-  }
-  inline float Geta(void) {
-    return a;
-  }
+  inline float GetLocalAltitudeOverRunway(void) { return LocalAltitudeOverRunway; }
+  inline float Geta(void) { return a; }
 
-  inline float Getsim_time(void) {
-    return sim_time;
-  }
-  inline float Getdt(void) {
-    return dt;
-  }
+  inline float Getsim_time(void) { return sim_time; }
+  inline float Getdt(void) { return dt; }
 
   float GetParameter(int val_idx);
   float GetParameter(string val_string);
   int GetParameterIndex(string val_string);
 
-  inline void Setadot(float tt) {
-    adot = tt;
-  }
-  inline void Setbdot(float tt) {
-    bdot = tt;
-  }
+  inline void Setadot(float tt) { adot = tt; }
+  inline void Setbdot(float tt) { bdot = tt; }
 
-  inline void SetLocalAltitudeOverRunway(float tt) {
-    LocalAltitudeOverRunway = tt;
-  }
-  inline void Seta(float tt) {
-    a = tt;
-  }
+  inline void SetLocalAltitudeOverRunway(float tt) { LocalAltitudeOverRunway = tt; }
+  inline void Seta(float tt) { a = tt; }
 
   inline float Setsim_time(float tt) {
     sim_time = tt;
     return sim_time;
   }
-  inline void  Setdt(float tt) {
-    dt = tt;
-  }
+  inline void  Setdt(float tt) { dt = tt; }
 
   void SetParameter(int, float);
 
@@ -139,12 +117,8 @@ public:
   void IntegrateQuat(FGColumnVector vPQR, int rate);
   FGColumnVector CalcEuler(void);
   FGMatrix GetTs2b(float alpha, float beta);
-  FGMatrix GetTl2b(void) {
-    return mTl2b;
-  }
-  FGMatrix GetTb2l(void) {
-    return mTb2l;
-  }
+  FGMatrix GetTl2b(void) { return mTl2b; }
+  FGMatrix GetTb2l(void) { return mTb2l; }
 
 private:
 

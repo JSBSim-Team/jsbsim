@@ -101,10 +101,10 @@ vQtrn(4) {
   coeffdef["FG_SPDBRAKE_CMD"]  = 16777216L   ;
   coeffdef["FG_SPOILERS_CMD"]  = 33554432L   ;
   coeffdef["FG_FLAPS_CMD"]     = 67108864L   ;
-  coeffdef["FG_SPARE3"]        = 134217728L  ;
-  coeffdef["FG_SPARE4"]        = 268435456L  ;
-  coeffdef["FG_SPARE5"]        = 536870912L  ;
-  coeffdef["FG_SPARE6"]        = 1073741824L ;
+  coeffdef["FG_THROTTLE_CMD"]  = 134217728L  ;
+  coeffdef["FG_THROTTLE_POS"]  = 268435456L  ;
+  coeffdef["FG_HOVERB"]        = 536870912L  ;
+  coeffdef["FG_PITCH_TRIM_CMD"] = 1073741824L ;
 }
 
 /******************************************************************************/
@@ -319,6 +319,14 @@ float FGState::GetParameter(int val_idx) {
     return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * FDMExec->GetTranslation()->GetVt());
   case FG_CI2VEL:
     return FDMExec->GetAircraft()->Getcbar()/(2.0 * FDMExec->GetTranslation()->GetVt());
+  case FG_THROTTLE_CMD:
+    return FDMExec->GetFCS()->GetThrottleCmd(0);
+  case FG_THROTTLE_POS:
+    return FDMExec->GetFCS()->GetThrottlePos(0);
+  case FG_HOVERB:
+    return FDMExec->GetPosition()->GetHOverB();
+  case FG_PITCH_TRIM_CMD:
+    return FDMExec->GetFCS()->GetPitchTrimCmd();
   }
   return 0;
 }
@@ -345,6 +353,8 @@ void FGState::SetParameter(int val_idx, float val) {
   case FG_FLAPS_POS:
     FDMExec->GetFCS()->SetDfPos(val);
     break;
+  case FG_THROTTLE_POS:
+    FDMExec->GetFCS()->SetThrottlePos(-1,val);
   }
 }
 
