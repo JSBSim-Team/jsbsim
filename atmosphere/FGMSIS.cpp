@@ -35,15 +35,15 @@ HISTORY
 12/14/03   DPC   Created
 01/11/04   DPC   Derived from FGAtmosphere
 
- -------------------------------------------------------------------- 
- ---------  N R L M S I S E - 0 0    M O D E L    2 0 0 1  ---------- 
- -------------------------------------------------------------------- 
+ --------------------------------------------------------------------
+ ---------  N R L M S I S E - 0 0    M O D E L    2 0 0 1  ----------
+ --------------------------------------------------------------------
 
  This file is part of the NRLMSISE-00  C source code package - release
  20020503
 
  The NRLMSISE-00 model was developed by Mike Picone, Alan Hedin, and
- Doug Drob. They also wrote a NRLMSISE-00 distribution package in 
+ Doug Drob. They also wrote a NRLMSISE-00 distribution package in
  FORTRAN which is available at
  http://uap-www.nrl.navy.mil/models_web/msis/msis_home.htm
 
@@ -59,7 +59,6 @@ INCLUDES
 
 #include "FGMSIS.h"
 #include "FGState.h"
-#include "FGPosition.h"
 #include <math.h>          /* maths functions */
 #include <stdlib.h>        /* for malloc/free */
 #include <stdio.h>         /* for printf      */
@@ -67,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.5 2004/04/03 01:40:26 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.6 2004/04/17 21:08:35 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,7 +113,7 @@ bool MSIS::InitModel(void)
 {
   FGModel::InitModel();
 
-  unsigned int i;  
+  unsigned int i;
 
   flags.switches[0] = 0;
   for (i=1;i<24;i++) flags.switches[i] = 1;
@@ -148,19 +147,19 @@ bool MSIS::InitModel(void)
 bool MSIS::Run(void)
 {
   if (!FGModel::Run()) {  // if false then execute this Run()
-    
+
     //do temp, pressure, and density first
     if (!useExternal) {
       // get sea-level values
       Calculate(Auxiliary->GetDayOfYear(),
-                Auxiliary->GetSecondsInDay(), 
-                0.0, 
-                Position->GetLatitude() * radtodeg,
-                Position->GetLongitude() * radtodeg);
-      SLtemperature = output.t[1] * 1.8;  
-      SLdensity     = output.d[5] * 1.940321; 
-      SLpressure    = 1716.488 * SLdensity * SLtemperature; 
-      SLsoundspeed  = sqrt(2403.0832 * SLtemperature);  
+                Auxiliary->GetSecondsInDay(),
+                0.0,
+                Propagate->GetLatitude() * radtodeg,
+                Propagate->GetLongitude() * radtodeg);
+      SLtemperature = output.t[1] * 1.8;
+      SLdensity     = output.d[5] * 1.940321;
+      SLpressure    = 1716.488 * SLdensity * SLtemperature;
+      SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
       rSLtemperature = 1.0/SLtemperature;
       rSLpressure    = 1.0/SLpressure;
       rSLdensity     = 1.0/SLdensity;
@@ -168,17 +167,17 @@ bool MSIS::Run(void)
 
       // get at-altitude values
       Calculate(Auxiliary->GetDayOfYear(),
-                Auxiliary->GetSecondsInDay(), 
-                Position->Geth(), 
-                Position->GetLatitude() * radtodeg,
-                Position->GetLongitude() * radtodeg);
-      intTemperature = output.t[1] * 1.8;  
-      intDensity     = output.d[5] * 1.940321;  
-      intPressure    = 1716.488 * intDensity * intTemperature; 
-      soundspeed     = sqrt(2403.0832 * intTemperature);  
+                Auxiliary->GetSecondsInDay(),
+                Propagate->Geth(),
+                Propagate->GetLatitude() * radtodeg,
+                Propagate->GetLongitude() * radtodeg);
+      intTemperature = output.t[1] * 1.8;
+      intDensity     = output.d[5] * 1.940321;
+      intPressure    = 1716.488 * intDensity * intTemperature;
+      soundspeed     = sqrt(2403.0832 * intTemperature);
       //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
-      //cout << intPressure << " a=" << soundspeed << endl; 
-    } 
+      //cout << intPressure << " a=" << soundspeed << endl;
+    }
 
     if (turbType != ttNone) {
       Turbulence();
@@ -245,7 +244,7 @@ void MSIS::tselec(struct nrlmsise_flags *flags)
     }
   }
 }
- 
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -341,7 +340,7 @@ double MSIS::dnet (double dd, double dm, double zhm, double xmm, double xm)
       return dd;
     if (dd==0)
       return dm;
-  } 
+  }
   ylog = a * log(dm/dd);
   if (ylog<-10)
     return dd;
@@ -371,7 +370,7 @@ void MSIS::splini (double *xa, double *ya, double *y2a, int n, double x, double 
     if (khi<(n-1)) {
       if (x<xa[khi])
         xx=x;
-      else 
+      else
         xx=xa[khi];
     }
     h = xa[khi] - xa[klo];
@@ -475,7 +474,7 @@ double MSIS::zeta(double zz, double zl)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double MSIS::densm(double alt, double d0, double xm, double *tz, int mn3, 
+double MSIS::densm(double alt, double d0, double xm, double *tz, int mn3,
                      double *zn3, double *tn3, double *tgn3, int mn2, double *zn2,
                      double *tn2, double *tgn2)
 {
@@ -594,8 +593,8 @@ double MSIS::densm(double alt, double d0, double xm, double *tz, int mn3,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double MSIS::densu(double alt, double dlb, double tinf, double tlb, double xm, 
-                     double alpha, double *tz, double zlb, double s2, int mn1, 
+double MSIS::densu(double alt, double dlb, double tinf, double tlb, double xm,
+                     double alpha, double *tz, double zlb, double s2, int mn1,
                      double *zn1, double *tn1, double *tgn1)
 {
 /*      Calculate Temperature and Density Profiles for MSIS models
@@ -722,17 +721,17 @@ double MSIS::sumex(double ex)
 /*    Eq. A24a */
 double MSIS::sg0(double ex, double *p, double *ap)
 {
-  return (g0(ap[1],p) + (g0(ap[2],p)*ex + g0(ap[3],p)*ex*ex + 
-                g0(ap[4],p)*pow(ex,3.0)  + (g0(ap[5],p)*pow(ex,4.0) + 
+  return (g0(ap[1],p) + (g0(ap[2],p)*ex + g0(ap[3],p)*ex*ex +
+                g0(ap[4],p)*pow(ex,3.0)  + (g0(ap[5],p)*pow(ex,4.0) +
                 g0(ap[6],p)*pow(ex,12.0))*(1.0-pow(ex,8.0))/(1.0-ex)))/sumex(ex);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double MSIS::globe7(double *p, struct nrlmsise_input *input, 
+double MSIS::globe7(double *p, struct nrlmsise_input *input,
                       struct nrlmsise_flags *flags)
 {
-/*       CALCULATE G(L) FUNCTION 
+/*       CALCULATE G(L) FUNCTION
  *       Upper Thermosphere Parameters */
   double t[15];
   int i,j;
@@ -790,7 +789,7 @@ double MSIS::globe7(double *p, struct nrlmsise_input *input,
   plg[2][6] =(11.0*c*plg[2][5]-7.0*plg[2][4])/4.0;
   plg[2][7] =(13.0*c*plg[2][6]-8.0*plg[2][5])/5.0;
   plg[3][3] = 15.0*s2*s;
-  plg[3][4] = 105.0*s2*s*c; 
+  plg[3][4] = 105.0*s2*s*c;
   plg[3][5] =(9.0*c*plg[3][4]-7.*plg[3][3])/2.0;
   plg[3][6] =(11.0*c*plg[3][5]-8.*plg[3][4])/3.0;
 
@@ -820,7 +819,7 @@ double MSIS::globe7(double *p, struct nrlmsise_input *input,
   f2 = 1.0 + (p[49]*dfa+p[19]*df+p[20]*df*df)*flags->swc[1];
 
   /*  TIME INDEPENDENT */
-  t[1] = (p[1]*plg[0][2]+ p[2]*plg[0][4]+p[22]*plg[0][6]) + 
+  t[1] = (p[1]*plg[0][2]+ p[2]*plg[0][4]+p[22]*plg[0][6]) +
         (p[14]*plg[0][2])*dfa*flags->swc[1] +p[26]*plg[0][1];
 
   /*  SYMMETRICAL ANNUAL */
@@ -946,7 +945,7 @@ double MSIS::globe7(double *p, struct nrlmsise_input *input,
           + apdf*flags->swc[12]* \
           (p[83]*plg[0][1]+p[84]*plg[0][3]+p[85]*plg[0][5])* \
           cos(sr*(input->sec-p[75]));
-      }      
+      }
     }
   }
 
@@ -959,10 +958,10 @@ double MSIS::globe7(double *p, struct nrlmsise_input *input,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double MSIS::glob7s(double *p, struct nrlmsise_input *input, 
+double MSIS::glob7s(double *p, struct nrlmsise_input *input,
                       struct nrlmsise_flags *flags)
 {
-/*    VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99 
+/*    VERSION OF GLOBE FOR LOWER ATMOSPHERE 10/26/99
  */
   double pset=2.0;
   double t[14];
@@ -1033,7 +1032,7 @@ double MSIS::glob7s(double *p, struct nrlmsise_input *input,
   if (flags->sw[9]) {
     if (flags->sw[9]==1)
       t[8] = apdf * (p[32] + p[45] * plg[0][2] * flags->swc[2]);
-    if (flags->sw[9]==-1)  
+    if (flags->sw[9]==-1)
       t[8]=(p[50]*apt[0] + p[96]*plg[0][2] * apt[0]*flags->swc[2]);
   }
 
@@ -1058,7 +1057,7 @@ double MSIS::glob7s(double *p, struct nrlmsise_input *input,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, 
+void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
                   struct nrlmsise_output *output)
 {
   double xlat;
@@ -1142,7 +1141,7 @@ void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   if (input->alt>zmix)
     dmc = 1.0 - (zn2[0]-input->alt)/(zn2[0] - zmix);
   dz28=soutput.d[2];
-  
+
   /**** N2 density ****/
   dmr=soutput.d[2] / dm28m - 1.0;
   output->d[2]=densm(input->alt,dm28m,xmm, &tz, mn3, zn3, meso_tn3, meso_tgn3, mn2, zn2, meso_tn2, meso_tgn2);
@@ -1171,7 +1170,7 @@ void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   output->d[7] = 0;
 
   /**** Total mass density */
-  output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] + 
+  output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] +
                      28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4]
                      + output->d[6] + 14.0 * output->d[7]);
 
@@ -1187,18 +1186,18 @@ void MSIS::gtd7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void MSIS::gtd7d(struct nrlmsise_input *input, struct nrlmsise_flags *flags, 
+void MSIS::gtd7d(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
                    struct nrlmsise_output *output)
 {
   gtd7(input, flags, output);
-  output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] + 
-                   28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4] 
+  output->d[5] = 1.66E-24 * (4.0 * output->d[0] + 16.0 * output->d[1] +
+                   28.0 * output->d[2] + 32.0 * output->d[3] + 40.0 * output->d[4]
                    + output->d[6] + 14.0 * output->d[7] + 16.0 * output->d[8]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, 
+void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
                   struct nrlmsise_output *output, double press)
 {
   double bm = 1.3806E-19;
@@ -1231,7 +1230,7 @@ void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
     cl2 = cl*cl;
     if (input->doy<182)
       cd = (1.0 - (double) input->doy) / 91.25;
-    else 
+    else
       cd = ((double) input->doy) / 91.25 - 3.0;
     ca = 0;
     if ((pl > -1.11) && (pl<=-0.23))
@@ -1278,12 +1277,12 @@ void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags, 
+void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
                   struct nrlmsise_output *output)
 {
 /*     Thermospheric portion of NRLMSISE-00
  *     See GTD7 for more extensive comments
- *     alt > 72.5 km! 
+ *     alt > 72.5 km!
  */
   double za;
   int i, j;
@@ -1317,7 +1316,7 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   double hc216, hcc232;
   za = pdl[1][15];
   zn1[0] = za;
-  for (j=0;j<9;j++) 
+  for (j=0;j<9;j++)
     output->d[j]=0;
 
   /* TINF VARIATIONS NOT IMPORTANT BELOW ZA OR ZN1(1) */
@@ -1376,7 +1375,7 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   dd=output->d[2];
   /* Turbopause */
   zh28=pdm[2][2]*zhf;
-  zhm28=pdm[2][3]*pdl[1][5]; 
+  zhm28=pdm[2][3]*pdl[1][5];
   xmd=28.0-xmm;
   /* Mixed density at Zlb */
   b28=densu(zh28,db28,tinf,tlb,xmd,(alpha[2]-1.0),&tz,ptm[5],s,mn1, zn1,meso_tn1,meso_tgn1);

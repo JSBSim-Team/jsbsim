@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.3 2004/03/26 04:47:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.4 2004/04/17 21:08:35 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,7 +116,7 @@ bool FGMars::Run(void)
 
     //do temp, pressure, and density first
     if (!useExternal) {
-      h = Position->Geth();
+      h = Propagate->Geth();
       Calculate(h);
     }
 
@@ -202,13 +202,13 @@ void FGMars::Turbulence(void)
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulence = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Position->GetHOverBMAC();
+    double HOverBMAC = Propagate->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
 //     if (Aircraft->GetHTailArm() != 0.0)
 //       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
@@ -246,7 +246,7 @@ void FGMars::Turbulence(void)
 
                                 // Diminish z-vector within two wingspans
                                 // of the ground
-    double HOverBMAC = Position->GetHOverBMAC();
+    double HOverBMAC = Propagate->GetHOverBMAC();
     if (HOverBMAC < 2.0)
         vDirection(eZ) *= HOverBMAC / 2.0;
 
@@ -255,7 +255,7 @@ void FGMars::Turbulence(void)
     vTurbulence = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
     if (Aircraft->GetHTailArm() != 0.0)
       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
