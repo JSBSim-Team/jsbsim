@@ -41,11 +41,11 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a1 -5 -k -y -v -vi- -c -tWM \
-  -tWC -D$(SYSDEFINES);$(USERDEFINES)
+CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -xp -Tkh30000 -r- -a1 -5 -k -y -v -vi- -c \
+  -tWM -tWC -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
 PFLAGS = -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb;$(BCB)\include -N2. -N0. \
-  -$YD -$W -$O- -v -JPHN -M
+  -$YD -$W -$R -$Q -$O- -v -JPHN -M
 RFLAGS = -ifiltersjb;$(BCB)\include
 AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd
 LFLAGS = -Lfiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
@@ -58,11 +58,11 @@ ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=0
+AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=23
+Build=21
 Debug=0
 PreRelease=0
 Special=0
@@ -74,7 +74,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.23
+FileVersion=0.7.2.21
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -82,10 +82,6 @@ OriginalFilename=JSBSim.exe
 ProductName=JSBSim
 ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
-
-[Excluded Packages]
-C:\WINNT\Rxctl.bpl=RX Library Controls and Tools Package
-C:\WINNT\Rxdb.bpl=RX Library DB Components Package
 
 [HistoryLists\hlIncludePath]
 Count=1
