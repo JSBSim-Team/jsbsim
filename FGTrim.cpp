@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.30 2001/11/30 12:46:54 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.31 2001/12/22 13:32:54 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,15 +115,17 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
     break;
   case tTurn:
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
+    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
     break;
-  
-  }
+  case tCustom:
+  case tNone:
+    break;
+}
   //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
   sub_iterations=new double[TrimAxes.size()];
   successful=new double[TrimAxes.size()];
@@ -312,14 +314,14 @@ bool FGTrim::DoTrim(void) {
     cout << "nlf done" << endl;
   } else if (mode == tTurn) {
     setupTurn();
-    TrimAxes[0]->SetStateTarget(targetNlf);
+    //TrimAxes[0]->SetStateTarget(targetNlf);
   }  
   
   do {
     axis_count=0;
     for(current_axis=0;current_axis<TrimAxes.size();current_axis++) {
       setDebug();
-      
+      updateRates();
       Nsub=0;
       if(!solution[current_axis]) {
         if(checkLimits()) { 
@@ -595,30 +597,33 @@ void FGTrim::setupPullup() {
        << fgic->GetVtrueFpsIC() << endl;
   q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
   cout << targetNlf << ", " << q << endl;
-  vPQR.InitMatrix();
-  vPQR(2)=q;
-  cout << vPQR << endl;
-  fdmex->GetRotation()->SetPQR(vPQR);
+  fdmex->GetRotation()->SetPQR(0,q,0);
   cout << "setPitchRateInPullup() complete" << endl;
   
 }  
   
 void FGTrim::setupTurn(void){
-  FGColumnVector3 vPQR;
-  float g,q,r,phi, psidot;
+  double g,phi;
   phi = fgic->GetRollAngleRadIC();
   if( fabs(phi) > 0.01 && fabs(phi) < 1.56 ) {
     targetNlf = 1 / cos(phi);
     g = fdmex->GetInertial()->gravity(); 
     psidot = g*tan(phi) / fgic->GetVtrueFpsIC();
-    q = psidot*sin(phi);
-    r = psidot*cos(phi);
-    vPQR(1)=0;vPQR(2)=q;vPQR(3)=r;
-    fdmex->GetRotation()->SetPQR(vPQR);
-    cout << targetNlf << ", " << vPQR*57.29577 << endl;
+    cout << targetNlf << ", " << psidot << endl;
   }  
 }  
 
+void FGTrim::updateRates(void){
+  if(mode == tTurn) {
+    double p,q,r,theta,phi;
+    theta=fgic->GetPitchAngleRadIC();
+    phi=fgic->GetRollAngleRadIC();
+    p=-psidot*sin(theta);
+    q=psidot*cos(theta)*sin(phi);
+    r=psidot*cos(theta)*cos(phi);
+    fdmex->GetRotation()->SetPQR(p,q,r);
+  }
+}  
 
 void FGTrim::setDebug(void) {
   if(debug_axis == tAll ||

@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.99 2001/12/17 00:27:57 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.100 2001/12/22 13:33:42 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +326,7 @@ eParam FGState::GetParameterIndex(string val_string)
 
 void FGState::SetParameter(eParam val_idx, double val)
 {
-  int i;
+  unsigned i;
 
   switch(val_idx) {
   case FG_ELEVATOR_POS:
