@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.34 2002/08/16 12:42:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.35 2002/08/17 00:05:05 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,6 +187,7 @@ void FGSummer::Debug(int from)
       cout << "      INPUTS: " << endl;
       for (unsigned i=0;i<Inputs.size();i++) {
         switch (Inputs[i]->Type) {
+        case itAP:
         case itPilotAC:
           cout << "       " << Inputs[i]->Node->getName() << endl;
           break;

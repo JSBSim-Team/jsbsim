@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.53 2002/08/16 12:42:30 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.54 2002/08/17 00:05:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.53 2002/08/16 12:42:30 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.54 2002/08/17 00:05:05 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -629,6 +629,8 @@ private:
   vector <double> PropAdvance;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
+
+  enum Mode {mAP, mFCS, mNone} eMode;
 
   double APAttitudeSetPt, APAltitudeSetPt, APHeadingSetPt, APAirspeedSetPt;
   bool APAcquireAttitude, APAcquireAltitude, APAcquireHeading, APAcquireAirspeed;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.26 2002/04/01 12:01:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.27 2002/08/17 00:05:05 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,14 +78,12 @@ void FGFCSComponent::SetOutput(void)
 bool FGFCSComponent::Run(void)
 {
   switch(InputType) {
+  case itAP:
   case itPilotAC:
     Input = InputNode->getDoubleValue();
     break;
   case itFCS:
     Input = fcs->GetComponentOutput(InputIdx);  
-  case itAP:
-    // implement autopilot input mechanism
-    break;
   case itBias:
     break;  
   }

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.39 2002/04/01 12:00:56 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.40 2002/08/17 00:05:05 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,11 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
         InputNode = PropertyManager->GetNode( 
                     fcs->GetState()->GetPropertyName(token) );
         InputType = itPilotAC;
+      } else if (token.find("AP_") != token.npos) {
+        *AC_cfg >> token;
+        InputNode = PropertyManager->GetNode( 
+                    fcs->GetState()->GetPropertyName(token) );
+        InputType = itAP;
       } else {
         *AC_cfg >> InputIdx;
         InputType = itFCS;
@@ -181,6 +186,7 @@ void FGGain::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      ID: " << ID << endl;
       switch(InputType) {
+      case itAP:
       case itPilotAC:
         cout << "      INPUT: " << InputNode->getName() << endl;
         break;
@@ -188,7 +194,6 @@ void FGGain::Debug(int from)
         cout << "      INPUT: FCS Component " << InputIdx << " (" << 
                                         fcs->GetComponentName(InputIdx) << ")" << endl;
         break;
-      case itAP:
       case itBias:
         break;  
       }
