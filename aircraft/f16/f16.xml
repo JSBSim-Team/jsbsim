@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.22 2003/03/14 11:00:13 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.23 2003/03/24 13:51:02 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -38,10 +38,10 @@
     AC_IZZ      63100.0
     AC_IXZ        982.0
     AC_EMPTYWT  17400.0 <!-- w. oil, oxygen, unusable fuel and tip missile launchers -->
-    AC_CGLOC            201.3  0.0   0.0 <!-- 35% CBAR -->
-    AC_AERORP           216.3  0.0   0.0
-    AC_EYEPTLOC         384.7  0.0  33.2
-    AC_POINTMASS  230.0 384.7  0.0   0.0 <!-- pilot -->
+    AC_AERORP           -201.3  0.0   0.0
+    AC_CGLOC            -216.3  0.0   0.0 <!-- 35% CBAR -->
+    AC_EYEPTLOC         -384.7  0.0  33.2
+    AC_POINTMASS  230.0 -384.7  0.0   0.0 <!-- pilot -->
   </METRICS>
 
   <UNDERCARRIAGE>
@@ -50,17 +50,17 @@
        -    WT   Wing Tip           VFT   Ventral Fin Tip
        -    VS   Vertical Stabilizer
       -->
-    AC_GEAR NOSE_LG   332.2    0.0 -73.0 15000  5000 0.5 0.8 0.02 STEERABLE NOSE 72.0 RETRACT
-    AC_GEAR LEFT_MLG  171.9  -46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     LEFT    0 RETRACT
-    AC_GEAR RIGHT_MLG 171.9   46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     RIGHT   0 RETRACT
+    AC_GEAR NOSE_LG   -332.2    0.0 -73.0 15000  5000 0.5 0.8 0.02 STEERABLE NOSE 72.0 RETRACT
+    AC_GEAR LEFT_MLG  -171.9  -46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     LEFT    0 RETRACT
+    AC_GEAR RIGHT_MLG -171.9   46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     RIGHT   0 RETRACT
 
-    AC_GEAR LEFT_WT   128.0 -197.0   0.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR RIGHT_WT  128.0  197.0   0.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR TOP_VS      0.0    0.0 127.5 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR LEFT_VFT  111.1  -24.0 -51.3   200  5000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR RIGHT_VFT 111.1   24.0 -51.3   200  5000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR INTAKE    350.7    0.0 -41.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
-    AC_GEAR RADOME    525.0    0.0 -13.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR LEFT_WT   -128.0 -197.0   0.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR RIGHT_WT  -128.0  197.0   0.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR TOP_VS       0.0    0.0 127.5 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR LEFT_VFT  -111.1  -24.0 -51.3   200  5000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR RIGHT_VFT -111.1   24.0 -51.3   200  5000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR INTAKE    -350.7    0.0 -41.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
+    AC_GEAR RADOME    -525.0    0.0 -13.0 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
   </UNDERCARRIAGE>
 
   <PROPULSION>
@@ -74,14 +74,14 @@
       FEED          1
     </AC_ENGINE>
     <AC_THRUSTER FILE="direct">
-      XLOC      -28.8
+      XLOC       28.8
       YLOC        0.0
       ZLOC        0.0
       PITCH       0.0
       YAW         0.0
     </AC_THRUSTER>
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC      171.3
+      XLOC     -171.3
       YLOC       71.5
       ZLOC        0.0
       RADIUS     78.8
@@ -89,7 +89,7 @@
       CONTENTS 3486.0
     </AC_TANK>
     <AC_TANK TYPE="FUEL" NUMBER="2">
-      XLOC      171.3
+      XLOC     -171.3
       YLOC      -71.5
       ZLOC        0.0
       RADIUS     78.8
