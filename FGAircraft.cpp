@@ -153,6 +153,8 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   AxisIdx["YAW"]   = 5;
 
   GearUp = false;
+  
+  alphaclmin=alphaclmax=0;
 
   numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
 }
