@@ -5,28 +5,26 @@
  Maintained by: Tony Peden, Curt Olson
  Date started:  02/01/1999
 
----------- Copyright (C) 1999  Curtis L. Olson (curt@flightgear.org) ----------
+------ Copyright (C) 1999 - 2000  Curtis L. Olson (curt@flightgear.org) ------
 
- This program is free software; you can redistribute it and/or modify it under
- the terms of the GNU General Public License as published by the Free Software
- Foundation; either version 2 of the License, or (at your option) any later
- version.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License, or (at your option) any later version.
 
- This program is distributed in the hope that it will be useful, but WITHOUT
- ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
- details.
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ General Public License for more details.
 
- You should have received a copy of the GNU General Public License along with
- this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- Place - Suite 330, Boston, MA  02111-1307, USA.
-
- Further information about the GNU General Public License can also be found on
- the world wide web at http://www.gnu.org.
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 HISTORY
 --------------------------------------------------------------------------------
 02/01/1999   CLO   Created
+Additional log messages stored in CVS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -69,7 +67,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.8 2000/10/24 12:21:11 jsb Exp $
+   @version $Id: JSBSim.hxx,v 1.9 2000/10/24 23:20:57 jsb Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -78,6 +76,15 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGJSBsim: public FGInterface {
+
+    // The aircraft for this instance
+    FGFDMExec *fdmex;
+    FGInitialCondition *fgic;
+    bool needTrim;
+    
+    bool trimmed;
+    float trim_elev;
+    float trim_throttle;
 
 public:
     /// Constructor
@@ -93,93 +100,42 @@ public:
 
     /// Reset flight params to a specific position
     bool init( double dt );
-
-    /** Set geocentric latitude
-        @param lat latitude in radians measured from the 0 meridian where
-	                 the westerly direction is positive and east is negative */
-    void set_Latitude(double lat); 
-    /** Set longitude
-        @param long longitude in radians measured from the equator where
-	                 the northerly direction is positive and south is negative */
-    void set_Longitude(double long);
-    /** Set altitude
-        Note: this triggers a recalculation of AGL altitude
-	      @param alt altitude in feet */
-    void set_Altitude(double alt);
-
-    /** Sets calibrated airspeed
-        Setting this will trigger a recalc of the other velocity terms.
-	      @param Vc Calibrated airspeed in ft/sec */
-    void set_V_calibrated_kts(double Vc);
-    /** Sets Mach number.
-        Setting this will trigger a recalc of the other velocity terms.
-	      @param mach Mach number */
-    void set_Mach_number(double mach);
-    /** Sets velocity in N-E-D coordinates.
-        Setting this will trigger a recalc of the other velocity terms.
-	      @param north velocity northward in ft/sec 
-	      @param east velocity eastward in ft/sec 
-	      @param down velocity downward in ft/sec */
-    void set_Velocities_Local( double north, double east, double down );
-    /** Sets aircraft velocity in stability frame.
-        Setting this will trigger a recalc of the other velocity terms.
-	      @param u X velocity in ft/sec 
-	      @param v Y velocity  in ft/sec 
-	      @param w Z velocity in ft/sec */
-    void set_Velocities_Wind_Body( double u, double v, double w);
-
-    /** Euler angles
-        @param phi roll angle in radians
-	      @param theta pitch angle in radians 
-	      @param psi heading angle in radians */  
-    void set_Euler_Angles( double phi, double theta, double psi );
-
-    /** Sets rate of climb
-        @param roc Rate of climb in ft/sec */
-    void set_Climb_Rate( double roc);
-    /** Sets the flight path angle in radians
-        @param gamma flight path angle in radians. */
-    void set_Gamma_vert_rad( double gamma);
-
-    /** Sets the sea level radius in feet.
-        @param slr Sea Level Radius in feet */
-    void set_Sea_level_radius(double slr);
-    /** Sets the runway altitude in feet above sea level.
-        @param ralt Runway altitude in feet above sea level. */
-    void set_Runway_altitude(double ralt);
-
-    /** Sets the atmospheric static pressure
-        @param p pressure in psf */
-    void set_Static_pressure(double p);
-    /** Sets the atmospheric temperature
-        @param T temperature in degrees rankine */
-    void set_Static_temperature(double T);
-    /** Sets the atmospheric density.
-        @param rho air density slugs/cubic foot */
-    void set_Density(double rho);
-    /** Sets the velocity of the local airmass for wind modeling.
-        @param wnorth velocity north in fps 
-        @param weast velocity east in fps 
-        @param wdown velocity down in fps*/
-    void set_Velocities_Local_Airmass (double wnorth,
-                                         double weast,
-                                           double wdown );
-
-    /** Update the position
-        @param multiloop number of times to loop through the FDM
-	      @return true if successful */
-    bool update( int multiloop );
-
-private:
-    // The aircraft for this instance
-    FGFDMExec *fdmex;
-    FGInitialCondition *fgic;
-    bool needTrim;
     
-    bool trimmed;
-    float trim_elev;
-    float trim_throttle;
+    // Positions
+    void set_Latitude(double lat);  // geocentric
+    void set_Longitude(double lon);    
+    void set_Altitude(double alt);        // triggers re-calc of AGL altitude
+    //void set_AltitudeAGL(double altagl); // and vice-versa
+    
+    // Speeds -- setting any of these will trigger a re-calc of the rest
+    void set_V_calibrated_kts(double vc);
+    void set_Mach_number(double mach);
+    void set_Velocities_Local( double north, double east, double down );
+    void set_Velocities_Wind_Body( double u, double v, double w);
+    
+    // Euler angles 
+    void set_Euler_Angles( double phi, double theta, double psi );
+    
+    // Flight Path
+    void set_Climb_Rate( double roc);
+    void set_Gamma_vert_rad( double gamma);
+    
+    // Earth
+    void set_Sea_level_radius(double slr);
+    void set_Runway_altitude(double ralt);
+    
+    // Atmosphere
+    void set_Static_pressure(double p);
+    void set_Static_temperature(double T);
+    void set_Density(double rho);
+    void set_Velocities_Local_Airmass (double wnorth, 
+				       double weast, 
+				       double wdown );
+
+    // update position based on inputs, positions, velocities, etc.
+    bool update( int multiloop );
 };
+
 
 #endif // _JSBSIM_HXX
 
