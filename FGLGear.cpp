@@ -55,7 +55,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
-  
+
   WOW = false;
 }
 
@@ -88,19 +88,16 @@ FGColumnVector FGLGear::Force(void)
 
     WOW = true;
 
-    vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
-    vWhlVelVec += Position->GetVel();
-//    compressSpeed = vWhlVelVec(eZ) + Position->GetVd();
-    compressSpeed = vWhlVelVec(eZ);
+    vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
+    vWhlVelVec     +=  Position->GetVel();
+    compressSpeed   =  vWhlVelVec(eZ);
 
-    vWhlVelVec = -1.0 * vWhlVelVec.Normalize();
-    vWhlVelVec(eZ) = 0.00;
+    vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
+    vWhlVelVec(eZ)  =  0.00;
 
-//    vLocalForce.InitMatrix();
-    vLocalForce(eZ) = min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
-//    vLocalForce += (vLocalForce(eZ) * statFCoeff) * vWhlVelVec;
-    vLocalForce(eX) = (vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eX);
-    vLocalForce(eY) = (vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eY);
+    vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
+    vLocalForce(eX) =  fabs(vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eX);
+    vLocalForce(eY) =  fabs(vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eY);
 
     vForce  = State->GetTl2b() * vLocalForce ;
     vMoment = vWhlBodyVec * vForce;
