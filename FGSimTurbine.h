@@ -25,14 +25,14 @@
 
 HISTORY
 --------------------------------------------------------------------------------
-03/11/2003  DPC  Created
-09/22/2003  DPC  Added starting, stopping 
+03/11/2003  DPC  Created, based on FGTurbine
+09/22/2003  DPC  Added starting, stopping, new framework 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -48,18 +48,59 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.8 2003/09/23 04:38:16 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.9 2003/10/15 12:21:33 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** This class models a turbine engine.  Based on Jon Berndt's FGTurbine module.
+    Here the term "phase" signifies the engine's mode of operation.  At any given
+    time the engine is in only one phase.  At simulator startup the engine will be
+    placed in the Trim phase in order to provide a simplified thrust value without
+    throttle lag.  When trimming is complete the engine will go to the Off phase,
+    unless the value FGEngine::Running has been previously set to true, in which
+    case the engine will go to the Run phase.  Once an engine is in the Off phase
+    the full starting procedure (or airstart) must be used to get it running.
+<P>
+    -STARTING (on ground):
+      -#  Set the control FGEngine::Starter to true.  The engine will spin up to
+          a maximum of about %25 N2 (%5.2 N1).  This simulates the action of a
+          pneumatic starter.
+      -#  After reaching %15 N2 set the control FGEngine::Cutoff to false. If fuel
+          is available the engine will now accelerate to idle.  The starter will
+          automatically be set to false after the start cycle.
+<P>
+    -STARTING (in air):
+      -#  Increase speed to obtain a minimum of %15 N2.  If this is not possible,
+          the starter may be used to assist.
+      -#  Place the control FGEngine::Cutoff to false.
+<P>
+    Ignition is assumed to be on anytime the Cutoff control is set to false, 
+    therefore a seperate ignition system is not modeled.
+
+    @author David P. Culp
+    @version $Id: FGSimTurbine.h,v 1.9 2003/10/15 12:21:33 jberndt Exp $
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-namespace JSBSim {
-
 class FGSimTurbine : public FGEngine
 {
 public:
+  /** Constructor
+      @param exec pointer to executive structure
+      @param Eng_Cfg pointer to engine config file instance */
   FGSimTurbine(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+  /// Destructor
   ~FGSimTurbine();
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
@@ -80,32 +121,31 @@ private:
   typedef vector<FGCoefficient*> CoeffArray;
   CoeffArray ThrustTables;
 
-  phaseType phase;         // Operating mode, or "phase"
-  double MaxMilThrust;     // Maximum Rated Thrust, static @ S.L. (lbf)
-  double BypassRatio;      // Bypass Ratio
-  double TSFC;             // Thrust Specific Fuel Consumption (lbm/hr/lbf)
-  double ATSFC;            // Augmented TSFC (lbm/hr/lbf)
-  double IdleN1;           // Idle N1
-  double IdleN2;           // Idle N2
-  double MaxN1;            // N1 at 100% throttle
-  double MaxN2;            // N2 at 100% throttle
-  double IdleFF;           // Idle Fuel Flow (lbm/hr)
-  double delay;            // Inverse spool-up time from idle to 100% (seconds)
-  double dt;               // Simulator time slice
-  double N1_factor;        // factor to tie N1 and throttle
-  double N2_factor;        // factor to tie N2 and throttle
-  double ThrottleCmd;      // FCS-supplied throttle position
-  double throttle;         // virtual throttle position
-  double TAT;              // total air temperature (deg C)
-  bool Stalled;            // true if engine is compressor-stalled
-  bool Seized;             // true if inner spool is seized
-  bool Overtemp;           // true if EGT exceeds limits
-  bool Fire;               // true if engine fire detected
-  bool start_running;      // true if user wants engine running at start
-  int Augmented;           // = 1 if augmentation installed
-  int Injected;            // = 1 if water injection installed
-  int AugMethod;           // = 0 if using property /engine[n]/augmentation
-                           // = 1 if using last 1% of throttle movement
+  phaseType phase;         ///< Operating mode, or "phase"
+  double MilThrust;        ///< Maximum Unaugmented Thrust, static @ S.L. (lbf)
+  double MaxThrust;        ///< Maximum Augmented Thrust, static @ S.L. (lbf)
+  double BypassRatio;      ///< Bypass Ratio
+  double TSFC;             ///< Thrust Specific Fuel Consumption (lbm/hr/lbf)
+  double ATSFC;            ///< Augmented TSFC (lbm/hr/lbf)
+  double IdleN1;           ///< Idle N1
+  double IdleN2;           ///< Idle N2
+  double MaxN1;            ///< N1 at 100% throttle
+  double MaxN2;            ///< N2 at 100% throttle
+  double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
+  double delay;            ///< Inverse spool-up time from idle to 100% (seconds)
+  double dt;               ///< Simulator time slice
+  double N1_factor;        ///< factor to tie N1 and throttle
+  double N2_factor;        ///< factor to tie N2 and throttle
+  double ThrottleCmd;      ///< FCS-supplied throttle position
+  double TAT;              ///< total air temperature (deg C)
+  bool Stalled;            ///< true if engine is compressor-stalled
+  bool Seized;             ///< true if inner spool is seized
+  bool Overtemp;           ///< true if EGT exceeds limits
+  bool Fire;               ///< true if engine fire detected
+  int Augmented;           ///< = 1 if augmentation installed
+  int Injected;            ///< = 1 if water injection installed
+  int AugMethod;           ///< = 0 if using property /engine[n]/augmentation
+                           ///< = 1 if using last 1% of throttle movement
 
   double Off(void);
   double Run(void);
@@ -123,3 +163,4 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

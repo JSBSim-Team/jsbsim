@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.7 2003/09/23 04:38:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.8 2003/10/15 12:21:33 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,8 +139,8 @@ double FGSimTurbine::Run(void)
 {
     double idlethrust, milthrust, thrust;
     double N2norm;   // 0.0 = idle N2, 1.0 = maximum N2
-    idlethrust = MaxMilThrust * ThrustTables[0]->TotalValue();
-    milthrust = (MaxMilThrust - idlethrust) * ThrustTables[1]->TotalValue();
+    idlethrust = MilThrust * ThrustTables[0]->TotalValue();
+    milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
  
     Running = true;
     Starter = false;
@@ -149,13 +149,13 @@ double FGSimTurbine::Run(void)
     N1 = Seek(&N1, IdleN1 + ThrottleCmd * N1_factor, delay, delay * 2.4);
     N2norm = (N2 - IdleN2) / N2_factor;
     thrust = idlethrust + (milthrust * N2norm * N2norm); 
-    FuelFlow_pph = thrust * TSFC;
     thrust = thrust * (1.0 - BleedDemand);
+    FuelFlow_pph = thrust * TSFC;
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
     OilPressure_psi = N2 * 0.62;
     OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0);
-    EPR = 1.0 + thrust/MaxMilThrust;
+    EPR = 1.0 + thrust/MilThrust;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
     if (Reversed) thrust = thrust * -0.2;
 
@@ -165,9 +165,9 @@ double FGSimTurbine::Run(void)
       }
 
     if ((Augmented == 1) && Augmentation) {
-      thrust = thrust * ThrustTables[2]->TotalValue();
+      thrust = MaxThrust * ThrustTables[2]->TotalValue();
       FuelFlow_pph = thrust * ATSFC;
-      NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0);
+      NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
       }
 
     if ((Injected == 1) && Injection)
@@ -200,7 +200,7 @@ double FGSimTurbine::SpinUp(void)
 double FGSimTurbine::Start(void)
 {
     if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
-      Cranking = true;
+      Cranking = true;                   // provided for sound effects signal
       if (N2 < IdleN2) {
         N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
         N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
@@ -254,8 +254,8 @@ double FGSimTurbine::Seize(void)
 double FGSimTurbine::Trim(void)
 {
     double idlethrust, milthrust, thrust;
-    idlethrust = MaxMilThrust * ThrustTables[0]->TotalValue();
-    milthrust = (MaxMilThrust - idlethrust) * ThrustTables[1]->TotalValue();
+    idlethrust = MilThrust * ThrustTables[0]->TotalValue();
+    milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
     thrust = idlethrust + (milthrust * ThrottleCmd * ThrottleCmd);
     return thrust; 
 }
@@ -295,7 +295,8 @@ double FGSimTurbine::Seek(double *var, double target, double accel, double decel
 void FGSimTurbine::SetDefaults(void)
 {
   Name = "None_Defined";
-  MaxMilThrust = 10000.0;
+  MilThrust = 10000.0;
+  MaxThrust = 10000.0;
   BypassRatio = 0.0;
   TSFC = 0.8;
   ATSFC = 1.7;
@@ -329,7 +330,8 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
   Name = Eng_cfg->GetValue("NAME");
   cout << Name << endl;
   Eng_cfg->GetNextConfigLine();
-  *Eng_cfg >> token >> MaxMilThrust;
+  *Eng_cfg >> token >> MilThrust;
+  *Eng_cfg >> token >> MaxThrust;
   *Eng_cfg >> token >> BypassRatio;
   *Eng_cfg >> token >> TSFC;
   *Eng_cfg >> token >> ATSFC;
@@ -352,7 +354,7 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
-  IdleFF = pow(MaxMilThrust, 0.2) * 107.0;  // just an estimate
+  IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
   return true;
 }
 
