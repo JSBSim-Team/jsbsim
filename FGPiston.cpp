@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.26 2001/10/03 22:21:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.27 2001/10/04 03:49:10 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,6 +99,8 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
 
   Type = etPiston;
   EngineNumber = 0;    // FIXME: this should be the actual number
+
+  dt = State->Getdt();
 
   // Initialisation
   volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
@@ -411,6 +413,37 @@ void FGPiston::doCHT(void)
   float HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
     
   CylinderHeadTemp_degK = dqdt_cylinder_head / HeatCapacityCylinderHead;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/**
+ * Calculate the oil temperature.
+ *
+ * Inputs: Percentage_Power, running flag.
+ *
+ * Outputs: OilTemp_degK
+ */
+
+void FGPiston::doOilTemperature(void)
+{
+  float idle_percentage_power = 2.3;        // approximately
+  float target_oil_temp;        // Steady state oil temp at the current engine conditions
+  float time_constant;          // The time constant for the differential equation
+
+  if (running) {
+    target_oil_temp = 363;
+    time_constant = 500;        // Time constant for engine-on idling.
+    if (Percentage_Power > idle_percentage_power) {
+      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0);       // adjust for power 
+    }
+  } else {
+    target_oil_temp = 298;
+    time_constant = 1000;  // Time constant for engine-off; reflects the fact that oil is no longer getting circulated
+  }
+
+  float dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
+
+  OilTemp_degK += (dOilTempdt * dt);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

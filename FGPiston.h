@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.16 2001/10/03 22:34:46 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.17 2001/10/04 03:49:10 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.16 2001/10/03 22:34:46 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.17 2001/10/04 03:49:10 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,6 +93,13 @@ private:
   float AltitudeSlope;
   float PowerAvailable;
 
+  // timestep
+  float dt;
+
+  // engine state
+  bool running;
+  bool cranking;
+
   void doEngineStartup(void);
   void doManifoldPressure(void);
   void doAirFlow(void);
@@ -101,6 +108,7 @@ private:
   void doEGT(void);
   void doCHT(void);
   void doOilPressure(void);
+  void doOilTemperature(void);
 
   //
   // constants

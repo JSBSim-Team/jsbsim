@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.37 2001/10/03 22:21:55 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.38 2001/10/04 03:49:10 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.37 2001/10/03 22:21:55 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.38 2001/10/04 03:49:10 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,9 @@ public:
   }
   virtual float getOilPressure_psi () const {
     return OilPressure_psi;
+  }
+  virtual float getOilTemp_degF () const {
+    return (OilTemp_degK - 273.0) * (9.0 / 5.0) + 32.0;
   }
 
   void SetStarved(bool tt) {Starved = tt;}
@@ -204,6 +207,7 @@ protected:
   float ExhaustGasTemp_degK;
   float CylinderHeadTemp_degK;
   float OilPressure_psi;
+  float OilTemp_degK;
 
   FGFDMExec*      FDMExec;
   FGState*        State;
