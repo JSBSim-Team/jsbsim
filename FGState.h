@@ -60,6 +60,7 @@ INCLUDES
 
 #include "FGDefs.h"
 #include "FGInitialCondition.h"
+#include "FGMatrix.h"
 
 /*******************************************************************************
 DEFINES
@@ -124,6 +125,8 @@ public:
   inline void  Setdt(float tt) {dt = tt;}
 
   inline float IncrTime(void) {sim_time+=dt;return sim_time;}
+    void CalcMatrices(float phi, float tht, float psi);
+    void IntegrateQuat(float P, float Q, float R);
 
 
 private:
@@ -139,6 +142,10 @@ private:
 
   FGFDMExec* FDMExec;
   float LocalAltitudeOverRunway;
+  FGMatrix* Tb2l;
+  FGMatrix* Tl2b;
+  FGMatrix* Ts2b;
+  FGColumnVector* Qtrn;
 
 protected:
 

@@ -302,3 +302,15 @@ float FGState::GetParameter(int val_idx)
   return 0;
 }
 
+
+void FGState::CalcMatrices(float phi, float tht, float psi)
+{
+    //TODO: Add your source code here
+}
+
+
+void FGState::IntegrateQuat(float P, float Q, float R)
+{
+    //TODO: Add your source code here
+}
+
