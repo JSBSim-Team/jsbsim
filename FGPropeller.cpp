@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.3 2000/10/16 12:32:47 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.4 2001/01/11 00:44:55 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,14 +45,68 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGPropeller::FGPropeller(FGFDMExec *FDMExec) : FGThruster(FDMExec)
+FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(exec)
 {
+  string token;
+  int rows, cols;
 
+  PropName = Prop_cfg->GetValue("NAME");
+  cout << "\n    Propeller Name: " << PropName << endl;
+  Prop_cfg->GetNextConfigLine();
+  while (Prop_cfg->GetValue() != "/PROPELLER") {
+    *Prop_cfg >> token;
+    if (token == "IXX") {
+      *Prop_cfg >> Ixx;
+      cout << "      IXX = " << Ixx << endl;
+    } else if (token == "DIAMETER") {
+      *Prop_cfg >> Diameter;
+      cout << "      Diameter = " << Diameter << endl;
+    } else if (token == "NUMBLADES") {
+      *Prop_cfg >> numBlades;
+      cout << "      Number of Blades  = " << numBlades << endl;
+    } else if (token == "EFFICIENCY") {
+       *Prop_cfg >> rows >> cols;
+       if (cols == 1) Efficiency = new FGTable(rows);
+	     else           Efficiency = new FGTable(rows, cols);
+       *Efficiency << *Prop_cfg;
+       cout << "      Efficiency: " <<  endl;
+       Efficiency->Print();
+    } else if (token == "C_THRUST") {
+       *Prop_cfg >> rows >> cols;
+       if (cols == 1) cThrust = new FGTable(rows);
+	     else           cThrust = new FGTable(rows, cols);
+       *cThrust << *Prop_cfg;
+       cout << "      Thrust Coefficient: " <<  endl;
+       cThrust->Print();
+    } else if (token == "C_POWER") {
+       *Prop_cfg >> rows >> cols;
+       if (cols == 1) cPower = new FGTable(rows);
+	     else           cPower = new FGTable(rows, cols);
+       *cPower << *Prop_cfg;
+       cout << "      Power Coefficient: " <<  endl;
+       cPower->Print();
+    } else {
+      cout << "Unhandled token in Propeller config file: " << token << endl;
+    }
+  }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGPropeller::~FGPropeller(void)
+{
+  if (Efficiency) delete Efficiency;
+  if (cThrust)    delete cThrust;
+  if (cPower)     delete cPower;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropeller::Calculate(void)
 {
   FGThruster::Calculate();
-
+  float Vel = (fdmex->GetTranslation()->GetUVW())(1);
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

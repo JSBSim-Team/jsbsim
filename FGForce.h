@@ -130,6 +130,7 @@ public:
 protected:
   FGColumnVector vFn;
   FGColumnVector vMn;
+  FGFDMExec *fdmex;
 
 private:
   FGColumnVector vFb;
@@ -140,7 +141,6 @@ private:
 
   FGMatrix mT;
 
-  FGFDMExec *fdmex;
   TransformType ttype;
 
 };

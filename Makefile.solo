@@ -6,7 +6,7 @@ FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\
 FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\
 FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix.o FGPropulsion.o FGRocket.o\
 FGTurboShaft.o FGTurboJet.o FGTurboProp.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\
-FGTable.o
+FGTable.o FGPropeller.o FGNozzle.o
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
 	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
@@ -35,6 +35,8 @@ FGFDMExec.o : FGFDMExec.cpp FGFDMExec.h
 FGModel.o : FGModel.cpp FGModel.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGModel.cpp
 
+FGNozzle.o : FGNozzle.cpp FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGNozzle.cpp
 FGOutput.o : FGOutput.cpp FGOutput.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
 
@@ -82,6 +84,9 @@ FGTrim.o : FGTrim.cpp FGTrim.h
   
 FGTrimAxis.o : FGTrimAxis.cpp FGTrimAxis.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrimAxis.cpp
+
+FGPropeller.o : FGPropeller.cpp FGPropeller.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropeller.cpp
 
 FGPropulsion.o : FGPropulsion.cpp FGPropulsion.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGPropulsion.cpp

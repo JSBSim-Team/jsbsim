@@ -43,8 +43,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGThruster.h"
+#include "FGTable.h"
+#include "FGTranslation.h"
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.3 2000/10/16 12:32:47 jsb Exp $"
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.4 2001/01/11 00:44:55 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -53,10 +55,36 @@ CLASS DECLARATION
 class FGPropeller : public FGThruster {
 
 public:
-  FGPropeller(FGFDMExec *FDMExec);
+  FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg);
   ~FGPropeller(void);
+  
+  void SetRPM(float rpm) {RPM = rpm;}
+  void SetPitch(float pitch) {Pitch = pitch;}
+
+  float GetPitch(void)         { return Pitch;         }
+  float GetRPM(void)           { return RPM;           }
+  float GetIxx(void)           { return Ixx;           }
+  float GetThrust(void)        { return Thrust;        }
+  float GetPowerRequired(void) { return PowerRequired; }
+  float GetTorque(void)        { return Torque;        }
 
   void Calculate(void);
+  
+private:
+  string PropName;
+  int   numBlades;
+  float RPM;
+  float Ixx;
+  float Diameter;
+  float MaxPitch;
+  float MinPitch;
+  float Pitch;
+  float Thrust;
+  float PowerRequired;
+  float Torque;
+  FGTable *Efficiency;
+  FGTable *cThrust;
+  FGTable *cPower;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

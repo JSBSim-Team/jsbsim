@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.3 2000/10/16 12:32:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.4 2001/01/11 00:44:55 jsb Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGNozzle::FGNozzle(FGFDMExec *FDMExec) : FGThruster(FDMExec)
+FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* AC_cfg) : FGThruster(FDMExec)
 {
 
 }

@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.17 2001/01/04 13:42:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.18 2001/01/11 00:44:55 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,9 +103,16 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
   string token, tag;
   string engineName, fullpath;
+  string thrusterName, thrType;
   string parameter;
   string enginePath = FDMExec->GetEnginePath();
   float xLoc, yLoc, zLoc, engPitch, engYaw;
+  
+# ifndef macintosh
+      fullpath = enginePath + "/";
+# else
+      fullpath = enginePath + ";";
+# endif
 
   AC_cfg->GetNextConfigLine();
 
@@ -116,15 +123,9 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
       *AC_cfg >> engineName;
 
-# ifndef macintosh
-      fullpath = enginePath + "/" + engineName + ".xml";
-# else
-      fullpath = enginePath + ";" + engineName + ".xml";
-# endif
-
-
-      cout << "    Reading engine: " << engineName << " from file: " << fullpath << endl;
-      FGConfigFile Eng_cfg(fullpath);
+      cout << "    Reading engine: " << engineName << " from file: " << fullpath
+                                                   + engineName + ".xml"<< endl;
+      FGConfigFile Eng_cfg(fullpath + engineName + ".xml");
 
       if (Eng_cfg.IsOpen()) {
         Eng_cfg >> tag;
@@ -151,7 +152,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
         numEngines++;
       } else {
-        cerr << "Could not read engine config file: " << fullpath << endl;
+        cerr << "Could not read engine config file: " << fullpath
+                                                   + engineName + ".xml" << endl;
         return false;
       }
 
@@ -169,6 +171,27 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         break;
       }
       numTanks++;
+      
+    } else if (parameter == "AC_THRUSTER") {
+    
+      *AC_cfg >> thrusterName;
+
+      cout << "    Reading thruster: " << thrusterName << " from file: " << fullpath
+                                                   + thrusterName + ".xml" << endl;
+      FGConfigFile Thruster_cfg(fullpath + thrusterName + ".xml");
+
+      if (Thruster_cfg.IsOpen()) {
+        thrType = Thruster_cfg.GetValue();
+        if (thrType == "FG_PROPELLER") {
+          Thrusters.push_back(new FGPropeller(FDMExec, &Thruster_cfg));
+	      } else if (thrType == "FG_NOZZLE") {
+          Thrusters.push_back(new FGNozzle(FDMExec, &Thruster_cfg));
+	      }
+	    } else {
+        cerr << "Could not read thruster engine config file: " << fullpath
+                                                   + thrusterName + ".xml" << endl;
+        return false;
+      }
     }
   }
   return true;
