@@ -289,16 +289,6 @@
       GAIN         0.30
     </COMPONENT>
 
-    <COMMENT>
-    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
-      ID           15
-      INPUT         3
-      INPUT        10
-      OUTPUT       FG_ELEVATOR_POS
-      CLIPTO       -0.26 0.61
-    </COMPONENT>
-    </COMMENT>
-
     <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
       ID           15
       INPUT         3
@@ -631,7 +621,7 @@
   -->
   </COMMENT>
 
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF

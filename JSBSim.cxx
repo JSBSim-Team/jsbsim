@@ -18,12 +18,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.53 2001/03/29 23:16:21 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.54 2001/03/30 21:32:36 jberndt Exp $
 
 
 #include <simgear/compiler.h>
 
-#ifdef FG_MATH_EXCEPTION_CLASH
+#ifdef SG_MATH_EXCEPTION_CLASH
 #  include <math.h>
 #endif
 
@@ -32,7 +32,7 @@
 #include <simgear/constants.h>
 #include <simgear/debug/logstream.hxx>
 #include <simgear/math/sg_geodesy.hxx>
-#include <simgear/misc/fgpath.hxx>
+#include <simgear/misc/sg_path.hxx>
 
 #include <Scenery/scenery.hxx>
 
@@ -85,14 +85,10 @@ FGJSBsim::FGJSBsim( double dt )
 	add_engine( FGEngInterface() );
     }  
     
-    fgSetDouble("/fdm/trim/pitch-trim",
-		fdmex->GetFCS()->GetPitchTrimCmd());
-    fgSetDouble("/fdm/trim/throttle",
-		fdmex->GetFCS()->GetThrottleCmd(0)/100.0);
-    fgSetDouble("/fdm/trim/aileron",
-		fdmex->GetFCS()->GetDaCmd());
-    fgSetDouble("/fdm/trim/rudder",
-		fdmex->GetFCS()->GetDrCmd());
+    fgSetDouble("/fdm/trim/pitch-trim", fdmex->GetFCS()->GetPitchTrimCmd());
+    fgSetDouble("/fdm/trim/throttle", fdmex->GetFCS()->GetThrottleCmd(0));
+    fgSetDouble("/fdm/trim/aileron", fdmex->GetFCS()->GetDaCmd());
+    fgSetDouble("/fdm/trim/rudder", fdmex->GetFCS()->GetDrCmd());
 
     trimmed = fgGetValue("/fdm/trim/trimmed",true);
     trimmed->setBoolValue(false);
@@ -182,20 +178,20 @@ void FGJSBsim::init() {
 	    <<  fdmex->GetPosition()->GetLongitude() << " deg"  );
   
     // for debug only
-    /* SG_LOG( SG_FLIGHT, FG_DEBUG, "  FGJSBSim::get_Altitude(): " <<  get_Altitude() );
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  FGJSBSim::get_Sea_level_radius(): " << get_Sea_level_radius()  );
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  scenery.cur_radius*SG_METER_TO_FEET: "
+    /* SG_LOG( SG_FLIGHT, SG_DEBUG, "  FGJSBSim::get_Altitude(): " <<  get_Altitude() );
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  FGJSBSim::get_Sea_level_radius(): " << get_Sea_level_radius()  );
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  scenery.cur_radius*SG_METER_TO_FEET: "
        <<  scenery.cur_radius*SG_METER_TO_FEET );
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  Calculated Terrain ASL: " << endl 
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  Calculated Terrain ASL: " << endl 
        << "    " << "scenery.cur_radius*SG_METER_TO_FEET -get_Sea_level_radius()= " 
        <<  scenery.cur_radius*SG_METER_TO_FEET - get_Sea_level_radius()  );
 
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  Calculated Aircraft AGL: " << endl 
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  Calculated Aircraft AGL: " << endl 
        << "    " << "get_Altitude() + get_Sea_level_radius() - scenery.cur_radius*SG_METER_TO_FEET= " 
        <<  get_Altitude() + get_Sea_level_radius()- scenery.cur_radius*SG_METER_TO_FEET );
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  fgGetDouble("/position/altitude"): " 
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  fgGetDouble("/position/altitude"): " 
        <<  fgGetDouble("/position/altitude") );
-       SG_LOG( SG_FLIGHT, FG_DEBUG, "  FGBFI::getAltitude(): " 
+       SG_LOG( SG_FLIGHT, SG_DEBUG, "  FGBFI::getAltitude(): " 
        <<  FGBFI::getAltitude() );    */
 
 
@@ -242,19 +238,16 @@ bool FGJSBsim::update( int multiloop ) {
   
 	needTrim=false;
   
-  	fgSetDouble("/fdm/trim/pitch-trim",
-		fdmex->GetFCS()->GetPitchTrimCmd());
-	fgSetDouble("/fdm/trim/throttle",
-		fdmex->GetFCS()->GetThrottleCmd(0)/100.0);
-	fgSetDouble("/fdm/trim/aileron",
-		fdmex->GetFCS()->GetDaCmd());
-	fgSetDouble("/fdm/trim/rudder",
-		fdmex->GetFCS()->GetDrCmd());
+  	fgSetDouble("/fdm/trim/pitch-trim", fdmex->GetFCS()->GetPitchTrimCmd());
+	fgSetDouble("/fdm/trim/throttle", fdmex->GetFCS()->GetThrottleCmd(0));
+	fgSetDouble("/fdm/trim/aileron", fdmex->GetFCS()->GetDaCmd());
+	fgSetDouble("/fdm/trim/rudder", fdmex->GetFCS()->GetDrCmd());
   
   	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
 	controls.set_elevator(fdmex->GetFCS()->GetDeCmd());
 	controls.set_throttle(FGControls::ALL_ENGINES,
-			      fdmex->GetFCS()->GetThrottleCmd(0)/100.0);
+			      fdmex->GetFCS()->GetThrottleCmd(0));
+
 	controls.set_aileron(fdmex->GetFCS()->GetDaCmd());
 	controls.set_rudder(fdmex->GetFCS()->GetDrCmd());
     
@@ -304,8 +297,7 @@ bool FGJSBsim::copy_to_JSBsim() {
     fdmex->GetFCS()->SetDsbCmd( 0.0 ); //speedbrakes
     fdmex->GetFCS()->SetDspCmd( 0.0 ); //spoilers
     fdmex->GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
-				     controls.get_throttle( 0 ) * 100.0 );
-
+				     controls.get_throttle( 0 ));
     fdmex->GetFCS()->SetLBrake( controls.get_brake( 0 ) );
     fdmex->GetFCS()->SetRBrake( controls.get_brake( 1 ) );
     fdmex->GetFCS()->SetCBrake( controls.get_brake( 2 ) );
@@ -625,3 +617,4 @@ void FGJSBsim::set_Velocities_Local_Airmass (double wnorth,
     if(fdmex->GetAtmosphere()->External() == true)
         needTrim=true;
 }     
+
