@@ -137,8 +137,6 @@ FGColumnVector FGLGear::Force(void)
 
     vForce  = State->GetTl2b() * vLocalForce ;
     vMoment = vWhlBodyVec * vForce;
-    cout << "      Force: " << vForce << endl;
-    cout << "      Moment: " << vMoment << endl;
 
   } else {
 
