@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.50 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.51 2001/12/24 22:58:40 dmegginson Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,8 +154,17 @@ double FGPropeller::Calculate(double PowerAvailable)
   }
 
   Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
-  vFn(1) = Thrust;
   omega = RPS*2.0*M_PI;
+
+  // Check for windmilling.
+  double radius = Diameter * 0.375; // 75% of radius
+  double windmill_cutoff = tan(Pitch * 1.745329E-2) * omega * radius;
+  if (Vel > windmill_cutoff) {
+    cout << "Windmilling: " << Vel << " > " << windmill_cutoff << endl;
+    Thrust = -Thrust;
+  }
+
+  vFn(1) = Thrust;
 
   // The Ixx value and rotation speed given below are for rotation about the
   // natural axis of the engine. The transform takes place in the base class
@@ -187,6 +196,7 @@ double FGPropeller::GetPowerRequired(void)
   double rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
+    Pitch = MinPitch;
     cPReq = cPower->GetValue(J);
   } else {                    // Variable pitch prop
     double advance = fdmex->GetFCS()->GetPropAdvance(ThrusterNumber);
