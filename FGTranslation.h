@@ -85,6 +85,7 @@ public:
    ~FGTranslation(void);
 
    inline FGColumnVector GetUVW(void) {return vUVW;}
+   inline FGColumnVector GetUVWdot(void) { return vUVWdot; }
 
    inline float Getalpha(void) {return alpha;}
    inline float Getbeta (void) {return beta; }
@@ -102,13 +103,14 @@ public:
    inline void SetVt   (float tt) {Vt = tt;}
 
    inline void SetABG(float t1, float t2, float t3) {alpha=t1; beta=t2; gamma=t3;}
-
+   
    bool Run(void);
 
 protected:
 
 private:
-  FGColumnVector vUVW;
+  FGColumnVector vUVW,vWindUVW;
+  FGColumnVector vUVWdot;
   FGColumnVector vPQR;
   FGColumnVector vForces;
   FGColumnVector vEuler;

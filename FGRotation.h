@@ -81,6 +81,7 @@ CLASS DECLARATION
 class FGRotation : public FGModel
 {
   FGColumnVector vPQR;
+  FGColumnVector vPQRdot;
   FGColumnVector vMoments;
   FGColumnVector vEuler;
 
@@ -96,6 +97,7 @@ public:
   bool Run(void);
 
   inline FGColumnVector GetPQR(void) {return vPQR;}
+  inline FGColumnVector GetPQRdot(void) {return vPQRdot;}
   inline FGColumnVector GetEuler(void) {return vEuler;}
   inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector tt) {vEuler = tt;}
