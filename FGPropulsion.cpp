@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.67 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.68 2001/12/14 04:08:44 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -317,7 +317,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         if (thrType == "FG_PROPELLER" && P_Factor > 0.001) {
           ((FGPropeller*)Thrusters[numThrusters])->SetPFactor(P_Factor);
           if (debug_lvl > 0) cout << "      P-Factor: " << P_Factor << endl;
-          ((FGPropeller*)Thrusters[numThrusters])->SetSense(Sense);
+          ((FGPropeller*)Thrusters[numThrusters])->SetSense(fabs(Sense)/Sense);
           if (debug_lvl > 0) cout << "      Sense: " << Sense <<  endl;
         }
         Thrusters[numThrusters]->SetdeltaT(dt*rate);
