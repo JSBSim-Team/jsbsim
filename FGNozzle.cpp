@@ -37,14 +37,14 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include <algorithm.h>
+#  include STL_ALGORITHM
 #else
 #  include <algorithm>
 #endif
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.19 2001/07/13 12:55:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.20 2001/07/13 14:52:08 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 extern short debug_lvl;
