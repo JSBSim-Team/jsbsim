@@ -149,78 +149,90 @@ Aerodynamics:
    AC_IZZ   49700000.0  //  49,700,000
    AC_IXZ     970000.0  //     970,000
    AC_EMPTYWT   523816
-   AC_CGLOC     1530.5  0.0 -69.6
-   AC_AERORP    1530.5  0.0  0.0
-   AC_EYEPTLOC  194.8 -32.0 80.0
+   AC_CGLOC     1327.0   0.0 -24.0 // Z point is guesstimated
+   AC_AERORP    1377.0   0.0 -24.0 // Estimated Y component
+   AC_EYEPTLOC   308.0 -21.0 138.0
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   361.8  0.0 -333.9 1222236.4 87302.6  0.5  0.8  0.0 STEERABLE NONE  5.0 RETRACT
-  AC_GEAR LEFT_MLG  1668.3 -228.4 -333.9 4365130.0 174605.2  0.5  0.8  0.0 FIXED LEFT  0 RETRACT
-  AC_GEAR RIGHT_MLG 1668.3 228.4 -333.9 4365130.0 174605.2  0.5  0.8  0.0 FIXED RIGHT 0 RETRACT
+  AC_GEAR NOSE_LG    396.0    0.0 -194.0 1222236.4 87302.6  0.5  0.8  0.0 STEERABLE NONE  5.0 RETRACT
+  AC_GEAR LEFT_MLG  1554.0 -216.5 -204.0 4365130.0 174605.2  0.5  0.8  0.0 FIXED LEFT  0 RETRACT
+  AC_GEAR RIGHT_MLG 1554.0  216.5 -204.0 4365130.0 174605.2  0.5  0.8  0.0 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
+  <!-- 
+    Position of engines (forward edge of nacelle, #1 being on the left side) in inches
+       XLOC   YLOC   ZLOC
+    1  1356   -820    -97
+    2   996   -460   -121
+    3   996    460   -121
+    4  1356    820    -97
+    -->
+  <!-- Engine #1 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
-    XLOC 1530.54
-    YLOC -423
-    ZLOC -40
+    XLOC 1356
+    YLOC -820
+    ZLOC -97
     PITCH 0
     YAW 0
     FEED 0
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 1530.54
-    YLOC -423
-    ZLOC -40
+    XLOC 1356
+    YLOC -820
+    ZLOC -97
     PITCH 0
     YAW 0
   </AC_THRUSTER>
+  <!-- Engine #2 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
-    XLOC 1530.54
-    YLOC -423
-    ZLOC -40
+    XLOC 996
+    YLOC -460
+    ZLOC -121
     PITCH 0
     YAW 0
     FEED 1
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 1530.54
-    YLOC -423
-    ZLOC -40
+    XLOC 996
+    YLOC -460
+    ZLOC -121
     PITCH 0
     YAW 0
   </AC_THRUSTER>
+  <!-- Engine #3 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
-    XLOC 1530.54
-    YLOC 423
-    ZLOC -40
+    XLOC 996
+    YLOC 460
+    ZLOC -121
     PITCH 0
     YAW 0
     FEED 2
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 1530.54
-    YLOC 423
-    ZLOC -40
+    XLOC 996
+    YLOC 460
+    ZLOC -121
     PITCH 0
     YAW 0
   </AC_THRUSTER>
+  <!-- Engine #4 -->
   <AC_ENGINE FILE="GE-CF6-80C2-B1F">
-    XLOC 1530.54
-    YLOC 423
-    ZLOC -40
+    XLOC 1356
+    YLOC 820
+    ZLOC -97
     PITCH 0
     YAW 0
     FEED 3
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 1530.54
-    YLOC 423
-    ZLOC -40
+    XLOC 1356
+    YLOC 820
+    ZLOC -97
     PITCH 0
     YAW 0
   </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 1530.54 
+    XLOC 1327
     YLOC 0 
     ZLOC -69.57 
     RADIUS 1 
@@ -228,7 +240,7 @@ Aerodynamics:
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 1530.54 
+    XLOC 1327
     YLOC 0 
     ZLOC -69.57 
     RADIUS 1 
@@ -236,7 +248,7 @@ Aerodynamics:
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 1530.54 
+    XLOC 1327
     YLOC 0 
     ZLOC -69.57 
     RADIUS 1 
@@ -244,7 +256,7 @@ Aerodynamics:
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="3">
-    XLOC 1530.54 
+    XLOC 1327
     YLOC 0 
     ZLOC -69.57 
     RADIUS 1 
@@ -252,7 +264,7 @@ Aerodynamics:
     CONTENTS  5456.4
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="4">
-    XLOC 1530.54 
+    XLOC 1327
     YLOC 0 
     ZLOC -69.57 
     RADIUS 1 
