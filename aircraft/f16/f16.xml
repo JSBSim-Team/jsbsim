@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.38 2004/06/27 16:01:59 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.39 2004/07/01 14:07:03 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -208,10 +208,10 @@
        MAX          0.524
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
-<!--
-     <COMPONENT NAME="Alpha Norm" TYPE="PURE_GAIN">
+     <COMPONENT NAME="Alpha Norm Gain" TYPE="PURE_GAIN">
        INPUT          aero/alpha-rad
        GAIN           1.909859317
+       OUTPUT         fcs/alpha-norm
      </COMPONENT>
      <COMPONENT NAME="LEF Control" TYPE="KINEMAT">
        INPUT        fcs/alpha-norm
@@ -221,19 +221,28 @@
                     25   2
        OUTPUT      fcs/lef-pos-deg
      </COMPONENT>
--->
      <COMPONENT NAME="Throttle1" TYPE="PURE_GAIN">
       INPUT        fcs/throttle-cmd-norm[0]
       GAIN         2.0
       OUTPUT       fcs/throttle-pos-norm[0]
      </COMPONENT>
+     <COMPONENT NAME="Flap Command" TYPE="SWITCH">
+      <TEST LOGIC="DEFAULT" VALUE="0">
+      </TEST>
+      <TEST LOGIC="AND" VALUE="1">
+        velocities/vc-kts < 250
+      </TEST>
+      <TEST LOGIC="OR" VALUE="1">
+        gear/gear-cmd-norm == 1
+      </TEST>
+     </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       INPUT        gear/gear-cmd-norm
+       INPUT        fcs/flap-command
        DETENTS      3
                    -2    0.5
                     0    0
                     20   3
-       OUTPUT      fcs/flap-pos-deg
+       OUTPUT       fcs/flap-pos-deg
      </COMPONENT>
      <COMPONENT NAME="Speedbrake Control" TYPE="KINEMAT">
        INPUT        fcs/speedbrake-cmd-norm
@@ -294,7 +303,6 @@
             0.698  1.898  1.869  1.822  1.757  1.689
             0.785  1.753  1.724  1.674  1.612  1.546
         </COEFFICIENT>
-<!--
         <COEFFICIENT NAME="CLDlef" TYPE="VECTOR">
            Lift_due_to_leading_edge_flap_deflection
            12
@@ -313,7 +321,6 @@
             0.698  0.028
             0.785  0.025
         </COEFFICIENT>
--->
         <!-- aeromatic -->
         <COEFFICIENT NAME="CLDflaps" TYPE="VALUE">
           Delta_Lift_due_to_trailing_edge_flaps
@@ -408,7 +415,6 @@
        1.1       0.023
        1.8       0.015
       </COEFFICIENT>
-<!--
       <COEFFICIENT NAME="CDDlef" TYPE="VECTOR">
         Drag_due_to_leading_edge_flap_deflection
         12
@@ -427,7 +433,6 @@
          0.698  0.023
          0.785  0.024
       </COEFFICIENT>
--->
       <!-- aeromatic -->
       <COEFFICIENT NAME="CDDflaps" TYPE="VALUE">
          Drag_due_to_trailing_edge_flaps
@@ -475,7 +480,6 @@
          0.698 23.217
          0.785 24.105
       </COEFFICIENT>
-<!--
       <COEFFICIENT NAME="CDq_Dlef" TYPE="VECTOR">
         Drag_due_to_pitch_rate_and_leading_edge_flap_deflection
         12
@@ -494,7 +498,6 @@
          0.698  0.029
          0.785  0.015
       </COEFFICIENT>
--->
     </AXIS>
     <AXIS NAME="SIDE">
       <COEFFICIENT NAME="CYb" TYPE="VALUE">
