@@ -61,7 +61,7 @@ SENTRY
 #define METERS_TO_FEET 3.2808
 
 enum eParam {
-  FG_NONE = 0,
+  FG_UNDEF = 0,
   FG_QBAR,
   FG_WINGAREA,
   FG_WINGSPAN,
