@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.67 2001/07/16 16:03:26 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.68 2001/07/23 20:39:47 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -37,7 +37,6 @@
 #include <Scenery/scenery.hxx>
 
 #include <Aircraft/aircraft.hxx>
-#include <Controls/controls.hxx>
 #include <Main/globals.hxx>
 #include <Main/fg_props.hxx>
 
@@ -233,20 +232,20 @@ bool FGJSBsim::update( int multiloop ) {
         aileron_trim->setDoubleValue( FCS->GetDaCmd() );
         rudder_trim->setDoubleValue( FCS->GetDrCmd() );
 
-        controls.set_elevator_trim(FCS->GetPitchTrimCmd());
-        controls.set_elevator(FCS->GetDeCmd());
-        controls.set_throttle(FGControls::ALL_ENGINES,
+        globals->get_controls()->set_elevator_trim(FCS->GetPitchTrimCmd());
+        globals->get_controls()->set_elevator(FCS->GetDeCmd());
+        globals->get_controls()->set_throttle(FGControls::ALL_ENGINES,
                               FCS->GetThrottleCmd(0));
 
-        controls.set_aileron(FCS->GetDaCmd());
-        controls.set_rudder( FCS->GetDrCmd());
+        globals->get_controls()->set_aileron(FCS->GetDaCmd());
+        globals->get_controls()->set_rudder( FCS->GetDrCmd());
     
         SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
     }
   
     for( i=0; i<get_num_engines(); i++ ) {
       get_engine(i)->set_RPM( Propulsion->GetThruster(i)->GetRPM() );
-      get_engine(i)->set_Throttle( controls.get_throttle(i) );
+      get_engine(i)->set_Throttle( globals->get_controls()->get_throttle(i) );
     }
 
     for ( i=0; i < multiloop; i++ ) {
@@ -270,18 +269,18 @@ bool FGJSBsim::update( int multiloop ) {
 bool FGJSBsim::copy_to_JSBsim() {
     // copy control positions into the JSBsim structure
 
-    FCS->SetDaCmd( controls.get_aileron());
-    FCS->SetDeCmd( controls.get_elevator());
-    FCS->SetPitchTrimCmd(controls.get_elevator_trim());
-    FCS->SetDrCmd( -controls.get_rudder());
-    FCS->SetDfCmd(  controls.get_flaps() );
+    FCS->SetDaCmd( globals->get_controls()->get_aileron());
+    FCS->SetDeCmd( globals->get_controls()->get_elevator());
+    FCS->SetPitchTrimCmd(globals->get_controls()->get_elevator_trim());
+    FCS->SetDrCmd( -globals->get_controls()->get_rudder());
+    FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
     FCS->SetDsbCmd( 0.0 ); //speedbrakes
     FCS->SetDspCmd( 0.0 ); //spoilers
-    FCS->SetLBrake( controls.get_brake( 0 ) );
-    FCS->SetRBrake( controls.get_brake( 1 ) );
-    FCS->SetCBrake( controls.get_brake( 2 ) );
-    for (i = 0; i < get_num_engines(); i++)
-      FCS->SetThrottleCmd(i, controls.get_throttle(i));
+    FCS->SetLBrake( globals->get_controls()->get_brake( 0 ) );
+    FCS->SetRBrake( globals->get_controls()->get_brake( 1 ) );
+    FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
+    for (int i = 0; i < get_num_engines(); i++)
+      FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
 
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
     Position->SetRunwayRadius( scenery.cur_elev*SG_METER_TO_FEET
