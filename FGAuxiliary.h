@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.40 2004/04/03 01:40:26 dpculp Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.41 2004/04/06 13:14:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.40 2004/04/03 01:40:26 dpculp Exp $
+    @version $Id: FGAuxiliary.h,v 1.41 2004/04/06 13:14:58 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,6 +149,7 @@ public:
   double GetqbarUW (void) const { return qbarUW; }
   double GetqbarUV (void) const { return qbarUV; }
   inline double GetVt   (void) const { return Vt; }
+  inline double GetVground(void) const { return Vground; }
   double GetMach (void) const { return Mach; }
   inline double GetMachU(void) const { return MachU; }
   double Getadot (void) const { return adot; }
@@ -168,6 +169,10 @@ public:
 
   inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
   inline double GetEarthPositionAngle(void) const { return earthPosAngle; }
+
+  inline double GetGamma(void) const { return gamma; }
+  inline void SetGamma(double tt) { gamma = tt; }
+  inline double GetGroundTrack(void) const { return psigt; }
 
   inline void SetDayOfYear(int doy) { day_of_year = doy; }
   inline int  GetDayOfYear(void) const { return day_of_year; }
@@ -195,14 +200,13 @@ private:
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
 
-  double Vt, Mach, MachU;
+  double Vt, Vground, Mach, MachU;
   double qbar, qbarUW, qbarUV;
   double alpha, beta;
   double adot,bdot;
+  double psigt, gamma;
 
   double earthPosAngle;
-  int    day_of_year;     // GMT day, 1 .. 366
-  double seconds_in_day;  // seconds since current GMT day began
 
   void Debug(int from);
 };

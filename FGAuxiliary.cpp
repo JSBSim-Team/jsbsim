@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.49 2004/04/03 01:40:26 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.50 2004/04/06 13:14:58 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,10 +70,11 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   qbar = 0;
   qbarUW = 0.0;
   qbarUV = 0.0;
-  Vt = 0.0;
   Mach = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
+  gamma = Vt = Vground = 0.0;
+  psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
 
@@ -100,10 +101,11 @@ FGAuxiliary::~FGAuxiliary()
 
 bool FGAuxiliary::Run()
 {
-  double A,B,D;
+  double A,B,D, hdot_Vt;
   FGColumnVector3& vPQR = Rotation->GetPQR();
   FGColumnVector3& vUVW = Translation->GetUVW();
   FGColumnVector3& vUVWdot = Translation->GetUVWdot();
+  FGColumnVector3& vVel = Position->GetVel();
 
   if (!FGModel::Run())
   {
@@ -165,6 +167,19 @@ bool FGAuxiliary::Run()
 
 // Position
 
+    Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
+
+    if (vVel(eNorth) == 0) psigt = 0;
+    else psigt =  atan2(vVel(eEast), vVel(eNorth));
+
+    if (psigt < 0.0) psigt += 2*M_PI;
+
+    if (Vt != 0) {
+      hdot_Vt = -vVel(eDown)/Vt;
+      if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
+    } else {
+      gamma = 0.0;
+    }
 
     tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
     tatc = RankineToCelsius(tat);
@@ -332,6 +347,14 @@ void FGAuxiliary::bind(void)
                       &FGAuxiliary::Getbdot,
                       &FGAuxiliary::Setbdot,
                       true);
+  PropertyManager->Tie("flight-path/gamma-rad", this,
+                      &FGAuxiliary::GetGamma,
+                      &FGAuxiliary::SetGamma);
+  PropertyManager->Tie("velocities/vg-fps", this,
+                      &FGAuxiliary::GetVground);
+  PropertyManager->Tie("flight-path/psi-gt-rad", this,
+                      &FGAuxiliary::GetGroundTrack);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,7 +397,9 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("aero/alphadot-rad_sec");
   PropertyManager->Untie("aero/betadot-rad_sec");
   PropertyManager->Untie("aero/mag-beta-rad");
-
+  PropertyManager->Untie("flight-path/gamma-rad");
+  PropertyManager->Untie("velocities/vg-fps");
+  PropertyManager->Untie("flight-path/psi-gt-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

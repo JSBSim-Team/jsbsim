@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.130 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.131 2004/04/06 13:15:01 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,7 +266,7 @@ void FGState::ReportState(void)
   snprintf(out,80, "    Flaps: %3s  Gear: %12s\n",flap,gear);
   cout << out;
   snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
-                    FDMExec->GetAuxiliary()->GetVcalibratedKTS(),
+                    Auxiliary->GetVcalibratedKTS(),
                     Auxiliary->GetMach() );
   cout << out;
   snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
@@ -278,7 +278,7 @@ void FGState::ReportState(void)
                     Rotation->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
-                    Position->GetGamma()*radtodeg,
+                    Auxiliary->GetGamma()*radtodeg,
                     Position->Gethdot()*60 );
   cout << out;
   snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
@@ -304,13 +304,13 @@ void FGState::ReportState(void)
   cout << out;
 
   snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
-                    FDMExec->GetAuxiliary()->GetHeadWind()*fpstokts,
-                    FDMExec->GetAuxiliary()->GetCrossWind()*fpstokts );
+                    Auxiliary->GetHeadWind()*fpstokts,
+                    Auxiliary->GetCrossWind()*fpstokts );
   cout << out;
 
   snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
-                    Position->GetVground()*fpstokts,
-                    Position->GetGroundTrack()*radtodeg );
+                    Auxiliary->GetVground()*fpstokts,
+                    Auxiliary->GetGroundTrack()*radtodeg );
   cout << out;
 #endif
 }

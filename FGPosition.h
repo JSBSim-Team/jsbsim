@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.57 2004/03/26 11:54:44 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.58 2004/04/06 13:15:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.57 2004/03/26 11:54:44 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.58 2004/04/06 13:15:00 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,8 +86,6 @@ public:
   inline double GetVn(void)  const { return vVel(eX); }
   inline double GetVe(void)  const { return vVel(eY); }
   inline double GetVd(void)  const { return vVel(eZ); }
-  inline double GetVground(void) const { return Vground; }
-  inline double GetGroundTrack(void) const { return psigt; }
   inline double Geth(void)  const { return h; }
   inline double GethVRP(void)  const { return hVRP; }
   inline double Gethdot(void) const { return RadiusDot; }
@@ -102,8 +100,6 @@ public:
   inline double GetRadius(void) const { return Radius; }
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
 
-  inline double GetGamma(void) const { return gamma; }
-  inline void SetGamma(double tt) { gamma = tt; }
   inline double GetHOverBCG(void) const { return hoverbcg; }
   inline double GetHOverBMAC(void) const { return hoverbmac; }
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
@@ -137,13 +133,8 @@ private:
   double RunwayRadius;
   double DistanceAGL;
   double SeaLevelRadius;
-  double gamma;
-  double Vt, Vground;
   double hoverbcg,hoverbmac,b;
 
-  double psigt;
-
-  void GetState(void);
   void Debug(int from);
 };
 }

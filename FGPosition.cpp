@@ -88,7 +88,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.73 2004/03/26 11:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.74 2004/04/06 13:15:00 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,9 +110,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
 
   Longitude = Latitude = 0.0;
   LongitudeVRP = LatitudeVRP = 0.0;
-  gamma = Vt = Vground = 0.0;
   hoverbmac = hoverbcg = 0.0;
-  psigt = 0.0;
   bind();
   Debug(0);
 }
@@ -153,18 +151,11 @@ Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
 bool FGPosition::Run(void)
 {
   double cosLat;
-  double hdot_Vt;
 
   if (!FGModel::Run()) {
-    GetState();
+    dt = State->Getdt();
 
-    Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
-
-    if (vVel(eNorth) == 0) psigt = 0;
-    else psigt =  atan2(vVel(eEast), vVel(eNorth));
-
-    if (psigt < 0.0) psigt += 2*M_PI;
-
+    vVel      = Rotation->GetTb2l() * Translation->GetUVW();
     Radius    = h + SeaLevelRadius;
 
     cosLat = cos(Latitude);
@@ -190,41 +181,20 @@ bool FGPosition::Run(void)
 
     LatitudeVRP = vVRPoffset(eNorth) / Radius + Latitude;
     hVRP = h - vVRPoffset(eDown);
-/*
-cout << "Lat/Lon/Alt : " << Latitude << " / " << Longitude << " / " << h << endl;
-cout << "Lat/Lon/Alt VRP: " << LatitudeVRP << " / " << LongitudeVRP << " / " << hVRP << endl << endl;
-*/
+
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
 
+    b = Aircraft->GetWingSpan();
     hoverbcg = DistanceAGL/b;
 
     vMac = Rotation->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
     hoverbmac = (DistanceAGL + vMac(3)) / b;
-
-    if (Vt > 0) {
-      hdot_Vt = RadiusDot/Vt;
-      if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
-    } else {
-      gamma = 0.0;
-    }
 
     return false;
 
   } else {
     return true;
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPosition::GetState(void)
-{
-  dt = State->Getdt();
-
-  Vt        = Auxiliary->GetVt();
-  vVel      = Rotation->GetTb2l() * Translation->GetUVW();
-
-  b = Aircraft->GetWingSpan();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,10 +227,6 @@ void FGPosition::bind(void)
                        &FGPosition::GetVe);
   PropertyManager->Tie("velocities/v-down-fps", this,
                        &FGPosition::GetVd);
-  PropertyManager->Tie("velocities/vg-fps", this,
-                       &FGPosition::GetVground);
-  PropertyManager->Tie("flight-path/psi-gt-rad", this,
-                       &FGPosition::GetGroundTrack);
   PropertyManager->Tie("position/h-sl-ft", this,
                        &FGPosition::Geth,
                        &FGPosition::Seth,
@@ -286,9 +252,6 @@ void FGPosition::bind(void)
                        &FGPosition::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this,
                        &FGPosition::GetRadius);
-  PropertyManager->Tie("flight-path/gamma-rad", this,
-                       &FGPosition::GetGamma,
-                       &FGPosition::SetGamma);
   PropertyManager->Tie("aero/h_b-cg-ft", this,
                        &FGPosition::GetHOverBCG);
   PropertyManager->Tie("aero/h_b-mac-ft", this,
@@ -302,8 +265,6 @@ void FGPosition::unbind(void)
   PropertyManager->Untie("velocities/v-north-fps");
   PropertyManager->Untie("velocities/v-east-fps");
   PropertyManager->Untie("velocities/v-down-fps");
-  PropertyManager->Untie("velocities/vg-fps");
-  PropertyManager->Untie("flight-path/psi-gt-rad");
   PropertyManager->Untie("position/h-sl-ft");
   PropertyManager->Untie("velocities/h-dot-fps");
   PropertyManager->Untie("position/lat-gc-rad");
@@ -313,7 +274,6 @@ void FGPosition::unbind(void)
   PropertyManager->Untie("metrics/runway-radius");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
-  PropertyManager->Untie("flight-path/gamma-rad");
   PropertyManager->Untie("aero/h_b-cg-ft");
   PropertyManager->Untie("aero/h_b-mac-ft");
 }

@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.44 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.45 2004/04/06 13:15:02 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -192,7 +192,7 @@ void FGTrimAxis::getControl(void) {
   case tAltAGL:    control_value=fdmex->GetPosition()->GetDistanceAGL();break;
   case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
   case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
-  case tGamma:     control_value=fdmex->GetPosition()->GetGamma();break;
+  case tGamma:     control_value=fdmex->GetAuxiliary()->GetGamma();break;
   case tHeading:   control_value=fdmex->GetRotation()->Getpsi(); break;
   }
 }
@@ -203,7 +203,7 @@ double FGTrimAxis::computeHmgt(void) {
   double diff;
 
   diff   = fdmex->GetRotation()->Getpsi() -
-             fdmex->GetPosition()->GetGroundTrack();
+             fdmex->GetAuxiliary()->GetGroundTrack();
 
   if( diff < -M_PI ) {
      return (diff + 2*M_PI);

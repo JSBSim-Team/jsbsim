@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.110 2004/03/29 02:15:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.111 2004/04/06 13:14:58 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -460,14 +460,14 @@ FGColumnVector3& FGLGear::Force(void)
       compressLength = 0.0; // reset compressLength to zero for data output validity
     }
 
-    if (FirstContact) LandingDistanceTraveled += Position->GetVground()*deltaT;
+    if (FirstContact) LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
 
     if (StartedGroundRun) {
-       TakeoffDistanceTraveled50ft += Position->GetVground()*deltaT;
-      if (WOW) TakeoffDistanceTraveled += Position->GetVground()*deltaT;
+       TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
+      if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
     }
 
-    if (ReportEnable && Position->GetVground() <= 0.05 && !LandingReported) {
+    if (ReportEnable && Auxiliary->GetVground() <= 0.05 && !LandingReported) {
       if (debug_lvl > 0) Report(erLand);
     }
 
