@@ -68,6 +68,7 @@ class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
+class FGGroundReactions;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -84,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.23 2001/11/04 15:44:32 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.24 2001/11/05 18:23:22 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -203,12 +204,10 @@ public:
         @param weast velocity east in fps
         @param wdown velocity down in fps*/
     void set_Velocities_Local_Airmass (double wnorth,
-				       double weast,
-				       double wdown );
+               double weast,
+               double wdown );
     /// @name Position Parameter Update
     //@{
-
-
     /** Update the position based on inputs, positions, velocities, etc.
         @param multiloop number of times to loop through the FDM
 	      @return true if successful */
