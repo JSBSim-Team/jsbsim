@@ -64,8 +64,8 @@ private:
   float DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
   float DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
   float PTrimCmd;
-  float ThrottleCmd[MAX_ENGINES];
-  float ThrottlePos[MAX_ENGINES];
+  float ThrottleCmd[MAX_ENGINES];       // Needs to be changed: no limit
+  float ThrottlePos[MAX_ENGINES];       // Needs to be changed: no limit
 
   vector <FGFCSComponent*> Components;
 

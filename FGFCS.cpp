@@ -63,7 +63,7 @@ INCLUDES
 
 FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGFCS";
-  for (int i=0; i < MAX_ENGINES; i++) {
+  for (int i=0; i < MAX_ENGINES; i++) {  // needs to be changed: no limit
     ThrottleCmd[i] = 0.0;
     ThrottlePos[i] = 0.0;
   }
