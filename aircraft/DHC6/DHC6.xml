@@ -365,13 +365,11 @@
   </AXIS>
   <AXIS NAME="PITCH">
     <!-- UIUC -->
-<!-- I'm not sure about this one, EMH
     <COEFFICIENT NAME="Cmo" TYPE="VALUE">
        Pitching_moment_at_zero_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
        -0.040
     </COEFFICIENT>
--->
     <!-- AIAA -->
     <COEFFICIENT NAME="Cmalpha" TYPE="TABLE3D">
        Pitch_moment_due_to_alpha_and_elevator_and_flaps
