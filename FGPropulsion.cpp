@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.32 2001/02/13 00:03:15 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.33 2001/03/07 23:41:10 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,7 @@ CLASS IMPLEMENTATION
 
 FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
+  Name = "FGPropulsion";
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;

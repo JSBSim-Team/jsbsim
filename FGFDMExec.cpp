@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.33 2001/03/01 23:48:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.34 2001/03/07 23:41:10 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -270,6 +270,8 @@ bool FGFDMExec::Run(void)
     RunScript();
     if (State->Getsim_time() >= EndTime) return false;
   }
+
+  if (getenv("JSBSIM_DEBUG")) cout << "=========================" << endl;
 
   while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;

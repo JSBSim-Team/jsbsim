@@ -50,7 +50,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.7 2001/02/04 13:16:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.8 2001/03/07 23:41:10 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,8 @@ bool FGModel::InitModel(void)
 
 bool FGModel::Run()
 {
+  if (getenv("JSBSIM_DEBUG")) cout << "Entering Run() for model " << Name << endl;
+  
   if (exe_ctr == 1) {
     if (exe_ctr++ >= rate) exe_ctr = 1;
     return false;
