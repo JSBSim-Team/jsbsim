@@ -41,13 +41,14 @@ INCLUDES
 #include "FGModel.h"
 #include "FGColumnVector3.h"
 #include "FGMatrix33.h"
+#include "FGXMLElement.h"
 #include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.28 2004/03/09 12:32:51 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.29 2004/10/05 14:08:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -72,6 +73,8 @@ class FGMassBalance : public FGModel
 public:
   FGMassBalance(FGFDMExec*);
   ~FGMassBalance();
+
+  bool Load(Element* el);
 
   bool Run(void);
 
@@ -117,7 +120,7 @@ public:
   inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
   inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
 
-  void AddPointMass(double weight, double X, double Y, double Z);
+  void AddPointMass(Element* el);
   double GetPointMassWeight(void);
   FGColumnVector3& GetPointMassMoment(void);
   FGMatrix33& GetJ(void) {return mJ;}
@@ -139,10 +142,15 @@ private:
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;
   FGColumnVector3 vPMxyz;
-  vector <FGColumnVector3> PointMassLoc;
-  vector <double> PointMassWeight;
   FGColumnVector3 PointMassCG;
   FGMatrix33& CalculatePMInertias(void);
+
+  struct PointMass {
+    FGColumnVector3 Location;
+    double Weight;
+  };
+
+  vector <struct PointMass> PointMasses;
 
   void Debug(int from);
 };

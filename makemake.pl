@@ -6,7 +6,7 @@ if (length($ENV{CC}) gt 0) {
 }
 #print "CCOPTS = -pg -O2\n";
 print "INCLUDES = -I. -Isimgear/props\n";
-print "LINKDIR= -Lfiltersjb/ -Lsimgear/props/ -Latmosphere\n";
+print "LINKDIR= -Lfiltersjb/ -Lsimgear/props/ -Latmosphere -L/usr/local/lib\n";
 #
 print "JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\\\n";
 print "FGModel.o FGOutput.o FGState.o \\\n";
@@ -15,14 +15,15 @@ print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o
 print "FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
 print "FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\\\n";
-print "FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocation.o\n\n";
+print "FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocation.o\\\n";
+print "FGXMLParse.o FGXMLElement.o\n\n";
 #
 print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\\\n";
 print "Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\\\n";
 print "atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README\n\n";
 #
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a libAtmosphere.a\n";
-print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere\n\n";
+print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere -lsgxml -lsgstructure\n\n";
 print "libFCSComponents.a:\n";
 print "	cd filtersjb; make -fMakefile.solo; cd ..\n\n";
 print "libAtmosphere.a:\n";

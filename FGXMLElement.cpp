@@ -10,10 +10,37 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGXMLElement.h"
+#ifdef FGFS
+#  ifndef __BORLANDC__
+#    include <simgear/compiler.h>
+#  endif
+#  ifdef SG_HAVE_STD_INCLUDES
+#    include <cmath>
+#    include <cstdlib>
+#  else
+#    include <math.h>
+#    include <stdlib.h>
+#  endif
+#else
+#  if defined (sgi) && !defined(__GNUC__)
+#    include <math.h>
+#    include <stdlib.h>
+#  else
+#    include <cmath>
+#    include <cstdlib>
+#  endif
+#endif
+
+#include <stdlib.h>
+#include <math.h>
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.3 2004/10/04 19:19:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.4 2004/10/05 14:08:54 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,6 +52,32 @@ Element::Element(string nm)
   name   = nm;
   parent = 0L;
   element_index = 0;
+
+  // convert ["from"]["to"] = factor, so: from * factor = to
+  convert["M"]["FT"] = 3.2808399;
+  convert["FT"]["M"] = 1.0/convert["M"]["FT"];
+  convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
+  convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
+  convert["FT"]["IN"] = 12.0;
+  convert["IN"]["FT"] = 1.0/convert["FT"]["IN"];
+  convert["LBS"]["KG"] = 0.45359237;
+  convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
+  convert["SLUG*FT2"]["KG*M2"] = 1.35694;
+  convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
+  convert["RAD"]["DEG"] = 360.0/(2.0*3.1415926);
+  convert["DEG"]["RAD"] = 1.0/convert["RAD"]["DEG"];
+
+  convert["M"]["M"] = 1.00;
+  convert["FT"]["FT"] = 1.00;
+  convert["IN"]["IN"] = 1.00;
+  convert["DEG"]["DEG"] = 1.00;
+  convert["RAD"]["RAD"] = 1.00;
+  convert["M2"]["M2"] = 1.00;
+  convert["FT2"]["FT2"] = 1.00;
+  convert["KG*M2"]["KG*M2"] = 1.00;
+  convert["SLUG*FT2"]["SLUG*FT2"] = 1.00;
+  convert["KG"]["KG"] = 1.00;
+  convert["LBS"]["LBS"] = 1.00;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,6 +88,18 @@ Element::~Element(void)
   data_lines.clear();
   attributes.clear();
   attribute_key.clear();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string Element::GetAttributeValue(string attr)
+{
+  int select=-1;
+  for (int i=0; i<attribute_key.size(); i++) {
+    if (attribute_key[i] == attr) select = i;
+  }
+  if (select < 0) return string("");
+  else return attributes[attr];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +131,28 @@ Element* Element::GetNextElement(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+string Element::GetDataLine(int i)
+{
+  if (data_lines.size() > 0)
+    return data_lines[i];
+  else
+    return string("");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double Element::GetDataAsNumber(void)
+{
+  if (data_lines.size() == 1) {
+    return atof(data_lines[0].c_str());
+  } else {
+    return HUGE_VAL;
+  }
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 Element* Element::FindElement(string el)
 {
   if (el.empty() && children.size() >= 1) {
@@ -80,6 +167,58 @@ Element* Element::FindElement(string el)
   }
   element_index = 0;
   return 0L;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double Element::FindElementValueAsNumber(string el)
+{
+  Element* element = FindElement(el);
+  if (element) {
+    return element->GetDataAsNumber();
+  } else {
+    return HUGE_VAL;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double Element::FindElementValueAsNumberConvertTo(string el, string target_units)
+{
+  Element* element = FindElement(el);
+  double value;
+  string supplied_units="";
+
+  if (element) {
+     value = element->GetDataAsNumber();
+     supplied_units = element->GetAttributeValue("UNIT");
+     if (!supplied_units.empty()) {
+       value *= convert[supplied_units][target_units];
+     }
+  } else {
+    return HUGE_VAL;
+  }
+  return value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double Element::FindElementValueAsNumberConvertFromTo( string el,
+                                                       string supplied_units,
+		                                                   string target_units)
+{
+  Element* element = FindElement(el);
+  double value;
+
+  if (element) {
+     value = element->GetDataAsNumber();
+     if (!supplied_units.empty()) {
+       value *= convert[supplied_units][target_units];
+     }
+  } else {
+    return HUGE_VAL;
+  }
+  return value;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

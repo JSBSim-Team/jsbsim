@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.42 2004/03/09 12:32:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.43 2004/10/05 14:08:54 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,46 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 FGMassBalance::~FGMassBalance()
 {
   unbind();
+  PointMasses.clear();
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGMassBalance::Load(Element* el)
+{
+  Element *element;
+  string element_name = "";
+  double bixx, biyy, bizz, bixy, bixz, biyz;
+
+  bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
+  bixx = el->FindElementValueAsNumberConvertTo("IXX", "SLUG*FT2");
+  biyy = el->FindElementValueAsNumberConvertTo("IYY", "SLUG*FT2");
+  bizz = el->FindElementValueAsNumberConvertTo("IZZ", "SLUG*FT2");
+  bixy = el->FindElementValueAsNumberConvertTo("IXY", "SLUG*FT2");
+  bixz = el->FindElementValueAsNumberConvertTo("IXZ", "SLUG*FT2");
+  biyz = el->FindElementValueAsNumberConvertTo("IYZ", "SLUG*FT2");
+  SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  -bixz,
+                                      -bixy,  biyy,  -biyz,
+                                      -bixz,  -biyz,  bizz ));
+  EmptyWeight = el->FindElementValueAsNumberConvertTo("EMPTYWT", "LBS");
+
+  element = el->FindElement("LOCATION");
+  while (element) {
+    element_name = element->GetAttributeValue("NAME");
+    if (element_name == "CG") vbaseXYZcg.InitMatrix(element, "IN");
+    element = el->FindNextElement("LOCATION");
+  }
+
+// Find all POINTMASS elements that descend from this METRICS branch of the
+// config file.
+
+  element = el->FindElement("POINTMASS");
+  while (element) {
+    AddPointMass(element);
+    element = el->FindNextElement("POINTMASS");
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,10 +178,12 @@ bool FGMassBalance::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMassBalance::AddPointMass(double weight, double X, double Y, double Z)
+void FGMassBalance::AddPointMass(Element* el)
 {
-  PointMassLoc.push_back(FGColumnVector3(X, Y, Z));
-  PointMassWeight.push_back(weight);
+  fix this
+
+//  PointMassLoc.push_back(FGColumnVector3(X, Y, Z));
+//  PointMassWeight.push_back(weight);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,8 +192,8 @@ double FGMassBalance::GetPointMassWeight(void)
 {
   double PM_total_weight = 0.0;
 
-  for (unsigned int i=0; i<PointMassWeight.size(); i++) {
-    PM_total_weight += PointMassWeight[i];
+  for (unsigned int i=0; i<PointMasses.size(); i++) {
+    PM_total_weight += PointMasses[i].Weight;
   }
   return PM_total_weight;
 }
@@ -163,8 +204,8 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 {
   PointMassCG.InitMatrix();
 
-  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    PointMassCG += PointMassWeight[i]*PointMassLoc[i];
+  for (unsigned int i=0; i<PointMasses.size(); i++) {
+    PointMassCG += PointMasses[i].Weight*PointMasses[i].Location;
   }
   return PointMassCG;
 }
@@ -175,13 +216,13 @@ FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
   unsigned int size;
 
-  size = PointMassLoc.size();
+  size = PointMasses.size();
   if (size == 0) return pmJ;
 
   pmJ = FGMatrix33();
 
   for (unsigned int i=0; i<size; i++)
-    pmJ += GetPointmassInertia( lbtoslug * PointMassWeight[i], PointMassLoc[i] );
+    pmJ += GetPointmassInertia( lbtoslug * PointMasses[i].Weight, PointMasses[i].Location );
 
   return pmJ;
 }

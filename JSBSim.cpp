@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.82 2004/04/17 22:01:14 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.83 2004/10/05 14:08:54 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -196,6 +196,7 @@ IMPLEMENTATION
 
 int main(int argc, char* argv[])
 {
+
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
@@ -367,4 +368,3 @@ void options(int count, char **arg)
     }
   }
 }
-
