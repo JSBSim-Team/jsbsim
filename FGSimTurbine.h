@@ -4,7 +4,7 @@
  Author:       David Culp
  Date started: 03/11/2003
 
- ------------- Copyright (C) 2003  David Culp (davidculp2@attbi.com)------------
+ ------------- Copyright (C) 2003  David Culp (davidculp2@comcast.net)----------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 03/11/2003  DPC  Created
+09/22/2003  DPC  Added starting, stopping 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
@@ -47,7 +48,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.7 2003/07/26 09:06:02 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.8 2003/09/23 04:38:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -61,15 +62,25 @@ public:
   FGSimTurbine(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGSimTurbine();
 
+  enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
+
   double Calculate(double);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
+  double Seek(double* var, double target, double accel, double decel);
+
+  virtual phaseType GetPhase(void) { return phase; }
+  virtual void SetPhase( phaseType p ) { phase = p; } 
+
+  virtual bool GetOvertemp(void) { return Overtemp; }
+  virtual bool GetFire(void) { return Fire; }
   
 private:
 
   typedef vector<FGCoefficient*> CoeffArray;
   CoeffArray ThrustTables;
 
+  phaseType phase;         // Operating mode, or "phase"
   double MaxMilThrust;     // Maximum Rated Thrust, static @ S.L. (lbf)
   double BypassRatio;      // Bypass Ratio
   double TSFC;             // Thrust Specific Fuel Consumption (lbm/hr/lbf)
@@ -85,10 +96,24 @@ private:
   double N2_factor;        // factor to tie N2 and throttle
   double ThrottleCmd;      // FCS-supplied throttle position
   double throttle;         // virtual throttle position
+  double TAT;              // total air temperature (deg C)
+  bool Stalled;            // true if engine is compressor-stalled
+  bool Seized;             // true if inner spool is seized
+  bool Overtemp;           // true if EGT exceeds limits
+  bool Fire;               // true if engine fire detected
+  bool start_running;      // true if user wants engine running at start
   int Augmented;           // = 1 if augmentation installed
   int Injected;            // = 1 if water injection installed
   int AugMethod;           // = 0 if using property /engine[n]/augmentation
                            // = 1 if using last 1% of throttle movement
+
+  double Off(void);
+  double Run(void);
+  double SpinUp(void);
+  double Start(void);
+  double Stall(void);
+  double Seize(void);
+  double Trim(void);
 
   void SetDefaults(void);
   bool Load(FGConfigFile *ENG_cfg);
@@ -98,4 +123,3 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-
