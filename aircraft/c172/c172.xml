@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.61 2001/11/21 02:10:42 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.62 2001/11/23 12:24:19 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -245,7 +245,7 @@
       <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
          FG_QBAR|FG_WINGAREA
-         0.036
+         0.042
       </COEFFICIENT>
        <COEFFICIENT NAME="CDDf" TYPE="VECTOR">
          Delta_drag_due_to_flap_deflection
@@ -253,9 +253,9 @@
          FG_FLAPS_POS
          FG_QBAR|FG_WINGAREA
          0   0
-         10  0.01
-         20  0.03
-         30  0.05
+         10  0.007
+         20  0.012
+         30  0.018
        </COEFFICIENT>
       <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
          Drag_due_to_alpha
@@ -300,7 +300,7 @@
        <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
          Drag_due_to_sideslip
          FG_QBAR|FG_WINGAREA|FG_ABETA
-         0.14
+         0.17
        </COEFFICIENT>
 
     </AXIS>
