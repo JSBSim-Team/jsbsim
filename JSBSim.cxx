@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.142 2003/09/23 04:38:16 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.143 2003/09/23 12:44:30 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -224,8 +224,6 @@ void FGJSBsim::init() {
       Atmosphere->SetTurbGain(tmp * tmp * 100.0);
 
       tmp = turbulence_rate->getDoubleValue();
-      if (tmp <= 0)
-          tmp = 1.0;
       Atmosphere->SetTurbRate(tmp);
 
     } else {
@@ -411,7 +409,6 @@ bool FGJSBsim::copy_to_JSBsim() {
       eng->SetIgnition( globals->get_controls()->get_ignition(i) );
       eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
       eng->SetNitrous( globals->get_controls()->get_nitrous_injection(i) );
-      eng->SetRunning( node->getBoolValue("running") );
     }
 
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
@@ -427,10 +424,7 @@ bool FGJSBsim::copy_to_JSBsim() {
     tmp = turbulence_gain->getDoubleValue();
     Atmosphere->SetTurbGain(tmp * tmp * 100.0);
 
-    if (turbulence_rate->hasValue())
-        tmp = turbulence_rate->getDoubleValue();
-    else
-        tmp = 1.0;
+    tmp = turbulence_rate->getDoubleValue();
     Atmosphere->SetTurbRate(tmp);
 
     Atmosphere->SetWindNED( wind_from_north->getDoubleValue(),
@@ -574,7 +568,6 @@ bool FGJSBsim::copy_from_JSBsim() {
       node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
       node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
       node->setBoolValue("running", eng->GetRunning());
-      node->setBoolValue("starter", eng->GetStarter());
       node->setBoolValue("cranking", eng->GetCranking());
       node->setBoolValue("ignition", eng->GetIgnition());
       node->setBoolValue("augmentation", eng->GetAugmentation());
@@ -582,11 +575,6 @@ bool FGJSBsim::copy_from_JSBsim() {
       node->setBoolValue("reversed", eng->GetReversed());
       node->setBoolValue("cutoff", eng->GetCutoff());
       node->setBoolValue("nitrous", eng->GetNitrous());
-      globals->get_controls()->set_starter(i, eng->GetStarter() );
-      globals->get_controls()->set_cutoff(i, eng->GetCutoff() );
-      globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
-      globals->get_controls()->set_reverser(i, eng->GetReversed() );
-      globals->get_controls()->set_water_injection(i, eng->GetInjection() );
     }
 
     static const SGPropertyNode *fuel_freeze
@@ -819,6 +807,7 @@ void FGJSBsim::init_gear(void ) {
       node->setBoolValue("wow", gr->GetGearUnit(i)->GetWOW());
       node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", FCS->GetGearPos());
+      node->setDoubleValue("tire-pressure-norm", gr->GetGearUnit(i)->GetTirePressure());
     }  
 }
 
@@ -832,6 +821,7 @@ void FGJSBsim::update_gear(void) {
 	->setBoolValue(gr->GetGearUnit(i)->GetWOW());
       node->getChild("position-norm", 0, true)
 	->setDoubleValue(FCS->GetGearPos());
+      gr->GetGearUnit(i)->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
     }  
 }
 
