@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.47 2001/03/23 23:30:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.48 2001/03/29 00:06:11 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -88,7 +88,8 @@ CLASS IMPLEMENTATION
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     mTl2b(3,3),
     mTs2b(3,3),
-    vQtrn(4)
+    vQtrn(4),
+    vlastQdot(4)
 {
   FDMExec = fdex;
 
@@ -503,14 +504,13 @@ void FGState::CalcMatrices(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
-  static FGColumnVector vlastQdot(4);
   static FGColumnVector vQdot(4);
+  static FGColumnVector vTmp(4);
 
   vQdot(1) = -0.5*(vQtrn(2)*vPQR(eP) + vQtrn(3)*vPQR(eQ) + vQtrn(4)*vPQR(eR));
   vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
   vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
   vQdot(4) =  0.5*(vQtrn(1)*vPQR(eR) + vQtrn(2)*vPQR(eQ) - vQtrn(3)*vPQR(eP));
-
   vQtrn += 0.5*dt*rate*(vlastQdot + vQdot);
 
   vQtrn.Normalize();

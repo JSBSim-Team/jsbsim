@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.24 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.25 2001/03/29 00:06:11 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -47,7 +47,7 @@ double** FGalloc(int rows, int cols)
 
 void dealloc(double **A, int rows)
 {
-  for(int i=0;i<= rows;i++) delete[] A[i];
+  for (int i=0; i <= rows; i++) delete[] A[i];
   delete[] A;
 }
 
@@ -69,11 +69,13 @@ FGMatrix::FGMatrix(const FGMatrix& M)
   data  = NULL;
   rowCtr = colCtr = 1;
   *this = M;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGMatrix" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix::~FGMatrix()
+FGMatrix::~FGMatrix(void)
 {
   dealloc(data,rows);
   rowCtr = colCtr = 1;
@@ -196,13 +198,13 @@ void FGMatrix::InitMatrix(void)
 
 FGMatrix FGMatrix::operator-(const FGMatrix& M)
 {
+  FGMatrix Diff(Rows(), Cols());
+
   if ((Rows() != M.Rows()) || (Cols() != M.Cols())) {
     MatrixException mE;
     mE.Message = "Invalid row/column match in Matrix operator -";
     throw mE;
   }
-
-  FGMatrix Diff(Rows(), Cols());
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
@@ -233,13 +235,13 @@ void FGMatrix::operator-=(const FGMatrix &M)
 
 FGMatrix FGMatrix::operator+(const FGMatrix& M)
 {
+  FGMatrix Sum(Rows(), Cols());
+
   if ((Rows() != M.Rows()) || (Cols() != M.Cols())) {
     MatrixException mE;
     mE.Message = "Invalid row/column match in Matrix operator +";
     throw mE;
   }
-
-  FGMatrix Sum(Rows(), Cols());
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
@@ -295,13 +297,13 @@ void FGMatrix::operator*=(const double scalar)
 
 FGMatrix FGMatrix::operator*(const FGMatrix& M)
 {
+  FGMatrix Product(Rows(), M.Cols());
+
   if (Cols() != M.Rows()) {
     MatrixException mE;
     mE.Message = "Invalid row/column match in Matrix operator *";
     throw mE;
   }
-
-  FGMatrix Product(Rows(), M.Cols());
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=M.Cols(); j++)  {
@@ -346,15 +348,16 @@ FGMatrix FGMatrix::operator/(const double scalar)
 {
   FGMatrix Quot(Rows(), Cols());
 
-  if(scalar != 0) {
+  if (scalar != 0) {
     for (unsigned int i=1; i<=Rows(); i++) {
       for (unsigned int j=1; j<=Cols(); j++)  {
          Quot(i,j) = data[i][j]/scalar;
       }
     }
     
-  } else
+  } else {
     cerr << "Attempt to divide by zero in method FGMatrix::operator/(const double scalar), object at " << this << endl; 
+  }
   return Quot;  
 }
 
@@ -456,8 +459,9 @@ FGColumnVector::FGColumnVector(void):FGMatrix(3,1)
 FGColumnVector::FGColumnVector(int m):FGMatrix(m,1) { }
 FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b) { }
 
-FGColumnVector::~FGColumnVector()
+FGColumnVector::~FGColumnVector(void)
 {
+//  dealloc(data,rows);
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector" << endl;
 }
 
@@ -494,17 +498,16 @@ FGColumnVector operator*(const FGMatrix& Mat, const FGColumnVector& Col)
 
 FGColumnVector FGColumnVector::operator+(const FGColumnVector& C)
 {
+  FGColumnVector Sum(C.Rows()); // This must be created dynamically
+                                // because we don't know the size of "C",
+                                // it could be 3 or 4 or ...
   if (Rows() != C.Rows()) {
     MatrixException mE;
     mE.Message = "Invalid row/column match in Column Vector operator *";
     throw mE;
   }
 
-  FGColumnVector Sum(C.Rows());
-
-  for (unsigned int i=1; i<=C.Rows(); i++) {
-    Sum(i) = C(i) + data[i][1];
-  }
+  for (unsigned int i=1; i<=C.Rows(); i++) Sum(i) = C(i) + data[i][1];
 
   return Sum;
 }
@@ -524,13 +527,13 @@ FGColumnVector FGColumnVector::operator*(const double scalar)
 
 FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
 {
+  FGColumnVector Diff(Rows());
+
   if ((Rows() != V.Rows()) || (Cols() != V.Cols())) {
     MatrixException mE;
     mE.Message = "Invalid row/column match in Column Vector operator -";
     throw mE;
   }
-
-  FGColumnVector Diff(Rows());
 
   for (unsigned int i=1; i<=Rows(); i++) {
     Diff(i) = data[i][1] - V(i);
@@ -544,16 +547,13 @@ FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
 FGColumnVector FGColumnVector::operator/(const double scalar)
 {
   FGColumnVector Quotient(Rows());
-  if(scalar != 0) {
-    
 
+  if (scalar != 0) {
     for (unsigned int i=1; i<=Rows(); i++) Quotient(i) = data[i][1] / scalar;
-
-  } else 
+  } else {
     cerr << "Attempt to divide by zero in method FGColumnVector::operator/(const double scalar), object " << this << endl; 
+  }
   return Quotient;
-  
-    
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -603,15 +603,15 @@ FGColumnVector FGColumnVector::Normalize(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
+FGColumnVector& FGColumnVector::operator*(const FGColumnVector& V)
 {
+  static FGColumnVector Product(3);
+
   if (Rows() != 3 || V.Rows() != 3) {
     MatrixException mE;
     mE.Message = "Invalid row count in vector cross product function";
     throw mE;
   }
-
-  FGColumnVector Product(3);
 
   Product(1) = data[2][1] * V(3) - data[3][1] * V(2);
   Product(2) = data[3][1] * V(1) - data[1][1] * V(3);
@@ -622,15 +622,15 @@ FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
+FGColumnVector& FGColumnVector::multElementWise(const FGColumnVector& V)
 {
+  static FGColumnVector Product(3);
+
   if (Rows() != 3 || V.Rows() != 3) {
     MatrixException mE;
     mE.Message = "Invalid row count in vector cross product function";
     throw mE;
   }
-
-  FGColumnVector Product(3);
 
   Product(1) = data[1][1] * V(1);
   Product(2) = data[2][1] * V(2);

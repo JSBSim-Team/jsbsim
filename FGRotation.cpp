@@ -66,7 +66,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.16 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.17 2001/03/29 00:06:11 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 extern short debug_lvl;
@@ -121,11 +121,9 @@ bool FGRotation::Run(void)
         State->CalcMatrices();
         vEuler = State->CalcEuler();
         
-        
         cTht = cos(vEuler(eTht));   sTht = sin(vEuler(eTht));
         cPhi = cos(vEuler(ePhi));   sPhi = sin(vEuler(ePhi));
         cPsi = cos(vEuler(ePsi));   sPsi = sin(vEuler(ePsi));
-
 
         vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
         if (cTht != 0.0) {
@@ -146,7 +144,6 @@ bool FGRotation::Run(void)
 void FGRotation::GetState(void)
 {
     dt = State->Getdt();
-
     vMoments = Aircraft->GetMoments();
 
     Ixx = Aircraft->GetIxx();

@@ -75,7 +75,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.17 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.18 2001/03/29 00:06:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -83,21 +83,6 @@ CLASS DECLARATION
 
 class FGRotation : public FGModel
 {
-  FGColumnVector vPQR;
-  FGColumnVector vPQRdot;
-  FGColumnVector vMoments;
-  FGColumnVector vEuler;
-  FGColumnVector vEulerRates;
-  
-  float cTht,sTht;
-  float cPhi,sPhi;
-  float cPsi,sPsi;
-  
-  float Ixx, Iyy, Izz, Ixz;
-  float dt;
-
-  void GetState(void);
-
 public:
   FGRotation(FGFDMExec*);
   ~FGRotation();
@@ -122,7 +107,23 @@ public:
   inline float GetSinphi(void) {return sPhi;}
   inline float GetSintht(void) {return sTht;}
   inline float GetSinpsi(void) {return sPsi;}
+
 private:
+  FGColumnVector vPQR;
+  FGColumnVector vPQRdot;
+  FGColumnVector vMoments;
+  FGColumnVector vEuler;
+  FGColumnVector vEulerRates;
+  
+  float cTht,sTht;
+  float cPhi,sPhi;
+  float cPsi,sPsi;
+  
+  float Ixx, Iyy, Izz, Ixz;
+  float dt;
+
+  void GetState(void);
+
   void Debug(void);
 };
 

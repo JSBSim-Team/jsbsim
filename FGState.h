@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.28 2001/03/23 13:08:14 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.29 2001/03/29 00:06:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -130,6 +130,7 @@ private:
   FGMatrix mTl2b;
   FGMatrix mTs2b;
   FGColumnVector vQtrn;
+  FGColumnVector vlastQdot;
 
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
