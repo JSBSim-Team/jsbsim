@@ -1,3 +1,5 @@
 .deps
 Makefile
 Makefile.in
+libProperties.a
+props.o
