@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.103 2002/02/23 13:10:18 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.104 2002/02/27 14:36:51 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,70 +93,82 @@ FGState::FGState(FGFDMExec* fdex)
   GroundReactions = FDMExec->GetGroundReactions();
   Propulsion      = FDMExec->GetPropulsion();
 
-  RegisterVariable(FG_TIME,           " time "           );
-  RegisterVariable(FG_QBAR,           " qbar "           );
-  RegisterVariable(FG_WINGAREA,       " wing_area "      );
-  RegisterVariable(FG_WINGSPAN,       " wingspan "       );
-  RegisterVariable(FG_CBAR,           " cbar "           );
-  RegisterVariable(FG_ALPHA,          " alpha "          );
-  RegisterVariable(FG_ALPHADOT,       " alphadot "       );
-  RegisterVariable(FG_BETA,           " beta "           );
-  RegisterVariable(FG_ABETA,          " |beta| "         );
-  RegisterVariable(FG_BETADOT,        " betadot "        );
-  RegisterVariable(FG_PHI,            " roll_angle "     );
-  RegisterVariable(FG_THT,            " pitch_angle "    );
-  RegisterVariable(FG_PSI,            " heading_angle "  );
-  RegisterVariable(FG_PITCHRATE,      " pitch_rate "     );
-  RegisterVariable(FG_ROLLRATE,       " roll_rate "      );
-  RegisterVariable(FG_YAWRATE,        " yaw_rate "       );
-  RegisterVariable(FG_AEROQ,          " aero_pitch_rate ");
-  RegisterVariable(FG_AEROP,          " aero_roll_rate " );
-  RegisterVariable(FG_AEROR,          " aero_yaw_rate "  );
-  RegisterVariable(FG_CL_SQRD,        " Clift_sqrd "     );
-  RegisterVariable(FG_MACH,           " mach "           );
-  RegisterVariable(FG_ALTITUDE,       " altitude "       );
-  RegisterVariable(FG_BI2VEL,         " BI2Vel "         );
-  RegisterVariable(FG_CI2VEL,         " CI2Vel "         );
-  RegisterVariable(FG_ELEVATOR_POS,   " elevator_pos "   );
-  RegisterVariable(FG_AELEVATOR_POS,  " |elevator_pos| " );
-  RegisterVariable(FG_AILERON_POS,    " aileron_pos "    );
-  RegisterVariable(FG_AAILERON_POS,   " |aileron_pos| "  );
-  RegisterVariable(FG_RUDDER_POS,     " rudder_pos "     );
-  RegisterVariable(FG_ARUDDER_POS,    " |rudder_pos| "   );
-  RegisterVariable(FG_SPDBRAKE_POS,   " speedbrake_pos " );
-  RegisterVariable(FG_SPOILERS_POS,   " spoiler_pos "    );
-  RegisterVariable(FG_FLAPS_POS,      " flaps_pos "      );
-  RegisterVariable(FG_GEAR_POS,       " gear_pos "       );
-  RegisterVariable(FG_ELEVATOR_CMD,   " elevator_cmd "   );
-  RegisterVariable(FG_AILERON_CMD,    " aileron_cmd "    );
-  RegisterVariable(FG_RUDDER_CMD,     " rudder_cmd "     );
-  RegisterVariable(FG_SPDBRAKE_CMD,   " speedbrake_cmd " );
-  RegisterVariable(FG_SPOILERS_CMD,   " spoiler_cmd "    );
-  RegisterVariable(FG_FLAPS_CMD,      " flaps_cmd "      );
-  RegisterVariable(FG_THROTTLE_CMD,   " throttle_cmd "   );
-  RegisterVariable(FG_GEAR_CMD,       " gear_cmd "       );
-  RegisterVariable(FG_THROTTLE_POS,   " throttle_pos "   );
-  RegisterVariable(FG_MIXTURE_CMD,    " mixture_cmd "    );
-  RegisterVariable(FG_MIXTURE_POS,    " mixture_pos "    );
-  RegisterVariable(FG_MAGNETO_CMD,    " magneto_cmd "    );
-  RegisterVariable(FG_STARTER_CMD,    " starter_cmd "    );
-  RegisterVariable(FG_ACTIVE_ENGINE,  " active_engine "  );
-  RegisterVariable(FG_HOVERB,         " height/span "    );
-  RegisterVariable(FG_PITCH_TRIM_CMD, " pitch_trim_cmd " );
-  RegisterVariable(FG_YAW_TRIM_CMD,   " yaw_trim_cmd " );
-  RegisterVariable(FG_ROLL_TRIM_CMD,  " roll_trim_cmd " );
-  RegisterVariable(FG_LEFT_BRAKE_CMD, " left_brake_cmd " );
-  RegisterVariable(FG_RIGHT_BRAKE_CMD," right_brake_cmd ");
-  RegisterVariable(FG_CENTER_BRAKE_CMD," center_brake_cmd ");
-  RegisterVariable(FG_ALPHAH,          " h-tail alpha " );
-  RegisterVariable(FG_ALPHAW,          " wing alpha " );
-  RegisterVariable(FG_LBARH,           " h-tail arm " );
-  RegisterVariable(FG_LBARV,           " v-tail arm " );
-  RegisterVariable(FG_HTAILAREA,       " h-tail area " );
-  RegisterVariable(FG_VTAILAREA,       " v-tail area " );
-  RegisterVariable(FG_VBARH,           " h-tail volume " );
-  RegisterVariable(FG_VBARV,           " v-tail volume " );
-  RegisterVariable(FG_SET_LOGGING,    " data_logging "   );
+  RegisterVariable(FG_TIME,               " time "                ); 
+  RegisterVariable(FG_QBAR,               " qbar "                ); 
+  RegisterVariable(FG_WINGAREA,           " wing_area "           ); 
+  RegisterVariable(FG_WINGSPAN,           " wingspan "            ); 
+  RegisterVariable(FG_CBAR,               " cbar "                ); 
+  RegisterVariable(FG_ALPHA,              " alpha "               ); 
+  RegisterVariable(FG_ALPHADOT,           " alphadot "            ); 
+  RegisterVariable(FG_BETA,               " beta "                ); 
+  RegisterVariable(FG_ABETA,              " |beta| "              ); 
+  RegisterVariable(FG_BETADOT,            " betadot "             ); 
+  RegisterVariable(FG_PHI,                " roll_angle "          ); 
+  RegisterVariable(FG_THT,                " pitch_angle "         ); 
+  RegisterVariable(FG_PSI,                " heading_angle "       ); 
+  RegisterVariable(FG_PITCHRATE,          " pitch_rate "          ); 
+  RegisterVariable(FG_ROLLRATE,           " roll_rate "           ); 
+  RegisterVariable(FG_YAWRATE,            " yaw_rate "            ); 
+  RegisterVariable(FG_AEROQ,              " aero_pitch_rate "     ); 
+  RegisterVariable(FG_AEROP,              " aero_roll_rate "      ); 
+  RegisterVariable(FG_AEROR,              " aero_yaw_rate "       ); 
+  RegisterVariable(FG_CL_SQRD,            " Clift_sqrd "          ); 
+  RegisterVariable(FG_MACH,               " mach "                ); 
+  RegisterVariable(FG_ALTITUDE,           " altitude "            ); 
+  RegisterVariable(FG_BI2VEL,             " BI2Vel "              ); 
+  RegisterVariable(FG_CI2VEL,             " CI2Vel "              ); 
+  RegisterVariable(FG_ELEVATOR_POS,       " elevator_pos "        ); 
+  RegisterVariable(FG_AELEVATOR_POS,      " |elevator_pos| "      ); 
+  RegisterVariable(FG_NELEVATOR_POS,      " elevator_pos_n "      ); 
+  RegisterVariable(FG_AILERON_POS,        " aileron_pos "         );
+  RegisterVariable(FG_AAILERON_POS,       " |aileron_pos| "       );
+  RegisterVariable(FG_NAILERON_POS,       " aileron_pos_n "       );
+  RegisterVariable(FG_LEFT_AILERON_POS,   " left_aileron_pos "    );
+  RegisterVariable(FG_ALEFT_AILERON_POS,  " |left_aileron_pos| "  );
+  RegisterVariable(FG_NLEFT_AILERON_POS,  " left_aileron_pos_n "  );
+  RegisterVariable(FG_RIGHT_AILERON_POS,  " right_aileron_pos "   );
+  RegisterVariable(FG_ARIGHT_AILERON_POS, " |right_aileron_pos| " );
+  RegisterVariable(FG_NRIGHT_AILERON_POS, " right_aileron_pos_n " );
+  RegisterVariable(FG_RUDDER_POS,         " rudder_pos "          );
+  RegisterVariable(FG_ARUDDER_POS,        " |rudder_pos| "        );
+  RegisterVariable(FG_NRUDDER_POS,        " rudder_pos_n "        );
+  RegisterVariable(FG_SPDBRAKE_POS,       " speedbrake_pos "      );
+  RegisterVariable(FG_NSPDBRAKE_POS,      " speedbrake_pos_n "    );
+  RegisterVariable(FG_SPOILERS_POS,       " spoiler_pos "         );
+  RegisterVariable(FG_NSPOILERS_POS,      " spoiler_pos_n "       );
+  RegisterVariable(FG_FLAPS_POS,          " flaps_pos "           );
+  RegisterVariable(FG_NFLAPS_POS,         " flaps_pos_n "         );
+  RegisterVariable(FG_GEAR_POS,           " gear_pos "            );
+  RegisterVariable(FG_ELEVATOR_CMD,       " elevator_cmd "        );
+  RegisterVariable(FG_AILERON_CMD,        " aileron_cmd "         );
+  RegisterVariable(FG_RUDDER_CMD,         " rudder_cmd "          );
+  RegisterVariable(FG_SPDBRAKE_CMD,       " speedbrake_cmd "      );
+  RegisterVariable(FG_SPOILERS_CMD,       " spoiler_cmd "         );
+  RegisterVariable(FG_FLAPS_CMD,          " flaps_cmd "           );
+  RegisterVariable(FG_THROTTLE_CMD,       " throttle_cmd "        );
+  RegisterVariable(FG_GEAR_CMD,           " gear_cmd "            );
+  RegisterVariable(FG_THROTTLE_POS,       " throttle_pos "        );
+  RegisterVariable(FG_MIXTURE_CMD,        " mixture_cmd "         );
+  RegisterVariable(FG_MIXTURE_POS,        " mixture_pos "         );
+  RegisterVariable(FG_MAGNETO_CMD,        " magneto_cmd "         );
+  RegisterVariable(FG_STARTER_CMD,        " starter_cmd "         );
+  RegisterVariable(FG_ACTIVE_ENGINE,      " active_engine "       );
+  RegisterVariable(FG_HOVERB,             " height/span "         );
+  RegisterVariable(FG_PITCH_TRIM_CMD,     " pitch_trim_cmd "      );
+  RegisterVariable(FG_YAW_TRIM_CMD,       " yaw_trim_cmd "        );
+  RegisterVariable(FG_ROLL_TRIM_CMD,      " roll_trim_cmd "       );
+  RegisterVariable(FG_LEFT_BRAKE_CMD,     " left_brake_cmd "      );
+  RegisterVariable(FG_RIGHT_BRAKE_CMD,    " right_brake_cmd "     );
+  RegisterVariable(FG_CENTER_BRAKE_CMD,   " center_brake_cmd "    );
+  RegisterVariable(FG_ALPHAH,             " h-tail alpha "        );
+  RegisterVariable(FG_ALPHAW,             " wing alpha "          );
+  RegisterVariable(FG_LBARH,              " h-tail arm "          );
+  RegisterVariable(FG_LBARV,              " v-tail arm "          );
+  RegisterVariable(FG_HTAILAREA,          " h-tail area "         );
+  RegisterVariable(FG_VTAILAREA,          " v-tail area "         );
+  RegisterVariable(FG_VBARH,              " h-tail volume "       );
+  RegisterVariable(FG_VBARV,              " v-tail volume "       );
+  RegisterVariable(FG_SET_LOGGING,        " data_logging "        );
 
   Debug(0);
 }
@@ -235,21 +247,45 @@ double FGState::GetParameter(eParam val_idx) {
   case FG_ELEVATOR_POS:
     return FCS->GetDePos();
   case FG_AELEVATOR_POS:
-    return fabs(FCS->GetDePos());  
+    return fabs(FCS->GetDePos());
+  case FG_NELEVATOR_POS:
+    return FCS->GetDePosN();   
   case FG_AILERON_POS:
-    return FCS->GetDaPos();
+    return FCS->GetDaLPos();
   case FG_AAILERON_POS:
-    return fabs(FCS->GetDaPos());
+    return fabs(FCS->GetDaLPos());
+  case FG_NAILERON_POS:
+    return FCS->GetDaLPosN();
+  case FG_LEFT_AILERON_POS:
+    return FCS->GetDaLPos();
+  case FG_ALEFT_AILERON_POS:
+    return fabs(FCS->GetDaLPos());
+  case FG_NLEFT_AILERON_POS:
+    return FCS->GetDaLPosN();
+  case FG_RIGHT_AILERON_POS:
+    return FCS->GetDaRPos();
+  case FG_ARIGHT_AILERON_POS:
+    return fabs(FCS->GetDaRPos());
+  case FG_NRIGHT_AILERON_POS:
+    return FCS->GetDaRPosN();
   case FG_RUDDER_POS:
     return FCS->GetDrPos();
   case FG_ARUDDER_POS:
     return fabs(FCS->GetDrPos());
+  case FG_NRUDDER_POS:
+    return FCS->GetDrPosN();
   case FG_SPDBRAKE_POS:
     return FCS->GetDsbPos();
+  case FG_NSPDBRAKE_POS:
+    return FCS->GetDsbPosN();
   case FG_SPOILERS_POS:
     return FCS->GetDspPos();
+  case FG_NSPOILERS_POS:
+    return FCS->GetDspPosN();
   case FG_FLAPS_POS:
-    return FCS->GetDfPos();
+    return FCS->GetDfPosN();
+  case FG_NFLAPS_POS:
+    return FCS->GetDfPosN();
   case FG_ELEVATOR_CMD:
     return FCS->GetDeCmd();
   case FG_AILERON_CMD:
@@ -341,20 +377,50 @@ void FGState::SetParameter(eParam val_idx, double val)
   case FG_ELEVATOR_POS:
     FCS->SetDePos(val);
     break;
+  case FG_NELEVATOR_POS:
+    FCS->SetDePosN(val);
+    break;
   case FG_AILERON_POS:
-    FCS->SetDaPos(val);
+    FCS->SetDaLPos(val);
+    break;
+  case FG_NAILERON_POS:
+    FCS->SetDaLPosN(val);
+    break;
+  case FG_LEFT_AILERON_POS:
+    FCS->SetDaLPos(val);
+    break;
+  case FG_NLEFT_AILERON_POS:
+    FCS->SetDaLPosN(val);
+    break;
+  case FG_RIGHT_AILERON_POS:
+    FCS->SetDaRPos(val);
+    break;
+  case FG_NRIGHT_AILERON_POS:
+    FCS->SetDaRPosN(val);
     break;
   case FG_RUDDER_POS:
     FCS->SetDrPos(val);
     break;
+  case FG_NRUDDER_POS:
+    FCS->SetDrPosN(val);
+    break;
   case FG_SPDBRAKE_POS:
     FCS->SetDsbPos(val);
+    break;
+  case FG_NSPDBRAKE_POS:
+    FCS->SetDsbPosN(val);
     break;
   case FG_SPOILERS_POS:
     FCS->SetDspPos(val);
     break;
+  case FG_NSPOILERS_POS:
+    FCS->SetDspPosN(val);
+    break;
   case FG_FLAPS_POS:
     FCS->SetDfPos(val);
+    break;
+  case FG_NFLAPS_POS:
+    FCS->SetDfPosN(val);
     break;
   case FG_THROTTLE_POS:
     if (ActiveEngine == -1) {
