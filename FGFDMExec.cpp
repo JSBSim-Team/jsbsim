@@ -35,6 +35,10 @@ HISTORY
 11/17/98   JSB   Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES,  and NOTES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -68,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.31 2001/02/26 23:37:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.32 2001/02/27 19:44:16 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -86,7 +90,6 @@ char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 
 // Constructor
 
@@ -118,9 +121,13 @@ FGFDMExec::FGFDMExec(void)
   Allocate();
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGFDMExec::~FGFDMExec(void) {
   DeAllocate();
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::Allocate(void) {
 
@@ -189,6 +196,8 @@ bool FGFDMExec::Allocate(void) {
   return result;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGFDMExec::DeAllocate(void) {
 
   if ( Atmosphere != 0 )  delete Atmosphere;
@@ -220,6 +229,7 @@ bool FGFDMExec::DeAllocate(void) {
   return modelLoaded;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int FGFDMExec::Schedule(FGModel* model, int rate)
 {
@@ -245,6 +255,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
   return 0;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::Run(void)
 {
@@ -255,12 +266,12 @@ bool FGFDMExec::Run(void)
   model_iterator = FirstModel;
   if (model_iterator == 0L) return false;
 
-  while (!model_iterator->Run())
-  {
-    if (Scripted) {                                              
-      RunScript();
-      if (State->Getsim_time() >= EndTime) return false;
-    }
+  if (Scripted) {                                              
+    RunScript();
+    if (State->Getsim_time() >= EndTime) return false;
+  }
+
+  while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;
     if (model_iterator == 0L) break;
   }
@@ -270,6 +281,7 @@ bool FGFDMExec::Run(void)
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 {
@@ -280,6 +292,7 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
@@ -304,6 +317,7 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
   return result;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::LoadScript(string script)
 {
@@ -480,6 +494,7 @@ bool FGFDMExec::LoadScript(string script)
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFDMExec::RunScript(void)
 {
