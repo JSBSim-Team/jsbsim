@@ -78,27 +78,28 @@ FGOutput::~FGOutput(void)
 
 bool FGOutput::Run(void)
 {
-  if (!FGModel::Run()) {
+  if(enabled) {
+    if (!FGModel::Run()) {
 
-    if (Type == otSocket) {
-      SocketOutput();
-    } else if (Type == otCSV) {
-      if (Filename != "COUT" && Filename != "cout" && Filename.size() > 0) {
-        DelimitedOutput(Filename);
+      if (Type == otSocket) {
+        SocketOutput();
+      } else if (Type == otCSV) {
+        if (Filename != "COUT" && Filename != "cout" && Filename.size() > 0) {
+          DelimitedOutput(Filename);
+        } else {
+          DelimitedOutput();
+        }
+      } else if (Type == otTerminal) {
+        // Not done yet
+      } else if (Type == otNone) {
+        // Do nothing
       } else {
-        DelimitedOutput();
+        // Not a valid type of output
       }
-    } else if (Type == otTerminal) {
-      // Not done yet
-    } else if (Type == otNone) {
-      // Do nothing
+
     } else {
-      // Not a valid type of output
     }
-
-  } else {
   }
-
   return false;
 }
 

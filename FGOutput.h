@@ -75,11 +75,13 @@ public:
   void SetFilename(string fn) {Filename = fn;}
   void SetType(string);
   void SetSubsystems(int tt) {SubSystems = tt;}
+  inline float GetEnabled(void) { return enabled; }
+  inline void SetEnabled(bool bb){ enabled=bb; }
 
 protected:
 
 private:
-  bool sFirstPass, dFirstPass;
+  bool sFirstPass, dFirstPass,enabled;
   int SubSystems;
   string Filename;
   enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
