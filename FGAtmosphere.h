@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.20 2001/10/01 16:34:17 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.21 2001/10/31 12:35:58 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.20 2001/10/01 16:34:17 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.21 2001/10/31 12:35:58 apeden Exp $
 */
 
 /******************************************************************************
@@ -141,19 +141,19 @@ public:
   inline float GetWindPsi(void) { return psiw; }
   
 private:
-  float rho;
+  double rho;
 
   int lastIndex;
-  float h;
-  float htab[8];
-  float SLtemperature,SLdensity,SLpressure,SLsoundspeed;
-  float rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
-  float temperature,density,pressure,soundspeed;
+  double h;
+  double htab[8];
+  double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
+  double rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
+  double temperature,density,pressure,soundspeed;
   bool useExternal;
-  float exTemperature,exDensity,exPressure;
+  double exTemperature,exDensity,exPressure;
   
   FGColumnVector3 vWindNED;
-  float psiw;
+  double psiw;
 
   void Calculate(float altitude);
   void Debug(void);
