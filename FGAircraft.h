@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.70 2001/10/31 12:33:44 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.71 2001/11/03 17:01:28 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.70 2001/10/31 12:33:44 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.71 2001/11/03 17:01:28 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -233,7 +233,7 @@ private:
   float HTailArea, VTailArea, HTailArm, VTailArm;
   float lbarh,lbarv,vbarh,vbarv;
   float alphaclmax,alphaclmin;
-  bool impending_stall;
+  float impending_stall;
   string CFGVersion;
   string AircraftName;
 
