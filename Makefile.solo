@@ -62,7 +62,7 @@ FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGDefs.h \
  FGEngine.h FGPosition.h FGOutput.h FGfdmSocket.h FGPiston.h \
  FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGTable.h FGNozzle.h FGMassBalance.h \
- FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGAerodynamics.h FGCoefficient.h FGFactorGroup.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAuxiliary.o -c FGAuxiliary.cpp
 
 FGCoefficient.o: FGCoefficient.cpp FGDefs.h FGCoefficient.h \
@@ -100,6 +100,18 @@ FGEngine.o: FGEngine.cpp FGEngine.h FGJSBBase.h FGState.h FGDefs.h \
  FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGEngine.o -c FGEngine.cpp
 
+FGFactorGroup.o: FGFactorGroup.cpp FGDefs.h FGCoefficient.h \
+ FGConfigFile.h FGJSBBase.h FGTable.h FGFactorGroup.h FGAerodynamics.h \
+ FGModel.h FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h \
+ FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
+ filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGLGear.h FGAircraft.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
+
 FGFCS.o: FGFCS.cpp FGDefs.h FGFCS.h filtersjb/FGFCSComponent.h \
  filtersjb/../FGDefs.h filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h \
  FGModel.h FGJSBBase.h FGLGear.h FGConfigFile.h FGMatrix33.h \
@@ -127,17 +139,8 @@ FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFDMExec.o -c FGFDMExec.cpp
 
-FGFactorGroup.o: FGFactorGroup.cpp FGDefs.h FGCoefficient.h \
- FGConfigFile.h FGJSBBase.h FGTable.h FGFactorGroup.h FGAerodynamics.h \
- FGModel.h FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h \
- FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGFCS.h \
- filtersjb/FGFCSComponent.h filtersjb/../FGDefs.h \
- filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGLGear.h FGAircraft.h \
- FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
- FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
- FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
- FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
+FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGfdmSocket.o -c FGfdmSocket.cpp
 
 FGForce.o: FGForce.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGInitialCondition.h FGAtmosphere.h FGMatrix33.h FGColumnVector3.h \
@@ -214,9 +217,6 @@ FGMassBalance.o: FGMassBalance.cpp FGMassBalance.h FGModel.h FGDefs.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGMassBalance.o -c FGMassBalance.cpp
-
-FGMatrix.o: FGMatrix.cpp FGMatrix.h FGJSBBase.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGMatrix.o -c FGMatrix.cpp
 
 FGMatrix33.o: FGMatrix33.cpp FGMatrix33.h FGColumnVector3.h \
  FGJSBBase.h
@@ -432,9 +432,6 @@ FGUtility.o: FGUtility.cpp FGUtility.h FGJSBBase.h FGState.h FGDefs.h \
  FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGUtility.o -c FGUtility.cpp
 
-FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGfdmSocket.o -c FGfdmSocket.cpp
-
 JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGInitialCondition.h FGAtmosphere.h FGMatrix33.h FGColumnVector3.h \
  FGColumnVector4.h FGRotation.h FGState.h FGFCS.h \
@@ -446,9 +443,6 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGPropeller.h FGThruster.h FGForce.h FGTable.h FGNozzle.h \
  FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
-
-makePlane.o: makePlane.cpp
-	$(CC) $(INCLUDES) $(CCOPTS) -omakePlane.o -c makePlane.cpp
 
 
 x15trim.o:x15trim.cpp
