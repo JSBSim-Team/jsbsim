@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.24 2004/03/15 09:20:02 ehofman Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.25 2004/05/21 12:44:44 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.24 2004/03/15 09:20:02 ehofman Exp $
+    @version $Id: FGColumnVector3.h,v 1.25 2004/05/21 12:44:44 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,6 +191,24 @@ public:
     data[2] = b.data[2];
     return *this;
   }
+
+  /**  Comparison operator.
+
+      @param b other vector.
+    
+      Returns true if both vectors are exactly the same.
+   */
+  bool operator==(const FGColumnVector3& b) const {
+    return data[0] == b.data[0] && data[1] == b.data[1] && data[2] == b.data[2];
+  }
+
+  /** Comparison operator.
+
+      @param b other vector.
+    
+      Returns false if both vectors are exactly the same.
+   */
+  bool operator!=(const FGColumnVector3& b) const { return ! operator==(b); }
 
   /** Multiplication by a scalar.
     
