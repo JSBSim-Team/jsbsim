@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.69 2004/06/20 16:14:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.70 2004/09/10 20:08:29 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,11 +236,11 @@ bool FGEngine::LoadThruster(FGConfigFile* AC_cfg)
     thrType = Cfg_ptr->GetValue();
 
     if (thrType == "FG_PROPELLER") {
-      Thruster = new FGPropeller(FDMExec, Cfg_ptr);
+      Thruster = new FGPropeller(FDMExec, Cfg_ptr, EngineNumber);
     } else if (thrType == "FG_NOZZLE") {
-      Thruster = new FGNozzle(FDMExec, Cfg_ptr);
+      Thruster = new FGNozzle(FDMExec, Cfg_ptr, EngineNumber);
     } else if (thrType == "FG_DIRECT") {
-      Thruster = new FGThruster( FDMExec, Cfg_ptr);
+      Thruster = new FGThruster( FDMExec, Cfg_ptr, EngineNumber);
     }
 
     AC_cfg->GetNextConfigLine();

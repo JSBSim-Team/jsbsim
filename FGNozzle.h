@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.27 2004/05/26 12:29:54 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.28 2004/09/10 20:08:29 ehofman Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ CLASS DOCUMENTATION
 
 /** Models a rocket nozzle.
     @author Jon S. Berndt
-    @version $Id: FGNozzle.h,v 1.27 2004/05/26 12:29:54 jberndt Exp $
+    @version $Id: FGNozzle.h,v 1.28 2004/09/10 20:08:29 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,7 @@ class FGNozzle : public FGThruster {
 
 public:
   /// Constructor
-  FGNozzle(FGFDMExec* exec, FGConfigFile* AC_cfg);
+  FGNozzle(FGFDMExec* exec, FGConfigFile* AC_cfg, int num = 0);
   /// Destructor
   ~FGNozzle();
 

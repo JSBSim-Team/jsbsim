@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.66 2004/05/27 11:52:46 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.67 2004/09/10 20:08:29 ehofman Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +56,7 @@ CLASS IMPLEMENTATION
 // not just the X-axis of the engine/propeller. This may or may not work for a
 // helicopter.
 
-FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(exec)
+FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg, int num) : FGThruster(exec)
 {
   string token;
   int rows, cols;
@@ -107,6 +107,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   RPM = 0;
   vTorque.InitMatrix();
 
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
+  PropertyManager->Tie( property_name, &ThrustCoeff );
+
   Debug(0);
 }
 
@@ -116,6 +120,11 @@ FGPropeller::~FGPropeller()
 {
   if (cThrust)    delete cThrust;
   if (cPower)     delete cPower;
+
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
+  PropertyManager->Untie( property_name );
+  
   Debug(1);
 }
 
@@ -135,7 +144,7 @@ FGPropeller::~FGPropeller()
 
 double FGPropeller::Calculate(double PowerAvailable)
 {
-  double J, C_Thrust, omega;
+  double J, omega;
   double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
@@ -148,9 +157,9 @@ double FGPropeller::Calculate(double PowerAvailable)
   }
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
-    C_Thrust = cThrust->GetValue(J);
+    ThrustCoeff = cThrust->GetValue(J);
   } else {                    // Variable pitch prop
-    C_Thrust = cThrust->GetValue(J, Pitch);
+    ThrustCoeff = cThrust->GetValue(J, Pitch);
   }
 
   if (P_Factor > 0.0001) {
@@ -162,7 +171,7 @@ double FGPropeller::Calculate(double PowerAvailable)
     cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
 
-  Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
+  Thrust = ThrustCoeff*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
   omega = RPS*2.0*M_PI;
 
   vFn(1) = Thrust;

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.35 2004/05/26 12:29:54 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.36 2004/09/10 20:08:45 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.35 2004/05/26 12:29:54 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.36 2004/09/10 20:08:45 ehofman Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -89,7 +89,7 @@ public:
   /** Constructor for FGPropeller.
       @param exec a pointer to the main executive object
       @param AC_cfg a pointer to the main aircraft config file object */
-  FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg);
+  FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg, int num = 0);
 
   /// Destructor for FGPropeller - deletes the FGTable objects
   ~FGPropeller();

@@ -40,13 +40,14 @@ INCLUDES
 
 #include "FGForce.h"
 #include "FGConfigFile.h"
+#include "FGPropertyManager.h"
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.34 2004/05/26 12:29:54 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.35 2004/09/10 20:08:45 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.34 2004/05/26 12:29:54 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.35 2004/09/10 20:08:45 ehofman Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,13 +73,16 @@ class FGThruster : public FGForce {
 public:
   /// Constructor
   FGThruster(FGFDMExec *FDMExec);
-  FGThruster(FGFDMExec *FDMExec, FGConfigFile *Eng_cfg );
+  FGThruster(FGFDMExec *FDMExec, FGConfigFile *Eng_cfg, int num );
   /// Destructor
   virtual ~FGThruster();
 
   enum eType {ttNozzle, ttRotor, ttPropeller, ttDirect};
 
-  virtual double Calculate(double tt) { Thrust = tt; vFn(1) = Thrust; return 0.0; }
+  virtual double Calculate(double tt) {
+       Thrust = tt; vFn(1) = Thrust;
+       return 0.0;
+  }
   void SetName(string name) {Name = name;}
   virtual void SetRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
@@ -98,6 +102,9 @@ protected:
   double PowerRequired;
   double deltaT;
   double GearRatio;
+  double ThrustCoeff;
+  int EngineNum;
+  FGPropertyManager* PropertyManager;
   virtual void Debug(int from);
 };
 }
