@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.47 2003/01/26 06:54:39 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.48 2003/01/28 07:17:51 jberndt Exp $"
 
 using std::vector;
 
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.47 2003/01/26 06:54:39 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.48 2003/01/28 07:17:51 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -156,8 +156,7 @@ public:
   virtual inline string GetCoefficientName(void) { return name; }
   /// Returns the stability derivative or coefficient value as a string.
   virtual string GetSDstring(void);
-  
-  
+
   inline void setBias(double b) { bias=b; }
   inline void setGain(double g) { gain=g; };
   inline double getBias(void) const { return bias; }

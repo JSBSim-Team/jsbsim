@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.16 2003/01/22 15:53:38 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.17 2003/01/28 07:17:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -119,7 +119,6 @@ private:
 
   enum eLogic {elUndef=0, eAND, eOR, eDefault};
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
-  map <const string, eComparison> mComparison;
 
   struct test {
     vector <FGCondition> conditions;
