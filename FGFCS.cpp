@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.72 2002/02/27 14:33:31 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.73 2002/02/28 12:16:45 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,7 @@ CLASS IMPLEMENTATION
 
 FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 {
+  int i;
   Name = "FGFCS";
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
@@ -73,7 +74,8 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
   DoNormalize=true;
-
+  
+  for(i=0;i<6;i++) { ToNormalize[i]=-1;}
   Debug(0);
 }
 
@@ -296,12 +298,15 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
     }
   }
   //collect information for normalizing control surfaces
+  
   for(i=0;i<Components.size();i++) {
+    
     if(Components[i]->GetType() == "AEROSURFACE_SCALE" 
         || Components[i]->GetType() == "KINEMAT"  ) {
       if( Components[i]->GetOutputIdx() == FG_ELEVATOR_POS ) {
         ToNormalize[iNDe]=i;
-      } else if ( Components[i]->GetOutputIdx() == FG_LEFT_AILERON_POS ) {
+      } else if ( Components[i]->GetOutputIdx() == FG_LEFT_AILERON_POS 
+                      || Components[i]->GetOutputIdx() == FG_AILERON_POS ) {
         ToNormalize[iNDaL]=i;
       } else if ( Components[i]->GetOutputIdx() == FG_RIGHT_AILERON_POS ) {
         ToNormalize[iNDaR]=i;
@@ -402,58 +407,27 @@ void FGFCS::AddThrottle(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFCS::Normalize(void) {
-  if(DePos < 0) {
-    DePosN = DePos/(Components[ToNormalize[iNDe]]->GetMin()
-               *Components[ToNormalize[iNDe]]->GetGain());
-  } else {
-    DePosN = DePos/(Components[ToNormalize[iNDe]]->GetMax()
-               *Components[ToNormalize[iNDe]]->GetGain()); 
-    cout << "DePosN, Max=" << Components[ToNormalize[iNDe]]->GetMax() 
-         << " Gain: " << Components[ToNormalize[iNDe]]->GetGain()
-         << endl;
-  }
-  if(DaLPos < 0) 
-    DaLPosN = DaLPos/(Components[ToNormalize[iNDaL]]->GetMin()
-                *Components[ToNormalize[iNDaL]]->GetGain());
-  else
-    DaLPosN = DaLPos/(Components[ToNormalize[iNDaL]]->GetMax()
-                *Components[ToNormalize[iNDaL]]->GetGain());
+  if( ToNormalize[iNDe] > -1 ) 
+    DePosN = Components[ToNormalize[iNDe]]->GetOutputPct();
   
-  if(DaRPos < 0) 
-    DaRPosN = DaRPos/(Components[ToNormalize[iNDaR]]->GetMin()
-                *Components[ToNormalize[iNDaR]]->GetGain());
-  else
-    DaRPosN = DaRPos/(Components[ToNormalize[iNDaR]]->GetMax()
-                *Components[ToNormalize[iNDaR]]->GetGain());
+  if( ToNormalize[iNDaL] > -1 ) 
+    DaLPosN = Components[ToNormalize[iNDaL]]->GetOutputPct();
   
-  if(DrPos < 0) 
-    DrPosN = DrPos/(Components[ToNormalize[iNDr]]->GetMin()
-                *Components[ToNormalize[iNDr]]->GetGain());
-  else
-    DrPosN = DrPos/(Components[ToNormalize[iNDr]]->GetMax()
-                *Components[ToNormalize[iNDr]]->GetGain());
-      
-  if(DsbPos < 0) 
-    DsbPosN = DsbPos/(Components[ToNormalize[iNDsb]]->GetMin()
-                *Components[ToNormalize[iNDsb]]->GetGain());
-  else
-    DsbPosN = DsbPos/(Components[ToNormalize[iNDsb]]->GetMax()
-                *Components[ToNormalize[iNDsb]]->GetGain());
+  if( ToNormalize[iNDaR] > -1 ) 
+    DaRPosN = Components[ToNormalize[iNDaR]]->GetOutputPct();
   
-  if(DspPos < 0) 
-    DspPosN = DspPos/(Components[ToNormalize[iNDsp]]->GetMin()
-                *Components[ToNormalize[iNDsp]]->GetGain());
-  else
-    DspPosN = DspPos/(Components[ToNormalize[iNDsp]]->GetMax()
-              *Components[ToNormalize[iNDsp]]->GetGain());
+  if( ToNormalize[iNDr] > -1 ) 
+    DrPosN = Components[ToNormalize[iNDr]]->GetOutputPct();
+       
+  if( ToNormalize[iNDsb] > -1 ) 
+    DsbPosN = Components[ToNormalize[iNDsb]]->GetOutputPct();
   
-  if(DfPos < 0) 
-    DfPosN = DfPos/(Components[ToNormalize[iNDf]]->GetMin()
-              *Components[ToNormalize[iNDf]]->GetGain());
-  else
-    DfPosN = DfPos/(Components[ToNormalize[iNDf]]->GetMax()
-              *Components[ToNormalize[iNDf]]->GetGain());
+  if( ToNormalize[iNDsp] > -1 ) 
+    DspPosN = Components[ToNormalize[iNDsp]]->GetOutputPct();
   
+  if( ToNormalize[iNDf] > -1 ) 
+    DfPosN = Components[ToNormalize[iNDf]]->GetOutputPct();
+   
 }  
     
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

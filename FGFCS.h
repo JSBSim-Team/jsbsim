@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.44 2002/02/27 14:33:31 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.45 2002/02/28 12:16:45 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.44 2002/02/27 14:33:31 apeden Exp $
+    @version $Id: FGFCS.h,v 1.45 2002/02/28 12:16:45 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -500,7 +500,7 @@ public:
   void AddThrottle(void);
 
 private:
-  double DaCmd,  DeCmd,   DrCmd,  DfCmd,  DsbCmd, DspCmd;
+  double DaCmd,   DeCmd,   DrCmd,  DfCmd,  DsbCmd, DspCmd;
   double DaLPos,  DaRPos,  DePos,  DrPos,  DfPos,  DsbPos,  DspPos;
   double DaLPosN, DaRPosN, DePosN, DrPosN, DfPosN, DsbPosN, DspPosN;
   double PTrimCmd, YTrimCmd, RTrimCmd;
