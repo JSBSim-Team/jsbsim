@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.94 2002/09/29 13:19:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.95 2002/12/27 13:04:50 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,12 +245,11 @@ bool FGFDMExec::Allocate(void)
   if (Error > 0) result = false;
   
   IC = new FGInitialCondition(this); 
-  //Trim is allocated as needed by GetTrim()                                 
-
   
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
+  // IC and Trim objects are NOT scheduled.
 
   Schedule(Atmosphere,      1);
   Schedule(FCS,             1);
@@ -265,9 +264,6 @@ bool FGFDMExec::Allocate(void)
   Schedule(Position,        1);
   Schedule(Auxiliary,       1);
   Schedule(Output,          1);
-  //IC and Trim are *not* scheduled objects
-  
-  
 
   modelLoaded = false;
 

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.19 2002/09/29 13:22:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.20 2002/12/27 13:04:51 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,8 +50,54 @@ CLASS IMPLEMENTATION
 FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
+  string token, logic, param, strCompare, strCompVal;
+  struct test *current_test;
+  struct condition *current_condition;
+
+  mComparison["EQ"] = eEQ;
+  mComparison["NE"] = eNE;
+  mComparison["GT"] = eGT;
+  mComparison["GE"] = eGE;
+  mComparison["LT"] = eLT;
+  mComparison["LE"] = eLE;
+
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
+
+  AC_cfg->GetNextConfigLine();
+
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
+    if (token == "TEST") {
+      tests.push_back(*(new test));
+      current_test = &tests.back();
+      if (AC_cfg->GetValue("LOGIC") == "OR") {
+        current_test->Logic = eOr;
+      } else {
+        current_test->Logic = eAnd;
+      }
+      AC_cfg->GetNextConfigLine();
+      while (AC_cfg->GetValue() != "/TEST") {
+        current_test->conditions.push_back(*(new condition));
+        current_condition = &current_test->conditions.back();
+	current_condition->TestValue = 0.0;
+	current_condition->TestParam2 = 0L;
+        *AC_cfg >> param;
+        current_condition->TestParam1 = PropertyManager->GetNode(param);
+        *AC_cfg >> strCompare;
+        current_condition->Comparison = mComparison[strCompare];
+        *AC_cfg >> strCompVal;
+        if (strCompVal.find_first_not_of("-.0123456789eE") == string::npos) {
+          current_condition->TestValue = atof(strCompVal.c_str());
+        } else {
+          current_condition->TestParam2 = PropertyManager->GetNode(param);
+        }
+        // read comparison value (property or value)
+        AC_cfg->GetNextConfigLine();
+      }
+    } else if (token == "VALUE") {
+    } else {
+    }
+  }
 
   FGFCSComponent::bind();
 

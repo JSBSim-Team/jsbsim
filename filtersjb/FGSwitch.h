@@ -1,8 +1,8 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGSwitch.h
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 12/23/2002
 
  ------------- Copyright (C)  -------------
 
@@ -27,10 +27,6 @@ HISTORY
 --------------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -45,11 +41,46 @@ INCLUDES
 #include "../FGConfigFile.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINES
+DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.12 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.13 2002/12/27 13:04:51 jberndt Exp $"
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Encapsulates a filter for the flight control system.
+<COMPONENT NAME="switch1" TYPE="SWITCH">
+  <TEST LOGIC="{AND|OR}>
+    {property} {conditional} {PROPERTY|INT|DOUBLE} {property|value}
+    {property} {conditional} {PROPERTY|INT|DOUBLE} {property|value}
+    ...
+  </TEST>
+  <TEST LOGIC="{AND|OR}>
+    {property} {conditional} {PROPERTY|INT|DOUBLE} {property|value}
+    ...
+  </TEST>
+  ...
+  <VALUE TYPE={BOOLEAN|MULTIPLE}>
+    <!-- if component value chosen based on the value of the
+         components set of tests, the output is chosen as follows -->
+    TRUE  {property|value}
+    FALSE {property|value}
+    <!-- if component value is MULTIPLE, the output value of the
+         component is chosen for the first top-level test that evaluates
+         to true -->
+    TEST 0 {PROPERTY|INT|DOUBLE} {property|value}
+    TEST 1 {PROPERTY|INT|DOUBLE} {property|value}
+    ...
+  </VALUE>
+</COMPONENT>
+    */
+   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -65,6 +96,26 @@ public:
 private:
   FGFCS* fcs;
   FGConfigFile* AC_cfg;
+
+  enum eLogic {eAnd=0, eOr};
+  enum eComparison {eEQ=0, eNE, eGT, eGE, eLT, eLE};
+
+  struct condition {
+    FGPropertyManager *TestParam1, *TestParam2;
+    double TestValue;
+    eComparison Comparison;
+    double compare_val;
+  };
+
+  map <const string, eComparison> mComparison;
+
+  struct test {
+    vector <condition> conditions;
+    eLogic Logic;
+  };
+
+  vector <test> tests;
+
   void Debug(int from);
 };
 

@@ -3,12 +3,15 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.3 2002/11/22 14:56:19 jberndt Exp $
+  CVS Version: $Id: f15.xml,v 1.4 2002/12/27 13:04:51 jberndt Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Beta
 
   Sources:
+    Stability and Control of Flight Vehicle, Uy-Loi Ly, 1997
+          http://www.aa.washington.edu/courses/aa516/book516.pdf
+
     Dryden Technical Reports Server documents:
         H-823:  Initial results from flight testing a large, remotely piloted
                 airplane model.
@@ -39,10 +42,10 @@
     AC_HTAILARM  20.0
     AC_VTAILAREA 46.96
     AC_LV        20.0
-    AC_IXX      22000
-    AC_IYY     182000
-    AC_IZZ     200000
-    AC_IXZ       1230
+    AC_IXX      28700
+    AC_IYY     165100
+    AC_IZZ     187900
+    AC_IXZ       -520
     AC_EMPTYWT  30035
     AC_AERORP    223.89   0.0   13.2
     AC_CGLOC     221.65   0.0    4.1
@@ -107,7 +110,7 @@
     <AC_TANK TYPE="FUEL" NUMBER="0">
       XLOC     195.0
       YLOC    -108.0
-      ZLOC       0.0
+      ZLOC      13.2
       RADIUS    29.4
       CAPACITY 185.0
       CONTENTS 100.0
@@ -116,7 +119,7 @@
     <AC_TANK TYPE="FUEL" NUMBER="1">
       XLOC     195.0
       YLOC     108.0
-      ZLOC       0.0
+      ZLOC      13.2
       RADIUS     0.0
       CAPACITY 185.0
       CONTENTS 100.0
@@ -212,27 +215,29 @@
               CL is accurate for alpha of 0 ... 0.558, the rest is an estimate
               based on the fact that CL=0 for alpha=-0.0349 and CLmax = 1.2
            -->
-         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
+         <COEFFICIENT NAME="CLalpha" TYPE="TABLE">
            Lift_due_to_alpha
-           16
+           16 2
            aero/alpha-rad
+           velocities/mach-norm
            aero/qbar-psf | metrics/Sw-sqft
-           -0.349	-0.93
-           -0.262	-0.86
-           -0.175	-0.58
-           -0.087	-0.26
-           0.000	0.06
-           0.070	0.30
-           0.140	0.58
-           0.209	0.78
-           0.279	0.88
-           0.349	1.01
-           0.419	1.08
-           0.489	1.16
-           0.559	1.19
-           0.698	1.01
-           0.785	0.93
-           0.873	0.81
+                         0.5	1.4
+           -0.349	-0.93	-0.25
+           -0.262	-0.86	-0.23
+           -0.175	-0.58	-0.16
+           -0.087	-0.26	-0.07
+           0.000	0.06	0.02
+           0.070	0.30	0.08
+           0.140	0.58	0.16
+           0.209	0.78	0.21
+           0.279	0.88	0.24
+           0.349	1.01	0.27
+           0.419	1.08	0.29
+           0.489	1.16	0.31
+           0.559	1.19	0.32
+           0.698	1.01	0.27
+           0.785	0.93	0.25
+           0.873	0.81	0.22
          </COEFFICIENT>
        </GROUP>
 
@@ -271,17 +276,42 @@
               CDmin is calculated from flight test date as described in H-1990
               as a function of Fex, FNP, W, y, v, S and rho
            -->
-         <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+         <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
            Drag_minimum
+           2
+           velocities/mach-norm
            aero/qbar-psf | metrics/Sw-sqft
-           0.00474
+           0.5	0.01468
+           1.4	0.00308
+         </COEFFICIENT>
+         <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+           Drag_induced
+           16
+           aero/alpha-rad
+           aero/qbar-psf | metrics/Sw-sqft
+           -0.349       0.227
+           -0.262       0.067
+           -0.175       0.048
+           -0.087       0.006
+           0.000        0.006
+           0.070        0.013
+           0.140        0.020
+           0.209        0.047
+           0.279        0.067
+           0.349        0.212
+           0.419        0.227
+           0.489        0.331
+           0.559        0.474
+           0.698        0.212
+           0.785        0.913
+           0.873        0.721
          </COEFFICIENT>
          <!--
               CDalpha is calculated based on CL and CNb and therefore is accurate
               for alpha of 0 ... 0.558
            -->
-         <COEFFICIENT NAME="CDalpha" TYPE="VECTOR">
-           Drag_due_to_alpha
+         <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
+           Drag_due_to_beta
            16
            aero/alpha-rad
            aero/qbar-psf | metrics/Sw-sqft | aero/mag-beta-rad
