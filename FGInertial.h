@@ -56,7 +56,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.9 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.10 2001/04/18 13:51:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -71,6 +71,9 @@ public:
 
   bool Run(void);
   bool LoadInertial(FGConfigFile* AC_cfg);
+
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -64,6 +64,56 @@ INCLUDES
 #include <ctime>
 #endif
 
+#include <condefs.h>
+USEUNIT("FGUtility.cpp");
+USEUNIT("FGAircraft.cpp");
+USEUNIT("FGAtmosphere.cpp");
+USEUNIT("FGAuxiliary.cpp");
+USEUNIT("FGCoefficient.cpp");
+USEUNIT("FGConfigFile.cpp");
+USEUNIT("FGControls.cpp");
+USEUNIT("FGEngine.cpp");
+USEUNIT("FGFCS.cpp");
+USEUNIT("FGFDMExec.cpp");
+USEUNIT("FGfdmSocket.cpp");
+USEUNIT("FGForce.cpp");
+USEUNIT("FGGroundReactions.cpp");
+USEUNIT("FGInertial.cpp");
+USEUNIT("FGInitialCondition.cpp");
+USEUNIT("FGLGear.cpp");
+USEUNIT("FGMassBalance.cpp");
+USEUNIT("FGMatrix.cpp");
+USEUNIT("FGModel.cpp");
+USEUNIT("FGNozzle.cpp");
+USEUNIT("FGOutput.cpp");
+USEUNIT("FGPiston.cpp");
+USEUNIT("FGPosition.cpp");
+USEUNIT("FGPropeller.cpp");
+USEUNIT("FGPropulsion.cpp");
+USEUNIT("FGRocket.cpp");
+USEUNIT("FGRotation.cpp");
+USEUNIT("FGRotor.cpp");
+USEUNIT("FGState.cpp");
+USEUNIT("FGTable.cpp");
+USEUNIT("FGTank.cpp");
+USEUNIT("FGThruster.cpp");
+USEUNIT("FGTranslation.cpp");
+USEUNIT("FGTrim.cpp");
+USEUNIT("FGTrimAxis.cpp");
+USEUNIT("FGTurboJet.cpp");
+USEUNIT("FGTurboProp.cpp");
+USEUNIT("FGTurboShaft.cpp");
+USEUNIT("FGAerodynamics.cpp");
+USEUNIT("filtersjb\FGSwitch.cpp");
+USEUNIT("filtersjb\FGFCSComponent.cpp");
+USEUNIT("filtersjb\FGFilter.cpp");
+USEUNIT("filtersjb\FGFlaps.cpp");
+USEUNIT("filtersjb\FGGain.cpp");
+USEUNIT("filtersjb\FGGradient.cpp");
+USEUNIT("filtersjb\FGSummer.cpp");
+USEUNIT("filtersjb\FGDeadBand.cpp");
+//---------------------------------------------------------------------------
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -72,7 +122,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.47 2001/03/10 21:44:44 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.48 2001/04/18 13:51:07 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -88,7 +138,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.47 2001/03/10 21:44:44 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.48 2001/04/18 13:51:07 jberndt Exp $
     @see -
 */
 

@@ -28,6 +28,7 @@ INCLUDES
    SG_USING_STD(ostream);
    SG_USING_STD(istream);
    SG_USING_STD(cerr);
+   SG_USING_STD(cout);
    SG_USING_STD(endl);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
@@ -47,6 +48,7 @@ INCLUDES
    using std::ostream;
    using std::istream;
    using std::cerr;
+   using std::cout;
    using std::endl;
 #endif
 
@@ -55,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.25 2001/04/09 05:28:31 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.26 2001/04/18 13:51:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

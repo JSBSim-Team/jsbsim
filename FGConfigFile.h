@@ -40,23 +40,42 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
+#  include STL_STRING
+   SG_USING_STD(string);
+   SG_USING_STD(ostream);
+   SG_USING_STD(istream);
+   SG_USING_STD(cerr);
+   SG_USING_STD(endl);
+   SG_USING_STD(ios);
+   SG_USING_STD(cout);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
+#    include <iostream>
 #  else
 #    include <fstream.h>
+#    include <iostream.h>
 #  endif
 #else
 #  include <fstream>
+#  include <fstream>
+#  include <iostream>
+#  include <string>
+   using std::string;
+   using std::ostream;
+   using std::istream;
+   using std::ios;
+   using std::cerr;
+   using std::endl;
+   using std::cout;
 #endif
 
-#include <string>
 #include "FGDefs.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.16 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.17 2001/04/18 13:51:07 jberndt Exp $"
 
 using std::string;
 using std::ifstream;
@@ -76,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.16 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.17 2001/04/18 13:51:07 jberndt Exp $
     @see -
 */
 
