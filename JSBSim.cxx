@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.112 2002/03/18 12:12:47 apeden Exp $
+// $Id: JSBSim.cxx,v 1.113 2002/03/20 11:40:50 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -55,6 +55,7 @@
 #include <FDM/JSBSim/FGMassBalance.h>
 #include <FDM/JSBSim/FGAerodynamics.h>
 #include <FDM/JSBSim/FGLGear.h>
+#include <FDM/JSBSim/FGPropertyManager.h>
 #include "JSBSim.hxx"
 
 /******************************************************************************/
@@ -64,7 +65,7 @@ FGJSBsim::FGJSBsim( double dt )
 {
     bool result;
    
-    fdmex = new FGFDMExec( globals->get_props() );
+    fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
     
     State           = fdmex->GetState();
     Atmosphere      = fdmex->GetAtmosphere();
@@ -151,15 +152,7 @@ FGJSBsim::FGJSBsim( double dt )
     stall_warning = fgGetNode("/sim/aero/alarms/stall-warning",true);
     stall_warning->setDoubleValue(0);
     
-    /* elevator_pos_deg=fgGetNode("/surface-positions/elevator-pos-deg",true);
-    left_aileron_pos_deg
-        =fgGetNode("/surface-positions/left-aileron-pos-deg",true);
-    right_aileron_pos_deg
-        =fgGetNode("/surface-positions/right-aileron-pos-deg",true);
-    rudder_pos_deg=fgGetNode("/surface-positions/rudder-pos-deg",true);
-    flap_pos_deg=fgGetNode("/surface-positions/flap-pos-deg",true); */
 
-    
     flap_pos_pct=fgGetNode("/surface-positions/flap-pos-norm",true);
     elevator_pos_pct=fgGetNode("/surface-positions/elevator-pos-norm",true);
     left_aileron_pos_pct
@@ -169,13 +162,7 @@ FGJSBsim::FGJSBsim( double dt )
     rudder_pos_pct=fgGetNode("/surface-positions/rudder-pos-norm",true);
     
     
-    /* elevator_pos_deg->setDoubleValue(0);
-    left_aileron_pos_deg->setDoubleValue(0);
-    right_aileron_pos_deg->setDoubleValue(0);
-    rudder_pos_deg->setDoubleValue(0);
-    flap_pos_deg->setDoubleValue(0); */
 
-    
     elevator_pos_pct->setDoubleValue(0);
     left_aileron_pos_pct->setDoubleValue(0);
     right_aileron_pos_pct->setDoubleValue(0);
@@ -527,11 +514,11 @@ bool FGJSBsim::copy_from_JSBsim() {
     flap_pos_deg->setDoubleValue( FCS->GetDfPos() ); */
 
     
-    elevator_pos_pct->setDoubleValue( FCS->GetDePosN() );
-    left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPosN() );
-    right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPosN() );
-    rudder_pos_pct->setDoubleValue( FCS->GetDrPosN() );
-    flap_pos_pct->setDoubleValue( FCS->GetDfPosN() );
+    elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
+    left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
+    right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
+    rudder_pos_pct->setDoubleValue( FCS->GetDrPos(ofNorm) );
+    flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
 
     
     return true;
