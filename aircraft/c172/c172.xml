@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.94 2002/02/27 14:44:46 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.95 2002/03/01 01:41:04 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -174,7 +174,7 @@
        OUTPUT        FG_LEFT_AILERON_POS
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID            3
+       ID            4
        INPUT         FG_AILERON_CMD
        MIN          -20
        MAX           15
@@ -183,13 +183,13 @@
        OUTPUT        FG_RIGHT_AILERON_POS
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
-       ID            4
+       ID            5
        INPUT        FG_RUDDER_CMD
        INPUT        FG_YAW_TRIM_CMD
        CLIPTO       -1 1
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-       ID            5
+       ID            6
        INPUT        FG_RUDDER_CMD
        MIN         -16
        MAX          16
@@ -197,7 +197,7 @@
        OUTPUT       FG_RUDDER_POS
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       ID           6
+       ID           7
        INPUT        FG_FLAPS_CMD
        DETENTS      4
                     0    0
