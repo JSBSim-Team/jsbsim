@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.84 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.85 2002/04/30 11:23:48 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,7 +117,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   IdFDM = FDMctr;
   FDMctr++;
-
+  
   try {
     char* num = getenv("JSBSIM_DEBUG");
     if (!num) debug_lvl = 1;
@@ -154,7 +154,7 @@ FGFDMExec::~FGFDMExec()
     cout << "Caught error: " << msg << endl;
   }    
 
-  for (int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
+  for (unsigned int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
   SlaveFDMList.clear();
  
   Debug(1);
@@ -332,7 +332,7 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
-  for (int i=0; i<SlaveFDMList.size(); i++) {
+  for (unsigned int i=0; i<SlaveFDMList.size(); i++) {
     // TransferState(i);
     // Run(i)
   }
@@ -344,7 +344,6 @@ bool FGFDMExec::Run(void)
 
   frame = Frame++;
   State->IncrTime();
-
   return true;
 }
 
@@ -377,7 +376,7 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
   FDMList.push_back(Aircraft->GetAircraftName());
 
-  for (int i=1; i<SlaveFDMList.size(); i++) {
+  for (unsigned int i=1; i<SlaveFDMList.size(); i++) {
     FDMList.push_back(SlaveFDMList[i]->exec->GetAircraft()->GetAircraftName());
   }
 

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.55 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.56 2002/04/30 11:23:48 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.55 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.56 2002/04/30 11:23:48 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -207,7 +207,7 @@ public:
   FGPropertyManager* GetPropertyManager(void);
   vector <string> EnumerateFDMs(void);
   void SetSlave(void) {IsSlave = true;}
-
+  
 private:
   FGModel* FirstModel;
 
@@ -221,7 +221,7 @@ private:
   bool IsSlave;
   static FGPropertyManager *master;
   FGPropertyManager *instance;
-
+  
   struct slaveData {
     FGFDMExec* exec;
     string info;
