@@ -57,7 +57,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.24 2001/04/24 22:14:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.25 2001/07/12 23:50:35 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 extern short debug_lvl;
@@ -137,7 +137,7 @@ void FGTrim::TrimStats() {
     cout << "    Sub-iterations:" << endl;
     for(current_axis=0; current_axis<TrimAxes.size(); current_axis++) {
       run_sum+=TrimAxes[current_axis]->GetRunCount();
-      sprintf(out,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
+      snprintf(out,80,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
                   TrimAxes[current_axis]->GetStateName().c_str(),
                   sub_iterations[current_axis],
                   sub_iterations[current_axis]/float(total_its),
@@ -164,65 +164,64 @@ void FGTrim::ReportState(void) {
   char out[80], flap[10], gear[10];
   
   cout << endl << "  JSBSim State" << endl;
-  sprintf(out,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
+  snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
                    fdmex->GetMassBalance()->GetWeight(),
                    fdmex->GetMassBalance()->GetXYZcg(1),
                    fdmex->GetMassBalance()->GetXYZcg(2),
                    fdmex->GetMassBalance()->GetXYZcg(3));
   cout << out;             
   if( fdmex->GetFCS()->GetDfPos() <= 0.01)
-    sprintf(flap,"Up");
+    snprintf(flap,10,"Up");
   else
-    sprintf(flap,"%2.0f",fdmex->GetFCS()->GetDfPos());
+    snprintf(flap,10,"%2.0f",fdmex->GetFCS()->GetDfPos());
   if(fdmex->GetAircraft()->GetGearUp() == true)
-    sprintf(gear,"Up");
+    snprintf(gear,10,"Up");
   else
-    sprintf(gear,"Down");
-  sprintf(out, "    Flaps: %3s  Gear: %4s\n",flap,gear);
+    snprintf(gear,10,"Down");
+  snprintf(out,80, "    Flaps: %3s  Gear: %4s\n",flap,gear);
   cout << out;
-  sprintf(out, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
+  snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
                     fdmex->GetAuxiliary()->GetVcalibratedKTS(),
-                    fdmex->GetState()->GetParameter(FG_MACH),
-                    fdmex->GetPosition()->Geth() );
+                    fdmex->GetState()->GetParameter(FG_MACH) );
   cout << out;
-  sprintf(out, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
+  snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
                     fdmex->GetPosition()->Geth(),
                     fdmex->GetPosition()->GetDistanceAGL() );
   cout << out;
-  sprintf(out, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
+  snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
                     fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG,
                     fdmex->GetRotation()->Gettht()*RADTODEG );
   cout << out;
-  sprintf(out, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
+  snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
                     fdmex->GetPosition()->GetGamma()*RADTODEG,
                     fdmex->GetPosition()->Gethdot()*60 );
   cout << out;                  
-  sprintf(out, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
+  snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
                     fdmex->GetAerodynamics()->GetNlf(),
                     fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG );
   cout << out;
-  sprintf(out, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
+  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
                     fdmex->GetRotation()->Getpsi()*RADTODEG,
                     fdmex->GetState()->GetParameter(FG_BETA)*RADTODEG );                  
   cout << out;
-  sprintf(out, "    Bank Angle: %5.2f deg\n",
+  snprintf(out,80, "    Bank Angle: %5.2f deg\n",
                     fdmex->GetRotation()->Getphi()*RADTODEG );
   cout << out;
-  sprintf(out, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
+  snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
                     fdmex->GetState()->GetParameter(FG_ELEVATOR_POS)*RADTODEG,
                     fdmex->GetState()->GetParameter(FG_AILERON_POS)*RADTODEG,
                     fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG );
   cout << out;                  
-  sprintf(out, "    Throttle: %5.2f%c\n",
+  snprintf(out,80, "    Throttle: %5.2f%c\n",
                     fdmex->GetFCS()->GetThrottlePos(0),'%' );
   cout << out;
   
-  sprintf(out, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
+  snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
                     fdmex->GetAuxiliary()->GetHeadWind()*jsbFPSTOKTS,
                     fdmex->GetAuxiliary()->GetCrossWind()*jsbFPSTOKTS );
   cout << out; 
   
-  sprintf(out, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
+  snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
                     fdmex->GetPosition()->GetVground()*jsbFPSTOKTS,
                     fdmex->GetPosition()->GetGroundTrack()*RADTODEG );
   cout << out;                                   
