@@ -63,7 +63,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGTrimAxis.h"
 
-#include <vector.h>
+#include <vector>
 
 #define ID_TRIM "$Header"
 

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.25 2001/02/04 13:16:14 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.26 2001/02/24 12:04:35 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 
@@ -117,7 +117,8 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
 }
 
 void FGInitialCondition::SetVgroundFpsIC(float tt) {
-  float ua,va,wa,vxz;
+  //float ua,va,wa;
+  float vxz;
   
   //cout << "FGInitialCondition::SetVgroundFpsIC" << endl;
   vg=tt;

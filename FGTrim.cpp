@@ -52,7 +52,11 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.17 2001/02/18 15:50:52 apeden Exp $";
+#if _MSC_VER
+#pragma warning (disable : 4786 4788)
+#endif
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.18 2001/02/24 12:03:58 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,9 +324,9 @@ bool FGTrim::EditState( State state, Control new_control ){
 bool FGTrim::DoTrim(void) {
   
   trim_failed=false;
+  int i;
 
-
-  for(int i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
+  for(i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
     fdmex->GetAircraft()->GetGearUnit(i)->SetReport(false);
   }
 
@@ -418,7 +422,7 @@ bool FGTrim::DoTrim(void) {
     total_its=N;
     cout << endl << "  Trim failed" << endl;
   }
-  for(int i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
+  for(i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
     fdmex->GetAircraft()->GetGearUnit(i)->SetReport(true);
   }
   fdmex->GetOutput()->Enable();
