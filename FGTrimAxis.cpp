@@ -32,6 +32,10 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#ifdef _MSC_VER
+#  pragma warning (disable : 4786)
+#endif
+
 #include <string>
 #include <stdlib.h>
 
@@ -42,7 +46,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.34 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.35 2002/04/30 11:24:07 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
