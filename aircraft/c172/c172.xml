@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.54 2001/11/09 04:10:22 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.55 2001/11/11 22:28:13 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -298,6 +298,11 @@
          FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
          0.06
        </COEFFICIENT>
+       <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
+         Drag_due_to_sideslip
+         FG_QBAR|FG_WINGAREA|FG_ABETA
+         0.14
+       </COEFFICIENT>
 
     </AXIS>
 
@@ -434,7 +439,7 @@
        <COEFFICIENT NAME="Cndr" TYPE="VALUE">
          Yaw_moment_due_to_rudder
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
-         -0.0657
+         -0.043
        </COEFFICIENT>
 
     </AXIS>
