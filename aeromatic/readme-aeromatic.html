@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+  <title>readme</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="GENERATOR" content="Quanta Plus">
+</head>
+<body>
+
+<h1>Aero-Matic</h1><br>
+Aero-Matic is an internet application that uses an HTML interface to collect user-submitted
+data on an airplane, then generates configuration files for use with
+the <A href="http://jsbsim.sourceforge.net">JSBSim</A> Flight Dynamics Model.
+Aero-Matic tries to strike a balance
+between simplicity and accuracy when modeling an airplane.  The generated
+configuration files will result in a <i>plausible</i> airplane model, and
+is based on only a few data points that should be easily available from books or
+internet sources.  For a description of how Aero-Matic creates these files see
+<A HREF="aeromatic-doc.html">here</A>.
+<BR><BR>
+<h2>How to use Aero-Matic</h2><br>
+Lets assume we want to make a model of the MiG-21.  In this case we will need
+two configuration files, an <i>aero</i> configuration, and an <i>engine</i>
+configuration.  Obviously we won't need a propeller configuration for the MiG-21.
+<br><br>
+The first step is to open <i>aeromatic.html</i> in a browser.  Step one in 
+<i>aeromatic.html</i> is to
+define an engine for the MiG-21. From <i>The Encyclopedia of World Airpower</i>
+<sup>1</sup> I find the following information on the engine used by the MiG-21.
+Name: Tumansky_R25, type: Turbine, thrust (without afterburning): 10000 lb.,
+and afterburning is installed, but water-injection is not.  Note that the name
+you chose for your engine should be a suitable file name, so only use appropriate
+characters.
+<br><br>
+When you click on the "generate" button Aero-Matic will send the information to
+<i>engine.php</i>, which will do some calculations and send the results back to you.
+The results will look like garbage because the configuration file was not meant to
+look nice in a browser window.  If you view the document source you will see the
+file as it really is.  Save this file with the file name <b>Tumansky_R25.xml</b>,
+and place it in the $FGROOT/Engine directory with all the other engines.
+<BR><BR>
+Use your browser's "back" button to return to <i>aeromatic.html</i>.  Skip over the
+propeller form and fill in the aero form.  You must first select a system of units,
+either English or metric. You cannot mix units! Now for the airplane data. For the
+MiG-21 I have the following data. Name: Mig21, type: Single Engine Fighter, maximum
+takeoff weight: 22,000 lb., span: 23.5 feet, length: 51.75 feet, wing area: 247 square
+feet, tricycle landing gear (meaning the third wheel is in front of the main wheels),
+one engine, engine type: Turbine, engine layout: aft fuselage.  My source doesn't
+say whether the MiG-21 had a yaw damper, but since it's a high-performance jet I'll
+assume it needs one.
+<br><br>
+Now click on "generate" and the data will be sent to <i>
+aero.php</i>, which will do some calculations and return the configuration file to you.
+As with the previous configuration file, it will look like garbage in your browser
+window, but will look properly if you view the document source.  Save this file as
+<b>Mig21.xml</b>, and place it in a $FGROOT/Aircraft/Mig21 folder.  You will now have
+to open the file in a text editor and make a change.  In the Propulsion section of
+the aero file you will find a reference to the file name of your engine,
+"Mig21_engine".  Edit this name to read "Tumansky_R25".  Your Mig-21 will now be
+matched with a correct engine.
+<br><br>
+If you model a multi-engined airplane you must make the above change for each engine.
+If you are modeling a propeller-driven airplane you must also change the thruster
+file name to reflect the file name of the propeller configuration file.  This must
+be done for each propeller.
+<br><br>
+<B>NOTE!!</B> Be aware that some browsers can be configured to add HTML tags and make other changes
+to files without telling you.  This will prevent Aero-Matic from working!  Also, 
+some browsers will <i>reload</i> the current page when displaying the document source.  This
+may result in a bad document. Also, watch out for browsers that are set to fetch <i>cached</i>
+pages rather than new ones.
+<br><br>
+<h5><sup>1</sup>The Encyclopedia of World Airpower, ed. Bill Gunston, Crescent Books,
+New York, 1981</h5>
+<br><br><hr>
+12 Aug 2003
+
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<HTML>
+<HEAD><TITLE>Aero-Matic v 0.7</TITLE>
+</HEAD>
+<BODY>
+<h1>Aero-Matic</h1>
+<b>version 0.7</b>
+<!-- 03 July 2003, David P. Culp, davidculp2@comcast.net -->
+<!-- update: 26 July 2003, DPC, new aero.php with flap changes -->
+<!-- update:  5 Sept 2003, DPC, added multi-engine prop transport -->
+<!-- update: 29 Sept 2003, DPC, added high-alpha/beta drag -->
+<!-- update: 16  Oct 2003, DPC, better FCS, version 0.7 -->
+<br><hr>
+
+<H3><A HREF="readme-aeromatic.html">README! INSTRUCTIONS!</A></H3>
+
+This form can be used to create aircraft configuration files for
+use with the <A href="http://jsbsim.sourceforge.net">JSBSim</A> Flight
+Dynamics Model, the default FDM for the
+<A href="http://www.flightgear.org">FlightGear</A> flight simulator.
+<br><br>
+You will need at least two files for a complete configuration, an <i>aero</i> 
+file containing information on the aircraft's aerodynamic properties, an 
+<i>engine</i> file describing the engine(s), and in the case of a 
+propeller-driven aircraft you will need a <i>prop</i> file.  Aero-Matic 
+will generate plausible configuration files for your aircraft using some 
+simplifying assumptions.  Note that Aero-Matic allows only one type of engine 
+to be defined per aircraft.  If you want to mix engine types you'll have to
+make the necessary changes by hand.  Also note that all turbine, turboprop and
+rocket engines use the default "direct" thruster. 
+<hr>
+
+<!-- *************************************************************************** -->
+<!-- *  Engine Form                                                            * -->
+<!-- *************************************************************************** -->
+<form action="engine.php" method="POST">
+<font color=red><h1>Step 1: The Engine configuration ...</h1></font>
+
+This step is not necessary if you are using an already existing engine 
+configuration file.  In any case you will have to edit the propulsion 
+section of the aero configuration file to ensure that the engine name 
+is the same as the name of the engine configuration file. 
+<br><br><br>
+<b>Engine Name</b><br>&nbsp
+<input type="text" name="ac_enginename" value="my_engine">
+
+<br><hr>
+<b>Engine Type</b><br>&nbsp
+<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp
+<input type="radio" name="ac_enginetype" value="1">turbine&nbsp
+<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp
+<input type="radio" name="ac_enginetype" value="3">rocket&nbsp
+
+<br><hr>
+<b>Engine Power or Thrust</b>&nbsp(per engine, without afterburning)<br>&nbsp
+<input type="text" name="ac_enginepower" value="1000.0"><br>&nbsp
+<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp
+<input type="radio" name="ac_engineunits" value="1">kw&nbsp
+<input type="radio" name="ac_engineunits" value="2">pounds&nbsp
+<input type="radio" name="ac_engineunits" value="3">newtons&nbsp
+
+<br><hr>
+<b>Augmentation (afterburning) Installed?</b><br>&nbsp
+<input type="radio" name="ac_augmented" value="1">yes
+<input type="radio" name="ac_augmented" value="0" checked>no
+
+<br><hr>
+<b>Water Injection Installed?</b><br>&nbsp
+<input type="radio" name="ac_injected" value="1">yes
+<input type="radio" name="ac_injected" value="0" checked>no
+
+<br><br>
+You are now ready to submit your data.  Aero-Matic will generate a file called
+<i>engine.php</i>, which is your engine configuration file.  Note that this 
+file will probably look like garbage when viewed in your browser, but will 
+look fine when viewing the document source.  You will need to save
+ this file with a filename of the form <i>engine_name.xml</i>.<br><br>    
+<center><input type="submit" name="generate" value="Generate"></center>
+<hr><br><br>
+</form>
+
+<!-- *************************************************************************** -->
+<!-- *  Propeller Form                                                         * -->
+<!-- *************************************************************************** -->
+<form action="prop.php" method="POST">
+<font color=red><h1>Step 2: The Prop configuration (if applicable)...</h1></font>
+<br><br>
+<b>Engine Power</b>&nbsp(per engine)<br>&nbsp
+<input type="text" name="ac_enginepower" value="1000.0"><br>&nbsp
+<input type="radio" name="ac_engineunits" value="0" checked>horsepower&nbsp
+<input type="radio" name="ac_engineunits" value="1">kw&nbsp
+<br><hr>
+<b>Pitch</b><br>&nbsp
+<input type="radio" name="ac_prop_pitch" value="0" checked>fixed&nbsp
+<input type="radio" name="ac_prop_pitch" value="1">variable&nbsp
+<br><br>
+You are now ready to submit your data.  Aero-Matic will generate a file called
+<i>prop.php</i>, which is your propeller configuration file.  Note that this 
+file will probably look like garbage when viewed in your browser, but will 
+look fine when viewing the document source.  You will need to save
+ this file with a filename of the form <i>prop_name.xml</i>.<br><br>    
+<center><input type="submit" name="generate" value="Generate"></center>
+<hr><br><br>
+</form>
+
+<!-- *************************************************************************** -->
+<!-- *  Aero Form                                                              * -->
+<!-- *************************************************************************** -->
+<form action="aero.php" method="POST">
+<font color=red><h1>Step 3: The Aero configuration ...</h1></font>
+<br>
+<b>Chose a system of measurement</b><br>&nbsp
+<input type="radio" name="ac_units" value="0" checked>English (feet, pounds)
+&nbsp
+<input type="radio" name="ac_units" value="1">Metric (meters, kilograms)
+
+<br><hr>
+<b>Name of aircraft</b>&nbsp
+<input type="text" name="ac_name" value="unnamed" maxlength=100>
+
+<br><hr>
+<b>Type of aircraft</b> (Select closest <i>aerodynamic</i> type)<br>&nbsp
+<input type="radio" name="ac_type" value="0">Glider<br>&nbsp
+<input type="radio" name="ac_type" value="1" checked>Light Single<br>&nbsp
+<input type="radio" name="ac_type" value="2">Light Twin<br>&nbsp
+<input type="radio" name="ac_type" value="3">WWII Fighter (or subsonic racer/aerobatic)<br>&nbsp
+<input type="radio" name="ac_type" value="4">Single-engine Transonic or Supersonic Fighter<br>&nbsp
+<input type="radio" name="ac_type" value="5">Two-engine Transonic or Supersonic Fighter<br>&nbsp
+<input type="radio" name="ac_type" value="6">Two-engine Transonic Transport<br>&nbsp
+<input type="radio" name="ac_type" value="7">Three-engine Transonic Transport<br>&nbsp
+<input type="radio" name="ac_type" value="8">Four+-engine Transonic Transport<br>&nbsp
+<input type="radio" name="ac_type" value="9">Multi-engine Prop Transport<br>&nbsp
+
+<br><hr>
+<b>Maximum Takeoff Weight</b><br>&nbsp
+<input type="text" name="ac_weight" value=10000.0>
+
+<br><hr>
+<b>Wing span</b><br>&nbsp
+<input type="text" name="ac_wingspan" value=40.0>
+
+<br><hr>
+<b>Length</b><br>&nbsp
+<input type="text" name="ac_length" value=40.0>
+
+<br><hr>
+<b>Wing area</b>&nbsp;(Enter 0 to use estimated value)<br>&nbsp
+<input type="text" name="ac_wingarea" value=0>
+
+<br><hr>
+<b>Landing Gear Layout</b><br>&nbsp
+<input type="radio" name="ac_geartype" value="0" checked>tricycle&nbsp
+<input type="radio" name="ac_geartype" value="1">taildragger
+
+<br><hr>
+<b>Is the Landing Gear Retractable?</b><br>&nbsp
+<input type="radio" name="ac_gearretract" value="1" checked>yes&nbsp
+<input type="radio" name="ac_gearretract" value="0">no
+
+<br><hr>
+<b>Number of Engines</b><br>&nbsp
+<input type="radio" name="ac_numengines" value=0>0&nbsp
+<input type="radio" name="ac_numengines" value=1 checked>1&nbsp
+<input type="radio" name="ac_numengines" value=2>2&nbsp
+<input type="radio" name="ac_numengines" value=3>3&nbsp
+<input type="radio" name="ac_numengines" value=4>4&nbsp
+<input type="radio" name="ac_numengines" value=5>5&nbsp
+<input type="radio" name="ac_numengines" value=6>6&nbsp
+<input type="radio" name="ac_numengines" value=7>7&nbsp
+<input type="radio" name="ac_numengines" value=8>8
+
+<br><hr>
+<b>Engine Type</b><br>&nbsp
+<input type="radio" name="ac_enginetype" value="0" checked>piston&nbsp
+<input type="radio" name="ac_enginetype" value="1">turbine&nbsp
+<input type="radio" name="ac_enginetype" value="2">turboprop&nbsp
+<input type="radio" name="ac_enginetype" value="3">rocket&nbsp
+
+
+<br><hr>
+<b>Engine Layout</b><br>&nbsp
+<input type="radio" name="ac_enginelayout" value="0" checked>fwd_fuselage&nbsp
+<input type="radio" name="ac_enginelayout" value="1">mid_fuselage&nbsp
+<input type="radio" name="ac_enginelayout" value="2">aft_fuselage&nbsp
+<input type="radio" name="ac_enginelayout" value="3">wings&nbsp
+<input type="radio" name="ac_enginelayout" value="4">wings and tail&nbsp
+<input type="radio" name="ac_enginelayout" value="5">wings and nose&nbsp
+
+<br><hr>
+<b>Yaw Damper Installed?</b>&nbsp(Almost all jets will need one)<br>&nbsp
+<input type="radio" name="ac_yawdamper" value="1">yes&nbsp
+<input type="radio" name="ac_yawdamper" value="0" checked>no
+
+<br><br>
+You are ready to submit your data.  Aero-Matic will send you a page called
+ <i>aero.php</i> which contains your configuration file.  Note that this 
+file will probably look like garbage when viewed in your browser, but will 
+look fine when viewing the document source.  Save this file with a suitable 
+filename, such as <i>spitfireIX.xml</i>.  You will need to edit the 
+propulsion section of this file so that the engine name is the same as the 
+engine configuration file name, and the propeller name (if applicable) is 
+the same as the propeller configuration file name.<br><br>
+<center><input type="submit" name="generate" value="Generate"></center>
+
+</form>
+
+
+
+
+
+
+<br><br><hr>
+05 Sep 2003
+</BODY>
+</HTML>
