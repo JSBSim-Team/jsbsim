@@ -72,9 +72,9 @@ class FGGain  : public FGFCSComponent
   FGConfigFile* AC_cfg;
   float Gain;
   float* lookup;
-  vector< float* > Schedule;
+  vector < float* > Schedule;
   float Min, Max;
-  int ScheduledBy;
+  eParam ScheduledBy;
 
 public:
   FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);

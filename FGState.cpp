@@ -50,7 +50,7 @@ INCLUDES
 #ifndef M_PI         // support for silly Microsoft compiler
 #  include <simgear/constants.h>
 #  define M_PI FG_PI
-#endif 
+#endif
 
 #include "FGState.h"
 #include "FGFDMExec.h"
@@ -62,6 +62,13 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+
+/*******************************************************************************
+MACROS
+*******************************************************************************/
+
+#define RegisterVariable(FGX, DESCRIPTION) \
+                              coeffdef["FGX"] = FGX; paramdef[FGX] = DESCRIPTION
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -80,37 +87,103 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   sim_time = 0.0;
   dt = 1.0/120.0;
 
-  coeffdef["FG_QBAR"]          = 1           ;
-  coeffdef["FG_WINGAREA"]      = 2           ;
-  coeffdef["FG_WINGSPAN"]      = 4           ;
-  coeffdef["FG_CBAR"]          = 8           ;
-  coeffdef["FG_ALPHA"]         = 16          ;
-  coeffdef["FG_ALPHADOT"]      = 32          ;
-  coeffdef["FG_BETA"]          = 64          ;
-  coeffdef["FG_BETADOT"]       = 128         ;
-  coeffdef["FG_PITCHRATE"]     = 256         ;
-  coeffdef["FG_ROLLRATE"]      = 512         ;
-  coeffdef["FG_YAWRATE"]       = 1024        ;
-  coeffdef["FG_MACH"]          = 2048        ;
-  coeffdef["FG_ALTITUDE"]      = 4096        ;
-  coeffdef["FG_BI2VEL"]        = 8192        ;
-  coeffdef["FG_CI2VEL"]        = 16384       ;
-  coeffdef["FG_ELEVATOR_POS"]  = 32768L      ;
-  coeffdef["FG_AILERON_POS"]   = 65536L      ;
-  coeffdef["FG_RUDDER_POS"]    = 131072L     ;
-  coeffdef["FG_SPDBRAKE_POS"]  = 262144L     ;
-  coeffdef["FG_SPOILERS_POS"]  = 524288L     ;
-  coeffdef["FG_FLAPS_POS"]     = 1048576L    ;
-  coeffdef["FG_ELEVATOR_CMD"]  = 2097152L    ;
-  coeffdef["FG_AILERON_CMD"]   = 4194304L    ;
-  coeffdef["FG_RUDDER_CMD"]    = 8388608L    ;
-  coeffdef["FG_SPDBRAKE_CMD"]  = 16777216L   ;
-  coeffdef["FG_SPOILERS_CMD"]  = 33554432L   ;
-  coeffdef["FG_FLAPS_CMD"]     = 67108864L   ;
-  coeffdef["FG_THROTTLE_CMD"]  = 134217728L  ;
-  coeffdef["FG_THROTTLE_POS"]  = 268435456L  ;
-  coeffdef["FG_HOVERB"]        = 536870912L  ;
-  coeffdef["FG_PITCH_TRIM_CMD"] = 1073741824L ;
+/*
+  coeffdef["FG_QBAR"]           = FG_QBAR           ;
+  coeffdef["FG_WINGAREA"]       = FG_WINGAREA       ;
+  coeffdef["FG_WINGSPAN"]       = FG_WINGSPAN       ;
+  coeffdef["FG_CBAR"]           = FG_CBAR           ;
+  coeffdef["FG_ALPHA"]          = FG_ALPHA          ;
+  coeffdef["FG_ALPHADOT"]       = FG_ALPHADOT       ;
+  coeffdef["FG_BETA"]           = FG_BETA           ;
+  coeffdef["FG_BETADOT"]        = FG_BETADOT        ;
+  coeffdef["FG_PITCHRATE"]      = FG_PITCHRATE      ;
+  coeffdef["FG_ROLLRATE"]       = FG_ROLLRATE       ;
+  coeffdef["FG_YAWRATE"]        = FG_YAWRATE        ;
+  coeffdef["FG_MACH"]           = FG_MACH           ;
+  coeffdef["FG_ALTITUDE"]       = FG_ALTITUDE       ;
+  coeffdef["FG_BI2VEL"]         = FG_BI2VEL         ;
+  coeffdef["FG_CI2VEL"]         = FG_CI2VEL         ;
+  coeffdef["FG_ELEVATOR_POS"]   = FG_ELEVATOR_POS   ;
+  coeffdef["FG_AILERON_POS"]    = FG_AILERON_POS    ;
+  coeffdef["FG_RUDDER_POS"]     = FG_RUDDER_POS     ;
+  coeffdef["FG_SPDBRAKE_POS"]   = FG_SPDBRAKE_POS   ;
+  coeffdef["FG_SPOILERS_POS"]   = FG_SPOILERS_POS   ;
+  coeffdef["FG_FLAPS_POS"]      = FG_FLAPS_POS      ;
+  coeffdef["FG_ELEVATOR_CMD"]   = FG_ELEVATOR_CMD   ;
+  coeffdef["FG_AILERON_CMD"]    = FG_AILERON_CMD    ;
+  coeffdef["FG_RUDDER_CMD"]     = FG_RUDDER_CMD     ;
+  coeffdef["FG_SPDBRAKE_CMD"]   = FG_SPDBRAKE_CMD   ;
+  coeffdef["FG_SPOILERS_CMD"]   = FG_SPOILERS_CMD   ;
+  coeffdef["FG_FLAPS_CMD"]      = FG_FLAPS_CMD      ;
+  coeffdef["FG_THROTTLE_CMD"]   = FG_THROTTLE_CMD   ;
+  coeffdef["FG_THROTTLE_POS"]   = FG_THROTTLE_POS   ;
+  coeffdef["FG_HOVERB"]         = FG_HOVERB         ;
+  coeffdef["FG_PITCH_TRIM_CMD"] = FG_PITCH_TRIM_CMD ;
+
+  paramdef[FG_QBAR]           = " qbar "           ;
+  paramdef[FG_WINGAREA]       = " wing area "      ;
+  paramdef[FG_WINGSPAN]       = " wingspan "       ;
+  paramdef[FG_CBAR]           = " cbar "           ;
+  paramdef[FG_ALPHA]          = " alpha "          ;
+  paramdef[FG_ALPHADOT]       = " alphadot "       ;
+  paramdef[FG_BETA]           = " beta "           ;
+  paramdef[FG_BETADOT]        = " betadot "        ;
+  paramdef[FG_PITCHRATE]      = " pitch rate "     ;
+  paramdef[FG_ROLLRATE]       = " roll rate "      ;
+  paramdef[FG_YAWRATE]        = " yaw rate "       ;
+  paramdef[FG_MACH]           = " mach "           ;
+  paramdef[FG_ALTITUDE]       = " altitude "       ;
+  paramdef[FG_BI2VEL]         = " BI2Vel "         ;
+  paramdef[FG_CI2VEL]         = " CI2Vel "         ;
+  paramdef[FG_ELEVATOR_POS]   = " elevator pos "   ;
+  paramdef[FG_AILERON_POS]    = " aileron pos "    ;
+  paramdef[FG_RUDDER_POS]     = " rudder pos "     ;
+  paramdef[FG_SPDBRAKE_POS]   = " speedbrake pos " ;
+  paramdef[FG_SPOILERS_POS]   = " spoiler pos "    ;
+  paramdef[FG_FLAPS_POS]      = " flaps pos "      ;
+  paramdef[FG_ELEVATOR_CMD]   = " elevator cmd "   ;
+  paramdef[FG_AILERON_CMD]    = " aileron cmd "    ;
+  paramdef[FG_RUDDER_CMD]     = " rudder cmd "     ;
+  paramdef[FG_SPDBRAKE_CMD]   = " speedbrake cmd " ;
+  paramdef[FG_SPOILERS_CMD]   = " spoiler cmd "    ;
+  paramdef[FG_FLAPS_CMD]      = " flaps cmd "      ;
+  paramdef[FG_THROTTLE_CMD]   = " throttle cmd "   ;
+  paramdef[FG_THROTTLE_POS]   = " throttle pos "   ;
+  paramdef[FG_HOVERB]         = " height / span "  ;
+  paramdef[FG_PITCH_TRIM_CMD] = " pitch trim cmd " ;
+*/
+
+  RegisterVariable(FG_QBAR,           " qbar "           );
+  RegisterVariable(FG_WINGAREA,       " wing area "      );
+  RegisterVariable(FG_WINGSPAN,       " wingspan "       );
+  RegisterVariable(FG_CBAR,           " cbar "           );
+  RegisterVariable(FG_ALPHA,          " alpha "          );
+  RegisterVariable(FG_ALPHADOT,       " alphadot "       );
+  RegisterVariable(FG_BETA,           " beta "           );
+  RegisterVariable(FG_BETADOT,        " betadot "        );
+  RegisterVariable(FG_PITCHRATE,      " pitch rate "     );
+  RegisterVariable(FG_ROLLRATE,       " roll rate "      );
+  RegisterVariable(FG_MACH,           " mach "           );
+  RegisterVariable(FG_ALTITUDE,       " altitude "       );
+  RegisterVariable(FG_BI2VEL,         " BI2Vel "         );
+  RegisterVariable(FG_CI2VEL,         " CI2Vel "         );
+  RegisterVariable(FG_ELEVATOR_POS,   " elevator pos "   );
+  RegisterVariable(FG_AILERON_POS,    " aileron pos "    );
+  RegisterVariable(FG_RUDDER_POS,     " rudder pos "     );
+  RegisterVariable(FG_SPDBRAKE_POS,   " speedbrake pos " );
+  RegisterVariable(FG_SPOILERS_POS,   " spoiler pos "    );
+  RegisterVariable(FG_FLAPS_POS,      " flaps pos "      );
+  RegisterVariable(FG_ELEVATOR_CMD,   " elevator cmd "   );
+  RegisterVariable(FG_AILERON_CMD,    " aileron cmd "    );
+  RegisterVariable(FG_RUDDER_CMD,     " rudder cmd "     );
+  RegisterVariable(FG_SPDBRAKE_CMD,   " speedbrake cmd " );
+  RegisterVariable(FG_SPOILERS_CMD,   " spoiler cmd "    );
+  RegisterVariable(FG_FLAPS_CMD,      " flaps cmd "      );
+  RegisterVariable(FG_THROTTLE_CMD,   " throttle cmd "   );
+  RegisterVariable(FG_THROTTLE_POS,   " throttle pos "   );
+  RegisterVariable(FG_HOVERB,         " height / span "  );
+  RegisterVariable(FG_PITCH_TRIM_CMD, " pitch trim cmd " );
+
 }
 
 /******************************************************************************/
@@ -263,7 +336,7 @@ float FGState::GetParameter(string val_string) {
 
 /******************************************************************************/
 
-int FGState::GetParameterIndex(string val_string) {
+eParam FGState::GetParameterIndex(string val_string) {
   return coeffdef[val_string];
 }
 
@@ -271,7 +344,8 @@ int FGState::GetParameterIndex(string val_string) {
 //
 // NEED WORK BELOW TO ADD NEW PARAMETERS !!!
 //
-float FGState::GetParameter(int val_idx) {
+
+float FGState::GetParameter(eParam val_idx) {
   switch(val_idx) {
   case FG_QBAR:
     return FDMExec->GetTranslation()->Getqbar();
@@ -341,13 +415,17 @@ float FGState::GetParameter(int val_idx) {
     return FDMExec->GetPosition()->GetHOverB();
   case FG_PITCH_TRIM_CMD:
     return FDMExec->GetFCS()->GetPitchTrimCmd();
+  default:
+    cerr << "FGState::GetParameter() - No handler for parameter " << val_idx << endl;
+    return 0.0;
+    break;
   }
   return 0;
 }
 
 /******************************************************************************/
 
-void FGState::SetParameter(int val_idx, float val) {
+void FGState::SetParameter(eParam val_idx, float val) {
   switch(val_idx) {
   case FG_ELEVATOR_POS:
     FDMExec->GetFCS()->SetDePos(val);

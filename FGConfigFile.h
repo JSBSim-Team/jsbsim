@@ -50,6 +50,7 @@ INCLUDES
 #endif
 
 #include <string>
+#include "FGDefs.h"
 
 /*******************************************************************************
 DEFINES
@@ -78,6 +79,7 @@ public:
   FGConfigFile& operator>>(float&);
   FGConfigFile& operator>>(int&);
   FGConfigFile& operator>>(string&);
+  FGConfigFile& operator>>(eParam&);
   void ResetLineIndexToZero(void);
 
 protected:

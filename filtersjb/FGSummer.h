@@ -68,8 +68,8 @@ CLASS DECLARATION
 class FGSummer  : public FGFCSComponent
 {
   FGConfigFile* AC_cfg;
-  vector<int> InputIndices;
-  vector<int> InputTypes;
+  vector <eParam> InputIndices;
+  vector <int> InputTypes;
   bool clip;
   float clipmin,clipmax;
   

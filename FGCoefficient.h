@@ -42,8 +42,8 @@ INCLUDES
 #  include <simgear/compiler.h>
 #endif
 
+#include <vector>
 #include <string>
-#include <map>
 #include "FGConfigFile.h"
 #include "FGDefs.h"
 
@@ -54,6 +54,7 @@ DEFINES
 /*******************************************************************************
 FORWARD DECLARATIONS
 *******************************************************************************/
+
 class FGFDMExec;
 class FGState;
 class FGAtmosphere;
@@ -72,64 +73,17 @@ COMMENTS, REFERENCES,  and NOTES
 This class models the stability derivative coefficient lookup tables or 
 equations. Note that the coefficients need not be calculated each delta-t.
 
-FG_QBAR           1
-FG_WINGAREA       2
-FG_WINGSPAN       4
-FG_CBAR           8
-FG_ALPHA          16
-FG_ALPHADOT       32
-FG_BETA           64
-FG_BETADOT        128
-FG_PITCHRATE      256
-FG_ROLLRATE       512
-FG_YAWRATE        1024
-FG_MACH           2048
-FG_ALTITUDE       4096
-FG_BI2VEL         8192
-FG_CI2VEL         16384
-FG_ELEVATOR_POS   32768L
-FG_AILERON_POS    65536L
-FG_RUDDER_POS     131072L
-FG_SPDBRAKE_POS   262144L
-FG_FLAPS_POS      524288L
-FG_ELEVATOR_CMD   1048576L
-FG_AILERON_CMD    2097152L
-FG_RUDDER_CMD     4194304L
-FG_SPDBRAKE_CMD   8388608L
-FG_FLAPS_CMD      16777216L
-FG_SPARE1         33554432L
-FG_SPARE2         67108864L
-FG_SPARE3         134217728L
-FG_SPARE4         268435456L
-FG_SPARE5         536870912L
-FG_SPARE6         1073741824L
-
-The above definitions are found in FGDefs.h
-
 ********************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
+using std::vector;
+
 class FGCoefficient
 {
-public:
-  FGCoefficient(FGFDMExec*, FGConfigFile*);
-  ~FGCoefficient(void);
-  bool Allocate(int);
-  bool Allocate(int, int);
-  float Value(float, float);
-  float Value(float);
-  float Value(void);
-  float TotalValue(void);
-  inline string Getname(void) {return name;}
-  inline float GetSD(void) {return SD;}
-  inline long int Getmultipliers(void) {return multipliers;}
-  void DumpSD(void);
+  typedef vector <eParam> MultVec;
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
 
-protected:
-
-private:
   int numInstances;
   string filename;
   string description;
@@ -138,12 +92,10 @@ private:
   float StaticValue;
   float *Table2D;
   float **Table3D;
-  float LookupR, LookupC;
-  long int multipliers;
-  long int mult_idx[10];
+  eParam LookupR, LookupC;
+  MultVec multipliers;
   int rows, columns;
   Type type;
-  int mult_count;
   float SD; // Actual stability derivative (or other coefficient) value
 
   FGFDMExec*      FDMExec;
@@ -156,6 +108,21 @@ private:
   FGPosition*     Position;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
+
+public:
+  FGCoefficient(FGFDMExec*, FGConfigFile*);
+  ~FGCoefficient(void);
+  bool Allocate(int);
+  bool Allocate(int, int);
+  float Value(float, float);
+  float Value(float);
+  float Value(void);
+  float TotalValue(void);
+  inline string Getname(void) {return name;}
+  inline float GetSD(void) {return SD;}
+  inline MultVec Getmultipliers(void) {return multipliers;}
+  void DumpSD(void);
+
 };
 
 /******************************************************************************/

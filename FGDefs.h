@@ -60,37 +60,40 @@ SENTRY
 #define HPTOFTLBSSEC 550
 #define METERS_TO_FEET 3.2808
 
-#define FG_QBAR           1
-#define FG_WINGAREA       2
-#define FG_WINGSPAN       4
-#define FG_CBAR           8
-#define FG_ALPHA          16
-#define FG_ALPHADOT       32
-#define FG_BETA           64
-#define FG_BETADOT        128
-#define FG_PITCHRATE      256
-#define FG_ROLLRATE       512
-#define FG_YAWRATE        1024
-#define FG_MACH           2048
-#define FG_ALTITUDE       4096
-#define FG_BI2VEL         8192
-#define FG_CI2VEL         16384
-#define FG_ELEVATOR_POS   32768L
-#define FG_AILERON_POS    65536L
-#define FG_RUDDER_POS     131072L
-#define FG_SPDBRAKE_POS   262144L
-#define FG_SPOILERS_POS   524288L
-#define FG_FLAPS_POS      1048576L
-#define FG_ELEVATOR_CMD   2097152L
-#define FG_AILERON_CMD    4194304L
-#define FG_RUDDER_CMD     8388608L
-#define FG_SPDBRAKE_CMD   16777216L
-#define FG_SPOILERS_CMD   33554432L
-#define FG_FLAPS_CMD      67108864L
-#define FG_THROTTLE_CMD   134217728L
-#define FG_THROTTLE_POS   268435456L
-#define FG_HOVERB         536870912L
-#define FG_PITCH_TRIM_CMD  1073741824L
+enum eParam {
+  FG_NONE = 0,
+  FG_QBAR,
+  FG_WINGAREA,
+  FG_WINGSPAN,
+  FG_CBAR,
+  FG_ALPHA,
+  FG_ALPHADOT,
+  FG_BETA,
+  FG_BETADOT,
+  FG_PITCHRATE,
+  FG_ROLLRATE,
+  FG_YAWRATE,
+  FG_MACH,
+  FG_ALTITUDE,
+  FG_BI2VEL,
+  FG_CI2VEL,
+  FG_ELEVATOR_POS,
+  FG_AILERON_POS,
+  FG_RUDDER_POS,
+  FG_SPDBRAKE_POS,
+  FG_SPOILERS_POS,
+  FG_FLAPS_POS,
+  FG_ELEVATOR_CMD,
+  FG_AILERON_CMD,
+  FG_RUDDER_CMD,
+  FG_SPDBRAKE_CMD,
+  FG_SPOILERS_CMD,
+  FG_FLAPS_CMD,
+  FG_THROTTLE_CMD,
+  FG_THROTTLE_POS,
+  FG_HOVERB,
+  FG_PITCH_TRIM_CMD
+};
 
 /******************************************************************************/
 #endif

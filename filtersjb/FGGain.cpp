@@ -58,7 +58,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Schedule.clear();
   Gain = 1.000;
   Min = Max = 0;
-  ScheduledBy = 0;
+  ScheduledBy = FG_NONE;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");

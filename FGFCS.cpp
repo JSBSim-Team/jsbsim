@@ -154,7 +154,7 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
 
 /******************************************************************************/
 
-float FGFCS::GetComponentOutput(int idx) {
+float FGFCS::GetComponentOutput(eParam idx) {
   return Components[idx]->GetOutput();
 }
 

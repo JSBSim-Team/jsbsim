@@ -224,7 +224,7 @@ private:
 
   CoeffVector Coeff;
 
-  void DisplayCoeffFactors(int multipliers);
+  void DisplayCoeffFactors(vector <eParam> multipliers);
 
   bool GearUp;
 

@@ -47,6 +47,7 @@ INCLUDES
 #endif
 
 #include <string>
+#include "../FGDefs.h"
 
 /*******************************************************************************
 DEFINES
@@ -70,10 +71,10 @@ protected:
   string Name;
   enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopilot inputs
   int ID;
-  int InputIdx;
+  eParam InputIdx;
   float Input;
   string sOutputIdx;
-  int OutputIdx;
+  eParam OutputIdx;
   float Output;
   bool IsOutput;
 

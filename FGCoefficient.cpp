@@ -107,19 +107,16 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
     end   = multparms.length();
     n     = multparms.find("|");
-    start = mult_count = multipliers = 0;
+    start = 0;
 
     while (n < end && n >= 0) {
       n -= start;
-      mult_idx[mult_count] = State->GetParameterIndex(multparms.substr(start,n));
-      multipliers += mult_idx[mult_count];
-      mult_count++;
+      multipliers.push_back(State->GetParameterIndex(multparms.substr(start,n)));
       start += n+1;
       n = multparms.find("|",start);
     }
-    mult_idx[mult_count] = State->GetParameterIndex(multparms.substr(start,n));
-    multipliers += mult_idx[mult_count];
-    mult_count++;
+
+    multipliers.push_back(State->GetParameterIndex(multparms.substr(start,n)));
 
     // End of non-dimensionalizing parameter read-in
 
@@ -222,8 +219,8 @@ float FGCoefficient::Value(float rVal, float cVal)
 
   SD = Value = col1temp + cFactor*(col2temp - col1temp);
 
-  for (midx=0;midx<mult_count;midx++) {
-    Value *= State->GetParameter(mult_idx[midx]);
+  for (midx=0; midx < multipliers.size(); midx++) {
+    Value *= State->GetParameter(multipliers[midx]);
   }
 
   return Value;
@@ -250,8 +247,8 @@ float FGCoefficient::Value(float Val)
 
   SD = Value = Factor*(Table3D[r][1] - Table3D[r-1][1]) + Table3D[r-1][1];
 
-  for (midx=0;midx<mult_count;midx++) {
-    Value *= State->GetParameter(mult_idx[midx]);
+  for (midx=0; midx < multipliers.size(); midx++) {
+    Value *= State->GetParameter(multipliers[midx]);
   }
 
   return Value;
@@ -266,8 +263,8 @@ float FGCoefficient::Value(void)
 
 	SD = Value = StaticValue;
 
-  for (midx=0;midx<mult_count;midx++) {
-    Value *= State->GetParameter(mult_idx[midx]);
+  for (midx=0; midx < multipliers.size(); midx++) {
+    Value *= State->GetParameter(multipliers[midx]);
   }
 
   return Value;

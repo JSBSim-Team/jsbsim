@@ -47,7 +47,6 @@ INCLUDES
 #  endif
 #else
 #  include <vector>
-#  include <string>
 #endif
 
 #include <string>
@@ -94,7 +93,7 @@ public:
 
   inline float GetThrottlePos(int ii) { return ThrottlePos[ii]; }
   inline FGState* GetState(void) { return State; }
-  float GetComponentOutput(int idx);
+  float GetComponentOutput(eParam idx);
   string GetComponentName(int idx);
 
   inline void SetDaCmd(float tt) { DaCmd = tt; }

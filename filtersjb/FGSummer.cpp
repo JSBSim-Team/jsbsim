@@ -53,7 +53,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
   string token;
-  int tmpInputIndex;
+  eParam tmpInputIndex;
 
   clip = false;
   InputIndices.clear();

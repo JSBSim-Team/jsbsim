@@ -106,8 +106,8 @@ bool FGFlaps::Run(void ) {
   float flap_transit_rate=0;
 
   FGFCSComponent::Run(); // call the base class for initialization of Input
-  Flap_Handle=Input*Detents[NumDetents-1];
-  Flap_Position=fcs->GetState()->GetParameter(OutputIdx);
+  Flap_Handle = Input*Detents[NumDetents-1];
+  Flap_Position = fcs->GetState()->GetParameter(OutputIdx);
 
   if(Flap_Handle < Detents[0]) {
     fi=0;
