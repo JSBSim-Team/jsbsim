@@ -27,6 +27,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 12/14/03   DPC   Created
+01/11/04   DPC   Derive from FGAtmosphere
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -39,13 +40,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
+#include "FGAtmosphere.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.1 2004/01/11 20:31:08 dpculp Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.2 2004/01/12 21:08:28 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +74,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.1 2004/01/11 20:31:08 dpculp Exp $
+    @version $Id: FGMSIS.h,v 1.2 2004/01/12 21:08:28 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,50 +115,94 @@ struct nrlmsise_output {
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class MSIS : public FGJSBBase
+class MSIS : public FGAtmosphere
 {
 public:
 
   /// Constructor
-  MSIS(void);
-
+  MSIS(FGFDMExec*);
   /// Destructor
   ~MSIS();
+  /** Runs the MSIS-00 atmosphere model; called by the Executive
+      @return false if no error */
+  bool Run(void);
 
   bool InitModel(void);
+
+  /// Returns the temperature in Kelvins.
+  inline double GetTemperature_K(void) const {return temperature;}
+  /// Returns the temperature in degrees Celcius.
+  inline double GetTemperature_C(void) const {return (temperature - 273.15);}
+  /// Returns the temperature in degrees Rankine.
+  inline double GetTemperature(void) const {return (temperature * 0.555555556);}
+  /// Returns the density in grams/cm^3.
+  inline double GetDensity_SI(void)  const {return density;}
+  /// Returns the density in slugs/ft^3.
+  inline double GetDensity(void)  const {return (density * 1.940321);}
+  /// Returns the pressure in Pascals.
+  inline double GetPressure_Pa(void) const {return pressure;}
+  /// Returns the pressure in lb/ft^2.
+  inline double GetPressure(void) const {return (pressure * 0.0208855);}
+  /// Returns the speed of sound in m/sec.
+  inline double GetSoundSpeed_mps(void) const {return soundspeed;}
+  /// Returns the speed of sound in ft/sec.
+  inline double GetSoundSpeed(void) const {return soundspeed * 3.281;}
+
+  /// Returns the sea level temperature in degrees Rankine.
+  inline double GetTemperatureSL(void) const { return (SLtemperature * 0.555555556); }
+  /// Returns the sea level density in slugs/ft^3
+  inline double GetDensitySL(void)  const { return (SLdensity * 1.940321); }
+  /// Returns the sea level pressure in psf.
+  inline double GetPressureSL(void) const { return (SLpressure * 0.0208855); }
+  /// Returns the sea level speed of sound in ft/sec.
+  inline double GetSoundSpeedSL(void) const { return (SLsoundspeed * 3.281); }
+
+  /// Returns the ratio of at-altitude temperature over the sea level value.
+  inline double GetTemperatureRatio(void) const { return (temperature*rSLtemperature); }
+  /// Returns the ratio of at-altitude density over the sea level value.
+  inline double GetDensityRatio(void) const { return (density*rSLdensity); }
+  /// Returns the ratio of at-altitude pressure over the sea level value.
+  inline double GetPressureRatio(void) const { return (pressure*rSLpressure); }
+  /// Returns the ratio of at-altitude sound speed over the sea level value.
+  inline double GetSoundSpeedRatio(void) const { return (soundspeed*rSLsoundspeed); }
+
+  /// Tells the simulator to use an externally calculated atmosphere model.
+  void UseExternal(void);
+  /// Tells the simulator to use the internal atmosphere model.
+  void UseInternal(void);  //this is the default
+  /// Gets the boolean that tells if the external atmosphere model is being used.
+  bool External(void) { return useExternal; }
+
+  /// Provides the external atmosphere model with an interface to set the temperature.
+  inline void SetExTemperature(double t)  { exTemperature=t; }
+  /// Provides the external atmosphere model with an interface to set the density.
+  inline void SetExDensity(double d)      { exDensity=d; }
+  /// Provides the external atmosphere model with an interface to set the pressure.
+  inline void SetExPressure(double p)     { exPressure=p; }
+
+  void bind(void);
+  void unbind(void);
+
+private:
+
+  int lastIndex;
+  double h;
+  double htab[8];
+  double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
+  double rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
+  double temperature,density,pressure;
+  double soundspeed;
+  bool useExternal;
+  double exTemperature,exDensity,exPressure;
+  double intTemperature, intDensity, intPressure;
+  
   void Calculate(int day,      // day of year (1 to 366) 
                  double sec,   // seconds in day (0.0 to 86400.0)
                  double alt,   // altitude, feet
                  double lat,   // geodetic latitude, degrees
                  double lon    // geodetic longitude, degrees
                 );
-
-  /// Returns the temperature in Kelvins.
-  inline double GetTemperature_K(void) const {return temperature;}
-
-  /// Returns the temperature in degrees Celcius.
-  inline double GetTemperature_C(void) const {return KelvinToCelsius(output.t[1]);}
-
-  /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature_R(void) const {return KelvinToRankine(output.t[1]);}
-
-  /// Returns the density in grams/cm^3.
-  inline double GetDensity_SI(void)  const {return density;}
-
-  /// Returns the density in slugs/ft^3.
-  inline double GetDensity_en(void)  const {return density * 1.940321;}
-  
-  /// Returns the pressure in Pascals.
-  inline double GetPressure_Pa(void) const {return pressure;}
-
-  /// Returns the pressure in lb/ft^2.
-  inline double GetPressure_en(void) const {return pressure * 0.0208855;}
-
-private:
-
-  double temperature;
-  double density;
-  double pressure;
+  void Debug(int from);
 
   nrlmsise_flags flags;
   nrlmsise_input input;

@@ -33,6 +33,7 @@ given day-of-year, time-of-day, altitude, latitude, longitude and local time.
 HISTORY
 --------------------------------------------------------------------------------
 12/14/03   DPC   Created
+01/11/04   DPC   Derived from FGAtmosphere
 
  -------------------------------------------------------------------- 
  ---------  N R L M S I S E - 0 0    M O D E L    2 0 0 1  ---------- 
@@ -57,6 +58,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGMSIS.h"
+#include "FGState.h"
+#include "FGPosition.h"
 #include <math.h>          /* maths functions */
 #include <stdlib.h>        /* for malloc/free */
 #include <stdio.h>         /* for printf      */
@@ -64,7 +67,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.1 2004/01/11 20:31:08 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.2 2004/01/12 21:08:28 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,20 +93,25 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-MSIS::MSIS(void)
+MSIS::MSIS(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 {
+  Name = "MSIS";
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 MSIS::~MSIS()
 {
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool MSIS::InitModel(void)
 {
+  FGModel::InitModel();
+
   unsigned int i;  
 
   flags.switches[0] = 0;
@@ -119,7 +127,83 @@ bool MSIS::InitModel(void)
   output.d[5] = 0.001225;
   output.t[1] = 288.15;
 
+  // get sea-level atmosphere
+  Calculate(100, 43200.0, 0.0,
+            Position->GetLatitude(), Position->GetLongitude());
+  SLtemperature = output.t[1];  // Kelvins
+  SLdensity     = output.d[5];  // grams/cm^3
+  SLpressure    = 2.870368 * SLdensity * SLtemperature;  // Pascals
+  SLsoundspeed  = 20.05 * sqrt(SLtemperature);  // meters/sec
+
+  // start with local atmosphere equal to sea-level atmosphere
+  temperature = SLtemperature;
+  pressure    = SLpressure;
+  density     = SLdensity;
+  soundspeed  = SLsoundspeed; 
+
+  // calculate reciprocals of sea-level values
+  rSLtemperature = 1.0/SLtemperature;
+  rSLpressure    = 1.0/SLpressure;
+  rSLdensity     = 1.0/SLdensity;
+  rSLsoundspeed  = 1.0/SLsoundspeed;
+  
+  useExternal=false;
+
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool MSIS::Run(void)
+{
+  if (!FGModel::Run()) {  // if false then execute this Run()
+    
+    //do temp, pressure, and density first
+    if (!useExternal) {
+      // get sea-level values
+      Calculate(100,
+                43200.0, 
+                0.0, 
+                Position->GetLatitude(),
+                Position->GetLongitude());
+      SLtemperature = output.t[1];  // Kelvins
+      SLdensity     = output.d[5];  // grams/cm^3
+      SLpressure    = 2.870368 * SLdensity * SLtemperature;  // Pascals
+      SLsoundspeed  = 20.05 * sqrt(SLtemperature);  // meters/sec
+      rSLtemperature = 1.0/SLtemperature;
+      rSLpressure    = 1.0/SLpressure;
+      rSLdensity     = 1.0/SLdensity;
+      rSLsoundspeed  = 1.0/SLsoundspeed;
+
+      // get at-altitude values
+      Calculate(100,
+                43200.0, 
+                Position->Geth(), 
+                Position->GetLatitude(),
+                Position->GetLongitude());
+      temperature = output.t[1];  // Kelvins
+      density     = output.d[5];  // grams/cm^3
+      pressure    = 2.870368 * density * temperature;  // Pascals
+      soundspeed  = 20.05 * sqrt(temperature);  // meters/sec 
+    } 
+
+    if (turbType != ttNone) {
+      Turbulence();
+      vWindNED += vTurbulence;
+    }
+
+    if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
+
+    if (psiw < 0) psiw += 2*M_PI;
+
+    State->Seta(soundspeed * 3.281);
+
+    Debug(2);
+
+    return false;
+  } else {                               // skip Run() execution this time
+    return true;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,10 +222,6 @@ void MSIS::Calculate(int day, double sec, double alt, double lat, double lon)
   if (input.lst < 0.0) input.lst = 24 - input.lst;
 
   gtd7d(&input, &flags, &output);
-
-  temperature = output.t[1];
-  density = output.d[5];
-  pressure = density * 1000 * 287.05 * temperature; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -521,12 +601,12 @@ double MSIS::densu(double alt, double dlb, double tinf, double tlb, double xm,
 /*      Calculate Temperature and Density Profiles for MSIS models
  *      New lower thermo polynomial
  */
-  double yd2, yd1, x, y;
+  double yd2, yd1, x=0.0, y=0.0;
   double rgas=831.4;
   double densu_temp=1.0;
-  double za, z, zg2, tt, ta;
-  double dta, z1, z2, t1, t2, zg, zgdif;
-  int mn;
+  double za, z, zg2, tt, ta=0.0;
+  double dta, z1=0.0, z2, t1=0.0, t2, zg, zgdif=0.0;
+  int mn=0;
   int k;
   double glb;
   double expl;
@@ -1126,7 +1206,7 @@ void MSIS::ghp7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
   double test = 0.00043;
   double ltest = 12;
   double pl, p;
-  double zi;
+  double zi = 0.0;
   double z;
   double cl, cl2;
   double ca, cd;
@@ -1524,6 +1604,63 @@ void MSIS::gts7(struct nrlmsise_input *input, struct nrlmsise_flags *flags,
     for(i=0;i<9;i++)
       output->d[i]=output->d[i]*1.0E6;
     output->d[5]=output->d[5]/1000;
+  }
+}
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
+
+void MSIS::Debug(int from)
+{
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
+    if (from == 0) { // Constructor
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: MSIS" << endl;
+    if (from == 1) cout << "Destroyed:    MSIS" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 32) { // Turbulence
+    if (frame == 0 && from == 2) {
+      cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
+           << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
+           << "vDirection(X), vDirection(Y), vDirection(Z), "
+           << "Magnitude, "
+           << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
+    } else if (from == 2) {
+      cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+    }
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
   }
 }
 
