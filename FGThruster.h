@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.8 2001/01/19 23:36:07 jsb Exp $"
+#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.9 2001/01/20 14:11:26 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -61,10 +61,14 @@ public:
 
   virtual float Calculate(float) {};
   void SetName(string name) {Name = name;}
-  virtual float GetPowerRequired(void) {};
+  virtual float GetPowerRequired(void) {}
+  virtual void SetdeltaT(float dt) {deltaT = dt;}
 
 protected:
   string Name;
+  float Thrust;
+  float PowerRequired;
+  float deltaT;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

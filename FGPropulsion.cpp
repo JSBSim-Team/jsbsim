@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.22 2001/01/19 23:36:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.23 2001/01/20 14:11:26 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,9 +87,12 @@ bool FGPropulsion::Run(void) {
   float tot_thrust;
   float tot_moment;
 
+  dt = State->Getdt();
+
   tot_thrust = tot_moment = 0.0;
   if (!FGModel::Run()) {
     for (int i=0; i<numEngines; i++) {
+      Thrusters[i]->SetdeltaT(dt);
       Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
       Thrusters[i]->Calculate(Engines[i]->GetPowerAvailable());
 //      tot_thrust += Thrusters[i]->GetForce();  // sum body frame forces
@@ -219,9 +222,10 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
           else cerr << "Unknown identifier: " << token << " in engine file: "
 	                                                      << engineFileName << endl;
 	      }
-	    
+
         Thrusters[numThrusters]->SetLocation(xLoc, yLoc, zLoc);
         Thrusters[numThrusters]->SetAnglesToBody(0, Pitch, Yaw);
+        Thrusters[numThrusters]->SetdeltaT(dt*rate);
 
         numThrusters++;
 

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.5 2001/01/19 23:36:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.6 2001/01/20 14:11:26 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,23 +101,52 @@ FGPropeller::~FGPropeller(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// We must be getting the aerodynamic velocity here, NOT the inertial velocity.
+// We need the velocity with respect to the wind.
+//
+// Note that PwrAvail is the excess power available after the drag of the
+// propeller has been subtracted. At equilibrium, PwrAvail will be zero -
+// indicating that the propeller will not accelerate or decelerate.
+// Remembering that Torque * omega = Power, we can derive the torque on the
+// propeller and its acceleration to give a new RPM. The current RPM will be
+// used to calculate thrust.
 
-float FGPropeller::Calculate(float  PReq)
+float FGPropeller::Calculate(float ExcessPwrAvail)
 {
+  float J, C_Thrust, omega;
   float Vel = (fdmex->GetTranslation()->GetUVW())(1);
-  
-  return 0.0; // return thrust in pounds
+  float rho = fdmex->GetAtmosphere()->GetDensity();
+
+  if (RPM > 0.10) {
+    J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPM / 60.0);
+  } else {
+    J = 0.0;
+  }
+
+  if (MaxPitch == MinPitch) { // Fixed pitch prop
+    C_Thrust = cThrust->GetValue(J);
+  } else {                    // Variable pitch prop
+    C_Thrust = cThrust->GetValue(J, Pitch);
+  }
+
+  Thrust = C_Thrust*RPM*RPM*Diameter*Diameter*Diameter*Diameter*rho/(3600.0);
+
+  omega = (RPM/60.0)*2.0*M_PI;
+  RPM += (((ExcessPwrAvail / omega) / Ixx) * 60.0 / (2.0 * M_PI)) * deltaT;
+
+  return Thrust; // return thrust in pounds
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGPropeller::GetPowerRequired(void)
 {
+  if (RPM <= 0.10) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
+
   float J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPM / 60.0);
   float rho = fdmex->GetAtmosphere()->GetDensity();
   float cPReq;
-
-  if (RPM <= 1) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
     cPReq = cPower->GetValue(J);
@@ -125,8 +154,9 @@ float FGPropeller::GetPowerRequired(void)
     cPReq = cPower->GetValue(J, Pitch);
   }
 
-  return cPReq*RPM*RPM*RPM*Diameter*Diameter*Diameter*Diameter*Diameter*rho/(216000.0);
-}
+  PowerRequired = cPReq*RPM*RPM*RPM*Diameter*Diameter*Diameter*Diameter
+                                                       *Diameter*rho/(216000.0);
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  return PowerRequired;
+}
 
