@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.40 2004/03/06 14:16:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.41 2004/03/07 06:02:35 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,22 +102,26 @@ bool FGMassBalance::Run(void)
     Iyy = mJ(2,2);
     Izz = mJ(3,3);
     Ixy = mJ(1,2);
-    Ixz = mJ(1,2);
+    Ixz = mJ(1,3);
     Iyz = mJ(2,3);
 
-    mJ(1,2) = mJ(2,1) *= -1;
-    mJ(1,3) = mJ(3,1) *= -1;
-    mJ(2,3) = mJ(3,2) *= -1;
+    mJ(1,2) = mJ(2,1) *= -1.0;
+    mJ(1,3) = mJ(3,1) *= -1.0;
+    mJ(2,3) = mJ(3,2) *= -1.0;
 
 // Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
 
-    denom = Ixx*Iyy*Izz - 2.0*Ixy*Iyz*Ixz - Ixx*Iyz*Iyz - Iyy*Ixz*Ixz - Izz*Ixy*Ixy;
-    k1 = (Iyy*Izz - Iyz*Iyz)/denom;
-    k2 = (Iyz*Ixz + Ixy*Izz)/denom;
-    k3 = (Ixy*Iyz + Ixz*Iyy)/denom;
-    k4 = (Izz*Ixx - Ixz*Ixz)/denom;
-    k5 = (Ixy*Ixz + Iyz*Ixx)/denom;
-    k6 = (Ixx*Iyy - Ixy*Ixy)/denom;
+    k1 = (Iyy*Izz - Iyz*Iyz);
+    k2 = (Iyz*Ixz + Ixy*Izz);
+    k3 = (Ixy*Iyz + Iyy*Ixz);
+
+    denom = 1.0/(Ixx*k1 - Ixy*k2 - Ixz*k3 );
+    k1 = k1*denom;
+    k2 = k2*denom;
+    k3 = k3*denom;
+    k4 = (Izz*Ixx - Ixz*Ixz)*denom;
+    k5 = (Ixy*Ixz + Iyz*Ixx)*denom;
+    k6 = (Ixx*Iyy - Ixy*Ixy)*denom;
 
     mJinv.InitMatrix( k1, k2, k3,
                       k2, k4, k5,
