@@ -53,11 +53,15 @@ INCLUDES
 FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
+  string token;
+  int tmpInputIndex;
+
+  InputIndices.clear();
+  InputTypes.clear();
+
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
-  string token;
-  int tmpInputIndex;
 
   while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
     *AC_cfg >> token;
@@ -106,7 +110,7 @@ bool FGSummer::Run(void )
       cout << "Input Value (Pilot/AC Value): " << fcs->GetState()->GetParameter(InputIndices[idx]) << endl;
       break;
     case itFCS:
-      Output += fcs->GetComponentOutput(idx);
+      Output += fcs->GetComponentOutput(InputIndices[idx]);
       cout << "Input Value: " << fcs->GetComponentName(InputIndices[idx]) << " " << fcs->GetComponentOutput(InputIndices[idx]) << endl;
       break;
     }

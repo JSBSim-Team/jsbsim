@@ -52,14 +52,17 @@ INCLUDES
 FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                    AC_cfg(AC_cfg)
 {
-  Type = AC_cfg->GetValue("TYPE");
-  Name = AC_cfg->GetValue("NAME");
-  AC_cfg->GetNextConfigLine();
   string token;
 
+  lookup = NULL;
+  Schedule.clear();
   Gain = 1.000;
   Min = Max = 0;
   ScheduledBy = 0;
+
+  Type = AC_cfg->GetValue("TYPE");
+  Name = AC_cfg->GetValue("NAME");
+  AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
     *AC_cfg >> token;

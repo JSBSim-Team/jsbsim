@@ -5,98 +5,87 @@ State=2
 Left=5
 Top=6
 Width=1267
-Height=114
+Height=105
 MaxLeft=-1
 MaxTop=-1
 MaxWidth=1288
-MaxHeight=114
+MaxHeight=105
 ClientWidth=1280
-ClientHeight=87
+ClientHeight=78
 
 [ProjectManager]
 Create=1
 Visible=1
 State=0
 Left=0
-Top=451
-Width=242
-Height=392
+Top=405
+Width=274
+Height=386
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=242
-ClientHeight=392
+ClientWidth=274
+ClientHeight=386
 TBDockHeight=370
-LRDockWidth=242
+LRDockWidth=274
 Dockable=1
 
-[CPUWindow]
-DumpPane=101
-DisassemblyPane=240
-RegisterPane=297
-FlagPane=82
-
 [Closed Files]
-File_0=SourceModule,'f:\PROGRA~1\BORLAND\CBUILD~2\include\condefs.h',0,1,1,51,12,0,0
-File_1=SourceModule,'J:\JSBSim\FGOutput.cpp',0,1,97,1,125,0,0
-File_2=SourceModule,'J:\JSBSim\FGFDMExec.cpp',0,1,133,1,165,0,0
-File_3=SourceModule,'J:\JSBSim\FGConfigFile.cpp',0,1,175,40,233,0,0
-File_4=SourceModule,'J:\JSBSim\FGMatrix.cpp',0,1,67,34,84,0,0
-File_5=SourceModule,'J:\JSBSim\Makefile.solo',0,1,1,89,6,0,0
-File_6=SourceModule,'J:\JSBSim\filtersjb\FGFilter.cpp',0,1,25,18,70,0,0
+File_0=SourceModule,'D:\CBuilder4\Projects\FDM\JSBSim\aircraft\X15\X15.cfg',0,1,190,75,195,0,0
+File_1=SourceModule,'f:\PROGRA~1\BORLAND\CBUILD~2\include\condefs.h',0,1,1,51,12,0,0
+File_2=SourceModule,'J:\JSBSim\FGOutput.cpp',0,1,97,1,125,0,0
+File_3=SourceModule,'J:\JSBSim\FGFDMExec.cpp',0,1,133,1,165,0,0
+File_4=SourceModule,'J:\JSBSim\FGConfigFile.cpp',0,1,175,40,233,0,0
+File_5=SourceModule,'J:\JSBSim\FGMatrix.cpp',0,1,67,34,84,0,0
+File_6=SourceModule,'J:\JSBSim\Makefile.solo',0,1,1,89,6,0,0
+File_7=SourceModule,'J:\JSBSim\filtersjb\FGFilter.cpp',0,1,25,18,70,0,0
 
 [Modules]
-Module0=J:\JSBSim\JSBSim.bpr
-Module1=J:\JSBSim\filtersjb\FGSummer.cpp
-Module2=J:\JSBSim\aircraft\X15\X15.cfg
-Module3=J:\JSBSim\filtersjb\FGFCSComponent.cpp
-Module4=J:\JSBSim\filtersjb\FGGain.cpp
-Module5=J:\JSBSim\FGState.cpp
-Module6=J:\JSBSim\FGFCS.cpp
-Module7=F:\PROGRA~1\BORLAND\CBUILD~2\INCLUDE\vector.h
-Count=8
+Module0=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.bpr
+Module1=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGSummer.cpp
+Module2=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGGain.cpp
+Module3=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp
+Module4=D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp
+Module5=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGFCSComponent.cpp
+Module6=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
+Count=7
 EditWindowCount=1
 
-[J:\JSBSim\JSBSim.bpr]
+[D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.bpr]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\filtersjb\FGSummer.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGSummer.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\aircraft\X15\X15.cfg]
+[D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGGain.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\filtersjb\FGFCSComponent.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\filtersjb\FGGain.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\FGState.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGFCSComponent.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\FGFCS.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[F:\PROGRA~1\BORLAND\CBUILD~2\INCLUDE\vector.h]
-ModuleType=SourceModule
-FormState=0
-FormOnTop=0
-
-[F:\Program Files\Borland\CBuilder4\Bin\ProjectGroup1.bpg]
+[D:\CBuilder4\Bin\ProjectGroup1.bpg]
 FormState=0
 FormOnTop=0
 
@@ -107,23 +96,23 @@ ClassHierarchy=ClassHierarchy@EditWindow0
 Create=1
 Visible=1
 State=0
-Left=148
-Top=131
-Width=1120
-Height=891
+Left=18
+Top=102
+Width=1134
+Height=836
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1112
-ClientHeight=864
-LeftPanelSize=242
+ClientWidth=1126
+ClientHeight=809
+LeftPanelSize=274
 LeftPanelClients=CodeExplorer@EditWindow0,ProjectManager
-LeftPanelData=00000400000000004B0300000000000001F2000000000000000100000000B80100000C000000436F64654578706C6F72657201000000004B0300001200000050726F6A6563744D616E61676572466F726DFFFFFFFF
+LeftPanelData=0000040000000000170300000000000001120100000000000001000000008A0100000C000000436F64654578706C6F7265720100000000170300001200000050726F6A6563744D616E61676572466F726DFFFFFFFF
 RightPanelSize=0
 BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
 BottomPanelData=00000400010000000B0000004D657373616765566965770000000000000000000000000000000000FFFFFFFF
-ViewCount=10
-CurrentView=0
+ViewCount=11
+CurrentView=4
 View0=0
 View1=1
 View2=2
@@ -134,10 +123,11 @@ View6=6
 View7=7
 View8=8
 View9=9
+View10=10
 
 [ClassHierarchy@EditWindow0]
-TreeWidth=228
-FieldListHeigth=149
+TreeWidth=185
+FieldListHeigth=121
 
 [CodeExplorer@EditWindow0]
 Create=1
@@ -145,14 +135,14 @@ Visible=1
 State=0
 Left=0
 Top=11
-Width=242
-Height=425
+Width=274
+Height=379
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=242
-ClientHeight=425
+ClientWidth=274
+ClientHeight=379
 TBDockHeight=388
-LRDockWidth=242
+LRDockWidth=274
 Dockable=1
 ClassViewDisplayMode=0
 
@@ -162,84 +152,91 @@ Visible=0
 State=0
 Left=11
 Top=0
-Width=1101
+Width=1115
 Height=52
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1101
+ClientWidth=1115
 ClientHeight=52
 TBDockHeight=52
 LRDockWidth=443
 Dockable=1
 
 [View0]
-Module=J:\JSBSim\JSBSim.cpp
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGSummer.cpp
 CursorX=1
-CursorY=119
-TopLine=105
+CursorY=98
+TopLine=78
 LeftCol=1
 
 [View1]
-Module=J:\JSBSim\filtersjb\FGFCSComponent.cpp
-CursorX=19
-CursorY=62
-TopLine=49
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGSummer.h
+CursorX=42
+CursorY=73
+TopLine=55
 LeftCol=1
 
 [View2]
-Module=J:\JSBSim\FGState.cpp
-CursorX=1
-CursorY=319
-TopLine=267
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGGain.h
+CursorX=43
+CursorY=72
+TopLine=67
 LeftCol=1
 
 [View3]
-Module=J:\JSBSim\filtersjb\FGSummer.cpp
-CursorX=11
-CursorY=74
-TopLine=69
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGGain.cpp
+CursorX=1
+CursorY=106
+TopLine=84
 LeftCol=1
 
 [View4]
-Module=J:\JSBSim\aircraft\X15\X15.cfg
+Module=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.cpp
 CursorX=1
-CursorY=1
-TopLine=192
+CursorY=119
+TopLine=103
 LeftCol=1
 
 [View5]
-Module=J:\JSBSim\filtersjb\FGSummer.h
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp
 CursorX=1
-CursorY=1
-TopLine=49
+CursorY=168
+TopLine=139
 LeftCol=1
 
 [View6]
-Module=J:\JSBSim\FGFCS.cpp
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp
 CursorX=1
-CursorY=154
-TopLine=125
+CursorY=80
+TopLine=66
 LeftCol=1
 
 [View7]
-Module=F:\PROGRA~1\BORLAND\CBUILD~2\INCLUDE\vector.h
-CursorX=1
-CursorY=465
-TopLine=439
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGFCSComponent.h
+CursorX=43
+CursorY=80
+TopLine=60
 LeftCol=1
 
 [View8]
-Module=J:\JSBSim\filtersjb\FGFCSComponent.h
-CursorX=39
-CursorY=67
-TopLine=61
+Module=D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGFCSComponent.cpp
+CursorX=55
+CursorY=72
+TopLine=55
 LeftCol=1
 
 [View9]
-Module=J:\JSBSim\filtersjb\FGGain.cpp
-CursorX=40
-CursorY=102
-TopLine=97
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.h
+CursorX=67
+CursorY=100
+TopLine=73
+LeftCol=1
+
+[View10]
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
+CursorX=1
+CursorY=1
+TopLine=235
 LeftCol=1
 
 [DockHosts]
@@ -250,8 +247,11 @@ Count=1
 Watch0='((FGFCSComponent*)this)->fcs->Components[idx].Output',256,0,18,1
 
 [Breakpoints]
-Count=1
+Count=4
 Breakpoint0='J:\JSBSim\JSBSim.cpp',126,'',0,1
+Breakpoint1='D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGGain.cpp',106,'',0,0
+Breakpoint2='D:\CBuilder4\Projects\FDM\JSBSim\filtersjb\FGSummer.cpp',98,'',0,0
+Breakpoint3='D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp',80,'',0,0
 
 [AddressBreakpoints]
 Count=0

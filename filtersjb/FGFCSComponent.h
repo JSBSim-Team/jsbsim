@@ -85,9 +85,9 @@ public:
   ~FGFCSComponent ( ) { }       //Destructor
 
   virtual bool Run (void);
+  virtual void SetOutput(void);
   inline float GetOutput (void) {return Output;}
   inline string GetName(void) {return Name;}
-  void SetOutput(void);
 };
 
 #include "FGFCS.h"
