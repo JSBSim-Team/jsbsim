@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.12 2003/03/26 20:34:12 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.13 2003/10/19 09:45:59 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -72,7 +72,7 @@
 
   <PROPULSION>
 
-    <AC_ENGINE FILE="low_bypass_turbofan">
+    <AC_ENGINE FILE="F100-PW-229_sim">
       XLOC       0.0
       YLOC     -25.5
       ZLOC       0.0
@@ -82,7 +82,7 @@
       FEED         1
     </AC_ENGINE>
 
-    <AC_ENGINE FILE="low_bypass_turbofan">
+    <AC_ENGINE FILE="F100-PW-229_sim">
       XLOC       0.0
       YLOC      25.5
       ZLOC       0.0
@@ -109,8 +109,8 @@
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
-      XLOC    -224.0
-      YLOC    -114.0
+      XLOC    -236.39
+      YLOC       0.0
       ZLOC       4.5
       RADIUS    29.0
       CAPACITY 185.0
@@ -118,8 +118,8 @@
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC    -224.0
-      YLOC     114.0
+      XLOC    -236.39
+      YLOC       0.0
       ZLOC       4.5
       RADIUS    29.0
       CAPACITY 185.0
