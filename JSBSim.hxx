@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.26 2001/11/12 05:06:28 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.27 2001/12/22 16:58:05 dmegginson Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -215,7 +215,7 @@ public:
     /** Update the position based on inputs, positions, velocities, etc.
         @param multiloop number of times to loop through the FDM
 	      @return true if successful */
-    bool update( int multiloop );
+    void update( int multiloop );
     bool ToggleDataLogging(bool state);
     bool ToggleDataLogging(void);
     void do_trim(void);

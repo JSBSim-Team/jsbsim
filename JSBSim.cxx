@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.93 2001/12/17 14:34:38 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.94 2001/12/22 16:58:05 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -230,7 +230,8 @@ void FGJSBsim::init() {
 
 // Run an iteration of the EOM (equations of motion)
 
-bool FGJSBsim::update( int multiloop ) {
+void
+FGJSBsim::update( int multiloop ) {
 
     int i;
 
@@ -306,7 +307,6 @@ bool FGJSBsim::update( int multiloop ) {
     // translate JSBsim back to FG structure so that the
     // autopilot (and the rest of the sim can use the updated values
     copy_from_JSBsim();
-    return true;
 }
 
 /******************************************************************************/
