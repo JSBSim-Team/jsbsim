@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.54 2002/02/22 12:13:09 apeden Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.55 2002/02/27 14:36:12 apeden Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,8 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Elevator Cmd, ";
       outstream << "Rudder Cmd, ";
       outstream << "Flap Cmd, ";
-      outstream << "Aileron Pos, ";
+      outstream << "Left Aileron Pos, ";
+      outstream << "Right Aileron Pos, ";
       outstream << "Elevator Pos, ";
       outstream << "Rudder Pos, ";
       outstream << "Flap Pos"; 
@@ -228,7 +229,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << FCS->GetDeCmd() << ", ";
     outstream << FCS->GetDrCmd() << ", ";
     outstream << FCS->GetDfCmd() << ", ";
-    outstream << FCS->GetDaPos() << ", ";
+    outstream << FCS->GetDaLPos() << ", ";
+    outstream << FCS->GetDaRPos() << ", ";
     outstream << FCS->GetDePos() << ", ";
     outstream << FCS->GetDrPos() << ", ";
     outstream << FCS->GetDfPos();
@@ -346,7 +348,8 @@ void FGOutput::SocketOutput(void)
     socket->Append("M");
     socket->Append("N");
     socket->Append("Throttle Position");
-    socket->Append("Aileron Position");
+    socket->Append("Left Aileron Position");
+    socket->Append("Right Aileron Position");
     socket->Append("Elevator Position");
     socket->Append("Rudder Position");
     sFirstPass = false;
@@ -390,7 +393,8 @@ void FGOutput::SocketOutput(void)
   socket->Append(Aircraft->GetMoments(eM));
   socket->Append(Aircraft->GetMoments(eN));
   socket->Append(FCS->GetThrottlePos(0));
-  socket->Append(FCS->GetDaPos());
+  socket->Append(FCS->GetDaLPos());
+  socket->Append(FCS->GetDaRPos());
   socket->Append(FCS->GetDePos());
   socket->Append(FCS->GetDrPos());
   socket->Send();
