@@ -208,10 +208,10 @@ private:
   string CFGVersion;
   string AircraftName;
 
-  int numTanks;
-  int numEngines;
-  int numSelectedOxiTanks;
-  int numSelectedFuelTanks;
+  unsigned int numTanks;
+  unsigned int numEngines;
+  unsigned int numSelectedOxiTanks;
+  unsigned int numSelectedFuelTanks;
   FGTank* Tank[MAX_TANKS];
   FGEngine *Engine[MAX_ENGINES];
 

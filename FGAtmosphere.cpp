@@ -108,8 +108,8 @@ bool FGAtmosphere::Run(void)
             //and we know that headwinds increase the relative
             //velocity, so to make a positive delta U from the
             //southerly wind the sign must be switched.
-            vWindNED*=-1;
-            vWindUVW=State->GetTl2b()*vWindNED;
+            vWindNED *= -1;
+            vWindUVW  = State->GetTl2b()*vWindNED;
         }
         soundspeed = sqrt(SHRATIO*Reng*temperature);
         //cout << "Atmosphere: soundspeed: " << soundspeed << endl;

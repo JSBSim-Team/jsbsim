@@ -218,8 +218,8 @@ bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result,
 
   float x1,x2,x3,f1,f2,f3,d,d0;
   float const relax =0.9;
-  x1=x3=0;
   int i;
+  x1 = x3 = x2 = 0;
   d=1;
   bool success=false;
   //initializations

@@ -159,18 +159,20 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
   altitude=tt;
   fdmex->GetPosition()->Seth(altitude);
   fdmex->GetAtmosphere()->Run();
+
   //lets try to make sure the user gets what they intended
+
   switch(lastSpeedSet) {
-setvt:
+  case setvt:
     SetVtrueKtsIC(vt);
     break;
-setvc:
+  case setvc:
     SetVcalibratedKtsIC(vc);
     break;
-setve:
+  case setve:
     SetVequivalentKtsIC(ve);
     break;
-setmach:
+  case setmach:
     SetMachIC(mach);
     break;
   }

@@ -317,15 +317,15 @@ float FGState::GetParameter(int val_idx) {
   case FG_ALTITUDE:
     return FDMExec->GetPosition()->Geth();
   case FG_BI2VEL:
-    if(FDMExec->GetTranslation()->GetVt() > 0) 
+    if(FDMExec->GetTranslation()->GetVt() > 0)
         return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * FDMExec->GetTranslation()->GetVt());
-    else 
+    else
         return 0;
   case FG_CI2VEL:
-    if(FDMExec->GetTranslation()->GetVt() > 0) 
+    if(FDMExec->GetTranslation()->GetVt() > 0)
         return FDMExec->GetAircraft()->Getcbar()/(2.0 * FDMExec->GetTranslation()->GetVt());
-    else 
-        return 0;   
+    else
+        return 0;
   case FG_THROTTLE_CMD:
     return FDMExec->GetFCS()->GetThrottleCmd(0);
   case FG_THROTTLE_POS:
@@ -419,18 +419,18 @@ void FGState::CalcMatrices(void) {
   Q1Q3 = vQtrn(2)*vQtrn(4);
   Q2Q3 = vQtrn(3)*vQtrn(4);
 
-  mTb2l(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-  mTb2l(1,2) = 2*(Q1Q2 + Q0Q3);
-  mTb2l(1,3) = 2*(Q1Q3 - Q0Q2);
-  mTb2l(2,1) = 2*(Q1Q2 - Q0Q3);
-  mTb2l(2,2) = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-  mTb2l(2,3) = 2*(Q2Q3 + Q0Q1);
-  mTb2l(3,1) = 2*(Q1Q3 + Q0Q2);
-  mTb2l(3,2) = 2*(Q2Q3 - Q0Q1);
-  mTb2l(3,3) = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+  mTl2b(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
+  mTl2b(1,2) = 2*(Q1Q2 + Q0Q3);
+  mTl2b(1,3) = 2*(Q1Q3 - Q0Q2);
+  mTl2b(2,1) = 2*(Q1Q2 - Q0Q3);
+  mTl2b(2,2) = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
+  mTl2b(2,3) = 2*(Q2Q3 + Q0Q1);
+  mTl2b(3,1) = 2*(Q1Q3 + Q0Q2);
+  mTl2b(3,2) = 2*(Q2Q3 - Q0Q1);
+  mTl2b(3,3) = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
 
-  mTl2b = mTb2l;
-  mTl2b.T();
+  mTb2l = mTl2b;
+  mTb2l.T();
 }
 
 /******************************************************************************/
@@ -456,13 +456,13 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
 FGColumnVector FGState::CalcEuler(void) {
   static FGColumnVector vEuler(3);
 
-  if (mTb2l(3,3) == 0)    vEuler(ePhi) = 0.0;
-  else                    vEuler(ePhi) = atan2(mTb2l(2,3), mTb2l(3,3));
+  if (mTl2b(3,3) == 0)    vEuler(ePhi) = 0.0;
+  else                    vEuler(ePhi) = atan2(mTl2b(2,3), mTl2b(3,3));
 
   vEuler(eTht) = asin(-mTb2l(1,3));
 
-  if (mTb2l(1,1) == 0.0)  vEuler(ePsi) = 0.0;
-  else                    vEuler(ePsi) = atan2(mTb2l(1,2), mTb2l(1,1));
+  if (mTl2b(1,1) == 0.0)  vEuler(ePsi) = 0.0;
+  else                    vEuler(ePsi) = atan2(mTl2b(1,2), mTl2b(1,1));
 
   if (vEuler(ePsi) < 0.0) vEuler(ePsi) += 2*M_PI;
 
