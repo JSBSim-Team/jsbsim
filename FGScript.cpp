@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.7 2002/04/01 12:44:33 apeden Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.8 2002/04/01 12:52:51 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +118,7 @@ bool FGScript::LoadScript(string script)
         result = FDMExec->LoadModel("aircraft", "engine", aircraft);
         if (!result) {
           cerr << "Aircraft file " << aircraft << " was not found" << endl;
-	        exit(-1);
+          exit(-1);
         }
         if (debug_lvl > 0) cout << "  Use aircraft: " << token << endl;
       } else if ((token = Script.GetValue("initialize")) != string("")) {
