@@ -12,6 +12,8 @@ $version = 0.7;
 //****************************************************
 // Updated: 16 Oct 2003, DPC, new SimTurbine support
 
+header("Content-type: text/plain");
+
 
 //***** GET DATA FROM USER ***************************
 
