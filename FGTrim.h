@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.26 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.27 2002/07/10 01:24:11 apeden Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
@@ -139,7 +139,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.26 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.27 2002/07/10 01:24:11 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -260,7 +260,7 @@ public:
       is not enough/too much thrust.
       @param gamma_fallback true to enable fallback
   */     
-  inline void SetGammaFallback(bool bb) { gamma_fallback=true; }
+  inline void SetGammaFallback(bool bb) { gamma_fallback=bb; }
   
   /** query the fallback state
       @return true if fallback is enabled.
