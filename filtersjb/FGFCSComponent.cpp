@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.35 2003/06/03 09:53:52 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.36 2004/11/29 20:30:44 dpculp Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,7 @@ FGPropertyManager* FGFCSComponent::resolveSymbol(string token)
   FGPropertyManager* tmp = PropertyManager->GetNode(token,false);
   if (!tmp) {
     if (token.find("/") == token.npos) prop = "model/" + token;
-    cerr << "Creating new property " << prop << endl;
+    //cerr << "Creating new property " << prop << endl;
     tmp = PropertyManager->GetNode(token,true);
   }
   return tmp;  

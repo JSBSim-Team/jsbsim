@@ -75,9 +75,9 @@ FGPropertyManager*
 FGPropertyManager::GetNode (const string &path, bool create)
 {
   SGPropertyNode* node=this->getNode(path.c_str(), create);
-  if(node == 0)
-    cout << "FGPropertyManager::GetNode() No node found for "
-         << path << endl;
+  //if(node == 0)
+  //  cout << "FGPropertyManager::GetNode() No node found for "
+  //       << path << endl;
   return (FGPropertyManager*)node;
 }
 
