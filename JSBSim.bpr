@@ -64,7 +64,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=16
+Build=17
 Debug=0
 PreRelease=0
 Special=0
@@ -76,7 +76,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.16
+FileVersion=0.7.2.17
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -84,6 +84,10 @@ OriginalFilename=JSBSim.exe
 ProductName=JSBSim
 ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
+
+[HistoryLists\hlHostApplication]
+Count=1
+Item0=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.exe
 
 [HistoryLists\hlRunParameters]
 Count=3
@@ -96,7 +100,7 @@ DebugSourceDirs=
 
 [Parameters]
 RunParams=X15 reset00 
-HostApplication=
+HostApplication=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.exe
 RemoteHost=
 RemotePath=
 RemoteDebug=0

@@ -52,7 +52,6 @@ INCLUDES
 
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 {
-
   Type       = "";
   ID         = 0;
   QueueOrder = 0;
@@ -75,16 +74,16 @@ bool FGFCSComponent::Run(void)
   switch(InputType) {
   case itPilotAC:
     Input = fcs->GetState()->GetParameter(InputIdx);
+    cout << " Input Pilot/AC Value: " << Input << endl;
     break;
   case itFCS:
     Input = fcs->GetComponentOutput(InputIdx);
+    cout << "Input: " << fcs->GetComponentName(InputIdx) << " Input Value: " << Input << endl;
     break;
   case itAP:
     // implement autopilot input mechanism
     break;
   }
-
-  cout << "Input index: " << InputIdx << " Input Value: " << Input << endl;
 
   return true;
 }

@@ -97,6 +97,7 @@ public:
 
   inline FGState* GetState(void) {return State;}
   float GetComponentOutput(int idx);
+  string GetComponentName(int idx);
 
 	inline void SetDaCmd(float tt) {DaCmd = tt;}
 	inline void SetDeCmd(float tt) {DeCmd = tt;}

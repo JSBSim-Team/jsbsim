@@ -53,6 +53,8 @@ INCLUDES
 FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                            AC_cfg(AC_cfg)
 {
+  Type = AC_cfg->GetValue("TYPE");
+  Name = AC_cfg->GetValue("NAME");
   
 }
 

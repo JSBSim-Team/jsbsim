@@ -155,3 +155,9 @@ float FGFCS::GetComponentOutput(int idx)
 
 /******************************************************************************/
 
+string FGFCS::GetComponentName(int idx)
+{
+  return Components[idx]->GetName();
+}
+
+

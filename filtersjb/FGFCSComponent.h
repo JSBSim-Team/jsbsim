@@ -69,6 +69,7 @@ private:
 protected:
   FGFCS* fcs;
   string Type;
+  string Name;
   enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopilot inputs
   int ID;
   int QueueOrder;
@@ -84,6 +85,7 @@ public:
 
   virtual bool Run (void);
   inline float GetOutput (void) {return Output;}
+  inline string GetName(void) {return Name;}
   void SetOutput(void);
 };
 

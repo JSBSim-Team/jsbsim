@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 
  Module:       FGGain.cpp
@@ -54,10 +53,11 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                    AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
+  Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
   string token;
 
-  Gain = 0;
+  Gain = 1.000;
   Min = Max = 0;
   ScheduledBy = 0;
 
@@ -102,6 +102,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
 bool FGGain::Run(void ) 
 {
+  float SchedGain = 1.0;
+
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   if (Type == "PURE_GAIN") {
@@ -115,16 +117,16 @@ bool FGGain::Run(void )
     float lowVal = Schedule[0][0], hiVal = Schedule[last][0];
     float factor = 1.0;
 
-    if (LookupVal <= lowVal) Output = Schedule[0][1];
-    else if (LookupVal >= hiVal) Output = Schedule[last][1];
+    if (LookupVal <= lowVal) Output = Gain * Schedule[0][1];
+    else if (LookupVal >= hiVal) Output = Gain * Schedule[last][1];
     else {
       for (unsigned int ctr = 1; ctr < last; ctr++) {
         if (LookupVal < Schedule[ctr][0]) {
           hiVal = Schedule[ctr][0];
           lowVal = Schedule[ctr-1][0];
           factor = (LookupVal - lowVal) / (hiVal - lowVal);
-          Gain = Schedule[ctr-1][1] + factor*(Schedule[ctr][1] - Schedule[ctr-1][1]);
-          Output = Gain * Input;
+          SchedGain = Schedule[ctr-1][1] + factor*(Schedule[ctr][1] - Schedule[ctr-1][1]);
+          Output = Gain * SchedGain * Input;
           break;
         }
       }
@@ -135,6 +137,8 @@ bool FGGain::Run(void )
     if (Output >= 0.0) Output = Input * Max;
     else Output = Input * (-Min);
   }
+
+  cout << Type << " " << Name << " Output: " << Output << endl;
 
   return true;
 }

@@ -54,6 +54,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
+  Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
   string token;
   int tmpInputIndex;
@@ -106,10 +107,13 @@ bool FGSummer::Run(void )
       Output += fcs->GetComponentOutput(idx);
       break;
     }
+    cout << "Input Value: " << fcs->GetState()->GetParameter(InputIndices[idx]) << endl;
   }
 
   if (IsOutput) SetOutput();
   
+  cout << Type << " " << Name << " Output: " << Output << endl;
+
   return true;
 }
 
