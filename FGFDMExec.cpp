@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.66 2001/11/23 20:06:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.67 2001/12/01 00:16:41 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -395,13 +395,13 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 
   if (result) {
     modelLoaded = true;
+    if (debug_lvl > 0) cout << "\n\nJSBSim startup complete\n\n";
   } else {
     cerr << fgred
-         << "FGFDMExec: Failed to load aircraft and/or engine model"
+         << "  FGFDMExec: Failed to load aircraft and/or engine model"
          << fgdef << endl;
   }
 
-  if (debug_lvl > 0) cout << "\n\nJSBSim startup complete\n\n";
   return result;
 }
 

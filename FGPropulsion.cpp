@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.57 2001/11/29 22:12:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.58 2001/12/01 00:16:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,7 +226,9 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         } else if (engType == "FG_TURBOPROP") {
           Engines.push_back(new FGTurboProp(FDMExec, &Eng_cfg));
         } else {
-          cerr << "    Unrecognized engine type: " << engType << " found in config file.\n";
+          cerr << fgred << "    Unrecognized engine type: " << underon << engType
+                    << underoff << " found in config file." << fgdef << endl;
+          return false;
         }
 
         AC_cfg->GetNextConfigLine();
@@ -259,8 +261,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
 
       } else {
 
-        cerr << "Could not read engine config file: " << fullpath
-                                                  + engineFileName + ".xml" << endl;
+        cerr << fgred << "\n  Could not read engine config file: " << underon <<
+                    fullpath + engineFileName + ".xml" << underoff << fgdef << endl;
         return false;
       }
 
@@ -346,19 +348,20 @@ string FGPropulsion::GetPropulsionStrings(void)
 {
   string PropulsionStrings = "";
   bool firstime = true;
+  char buffer[5];
 
   for (unsigned int i=0;i<Engines.size();i++) {
-    if (!firstime) {
-      PropulsionStrings += ", ";
-      firstime = false;
-    }
+    if (firstime)  firstime = false;
+    else           PropulsionStrings += ", ";
+
+    sprintf(buffer, "%d", i);
 
     switch(Engines[i]->GetType()) {
     case FGEngine::etPiston:
-      PropulsionStrings += (Engines[i]->GetName() + "_PwrAvail");
+      PropulsionStrings += (Engines[i]->GetName() + "_PwrAvail[" + buffer + "]");
       break;
     case FGEngine::etRocket:
-      PropulsionStrings += (Engines[i]->GetName() + "_ChamberPress");
+      PropulsionStrings += (Engines[i]->GetName() + "_ChamberPress[" + buffer + "]");
       break;
     case FGEngine::etTurboJet:
     case FGEngine::etTurboProp:
@@ -373,14 +376,14 @@ string FGPropulsion::GetPropulsionStrings(void)
 
     switch(Thrusters[i]->GetType()) {
     case FGThruster::ttNozzle:
-      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "]");
       break;
     case FGThruster::ttRotor:
       break;
     case FGThruster::ttPropeller:
-      PropulsionStrings += (Thrusters[i]->GetName() + "_Torque, ");
-      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust, ");
-      PropulsionStrings += (Thrusters[i]->GetName() + "_RPM");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Torque[" + buffer + "], ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "], ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_RPM[" + buffer + "]");
       break;
     default:
       PropulsionStrings += "INVALID THRUSTER TYPE";
@@ -400,10 +403,8 @@ string FGPropulsion::GetPropulsionValues(void)
   bool firstime = true;
 
   for (unsigned int i=0;i<Engines.size();i++) {
-    if (!firstime) {
-      PropulsionValues += ", ";
-      firstime = false;
-    }
+    if (firstime)  firstime = false;
+    else           PropulsionValues += ", ";
 
     switch(Engines[i]->GetType()) {
     case FGEngine::etPiston:

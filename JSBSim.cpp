@@ -77,7 +77,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.61 2001/11/27 18:59:59 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.62 2001/12/01 00:16:41 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.61 2001/11/27 18:59:59 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.62 2001/12/01 00:16:41 jberndt Exp $
     @see -
 */
 
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
     }
   } else {        // form jsbsim <acname> <resetfile>
     if ( ! FDMExec->LoadModel("aircraft", "engine", string(argv[1]))) {
-    	cerr << "JSBSim could not be started" << endl;
+    	cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
     }                   
 
