@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.6 2000/10/16 12:32:47 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.7 2000/11/20 14:36:23 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,10 +85,11 @@ bool FGPropulsion:: Run(void) {
 
 bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
-  string token;
+  string token, tag;
   string engine_name;
   string parameter;
   int numEngines=0, numTanks=0;
+  float xLoc, yLoc, zLoc, engPitch, engYaw;
 
   AC_cfg->GetNextConfigLine();
 
@@ -98,8 +99,40 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
     if (parameter == "AC_ENGINE") {
 
       *AC_cfg >> engine_name;
-      Engines[numEngines] = *(new FGEngine(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
-      numEngines++;
+
+# ifndef macintosh
+      fullpath = enginePath + "/" + engineName + ".xml";
+# else
+      fullpath = enginePath + ";" + engineName + ".xml";
+# endif
+
+      cout << "    Reading engine: " << engineName << " from file: " << fullpath << endl;
+      ifstream enginefile(fullpath.c_str());
+
+      if (enginefile) {
+        enginefile >> tag;
+
+        if (tag == "FG_ROCKET") {
+          Engines[numEngines] = *(new FGRocket(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+        } else if (tag == "FG_PISTON") {
+          Engines[numEngines] = *(new FGPiston(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+        } else if (tag == "FG_TURBOJET") {
+          Engines[numEngines] = *(new FGTurboJet(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+        } else if (tag == "FG_TURBOSHAFT") {
+          Engines[numEngines] = *(new FGTurboShaft(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+        } else if (tag == "FG_TURBOPROP") {
+          Engines[numEngines] = *(new FGTurboProp(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+        }
+
+        Engines[numEngines] = *(new FGEngine(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
+
+        *AC_cfg >> xLoc >> yLoc >> zLoc;
+        *AC_cfg >> engPitch >> engYaw;
+
+        Engine[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
+
+        numEngines++;
+      }
 
     } else if (parameter == "AC_TANK") {
 
