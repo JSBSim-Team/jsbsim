@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.98 2004/02/02 21:26:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.99 2004/02/13 13:09:29 ehofman Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -398,6 +398,11 @@ FGColumnVector3& FGLGear::Force(void)
       } else {
         FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
       }
+
+      // A negative force coefficient will result in a force pulling the wheel(s)
+      // back instead of trying to stop them from moving.
+      if (FCoeff < 0.0)
+          FCoeff = 0.0;
 
 // Compute the vertical force on the wheel using square-law damping (per comment
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
