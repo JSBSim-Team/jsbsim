@@ -64,6 +64,7 @@ USEUNIT("FGTank.cpp");
 USEUNIT("FGTranslation.cpp");
 USEUNIT("FGAircraft.cpp");
 USERES("JSBSim.res");
+USEUNIT("FGStateMatrix.cpp");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif

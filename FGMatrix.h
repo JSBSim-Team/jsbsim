@@ -21,10 +21,19 @@ INCLUDES
 *******************************************************************************/
 
 #include <stdlib.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <exception>
-#include <string>
+#ifdef FGFS
+#  include <Include/compiler.h>
+#  include STL_STRING
+#  ifdef FG_HAVE_STD_INCLUDES
+#    include <fstream>
+#  else
+#    include <fstream.h>
+#  endif
+   FG_USING_STD(string);
+#else
+#  include <string>
+#  include <fstream>
+#endif
 
 /*******************************************************************************
 FORWARD DECLARATIONS
@@ -35,6 +44,8 @@ class FGColumnVector;
 /*******************************************************************************
 DECLARATION: MatrixException
 *******************************************************************************/
+
+using namespace std;
 
 class MatrixException : public exception
 {

@@ -18,7 +18,7 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
-  FGTranslation.obj FGAircraft.obj
+  FGTranslation.obj FGAircraft.obj FGStateMatrix.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
