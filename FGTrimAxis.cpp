@@ -79,12 +79,13 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     }
     control_value= (control_min+control_max)/2;
     control_convert=RADTODEG;
-    solver_eps=tolerance;
+    solver_eps=tolerance/100;
     break;
   case tElevator:
     control_min=-1;
     control_max=1;
     accel_convert=RADTODEG;
+    solver_eps=tolerance/100;
     break;
   case tAileron:
     control_min=-1;
@@ -204,7 +205,8 @@ void FGTrimAxis::setThrottlesPct(void) {
 }
 
 void FGTrimAxis::AxisReport(void) {
-  cout << GetControlName() << ": "
+  cout << "  " 
+  << GetControlName() << ": "
   << GetControl()*control_convert << "  "
   << GetAccelName() << ": "
   << GetAccel() << "  "
