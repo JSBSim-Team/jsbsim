@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+  File:     MerlinV1650.xml
+  Author:   Aero-Matic v 0.7
+
+  Inputs:
+    name:           MerlinV1650
+    type:           piston
+    power:          1650 hp
+    augmented?      no
+    injected?       no
+-->
+
+<FG_PISTON NAME="MerlinV1650">
+  MINMP          6.0
+  MAXMP         30.0
+  DISPLACEMENT 1649.00
+  MAXHP        1650.00
+  CYCLES         2.0
+  IDLERPM      700.0
+  MAXTHROTTLE    1.0
+  MINTHROTTLE    0.2
+</FG_PISTON>
+
