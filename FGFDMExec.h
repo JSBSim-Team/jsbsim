@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.25 2001/03/02 17:11:03 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.26 2001/03/02 17:16:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -130,44 +130,44 @@ CLASS DOCUMENTATION
     of the script file:</p>
 
     <pre><strong>&amp;lt ?xml version=&quot;1.0&quot;?&gt;
-    &amp;lt runscript name=&quot;C172-01A&quot;&gt;
+    < runscript name=&quot;C172-01A&quot;&gt;
 
-    &amp;lt !--
+    <!--
     This run is for testing C172 runs
     --&gt;
 
-    &amp;lt use aircraft=&quot;c172&quot;&gt;
-    &amp;lt use initialize=&quot;reset00&quot;&gt;
+    <use aircraft=&quot;c172&quot;&gt;
+    <use initialize=&quot;reset00&quot;&gt;
 
-    &amp;lt run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
-      &amp;lt when&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
-        &amp;lt set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot; action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
-      &amp;lt /when&gt;
-      &amp;lt when&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
-        &amp;lt set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &amp;lt /when&gt;
-      &amp;lt when&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
-        &amp;lt parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
-        &amp;lt set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &amp;lt /when&gt;
-    &amp;lt /run&gt;
+    <run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
+      <when&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
+        <set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot; action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
+      </when&gt;
+      <when&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
+        <set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
+      </when&gt;
+      <when&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
+        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
+        <set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
+      </when&gt;
+    </run&gt;
 
-    &amp;lt /runscript&gt;</strong></pre>
+    </runscript&gt;</strong></pre>
 
     <p>The first line must always be present. The second line
     identifies this file as a script file, and gives a descriptive
     name to the script file. Comments are next, delineated by the
-    &amp;lt!-- and --&gt; symbols. The aircraft and initialization
+    <!-- and --&gt; symbols. The aircraft and initialization
     files to be used are specified in the &quot;use&quot; lines.
     Next, comes the &quot;run&quot; section, where the conditions are
     described in &quot;when&quot; clauses.</p>
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.25 2001/03/02 17:11:03 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.26 2001/03/02 17:16:02 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
