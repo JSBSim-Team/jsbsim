@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.69 2001/07/24 21:23:46 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.70 2001/08/31 21:40:04 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -380,6 +380,8 @@ bool FGJSBsim::copy_from_JSBsim() {
     _updatePosition( Position->GetLatitude(),
                      Position->GetLongitude(),
                      Position->Geth() );
+
+    _set_Altitude_AGL( Position->GetDistanceAGL() );
 
     _set_Euler_Angles( Rotation->Getphi(),
                        Rotation->Gettht(),

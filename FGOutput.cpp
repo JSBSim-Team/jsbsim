@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.35 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.36 2001/08/31 21:40:04 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,6 +134,10 @@ void FGOutput::SetType(string type)
 
 void FGOutput::DelimitedOutput(void)
 {
+// --
+// datafile.open("JSBTestOut.csv");
+// cout = datafile;
+// --
   if (dFirstPass) {
     cout << "Time";
     if (SubSystems & FGAircraft::ssSimulation) {
