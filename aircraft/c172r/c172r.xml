@@ -1,13 +1,13 @@
 <FDM_CONFIG NAME="c172" VERSION="1.58">
 <!--
 
-  File:        c172.xml
+  File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172r.xml,v 1.1 2002/09/20 15:11:51 dmegginson Exp $
+  CVS Version: $Id: c172r.xml,v 1.1 2002/09/20 17:29:18 dmegginson Exp $
 
-  Function: Models a Cessna 172
+  Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
-            fgfs --fdm=jsb --aircraft=c172
+            fgfs --aircraft=c172r
 -->
 
   <METRICS>

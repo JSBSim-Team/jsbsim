@@ -4,7 +4,7 @@
     This run is for testing C172 runs
   -->
 
-  <use aircraft="c172">
+  <use aircraft="c172r">
   <use initialize="reset00">
   <run start="0.0" end="100" dt="0.00833333">
     <when>

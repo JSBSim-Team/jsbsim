@@ -43,7 +43,8 @@ CXXFLAGS="$CXXFLAGS $WFLAG"
 AC_OUTPUT([
 Makefile
 aircraft/X15/Makefile
-aircraft/c172/Makefile
+aircraft/c172p/Makefile
+aircraft/c172r/Makefile
 aircraft/c310/Makefile
 aircraft/shuttle/Makefile
 aircraft/c182/Makefile

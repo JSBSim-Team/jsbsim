@@ -1,13 +1,13 @@
 <FDM_CONFIG NAME="c172" VERSION="1.58">
 <!--
 
-  File:        c172.xml
+  File:        c172p.xml (originally c172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172p.xml,v 1.1 2002/09/20 15:11:51 dmegginson Exp $
+  CVS Version: $Id: c172p.xml,v 1.1 2002/09/20 17:29:17 dmegginson Exp $
 
-  Function: Models a Cessna 172
+  Function: Models a 1981 Cessna 172P.
   Notes:    Try running FlightGear using this command line,
-            fgfs --fdm=jsb --aircraft=c172
+            fgfs --aircraft=c172p
 -->
 
   <METRICS>
@@ -106,7 +106,7 @@
       AC_THRUSTER name x y z pitch yaw
     -->
 
-    <AC_ENGINE FILE="engIO360C">
+    <AC_ENGINE FILE="eng_io320">
       XLOC  -19.7
       YLOC    0.0
       ZLOC   26.6
