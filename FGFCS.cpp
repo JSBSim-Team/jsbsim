@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.44 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.45 2001/04/10 13:07:53 jberndt Exp $";
 static const char *IdHdr = "ID_FCS";
 
 extern short debug_lvl;
@@ -65,7 +65,8 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
+FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
+{
   Name = "FGFCS";
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = PTrimCmd = 0.0;
@@ -82,7 +83,9 @@ FGFCS::~FGFCS()
   ThrottleCmd.clear();
   ThrottlePos.clear();
 
-  for(unsigned int i=0;i<Components.size();i++) delete Components[i];
+  unsigned int i;
+
+  for(i=0;i<Components.size();i++) delete Components[i];
   if (debug_lvl & 2) cout << "Destroyed:    FGFCS" << endl;
 }
 
@@ -90,9 +93,11 @@ FGFCS::~FGFCS()
 
 bool FGFCS::Run(void)
 {
+  unsigned int i;
+
   if (!FGModel::Run()) {
-    for (unsigned int i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
-    for (unsigned int i=0; i<Components.size(); i++)  Components[i]->Run();
+    for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
+    for (i=0; i<Components.size(); i++)  Components[i]->Run();
   } else {
   }
 
@@ -101,9 +106,12 @@ bool FGFCS::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetThrottleCmd(int engineNum, float setting) {
+void FGFCS::SetThrottleCmd(int engineNum, float setting)
+{
+  unsigned int ctr;
+
   if (engineNum < 0) {
-    for (unsigned int ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
+    for (ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
   } else {
     ThrottleCmd[engineNum] = setting;
   }
@@ -111,9 +119,12 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetThrottlePos(int engineNum, float setting) {
+void FGFCS::SetThrottlePos(int engineNum, float setting)
+{
+  unsigned int ctr;
+
   if (engineNum < 0) {
-    for (unsigned int ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+    for (ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
   } else {
     ThrottlePos[engineNum] = setting;
   }
@@ -121,7 +132,8 @@ void FGFCS::SetThrottlePos(int engineNum, float setting) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
+bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
+{
   string token;
 
   FCSName = AC_cfg->GetValue("NAME");
@@ -193,11 +205,14 @@ float FGFCS::GetBrake(FGLGear::BrakeGroup bg) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentStrings(void){
+string FGFCS::GetComponentStrings(void)
+{
+  unsigned int comp;
+
   string CompStrings = "";
   bool firstime = true;
 
-  for (unsigned int comp = 0; comp < Components.size(); comp++) {
+  for (comp = 0; comp < Components.size(); comp++) {
     if (firstime) firstime = false;
     else          CompStrings += ", ";
 
@@ -211,11 +226,13 @@ string FGFCS::GetComponentStrings(void){
 
 string FGFCS::GetComponentValues(void)
 {
+  unsigned int comp;
+
   string CompValues = "";
   char buffer[10];
   bool firstime = true;
 
-  for (unsigned int comp = 0; comp < Components.size(); comp++) {
+  for (comp = 0; comp < Components.size(); comp++) {
     if (firstime) firstime = false;
     else          CompValues += ", ";
 

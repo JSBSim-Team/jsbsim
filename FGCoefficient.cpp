@@ -49,12 +49,12 @@ INCLUDES
 #include "FGFDMExec.h"
 
 #ifndef FGFS
-#  include <iomanip.h>
+#  include <iomanip>
 #else
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.30 2001/03/29 23:16:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.31 2001/04/10 13:07:53 jberndt Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];

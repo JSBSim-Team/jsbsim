@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.28 2001/04/05 12:12:32 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.29 2001/04/10 13:07:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.28 2001/04/05 12:12:32 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.29 2001/04/10 13:07:53 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -289,7 +289,7 @@ public:
   /** Sets the throttle command for the specified engine
       @param engine engine ID number
       @param cmd throttle command in percent (0 - 100)*/
-  inline void SetThrottleCmd(int engine, float cmd);
+  void SetThrottleCmd(int engine, float cmd);
   //@}
 
   /// @name Aerosurface position setting
@@ -321,7 +321,7 @@ public:
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
       @param cmd throttle setting in percent (0 - 100)*/
-  inline void SetThrottlePos(int engine, float cmd);
+  void SetThrottlePos(int engine, float cmd);
   //@}
 
   /// @name Landing Gear brakes
