@@ -84,6 +84,7 @@ struct characteristics* get_characteristics(ifstream& infile, int type)
 
   getline(infile, line);
   getline(infile, line);
+  if (type == 1) getline(infile, line);
 
   strcpy(temp, line.c_str());
 
@@ -114,11 +115,8 @@ struct characteristics* get_characteristics(ifstream& infile, int type)
     for (int i=0;i<dim[type];i++) {
       int starts = Slots[type][i].start;
       int length = Slots[type][i].length;
-//      cout << "Start: " << starts << " length: " << length;
       string str = line.substr(starts, length);
-//      cout << " string: " << str;
       double num = atof(str.c_str());
-//      cout << " Num: " << num << endl;
       chars->Columns[i].data.push_back(num);
     }
     getline(infile, line);
@@ -132,14 +130,16 @@ struct characteristics* get_characteristics(ifstream& infile, int type)
 void report(string which)
 {
   int column = -1, type = -1;
+  string output("\0",250);
+  char buf[12];
 
   for (int col=0; col<12; col++) {
-    cout << "Target: " << which << "  this col: " << AllData[0]->Columns[col].name << endl;
     if (AllData[0]->Columns[col].name == which) {
       type = 0;
       column = col;
       break;
-    } else if (AllData[1]->Columns[col].name == which) {
+    }
+    if (AllData[1]->Columns[col].name == which) {
       type = 1;
       column = col;
       break;
@@ -150,14 +150,15 @@ void report(string which)
   } else {
     cout << "======================================" << endl;
     cout << "Report for " << which << endl << endl;
+    cout << "       ";
     for (int col=0+type; col<AllData.size(); col+=2) {
       cout << "  " << AllData[col]->RN;
     }
     cout << endl;
     for (int ctr=0; ctr<AllData[0]->Columns[column].data.size(); ctr++) {
-      cout << " " << AllData[0]->Columns[0].data[ctr];
+      cout << AllData[0]->Columns[0].data[ctr];
       for (int col=0+type; col<AllData.size(); col+=2) {
-        cout << " " << AllData[col]->Columns[column].data[ctr];
+        cout << "   " << AllData[col]->Columns[column].data[ctr];
       }
       cout << endl;
     }
@@ -195,6 +196,24 @@ int main(int argc, char **argv)
 
   report("CD");
   report("CL");
+  report("CM");
+  report("CN");
+  report("CA");
+  report("XCP");
+  report("CLA");
+  report("CMA");
+  report("CYB");
+  report("CNB");
+  report("CLB");
+  report("CLQ");
+  report("CMQ");
+  report("CLAD");
+  report("CMAD");
+  report("CLP");
+  report("CYP");
+  report("CNP");
+  report("CNR");
+  report("CLR");
 
-   return 0;
+  return 0;
 }
