@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.55 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.56 2003/12/06 14:09:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,10 +96,11 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.55 2003/12/02 05:42:12 jberndt Exp $
-    @see FGEngine
-    @see FGTank
-    @see FGThruster
+    @version $Id: FGPropulsion.h,v 1.56 2003/12/06 14:09:31 jberndt Exp $
+    @see
+    FGEngine
+    FGTank
+    FGThruster
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

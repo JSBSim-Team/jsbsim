@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.36 2003/12/03 03:03:23 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.37 2003/12/06 14:09:31 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.36 2003/12/03 03:03:23 jberndt Exp $
+    @version "$Id: FGPiston.h,v 1.37 2003/12/06 14:09:31 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
