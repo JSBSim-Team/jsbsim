@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.20 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.21 2002/01/10 11:51:30 dmegginson Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,7 +225,7 @@ void FGTable::Print(void)
     }
     cout << endl;
   }
-  cout.setf(0, ios::floatfield); // reset
+  cout.setf((ios_base::fmtflags)0, ios::floatfield); // reset
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
