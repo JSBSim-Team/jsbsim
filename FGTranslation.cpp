@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.26 2001/07/09 23:32:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.27 2001/07/29 06:13:48 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 extern short debug_lvl;
@@ -110,7 +110,9 @@ FGTranslation::~FGTranslation()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGTranslation::Run(void) {
+bool FGTranslation::Run(void)
+{
+  float Tc = 0.5*dt*rate;
 
   if (!FGModel::Run()) {
 
@@ -130,7 +132,7 @@ bool FGTranslation::Run(void) {
 
     vNcg = vUVWdot*INVGRAVITY;
 
-    vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot);
+    vUVW += Tc * (vlastUVWdot + vUVWdot);
     vAero = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
     Vt = vAero.Magnitude();
