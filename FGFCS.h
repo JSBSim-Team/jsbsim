@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.22 2000/11/12 12:21:43 jsb Exp $
+    @version $Id: FGFCS.h,v 1.23 2001/01/24 00:08:27 jsb Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -323,12 +323,14 @@ public:
       This is given in the config file, and is not used for anything currently.*/
   string FCSName;
   
+  void AddThrottle(void);
+  
 private:
   float DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
   float DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
   float PTrimCmd;
-  float ThrottleCmd[MAX_ENGINES];       // Needs to be changed: s/b no limit
-  float ThrottlePos[MAX_ENGINES];       // Needs to be changed: s/b no limit
+  vector <float> ThrottleCmd;
+  vector <float> ThrottlePos;
   float LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;

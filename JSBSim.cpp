@@ -127,7 +127,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.38 2001/01/23 12:28:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.39 2001/01/24 00:08:27 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -143,7 +143,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.38 2001/01/23 12:28:21 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.39 2001/01/24 00:08:27 jsb Exp $
     @see -
 */
 
@@ -177,7 +177,7 @@ int main(int argc, char** argv)
 
   float cmd = 0.0;
 
-  while (FDMExec->GetState()->Getsim_time() <= 10.0)
+  while (FDMExec->GetState()->Getsim_time() <= 100.0)
   {
     // Fake an elevator ramp here after 1 second, hold for one second, ramp down
     
@@ -185,6 +185,7 @@ int main(int argc, char** argv)
         FDMExec->GetState()->Getsim_time() < 2.0)
     {
       cmd = -(FDMExec->GetState()->Getsim_time() - 1.00)/4.0;
+      FDMExec->GetFCS()->SetThrottleCmd(0,FDMExec->GetState()->Getsim_time() - 1.00);
     } else if (FDMExec->GetState()->Getsim_time() >= 2.00 &&
         FDMExec->GetState()->Getsim_time() < 6.0)
     {

@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.25 2001/01/23 12:28:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.26 2001/01/24 00:08:27 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
       if (Eng_cfg.IsOpen()) {
         engType = Eng_cfg.GetValue();
+
+        FCS->AddThrottle();
 
         if (engType == "FG_ROCKET") {
           Engines.push_back(new FGRocket(FDMExec, &Eng_cfg));

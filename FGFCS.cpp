@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.36 2000/11/27 07:34:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.37 2001/01/24 00:08:27 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,34 +65,30 @@ CLASS IMPLEMENTATION
 
 FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGFCS";
-  for (int i=0; i < MAX_ENGINES; i++) {  // needs to be changed: no limit
-    ThrottleCmd[i] = 0.0;
-    ThrottlePos[i] = 0.0;
-  }
+
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = PTrimCmd = 0.0;
   DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGFCS::~FGFCS(void) {
-  for(unsigned int i=0;i<Components.size();i++)
-    delete Components[i];
+FGFCS::~FGFCS(void)
+{
+  ThrottleCmd.clear();
+  ThrottlePos.clear();
+
+  for(unsigned int i=0;i<Components.size();i++) delete Components[i];
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::Run(void) {
+bool FGFCS::Run(void)
+{
   if (!FGModel::Run()) {
-
-//    for (unsigned int i=0; i<Aircraft->GetNumEngines(); i++) ThrottlePos[i]=ThrottleCmd[i];
-
-    for (unsigned int i=0; i<Components.size(); i++) {
-      Components[i]->Run();
-    }
-
-  } else {}
-
+    for (unsigned int i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
+    for (unsigned int i=0; i<Components.size(); i++)  Components[i]->Run();
+  } else {
+  }
 
   return false;
 }
@@ -101,7 +97,7 @@ bool FGFCS::Run(void) {
 
 void FGFCS::SetThrottleCmd(int engineNum, float setting) {
   if (engineNum < 0) {
-//    for (unsigned int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
+    for (unsigned int ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
   } else {
     ThrottleCmd[engineNum] = setting;
   }
@@ -111,7 +107,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting) {
 
 void FGFCS::SetThrottlePos(int engineNum, float setting) {
   if (engineNum < 0) {
-//    for (unsigned int ctr=0;ctr<=Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+    for (unsigned int ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
   } else {
     ThrottlePos[engineNum] = setting;
   }
@@ -206,7 +202,8 @@ string FGFCS::GetComponentStrings(void){
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentValues(void){
+string FGFCS::GetComponentValues(void)
+{
   string CompValues = "";
   char buffer[10];
   bool firstime = true;
@@ -221,3 +218,12 @@ string FGFCS::GetComponentValues(void){
 
   return CompValues;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::AddThrottle(void)
+{
+  ThrottleCmd.push_back(0.0);
+  ThrottlePos.push_back(0.0);
+}
+

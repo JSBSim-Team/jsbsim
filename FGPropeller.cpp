@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.9 2001/01/23 12:28:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.10 2001/01/24 00:08:27 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
       cout << "      IXX = " << Ixx << endl;
     } else if (token == "DIAMETER") {
       *Prop_cfg >> Diameter;
-      cout << "      Diameter = " << Diameter << endl;
+      Diameter /= 12.0;
+      cout << "      Diameter = " << Diameter << " ft." << endl;
     } else if (token == "NUMBLADES") {
       *Prop_cfg >> numBlades;
       cout << "      Number of Blades  = " << numBlades << endl;
@@ -133,15 +134,15 @@ float FGPropeller::Calculate(float PowerAvailable)
   }
 
   Thrust = C_Thrust*RPM*RPM*Diameter*Diameter*Diameter*Diameter*rho/(3600.0);
-
+cout << "Thrust: " << Thrust << endl;
   omega = (RPM/60.0)*2.0*M_PI;
 
-  if (omega <= 500) omega = 500.0;
+  if (omega <= 500) omega = 10.0;
 
   Torque = PowerAvailable / omega;
-
+cout << "Torque: " << Torque << endl;
   RPM += ((Torque / Ixx) * 60.0 / (2.0 * M_PI)) * deltaT;
-
+cout << "RPM: " << RPM << endl;
   return Thrust; // return thrust in pounds
 }
 
