@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.23 2001/10/19 22:13:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.24 2001/11/10 18:36:19 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,26 +64,20 @@ string FGConfigFile::GetNextConfigLine(void)
 
   do {
     CurrentLine = GetLine();
-    if ((CurrentLine.find("<COMMENT>") != CurrentLine.npos) ||
-        (CurrentLine.find("<!--") != CurrentLine.npos)) {
+    if (CurrentLine.find("<!--") != CurrentLine.npos) {
       CommentsOn = true;
       CommentString = "";
       if (CurrentLine.find("<!--") != CurrentLine.npos)
         CurrentLine.erase(CurrentLine.find("<!--"),4);
-      else if (CurrentLine.find("<COMMENT>") != CurrentLine.npos)
-        CurrentLine.erase(CurrentLine.find("<COMMENT>"),9);
       while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
       if (CurrentLine.size() <= 2) CurrentLine = "";
     }
 
-    if ((CurrentLine.find("</COMMENT>") != CurrentLine.npos) ||
-        (CurrentLine.find("-->") != CurrentLine.npos)) {
+    if (CurrentLine.find("-->") != CurrentLine.npos) {
       CommentsOn = false;
 
       if (CurrentLine.find("-->") != CurrentLine.npos)
         CurrentLine.erase(CurrentLine.find("-->"),4);
-      else if (CurrentLine.find("</COMMENT>") != CurrentLine.npos)
-        CurrentLine.erase(CurrentLine.find("</COMMENT>"),10);
 
       while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
       if (CurrentLine.size() <= 2) CurrentLine = "";
