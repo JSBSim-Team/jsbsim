@@ -24,8 +24,8 @@
 #include <config.h>
 #endif
 
+#include "plotXMLVisitor.h"
 #include "datafile.h"
-#include "simgear/xml/easyxml.hxx"
 #include <iostream>
 #include <fstream>
 #include <cstdio>
@@ -33,35 +33,13 @@
 #include <time.h>
 #include "dislin_d.h"
 
-class plotXMLVisitor : public XMLVisitor
-{
-public:
-
-  plotXMLVisitor(void) {  }
-  ~plotXMLVisitor() {  }
-
-  void startXML() { }
-  void endXML() { }
-  void startElement (const char * name, const XMLAttributes &atts)
-  {
-//    for (int i=0; i<atts.size();i++) {
-//      cout << "  " << atts.getName(i) << " = " << atts.getValue(i) << endl;
-//    }
-  }
-  void endElement (const char * name) { }
-  void data (const char * s, int length)
-  {
-//    cout << "Read data" << "  " << s << endl;
-  }
-  void pi (const char * target, const char * data) { }
-  void warning (const char * message, int line, int column) { }
-};
-
-void plotdata(DataFile& df, ifstream* datafile);
+void plotdata(DataFile& df, plotXMLVisitor* vis);
 void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs);
 bool autoscale;
 double xmin, ymin, xmax, ymax;
 ofstream outfile;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int main(int argc, char *argv[])
 {
@@ -78,23 +56,19 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 
-  ifstream inputfile(argv[1]);
-  plotXMLVisitor myVisitor;
-  readXML (inputfile, myVisitor);
-  exit(0);
-
   DataFile df(argv[1]);
 
-  ifstream f;
-
   if (argc == 3) {
-    f.open(argv[2]);
-    if (!f) {
+
+    ifstream inputfile(argv[2]);
+    if (!inputfile) {
       cerr << "Could not open autoplot file " << argv[2] << endl << endl;
-    } else {
-      f.setf(ios::skipws);
+      exit(-1);
     }
-    plotdata(df, &f);
+    plotXMLVisitor myVisitor;
+    readXML (inputfile, myVisitor);
+
+    plotdata(df, &myVisitor);
     exit(0);
   }
 
@@ -346,7 +320,7 @@ savepng:
   }
 }
 
-/* ****************************************** */
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 int GetID(DataFile& df, string param)
 {
@@ -359,22 +333,20 @@ int GetID(DataFile& df, string param)
   return -1;
 }
 
-/* ****************************************** */
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void plotdata(DataFile& df, ifstream* datafile)
+void plotdata(DataFile& df, plotXMLVisitor* plotVisitor)
 {
-  string data_str;
   string Title, Y_Axis_Caption, X_Axis_Caption;
   string Y_Variables;
   string X_Variable;
-  string Ranges;
-  int delim, id;
   vector <int> IDs;
   int XID;
 
   outfile.open("JSBSimPlots.html");
   if (!outfile) {
     cerr << "Could not open output file " << "JSBSimPlots.html" << endl;
+    exit(-1);
   }
   time_t tm = time(NULL);
 
@@ -394,63 +366,39 @@ void plotdata(DataFile& df, ifstream* datafile)
   outfile << "<P>" << endl;
   outfile << "<TABLE cellSpacing=2 cellPadding=3 width=""95%"" align=center border=0>" << endl;
 
-  while (!datafile->eof()) {
-    getline(*datafile, Title);
-    getline(*datafile, X_Axis_Caption);
-    getline(*datafile, Y_Axis_Caption);
-    getline(*datafile, Ranges);
-    getline(*datafile, X_Variable);
-    getline(*datafile, Y_Variables);
+  for (int j=0; j<plotVisitor->vPlots.size(); j++) {
 
-    if (datafile->eof()) break;
-
-    if (Ranges.find("auto") != string::npos) { // autoscaling
+    if (plotVisitor->vPlots[j].Autoscale) { // autoscaling
       xmin = xmax = ymin = ymax = 0.00;
       autoscale = true;
       cout << "Autoscaling ..." << endl;
     } else {
       autoscale = false;
-      delim = Ranges.find_first_of("|");
-      xmin = strtod(Ranges.substr(0, delim).c_str(), NULL);
-      cout << "Range: xmin=" << xmin;
-      Ranges = Ranges.substr(delim+1);
-      delim = Ranges.find_first_of("|");
-      ymin = strtod(Ranges.substr(0, delim).c_str(), NULL);
+      xmin = plotVisitor->vPlots[j].Min[eX];
+      cout << " xmin=" << xmin;
+      ymin = plotVisitor->vPlots[j].Min[eY];
       cout << " ymin=" << ymin;
-      Ranges = Ranges.substr(delim+1);
-      delim = Ranges.find_first_of("|");
-      xmax = strtod(Ranges.substr(0, delim).c_str(), NULL);
+      xmax = plotVisitor->vPlots[j].Max[eX];
       cout << " xmax=" << xmax;
-      Ranges = Ranges.substr(delim+1);
-      delim = Ranges.find_first_of("|");
-      ymax = strtod(Ranges.substr(0, delim).c_str(), NULL);
+      ymax = plotVisitor->vPlots[j].Max[eY];
       cout << " ymax=" << ymax;
     }
 
-    XID = GetID(df, X_Variable);
+    XID = GetID(df, plotVisitor->vPlots[j].X_Variable);
     if (XID < 0) {
-      cout << "ID not found for X axis parameter " << X_Variable << endl;
+      cout << "ID not found for X axis parameter " << plotVisitor->vPlots[j].X_Variable << endl;
     }
 
-    delim = Y_Variables.find_first_of("|");
     IDs.clear();
-    if (delim != string::npos) {
-      while (delim != string::npos) {
-        delim = Y_Variables.find_first_of("|");
-        id = GetID(df, Y_Variables.substr(0, delim));
-        if (id >= 0) {
-          IDs.push_back(id);
-        } else {
-          cerr << "ID not found for " << Y_Variables.substr(0, delim) << endl;
-        }
-        Y_Variables = Y_Variables.substr(delim+1);
-      }
-    } else {
-      id = GetID(df, Y_Variables.substr(0, delim));
-      if (id >= 0) {
-        IDs.push_back(id);
+
+    for (int i=0; i<plotVisitor->vPlots[j].Y_Variables.size(); i++) {
+      int id = GetID(df, plotVisitor->vPlots[j].Y_Variables[i]);
+      if (id < 0) {
+        cerr << "Item[" << i << "]: " << plotVisitor->vPlots[j].Y_Variables[i] <<
+                " not found in data file" << endl;
+        exit(-1);
       } else {
-        cerr << "ID not found for " << Y_Variables.substr(0, delim) << endl;
+        IDs.push_back(id);
       }
     }
 
@@ -462,7 +410,7 @@ void plotdata(DataFile& df, ifstream* datafile)
   outfile.close();
 }
 
-/* ****************************************** */
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs)
 {

@@ -6,6 +6,8 @@ bin_PROGRAMS = simplot
 simplot_SOURCES = \
 	datafile.cpp \
 	datafile.h \
+	plotXMLVisitor.cpp \
+	plotXMLVisitor.h \
 	main.cpp
 
 simplot_CXXFLAGS = \
@@ -13,8 +15,7 @@ simplot_CXXFLAGS = \
 
 simplot_LDADD = \
 	-L/usr/local/dislin_2 -ldisgcc_d -lgdi32 -lcomdlg32 \
-	$(top_srcdir)/libJSBSim.a \
-	$(top_srcdir)/filtersjb/libFCSComponents.a
+	-L/usr/local/lib -lsgxml -lsgstructure
 
 EXTRA_DIST = \
 	README
