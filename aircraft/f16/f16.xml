@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.21 2003/03/09 22:24:30 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.22 2003/03/14 11:00:13 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -155,6 +155,21 @@
        GAIN         0.01745
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
+     <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
+       INPUT        fcs/flap-cmd-norm
+       DETENTS      3
+                    0    0
+                    15   3
+                    25   3
+       OUTPUT      fcs/flap-pos-deg
+     </COMPONENT>
+     <COMPONENT NAME="Speedbrake Control" TYPE="KINEMAT">
+       INPUT        fcs/speedbrake-cmd-norm
+       DETENTS      2
+                    0    0
+                    1.05 7
+       OUTPUT      fcs/speedbrake-pos-rad
+     </COMPONENT>
      <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
        INPUT        gear/gear-cmd-norm
        DETENTS      2
@@ -210,6 +225,42 @@
             0.698  1.898  1.869  1.822  1.757  1.689
             0.785  1.753  1.724  1.674  1.612  1.546
         </COEFFICIENT>
+        <COEFFICIENT NAME="CLDlef" TYPE="VECTOR">
+           Lift_due_to_leading_edge_flap_deflection
+           12
+           aero/alpha-rad
+           aero/qbar-psf|metrics/Sw-sqft|fcs/flap-pos-deg
+           -0.175 -0.012
+           -0.087 -0.004
+            0.000  0.002
+            0.087  0.007
+            0.175  0.012
+            0.262  0.018
+            0.349  0.022
+            0.436  0.025
+            0.524  0.026
+            0.611  0.028
+            0.698  0.028
+            0.785  0.025
+        </COEFFICIENT>
+        <COEFFICIENT NAME="CLDsb" TYPE="VECTOR">
+           Lift_due_to_speedbrake_deflection
+           12
+           aero/alpha-rad
+           aero/qbar-psf|metrics/Sw-sqft|fcs/mag-speedbrake-pos-rad
+           -0.175  0.382
+           -0.087  0.385
+            0.000  0.386
+            0.087  0.264
+            0.175  0.284
+            0.262  0.379
+            0.349  0.134
+            0.436  0.008
+            0.524 -0.137
+            0.611 -0.192
+            0.698 -0.122
+            0.785 -0.111
+        </COEFFICIENT>
       </GROUP>
 
       <COEFFICIENT NAME="CLq" TYPE="VECTOR">
@@ -230,6 +281,25 @@
           0.698 30.5158
           0.785 25.8165
      </COEFFICIENT>
+
+     <COEFFICIENT NAME="CLq_Dsb" TYPE="VECTOR">
+         Lift_due_to_speedbrake_deflection
+         12
+         aero/alpha-rad
+         aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel|fcs/mag-speedbrake-pos-rad
+         -0.175 -0.256
+         -0.087 -0.062
+          0.000 -0.010
+          0.087  0.020
+          0.175 -0.011
+          0.262  0.053
+          0.349  0.063
+          0.436 -0.009
+          0.524  0.034
+          0.611  0.042
+          0.698  0.005
+          0.785  0.001
+      </COEFFICIENT>
 
     </AXIS>
 
@@ -256,23 +326,80 @@
          0.785  1.517  1.487  1.478  1.482  1.489
       </COEFFICIENT>
 
+      <COEFFICIENT NAME="CDDlef" TYPE="VECTOR">
+        Drag_due_to_leading_edge_flap_deflection
+        12
+        aero/alpha-rad
+        aero/qbar-psf|metrics/Sw-sqft|fcs/flap-pos-deg
+        -0.175  0.003
+        -0.087  0.001
+         0.000  0.000
+         0.087  0.001
+         0.175  0.002
+         0.262  0.004
+         0.349  0.007
+         0.436  0.011
+         0.524  0.015
+         0.611  0.019
+         0.698  0.023
+         0.785  0.024
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CDDsb" TYPE="VECTOR">
+        Drag_due_to_speedbrake_deflection
+        12
+        aero/alpha-rad
+        aero/qbar-psf|metrics/Sw-sqft|fcs/mag-speedbrake-pos-rad
+        -0.175 -0.057
+        -0.087 -0.024
+         0.000  0.010
+         0.087  0.059
+         0.175  0.130
+         0.262  0.229
+         0.349  0.243
+         0.436  0.212
+         0.524  0.150
+         0.611  0.110
+         0.698  0.143
+         0.785  0.125
+      </COEFFICIENT>
+
       <COEFFICIENT NAME="CDq" TYPE="VECTOR">
-         Drag_due_to_pitch_rate
-         12
-         aero/alpha-rad
-         aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel
-         -0.175 -1.265
-         -0.087 -2.139
-          0.000 -0.308
-          0.087  1.402
-          0.175  3.369
-          0.262  5.135
-          0.349  6.880
-          0.436 10.060
-          0.524 13.201
-          0.611 15.872
-          0.698 23.217
-          0.785 24.105
+        Drag_due_to_pitch_rate
+        12
+        aero/alpha-rad
+        aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel
+        -0.175 -1.265
+        -0.087 -2.139
+         0.000 -0.308
+         0.087  1.402
+         0.175  3.369
+         0.262  5.135
+         0.349  6.880
+         0.436 10.060
+         0.524 13.201
+         0.611 15.872
+         0.698 23.217
+         0.785 24.105
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CDq_Dlef" TYPE="VECTOR">
+        Drag_due_to_pitch_rate_and_leading_edge_flap_deflection
+        12
+        aero/alpha-rad
+        aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel|fcs/flap-pos-deg
+        -0.175  0.067
+        -0.087  0.034
+         0.000  0.028
+         0.087  0.029
+         0.175  0.033
+         0.262  0.059
+         0.349  0.061
+         0.436  0.027
+         0.524  0.036
+         0.611  0.047
+         0.698  0.029
+         0.785  0.015
       </COEFFICIENT>
 
     </AXIS>
@@ -286,7 +413,7 @@
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYDa" TYPE="VALUE">
-        Side_force_due_to_aileron
+        Side_force_due_to_flaperon
         aero/qbar-psf|metrics/Sw-sqft|fcs/left-aileron-pos-rad
         -2.2575e-2
       </COEFFICIENT>
@@ -409,7 +536,7 @@
          - BETA  = Sideslip angle in Degr (-30 <= BETA <= 30)
         -->
       <COEFFICIENT NAME="Clda" TYPE="TABLE">
-        Roll_moment_due_to_aileron
+        Roll_moment_due_to_flaperon
         12 7
         aero/alpha-rad
         aero/beta-rad
@@ -574,12 +701,12 @@
       </COEFFICIENT>
 
       <!--
-         - Yawing moment due to aileron deflection (DNDA)
+         - Yawing moment due to flaperon deflection (DNDA)
          - ALPHA = Angle Of Attack in Degr (-10 <= ALPHA <= 45)
          - BETA  = Sideslip angle in Degr (-30 <= BETA <= 30)
         -->
       <COEFFICIENT NAME="Cnda" TYPE="TABLE">
-        Yaw_moment_due_to_aileron
+        Yaw_moment_due_to_flaperon
         12 7
         aero/alpha-rad
         aero/beta-rad
