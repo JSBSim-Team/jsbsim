@@ -37,9 +37,6 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <FDM/JSBSim/FGFDMExec.h>
-#include <FDM/JSBSim/FGInitialCondition.h>
-#include <FDM/JSBSim/FGMassBalance.h>
 #undef MAX_ENGINES
 #include <Aircraft/aircraft.hxx>
 
@@ -68,7 +65,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.15 2001/04/19 23:26:48 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.16 2001/04/25 01:01:13 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -203,18 +200,19 @@ private:
     FGInitialCondition *fgic;
     bool needTrim;
 
-	FGState*       State;
-	FGAtmosphere*  Atmosphere;
-	FGFCS*         FCS;
-	FGPropulsion*  Propulsion;
-	FGMassBalance* MassBalance;
-	FGAircraft*    Aircraft;
-	FGTranslation* Translation;
-	FGRotation*    Rotation;
-	FGPosition*    Position;
-	FGAuxiliary*   Auxiliary;
+    FGState*        State;
+    FGAtmosphere*   Atmosphere;
+    FGFCS*          FCS;
+    FGPropulsion*   Propulsion;
+    FGMassBalance*  MassBalance;
+    FGAircraft*     Aircraft;
+    FGTranslation*  Translation;
+    FGRotation*     Rotation;
+    FGPosition*     Position;
+    FGAuxiliary*    Auxiliary;
+    FGAerodynamics* Aerodynamics;
 
-	int runcount;
+    int runcount;
     float trim_elev;
     float trim_throttle;
     
