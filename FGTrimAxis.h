@@ -53,21 +53,22 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
-#include "FGTrimLong.h"
+
 
 const string AccelNames[6]=   { "udot","vdot","wdot","qdot","pdot","rdot" };
-const string ControlNames[10]= { "Throttle","Sideslip","Angle of Attack",
+const string ControlNames[13]= { "Throttle","Sideslip","Angle of Attack",
                                  "Elevator","Ailerons","Rudder",
                                  "Altitude AGL", "Pitch Angle",
-                                 "Roll Angle", "Flight Path Angle"
+                                 "Roll Angle", "Flight Path Angle", 
+                                 "Pitch Trim", "Roll Trim", "Yaw Trim"
                                };
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
-typedef enum { tUdot,tVdot,tWdot,tQdot,tPdot,tRdot } Accel;
-typedef enum { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
-               tTheta, tPhi, tGamma } Control;
+enum Accel { tUdot,tVdot,tWdot,tQdot,tPdot,tRdot };
+enum Control { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
+               tTheta, tPhi, tGamma, tPitchTrim, tRollTrim, tYawTrim };
 
 class FGTrimAxis {
 public:

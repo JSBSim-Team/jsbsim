@@ -84,33 +84,27 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     control_convert=RADTODEG;
     solver_eps=tolerance/100;
     break;
+  case tPitchTrim:
   case tElevator:
-    control_min=-1;
-    control_max=1;
-    accel_convert=RADTODEG;
-    solver_eps=tolerance/100;
-    break;
+  case tRollTrim:
   case tAileron:
-    control_min=-1;
-    control_max=1;
-    accel_convert=RADTODEG;
-    break;
+  case tYawTrim:
   case tRudder:
     control_min=-1;
     control_max=1;
     accel_convert=RADTODEG;
+    solver_eps=tolerance/100;
     break;
   case tAltAGL:
-    control_min=fdmex->GetPosition()->GetDistanceAGL()-100;
-    control_max=fdmex->GetPosition()->GetDistanceAGL()+100;
+    control_min=0;
+    control_max=30;
     control_value=fdmex->GetPosition()->GetDistanceAGL();
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=-30*DEGTORAD;
-    control_max=30*DEGTORAD;
+    control_min=-10*DEGTORAD;
+    control_max=10*DEGTORAD;
     accel_convert=RADTODEG;
-    max_iterations=1;
     break;
   case tPhi:
     control_min=-30*DEGTORAD;
@@ -124,7 +118,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     control_convert=RADTODEG;
     break;
   }
-
+  
 }
 
 /*****************************************************************************/
@@ -150,16 +144,19 @@ void FGTrimAxis::getAccel(void) {
 
 void FGTrimAxis::getControl(void) {
   switch(control) {
-  case tThrottle: control_value=fdmex->GetFCS()->GetThrottleCmd(0); break;
-  case tBeta:     control_value=fdmex->GetTranslation()->Getalpha(); break;
-  case tAlpha:    control_value=fdmex->GetTranslation()->Getbeta();  break;
-  case tElevator: control_value=fdmex->GetFCS() -> GetDeCmd(); break;
-  case tAileron:  control_value=fdmex->GetFCS() -> GetDaCmd(); break;
-  case tRudder:   control_value=fdmex->GetFCS() -> GetDrCmd(); break;
-  case tAltAGL:   control_value=fdmex->GetPosition()->Geth(); break;
-  case tTheta:    control_value=fdmex->GetRotation()->Gettht(); break;
-  case tPhi:      control_value=fdmex->GetRotation()->Getphi(); break;
-  case tGamma:    control_value=fdmex->GetPosition()->GetGamma();break;
+  case tThrottle:  control_value=fdmex->GetFCS()->GetThrottleCmd(0); break;
+  case tBeta:      control_value=fdmex->GetTranslation()->Getalpha(); break;
+  case tAlpha:     control_value=fdmex->GetTranslation()->Getbeta();  break;
+  case tPitchTrim: control_value=fdmex->GetFCS() -> GetPitchTrimCmd(); break;
+  case tElevator:  control_value=fdmex->GetFCS() -> GetDeCmd(); break;
+  case tRollTrim:
+  case tAileron:   control_value=fdmex->GetFCS() -> GetDaCmd(); break;
+  case tYawTrim:
+  case tRudder:    control_value=fdmex->GetFCS() -> GetDrCmd(); break;
+  case tAltAGL:    control_value=fdmex->GetPosition()->GetDistanceAGL();break;
+  case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
+  case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
+  case tGamma:     control_value=fdmex->GetPosition()->GetGamma();break;
   }
 }
 
@@ -168,16 +165,19 @@ void FGTrimAxis::getControl(void) {
 
 void FGTrimAxis::setControl(void) {
   switch(control) {
-  case tThrottle: setThrottlesPct(); break;
-  case tBeta:     fgic->SetBetaRadIC(control_value); break;
-  case tAlpha:    fgic->SetAlphaRadIC(control_value);  break;
-  case tElevator: fdmex-> GetFCS() -> SetDeCmd(control_value); break;
-  case tAileron:  fdmex-> GetFCS() -> SetDaCmd(control_value); break;
-  case tRudder:   fdmex-> GetFCS() -> SetDrCmd(control_value); break;
-  case tAltAGL:   fgic->SetAltitudeFtIC(control_value); break;
-  case tTheta:    SetThetaOnGround(control_value); break;
-  case tPhi:      SetPhiOnGround(control_value); break;
-  case tGamma:    fgic->SetFlightPathAngleRadIC(control_value); break;
+  case tThrottle:  setThrottlesPct(); break;
+  case tBeta:      fgic->SetBetaRadIC(control_value); break;
+  case tAlpha:     fgic->SetAlphaRadIC(control_value);  break;
+  case tPitchTrim: fdmex->GetFCS() -> SetPitchTrimCmd(control_value); break;
+  case tElevator:  fdmex-> GetFCS() -> SetDeCmd(control_value); break;
+  case tRollTrim:
+  case tAileron:   fdmex-> GetFCS() -> SetDaCmd(control_value); break;
+  case tYawTrim:
+  case tRudder:    fdmex-> GetFCS() -> SetDrCmd(control_value); break;
+  case tAltAGL:    fgic->SetAltitudeAGLFtIC(control_value); break;
+  case tTheta:     fgic->SetPitchAngleRadIC(control_value); break;
+  case tPhi:       fgic->SetRollAngleRadIC(control_value); break;
+  case tGamma:     fgic->SetFlightPathAngleRadIC(control_value); break;
   }
 }
 
