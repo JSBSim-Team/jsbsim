@@ -74,7 +74,7 @@ SENTRY
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.3 2004/04/17 21:13:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.5 2004/04/17 21:21:26 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
