@@ -15,7 +15,7 @@ print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o
 print "FGTurbine.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
 print "FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\\\n";
-print "FGJSBBase.o FGPropertyManager.o FGSimTurbine.o\n\n";
+print "FGJSBBase.o FGPropertyManager.o FGSimTurbine.o FGElectric.o\n\n";
 #
 print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx\\\n";
 print "Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\n\n";
@@ -33,7 +33,7 @@ foreach $file (@files) {
   print substr($file,0,length($file)-4);
   print ".o -c $file\n\n";
 }
-print "\n"; 
+print "\n";
 print "x15trim.o:x15trim.cpp\n";
 print "	\$(CC) \$(INCLUDES) \$(CCOPTS) -c x15trim.cpp\n\n";
 print "x15trim:\$(JSBSim_objects) x15trim.o libFCSComponents.a\n";
