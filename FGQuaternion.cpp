@@ -74,7 +74,7 @@ SENTRY
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.6 2004/05/22 09:48:20 frohlich Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.7 2004/09/03 18:09:13 frohlich Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,12 +130,17 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi)
    angular velocities PQR.
 */
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const {
+  double norm = Magnitude();
+  if (norm == 0.0)
+    return FGQuaternion::zero();
+  double rnorm = 1.0/norm;
+
   FGQuaternion QDot;
   QDot(1) = -0.5*(Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR));
   QDot(2) =  0.5*(Entry(1)*PQR(eP) + Entry(3)*PQR(eR) - Entry(4)*PQR(eQ));
   QDot(3) =  0.5*(Entry(1)*PQR(eQ) + Entry(4)*PQR(eP) - Entry(2)*PQR(eR));
   QDot(4) =  0.5*(Entry(1)*PQR(eR) + Entry(2)*PQR(eQ) - Entry(3)*PQR(eP));
-  return QDot;
+  return rnorm*QDot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

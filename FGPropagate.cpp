@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.17 2004/09/01 03:10:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.18 2004/09/03 18:09:13 frohlich Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,6 +152,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   // Compute some derived values.
   vVel = VState.vQtrn.GetTInv()*VState.vUVW;
+
+  // Finaly make shure that the quaternion stays normalized.
+  VState.vQtrn.Normalize();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
