@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.1 2001/12/13 21:39:06 dmegginson Exp $
+  CVS Version: $Id: c182.xml,v 1.2 2001/12/15 14:52:04 jberndt Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -119,7 +119,7 @@
       ZLOC   26.6
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 0.1
+      P_FACTOR 10.0
       SENSE   1.0
     </AC_THRUSTER>
 
