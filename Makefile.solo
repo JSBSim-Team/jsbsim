@@ -11,7 +11,7 @@ FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o FGScript
 FGJSBBase.o FGPropertyManager.o
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a
-	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties
+	$(CC) $(INCLUDES) $(CCOPTS) -Wl,-Map output.map -Wl,--cref $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties
 
 libFCSComponents.a:
 	cd filtersjb; make -fMakefile.solo; cd ..
