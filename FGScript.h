@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.10 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.11 2003/12/02 12:56:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,13 +59,6 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates the JSBSim scripting capability.
-    @author Jon S. Berndt
-    @version $Id: FGScript.h,v 1.10 2003/12/02 05:42:12 jberndt Exp $
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGScript.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGScript.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
-
     <h4>Scripting support provided via FGScript.</h4>
 
     <p>There is simple scripting support provided in the FGScript
@@ -124,6 +117,9 @@ CLASS DOCUMENTATION
     to be used are specified in the &quot;use&quot; lines. Next,
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;when&quot; clauses.</p>
+    @author Jon S. Berndt
+    @version $Id: FGScript.h,v 1.11 2003/12/02 12:56:04 jberndt Exp $
+
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

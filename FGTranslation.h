@@ -28,24 +28,6 @@ HISTORY
 12/02/98   JSB   Created
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-    Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-    School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-    JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-    NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-    Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-    1982 ISBN 0-471-08936-2
- 
-  The order of rotations used in this class corresponds to a 3-2-1 sequence,
-  or Y-P-R, or Z-Y-X, if you prefer.
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -80,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.45 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.46 2003/12/02 12:56:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATION
@@ -93,6 +75,19 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models the translation aspects of the EOM.
+    Note: The order of rotations used in this class corresponds to a 3-2-1 sequence,
+    or Y-P-R, or Z-Y-X, if you prefer.
+    @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+    Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
+    School, January 1994
+    @see D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+    JSC 12960, July 1977
+    @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+    NASA-Ames", NASA CR-2497, January 1975
+    @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+    Wiley & Sons, 1979 ISBN 0-471-03032-5
+    @see Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+    1982 ISBN 0-471-08936-2
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
