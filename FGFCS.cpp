@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.85 2002/08/30 11:37:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.86 2002/09/07 21:40:12 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -419,6 +419,7 @@ double FGFCS::GetComponentOutput(int idx)
     cerr << "Unknown FCS mode" << endl;
     break;
   }
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -434,6 +435,7 @@ string FGFCS::GetComponentName(int idx)
     cerr << "Unknown FCS mode" << endl;
     break;
   }
+  return string("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

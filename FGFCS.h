@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.54 2002/08/17 00:05:05 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.55 2002/09/07 21:40:12 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.54 2002/08/17 00:05:05 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.55 2002/09/07 21:40:12 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -645,7 +645,6 @@ private:
   void Debug(int from);
 };
 
-#include "FGState.h"
 
 #endif
 
