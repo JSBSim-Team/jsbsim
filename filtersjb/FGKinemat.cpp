@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.7 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.8 2002/02/15 23:14:18 apeden Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,7 +146,7 @@ bool FGKinemat::Run(void ) {
           else
             output_transit_rate=(Detents[fi] - Detents[fi+1])/5;
         }
-        if(fabs(OutputPos - InputCmd) > dt*output_transit_rate)
+        if(fabs(OutputPos - InputCmd) > fabs(dt*output_transit_rate) )
           OutputPos+=output_transit_rate*dt;
         else {
           InTransit=0;
