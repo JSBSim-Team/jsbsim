@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.28 2001/11/05 18:23:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.29 2001/11/06 13:17:47 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,6 +179,12 @@ float FGPropeller::Calculate(float PowerAvailable)
   Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
   vFn(1) = Thrust;
   omega = RPS*2.0*M_PI;
+
+  // Must consider rotated axis for propeller (V-22, helicopter case)
+  // FIX THIS !!
+  vH(eX) = Ixx*omega*fabs(Sense)/Sense;
+  vH(eY) = 0.0;
+  vH(eZ) = 0.0;
 
   if (omega <= 5) omega = 1.0;
 
