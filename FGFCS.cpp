@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.33 2000/11/12 12:21:42 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.34 2000/11/15 14:14:58 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,7 +130,6 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
       token = AC_cfg->GetValue("TYPE");
       cout << "    Loading Component \"" << AC_cfg->GetValue("NAME") << "\" of type: " << token << endl;
       if ((token == "LAG_FILTER") ||
-          (token == "RECT_LAG_FILTER") ||
           (token == "LEAD_LAG_FILTER") ||
           (token == "SECOND_ORDER_FILTER") ||
           (token == "WASHOUT_FILTER") ||

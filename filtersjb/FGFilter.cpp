@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.10 2000/11/14 23:40:49 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.11 2000/11/15 14:14:59 jsb Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,6 +55,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
+  dt = fcs->GetState()->Getdt();
 
   C1 = C2 = C3 = C4 = C5 = C6 = 0.0;
 
@@ -69,6 +70,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;
+      cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
@@ -79,20 +81,34 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
         *AC_cfg >> InputIdx;
         InputType = itFCS;
       }
+      cout << "      INPUT: " << token << endl;
     } else if (token == "C1") {
       *AC_cfg >> C1;
+      cout << "      C1: " << C1 << endl;
     } else if (token == "C2") {
       *AC_cfg >> C2;
+      cout << "      C2: " << C2 << endl;
     } else if (token == "C3") {
       *AC_cfg >> C3;
+      cout << "      C3: " << C3 << endl;
     } else if (token == "C4") {
       *AC_cfg >> C4;
+      cout << "      C4: " << C4 << endl;
     } else if (token == "C5") {
       *AC_cfg >> C5;
+      cout << "      C5: " << C5 << endl;
     } else if (token == "C6") {
       *AC_cfg >> C6;
+      cout << "      C6: " << C6 << endl;
+    } else if (token == "OUTPUT") {
+      IsOutput = true;
+      *AC_cfg >> sOutputIdx;
+      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
+      cout << "      OUTPUT: " << sOutputIdx << endl;
     }
   }
+
+  Initialize = true;
 
   switch (FilterType) {
     case eLag:
@@ -120,31 +136,36 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFilter::Run(void)
 {
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
-  switch (FilterType) {
-    case eLag:
-      Output = Input * ca + PreviousOutput1 * cb;
-      break;
-    case eLeadLag:
-      Output = Input * ca + PreviousInput1 * cb + PreviousOutput1 * cc;
-      break;
-    case eOrder2:
-      break;
-    case eWashout:
-      Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;
-      break;
-    case eIntegrator:
-      Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
-      break;
+  if (Initialize) {
+
+    PreviousOutput1 = PreviousInput1 = Output = Input;
+    Initialize = false;
+
+  } else {
+
+    switch (FilterType) {
+      case eLag:
+        Output = Input * ca + PreviousOutput1 * cb;
+        break;
+      case eLeadLag:
+        Output = Input * ca + PreviousInput1 * cb + PreviousOutput1 * cc;
+        break;
+      case eOrder2:
+        break;
+      case eWashout:
+        Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;
+        break;
+      case eIntegrator:
+        Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
+        break;
+    }
+
   }
 
   PreviousOutput2 = PreviousOutput1;

@@ -241,6 +241,7 @@
       GAIN         0.30
     </COMPONENT>
 
+    <COMMENT>
     <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
       ID           15
       INPUT         3
@@ -248,9 +249,24 @@
       OUTPUT       FG_ELEVATOR_POS
       CLIPTO       -0.26 0.61
     </COMPONENT>
+    </COMMENT>
+
+    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
+      ID           15
+      INPUT         3
+      INPUT        10
+      CLIPTO       -0.26 0.61
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
+      ID           16
+      INPUT        15
+      C1           5
+      OUTPUT       FG_ELEVATOR_POS
+    </COMPONENT>
 
     <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
-      ID           16
+      ID           17
       INPUT         6
       INPUT        13
       OUTPUT       FG_AILERON_POS
@@ -258,7 +274,7 @@
     </COMPONENT>
 
     <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
-      ID           17
+      ID           18
       INPUT         9
       INPUT        14
       OUTPUT       FG_RUDDER_POS

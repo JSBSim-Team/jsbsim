@@ -56,6 +56,19 @@ CLASS DECLARATION
 
 class FGFilter  : public FGFCSComponent         
 {
+public:
+  FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg);
+  ~FGFilter ( ) { }       //Destructor
+
+  bool Run (void);
+
+  /** When true, causes previous values to be set to current values. This
+      is particularly useful for first pass. */
+  bool Initialize;
+
+  enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
+
+private:
   float dt;
   float ca;
   float cb;
@@ -73,14 +86,6 @@ class FGFilter  : public FGFCSComponent
   float PreviousOutput2;
   FGConfigFile* AC_cfg;
 
-protected:
-  enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType; 
-
-public:
-  FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGFilter ( ) { }       //Destructor
-
-  bool Run (void);
 };
 
 #endif
