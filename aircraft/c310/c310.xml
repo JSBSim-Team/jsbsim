@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.27 2002/04/16 06:31:01 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.28 2002/04/16 06:32:31 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -152,7 +152,7 @@
       ZLOC   15.5
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 0.5
+      P_FACTOR 0.1
       SENSE   1.0
     </AC_THRUSTER>
 
@@ -162,7 +162,7 @@
       ZLOC   15.5
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 0.5
+      P_FACTOR 0.1
       SENSE   1.0
     </AC_THRUSTER>
 
