@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.1 2003/03/16 13:01:10 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.2 2003/03/16 17:55:03 ehofman Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,7 +212,7 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
   }
   
   // pre-calculations and initializations
-  delay= (1.0 + (BypassRatio/2.5)) * 0.3;
+  delay= 1.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = ((Atmosphere->GetTemperature()- 492.0) * 0.5555556) + 273.0;

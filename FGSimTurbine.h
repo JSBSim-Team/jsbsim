@@ -48,7 +48,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.1 2003/03/16 13:01:10 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.2 2003/03/16 17:55:03 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -85,7 +85,7 @@ private:
   double MaxN1;            // N1 at 100% throttle
   double MaxN2;            // N2 at 100% throttle
   double IdleFF;           // Idle Fuel Flow (lbm/hr)
-  double delay;            // Spool-up time from idle to 100% (seconds)
+  double delay;            // Inverse spool-up time from idle to 100% (seconds)
   double dt;               // Simulator time slice
   double N1_factor;        // factor to tie N1 and throttle
   double N2_factor;        // factor to tie N2 and throttle
