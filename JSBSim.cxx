@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.7 2000/05/03 12:29:06 jsb Exp $
+// $Id: JSBSim.cxx,v 1.8 2000/05/03 22:39:39 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -142,8 +142,8 @@ int FGJSBsim::update( int multiloop ) {
                                          controls.get_throttle( 0 ) * 100.0 );
   // FCS->SetBrake( controls.get_brake( 0 ) );
 
-  // Inform JSBsim of the local terrain altitude
-  // Runway_altitude =   get_Runway_altitude();
+  // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
+  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude());
 
   for ( int i = 0; i < multiloop; i++ ) {
     FDMExec.Run();
@@ -245,9 +245,6 @@ int FGJSBsim::copy_from_JSBsim() {
   /* **FIXME*** */ set_Earth_position_angle( 0.0 );
 
   // /* ***FIXME*** */ set_Runway_altitude( 0.0 );
-  set_Runway_altitude( scenery.cur_elev );
-  
-  FDMExec.Position()->SetRunwayElevation(scenery.cur_elev);
 
   set_sin_lat_geocentric( lat_geoc );
   set_cos_lat_geocentric( lat_geoc );

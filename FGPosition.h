@@ -56,11 +56,11 @@ class FGPosition : public FGModel
   FGColumnVector vUVW;
   FGColumnVector vVel;
 
-  float Vee, invMass, invRadius;
+  double Vee, invMass, invRadius;
   double Radius, h;
-  float LatitudeDot, LongitudeDot, RadiusDot;
-  float lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
-  float Longitude, Latitude;
+  double LatitudeDot, LongitudeDot, RadiusDot;
+  double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
+  double Longitude, Latitude;
   float dt;
   double RunwayElevation;
   double DistanceAGL;
@@ -73,19 +73,19 @@ public:
 
   inline FGColumnVector GetVel(void) {return vVel;}
   inline FGColumnVector GetUVW(void) {return vUVW;}
-  inline float GetVn(void)  {return vVel(1);}
-  inline float GetVe(void)  {return vVel(2);}
-  inline float GetVd(void)  {return vVel(3);}
-  inline float Geth(void)  {return h;}
-  inline float GetLatitude(void) {return Latitude;}
-  inline float GetLongitude(void) {return Longitude;}
+  inline double GetVn(void)  {return vVel(1);}
+  inline double GetVe(void)  {return vVel(2);}
+  inline double GetVd(void)  {return vVel(3);}
+  inline double Geth(void)  {return h;}
+  inline double GetLatitude(void) {return Latitude;}
+  inline double GetLongitude(void) {return Longitude;}
   inline double GetRunwayElevation(void) {return RunwayElevation;}
   inline double GetDistanceAGL(void)  {return DistanceAGL;}
 
   void SetvVel(const FGColumnVector& v) {vVel = v;}
   void SetLatitude(float tt) {Latitude = tt;}
-  void SetLongitude(float tt) {Longitude = tt;}
-  void Seth(float tt) {h = tt;}
+  void SetLongitude(double tt) {Longitude = tt;}
+  void Seth(double tt) {h = tt;}
   void SetRunwayElevation(double tt) {RunwayElevation = tt;}
   void SetDistanceAGL(double tt) {DistanceAGL = tt;}
 

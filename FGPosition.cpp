@@ -102,7 +102,7 @@ FGPosition::~FGPosition(void)
 
 bool FGPosition:: Run(void)
 {
-  float cosLat;
+  double cosLat;
 
   if (!FGModel::Run()) {
     GetState();
