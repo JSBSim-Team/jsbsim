@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.57 2004/03/09 12:32:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.58 2004/03/23 11:36:55 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,7 @@ bool FGTranslation::Run(void)
     vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
     Vt = vAeroUVW.Magnitude();
-    if ( Vt > 1) {
+    if ( Vt > 0.05) {
       if (vAeroUVW(eW) != 0.0)
         alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
       if (vAeroUVW(eV) != 0.0)
