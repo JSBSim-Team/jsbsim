@@ -65,7 +65,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.26 2001/02/22 17:25:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.27 2001/02/23 00:08:28 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -297,16 +297,95 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 }
 
 
-bool FGFDMExec::RunScript(string script)
+bool FGFDMExec::LoadScript(string script)
 {
   FGConfigFile Script(script);
+  string token="";
+  string aircraft="";
+  string initialize="";
+  bool result=false;
+  float dt=0.0;
+  struct condition newCondition;
+
   if (!Script.IsOpen()) return false;
 
-  string token = Script.GetValue();
-  string scratch;
-  ScriptName = Script.GetValue("NAME");
+  Script.GetNextConfigLine();
+  ScriptName = Script.GetValue("name");
+  cout << "Reading Script File " << ScriptName << endl;
 
+  while (Script.GetNextConfigLine() != "EOF" && Script.GetValue() != "/runscript") {
+    token = Script.GetValue();
+    if (token == "use") {
+      if ((token = Script.GetValue("aircraft")) != "") {
+        aircraft = token;
+        cout << "  Use aircraft: " << token << endl;
+      } else if ((token = Script.GetValue("initialize")) != "") {
+        initialize = token;
+        cout << "  Use reset file: " << token << endl;
+      } else {
+        cerr << "Unknown 'use' keyword: \"" << token << "\"" << endl;
+      }
+    } else if (token == "run") {
+      StartTime = strtod(Script.GetValue("start").c_str(), NULL);
+      EndTime   = strtod(Script.GetValue("end").c_str(), NULL);
+      dt        = strtod(Script.GetValue("dt").c_str(), NULL);
+      State->Setdt(dt);
+      Script.GetNextConfigLine();
+      token = Script.GetValue();
+      while (token != "/run") {
 
+        if (token == "when") {
+          Script.GetNextConfigLine();
+          token = Script.GetValue();
+          while (token != "/when") {
+            if (token == "parameter") {
+              newCondition.TestParam = State->GetParameterIndex(Script.GetValue("name"));
+              newCondition.TestValue = strtod(Script.GetValue("value").c_str(), NULL);
+              newCondition.Tolerance = strtod(Script.GetValue("tolerance").c_str(), NULL);
+            } else if (token == "set") {
+              newCondition.SetParam = State->GetParameterIndex(Script.GetValue("name"));
+              newCondition.Type = (eType)strtol(Script.GetValue("type").c_str(), NULL, 10);
+              newCondition.SetValue = strtod(Script.GetValue("value").c_str(), NULL);
+              newCondition.Action = (eAction)strtol(Script.GetValue("action").c_str(), NULL, 10);
+              newCondition.Repeat = strtol(Script.GetValue("repeat").c_str(), NULL, 10);
+              newCondition.Factor = strtod(Script.GetValue("factor").c_str(), NULL);
+            } else {
+              cerr << "Unrecognized keyword in script file: \" [when] " << token << "\"" << endl;
+            }
+            Script.GetNextConfigLine();
+            token = Script.GetValue();
+          }
+          Conditions.push_back(newCondition);
+          Script.GetNextConfigLine();
+          token = Script.GetValue();
+
+        } else {
+          cerr << "Error reading script file: expected \"when\", got \"" << token << "\"" << endl;
+        }
+
+      }
+    } else {
+      cerr << "Unrecognized keyword in script file: \"" << token << "\" [runscript] " << endl;
+    }
+  }
+
+  if (aircraft == "") {
+    cerr << "Aircraft file not loaded in script" << endl;
+    exit(-1);
+  }
+  
+  result = LoadModel("aircraft", "engine", aircraft);
+  if (!result) {
+    cerr << "Aircraft file " << aircraft << " was not found" << endl;
+	  exit(-1);
+  }
+  if ( ! State->Reset("aircraft", aircraft, initialize))
+                 State->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
+  
   return true;
+}
+
+bool FGFDMExec::RunScript(void)
+{
 }
 

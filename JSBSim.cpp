@@ -39,62 +39,6 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#if __BCPLUSPLUS__  == 0x0540   // If compiling under Borland C++Builder
-
-#pragma hdrstop
-#include <condefs.h>
-
-USEUNIT("FGAerodynamics.cpp");
-USEUNIT("FGAircraft.cpp");
-USEUNIT("FGAtmosphere.cpp");
-USEUNIT("FGAuxiliary.cpp");
-USEUNIT("FGCoefficient.cpp");
-USEUNIT("FGConfigFile.cpp");
-USEUNIT("FGEngine.cpp");
-USEUNIT("FGFCS.cpp");
-USEUNIT("FGFDMExec.cpp");
-USEUNIT("FGfdmSocket.cpp");
-USEUNIT("FGForce.cpp");
-USEUNIT("FGGroundReactions.cpp");
-USEUNIT("FGInertial.cpp");
-USEUNIT("FGInitialCondition.cpp");
-USEUNIT("FGLGear.cpp");
-USEUNIT("FGMassBalance.cpp");
-USEUNIT("FGMatrix.cpp");
-USEUNIT("FGModel.cpp");
-USEUNIT("FGNozzle.cpp");
-USEUNIT("FGOutput.cpp");
-USEUNIT("FGPiston.cpp");
-USEUNIT("FGPosition.cpp");
-USEUNIT("FGPropeller.cpp");
-USEUNIT("FGPropulsion.cpp");
-USEUNIT("FGRocket.cpp");
-USEUNIT("FGRotation.cpp");
-USEUNIT("FGRotor.cpp");
-USEUNIT("FGState.cpp");
-USEUNIT("FGTable.cpp");
-USEUNIT("FGTank.cpp");
-USEUNIT("FGThruster.cpp");
-USEUNIT("FGTranslation.cpp");
-USEUNIT("FGTrim.cpp");
-USEUNIT("FGTrimAxis.cpp");
-USEUNIT("FGTurboJet.cpp");
-USEUNIT("FGTurboProp.cpp");
-USEUNIT("FGTurboShaft.cpp");
-USEUNIT("FGUtility.cpp");
-USEUNIT("filtersjb\FGSwitch.cpp");
-USEUNIT("filtersjb\FGFCSComponent.cpp");
-USEUNIT("filtersjb\FGFilter.cpp");
-USEUNIT("filtersjb\FGFlaps.cpp");
-USEUNIT("filtersjb\FGGain.cpp");
-USEUNIT("filtersjb\FGGradient.cpp");
-USEUNIT("filtersjb\FGSummer.cpp");
-USEUNIT("filtersjb\FGDeadBand.cpp");
-USERES("JSBSim.res");
-//---------------------------------------------------------------------------
-#pragma argsused
-#endif
-
 #include "FGFDMExec.h"
 #include "FGRotation.h"
 #include "FGAtmosphere.h"
@@ -105,6 +49,7 @@ USERES("JSBSim.res");
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGConfigFile.h"
 
 #ifdef FGFS
 #include <simgear/compiler.h>
@@ -127,7 +72,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.43 2001/02/04 13:16:19 jsb Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.44 2001/02/23 00:08:28 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -143,7 +88,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.43 2001/02/04 13:16:19 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.44 2001/02/23 00:08:28 jberndt Exp $
     @see -
 */
 
@@ -154,28 +99,50 @@ IMPLEMENTATION
 int main(int argc, char** argv)
 {
   FGFDMExec* FDMExec;
+  float cmd = 0.0;
   bool result = false;
+  bool scripted = false;
 
-  if (argc != 3) {
+  if (argc == 2) {
+    FGConfigFile testFile(argv[1]);
+
+    if (!testFile.IsOpen()) {
+      cout << "Script file not opened" << endl;
+      exit(-1); 
+    }
+
+    testFile.GetNextConfigLine();
+    if (testFile.GetValue("runscript").length() <= 0) {
+      cout << "File: " << argv[1] << " is not a script file" << endl;
+      exit(-1); 
+    }
+    scripted = true;
+  } else if (argc != 3) {
     cout << endl
          << "  You must enter the name of a registered aircraft and reset point:"
          << endl << endl << "  FDM <aircraft name> <reset file>" << endl;
+    cout << endl << "  Alternatively, you may specify only the name of a script file:"
+         << endl << endl << "  FDM <script file>" << endl;
     exit(0);
   }
 
   FDMExec = new FGFDMExec();
 
-  result = FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
-  
-  if (!result) {
-  	cerr << "Aircraft file " << argv[1] << " was not found" << endl;
-	  exit(-1);
+  if (scripted) {
+    result = FDMExec->LoadScript(argv[1]);
+    if (!result) {
+      cerr << "Script file " << argv[1] << " was not successfully loaded" << endl;
+      exit(-1);
+    }
+  } else {
+    result = FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
+    if (!result) {
+    	cerr << "Aircraft file " << argv[1] << " was not found" << endl;
+	    exit(-1);
+    }
+    if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
+                   FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
   }
-  
-  if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
-    FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
-
-  float cmd = 0.0;
 
   while (FDMExec->GetState()->Getsim_time() <= 10.0)
   {

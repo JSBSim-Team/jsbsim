@@ -41,7 +41,18 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Header"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.18 2001/02/23 00:08:28 jberndt Exp $"
+
+#ifdef FGFS
+#  include <simgear/compiler.h>
+#  ifdef FG_HAVE_STD_INCLUDES
+#    include <vector>
+#  else
+#    include <vector.h>
+#  endif
+#else
+#  include <vector>
+#endif
 
 #include "FGModel.h"
 #include "FGInitialCondition.h"
@@ -49,6 +60,18 @@ INCLUDES
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+struct condition {
+  eParam  TestParam;
+  eParam  SetParam;
+  float   TestValue;
+  float   SetValue;
+  float   Tolerance;
+  float   Factor;
+  int     Repeat;
+  eAction Action;
+  eType   Type;
+};
 
 class FGState;
 class FGAtmosphere;
@@ -82,7 +105,8 @@ public:
   bool SetScriptPath(string path)   {ScriptPath = path; return true;}
 
   bool LoadModel(string AircraftPath, string EnginePath, string model);
-  bool RunScript(string script);
+  bool LoadScript(string script);
+  bool RunScript(void);
 
   inline FGState* GetState(void)              {return State;}
   inline FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
@@ -101,13 +125,16 @@ public:
 private:
   bool frozen;
   bool terminate;
-  int Error;
+  int  Error;
   bool modelLoaded;
 
   string AircraftPath;
   string EnginePath;
   string ScriptPath;
   string ScriptName;
+  float  StartTime;
+  float  EndTime;
+  vector <struct condition> Conditions;
 
   FGState*       State;
   FGAtmosphere*  Atmosphere;

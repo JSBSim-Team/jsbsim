@@ -95,6 +95,18 @@ enum eParam {
   FG_PITCH_TRIM_CMD
 };
 
+enum eAction {
+  FG_RAMP  = 1,
+  FG_STEP  = 2,
+  FG_EXP   = 3
+};
+
+enum eType {
+  FG_VALUE = 1,
+  FG_DELTA = 2,
+  FG_BOOL  = 3
+};
+
 /******************************************************************************/
 #endif
 
