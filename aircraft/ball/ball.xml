@@ -1,85 +1,24 @@
 <FDM_CONFIG NAME="BALL" VERSION="1.60" RELEASE= "ALPHA" >
 
-  <!--
-
-  File:        ball.xml
-  Author:      Jon Berndt
-  CVS Version: $Id: ball.xml,v 1.2 2004/01/27 12:48:19 jberndt Exp $
-
-  Function: Models a 50 lb. ball for testing
-  Notes:    Try running JSBSim using this command line,
-
-  -->
-
   <METRICS>
 
-    <!--
-    Center of gravity location, empty weight, in aircraft structural coord
-    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
-    right wing.
-
-    Pilot eyepoint location, in aircraft coord system, FROM cg.
-    X, Y, Z, in inches
-    -->
-
     AC_WINGAREA 1.0
-    AC_WINGSPAN 0.0
-    AC_CHORD    0.0
     AC_IXX      10.0
     AC_IYY      10.0
     AC_IZZ      10.0
     AC_IXZ      0.0
     AC_EMPTYWT  50.0
     AC_CGLOC    0.0 0.0 0.0
-    AC_EYEPTLOC 0.0 0.0 0.0
-    AC_AERORP   0.0 0.0 0.0
 
   </METRICS>
 
   <UNDERCARRIAGE>
 
-    <!--
-    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-
-    AC_GEAR
-    <name>                           name of gear entry - no spaces allowed
-    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
-    <spring constant>                spring constant in lbs/ft
-    <damping coefficient>            damping coefficient in lbs/ft/sec
-    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
-    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
-    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
-    <max steer angle>                Maximum steerable angle in degrees
-    <retractable>                    FIXED or RETRACTABLE
-    -->
-
    AC_GEAR  NOSE_CONTACT    0.0  0.0  0.0  10000 200000  0.0  0.0  0.0  FIXED NONE 0 FIXED
 
   </UNDERCARRIAGE>
 
-  <PROPULSION>
-    <!--
-      No propulsion
-    -->
-  </PROPULSION>
-
-  <FLIGHT_CONTROL NAME="dumb ball">
-    <!--
-      No FCS
-    -->
-  </FLIGHT_CONTROL>
-
-
   <AERODYNAMICS>
-
-    <AXIS NAME="LIFT">
-      <!--
-        No Lift
-      -->
-    </AXIS>
-
     <AXIS NAME="DRAG">
       <COEFFICIENT NAME="CD" TYPE="VALUE">
          Drag
@@ -87,31 +26,6 @@
          1.0
       </COEFFICIENT>
     </AXIS>
-
-    <AXIS NAME="SIDE">
-      <!--
-        No Side Force
-      -->
-    </AXIS>
-
-    <AXIS NAME="ROLL">
-      <!--
-        No roll moment
-      -->
-    </AXIS>
-
-    <AXIS NAME="PITCH">
-      <!--
-        No pitch moment
-      -->
-    </AXIS>
-
-    <AXIS NAME="YAW">
-      <!--
-        No yaw moment
-      -->
-    </AXIS>
-
   </AERODYNAMICS>
 
   <OUTPUT NAME="JSBout.csv" TYPE="CSV">

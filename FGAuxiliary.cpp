@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.39 2004/01/13 17:35:06 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.40 2004/01/29 13:38:06 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +103,7 @@ bool FGAuxiliary::Run()
     tatc=RankineToCelsius(tat);
     
     if (mach < 1) {   //calculate total pressure assuming isentropic flow
-      pt=p*pow((1 + 0.2*machU*machU),3.5);
+      pt = p*pow((1 + 0.2*machU*machU),3.5);
     } else {
       // shock in front of pitot tube, we'll assume its normal and use
       // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
@@ -172,6 +172,8 @@ bool FGAuxiliary::Run()
        vPilotAccel /= MassBalance->GetMass();
        vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
        vToEyePt *= inchtoft;
+       vToEyePt(eX) *= -1.0;
+       vToEyePt(eZ) *= -1.0;
        vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
        vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
     } else {

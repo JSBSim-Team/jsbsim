@@ -92,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.63 2004/01/11 22:59:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.64 2004/01/29 13:38:07 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,8 +184,11 @@ bool FGPosition::Run(void)
 
     h = Radius - SeaLevelRadius;           // Geocentric
 
-    vVRPoffset = State->GetTb2l() * (vVRP - MassBalance->GetXYZcg());
-    vVRPoffset /= 12.0; // converted to feet
+    vVRPoffset = vVRP - MassBalance->GetXYZcg(); // calc distance from CG to VRP (inches)
+    vVRPoffset(eX) *= -1.0;                      // Convert from structural frame
+    vVRPoffset(eZ) *= -1.0;                      //   to body frame
+    vVRPoffset *= inchtoft;                      // Convert to units of feet
+    vVRPoffset = State->GetTb2l() * vVRPoffset;  // Transform to Local frame
 
     // vVRP  - the vector to the Visual Reference Point - now contains the 
     // offset from the CG to the VRP, in units of feet, in the Local coordinate
@@ -196,7 +199,7 @@ bool FGPosition::Run(void)
       LongitudeVRP = vVRPoffset(eEast) / (Radius * cosLat) + Longitude;
 
     LatitudeVRP = vVRPoffset(eNorth) / Radius + Latitude;
-    hVRP = vVRPoffset(eDown) + h;
+    hVRP = -vVRPoffset(eDown) + h;
 /*
 cout << "Lat/Lon/Alt : " << Latitude << " / " << Longitude << " / " << h << endl;
 cout << "Lat/Lon/Alt VRP: " << LatitudeVRP << " / " << LongitudeVRP << " / " << hVRP << endl << endl;
