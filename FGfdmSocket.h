@@ -49,8 +49,10 @@ INCLUDES
 #  include STL_STRING
 #  include STL_IOSTREAM
 #  include STL_FSTREAM
-   SG_USING_STD(cout);
-   SG_USING_STD(endl);
+#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
+     SG_USING_STD(cout);
+     SG_USING_STD(endl);
+#  endif
 #else
 #  include <iostream>
 #  include <fstream>
@@ -74,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.15 2001/06/05 12:52:09 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.16 2001/06/14 22:55:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

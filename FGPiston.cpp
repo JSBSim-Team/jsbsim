@@ -38,9 +38,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGDefs.h"
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.23 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.24 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 extern short debug_lvl;

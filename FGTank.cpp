@@ -36,9 +36,10 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGDefs.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.15 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.16 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 extern short debug_lvl;
@@ -47,9 +48,11 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#if !defined ( sgi ) || defined( __GNUC__ )
 using std::cerr;
 using std::endl;
 using std::cout;
+#endif
 
 FGTank::FGTank(FGConfigFile* AC_cfg)
 {

@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.12 2001/04/24 22:14:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.13 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -137,12 +137,12 @@ bool FGAerodynamics::LoadAerodynamics(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
+  while ((token = AC_cfg->GetValue()) != "/AERODYNAMICS") {
     if (token == "AXIS") {
       CoeffArray ca;
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
-      while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
+      while ((token = AC_cfg->GetValue()) != "/AXIS") {
         ca.push_back(new FGCoefficient(FDMExec, AC_cfg));
         if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
       }

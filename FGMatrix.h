@@ -28,11 +28,13 @@ INCLUDES
 #  include STL_FSTREAM
 #  include STL_IOSTREAM
    SG_USING_STD(string);
-   SG_USING_STD(ostream);
-   SG_USING_STD(istream);
-   SG_USING_STD(cerr);
-   SG_USING_STD(cout);
-   SG_USING_STD(endl);
+#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
+     SG_USING_STD(ostream);
+     SG_USING_STD(istream);
+     SG_USING_STD(cerr);
+     SG_USING_STD(cout);
+     SG_USING_STD(endl);
+#  endif
 #else
 #  include <fstream>
 #  include <cmath>
@@ -51,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.29 2001/06/05 18:25:06 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.30 2001/06/14 22:55:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

@@ -59,6 +59,10 @@ SENTRY
 #define HPTOFTLBSSEC 550
 #define METERS_TO_FEET 3.2808
 
+#if defined ( sgi ) && !defined( __GNUC__ )
+#define __STL_FUNCTION_TMPL_PARTIAL_ORDER
+#endif
+
 enum eParam {
   FG_UNDEF = 0,
   FG_TIME,

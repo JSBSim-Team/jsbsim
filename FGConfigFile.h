@@ -44,13 +44,15 @@ INCLUDES
 #  include STL_FSTREAM
 #  include STL_IOSTREAM
    SG_USING_STD(string);
-   SG_USING_STD(ostream);
-   SG_USING_STD(istream);
-   SG_USING_STD(ifstream);
-   SG_USING_STD(cerr);
-   SG_USING_STD(endl);
-   SG_USING_STD(ios);
-   SG_USING_STD(cout);
+#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
+     SG_USING_STD(ostream);
+     SG_USING_STD(istream);
+     SG_USING_STD(ifstream);
+     SG_USING_STD(cerr);
+     SG_USING_STD(endl);
+     SG_USING_STD(ios);
+     SG_USING_STD(cout);
+#  endif
 #else
 #  include <fstream>
 #  include <iostream>
@@ -71,7 +73,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.21 2001/06/05 12:52:09 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.22 2001/06/14 22:55:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +90,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.21 2001/06/05 12:52:09 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.22 2001/06/14 22:55:03 jberndt Exp $
     @see -
 */
 

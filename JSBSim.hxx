@@ -39,17 +39,20 @@ INCLUDES
 
 #undef MAX_ENGINES
 #include <Aircraft/aircraft.hxx>
-#include "FDM/JSBSim/FGDefs.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBSIMXX "$Header JSBSim.hxx,v 1.4 2000/10/22 14:02:16 jsb Exp $"
+#define ID_JSBSIMXX "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.hxx,v 1.19 2001/06/14 22:55:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <simgear/misc/props.hxx>
+
+#include <FDM/JSBSim/FGFDMExec.h>
 
 class FGState;
 class FGAtmosphere;
@@ -65,7 +68,6 @@ class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
-class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -82,7 +84,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.18 2001/06/05 19:20:44 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.19 2001/06/14 22:55:03 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -233,7 +235,12 @@ private:
     float trim_elev;
     float trim_throttle;
     
-    SGValue *trimmed;
+    SGPropertyNode *startup_trim;
+    SGPropertyNode *trimmed;
+    SGPropertyNode *pitch_trim;
+    SGPropertyNode *throttle_trim;
+    SGPropertyNode *aileron_trim;
+    SGPropertyNode *rudder_trim;
     
     void snap_shot(void);
 };

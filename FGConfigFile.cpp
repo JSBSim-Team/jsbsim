@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.19 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.20 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 extern short debug_lvl;
@@ -32,11 +32,19 @@ CLASS IMPLEMENTATION
 
 FGConfigFile::FGConfigFile(string cfgFileName)
 {
+#if defined ( sgi ) && !defined( __GNUC__ )
+  cfgfile.open(cfgFileName.c_str(), ios::in );
+#else
   cfgfile.open(cfgFileName.c_str(), ios::in | ios::binary );
+#endif
   CommentsOn = false;
   CurrentIndex = 0;
   Opened = true;
+#if defined ( sgi ) && !defined( __GNUC__ )
+   if (!cfgfile.fail() && !cfgfile.eof())  GetNextConfigLine();
+#else
   if (cfgfile.is_open()) GetNextConfigLine();
+#endif
   else Opened = false;
 
   if (debug_lvl & 2) cout << "Instantiated: FGConfigFile" << endl;
@@ -167,7 +175,11 @@ string FGConfigFile::GetLine(void)
       scratch += (char)test;
     } else {
       if ((test = cfgfile.get()) != EOF) {
+#if defined ( sgi ) && !defined( __GNUC__ )
+        if (test >= 0x20) cfgfile.putback(test);
+#else
         if (test >= 0x20) cfgfile.unget();
+#endif
         break;
       }
     }

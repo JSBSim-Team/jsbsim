@@ -37,6 +37,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGDefs.h"
+
 #include "FGFCS.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
@@ -56,7 +58,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.47 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.48 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 extern short debug_lvl;

@@ -37,9 +37,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGTable.h"
-#include <iomanip>
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.9 2001/03/22 14:10:24 jberndt Exp $";
+#if defined ( sgi ) && !defined( __GNUC__ )
+#include <iomanip.h>
+#else
+#include <iomanip>
+#endif
+
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.10 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 extern short debug_lvl;

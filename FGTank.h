@@ -50,9 +50,11 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  include STL_STRING
   SG_USING_STD(string);
-  SG_USING_STD(cerr);
-  SG_USING_STD(endl);
-  SG_USING_STD(cout);
+# if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
+   SG_USING_STD(cerr);
+   SG_USING_STD(endl);
+   SG_USING_STD(cout);
+# endif
 #else
 # include <string>
   using std::string;
@@ -65,7 +67,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.13 2001/06/04 19:52:14 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.14 2001/06/14 22:55:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

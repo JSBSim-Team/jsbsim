@@ -140,7 +140,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.79 2001/05/29 20:13:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.80 2001/06/14 22:55:03 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -210,8 +210,8 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 
   ReadPrologue(&AC_cfg);
 
-  while ((AC_cfg.GetNextConfigLine() != string("EOF")) &&
-         (token = AC_cfg.GetValue()) != string("/FDM_CONFIG")) {
+  while ((AC_cfg.GetNextConfigLine() != "EOF") &&
+         (token = AC_cfg.GetValue()) != "/FDM_CONFIG") {
     if (token == "METRICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
       ReadMetrics(&AC_cfg);
@@ -318,9 +318,9 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/METRICS")) {
+  while ((token = AC_cfg->GetValue()) != "/METRICS") {
     *AC_cfg >> parameter;
-    if (parameter == string("AC_WINGAREA")) {
+    if (parameter == "AC_WINGAREA") {
       *AC_cfg >> WingArea;
       if (debug_lvl > 0) cout << "    WingArea: " << WingArea  << endl;
     } else if (parameter == "AC_WINGSPAN") {
@@ -405,7 +405,7 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg) {
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/UNDERCARRIAGE")) {
+  while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
     lGear.push_back(FGLGear(AC_cfg, FDMExec));
   }
 }
@@ -423,7 +423,7 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
   Output->SetType(token);
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/OUTPUT")) {
+  while ((token = AC_cfg->GetValue()) != "/OUTPUT") {
     *AC_cfg >> parameter;
     if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
     if (parameter == "SIMULATION") {
@@ -501,7 +501,7 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   if (debug_lvl > 0)
     cout << "                            Version: " << highint << CFGVersion
                                                              << normint << endl;
-  if (CFGVersion != string(NEEDED_CFG_VERSION)) {
+  if (CFGVersion != NEEDED_CFG_VERSION) {
     cerr << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
             " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     cerr << "Current version needed is: " << NEEDED_CFG_VERSION << endl;

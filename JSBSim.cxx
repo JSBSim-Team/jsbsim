@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.62 2001/04/25 01:01:13 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.63 2001/06/14 22:55:03 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -105,16 +105,22 @@ FGJSBsim::FGJSBsim( double dt )
     fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
     fgSetDouble("/fdm/trim/rudder",     FCS->GetDrCmd());
 
-    trimmed = fgGetValue("/fdm/trim/trimmed",true);
+    startup_trim = fgGetNode("/sim/startup/trim", true);
+
+    trimmed = fgGetNode("/fdm/trim/trimmed", true);
     trimmed->setBoolValue(false);
 
+    pitch_trim = fgGetNode("/fdm/trim/pitch-trim", true );
+    throttle_trim = fgGetNode("/fdm/trim/throttle", true );
+    aileron_trim = fgGetNode("/fdm/trim/aileron", true );
+    rudder_trim = fgGetNode("/fdm/trim/rudder", true );
 }
 
 /******************************************************************************/
 FGJSBsim::~FGJSBsim(void) {
     if(fdmex != NULL) {
-    delete fdmex;
-    delete fgic;
+        delete fdmex;
+        delete fgic;
     }  
 }
 
@@ -192,44 +198,44 @@ bool FGJSBsim::update( int multiloop ) {
 
     trimmed->setBoolValue(false);
 
-    if (needTrim && fgGetBool("/sim/startup/trim")) {
+    if ( needTrim && startup_trim->getBoolValue() ) {
 
-      //fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
-      //fgic->SetTerrainAltitudeFtIC( scenery.cur_elev * SG_METER_TO_FEET );
+        //fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
+        //fgic->SetTerrainAltitudeFtIC( scenery.cur_elev * SG_METER_TO_FEET );
 
-    FGTrim *fgtrim;
-    if(fgic->GetVcalibratedKtsIC() < 10 ) {
-        fgic->SetVcalibratedKtsIC(0.0);
-        fgtrim=new FGTrim(fdmex,fgic,tGround);
-    } else {
-        fgtrim=new FGTrim(fdmex,fgic,tLongitudinal);
-    }
-    if(!fgtrim->DoTrim()) {
-        fgtrim->Report();
-        fgtrim->TrimStats();
-    } else {
-        trimmed->setBoolValue(true);
-    }
-    fgtrim->ReportState();
-    delete fgtrim;
+        FGTrim *fgtrim;
+        if(fgic->GetVcalibratedKtsIC() < 10 ) {
+            fgic->SetVcalibratedKtsIC(0.0);
+            fgtrim=new FGTrim(fdmex,fgic,tGround);
+        } else {
+            fgtrim=new FGTrim(fdmex,fgic,tLongitudinal);
+        }
+        if(!fgtrim->DoTrim()) {
+            fgtrim->Report();
+            fgtrim->TrimStats();
+        } else {
+            trimmed->setBoolValue(true);
+        }
+        fgtrim->ReportState();
+        delete fgtrim;
 
-    needTrim=false;
+        needTrim=false;
 
-    fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
-    fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
-    fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
-    fgSetDouble("/fdm/trim/rudder",     FCS->GetDrCmd());
+        pitch_trim->setDoubleValue( FCS->GetPitchTrimCmd() );
+        throttle_trim->setDoubleValue( FCS->GetThrottleCmd(0) );
+        aileron_trim->setDoubleValue( FCS->GetDaCmd() );
+        rudder_trim->setDoubleValue( FCS->GetDrCmd() );
 
-    controls.set_elevator_trim(FCS->GetPitchTrimCmd());
-    controls.set_elevator(FCS->GetDeCmd());
-    controls.set_throttle(FGControls::ALL_ENGINES,
-                          FCS->GetThrottleCmd(0));
+        controls.set_elevator_trim(FCS->GetPitchTrimCmd());
+        controls.set_elevator(FCS->GetDeCmd());
+        controls.set_throttle(FGControls::ALL_ENGINES,
+                              FCS->GetThrottleCmd(0));
 
-    controls.set_aileron(FCS->GetDaCmd());
-    controls.set_rudder( FCS->GetDrCmd());
+        controls.set_aileron(FCS->GetDaCmd());
+        controls.set_rudder( FCS->GetDrCmd());
     
-    SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
-    }  
+        SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
+    }
   
     for( i=0; i<get_num_engines(); i++ ) {
       get_engine(i)->set_RPM( Propulsion->GetThruster(i)->GetRPM() );
