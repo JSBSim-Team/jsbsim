@@ -52,6 +52,7 @@ INCLUDES
 #include <string>
 #include "filtersjb/FGFCSComponent.h"
 #include "FGModel.h"
+#include "FGLGear.h"
 #include "FGConfigFile.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.20 2000/10/20 18:29:03 jsb Exp $
+    @version $Id: FGFCS.h,v 1.21 2000/10/27 13:55:43 jsb Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -289,17 +290,21 @@ public:
   inline void SetThrottlePos(int engine, float cmd);
   //@}
 
-  /// @name Landing gear brake setting
+  /// @name Landing Gear brakes
   //@{
   /** Sets the left brake group
-      @param cmd brake setting in percent (0 - 100) */
-  void SetLBrake(float cmd);
+      @param cmd brake setting in percent (0.0 - 1.0) */
+  void SetLBrake(float cmd) {LeftBrake = cmd;}
   /** Sets the right brake group
-      @param cmd brake setting in percent (0 - 100) */
-  void SetRBrake(float cmd);
+      @param cmd brake setting in percent (0.0 - 1.0) */
+  void SetRBrake(float cmd) {RightBrake = cmd;}
   /** Sets the center brake group
-      @param cmd brake setting in percent (0 - 100) */
-  void SetCBrake(float cmd);
+      @param cmd brake setting in percent (0.0 - 1.0) */
+  void SetCBrake(float cmd) {CenterBrake = cmd;}
+  /** Gets the brake for a specified group.
+      @param bg which brakegroup to retrieve the command for
+      @return the brake setting for the supplied brake group argument */
+  float GetBrake(FGLGear::eBrakeGroup bg);
   //@}
 
   /** Loads the Flight Control System.
@@ -320,6 +325,7 @@ private:
   float PTrimCmd;
   float ThrottleCmd[MAX_ENGINES];       // Needs to be changed: s/b no limit
   float ThrottlePos[MAX_ENGINES];       // Needs to be changed: s/b no limit
+  float LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;
 

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.30 2000/10/20 19:53:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.31 2000/10/27 13:55:42 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,22 +117,6 @@ void FGFCS::SetThrottlePos(int engineNum, float setting) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::SetLBrake(float setting) {
-
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCS::SetRBrake(float setting) {
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCS::SetCBrake(float setting) {
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
   string token;
 
@@ -185,3 +169,17 @@ string FGFCS::GetComponentName(int idx) {
   return Components[idx]->GetName();
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGFCS::GetBrake(FGLGear::eBrakeGroup bg) {
+  switch (bg) {
+  case FGLGear::bgLeft:
+    return LeftBrake;
+  case FGLGear::bgRight:
+    return RightBrake;
+  case FGLGear::bgCenter:
+    return CenterBrake;
+  default:
+    cerr << "GetBrake asked to return a bogus brake value" << endl;
+  }
+}

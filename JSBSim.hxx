@@ -63,14 +63,14 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** FGFS / JSBSim interface (aka "The Bus")
+/** FGFS / JSBSim interface (aka "The Bus").
     This class provides for an interface between FlightGear and its data
     structures and JSBSim and its data structures. This is the class which is
     used to command JSBSim when integrated with FlightGear. See the
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.11 2000/10/27 10:21:42 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.12 2000/10/27 13:55:43 jsb Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -95,7 +95,7 @@ public:
     /// Reset flight params to a specific position
     bool init( double dt );
 
-    /// Position Parameters
+    /// @name Position Parameter Set
     //@{
     /** Set geocentric latitude
         @param lat latitude in radians measured from the 0 meridian where
@@ -115,7 +115,7 @@ public:
 
     //void set_AltitudeAGL(double altagl); // and vice-versa
 
-    /// Velocity Parameters
+    /// @name Velocity Parameter Set
     //@{
     /** Sets calibrated airspeed
         Setting this will trigger a recalc of the other velocity terms.
@@ -142,13 +142,13 @@ public:
     void set_Velocities_Wind_Body( double u, double v, double w);
     //@}
 
-    /** Euler angle parameters
+    /** Euler Angle Parameter Set
         @param phi roll angle in radians
 	      @param theta pitch angle in radians
 	      @param psi heading angle in radians */
     void set_Euler_Angles( double phi, double theta, double psi );
 
-    /// Flight Path Parameters
+    /// @name Flight Path Parameter Set
     //@{
     /** Sets rate of climb
         @param roc Rate of climb in ft/sec */
@@ -159,7 +159,7 @@ public:
     void set_Gamma_vert_rad( double gamma);
     //@}
 
-    /// Earth Parameters
+    /// @name Earth Parameter Set
     //@{
     /** Sets the sea level radius in feet.
         @param slr Sea Level Radius in feet */
@@ -170,7 +170,7 @@ public:
     void set_Runway_altitude(double ralt);
     //@}
 
-    /// Atmospheric Parameters
+    /// @name Atmospheric Parameter Set
     //@{
     /** Sets the atmospheric static pressure
         @param p pressure in psf */

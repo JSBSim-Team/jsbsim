@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.24 2000/10/25 12:18:51 jsb Exp $
+    @version $Id: FGLGear.h,v 1.25 2000/10/27 13:55:43 jsb Exp $
     @see -
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
@@ -88,6 +88,8 @@ CLASS DECLARATION
 class FGLGear
 {
 public:
+  /// Brake grouping enumerators
+  enum eBrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
   /** Constructor
       @param Executive a pointer to the parent executive object
       @param File a pointer to the config file instance */
@@ -129,7 +131,6 @@ public:
 
 private:
   enum {eX=1, eY, eZ};
-  enum eBrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
   FGColumnVector vXYZ;
   FGColumnVector vMoment;
   FGColumnVector vWhlBodyVec;
