@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.70 2004/06/19 09:38:46 ehofman Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.71 2004/06/27 08:35:32 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.70 2004/06/19 09:38:46 ehofman Exp $
+    @version $Id: FGFDMExec.h,v 1.71 2004/06/27 08:35:32 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,8 +152,11 @@ public:
       be looked for in the directory specified in the AircraftPath variable,
       and in turn under the directory with the same name as the model. For
       instance: "aircraft/x15/x15.xml"
+      @param addModelToPath set to true to add the model name to the
+      AircraftPath, defaults to true
       @return true if successful*/
-  bool LoadModel(string AircraftPath, string EnginePath, string model);
+  bool LoadModel(string AircraftPath, string EnginePath, string model,
+                 bool addModelToPath = true);
 
 
   /** Loads an aircraft model.  The paths to the aircraft and engine

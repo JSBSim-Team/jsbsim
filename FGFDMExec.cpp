@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.108 2004/06/26 11:42:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.109 2004/06/27 08:35:32 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -384,13 +384,14 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model)
+bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model,
+                bool addModelToPath)
 {
 
   FGFDMExec::AircraftPath = AircraftPath;
   FGFDMExec::EnginePath = EnginePath;
 
-  return LoadModel(model, true);
+  return LoadModel(model, addModelToPath);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
