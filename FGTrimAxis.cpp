@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.32 2001/12/22 13:32:20 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.33 2001/12/22 15:15:15 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -452,6 +452,8 @@ double FGTrimAxis::GetAvgStability( void ) {
 
 void FGTrimAxis::Debug(int from)
 {
+
+  if (debug_lvl <= 0) return;
   if (debug_lvl & 1 ) { // Standard console startup message output
     if (from == 0) { // Constructor
 
