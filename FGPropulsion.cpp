@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.19 2001/01/11 06:34:02 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.20 2001/01/12 00:25:46 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,11 +102,12 @@ bool FGPropulsion:: Run(void) {
 bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
   string token, fullpath;
-  string engineName, engType;
-  string thrusterName, thrType;
+  string engineFileName, engType;
+  string thrusterFileName, thrType;
   string parameter;
   string enginePath = FDMExec->GetEnginePath();
   float xLoc, yLoc, zLoc, Pitch, Yaw;
+  int Feed;
 
 # ifndef macintosh
       fullpath = enginePath + "/";
@@ -117,15 +118,14 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/PROPULSION") {
-    *AC_cfg >> parameter;
 
-    if (parameter == "AC_ENGINE") {
+    if (token == "AC_ENGINE") {                   // ============ READING ENGINES
 
-      *AC_cfg >> engineName;
+      engineFileName = AC_cfg->GetValue("FILE");
 
-      cout << "    Reading engine: " << engineName << " from file: " << fullpath
-                                                   + engineName + ".xml"<< endl;
-      FGConfigFile Eng_cfg(fullpath + engineName + ".xml");
+      cout << "\n    Reading engine from file: " << fullpath
+                                                   + engineFileName + ".xml"<< endl;
+      FGConfigFile Eng_cfg(fullpath + engineFileName + ".xml");
 
       if (Eng_cfg.IsOpen()) {
         engType = Eng_cfg.GetValue();
@@ -144,21 +144,35 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
           cerr << "    Unrecognized engine type: " << engType << " found in config file.\n";
         }
 
-        *AC_cfg >> xLoc >> yLoc >> zLoc;
-        *AC_cfg >> Pitch >> Yaw;
-
+        AC_cfg->GetNextConfigLine();
+        while ((token = AC_cfg->GetValue()) != "/AC_ENGINE") {
+          *AC_cfg >> token;
+	        if (token == "XLOC") { *AC_cfg >> xLoc; cout << "      X = " << xLoc << endl;}
+          else if (token == "YLOC") *AC_cfg >> yLoc;
+          else if (token == "ZLOC") *AC_cfg >> zLoc;
+          else if (token == "PITCH") *AC_cfg >> Pitch;
+          else if (token == "YAW") *AC_cfg >> Yaw;
+          else if (token == "FEED") {
+	          *AC_cfg >> Feed;
+	          Engines[numEngines]->AddFeedTank(Feed);
+		        cout << "      Feed tank: " << Feed << endl;
+		      } else cerr << "Unknown identifier: " << token << " in engine file: "
+	                                                      << engineFileName << endl;
+	      }
+	      
         Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, Pitch, Yaw);
-        Engines[numEngines]->SetName(engineName);
-
         numEngines++;
+
       } else {
+      
         cerr << "Could not read engine config file: " << fullpath
-                                                  + engineName + ".xml" << endl;
+                                                  + engineFileName + ".xml" << endl;
         return false;
       }
 
-    } else if (parameter == "AC_TANK") {
+    } else if (token == "AC_TANK") {              // ============== READING TANKS
 
+      cout << "\n    Reading tank definition" << endl;
       Tanks.push_back(new FGTank(AC_cfg));
       switch(Tanks[numTanks]->GetType()) {
       case FGTank::ttFUEL:
@@ -170,15 +184,16 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         numOxiTanks++;
         break;
       }
+      
       numTanks++;
 
-    } else if (parameter == "AC_THRUSTER") {
+    } else if (token == "AC_THRUSTER") {          // ========== READING THRUSTERS
 
-      *AC_cfg >> thrusterName;
+      thrusterFileName = AC_cfg->GetValue("FILE");
 
-      cout << "    Reading thruster: " << thrusterName << " from file: " <<
-                                       fullpath + thrusterName + ".xml" << endl;
-      FGConfigFile Thruster_cfg(fullpath + thrusterName + ".xml");
+      cout << "\n    Reading thruster from file: " <<
+                                       fullpath + thrusterFileName + ".xml" << endl;
+      FGConfigFile Thruster_cfg(fullpath + thrusterFileName + ".xml");
 
       if (Thruster_cfg.IsOpen()) {
         thrType = Thruster_cfg.GetValue();
@@ -189,22 +204,32 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
           Thrusters.push_back(new FGNozzle(FDMExec, &Thruster_cfg));
 	      }
 
-        *AC_cfg >> xLoc >> yLoc >> zLoc;
-        *AC_cfg >> Pitch >> Yaw;
-
+        AC_cfg->GetNextConfigLine();
+        while ((token = AC_cfg->GetValue()) != "/AC_THRUSTER") {
+	        *AC_cfg >> token;
+          if (token == "XLOC") *AC_cfg >> xLoc;
+          else if (token == "YLOC") *AC_cfg >> yLoc;
+          else if (token == "ZLOC") *AC_cfg >> zLoc;
+          else if (token == "PITCH") *AC_cfg >> Pitch;
+          else if (token == "YAW") *AC_cfg >> Yaw;
+          else cerr << "Unknown identifier: " << token << " in engine file: "
+	                                                      << engineFileName << endl;
+	      }
+	    
         Thrusters[numThrusters]->SetLocation(xLoc, yLoc, zLoc);
         Thrusters[numThrusters]->SetAnglesToBody(0, Pitch, Yaw);
-        Thrusters[numThrusters]->SetName(thrusterName);
 
         numThrusters++;
 
 	    } else {
         cerr << "Could not read thruster config file: " << fullpath
-                                                + thrusterName + ".xml" << endl;
+                                                + thrusterFileName + ".xml" << endl;
         return false;
       }
 
     }
+    AC_cfg->GetNextConfigLine();
   }
+  
   return true;
 }

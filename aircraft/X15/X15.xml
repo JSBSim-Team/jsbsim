@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.37">
+<FDM_CONFIG NAME="X-15" VERSION="1.38">
 
   <METRICS>
 
@@ -70,14 +70,35 @@
     pitch and yaw orientation. Coordinates are given in inches in the structural
     coordinate frame. Angles for pitch and yaw are specified in radians.
 
-    AC_ENGINE name x y z pitch yaw
-
     </COMMENT>
 
-    AC_TANK OXIDIZER 282.3 0.0 0.0 26.0 9470.0 9470.0
-    AC_TANK FUEL     408.3 0.0 0.0 26.0 8236.0 8236.0
+    <AC_TANK TYPE="OXIDIZER" NUMBER="0">
+      XLOC 282.3
+      YLOC 0.0
+      ZLOC 0.0
+      RADIUS 26.0
+      CAPACITY 9470.0
+      CONTENTS 9470.0
+    </AC_TANK>
+    
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC 408.3
+      YLOC 0.0
+      ZLOC 0.0
+      RADIUS 26.0
+      CAPACITY 8236.0
+      CONTENTS 8236.0
+    </AC_TANK>
 
-    AC_ENGINE XLR99 600.0 0.0 0.0 0.0 0.0
+    <AC_ENGINE FILE="XLR99">
+      XLOC 600.0
+      YLOC   0.0
+      ZLOC   0.0
+      PITCH  0.0
+      YAW    0.0
+      FEED     0
+      FEED     1
+    </AC_ENGINE>
 
   </PROPULSION>
 

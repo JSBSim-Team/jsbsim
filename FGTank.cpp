@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.7 2000/12/05 13:08:07 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.8 2001/01/12 00:25:47 jsb Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,19 +48,24 @@ CLASS IMPLEMENTATION
 
 FGTank::FGTank(FGConfigFile* AC_cfg)
 {
-  string type;
-
-  *AC_cfg >> type;                              // Type = 0: fuel, 1: oxidizer
-
-  if (type == "FUEL") Type = ttFUEL;
+  string type = AC_cfg->GetValue("TYPE");
+  string token;
+  
+  if      (type == "FUEL")     Type = ttFUEL;
   else if (type == "OXIDIZER") Type = ttOXIDIZER;
-  else Type = ttUNKNOWN;
-  *AC_cfg >> X;                                 // inches
-  *AC_cfg >> Y;                                 // "
-  *AC_cfg >> Z;                                 // "
-  *AC_cfg >> Radius;                            // "
-  *AC_cfg >> Capacity;                          // pounds (amount it can hold)
-  *AC_cfg >> Contents;                          // pounds  (amount it is holding)
+  else                         Type = ttUNKNOWN;
+  
+  AC_cfg->GetNextConfigLine();
+  while ((token = AC_cfg->GetValue()) != "/AC_TANK") {
+    if (token == "XLOC") *AC_cfg >> X;
+    else if (token == "YLOC") *AC_cfg >> Y;
+    else if (token == "ZLOC") *AC_cfg >> Z;
+    else if (token == "RADIUS") *AC_cfg >> Radius;
+    else if (token == "CAPACITY") *AC_cfg >> Capacity;
+    else if (token == "CONTENTS") *AC_cfg >> Contents;
+    else cerr << "Unknown identifier: " << token << " in tank definition." << endl;
+  }
+  
   Selected = true;
 
   if (Capacity != 0) {
@@ -69,6 +74,11 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     Contents = 0;
     PctFull  = 0;
   }     
+
+  cout << "      " << type << " tank holds " << Capacity << " lbs. " << type << endl;
+  cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
+  cout << "      Tank location (X, Y, Z): " << X << ", " << Y << ", " << Z << endl;
+  cout << "      Effective radius: " << Radius << " inches" << endl;
 }
 
 

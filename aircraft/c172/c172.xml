@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="c172" VERSION="1.37">
+<FDM_CONFIG NAME="c172" VERSION="1.38">
   <METRICS>
 
     <COMMENT>
@@ -79,19 +79,38 @@
 
       AC_ENGINE name x y z pitch yaw
 
-NOTE: put the ID numbers for the tanks that an engine draws from within the engine
-config file !!!!!!!!!!!!!      ID the Tanks.     XML-ize the engine file.
-
       THRUSTER[S] SECTION
 
       AC_THRUSTER name x y z pitch yaw
 
     </COMMENT>
 
-    AC_TANK       FUEL  48.0 0.0 59.4  29.4  336.0 336.0
-    AC_ENGINE     eng_io320      -19.7 0.0 26.6 0.0 0.0
-    AC_THRUSTER   prop_generic2f -19.7 0.0 26.6 0.0 0.0
-    
+    <AC_ENGINE FILE="eng_io320">
+      XLOC   48.0
+      YLOC    0.0
+      ZLOC   59.4
+      PITCH   0.0
+      YAW     0.0
+      FEED      0
+    </AC_ENGINE>
+      
+    <AC_THRUSTER FILE="prop_generic2f">
+      XLOC   48.0
+      YLOC    0.0
+      ZLOC   59.4
+      PITCH   0.0
+      YAW     0.0
+    </AC_THRUSTER>
+
+    <AC_TANK TYPE="FUEL" NUMBER="0">
+      XLOC   48.0
+      YLOC    0.0
+      ZLOC   59.4
+      RADIUS 29.4
+      CAPACITY 336.0
+      CONTENTS 336.0
+    </AC_TANK>
+	    
   </PROPULSION>
   
   <FLIGHT_CONTROL NAME="c172">

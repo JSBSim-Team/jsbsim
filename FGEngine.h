@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.19 2000/12/06 23:57:08 jsb Exp $ 
+    @version $Id: FGEngine.h,v 1.20 2001/01/12 00:25:46 jsb Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,6 +123,7 @@ public:
 
   void SetRunning(bool bb) { Running=bb; }
   void SetName(string name) {Name = name;}
+  void AddFeedTank(int tkID) {SourceTanks.push_back(tkID);}
 
   /** Calculates the thrust of the engine, and other engine functions.
       This base class Calculate() function should be called from within the
