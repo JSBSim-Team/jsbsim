@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
 <!-- J85-GE-5 afterburning turbojet engine model
-     for the SimTurbine turbine model -->
+     for the FGTurbine turbine model -->
 
-<FG_SIMTURBINE NAME="J85">
+<FG_TURBINE NAME="J85">
   <!--
      MILTHRUST     max static thrust at S.L. (installed), lbf
      MAXTHRUST     max static thrust at S.L. (installed) with afterburning, lbf
@@ -17,6 +17,7 @@
      AUGMENTED     = 1 if afterburning installed, else = 0
      AUGMETHOD     = 0 if using property /engine[n]/augmentation
                    = 1 if using last 1% of throttle movement
+                   = 2 if using FCS-defined throttle control 
      INJECTED      = 1 if water injection installed
 
      TABLE(0)      idle thrust vs. altitude and mach
@@ -35,7 +36,7 @@
   MAXN1        100.0
   MAXN2        100.0
   AUGMENTED    1
-  AUGMETHOD    1
+  AUGMETHOD    2
   INJECTED     0
 
   <TABLE NAME="IdleThrust" TYPE="TABLE">
@@ -54,7 +55,7 @@
     1.0   -0.3000 -0.2839 -0.1104 -0.0469 -0.0270 -0.0158  0.0552
   </TABLE>
 
-  <!-- data from EngineSim, http://www.grc.nasa.gov/WWW/K-12/airplane/ngnsim.html -->
+  <!-- data from EngineSim,  http://www.grc.nasa.gov/WWW/K-12/airplane/ngnsim.html -->
   <TABLE NAME="MilThrust" TYPE="TABLE">
     Military_power_thrust_factor
     8
@@ -73,7 +74,7 @@
     1.4   1.5940   1.3400   1.0860   0.8450   0.6280   0.4240   0.2630
   </TABLE>
 
-  <!-- data from EngineSim, http://www.grc.nasa.gov/WWW/K-12/airplane/ngnsim.html -->
+  <!-- data from EngineSim,  http://www.grc.nasa.gov/WWW/K-12/airplane/ngnsim.html -->
   <TABLE NAME="AugThrust" TYPE="TABLE">
     Augmented_thrust_factor
     8
@@ -92,17 +93,4 @@
     1.4    1.4365   1.2149   0.9933   0.8021   0.6360   0.4509   0.2794
   </TABLE>
 
-  <TABLE NAME="WaterFactor" TYPE="TABLE">
-    Water_Injection_factor
-    2
-    2
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0    50000 
-    0.0    1.2000   1.2000 
-    1.4    1.2000   1.2000 
-  </TABLE>
-
-</FG_SIMTURBINE>
-
+</FG_TURBINE>
