@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.47 2004/01/03 11:51:42 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.48 2004/01/13 17:35:06 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATION
@@ -114,6 +114,7 @@ public:
   double GetqbarUV (void) const { return qbarUV; }
   inline double GetVt   (void) const { return Vt; }
   double GetMach (void) const { return Mach; }
+  double GetMachU(void) const { return vMachUVW(eU); }
   double Getadot (void) const { return adot; }
   double Getbdot (void) const { return bdot; }
 
@@ -143,6 +144,7 @@ private:
   FGColumnVector3 vUVWdot_prev[4];
   FGMatrix33      mVel;
   FGColumnVector3 vAeroUVW;
+  FGColumnVector3 vMachUVW;
 
   double Vt, Mach;
   double qbar, qbarUW, qbarUV;

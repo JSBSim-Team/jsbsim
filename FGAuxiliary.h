@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.33 2003/12/02 13:28:39 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.34 2004/01/13 17:35:06 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.33 2003/12/02 13:28:39 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.34 2004/01/13 17:35:06 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,8 +86,10 @@ public:
   inline double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
   inline double GetVequivalentFPS(void) const { return veas; }
   inline double GetVequivalentKTS(void) const { return veas*fpstokts; }
+  inline double GetMachU(void) const { return machU; }
   
   inline double GetTotalTemperature(void) const { return tat; }
+  inline double GetTAT_C(void) const { return tatc; }
 
   // total pressure above is freestream total pressure for subsonic only
   // for supersonic it is the 1D total pressure behind a normal shock
@@ -110,7 +112,8 @@ private:
   double vcas;
   double veas;
   double mach;
-  double qbar,rhosl,rho,p,psl,pt,tat,sat;
+  double machU;
+  double qbar,rhosl,rho,p,psl,pt,tat,sat,tatc;
 
   // Don't add a getter for pt!
 

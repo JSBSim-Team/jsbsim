@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.54 2004/01/03 11:51:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.55 2004/01/13 17:35:06 dpculp Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,6 +161,9 @@ bool FGTranslation::Run(void)
     qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
     qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
     Mach = Vt / State->Geta();
+    vMachUVW(eU) = vAeroUVW(eU) / State->Geta();
+    vMachUVW(eV) = vAeroUVW(eV) / State->Geta();
+    vMachUVW(eW) = vAeroUVW(eW) / State->Geta();
 
     if (debug_lvl > 1) Debug(1);
 

@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.38 2003/06/03 09:53:41 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.39 2004/01/13 17:35:06 dpculp Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,28 +98,33 @@ bool FGAuxiliary::Run()
   if (!FGModel::Run()) {
     GetState();
     
-    //caculate total temperature assuming isentropic flow
+    //calculate total temperature assuming isentropic flow
     tat=sat*(1 + 0.2*mach*mach);
+    tatc=RankineToCelsius(tat);
     
     if (mach < 1) {   //calculate total pressure assuming isentropic flow
-      pt=p*pow((1 + 0.2*mach*mach),3.5);
+      pt=p*pow((1 + 0.2*machU*machU),3.5);
     } else {
       // shock in front of pitot tube, we'll assume its normal and use
       // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
       // pressure behind the shock to the static pressure in front
 
-      B = 5.76*mach*mach/(5.6*mach*mach - 0.8);
+      B = 5.76*machU*machU/(5.6*machU*machU - 0.8);
 
       // The denominator above is zero for Mach ~ 0.38, for which
       // we'll never be here, so we're safe
 
-      D = (2.8*mach*mach-0.4)*0.4167;
+      D = (2.8*machU*machU-0.4)*0.4167;
       pt = p*pow(B,3.5)*D;
     }
 
     A = pow(((pt-p)/psl+1),0.28571);
-    vcas = sqrt(7*psl/rhosl*(A-1));
-    veas = sqrt(2*qbar/rhosl);
+    if (machU > 0.0) {
+      vcas = sqrt(7*psl/rhosl*(A-1));
+      veas = sqrt(2*qbar/rhosl);
+    } else {
+      vcas = veas = 0.0;
+    }
 
     // Pilot sensed accelerations are calculated here. This is used
     // for the coordinated turn ball instrument. Motion base platforms sometimes
@@ -222,8 +227,12 @@ void FGAuxiliary::bind(void)
                        &FGAuxiliary::GetVequivalentFPS);
   PropertyManager->Tie("velocities/ve-kts", this,
                        &FGAuxiliary::GetVequivalentKTS);
+  PropertyManager->Tie("velocities/machU", this,
+                       &FGAuxiliary::GetMachU);
   PropertyManager->Tie("velocities/tat-r", this,
                        &FGAuxiliary::GetTotalTemperature);
+  PropertyManager->Tie("velocities/tat-c", this,
+                       &FGAuxiliary::GetTAT_C);
   PropertyManager->Tie("velocities/pt-lbs_sqft", this,
                        &FGAuxiliary::GetTotalPressure);
                      
@@ -257,6 +266,9 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("velocities/vc-kts");
   PropertyManager->Untie("velocities/ve-fps");
   PropertyManager->Untie("velocities/ve-kts");
+  PropertyManager->Untie("velocities/machU");
+  PropertyManager->Untie("velocities/tat-r");
+  PropertyManager->Untie("velocities/tat-c");
   PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
@@ -275,6 +287,7 @@ void FGAuxiliary::GetState(void)
 {
   qbar = Translation->Getqbar();
   mach = Translation->GetMach();
+  machU= Translation->GetMachU();
   p = Atmosphere->GetPressure();
   rhosl = Atmosphere->GetDensitySL();
   psl = Atmosphere->GetPressureSL();
