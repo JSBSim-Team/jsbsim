@@ -1,3 +1,34 @@
+<!--
+
+  Author:   Jon Berndt
+  Date:     18 August 2002
+  Function: C-172 autopilot test file
+  
+  Note: this file represents a test only of the new autopilot
+        setup in JSBSim. The same components used in the FCS
+        can also be used in the autopilot section. There are
+        some new FCS input and output identifiers directly
+	      related to the autopilot:
+
+          AP_ELEVATOR_CMD,
+          AP_AILERON_CMD,
+          AP_RUDDER_CMD,
+          AP_THROTTLE_CMD,
+          AP_SET_ATTITUDE,
+          AP_SET_ALTITUDE,
+          AP_SET_HEADING,
+          AP_SET_AIRSPEED,
+          AP_ACQUIRE_ATTITUDE,
+          AP_ACQUIRE_ALTITUDE,
+          AP_ACQUIRE_HEADING,
+          AP_ACQUIRE_AIRSPEED,
+          AP_ATTITUDE_HOLD_ON,
+          AP_ALTITUDE_HOLD_ON,
+          AP_HEADING_HOLD_ON,
+          AP_AIRSPEED_HOLD_ON,
+          AP_WINGSLEVEL_HOLD_ON
+
+-->
 <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
    ID            0
    INPUT         FG_PHI
