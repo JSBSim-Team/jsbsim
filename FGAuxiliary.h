@@ -74,8 +74,6 @@ private:
   float qbar,rhosl,rho,p,psl,pt;
   
   void GetState(void);
-  void PutState(void);
-
 };
 
 /******************************************************************************/

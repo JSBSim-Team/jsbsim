@@ -51,6 +51,7 @@ void dealloc(double **A, int rows)
 FGMatrix::FGMatrix(const unsigned int r, const unsigned int c) : rows(r), cols(c)
 {
   data = FGalloc(rows,cols);
+  InitMatrix();
   rowCtr = colCtr = 1;
 }
 

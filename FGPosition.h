@@ -57,14 +57,13 @@ class FGPosition : public FGModel
   FGColumnVector vVel;
 
   float Vee, invMass, invRadius;
-  double Radius;
+  double Radius, h;
   float LatitudeDot, LongitudeDot, RadiusDot;
   float lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
   float Longitude, Latitude;
   float dt;
 
   void GetState(void);
-  void PutState(void);
 
 public:
   FGPosition(FGFDMExec*);
@@ -75,7 +74,13 @@ public:
   inline float GetVn(void)  {return vVel(1);}
   inline float GetVe(void)  {return vVel(2);}
   inline float GetVd(void)  {return vVel(3);}
+  inline float Geth(void)  {return h;}
+  inline float GetLatitude(void) {return Latitude;}
+  inline float GetLongitude(void) {return Longitude;}
   void SetvVel(const FGColumnVector& v) {vVel = v;}
+  void SetLatitude(float tt) {Latitude = tt;}
+  void SetLongitude(float tt) {Longitude = tt;}
+  void Seth(float tt) {h = tt;}
 
   bool Run(void);
 };

@@ -85,7 +85,7 @@ bool FGAtmosphere::Run(void)
 {
   if (!FGModel::Run()) {                 // if false then execute this Run()
     if (!useExternal) {
-      h = State->Geth();
+      h = Position->Geth();
       Calculate(h);
     } else {
       density = exDensity;
@@ -99,10 +99,10 @@ bool FGAtmosphere::Run(void)
   return false;
 }
 
+
 void FGAtmosphere::Calculate(float altitude)
 {
   //see reference [1]
-
 
     float slope,reftemp,refpress,refdens;
     int i=0;

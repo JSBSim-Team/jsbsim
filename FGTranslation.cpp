@@ -80,6 +80,11 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
                                                  vEuler(3) 
 {
   Name = "FGTranslation";
+  qbar = 0;
+  Vt = 0.0;
+  Mach = 0.0;
+  alpha = beta = gamma = 0.0;
+  rho = 0.002378;
 }
 
 /******************************************************************************/
@@ -123,11 +128,10 @@ bool FGTranslation::Run(void)
 
     qbar = 0.5*rho*Vt*Vt;
 
-    mach = Vt / State->Geta();
+    Mach = Vt / State->Geta();
 
     vlastUVWdot = vUVWdot;
 
-    PutState();
   } else {
   }
   return false;
@@ -146,14 +150,5 @@ void FGTranslation::GetState(void)
   rho = Atmosphere->GetDensity();
 
   vEuler = Rotation->GetEuler();
-}
-
-/******************************************************************************/
-
-void FGTranslation::PutState(void)
-{
-  State->SetVt(Vt);
-  State->Setqbar(qbar);
-  State->SetMach(mach);
 }
 

@@ -70,12 +70,8 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
 {
   FDMExec = fdex;
 
-  Vt = 0.0;
-  latitude = longitude = 0.0;
   adot = bdot = 0.0;
-  h = 0.0;
   a = 1000.0;
-  qbar = 0.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
 
@@ -128,6 +124,7 @@ bool FGState::Reset(string path, string acname, string fname)
   string resetDef;
   float U, V, W;
   float phi, tht, psi;
+  float latitude, longitude, h;
 
   resetDef = path + "/" + acname + "/" + fname;
 
@@ -144,6 +141,10 @@ bool FGState::Reset(string path, string acname, string fname)
     resetfile >> psi;
     resetfile >> h;
     resetfile.close();
+
+    FDMExec->GetPosition()->SetLatitude(latitude*DEGTORAD);
+    FDMExec->GetPosition()->SetLongitude(longitude*DEGTORAD);
+    FDMExec->GetPosition()->Seth(h);
 
     Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
                latitude*DEGTORAD, longitude*DEGTORAD, h);
@@ -168,10 +169,12 @@ void FGState::Initialize(float U, float V, float W,
   FGColumnVector vLocalVelNED(3);
   FGColumnVector vEuler(3);
   float alpha, beta, gamma;
+  float qbar, Vt;
 
-  latitude = Latitude;
-  longitude = Longitude;
-  h = H;
+  FDMExec->GetPosition()->SetLatitude(Latitude*DEGTORAD);
+  FDMExec->GetPosition()->SetLongitude(Longitude*DEGTORAD);
+  FDMExec->GetPosition()->Seth(H);
+
   FDMExec->GetAtmosphere()->Run();
 
   gamma = 0.0;
@@ -186,12 +189,17 @@ void FGState::Initialize(float U, float V, float W,
 
   vUVW << U << V << W;
   FDMExec->GetTranslation()->SetUVW(vUVW);
+
   vEuler << phi << tht << psi;
   FDMExec->GetRotation()->SetEuler(vEuler);
+
   FDMExec->GetTranslation()->SetABG(alpha, beta, gamma);
 
   Vt = sqrt(U*U + V*V + W*W);
+  FDMExec->GetTranslation()->SetVt(Vt);
+
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
+  FDMExec->GetTranslation()->Setqbar(qbar);
 
   InitMatrices(phi, tht, psi);
 
@@ -205,7 +213,8 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 {
 
   float tht,psi,phi;
-  float U,V,W;
+  float U, V, W, h;
+  float latitude, longitude;
 
   latitude = FGIC->GetLatitudeRadIC();
   longitude = FGIC->GetLongitudeRadIC();
@@ -230,12 +239,12 @@ bool FGState::StoreData(string fname)
     datafile << (FDMExec->GetTranslation()->GetUVW())(1);
     datafile << (FDMExec->GetTranslation()->GetUVW())(2);
     datafile << (FDMExec->GetTranslation()->GetUVW())(3);
-    datafile << latitude;
-    datafile << longitude;
+    datafile << FDMExec->GetPosition()->GetLatitude();
+    datafile << FDMExec->GetPosition()->GetLongitude();
     datafile << (FDMExec->GetRotation()->GetEuler())(1);
     datafile << (FDMExec->GetRotation()->GetEuler())(2);
     datafile << (FDMExec->GetRotation()->GetEuler())(3);
-    datafile << h;
+    datafile << FDMExec->GetPosition()->Geth();
     datafile.close();
     return true;
   } else {
@@ -266,7 +275,7 @@ float FGState::GetParameter(int val_idx)
 {
   switch(val_idx) {
   case FG_QBAR:
-    return Getqbar();
+    return FDMExec->GetTranslation()->Getqbar();
   case FG_WINGAREA:
     return FDMExec->GetAircraft()->GetWingArea();
   case FG_WINGSPAN:
@@ -312,13 +321,13 @@ float FGState::GetParameter(int val_idx)
   case FG_FLAPS_CMD:
     return FDMExec->GetFCS()->GetDfCmd();
   case FG_MACH:
-    return GetMach();
+    return FDMExec->GetTranslation()->GetMach();
   case FG_ALTITUDE:
-    return Geth();
+    return FDMExec->GetPosition()->Geth();
   case FG_BI2VEL:
-    return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * GetVt());
+    return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * FDMExec->GetTranslation()->GetVt());
   case FG_CI2VEL:
-    return FDMExec->GetAircraft()->Getcbar()/(2.0 * GetVt());
+    return FDMExec->GetAircraft()->Getcbar()/(2.0 * FDMExec->GetTranslation()->GetVt());
   }
   return 0;
 }

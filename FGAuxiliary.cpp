@@ -104,11 +104,10 @@ bool FGAuxiliary::Run()
 
 void FGAuxiliary::GetState(void)
 {
-  qbar = State->Getqbar();
-  mach = State->GetMach();
+  qbar = Translation->Getqbar();
+  mach = Translation->GetMach();
   p = Atmosphere->GetPressure();
   rhosl = Atmosphere->GetDensitySL();
   psl = Atmosphere->GetPressureSL();
 }
 
-void FGAuxiliary::PutState(void){}

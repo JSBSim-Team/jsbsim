@@ -87,6 +87,8 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
+  Longitude = Latitude = 0.0;
+  h = 0.0;
 }
 
 /******************************************************************************/
@@ -116,11 +118,12 @@ bool FGPosition:: Run(void)
     Latitude  += 0.5*dt*rate*(LatitudeDot + lastLatitudeDot);
     Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
 
+    h = Radius - EARTHRAD;
+    
     lastLatitudeDot = LatitudeDot;
     lastLongitudeDot = LongitudeDot;
     lastRadiusDot = RadiusDot;
 
-    PutState();
     return false;
 
   } else {
@@ -136,22 +139,8 @@ void FGPosition::GetState(void)
 
   vUVW = Translation->GetUVW();
 
-  Latitude = State->Getlatitude();
-  Longitude = State->Getlongitude();
-
   invMass = 1.0 / Aircraft->GetMass();
-  invRadius = 1.0 / (State->Geth() + EARTHRAD);
-  Radius = State->Geth() + EARTHRAD;
+  invRadius = 1.0 / (h + EARTHRAD);
+  Radius = h + EARTHRAD;
 }
-
-/******************************************************************************/
-
-void FGPosition::PutState(void)
-{
-  State->Setlatitude(Latitude);
-  State->Setlongitude(Longitude);
-  State->Seth(Radius - EARTHRAD);
-}
-
-/******************************************************************************/
 

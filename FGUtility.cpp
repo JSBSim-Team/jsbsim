@@ -78,16 +78,4 @@ FGUtility::FGUtility()
 FGUtility::~FGUtility()
 {
 }
-                       
-
-float FGUtility::ToGeodetic()
-{
-  return 0.0;
-}
-
-
-float FGUtility:: FromGeodetic()
-{
-  return 0.0;
-}
 

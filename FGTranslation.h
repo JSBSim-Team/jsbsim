@@ -89,12 +89,17 @@ public:
    inline float Getalpha(void) {return alpha;}
    inline float Getbeta (void) {return beta; }
    inline float Getgamma(void) {return gamma;}
+   inline float Getqbar (void) {return qbar;}
+   inline float GetVt   (void) {return Vt;}
+   inline float GetMach (void) {return Mach;}
 
    void SetUVW(FGColumnVector tt) {vUVW = tt;}
 
    inline void Setalpha(float tt) {alpha = tt;}
    inline void Setbeta (float tt) {beta  = tt;}
    inline void Setgamma(float tt) {gamma = tt;}
+   inline void Setqbar (float tt) {qbar = tt;}
+   inline void SetVt   (float tt) {Vt = tt;}
 
    inline void SetABG(float t1, float t2, float t3) {alpha=t1; beta=t2; gamma=t3;}
 
@@ -107,13 +112,12 @@ private:
   FGColumnVector vPQR;
   FGColumnVector vForces;
   FGColumnVector vEuler;
-  float Vt, qbar, mach;
+  float Vt, qbar, Mach;
   float Mass, dt;
   float alpha, beta, gamma;
   float rho;
 
   void GetState(void);
-  void PutState(void);
 };
 #pragma warn .8026
 

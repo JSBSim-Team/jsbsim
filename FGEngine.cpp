@@ -174,8 +174,8 @@ float FGEngine::CalcPistonThrust(void)
   Throttle = FCS->GetThrottlePos(EngineNumber);
   Throttle /= 100;
 
-  v=State->GetVt();
-  h=State->Geth();
+  v=Translation->GetVt();
+  h=Position->Geth();
   if(v < 10)
     v=10;
   if(h < 0)

@@ -78,7 +78,7 @@ bool FGOutput::Run(void)
   if (!FGModel::Run()) {
 //    SocketOutput();
 //    DelimitedOutput("JSBSimData.csv");
-    DelimitedOutput();
+//    DelimitedOutput();
   } else {
   }
   return false;
@@ -118,8 +118,8 @@ void FGOutput::DelimitedOutput(void)
   }
 
   cout << State->Getsim_time() << ",";
-  cout << State->Getqbar() << ",";
-  cout << State->GetVt() << ",";
+  cout << Translation->Getqbar() << ",";
+  cout << Translation->GetVt() << ",";
   cout << FCS->GetThrottlePos(0) << ",";
   cout << FCS->GetDaPos() << ",";
   cout << FCS->GetDePos() << ",";
@@ -133,14 +133,14 @@ void FGOutput::DelimitedOutput(void)
   cout << Aircraft->GetXYZcg() << ",";
   cout << Aircraft->GetForces() << ",";
   cout << Aircraft->GetMoments() << ",";
-  cout << State->Geth() << ",";
+  cout << Position->Geth() << ",";
   cout << Rotation->GetEuler() << ",";
   cout << Rotation->GetPQR() << ",";
   cout << Translation->GetUVW() << ",";
   cout << Translation->Getalpha() << ",";
   cout << Position->GetVel() << ",";
-  cout << State->Getlatitude() << ",";
-  cout << State->Getlongitude();
+  cout << Position->GetLatitude() << ",";
+  cout << Position->GetLongitude();
   cout << endl;
 }
 
@@ -179,8 +179,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
 
   datafile << State->Getsim_time() << ",";
-  datafile << State->Getqbar() << ",";
-  datafile << State->GetVt() << ",";
+  datafile << Translation->Getqbar() << ",";
+  datafile << Translation->GetVt() << ",";
   datafile << FCS->GetThrottlePos(0) << ",";
   datafile << FCS->GetDaPos() << ",";
   datafile << FCS->GetDePos() << ",";
@@ -194,14 +194,14 @@ void FGOutput::DelimitedOutput(string fname)
   datafile << Aircraft->GetXYZcg() << ",";
   datafile << Aircraft->GetForces() << ",";
   datafile << Aircraft->GetMoments() << ",";
-  datafile << State->Geth() << ",";
+  datafile << Position->Geth() << ",";
   datafile << Rotation->GetEuler() << ",";
   datafile << Rotation->GetPQR() << ",";
   datafile << Translation->GetUVW() << ",";
   datafile << Translation->Getalpha() << ",";
   datafile << Position->GetVel() << ",";
-  datafile << State->Getlatitude() << ",";
-  datafile << State->Getlongitude();
+  datafile << Position->GetLatitude() << ",";
+  datafile << Position->GetLongitude();
   datafile << endl;
   datafile.flush();
 }
@@ -259,12 +259,12 @@ void FGOutput::SocketOutput(void)
 
   socket->Clear();
   socket->Append(State->Getsim_time());
-  socket->Append(State->Geth());
+  socket->Append(Position->Geth());
   socket->Append(Rotation->Getphi());
   socket->Append(Rotation->Gettht());
   socket->Append(Rotation->Getpsi());
   socket->Append(Atmosphere->GetDensity());
-  socket->Append(State->GetVt());
+  socket->Append(Translation->GetVt());
   socket->Append(Translation->GetU());
   socket->Append(Translation->GetV());
   socket->Append(Translation->GetW());
@@ -283,9 +283,9 @@ void FGOutput::SocketOutput(void)
   socket->Append(Aircraft->GetFx());
   socket->Append(Aircraft->GetFy());
   socket->Append(Aircraft->GetFz());
-  socket->Append(State->Getlatitude());
-  socket->Append(State->Getlongitude());
-  socket->Append(State->Getqbar());
+  socket->Append(Position->GetLatitude());
+  socket->Append(Position->GetLongitude());
+  socket->Append(Translation->Getqbar());
   socket->Append(Translation->Getalpha());
   socket->Append(Aircraft->GetL());
   socket->Append(Aircraft->GetM());

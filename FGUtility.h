@@ -59,9 +59,6 @@ public:
   FGUtility(void);
   ~FGUtility(void);
 
-  float ToGeodetic(void);
-  float FromGeodetic(void);
-
 protected:
 
 private:
