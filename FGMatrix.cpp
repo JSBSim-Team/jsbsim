@@ -337,23 +337,31 @@ FGMatrix FGMatrix::operator/(const double scalar)
 {
   FGMatrix Quot(Rows(), Cols());
 
-  for (unsigned int i=1; i<=Rows(); i++) {
-    for (unsigned int j=1; j<=Cols(); j++)  {
-       Quot(i,j) = data[i][j]/scalar;
+  if(scalar != 0) {
+    for (unsigned int i=1; i<=Rows(); i++) {
+      for (unsigned int j=1; j<=Cols(); j++)  {
+         Quot(i,j) = data[i][j]/scalar;
+      }
     }
-  }
-  return Quot;
+    
+  } else
+    cerr << "Attempt to divide by zero in method FGMatrix::operator/(const double scalar), object at " << this << endl; 
+  return Quot;  
 }
 
 /******************************************************************************/
 
 void FGMatrix::operator/=(const double scalar)
 {
-  for (unsigned int i=1; i<=Rows(); i++)  {
-    for (unsigned int j=1; j<=Cols(); j++) {
-      data[i][j]/=scalar;
+  
+  if(scalar != 0) {
+    for (unsigned int i=1; i<=Rows(); i++)  {
+      for (unsigned int j=1; j<=Cols(); j++) {
+        data[i][j]/=scalar;
+      }
     }
-  }
+  } else 
+    cerr << "Attempt to divide by zero in method FGMatrix::operator/=(const double scalar), object " << this << endl; 
 }
 
 /******************************************************************************/
@@ -512,10 +520,16 @@ FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
 FGColumnVector FGColumnVector::operator/(const double scalar)
 {
   FGColumnVector Quotient(Rows());
+  if(scalar != 0) {
+    
 
-  for (unsigned int i=1; i<=Rows(); i++) Quotient(i) = data[i][1] / scalar;
+    for (unsigned int i=1; i<=Rows(); i++) Quotient(i) = data[i][1] / scalar;
 
+  } else 
+    cerr << "Attempt to divide by zero in method FGColumnVector::operator/(const double scalar), object " << this << endl; 
   return Quotient;
+  
+    
 }
 
 /******************************************************************************/
@@ -558,7 +572,7 @@ FGColumnVector FGColumnVector::Normalize(void)
     for (unsigned int i=1; i<=Rows(); i++)
       for (unsigned int j=1; j<=Cols(); j++)
         data[i][j] = data[i][j]/Mag;
-  }      
+  }    
 
   return *this;
 }
