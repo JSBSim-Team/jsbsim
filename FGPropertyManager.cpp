@@ -104,6 +104,32 @@ string FGPropertyManager::GetName( void ) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+string FGPropertyManager::GetFullyQualifiedName(void) {
+    vector<string> stack;
+    stack.push_back( getDisplayName(true) );
+    SGPropertyNode* tmpn=getParent();
+    bool atroot=false;
+    while( !atroot ) {
+     stack.push_back( tmpn->getDisplayName(true) );
+     if( !tmpn->getParent() ) 
+      atroot=true;
+     else 
+      tmpn=tmpn->getParent();
+    }
+    
+    string fqname="";
+    for(unsigned i=stack.size()-1;i>0;i--) {
+      fqname+= stack[i];
+      fqname+= "/";
+    }
+    fqname+= stack[0];
+    return fqname;  
+       
+}    
+    
+    
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGPropertyManager::GetBool (const string &name, bool defaultValue)
 {
   return getBoolValue(name.c_str(), defaultValue);

@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.13 2002/09/22 15:38:37 apeden Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.14 2002/09/29 13:20:23 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,6 +111,12 @@ class FGPropertyManager : public SGPropertyNode {
      * Get the name of a node
      */
     string GetName( void );
+    
+    /**
+     * Get the fully qualified name of a node
+     * This function is very slow, so is probably useful for debugging only.
+     */
+    string GetFullyQualifiedName(void);
 
     /**
      * Get a bool value for a property.
