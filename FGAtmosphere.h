@@ -47,7 +47,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.18 2001/07/29 01:42:40 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.19 2001/07/29 16:00:20 apeden Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
@@ -77,10 +77,10 @@ public:
   inline float GetPressureSL(void)    { return SLpressure; }     //lbs/ft^2
   inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }   //ft/s
 
-  inline float GetTemperatureRatio(void)  { return temperature/SLtemperature; }
-  inline float GetDensityRatio(void) 	  { return density/SLdensity; }
-  inline float GetPressureRatio(void)     { return pressure/SLpressure; }
-  inline float GetSoundSpeedRatio(void)   { return soundspeed/SLsoundspeed; }
+  inline float GetTemperatureRatio(void)  { return temperature*rSLtemperature; }
+  inline float GetDensityRatio(void) 	  { return density*rSLdensity; }
+  inline float GetPressureRatio(void)     { return pressure*rSLpressure; }
+  inline float GetSoundSpeedRatio(void)   { return soundspeed*rSLsoundspeed; }
 
   inline void UseExternal(void)          { useExternal=true;  }
   inline void UseInternal(void)          { useExternal=false; } //this is the default
@@ -99,8 +99,11 @@ public:
 private:
   float rho;
 
+  int lastIndex;
   float h;
+  float htab[8];
   float SLtemperature,SLdensity,SLpressure,SLsoundspeed;
+  float rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
   float temperature,density,pressure,soundspeed;
   bool useExternal;
   float exTemperature,exDensity,exPressure;

@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.19 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.20 2001/07/29 16:00:20 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 extern short debug_lvl;
@@ -75,12 +75,26 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
                                                vWindNED(3)
 {
   Name = "FGAtmosphere";
+  lastIndex=0;
   h = 0;
+  htab[0]=0;
+  htab[1]=36089.239;
+  htab[2]=65616.798;
+  htab[3]=104986.878;
+  htab[4]=154199.475;
+  htab[5]=170603.675;
+  htab[6]=200131.234;
+  htab[7]=259186.352; //ft.
+
   Calculate(h);
   SLtemperature = temperature;
   SLpressure    = pressure;
   SLdensity     = density;
   SLsoundspeed  = sqrt(SHRATIO*Reng*temperature);
+  rSLtemperature = 1.0/temperature;
+  rSLpressure    = 1.0/pressure;
+  rSLdensity     = 1.0/density;
+  rSLsoundspeed  = 1.0/SLsoundspeed;
   useExternal=false;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
@@ -127,79 +141,90 @@ void FGAtmosphere::Calculate(float altitude)
 {
   //see reference [1]
 
-  float slope,reftemp,refpress,refdens;
-  int i=0;
-  float htab[]={0,36089,82020,154198,173882,259183,295272,344484}; //ft.
-
-  if (altitude <= htab[0]) {
-    altitude=0;
-  } else if (altitude >= htab[7]){
-    i = 7;
-    altitude = htab[7];
-  } else {
-    while (htab[i+1] < altitude) i++;
-  }
+  float slope,reftemp,refpress;
+  int i=0; bool lookup = false;
+  // cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+  i=lastIndex;
+  if(altitude < htab[lastIndex]) {
+    if (altitude <= 0) { 
+      i=0; altitude=0;
+    } else {
+       i=lastIndex-1;
+       while (htab[i] > altitude) { i--; }
+    }   
+  } else if (altitude > htab[lastIndex+1]){
+    if (altitude >= htab[7]){
+      i = 7; altitude = htab[7];
+    } else {
+      i=lastIndex+1;
+      while(htab[i+1] < altitude) { i++; } 
+    }  
+  } 
 
   switch(i) {
   case 0:     // sea level
-    slope     = -0.0035662; // R/ft.
-    reftemp   = 518.688;    // R
-    refpress  = 2116.17;    // psf
-    refdens   = 0.0023765;  // slugs/cubic ft.
+    slope     = -0.00356616; // R/ft.
+    reftemp   = 518.67;    // R
+    refpress  = 2116.22;    // psf
+    //refdens   = 0.00237767;  // slugs/cubic ft.
     break;
   case 1:     // 36089 ft.
     slope     = 0;
-    reftemp   = 389.988;
-    refpress  = 474.1;
-    refdens   = 0.0007078;
+    reftemp   = 389.97;
+    refpress  = 472.452;
+    //refdens   = 0.000706032;
     break;
-  case 2:     // 82020 ft.
-    slope     = 0.00164594;
-    reftemp   = 389.988;
-    refpress  = 52.7838;
-    refdens   = 7.8849E-5;
+  case 2:     // 65616 ft.
+    slope     = 0.00054864;
+    reftemp   = 389.97;
+    refpress  = 114.636;
+    //refdens   = 0.000171306;
     break;
-  case 3:     // 154198 ft.
+  case 3:     // 104986 ft.
+    slope     = 0.00153619;
+    reftemp   = 411.57;
+    refpress  = 8.36364;
+    //refdens   = 1.18422e-05;
+    break;
+  case 4:     // 154199 ft.
     slope     = 0;
-    reftemp   = 508.788;
-    refpress  = 2.62274;
-    refdens   = 3.01379E-6;
+    reftemp   = 487.17;
+    refpress  = 0.334882;
+    //refdens   = 4.00585e-7;
     break;
-  case 4:     // 173882 ft.
-    slope     = -0.00246891;
-    reftemp   = 508.788;
-    refpress  = 1.28428;
-    refdens   = 1.47035e-06;
+  case 5:     // 170603 ft.
+    slope     = -0.00109728;
+    reftemp   = 487.17;
+    refpress  = 0.683084;
+    //refdens   = 8.17102e-7;
     break;
-  case 5:     // 259183 ft.
+  case 6:     // 200131 ft.
+    slope     = -0.00219456;
+    reftemp   = 454.17;
+    refpress  = 0.00684986;
+    //refdens   = 8.77702e-9;
+    break;
+  case 7:     // 259186 ft.
     slope     = 0;
-    reftemp   = 298.188;
-    refpress  = 0.0222008;
-    refdens   = 4.33396e-08;
-    break;
-  case 6:     // 295272 ft.
-    slope     = 0.00219459;
-    reftemp   = 298.188;
-    refpress  = 0.00215742;
-    refdens   = 4.21368e-09;
-    break;
-  case 7:     // 344484 ft.
-    slope     = 0;
-    reftemp   = 406.188;
-    refpress  = 0.000153755;
-    refdens   = 2.20384e-10;
+    reftemp   = 325.17;
+    refpress  = 0.000122276;
+    //refdens   = 2.19541e-10;
     break;
   }
-
+ 
   if (slope == 0) {
     temperature = reftemp;
     pressure = refpress*exp(-GRAVITY/(reftemp*Reng)*(altitude-htab[i]));
-    density = refdens*exp(-GRAVITY/(reftemp*Reng)*(altitude-htab[i]));
+    //density = refdens*exp(-GRAVITY/(reftemp*Reng)*(altitude-htab[i]));
+    density = pressure/(Reng*temperature);
   } else {
     temperature = reftemp+slope*(altitude-htab[i]);
     pressure = refpress*pow(temperature/reftemp,-GRAVITY/(slope*Reng));
-    density = refdens*pow(temperature/reftemp,-(GRAVITY/(slope*Reng)+1));
+    //density = refdens*pow(temperature/reftemp,-(GRAVITY/(slope*Reng)+1));
+    density = pressure/(Reng*temperature);
   }
+  lastIndex=i;
+  //cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
