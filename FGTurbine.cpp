@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.19 2004/11/14 00:56:44 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.20 2004/11/28 15:17:11 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,8 @@ double FGTurbine::Calculate(void)
     default: Thrust = Off();
   }
 
-  return Thruster->Calculate(Thrust);
+  // The thruster can modify the thrust, eg. thrust reverser
+  return Thrust = Thruster->Calculate(Thrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,6 +237,7 @@ double FGTurbine::Start(void)
       EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
       FuelFlow_pph = Seek(&FuelFlow_pph, IdleFF, 103.7, 103.7);
       OilPressure_psi = N2 * 0.62;
+      ConsumeFuel();
       }
     else {
       phase = tpRun;
@@ -261,6 +263,7 @@ double FGTurbine::Stall(void)
   FuelFlow_pph = IdleFF;
   N1 = Seek(&N1, qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
+  ConsumeFuel();
   if (ThrottlePos < 0.01) phase = tpRun;        // clear the stall with throttle
 
   return 0.0;
@@ -274,6 +277,7 @@ double FGTurbine::Seize(void)
     N2 = 0.0;
     N1 = Seek(&N1, qbar/20.0, 0, N1/15.0);
     FuelFlow_pph = IdleFF;
+    ConsumeFuel();
     OilPressure_psi = 0.0;
     OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0, 0.2);
     Running = false;
@@ -446,10 +450,14 @@ void FGTurbine::bindmodel()
 {
   char property_name[80];
 
-  snprintf(property_name, 80, "propulsion/n1[%u]", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
   PropertyManager->Tie( property_name, &N1);
-  snprintf(property_name, 80, "propulsion/n2[%u]", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
   PropertyManager->Tie( property_name, &N2);
+  snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow", EngineNumber);
+  PropertyManager->Tie( property_name, &FuelFlow_pph);
+  snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
+  PropertyManager->Tie( property_name, &Thrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -458,10 +466,14 @@ void FGTurbine::unbind()
 {
   char property_name[80];
 
-  snprintf(property_name, 80, "propulsion/n1[%u]", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
   PropertyManager->Untie(property_name);
-  snprintf(property_name, 80, "propulsion/n2[%u]", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
   PropertyManager->Untie(property_name);
+  snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow", EngineNumber);
+  PropertyManager->Untie( property_name);
+  snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
+  PropertyManager->Untie( property_name);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

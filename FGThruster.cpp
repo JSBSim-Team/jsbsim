@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.28 2004/11/02 05:19:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.29 2004/11/28 15:17:11 dpculp Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,11 +72,15 @@ FGThruster::FGThruster(FGFDMExec *FDMExec,
 
   EngineNum = num;
   ThrustCoeff = 0.0;
+  ReverserAngle = 0.0;
   PropertyManager = FDMExec->GetPropertyManager();
 
   char property_name[80];
   snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
   PropertyManager->Tie( property_name, &ThrustCoeff );
+  snprintf(property_name, 80, "propulsion/engine[%u]/reverser-angle", EngineNum);
+  PropertyManager->Tie( property_name, &ReverserAngle );
+
 
   Debug(0);
 }
@@ -87,6 +91,8 @@ FGThruster::~FGThruster()
 {
   char property_name[80];
   snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
+  PropertyManager->Untie( property_name );
+  snprintf(property_name, 80, "propulsion/engine[%u]/reverser-angle", EngineNum);
   PropertyManager->Untie( property_name );
 
   Debug(1);
