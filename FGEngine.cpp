@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.51 2003/01/22 15:53:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.52 2003/04/01 17:16:43 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,8 @@ FGEngine::FGEngine(FGFDMExec* exec)
     Starter(false),
     FuelNeed(0.0), OxidizerNeed(0.0),
     Starved(false), Flameout(false), Running(false), Cranking(false),
+    Augmentation(false), Injection(false), Ignition(false),
+    Reversed(false), Cutoff(true), Nitrous(false),
     PctPower(0.0),
     EngineNumber(-1),
     TrimMode(false),

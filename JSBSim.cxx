@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.135 2003/03/24 10:47:44 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.136 2003/04/01 17:16:42 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -166,10 +166,9 @@ FGJSBsim::FGJSBsim( double dt )
     right_aileron_pos_pct
         =fgGetNode("/surface-positions/right-aileron-pos-norm",true);
     rudder_pos_pct=fgGetNode("/surface-positions/rudder-pos-norm",true);
-    speed_brake_pos_pct
-        =fgGetNode("/surface-positions/speed-brake-pos-norm",true);
-    spoiler_pos_pct=fgGetNode("/surface-positions/spoiler-pos-norm",true);
-    
+    speedbrake_pos_pct
+        =fgGetNode("/surface-positions/speedbrake-pos-norm",true);
+    spoilers_pos_pct=fgGetNode("/surface-positions/spoilers-pos-norm",true);
     
 
     elevator_pos_pct->setDoubleValue(0);
@@ -177,8 +176,8 @@ FGJSBsim::FGJSBsim( double dt )
     right_aileron_pos_pct->setDoubleValue(0);
     rudder_pos_pct->setDoubleValue(0);
     flap_pos_pct->setDoubleValue(0);
-    speed_brake_pos_pct->setDoubleValue(0);
-    spoiler_pos_pct->setDoubleValue(0);
+    speedbrake_pos_pct->setDoubleValue(0);
+    spoilers_pos_pct->setDoubleValue(0);
 
     temperature = fgGetNode("/environment/temperature-degc",true);
     pressure = fgGetNode("/environment/pressure-inhg",true);
@@ -376,16 +375,15 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
     FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
     FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
-    FCS->SetDsbCmd( globals->get_controls()->get_speed_brake() );
-    FCS->SetDspCmd( globals->get_controls()->get_spoilers() );
-
+    FCS->SetDsbCmd( globals->get_controls()->get_speedbrake() ); 
+    FCS->SetDspCmd( globals->get_controls()->get_spoilers() ); 
 
 				// Parking brake sets minimum braking
 				// level for mains.
     double parking_brake = globals->get_controls()->get_parking_brake();
     FCS->SetLBrake(FMAX(globals->get_controls()->get_brake(0), parking_brake));
     FCS->SetRBrake(FMAX(globals->get_controls()->get_brake(1), parking_brake));
-    FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
+    FCS->SetCBrake( globals->get_controls()->get_brake(2) );
 
     FCS->SetGearCmd( globals->get_controls()->get_gear_down());
     for (i = 0; i < Propulsion->GetNumEngines(); i++) {
@@ -397,6 +395,12 @@ bool FGJSBsim::copy_to_JSBsim() {
       Propulsion->GetThruster(i)->SetRPM(node->getDoubleValue("rpm"));
       eng->SetMagnetos( globals->get_controls()->get_magnetos(i) );
       eng->SetStarter( globals->get_controls()->get_starter(i) );
+      eng->SetAugmentation( globals->get_controls()->get_augmentation(i) );
+      eng->SetReverse( globals->get_controls()->get_reverser(i) );
+      eng->SetInjection( globals->get_controls()->get_water_injection(i) );
+      eng->SetIgnition( globals->get_controls()->get_ignition(i) );
+      eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
+      eng->SetNitrous( globals->get_controls()->get_nitrous_injection(i) );
     }
 
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
@@ -557,6 +561,9 @@ bool FGJSBsim::copy_from_JSBsim() {
       node->setBoolValue("ignition", eng->GetIgnition());
       node->setBoolValue("augmentation", eng->GetAugmentation());
       node->setBoolValue("water-injection", eng->GetInjection());
+      node->setBoolValue("reversed", eng->GetReversed());
+      node->setBoolValue("cutoff", eng->GetCutoff());
+      node->setBoolValue("nitrous", eng->GetNitrous());
     }
 
     static const SGPropertyNode *fuel_freeze
@@ -584,15 +591,15 @@ bool FGJSBsim::copy_from_JSBsim() {
     right_aileron_pos_deg->setDoubleValue( FCS->GetDaRPos()*SG_RADIANS_TO_DEGREES );
     rudder_pos_deg->setDoubleValue( -1*FCS->GetDrPos()*SG_RADIANS_TO_DEGREES );
     flap_pos_deg->setDoubleValue( FCS->GetDfPos() ); */
-    
 
+    
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
     right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
     rudder_pos_pct->setDoubleValue( -1*FCS->GetDrPos(ofNorm) );
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
-    speed_brake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
-    spoiler_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
+    speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
+    spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
 
     
     return true;
