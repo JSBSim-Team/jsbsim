@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.97 2002/01/19 03:01:59 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.98 2002/01/19 20:37:29 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -123,6 +123,14 @@ FGJSBsim::FGJSBsim( double dt )
         
     
     init_gear();
+
+				// Set initial fuel levels if provided.
+    for (int i = 0; i < Propulsion->GetNumTanks(); i++) {
+      SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
+      if (node->getChild("level-gal_us", 0, false) != 0)
+	Propulsion->GetTank(i)
+	  ->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
+    }
     
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
@@ -327,9 +335,10 @@ bool FGJSBsim::copy_to_JSBsim() {
 //                  << get_V_down_airmass() );
 
     for (i = 0; i < Propulsion->GetNumTanks(); i++) {
+      SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
       FGTank * tank = Propulsion->GetTank(i);
-      tank->SetContents(fgGetNode("consumables/fuel/tank", i, true)
-			->getDoubleValue());
+      tank->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
+//       tank->SetContents(node->getDoubleValue("level-lb"));
     }
 
     return true;
@@ -455,9 +464,12 @@ bool FGJSBsim::copy_from_JSBsim() {
     }
 
 				// Copy the fuel levels from JSBSim.
-    for (i = 0; i < Propulsion->GetNumTanks(); i++)
-      fgGetNode("consumables/fuel/tank", i, true)
-	->setDoubleValue(Propulsion->GetTank(i)->GetContents());
+    for (i = 0; i < Propulsion->GetNumTanks(); i++) {
+      SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
+      double contents = Propulsion->GetTank(i)->GetContents();
+      node->setDoubleValue("level-gal_us", contents/6.6);
+//       node->setDoubleValue("level-lb", contents);
+    }
 
     update_gear();
     
