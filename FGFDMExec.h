@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.23 2001/03/02 12:42:02 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.24 2001/03/02 16:35:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
     another flight simulator) this class is typically instantiated by an interface
     class on the simulator side.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.23 2001/03/02 12:42:02 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.24 2001/03/02 16:35:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,8 +183,7 @@ public:
   bool SetAircraftPath(string path) {AircraftPath = path; return true;}
   bool SetScriptPath(string path)   {ScriptPath = path; return true;}
 
-  /** @name Top-level executive State and Model retrieval mechanism
-      @return a pointer to the FGState or FGModel instance as appropriate. */
+  /// @name Top-level executive State and Model retrieval mechanism
   //@{
   /// Returns the FGState pointer.
   inline FGState* GetState(void)              {return State;}
