@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.50 2001/02/17 14:54:35 apeden Exp $
+// $Id: JSBSim.cxx,v 1.51 2001/02/24 13:26:37 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -61,7 +61,6 @@
 FGJSBsim::FGJSBsim( double dt ) {
     bool result;
    
-   
     fdmex=new FGFDMExec;
     fgic=new FGInitialCondition(fdmex);
     needTrim=true;
@@ -77,7 +76,7 @@ FGJSBsim::FGJSBsim( double dt ) {
     result = fdmex->LoadModel( aircraft_path.str(),
 			       engine_path.str(),
 			       fgGetString("/sim/aircraft") );
-    int Neng=fdmex->GetAircraft()->GetNumEngines();
+    int Neng=fdmex->GetPropulsion()->GetNumEngines();
     FG_LOG(FG_FLIGHT,FG_INFO, "Neng: " << Neng );
     for(int i=0;i<Neng;i++) {
 	add_engine( FGEngInterface() );
@@ -117,7 +116,6 @@ void FGJSBsim::init() {
 			       engine_path.str(),
 			       fgGetString("/sim/aircraft") );
 
-
     if (result) {
 	FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft " << fgGetString("/sim/aircraft") );
     } else {
@@ -127,6 +125,7 @@ void FGJSBsim::init() {
 	exit(-1);
     }
 #endif    
+
     fdmex->GetAtmosphere()->UseInternal();
   
     FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
@@ -223,7 +222,7 @@ bool FGJSBsim::update( int multiloop ) {
 	delete fgtrim;
   
 	
-  needTrim=false;
+  	needTrim=false;
     
          
 	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
