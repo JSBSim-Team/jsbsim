@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.16 2001/03/22 17:58:19 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.17 2001/10/01 22:47:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.16 2001/03/22 17:58:19 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.17 2001/10/01 22:47:06 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,6 +103,7 @@ private:
   float cb;
   float cc;
   float cd;
+  float ce;
   float C1;
   float C2;
   float C3;
@@ -118,3 +119,4 @@ private:
 };
 
 #endif
+

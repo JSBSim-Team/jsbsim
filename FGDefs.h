@@ -34,17 +34,11 @@ SENTRY
 #ifndef FGDEFS_H
 #define FGDEFS_H
 
-#define MAX_ENGINES     10
-#define MAX_TANKS       30
 #define GRAVITY         32.174
 #define INVGRAVITY      0.031081
 #define EARTHRAD        20925650.00       // feet, equatorial
 #define EARTHRADSQRD    437882827922500.0
 #define ONESECOND       4.848136811E-6
-#define ECCENT          0.996647186
-#define ECCENTSQRD      0.99330561
-#define INVECCENTSQRD   1.0067395
-#define INVECCENTSQRDM1 0.0067395
 #define Reng            1716             //Specific Gas Constant,ft^2/(sec^2*R)
 #define SHRATIO         1.4              //Specific Heat Ratio
 #define RADTODEG        57.29578
@@ -54,7 +48,7 @@ SENTRY
 #define INCHTOFT        0.08333333
 #define OMEGA_EARTH .00007272205217  
 #define NEEDED_CFG_VERSION "1.40"
-#define JSBSIM_VERSION  "0.8.6"
+#define JSBSIM_VERSION  "0.8.7"
 
 #define HPTOFTLBSSEC 550
 #define METERS_TO_FEET 3.2808
