@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.18 2001/04/05 23:05:30 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.19 2001/04/09 12:03:12 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -66,6 +66,7 @@ public:
   float GetThrust(void) {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
+  virtual float GetRPM(void) { return 0.0; };
 
 protected:
   eType Type;
