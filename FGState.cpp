@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.91 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.92 2001/12/02 15:58:53 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,7 @@ FGState::FGState(FGFDMExec* fdex) :
   RegisterVariable(FG_SPDBRAKE_POS,   " speedbrake_pos " );
   RegisterVariable(FG_SPOILERS_POS,   " spoiler_pos "    );
   RegisterVariable(FG_FLAPS_POS,      " flaps_pos "      );
+  RegisterVariable(FG_GEAR_POS,       " gear_pos "       );
   RegisterVariable(FG_ELEVATOR_CMD,   " elevator_cmd "   );
   RegisterVariable(FG_AILERON_CMD,    " aileron_cmd "    );
   RegisterVariable(FG_RUDDER_CMD,     " rudder_cmd "     );
@@ -142,11 +143,12 @@ FGState::FGState(FGFDMExec* fdex) :
   RegisterVariable(FG_SPOILERS_CMD,   " spoiler_cmd "    );
   RegisterVariable(FG_FLAPS_CMD,      " flaps_cmd "      );
   RegisterVariable(FG_THROTTLE_CMD,   " throttle_cmd "   );
+  RegisterVariable(FG_GEAR_CMD,       " gear_cmd "       );
   RegisterVariable(FG_THROTTLE_POS,   " throttle_pos "   );
-  RegisterVariable(FG_MIXTURE_CMD,    " mixture_cmd "   );
-  RegisterVariable(FG_MIXTURE_POS,    " mixture_pos "   );
-  RegisterVariable(FG_MAGNETO_CMD,    " magneto_cmd "   );
-  RegisterVariable(FG_STARTER_CMD,    " starter_cmd "   );
+  RegisterVariable(FG_MIXTURE_CMD,    " mixture_cmd "    );
+  RegisterVariable(FG_MIXTURE_POS,    " mixture_pos "    );
+  RegisterVariable(FG_MAGNETO_CMD,    " magneto_cmd "    );
+  RegisterVariable(FG_STARTER_CMD,    " starter_cmd "    );
   RegisterVariable(FG_ACTIVE_ENGINE,  " active_engine "  );
   RegisterVariable(FG_HOVERB,         " height/span "    );
   RegisterVariable(FG_PITCH_TRIM_CMD, " pitch_trim_cmd " );
@@ -302,6 +304,10 @@ double FGState::GetParameter(eParam val_idx) {
     return Position->GetHOverBMAC();
   case FG_PITCH_TRIM_CMD:
     return FCS->GetPitchTrimCmd();
+  case FG_GEAR_CMD:
+    return FCS->GetGearCmd();
+  case FG_GEAR_POS:
+    return FCS->GetGearPos();    
   default:
     cerr << "FGState::GetParameter() - No handler for parameter " << paramdef[val_idx] << endl;
     return 0.0;
@@ -396,7 +402,12 @@ void FGState::SetParameter(eParam val_idx, double val) {
   case FG_RIGHT_BRAKE_CMD:
     FCS->SetRBrake(val);
     break;
-
+  case FG_GEAR_CMD:
+    FCS->SetGearCmd(val);
+    break;
+  case  FG_GEAR_POS:
+    FCS->SetGearPos(val);
+    break; 
   case FG_SET_LOGGING:
     if      (val < -0.01) Output->Disable();
     else if (val >  0.01) Output->Enable();
@@ -735,7 +746,7 @@ FGMatrix33& FGState::GetTb2s(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGState::ReportState(void) {
-  char out[80], flap[10], gear[10];
+  char out[80], flap[10], gear[12];
   
   cout << endl << "  JSBSim State" << endl;
   snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
@@ -748,11 +759,13 @@ void FGState::ReportState(void) {
     snprintf(flap,10,"Up");
   else
     snprintf(flap,10,"%2.0f",FCS->GetDfPos());
-  if(GroundReactions->GetGearUp() == true)
-    snprintf(gear,10,"Up");
+  if(FCS->GetGearPos() < 0.01)
+    snprintf(gear,12,"Up");
+  else if(FCS->GetGearPos() > 0.99)
+    snprintf(gear,12,"Down");
   else
-    snprintf(gear,10,"Down");
-  snprintf(out,80, "    Flaps: %3s  Gear: %4s\n",flap,gear);
+    snprintf(gear,12,"In Transit");   
+  snprintf(out,80, "    Flaps: %3s  Gear: %12s\n",flap,gear);
   cout << out;
   snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
                     FDMExec->GetAuxiliary()->GetVcalibratedKTS(),
