@@ -58,12 +58,12 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.35 2002/07/10 22:17:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.36 2002/09/07 21:59:13 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
+FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt) {
 
   N=Nsub=0;
   max_iterations=60;
@@ -73,7 +73,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   
   Debug=0;DebugLevel=0;
   fdmex=FDMExec;
-  fgic=FGIC;
+  fgic=fdmex->GetIC();
   total_its=0;
   trimudot=true;
   gamma_fallback=true;
@@ -82,56 +82,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   xlo=xhi=alo=ahi=0.0;
   targetNlf=1.0;
   debug_axis=tAll;
-  switch(mode) {
-  case tFull:
-    cout << "  Full Trim" << endl;
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
-    break;
-  case tLongitudinal:
-    cout << "  Longitudinal Trim" << endl;
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    break;
-  case tGround:
-    cout << "  Ground Trim" << endl;
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta ));
-    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi ));
-    break;
-  case tPullup:
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
-    break;
-  case tTurn:
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
-    break;
-  case tCustom:
-  case tNone:
-    break;
-}
-  //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
-  sub_iterations=new double[TrimAxes.size()];
-  successful=new double[TrimAxes.size()];
-  solution=new bool[TrimAxes.size()];
-  current_axis=0;
-  
+  SetMode(tGround);
   if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
 }
 
@@ -588,6 +539,8 @@ bool FGTrim::checkLimits(void) {
   return solutionExists;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTrim::setupPullup() {
   float g,q,cgamma;
   FGColumnVector3 vPQR;
@@ -601,7 +554,9 @@ void FGTrim::setupPullup() {
   cout << "setPitchRateInPullup() complete" << endl;
   
 }  
-  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTrim::setupTurn(void){
   double g,phi;
   phi = fgic->GetRollAngleRadIC();
@@ -613,6 +568,8 @@ void FGTrim::setupTurn(void){
   }
    
 }  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::updateRates(void){
   if( mode == tTurn ) {
@@ -640,6 +597,8 @@ void FGTrim::updateRates(void){
   }  
 }  
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTrim::setDebug(void) {
   if(debug_axis == tAll ||
       TrimAxes[current_axis]->GetStateType() == debug_axis ) {
@@ -650,6 +609,60 @@ void FGTrim::setDebug(void) {
     return;
   }
 }      
-    
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTrim::SetMode(TrimMode tt) {
+    ClearStates();
+    switch(mode) {
+      case tFull:
+        cout << "  Full Trim" << endl;
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+        break;
+      case tLongitudinal:
+        cout << "  Longitudinal Trim" << endl;
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+        break;
+      case tGround:
+        cout << "  Ground Trim" << endl;
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta ));
+        //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi ));
+        break;
+      case tPullup:
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+        break;
+      case tTurn:
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+        break;
+      case tCustom:
+      case tNone:
+        break;
+    }
+    //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
+    sub_iterations=new double[TrimAxes.size()];
+    successful=new double[TrimAxes.size()];
+    solution=new bool[TrimAxes.size()];
+    current_axis=0;
+}    
 //YOU WERE WARNED, BUT YOU DID IT ANYWAY.
 
