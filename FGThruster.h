@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.31 2003/11/12 03:25:45 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.32 2003/11/25 17:51:16 dpculp Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.31 2003/11/12 03:25:45 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.32 2003/11/25 17:51:16 dpculp Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,6 +88,7 @@ public:
   string GetName(void) {return Name;}
   int GetThrusterNumber(void) {return ThrusterNumber;}
   virtual double GetRPM(void) { return 0.0; };
+  double GetGearRatio(void) {return GearRatio; } 
 
 protected:
   eType Type;
@@ -96,6 +97,7 @@ protected:
   double Thrust;
   double PowerRequired;
   double deltaT;
+  double GearRatio;
   virtual void Debug(int from);
 };
 }

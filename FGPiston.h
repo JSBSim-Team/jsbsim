@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.32 2003/11/17 12:50:56 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.33 2003/11/25 17:51:16 dpculp Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.32 2003/11/17 12:50:56 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.33 2003/11/25 17:51:16 dpculp Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -104,6 +104,7 @@ public:
   double getCylinderHeadTemp_degF(void) {return KelvinToFahrenheit(CylinderHeadTemp_degK);}
   double getOilPressure_psi(void) const {return OilPressure_psi;}
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
+  double getRPM(void) {return RPM;} 
 
 private:
   int crank_counter;

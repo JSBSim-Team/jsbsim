@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.23 2003/11/11 13:49:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.24 2003/11/25 17:51:16 dpculp Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,7 @@ FGThruster::FGThruster(FGFDMExec *FDMExec,
   Type = ttDirect;
   SetTransformType(FGForce::tCustom);
   Name = Eng_cfg->GetValue();
+  GearRatio = 1.0;
   Debug(0);
 }   
 

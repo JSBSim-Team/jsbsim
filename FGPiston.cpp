@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.61 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.62 2003/11/25 17:51:16 dpculp Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,7 +153,8 @@ double FGPiston::Calculate(double PowerRequired)
   p_amb_sea_level = Atmosphere->GetPressureSL() * 48;
   T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
 
-  RPM = Propulsion->GetThruster(EngineNumber)->GetRPM();
+  RPM = Propulsion->GetThruster(EngineNumber)->GetRPM() *
+        Propulsion->GetThruster(EngineNumber)->GetGearRatio();
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
