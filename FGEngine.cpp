@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.64 2004/05/26 12:29:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.65 2004/05/26 23:40:23 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +92,7 @@ FGEngine::FGEngine(FGFDMExec* exec)
   FDMExec = exec;
   State = FDMExec->GetState();
   Atmosphere = FDMExec->GetAtmosphere();
-//  FCS = FDMExec->GetFCS();
+  FCS = FDMExec->GetFCS();
   Propulsion = FDMExec->GetPropulsion();
   Aircraft = FDMExec->GetAircraft();
   Propagate = FDMExec->GetPropagate();
