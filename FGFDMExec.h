@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.28 2001/03/02 19:13:55 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.29 2001/03/02 19:16:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,8 +107,9 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.28 2001/03/02 19:13:55 jberndt Exp $
-    This class is the interface class through which all other simulation classes
+    @version $Id: FGFDMExec.h,v 1.29 2001/03/02 19:16:35 jberndt Exp $
+
+    @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
     other flight simulator) this class is typically instantiated by an interface
     class on the simulator side.
