@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.45 2004/04/12 04:07:36 apeden Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.46 2004/04/27 11:37:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ CLASS DOCUMENTATION
    Setting climb rate is, for the purpose of this discussion, 
    considered equivalent to setting gamma.
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.45 2004/04/12 04:07:36 apeden Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.46 2004/04/27 11:37:48 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,9 +218,9 @@ public:
   inline double GetWindFpsIC(void)  const { return sqrt(wnorth*wnorth + weast*weast); }
   double GetWindDirDegIC(void); 
   inline double GetClimbRateFpsIC(void) const { return hdot; }
-  double GetUBodyFpsIC(void);
-  double GetVBodyFpsIC(void);
-  double GetWBodyFpsIC(void);
+  double GetUBodyFpsIC(void) const;
+  double GetVBodyFpsIC(void) const;
+  double GetWBodyFpsIC(void) const;
   double GetPRadpsIC() const { return p; }
   double GetQRadpsIC() const { return q; }
   double GetRRadpsIC() const { return r; }

@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.62 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.63 2004/04/27 11:37:48 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -266,7 +266,7 @@ void FGInitialCondition::SetWBodyFpsIC(double tt) {
 
 //******************************************************************************
 
-double FGInitialCondition::GetUBodyFpsIC(void) {
+double FGInitialCondition::GetUBodyFpsIC(void) const {
     if(lastSpeedSet == setvg )
       return u;
     else
@@ -275,7 +275,7 @@ double FGInitialCondition::GetUBodyFpsIC(void) {
 
 //******************************************************************************
 
-double FGInitialCondition::GetVBodyFpsIC(void) {
+double FGInitialCondition::GetVBodyFpsIC(void) const {
     if( lastSpeedSet == setvg )
       return v;
     else {
@@ -285,7 +285,7 @@ double FGInitialCondition::GetVBodyFpsIC(void) {
 
 //******************************************************************************
 
-double FGInitialCondition::GetWBodyFpsIC(void) {
+double FGInitialCondition::GetWBodyFpsIC(void) const {
     if( lastSpeedSet == setvg )
       return w;
     else
