@@ -188,9 +188,11 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 }
   
 
-bool FGFDMExec::LoadModel(string model)
+bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
-  LoadAircraft(AircraftPath, EnginePath, model);
+	AircraftPath = APath;
+	EnginePath = EPath;
+  Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
 }
 
 

@@ -76,9 +76,9 @@ public:
 
   bool SetEnginePath(string path)   {EnginePath = path;}
   bool SetAircraftPath(string path) {AircraftPath = path;}
-  bool SetScriptPath(string path);  {ScriptPath = path;}
+  bool SetScriptPath(string path)   {ScriptPath = path;}
 
-  bool LoadModel(string name);
+  bool LoadModel(string AircraftPath, string EnginePath, string model);
   bool RunScript(string script);
 
   inline FGState* GetState(void)             {return State;}
