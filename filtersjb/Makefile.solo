@@ -1,6 +1,6 @@
 CC = g++
 libFCSComponents_OBJECTS = FGDeadBand.o FGFilter.o FGGradient.o FGSwitch.o\
-                           FGFCSComponent.o FGGain.o FGSummer.o FGFlaps.o
+                           FGFCSComponent.o FGGain.o FGSummer.o FGKinemat.o
 
 INCLUDES = -I../
 
@@ -51,20 +51,6 @@ FGFilter.o: FGFilter.cpp FGFilter.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFilter.o -c FGFilter.cpp
 
-FGFlaps.o: FGFlaps.cpp FGFlaps.h FGFCSComponent.h ../FGJSBBase.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
- ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
- ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
- ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
- ../FGPosition.h ../FGAerodynamics.h ../FGMassBalance.h \
- ../FGCoefficient.h ../FGTable.h ../FGFactorGroup.h ../FGOutput.h \
- ../FGfdmSocket.h ../FGGroundReactions.h ../FGInertial.h \
- ../FGAuxiliary.h ../FGPiston.h ../FGTurboShaft.h ../FGTurboJet.h \
- ../FGTurboProp.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
- ../FGForce.h ../FGNozzle.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGFlaps.o -c FGFlaps.cpp
-
 FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
  ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
@@ -92,6 +78,20 @@ FGGradient.o: FGGradient.cpp FGGradient.h FGFCSComponent.h \
  ../FGTurboProp.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
  ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGradient.o -c FGGradient.cpp
+
+FGKinemat.o: FGKinemat.cpp FGKinemat.h FGFCSComponent.h ../FGJSBBase.h \
+ ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
+ ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
+ ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
+ ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
+ ../FGPosition.h ../FGAerodynamics.h ../FGMassBalance.h \
+ ../FGCoefficient.h ../FGTable.h ../FGFactorGroup.h ../FGOutput.h \
+ ../FGfdmSocket.h ../FGGroundReactions.h ../FGInertial.h \
+ ../FGAuxiliary.h ../FGPiston.h ../FGTurboShaft.h ../FGTurboJet.h \
+ ../FGTurboProp.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
+ ../FGForce.h ../FGNozzle.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGKinemat.o -c FGKinemat.cpp
 
 FGSummer.o: FGSummer.cpp FGSummer.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \

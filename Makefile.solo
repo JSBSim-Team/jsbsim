@@ -124,7 +124,7 @@ FGFCS.o: FGFCS.cpp FGFCS.h filtersjb/FGFCSComponent.h \
  FGPropeller.h FGThruster.h FGForce.h FGNozzle.h filtersjb/FGFilter.h \
  filtersjb/../FGConfigFile.h filtersjb/FGDeadBand.h filtersjb/FGGain.h \
  filtersjb/../FGTable.h filtersjb/FGGradient.h filtersjb/FGSwitch.h \
- filtersjb/FGSummer.h filtersjb/FGFlaps.h
+ filtersjb/FGSummer.h filtersjb/FGKinemat.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCS.o -c FGFCS.cpp
 
 FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGJSBBase.h \

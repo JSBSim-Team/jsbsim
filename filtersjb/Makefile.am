@@ -10,8 +10,8 @@ libFCSComponents_a_SOURCES = \
 	FGFCSComponent.h \
 	FGFilter.cpp \
 	FGFilter.h \
-	FGFlaps.cpp \
-	FGFlaps.h \
+	FGKinemat.cpp \
+	FGKinemat.h \
 	FGGain.cpp \
 	FGGain.h \
 	FGGradient.cpp \
