@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.27 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.28 2001/11/05 18:23:22 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   string token;
   int rows, cols;
 
-  MaxPitch = MinPitch = 0.0;
+  MaxPitch = MinPitch = P_Factor = Sense = 0.0;
 
   Name = Prop_cfg->GetValue("NAME");
   Prop_cfg->GetNextConfigLine();
@@ -67,6 +67,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
       *Prop_cfg >> MinPitch;
     } else if (token == "MAXPITCH") {
       *Prop_cfg >> MaxPitch;
+    } else if (token == "P_FACTOR") {
+      *Prop_cfg >> P_Factor;
+    } else if (token == "SENSE") {
+      *Prop_cfg >> Sense;
     } else if (token == "EFFICIENCY") {
       *Prop_cfg >> rows >> cols;
       if (cols == 1) Efficiency = new FGTable(rows);
@@ -97,6 +101,14 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
     cout << "      Number of Blades  = " << numBlades << endl;
     cout << "      Minimum Pitch  = " << MinPitch << endl;
     cout << "      Maximum Pitch  = " << MaxPitch << endl;
+    if (P_Factor > 0.0) cout << "      P-Factor = " << P_Factor << endl;
+    if (Sense > 0.0) {
+      cout << "      Rotation Sense = CW (viewed from pilot looking forward)" << endl;
+    } else if (Sense < 0.0) {
+      cout << "      Rotation Sense = CCW (viewed from pilot looking forward)" << endl;
+    } else {
+      cout << "      Rotation Sense = indeterminate" << endl;
+    }
     cout << "      Efficiency: " <<  endl;
     Efficiency->Print();
     cout << "      Thrust Coefficient: " <<  endl;
@@ -141,6 +153,7 @@ float FGPropeller::Calculate(float PowerAvailable)
   float Vel = (fdmex->GetTranslation()->GetvAero())(1);
   float rho = fdmex->GetAtmosphere()->GetDensity();
   float RPS = RPM/60.0;
+  float alpha, beta;
 
   if (RPM > 0.10) {
     J = Vel / (Diameter * RPM / 60.0);
@@ -152,6 +165,15 @@ float FGPropeller::Calculate(float PowerAvailable)
     C_Thrust = cThrust->GetValue(J);
   } else {                    // Variable pitch prop
     C_Thrust = cThrust->GetValue(J, Pitch);
+  }
+
+  if (P_Factor > 0.0001) {
+    alpha = fdmex->GetTranslation()->Getalpha();
+    beta  = fdmex->GetTranslation()->Getbeta();
+    SetLocationY(P_Factor*alpha*fabs(Sense)/Sense);
+    SetLocationZ(P_Factor*beta*fabs(Sense)/Sense);
+  } else if (P_Factor < 0.000) {
+    cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
 
   Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;

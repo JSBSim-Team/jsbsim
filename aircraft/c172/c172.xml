@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.50 2001/11/04 17:26:50 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.51 2001/11/05 18:23:22 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -117,7 +117,7 @@
       YLOC    0.0
       ZLOC   59.4
       PITCH   0.0
-      YAW    -0.0872
+      YAW     0.0
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">

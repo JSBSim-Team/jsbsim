@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.15 2001/09/28 02:07:03 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.16 2001/11/05 18:23:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.15 2001/09/28 02:07:03 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.16 2001/11/05 18:23:22 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -150,6 +150,8 @@ private:
   float Diameter;
   float MaxPitch;
   float MinPitch;
+  float P_Factor;
+  float Sense;
   float Pitch;
   float Torque;
   FGTable *Efficiency;

@@ -3,6 +3,8 @@
   IXX       5
   DIAMETER  76
   NUMBLADES  2
+  SENSE 1
+  P_FACTOR 1
   EFFICIENCY 12 1
   0.0   0.00
   0.1   0.08

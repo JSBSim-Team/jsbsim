@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.16 2001/08/18 23:41:19 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.17 2001/11/05 18:23:22 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.16 2001/08/18 23:41:19 jberndt Exp $
+    @version $Id: FGForce.h,v 1.17 2001/11/05 18:23:22 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,6 +256,9 @@ public:
     vXYZn(2) = y;
     vXYZn(3) = z;
   }
+  inline void SetLocationX(float x) {vXYZn(1) = x;}
+  inline void SetLocationY(float y) {vXYZn(2) = y;}
+  inline void SetLocationZ(float z) {vXYZn(3) = z;}
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; }
   FGColumnVector3& GetLocation(void) { return vXYZn; }
 

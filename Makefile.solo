@@ -25,7 +25,8 @@ FGAerodynamics.o: FGAerodynamics.cpp FGAerodynamics.h FGModel.h \
  FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h FGOutput.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
- FGNozzle.h FGMassBalance.h FGCoefficient.h FGFactorGroup.h
+ FGNozzle.h FGMassBalance.h FGGroundReactions.h FGInertial.h \
+ FGCoefficient.h FGFactorGroup.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAerodynamics.o -c FGAerodynamics.cpp
 
 FGAircraft.o: FGAircraft.cpp FGAircraft.h FGModel.h FGDefs.h \
@@ -36,9 +37,10 @@ FGAircraft.o: FGAircraft.cpp FGAircraft.h FGModel.h FGDefs.h \
  filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGLGear.h \
  FGConfigFile.h FGPosition.h FGRotation.h FGMassBalance.h \
  FGTranslation.h FGAerodynamics.h FGCoefficient.h FGTable.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h FGPiston.h \
- FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
- FGThruster.h FGForce.h FGNozzle.h FGInertial.h FGGroundReactions.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
+ FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
+ FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAircraft.o -c FGAircraft.cpp
 
 FGAtmosphere.o: FGAtmosphere.cpp FGAtmosphere.h FGModel.h FGDefs.h \
@@ -51,7 +53,7 @@ FGAtmosphere.o: FGAtmosphere.cpp FGAtmosphere.h FGModel.h FGDefs.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h
+ FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAtmosphere.o -c FGAtmosphere.cpp
 
 FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGDefs.h \
@@ -63,7 +65,7 @@ FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGDefs.h \
  FGEngine.h FGPosition.h FGOutput.h FGfdmSocket.h FGPiston.h FGTable.h \
  FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h FGAerodynamics.h \
- FGCoefficient.h FGFactorGroup.h FGInertial.h
+ FGCoefficient.h FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAuxiliary.o -c FGAuxiliary.cpp
 
 FGCoefficient.o: FGCoefficient.cpp FGDefs.h FGCoefficient.h \
@@ -75,7 +77,8 @@ FGCoefficient.o: FGCoefficient.cpp FGDefs.h FGCoefficient.h \
  FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h FGOutput.h \
  FGfdmSocket.h FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
- FGMassBalance.h FGAerodynamics.h FGFactorGroup.h
+ FGMassBalance.h FGAerodynamics.h FGFactorGroup.h FGGroundReactions.h \
+ FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGCoefficient.o -c FGCoefficient.cpp
 
 FGColumnVector3.o: FGColumnVector3.cpp FGColumnVector3.h FGMatrix33.h \
@@ -98,7 +101,7 @@ FGEngine.o: FGEngine.cpp FGEngine.h FGJSBBase.h FGState.h FGDefs.h \
  FGPropeller.h FGThruster.h FGForce.h FGTranslation.h FGNozzle.h \
  FGPosition.h FGRotation.h FGMassBalance.h FGAerodynamics.h \
  FGCoefficient.h FGFactorGroup.h FGOutput.h FGfdmSocket.h \
- FGAuxiliary.h
+ FGGroundReactions.h FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGEngine.o -c FGEngine.cpp
 
 FGFactorGroup.o: FGFactorGroup.cpp FGDefs.h FGCoefficient.h \
@@ -110,7 +113,8 @@ FGFactorGroup.o: FGFactorGroup.cpp FGDefs.h FGCoefficient.h \
  FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
  FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
  FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
- FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h
+ FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h FGGroundReactions.h \
+ FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
 
 FGFCS.o: FGFCS.cpp FGDefs.h FGFCS.h filtersjb/FGFCSComponent.h \
@@ -120,12 +124,12 @@ FGFCS.o: FGFCS.cpp FGDefs.h FGFCS.h filtersjb/FGFCSComponent.h \
  FGAtmosphere.h FGAircraft.h FGPropulsion.h FGRocket.h FGEngine.h \
  FGState.h FGTranslation.h FGRotation.h FGPosition.h FGAerodynamics.h \
  FGMassBalance.h FGCoefficient.h FGTable.h FGFactorGroup.h FGOutput.h \
- FGfdmSocket.h FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
- FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
- FGNozzle.h filtersjb/FGFilter.h filtersjb/../FGConfigFile.h \
- filtersjb/FGDeadBand.h filtersjb/FGGain.h filtersjb/../FGTable.h \
- filtersjb/FGGradient.h filtersjb/FGSwitch.h filtersjb/FGSummer.h \
- filtersjb/FGFlaps.h
+ FGfdmSocket.h FGGroundReactions.h FGInertial.h FGAuxiliary.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h filtersjb/FGFilter.h \
+ filtersjb/../FGConfigFile.h filtersjb/FGDeadBand.h filtersjb/FGGain.h \
+ filtersjb/../FGTable.h filtersjb/FGGradient.h filtersjb/FGSwitch.h \
+ filtersjb/FGSummer.h filtersjb/FGFlaps.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCS.o -c FGFCS.cpp
 
 FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
@@ -150,9 +154,10 @@ FGForce.o: FGForce.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGLGear.h \
  FGConfigFile.h FGPosition.h FGRotation.h FGMassBalance.h \
  FGTranslation.h FGAerodynamics.h FGCoefficient.h FGTable.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h FGPiston.h \
- FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
- FGThruster.h FGForce.h FGNozzle.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
+ FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
+ FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGForce.o -c FGForce.cpp
 
 FGGroundReactions.o: FGGroundReactions.cpp FGGroundReactions.h \
@@ -175,8 +180,9 @@ FGInertial.o: FGInertial.cpp FGInertial.h FGModel.h FGDefs.h \
  filtersjb/../FGDefs.h filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h \
  FGLGear.h FGAircraft.h FGRotation.h FGTranslation.h FGAerodynamics.h \
  FGCoefficient.h FGTable.h FGFactorGroup.h FGOutput.h FGfdmSocket.h \
- FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
- FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+ FGGroundReactions.h FGAuxiliary.h FGPiston.h FGTurboShaft.h \
+ FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
+ FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGInertial.o -c FGInertial.cpp
 
 FGInitialCondition.o: FGInitialCondition.cpp FGInitialCondition.h \
@@ -189,7 +195,7 @@ FGInitialCondition.o: FGInitialCondition.cpp FGInitialCondition.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h
+ FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGInitialCondition.o -c FGInitialCondition.cpp
 
 FGJSBBase.o: FGJSBBase.cpp FGJSBBase.h
@@ -203,8 +209,9 @@ FGLGear.o: FGLGear.cpp FGLGear.h FGConfigFile.h FGDefs.h FGJSBBase.h \
  filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGTranslation.h \
  FGRotation.h FGPosition.h FGAerodynamics.h FGMassBalance.h \
  FGCoefficient.h FGTable.h FGFactorGroup.h FGOutput.h FGfdmSocket.h \
- FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
- FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+ FGGroundReactions.h FGInertial.h FGAuxiliary.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGLGear.o -c FGLGear.cpp
 
 FGMassBalance.o: FGMassBalance.cpp FGMassBalance.h FGModel.h FGDefs.h \
@@ -215,9 +222,9 @@ FGMassBalance.o: FGMassBalance.cpp FGMassBalance.h FGModel.h FGDefs.h \
  filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGLGear.h \
  FGConfigFile.h FGAircraft.h FGPosition.h FGRotation.h FGTranslation.h \
  FGAerodynamics.h FGCoefficient.h FGTable.h FGFactorGroup.h FGOutput.h \
- FGfdmSocket.h FGAuxiliary.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
- FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
- FGNozzle.h
+ FGfdmSocket.h FGGroundReactions.h FGInertial.h FGAuxiliary.h \
+ FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGMassBalance.o -c FGMassBalance.cpp
 
 FGMatrix33.o: FGMatrix33.cpp FGMatrix33.h FGColumnVector3.h \
@@ -234,7 +241,7 @@ FGModel.o: FGModel.cpp FGModel.h FGDefs.h FGJSBBase.h FGState.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGInertial.h FGGroundReactions.h
+ FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGModel.o -c FGModel.cpp
 
 FGNozzle.o: FGNozzle.cpp FGNozzle.h FGThruster.h FGForce.h FGFDMExec.h \
@@ -264,7 +271,8 @@ FGPiston.o: FGPiston.cpp FGDefs.h FGPiston.h FGEngine.h FGJSBBase.h \
  FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h \
  FGForce.h FGTable.h FGTranslation.h FGNozzle.h FGPosition.h \
  FGRotation.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPiston.o -c FGPiston.cpp
 
 FGPosition.o: FGPosition.cpp FGPosition.h FGModel.h FGDefs.h \
@@ -276,7 +284,8 @@ FGPosition.o: FGPosition.cpp FGPosition.h FGModel.h FGDefs.h \
  FGTranslation.h FGRotation.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
  FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
- FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h \
+ FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPosition.o -c FGPosition.cpp
 
 FGPropeller.o: FGPropeller.cpp FGPropeller.h FGThruster.h FGForce.h \
@@ -292,9 +301,10 @@ FGPropulsion.o: FGPropulsion.cpp FGPropulsion.h FGModel.h FGDefs.h \
  filtersjb/../FGDefs.h filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h \
  FGLGear.h FGConfigFile.h FGAircraft.h FGPosition.h FGRotation.h \
  FGMassBalance.h FGTranslation.h FGAerodynamics.h FGCoefficient.h \
- FGTable.h FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h \
- FGPiston.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
- FGPropeller.h FGThruster.h FGForce.h FGNozzle.h
+ FGTable.h FGFactorGroup.h FGOutput.h FGfdmSocket.h \
+ FGGroundReactions.h FGInertial.h FGAuxiliary.h FGPiston.h \
+ FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
+ FGThruster.h FGForce.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPropulsion.o -c FGPropulsion.cpp
 
 FGRocket.o: FGRocket.cpp FGDefs.h FGRocket.h FGEngine.h FGJSBBase.h \
@@ -306,7 +316,8 @@ FGRocket.o: FGRocket.cpp FGDefs.h FGRocket.h FGEngine.h FGJSBBase.h \
  FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGTranslation.h FGNozzle.h FGPosition.h \
  FGRotation.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGRocket.o -c FGRocket.cpp
 
 FGRotation.o: FGRotation.cpp FGRotation.h FGModel.h FGDefs.h \
@@ -318,7 +329,8 @@ FGRotation.o: FGRotation.cpp FGRotation.h FGModel.h FGDefs.h \
  FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
  FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
- FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h \
+ FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGRotation.o -c FGRotation.cpp
 
 FGRotor.o: FGRotor.cpp FGRotor.h FGThruster.h FGForce.h FGFDMExec.h \
@@ -336,7 +348,7 @@ FGState.o: FGState.cpp FGState.h FGDefs.h FGJSBBase.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h
+ FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGState.o -c FGState.cpp
 
 FGTable.o: FGTable.cpp FGTable.h FGConfigFile.h FGDefs.h FGJSBBase.h
@@ -359,7 +371,8 @@ FGTranslation.o: FGTranslation.cpp FGTranslation.h FGModel.h FGDefs.h \
  FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
  FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
  FGPropeller.h FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h \
- FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGAerodynamics.h FGCoefficient.h FGFactorGroup.h FGGroundReactions.h \
+ FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTranslation.o -c FGTranslation.cpp
 
 FGTrim.o: FGTrim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
@@ -372,7 +385,7 @@ FGTrim.o: FGTrim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
  FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h \
- FGTrimAxis.h
+ FGGroundReactions.h FGInertial.h FGTrimAxis.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTrim.o -c FGTrim.cpp
 
 FGTrimAxis.o: FGTrimAxis.cpp FGFDMExec.h FGModel.h FGDefs.h \
@@ -384,7 +397,8 @@ FGTrimAxis.o: FGTrimAxis.cpp FGFDMExec.h FGModel.h FGDefs.h \
  FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
  FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
- FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h \
+ FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTrimAxis.o -c FGTrimAxis.cpp
 
 FGTurboJet.o: FGTurboJet.cpp FGTurboJet.h FGEngine.h FGJSBBase.h \
@@ -396,7 +410,8 @@ FGTurboJet.o: FGTurboJet.cpp FGTurboJet.h FGEngine.h FGJSBBase.h \
  FGTable.h FGTurboShaft.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGTranslation.h FGNozzle.h FGPosition.h \
  FGRotation.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTurboJet.o -c FGTurboJet.cpp
 
 FGTurboProp.o: FGTurboProp.cpp FGTurboProp.h FGEngine.h FGJSBBase.h \
@@ -408,7 +423,8 @@ FGTurboProp.o: FGTurboProp.cpp FGTurboProp.h FGEngine.h FGJSBBase.h \
  FGTable.h FGTurboShaft.h FGTurboJet.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGTranslation.h FGNozzle.h FGPosition.h \
  FGRotation.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTurboProp.o -c FGTurboProp.cpp
 
 FGTurboShaft.o: FGTurboShaft.cpp FGTurboShaft.h FGEngine.h FGJSBBase.h \
@@ -420,7 +436,8 @@ FGTurboShaft.o: FGTurboShaft.cpp FGTurboShaft.h FGEngine.h FGJSBBase.h \
  FGTable.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGTranslation.h FGNozzle.h FGPosition.h \
  FGRotation.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h FGOutput.h FGfdmSocket.h FGAuxiliary.h
+ FGFactorGroup.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+ FGInertial.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTurboShaft.o -c FGTurboShaft.cpp
 
 FGUtility.o: FGUtility.cpp FGUtility.h FGJSBBase.h FGState.h FGDefs.h \
@@ -433,7 +450,7 @@ FGUtility.o: FGUtility.cpp FGUtility.h FGJSBBase.h FGState.h FGDefs.h \
  FGfdmSocket.h FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h \
  FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
  FGNozzle.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
- FGFactorGroup.h
+ FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGUtility.o -c FGUtility.cpp
 
 JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
@@ -445,7 +462,8 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
  FGTranslation.h FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h \
  FGPiston.h FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
- FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h
+ FGMassBalance.h FGAerodynamics.h FGCoefficient.h FGFactorGroup.h \
+ FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
 
 
