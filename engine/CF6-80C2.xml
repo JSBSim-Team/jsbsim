@@ -4,25 +4,25 @@
   Author:   Aero-Matic v 0.7
 
   Inputs:
-    name:           CF6-80C2
+    name:           CF6-80C2A3
     type:           turbine
-    thrust:         184500 lb
+    thrust:         60200 lb
     augmented?      no
     injected?       no
+
+  Additional sources:
+    http://www.geae.com/engines/commercial/comparison_turbofan.html
 -->
 
 <FG_TURBINE NAME="CF6-80C2">
-  MILTHRUST 184500
-  MAXTHRUST 184500
-  BYPASSRATIO    1.0
-  TSFC           0.8
-  ATSFC          1.7
+  MILTHRUST  60200.0
+  BYPASSRATIO    5.31
+  TSFC           0.576
   IDLEN1        30.0
   IDLEN2        60.0
   MAXN1        100.0
   MAXN2        100.0
   AUGMENTED      0
-  AUGMETHOD      1
   INJECTED       0
 
 <TABLE NAME="IdleThrust" TYPE="TABLE">
@@ -59,4 +59,4 @@
   1.4   1.5941  1.3400  1.0860  0.8450  0.6280  0.4240  0.2630
 </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
