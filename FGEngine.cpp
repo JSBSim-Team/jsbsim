@@ -1,39 +1,39 @@
 /*******************************************************************************
-
+ 
  Module:       FGEngine.cpp
  Author:       Jon Berndt
  Date started: 01/21/99
  Called by:    FGAircraft
-
+ 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
-
+ 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
-
+ 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
-
+ 
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
-
+ 
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
-
+ 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 See header file.
-
+ 
 HISTORY
 --------------------------------------------------------------------------------
 01/21/99   JSB   Created
 09/03/99   JSB   Changed Rocket thrust equation to correct -= Thrust instead of
                  += Thrust (thanks to Tony Peden)
-
+ 
 ********************************************************************************
 INCLUDES
 *******************************************************************************/
@@ -67,8 +67,7 @@ INCLUDES
 *******************************************************************************/
 
 
-FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int num)
-{
+FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int num) {
   string fullpath;
   string tag;
 
@@ -97,8 +96,7 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
     else if (tag == "TURBOJET")  Type = etTurboJet;
     else                         Type = etUnknown;
 
-    switch(Type)
-    {
+    switch(Type) {
     case etUnknown:
       cerr << "Unknown engine type: " << tag << endl;
       break;
@@ -139,13 +137,11 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
 }
 
 
-FGEngine::~FGEngine(void)
-{
-}
+FGEngine::~FGEngine(void) {}
 
 
-float FGEngine::CalcRocketThrust(void)
-{
+
+float FGEngine::CalcRocketThrust(void) {
   float lastThrust;
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
@@ -161,14 +157,14 @@ float FGEngine::CalcRocketThrust(void)
     Flameout = false;
   }
 
+
   Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
 
   return Thrust;
 }
 
 
-float FGEngine::CalcPistonThrust(void)
-{
+float FGEngine::CalcPistonThrust(void) {
   float v,h,pa;
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
@@ -187,8 +183,7 @@ float FGEngine::CalcPistonThrust(void)
 }
 
 
-float FGEngine::CalcThrust(void)
-{
+float FGEngine::CalcThrust(void) {
   switch(Type) {
   case etRocket:
     return CalcRocketThrust();
@@ -200,6 +195,7 @@ float FGEngine::CalcThrust(void)
     return 9999.0;
     // break;
   }
+
 }
 
 float FGEngine::CalcFuelNeed() {
