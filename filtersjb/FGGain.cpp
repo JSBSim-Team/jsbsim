@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.35 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.36 2002/02/14 23:41:14 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,7 +166,15 @@ void FGGain::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      ID: " << ID << endl;
-      cout << "      INPUT: " << InputIdx << endl;
+      switch(InputType) {
+      case itPilotAC:
+        cout << "      INPUT: " << State->GetParameterName(InputIdx) << endl;
+        break;
+      case itFCS:
+        cout << "      INPUT: FCS Component " << InputIdx << " (" << 
+                                        fcs->GetComponentName(InputIdx) << ")" << endl;
+        break;
+      }
       cout << "      GAIN: " << Gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << sOutputIdx << endl;
       cout << "      MIN: " << Min << endl;

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.70 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.71 2002/02/14 23:41:14 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,7 +256,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != string("/FLIGHT_CONTROL")) {
     if (token == "COMPONENT") {
       token = AC_cfg->GetValue("TYPE");
-      if (debug_lvl > 0) cout << "    Loading Component \""
+      if (debug_lvl > 0) cout << endl << "    Loading Component \""
                               << AC_cfg->GetValue("NAME")
                               << "\" of type: " << token << endl;
       if ((token == "LAG_FILTER") ||

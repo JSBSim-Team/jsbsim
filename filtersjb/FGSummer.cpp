@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.29 2002/02/14 19:16:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.30 2002/02/14 23:41:14 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,10 +170,11 @@ void FGSummer::Debug(int from)
       for (unsigned i=0;i<InputIndices.size();i++) {
         switch (InputTypes[i]) {
         case itPilotAC:
-          cout << "        " << fcs->GetState()->GetParameterName(InputIndices[i]) << endl;
+          cout << "       " << fcs->GetState()->GetParameterName(InputIndices[i]) << endl;
           break;
         case itFCS:
-          cout << "        " << "FCS Component " << InputIndices[i] << endl;
+          cout << "        FCS Component " << InputIndices[i] << " (" << 
+                              fcs->GetComponentName(InputIndices[i]) << ")" << endl;
           break;
         case itBias:
           cout << "        " << "Bias of " << Bias << endl;

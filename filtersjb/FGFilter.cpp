@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.28 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.29 2002/02/14 23:41:14 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,7 +213,15 @@ void FGFilter::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      ID: " << ID << endl;
-      cout << "      INPUT: " << InputIdx << endl;
+      switch(InputType) {
+      case itPilotAC:
+        cout << "      INPUT: " << fcs->GetState()->GetParameterName(InputIdx) << endl;
+        break;
+      case itFCS:
+        cout << "      INPUT: FCS Component " << InputIdx << " (" << 
+                                        fcs->GetComponentName(InputIdx) << ")" << endl;
+        break;
+      }
       cout << "      C1: " << C1 << endl;
       cout << "      C2: " << C2 << endl;
       cout << "      C3: " << C3 << endl;
