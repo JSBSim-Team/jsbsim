@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.107 2002/03/18 12:12:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.108 2002/03/22 11:56:37 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -998,7 +998,7 @@ void FGState::InitPropertyMaps(void)  {
   ParamToProp[  FG_MAGNETO_CMD ]="zero";
   ParamToProp[  FG_STARTER_CMD ]="zero";
   ParamToProp[  FG_ACTIVE_ENGINE ]="zero";
-  ParamToProp[  FG_HOVERB ]="position/h_b-mac-ft";
+  ParamToProp[  FG_HOVERB ]="aero/h_b-mac-ft";
   ParamToProp[  FG_PITCH_TRIM_CMD ]="fcs/pitch-trim-cmd-norm";
   ParamToProp[  FG_YAW_TRIM_CMD ]="fcs/yaw-trim-cmd-norm";
   ParamToProp[  FG_ROLL_TRIM_CMD ]="fcs/roll-trim-cmd-norm";
@@ -1068,7 +1068,7 @@ void FGState::InitPropertyMaps(void)  {
   PropToParam[ "fcs/speedbrake-cmd-norm" ]      = FG_SPDBRAKE_CMD;
   PropToParam[ "fcs/spoiler-cmd-norm" ]         = FG_SPOILERS_CMD;
   PropToParam[ "fcs/flap-cmd-norm" ]            = FG_FLAPS_CMD;
-  PropToParam[ "position/h_b-mac-ft" ]          = FG_HOVERB;
+  PropToParam[ "aero/h_b-mac-ft" ]              = FG_HOVERB;
   PropToParam[ "fcs/pitch-trim-cmd-norm" ]      = FG_PITCH_TRIM_CMD;
   PropToParam[ "fcs/yaw-trim-cmd-norm" ]        = FG_YAW_TRIM_CMD;
   PropToParam[ "fcs/roll-trim-cmd-norm" ]       = FG_ROLL_TRIM_CMD;
