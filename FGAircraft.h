@@ -121,7 +121,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.32 2000/10/13 13:03:50 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.33 2000/10/13 20:29:53 jsb Exp $"
 
 /*******************************************************************************
 DEFINITIONS
@@ -132,7 +132,19 @@ DEFINITIONS
     up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
     aerodynamic and mass properties, landing gear, etc.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.32 2000/10/13 13:03:50 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.33 2000/10/13 20:29:53 jsb Exp $
+    @see
+     [1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
+	   School, January 1994
+     [2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+     JSC 12960, July 1977
+     [3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+     NASA-Ames", NASA CR-2497, January 1975
+     [4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+     Wiley & Sons, 1979 ISBN 0-471-03032-5
+     [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+     1982 ISBN 0-471-08936-2
   */
 
 /*******************************************************************************
@@ -150,6 +162,7 @@ public:
       @param Executive a pointer to the parent executive object
     */
   FGAircraft(FGFDMExec *Executive);
+  
   /// Destructor
   ~FGAircraft(void);
 
@@ -158,6 +171,7 @@ public:
       @return bool returns false if no error
     */
   bool Run(void);
+  
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
       @param apath path to the aircraft files (e.g. "aircraft/X15/")
@@ -166,7 +180,12 @@ public:
       @return true if succesful
     */
   bool LoadAircraft(string apath, string epath, string acname);
+  
+  /** Retrieves the aircraft name
+      @return the name of the aircraft as a string type
+    */
   inline string GetAircraftName(void) { return AircraftName; }
+  
   inline void SetGearUp(bool tt) { GearUp = tt; }
   inline bool GetGearUp(void) { return GearUp; }
   inline int GetNumGearUnits(void) { return lGear.size(); }

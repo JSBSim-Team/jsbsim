@@ -45,8 +45,17 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.23 2000/10/13 19:21:05 jsb Exp $"
+#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.24 2000/10/13 20:29:53 jsb Exp $"
 
+
+/*******************************************************************************
+DEFINITIONS
+*******************************************************************************/
+
+/** Models the lateral and longitudinal translational EOM.
+    @author Jon S. Berndt
+    @version $Id: FGPosition.h,v 1.24 2000/10/13 20:29:53 jsb Exp $
+  */
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
