@@ -49,12 +49,12 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.49 2001/12/22 15:22:19 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.50 2001/12/22 16:11:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
+/*
 class FGState;
 class FGAtmosphere;
 class FGFCS;
@@ -69,6 +69,7 @@ class FGRotation;
 class FGPosition;
 class FGAuxiliary;
 class FGOutput;
+*/
 class FGInitialCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,12 +82,17 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.49 2001/12/22 15:22:19 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.50 2001/12/22 16:11:31 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
     other flight simulator) this class is typically instantiated by an interface
     class on the simulator side.
+
+    When an aircraft model is loaded the config file is parsed and for each of the
+    sections of the config file (propulsion, flight control, etc.) the
+    corresponding "ReadXXX()" method is called. From within this method the 
+    "Load()" method of that system is called (e.g. LoadFCS).
 
     <h4>JSBSim Debugging Directives</h4>
 
@@ -220,6 +226,7 @@ private:
 
   string AircraftPath;
   string EnginePath;
+  string CFGVersion;
 
   FGState*           State;
   FGAtmosphere*      Atmosphere;
@@ -235,6 +242,14 @@ private:
   FGPosition*        Position;
   FGAuxiliary*       Auxiliary;
   FGOutput*          Output;
+
+  bool ReadMetrics(FGConfigFile*);
+  bool ReadPropulsion(FGConfigFile*);
+  bool ReadFlightControls(FGConfigFile*);
+  bool ReadAerodynamics(FGConfigFile*);
+  bool ReadUndercarriage(FGConfigFile*);
+  bool ReadPrologue(FGConfigFile*);
+  bool ReadOutput(FGConfigFile*);
 
   bool Allocate(void);
   bool DeAllocate(void);

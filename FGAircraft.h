@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.77 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.78 2001/12/22 16:11:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,12 +123,9 @@ CLASS DOCUMENTATION
     landing gear, etc. These constituent parts may actually run as separate
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.<br>
-    When an aircraft model is loaded the config file is parsed and for each of the
-    sections of the config file (propulsion, flight control, etc.) the
-    corresponding "ReadXXX()" method is called. From within this method the 
-    "Load()" method of that system is called (e.g. LoadFCS).
+    
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.77 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.78 2001/12/22 16:11:31 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -199,6 +196,7 @@ public:
 
   inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
+  inline void SetAircraftName(string name) {AircraftName = name;}
   
   inline double GetStallWarn(void) { return impending_stall; }
   
@@ -222,16 +220,8 @@ private:
   double lbarh,lbarv,vbarh,vbarv;
   double alphaclmax,alphaclmin;
   double impending_stall;
-  string CFGVersion;
   string AircraftName;
 
-  bool ReadMetrics(FGConfigFile*);
-  bool ReadPropulsion(FGConfigFile*);
-  bool ReadFlightControls(FGConfigFile*);
-  bool ReadAerodynamics(FGConfigFile*);
-  bool ReadUndercarriage(FGConfigFile*);
-  bool ReadPrologue(FGConfigFile*);
-  bool ReadOutput(FGConfigFile*);
   void Debug(int from);
 };
 
