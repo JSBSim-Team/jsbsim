@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.19 2002/04/10 00:36:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.20 2002/04/30 11:23:57 apeden Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,6 @@ void FGFactorGroup::bind(FGPropertyManager* parent)
 void FGFactorGroup::unbind(void)
 {
   unsigned i;
-  
   FGCoefficient::unbind();
   for (i=0; i < sum.size(); i++) { 
     sum[i]->unbind();
