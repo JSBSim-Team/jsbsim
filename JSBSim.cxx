@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.34 2000/10/11 03:25:04 jsb Exp $
+// $Id: JSBSim.cxx,v 1.35 2000/10/11 10:55:13 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -73,12 +73,13 @@ int FGJSBsim::init( double dt ) {
   FGPath engine_path( current_options.get_fg_root() );
   engine_path.append( "Engine" );
 
- 
+  //FDMExec.GetState()->Setdt( dt );
+
   result = FDMExec.LoadModel( aircraft_path.str(),
                                        engine_path.str(),
                                        current_options.get_aircraft() );
   FDMExec.GetState()->Setdt( dt );
-
+  
   if (result) {
     FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft " << current_options.get_aircraft() );
   } else {
@@ -160,6 +161,9 @@ int FGJSBsim::init( double dt ) {
 
     controls.set_elevator_trim(FDMExec.GetFCS()->GetPitchTrimCmd());
     controls.set_throttle(FGControls::ALL_ENGINES,FDMExec.GetFCS()->GetThrottleCmd(0)/100);
+    trimmed=true;
+    trim_elev=FDMExec.GetFCS()->GetPitchTrimCmd();
+    trim_throttle=FDMExec.GetFCS()->GetThrottleCmd(0)/100;
     //the trimming routine only knows how to get 1 value for throttle
     
     delete fgtrim;
@@ -198,7 +202,19 @@ int FGJSBsim::update( int multiloop ) {
     save_alt = get_Altitude();
     set_Altitude( 0.0 );
   }
-
+  
+  if(trimmed) {
+    
+    controls.set_elevator_trim(trim_elev);
+    controls.set_throttle(FGControls::ALL_ENGINES,trim_throttle);
+    
+    controls.set_elevator(0.0);
+    controls.set_aileron(0.0);
+    controls.set_rudder(0.0);
+    trimmed=false;
+    
+  } 
+  
   copy_to_JSBsim();
 
   for ( int i = 0; i < multiloop; i++ ) {
