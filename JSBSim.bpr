@@ -14,26 +14,28 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
-OBJFILES = JSBSim.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj FGConfigFile.obj \
-  FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj FGfdmSocket.obj \
-  FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj FGOutput.obj \
-  FGPosition.obj FGRotation.obj FGState.obj FGTank.obj FGTranslation.obj \
-  FGAircraft.obj FGfcsComponent.obj FGSwitch.obj FGFilter.obj FGGain.obj \
-  FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
-  FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj FGThruster.obj \
-  FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj FGTurboShaft.obj \
-  FGPropulsion.obj FGGroundReactions.obj FGTurboProp.obj FGTable.obj \
-  FGAerodynamics.obj FGUtility.obj
+OBJFILES = JSBSim.obj FGAerodynamics.obj FGAircraft.obj FGAtmosphere.obj FGAuxiliary.obj \
+  FGCoefficient.obj FGConfigFile.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
+  FGfdmSocket.obj FGForce.obj FGGroundReactions.obj FGInertial.obj \
+  FGInitialCondition.obj FGLGear.obj FGMassBalance.obj FGMatrix.obj FGModel.obj \
+  FGNozzle.obj FGOutput.obj FGPiston.obj FGPosition.obj FGPropeller.obj \
+  FGPropulsion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGState.obj \
+  FGTable.obj FGTank.obj FGThruster.obj FGTranslation.obj FGTrim.obj \
+  FGTrimAxis.obj FGTurboJet.obj FGTurboProp.obj FGTurboShaft.obj FGUtility.obj \
+  filtersjb\FGSwitch.obj filtersjb\FGFCSComponent.obj filtersjb\FGFilter.obj \
+  filtersjb\FGFlaps.obj filtersjb\FGGain.obj filtersjb\FGGradient.obj \
+  filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = vcldbx40.lib vcldb40.lib vclx40.lib vcl40.lib
-SPARELIBS = vcl40.lib vclx40.lib vcldb40.lib vcldbx40.lib
-PACKAGES = Vcl40.bpi Vclx40.bpi Vcldb40.bpi vcldbx40.bpi bcbsmp40.bpi Qrpt40.bpi \
-  WinshoesPkgCB4.bpi nmfast40.bpi ibsmp40.bpi y32cb4.bpi Rxctl.bpi Rxdb.bpi \
-  TeeUI40.bpi teedb40.bpi tee40.bpi Auxiliary.bpi
+LIBRARIES = VCL40.lib
+SPARELIBS = VCL40.lib
+PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi bcbsmp40.bpi TEEUI40.bpi \
+  TEEDB40.bpi TEE40.bpi VCLDBX40.bpi y32cb4.bpi Icsbcb30.bpi WinshoesPkgCB4.bpi \
+  dclocx40.bpi nmfast40.bpi RXCTL.bpi RXDB.bpi calwdgA.bpi calwdgB.bpi \
+  CalCtrls.bpi GraphWin.bpi ibsmp40.bpi Auxiliary.bpi
 DEFFILE =
 # ---------------------------------------------------------------------------
 PATHCPP = .;filtersjb
@@ -42,24 +44,19 @@ PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-SYSDEFINES = NO_STRICT
+SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -I$(BCB)\Include;$(BCB)\Include\vcl;filtersjb -O2 -w-par -Tkh30000 -a8 -5 -k- \
-  -vi -D$(SYSDEFINES);$(USERDEFINES) -c -tWM -tWC -tWM
-CFLAG2 =
-CFLAG3 =
+CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a1 -5 -k -y -v -vi- -c -tWM \
+  -tWC -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -U$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(DEBUGLIBPATH) \
-  -I$(BCB)\Include;$(BCB)\Include\vcl;filtersjb -N2. -N0. -$Y- -$R -$Q -$L- -$D- \
-  -v -M -JPHNE
-RFLAGS = -i$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
-AFLAGS = /i$(BCB)\Include /i$(BCB)\Include\vcl /ifiltersjb /mx /w2 /zn /d$(SYSDEFINES) \
-  /d$(USERDEFINES)
-LFLAGS = -L$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn
-IFLAGS =
+PFLAGS = -Ufiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W \
+  -$O- -v -JPHN -M
+RFLAGS = -ifiltersjb;$(BCB)\include
+AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd
+LFLAGS = -Lfiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
-ALLOBJ = c0x32.obj sysinit.obj $(OBJFILES)
+ALLOBJ = c0x32.obj $(OBJFILES)
 ALLRES = $(RESFILES)
 ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 # ---------------------------------------------------------------------------
@@ -69,9 +66,9 @@ ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=0
-MinorVer=7
-Release=2
-Build=22
+MinorVer=8
+Release=0
+Build=4
 Debug=0
 PreRelease=0
 Special=0
@@ -81,55 +78,39 @@ Locale=1033
 CodePage=1252
 
 [Version Info Keys]
-CompanyName=FlightGear.org
+CompanyName=
 FileDescription=Executable (Console)
-FileVersion=0.7.2.22
-InternalName=JSBSim Standalone
-LegalCopyright=©2000 by Jon S. Berndt
-LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
-OriginalFilename=JSBSim.exe
-ProductName=JSBSim
-ProductVersion=0.7.2
-Comments=Standalone version of JSBSim
+FileVersion=0.8.0.4
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
 
 [HistoryLists\hlIncludePath]
-Count=5
-Item0=$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
-Item1=$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
-Item2=$(BCB)\Include;filtersjb
-Item3=filtersjb;
-Item4=filtersjb;$(BCB)\include
+Count=1
+Item0=filtersjb;$(BCB)\include
 
 [HistoryLists\hlLibraryPath]
-Count=5
-Item0=$(BCB)\lib\obj;$(BCB)\lib;filtersjb
-Item1=$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(BCB)\Bin
-Item2=$(BCB)\lib;$(BCB)\lib\obj;filtersjb
-Item3=filtersjb;$(BCB)\lib;$(BCB)\lib\obj
-Item4=filtersjb;$(BCB)\lib
-
-[HistoryLists\hlConditionals]
 Count=1
-Item0=$(SYSDEFINES);$(USERDEFINES)
+Item0=filtersjb;$(BCB)\lib
 
-[HistoryLists\hlIntOutputDir]
+[HistoryLists\hlHostApplication]
 Count=1
-Item0=.
+Item0=J:\JSBSim\JSBSim.exe
 
 [HistoryLists\hlRunParameters]
 Count=1
-Item0=X15 reset00
-
-[HistoryLists\hlFinalOutputDir]
-Count=1
-Item0=.
+Item0=c172 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=X15 reset00
-HostApplication=
+RunParams=c172 reset00
+HostApplication=J:\JSBSim\JSBSim.exe
 RemoteHost=
 RemotePath=
 RemoteDebug=0

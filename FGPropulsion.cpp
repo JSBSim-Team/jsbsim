@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.24 2001/01/22 23:34:32 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.25 2001/01/23 12:28:21 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,7 @@ FGPropulsion::~FGPropulsion(void)
 bool FGPropulsion::Run(void) {
   float tot_thrust;
   float tot_moment;
+  float PowerAvailable;
 
   dt = State->Getdt();
 
@@ -93,8 +94,8 @@ bool FGPropulsion::Run(void) {
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
       Thrusters[i]->SetdeltaT(dt);
-      Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
-      Thrusters[i]->Calculate(Engines[i]->GetPowerAvailable());
+      PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
+      Thrusters[i]->Calculate(PowerAvailable);
 //      tot_thrust += Thrusters[i]->GetForce();  // sum body frame forces
 //      tot_moment += Thrusters[i]->GetMoment(); // sum body frame moments
     }

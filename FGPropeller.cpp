@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.8 2001/01/23 01:40:10 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.9 2001/01/23 12:28:21 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,14 +105,16 @@ FGPropeller::~FGPropeller(void)
 // We must be getting the aerodynamic velocity here, NOT the inertial velocity.
 // We need the velocity with respect to the wind.
 //
-// Note that PwrAvail is the excess power available after the drag of the
-// propeller has been subtracted. At equilibrium, PwrAvail will be zero -
+// Note that PowerAvailable is the excess power available after the drag of the
+// propeller has been subtracted. At equilibrium, PowerAvailable will be zero -
 // indicating that the propeller will not accelerate or decelerate.
 // Remembering that Torque * omega = Power, we can derive the torque on the
 // propeller and its acceleration to give a new RPM. The current RPM will be
 // used to calculate thrust.
+//
+// Because RPM could be zero, we need to be creative about what RPM is stated as.
 
-float FGPropeller::Calculate(float ExcessPwrAvail)
+float FGPropeller::Calculate(float PowerAvailable)
 {
   float J, C_Thrust, omega;
   float Vel = (fdmex->GetTranslation()->GetUVW())(1);
@@ -133,7 +135,12 @@ float FGPropeller::Calculate(float ExcessPwrAvail)
   Thrust = C_Thrust*RPM*RPM*Diameter*Diameter*Diameter*Diameter*rho/(3600.0);
 
   omega = (RPM/60.0)*2.0*M_PI;
-  RPM += (((ExcessPwrAvail / omega) / Ixx) * 60.0 / (2.0 * M_PI)) * deltaT;
+
+  if (omega <= 500) omega = 500.0;
+
+  Torque = PowerAvailable / omega;
+
+  RPM += ((Torque / Ixx) * 60.0 / (2.0 * M_PI)) * deltaT;
 
   return Thrust; // return thrust in pounds
 }

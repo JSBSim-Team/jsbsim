@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.6 2001/01/22 15:38:56 jsb Exp $"
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.7 2001/01/23 12:28:21 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.6 2001/01/22 15:38:56 jsb Exp $
+    @version $Id: FGPropeller.h,v 1.7 2001/01/23 12:28:21 jsb Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -136,16 +136,16 @@ public:
   float GetPowerRequired(void);
   
   /** Calculates and returns the thrust produced by this propeller.
-      Given the power available by the engine (in foot-pounds/sec), the thrust is
+      Given the excess power available from the engine (in foot-pounds), the thrust is
       calculated, as well as the current RPM. The RPM is calculated by integrating
-      the excess torque provided by the engine over what the propeller "absorbs"
+      the torque provided by the engine over what the propeller "absorbs"
       (essentially the "drag" of the propeller).
-      @param PowerAvailable the power available to the propeller to increase its
-             rotational rate. Or, conversely, this could be negative, dictating
-	           that the propeller would be slowed.
+      @param PowerAvailable this is the excess power provided by the engine to
+      accelerate the prop. It could be negative, dictating that the propeller
+      would be slowed.
 		  @return the thrust in pounds */
   float Calculate(float PowerAvailable);
-  
+
 private:
   string PropName;
   int   numBlades;

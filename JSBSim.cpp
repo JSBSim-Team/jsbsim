@@ -43,53 +43,54 @@ INCLUDES
 
 #pragma hdrstop
 #include <condefs.h>
-USEFILE("JSBSim.cxx");
+
+USEUNIT("FGAerodynamics.cpp");
+USEUNIT("FGAircraft.cpp");
 USEUNIT("FGAtmosphere.cpp");
 USEUNIT("FGAuxiliary.cpp");
 USEUNIT("FGCoefficient.cpp");
 USEUNIT("FGConfigFile.cpp");
-USEUNIT("FGControls.cpp");
 USEUNIT("FGEngine.cpp");
 USEUNIT("FGFCS.cpp");
 USEUNIT("FGFDMExec.cpp");
 USEUNIT("FGfdmSocket.cpp");
+USEUNIT("FGForce.cpp");
+USEUNIT("FGGroundReactions.cpp");
+USEUNIT("FGInertial.cpp");
 USEUNIT("FGInitialCondition.cpp");
 USEUNIT("FGLGear.cpp");
+USEUNIT("FGMassBalance.cpp");
 USEUNIT("FGMatrix.cpp");
 USEUNIT("FGModel.cpp");
+USEUNIT("FGNozzle.cpp");
 USEUNIT("FGOutput.cpp");
+USEUNIT("FGPiston.cpp");
 USEUNIT("FGPosition.cpp");
+USEUNIT("FGPropeller.cpp");
+USEUNIT("FGPropulsion.cpp");
+USEUNIT("FGRocket.cpp");
 USEUNIT("FGRotation.cpp");
+USEUNIT("FGRotor.cpp");
 USEUNIT("FGState.cpp");
+USEUNIT("FGTable.cpp");
 USEUNIT("FGTank.cpp");
+USEUNIT("FGThruster.cpp");
 USEUNIT("FGTranslation.cpp");
-USEUNIT("FGAircraft.cpp");
-USERES("JSBSim.res");
-USEUNIT("filtersjb\FGfcsComponent.cpp");
+USEUNIT("FGTrim.cpp");
+USEUNIT("FGTrimAxis.cpp");
+USEUNIT("FGTurboJet.cpp");
+USEUNIT("FGTurboProp.cpp");
+USEUNIT("FGTurboShaft.cpp");
+USEUNIT("FGUtility.cpp");
 USEUNIT("filtersjb\FGSwitch.cpp");
+USEUNIT("filtersjb\FGFCSComponent.cpp");
 USEUNIT("filtersjb\FGFilter.cpp");
+USEUNIT("filtersjb\FGFlaps.cpp");
 USEUNIT("filtersjb\FGGain.cpp");
 USEUNIT("filtersjb\FGGradient.cpp");
 USEUNIT("filtersjb\FGSummer.cpp");
 USEUNIT("filtersjb\FGDeadBand.cpp");
-USEUNIT("filtersjb\FGFlaps.cpp");
-USEUNIT("FGForce.cpp");
-USEUNIT("FGInertial.cpp");
-USEUNIT("FGNozzle.cpp");
-USEUNIT("FGPropeller.cpp");
-USEUNIT("FGRotor.cpp");
-USEUNIT("FGThruster.cpp");
-USEUNIT("FGMassBalance.cpp");
-USEUNIT("FGRocket.cpp");
-USEUNIT("FGTurboJet.cpp");
-USEUNIT("FGPiston.cpp");
-USEUNIT("FGTurboShaft.cpp");
-USEUNIT("FGPropulsion.cpp");
-USEUNIT("FGGroundReactions.cpp");
-USEUNIT("FGTurboProp.cpp");
-USEUNIT("FGTable.cpp");
-USEUNIT("FGAerodynamics.cpp");
-USEUNIT("FGUtility.cpp");
+USERES("JSBSim.res");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif
@@ -126,7 +127,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.37 2001/01/22 15:38:57 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.38 2001/01/23 12:28:21 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -142,7 +143,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.37 2001/01/22 15:38:57 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.38 2001/01/23 12:28:21 jsb Exp $
     @see -
 */
 
