@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.163 2004/04/08 01:01:17 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.164 2004/04/08 01:10:33 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -157,11 +157,10 @@ FGJSBsim::FGJSBsim( double dt )
     if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
                 << GroundReactions->GetNumGearUnits() );
-        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground
-trimming");
-         SG_LOG( SG_FLIGHT, SG_ALERT, "routine (coming up later in the code) will core dump.");
-         SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
-         exit(-1);
+        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground trimming");
+        SG_LOG( SG_FLIGHT, SG_ALERT, "routine (coming up later in the code) will core dump.");
+        SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
+        exit(-1);
     }
 
     init_gear();
