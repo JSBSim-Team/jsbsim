@@ -13,7 +13,7 @@ BCB = $(MAKEDIR)\..
 
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
-PROJECT = engine\JSBSim.exe
+PROJECT = "F:\Program Files\Borland\CBuilder4\Bin\engine\JSBSim.exe"
 OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \
   FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \

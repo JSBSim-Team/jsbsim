@@ -2,6 +2,7 @@
   <METRICS>
 
     <COMMENT>
+    <!--
     // Wing area
     // Wing span
     // Wing avg. chord
@@ -15,6 +16,7 @@
     // Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
     //  X, Y, Z, in inches
     AC_AERORP   43.2  0.0    59.4
+    -->
     </COMMENT>
 
     AC_WINGAREA 174
@@ -35,7 +37,7 @@
   <UNDERCARRIAGE>
 
     <COMMENT>
-
+    <!--
     The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
 
     AC_GEAR
@@ -49,7 +51,7 @@
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
     <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
-
+    -->
     </COMMENT>
 
      AC_GEAR	NOSE	    -6.8   0.0  -24.2  900  300  0.01  0.05 0.02 STEERABLE NONE 20
@@ -61,7 +63,7 @@
   <PROPULSION>
 
     <COMMENT>
-
+    <!--
       TANKS SECTION
 
       Tank locations and characteristics, empty weight, in aircraft's own coord system:
@@ -82,7 +84,7 @@
       THRUSTER[S] SECTION
 
       AC_THRUSTER name x y z pitch yaw
-
+    -->
     </COMMENT>
 
     <AC_ENGINE FILE="eng_io320">
@@ -390,7 +392,7 @@
     </AXIS>
   </AERODYNAMICS>
   <COMMENT>
-
+  <!--
     OUTPUT section definition
 
     The following specifies the way that JSBSim writes out data.
@@ -431,7 +433,7 @@
     GROUND_REACTIONS ON|OFF
 
     NOTE that Time is always output with the data.
-
+  -->
   </COMMENT>
   <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       20
@@ -448,9 +450,4 @@
     GROUND_REACTIONS OFF
     FCS              OFF
   </OUTPUT>
- 
-
 </FDM_CONFIG>
-
-
-

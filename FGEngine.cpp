@@ -52,7 +52,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.22 2001/01/04 13:42:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.23 2001/01/19 13:43:13 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,3 +131,12 @@ void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
   EnginePitch = pitch;
   EngineYaw = yaw;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGEngine::CalculatePAvail(void)
+{
+    //TODO: Add your source code here
+  return 0.0;
+}
+

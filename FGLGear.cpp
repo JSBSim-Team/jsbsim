@@ -47,7 +47,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.33 2000/12/29 23:34:16 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.34 2001/01/19 13:43:13 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   compressSpeed   = lgear.compressSpeed;
   staticFCoeff    = lgear.staticFCoeff;
   dynamicFCoeff   = lgear.dynamicFCoeff;
-  rollingFCoeff   = lgear.dynamicFCoeff;
+  rollingFCoeff   = lgear.rollingFCoeff;
   brakePct        = lgear.brakePct;
   maxCompLen      = lgear.maxCompLen;
   SinkRate        = lgear.SinkRate;

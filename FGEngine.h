@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.20 2001/01/12 00:25:46 jsb Exp $ 
+    @version $Id: FGEngine.h,v 1.21 2001/01/19 13:43:13 jsb Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,6 +145,7 @@ public:
   float CalcOxidizerNeed(void);
   /// Sets engine placement information
   void SetPlacement(float x, float y, float z, float pitch, float yaw);
+  float CalculatePAvail(void);
 
 protected:
   string Name;

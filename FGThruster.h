@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.6 2001/01/11 06:34:02 jsb Exp $"
+#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.7 2001/01/19 13:43:14 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -61,6 +61,7 @@ public:
 
   virtual void Calculate(void);
   void SetName(string name) {Name = name;}
+  virtual float CalculatePReq(void);
 
 protected:
   string Name;

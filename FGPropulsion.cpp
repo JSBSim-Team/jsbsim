@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.20 2001/01/12 00:25:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.21 2001/01/19 13:43:13 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,14 +82,13 @@ FGPropulsion::~FGPropulsion(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// Should probably be checking the Starved flag here
 
 bool FGPropulsion:: Run(void) {
   float tot_thrust;
 
   if (!FGModel::Run()) {
     for (int i=0; i<numEngines; i++)
+//      Thrusters[i]->Execute(Engines[i]->CalculatePAvail(Thrusters[i]->CalculatePReq()));
       tot_thrust = tot_thrust + Engines[i]->Calculate();
     return false;
   } else {

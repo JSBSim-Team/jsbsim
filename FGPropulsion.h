@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.14 2001/01/11 06:34:02 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.15 2001/01/19 13:43:13 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.14 2001/01/11 06:34:02 jsb Exp $
+    @version $Id: FGPropulsion.h,v 1.15 2001/01/19 13:43:13 jsb Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -98,6 +98,21 @@ public:
   FGPropulsion(FGFDMExec*);
   ~FGPropulsion(void);
   
+  /** Executes thr propulsion model.
+      The initial plan for the FGPropulsion class calls for Run() to be executed,
+      performing the following tasks:
+      <ol>
+  <li>Determine the drag - or power required - for the attached thrust effector
+      for this engine so that any feedback to the engine can be performed. This
+      is done by calling FGThruster::CalculatePReq()</li>
+  <li>Given 1, above, calculate the power available from the engine. This is
+      done by calling FGEngine::CalculatePAvail()</li>
+  <li>Next, calculate the thrust output from the thruster model given the power
+      available and the power required. This may also result in new performance
+      numbers for the thruster in the case of the propeller, at least. This
+      result is returned from a call to Calculate().</li></ol>
+
+      [Note: Should we be checking the Starved flag here?] */
   bool Run(void);
   /** Loads the propulsion system (engine[s], tank[s], thruster[s]).
       Characteristics of the propulsion system are read in from the config file.
