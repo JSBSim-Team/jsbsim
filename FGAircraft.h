@@ -168,7 +168,7 @@ public:
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
-  inline FGCoefficient GetCoeff(int axis, int idx) { return Coeff[axis][idx]; }
+  inline FGCoefficient* GetCoeff(int axis, int idx) { return Coeff[axis][idx]; }
   string GetCoefficientStrings(void);
   string GetCoefficientValues(void);
   string GetGroundReactionStrings(void);
@@ -221,10 +221,9 @@ private:
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
 
-  typedef vector<FGCoefficient> CoeffArray;
-  typedef vector<CoeffArray> CoeffVector;
-
-  CoeffVector Coeff;
+  typedef vector<FGCoefficient*> CoeffArray;
+  
+  CoeffArray* Coeff;
 
   void DisplayCoeffFactors(vector <eParam> multipliers);
 

@@ -151,6 +151,8 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   AxisIdx["ROLL"]  = 3;
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
+  
+  Coeff = new CoeffArray[6];
 
   GearUp = false;
   
@@ -163,7 +165,34 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 /******************************************************************************/
 
 
-FGAircraft::~FGAircraft(void) {}
+FGAircraft::~FGAircraft(void) { 
+  unsigned int i,j;
+  cout << " ~FGAircraft" << endl;
+  if(Engine != NULL) {
+    for(i=0;i<numEngines; i++) 
+      delete Engine[i];
+  }    
+  cout << "  Engine" << endl;
+  if(Tank != NULL) {
+    for(i=0;i<numTanks; i++) 
+      delete Tank[i];
+  }    
+  cout << "  Tank" << endl;
+  cout << "  NumAxes: " << 6 << endl;
+  for(i=0;i<6;i++) {
+    cout << "  NumCoeffs: " << Coeff[i].size() << "  " << &Coeff[i] << endl;
+    for(j=0;j<Coeff[i].size();j++) {
+      
+      cout << "  Coeff[" << i << "][" << j << "]: " << Coeff[i][j] << endl;
+      delete Coeff[i][j];
+    }
+  } 
+  delete[] Coeff;
+  cout << "  Coeffs" << endl;
+  for(i=0;i<lGear.size();i++) {
+      delete lGear[i];
+  }  
+}
 
 /******************************************************************************/
 
@@ -343,7 +372,7 @@ void FGAircraft::FMAero(void) {
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-      vFs(axis_ctr+1) += Coeff[axis_ctr][ctr].TotalValue();
+      vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->TotalValue();
     }
   }
 
@@ -366,7 +395,7 @@ void FGAircraft::FMAero(void) {
   
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
-      vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr].TotalValue();
+      vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->TotalValue();
     }
   }
 }
@@ -402,6 +431,7 @@ void FGAircraft::FMProp(void) {
 
     vForces(eX) += Engine[i]->CalcThrust();
   }
+  
 }
 
 /******************************************************************************/
@@ -514,22 +544,17 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
   string token, axis;
 
   AC_cfg->GetNextConfigLine();
-
-  Coeff.push_back(*(new CoeffArray()));
-  Coeff.push_back(*(new CoeffArray()));
-  Coeff.push_back(*(new CoeffArray()));
-  Coeff.push_back(*(new CoeffArray()));
-  Coeff.push_back(*(new CoeffArray()));
-  Coeff.push_back(*(new CoeffArray()));
-
+  
   while ((token = AC_cfg->GetValue()) != "/AERODYNAMICS") {
     if (token == "AXIS") {
+      CoeffArray ca;
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
       while ((token = AC_cfg->GetValue()) != "/AXIS") {
-        Coeff[AxisIdx[axis]].push_back(*(new FGCoefficient(FDMExec, AC_cfg)));
-        DisplayCoeffFactors(Coeff[AxisIdx[axis]].back().Getmultipliers());
+        ca.push_back(new FGCoefficient(FDMExec, AC_cfg));
+        DisplayCoeffFactors(ca.back()->Getmultipliers());
       }
+      Coeff[AxisIdx[axis]]=ca;
       AC_cfg->GetNextConfigLine();
     }
   }
@@ -661,7 +686,7 @@ string FGAircraft::GetCoefficientStrings(void) {
       } else {
         CoeffStrings += ", ";
       }
-      CoeffStrings += Coeff[axis][sd].Getname();
+      CoeffStrings += Coeff[axis][sd]->Getname();
     }
   }
 
@@ -682,7 +707,7 @@ string FGAircraft::GetCoefficientValues(void) {
       } else {
         SDValues += ", ";
       }
-      sprintf(buffer, "%9.6f", Coeff[axis][sd].GetSD());
+      sprintf(buffer, "%9.6f", Coeff[axis][sd]->GetSD());
       SDValues += string(buffer);
     }
   }
