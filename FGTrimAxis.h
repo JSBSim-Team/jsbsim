@@ -52,11 +52,13 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.15 2001/11/30 12:47:39 apeden Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
-const string StateNames[7]=   { "udot","vdot","wdot","qdot","pdot","rdot","hmgt" };
+const string StateNames[10]=   { "all","udot","vdot","wdot","qdot","pdot","rdot",
+                                "hmgt","nlf" 
+                              };
 const string ControlNames[14]= { "Throttle","Sideslip","Angle of Attack",
                                  "Elevator","Ailerons","Rudder",
                                  "Altitude AGL", "Pitch Angle",
@@ -69,7 +71,7 @@ const string ControlNames[14]= { "Throttle","Sideslip","Angle of Attack",
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-enum State { tUdot,tVdot,tWdot,tQdot,tPdot,tRdot,tHmgt };
+enum State { tAll,tUdot,tVdot,tWdot,tQdot,tPdot,tRdot,tHmgt,tNlf };
 enum Control { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
                tTheta, tPhi, tGamma, tPitchTrim, tRollTrim, tYawTrim, tHeading };
 
@@ -120,6 +122,9 @@ public:
   void SetThetaOnGround(double ff);
   void SetPhiOnGround(double ff);
   
+  inline void SetStateTarget(float target) { state_target=target; }
+  inline float GetStateTarget(void) { return state_target; }
+  
   bool initTheta(void);
   
   void AxisReport(void);
@@ -132,9 +137,11 @@ private:
 
   State   state;
   Control control;
-
-  double state_value;
-  double control_value;
+  
+  float state_target;
+  
+  float state_value;
+  float control_value;
 
   double control_min;
   double control_max;

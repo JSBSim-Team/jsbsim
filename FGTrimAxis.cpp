@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.26 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.27 2001/11/30 12:47:39 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -62,7 +62,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   state_convert=1.0;
   control_convert=1.0;
   state_value=0;
-    switch(state) {
+  state_target=0;
+  switch(state) {
     case tUdot: tolerance = DEFAULT_TOLERANCE; break;
     case tVdot: tolerance = DEFAULT_TOLERANCE; break;
     case tWdot: tolerance = DEFAULT_TOLERANCE; break;
@@ -70,6 +71,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     case tPdot: tolerance = DEFAULT_TOLERANCE / 10; break;
     case tRdot: tolerance = DEFAULT_TOLERANCE / 10; break;
     case tHmgt: tolerance = 0.01; break;
+    case  tNlf: state_target=1.0; tolerance = 1E-5; break;
   }  
   
   solver_eps=tolerance;
@@ -151,13 +153,14 @@ FGTrimAxis::~FGTrimAxis()
 
 void FGTrimAxis::getState(void) {
   switch(state) {
-  case tUdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(1); break;
-  case tVdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(2); break;
-  case tWdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(3); break;
-  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot(2);break;
-  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot(1); break;
-  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot(3); break;
-  case tHmgt: state_value=computeHmgt(); break;
+  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot()(1)-state_target; break;
+  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot()(2)-state_target; break;
+  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot()(3)-state_target; break;
+  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot(2)-state_target;break;
+  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot(1)-state_target; break;
+  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot(3)-state_target; break;
+  case tHmgt: state_value=computeHmgt()-state_target; break;
+  case tNlf:  state_value=fdmex->GetAircraft()->GetNlf()-state_target; break;
   }
 }
 
@@ -412,7 +415,7 @@ void FGTrimAxis::AxisReport(void) {
   char out[80];
   sprintf(out,"  %20s: %6.2f %5s: %9.2e Tolerance: %3.0e\n",
            GetControlName().c_str(), GetControl()*control_convert,
-           GetStateName().c_str(), GetState(), GetTolerance()); 
+           GetStateName().c_str(), GetState()+state_target, GetTolerance()); 
   cout << out;
 
 }
