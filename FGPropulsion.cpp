@@ -55,7 +55,6 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGRocket.h"
 #include "FGTurbine.h"
-#include "FGTurbine.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGPiston.h"
@@ -73,7 +72,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.102 2004/05/01 13:25:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.103 2004/05/03 10:55:04 frohlich Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

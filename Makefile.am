@@ -54,8 +54,7 @@ libJSBSim_a_SOURCES = \
 	FGEngine.cpp \
 	FGTank.cpp \
 	FGfdmSocket.cpp \
-	FGPropertyManager.cpp \
-	FGSimTurbine.cpp
+	FGPropertyManager.cpp
 
 noinst_HEADERS = \
 	FGAerodynamics.h \
@@ -98,5 +97,4 @@ noinst_HEADERS = \
 	FGTank.h \
 	FGfdmSocket.h \
 	FGPropertyManager.h  \
-	FGSimTurbine.h \
 	JSBSim.hxx
