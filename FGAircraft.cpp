@@ -176,7 +176,11 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   AircraftPath = aircraft_path;
   EnginePath = engine_path;
 
-  aircraftCfgFileName = AircraftPath + "/" + fname + "/" + fname + ".cfg";
+# ifndef macintosh
+  aircraftCfgFileName = AircraftPath + "/" + fname + "/" + fname + ".xml";
+# else  
+  aircraftCfgFileName = AircraftPath + ";" + fname + ";" + fname + ".xml";
+# endif
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
   if (!AC_cfg.IsOpen()) return false;

@@ -1,0 +1,566 @@
+<FDM_CONFIG NAME="X-15" VERSION="1.30">
+
+  <METRICS>
+
+    <COMMENT>
+
+    Center of gravity location, empty weight, in aircraft's own structural coord
+    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+    right wing.
+
+    Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+    X, Y, Z, in inches
+
+    </COMMENT>
+
+    AC_WINGAREA 200
+    AC_WINGSPAN 22.36
+    AC_CHORD    10.27
+    AC_IXX      3650
+    AC_IYY      80000
+    AC_IZZ      82000
+    AC_IXZ      590
+    AC_EMPTYWT  15560
+    AC_CGLOC    345.0  0.0    0.0
+    AC_EYEPTLOC 115.9  0.0   26.0
+    AC_AERORP   345.4  0.0    0.0
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0
+    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0
+    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0
+
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+
+    <COMMENT>
+
+    Tank locations and characteristics, empty weight, in aircraft's own coord system:
+    X, Y, Z, in inches
+    effective radius of tank, in inches (for fuel slosh, if/when modeled)
+    capacity in pounds
+    current contents, in pounds
+
+    AC_TANK OXIDIZER 282.3 0.0 0.0 26.0 9470.0 9470.0
+    AC_TANK FUEL     408.3 0.0 0.0 26.0 8236.0 8236.0
+
+    </COMMENT>
+
+    AC_TANK OXIDIZER 282.3 0.0 0.0 26.0 9470.0 9470.0
+    AC_TANK FUEL     408.3 0.0 0.0 26.0 8236.0 8236.0
+
+    AC_ENGINE XLR99
+
+  </PROPULSION>
+
+  <COMMENT>
+
+  In the following section for flight controls the TYPE parameter may be one of
+  the following:
+
+    LAG_FILTER
+    RECT_LAG_FILTER
+    LEAD_LAG_FILTER
+    SECOND_ORDER_FILTER
+    WASHOUT_FILTER
+    INTEGRATOR
+    PURE_GAIN
+    SCHEDULED_GAIN
+    HYSTERESIS
+    SUMMER
+    DEADBAND
+    GRADIENT
+    AEROSURFACE_SCALE
+
+  Most flight control systems should be able to be modeled by the above
+  components.
+
+  According to Etkin, (From the Flight Safety Foundation Human Engineering
+  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
+  are as follows (averaged, for a right-handed pilot):
+
+  Stick Pull:  50 lbs.
+        Push:  50
+        Right: 20
+        Left:  20
+
+  Pedal Push: 300 lbs.
+
+  It is assumed that most flight control systems will list the pilot input in
+  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
+  will all have limits specified, and that the joystick inputs from FlightGear will be
+  from -1 to 0 to +1. Given all those parameters, it should be possible to
+  calculate a scaling factor that will convert the +/-1 range into a push/pull
+  force command ready for input to the FCS.
+
+  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
+  pounds.
+
+  </COMMENT>
+
+  <FLIGHT_CONTROL NAME="X-15 SAS">
+
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           1
+      INPUT        0
+      MIN         -50
+      MAX          50
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
+      ID           2
+      INPUT        1
+      GAIN         -0.36
+    </COMPONENT>
+
+    <COMMENT>
+      In the following component, the GAIN value is actually in addition to the
+      scheduled gain in the next component. If the GAIN in a scheduled component
+      is not required, it may be ignored and not specified here - it is initialized
+      to one in the contructor.
+    </COMMENT>
+
+    <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
+      ID           3
+      INPUT        2
+      GAIN         0.017
+      SCHEDULED_BY FG_ELEVATOR_POS
+      -0.35  -6.0
+      -0.17  -3.0
+       0.00  -2.0
+       0.09  -3.0
+       0.17  -5.0
+       0.60 -12.0
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           4
+      INPUT        FG_AILERON_CMD
+      MIN         -20
+      MAX          20
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 1" TYPE="PURE_GAIN">
+      ID           5
+      INPUT        4
+      GAIN         0.42
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 2" TYPE="PURE_GAIN">
+      ID           6
+      INPUT        5
+      GAIN         0.027
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           7
+      INPUT        FG_RUDDER_CMD
+      MIN         -250
+      MAX          250
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 1" TYPE="PURE_GAIN">
+      ID           8
+      INPUT        7
+      GAIN         0.082
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 2" TYPE="PURE_GAIN">
+      ID           9
+      INPUT        8
+      GAIN         0.040
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch SAS Feedback" TYPE="PURE_GAIN">
+      ID           10
+      INPUT        FG_PITCHRATE
+      GAIN         0.75
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw-Roll Crossover Gain" TYPE="PURE_GAIN">
+      ID           11
+      INPUT        FG_YAWRATE
+      GAIN         -0.90
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Coupled Aileron Feedback Sum" TYPE="SUMMER">
+      ID           12
+      INPUT        FG_ROLLRATE
+      INPUT        11
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll SAS Gain" TYPE="PURE_GAIN">
+      ID           13
+      INPUT        12
+      GAIN         -0.50
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw SAS Gain" TYPE="PURE_GAIN">
+      ID           14
+      INPUT        FG_YAWRATE
+      GAIN         0.30
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
+      ID           15
+      INPUT         3
+      INPUT        10
+      OUTPUT       FG_ELEVATOR_POS
+    </COMPONENT>
+
+    <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
+      ID           16
+      INPUT         6
+      INPUT        13
+      OUTPUT       FG_AILERON_POS
+    </COMPONENT>
+
+    <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
+      ID           17
+      INPUT         9
+      INPUT        14
+      OUTPUT       FG_RUDDER_POS
+    </COMPONENT>
+
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+
+    <COMMENT>
+
+    For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
+
+
+
+    The aerodynamics section is arranged as follows:
+
+     <AERODYNAMICS>
+       <AXIS NAME="LIFT">                   // {LIFT|DRAG|SIDE|ROLL|PITCH|YAW}
+
+         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">   // example for CLalpha
+
+           Lift_due_to_alpha                // e.g. Lift_at_zero_alpha (no embedded spaces)
+           [[rows] cols]                    // calc_type: {TABLE|VECTOR|TABLE|EQUATION}
+                                            // number of rows and number of columns
+                                            // are present depending on calc_type
+           row_lookup column_lookup         // the lookup parameters for row and column
+                                            // based on the above chart, i.e. if the
+                                            // row and column lookups are 16384 &
+                                            // 32768 that means the rows are indexed
+                                            // by mach and the columns by altitude
+                                            // if the type is VECTOR, then the table
+                                            // is referenced only by a single lookup.
+           multipliers                      // this is an OR'ed value of all the
+                                            // parameters this coefficient must be
+                                            // multiplied by to get a force or moment,
+                                            // i.e., these are the non-dimensionalizing
+                                            // values. Alternatively, the values can
+                                            // be given as the FG_* descriptors
+                                            // delimited with the "|" pipe character.
+           column_value                     // if a TABLE, the row values for _this_
+                                            // column follow. I.e., if the column
+                                            // represents altitude and this value is
+                                            // 40,000, then what follows are the rows
+                                            // of data for this coefficient at this
+                                            // altitude
+           row_value coeff_value            // The actual value for the data at this
+                                            // row, where for instance, 0.0 might
+                                            // a mach number of 0; and the second value
+                                            // represents the coefficient value for
+                                            // this column at this row. Using the
+                                            // example mentioned: 2.4 0.98 would mean,
+                                            // for this column of data and at mach 2.4,
+                                            // the value of the coefficient is 0.98.
+           <...> <...>                      // a <row> <coeff> value entry is present
+                                            // each row of data. ADDITIONALLY, for each
+                                            // column, the row_value series must be
+                                            // identical.
+           column_value2                    // repeat row/coeff value mapping for
+           row_value coeff_value            // each column in the table
+            ,...> <...>                      //
+           </COEFFICIENT>
+
+         </AXIS>
+
+    </COMMENT>
+
+    <AXIS NAME="LIFT">
+
+      <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
+        Lift_due_to_alpha
+        8
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_ALPHA
+        0.00 4.50
+        0.40 3.80
+        0.60 3.60
+        1.05 4.50
+        1.40 4.00
+        2.80 2.50
+        6.00 1.10
+        9.00 1.00
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CLDe" TYPE="VALUE">
+        Lift_due_to_Elevator_Deflection
+        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+        0.5
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CLM" TYPE="VALUE">
+        Lift_due_to_Mach
+        FG_QBAR|FG_WINGAREA|FG_MACH
+        0.0
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+
+      <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+        Drag_minimum
+        FG_QBAR|FG_WINGAREA
+        0.095
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
+        Drag_due_to_alpha
+        FG_QBAR|FG_WINGAREA|FG_ALPHA
+        0.6
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CDM" TYPE="VALUE">
+        Drag_due_to_Mach
+        FG_QBAR|FG_WINGAREA|FG_MACH
+        -0.03
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+
+      <COEFFICIENT NAME="CYb" TYPE="VALUE">
+        Side_force_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_BETA
+        -1.4
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYda" TYPE="VALUE">
+        Side_force_due_to_aileron
+        FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+        -0.05
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+        Side_force_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+        0.45
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+        Side_force_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+        0.45
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+
+      <COEFFICIENT NAME="Clb" TYPE="VALUE">
+        Roll_moment_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        -0.01
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clp" TYPE="VALUE">
+        Roll_moment_due_to_roll_rate_(roll_damping)
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        -0.35
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clr" TYPE="VALUE">
+        Roll_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        0.04
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Clda" TYPE="TABLE">
+        Roll_moment_due_to_aileron
+        8 2
+        FG_MACH FG_ALTITUDE
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+
+        0.0
+        0.0 0.05
+        0.4 0.07
+        0.6 0.08
+        1.0 0.11
+        1.4 0.08
+        1.6 0.07
+        2.4 0.06
+        6.0 0.03
+
+        80000.0
+        0.0 0.05
+        0.4 0.05
+        0.6 0.05
+        1.0 0.05
+        1.4 0.06
+        1.6 0.06
+        2.4 0.05
+        6.0 0.02
+
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cldr" TYPE="VALUE">
+        Roll_moment_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        0.012
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="PITCH">
+
+      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+        Pitch_moment_due_to_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+        -1.2
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+        Pitch_moment_due_to_pitch_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
+        -6.2
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+        0.0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="CmM" TYPE="VALUE">
+        Pitch_moment_due_to_Mach
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_MACH
+        0.0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+        Pitch_moment_due_to_elevator_deflection
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+        -0.9
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+
+      <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+        Yaw_moment_due_to_beta
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+        0.5
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+        Yaw_moment_due_to_roll_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        0.0
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnr" TYPE="VALUE">
+        Yaw_moment_due_to_yaw_rate
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        -1.5
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cnda" TYPE="VALUE">
+        Yaw_moment_due_to_aileron
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+        0.04
+      </COEFFICIENT>
+
+      <COEFFICIENT NAME="Cndr" TYPE="VALUE">
+        Yaw_moment_due_to_rudder
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+        -0.3
+      </COEFFICIENT>
+
+    </AXIS>
+
+  </AERODYNAMICS>
+
+  <COMMENT>
+
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+
+    NOTE that Time is always output with the data.
+
+  </COMMENT>
+
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+    RATE_IN_HZ       60
+    SIMULATION       OFF
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS ON
+  </OUTPUT>
+
+</FDM_CONFIG>
+

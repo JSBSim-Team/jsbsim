@@ -84,7 +84,13 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
   Output      = FDMExec->GetOutput();
 
   Name = engineName;
-  fullpath = enginePath + "/" + engineName + ".dat";
+
+# ifndef macintosh  
+    fullpath = enginePath + "/" + engineName + ".xml";
+# else
+    fullpath = enginePath + ";" + engineName + ".xml";
+# endif
+      
   cout << "    Reading engine: " << engineName << " from file: " << fullpath << endl;
   ifstream enginefile(fullpath.c_str());
 
