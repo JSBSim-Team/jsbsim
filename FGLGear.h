@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.47 2001/12/14 00:16:28 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.48 2002/01/25 17:32:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.47 2001/12/14 00:16:28 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.48 2002/01/25 17:32:45 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -232,9 +232,14 @@ public:
   inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
   inline int GetSteerType(void)  { return (int)eSteerType; }
   
-  inline bool GetRetractable(void)  { return isRetractable; }
-  inline bool GetGearUnitUp(void)   { return GearUp; }
-  inline bool GetGearUnitDown(void) { return GearDown; }
+  inline bool GetRetractable(void)         { return isRetractable;   }
+  inline bool GetGearUnitUp(void)          { return GearUp;          }
+  inline bool GetGearUnitDown(void)        { return GearDown;        }
+  inline double GetWheelSideForce(void)    { return SideForce;       }
+  inline double GetWheelRollForce(void)    { return RollingForce;    }
+  inline double GetBodyXForce(void)        { return vLocalForce(eX); }
+  inline double GetBodyYForce(void)        { return vLocalForce(eY); }
+  inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   
 private:
   FGColumnVector3 vXYZ;
@@ -258,6 +263,9 @@ private:
   double DistanceTraveled;
   double MaximumStrutForce;
   double MaximumStrutTravel;
+  double SideWhlVel, RollingWhlVel;
+  double RollingForce, SideForce, FCoeff;
+  double WheelSlip;
   bool WOW;
   bool lastWOW;
   bool FirstContact;

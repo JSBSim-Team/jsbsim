@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.75 2002/01/18 17:30:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.76 2002/01/25 17:32:45 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,6 +181,9 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
+  double SteerGain = 0;
+  double SinWheel, CosWheel;
+
   vForce.InitMatrix();
   vMoment.InitMatrix();
 
@@ -201,10 +204,6 @@ FGColumnVector3& FGLGear::Force(void)
   }         
       
   if (GearDown) {
-    double SteerGain = 0;
-    double SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
-    double RollingForce, SideForce, FCoeff;
-    double WheelSlip;
 
     vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
     vWhlBodyVec(eX) = -vWhlBodyVec(eX);

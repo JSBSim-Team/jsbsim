@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.26 2002/01/18 17:30:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.27 2002/01/25 17:32:44 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,9 +116,14 @@ string FGGroundReactions::GetGroundReactionStrings(void)
   for (unsigned int i=0;i<lGear.size();i++) {
     if (!firstime) GroundReactionStrings += ", ";
     GroundReactionStrings += (lGear[i].GetName() + "_WOW, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_compressLength, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_compressSpeed, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_Force");
+    GroundReactionStrings += (lGear[i].GetName() + "_stroke, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_strokeVel, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_CompressForce, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_WhlSideForce, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_WhlRollForce, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_BodyXForce, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_BodyYForce, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_WhlSlipDegrees");
 
     firstime = false;
   }
@@ -140,7 +145,12 @@ string FGGroundReactions::GetGroundReactionValues(void)
     GroundReactionValues += string( lGear[i].GetWOW()?"1":"0" ) + ", ";
     GroundReactionValues += (string(gcvt(lGear[i].GetCompLen(),    5, buff)) + ", ");
     GroundReactionValues += (string(gcvt(lGear[i].GetCompVel(),    6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompForce(), 10, buff)));
+    GroundReactionValues += (string(gcvt(lGear[i].GetCompForce(), 10, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetWheelSideForce(), 6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetWheelRollForce(), 6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetBodyXForce(), 6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetBodyYForce(), 6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetWheelSlipAngle(), 6, buff)));
 
     firstime = false;
   }
