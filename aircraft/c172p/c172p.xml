@@ -2,7 +2,7 @@
 <!--
   File:        c172p.xml
   Author:      David Megginson (based on c172r.xml by Tony Peden)
-  CVS Version: $Id: c172p.xml,v 1.7 2002/12/17 12:38:13 apeden Exp $
+  CVS Version: $Id: c172p.xml,v 1.8 2002/12/22 20:08:21 dmegginson Exp $
 
   Function: Models a 1981 Cessna 172P.
 
@@ -522,127 +522,94 @@
 
     <AXIS NAME="PITCH">
 
-      <!-- Roskam p.481 -->
-      <COEFFICIENT NAME="Cmo" TYPE="VECTOR">
+      <!-- Peden -->
+      <COEFFICIENT NAME="Cmo" TYPE="VALUE">
         Pitching_moment_at_zero_alpha
-        2
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
+        0.1
+      </COEFFICIENT>
+
+      <!-- Peden -->
+      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+        Pitch_moment_due_to_alpha
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
+        -1.8
+      </COEFFICIENT>
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+         Pitch_moment_due_to_pitch_rate
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
+         -12.4
+      </COEFFICIENT>
+
+      <!-- based on Roskam p.481 -->
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
+        -7.27
+      </COEFFICIENT>
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+        Pitch_moment_due_to_elevator_deflection
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
+        -1.122
+      </COEFFICIENT>
+
+      <!-- Peden -->
+      <COEFFICIENT NAME="Cmdf" TYPE="VECTOR">
+        Delta_pitching_moment_due_to_flap_deflection
+        4
         fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
-        0  0.04
-        30 0.09
-      </COEFFICIENT>
-
-      <!-- based on Roskam p.481 -->
-      <COEFFICIENT NAME="Cmalpha" TYPE="TABLE">
-        Pitch_moment_due_to_alpha
-        2
-        2
-        aero/alpha-rad
-        fcs/flap-pos-deg
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
-                 0     30
-         0      -0.613 -0.584
-         0.0943 -0.650 -0.621
-      </COEFFICIENT>
-
-      <!-- based on Roskam p.481 -->
-      <COEFFICIENT NAME="Cmq" TYPE="TABLE">
-         Pitch_moment_due_to_pitch_rate
-         2
-         2
-         aero/alpha-rad
-         fcs/flap-pos-deg
-         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
-                 0     30
-         0      -12.4  -9.3
-         0.0943 -15.2 -12.1
-      </COEFFICIENT>
-
-      <!-- based on Roskam p.481 -->
-      <COEFFICIENT NAME="Cmadot" TYPE="TABLE">
-        Pitch_moment_due_to_alpha_rate
-        2
-        2
-        aero/alpha-rad
-        fcs/flap-pos-deg
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
-                0    30
-        0      -7.27 -6.66
-        0.0943 -5.57 -4.96
-      </COEFFICIENT>
-
-      <!-- based on Roskam p.481 -->
-      <COEFFICIENT NAME="Cmde" TYPE="TABLE">
-        Pitch_moment_due_to_elevator_deflection
-        2
-        2
-        aero/alpha-rad
-        fcs/flap-pos-deg
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
-                0     30
-        0      -1.122 -0.846
-        0.0943 -1.369 -1.093
-      </COEFFICIENT>
+        0    0
+        10  -0.0654
+        20  -0.0981
+        30  -0.1140
+       </COEFFICIENT>
 
     </AXIS>
 
     <AXIS NAME="YAW">
 
       <!-- based on Roskam p.482, clamped to +/-20deg beta -->
-      <COEFFICIENT NAME="Cnb" TYPE="TABLE">
+      <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
         Yaw_moment_due_to_beta
         3
-        2
         aero/beta-rad
-        aero/alpha-rad
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
-                0       0.0943
-        -0.349 -0.0205 -0.0317
-         0      0       0
-         0.349  0.0205  0.0317
-      </COEFFICIENT>
-
-      <!-- based on Roskam p.482 -->
-      <COEFFICIENT NAME="Cnp" TYPE="TABLE">
-        Yaw_moment_due_to_roll_rate
-        2
-        2
-        aero/alpha-rad
-        fcs/flap-pos-deg
-        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
-                0       30
-        0      -0.0278  -0.0685
-        0.0943 -0.0649  -0.1056
+        -0.349 -0.0205
+         0      0
+         0.349  0.0205
       </COEFFICIENT>
 
       <!-- Roskam p.482 -->
-      <COEFFICIENT NAME="Cnr" TYPE="VECTOR">
+      <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+        Yaw_moment_due_to_roll_rate
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
+        -0.0278
+      </COEFFICIENT>
+
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="Cnr" TYPE="VALUE">
         Yaw_moment_due_to_yaw_rate
-        2
-        aero/alpha-rad
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-        0      -0.0937
-        0.0943 -0.1199
+        -0.0937
       </COEFFICIENT>
 
-      <!-- based on Roskam p.482 -->
-      <COEFFICIENT NAME="Cnda" TYPE="VECTOR">
+      <!-- Peden -->
+      <COEFFICIENT NAME="Cnda" TYPE="VALUE">
         Yaw_moment_due_to_aileron
-        2
-        fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
-        0  -0.0216
-        30 -0.0573
+        -0.0053
       </COEFFICIENT>
 
-      <!-- based on Roskam p.482 -->
-      <COEFFICIENT NAME="Cndr" TYPE="VECTOR">
+      <!-- Peden -->
+      <COEFFICIENT NAME="Cndr" TYPE="VALUE">
         Yaw_moment_due_to_rudder
-        2
-        fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
-        0  -0.0645
-        30 -0.0485
+        -0.043
       </COEFFICIENT>
 
     </AXIS>
@@ -693,7 +660,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
