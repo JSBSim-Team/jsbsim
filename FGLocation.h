@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.2 2004/05/21 12:52:54 frohlich Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.3 2004/10/14 11:33:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,10 +124,14 @@ CLASS DOCUMENTATION
     same magnitude for all components in this representation which is
     an advantage for numerical stability in implicit time-stepping too.
 
+    Note: The latitude is a GEOCENTRIC value. FlightGear
+    converts latitude to a geodetic value and uses that. In order to get best
+    matching relative to a map, geocentric latitude must be converted to geodetic.
+
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.2 2004/05/21 12:52:54 frohlich Exp $
+    @version $Id: FGLocation.h,v 1.3 2004/10/14 11:33:28 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +145,10 @@ public:
   FGLocation() { mCacheValid = false; }
 
   /** Constructor to set the longitude, latitude and the distance
-      from the center of the earth. */
+      from the center of the earth.
+      @param lon longitude
+      @param lat GEOCENTRIC latitude
+      @param distance from center of earth to vehicle in feet*/
   FGLocation(double lon, double lat, double radius);
 
   /** Copy constructor. */
