@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.32 2001/07/30 11:21:15 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.33 2001/08/01 11:49:09 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 extern short debug_lvl;
@@ -71,8 +71,9 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
   altitude=hdot=0;
   latitude=longitude=0;
   u=v=w=0;
-  vw=vw=ww=0;
+  uw=vw=ww=0;
   vnorth=veast=vdown=0;
+  wnorth=weast=wdown=0;
   lastSpeedSet=setvt;
   sea_level_radius = EARTHRAD;
   radius_to_vehicle = EARTHRAD;
