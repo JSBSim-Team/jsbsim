@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.31 2004/02/06 15:09:50 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.32 2004/02/08 10:45:16 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -90,17 +90,38 @@
     </AC_TANK>
   </PROPULSION>
   <FLIGHT_CONTROL NAME="F-16 FC">
-    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       INPUT        fcs/elevator-cmd-norm
-       INPUT        fcs/pitch-trim-cmd-norm
-       CLIPTO       -1 1
-    </COMPONENT>
-    <COMPONENT NAME="Pitch Damper Gain" TYPE="PURE_GAIN">
-       INPUT        velocities/q-rad_sec
-       GAIN         4.0
+   <COMPONENT NAME="g load norm" TYPE="PURE_GAIN">
+     INPUT          accelerations/n-pilot-z-norm
+     GAIN           -0.111111
+   </COMPONENT>
+   <COMPONENT NAME="g load error" TYPE="SUMMER">
+     INPUT          fcs/elevator-cmd-norm
+     INPUT          fcs/g-load-norm
+   </COMPONENT>
+   <COMPONENT NAME="g load p" TYPE="PURE_GAIN">
+     INPUT          fcs/g-load-error
+     GAIN           3.0
+   </COMPONENT>
+   <COMPONENT NAME="g load d" TYPE="LEAD_LAG_FILTER">
+     INPUT          fcs/g-load-error
+     C1             0.05
+     C2             0.0
+     C3             0.0
+     C4             1.0
+   </COMPONENT>
+   <COMPONENT NAME="g load i" TYPE="INTEGRATOR">
+     INPUT          fcs/g-load-error
+     C1             0.005
+   </COMPONENT>
+   <COMPONENT NAME="g load command" TYPE="SUMMER">
+     INPUT          fcs/g-load-p
+     INPUT          fcs/g-load-d
+     INPUT          fcs/g-load-i
+     INPUT          fcs/pitch-trim-cmd-norm
+     CLIPTO         -1 1
     </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
-       INPUT         fcs/pitch-trim-sum
+       INPUT         fcs/g-load-command
        MIN          -0.436
        MAX           0.436
        OUTPUT        fcs/elevator-pos-rad
