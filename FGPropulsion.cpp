@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.107 2004/06/02 13:06:42 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.108 2004/06/04 16:33:16 frohlich Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -68,7 +68,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   Name = "FGPropulsion";
 
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
-  numTanks = numEngines;
+  numTanks = numEngines = 0;
   numOxiTanks = numFuelTanks = 0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
@@ -334,7 +334,6 @@ string FGPropulsion::GetPropulsionStrings(void)
 
 string FGPropulsion::GetPropulsionValues(void)
 {
-  char buff[20];
   string PropulsionValues = "";
   bool firstime = true;
 
