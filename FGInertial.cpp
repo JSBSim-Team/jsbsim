@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.9 2001/04/26 12:45:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.10 2001/04/26 23:46:46 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 extern short debug_lvl;
@@ -51,14 +51,10 @@ CLASS IMPLEMENTATION
 
 FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex),
     vForces(3),
-    vOmegaEarth(3),
-    vOmegaAircraft(3),
+    vOmegaLocal(3),
     vRadius(3)
 {
-  vOmegaEarth.InitMatrix();
-  vOmegaEarth(1) = OMEGA_EARTH;
   vRadius.InitMatrix();
-  vRadius(3) = -EARTHRAD;
 
   if (debug_lvl & 2) cout << "Instantiated: FGInertial" << endl;
 }
@@ -75,16 +71,24 @@ FGInertial::~FGInertial(void)
 bool FGInertial::Run(void)
 {
   if (!FGModel::Run()) {
-/*
-    vOmegaAircraft = Position->GetVel / EARTHRAD;
-    vForces = ( 2.0 * (vOmegaAircraft + vOmegaEarth)
-                * (Position->GetVel() + vOmegaEarth * EARTHRAD) )
-		            * MassBalance->GetMass();
 
-    vForces = ( (vOmegaAircraft + vOmegaEarth)
-                 * ((vOmegaAircraft + vOmegaEarth) * EARTHRAD ))
-                 * MassBalance->GetMass();
-*/
+    // The following equation for vOmegaLocal terms shows the angular velocity
+    // calculation for the local frame given the earth's rotation (first term)
+    // at the current latitude, and also the component due to the aircraft
+    // motion over the curved surface of the earth (second term).
+
+    vOmegaLocal(eX) = OMEGA_EARTH * cos(Position->GetLatitude())
+                      + Position->GetVe() / Position->GetRadius();
+    vOmegaLocal(eY) = 0.0 - Position->GetVn() / Position->GetRadius();
+    vOmegaLocal(eZ) = OMEGA_EARTH * -sin(Position->GetLatitude());
+
+    vForces = (2.0*vOmegaLocal * Position->GetVel()) * MassBalance->GetMass();
+cout << "Coriolis: " << vForces << endl;
+
+    vRadius(3) = Position->GetRadius();
+    vForces = (vOmegaLocal * (vOmegaLocal * vRadius)) * MassBalance->GetMass();
+cout << "Centripetal: " << vForces << endl;
+
     return false;
   } else {
     return true;
