@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.106 2002/02/23 12:25:21 apeden Exp $
+// $Id: JSBSim.cxx,v 1.107 2002/02/26 21:27:01 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -150,8 +150,20 @@ FGJSBsim::FGJSBsim( double dt )
     
     stall_warning = fgGetNode("/sim/aero/alarms/stall-warning",true);
     stall_warning->setDoubleValue(0);
-}
+    
+    elevator_pos=fgGetNode("/surface-positions/elevator-pos-deg",true);
+    left_aileron_pos=fgGetNode("/surface-positions/left-aileron-pos-deg",true);
+    right_aileron_pos=fgGetNode("/surface-positions/right-aileron-pos-deg",true);
+    rudder_pos=fgGetNode("/surface-positions/rudder-pos-deg",true);
+    flap_pos=fgGetNode("/surface-positions/flap-pos-deg",true);
+    
+    elevator_pos->setDoubleValue(0);
+    left_aileron_pos->setDoubleValue(0);
+    right_aileron_pos->setDoubleValue(0);
+    rudder_pos->setDoubleValue(0);
+    flap_pos->setDoubleValue(0);
 
+}
 /******************************************************************************/
 FGJSBsim::~FGJSBsim(void) {
     if (fdmex != NULL) {
@@ -487,6 +499,13 @@ bool FGJSBsim::copy_from_JSBsim() {
     update_gear();
     
     stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
+    
+    elevator_pos->setDoubleValue( FCS->GetDePos()*SG_RADIANS_TO_DEGREES );
+    left_aileron_pos->setDoubleValue( FCS->GetDaPos()*SG_RADIANS_TO_DEGREES );
+    right_aileron_pos->setDoubleValue( -1*FCS->GetDaPos()*SG_RADIANS_TO_DEGREES );
+    rudder_pos->setDoubleValue( -1*FCS->GetDrPos()*SG_RADIANS_TO_DEGREES );
+    flap_pos->setDoubleValue( FCS->GetDfPos() );
+
     
     return true;
 }

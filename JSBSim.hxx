@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.29 2002/02/17 14:30:48 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.30 2002/02/26 21:27:01 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -240,6 +240,12 @@ private:
     SGPropertyNode *aileron_trim;
     SGPropertyNode *rudder_trim;
     SGPropertyNode *stall_warning;
+    
+    SGPropertyNode *elevator_pos;
+    SGPropertyNode *left_aileron_pos;
+    SGPropertyNode *right_aileron_pos;
+    SGPropertyNode *rudder_pos;
+    SGPropertyNode *flap_pos;
     
     void init_gear(void);
     void update_gear(void);
