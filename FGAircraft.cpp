@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.53 2000/11/27 07:34:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.54 2000/12/29 23:34:15 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,19 +222,19 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   while ((AC_cfg.GetNextConfigLine() != "EOF") &&
          (token = AC_cfg.GetValue()) != "/FDM_CONFIG") {
     if (token == "METRICS") {
-      cout << "  Reading Metrics" << endl;
+      cout << "\n  Reading Metrics" << endl;
       ReadMetrics(&AC_cfg);
     } else if (token == "AERODYNAMICS") {
-      cout << "  Reading Aerodynamics" << endl;
+      cout << "\n  Reading Aerodynamics" << endl;
       ReadAerodynamics(&AC_cfg);
     } else if (token == "UNDERCARRIAGE") {
-      cout << "  Reading Landing Gear" << endl;
+      cout << "\n  Reading Landing Gear" << endl;
       ReadUndercarriage(&AC_cfg);
     } else if (token == "PROPULSION") {
-      cout << "  Reading Propulsion" << endl;
+      cout << "\n  Reading Propulsion" << endl;
       ReadPropulsion(&AC_cfg);
     } else if (token == "FLIGHT_CONTROL") {
-      cout << "  Reading Flight Control" << endl;
+      cout << "\n  Reading Flight Control" << endl;
       ReadFlightControls(&AC_cfg);
     } else if (token == "OUTPUT") {
       ReadOutput(&AC_cfg);

@@ -64,7 +64,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.20 2000/12/27 23:44:44 jsb Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.21 2000/12/29 23:34:16 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,11 @@ FGFDMExec::FGFDMExec(void)
   modelLoaded = false;
   
   Allocate();
-  
+
+  cout << "\n\nJSBSim Flight Dynamics Model v" << JSBSIM_VERSION << endl;
+  cout << "  requires models to comply with config file spec v" <<
+                                                  NEEDED_CFG_VERSION << "\n\n";
+  cout << "  JSBSim startup beginning ...\n\n";						  
 }
 
 FGFDMExec::~FGFDMExec(void) {
@@ -146,8 +150,8 @@ bool FGFDMExec::Allocate(void) {
   Schedule(Output,     1);
   
   modelLoaded = false;
-  return result;
 
+  return result;
 }
 
 bool FGFDMExec::DeAllocate(void) {
@@ -255,6 +259,7 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
     cerr << "FGFDMExec: Failed to load aircraft and/or engine model" << endl;
   }
 
+  cout << "\n\nJSBSim startup complete\n\n";						  
   return result;
 }
 

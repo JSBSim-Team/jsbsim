@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.40 2000/11/27 07:34:03 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.41 2000/12/29 23:34:15 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,9 +87,13 @@ CLASS DOCUMENTATION
     the Engines, Tanks, Propellers, Nozzles, Aerodynamic and Mass properties,
     landing gear, etc. These constituent parts may actually run as separate
     JSBSim models themselves, but the responsibility for initializing them and
-    for retrieving their force and moment contributions falls to FGAircraft.
+    for retrieving their force and moment contributions falls to FGAircraft.<br>
+    When an aircraft model is loaded the config file is parsed and for each of the
+    sections of the config file (propulsion, flight control, etc.) the
+    corresponding "ReadXXX()" method is called. From within this method the 
+    "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.40 2000/11/27 07:34:03 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.41 2000/12/29 23:34:15 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate

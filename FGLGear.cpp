@@ -47,7 +47,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.32 2000/12/27 23:44:44 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.33 2000/12/29 23:34:16 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)  
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
-	          >> rollingFCoeff >> BrakeGroup >> SteerType >> maxSteerAngle;
+	          >> rollingFCoeff >> SteerType >> BrakeGroup >> maxSteerAngle;
     
   cout << "    Name: " << name << endl;
   cout << "      Location: " << vXYZ << endl;
@@ -71,8 +71,8 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
   cout << "      Static Friction:  " << staticFCoeff << endl;
   cout << "      Rolling Friction: " << rollingFCoeff << endl;
-  cout << "      Grouping:         " << BrakeGroup << endl;
   cout << "      Steering Type:    " << SteerType << endl;
+  cout << "      Grouping:         " << BrakeGroup << endl;
   cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
 
   if      (BrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
