@@ -57,24 +57,37 @@ SENTRY
 #define HPTOFTLBSSEC 550
 #define METERS_TO_FEET 3.2808
 
-#define FG_QBAR         1
-#define FG_WINGAREA     2
-#define FG_WINGSPAN     4
-#define FG_CBAR         8
-#define FG_ALPHA       16
-#define FG_ALPHADOT    32
-#define FG_BETA        64
-#define FG_BETADOT    128
-#define FG_PITCHRATE  256
-#define FG_ROLLRATE   512
-#define FG_YAWRATE   1024
-#define FG_ELEVATOR  2048
-#define FG_AILERON   4096
-#define FG_RUDDER    8192
-#define FG_MACH     16384
-#define FG_ALTITUDE 32768L
-#define FG_BI2VEL   65536L
-#define FG_CI2VEL  131072L
+#define FG_QBAR           1
+#define FG_WINGAREA       2
+#define FG_WINGSPAN       4
+#define FG_CBAR           8
+#define FG_ALPHA          16
+#define FG_ALPHADOT       32
+#define FG_BETA           64
+#define FG_BETADOT        128
+#define FG_PITCHRATE      256
+#define FG_ROLLRATE       512
+#define FG_YAWRATE        1024
+#define FG_MACH           2048
+#define FG_ALTITUDE       4096
+#define FG_BI2VEL         8192
+#define FG_CI2VEL         16384
+#define FG_ELEVATOR_POS   32768L
+#define FG_AILERON_POS    65536L
+#define FG_RUDDER_POS     131072L
+#define FG_SPDBRAKE_POS   262144L
+#define FG_FLAPS_POS      524288L
+#define FG_ELEVATOR_CMD   1048576L
+#define FG_AILERON_CMD    2097152L
+#define FG_RUDDER_CMD     4194304L
+#define FG_SPDBRAKE_CMD   8388608L
+#define FG_FLAPS_CMD      16777216L
+#define FG_SPARE1         33554432L
+#define FG_SPARE2         67108864L
+#define FG_SPARE3         134217728L
+#define FG_SPARE4         268435456L
+#define FG_SPARE5         536870912L
+#define FG_SPARE6         1073741824L
 
 /******************************************************************************/
 #endif

@@ -79,24 +79,37 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   sim_time = 0.0;
   dt = 1.0/120.0;
 
-  coeffdef["FG_QBAR"]      = 1;
-  coeffdef["FG_WINGAREA"]  = 2;
-  coeffdef["FG_WINGSPAN"]  = 4;
-  coeffdef["FG_CBAR"]      = 8;
-  coeffdef["FG_ALPHA"]     = 16;
-  coeffdef["FG_ALPHADOT"]  = 32;
-  coeffdef["FG_BETA"]      = 64;
-  coeffdef["FG_BETADOT"]   = 128;
-  coeffdef["FG_PITCHRATE"] = 256;
-  coeffdef["FG_ROLLRATE"]  = 512;
-  coeffdef["FG_YAWRATE"]   = 1024;
-  coeffdef["FG_ELEVATOR"]  = 2048;
-  coeffdef["FG_AILERON"]   = 4096;
-  coeffdef["FG_RUDDER"]    = 8192;
-  coeffdef["FG_MACH"]      = 16384;
-  coeffdef["FG_ALTITUDE"]  = 32768L;
-  coeffdef["FG_BI2VEL"]    = 65536L;
-  coeffdef["FG_CI2VEL"]    = 131072L;
+  coeffdef["FG_QBAR"]          = 1           ;
+  coeffdef["FG_WINGAREA"]      = 2           ;
+  coeffdef["FG_WINGSPAN"]      = 4           ;
+  coeffdef["FG_CBAR"]          = 8           ;
+  coeffdef["FG_ALPHA"]         = 16          ;
+  coeffdef["FG_ALPHADOT"]      = 32          ;
+  coeffdef["FG_BETA"]          = 64          ;
+  coeffdef["FG_BETADOT"]       = 128         ;
+  coeffdef["FG_PITCHRATE"]     = 256         ;
+  coeffdef["FG_ROLLRATE"]      = 512         ;
+  coeffdef["FG_YAWRATE"]       = 1024        ;
+  coeffdef["FG_MACH"]          = 2048        ;
+  coeffdef["FG_ALTITUDE"]      = 4096        ;
+  coeffdef["FG_BI2VEL"]        = 8192        ;
+  coeffdef["FG_CI2VEL"]        = 16384       ;
+  coeffdef["FG_ELEVATOR_POS"]  = 32768L      ;
+  coeffdef["FG_AILERON_POS"]   = 65536L      ;
+  coeffdef["FG_RUDDER_POS"]    = 131072L     ;
+  coeffdef["FG_SPDBRAKE_POS"]  = 262144L     ;
+  coeffdef["FG_FLAPS_POS"]     = 524288L     ;
+  coeffdef["FG_ELEVATOR_CMD"]  = 1048576L    ;
+  coeffdef["FG_AILERON_CMD"]   = 2097152L    ;
+  coeffdef["FG_RUDDER_CMD"]    = 4194304L    ;
+  coeffdef["FG_SPDBRAKE_CMD"]  = 8388608L    ;
+  coeffdef["FG_FLAPS_CMD"]     = 16777216L   ;
+  coeffdef["FG_SPARE1"]        = 33554432L   ;
+  coeffdef["FG_SPARE2"]        = 67108864L   ;
+  coeffdef["FG_SPARE3"]        = 134217728L  ;
+  coeffdef["FG_SPARE4"]        = 268435456L  ;
+  coeffdef["FG_SPARE5"]        = 536870912L  ;
+  coeffdef["FG_SPARE6"]        = 1073741824L ;
 }
 
 /******************************************************************************/
@@ -268,12 +281,12 @@ float FGState::GetParameter(int val_idx)
     return (FDMExec->GetRotation()->GetPQR())(1);
   case FG_YAWRATE:
     return (FDMExec->GetRotation()->GetPQR())(3);
-  case FG_ELEVATOR:
-    return FDMExec->GetFCS()->GetDe();
-  case FG_AILERON:
-    return FDMExec->GetFCS()->GetDa();
-  case FG_RUDDER:
-    return FDMExec->GetFCS()->GetDr();
+  case FG_ELEVATOR_POS:
+    return FDMExec->GetFCS()->GetDePos();
+  case FG_AILERON_POS:
+    return FDMExec->GetFCS()->GetDaPos();
+  case FG_RUDDER_POS:
+    return FDMExec->GetFCS()->GetDrPos();
   case FG_MACH:
     return GetMach();
   case FG_ALTITUDE:

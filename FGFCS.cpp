@@ -76,9 +76,9 @@ FGFCS::~FGFCS(void)
 bool FGFCS::Run(void)
 {
   if (!FGModel::Run()) {
-    // TEST
-    for (unsigned int i=0;i<Components.size();i++) Components[i]->Run();
-    // END TEST
+
+    for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
+
   } else {
   }
   return false;
@@ -86,12 +86,24 @@ bool FGFCS::Run(void)
 
 /******************************************************************************/
 
-void FGFCS::SetThrottle(int engineNum, float setting)
+void FGFCS::SetThrottleCmd(int engineNum, float setting)
 {
   if (engineNum < 0) {
-    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) Throttle[ctr] = setting;
+    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
   } else {
-    Throttle[engineNum] = setting;
+    ThrottlePos[engineNum] = setting;
+  }
+}
+
+/******************************************************************************/
+
+void FGFCS::SetThrottlePos(int engineNum, float setting)
+{
+  if (engineNum < 0) {
+    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++)
+      ThrottlePos[ctr] = ThrottleCmd[ctr];
+  } else {
+    ThrottlePos[engineNum] = setting;
   }
 }
 
@@ -106,7 +118,6 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
 
-#if 1 // TEST
       if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
           (token == "RECT_LAG_FILTER") ||
           (token == "LEAD_LAG_FILTER") ||
@@ -129,11 +140,6 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
       } else if (token == "SWITCH") {
        Components.push_back(new FGSwitch(this, AC_cfg));
       }
-#else // END TEST
-      while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
-        AC_cfg->GetNextConfigLine();
-      }
-#endif
       AC_cfg->GetNextConfigLine();
     }
   }
@@ -142,12 +148,10 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-//TEST
 float FGFCS::GetComponentOutput(int idx)
 {
   return Components[idx]->GetOutput();
 }
-// END TEST
 
 /******************************************************************************/
 

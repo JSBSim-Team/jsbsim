@@ -118,9 +118,7 @@ int main(int argc, char** argv)
 
   while (FDMExec->GetState()->Getsim_time() <= 25.0)
   {
-    //
     // Fake an elevator kick here after 5 seconds
-    //
 
     if (FDMExec->GetState()->Getsim_time() > 5.0 &&
         FDMExec->GetState()->Getsim_time() < 6.0)

@@ -52,9 +52,7 @@ INCLUDES
 #  include <string>
 #endif
 
-// TEST
 #include "filtersjb/FGFCSComponent.h"
-// END TEST
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
@@ -68,34 +66,50 @@ using namespace std;
 class FGFCS : public FGModel
 {
 private:
-  /// elevator, rudder, aileron, flaps, throttle, slats scaling
-  float eScale, rScale, aScale, fScale, tScale, sScale;
-  float Da, De, Dr, Df, Ds;
-  float Throttle[MAX_ENGINES];
-  // TEST
+  float DaCmd, DeCmd, DrCmd, DfCmd, DsCmd;
+  float DaPos, DePos, DrPos, DfPos, DsPos;
+  float ThrottleCmd[MAX_ENGINES];
+  float ThrottlePos[MAX_ENGINES];
+
   vector <FGFCSComponent*> Components;
-  // END TEST
+
 public:
 	FGFCS(FGFDMExec*);
 	~FGFCS(void);
 
 	bool Run(void);
 
-	inline float GetDa(void) {return Da;}
-	inline float GetDe(void) {return De;}
-	inline float GetDr(void) {return Dr;}
-	inline float GetDf(void) {return Df;}
-	inline float GetDs(void) {return Ds;}
-	inline float GetThrottle(int ii) {return Throttle[ii];}
+	inline float GetDaCmd(void) {return DaCmd;}
+	inline float GetDeCmd(void) {return DeCmd;}
+	inline float GetDrCmd(void) {return DrCmd;}
+	inline float GetDfCmd(void) {return DfCmd;}
+	inline float GetDsCmd(void) {return DsCmd;}
+	inline float GetThrottleCmd(int ii) {return ThrottleCmd[ii];}
+
+	inline float GetDaPos(void) {return DaPos;}
+	inline float GetDePos(void) {return DePos;}
+	inline float GetDrPos(void) {return DrPos;}
+	inline float GetDfPos(void) {return DfPos;}
+	inline float GetDsPos(void) {return DsPos;}
+	inline float GetThrottlePos(int ii) {return ThrottlePos[ii];}
+
   inline FGState* GetState(void) {return State;}
   float GetComponentOutput(int idx);
 
-	inline void SetDa(float tt) {Da = tt*aScale;} //0.3
-	inline void SetDe(float tt) {De = tt*eScale;} //0.6
-	inline void SetDr(float tt) {Dr = tt*rScale;} //-1.0 * 0.5
-	inline void SetDf(float tt) {Df = tt*fScale;}
-	inline void SetDs(float tt) {Ds = tt*sScale;}
-	void SetThrottle(int ii, float tt);
+	inline void SetDaCmd(float tt) {DaCmd = tt;}
+	inline void SetDeCmd(float tt) {DeCmd = tt;}
+	inline void SetDrCmd(float tt) {DrCmd = tt;}
+	inline void SetDfCmd(float tt) {DfCmd = tt;}
+	inline void SetDsCmd(float tt) {DsCmd = tt;}
+	void SetThrottleCmd(int ii, float tt);
+
+	inline void SetDaPos(float tt) {DaPos = tt;}
+	inline void SetDePos(float tt) {DePos = tt;}
+	inline void SetDrPos(float tt) {DrPos = tt;}
+	inline void SetDfPos(float tt) {DfPos = tt;}
+	inline void SetDsPos(float tt) {DsPos = tt;}
+	void SetThrottlePos(int ii, float tt);
+
   bool LoadFCS(FGConfigFile* AC_cfg);
   string FCSName;
 };
