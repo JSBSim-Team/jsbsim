@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.59 2001/11/20 21:25:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.60 2001/11/28 06:02:08 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ FGFCS::~FGFCS()
 
   unsigned int i;
 
-  for(i=0;i<Components.size();i++) delete Components[i];
+  for (i=0;i<Components.size();i++) delete Components[i];
   if (debug_lvl & 2) cout << "Destroyed:    FGFCS" << endl;
 }
 

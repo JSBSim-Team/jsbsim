@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.34 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.35 2001/11/28 06:02:08 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   string token;
   int rows, cols;
 
-  MaxPitch = MinPitch = P_Factor = Sense = 0.0;
+  MaxPitch = MinPitch = P_Factor = Sense = Pitch = 0.0;
 
   Name = Prop_cfg->GetValue("NAME");
   Prop_cfg->GetNextConfigLine();
