@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.8 2004/04/18 02:45:51 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.9 2004/04/24 17:12:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.8 2004/04/18 02:45:51 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.9 2004/04/24 17:12:58 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,37 +82,40 @@ public:
       @return false if no error */
   bool Run(void);
 
-  inline FGColumnVector3& GetVel(void) { return vVel; }
-  inline double           GetUVW   (int idx) const { return vUVW(idx); }
-  inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
-  inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
-  inline double           GetUVWdot(int idx) const { return vUVWdot(idx); }
-  inline double GetVn(void)  const { return vVel(eX); }
-  inline double GetVe(void)  const { return vVel(eY); }
-  inline double GetVd(void)  const { return vVel(eZ); }
-  inline double Geth(void)  const { return h; }
-  inline FGColumnVector3& GetPQR(void) {return vPQR;}
-  inline double GetPQR(int axis) const {return vPQR(axis);}
-  inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
-  inline double GetPQRdot(int idx) const {return vPQRdot(idx);}
+  const FGColumnVector3& GetVel(void) { return vVel; }
+  const FGColumnVector3& GetUVW   (void)    { return vUVW; }
+  const FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
+  const FGColumnVector3& GetPQR(void) {return vPQR;}
+  const FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
   const FGColumnVector3& GetEuler(void) const { return vQtrn.GetEuler(); }
-  inline double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
-  inline void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
-  inline void SetPQR(double p, double q, double r) {vPQR(eP)=p;
-                                                    vPQR(eQ)=q;
-                                                    vPQR(eR)=r;}
-  inline double GethVRP(void)  const { return hVRP; }
-  inline double Gethdot(void) const { return vLocationDot(eRad); }
-  inline double GetLatitude(void) const { return vLocation(eLat); }
-  inline double GetLatitudeVRP(void) const { return LatitudeVRP; }
-  inline double GetLatitudeDot(void) const { return vLocationDot(eLat); }
-  inline double GetLongitude(void) const { return vLocation(eLong); }
-  inline double GetLongitudeVRP(void) const { return LongitudeVRP; }
-  inline double GetLongitudeDot(void) const { return vLocationDot(eLong); }
-  inline double GetRunwayRadius(void) const { return RunwayRadius; }
-  inline double GetDistanceAGL(void)  const { return DistanceAGL; }
-  inline double GetRadius(void) const { return vLocation(eRad); }
-  inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
+
+  double GetUVW   (int idx) const { return vUVW(idx); }
+  double GetUVWdot(int idx) const { return vUVWdot(idx); }
+  double GetVn(void)  const { return vVel(eNorth); }
+  double GetVe(void)  const { return vVel(eEast); }
+  double GetVd(void)  const { return vVel(eDown); }
+  double Geth(void)   const { return vLocation(eRad) - SeaLevelRadius; }
+  double GetPQR(int axis) const {return vPQR(axis);}
+  double GetPQRdot(int idx) const {return vPQRdot(idx);}
+  double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
+  double Gethdot(void) const { return vLocationDot(eRad); }
+//  double GetLatitude(void) const { return vLocation(eLat); }
+//  double GetLatitudeDot(void) const { return vLocationDot(eLat); }
+//  double GetLongitude(void) const { return vLocation(eLong); }
+//  double GetLongitudeDot(void) const { return vLocationDot(eLong); }
+
+  /** Returns the "constant" RunwayRadius.
+      The RunwayRadius parameter is set by the calling application or set to
+      zero if JSBSim is running in standalone mode.
+      @return distance of the runway from the center of the earth.
+      @units feet */
+  double GetRunwayRadius(void) const { return RunwayRadius; }
+  double GetDistanceAGL(void)  const { return vLocation(eRad)-RunwayRadius; }
+  double GetRadius(void) const { return vLocation(eRad); }
+  double GetLocation (int idx) const { return vLocation(idx);}
+  double GetLocationDot (int idx) const { return vLocationDot(idx);}
+  const  FGColumnVector3& GetLocation(void) const { return vLocation;}
+  const  FGColumnVector3& GetLocationDot(void) const { return vLocationDot;}
 
   double Getphi(void) const { return vQtrn.GetEulerPhi(); }
   double Gettht(void) const { return vQtrn.GetEulerTheta(); }
@@ -134,32 +137,29 @@ public:
       @return a reference to the body-to-local matrix.  */
   const FGMatrix33& GetTb2l(void) { return vQtrn.GetTInv(); }
 
-  inline double GetHOverBCG(void) const { return hoverbcg; }
-  inline double GetHOverBMAC(void) const { return hoverbmac; }
+  double GetHOverBCG(void) const { return hoverbcg; }
+  double GetHOverBMAC(void) const { return hoverbmac; }
+
+// SET functions
+
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
-  void SetLatitude(double tt) { vLocation(eLat) = tt; }
-  void SetLongitude(double tt) { vLocation(eLong) = tt; }
+//  void SetLatitude(double tt) { vLocation(eLat) = tt; }
+//  void SetLongitude(double tt) { vLocation(eLong) = tt; }
+  void SetLocation(int idx, double val) { vLocation(idx) = val; }
   void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt;}
   void SetDistanceAGL(double tt);
-  inline void SetRunwayNormal(double fgx, double fgy, double fgz ) {
-      vRunwayNormal << fgx << fgy << fgz;
-  }
-  void SetVRP(FGColumnVector3& vrp) {vVRP = vrp;}
-  void SetEuler(FGColumnVector3 tt) {
-    vQtrn = FGQuaternion(tt(ePhi), tt(eTht), tt(ePsi));
-  }
+  void SetEuler(FGColumnVector3 tt) {vQtrn = FGQuaternion(tt(ePhi), tt(eTht), tt(ePsi));}
   void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
+  void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
+  void SetPQR(double p, double q, double r) {vPQR(eP)=p; vPQR(eQ)=q; vPQR(eR)=r;}
 
   void bind(void);
   void unbind(void);
 
 private:
   FGColumnVector3 vVel;
-  FGColumnVector3 vRunwayNormal;
-  FGColumnVector3 vVRP;
-  FGColumnVector3 vVRPoffset;
   FGColumnVector3 vMac;
   FGColumnVector3 vLocation;
   FGColumnVector3 vLocationDot;
@@ -173,18 +173,14 @@ private:
   FGQuaternion vQtrn;
   FGQuaternion vQtrndot_prev[4];
 
-  double h, hVRP;
-  double LongitudeVRP, LatitudeVRP;
   double dt;
-  double RunwayRadius;
-  double DistanceAGL;
-  double SeaLevelRadius;
+  double RunwayRadius, SeaLevelRadius;
   double hoverbcg,hoverbmac,b;
 
   FGColumnVector3& toGlobe(FGColumnVector3&);
+
   void Debug(int from);
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

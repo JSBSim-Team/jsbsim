@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.36 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.37 2004/04/24 17:12:57 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,9 +93,9 @@ bool FGInertial::Run(void)
     // at the current latitude, and also the component due to the aircraft
     // motion over the curved surface of the earth (second set).
 
-    vOmegaLocal(eX) = omega() * cos(Propagate->GetLatitude());
+    vOmegaLocal(eX) = omega() * cos(Propagate->GetLocation(eLat));
     vOmegaLocal(eY) = 0.0;
-    vOmegaLocal(eZ) = omega() * -sin(Propagate->GetLatitude());
+    vOmegaLocal(eZ) = omega() * -sin(Propagate->GetLocation(eLat));
 
     vOmegaLocal(eX) +=  Propagate->GetVe() / Propagate->GetRadius();
     vOmegaLocal(eY) += -Propagate->GetVn() / Propagate->GetRadius();
@@ -105,10 +105,10 @@ bool FGInertial::Run(void)
     // conventions used here the sign is reversed: 2w*dr/dt. The same is true for
     // Centrifugal acceleration.
 
-    vCoriolis(eEast) = 2.0*omega() * (Propagate->GetVd()*cos(Propagate->GetLatitude()) +
-                                      Propagate->GetVn()*sin(Propagate->GetLatitude()));
+    vCoriolis(eEast) = 2.0*omega() * (Propagate->GetVd()*cos(Propagate->GetLocation(eLat)) +
+                                      Propagate->GetVn()*sin(Propagate->GetLocation(eLat)));
 
-    vRadius(eDown) = Propagate->GetRadius();
+    vRadius(eDown) = Propagate->GetLocation(eRad);
     vCentrifugal(eDown) = -vOmegaLocal.Magnitude() * vOmegaLocal.Magnitude() * vRadius(eDown);
 
 //    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.42 2004/04/06 13:44:01 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.43 2004/04/24 17:12:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.42 2004/04/06 13:44:01 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.43 2004/04/24 17:12:57 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,6 +110,7 @@ public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
   FGAuxiliary(FGFDMExec* Executive);
+
   /// Destructor
   ~FGAuxiliary();
 
@@ -117,79 +118,86 @@ public:
       @return false if no error */
   bool Run(void);
 
-  // Use FGInitialCondition to set these speeds
-  inline double GetVcalibratedFPS(void) const { return vcas; }
-  inline double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
-  inline double GetVequivalentFPS(void) const { return veas; }
-  inline double GetVequivalentKTS(void) const { return veas*fpstokts; }
+// GET functions
 
-  inline double GetTotalTemperature(void) const { return tat; }
-  inline double GetTAT_C(void) const { return tatc; }
+  // Atmospheric parameters GET functions
+  double GetVcalibratedFPS(void) const { return vcas; }
+  double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
+  double GetVequivalentFPS(void) const { return veas; }
+  double GetVequivalentKTS(void) const { return veas*fpstokts; }
 
   // total pressure above is freestream total pressure for subsonic only
   // for supersonic it is the 1D total pressure behind a normal shock
-  inline double GetTotalPressure(void) const { return pt; }
+  double GetTotalPressure(void) const { return pt; }
+  double GetTotalTemperature(void) const { return tat; }
+  double GetTAT_C(void) const { return tatc; }
 
-  inline FGColumnVector3& GetPilotAccel(void) { return vPilotAccel; }
-  inline double GetPilotAccel(int idx) const { return vPilotAccel(idx); }
-  FGColumnVector3 GetNpilot(void) const { return vPilotAccelN; }
-  double GetNpilot(int idx) const { return vPilotAccelN(idx); }
-  inline FGColumnVector3& GetAeroPQR(void) {return vAeroPQR;}
-  inline double GetAeroPQR(int axis) const {return vAeroPQR(axis);}
-  FGColumnVector3& GetEulerRates(void) { return vEulerRates; }
+  double GetPilotAccel(int idx)  const { return vPilotAccel(idx);  }
+  double GetNpilot(int idx)      const { return vPilotAccelN(idx); }
+  double GetAeroPQR(int axis)    const { return vAeroPQR(axis);    }
   double GetEulerRates(int axis) const { return vEulerRates(axis); }
+  double GetLocationVRP(int i)   const { return vLocationVRP(i);   }
 
-  inline FGColumnVector3& GetAeroUVW (void)    { return vAeroUVW; }
-  inline double           GetAeroUVW (int idx) const { return vAeroUVW(idx); }
+  const FGColumnVector3& GetPilotAccel (void) const { return vPilotAccel;      }
+  const FGColumnVector3& GetNpilot     (void) const { return vPilotAccelN;     }
+  const FGColumnVector3& GetAeroPQR    (void) const { return vAeroPQR;         }
+  const FGColumnVector3& GetEulerRates (void) const { return vEulerRates;      }
+  const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;         }
+  const FGColumnVector3& GetLocationVRP(void) const { return vLocationVRP;     }
 
-  double Getalpha(void) const { return alpha; }
-  double Getbeta (void) const { return beta; }
-  inline double GetMagBeta(void) const { return fabs(beta); }
-  double Getqbar (void) const { return qbar; }
-  double GetqbarUW (void) const { return qbarUW; }
-  double GetqbarUV (void) const { return qbarUV; }
-  inline double GetVt   (void) const { return Vt; }
-  inline double GetVground(void) const { return Vground; }
-  double GetMach (void) const { return Mach; }
-  inline double GetMachU(void) const { return MachU; }
-  double Getadot (void) const { return adot; }
-  double Getbdot (void) const { return bdot; }
+  double GetAeroUVW (int idx) const { return vAeroUVW(idx); }
+  double Getalpha   (void) const { return alpha;      }
+  double Getbeta    (void) const { return beta;       }
+  double Getadot    (void) const { return adot;       }
+  double Getbdot    (void) const { return bdot;       }
+  double GetMagBeta (void) const { return fabs(beta); }
+  double Getqbar    (void) const { return qbar;       }
+  double GetqbarUW  (void) const { return qbarUW;     }
+  double GetqbarUV  (void) const { return qbarUV;     }
+  double GetVt      (void) const { return Vt;         }
+  double GetVground (void) const { return Vground;    }
+  double GetMach    (void) const { return Mach;       }
+  double GetMachU   (void) const { return MachU;      }
 
-  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
-
-  inline void Setalpha(double tt) { alpha = tt; }
-  inline void Setbeta (double tt) { beta  = tt; }
-  inline void Setqbar (double tt) { qbar = tt; }
-  inline void SetqbarUW (double tt) { qbarUW = tt; }
-  inline void SetqbarUV (double tt) { qbarUV = tt; }
-  inline void SetVt   (double tt) { Vt = tt; }
-  inline void SetMach (double tt) { Mach=tt; }
-  inline void Setadot (double tt) { adot = tt; }
-  inline void Setbdot (double tt) { bdot = tt; }
-
-  inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
-  inline double GetEarthPositionAngle(void) const { return earthPosAngle; }
-
-  inline double GetGamma(void) const { return gamma; }
-  inline void SetGamma(double tt) { gamma = tt; }
-  inline double GetGroundTrack(void) const { return psigt; }
-
-  inline void SetDayOfYear(int doy) { day_of_year = doy; }
-  inline int  GetDayOfYear(void) const { return day_of_year; }
-  inline void   SetSecondsInDay(double sid) { seconds_in_day = sid; }
-  inline double GetSecondsInDay(void) const { return seconds_in_day; }
+  double GetGamma(void)              const { return gamma;         }
+  double GetGroundTrack(void)        const { return psigt;         }
+  double GetEarthPositionAngle(void) const { return earthPosAngle; }
 
   double GetHeadWind(void);
   double GetCrossWind(void);
+
+// SET functions
+
+  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
+
+  void Setalpha  (double tt) { alpha = tt;  }
+  void Setbeta   (double tt) { beta  = tt;  }
+  void Setqbar   (double tt) { qbar = tt;   }
+  void SetqbarUW (double tt) { qbarUW = tt; }
+  void SetqbarUV (double tt) { qbarUV = tt; }
+  void SetVt     (double tt) { Vt = tt;     }
+  void SetMach   (double tt) { Mach=tt;     }
+  void Setadot   (double tt) { adot = tt;   }
+  void Setbdot   (double tt) { bdot = tt;   }
+
+  void SetVRP   (FGColumnVector3& vrp) { vVRP = vrp;        }
+  void SetAB    (double t1, double t2) { alpha=t1; beta=t2; }
+  void SetGamma (double tt)            { gamma = tt;        }
+
+// Time routines, SET and GET functions
+
+  void SetDayOfYear    (int doy)    { day_of_year = doy;    }
+  void SetSecondsInDay (double sid) { seconds_in_day = sid; }
+
+  int    GetDayOfYear    (void) const { return day_of_year;    }
+  double GetSecondsInDay (void) const { return seconds_in_day; }
 
   void bind(void);
   void unbind(void);
 
 private:
   double vcas, veas;
-  double rhosl, rho, p, psl, pt, tat, sat, tatc;
-
-  // Don't add a getter for pt!
+  double rhosl, rho, p, psl, pt, tat, sat, tatc; // Don't add a getter for pt!
 
   FGColumnVector3 vPilotAccel;
   FGColumnVector3 vPilotAccelN;
@@ -199,16 +207,24 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
+  FGColumnVector3 vVRP;
+  FGColumnVector3 vVRPoffset;
+  FGColumnVector3 vLocationVRP;
 
+  double hVRP, LongitudeVRP, LatitudeVRP;
   double Vt, Vground, Mach, MachU;
   double qbar, qbarUW, qbarUV;
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;
-  int    day_of_year;     // GMT day, 1 .. 366
   double seconds_in_day;  // seconds since current GMT day began
+  int    day_of_year;     // GMT day, 1 .. 366
 
   double earthPosAngle;
+  double seaLevelRadius; // radius of sea level, in ft.
+  double altitude;       // altitude above sea level, in ft.
+  double groundRadius;   // radius of runway, in ft.
+  double distanceAGL;    // distance above runway, in ft.
 
   void Debug(int from);
 };
@@ -217,4 +233,3 @@ private:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

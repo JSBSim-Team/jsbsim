@@ -41,7 +41,6 @@ libJSBSim_a_SOURCES = \
 	FGThruster.cpp FGThruster.h \
 	FGTrim.cpp FGTrim.h \
 	FGTrimAxis.cpp FGTrimAxis.h \
-	FGTurbine.cpp FGTurbine.h \
 	FGEngine.cpp FGEngine.h \
 	FGTank.cpp FGTank.h \
 	FGfdmSocket.cpp FGfdmSocket.h \

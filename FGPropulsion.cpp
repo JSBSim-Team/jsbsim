@@ -55,7 +55,6 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGRocket.h"
 #include "FGSimTurbine.h"
-#include "FGTurbine.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGPiston.h"
@@ -73,7 +72,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.98 2004/04/08 01:01:17 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.99 2004/04/24 17:12:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -238,13 +237,13 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
       // Look in the Aircraft/Engines directory first
       Cfg_ptr = 0;
       FGConfigFile Local_cfg(localpath + engineFileName + ".xml");
-      FGConfigFile Eng_cfg(fullpath + engineFileName + ".xml"); 
+      FGConfigFile Eng_cfg(fullpath + engineFileName + ".xml");
       if (Local_cfg.IsOpen()) {
         Cfg_ptr = &Local_cfg;
         if (debug_lvl > 0) cout << "\n    Reading engine from file: " << localpath
                                                 + engineFileName + ".xml"<< endl;
       } else {
-        if (Eng_cfg.IsOpen()) {       
+        if (Eng_cfg.IsOpen()) {
           Cfg_ptr = &Eng_cfg;
           if (debug_lvl > 0) cout << "\n    Reading engine from file: " << fullpath
                                                 + engineFileName + ".xml"<< endl;
@@ -262,8 +261,6 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGRocket(FDMExec, Cfg_ptr));
         } else if (engType == "FG_PISTON") {
           Engines.push_back(new FGPiston(FDMExec, Cfg_ptr));
-        } else if (engType == "FG_TURBINE") {
-          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_SIMTURBINE") {
           Engines.push_back(new FGSimTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_ELECTRIC") {
@@ -333,13 +330,13 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
       // Look in the Aircraft/Engines directory first
       Cfg_ptr = 0;
       FGConfigFile Local_Thruster_cfg(localpath + thrusterFileName + ".xml");
-      FGConfigFile Thruster_cfg(fullpath + thrusterFileName + ".xml"); 
+      FGConfigFile Thruster_cfg(fullpath + thrusterFileName + ".xml");
       if (Local_Thruster_cfg.IsOpen()) {
         Cfg_ptr = &Local_Thruster_cfg;
         if (debug_lvl > 0) cout << "\n    Reading thruster from file: " << localpath
                                                 + thrusterFileName + ".xml"<< endl;
       } else {
-        if (Thruster_cfg.IsOpen()) {       
+        if (Thruster_cfg.IsOpen()) {
           Cfg_ptr = &Thruster_cfg;
           if (debug_lvl > 0) cout << "\n    Reading thruster from file: " << fullpath
                                                 + thrusterFileName + ".xml"<< endl;

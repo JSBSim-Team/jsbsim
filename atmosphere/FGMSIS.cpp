@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.8 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.9 2004/04/24 17:13:00 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,8 +154,8 @@ bool MSIS::Run(void)
       Calculate(Auxiliary->GetDayOfYear(),
                 Auxiliary->GetSecondsInDay(),
                 0.0,
-                Propagate->GetLatitude() * radtodeg,
-                Propagate->GetLongitude() * radtodeg);
+                Propagate->GetLocation(eLat) * radtodeg,
+                Propagate->GetLocation(eLong) * radtodeg);
       SLtemperature = output.t[1] * 1.8;
       SLdensity     = output.d[5] * 1.940321;
       SLpressure    = 1716.488 * SLdensity * SLtemperature;
@@ -169,8 +169,8 @@ bool MSIS::Run(void)
       Calculate(Auxiliary->GetDayOfYear(),
                 Auxiliary->GetSecondsInDay(),
                 Propagate->Geth(),
-                Propagate->GetLatitude() * radtodeg,
-                Propagate->GetLongitude() * radtodeg);
+                Propagate->GetLocation(eLat) * radtodeg,
+                Propagate->GetLocation(eLong) * radtodeg);
       intTemperature = output.t[1] * 1.8;
       intDensity     = output.d[5] * 1.940321;
       intPressure    = 1716.488 * intDensity * intTemperature;

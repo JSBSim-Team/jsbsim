@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.51 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.52 2004/04/24 17:12:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.51 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.52 2004/04/24 17:12:57 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,28 +129,6 @@ public:
     double dVal;
   } Message;
 
-  ///@name JSBSim Enums.
-  //@{
-  /// Moments L, M, N
-  enum {eL     = 1, eM,     eN    };
-  /// Rates P, Q, R
-  enum {eP     = 1, eQ,     eR    };
-  /// Velocities U, V, W
-  enum {eU     = 1, eV,     eW    };
-  /// Positions X, Y, Z
-  enum {eX     = 1, eY,     eZ    };
-  /// Euler angles Phi, Theta, Psi
-  enum {ePhi   = 1, eTht,   ePsi  };
-  /// Stability axis forces, Drag, Side force, Lift
-  enum {eDrag  = 1, eSide,  eLift };
-  /// Local frame orientation Roll, Pitch, Yaw
-  enum {eRoll  = 1, ePitch, eYaw  };
-  /// Local frame position North, East, Down
-  enum {eNorth = 1, eEast,  eDown };
-  /// Locations Radius, Latitude, Longitude
-  enum {eLat = 1, eLong, eRad     };
-  //@}
-  
   ///@name JSBSim console output highlighting terms.
   //@{
   /// highlights text
@@ -210,7 +188,7 @@ public:
   Message* ProcessMessage(void);
   //@}
   string GetVersion(void) {return JSBSim_version;}
-  
+
   void disableHighLighting(void);
 
   static short debug_lvl;
@@ -224,14 +202,14 @@ public:
 
 protected:
   static Message localMsg;
-  
+
   static std::queue <Message*> Messages;
 
   virtual void Debug(int from) {};
 
   static unsigned int frame;
   static unsigned int messageId;
-  
+
   static const double radtodeg;
   static const double degtorad;
   static const double hptoftlbssec;
@@ -247,6 +225,26 @@ protected:
   static const string needed_cfg_version;
   static const string JSBSim_version;
 };
+
+/// Moments L, M, N
+enum {eL     = 1, eM,     eN    };
+/// Rates P, Q, R
+enum {eP     = 1, eQ,     eR    };
+/// Velocities U, V, W
+enum {eU     = 1, eV,     eW    };
+/// Positions X, Y, Z
+enum {eX     = 1, eY,     eZ    };
+/// Euler angles Phi, Theta, Psi
+enum {ePhi   = 1, eTht,   ePsi  };
+/// Stability axis forces, Drag, Side force, Lift
+enum {eDrag  = 1, eSide,  eLift };
+/// Local frame orientation Roll, Pitch, Yaw
+enum {eRoll  = 1, ePitch, eYaw  };
+/// Local frame position North, East, Down
+enum {eNorth = 1, eEast,  eDown };
+/// Locations Radius, Latitude, Longitude
+enum {eLat = 1, eLong, eRad     };
+
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

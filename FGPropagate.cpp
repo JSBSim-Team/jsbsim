@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.8 2004/04/18 02:45:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.9 2004/04/24 17:12:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,8 +96,6 @@ CLASS IMPLEMENTATION
 FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPropagate";
-
-  vVRPoffset.InitMatrix();
 
   vUVWdot.InitMatrix();
   vUVWdot_prev[0].InitMatrix();
@@ -111,7 +109,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   vPQRdot_prev[2].InitMatrix();
   vPQRdot_prev[3].InitMatrix();
 
-  LongitudeVRP = LatitudeVRP = 0.0;
   hoverbmac = hoverbcg = 0.0;
   bind();
   Debug(0);
@@ -131,27 +128,24 @@ bool FGPropagate::InitModel(void)
 {
   FGModel::InitModel();
 
-  h = 3.0;                                           // Est. height of aircraft cg off runway
   SeaLevelRadius   = Inertial->RefRadius();          // For initialization ONLY
-  vLocation(eRad)  = SeaLevelRadius + h;
+  vLocation(eRad)  = SeaLevelRadius + 4.0;
   RunwayRadius     = SeaLevelRadius;
-  DistanceAGL      = vLocation(eRad) - RunwayRadius; // Geocentric
-  vRunwayNormal(3) = -1.0;                           // Initialized for standalone mode
   b = 1;
   return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
-Purpose: Called on a schedule to perform Propagating algorithms
-Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
-         be the case
-         [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
-               In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
+Purpose: Called on a schedule to perform EOM integration
+Notes:   [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
+         In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
 */
 
 bool FGPropagate::Run(void)
 {
+  double DistanceAGL;
+
   if (!FGModel::Run()) {
     double dt = State->Getdt()*rate;
     const FGColumnVector3& vMoments = Aircraft->GetMoments();
@@ -175,22 +169,6 @@ bool FGPropagate::Run(void)
     vLocationDot = toGlobe(vVel);
     vLocation += State->Integrate(FGState::TRAPZ, dt, vLocationDot, vLocationDot_prev);
 
-    // Update altitude parameter
-    h = vLocation(eRad) - SeaLevelRadius;           // Geocentric
-
-    vVRPoffset = vQtrn.GetTInv() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
-
-    // vVRP  - the vector to the Visual Reference Point - now contains the
-    // offset from the CG to the VRP, in units of feet, in the Local coordinate
-    // frame, where X points north, Y points East, and Z points down. This needs
-    // to be converted to Lat/Lon/Alt, now.
-
-    if (cos(vLocation(eLat)) != 0)
-      LongitudeVRP = vVRPoffset(eEast) / (vLocation(eRad) * cos(vLocation(eLat))) + vLocation(eLong);
-
-    LatitudeVRP = vVRPoffset(eNorth) / vLocation(eRad) + vLocation(eLat);
-    hVRP = h - vVRPoffset(eDown);
-
     DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
 
     b = Aircraft->GetWingSpan();
@@ -198,7 +176,6 @@ bool FGPropagate::Run(void)
 
     vMac = vQtrn.GetTInv()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
     hoverbmac = (DistanceAGL + vMac(3)) / b;
-
     return false;
 
   } else {
@@ -210,28 +187,22 @@ bool FGPropagate::Run(void)
 
 void FGPropagate::Seth(double tt)
 {
-  h = tt;
-  vLocation(eRad) = h + SeaLevelRadius;
-  DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
-  hoverbcg = DistanceAGL/b;
+  vLocation(eRad) = tt + SeaLevelRadius;
+  hoverbcg = (vLocation(eRad) - RunwayRadius)/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  DistanceAGL=tt;
-  vLocation(eRad) = RunwayRadius + DistanceAGL;
-  h = vLocation(eRad) - SeaLevelRadius;
-  hoverbcg = DistanceAGL/b;
+  vLocation(eRad) = RunwayRadius + tt;
+  hoverbcg = tt/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector3& FGPropagate::toGlobe(FGColumnVector3& V)
 {
-  vLocation(eRad) = h + SeaLevelRadius;
-
   if (cos(vLocation(eLat)) != 0) vLocationDot(eLong) = V(eEast) / (vLocation(eRad) * cos(vLocation(eLat)));
   vLocationDot(eLat) = V(eNorth) / vLocation(eRad);
   vLocationDot(eRad) = -V(eDown);
@@ -267,10 +238,10 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("accelerations/wdot-fps", this, eW, (PMF)&FGPropagate::GetUVWdot);
 
   PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
-  PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
-  PropertyManager->Tie("position/lat-dot-gc-rad", this, &FGPropagate::GetLatitudeDot);
-  PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude, true);
-  PropertyManager->Tie("position/long-dot-gc-rad", this, &FGPropagate::GetLongitudeDot);
+  PropertyManager->Tie("position/lat-gc-rad", this, eLat, (PMF)&FGPropagate::GetLocation, &FGPropagate::SetLocation);
+  PropertyManager->Tie("position/lat-dot-gc-rad", this, eLat, (PMF)&FGPropagate::GetLocationDot);
+  PropertyManager->Tie("position/long-gc-rad", this, eLong, (PMF)&FGPropagate::GetLocation, &FGPropagate::SetLocation, true);
+  PropertyManager->Tie("position/long-dot-gc-rad", this, eLong, (PMF)&FGPropagate::GetLocationDot);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
 

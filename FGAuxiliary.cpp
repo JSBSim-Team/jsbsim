@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.53 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.54 2004/04/24 17:12:57 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vToEyePt.InitMatrix();
   vAeroPQR.InitMatrix();
   vEulerRates.InitMatrix();
+  LongitudeVRP = LatitudeVRP = 0.0;
+  vVRPoffset.InitMatrix();
 
   bind();
 
@@ -101,10 +103,10 @@ FGAuxiliary::~FGAuxiliary()
 bool FGAuxiliary::Run()
 {
   double A,B,D, hdot_Vt;
-  FGColumnVector3& vPQR = Propagate->GetPQR();
-  FGColumnVector3& vUVW = Propagate->GetUVW();
-  FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
-  FGColumnVector3& vVel = Propagate->GetVel();
+  const FGColumnVector3& vPQR = Propagate->GetPQR();
+  const FGColumnVector3& vUVW = Propagate->GetUVW();
+  const FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
+  const FGColumnVector3& vVel = Propagate->GetVel();
 
   if (!FGModel::Run())
   {
@@ -216,6 +218,20 @@ bool FGAuxiliary::Run()
     vPilotAccelN = vPilotAccel/Inertial->gravity();
 
     earthPosAngle += State->Getdt()*Inertial->omega();
+
+    const FGColumnVector3& vLocation = Propagate->GetLocation();
+    vVRPoffset = Propagate->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
+
+    // vVRP  - the vector to the Visual Reference Point - now contains the
+    // offset from the CG to the VRP, in units of feet, in the Local coordinate
+    // frame, where X points north, Y points East, and Z points down. This needs
+    // to be converted to Lat/Lon/Alt, now.
+
+    if (cos(vLocation(eLat)) != 0)
+      vLocationVRP(eLong) = vVRPoffset(eEast) / (vLocation(eRad) * cos(vLocation(eLat))) + vLocation(eLong);
+
+    vLocationVRP(eLat) = vVRPoffset(eNorth) / vLocation(eRad) + vLocation(eLat);
+    vLocationVRP(eRad) = Propagate->Geth() - vVRPoffset(eDown); // this is really a height, not a radius
 
     return false;
   } else {

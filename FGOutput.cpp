@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.85 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.86 2004/04/24 17:12:57 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,8 +212,8 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Phi, Tht, Psi, ";
       outstream << "Alpha, ";
       outstream << "Beta, ";
-      outstream << "Latitude, ";
-      outstream << "Longitude, ";
+      outstream << "Latitude (Deg), ";
+      outstream << "Longitude (Deg), ";
       outstream << "Distance AGL, ";
       outstream << "Runway Radius";
     }
@@ -301,8 +301,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Propagate->GetEuler() << ", ";
     outstream << Auxiliary->Getalpha() << ", ";
     outstream << Auxiliary->Getbeta() << ", ";
-    outstream << Propagate->GetLatitude() << ", ";
-    outstream << Propagate->GetLongitude() << ", ";
+    outstream << Propagate->GetLocation(eLat)*radtodeg << ", ";
+    outstream << Propagate->GetLocation(eLong)*radtodeg << ", ";
     outstream << Propagate->GetDistanceAGL() << ", ";
     outstream << Propagate->GetRunwayRadius();
   }
@@ -371,8 +371,8 @@ void FGOutput::SocketOutput(void)
     socket->Append("Fx");
     socket->Append("Fy");
     socket->Append("Fz");
-    socket->Append("Latitude");
-    socket->Append("Longitude");
+    socket->Append("Latitude (Deg)");
+    socket->Append("Longitude (Deg)");
     socket->Append("QBar");
     socket->Append("Alpha");
     socket->Append("L");
@@ -416,8 +416,8 @@ void FGOutput::SocketOutput(void)
   socket->Append(Aircraft->GetForces(eX));
   socket->Append(Aircraft->GetForces(eY));
   socket->Append(Aircraft->GetForces(eZ));
-  socket->Append(Propagate->GetLatitude());
-  socket->Append(Propagate->GetLongitude());
+  socket->Append(Propagate->GetLocation(eLat)*radtodeg);
+  socket->Append(Propagate->GetLocation(eLong)*radtodeg);
   socket->Append(Auxiliary->Getqbar());
   socket->Append(Auxiliary->Getalpha());
   socket->Append(Aircraft->GetMoments(eL));

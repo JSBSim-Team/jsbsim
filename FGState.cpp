@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.135 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.136 2004/04/24 17:12:58 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,9 +113,9 @@ void FGState::Initialize(double U, double V, double W,
   FGColumnVector3 vAeroUVW;
   FGColumnVector3 vUVW;
 
-  Propagate->SetLatitude(Latitude);
-  Propagate->SetLongitude(Longitude);
-  Propagate->Seth(H);
+  Propagate->SetLocation(eLat, Latitude);
+  Propagate->SetLocation(eLong, Longitude);
+  Propagate->Seth(H); // Set altitude above Sea Level
 
   Atmosphere->Run();
 

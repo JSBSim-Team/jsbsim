@@ -27,7 +27,7 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This base class for the FGAero, FGPropagation, etc. classes defines methods
+This base class for the FGAerodynamics, FGPropagate, etc. classes defines methods
 common to all models.
 
 HISTORY
@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.29 2004/04/18 11:40:48 frohlich Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.30 2004/04/24 17:12:57 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
