@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.19 2004/03/06 17:05:30 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.20 2004/03/06 18:18:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -110,14 +110,45 @@ public:
     eColumns = 3
   };
 
+  /** Default initializer.
+   *
+   * Creat a zero matrix.
+   */
   FGMatrix33(void);
-  FGMatrix33(int r, int c);
-  FGMatrix33(const FGMatrix33& A);
-  FGMatrix33(double x1, double x2, double x3,
-             double y1, double y2, double y3,
-             double z1, double z2, double z3);
 
+  /** Copy constructor.
+   *
+   * \param A Matrix which is used for initialization.
+   *
+   * Creat copy of the matrix given in the argument.
+   */
+  FGMatrix33(const FGMatrix33& A);
+
+  /** Initialization by given values.
+   *
+   * \param m11 value of the 1,1 Matrix element.
+   * \param m12 value of the 1,2 Matrix element.
+   * \param m13 value of the 1,3 Matrix element.
+   * \param m21 value of the 2,1 Matrix element.
+   * \param m22 value of the 2,2 Matrix element.
+   * \param m23 value of the 2,3 Matrix element.
+   * \param m31 value of the 3,1 Matrix element.
+   * \param m32 value of the 3,2 Matrix element.
+   * \param m33 value of the 3,3 Matrix element.
+   *
+   * Creat a matrix from the doubles given in the arguments.
+   */
+  FGMatrix33(double m11, double m12, double m13,
+             double m21, double m22, double m23,
+             double m31, double m32, double m33);
+
+  /** Destructor.
+   */
   ~FGMatrix33(void);
+
+  // ???
+  FGMatrix33(int r, int c);
+
 
   /** Read access the entries of the matrix.
    \param row Row index.
@@ -189,10 +220,6 @@ public:
     */
    unsigned int Cols(void) const { return eColumns; }
 
-
-   FGMatrix33& operator=(const FGMatrix33& A);
-   FGColumnVector3 operator*(const FGColumnVector3& Col) const;
-
   void T(void);
   void InitMatrix(void);
   void InitMatrix(double value);
@@ -224,7 +251,9 @@ public:
    */
   FGMatrix33 Inverse(void) const;
 
-  //friend FGMatrix33 operator*(double scalar,FGMatrix33& A);
+  FGMatrix33& operator=(const FGMatrix33& A);
+
+  FGColumnVector3 operator*(const FGColumnVector3& Col) const;
 
   FGMatrix33 operator-(const FGMatrix33& B) const;
   FGMatrix33 operator+(const FGMatrix33& B) const;
@@ -232,9 +261,6 @@ public:
   FGMatrix33 operator*(const double scalar) const;
   FGMatrix33 operator/(const double scalar) const;
   FGMatrix33& operator<<(const double ff);
-
-  friend ostream& operator<<(ostream& os, const FGMatrix33& M);
-  friend istream& operator>>(istream& is, FGMatrix33& M);
 
   void operator-=(const FGMatrix33 &B);
   void operator+=(const FGMatrix33 &B);
@@ -246,9 +272,27 @@ protected:
   double data[eRows*eColumns];
 
 private:
-  void TransposeSquare(void);
   unsigned int rowCtr, colCtr;
   void Debug(int from);
 };
+
+/** Write matrix to a stream.
+ *
+ * \param os Stream to write to.
+ * \param M Matrix to write.
+ *
+ * Write the matrix to a stream.
+ */
+ostream& operator<<(ostream& os, const FGMatrix33& M);
+
+/** Read matrix from a stream.
+ *
+ * \param os Stream to read from.
+ * \param M Matrix to initialize with the values from the stream.
+ *
+ * Read matrix from a stream.
+ */
+istream& operator>>(istream& is, FGMatrix33& M);
+
 }
 #endif
