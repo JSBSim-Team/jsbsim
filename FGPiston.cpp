@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.67 2004/06/20 16:14:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.68 2004/10/14 00:15:37 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -703,6 +703,7 @@ string FGPiston::GetEngineLabels(void)
   std::ostringstream buf;
 
   buf << Name << "_PwrAvail[" << EngineNumber << "], "
+      << Name << "_HP[" << EngineNumber << "], "
       << Thruster->GetThrusterLabels(EngineNumber);
 
   return buf.str();
@@ -714,7 +715,7 @@ string FGPiston::GetEngineValues(void)
 {
   std::ostringstream buf;
 
-  buf << PowerAvailable << ", " << Thruster->GetThrusterValues(EngineNumber);
+  buf << PowerAvailable << ", " << HP << ", " << Thruster->GetThrusterValues(EngineNumber);
 
   return buf.str();
 }
