@@ -331,9 +331,9 @@
          FG_FLAPS_POS
          FG_QBAR|FG_WINGAREA|FG_CBAR
          0    0
-         10     -0.0654
+         10  -0.0654
          20  -0.0981
-         30  -0.0114
+         30  -0.1140
        </COEFFICIENT>      
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
          Pitch_moment_due_to_pitch_rate
