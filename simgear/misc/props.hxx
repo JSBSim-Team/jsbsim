@@ -6,25 +6,36 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.1 2002/03/18 11:59:45 apeden Exp $
+ * $Id: props.hxx,v 1.2 2002/03/20 11:42:46 apeden Exp $
  */
 
 #ifndef __PROPS_HXX
 #define __PROPS_HXX
 
-#include <simgear/compiler.h>
-
-#ifndef NOSIMGEAR
-#  include <simgear/debug/logstream.hxx>
+#ifndef PROPS_STANDALONE
+#define PROPS_STANDALONE 1
 #endif
 
-#include <stdio.h>
-
-#include STL_STRING
 #include <vector>
 #include <map>
-#include STL_IOSTREAM
 
+#if PROPS_STANDALONE
+
+#include <string>
+#include <iostream>
+
+using std::string;
+using std::vector;
+using std::map;
+using std::istream;
+using std::ostream;
+
+#else
+
+#include <simgear/compiler.h>
+#include <simgear/debug/logstream.hxx>
+#include STL_STRING
+#include STL_IOSTREAM
 SG_USING_STD(string);
 SG_USING_STD(vector);
 SG_USING_STD(map);
@@ -32,6 +43,9 @@ SG_USING_STD(map);
 SG_USING_STD(istream);
 SG_USING_STD(ostream);
 #endif
+
+#endif
+
 
 #ifdef NONE
 #pragma warn A sloppy coder has defined NONE as a macro!
@@ -86,40 +100,50 @@ SG_USING_STD(ostream);
 // This is the mechanism that information-providing routines can
 // use to link their own values to the property manager.  Any
 // SGValue can be tied to a raw value and then untied again.
+//
+// Note: we are forced to use inlined methods here to ensure
+// that the templates will be instantiated.  We're probably taking
+// a small performance hit for that.
 ////////////////////////////////////////////////////////////////////////
 
 
 /**
  * Abstract base class for a raw value.
  *
- * The property manager is implemented in three layers.  The {@link
+ * <p>The property manager is implemented in two layers.  The {@link
  * SGPropertyNode} is the highest and most abstract layer,
- * representing * an LValue/RValue pair: it * records the position
- * of the property in the property tree and * contains facilities
- * for navigation to other nodes.  Each node * may contain an {@link
- * SGValue}, which is guaranteed persistent: the * {@link SGValue}
- * will not change during a session, even if the * property is bound
- * and unbound multiple times.  The SGValue is the * abstraction of
- * an RValue: it allows for conversion among all of the different
- * types, and can be bound to external pointers, functions, methods,
- * or other data sources.  Every SGValue contains an SGRawValue of
- * a specific type.  The SGRawValue (this class) may change frequently
- * during a session as a value is retyped or bound and unbound to
- * various data source, but the abstract SGValue layer insulates
- * the application from those changes.  The raw value contains no
- * facilities for data binding or for type conversion: it is simply
- * the abstraction of a primitive data type (or a compound data
- * type, in the case of a string).
+ * representing an LValue/RValue pair: it records the position of the
+ * property in the property tree and contains facilities for
+ * navigation to other nodes.  It is guaranteed to be persistent: the
+ * {@link SGPropertyNode} will not change during a session, even if
+ * the property is bound and unbound multiple times.</p>
  *
- * The SGValue class always keeps a *copy* of a raw value, not the
- * original one passed to it; if you override a derived class but do
- * not replace the {@link #clone} method, strange things will happen.
+ * <p>When the property value is not managed internally in the
+ * SGPropertyNode, the SGPropertyNode will contain a reference to an
+ * SGRawValue (this class), which provides an abstract way to get,
+ * set, and clone the underlying value.  The SGRawValue may change
+ * frequently during a session as a value is retyped or bound and
+ * unbound to various data source, but the abstract SGPropertyNode
+ * layer insulates the application from those changes.  The raw value
+ * contains no facilities for data binding or for type conversion: it
+ * is simply the abstraction of a primitive data type (or a compound
+ * data type, in the case of a string).</p>
  *
- * All raw values must implement {@link #getValue}, {@link #setValue},
- * and {@link #clone} for the appropriate type.
+ * <p>The SGPropertyNode class always keeps a *copy* of a raw value,
+ * not the original one passed to it; if you override a derived class
+ * but do not replace the {@link #clone} method, strange things will
+ * happen.</p>
  *
- * @see SGValue
- * @see SGPropertyNode */
+ * <p>All derived SGRawValue classes must implement {@link #getValue},
+ * {@link #setValue}, and {@link #clone} for the appropriate type.</p>
+ *
+ * @see SGPropertyNode
+ * @see SGRawValuePointer
+ * @see SGRawValueFunctions
+ * @see SGRawValueFunctionsIndexed
+ * @see SGRawValueMethods
+ * @see SGRawValueMethodsIndexed
+ */
 template <class T>
 class SGRawValue
 {
@@ -184,61 +208,6 @@ public:
    * @return A deep copy of the current object.
    */
   virtual SGRawValue * clone () const = 0;
-};
-
-
-/**
- * An unbound raw value, stored internally.
- *
- * Instances of this class are created automatically, by default,
- * by the SGValue class; ordinarily the application should not
- * need to touch it.
- */
-template <class T>
-class SGRawValueInternal : public SGRawValue<T>
-{
-public:
-
-  /**
-   * Default constructor.
-   *
-   * Initialize with the default value for this type.
-   */
-  SGRawValueInternal () {}
-
-  /**
-   * Explicit value constructor.
-   *
-   * Initialize with the underlying value provided.
-   *
-   * @param value The initial value for this property.
-   */
-  SGRawValueInternal (T value) : _value(value) {}
-
-  /**
-   * Destructor.
-   */
-  virtual ~SGRawValueInternal () {}
-
-  /**
-   * Get the underlying value.
-   */
-  virtual T getValue () const { return _value; }
-
-  /**
-   * Set the underlying value.
-   */
-  virtual bool setValue (T value) { _value = value; return true; }
-
-  /**
-   * Create a deep copy of this raw value.
-   */
-  virtual SGRawValue<T> * clone () const {
-    return new SGRawValueInternal<T>(_value);
-  }
-
-private:
-  T _value;
 };
 
 
@@ -386,6 +355,8 @@ private:
  * not have a getter.  An indexed value is useful for binding one
  * of a list of possible values (such as multiple engines for a
  * plane).  The index is hard-coded at creation time.
+ *
+ * @see SGRawValue
  */
 template <class T>
 class SGRawValueFunctionsIndexed : public SGRawValue<T>
@@ -488,9 +459,14 @@ private:
  */
 class SGPropertyNode
 {
-
 public:
 
+  /**
+   * Public constants.
+   */
+  enum {
+    MAX_STRING_LEN = 1024
+  };
 
   /**
    * Property value types.
@@ -555,7 +531,7 @@ public:
   /**
    * Get the node's simple (XML) name.
    */
-  const string &getName () const { return _name; }
+  const char * getName () const { return _name; }
 
 
   /**
@@ -602,26 +578,26 @@ public:
   /**
    * Get a child node by name and index.
    */
-  SGPropertyNode * getChild (const string &name, int index = 0,
+  SGPropertyNode * getChild (const char * name, int index = 0,
 			     bool create = false);
 
 
   /**
    * Get a const child node by name and index.
    */
-  const SGPropertyNode * getChild (const string &name, int index = 0) const;
+  const SGPropertyNode * getChild (const char * name, int index = 0) const;
 
 
   /**
    * Get a vector of all children with the specified name.
    */
-  vector<SGPropertyNode *> getChildren (const string &name);
+  vector<SGPropertyNode *> getChildren (const char * name);
 
 
   /**
    * Get a vector all all children (const) with the specified name.
    */
-  vector<const SGPropertyNode *> getChildren (const string &name) const;
+  vector<const SGPropertyNode *> getChildren (const char * name) const;
 
 
   //
@@ -638,7 +614,7 @@ public:
   /**
    * Alias this node's leaf value to another's by relative path.
    */
-  bool alias (const string &path);
+  bool alias (const char * path);
 
 
   /**
@@ -673,7 +649,7 @@ public:
   /**
    * Get the path to this node from the root.
    */
-  string getPath (bool simplify = false) const;
+  const char * getPath (bool simplify = false) const;
 
 
   /**
@@ -691,7 +667,7 @@ public:
   /**
    * Get a pointer to another node by relative path.
    */
-  SGPropertyNode * getNode (const string &relative_path, bool create = false);
+  SGPropertyNode * getNode (const char * relative_path, bool create = false);
 
 
   /**
@@ -704,14 +680,14 @@ public:
    * provided overrides any given in the path itself for the last
    * component.
    */
-  SGPropertyNode * getNode (const string &relative_path, int index,
+  SGPropertyNode * getNode (const char * relative_path, int index,
 			    bool create = false);
 
 
   /**
    * Get a const pointer to another node by relative path.
    */
-  const SGPropertyNode * getNode (const string &relative_path) const;
+  const SGPropertyNode * getNode (const char * relative_path) const;
 
 
   /**
@@ -720,7 +696,7 @@ public:
    * This method leaves the index off the last member of the path,
    * so that the user can specify it separate.
    */
-  const SGPropertyNode * getNode (const string &relative_path,
+  const SGPropertyNode * getNode (const char * relative_path,
 				  int index) const;
 
 
@@ -798,7 +774,7 @@ public:
   /**
    * Get a string value for this node.
    */
-  string getStringValue () const;
+  const char * getStringValue () const;
 
 
 
@@ -835,13 +811,13 @@ public:
   /**
    * Set a string value for this node.
    */
-  bool setStringValue (string value);
+  bool setStringValue (const char * value);
 
 
   /**
    * Set a value of unspecified type for this node.
    */
-  bool setUnspecifiedValue (string value);
+  bool setUnspecifiedValue (const char * value);
 
 
   //
@@ -888,7 +864,7 @@ public:
   /**
    * Bind this node to an external string source.
    */
-  bool tie (const SGRawValue<string> &rawValue, bool useDefault = true);
+  bool tie (const SGRawValue<const char *> &rawValue, bool useDefault = true);
 
 
   /**
@@ -906,151 +882,151 @@ public:
   /**
    * Get another node's type.
    */
-  Type getType (const string &relative_path) const;
+  Type getType (const char * relative_path) const;
 
 
   /**
    * Test whether another node has a leaf value.
    */
-  bool hasValue (const string &relative_path) const;
+  bool hasValue (const char * relative_path) const;
 
 
   /**
    * Get another node's value as a bool.
    */
-  bool getBoolValue (const string &relative_path,
+  bool getBoolValue (const char * relative_path,
 		     bool defaultValue = false) const;
 
 
   /**
    * Get another node's value as an int.
    */
-  int getIntValue (const string &relative_path,
+  int getIntValue (const char * relative_path,
 		   int defaultValue = 0) const;
 
 
   /**
    * Get another node's value as a long int.
    */
-  long getLongValue (const string &relative_path,
+  long getLongValue (const char * relative_path,
 		     long defaultValue = 0L) const;
 
 
   /**
    * Get another node's value as a float.
    */
-  float getFloatValue (const string &relative_path,
+  float getFloatValue (const char * relative_path,
 		       float defaultValue = 0.0) const;
 
 
   /**
    * Get another node's value as a double.
    */
-  double getDoubleValue (const string &relative_path,
+  double getDoubleValue (const char * relative_path,
 			 double defaultValue = 0.0L) const;
 
 
   /**
    * Get another node's value as a string.
    */
-  string getStringValue (const string &relative_path,
-			 string defaultValue = "") const;
+  const char * getStringValue (const char * relative_path,
+			       const char * defaultValue = "") const;
 
 
   /**
    * Set another node's value as a bool.
    */
-  bool setBoolValue (const string &relative_path, bool value);
+  bool setBoolValue (const char * relative_path, bool value);
 
 
   /**
    * Set another node's value as an int.
    */
-  bool setIntValue (const string &relative_path, int value);
+  bool setIntValue (const char * relative_path, int value);
 
 
   /**
    * Set another node's value as a long int.
    */
-  bool setLongValue (const string &relative_path, long value);
+  bool setLongValue (const char * relative_path, long value);
 
 
   /**
    * Set another node's value as a float.
    */
-  bool setFloatValue (const string &relative_path, float value);
+  bool setFloatValue (const char * relative_path, float value);
 
 
   /**
    * Set another node's value as a double.
    */
-  bool setDoubleValue (const string &relative_path, double value);
+  bool setDoubleValue (const char * relative_path, double value);
 
 
   /**
    * Set another node's value as a string.
    */
-  bool setStringValue (const string &relative_path, string value);
+  bool setStringValue (const char * relative_path, const char * value);
 
 
   /**
    * Set another node's value with no specified type.
    */
-  bool setUnspecifiedValue (const string &relative_path, string value);
+  bool setUnspecifiedValue (const char * relative_path, const char * value);
 
 
   /**
    * Test whether another node is bound to an external data source.
    */
-  bool isTied (const string &relative_path) const;
+  bool isTied (const char * relative_path) const;
 
 
   /**
    * Bind another node to an external bool source.
    */
-  bool tie (const string &relative_path, const SGRawValue<bool> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<bool> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Bind another node to an external int source.
    */
-  bool tie (const string &relative_path, const SGRawValue<int> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<int> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Bind another node to an external long int source.
    */
-  bool tie (const string &relative_path, const SGRawValue<long> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<long> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Bind another node to an external float source.
    */
-  bool tie (const string &relative_path, const SGRawValue<float> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<float> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Bind another node to an external double source.
    */
-  bool tie (const string &relative_path, const SGRawValue<double> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<double> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Bind another node to an external string source.
    */
-  bool tie (const string &relative_path, const SGRawValue<string> &rawValue,
+  bool tie (const char * relative_path, const SGRawValue<const char *> &rawValue,
 	    bool useDefault = true);
 
 
   /**
    * Unbind another node from any external data source.
    */
-  bool untie (const string &relative_path);
+  bool untie (const char * relative_path);
 
 
 protected:
@@ -1059,10 +1035,26 @@ protected:
   /**
    * Protected constructor for making new nodes on demand.
    */
-  SGPropertyNode (const string &name, int index, SGPropertyNode * parent);
+  SGPropertyNode (const char * name, int index, SGPropertyNode * parent);
 
 
 private:
+
+				// Get the raw value
+  bool get_bool () const;
+  int get_int () const;
+  long get_long () const;
+  float get_float () const;
+  double get_double () const;
+  const char * get_string () const;
+
+				// Set the raw value
+  bool set_bool (bool value);
+  bool set_int (int value);
+  bool set_long (long value);
+  bool set_float (float value);
+  bool set_double (double value);
+  bool set_string (const char * value);
 
 
   /**
@@ -1074,21 +1066,23 @@ private:
   /**
    * Get the value as a string.
    */
-  string get_string () const;
+  const char * make_string () const;
 
 
   /**
    * Trace a read access.
    */
-  void trace_read (Type accessType) const;
+  void trace_read () const;
 
 
   /**
    * Trace a write access.
    */
-  void trace_write (Type accessType) const;
+  void trace_write () const;
 
-  string _name;
+  mutable char _buffer[MAX_STRING_LEN+1];
+
+  const char * _name;
   int _index;
   SGPropertyNode * _parent;
   vector<SGPropertyNode *> _children;
@@ -1106,8 +1100,17 @@ private:
     SGRawValue<long> * long_val;
     SGRawValue<float> * float_val;
     SGRawValue<double> * double_val;
-    SGRawValue<string> * string_val;
+    SGRawValue<const char *> * string_val;
   } _value;
+
+  union {
+    bool bool_val;
+    int int_val;
+    long long_val;
+    float float_val;
+    double double_val;
+    const char * string_val;
+  } _local_val;
 
 
 };
