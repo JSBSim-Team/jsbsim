@@ -49,27 +49,12 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.50 2001/12/22 16:11:31 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.51 2001/12/22 16:18:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-/*
-class FGState;
-class FGAtmosphere;
-class FGFCS;
-class FGPropulsion;
-class FGMassBalance;
-class FGAerodynamics;
-class FGInertial;
-class FGGroundReactions;
-class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
-class FGAuxiliary;
-class FGOutput;
-*/
+
 class FGInitialCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +67,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.50 2001/12/22 16:11:31 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.51 2001/12/22 16:18:36 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
