@@ -56,8 +56,8 @@ INCLUDES
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
 
-  max_iterations=40;
-  max_sub_iterations=10;
+  max_iterations=60;
+  max_sub_iterations=20;
   Tolerance=1E-3;
   A_Tolerance = Tolerance / 10;
 
@@ -119,12 +119,12 @@ void FGTrim::TrimStats() {
     cout << "    Sub-iterations:" << endl;
     for(current_axis=0; current_axis<NumAxes; current_axis++) {
       
-      sprintf(out,"   %5s: %3.0f average: %5.2f stability: %5.2f  successful: %3.0f\n",
+      sprintf(out,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
                   TrimAxes[current_axis]->GetAccelName().c_str(),
                   sub_iterations[current_axis],
                   sub_iterations[current_axis]/float(total_its),
-                  TrimAxes[current_axis]->GetAvgStability(),
-                  successful[current_axis] );
+                  successful[current_axis],
+                  TrimAxes[current_axis]->GetAvgStability() );
       cout << out;
     }
   }
@@ -193,63 +193,6 @@ void FGTrim::ReportState(void) {
   sprintf(out, "    Throttle: %5.2f\%\n",
                     fdmex->GetFCS()->GetThrottlePos(0) );
   cout << out;                                  
-  
-  
-  /* cout << "    Weight: " << fdmex->GetAircraft()->GetWeight()
-  << " lbs.  CG x,y,z: " << fdmex->GetAircraft()->GetXYZcg()
-  << " inches " << endl;
-
-  cout << "    Flaps: ";
-  float flaps=fdmex->GetFCS()->GetDfPos();
-  if(flaps <= 0.01)
-    cout << "Up";
-  else
-    cout << flaps;
-
-  cout << "  Gear: ";
-  if(fdmex->GetAircraft()->GetGearUp() == true)
-    cout << "Up" << endl;
-  else
-    cout << "Down" << endl;
-
-  cout << "    Speed: " << fdmex->GetAuxiliary()->GetVcalibratedKTS()
-  << " KCAS  Mach: " << fdmex->GetState()->GetParameter(FG_MACH)
-  << endl;
-
-  cout << "    Altitude: " << fdmex->GetPosition()->Geth() << " ft" << endl;
-
-
-  cout << "    Pitch Angle: " << fdmex->GetRotation()->Gettht()*RADTODEG
-  << " deg  Angle of Attack: " << fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG
-  << " deg" << endl;
-
-
-  cout << "    Flight Path Angle: "
-  << fdmex->GetPosition()->GetGamma()*RADTODEG
-  << " deg" << endl;
-
-
-  cout << "    Normal Load Factor: " << fdmex->GetAircraft()->GetNlf() << endl;
-
-  cout << "    Pitch Rate: " << fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG
-  << " deg/s" << endl;
-
-  cout << "    Roll Angle: " << fdmex->GetRotation()->Getphi()*RADTODEG
-  << " deg  Roll Rate: " << fdmex->GetState()->GetParameter(FG_ROLLRATE)
-  << " deg/s"
-  << endl ;
-
-  cout << "    Sideslip: " << fdmex->GetState()->GetParameter(FG_BETA) *RADTODEG
-  << " deg  Yaw Rate: " << fdmex->GetState()->GetParameter(FG_YAWRATE)*RADTODEG
-  << " deg/s " << endl;
-
-  cout << "    Elevator: " << fdmex->GetState()->GetParameter(FG_ELEVATOR_POS)*RADTODEG
-  << " deg  Left Aileron: " << fdmex->GetState()->GetParameter(FG_AILERON_POS)*RADTODEG
-  << " deg  Rudder: " << fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG
-  << " deg" << endl;
-
-  cout << "    Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)/100 << endl; */
-
 }
 
 /******************************************************************************/
@@ -385,15 +328,16 @@ bool FGTrim::DoTrim(void) {
         if(fabs(TrimAxes[current_axis]->GetAccel())
             > TrimAxes[current_axis]->GetTolerance()) {
 
-          TrimAxes[current_axis]->checkLimits();
-          if(TrimAxes[current_axis]->GetSolutionDomain() == 0) {
+          
+          if( !TrimAxes[current_axis]->checkLimits() || 
+                TrimAxes[current_axis]->GetSolutionDomain() == 0) {
             // special case this for now -- if other cases arise proper
             // support can be added to FGTrimAxis
             if( (gamma_fallback) &&
                 (TrimAxes[current_axis]->GetAccelType() == tUdot) &&
                 (TrimAxes[current_axis]->GetControlType() == tThrottle)) {
               cout << "  Can't trim udot with throttle, trying flight"
-              << " path angle." << endl;
+              << " path angle. (" << k << ")" << endl;
               if(TrimAxes[current_axis]->GetAccel() > 0)
                 TrimAxes[current_axis]->SetControlToMin();
               else
