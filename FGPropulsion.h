@@ -38,7 +38,7 @@ SENTRY
 #ifndef FGPROPULSION_H
 #define FGPROPULSION_H
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.4 2000/10/16 12:32:47 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.5 2000/11/20 23:59:45 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -57,7 +57,11 @@ INCLUDES
 
 #include "FGModel.h"
 
-#include "FGEngine.h"
+#include "FGRocket.h"
+#include "FGPiston.h"
+#include "FGTurboShaft.h"
+#include "FGTurboJet.h"
+#include "FGTurboProp.h"
 #include "FGTank.h"
 #include "FGThruster.h"
 #include "FGConfigFile.h"
