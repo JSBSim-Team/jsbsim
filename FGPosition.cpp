@@ -1,30 +1,30 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Module:       FGPosition.cpp
  Author:       Jon S. Berndt
  Date started: 01/05/99
  Purpose:      Integrate the EOM to determine instantaneous position
  Called by:    FGFDMExec
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 This class encapsulates the integration of rates and accelerations to get the
@@ -88,7 +88,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.66 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.67 2004/02/27 13:23:05 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +103,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
-  
+
   for (int i=0;i<4;i++) {
     LatitudeDot_prev[i]  = 0.0;
     LongitudeDot_prev[i] = 0.0;
@@ -151,7 +151,7 @@ Purpose: Called on a schedule to perform Positioning algorithms
 Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
          be the case
          [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
-	       In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
+               In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
 */
 
 bool FGPosition::Run(void)
@@ -163,9 +163,11 @@ bool FGPosition::Run(void)
     GetState();
 
     Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
-    psigt =  atan2(vVel(eEast), vVel(eNorth));
-    if (psigt < 0.0)
-      psigt += 2*M_PI;
+
+    if (vVel(eNorth) == 0) psigt = 0;
+    else psigt =  atan2(vVel(eEast), vVel(eNorth));
+
+    if (psigt < 0.0) psigt += 2*M_PI;
 
     Radius    = h + SeaLevelRadius;
 
@@ -182,7 +184,7 @@ bool FGPosition::Run(void)
 
     vVRPoffset = State->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
 
-    // vVRP  - the vector to the Visual Reference Point - now contains the 
+    // vVRP  - the vector to the Visual Reference Point - now contains the
     // offset from the CG to the VRP, in units of feet, in the Local coordinate
     // frame, where X points north, Y points East, and Z points down. This needs
     // to be converted to Lat/Lon/Alt, now.
@@ -226,7 +228,7 @@ void FGPosition::GetState(void)
   Vt        = Translation->GetVt();
   vVel      = State->GetTb2l() * Translation->GetUVW();
   vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
-  
+
   b = Aircraft->GetWingSpan();
 }
 
