@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.2 2004/02/20 15:06:00 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.3 2004/03/26 04:47:32 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,9 +102,9 @@ bool FGMars::InitModel(void)
   temperature = &intTemperature;
   pressure = &intPressure;
   density = &intDensity;
-  
+
   useExternal=false;
-  
+
   return true;
 }
 
@@ -113,12 +113,12 @@ bool FGMars::InitModel(void)
 bool FGMars::Run(void)
 {
   if (!FGModel::Run()) {  // if false then execute this Run()
-    
+
     //do temp, pressure, and density first
     if (!useExternal) {
       h = Position->Geth();
       Calculate(h);
-    } 
+    }
 
     if (turbType != ttNone) {
       Turbulence();
@@ -162,7 +162,7 @@ void FGMars::Calculate(double altitude)
 
 // square a value, but preserve the original sign
 
-static inline double 
+static inline double
 square_signed (double value)
 {
   if (value < 0)
@@ -198,7 +198,7 @@ void FGMars::Turbulence(void)
     vDirection      += vDirectionAccel*rate*State->Getdt();
 
     vDirection.Normalize();
-    
+
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulence = TurbGain * Magnitude * vDirection;
@@ -208,7 +208,7 @@ void FGMars::Turbulence(void)
 
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
 //     if (Aircraft->GetHTailArm() != 0.0)
 //       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
@@ -234,7 +234,7 @@ void FGMars::Turbulence(void)
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
 
-    
+
     MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
@@ -251,11 +251,11 @@ void FGMars::Turbulence(void)
         vDirection(eZ) *= HOverBMAC / 2.0;
 
     vDirection.Normalize();
-    
+
     vTurbulence = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
     if (Aircraft->GetHTailArm() != 0.0)
       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
