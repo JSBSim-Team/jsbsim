@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.44 2003/01/22 15:53:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.45 2003/02/12 00:26:59 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,9 +88,9 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   htab[7]=259186.352; //ft.
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-  turbType = ttNone;
-//  turbType = ttBerndt; // temporarily disable turbulence until fully tested
-  TurbGain = 100.0;
+//   turbType = ttNone;
+  turbType = ttBerndt;
+  TurbGain = 0.0;
   
   bind();
   Debug(0);
@@ -266,10 +266,11 @@ void FGAtmosphere::Turbulence(void)
     vDirectiondAccelDt(eY) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
     vDirectiondAccelDt(eZ) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
 
-    MagnitudedAccelDt = 1 - 2.0*(((double)(rand()))/RAND_MAX);
+    
+    MagnitudedAccelDt = 1 - 2.0*(((double)(rand()))/RAND_MAX) - Magnitude;
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
-
+    
     vDirectiondAccelDt.Normalize();
     vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
     vDirectionAccel.Normalize();
