@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.90 2002/08/30 11:37:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.91 2002/09/07 21:43:50 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +109,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   Position        = 0;
   Auxiliary       = 0;
   Output          = 0;
+  IC              = 0;
+  Trim            = 0;
 
   terminate = false;
   frozen = false;
@@ -132,6 +134,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
   instance->SetDouble("zero",0);  
   
+  disableHighLighting();
   Debug(0);
   
   // this is here to catch errors in binding member functions
@@ -227,7 +230,11 @@ bool FGFDMExec::Allocate(void)
     Error+=4096;}
 
   if (Error > 0) result = false;
+  
+  IC = new FGInitialCondition(this); 
+  //Trim is allocated as needed by GetTrim()                                 
 
+  
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
@@ -245,6 +252,9 @@ bool FGFDMExec::Allocate(void)
   Schedule(Position,        1);
   Schedule(Auxiliary,       1);
   Schedule(Output,          1);
+  //IC and Trim are *not* scheduled objects
+  
+  
 
   modelLoaded = false;
 
@@ -255,20 +265,23 @@ bool FGFDMExec::Allocate(void)
 
 bool FGFDMExec::DeAllocate(void) {
 
-  if ( Atmosphere != 0 )     delete Atmosphere;
-  if ( FCS != 0 )            delete FCS;
-  if ( Propulsion != 0)      delete Propulsion;
-  if ( MassBalance != 0)     delete MassBalance;
-  if ( Aerodynamics != 0)    delete Aerodynamics;
-  if ( Inertial != 0)        delete Inertial;
-  if ( GroundReactions != 0) delete GroundReactions;
-  if ( Aircraft != 0 )       delete Aircraft;
-  if ( Translation != 0 )    delete Translation;
-  if ( Rotation != 0 )       delete Rotation;
-  if ( Position != 0 )       delete Position;
-  if ( Auxiliary != 0 )      delete Auxiliary;
-  if ( Output != 0 )         delete Output;
-  if ( State != 0 )          delete State;
+  delete Atmosphere;
+  delete FCS;
+  delete Propulsion;
+  delete MassBalance;
+  delete Aerodynamics;
+  delete Inertial;
+  delete GroundReactions;
+  delete Aircraft;
+  delete Translation;
+  delete Rotation;
+  delete Position;
+  delete Auxiliary;
+  delete Output;
+  delete State;
+  
+  delete IC;
+  delete Trim;
 
   FirstModel  = 0L;
   Error       = 0;
@@ -349,10 +362,10 @@ bool FGFDMExec::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::RunIC(FGInitialCondition *fgic)
+bool FGFDMExec::RunIC(void)
 {
   State->Suspend();
-  State->Initialize(fgic);
+  State->Initialize(IC);
   Run();
   State->Resume();
   return true;
@@ -375,15 +388,26 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string APath, string EPath, string model)
+bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model) {
+  FGFDMExec::AircraftPath=AircraftPath;
+  FGFDMExec::EnginePath=EnginePath;
+  LoadModel(model);
+}  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::LoadModel(string model)
 {
   bool result = true;
   string token;
   string aircraftCfgFileName;
 
-  AircraftPath = APath;
-  EnginePath   = EPath;
-
+  if( AircraftPath.empty() || EnginePath.empty() ) {
+    cerr << "Error: attempted to load aircraft with undefined ";
+    cerr << "aircraft and engine paths" << endl;
+    return false;
+  }
+    
 # ifndef macintosh
   aircraftCfgFileName = AircraftPath + "/" + model + "/" + model + ".xml";
 # else
@@ -392,7 +416,9 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
   if (!AC_cfg.IsOpen()) return false;
-
+  
+  modelName = model;
+  
   if (modelLoaded) {
     DeAllocate();
     Allocate();
@@ -495,7 +521,10 @@ bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
   string AircraftName = AC_cfg->GetValue("FILE");
 
   debug_lvl = 0;                 // turn off debug output for slave vehicle
-  SlaveFDMList.back()->exec->LoadModel("aircraft", "engine", AircraftName);
+  
+  SlaveFDMList.back()->exec->SetAircraftPath( AircraftPath );
+  SlaveFDMList.back()->exec->SetEnginePath( EnginePath );
+  SlaveFDMList.back()->exec->LoadModel(AircraftName);
   debug_lvl = saved_debug_lvl;   // turn debug output back on for master vehicle
 
   AC_cfg->GetNextConfigLine();
@@ -594,6 +623,14 @@ FGPropertyManager* FGFDMExec::GetPropertyManager(void) {
   return instance;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTrim* FGFDMExec::GetTrim(void) { 
+  delete Trim;
+  Trim = new FGTrim(this,tNone);
+  return Trim;
+}
+  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

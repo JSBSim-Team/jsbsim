@@ -41,22 +41,22 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
+#include "FGTrim.h"
 #include "FGInitialCondition.h"
 #include "FGJSBBase.h"
 #include "FGPropertyManager.h"
+
 
 #include <vector>
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.57 2002/05/04 02:48:03 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.58 2002/09/07 21:43:50 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGInitialCondition;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.57 2002/05/04 02:48:03 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.58 2002/09/07 21:43:50 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -138,20 +138,19 @@ public:
       @return true if successful, false if sim should be ended  */
   bool Run(void);
 
-  /** Initializes the sim with a set of initial conditions.
-      @param fgic A pointer to a filled out initial conditions class which
-      describes the desired initial conditions.
+  /** Initializes the sim from the initial condition object and executes
+      each scheduled model without integrating i.e. dt=0.
       @return true if successful
        */
-  bool RunIC(FGInitialCondition *fgic);
+  bool RunIC(void);
 
   /// Freezes the sim
   void Freeze(void) {frozen = true;}
 
   /// Resumes the sim
   void Resume(void) {frozen = false;}
-
-  /** Loads an aircraft model.
+  
+  /** Loads an aircraft model.  
       @param AircraftPath path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.
@@ -163,10 +162,39 @@ public:
       instance: "aircraft/x15/x15.xml"
       @return true if successful*/
   bool LoadModel(string AircraftPath, string EnginePath, string model);
+  
 
-  bool SetEnginePath(string path)   {EnginePath = path; return true;}
-  bool SetAircraftPath(string path) {AircraftPath = path; return true;}
+  /** Loads an aircraft model.  The paths to the aircraft and engine
+      config file directories must be set prior to calling this.  See
+      below.
+      @param model the name of the aircraft model itself. This file will
+      be looked for in the directory specified in the AircraftPath variable,
+      and in turn under the directory with the same name as the model. For
+      instance: "aircraft/x15/x15.xml"
+      @return true if successful*/
+  bool LoadModel(string model);
+  
 
+  /** Sets the path to the engine config file directories.
+      @param EnginePath path to the directory under which engine config
+      files are kept, for instance "engine"
+  */
+  bool SetEnginePath(string path)   { EnginePath = path; return true; }
+
+  /** Sets the path to the aircraft config file directories.
+      @param AircraftPath path to the aircraft directory. For instance:
+      "aircraft". Under aircraft, then, would be directories for various
+      modeled aircraft such as C172/, x15/, etc.
+  */
+  bool SetAircraftPath(string path) { AircraftPath = path; return true; }
+  
+  /** Sets the path to the autopilot config file directories.
+      @param ControlPath path to the control directory. For instance:
+      "control".
+  */
+  bool SetControlPath(string path) { ControlPath = path; return true; }
+  
+ 
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
   /// Returns the FGState pointer.
@@ -197,12 +225,20 @@ public:
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
   /// Returns the FGOutput pointer.
   inline FGOutput* GetOutput(void)            {return Output;}
+  // Returns a pointer to the FGInitialCondition object
+  inline FGInitialCondition* GetIC(void)      {return IC;}
+  // Returns a pointer to the FGTrim object
+  FGTrim* GetTrim(void);
   //@}
-
+  
   /// Retrieves the engine path.
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
+  /// Retrieves the control path.
+  inline string GetControlPath(void)        {return ControlPath;}
+  
+  string GetModelName(void) { return modelName; }
   
   FGPropertyManager* GetPropertyManager(void);
   vector <string> EnumerateFDMs(void);
@@ -218,6 +254,7 @@ private:
   unsigned int IdFDM;
   static unsigned int FDMctr;
   bool modelLoaded;
+  string modelName;
   bool IsSlave;
   static FGPropertyManager *master;
   FGPropertyManager *instance;
@@ -243,6 +280,8 @@ private:
 
   string AircraftPath;
   string EnginePath;
+  string ControlPath;
+  
   string CFGVersion;
 
   FGState*           State;
@@ -259,6 +298,9 @@ private:
   FGPosition*        Position;
   FGAuxiliary*       Auxiliary;
   FGOutput*          Output;
+  
+  FGInitialCondition* IC;
+  FGTrim *Trim;
 
   vector <slaveData*> SlaveFDMList;
 
