@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
-<!-- J85-GE-5 afterburning turbojet engine model
+<!-- T76 turboprop engine model
      for the SimTurbine turbine model -->
 
-<FG_SIMTURBINE NAME="J85">
+<FG_SIMTURBINE NAME="T76">
   <!--
      MAXMILTHRUST  max static thrust at S.L. (installed), lbf
      BYPASSRATIO   bypass ratio
@@ -14,7 +14,7 @@
      MAXN1         N1 at 100% throttle
      MAXN2         N2 at 100% throttle
      AUGMENTED     = 1 if augmentation installed, else = 0
-     AUGMETHOD     = 0 if using property /propulsion/augmentation_cmd
+     AUGMETHOD     = 0 if using property /engine[n]/augmentation
                    = 1 if using last 1% of throttle movement
      INJECTED      = 1 if water injection installed
 
@@ -24,15 +24,15 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  MAXMILTHRUST 2050
+  MAXMILTHRUST 1200
   BYPASSRATIO  0
-  TSFC         0.85
-  ATSFC        1.70
+  TSFC         0.55
+  ATSFC        0.00
   IDLEN1       0.0
-  IDLEN2       53.0
-  MAXN1        100.0
+  IDLEN2       61.0
+  MAXN1        0.0
   MAXN2        100.0
-  AUGMENTED    1
+  AUGMENTED    0
   AUGMETHOD    0
   INJECTED     0
 

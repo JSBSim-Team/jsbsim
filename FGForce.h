@@ -57,13 +57,17 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.27 2003/05/02 10:47:33 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.28 2003/05/22 03:22:26 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
 
@@ -212,7 +216,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.27 2003/05/02 10:47:33 jberndt Exp $
+    @version $Id: FGForce.h,v 1.28 2003/05/22 03:22:26 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

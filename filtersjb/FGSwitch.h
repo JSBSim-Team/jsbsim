@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.18 2003/05/02 10:47:35 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.19 2003/05/22 03:22:26 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -84,21 +84,23 @@ Within a TEST, a CONDITION_GROUP can be specified. A CONDITION_GROUP allows for
 complex groupings of logical comparisons. Each CONDITION_GROUP contains
 additional conditions, as well as possibly additional CONDITION_GROUPs.
 
-<COMPONENT NAME="switch1" TYPE="SWITCH">
-  <TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}">
-    {property} {conditional} {property|value}
-    <CONDITION_GROUP LOGIC="{AND|OR}">
-      {property} {conditional} {property|value}
-      ...
-    </CONDITION_GROUP>
-    ...
-  </TEST>
-  <TEST LOGIC="{AND|OR}" OUTPUT="{property|value}">
-    {property} {conditional} {property|value}
-    ...
-  </TEST>
-  ...
-</COMPONENT>
+<pre>
+\<COMPONENT NAME="switch1" TYPE="SWITCH"\><BR>
+  \<TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}"\><BR>
+    {property} {conditional} {property|value}<BR>
+    \<CONDITION_GROUP LOGIC="{AND|OR}"\><BR>
+      {property} {conditional} {property|value}<BR>
+      ...<BR>
+    \</CONDITION_GROUP\><BR>
+    ...<BR>
+  \</TEST><BR>
+  \<TEST LOGIC="{AND|OR}" OUTPUT="{property|value}"\><BR>
+    {property} {conditional} {property|value}<BR>
+    ...<BR>
+  \</TEST\><BR>
+  ...<BR>
+\</COMPONENT\>
+</pre>
 */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.23 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.24 2003/05/22 03:22:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,24 +63,26 @@ CLASS DOCUMENTATION
 /** Encapsulates a filter for the flight control system.
     Filters are modeled using the Tustin Substitution method. These types of
     filters can currently be modeled:
-    <ol><li>Lag</li>
-    <li>Lead-Lag</li>
-    <li>Washout</li>
-    <li>Integrator</li></ol>
+    
+    - Lag
+    - Lead-Lag
+    - Washout
+    - Integrator
+    - Second order
+
     The filter is specified in the config file like this:
     <pre>
-    
-    &ltCOMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
-      INPUT        15
-      C1           600
-      OUTPUT       FG_ELEVATOR_POS
-    &lt/COMPONENT>
+    \<COMPONENT NAME="{name}" TYPE="{LAG_FILTER}"\><BR>
+      INPUT        15<BR>
+      C1           600<BR>
+      OUTPUT       fcs/elevator-pos-rad<BR>
+    \</COMPONENT\>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.23 2003/05/02 10:47:34 jberndt Exp $
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+    @version $Id: FGFilter.h,v 1.24 2003/05/22 03:22:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.h?rev=HEAD">
          Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.cpp?rev=HEAD">
          Source File </a>
     */
    
