@@ -62,12 +62,9 @@ INCLUDES
 #include <stdio.h>         /* for printf      */
 #include <iostream>        // for cout, endl
 
-using namespace std;
-using namespace JSBSim;
-
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.3 2003/12/18 16:43:14 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.4 2003/12/19 02:13:46 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
