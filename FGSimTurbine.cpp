@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.16 2004/01/23 15:17:39 dpculp Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.17 2004/02/17 02:05:31 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,6 +303,7 @@ double FGSimTurbine::Seek(double *var, double target, double accel, double decel
 void FGSimTurbine::SetDefaults(void)
 {
   Name = "Not defined";
+  N1 = N2 = 0.0;
   Type = etSimTurbine;
   MilThrust = 10000.0;
   MaxThrust = 10000.0;
