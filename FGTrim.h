@@ -37,8 +37,6 @@ and throttle setting required to fly steady level. This is currently for in-air
 conditions only.  It is implemented using an iterative, one-axis-at-a-time 
 scheme.  
  
- 
- 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -65,7 +63,23 @@ INCLUDES
 
 #include <vector>
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $"
+typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_TRIM "$Id: FGTrim.h,v 1.12 2001/03/20 16:15:39 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -101,14 +115,12 @@ CLASS DOCUMENTATION
     at those conditions?  Check the speed, altitude, configuration (flaps,
     gear, etc.), weight, cg, and anything else that may be relavant.
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.12 2001/03/20 16:15:39 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 
 class FGTrim {
 private:
