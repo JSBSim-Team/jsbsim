@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.79 2002/04/05 14:55:10 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.80 2002/04/08 14:14:48 dmegginson Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,12 +266,12 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eBrakeGrp) {
       case bgLeft:
-        SteerGain = -1.0;
+        SteerGain = -0.10;
         BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
                                               staticFCoeff*FCS->GetBrake(bgLeft);
         break;
       case bgRight:
-        SteerGain = -1.0;
+        SteerGain = -0.10;
         BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
                                              staticFCoeff*FCS->GetBrake(bgRight);
         break;
@@ -281,15 +281,15 @@ FGColumnVector3& FGLGear::Force(void)
                                              staticFCoeff*FCS->GetBrake(bgCenter);
         break;
       case bgNose:
-        SteerGain = 1.0;
+        SteerGain = 0.50;
         BrakeFCoeff = rollingFCoeff;
         break;
       case bgTail:
-        SteerGain = -1.0;
+        SteerGain = -0.10;
         BrakeFCoeff = rollingFCoeff;
         break;
       case bgNone:
-        SteerGain = -1.0;
+        SteerGain = -0.10;
         BrakeFCoeff = rollingFCoeff;
         break;
       default:
