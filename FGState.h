@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.55 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.56 2002/02/14 19:16:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.55 2001/12/11 05:33:09 jberndt Exp $
+    @version $Id: FGState.h,v 1.56 2002/02/14 19:16:38 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,6 +211,12 @@ public:
       */
   inline void Seta(double speed) { a = speed; }
 
+  /** Gets the name of the parameter given the index.
+      @param val_idx one of the enumerated JSBSim parameters.
+      @return the name of the parameter pointed to by the index.
+      */
+  string GetParameterName(eParam val_idx) {return paramdef[val_idx];}
+  
   /** Sets the current sim time.
       @param cur_time the current time
       @return the current time.
@@ -303,10 +309,6 @@ public:
   */
   void ReportState(void);
 
-
-  typedef map<eParam, string> ParamMap;
-  ParamMap paramdef;
-
 private:
   double a;                          // speed of sound
   double sim_time, dt;
@@ -340,6 +342,10 @@ private:
 
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
+
+  typedef map<eParam, string> ParamMap;
+  ParamMap paramdef;
+
   int ActiveEngine;
   void Debug(int from);
 };

@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.49 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.50 2002/02/14 19:16:38 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +246,7 @@ void FGCoefficient::DisplayCoeffFactors(void)
     cout << "none" << endl;
   } else {
     for (i=0; i<multipliers.size(); i++) 
-        cout << FDMExec->GetState()->paramdef[multipliers[i]];
+      cout << State->GetParameterName(multipliers[i]);
   }
   cout << endl;
 }
