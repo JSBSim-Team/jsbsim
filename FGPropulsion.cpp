@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.101 2004/04/30 12:34:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.102 2004/05/01 13:25:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -262,8 +262,14 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGRocket(FDMExec, Cfg_ptr));
         } else if (engType == "FG_PISTON") {
           Engines.push_back(new FGPiston(FDMExec, Cfg_ptr));
-        } else if (engType == "FG_TURBINE" || engType == "FG_SIMTURBINE") {
+        } else if (engType == "FG_TURBINE") {
           Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
+        } else if (engType == "FG_SIMTURBINE") {
+          cerr << endl;
+          cerr << "The FG_SIMTURBINE engine type has been renamed to FG_TURBINE." << endl;
+          cerr << "To fix this problem, simply replace the FG_SIMTURBINE name " << endl;
+          cerr << "in your engine file to FG_TURBINE." << endl;
+          cerr << endl;
         } else if (engType == "FG_ELECTRIC") {
           Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
         } else {
