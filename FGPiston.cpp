@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.43 2001/12/14 13:51:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.44 2001/12/14 18:59:17 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   crank_counter = 0;
   EngineNumber = 0;
   OilTemp_degK = 298;
+  ManifoldPressure_inHg = Atmosphere->GetPressure() * 0.014138; // psf to in Hg
 
   dt = State->Getdt();
 
@@ -286,13 +287,11 @@ void FGPiston::doEngineStartup(void)
 
 void FGPiston::doManifoldPressure(void)
 {
-  if (Running ) {
+  if (Running || Cranking) {
     ManifoldPressure_inHg = MinManifoldPressure_inHg +
             (Throttle * (MaxManifoldPressure_inHg - MinManifoldPressure_inHg));
-  } else if (Cranking) {
-    ManifoldPressure_inHg += (dt/2.0)*(MinManifoldPressure_inHg / 6.0 - ManifoldPressure_inHg);
   } else {
-    ManifoldPressure_inHg -= (dt/2.0)*ManifoldPressure_inHg; // fade to black
+    ManifoldPressure_inHg = Atmosphere->GetPressure() * 0.014138; // psf to in Hg
   }  
 }
 
@@ -397,7 +396,7 @@ void FGPiston::doEnginePower(void)
 
 void FGPiston::doEGT(void)
 {
-  double delta_T_exhaust;
+  double delta_T_exhaust = 0.0;
   double heat_capacity_exhaust;
   double enthalpy_exhaust;
 
@@ -405,11 +404,10 @@ void FGPiston::doEGT(void)
   enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
   heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
 
-  // DAVE: CHECK THIS
   if (heat_capacity_exhaust <= 0.0000001)
     delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
   else
-    delta_T_exhaust -= (dt/2.0)*delta_T_exhaust;
+    delta_T_exhaust = 0.0;
 
   ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
   ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * Percentage_Power / 100.0);
