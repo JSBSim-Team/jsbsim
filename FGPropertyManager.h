@@ -1,9 +1,9 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGPropertyManager.h
- Author:       Originally David Megginson
-               Incorporated into JSBSim by Tony Peden
- Date:         Incorporated 2/2002
+ Author:       Tony Peden
+               Based on work originally by David Megginson
+ Date:         2/2002
  
  ------------- Copyright (C) 2002 -------------
  
@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGPropertyManager.h,v 1.7 2002/03/21 13:29:21 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.8 2002/03/22 11:54:43 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -561,19 +561,19 @@ class FGPropertyManager:public SGPropertyNode {
     }
 
     /* template <class V> void
-    FGPropertyManager::Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
+    Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
            bool useDefault = true);
     
     template <class V> void
-    FGPropertyManager::Tie (const string &name, int index, V (*getter)(int),
+    Tie (const string &name, int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true);
     
     template <class T, class V> void
-    FGPropertyManager::Tie (const string &name, T * obj, V (T::*getter)() const,
+    Tie (const string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true);
 
     template <class T, class V> void 
-    FGPropertyManager::Tie (const string &name, T * obj, int index,
+    Tie (const string &name, T * obj, int index,
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
            bool useDefault = true); */
 
@@ -595,7 +595,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     template <class V>
     inline void
-    FGPropertyManager::Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
+    Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
            bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter),
@@ -625,7 +625,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     template <class V>
     inline void
-    FGPropertyManager::Tie (const string &name, int index, V (*getter)(int),
+    Tie (const string &name, int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(),
@@ -659,7 +659,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     template <class T, class V>
     inline void
-    FGPropertyManager::Tie (const string &name, T * obj, V (T::*getter)() const,
+    Tie (const string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(),
@@ -691,7 +691,7 @@ class FGPropertyManager:public SGPropertyNode {
      */
     template <class T, class V>
     inline void 
-    FGPropertyManager::Tie (const string &name, T * obj, int index,
+    Tie (const string &name, T * obj, int index,
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
            bool useDefault = true)
     {
