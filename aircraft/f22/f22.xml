@@ -3,7 +3,7 @@
 
   File:        f22.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f22.xml,v 1.1 2003/03/27 19:00:23 ehofman Exp $
+  CVS Version: $Id: f22.xml,v 1.2 2003/03/28 11:00:34 ehofman Exp $
 
   Function: models a Lockheed-Martin F-22 Raptor
   Notes:    {notes}
@@ -119,7 +119,7 @@
      <COEFFICIENT NAME="CLq" TYPE="VALUE">
       Lift_due_to_pitch_rate
       aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
- R     2.7711
+      2.7711
      </COEFFICIENT>
 
     </AXIS>
@@ -128,19 +128,17 @@
 
      <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
       Drag_due_to_alpha
-      aero/qbar-psf | metrics/Sw-sqft
+      aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
       0.1786
      </COEFFICIENT>
 
-     COEFFICIENT NAME="CDo" TYPE="VALUE">
-      Drag_at_zero_lift
-      17
-      velocities/mach-norm
+     <COEFFICIENT NAME="CDo" TYPE="VALUE">
+      Drag_at_zero_alpha
       aero/qbar-psf | metrics/Sw-sqft
       0.0111
      </COEFFICIENT>
 
-     COEFFICIENT NAME="CDzero" TYPE="VALUE">
+     <COEFFICIENT NAME="CDzero" TYPE="VALUE">
       Drag_at_zero_lift
       aero/qbar-psf | metrics/Sw-sqft
       0.0101
@@ -154,9 +152,9 @@
       Side_force_due_to_beta_rate
       aero/qbar-psf | metrics/Sw-sqft | aero/betadot-rad_sec
       -0.0458
-    </COEFFICIENT>
+     </COEFFICIENT>
 
-    <COEFFICIENT NAME="CYDr" TYPE="VALUE">
+     <COEFFICIENT NAME="CYDr" TYPE="VALUE">
       Side_force_due_to_rudder
       aero/qbar-psf | metrics/Sw-sqft | fcs/rudder-pos-rad
       0.0619
@@ -178,10 +176,20 @@
 
     <AXIS NAME="ROLL">
  
-     <COEFFICIENT NAME="Clb" TYPE="VALUE">
+     <COEFFICIENT NAME="Clb" TYPE="VECTOR">
       Roll_moment_due_to_beta
-      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
-      0.0176
+      9
+      aero/alpha-rad
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
+      -0.0873   0.0339
+       0.0      0.0339
+       0.0873   0.0197
+       0.1745   0.0091
+       0.2618   0.0089
+       0.3491   0.0054
+       0.4363   0.0149
+       0.5236   0.0273
+       0.6109   0.0021
      </COEFFICIENT>
  
      COEFFICIENT NAME="Clbdot" TYPE="VALUE">
@@ -200,10 +208,26 @@
 
     <AXIS NAME="PITCH">
 
-     <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+     <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
       Pitch_moment_due_to_alpha
+      15
+      aero/alpha-rad
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
-      0.1218
+      -0.0873  -0.1597
+       0.0     -0.0742
+       0.0873   0.0000
+       0.1745   0.1198
+       0.2618   0.1826
+       0.3491   0.2510
+       0.4363   0.3423
+       0.5236   0.5591
+       0.6109   0.6618
+       0.6981   0.7816
+       0.7854   0.7473
+       0.8727   0.6389
+       1.0472   0.6389
+       1.2217   0.2681
+       1.3963  -0.4678
      </COEFFICIENT>
 
      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
@@ -234,10 +258,20 @@
 
     <AXIS NAME="YAW">
 
-     <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+     <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
       Yaw_moment_due_to_beta
+      9
+      aero/alpha-rad
       aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
-      -0.0016
+      -0.0873  -0.0012
+       0.0     -0.0012
+       0.0873  -0.0014
+       0.1745  -0.0019
+       0.2618  -0.0022
+       0.3491  -0.0015
+       0.4363  -0.0024
+       0.5236  -0.0012
+       0.6109  -0.0017
      </COEFFICIENT>
 
      <COEFFICIENT NAME="Cnbdot" TYPE="VALUE">
@@ -249,7 +283,15 @@
      <COEFFICIENT NAME="CnDr" TYPE="VALUE">
       Yaw_moment_due_to_rudder
       aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
-      -0.0131
+      -0.0873  -0.0327
+       0.0     -0.0342
+       0.0873  -0.0354
+       0.1745  -0.0357
+       0.2618  -0.0321
+       0.3491  -0.0237
+       0.4363  -0.0179
+       0.5236  -0.0100
+       0.6109  -0.0038
      </COEFFICIENT>
 
      <COEFFICIENT NAME="Cnp" TYPE="VALUE">
