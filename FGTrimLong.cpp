@@ -334,9 +334,9 @@ float FGTrimLong::qdot_func(float x) {
 /******************************************************************************/
 
 bool FGTrimLong::DoTrim(void) {
-  int k=0,j=0,sum=0,trim_failed=0,jmax=Naxis;
+  int k=0;
   int its;
-  float step,temp,min,max;
+  
 
   if(fgic->GetVtrueKtsIC() < 1) {
     cout << "Trim failed, on-ground trimming not yet implemented." << endl;
@@ -345,7 +345,6 @@ bool FGTrimLong::DoTrim(void) {
     return false;
   }
 
-  trimfp fp;
 
   fgic -> SetAlphaDegIC((alphaMin+alphaMax)/2);
   fdmex -> GetFCS() -> SetDeCmd(0);
@@ -402,10 +401,7 @@ bool FGTrimLong::DoTrim(void) {
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
-
-
-
-      }
+     }
       if( udot > Tolerance ) {
         if(checkLimits(udotf,dth,0,1) == false) {
           cout << "    Sorry, udot doesn't appear to be trimmable" << endl;
@@ -414,10 +410,7 @@ bool FGTrimLong::DoTrim(void) {
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
-
-
-
-      }
+     }
       if(qdot > A_Tolerance) {
 
         if(checkLimits(qdotf,fdmex->GetFCS()->GetPitchTrimCmd(),-1,1) == false) {
@@ -425,9 +418,6 @@ bool FGTrimLong::DoTrim(void) {
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
-
-
-
       }
     }
     k++;
