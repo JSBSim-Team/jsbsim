@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.53 2003/06/03 09:53:43 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.54 2003/08/11 08:33:57 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,6 +91,9 @@ FGEngine::FGEngine(FGFDMExec* exec)
     CylinderHeadTemp_degK(0.0),
     OilPressure_psi(0.0),
     OilTemp_degK(0.0),
+    FuelFlow_pph(0.0),
+    N1(0.0), N2(0.0), EGT_degC(0.0),
+    InletPosition(0.0), NozzlePosition(0.0),
     FDMExec(exec),
     State(FDMExec->GetState()),
     Atmosphere(FDMExec->GetAtmosphere()),
