@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.41 2003/06/03 09:53:53 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.42 2003/06/05 12:36:58 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,7 +153,10 @@ void FGSummer::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      INPUTS: " << endl;
       for (unsigned i=0;i<InputNodes.size();i++) {
-        cout << "       " << InputNodes[i]->getName() << endl;
+        if (InputSigns[i] < 0)
+          cout << "       -" << InputNodes[i]->getName() << endl;
+        else
+          cout << "       " << InputNodes[i]->getName() << endl;
       }
       if (clip) cout << "      CLIPTO: " << clipmin 
                                   << ", " << clipmax << endl;

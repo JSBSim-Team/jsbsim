@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.48 2003/06/03 09:53:53 ehofman Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.49 2003/06/05 12:36:57 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,8 +61,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Gain = 1.000;
   Rows = 0;
   Min = Max = 0.0;
-  OutputPct=0;
-  invert=false;
+  OutputPct = 0;
+  invert = false;
   ScheduledBy = 0;
 
   Type = AC_cfg->GetValue("TYPE");
@@ -73,6 +73,12 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
+
+      if (token[0] == '-') {
+        invert = true;
+        token.erase(0,1);
+      }      
+
       if (InputNodes.size() > 0) {
         cerr << "Gains can only accept one input" << endl;
       } else  {
@@ -86,7 +92,10 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     } else if (token == "MAX") {
       *AC_cfg >> Max;
     } else if (token == "INVERT") {
-      invert=true;  
+      invert = true;
+      cerr << endl << "The INVERT keyword is being deprecated and will not be "
+                      "supported in the future. Please use a minus sign in front "
+		                  "of an input property in the future." << endl << endl;
     } else if (token == "ROWS") {
       *AC_cfg >> Rows;
       Table = new FGTable(Rows);
@@ -128,23 +137,26 @@ bool FGGain::Run(void )
 
   FGFCSComponent::Run(); // call the base class for initialization of Input
   Input = InputNodes[0]->getDoubleValue();
-  if (Type == "PURE_GAIN") {
+
+  if (invert) Input = -Input;
+
+  if (Type == "PURE_GAIN") {                       // PURE_GAIN
+
     Output = Gain * Input;
-  } else if (Type == "SCHEDULED_GAIN") {
+
+  } else if (Type == "SCHEDULED_GAIN") {           // SCHEDULED_GAIN
+
     LookupVal = ScheduledBy->getDoubleValue();
     SchedGain = Table->GetValue(LookupVal);
     Output = Gain * SchedGain * Input;
-  } else if (Type == "AEROSURFACE_SCALE") {
-    if (!invert) {
-      OutputPct = Input;
-      if (Input >= 0.0) Output = Input * Max;
-      else Output = Input * -Min;
-    } else {
-      OutputPct=-1*Input;
-      if (Input <= 0.0) Output = Input * -Max;
-      else Output = Input * Min;
-    } 
+
+  } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
+
+    OutputPct = Input;
+    if (Input >= 0.0) Output = Input * Max;
+    else Output = Input * -Min;
     Output *= Gain;
+
   }
 
   if (IsOutput) SetOutput();
@@ -177,7 +189,11 @@ void FGGain::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      INPUT: " << InputNodes[0]->getName() << endl;
+      if (invert)
+        cout << "      INPUT: -" << InputNodes[0]->getName() << endl;
+      else
+        cout << "      INPUT: " << InputNodes[0]->getName() << endl;
+
       cout << "      GAIN: " << Gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       cout << "      MIN: " << Min << endl;
