@@ -1,6 +1,6 @@
 CC = g++
 INCLUDES = -I. -Isimgear/props
-LINKDIR= -Lfiltersjb/ -Lsimgear/props/ -Latmosphere -L/usr/local/lib
+LINKDIR= -Lfiltersjb/ -Lsimgear/props/ -Latmosphere
 JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\
 FGModel.o FGOutput.o FGState.o \
 FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\
@@ -8,15 +8,14 @@ FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRock
 FGPiston.o FGForce.o FGThruster.o FGEngine.o\
 FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\
 FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\
-FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocation.o\
-FGXMLParse.o FGXMLElement.o
+FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocation.o
 
 JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\
 Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\
 atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a libAtmosphere.a
-	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere -lsgxml -lsgstructure
+	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere
 
 libFCSComponents.a:
 	cd filtersjb; make -fMakefile.solo; cd ..
@@ -29,46 +28,43 @@ libProperties.a:
 
 FGAerodynamics.o: FGAerodynamics.cpp FGAerodynamics.h FGModel.h \
   FGJSBBase.h FGPropertyManager.h simgear/props/props.hxx FGConfigFile.h \
-  FGCoefficient.h FGTable.h FGColumnVector3.h FGXMLElement.h \
-  FGPropagate.h FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGLocation.h \
+  FGCoefficient.h FGTable.h FGColumnVector3.h FGPropagate.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGLocation.h \
   FGMatrix33.h FGQuaternion.h FGAircraft.h FGState.h FGAtmosphere.h \
   FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h FGAuxiliary.h \
-  FGMassBalance.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
-  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h \
-  FGFactorGroup.h
+  FGMassBalance.h FGXMLElement.h FGOutput.h FGfdmSocket.h \
+  FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
+  FGTank.h FGFactorGroup.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAerodynamics.o -c FGAerodynamics.cpp
 
 FGAircraft.o: FGAircraft.cpp FGAircraft.h FGModel.h FGJSBBase.h \
-  FGPropertyManager.h simgear/props/props.hxx FGXMLElement.h \
-  FGColumnVector3.h FGMassBalance.h FGMatrix33.h FGInertial.h \
-  FGConfigFile.h FGGroundReactions.h FGLGear.h FGFDMExec.h FGTrim.h \
-  FGTrimAxis.h FGInitialCondition.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGPropagate.h FGLocation.h FGQuaternion.h \
-  FGAuxiliary.h FGFCS.h filtersjb/FGFCSComponent.h FGState.h \
-  FGAtmosphere.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
-  FGfdmSocket.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h
+  FGPropertyManager.h simgear/props/props.hxx FGConfigFile.h \
+  FGColumnVector3.h FGMassBalance.h FGMatrix33.h FGXMLElement.h \
+  FGInertial.h FGGroundReactions.h FGLGear.h FGFDMExec.h FGTrim.h \
+  FGTrimAxis.h FGInitialCondition.h FGPropagate.h FGLocation.h \
+  FGQuaternion.h FGAuxiliary.h FGFCS.h filtersjb/FGFCSComponent.h \
+  FGState.h FGAtmosphere.h FGAerodynamics.h FGCoefficient.h FGTable.h \
+  FGOutput.h FGfdmSocket.h FGPropulsion.h FGEngine.h FGThruster.h \
+  FGForce.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAircraft.o -c FGAircraft.cpp
 
 FGAtmosphere.o: FGAtmosphere.cpp FGAtmosphere.h FGModel.h FGJSBBase.h \
-  FGPropertyManager.h simgear/props/props.hxx FGColumnVector3.h \
-  FGXMLElement.h FGState.h FGInitialCondition.h FGFDMExec.h FGTrim.h \
-  FGTrimAxis.h FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h \
-  FGMatrix33.h FGQuaternion.h FGFCS.h filtersjb/FGFCSComponent.h \
-  FGLGear.h FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h \
-  FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
+  FGPropertyManager.h simgear/props/props.hxx FGColumnVector3.h FGState.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGMatrix33.h \
+  FGQuaternion.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
+  FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h \
+  FGMassBalance.h FGXMLElement.h FGAerodynamics.h FGCoefficient.h \
   FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
   FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAtmosphere.o -c FGAtmosphere.cpp
 
 FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGColumnVector3.h \
-  FGXMLElement.h FGLocation.h FGMatrix33.h FGPropagate.h \
-  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGQuaternion.h \
-  FGAerodynamics.h FGConfigFile.h FGCoefficient.h FGTable.h \
-  FGAtmosphere.h FGState.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
-  FGAircraft.h FGMassBalance.h FGOutput.h FGfdmSocket.h \
+  FGLocation.h FGMatrix33.h FGPropagate.h FGInitialCondition.h \
+  FGFDMExec.h FGTrim.h FGTrimAxis.h FGQuaternion.h FGAerodynamics.h \
+  FGConfigFile.h FGCoefficient.h FGTable.h FGAtmosphere.h FGState.h \
+  FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h FGAircraft.h \
+  FGMassBalance.h FGXMLElement.h FGOutput.h FGfdmSocket.h \
   FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
   FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGAuxiliary.o -c FGAuxiliary.cpp
@@ -76,16 +72,15 @@ FGAuxiliary.o: FGAuxiliary.cpp FGAuxiliary.h FGModel.h FGJSBBase.h \
 FGCoefficient.o: FGCoefficient.cpp FGCoefficient.h FGConfigFile.h \
   FGJSBBase.h FGTable.h FGPropertyManager.h simgear/props/props.hxx \
   FGState.h FGInitialCondition.h FGFDMExec.h FGModel.h FGTrim.h \
-  FGTrimAxis.h FGXMLParse.h FGXMLElement.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGColumnVector3.h FGMatrix33.h FGQuaternion.h \
+  FGTrimAxis.h FGColumnVector3.h FGMatrix33.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
-  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h
+  FGXMLElement.h FGAerodynamics.h FGOutput.h FGfdmSocket.h \
+  FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
+  FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGCoefficient.o -c FGCoefficient.cpp
 
-FGColumnVector3.o: FGColumnVector3.cpp FGColumnVector3.h FGJSBBase.h \
-  FGXMLElement.h
+FGColumnVector3.o: FGColumnVector3.cpp FGColumnVector3.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGColumnVector3.o -c FGColumnVector3.cpp
 
 FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGJSBBase.h
@@ -94,33 +89,30 @@ FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGJSBBase.h
 FGElectric.o: FGElectric.cpp FGElectric.h FGEngine.h FGJSBBase.h \
   FGThruster.h FGForce.h FGFDMExec.h FGModel.h FGPropertyManager.h \
   simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGTank.h
+  FGXMLElement.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
+  FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGElectric.o -c FGElectric.cpp
 
 FGEngine.o: FGEngine.cpp FGEngine.h FGJSBBase.h FGThruster.h FGForce.h \
   FGFDMExec.h FGModel.h FGPropertyManager.h simgear/props/props.hxx \
   FGTrim.h FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h \
-  FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h \
   FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h FGAtmosphere.h \
   FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h FGAircraft.h FGPropagate.h \
-  FGLocation.h FGAuxiliary.h FGMassBalance.h FGAerodynamics.h \
-  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
-  FGPropulsion.h FGTank.h FGPropeller.h FGNozzle.h
+  FGLocation.h FGAuxiliary.h FGMassBalance.h FGXMLElement.h \
+  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
+  FGGroundReactions.h FGPropulsion.h FGTank.h FGPropeller.h FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGEngine.o -c FGEngine.cpp
 
 FGFactorGroup.o: FGFactorGroup.cpp FGCoefficient.h FGConfigFile.h \
   FGJSBBase.h FGTable.h FGPropertyManager.h simgear/props/props.hxx \
-  FGFactorGroup.h FGAerodynamics.h FGModel.h FGColumnVector3.h \
-  FGXMLElement.h FGState.h FGInitialCondition.h FGFDMExec.h FGTrim.h \
-  FGTrimAxis.h FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h \
-  FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
-  filtersjb/FGFCSComponent.h FGLGear.h FGAircraft.h FGPropagate.h \
-  FGLocation.h FGAuxiliary.h FGMassBalance.h FGOutput.h FGfdmSocket.h \
+  FGFactorGroup.h FGAerodynamics.h FGModel.h FGColumnVector3.h FGState.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGMatrix33.h \
+  FGQuaternion.h FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h \
+  FGLGear.h FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h \
+  FGMassBalance.h FGXMLElement.h FGOutput.h FGfdmSocket.h \
   FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
   FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
@@ -128,26 +120,24 @@ FGFactorGroup.o: FGFactorGroup.cpp FGCoefficient.h FGConfigFile.h \
 FGFCS.o: FGFCS.cpp FGFCS.h filtersjb/FGFCSComponent.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGModel.h FGLGear.h \
   FGFDMExec.h FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGConfigFile.h FGAircraft.h FGPropagate.h \
+  FGColumnVector3.h FGConfigFile.h FGAircraft.h FGPropagate.h \
   FGLocation.h FGMatrix33.h FGQuaternion.h FGAuxiliary.h FGMassBalance.h \
-  FGState.h FGAtmosphere.h FGAerodynamics.h FGCoefficient.h FGTable.h \
-  FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGEngine.h \
-  FGThruster.h FGForce.h FGTank.h filtersjb/FGFilter.h \
-  filtersjb/FGDeadBand.h filtersjb/FGGain.h filtersjb/FGGradient.h \
-  filtersjb/FGSwitch.h filtersjb/FGCondition.h filtersjb/FGSummer.h \
-  filtersjb/FGKinemat.h
+  FGXMLElement.h FGState.h FGAtmosphere.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h \
+  filtersjb/FGFilter.h filtersjb/FGDeadBand.h filtersjb/FGGain.h \
+  filtersjb/FGGradient.h filtersjb/FGSwitch.h filtersjb/FGCondition.h \
+  filtersjb/FGSummer.h filtersjb/FGKinemat.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCS.o -c FGFCS.cpp
 
 FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGState.h FGMatrix33.h \
+  FGInitialCondition.h FGColumnVector3.h FGState.h FGMatrix33.h \
   FGQuaternion.h FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h \
   FGLGear.h FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h \
-  FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
-  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
+  FGAuxiliary.h FGMassBalance.h FGXMLElement.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFDMExec.o -c FGFDMExec.cpp
 
 FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
@@ -155,48 +145,41 @@ FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
 
 FGForce.o: FGForce.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGAircraft.h FGPropagate.h \
-  FGLocation.h FGMatrix33.h FGQuaternion.h FGMassBalance.h FGState.h \
-  FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
-  FGConfigFile.h FGAuxiliary.h FGAerodynamics.h FGCoefficient.h FGTable.h \
-  FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGEngine.h \
-  FGThruster.h FGForce.h FGTank.h
+  FGInitialCondition.h FGColumnVector3.h FGAircraft.h FGConfigFile.h \
+  FGPropagate.h FGLocation.h FGMatrix33.h FGQuaternion.h FGMassBalance.h \
+  FGXMLElement.h FGState.h FGAtmosphere.h FGFCS.h \
+  filtersjb/FGFCSComponent.h FGLGear.h FGAuxiliary.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGForce.o -c FGForce.cpp
-
-FGFunction.o: FGFunction.cpp FGFunction.h FGJSBBase.h FGTable.h \
-  FGConfigFile.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGFunction.o -c FGFunction.cpp
 
 FGGroundReactions.o: FGGroundReactions.cpp FGGroundReactions.h FGModel.h \
   FGJSBBase.h FGPropertyManager.h simgear/props/props.hxx FGConfigFile.h \
   FGLGear.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGAircraft.h FGPropagate.h FGLocation.h FGMatrix33.h \
+  FGColumnVector3.h FGAircraft.h FGPropagate.h FGLocation.h FGMatrix33.h \
   FGQuaternion.h FGAuxiliary.h FGFCS.h filtersjb/FGFCSComponent.h \
-  FGMassBalance.h FGState.h FGAtmosphere.h FGAerodynamics.h \
-  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h
+  FGMassBalance.h FGXMLElement.h FGState.h FGAtmosphere.h \
+  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGroundReactions.o -c FGGroundReactions.cpp
 
 FGInertial.o: FGInertial.cpp FGInertial.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGConfigFile.h \
-  FGColumnVector3.h FGXMLElement.h FGPropagate.h FGInitialCondition.h \
-  FGFDMExec.h FGTrim.h FGTrimAxis.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGLocation.h FGMatrix33.h FGQuaternion.h FGState.h \
-  FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
-  FGAircraft.h FGAuxiliary.h FGMassBalance.h FGAerodynamics.h \
-  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
-  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h
+  FGColumnVector3.h FGPropagate.h FGInitialCondition.h FGFDMExec.h \
+  FGTrim.h FGTrimAxis.h FGLocation.h FGMatrix33.h FGQuaternion.h \
+  FGState.h FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
+  FGAircraft.h FGAuxiliary.h FGMassBalance.h FGXMLElement.h \
+  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
+  FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
+  FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGInertial.o -c FGInertial.cpp
 
 FGInitialCondition.o: FGInitialCondition.cpp FGInitialCondition.h \
   FGFDMExec.h FGModel.h FGJSBBase.h FGPropertyManager.h \
-  simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGXMLParse.h \
-  FGXMLElement.h simgear/xml/easyxml.hxx simgear/compiler.h \
-  FGColumnVector3.h FGInertial.h FGConfigFile.h FGAtmosphere.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGPropagate.h FGLocation.h \
-  FGMatrix33.h FGQuaternion.h
+  simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGColumnVector3.h \
+  FGInertial.h FGConfigFile.h FGAtmosphere.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGPropagate.h FGLocation.h FGMatrix33.h \
+  FGQuaternion.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGInitialCondition.o -c FGInitialCondition.cpp
 
 FGJSBBase.o: FGJSBBase.cpp FGJSBBase.h
@@ -204,98 +187,81 @@ FGJSBBase.o: FGJSBBase.cpp FGJSBBase.h
 
 FGLGear.o: FGLGear.cpp FGLGear.h FGJSBBase.h FGFDMExec.h FGModel.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGConfigFile.h FGAircraft.h \
+  FGInitialCondition.h FGColumnVector3.h FGConfigFile.h FGAircraft.h \
   FGPropagate.h FGLocation.h FGMatrix33.h FGQuaternion.h FGAuxiliary.h \
-  FGFCS.h filtersjb/FGFCSComponent.h FGMassBalance.h FGState.h \
-  FGAtmosphere.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
-  FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGEngine.h \
+  FGFCS.h filtersjb/FGFCSComponent.h FGMassBalance.h FGXMLElement.h \
+  FGState.h FGAtmosphere.h FGAerodynamics.h FGCoefficient.h FGTable.h \
+  FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGEngine.h \
   FGThruster.h FGForce.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGLGear.o -c FGLGear.cpp
 
 FGLocation.o: FGLocation.cpp FGLocation.h FGJSBBase.h FGPropertyManager.h \
-  simgear/props/props.hxx FGColumnVector3.h FGXMLElement.h FGMatrix33.h
+  simgear/props/props.hxx FGColumnVector3.h FGMatrix33.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGLocation.o -c FGLocation.cpp
 
 FGMassBalance.o: FGMassBalance.cpp FGMassBalance.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGColumnVector3.h \
-  FGXMLElement.h FGMatrix33.h FGPropulsion.h FGEngine.h FGThruster.h \
+  FGMatrix33.h FGXMLElement.h FGPropulsion.h FGEngine.h FGThruster.h \
   FGForce.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGConfigFile.h \
-  FGState.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
+  FGConfigFile.h FGState.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGAircraft.h FGPropagate.h \
   FGLocation.h FGAuxiliary.h FGAerodynamics.h FGCoefficient.h FGTable.h \
   FGOutput.h FGfdmSocket.h FGGroundReactions.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGMassBalance.o -c FGMassBalance.cpp
 
-FGMatrix33.o: FGMatrix33.cpp FGMatrix33.h FGColumnVector3.h FGJSBBase.h \
-  FGXMLElement.h
+FGMatrix33.o: FGMatrix33.cpp FGMatrix33.h FGColumnVector3.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGMatrix33.o -c FGMatrix33.cpp
 
 FGModel.o: FGModel.cpp FGModel.h FGJSBBase.h FGPropertyManager.h \
   simgear/props/props.hxx FGState.h FGInitialCondition.h FGFDMExec.h \
-  FGTrim.h FGTrimAxis.h FGXMLParse.h FGXMLElement.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGColumnVector3.h \
-  FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
-  filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
-  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
-  FGTank.h FGInertial.h
+  FGTrim.h FGTrimAxis.h FGColumnVector3.h FGMatrix33.h FGQuaternion.h \
+  FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
+  FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h \
+  FGMassBalance.h FGXMLElement.h FGAerodynamics.h FGCoefficient.h \
+  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
+  FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGModel.o -c FGModel.cpp
 
 FGNozzle.o: FGNozzle.cpp FGNozzle.h FGThruster.h FGForce.h FGFDMExec.h \
   FGModel.h FGJSBBase.h FGPropertyManager.h simgear/props/props.hxx \
   FGTrim.h FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h \
-  FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h \
   FGMatrix33.h FGConfigFile.h FGAtmosphere.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGNozzle.o -c FGNozzle.cpp
 
 FGOutput.o: FGOutput.cpp FGOutput.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGfdmSocket.h FGState.h \
-  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGXMLParse.h \
-  FGXMLElement.h simgear/xml/easyxml.hxx simgear/compiler.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h \
   FGColumnVector3.h FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
-  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
+  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h FGXMLElement.h \
   FGAerodynamics.h FGCoefficient.h FGTable.h FGGroundReactions.h \
   FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGOutput.o -c FGOutput.cpp
 
-FGParameter.o: FGParameter.cpp FGParameter.h FGJSBBase.h FGFDMExec.h \
-  FGModel.h FGPropertyManager.h simgear/props/props.hxx FGTrim.h \
-  FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h FGXMLElement.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGTable.h \
-  FGConfigFile.h FGFunction.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGParameter.o -c FGParameter.cpp
-
 FGPiston.o: FGPiston.cpp FGPiston.h FGEngine.h FGJSBBase.h FGThruster.h \
   FGForce.h FGFDMExec.h FGModel.h FGPropertyManager.h \
   simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGTank.h FGPropeller.h
+  FGXMLElement.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
+  FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGTank.h FGPropeller.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPiston.o -c FGPiston.cpp
 
 FGPropagate.o: FGPropagate.cpp FGPropagate.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGColumnVector3.h \
-  FGXMLElement.h FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGLocation.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGLocation.h \
   FGMatrix33.h FGQuaternion.h FGState.h FGAtmosphere.h FGFCS.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
-  FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
-  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
+  FGAuxiliary.h FGMassBalance.h FGXMLElement.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPropagate.o -c FGPropagate.cpp
 
 FGPropeller.o: FGPropeller.cpp FGPropeller.h FGThruster.h FGForce.h \
   FGFDMExec.h FGModel.h FGJSBBase.h FGPropertyManager.h \
   simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGTable.h FGPropagate.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGTable.h FGPropagate.h \
   FGLocation.h FGQuaternion.h FGAtmosphere.h FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPropeller.o -c FGPropeller.cpp
 
@@ -306,45 +272,40 @@ FGPropertyManager.o: FGPropertyManager.cpp FGPropertyManager.h \
 FGPropulsion.o: FGPropulsion.cpp FGPropulsion.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGEngine.h FGThruster.h \
   FGForce.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGTank.h FGRocket.h FGTurbine.h FGPiston.h \
-  FGElectric.h
+  FGXMLElement.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
+  FGfdmSocket.h FGGroundReactions.h FGTank.h FGRocket.h FGTurbine.h \
+  FGPiston.h FGElectric.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPropulsion.o -c FGPropulsion.cpp
 
 FGQuaternion.o: FGQuaternion.cpp FGMatrix33.h FGColumnVector3.h \
-  FGJSBBase.h FGXMLElement.h FGQuaternion.h FGPropertyManager.h \
-  simgear/props/props.hxx
+  FGJSBBase.h FGQuaternion.h FGPropertyManager.h simgear/props/props.hxx
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGQuaternion.o -c FGQuaternion.cpp
 
 FGRocket.o: FGRocket.cpp FGRocket.h FGEngine.h FGJSBBase.h FGThruster.h \
   FGForce.h FGFDMExec.h FGModel.h FGPropertyManager.h \
   simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGTank.h
+  FGXMLElement.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
+  FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGRocket.o -c FGRocket.cpp
 
 FGRotor.o: FGRotor.cpp FGRotor.h FGThruster.h FGForce.h FGFDMExec.h \
   FGModel.h FGJSBBase.h FGPropertyManager.h simgear/props/props.hxx \
   FGTrim.h FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h \
-  FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h \
   FGMatrix33.h FGConfigFile.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGRotor.o -c FGRotor.cpp
 
 FGScript.o: FGScript.cpp FGScript.h FGJSBBase.h FGState.h \
   FGInitialCondition.h FGFDMExec.h FGModel.h FGPropertyManager.h \
-  simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGXMLParse.h \
-  FGXMLElement.h simgear/xml/easyxml.hxx simgear/compiler.h \
-  FGColumnVector3.h FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
+  simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGColumnVector3.h \
+  FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
-  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
+  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h FGXMLElement.h \
   FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
   FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
   FGTank.h
@@ -352,82 +313,74 @@ FGScript.o: FGScript.cpp FGScript.h FGJSBBase.h FGState.h \
 
 FGState.o: FGState.cpp FGState.h FGJSBBase.h FGInitialCondition.h \
   FGFDMExec.h FGModel.h FGPropertyManager.h simgear/props/props.hxx \
-  FGTrim.h FGTrimAxis.h FGXMLParse.h FGXMLElement.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGColumnVector3.h \
-  FGMatrix33.h FGQuaternion.h FGAtmosphere.h FGFCS.h \
-  filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
-  FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
-  FGTank.h
+  FGTrim.h FGTrimAxis.h FGColumnVector3.h FGMatrix33.h FGQuaternion.h \
+  FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
+  FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h \
+  FGMassBalance.h FGXMLElement.h FGAerodynamics.h FGCoefficient.h \
+  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
+  FGEngine.h FGThruster.h FGForce.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGState.o -c FGState.cpp
 
 FGTable.o: FGTable.cpp FGTable.h FGConfigFile.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTable.o -c FGTable.cpp
 
 FGTank.o: FGTank.cpp FGTank.h FGJSBBase.h FGConfigFile.h \
-  FGColumnVector3.h FGXMLElement.h FGAuxiliary.h FGModel.h \
-  FGPropertyManager.h simgear/props/props.hxx FGLocation.h FGMatrix33.h \
-  FGPropagate.h FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGQuaternion.h
+  FGColumnVector3.h FGAuxiliary.h FGModel.h FGPropertyManager.h \
+  simgear/props/props.hxx FGLocation.h FGMatrix33.h FGPropagate.h \
+  FGInitialCondition.h FGFDMExec.h FGTrim.h FGTrimAxis.h FGQuaternion.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTank.o -c FGTank.cpp
 
 FGThruster.o: FGThruster.cpp FGThruster.h FGForce.h FGFDMExec.h FGModel.h \
   FGJSBBase.h FGPropertyManager.h simgear/props/props.hxx FGTrim.h \
-  FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h FGXMLElement.h \
-  FGXMLParse.h simgear/xml/easyxml.hxx simgear/compiler.h FGMatrix33.h \
+  FGTrimAxis.h FGInitialCondition.h FGColumnVector3.h FGMatrix33.h \
   FGConfigFile.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGThruster.o -c FGThruster.cpp
 
 FGTrim.o: FGTrim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGAtmosphere.h FGAircraft.h \
-  FGMassBalance.h FGMatrix33.h FGGroundReactions.h FGConfigFile.h \
-  FGLGear.h FGPropagate.h FGLocation.h FGQuaternion.h FGAuxiliary.h \
-  FGFCS.h filtersjb/FGFCSComponent.h FGState.h FGAerodynamics.h \
-  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
+  FGInitialCondition.h FGColumnVector3.h FGAtmosphere.h FGAircraft.h \
+  FGConfigFile.h FGMassBalance.h FGMatrix33.h FGXMLElement.h \
+  FGGroundReactions.h FGLGear.h FGPropagate.h FGLocation.h FGQuaternion.h \
+  FGAuxiliary.h FGFCS.h filtersjb/FGFCSComponent.h FGState.h \
+  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTrim.o -c FGTrim.cpp
 
 FGTrimAxis.o: FGTrimAxis.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGAtmosphere.h FGAircraft.h \
-  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGMatrix33.h \
-  FGConfigFile.h FGState.h FGQuaternion.h FGFCS.h \
+  FGInitialCondition.h FGColumnVector3.h FGAtmosphere.h FGAircraft.h \
+  FGConfigFile.h FGPropulsion.h FGEngine.h FGThruster.h FGForce.h \
+  FGMatrix33.h FGState.h FGQuaternion.h FGFCS.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGPropagate.h FGLocation.h \
-  FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
-  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGTank.h
+  FGAuxiliary.h FGMassBalance.h FGXMLElement.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTrimAxis.o -c FGTrimAxis.cpp
 
 FGTurbine.o: FGTurbine.cpp FGTurbine.h FGEngine.h FGJSBBase.h \
   FGThruster.h FGForce.h FGFDMExec.h FGModel.h FGPropertyManager.h \
   simgear/props/props.hxx FGTrim.h FGTrimAxis.h FGInitialCondition.h \
-  FGColumnVector3.h FGXMLElement.h FGXMLParse.h simgear/xml/easyxml.hxx \
-  simgear/compiler.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
+  FGColumnVector3.h FGMatrix33.h FGConfigFile.h FGState.h FGQuaternion.h \
   FGAtmosphere.h FGFCS.h filtersjb/FGFCSComponent.h FGLGear.h \
   FGAircraft.h FGPropagate.h FGLocation.h FGAuxiliary.h FGMassBalance.h \
-  FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h \
-  FGGroundReactions.h FGPropulsion.h FGTank.h
+  FGXMLElement.h FGAerodynamics.h FGCoefficient.h FGTable.h FGOutput.h \
+  FGfdmSocket.h FGGroundReactions.h FGPropulsion.h FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTurbine.o -c FGTurbine.cpp
 
 FGXMLElement.o: FGXMLElement.cpp FGXMLElement.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGXMLElement.o -c FGXMLElement.cpp
 
-FGXMLParse.o: FGXMLParse.cpp FGXMLParse.h FGXMLElement.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h
+FGXMLParse.o: FGXMLParse.cpp FGXMLParse.h FGXMLElement.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGXMLParse.o -c FGXMLParse.cpp
 
 JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
-  FGInitialCondition.h FGColumnVector3.h FGXMLElement.h FGXMLParse.h \
-  simgear/xml/easyxml.hxx simgear/compiler.h FGAtmosphere.h FGState.h \
+  FGInitialCondition.h FGColumnVector3.h FGAtmosphere.h FGState.h \
   FGMatrix33.h FGQuaternion.h FGFCS.h filtersjb/FGFCSComponent.h \
   FGLGear.h FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h \
-  FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
-  FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h FGScript.h
+  FGAuxiliary.h FGMassBalance.h FGXMLElement.h FGAerodynamics.h \
+  FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
+  FGPropulsion.h FGEngine.h FGThruster.h FGForce.h FGTank.h FGScript.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
 
 
