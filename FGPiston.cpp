@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.69 2004/11/02 05:19:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.70 2004/11/16 05:00:22 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +93,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number)
   bTakeoffBoost = false;
   TakeoffBoost = 0.0;   // Default to no extra takeoff-boost
   int i;
-  for(i=0; i<FG_MAX_BOOST_SPEEDS; ++i) {
+  for (i=0; i<FG_MAX_BOOST_SPEEDS; i++) {
     RatedBoost[i] = 0.0;
     RatedPower[i] = 0.0;
     RatedAltitude[i] = 0.0;
@@ -101,6 +101,10 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number)
     RatedMAP[i] = 100000;
     RatedRPM[i] = 2500;
     TakeoffMAP[i] = 100000;
+  }
+  for (i=0; i<FG_MAX_BOOST_SPEEDS-1; i++) {
+    BoostSwitchAltitude[i] = 0.0;
+    BoostSwitchPressure[i] = 0.0;
   }
 
   // Initialisation
