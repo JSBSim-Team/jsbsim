@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.64 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.65 2001/08/30 11:03:59 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.64 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.65 2001/08/30 11:03:59 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -148,6 +148,15 @@ public:
   inline float GetWingSpan(void) { return WingSpan; }
   /// Gets the average wing chord
   inline float Getcbar(void) { return cbar; }
+  inline float GetWingIncidence(void) { return WingIncidence; }
+  inline float GetHTailArea(void) { return HTailArea; }
+  inline float GetHTailArm(void)  { return HTailArm; }
+  inline float GetVTailArea(void) { return VTailArea; }
+  inline float GetVTailArm(void)  { return VTailArm; }
+  inline float Getlbarh(void) { return lbarh; } // HTailArm / cbar
+  inline float Getlbarv(void) { return lbarv; } // VTailArm / cbar
+  inline float Getvbarh(void) { return vbarh; } // H. Tail Volume
+  inline float Getvbarv(void) { return vbarv; } // V. Tail Volume
   inline FGColumnVector3& GetMoments(void) { return vMoments; }
   inline FGColumnVector3& GetForces(void) { return vForces; }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
@@ -187,7 +196,9 @@ private:
   FGColumnVector3 vXYZep;
   FGColumnVector3 vEuler;
   FGColumnVector3 vDXYZcg;
-  float WingArea, WingSpan, cbar;
+  float WingArea, WingSpan, cbar, WingIncidence;;
+  float HTailArea, VTailArea, HTailArm, VTailArm;
+  float lbarh,lbarv,vbarh,vbarv;
   float alphaclmax,alphaclmin;
   string CFGVersion;
   string AircraftName;
