@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.69 2001/04/11 22:34:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.70 2001/04/17 11:58:40 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -749,3 +749,14 @@ void FGAircraft::Debug(void)
     //TODO: Add your source code here
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGAircraft::GetLoD(void) {
+  float LoD;
+  if (vFs(1) != 0.00)
+    LoD = vFs(3)/vFs(1);
+  else
+    LoD = 0.00;
+
+  return LoD;
+}
