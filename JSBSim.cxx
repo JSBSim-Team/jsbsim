@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.8 2000/05/03 22:39:39 jsb Exp $
+// $Id: JSBSim.cxx,v 1.9 2000/05/05 13:05:09 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -52,6 +52,10 @@
 
 #include "JSBsim.hxx"
 
+
+extern float globalTriNormal[3];
+extern double globalSceneryAltitude;
+extern double globalSeaLevelRadius;
 
 /******************************************************************************/
 

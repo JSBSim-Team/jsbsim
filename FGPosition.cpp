@@ -79,6 +79,9 @@ INCLUDES
 ************************************ CODE **************************************
 *******************************************************************************/
 
+extern float globalTriNormal[3];
+extern double globalSceneryAltitude;
+extern double globalSeaLevelRadius;
 
 FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
                                            vUVW(3),
@@ -122,7 +125,7 @@ bool FGPosition:: Run(void)
     h = Radius - EARTHRAD;
 
     DistanceAGL = h - RunwayElevation;
-    
+
     lastLatitudeDot = LatitudeDot;
     lastLongitudeDot = LongitudeDot;
     lastRadiusDot = RadiusDot;
