@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.81 2001/11/14 00:17:41 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.82 2001/11/29 01:26:48 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -198,7 +198,7 @@ void FGJSBsim::init() {
     break;
     }
     
-    stall_warning->setBoolValue(false);
+    stall_warning->setDoubleValue(0);
     
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
             <<  Rotation->Getphi()*RADTODEG << " deg" );
