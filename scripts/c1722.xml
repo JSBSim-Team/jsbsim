@@ -6,27 +6,28 @@
 
   <use aircraft="c172">
   <use initialize="reset00">
-  <run start="0.0" end="50.5" dt="0.00833333">
+  <run start="0.0" end="75" dt="0.00833333">
     <when>
       <parameter name="FG_TIME" comparison="ge" value="0.25">
       <parameter name="FG_TIME" comparison="le" value="2.00">
       <set name="FG_THROTTLE_CMD" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="2.00">
     </when>
+
     <when>
       <parameter name="FG_QBAR" comparison="ge" value="17.0">
-      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.04" action="FG_EXP" persistent="false" tc ="0.5">
+      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.005" action="FG_EXP" persistent="false" tc ="2.0">
     </when>
 
     <when>
       <parameter name="FG_ALTITUDE" comparison="le" value="2000">
-      <parameter name="FG_THT" comparison="ge" value="0.35">
-      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="0.005" action="FG_EXP" persistent="true" tc ="0.1">
+      <parameter name="FG_THT" comparison="ge" value="0.30">
+      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="0.06" action="FG_EXP" persistent="true" tc ="12.0">
     </when>
 
     <when>
       <parameter name="FG_ALTITUDE" comparison="le" value="2000">
       <parameter name="FG_THT" comparison="le" value="0.25">
-      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="-0.005" action="FG_EXP" persistent="true" tc ="0.1">
+      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="-0.06" action="FG_EXP" persistent="true" tc ="12.0">
     </when>
 
     <when>

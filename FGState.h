@@ -62,10 +62,29 @@ INCLUDES
 #include "FGMatrix.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINES
+DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.32 2001/04/09 23:36:25 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.33 2001/04/11 15:53:01 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+class FGAircraft;
+class FGTranslation;
+class FGRotation;
+class FGAtmosphere;
+class FGOutput;
+class FGPosition;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -80,6 +99,8 @@ public:
 
   enum {ePhi=1, eTht, ePsi};
   enum {eP=1, eQ, eR};
+  enum {eU=1, eV, eW};
+  enum {eDrag=1, eSide, eLift};
 
   bool Reset(string, string, string);
   void Initialize(float, float, float, float, float, float, float, float, float);
@@ -137,6 +158,14 @@ private:
   FGColumnVector vQtrn;
   FGColumnVector vlastQdot;
 
+  FGAircraft* Aircraft;
+  FGPosition* Position;
+  FGTranslation* Translation;
+  FGRotation* Rotation;
+  FGOutput* Output;
+  FGAtmosphere* Atmosphere;
+  FGFCS* FCS;
+
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
   void Debug(void);
@@ -148,5 +177,16 @@ private:
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+#include "FGFDMExec.h"
+#include "FGAtmosphere.h"
+#include "FGFCS.h"
+#include "FGTranslation.h"
+#include "FGRotation.h"
+#include "FGPosition.h"
+//#include "FGAuxiliary.h"
+#include "FGOutput.h"
+#include "FGAircraft.h"
+
 #endif
 

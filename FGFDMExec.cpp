@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.41 2001/03/30 14:06:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.42 2001/04/11 15:53:01 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -177,7 +177,9 @@ bool FGFDMExec::Allocate(void) {
   Auxiliary   = new FGAuxiliary(this);
   Output      = new FGOutput(this);
 
-  State       = new FGState(this);
+  State       = new FGState(this); // This must be done here, as the FGState
+                                   // class needs valid pointers to the above
+				   // model classes
 
   // Initialize models so they can communicate with each other
 
