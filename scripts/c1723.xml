@@ -6,50 +6,42 @@
 
   <use aircraft="c172x">
   <use initialize="reset00">
-  <run start="0.0" end="700" dt="0.0083333">
+  <run start="0.0" end="1700" dt="0.0083333">
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="0.25">
       <parameter name="sim-time-sec" comparison="le" value="1.00">
       <set name="fcs/throttle-cmd-norm" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05">
-      <set name="fcs/mixture-cmd-norm" type="FG_VALUE" value="0.65" action="FG_RAMP" persistent="false" tc ="0.05">
+      <set name="fcs/mixture-cmd-norm" type="FG_VALUE" value="0.87" action="FG_RAMP" persistent="false" tc ="0.05">
       <set name="propulsion/magneto_cmd" type="FG_VALUE" value="3" action="FG_STEP" persistent="false" tc ="1.00">
       <set name="propulsion/starter_cmd" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="1.00">
     </when>
 
-    <when> <!-- Set Aileron AP on -->
-      <parameter name="position/h-agl-ft" comparison="ge" value="6.0">
-      <set name="ap/attitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-    </when>
-
-    <when> <!-- Set Autopilot for 800 ft -->
-      <parameter name="aero/qbar-psf" comparison="ge" value="15.0">
-      <set name="ap/altitude_setpoint" type="FG_VALUE" value="800.0" action="FG_EXP" persistent="false" tc ="3.0">
-      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-    </when>
-
-    <when> <!-- Set Autopilot for 850 ft -->
-      <parameter name="sim-time-sec" comparison="ge" value="260.0">
-      <set name="ap/altitude_setpoint" type="FG_VALUE" value="850.0" action="FG_EXP" persistent="false" tc ="3.0">
-      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-    </when>
-
-    <when> <!-- Set Autopilot for 600 ft -->
-      <parameter name="sim-time-sec" comparison="ge" value="320.0">
-      <set name="ap/altitude_setpoint" type="FG_VALUE" value="600.0" action="FG_EXP" persistent="false" tc ="3.0">
-      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-    </when>
-
-    <when> <!-- Set Autopilot for 2000 ft -->
-      <parameter name="sim-time-sec" comparison="ge" value="430.0">
-      <set name="ap/altitude_setpoint" type="FG_VALUE" value="2000.0" action="FG_EXP" persistent="false" tc ="3.0">
-      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-    </when>
-
-    <when> <!-- Set Heading when reach 1900 ft -->
+    <when> <!-- Set Heading when reach 5 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="5">
       <set name="ap/heading_setpoint" type="FG_VALUE" value="200" action="FG_STEP" persistent="false" tc="1.0">
       <set name="ap/attitude_hold" type="FG_VALUE" value="0" action="FG_STEP" persistent="false" tc="1.0">
       <set name="ap/heading_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
     </when>
+
+    <when> <!-- Set Autopilot for 20 ft -->
+      <parameter name="aero/qbar-psf" comparison="ge" value="4.0">
+      <set name="ap/altitude_setpoint" type="FG_VALUE" value="20.0" action="FG_EXP" persistent="false" tc ="3.0">
+      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
+      <set name="fcs/flap-cmd-norm" type="FG_VALUE" value="10" action="FG_STEP" persisten="false" tc="1.0">
+    </when>
+
+    <when> <!-- Set Autopilot for 8000 ft -->
+      <parameter name="aero/qbar-psf" comparison="ge" value="5.0">
+      <set name="ap/altitude_setpoint" type="FG_VALUE" value="8000.0" action="FG_EXP" persistent="false" tc ="3.0">
+      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
+    </when>
+
+    <when> <!-- remove flaps at 50 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="50.0">
+      <set name="fcs/mixture-cmd-norm" type="FG_VALUE" value="0.69" action="FG_EXP" persistent="false" tc ="400.0">
+      <set name="fcs/flap-cmd-norm" type="FG_VALUE" value="0" action="FG_STEP" persisten="false" tc="1.0">
+    </when>
+
   </run>
 
 </runscript>
