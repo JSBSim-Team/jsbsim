@@ -4,14 +4,14 @@
   Author:   Aero-Matic v 0.7
 
   Inputs:
-    name:            F119-PW1
+    name:           F119-PW1
     type:           turbine
     thrust:         35068.8 lb
     augmented?      yes
     injected?       no
 -->
 
-<FG_SIMTURBINE NAME=" F119-PW1">
+<FG_TURBINE NAME="F119-PW1">
   MILTHRUST 35068.8
   MAXTHRUST 52603.2
   BYPASSRATIO    1.0
@@ -83,4 +83,4 @@
   2.6    2.2000  1.9200  1.6400  1.4400  1.1000  0.8000  0.5200
 </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
