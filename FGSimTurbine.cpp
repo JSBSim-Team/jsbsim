@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.5 2003/06/07 08:48:29 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.6 2003/07/26 09:06:02 ehofman Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,6 +155,14 @@ double FGSimTurbine::CalcFuelNeed(void)
   return FuelFlow_pph /3600 * State->Getdt() * Propulsion->GetRate();
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGSimTurbine::GetPowerAvailable(void) {
+  if( throttle <= 0.77 )
+    return 64.94*throttle;
+  else
+    return 217.38*throttle - 117.38;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

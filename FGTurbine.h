@@ -47,7 +47,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.5 2003/06/03 09:53:50 ehofman Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.6 2003/07/26 09:06:02 ehofman Exp $"
 
 namespace JSBSim {
 
@@ -62,6 +62,7 @@ public:
   ~FGTurbine();
 
   double Calculate(double);
+  double GetPowerAvailable(void) { return PowerCommand; }
 
 private:
   typedef vector<FGCoefficient*> CoeffArray;

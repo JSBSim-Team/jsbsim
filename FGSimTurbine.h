@@ -47,7 +47,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.6 2003/06/03 09:53:49 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.7 2003/07/26 09:06:02 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -63,6 +63,7 @@ public:
 
   double Calculate(double);
   double CalcFuelNeed(void);
+  double GetPowerAvailable(void);
   
 private:
 
