@@ -55,7 +55,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.27 2002/02/05 12:11:23 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.28 2002/02/06 13:35:34 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,13 +149,14 @@ bool FGAuxiliary::Run()
     vPilotAccel.InitMatrix();   
     if( Translation->GetVt() > 1 ) {
       vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
-
+      vToEyePt *= inchtoft;
       vPilotAccel =  Aerodynamics->GetForces() 
                   +  Propulsion->GetForces()
                   +  GroundReactions->GetForces();
       vPilotAccel /= MassBalance->GetMass();
       vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
       vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
+      //vPilotAccel(2)*=-1;
     }
     earthPosAngle += State->Getdt()*Inertial->omega();
     return false;
