@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.32 2002/02/23 13:08:33 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.33 2002/03/13 02:33:33 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -614,18 +614,27 @@ void FGTrim::setupTurn(void){
 }  
 
 void FGTrim::updateRates(void){
-  double phi = fgic->GetRollAngleRadIC();
-  double g = fdmex->GetInertial()->gravity(); 
-  if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
-    double p,q,r,theta,phi;
-    theta=fgic->GetPitchAngleRadIC();
-    phi=fgic->GetRollAngleRadIC();
-    psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
-    p=-psidot*sin(theta);
-    q=psidot*cos(theta)*sin(phi);
-    r=psidot*cos(theta)*cos(phi);
-    fdmex->GetRotation()->SetPQR(p,q,r);
-  }
+  if( mode == tTurn ) {
+    double phi = fgic->GetRollAngleRadIC();
+    double g = fdmex->GetInertial()->gravity(); 
+    if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
+      double p,q,r,theta,phi;
+      theta=fgic->GetPitchAngleRadIC();
+      phi=fgic->GetRollAngleRadIC();
+      psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
+      p=-psidot*sin(theta);
+      q=psidot*cos(theta)*sin(phi);
+      r=psidot*cos(theta)*cos(phi);
+      fdmex->GetRotation()->SetPQR(p,q,r);
+    }
+  } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
+      float g,q,cgamma;
+      FGColumnVector3 vPQR;
+      g=fdmex->GetInertial()->gravity();
+      cgamma=cos(fgic->GetFlightPathAngleRadIC());
+      q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
+      fdmex->GetRotation()->SetPQR(0,q,0);
+  }  
 }  
 
 void FGTrim::setDebug(void) {
