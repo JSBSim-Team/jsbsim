@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.16 2002/02/04 23:05:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.17 2002/05/10 21:34:24 dmegginson Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ FGfdmSocket::FGfdmSocket(string address, int port)
 
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
-    int PASCAL FAR wsaReturnCode;
+    int wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
     if (wsaReturnCode == 0) cout << "Winsock DLL loaded ..." << endl;
     else cout << "Winsock DLL not initialized ..." << endl;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.11 2001/12/02 15:57:15 apeden Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.12 2002/05/10 21:34:24 dmegginson Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(string text, int iVal)
   msg->messageId = messageId++;
   msg->subsystem = "FDM";
   msg->type = Message::eInteger;
-  msg->bVal = iVal;
+  msg->bVal = (iVal != 0);
   Messages.push(msg);
   return msg;
 }
@@ -138,7 +138,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(string text, double dVal)
   msg->messageId = messageId++;
   msg->subsystem = "FDM";
   msg->type = Message::eDouble;
-  msg->bVal = dVal;
+  msg->bVal = (dVal != 0.0);
   Messages.push(msg);
   return msg;
 }

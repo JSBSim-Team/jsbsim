@@ -57,8 +57,12 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.79 2002/04/28 11:31:44 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.80 2002/05/10 21:34:24 dmegginson Exp $";
 static const char *IdHdr = ID_FCS;
+
+#if defined(WIN32) && !defined(__CYGWIN__)
+#define snprintf _snprintf
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

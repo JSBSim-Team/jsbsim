@@ -56,8 +56,20 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.74 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.75 2002/05/10 21:34:24 dmegginson Exp $";
 static const char *IdHdr = ID_PROPULSION;
+
+extern short debug_lvl;
+
+#if defined (__APPLE__)
+/* Not all systems have the gcvt function */
+inline char* gcvt (double value, int ndigits, char *buf) {
+    /* note that this is not exactly what gcvt is supposed to do! */
+    snprintf (buf, ndigits+1, "%f", value);
+    return buf;
+}
+#endif
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
