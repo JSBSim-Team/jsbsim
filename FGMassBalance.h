@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.26 2004/03/03 12:33:00 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.27 2004/03/05 04:53:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -77,12 +77,6 @@ public:
 
   inline double GetMass(void) const {return Mass;}
   inline double GetWeight(void) const {return Weight;}
-  inline double GetIxx(void) const {return Ixx;}
-  inline double GetIyy(void) const {return Iyy;}
-  inline double GetIzz(void) const {return Izz;}
-  inline double GetIxy(void) const {return Ixy;}
-  inline double GetIxz(void) const {return Ixz;}
-  inline double GetIyz(void) const {return Iyz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
 
@@ -95,19 +89,14 @@ public:
   FGColumnVector3 StructuralToBody(const FGColumnVector3& r) const;
 
   inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
-  inline void SetBaseIxx(double bixx)   { baseIxx = bixx;}
-  inline void SetBaseIyy(double biyy)   { baseIyy = biyy;}
-  inline void SetBaseIzz(double bizz)   { baseIzz = bizz;}
-  inline void SetBaseIxy(double bixy)   { baseIxy = bixy;}
-  inline void SetBaseIxz(double bixz)   { baseIxz = bixz;}
-  inline void SetBaseIyz(double biyz)   { baseIyz = biyz;}
   inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
 
   void AddPointMass(double weight, double X, double Y, double Z);
   double GetPointMassWeight(void);
   FGColumnVector3& GetPointMassMoment(void);
-  const FGMatrix33& GetJ(void) {return mJ;}
-  const FGMatrix33& GetJinv(void) {return mJinv;}
+  FGMatrix33& GetJ(void) {return mJ;}
+  FGMatrix33& GetJinv(void) {return mJinv;}
+  void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
 
   void bind(void);
   void unbind(void);
@@ -118,24 +107,8 @@ private:
   double Mass;
   FGMatrix33 mJ;
   FGMatrix33 mJinv;
-  double Ixx;
-  double Iyy;
-  double Izz;
-  double Ixy;
-  double Ixz;
-  double Iyz;
-  double pmIxx;
-  double pmIyy;
-  double pmIzz;
-  double pmIxy;
-  double pmIxz;
-  double pmIyz;
-  double baseIxx;
-  double baseIyy;
-  double baseIzz;
-  double baseIxy;
-  double baseIxz;
-  double baseIyz;
+  FGMatrix33 pmJ;
+  FGMatrix33 baseJ;
   FGColumnVector3 vXYZcg;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;
@@ -143,7 +116,7 @@ private:
   vector <FGColumnVector3> PointMassLoc;
   vector <double> PointMassWeight;
   FGColumnVector3 PointMassCG;
-  void CalculatePMInertia(void);
+  FGMatrix33& CalculatePMInertias(void);
 
   void Debug(int from);
 };

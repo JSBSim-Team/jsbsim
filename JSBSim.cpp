@@ -56,6 +56,7 @@ INCLUDES
 #ifdef FGFS
 #include <simgear/compiler.h>
 #include STL_IOSTREAM
+#include STL_TIME
 #else
 #  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <iostream.h>
@@ -64,11 +65,13 @@ INCLUDES
 #  endif
 #endif
 
+#include <time.h>
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.77 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.78 2004/03/05 04:53:12 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -97,7 +100,7 @@ CLASS DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.77 2003/12/29 10:57:39 ehofman Exp $
+    @version $Id: JSBSim.cpp,v 1.78 2004/03/05 04:53:12 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,7 +123,7 @@ int main(int argc, char* argv[])
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetAircraftPath("aircraft");
   FDMExec->SetEnginePath("engine");
-  
+
   if (!ScriptName.empty()) { // SCRIPTED CASE
 
     Script = new JSBSim::FGScript(FDMExec);
@@ -136,13 +139,13 @@ int main(int argc, char* argv[])
   } else if (!AircraftName.empty() || !ResetName.empty()) {        // form jsbsim <acname> <resetfile>
 
     if ( ! FDMExec->LoadModel("aircraft", "engine",AircraftName)) {
-    	cerr << "  JSBSim could not be started" << endl << endl;
+      cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
     }
-    
+
     JSBSim::FGInitialCondition *IC=FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
-    	cerr << "Initialization unsuccessful" << endl;
+      cerr << "Initialization unsuccessful" << endl;
       exit(-1);
     }
   } else {
@@ -174,7 +177,7 @@ int main(int argc, char* argv[])
         break;
       default:
         cerr << "Unrecognized message type." << endl;
-	      break;
+        break;
       }
     }
 
@@ -186,6 +189,7 @@ int main(int argc, char* argv[])
   }
 
   delete FDMExec;
+  cout << endl << "Seconds processor time used: " << clock()/CLOCKS_PER_SEC << " seconds" << endl;
 
   return 0;
 }
@@ -275,6 +279,5 @@ void options(int count, char **arg)
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
     }
   }
-
 }
 

@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.69 2004/03/02 12:53:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.70 2004/03/05 04:53:12 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,9 +197,14 @@ void FGOutput::DelimitedOutput(string fname)
     if (SubSystems & ssMassProps) {
       outstream << ", ";
       outstream << "Ixx, ";
-      outstream << "Iyy, ";
-      outstream << "Izz, ";
+      outstream << "Ixy, ";
       outstream << "Ixz, ";
+      outstream << "Iyx, ";
+      outstream << "Iyy, ";
+      outstream << "Iyz, ";
+      outstream << "Izx, ";
+      outstream << "Izy, ";
+      outstream << "Izz, ";
       outstream << "Mass, ";
       outstream << "Xcg, Ycg, Zcg";
     }
@@ -288,10 +293,7 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssMassProps) {
     outstream << ", ";
-    outstream << MassBalance->GetIxx() << ", ";
-    outstream << MassBalance->GetIyy() << ", ";
-    outstream << MassBalance->GetIzz() << ", ";
-    outstream << MassBalance->GetIxz() << ", ";
+    outstream << MassBalance->GetJ() << ", ";
     outstream << MassBalance->GetMass() << ", ";
     outstream << MassBalance->GetXYZcg();
   }

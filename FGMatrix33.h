@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.16 2004/03/03 12:33:00 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.17 2004/03/05 04:53:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,6 +107,10 @@ public:
   FGMatrix33(void);
   FGMatrix33(int r, int c);
   FGMatrix33(const FGMatrix33& A);
+  FGMatrix33(double x1, double x2, double x3,
+             double y1, double y2, double y3,
+             double z1, double z2, double z3);
+
   ~FGMatrix33(void);
 
   FGMatrix33& operator=(const FGMatrix33& A);

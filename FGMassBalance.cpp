@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.36 2004/03/04 00:23:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.37 2004/03/05 04:53:12 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,13 +57,13 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
-  Ixx = Iyy = Izz = Ixy = Ixz = Iyz = 0.0;
-  baseIxx = baseIyy = baseIzz = baseIxy = baseIxz = baseIyz = 0.0;
-  pmIxx = pmIyy = pmIzz = pmIxy = pmIxz = pmIyz = 0.0;
 
   vbaseXYZcg.InitMatrix(0.0);
+  baseJ.InitMatrix();
   mJ.InitMatrix();
   mJinv.InitMatrix();
+  pmJ.InitMatrix();
+
   bind();
 
   Debug(0);
@@ -82,6 +82,7 @@ FGMassBalance::~FGMassBalance()
 bool FGMassBalance::Run(void)
 {
   double denom, k1, k2, k3, k4, k5, k6;
+  double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
   if (!FGModel::Run()) {
 
@@ -89,25 +90,25 @@ bool FGMassBalance::Run(void)
 
     Mass = Weight / Inertial->SLgravity();
 
-// Calculate new CG here.
+// Calculate new CG
 
     vXYZcg = (Propulsion->GetTanksMoment() + EmptyWeight*vbaseXYZcg
                                        + GetPointMassMoment() ) / Weight;
 
-// Calculate new moments of inertia here
+// Calculate new total moments of inertia
 
-    CalculatePMInertia();
+    mJ = baseJ + CalculatePMInertias() + Propulsion->CalculateTankInertias();
 
-    Ixx = baseIxx + Propulsion->GetTanksIxx() + pmIxx;
-    Iyy = baseIyy + Propulsion->GetTanksIyy() + pmIyy;
-    Izz = baseIzz + Propulsion->GetTanksIzz() + pmIzz;
-    Ixy = baseIxy + Propulsion->GetTanksIxy() + pmIxy;
-    Ixz = baseIxz + Propulsion->GetTanksIxz() + pmIxz;
-    Iyz = baseIyz + Propulsion->GetTanksIyz() + pmIyz;
+    Ixx = mJ(1,1);
+    Iyy = mJ(2,2);
+    Izz = mJ(3,3);
+    Ixy = mJ(1,2);
+    Ixz = mJ(1,2);
+    Iyz = mJ(2,3);
 
-    mJ.InitMatrix( Ixx, -Ixy, -Ixz,
-                  -Ixy,  Iyy, -Iyz,
-                  -Ixz, -Iyz,  Izz );
+	  mJ(1,2) = mJ(2,1) *= -1;
+    mJ(1,3) = mJ(3,1) *= -1;
+    mJ(2,3) = mJ(3,2) *= -1;
 
 // Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
 
@@ -165,13 +166,14 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMassBalance::CalculatePMInertia(void)
+FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
   int size;
   double XX, YY, ZZ;
+  double pmIxx, pmIyy, pmIzz, pmIxy, pmIxz, pmIyz;
 
   size = PointMassLoc.size();
-  if (size == 0) return;
+  if (size == 0) return pmJ;
 
   pmIxx = pmIyy = pmIzz = pmIxy = pmIxz = pmIyz = 0.0;
 
@@ -191,12 +193,14 @@ void FGMassBalance::CalculatePMInertia(void)
     pmIyz += vPMxyz(eY)*vPMxyz(eZ)*PointMassWeight[i];
   }
 
-  pmIxx /= Inertial->SLgravity();
-  pmIyy /= Inertial->SLgravity();
-  pmIzz /= Inertial->SLgravity();
-  pmIxy /= Inertial->SLgravity();
-  pmIxz /= Inertial->SLgravity();
-  pmIyz /= Inertial->SLgravity();
+  pmJ(1,1) = pmIxx / Inertial->SLgravity();
+  pmJ(2,2) = pmIyy / Inertial->SLgravity();
+  pmJ(3,3) = pmIzz / Inertial->SLgravity();
+  pmJ(1,2) = pmJ(2,1) = pmIxy / Inertial->SLgravity();
+  pmJ(1,3) = pmJ(3,1) = pmIxz / Inertial->SLgravity();
+  pmJ(2,3) = pmJ(3,2) = pmIyz / Inertial->SLgravity();
+
+  return (pmJ);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,7 +245,7 @@ void FGMassBalance::bind(void) // UNITS SHOULD BE CHANGED FOR Ixx, etc. to SLUG-
                        &FGMassBalance::GetMass);
   PropertyManager->Tie("inertia/weight-lbs", this,
                        &FGMassBalance::GetWeight);
-  PropertyManager->Tie("inertia/ixx-lbsft2", this,
+/*PropertyManager->Tie("inertia/ixx-lbsft2", this,
                        &FGMassBalance::GetIxx);
   PropertyManager->Tie("inertia/iyy-lbsft2", this,
                        &FGMassBalance::GetIyy);
@@ -252,7 +256,7 @@ void FGMassBalance::bind(void) // UNITS SHOULD BE CHANGED FOR Ixx, etc. to SLUG-
   PropertyManager->Tie("inertia/ixz-lbsft2", this,
                        &FGMassBalance::GetIxz);
   PropertyManager->Tie("inertia/iyz-lbsft2", this,
-                       &FGMassBalance::GetIyz);
+                       &FGMassBalance::GetIyz); */
   PropertyManager->Tie("inertia/cg-x-ft", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-ft", this,2,
@@ -267,12 +271,6 @@ void FGMassBalance::unbind(void)
 {
   PropertyManager->Untie("inertia/mass-slugs");
   PropertyManager->Untie("inertia/weight-lbs");
-  PropertyManager->Untie("inertia/ixx-lbsft2");
-  PropertyManager->Untie("inertia/iyy-lbsft2");
-  PropertyManager->Untie("inertia/izz-lbsft2");
-  PropertyManager->Untie("inertia/ixy-lbsft2");
-  PropertyManager->Untie("inertia/ixz-lbsft2");
-  PropertyManager->Untie("inertia/iyz-lbsft2");
   PropertyManager->Untie("inertia/cg-x-ft");
   PropertyManager->Untie("inertia/cg-y-ft");
   PropertyManager->Untie("inertia/cg-z-ft");

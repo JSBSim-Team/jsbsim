@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.93 2004/03/04 00:23:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.94 2004/03/05 04:53:12 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -92,6 +92,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numOxiTanks = numFuelTanks = 0;
   dt = 0.0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
+  tankJ.InitMatrix();
 
   bind();
 
@@ -126,7 +127,7 @@ bool FGPropulsion::Run(void)
       vForces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       vMoments += Thrusters[i]->GetMoments();     // sum body frame moments
     }
-    CalculateTankInertias();
+
     return false;
   } else {
     return true;
@@ -519,14 +520,15 @@ double FGPropulsion::GetTanksWeight(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropulsion::CalculateTankInertias(void)
+FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 {
   unsigned int size;
   double contents;
   double XX, YY, ZZ;
+  double tankIxx, tankIyy, tankIzz, tankIxz, tankIxy, tankIyz;
 
   size = Tanks.size();
-  if (size == 0) return;
+  if (size == 0) return (tankJ);
 
   tankIxx = tankIyy = tankIzz = tankIxy = tankIxz = tankIyz = 0.0;
 
@@ -553,6 +555,15 @@ void FGPropulsion::CalculateTankInertias(void)
   tankIxy /= Inertial->SLgravity();
   tankIxz /= Inertial->SLgravity();
   tankIyz /= Inertial->SLgravity();
+
+  tankJ(1,1) = tankIxx;
+  tankJ(2,2) = tankIyy;
+  tankJ(3,3) = tankIzz;
+  tankJ(1,2) = tankJ(2,1) = tankIxy;
+  tankJ(1,3) = tankJ(3,1) = tankIxz;
+  tankJ(2,3) = tankJ(3,2) = tankIyz;
+
+  return (tankJ);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

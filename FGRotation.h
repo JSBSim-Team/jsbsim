@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.47 2004/03/01 13:56:39 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.48 2004/03/05 04:53:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -144,7 +144,6 @@ private:
   double cPhi,sPhi;
   double cPsi,sPsi;
 
-  double Ixx, Iyy, Izz, Ixz, Ixy, Iyz;
   double dt;
 
   void GetState(void);

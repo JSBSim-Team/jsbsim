@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.16 2004/03/03 12:33:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.17 2004/03/05 04:53:12 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,27 @@ FGMatrix33::FGMatrix33(const FGMatrix33& M)
   data[3][1] = M.data[3][1];
   data[3][2] = M.data[3][2];
   data[3][3] = M.data[3][3];
+
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGMatrix33::FGMatrix33(double x1, double x2, double x3,
+                       double y1, double y2, double y3,
+                       double z1, double z2, double z3)
+{
+  rowCtr = colCtr = 1;
+
+  data[1][1] = x1;
+  data[1][2] = x2;
+  data[1][3] = x3;
+  data[2][1] = y1;
+  data[2][2] = y2;
+  data[2][3] = y3;
+  data[3][1] = z1;
+  data[3][2] = z2;
+  data[3][3] = z3;
 
   Debug(0);
 }
@@ -407,13 +428,11 @@ void FGMatrix33::T(void)
 
 FGColumnVector3 FGMatrix33::operator*(const FGColumnVector3& Col)
 {
-  FGColumnVector3 Product;
-
-  Product(1) = data[1][1]*Col(1) + data[1][2]*Col(2) + data[1][3]*Col(3);
-  Product(2) = data[2][1]*Col(1) + data[2][2]*Col(2) + data[2][3]*Col(3);
-  Product(3) = data[3][1]*Col(1) + data[3][2]*Col(2) + data[3][3]*Col(3);
-
-  return Product;
+  return ( FGColumnVector3(
+    data[1][1]*Col(1) + data[1][2]*Col(2) + data[1][3]*Col(3),
+    data[2][1]*Col(1) + data[2][2]*Col(2) + data[2][3]*Col(3),
+    data[3][1]*Col(1) + data[3][2]*Col(2) + data[3][3]*Col(3))
+  );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

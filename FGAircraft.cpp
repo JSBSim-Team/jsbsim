@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.125 2004/03/01 13:56:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.126 2004/03/05 04:53:12 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,27 +195,21 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
     } else if (parameter == "AC_IXX") {
       *AC_cfg >> bixx;
       if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
-      MassBalance->SetBaseIxx(bixx);
     } else if (parameter == "AC_IYY") {
       *AC_cfg >> biyy;
       if (debug_lvl > 0) cout << "    baseIyy: " << biyy << endl;
-      MassBalance->SetBaseIyy(biyy);
     } else if (parameter == "AC_IZZ") {
       *AC_cfg >> bizz;
       if (debug_lvl > 0) cout << "    baseIzz: " << bizz << endl;
-      MassBalance->SetBaseIzz(bizz);
     } else if (parameter == "AC_IXY") {
       *AC_cfg >> bixy;
       if (debug_lvl > 0) cout << "    baseIxy: " << bixy  << endl;
-      MassBalance->SetBaseIxy(bixy);
     } else if (parameter == "AC_IXZ") {
       *AC_cfg >> bixz;
       if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
-      MassBalance->SetBaseIxz(bixz);
     } else if (parameter == "AC_IYZ") {
-        *AC_cfg >> biyz;
-        if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
-        MassBalance->SetBaseIyz(biyz);
+      *AC_cfg >> biyz;
+      if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
     } else if (parameter == "AC_EMPTYWT") {
       *AC_cfg >> EW;
       MassBalance->SetEmptyWeight(EW);
@@ -242,6 +236,10 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
                          << endl;
     }
   }
+
+  MassBalance->SetAircraftBaseInertias(FGMatrix33(  bixx,  bixy,  bixz,
+                                                    bixy,  biyy,  biyz,
+                                                    bixz,  biyz,  bizz ));
 
   // calculate some derived parameters
   if (cbar != 0.0) {

@@ -56,12 +56,13 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 #include "FGThruster.h"
+#include "FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.59 2004/03/03 11:56:52 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.60 2004/03/05 04:53:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +92,7 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.59 2004/03/03 11:56:52 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.60 2004/03/05 04:53:12 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -188,13 +189,6 @@ public:
   FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void);
 
-  double GetTanksIxx(void) {return tankIxx;}
-  double GetTanksIyy(void) {return tankIyy;}
-  double GetTanksIzz(void) {return tankIzz;}
-  double GetTanksIxz(void) {return tankIxz;}
-  double GetTanksIxy(void) {return tankIxy;}
-  double GetTanksIyz(void) {return tankIyz;}
-
   inline int GetActiveEngine(void) const
   {
     return ActiveEngine;
@@ -206,6 +200,7 @@ public:
   void SetStarter(int setting);
   void SetCutoff(int setting=0);
   void SetActiveEngine(int engine);
+  FGMatrix33& CalculateTankInertias(void);
 
   void bind();
   void unbind();
@@ -222,14 +217,13 @@ private:
   unsigned int numEngines;
   unsigned int numTanks;
   unsigned int numThrusters;
-  double tankIxx, tankIyy, tankIzz, tankIxy, tankIxz, tankIyz;
   int ActiveEngine;
   double dt;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
-  void CalculateTankInertias(void);
+  FGMatrix33 tankJ;
   void Debug(int from);
 };
 }
