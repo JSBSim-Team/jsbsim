@@ -21,7 +21,7 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.2 2001/07/28 15:32:52 apeden Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.3 2001/07/29 01:07:13 apeden Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -35,8 +35,20 @@ double** FGalloc(void)
   double **A;
 
   A = new double *[4];
-  if (!A)  return NULL;
-
+  if (!A) return NULL;
+  
+  double *tmp;
+  tmp = new double [16];
+  
+  if (!tmp) {
+	  delete A;
+	  return NULL;
+  }
+  A[0] = tmp;
+  A[1] = tmp + 4;
+  A[2] = tmp + 8;
+  A[3] = tmp + 12;
+#if 0
   A[0] = new double [4];
   if (!A[0]) return NULL;
   A[1] = new double [4];
@@ -45,6 +57,7 @@ double** FGalloc(void)
   if (!A[2]) return NULL;
   A[3] = new double [4];
   if (!A[3]) return NULL;
+#endif
   
   return A;
 }
@@ -54,9 +67,9 @@ double** FGalloc(void)
 void dealloc(double **A)
 {
   delete[] A[0];
-  delete[] A[1];
-  delete[] A[2];
-  delete[] A[3];
+//  delete[] A[1];
+//  delete[] A[2];
+//  delete[] A[3];
  
   delete[] A;
 }
@@ -397,15 +410,16 @@ FGMatrix33 FGMatrix33::operator/(const double scalar)
   FGMatrix33 Quot;
   
   if( scalar != 0 ) {
-    Quot(1,1) = data[1][1] / scalar;
-    Quot(1,2) = data[1][2] / scalar;
-    Quot(1,3) = data[1][3] / scalar;
-    Quot(2,1) = data[2][1] / scalar;
-    Quot(2,2) = data[2][2] / scalar;
-    Quot(2,3) = data[2][3] / scalar;
-    Quot(3,1) = data[3][1] / scalar;
-    Quot(3,2) = data[3][2] / scalar;
-    Quot(3,3) = data[3][3] / scalar;
+	  double tmp = 1.0/scalar;
+    Quot(1,1) = data[1][1] * tmp;
+    Quot(1,2) = data[1][2] * tmp;
+    Quot(1,3) = data[1][3] * tmp;
+    Quot(2,1) = data[2][1] * tmp;
+    Quot(2,2) = data[2][2] * tmp;
+    Quot(2,3) = data[2][3] * tmp;
+    Quot(3,1) = data[3][1] * tmp;
+    Quot(3,2) = data[3][2] * tmp;
+    Quot(3,3) = data[3][3] * tmp;
   } else {
     MatrixException mE;
     mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/(const double scalar)";
@@ -419,15 +433,16 @@ FGMatrix33 FGMatrix33::operator/(const double scalar)
 void FGMatrix33::operator/=(const double scalar)
 {
   if( scalar != 0 ) {
-    data[1][1] /= scalar;
-    data[1][2] /= scalar;
-    data[1][3] /= scalar;
-    data[2][1] /= scalar;
-    data[2][2] /= scalar;
-    data[2][3] /= scalar;
-    data[3][1] /= scalar;
-    data[3][2] /= scalar;
-    data[3][3] /= scalar;
+	  double tmp = 1.0/scalar;
+    data[1][1] *= tmp;
+    data[1][2] *= tmp;
+    data[1][3] *= tmp;
+    data[2][1] *= tmp;
+    data[2][2] *= tmp;
+    data[2][3] *= tmp;
+    data[3][1] *= tmp;
+    data[3][2] *= tmp;
+    data[3][3] *= tmp;
   } else {
     MatrixException mE;
     mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/=(const double scalar)";
