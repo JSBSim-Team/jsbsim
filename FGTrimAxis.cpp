@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.39 2003/06/03 09:53:50 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.40 2003/07/17 02:31:53 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -323,22 +323,22 @@ bool FGTrimAxis::initTheta(void) {
   level=false;
   theta=fgic->GetPitchAngleDegIC(); 
   while(!level && (i < 100)) {
-	theta+=2.0*zDiff;
-	fgic->SetPitchAngleDegIC(theta);   
-	fdmex->RunIC();
-	zAft=fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear(3);
-        zForward=fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear(3);
-        zDiff = zForward - zAft;
-	//cout << endl << theta << "  " << zDiff << endl;
-	//cout << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << endl;
-	//cout << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << endl;
-
-	if(fabs(zDiff ) < 0.1) 
-	    level=true;
-	i++;   
+	  theta+=2.0*zDiff;
+	  fgic->SetPitchAngleDegIC(theta);   
+	  fdmex->RunIC();
+	  zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
+    zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
+    zDiff = zForward - zAft;
+	  //cout << endl << theta << "  " << zDiff << endl;
+	  //cout << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << endl;
+	  //cout << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << endl;
+	  if(fabs(zDiff ) < 0.1) 
+	      level=true;
+	  i++;   
   }	    	    	
   //cout << i << endl;
   cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
+  cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
   control_min=(theta+5)*degtorad;
   control_max=(theta-5)*degtorad;
   fgic->SetAltitudeAGLFtIC(saveAlt);
