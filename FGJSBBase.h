@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.28 2002/08/25 13:57:11 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.29 2002/09/07 21:51:12 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -195,7 +195,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.28 2002/08/25 13:57:11 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.29 2002/09/07 21:51:12 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,6 +301,8 @@ public:
   Message* ProcessMessage(void);
   //@}
   string GetVersion(void) {return JSBSim_version;}
+  
+  void disableHighLighting(void);
 
 protected:
   static Message localMsg;

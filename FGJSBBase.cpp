@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.14 2002/08/25 13:57:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.15 2002/09/07 21:51:13 apeden Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,4 +166,21 @@ FGJSBBase::Message* FGJSBBase::ProcessMessage(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGJSBBase::disableHighLighting(void) {
+  highint[0]='\0';
+  halfint[0]='\0';
+  normint[0]='\0';
+  reset[0]='\0';
+  underon[0]='\0';
+  underoff[0]='\0';
+  fgblue[0]='\0';
+  fgcyan[0]='\0';
+  fgred[0]='\0';
+  fggreen[0]='\0';
+  fgdef[0]='\0';
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
