@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.6 2000/05/02 12:18:48 jsb Exp $
+// $Id: JSBSim.cxx,v 1.7 2000/05/03 12:29:06 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -33,6 +33,8 @@
 #include <simgear/debug/logstream.hxx>
 #include <simgear/math/fg_geodesy.hxx>
 #include <simgear/misc/fgpath.hxx>
+
+#include <scenery/scenery.hxx>
 
 #include <Aircraft/aircraft.hxx>
 #include <Controls/controls.hxx>
@@ -242,7 +244,10 @@ int FGJSBsim::copy_from_JSBsim() {
   /* **FIXME*** */ set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
   /* **FIXME*** */ set_Earth_position_angle( 0.0 );
 
-  /* ***FIXME*** */ set_Runway_altitude( 0.0 );
+  // /* ***FIXME*** */ set_Runway_altitude( 0.0 );
+  set_Runway_altitude( scenery.cur_elev );
+  
+  FDMExec.Position()->SetRunwayElevation(scenery.cur_elev);
 
   set_sin_lat_geocentric( lat_geoc );
   set_cos_lat_geocentric( lat_geoc );

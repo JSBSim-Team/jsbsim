@@ -178,7 +178,9 @@ void FGOutput::DelimitedOutput(void)
       cout << "Phi, Tht, Psi, ";
       cout << "Alpha, ";
       cout << "Latitude, ";
-      cout << "Longitude";
+      cout << "Longitude, ";
+      cout << "Distance AGL, ";
+      cout << "Runway Elevation";
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       cout << ", ";
@@ -241,7 +243,9 @@ void FGOutput::DelimitedOutput(void)
     cout << Rotation->GetEuler() << ", ";
     cout << Translation->Getalpha() << ", ";
     cout << Position->GetLatitude() << ", ";
-    cout << Position->GetLongitude();
+    cout << Position->GetLongitude() << ", ";
+    cout << Position->GetDistanceAGL() << ", ";
+    cout << Position->GetRunwayElevation();
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     cout << ", ";
@@ -309,7 +313,9 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << "Phi, Tht, Psi, ";
       datafile << "Alpha, ";
       datafile << "Latitude, ";
-      datafile << "Longitude";
+      datafile << "Longitude, ";
+      datafile << "Distance AGL, ";
+      datafile << "Runway Elevation";
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       datafile << ", ";
@@ -371,7 +377,9 @@ void FGOutput::DelimitedOutput(string fname)
     datafile << Rotation->GetEuler() << ", ";
     datafile << Translation->Getalpha() << ", ";
     datafile << Position->GetLatitude() << ", ";
-    datafile << Position->GetLongitude();
+    datafile << Position->GetLongitude() << ", ";
+    datafile << Position->GetDistanceAGL() << ", ";
+    datafile << Position->GetRunwayElevation();
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     datafile << ", ";

@@ -308,11 +308,12 @@ bool FGInitialCondition::findMachInterval(float *mlo, float *mhi, float vcas) {
 bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
 
 
-    float x1,x2,x3,f1,f2,f3,d,d0;
+    float x1,x2,x3,f1,f2,f3,d=0,d0;
     float eps=1E-3;
     float const relax =0.9;
     int i;
     bool success=false;
+
     //initializations
     if(findMachInterval(&x1,&x3,vcas)) {
 

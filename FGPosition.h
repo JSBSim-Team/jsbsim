@@ -62,6 +62,8 @@ class FGPosition : public FGModel
   float lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
   float Longitude, Latitude;
   float dt;
+  double RunwayElevation;
+  double DistanceAGL;
 
   void GetState(void);
 
@@ -77,10 +79,15 @@ public:
   inline float Geth(void)  {return h;}
   inline float GetLatitude(void) {return Latitude;}
   inline float GetLongitude(void) {return Longitude;}
+  inline double GetRunwayElevation(void) {return RunwayElevation;}
+  inline double GetDistanceAGL(void)  {return DistanceAGL;}
+
   void SetvVel(const FGColumnVector& v) {vVel = v;}
   void SetLatitude(float tt) {Latitude = tt;}
   void SetLongitude(float tt) {Longitude = tt;}
   void Seth(float tt) {h = tt;}
+  void SetRunwayElevation(double tt) {RunwayElevation = tt;}
+  void SetDistanceAGL(double tt) {DistanceAGL = tt;}
 
   bool Run(void);
 };

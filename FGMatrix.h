@@ -122,10 +122,12 @@ public:
   FGColumnVector operator*(const double scalar);
   FGColumnVector operator/(const double scalar);
   FGColumnVector operator+(const FGColumnVector& B);
-  float Magnitude(void); 
+  FGColumnVector operator-(const FGColumnVector& B);
+  float Magnitude(void);
   FGColumnVector Normalize(void);
 
   friend FGColumnVector operator*(const double scalar, const FGColumnVector& A);
+  friend FGColumnVector operator*(const FGMatrix& M, const FGColumnVector& V);
 
   double& operator()(int m) const;
 };

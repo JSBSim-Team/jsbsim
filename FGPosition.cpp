@@ -89,6 +89,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   h = 0.0;
+  RunwayElevation = 0.0;
 }
 
 /******************************************************************************/
@@ -119,6 +120,8 @@ bool FGPosition:: Run(void)
     Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
 
     h = Radius - EARTHRAD;
+
+    DistanceAGL = h - RunwayElevation;
     
     lastLatitudeDot = LatitudeDot;
     lastLongitudeDot = LongitudeDot;

@@ -37,18 +37,20 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGLGear.h"
-#include "FGState.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
 
 
-FGLGear::FGLGear(FGConfigFile* AC_cfg) : vXYZ(3)
+FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3), Exec(fdmex)
 {
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3) >> kSpring >> bDamp
                                                     >> statFCoeff >> brakeCoeff;
+  State = Exec->GetState();
+  Aircraft = Exec->GetAircraft();
+  Position = Exec->GetPosition();                                                  
 }
 
 
@@ -63,6 +65,10 @@ FGLGear::~FGLGear(void)
 FGColumnVector FGLGear::Force(void)
 {
   static FGColumnVector vForce(3);
+  static FGColumnVector vLocalGear(3);
+
+  vLocalGear = State->GetTb2l() * (vXYZ - Aircraft->GetXYZcg());
+  vLocalGear(3) = -vLocalGear(3);
 
   return vForce;
 }

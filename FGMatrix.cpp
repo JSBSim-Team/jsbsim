@@ -197,7 +197,7 @@ FGMatrix FGMatrix::operator-(const FGMatrix& M)
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
-      Diff(i,j) = (*this)(i,j) - M(i,j);
+      Diff(i,j) = data[i][j] - M(i,j);
     }
   }
   return Diff;
@@ -215,7 +215,7 @@ void FGMatrix::operator-=(const FGMatrix &M)
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
-      (*this)(i,j) -= M(i,j);
+      data[i][j] -= M(i,j);
     }
   }
 }
@@ -234,7 +234,7 @@ FGMatrix FGMatrix::operator+(const FGMatrix& M)
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
-      Sum(i,j) = (*this)(i,j) + M(i,j);
+      Sum(i,j) = data[i][j] + M(i,j);
     }
   }
   return Sum;
@@ -252,7 +252,7 @@ void FGMatrix::operator+=(const FGMatrix &M)
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
-      (*this)(i,j)+=M(i,j);
+      data[i][j]+=M(i,j);
     }
   }
 }
@@ -277,7 +277,7 @@ void FGMatrix::operator*=(const double scalar)
 {
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++) {
-      (*this)(i,j) *= scalar;
+      data[i][j] *= scalar;
     }
   }
 }
@@ -298,7 +298,7 @@ FGMatrix FGMatrix::operator*(const FGMatrix& M)
     for (unsigned int j=1; j<=M.Cols(); j++)  {
       Product(i,j) = 0;
       for (unsigned int k=1; k<=Cols(); k++) {
-         Product(i,j) += (*this)(i,k) * M(k,j);
+         Product(i,j) += data[i][k] * M(k,j);
       }
     }
   }
@@ -322,7 +322,7 @@ void FGMatrix::operator*=(const FGMatrix& M)
     for (unsigned int j=1; j<=M.Cols(); j++) {
       prod[i][j] = 0;
       for (unsigned int k=1; k<=Cols(); k++) {
-        prod[i][j] += (*this)(i,k) * M(k,j);
+        prod[i][j] += data[i][k] * M(k,j);
       }
     }
   }
@@ -339,7 +339,7 @@ FGMatrix FGMatrix::operator/(const double scalar)
 
   for (unsigned int i=1; i<=Rows(); i++) {
     for (unsigned int j=1; j<=Cols(); j++)  {
-       Quot(i,j) = (*this)(i,j)/scalar;
+       Quot(i,j) = data[i][j]/scalar;
     }
   }
   return Quot;
@@ -351,7 +351,7 @@ void FGMatrix::operator/=(const double scalar)
 {
   for (unsigned int i=1; i<=Rows(); i++)  {
     for (unsigned int j=1; j<=Cols(); j++) {
-      (*this)(i,j)/=scalar;
+      data[i][j]/=scalar;
     }
   }
 }
@@ -486,6 +486,25 @@ FGColumnVector FGColumnVector::operator*(const double scalar)
   for (unsigned int i=1; i<=Rows(); i++) Product(i) = scalar * data[i][1];
 
   return Product;
+}
+
+/******************************************************************************/
+
+FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
+{
+  if ((Rows() != V.Rows()) || (Cols() != V.Cols())) {
+    MatrixException mE;
+    mE.Message = "Invalid row/column match in Column Vector operator -";
+    throw mE;
+  }
+
+  FGColumnVector Diff(Rows());
+
+  for (unsigned int i=1; i<=Rows(); i++) {
+    Diff(i) = data[i][1] - V(i);
+  }
+
+  return Diff;
 }
 
 /******************************************************************************/

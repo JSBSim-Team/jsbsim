@@ -507,7 +507,7 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
-    lGear.push_back(new FGLGear(AC_cfg));
+    lGear.push_back(new FGLGear(AC_cfg, FDMExec));
   }
 }
 

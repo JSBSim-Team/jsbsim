@@ -64,6 +64,8 @@ INCLUDES
 
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
+#include "FGFDMExec.h"
+#include "FGState.h"
 
 /*******************************************************************************
 DEFINITIONS
@@ -75,10 +77,13 @@ using namespace std;
 CLASS DECLARATION
 *******************************************************************************/
 
+class FGAircraft;
+class FGPosition;
+
 class FGLGear
 {
 public:
-  FGLGear(FGConfigFile*);
+  FGLGear(FGConfigFile*, FGFDMExec*);
   ~FGLGear(void);
 
   FGColumnVector Force(void);
@@ -90,7 +95,14 @@ private:
   float frictionForce, compForce;
   float brakePct, brakeForce, brakeCoeff;
   string name;
+  FGState* State;
+  FGAircraft* Aircraft;
+  FGPosition* Position;
+  FGFDMExec* Exec;
 };
+
+#include "FGAircraft.h"
+#include "FGPosition.h"
 
 /******************************************************************************/
 #endif
