@@ -53,7 +53,7 @@ SENTRY
 #define DEGTORAD        1.745329E-2
 #define KTSTOFPS        1.68781
 #define FPSTOKTS        0.592484
-#define NEEDED_CFG_VERSION 1.30
+#define NEEDED_CFG_VERSION "1.30"
 
 #define HPTOFTLBSSEC 550
 #define METERS_TO_FEET 3.2808

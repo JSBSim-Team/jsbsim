@@ -237,7 +237,7 @@ private:
   float Weight, EmptyWeight;
   float nlf;
   float dt;
-  double CFGVersion;
+  string CFGVersion;
   string AircraftName;
 
   int numTanks;

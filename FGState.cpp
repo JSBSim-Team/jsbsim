@@ -164,7 +164,7 @@ void FGState::Initialize(float U, float V, float W,
   FGColumnVector vUVW(3);
   FGColumnVector vLocalVelNED(3);
   FGColumnVector vEuler(3);
-  float alpha, beta, gamma;
+  float alpha, beta;
   float qbar, Vt;
 
   FDMExec->GetPosition()->SetLatitude(Latitude);
@@ -173,7 +173,6 @@ void FGState::Initialize(float U, float V, float W,
 
   FDMExec->GetAtmosphere()->Run();
 
-  gamma = 0.0;
   if (W != 0.0)
     alpha = U*U > 0.0 ? atan2(W, U) : 0.0;
   else

@@ -152,7 +152,6 @@ setvc:   SetVcalibratedKtsIC(vc); break;
 setve:   SetVequivalentKtsIC(ve); break;
 setmach: SetMachIC(mach); break;
     }
-
 }
 
 float FGInitialCondition::calcVcas(float Mach) {

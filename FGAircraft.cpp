@@ -571,12 +571,10 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   cout << "Reading Aircraft Configuration File: " << AircraftName << endl;
   scratch=AC_cfg->GetValue("VERSION").c_str();
 
-  CFGVersion = strtod(AC_cfg->GetValue("VERSION").c_str(),NULL);
-  CFGVersion=1.3;
+  CFGVersion = AC_cfg->GetValue("VERSION");
   cout << "                            Version: " << CFGVersion << endl;
-  cout << CFGVersion - NEEDED_CFG_VERSION  << endl;
-  if (CFGVersion < NEEDED_CFG_VERSION) {
-    cout << endl << "YOU HAVE AN OLD CFG FILE FOR THIS AIRCRAFT."
+  if (CFGVersion != NEEDED_CFG_VERSION) {
+    cout << endl << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
     " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
     cout << "         You have version: " << CFGVersion << endl << endl;

@@ -14,13 +14,13 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
-OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \
-  FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
+OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \  FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
   FGTranslation.obj FGAircraft.obj filtersjb\FGfcsComponent.obj \
   filtersjb\FGSwitch.obj filtersjb\FGFilter.obj filtersjb\FGGain.obj \
-  filtersjb\FGGradient.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj
+  filtersjb\FGGradient.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj \
+  FGTrimLong.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
