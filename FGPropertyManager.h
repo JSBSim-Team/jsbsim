@@ -14,11 +14,11 @@ using namespace std;
 
 class FGPropertyManager:public SGPropertyNode {
   public:
-    FGPropertyManager::FGPropertyManager(void) {
+    FGPropertyManager(void) {
       
     }
     
-    FGPropertyManager::~FGPropertyManager(void) {
+    ~FGPropertyManager(void) {
       
     }   
     /**
