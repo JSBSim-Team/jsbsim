@@ -83,6 +83,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
 
 FGLGear::~FGLGear(void)
 {
+  cout << "Destructing Landing Gear ..." << endl;
 }
 
 /******************************************************************************/

@@ -145,7 +145,7 @@ public:
   inline void SetGearUp(bool tt) { GearUp = tt; }
   inline bool GetGearUp(void) { return GearUp; }
   inline int GetNumGearUnits(void) { return lGear.size(); }
-  inline FGLGear* GetGearUnit(int ii) { return lGear[ii]; }
+  inline FGLGear* GetGearUnit(int ii) { return &(lGear[ii]); }
   inline float GetWingArea(void) { return WingArea; }
   inline float GetWingSpan(void) { return WingSpan; }
   inline float Getcbar(void) { return cbar; }
@@ -176,8 +176,6 @@ public:
   string GetCoefficientValues(void);
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
-
-  vector <FGLGear>::iterator iGear;
 
   enum { ssSimulation      = 1,
          ssAerosurfaces    = 2,
@@ -235,7 +233,7 @@ private:
   bool GearUp;
 
   string Axis[6];
-  vector <FGLGear*> lGear;
+  vector <FGLGear> lGear;
 
   string AircraftPath;
   string EnginePath;
