@@ -3,7 +3,7 @@
 
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.5 2003/02/19 11:04:09 ehofman Exp $
+  CVS Version: $Id: f104.xml,v 1.6 2003/03/26 20:34:11 ehofman Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -41,24 +41,24 @@
    AC_IZZ     60000
    AC_IXZ         0
    AC_EMPTYWT 16300
-   AC_CGLOC           245.5   0.0   0.0
-   AC_AERORP          273.0   0.0   0.0
-   AC_EYEPTLOC        467.3   0.0  29.1 
-   AC_POINTMASS 230.0 467.3   0.0   9.4
+   AC_AERORP          -245.5   0.0   0.0
+   AC_CGLOC           -273.0   0.0   0.0
+   AC_EYEPTLOC        -467.3   0.0  29.1 
+   AC_POINTMASS 230.0 -467.3   0.0   9.4
 
   </METRICS>
 
   <UNDERCARRIAGE>
 
-   AC_GEAR NOSE       404.0    0.0 -56.9 15000 5000 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
-   AC_GEAR LEFT_MAIN  221.3  -99.0 -56.9 22500 9000 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
-   AC_GEAR RIGHT_MAIN 221.3   99.0 -56.9 22500 9000 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
+   AC_GEAR NOSE       -404.0    0.0 -56.9 15000 5000 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
+   AC_GEAR LEFT_MAIN  -221.3  -99.0 -56.9 22500 9000 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
+   AC_GEAR RIGHT_MAIN -221.3   99.0 -56.9 22500 9000 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
 
-   AC_GEAR VF         181.4    0.0 -42.9  5000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-   AC_GEAR VT          20.0    0.0  95.4 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-   AC_GEAR WT_LEFT    192.8 -128.9   0.0 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-   AC_GEAR WT_RIGHT   192.8  128.9   0.0 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
-   AC_GEAR RADOME     610.4    0.0  -5.7 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+   AC_GEAR VF         -181.4    0.0 -42.9  5000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+   AC_GEAR VT          -20.0    0.0  95.4 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+   AC_GEAR WT_LEFT    -192.8 -128.9   0.0 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+   AC_GEAR WT_RIGHT   -192.8  128.9   0.0 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
+   AC_GEAR RADOME     -610.4    0.0  -5.7 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
 
   </UNDERCARRIAGE>
 
@@ -83,7 +83,7 @@
    </AC_THRUSTER>
 
    <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC      192.8
+    XLOC     -192.8
     YLOC      -71.8
     ZLOC        0.0
     RADIUS     78.8
@@ -92,7 +92,7 @@
    </AC_TANK>
 
    <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC      192.8
+    XLOC     -192.8
     YLOC       71.8
     ZLOC        0.0
     RADIUS     78.8
