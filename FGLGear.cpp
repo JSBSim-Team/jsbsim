@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.117 2004/07/06 09:39:44 frohlich Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.118 2004/08/21 11:51:04 frohlich Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -348,8 +348,8 @@ FGColumnVector3& FGLGear::Force(void)
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-      SinWheel      = sin(Propagate->Getpsi() + SteerAngle);
-      CosWheel      = cos(Propagate->Getpsi() + SteerAngle);
+      SinWheel      = sin(Propagate->GetEuler(ePsi) + SteerAngle);
+      CosWheel      = cos(Propagate->GetEuler(ePsi) + SteerAngle);
       RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 

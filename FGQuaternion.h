@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.8 2004/05/22 09:48:20 frohlich Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.9 2004/08/21 11:51:04 frohlich Exp $"
 
 namespace JSBSim {
 
@@ -110,6 +110,39 @@ public:
       @param psi The euler Z axis (heading) angle in radians  */
   FGQuaternion(double phi, double tht, double psi);
 
+  /** Initializer by one euler angle.
+      Initialize the quaternion with the single euler angle where its index
+      is given in the first argument.
+      @param idx Index of the euler angle to initialize
+      @param angle The euler angle in radians  */
+  FGQuaternion(int idx, double angle)
+    : mCacheValid(false) {
+    double angle2 = 0.5*angle;
+
+    double Sangle2 = sin(angle2);
+    double Cangle2 = cos(angle2);
+
+    if (idx == ePhi) {
+      Entry(1) = Cangle2;
+      Entry(2) = Sangle2;
+      Entry(3) = 0.0;
+      Entry(4) = 0.0;
+
+    } else if (idx == eTht) {
+      Entry(1) = Cangle2;
+      Entry(2) = 0.0;
+      Entry(3) = Sangle2;
+      Entry(4) = 0.0;
+
+    } else {
+      Entry(1) = Cangle2;
+      Entry(2) = 0.0;
+      Entry(3) = 0.0;
+      Entry(4) = Sangle2;
+
+    }
+  }
+
   /// Destructor.
   ~FGQuaternion() {}
 
@@ -123,171 +156,106 @@ public:
   /** Transformation matrix.
       @return a reference to the transformation/rotation matrix
       corresponding to this quaternion rotation.  */
-  const FGMatrix33& GetT() const { ComputeDerived(); return mT; }
+  const FGMatrix33& GetT(void) const { ComputeDerived(); return mT; }
 
   /** Backward transformation matrix.
       @return a reference to the inverse transformation/rotation matrix
       corresponding to this quaternion rotation.  */
-  const FGMatrix33& GetTInv() const { ComputeDerived(); return mTInv; }
+  const FGMatrix33& GetTInv(void) const { ComputeDerived(); return mTInv; }
 
   /** Retrieves the Euler angles.
       @return a reference to the triad of euler angles corresponding
       to this quaternion rotation.
       @units radians  */
-  const FGColumnVector3& GetEuler() const {
+  const FGColumnVector3& GetEuler(void) const {
     ComputeDerived();
     return mEulerAngles;
   }
 
-  /** Euler angle theta.
-      @return the euler angle theta (pitch attitude) corresponding to this
-      quaternion rotation.
-      @units radians  */
-  double GetEulerTheta() const {
+  /** Retrieves the Euler angles.
+      @param i the euler angle index.
+      @return a reference to the i-th euler angles corresponding
+      to this quaternion rotation.
+      @units radians */
+  double GetEuler(int i) const {
     ComputeDerived();
-    return mEulerAngles(eTht);
+    return mEulerAngles(i);
   }
 
-  /** Euler angle theta.
-      @return the euler angle theta (pitch attitude) corresponding to
-      this quaternion rotation.
-      @units degrees  */
-  double GetEulerThetaDeg() const {
+  /** Retrieves the Euler angles.
+      @param i the euler angle index.
+      @return a reference to the i-th euler angles corresponding
+      to this quaternion rotation.
+      @units degrees */
+  double GetEulerDeg(int i) const {
     ComputeDerived();
-    return radtodeg*mEulerAngles(eTht);
+    return radtodeg*mEulerAngles(i);
   }
 
-  /** Euler angle psi.
-      @return the heading euler angle (psi) corresponding to this quaternion
-      rotation.
-      @units radians  */
-  double GetEulerPsi() const {
-    ComputeDerived();
-    return mEulerAngles(ePsi);
-  }
-
-  /** Retrieves the heading angle.
-      @return the Euler angle psi (heading) corresponding to this quaternion
-      rotation.
-      @units degrees  */
-  double GetEulerPsiDeg() const {
-    ComputeDerived();
-    return radtodeg*mEulerAngles(ePsi);
-  }
-
-  /** Retrieves the roll angle.
-      @return the euler angle phi (roll) corresponding to this quaternion
-      rotation.
-      @units radians  */
-  double GetEulerPhi() const {
-    ComputeDerived();
-    return mEulerAngles(ePhi);
-  }
-
-  /** Retrieves the roll angle.
-      Returns the Euler angle phi (roll) corresponding to this quaternion rotation.
-      @units degrees  */
-  double GetEulerPhiDeg() const {
-    ComputeDerived();
-    return radtodeg*mEulerAngles(ePhi);
-  }
-
-  /** Retrieves sine theta.
+  /** Retrieves sine of the given euler angle.
       @return the sine of the Euler angle theta (pitch attitude) corresponding
       to this quaternion rotation.  */
-  double GetSinEulerTheta() const {
+  double GetSinEuler(int i) const {
     ComputeDerived();
-    return mEulerSines(eTht);
+    return mEulerSines(i);
   }
 
-  /** Retrieves sine psi.
-      @return the sine of the Euler angle psi (heading) corresponding to this
-      quaternion rotation.  */
-  double GetSinEulerPsi() const {
+  /** Retrieves cosine of the given euler angle.
+      @return the sine of the Euler angle theta (pitch attitude) corresponding
+      to this quaternion rotation.  */
+  double GetCosEuler(int i) const {
     ComputeDerived();
-    return mEulerSines(ePsi);
-  }
-
-  /** Sine of euler angle phi.
-      @return the sine of the Euler angle phi (roll) corresponding to this
-      quaternion rotation.  */
-  double GetSinEulerPhi() const {
-    ComputeDerived();
-    return mEulerSines(ePhi);
-  }
-
-  /** Cosine of euler angle theta.
-      @return the cosine of the Euler angle theta (pitch) corresponding to this
-      quaternion rotation.  */
-  double GetCosEulerTheta() const {
-    ComputeDerived();
-    return mEulerCosines(eTht);
-  }
-
-  /** Cosine of euler angle psi.
-      @return the cosine of the Euler angle psi (heading) corresponding to this
-      quaternion rotation.  */
-  double GetCosEulerPsi() const {
-    ComputeDerived();
-    return mEulerCosines(ePsi);
-  }
-
-  /** Cosine of euler angle phi.
-      @return the cosine of the Euler angle phi (roll) corresponding to this
-      quaternion rotation.  */
-  double GetCosEulerPhi() const {
-    ComputeDerived();
-    return mEulerCosines(ePhi);
+    return mEulerCosines(i);
   }
 
   /** Read access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double operator()(unsigned int idx) const { return Entry(idx); }
 
   /** Write access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double& operator()(unsigned int idx) { return Entry(idx); }
 
   /** Read access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-    
+
       This function is just a shortcut for the @ref double
       operator()(unsigned int idx) const function. It is
       used internally to access the elements in a more convenient way.
-    
+
       Note that the index given in the argument is unchecked.
   */
   double Entry(unsigned int idx) const { return mData[idx-1]; }
 
   /** Write access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
-    
+
       This function is just a shortcut for the @ref double&
       operator()(unsigned int idx) function. It is
       used internally to access the elements in a more convenient way.
-    
+
       Note that the index given in the argument is unchecked.
   */
   double& Entry(unsigned int idx) { mCacheValid = false; return mData[idx-1]; }
@@ -413,29 +381,53 @@ public:
     return *this;
   }
 
+  /** Inverse of the quaternion.
+
+      Compute and return the inverse of the quaternion so that the orientation
+      represented with *this multiplied with the returned value is equal to
+      the identity orientation.
+  */
+  FGQuaternion Inverse(void) const {
+    double norm = Magnitude();
+    if (norm == 0.0)
+      return *this;
+    double rNorm = 1.0/norm;
+    return FGQuaternion( Entry(1)*rNorm, -Entry(2)*rNorm,
+                         -Entry(3)*rNorm, -Entry(4)*rNorm );
+  }
+
+  /** Conjugate of the quaternion.
+
+      Compute and return the conjugate of the quaternion. This one is equal
+      to the inverse iff the quaternion is normalized.
+  */
+  FGQuaternion Conjugate(void) const {
+    return FGQuaternion( Entry(1), -Entry(2), -Entry(3), -Entry(4) );
+  }
+
   friend FGQuaternion operator*(double, const FGQuaternion&);
-  
+
   /** Length of the vector.
-    
+
       Compute and return the euclidean norm of this vector.
   */
-  double Magnitude() const { return sqrt(SqrMagnitude()); }
+  double Magnitude(void) const { return sqrt(SqrMagnitude()); }
 
   /** Square of the length of the vector.
-    
+
       Compute and return the square of the euclidean norm of this vector.
   */
-  double SqrMagnitude() const {
+  double SqrMagnitude(void) const {
     return Entry(1)*Entry(1)+Entry(2)*Entry(2)
       +Entry(3)*Entry(3)+Entry(4)*Entry(4);
   }
 
   /** Normialze.
-    
+
       Normalize the vector to have the Magnitude() == 1.0. If the vector
       is equal to zero it is left untouched.
    */
-  void Normalize();
+  void Normalize(void);
 
   /** Zero quaternion vector. Does not represent any orientation.
       Useful for initialization of increments */
@@ -454,7 +446,10 @@ private:
   /** Computation of derived values.
       This function checks if the derived values like euler angles and
       transformation matrices are already computed. If so, it
-      returns. If they need to be computed this is done here.  */
+      returns. If they need to be computed the real worker routine
+      \ref FGQuaternion::ComputeDerivedUnconditional(void) const
+      is called.
+      This function is inlined to avoid function calls in the fast path. */
   void ComputeDerived(void) const {
     if (!mCacheValid)
       ComputeDerivedUnconditional();

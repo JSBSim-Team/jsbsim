@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.181 2004/07/06 09:39:44 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.182 2004/08/21 11:51:04 frohlich Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -314,11 +314,11 @@ void FGJSBsim::init()
     stall_warning->setDoubleValue(0);
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
-            << Propagate->Getphi()*RADTODEG << " deg" );
+            << Propagate->GetEuler(ePhi)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
-            << Propagate->Gettht()*RADTODEG << " deg" );
+            << Propagate->GetEuler(eTht)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
-            << Propagate->Getpsi()*RADTODEG << " deg" );
+            << Propagate->GetEuler(ePsi)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
             << Propagate->GetLocation().GetLatitudeDeg() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
@@ -579,9 +579,9 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_Altitude_AGL( Propagate->GetDistanceAGL() );
 
-    _set_Euler_Angles( Propagate->Getphi(),
-                       Propagate->Gettht(),
-                       Propagate->Getpsi() );
+    _set_Euler_Angles( Propagate->GetEuler(ePhi),
+                       Propagate->GetEuler(eTht),
+                       Propagate->GetEuler(ePsi) );
 
     _set_Alpha( Auxiliary->Getalpha() );
     _set_Beta( Auxiliary->Getbeta() );

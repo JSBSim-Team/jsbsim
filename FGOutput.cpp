@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.90 2004/05/29 17:27:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.91 2004/08/21 11:51:04 frohlich Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,9 +381,9 @@ void FGOutput::SocketOutput(void)
   socket->Clear();
   socket->Append(State->Getsim_time());
   socket->Append(Propagate->Geth());
-  socket->Append(Propagate->Getphi());
-  socket->Append(Propagate->Gettht());
-  socket->Append(Propagate->Getpsi());
+  socket->Append(Propagate->GetEuler(ePhi));
+  socket->Append(Propagate->GetEuler(eTht));
+  socket->Append(Propagate->GetEuler(ePsi));
   socket->Append(Atmosphere->GetDensity());
   socket->Append(Auxiliary->GetVt());
   socket->Append(Propagate->GetUVW(eU));

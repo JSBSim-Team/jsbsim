@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.61 2004/05/29 17:27:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.62 2004/08/21 11:51:04 frohlich Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,9 +116,9 @@ bool FGAuxiliary::Run()
 
 // Rotation
 
-    double cTht = Propagate->GetCostht();
-    double cPhi = Propagate->GetCosphi();
-    double sPhi = Propagate->GetSinphi();
+    double cTht = Propagate->GetCosEuler(eTht);
+    double cPhi = Propagate->GetCosEuler(ePhi);
+    double sPhi = Propagate->GetSinEuler(ePhi);
 
     vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
     if (cTht != 0.0) {
@@ -246,7 +246,7 @@ double FGAuxiliary::GetHeadWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return vw*cos(psiw - Propagate->Getpsi());
+  return vw*cos(psiw - Propagate->GetEuler(ePsi));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +258,7 @@ double FGAuxiliary::GetCrossWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return  vw*sin(psiw - Propagate->Getpsi());
+  return  vw*sin(psiw - Propagate->GetEuler(ePsi));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

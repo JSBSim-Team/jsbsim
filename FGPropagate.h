@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.13 2004/05/29 17:27:44 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.14 2004/08/21 11:51:04 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.13 2004/05/29 17:27:44 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.14 2004/08/21 11:51:04 frohlich Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,9 @@ public:
   double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
   double GetPQR(int axis) const {return VState.vPQR(axis);}
   double GetPQRdot(int idx) const {return vPQRdot(idx);}
-  double GetEuler(int axis) const { return VState.vQtrn.GetEuler()(axis); }
+  double GetEuler(int axis) const { return VState.vQtrn.GetEuler(axis); }
+  double GetCosEuler(int idx) const { return VState.vQtrn.GetCosEuler(idx); }
+  double GetSinEuler(int idx) const { return VState.vQtrn.GetSinEuler(idx); }
   double Gethdot(void) const { return -vVel(eDown); }
 
   /** Returns the "constant" RunwayRadius.
@@ -121,18 +123,6 @@ public:
   double GetLongitude(void) const { return VState.vLocation.GetLongitude(); }
   double GetLatitude(void) const { return VState.vLocation.GetLatitude(); }
   const FGLocation& GetLocation(void) const { return VState.vLocation; }
-
-  double Getphi(void) const { return VState.vQtrn.GetEulerPhi(); }
-  double Gettht(void) const { return VState.vQtrn.GetEulerTheta(); }
-  double Getpsi(void) const { return VState.vQtrn.GetEulerPsi(); }
-
-  double GetCosphi(void) const { return VState.vQtrn.GetCosEulerPhi(); }
-  double GetCostht(void) const { return VState.vQtrn.GetCosEulerTheta(); }
-  double GetCospsi(void) const { return VState.vQtrn.GetCosEulerPsi(); }
-
-  double GetSinphi(void) const { return VState.vQtrn.GetSinEulerPhi(); }
-  double GetSintht(void) const { return VState.vQtrn.GetSinEulerTheta(); }
-  double GetSinpsi(void) const { return VState.vQtrn.GetSinEulerPsi(); }
 
   /** Retrieves the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.  */
