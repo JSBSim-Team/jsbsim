@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.17 2001/12/15 14:52:04 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.18 2001/12/17 14:35:22 dmegginson Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -172,13 +172,15 @@
   </PROPULSION>
 
   <FLIGHT_CONTROL NAME="c310">
+
      <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
        ID            0
-       INPUT        FG_ELEVATOR_CMD
-       INPUT        FG_PITCH_TRIM_CMD
-       CLIPTO       -1 1
+       INPUT         FG_ELEVATOR_CMD
+       INPUT         FG_PITCH_TRIM_CMD
+       CLIPTO        -1 1
      </COMPONENT>
-    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
+
+     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        ID            1
        INPUT         0
        MIN           -16.5
@@ -186,40 +188,59 @@
        OUTPUT        FG_ELEVATOR_POS
        GAIN          0.01745
      </COMPONENT>
+
+     <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+       ID            2
+       INPUT         FG_AILERON_CMD
+       INPUT         FG_ROLL_TRIM_CMD
+       CLIPTO        -1 1
+     </COMPONENT>
+
      <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID             2
-       INPUT          FG_AILERON_CMD
-       MIN            -20
-       MAX             20
-       GAIN           0.01745
+       ID            3
+       INPUT         2
+       MIN           -20
+       MAX            20
+       GAIN          0.01745
        OUTPUT        FG_AILERON_POS
      </COMPONENT>
+
+     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+       ID            4
+       INPUT         FG_RUDDER_CMD
+       INPUT         FG_YAW_TRIM_CMD
+       CLIPTO        -1 1
+     </COMPONENT>
+
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-       ID            3
-       INPUT        FG_RUDDER_CMD
-       MIN         -29.3
-       MAX          29.3
-       GAIN         0.01745
-       OUTPUT       FG_RUDDER_POS
+       ID            5
+       INPUT         4
+       MIN           -29.3
+       MAX           29.3
+       GAIN          0.01745
+       OUTPUT        FG_RUDDER_POS
      </COMPONENT>
+
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       ID           4
-       INPUT        FG_FLAPS_CMD
-       DETENTS      4
-                    0    0
-                    15   2
-                    25   1
-                    35   1
-       OUTPUT      FG_FLAPS_POS
+       ID            6
+       INPUT         FG_FLAPS_CMD
+       DETENTS       4
+                     0    0
+                     15   2
+                     25   1
+                     35   1
+       OUTPUT        FG_FLAPS_POS
      </COMPONENT>
+
      <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
-       ID           5
+       ID           7
        INPUT        FG_GEAR_CMD
        DETENTS      2
                     0    0
                     1    5
        OUTPUT       FG_GEAR_POS
      </COMPONENT>
+
    </FLIGHT_CONTROL>
 
    <AERODYNAMICS>
