@@ -78,10 +78,10 @@ private:
   typedef float (FGTrimLong::*trimfp)(float);
   int Ncycles,Naxis,Debug;
   float Tolerance, A_Tolerance;
-  float Alpha_Gain, Elev_Gain, Throttle_Gain;
   float alphaMin, alphaMax;
   float wdot,udot,qdot;
   float udot_subits, wdot_subits, qdot_subits;
+  int total_its, trimudot;
 
   trimfp udotf,wdotf,qdotf;
   FGFDMExec* fdmex;
@@ -102,6 +102,16 @@ public:
   ~FGTrimLong(void);
 
   bool DoTrim(void);
+
+  void Report(void);
+  void TrimStats();
+
+  inline void SetUdotTrim(bool bb) {
+    trimudot=false;
+  }
+  inline bool GetUdotTrim(void) {
+    return trimudot;
+  }
 
   inline void SetMaxCycles(int ii) {
     Ncycles = ii;

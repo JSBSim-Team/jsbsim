@@ -64,9 +64,6 @@ FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
   Naxis=40;
   Tolerance=1E-3;
   A_Tolerance = Tolerance / 10;
-  Alpha_Gain=0.07;
-  Throttle_Gain=0.01;
-  Elev_Gain=0.05;
   alphaMin=-5;
   alphaMax=20;
   Debug=0;
@@ -75,15 +72,91 @@ FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
   udotf=&FGTrimLong::udot_func;
   wdotf=&FGTrimLong::wdot_func;
   qdotf=&FGTrimLong::qdot_func;
+  total_its=0;
   udot_subits=wdot_subits=qdot_subits=0;
+  trimudot=true;
+
+
 }
 
 FGTrimLong::~FGTrimLong(void) {}
 
 
+
+void FGTrimLong::TrimStats() {
+  cout << endl << "Trim Statistics: " << endl;
+  cout << "  Total Iterations: " << total_its << endl;
+  if(total_its > 0) {
+    cout << "  Sub-iterations:" << endl;
+    cout << "    wdot: " << wdot_subits << " average: " << wdot_subits/total_its << endl;
+    cout << "    udot: " << udot_subits << " average: " << udot_subits/total_its << endl;
+    cout << "    qdot: " << qdot_subits << " average: " << qdot_subits/total_its << endl;
+  }
+}
+
+void FGTrimLong::Report(void) {
+  cout << endl << "JSBSim Trim Report" << endl;
+  cout << "  Weight: " << fdmex->GetAircraft()->GetWeight()
+  << " lbs.  CG x,y,z: " << fdmex->GetAircraft()->GetXYZcg()
+  << " inches " << endl;
+
+  cout << "  Flaps: ";
+  float flaps=fdmex->GetFCS()->GetDfPos();
+  if(flaps <= 0.01)
+    cout << "Up";
+  else
+    cout << flaps;
+
+  cout << "  Gear: ";
+  if(fdmex->GetAircraft()->GetGearUp() == true)
+    cout << "Up" << endl;
+  else
+    cout << "Down" << endl;
+
+  cout << "  Speed: " << fdmex->GetAuxiliary()->GetVcalibratedKTS()
+  << " KCAS  Mach: " << fdmex->GetState()->GetParameter(FG_MACH)
+  << endl;
+
+  cout << "  Altitude: " << fdmex->GetPosition()->Geth() << " ft" << endl;
+
+
+  cout << "  Pitch Angle: " << fdmex->GetRotation()->Gettht()*RADTODEG
+  << " deg  Angle of Attack: " << fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG
+  << " deg" << endl;
+
+  float vt=fdmex->GetTranslation()->GetVt();
+  if(vt > 0 ) {
+    cout << "  Flight Path Angle: "
+    << asin(fdmex->GetPosition()->Gethdot()/vt)*RADTODEG
+    << " deg" << endl;
+  }
+
+  cout << "  Pitch Rate: " << fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG
+  << " deg/s" << endl;
+
+  cout << "  Roll Angle: " << fdmex->GetRotation()->Getphi()*RADTODEG
+  << " deg  Roll Rate: " << fdmex->GetState()->GetParameter(FG_ROLLRATE)
+  << " deg/s"
+  << endl ;
+
+  cout << "  Sideslip: " << fdmex->GetState()->GetParameter(FG_BETA) *RADTODEG
+  << " deg  Yaw Rate: " << fdmex->GetState()->GetParameter(FG_YAWRATE)*RADTODEG
+  << " deg/s " << endl;
+
+  cout << "  Elevator: " << fdmex->GetState()->GetParameter(FG_ELEVATOR_POS)*RADTODEG
+  << "  deg  Ailerons: " << fdmex->GetState()->GetParameter(FG_AILERON_POS)*RADTODEG
+  << "  deg  Rudder: " << fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG
+  << " deg" << endl;
+}
+
 void FGTrimLong::setThrottlesPct(float tt) {
 
-  fdmex -> GetFCS() -> SetThrottleCmd(-1,tt*100);
+  float tMin,tMax;
+  for(int i=0;i<fdmex->GetAircraft()->GetNumEngines();i++) {
+    tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
+    tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
+    fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+tt*(tMax-tMin));
+  }
 }
 
 
@@ -140,13 +213,12 @@ bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result, float
       //cout << i << endl;
       i++;
     }//end while
-    if(i < 100) {
+    if(i < max_iterations) {
       success=true;
       *result=x2;
     }
     *actual_its=i;
   } else {
-    cout << "No sign change in interval: " << x1 << "," << x3 << endl;
     *actual_its=0;
   }
   return success;
@@ -217,15 +289,12 @@ bool FGTrimLong::DoTrim(void) {
   fdmex -> GetFCS() -> SetDeCmd(de);
   setThrottlesPct(dth);
   fdmex -> RunIC(fgic);
-  if(!checkLimits(wdotf,alpha,alphaMin,alphaMax))
-    cout << "Sorry, it doesn't appear as if wdot is trimmable." << endl;
-  if(!checkLimits(udotf,dth,0,1))
-    cout << "Sorry, it doesn't appear as if udot is trimmable." << endl;
-  if(!checkLimits(qdotf,de,-1,1))
-    cout << "Sorry, it doesn't appear as if qdot is trimmable." << endl;
+
   min=alphaMin;
   max=alphaMax;
   cout << "Entering Main trim loop" << endl;
+  if(trimudot == false)
+    udot=0;
   do {
     solve(wdotf,5,0,&wdot,Tolerance,Naxis,&its);
     wdot_subits+=its;
@@ -234,23 +303,28 @@ bool FGTrimLong::DoTrim(void) {
       << " wdot: " << fdmex->GetTranslation()->GetUVWdot()(3)
       << endl;
     }
-    solve(udotf,0.5,0,&udot,Tolerance,Naxis,&its);
-    udot_subits+=its;
-    if(Debug > 0) {
-      cout << "Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)
-      << " udot: " << fdmex->GetTranslation()->GetUVWdot()(1)
-      << endl;
+
+    if(trimudot == true) {
+      solve(udotf,0.5,0,&udot,Tolerance,Naxis,&its);
+      udot_subits+=its;
+      if(Debug > 0) {
+        cout << "Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)
+        << " udot: " << fdmex->GetTranslation()->GetUVWdot()(1)
+        << endl;
+      }
     }
     solve(qdotf,0.5,0,&qdot,A_Tolerance,Naxis,&its);
     qdot_subits+=its;
     if(Debug > 0) {
       cout << "Elevator: " << fdmex->GetFCS()->GetDePos()
-      << " qdot: " << fdmex->GetRotation()->GetPQRdot()(2)
+      << " qdot: " << fdmex->GetRotation()->GetPQRdot()(2)*RADTODEG
       << endl;
     }
     wdot=fdmex->GetTranslation()->GetUVWdot()(3);
-    udot=fdmex->GetTranslation()->GetUVWdot()(1);
     qdot=fdmex->GetRotation()->GetPQRdot()(2);
+    if(trimudot == true)
+      udot=fdmex->GetTranslation()->GetUVWdot()(1);
+
     if((Ncycles > 3) && (k == Ncycles-2) ) {
 
       if((fabs(wdot) > Tolerance) || (fabs(udot) > Tolerance) || (fabs(qdot) > A_Tolerance)) {
@@ -258,17 +332,17 @@ bool FGTrimLong::DoTrim(void) {
         cout << endl << "Trimming routine failure is imminent" << endl;
         cout << "Hmm...let's see here" << endl;
         if(wdot > Tolerance)
-          cout << "wdot is too high: " << wdot << endl;
+          cout << "  wdot is too high: " << wdot << " Too slow? " << endl;
         else
-          cout << "wdot is ok" << endl;
-        if(udot > Tolerance)
-          cout << "udot is too high: " << udot << endl;
+          cout << "  wdot is ok" << endl;
+        if((udot > Tolerance) && (trimudot == true))
+          cout << "  udot is too high: " << udot << " Too fast? " << endl;
         else
-          cout << "udot is ok" << endl;
+          cout << "  udot is ok" << endl;
         if(qdot > A_Tolerance)
-          cout << "qdot is too high: " << qdot << endl;
+          cout << "  qdot is too high: " << qdot << " Pitch Stability?  Elevator Power? " << endl;
         else
-          cout << "qdot is ok" << endl;
+          cout << "  qdot is ok" << endl;
 
         trim_failed=true;
 
@@ -276,16 +350,10 @@ bool FGTrimLong::DoTrim(void) {
     }
     k++;
   } while(((fabs(wdot) > Tolerance) || (fabs(udot) > Tolerance) || (fabs(qdot) > A_Tolerance)) && (k < Ncycles));
-
+  total_its=k;
   if(!trim_failed)
     cout << endl << "Trim successful" << endl;
-  cout << "Total Iterations: " << k << endl;
-  if(k > 0) {
-    cout << "Sub-iterations" << endl;
-    cout << "  wdot: " << wdot_subits << " average: " << wdot_subits/k << endl;
-    cout << "  udot: " << udot_subits << " average: " << udot_subits/k << endl;
-    cout << "  qdot: " << qdot_subits << " average: " << qdot_subits/k << endl;
-  }
+
   return trim_failed;
 }
 
