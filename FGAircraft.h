@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.37 2000/10/20 18:29:02 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.38 2000/11/12 12:21:42 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.37 2000/10/20 18:29:02 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.38 2000/11/12 12:21:42 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -201,7 +201,8 @@ public:
     /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
     /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
     /** Subsystem: Position (= 512)          */ ssPosition        = 512,
-    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024
+    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
+    /** Subsystem: Ground Reactions (= 2048) */ ssFCS             = 2048
   } subsystems;
 
 private:

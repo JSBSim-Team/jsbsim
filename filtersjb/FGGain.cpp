@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.19 2000/10/16 12:32:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.20 2000/11/12 12:21:43 jsb Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,8 +140,8 @@ bool FGGain::Run(void )
     float lowVal = Schedule[0][0], hiVal = Schedule[last][0];
     float factor = 1.0;
 
-    if (LookupVal <= lowVal) Output = Gain * Schedule[0][1];
-    else if (LookupVal >= hiVal) Output = Gain * Schedule[last][1];
+    if (LookupVal <= lowVal) Output = Gain * Schedule[0][1] * Input;
+    else if (LookupVal >= hiVal) Output = Gain * Schedule[last][1] * Input;
     else {
       for (unsigned int ctr = 1; ctr < last; ctr++) {
         if (LookupVal < Schedule[ctr][0]) {

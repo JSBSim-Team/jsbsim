@@ -49,7 +49,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.20 2000/10/16 12:32:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.21 2000/11/12 12:21:43 jsb Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -338,6 +338,10 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << ", ";
       datafile << Aircraft->GetGroundReactionStrings();
     }
+    if (SubSystems & FGAircraft::ssFCS) {
+      datafile << ", ";
+      datafile << FCS->GetComponentStrings();
+    }
     datafile << endl;
     sFirstPass = false;
   }
@@ -405,6 +409,10 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & FGAircraft::ssGroundReactions) {
     datafile << ", ";
     datafile << Aircraft->GetGroundReactionValues();
+  }
+  if (SubSystems & FGAircraft::ssFCS) {
+    datafile << ", ";
+    datafile << FCS->GetComponentValues();
   }
   datafile << endl;
   datafile.flush();

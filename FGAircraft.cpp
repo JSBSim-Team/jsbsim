@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.47 2000/10/16 12:32:43 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.48 2000/11/12 12:21:42 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -636,6 +636,10 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
       *AC_cfg >> parameter;
       if (parameter == "ON") subsystems += ssGroundReactions;
     }
+    if (parameter == "FCS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssFCS;
+    }
   }
 
   Output->SetSubsystems(subsystems);
@@ -717,7 +721,6 @@ string FGAircraft::GetCoefficientValues(void) {
   }
 
   return SDValues;
-  ;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

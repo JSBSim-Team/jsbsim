@@ -556,6 +556,7 @@
     POSITION         ON|OFF
     COEFFICIENTS     ON|OFF
     GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
 
     NOTE that Time is always output with the data.
 
@@ -574,6 +575,7 @@
     POSITION         ON
     COEFFICIENTS     OFF
     GROUND_REACTIONS ON
+    FCS              ON
   </OUTPUT>
 
 </FDM_CONFIG>

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.32 2000/11/01 11:37:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.33 2000/11/12 12:21:42 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,9 @@ bool FGFCS::Run(void) {
 
     for (unsigned int i=0; i<Aircraft->GetNumEngines(); i++) ThrottlePos[i]=ThrottleCmd[i];
 
-    for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
+    for (unsigned int i=0; i<Components.size(); i++) {
+      Components[i]->Run();
+    }
 
   } else {}
 
@@ -182,4 +184,38 @@ float FGFCS::GetBrake(FGLGear::eBrakeGroup bg) {
   default:
     cerr << "GetBrake asked to return a bogus brake value" << endl;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGFCS::GetComponentStrings(void){
+  string CompStrings = "";
+  bool firstime = true;
+
+  for (unsigned int comp = 0; comp < Components.size(); comp++) {
+    if (firstime) firstime = false;
+    else          CompStrings += ", ";
+
+    CompStrings += Components[comp]->GetName();
+  }
+
+  return CompStrings;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGFCS::GetComponentValues(void){
+  string CompValues = "";
+  char buffer[10];
+  bool firstime = true;
+
+  for (unsigned int comp = 0; comp < Components.size(); comp++) {
+    if (firstime) firstime = false;
+    else          CompValues += ", ";
+
+    sprintf(buffer, "%9.6f", Components[comp]->GetOutput());
+    CompValues += string(buffer);
+  }
+
+  return CompValues;
 }

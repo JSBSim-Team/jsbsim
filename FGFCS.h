@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.21 2000/10/27 13:55:43 jsb Exp $
+    @version $Id: FGFCS.h,v 1.22 2000/11/12 12:21:43 jsb Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -234,6 +234,10 @@ public:
       @param idx the index of the component (the component ID)
       @return name of the component */
   string GetComponentName(int idx);
+  /** Retrieves all component names for inclusion in output stream */
+  string GetComponentStrings(void);
+  /** Retrieves all component outputs for inclusion in output stream */
+  string GetComponentValues(void);
 
   /// @name Pilot input command setting
   //@{
@@ -314,7 +318,7 @@ public:
       @param AC_cfg pointer to the config file instance
       @return true if succesful */
   bool LoadFCS(FGConfigFile* AC_cfg);
-  
+
   /** The name of the flight control laws for this aircraft.
       This is given in the config file, and is not used for anything currently.*/
   string FCSName;
