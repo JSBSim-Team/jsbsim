@@ -55,7 +55,6 @@ AC_cfg(AC_cfg) {
   float tmpDetent;
   float tmpTime;
 
-  cout <<  "      Reading Flaps Configuration" << endl;
   Detents.clear();
   TransitionTimes.clear();
 
@@ -70,11 +69,10 @@ AC_cfg(AC_cfg) {
       cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      cout << "      INPUT: " << token;
+      cout << "      INPUT: " << token << endl;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
         InputIdx = fcs->GetState()->GetParameterIndex(token);
-        cout << " INPUTIDX: " << InputIdx << endl;
         InputType = itPilotAC;
       }
     } else if ( token == "DETENTS" ) {
@@ -91,9 +89,8 @@ AC_cfg(AC_cfg) {
 
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      cout << "      OUTPUT: " <<sOutputIdx;
+      cout << "      OUTPUT: " <<sOutputIdx << endl;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
-      cout << " OUTPUTIDX: " << OutputIdx << endl;
     }
   }
 }
