@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.106 2002/02/28 12:20:09 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.107 2002/03/18 12:12:47 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +93,10 @@ FGState::FGState(FGFDMExec* fdex)
   Aerodynamics = FDMExec->GetAerodynamics();
   GroundReactions = FDMExec->GetGroundReactions();
   Propulsion      = FDMExec->GetPropulsion();
+  PropertyManager = FDMExec->GetPropertyManager();
 
+  InitPropertyMaps();
+  
   RegisterVariable(FG_TIME,               " time "                ); 
   RegisterVariable(FG_QBAR,               " qbar "                ); 
   RegisterVariable(FG_WINGAREA,           " wing_area "           ); 
@@ -170,7 +173,9 @@ FGState::FGState(FGFDMExec* fdex)
   RegisterVariable(FG_VBARH,              " h-tail volume "       );
   RegisterVariable(FG_VBARV,              " v-tail volume "       );
   RegisterVariable(FG_SET_LOGGING,        " data_logging "        );
-
+  
+  bind();
+  
   Debug(0);
 }
 
@@ -178,6 +183,7 @@ FGState::FGState(FGFDMExec* fdex)
 
 FGState::~FGState()
 {
+  unbind();
   Debug(1);
 }
 
@@ -250,43 +256,43 @@ double FGState::GetParameter(eParam val_idx) {
   case FG_AELEVATOR_POS:
     return fabs(FCS->GetDePos());
   case FG_NELEVATOR_POS:
-    return FCS->GetDePosN();   
+    return FCS->GetDePos(ofNorm);   
   case FG_AILERON_POS:
     return FCS->GetDaLPos();
   case FG_AAILERON_POS:
     return fabs(FCS->GetDaLPos());
   case FG_NAILERON_POS:
-    return FCS->GetDaLPosN();
+    return FCS->GetDaLPos(ofNorm);
   case FG_LEFT_AILERON_POS:
     return FCS->GetDaLPos();
   case FG_ALEFT_AILERON_POS:
-    return fabs(FCS->GetDaLPos());
+    return FCS->GetDaLPos(ofMag);
   case FG_NLEFT_AILERON_POS:
-    return FCS->GetDaLPosN();
+    return FCS->GetDaLPos(ofNorm);
   case FG_RIGHT_AILERON_POS:
     return FCS->GetDaRPos();
   case FG_ARIGHT_AILERON_POS:
-    return fabs(FCS->GetDaRPos());
+    return FCS->GetDaRPos(ofMag);    
   case FG_NRIGHT_AILERON_POS:
-    return FCS->GetDaRPosN();
+    return FCS->GetDaRPos(ofNorm);
   case FG_RUDDER_POS:
     return FCS->GetDrPos();
   case FG_ARUDDER_POS:
-    return fabs(FCS->GetDrPos());
+    return FCS->GetDrPos(ofMag);
   case FG_NRUDDER_POS:
-    return FCS->GetDrPosN();
+    return FCS->GetDrPos(ofNorm);
   case FG_SPDBRAKE_POS:
     return FCS->GetDsbPos();
   case FG_NSPDBRAKE_POS:
-    return FCS->GetDsbPosN();
+    return FCS->GetDsbPos(ofNorm);
   case FG_SPOILERS_POS:
     return FCS->GetDspPos();
   case FG_NSPOILERS_POS:
-    return FCS->GetDspPosN();
+    return FCS->GetDspPos(ofNorm);
   case FG_FLAPS_POS:
     return FCS->GetDfPos();
   case FG_NFLAPS_POS:
-    return FCS->GetDfPosN();
+    return FCS->GetDfPos(ofNorm);
   case FG_ELEVATOR_CMD:
     return FCS->GetDeCmd();
   case FG_AILERON_CMD:
@@ -376,52 +382,52 @@ void FGState::SetParameter(eParam val_idx, double val)
 
   switch(val_idx) {
   case FG_ELEVATOR_POS:
-    FCS->SetDePos(val);
+    FCS->SetDePos(ofRad,val);
     break;
   case FG_NELEVATOR_POS:
-    FCS->SetDePosN(val);
+    FCS->SetDePos(ofNorm,val);
     break;
   case FG_AILERON_POS:
-    FCS->SetDaLPos(val);
+    FCS->SetDaLPos(ofRad,val);
     break;
   case FG_NAILERON_POS:
-    FCS->SetDaLPosN(val);
+    FCS->SetDaLPos(ofNorm,val);
     break;
   case FG_LEFT_AILERON_POS:
-    FCS->SetDaLPos(val);
+    FCS->SetDaLPos(ofRad,val);
     break;
   case FG_NLEFT_AILERON_POS:
-    FCS->SetDaLPosN(val);
+    FCS->SetDaLPos(ofNorm,val);
     break;
   case FG_RIGHT_AILERON_POS:
-    FCS->SetDaRPos(val);
+    FCS->SetDaRPos(ofRad,val);
     break;
   case FG_NRIGHT_AILERON_POS:
-    FCS->SetDaRPosN(val);
+    FCS->SetDaRPos(ofNorm,val);
     break;
   case FG_RUDDER_POS:
-    FCS->SetDrPos(val);
+    FCS->SetDrPos(ofRad,val);
     break;
   case FG_NRUDDER_POS:
-    FCS->SetDrPosN(val);
+    FCS->SetDrPos(ofNorm,val);
     break;
   case FG_SPDBRAKE_POS:
-    FCS->SetDsbPos(val);
+    FCS->SetDsbPos(ofRad,val);
     break;
   case FG_NSPDBRAKE_POS:
-    FCS->SetDsbPosN(val);
+    FCS->SetDsbPos(ofNorm,val);
     break;
   case FG_SPOILERS_POS:
-    FCS->SetDspPos(val);
+    FCS->SetDspPos(ofRad,val);
     break;
   case FG_NSPOILERS_POS:
-    FCS->SetDspPosN(val);
+    FCS->SetDspPos(ofNorm,val);
     break;
   case FG_FLAPS_POS:
-    FCS->SetDfPos(val);
+    FCS->SetDfPos(ofRad,val);
     break;
   case FG_NFLAPS_POS:
-    FCS->SetDfPosN(val);
+    FCS->SetDfPos(ofNorm,val);
     break;
   case FG_THROTTLE_POS:
     if (ActiveEngine == -1) {
@@ -930,6 +936,170 @@ void FGState::ReportState(void)
   cout << out;                                   
 #endif
 } 
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGState::InitPropertyMaps(void)  {
+  ParamToProp[  FG_TIME ]="sim-time-sec";
+  ParamToProp[  FG_QBAR ]="aero/qbar-psf";
+  ParamToProp[  FG_WINGAREA ]="metrics/Sw-sqft";
+  ParamToProp[  FG_WINGSPAN ]="metrics/bw-ft";
+  ParamToProp[  FG_CBAR ]="metrics/cbarw-ft";
+  ParamToProp[  FG_ALPHA ]="aero/alpha-rad";
+  ParamToProp[  FG_ALPHADOT ]="aero/alphadot-rad_sec";
+  ParamToProp[  FG_BETA ]="aero/beta-rad";
+  ParamToProp[  FG_ABETA ]="aero/mag-beta-rad";
+  ParamToProp[  FG_BETADOT ]="aero/betadot-rad_sec";
+  ParamToProp[  FG_PHI ]="attitude/phi-rad";
+  ParamToProp[  FG_THT ]="attitude/theta-rad";
+  ParamToProp[  FG_PSI ]="attitude/psi-true-rad";
+  ParamToProp[  FG_PITCHRATE ]="velocities/q-rad_sec";
+  ParamToProp[  FG_ROLLRATE ]="velocities/p-rad_sec";
+  ParamToProp[  FG_YAWRATE ]="velocities/r-rad_sec";
+  ParamToProp[  FG_AEROP ]="velocities/p-aero-rad_sec";
+  ParamToProp[  FG_AEROQ ]="velocities/q-aero-rad_sec";
+  ParamToProp[  FG_AEROR ]="velocities/r-aero-rad_sec";
+  ParamToProp[  FG_CL_SQRD ]="aero/cl-squared-norm";
+  ParamToProp[  FG_MACH ]="velocities/mach-norm";
+  ParamToProp[  FG_ALTITUDE ]="position/h-sl-ft";
+  ParamToProp[  FG_BI2VEL ]="aero/bi2vel";
+  ParamToProp[  FG_CI2VEL ]="aero/ci2vel";
+  ParamToProp[  FG_ELEVATOR_POS ]="fcs/elevator-pos-rad";
+  ParamToProp[  FG_AELEVATOR_POS ]="fcs/mag-elevator-pos-rad";
+  ParamToProp[  FG_NELEVATOR_POS ]="fcs/elevator-pos-norm";
+  ParamToProp[  FG_AILERON_POS ]="fcs/left-aileron-pos-rad";
+  ParamToProp[  FG_AAILERON_POS ]="fcs/mag-aileron-pos-rad";
+  ParamToProp[  FG_NAILERON_POS ]="fcs/left-aileron-pos-norm";
+  ParamToProp[  FG_LEFT_AILERON_POS ]="fcs/left-aileron-pos-rad";
+  ParamToProp[  FG_ALEFT_AILERON_POS ]="fcs/mag-left-aileron-pos-rad";
+  ParamToProp[  FG_NLEFT_AILERON_POS ]="fcs/left-aileron-pos-norm";
+  ParamToProp[  FG_RIGHT_AILERON_POS ]="fcs/right-aileron-pos-rad";
+  ParamToProp[  FG_ARIGHT_AILERON_POS ]="fcs/mag-aileron-pos-rad";
+  ParamToProp[  FG_NRIGHT_AILERON_POS ]="fcs/right-aileron-pos-norm";
+  ParamToProp[  FG_RUDDER_POS ]="fcs/rudder-pos-rad";
+  ParamToProp[  FG_ARUDDER_POS ]="fcs/mag-rudder-pos-rad";
+  ParamToProp[  FG_NRUDDER_POS ]="fcs/rudder-pos-norm";
+  ParamToProp[  FG_SPDBRAKE_POS ]="fcs/speedbrake-pos-rad";
+  ParamToProp[  FG_NSPDBRAKE_POS ]="fcs/speedbrake-pos-norm";
+  ParamToProp[  FG_SPOILERS_POS ]="fcs/spoiler-pos-rad";
+  ParamToProp[  FG_NSPOILERS_POS ]="fcs/spoiler-pos-norm";
+  ParamToProp[  FG_FLAPS_POS ]="fcs/flap-pos-deg";
+  ParamToProp[  FG_NFLAPS_POS ]="fcs/flap-pos-norm";
+  ParamToProp[  FG_ELEVATOR_CMD ]="fcs/elevator-cmd-norm";
+  ParamToProp[  FG_AILERON_CMD ]="fcs/aileron-cmd-norm";
+  ParamToProp[  FG_RUDDER_CMD ]="fcs/rudder-cmd-norm";
+  ParamToProp[  FG_SPDBRAKE_CMD ]="fcs/speedbrake-cmd-norm";
+  ParamToProp[  FG_SPOILERS_CMD ]="fcs/spoiler-cmd-norm";
+  ParamToProp[  FG_FLAPS_CMD ]="fcs/flap-cmd-norm";
+  ParamToProp[  FG_THROTTLE_CMD ]="zero";
+  ParamToProp[  FG_THROTTLE_POS ]="zero";
+  ParamToProp[  FG_MIXTURE_CMD ]="zero";
+  ParamToProp[  FG_MIXTURE_POS ]="zero";
+  ParamToProp[  FG_MAGNETO_CMD ]="zero";
+  ParamToProp[  FG_STARTER_CMD ]="zero";
+  ParamToProp[  FG_ACTIVE_ENGINE ]="zero";
+  ParamToProp[  FG_HOVERB ]="position/h_b-mac-ft";
+  ParamToProp[  FG_PITCH_TRIM_CMD ]="fcs/pitch-trim-cmd-norm";
+  ParamToProp[  FG_YAW_TRIM_CMD ]="fcs/yaw-trim-cmd-norm";
+  ParamToProp[  FG_ROLL_TRIM_CMD ]="fcs/roll-trim-cmd-norm";
+  ParamToProp[  FG_LEFT_BRAKE_CMD ]="zero";
+  ParamToProp[  FG_CENTER_BRAKE_CMD ]="zero";
+  ParamToProp[  FG_RIGHT_BRAKE_CMD ]="zero";
+  ParamToProp[  FG_SET_LOGGING ]="zero";
+  ParamToProp[  FG_ALPHAH ]="aero/alpha-rad";
+  ParamToProp[  FG_ALPHAW ]="aero/alpha-wing-rad";
+  ParamToProp[  FG_LBARH ]="metrics/lh-norm";     
+  ParamToProp[  FG_LBARV ]="metrics/lv-norm";     
+  ParamToProp[  FG_HTAILAREA ]="metrics/Sh-sqft";
+  ParamToProp[  FG_VTAILAREA ]="metrics/Sv-sqft";
+  ParamToProp[  FG_VBARH ]="metrics/vbarh-norm";    
+  ParamToProp[  FG_VBARV ]="metrics/vbarv-norm";     
+  ParamToProp[  FG_GEAR_CMD ]="gear/gear-cmd-norm";
+  ParamToProp[  FG_GEAR_POS ]="gear/gear-pos-norm";
+  
+  PropToParam[ "sim-time-sec" ]                 = FG_TIME;
+  PropToParam[ "aero/qbar-psf" ]                = FG_QBAR;
+  PropToParam[ "metrics/Sw-sqft" ]              = FG_WINGAREA;
+  PropToParam[ "metrics/bw-ft" ]                = FG_WINGSPAN;
+  PropToParam[ "metrics/cbarw-ft" ]             = FG_CBAR;
+  PropToParam[ "aero/alpha-rad" ]               = FG_ALPHA;
+  PropToParam[ "aero/alphadot-rad_sec" ]        = FG_ALPHADOT;
+  PropToParam[ "aero/beta-rad" ]                = FG_BETA;
+  PropToParam[ "aero/mag-beta-rad" ]            = FG_ABETA;
+  PropToParam[ "aero/betadot-rad_sec" ]         = FG_BETADOT;
+  PropToParam[ "attitude/phi-rad" ]             = FG_PHI;
+  PropToParam[ "attitude/theta-rad" ]           = FG_THT;
+  PropToParam[ "attitude/psi-true-rad" ]        = FG_PSI;
+  PropToParam[ "velocities/q-rad_sec" ]         = FG_PITCHRATE;
+  PropToParam[ "velocities/p-rad_sec" ]         = FG_ROLLRATE;
+  PropToParam[ "velocities/r-rad_sec" ]         = FG_YAWRATE;
+  PropToParam[ "velocities/p-aero-rad_sec" ]    = FG_AEROP;
+  PropToParam[ "velocities/q-aero-rad_sec" ]    = FG_AEROQ;
+  PropToParam[ "velocities/r-aero-rad_sec" ]    = FG_AEROR;
+  PropToParam[ "aero/cl-squared-norm" ]         = FG_CL_SQRD;
+  PropToParam[ "velocities/mach-norm" ]         = FG_MACH;
+  PropToParam[ "position/h-sl-ft" ]             = FG_ALTITUDE;
+  PropToParam[ "aero/bi2vel" ]                  = FG_BI2VEL;
+  PropToParam[ "aero/ci2vel" ]                  = FG_CI2VEL;
+  PropToParam[ "fcs/elevator-pos-rad" ]         = FG_ELEVATOR_POS;
+  PropToParam[ "fcs/mag-elevator-pos-rad" ]     = FG_AELEVATOR_POS;
+  PropToParam[ "fcs/elevator-pos-norm" ]        = FG_NELEVATOR_POS;
+  PropToParam[ "fcs/left-aileron-pos-rad" ]     = FG_AILERON_POS;
+  PropToParam[ "fcs/mag-aileron-pos-rad" ]      = FG_AAILERON_POS;
+  PropToParam[ "fcs/left-aileron-pos-norm" ]    = FG_NAILERON_POS;
+  PropToParam[ "fcs/left-aileron-pos-rad" ]     = FG_LEFT_AILERON_POS;
+  PropToParam[ "fcs/mag-left-aileron-pos-rad" ] = FG_ALEFT_AILERON_POS;
+  PropToParam[ "fcs/left-aileron-pos-norm" ]    = FG_NLEFT_AILERON_POS;
+  PropToParam[ "fcs/right-aileron-pos-rad" ]    = FG_RIGHT_AILERON_POS;
+  PropToParam[ "fcs/mag-aileron-pos-rad" ]      = FG_ARIGHT_AILERON_POS;
+  PropToParam[ "fcs/right-aileron-pos-norm" ]   = FG_NRIGHT_AILERON_POS;
+  PropToParam[ "fcs/rudder-pos-rad" ]           = FG_RUDDER_POS;
+  PropToParam[ "fcs/mag-rudder-pos-rad" ]       = FG_ARUDDER_POS;
+  PropToParam[ "fcs/rudder-pos-norm" ]          = FG_NRUDDER_POS;
+  PropToParam[ "fcs/speedbrake-pos-rad" ]       = FG_SPDBRAKE_POS;
+  PropToParam[ "fcs/speedbrake-pos-norm" ]      = FG_NSPDBRAKE_POS;
+  PropToParam[ "fcs/spoiler-pos-rad" ]          = FG_SPOILERS_POS;
+  PropToParam[ "fcs/spoiler-pos-norm" ]         = FG_NSPOILERS_POS;
+  PropToParam[ "fcs/flap-pos-deg" ]             = FG_FLAPS_POS;
+  PropToParam[ "fcs/flap-pos-norm" ]            = FG_NFLAPS_POS;
+  PropToParam[ "fcs/elevator-cmd-norm" ]        = FG_ELEVATOR_CMD;
+  PropToParam[ "fcs/aileron-cmd-norm" ]         = FG_AILERON_CMD;
+  PropToParam[ "fcs/rudder-cmd-norm" ]          = FG_RUDDER_CMD;
+  PropToParam[ "fcs/speedbrake-cmd-norm" ]      = FG_SPDBRAKE_CMD;
+  PropToParam[ "fcs/spoiler-cmd-norm" ]         = FG_SPOILERS_CMD;
+  PropToParam[ "fcs/flap-cmd-norm" ]            = FG_FLAPS_CMD;
+  PropToParam[ "position/h_b-mac-ft" ]          = FG_HOVERB;
+  PropToParam[ "fcs/pitch-trim-cmd-norm" ]      = FG_PITCH_TRIM_CMD;
+  PropToParam[ "fcs/yaw-trim-cmd-norm" ]        = FG_YAW_TRIM_CMD;
+  PropToParam[ "fcs/roll-trim-cmd-norm" ]       = FG_ROLL_TRIM_CMD;
+  PropToParam[ "aero/alpha-rad" ]               = FG_ALPHAH;
+  PropToParam[ "aero/alpha-wing-rad" ]          = FG_ALPHAW;
+  PropToParam[ "metrics/lh-norm" ]              = FG_LBARH;
+  PropToParam[ "metrics/lv-norm" ]              = FG_LBARV;
+  PropToParam[ "metrics/Sh-sqft" ]              = FG_HTAILAREA;
+  PropToParam[ "metrics/Sv-sqft" ]              = FG_VTAILAREA;
+  PropToParam[ "metrics/vbarh-norm" ]           = FG_VBARH;
+  PropToParam[ "metrics/vbarv-norm" ]           = FG_VBARV;
+  PropToParam[ "gear/gear-cmd-norm" ]           = FG_GEAR_CMD;
+  PropToParam[ "gear/gear-pos-norm" ]           = FG_GEAR_POS;
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGState::bind(void) {
+  PropertyManager->Tie("sim-time-sec",this,
+                        &FGState::Getsim_time);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                        
+void FGState::unbind(void) {
+  PropertyManager->Untie("sim-time-sec");
+}
+
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

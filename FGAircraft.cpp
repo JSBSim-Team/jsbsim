@@ -92,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.111 2002/03/09 11:54:08 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.112 2002/03/18 12:12:46 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,13 +108,10 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
   lbarh = lbarv = vbarh = vbarv = 0.0;
   WingIncidence=0;
   impending_stall = 0;
-  
-  cout << "Calling FGAircraft::bind()" << endl;
-  cout << "PropertyManager= ";
-  cout << PropertyManager;
-  cout << endl;
+  bi2vel=ci2vel=alphaw=0;
+
   bind();
-  cout << "bind() complete." << endl;
+
   Debug(0);
 }
 
@@ -130,6 +127,8 @@ FGAircraft::~FGAircraft()
 
 bool FGAircraft::Run(void)
 {
+  double twovel;
+  
   if (!FGModel::Run()) {                 // if false then execute this Run()
     vForces.InitMatrix();
     vForces += Aerodynamics->GetForces();
@@ -148,6 +147,14 @@ bool FGAircraft::Run(void)
 
     vNwcg = State->GetTb2s() * vNcg;
     vNwcg(3) = -1*vNwcg(3) + 1;
+    
+    twovel=2*Translation->GetVt();
+    if(twovel > 0) {
+      bi2vel = WingSpan / twovel;
+      ci2vel = cbar / twovel;
+    }  
+    
+    alphaw = Translation->Getalpha() + WingIncidence;
     
     if (alphaclmax != 0) {
       if (Translation->Getalpha() > 0.85*alphaclmax) {
@@ -362,20 +369,22 @@ void FGAircraft::bind(void){
                        &FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/eyepoint-z-ft", this,3,
                        &FGAircraft::GetXYZep);
-                         
   PropertyManager->Tie("metrics/alpha-max-deg", this,
                        &FGAircraft::GetAlphaCLMax,
                        &FGAircraft::SetAlphaCLMax,
                        true);
-                     
   PropertyManager->Tie("metrics/alpha-min-deg", this,
                        &FGAircraft::GetAlphaCLMin,
                        &FGAircraft::SetAlphaCLMin,
                        true);
- 
-  //PropertyManager->Tie("systems/stall-warn-norm ", this,
-  //                      &FGAircraft::GetStallWarn);
-                     
+  PropertyManager->Tie("aero/bi2vel", this,
+                       &FGAircraft::GetBI2Vel);
+  PropertyManager->Tie("aero/ci2vel", this,
+                       &FGAircraft::GetCI2Vel);
+  PropertyManager->Tie("aero/alpha-wing-rad", this,
+                       &FGAircraft::GetAlphaW);
+  PropertyManager->Tie("systems/stall-warn-norm", this,
+                        &FGAircraft::GetStallWarn);
 }
 
 void FGAircraft::unbind(void){
@@ -405,5 +414,8 @@ void FGAircraft::unbind(void){
   PropertyManager->Untie("metrics/eyepoint-z-ft");
   PropertyManager->Untie("metrics/alpha-max-deg");
   PropertyManager->Untie("metrics/alpha-min-deg");
-  //PropertyManager->Untie("systems/stall-warn-norm ");
+  PropertyManager->Untie("aero/bi2vel");
+  PropertyManager->Untie("aero/ci2vel");
+  PropertyManager->Untie("aero/alpha-wing-rad");
+  PropertyManager->Untie("systems/stall-warn-norm");
 }

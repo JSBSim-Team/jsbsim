@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.81 2002/03/09 11:54:08 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.82 2002/03/18 12:12:46 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.81 2002/03/09 11:54:08 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.82 2002/03/18 12:12:46 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -130,11 +130,11 @@ public:
   inline string GetAircraftName(void) { return AircraftName; }
   
   /// Gets the wing area
-  inline double GetWingArea(void) const { return WingArea; }
+  double GetWingArea(void) const { return WingArea; }
   /// Gets the wing span
-  inline double GetWingSpan(void) const { return WingSpan; }
+  double GetWingSpan(void) const { return WingSpan; }
   /// Gets the average wing chord
-  inline double Getcbar(void) const { return cbar; }
+  double Getcbar(void) const { return cbar; }
   inline double GetWingIncidence(void) const { return WingIncidence; }
   inline double GetHTailArea(void) const { return HTailArea; }
   inline double GetHTailArm(void)  const { return HTailArm; }
@@ -163,6 +163,11 @@ public:
   
   inline double GetStallWarn(void) const { return impending_stall; }
   
+  double GetBI2Vel(void) const { return bi2vel; }
+  double GetCI2Vel(void) const { return ci2vel; }
+  double GetAlphaW(void) const { return alphaw; }
+                                                           
+  
   float GetNlf(void);
   
   inline FGColumnVector3& GetNwcg(void) { return vNwcg; }
@@ -186,6 +191,7 @@ private:
   double lbarh,lbarv,vbarh,vbarv;
   double alphaclmax,alphaclmin;
   double impending_stall;
+  double bi2vel, ci2vel,alphaw;
   string AircraftName;
 
   void Debug(int from);

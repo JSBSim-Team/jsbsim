@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.27 2002/03/09 11:52:31 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.28 2002/03/18 12:12:46 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.27 2002/03/09 11:52:31 apeden Exp $
+    @version $Id: FGAerodynamics.h,v 1.28 2002/03/18 12:12:46 apeden Exp $
     @see -
 */
 
@@ -123,7 +123,8 @@ public:
   inline double GetvLastFs(int axis) const { return vLastFs(axis); }
   inline FGColumnVector3& GetvFs(void) { return vFs; }
   inline double GetvFs(int axis) const { return vFs(axis); }
-  double GetLoD(void);
+  inline double GetLoD(void) const { return lod; }
+  inline double GetClSquared(void) const { return clsq; } 
 
     /** Gets the strings for the current set of coefficients.
       @return a string containing the descriptive names for all coefficients */
@@ -151,6 +152,7 @@ private:
   FGColumnVector3 vMoments;
   FGColumnVector3 vLastFs;
   FGColumnVector3 vDXYZcg;
+  double clsq,lod;
 
   void Debug(int from);
 };

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.7 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.8 2002/03/18 12:12:47 apeden Exp $"
 
 using std::vector;
 
@@ -99,6 +99,7 @@ class FGFactorGroup: public FGCoefficient {
     
     bool Load(FGConfigFile *AC_cfg);
     double TotalValue(void);
+    inline double GetValue(void) const { return totalValue; }
     //string GetCoefficientStrings(void);
     //string GetCoefficientValues(void);
     inline double GetSD(void) { return SDtotal; }
@@ -111,6 +112,7 @@ class FGFactorGroup: public FGCoefficient {
     typedef vector<FGCoefficient*> CoeffArray;
     CoeffArray sum;
     double SDtotal;
+    double totalValue;
     void Debug(int from);
 };
     

@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.81 2002/03/09 11:55:33 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.82 2002/03/18 12:12:46 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ CLASS IMPLEMENTATION
 
 // Constructor
 
-FGFDMExec::FGFDMExec(void)
+FGFDMExec::FGFDMExec(FGPropertyManager* root)
 {
   
   Frame           = 0;
@@ -124,20 +124,35 @@ FGFDMExec::FGFDMExec(void)
     debug_lvl = 1;
   }
 
-  if(master == NULL)
-    master = new FGPropertyManager;
 
-  instance = master->GetNode("/fdm/jsbsim",IdFDM,true);  
+  if(root == 0) 
+    master= new FGPropertyManager;
+  else
+    master = root;  
+  instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
+  instance->SetDouble("zero",0);  
   
   Debug(0);
-  Allocate();
+  
+  // this is here to catch errors in binding member functions
+  // to the property tree.
+  try {
+    Allocate();
+  } catch ( string msg ) {
+    cout << "Caught error: " << msg << endl;
+    exit(1);
+  }    
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGFDMExec::~FGFDMExec()
 {
-  DeAllocate();
+  try {
+    DeAllocate();
+  } catch ( string msg ) {
+    cout << "Caught error: " << msg << endl;
+  }    
 
   Debug(1);
 }
@@ -492,6 +507,12 @@ bool FGFDMExec::ReadOutput(FGConfigFile* AC_cfg)
     return false;
   }
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGPropertyManager* FGFDMExec::GetPropertyManager(void) { 
+  return instance;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

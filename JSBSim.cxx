@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.111 2002/03/01 19:54:58 apeden Exp $
+// $Id: JSBSim.cxx,v 1.112 2002/03/18 12:12:47 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -64,7 +64,7 @@ FGJSBsim::FGJSBsim( double dt )
 {
     bool result;
    
-    fdmex = new FGFDMExec;
+    fdmex = new FGFDMExec( globals->get_props() );
     
     State           = fdmex->GetState();
     Atmosphere      = fdmex->GetAtmosphere();

@@ -68,9 +68,9 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
-#include <FGPropertyManager.h>
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.42 2002/03/09 11:58:13 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.43 2002/03/18 12:12:47 apeden Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,6 +223,8 @@ void FGTranslation::Debug(int from)
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTranslation::bind(void){
   PropertyManager->Tie("velocities/u-fps", this,1,
                        &FGTranslation::GetUVW /*,
@@ -256,6 +258,8 @@ void FGTranslation::bind(void){
                        &FGTranslation::Getbeta,
                        &FGTranslation::Setbeta,
                        true);
+  PropertyManager->Tie("aero/mag-beta-rad", this,
+                       &FGTranslation::GetMagBeta);
   PropertyManager->Tie("aero/qbar-psf", this,
                        &FGTranslation::Getqbar,
                        &FGTranslation::Setqbar,
@@ -264,7 +268,7 @@ void FGTranslation::bind(void){
                        &FGTranslation::GetVt,
                        &FGTranslation::SetVt,
                        true);
-  PropertyManager->Tie("velocties/mach-norm", this,
+  PropertyManager->Tie("velocities/mach-norm", this,
                        &FGTranslation::GetMach,
                        &FGTranslation::SetMach,
                        true);
@@ -277,6 +281,8 @@ void FGTranslation::bind(void){
                        &FGTranslation::Setbdot,
                        true);
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTranslation::unbind(void){
   PropertyManager->Untie("velocities/u-fps");
@@ -292,7 +298,7 @@ void FGTranslation::unbind(void){
   PropertyManager->Untie("aero/beta-rad");
   PropertyManager->Untie("aero/qbar-psf");
   PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocties/mach-norm");
+  PropertyManager->Untie("velocities/mach-norm");
   PropertyManager->Untie("aero/alphadot-rad_sec");
   PropertyManager->Untie("aero/betadot-rad_sec");
 }

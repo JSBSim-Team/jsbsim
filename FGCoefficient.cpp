@@ -47,6 +47,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
+#include "FGPropertyManager.h"
 
 #ifndef FGFS
 #  if defined(sgi) && !defined(__GNUC__)
@@ -58,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.50 2002/02/14 19:16:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.51 2002/03/18 12:12:46 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,8 +73,14 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
   State   = FDMExec->GetState();
   Table   = 0;
   
+  PropertyManager = FDMExec->GetPropertyManager();
+  
   bias=0;
   gain=1;
+  
+  LookupR = LookupC = 0;
+  
+  totalValue = 0;
 
   if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
 }
@@ -91,7 +98,7 @@ FGCoefficient::~FGCoefficient()
 bool FGCoefficient::Load(FGConfigFile *AC_cfg)
 {
   int start, end, n;
-  string mult;
+  string mult,prop;
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
@@ -115,12 +122,15 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
       }
 
       *AC_cfg >> multparmsRow;
-      LookupR = State->GetParameterIndex(multparmsRow);
+      prop = State->GetPropertyName( State->GetParameterIndex(multparmsRow) );
+      LookupR = PropertyManager->GetNode( prop );
     }
 
     if (type == TABLE) {
       *AC_cfg >> multparmsCol;
-      LookupC = State->GetParameterIndex(multparmsCol);
+      prop = State->GetPropertyName( State->GetParameterIndex(multparmsCol) );
+
+      LookupC = PropertyManager->GetNode( prop );
     }
 
     // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
@@ -137,11 +147,15 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
       while (n < end && n >= 0) {
         n -= start;
         mult = multparms.substr(start,n);
-        multipliers.push_back( State->GetParameterIndex(mult) );
+        prop= State->GetPropertyName( State->GetParameterIndex(mult) );
+        multipliers.push_back( PropertyManager->GetNode(prop) );
         start += n+1;
         n = multparms.find("|",start);
       }
-      multipliers.push_back(State->GetParameterIndex(multparms.substr(start,n)));
+      prop=State->GetPropertyName( 
+            State->GetParameterIndex( multparms.substr(start,n) ) );
+      mult = multparms.substr(start,n);
+      multipliers.push_back( PropertyManager->GetNode(prop) );
       // End of non-dimensionalizing parameter read-in
     }
 
@@ -175,7 +189,7 @@ double FGCoefficient::Value(double rVal, double cVal)
   
 
   for (midx=0; midx < multipliers.size(); midx++) {
-      Value *= State->GetParameter(multipliers[midx]);
+      Value *= multipliers[midx]->getDoubleValue();
   }
   return Value;
 }
@@ -189,7 +203,7 @@ double FGCoefficient::Value(double Val)
   SD = Value = gain*Table->GetValue(Val) + bias;
   
   for (unsigned int midx=0; midx < multipliers.size(); midx++) 
-      Value *= State->GetParameter(multipliers[midx]);
+      Value *= multipliers[midx]->getDoubleValue();
   
   return Value;
 }
@@ -203,28 +217,34 @@ double FGCoefficient::Value(void)
   SD = Value = gain*StaticValue + bias;
 
   for (unsigned int midx=0; midx < multipliers.size(); midx++)
-    Value *= State->GetParameter(multipliers[midx]);
+    Value *= multipliers[midx]->getDoubleValue();
 
   return Value;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGCoefficient::TotalValue()
+double FGCoefficient::TotalValue(void)
 {
   switch(type) {
   case 0:
-    return -1;
+    totalValue=-1;
+    return totalValue;
   case 1:
-    return (Value());
+    totalValue=Value();
+    return totalValue;
   case 2:
-    return (Value(State->GetParameter(LookupR)));
+    totalValue=Value( LookupR->getDoubleValue() );
+    return totalValue;
   case 3:
-    return (Value(State->GetParameter(LookupR),State->GetParameter(LookupC)));
+    totalValue=Value( LookupR->getDoubleValue(),
+                        LookupC->getDoubleValue() );
+    return totalValue;
   case 4:
-    return 0.0;
+    totalValue=0.0;
+    return totalValue;
   }
-  return 0;
+  return totalValue;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +266,7 @@ void FGCoefficient::DisplayCoeffFactors(void)
     cout << "none" << endl;
   } else {
     for (i=0; i<multipliers.size(); i++) 
-      cout << State->GetParameterName(multipliers[i]);
+      cout << multipliers[i]->getName() << "  ";
   }
   cout << endl;
 }
@@ -263,6 +283,44 @@ string FGCoefficient::GetCoefficientValues(void)
   return value;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGCoefficient::bind(FGPropertyManager *node) {
+  string mult;
+  unsigned i;
+  
+  FGCoefficient::node=node;
+  
+  node->SetString("description",description);
+  if(LookupR) node->SetString("row-parm",LookupR->getName() );
+  if(LookupC) node->SetString("column-parm",LookupC->getName() );
+  
+  mult="";
+  for (i=0; i<multipliers.size(); i++) {
+      mult += multipliers[i]->getName();
+      if( i < multipliers.size()-1 ) mult += "|"; 
+  }
+  node->SetString("multipliers",mult);
+  
+  node->Tie("SD-norm",this,&FGCoefficient::GetSD );
+  node->Tie("value-lbs",this,&FGCoefficient::GetValue );
+  
+  node->Tie("bias", this, &FGCoefficient::getBias,
+                          &FGCoefficient::setBias );
+                          
+  node->Tie("gain", this, &FGCoefficient::getGain,
+                          &FGCoefficient::setGain );
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGCoefficient::unbind(void) {
+  node->Untie("SD-norm");
+  node->Untie("value-lbs"); 
+  node->Untie("bias");  
+  node->Untie("gain");
+}  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
@@ -298,11 +356,11 @@ void FGCoefficient::Debug(int from)
         if (type == TABLE) {
           cout << "Cols: " << columns;
         }
-        cout << endl << "   Row indexing parameter: " << multparmsRow << endl;
+        cout << endl << "   Row indexing parameter: " << LookupR->getName() << endl;
       }
 
       if (type == TABLE) {
-        cout << "   Column indexing parameter: " << multparmsCol << endl;
+        cout << "   Column indexing parameter: " << LookupC->getName() << endl;
       }
 
       if (type == VALUE) {

@@ -8,7 +8,7 @@
 #ifndef FGPROPERTYMANAGER_H
 #define FGPROPERTYMANAGER_H
 
-#include <simgear/props.hxx>
+#include <simgear/misc/props.hxx>
 
 class FGPropertyManager:public SGPropertyNode {
   public:
@@ -30,7 +30,9 @@ class FGPropertyManager:public SGPropertyNode {
     GetNode (const string &path, bool create = false)
     {
       SGPropertyNode* node=this->getNode(path, create);
-      cout << "FGPropertyManager::node= " << node << endl;
+      if(node == 0) 
+        cout << "FGPropertyManager::GetNode() No node found for " 
+             << path << endl;
       return (FGPropertyManager*)node;
     }
   

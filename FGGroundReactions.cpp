@@ -38,7 +38,7 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.28 2002/03/09 11:55:51 apeden Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.29 2002/03/18 12:12:47 apeden Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +210,7 @@ void FGGroundReactions::Debug(int from)
 }
 
 void FGGroundReactions::bind(void){
+
   PropertyManager->Tie("gear/num-units", this,
                        &FGGroundReactions::GetNumGearUnits);  
   PropertyManager->Tie("moments/l-gear-lbsft", this,1,
@@ -224,7 +225,6 @@ void FGGroundReactions::bind(void){
                        &FGGroundReactions::GetForces);
   PropertyManager->Tie("forces/fbz-gear-lbs", this,3,
                        &FGGroundReactions::GetForces);
-
 }
 
 void FGGroundReactions::unbind(void){

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.52 2002/03/09 11:55:34 apeden Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.53 2002/03/18 12:12:46 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.52 2002/03/09 11:55:34 apeden Exp $
+    @version $Id: FGFDMExec.h,v 1.53 2002/03/18 12:12:46 apeden Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -112,9 +112,11 @@ CLASS DECLARATION
 class FGFDMExec : public FGJSBBase
 {
 public:
-  /// Default constructor
-  FGFDMExec(void);
 
+  
+  /// Default constructor
+  FGFDMExec(FGPropertyManager* root = 0);
+  
   /// Default destructor
   ~FGFDMExec();
 
@@ -199,7 +201,8 @@ public:
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
   
-  inline FGPropertyManager* GetPropertyManager(void) { return instance; }
+  FGPropertyManager* GetPropertyManager(void);
+
 private:
   FGModel* FirstModel;
 

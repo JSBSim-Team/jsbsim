@@ -47,12 +47,13 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGTable.h"
 #include "FGJSBBase.h"
+#include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.36 2001/12/17 01:40:02 apeden Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.37 2002/03/18 12:12:46 apeden Exp $"
 
 using std::vector;
 
@@ -87,7 +88,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.36 2001/12/17 01:40:02 apeden Exp $
+    @version $Id: FGCoefficient.h,v 1.37 2002/03/18 12:12:46 apeden Exp $
     @see -
 */
 
@@ -103,10 +104,11 @@ public:
   
   virtual bool Load(FGConfigFile* AC_cfg);
   
-  typedef vector <eParam> MultVec;
+  typedef vector <FGPropertyManager*> MultVec;
   virtual double TotalValue(void);
-  virtual inline string Getname(void) {return name;}
-  virtual inline double GetSD(void) { return SD;}
+  virtual inline double GetValue(void) const { return totalValue; }
+  virtual inline string Getname(void) const {return name;}
+  virtual inline double GetSD(void) const { return SD;}
   inline MultVec Getmultipliers(void) {return multipliers;}
   void DumpSD(void);  
   
@@ -120,8 +122,11 @@ public:
   
   inline void setBias(double b) { bias=b; }
   inline void setGain(double g) { gain=g; };
-  inline double getBias(void) { return bias; }
-  inline double getGain(void) { return gain; }
+  inline double getBias(void) const { return bias; }
+  inline double getGain(void) const { return gain; }
+  
+  void bind(FGPropertyManager *node);
+  void unbind(void);
 
 private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
@@ -138,8 +143,11 @@ private:
   double Value(double);
   double Value(void);
   double StaticValue;
+  double totalValue;
   double bias,gain;
-  eParam LookupR, LookupC;
+  FGPropertyManager *LookupR, *LookupC;
+  FGPropertyManager *node;
+  
   MultVec multipliers;
   int rows, columns;
   Type type;
@@ -156,6 +164,7 @@ private:
   FGPosition*     Position;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
+  FGPropertyManager* PropertyManager;
 
   virtual void Debug(int from);
 };
