@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.17 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.18 2004/01/17 19:32:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,20 +59,23 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models a deadband object.
-    Owned and Operated by the FGFCS class.
-
-    <COMPONENT NAME="Deadbeat1" TYPE="DEADBAND">
-      INPUT {input}
-      WIDTH {deadband width}
-      GAIN {optional deadband gain}
-      MIN {minimum value}
-      MAX {maximum value}
-      OUTPUT {optional output parameter to set}
-    </COMPONENT>
-
+    Here is the format of the deadband control specification:
+    <pre>
+    \<COMPONENT NAME="Deadbeat1" TYPE="DEADBAND">
+       INPUT {input}
+       WIDTH {deadband width}
+       MIN {minimum value}
+       MAX {maximum value}
+       [GAIN {optional deadband gain}]
+       [OUTPUT {optional output parameter to set}]
+    \</COMPONENT>
+    </pre>
+    The WIDTH value is the total deadband region within which an input will
+    produce no output. For example, say that the WIDTH value is 2.0.  If the
+    input is between -1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @see -
-  */
+    @version $Id: FGDeadBand.h,v 1.18 2004/01/17 19:32:21 jberndt Exp $
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.23 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.24 2004/01/17 19:32:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,13 +62,13 @@ CLASS DOCUMENTATION
 The SWITCH component models a switch - either on/off or a multi-choice rotary
 switch. The switch can represent a physical cockpit switch, or can represent a
 logical switch, where several conditions might need to be satisfied before a
-particular state is reached. The VALUE of the switch - the output value - is
-chosen depending on the state of the switch. Each switch is comprised of two or
-more TESTs. Each TEST has a VALUE associated with it. The first TEST that
-evaluates to TRUE will set the output value of the switch according to the VALUE
-parameter belonging to that TEST. Each TEST contains one or more CONDITIONS, which
-each must be logically related (if there are more than one) given the value of
-the LOGIC parameter, and which takes the form:
+particular state is reached. The VALUE of the switch - the output value for the
+component - is chosen depending on the state of the switch. Each switch is
+comprised of two or more TESTs. Each TEST has a VALUE associated with it. The
+first TEST that evaluates to TRUE will set the output value of the switch
+according to the VALUE parameter belonging to that TEST. Each TEST contains one
+or more CONDITIONS, which each must be logically related (if there are more than
+one) given the value of the LOGIC parameter, and which takes the form:
 
   property conditional property|value
 
@@ -101,6 +101,24 @@ additional conditions, as well as possibly additional CONDITION_GROUPs.
   ...
 \</COMPONENT\>
 </pre>
+
+Here's an example:
+<pre>
+\<COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
+  \<TEST LOGIC="DEFAULT" VALUE="0.0">
+  \</TEST>
+  \<TEST LOGIC="AND" VALUE="fcs/roll-ap-error-summer">
+    ap/attitude_hold == 1
+  \</TEST>
+\</COMPONENT>
+</pre>
+The above example specifies that the default value of the component (i.e. the
+output property of the component, addressed by the property, ap/roll-ap-autoswitch)
+is 0.0.  If or when the attitude hold switch is selected (property
+ap/attitude_hold takes the value 1), the value of the switch component will be
+whatever value fcs/roll-ap-error-summer is.
+@author Jon S. Berndt
+@version $Id: FGSwitch.h,v 1.24 2004/01/17 19:32:21 jberndt Exp $
 */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.26 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.27 2004/01/17 19:32:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,10 +69,34 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models a flight control system summing component.
-    The Summer component sums multiple inputs. These can be pilot control inputs,
-    state variables, or even floating point numbers (e.g. for a bias).
+    The Summer component sums two or more inputs. These can be pilot control
+    inputs or state variables, and a bias can also be added in using the BIAS
+    keyword.  The form of the summer component specification is:
+<pre>
+    \<COMPONENT NAME="name" TYPE="SUMMER">
+      INPUT \<property>
+      INPUT \<property>
+      [BIAS \<value>]
+      [?]
+      [CLIPTO \<min> \<max> 1]
+      [OUTPUT \<property>]
+    \</COMPONENT>
+</pre>
+    Note that in the case of an input property the property name may be
+    immediately preceded by a minus sign. Here's an example of a summer
+    component specification:
+<pre>
+    \<COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
+      INPUT  velocities/p-rad_sec
+      INPUT -fcs/roll-ap-wing-leveler
+      INPUT  fcs/roll-ap-error-integrator
+      CLIPTO -1 1
+    \</COMPONENT>
+</pre>
+    Note that there can be only one BIAS statement per component.
+    
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.26 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.27 2004/01/17 19:32:21 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.29 2004/01/13 14:30:07 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.30 2004/01/17 19:32:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,14 +166,19 @@ The corresponding filter definition is:
   [TRIGGER \<property>]
 \</COMPONENT>
 </pre>
-For the integrator, the TRIGGER features the following behavior, if the TRIGGER property value is:
+For the integrator, the TRIGGER features the following behavior, if the TRIGGER
+property value is:
   - -1 (or simply less than zero), all previous inputs and outputs are set to 0.0
   - 0, no action is taken - the output is calculated normally
   - +1 (or simply greater than zero), all previous outputs (only) will be set to 0.0
-  
-    @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.29 2004/01/13 14:30:07 jberndt Exp $
-    */
+
+In all the filter specifications above, an [OUTPUT] keyword is also seen.  This
+is so that the last component in a "string" can copy its value to the appropriate
+output, such as the elevator, or speedbrake, etc.
+
+@author Jon S. Berndt
+@version $Id: FGFilter.h,v 1.30 2004/01/17 19:32:21 jberndt Exp $
+*/
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
