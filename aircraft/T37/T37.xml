@@ -224,13 +224,13 @@
          0.35
       </COEFFICIENT>
     </GROUP>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CLadot" TYPE="VALUE">
        Delta_Lift_due_to_alpha_rate
        aero/qbar-psf|metrics/Sw-sqft|aero/alphadot-rad_sec|aero/ci2vel
        2.0
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CLq" TYPE="VALUE">
         Lift_due_to_pitch_rate
         aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel
@@ -241,7 +241,7 @@
        aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
        0
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CLde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
        aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-rad
@@ -282,7 +282,7 @@
           0.26       0.096
           1.57       1.500
       </COEFFICIENT>
-      <!-- Roslam -->
+      <!-- Roskam -->
       <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
          Drag_due_to_alpha
          aero/qbar-psf|metrics/Sw-sqft|aero/alpha-rad
@@ -332,25 +332,25 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="SIDE">
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CYb" TYPE="VALUE">
        Side_force_due_to_beta
        aero/qbar-psf|metrics/Sw-sqft|aero/beta-rad
        -0.346
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CYp" TYPE="VALUE">
        Side_force_due_to_roll_rate
        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/p-aero-rad_sec
        -0.0827
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CYr" TYPE="VALUE">
        Side_force_due_to_yaw_rate
        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/r-aero-rad_sec
        0.3
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="CYdr" TYPE="VALUE">
        Side_force_due_to_rudder
        aero/qbar-psf|metrics/Sw-sqft|fcs/rudder-pos-rad
@@ -358,25 +358,25 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="ROLL">
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Clb" TYPE="VALUE">
        Roll_moment_due_to_beta
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
        -0.0944
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Clp" TYPE="VALUE">
        Roll_moment_due_to_roll_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
        -0.442
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Clr" TYPE="VALUE">
        Roll_moment_due_to_yaw_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
        0.0926
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Clda" TYPE="VECTOR">
        Roll_moment_due_to_aileron
        2
@@ -385,7 +385,7 @@
        0.0       0.181
        2.0       0.040
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cldr" TYPE="VALUE">
        Roll_moment_due_to_rudder
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
@@ -393,25 +393,25 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="PITCH">
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cmo" TYPE="VALUE">
        Pitching_moment_at_zero_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
        0.025
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
        Pitch_moment_due_to_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/alpha-rad
        -0.7
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
        Pitch_moment_due_to_alpha_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|aero/alphadot-rad_sec
        -6.95
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cmde" TYPE="VECTOR">
        Pitch_moment_due_to_elevator
        2
@@ -420,39 +420,39 @@
        0.0       -1.12
        2.0       -0.200
     </COEFFICIENT>
-    <!-- David Culp -->
+    <!-- David Culp, Roskam defines -14.9 -->
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-      -50.0  <!-- Roskam defines -14.9 -->
+      -50.0
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="YAW">
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cnb" TYPE="VALUE">
        Yaw_moment_due_to_beta
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
        0.1106
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cnp" TYPE="VALUE">
        Yaw_moment_due_to_roll_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
        -0.0243
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cnr" TYPE="VALUE">
        Yaw_moment_due_to_yaw_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
        -0.139
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cndr" TYPE="VALUE">
        Yaw_moment_due_to_rudder
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
        -0.0365
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cnda" TYPE="VALUE">
        Adverse_yaw
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
