@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.87 2002/09/22 18:10:05 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.88 2002/09/23 11:53:21 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -285,6 +285,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   vector <FGFCSComponent*> *Components;
   FGConfigFile *FCS_cfg;
 
+  Components=0;
   // Determine if the FCS/Autopilot is defined inline in the aircraft configuration
   // file or in a separate file. Set up the config file class as appropriate.
 
