@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.41 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.42 2004/02/28 17:09:10 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,7 @@ FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
   vPQRdot_prev[3].InitMatrix();
 
   bind();
-  
+
   Debug(0);
 }
 
@@ -109,16 +109,26 @@ bool FGRotation::Run(void)
   if (!FGModel::Run()) {
     GetState();
 
+    // The equations that follow are presented here for clarity:
+    //
+    // L2 = L + Ixz*P*Q - (Izz-Iyy)*R*Q;
+    // N1 = N - Ixz*R*Q - (Iyy-Ixx)*P*Q;
+    // D = Ixx*Izz - Ixz*Ixz;
+
+    // Pdot = (L2*Izz + N1*Ixz) / D;
+    // Qdot = (M - (Ixx-Izz)*P*R - Ixz*(P*P - R*R)) / Iyy;
+    // Rdot = (L2*Ixz + N1*Ixx) / D;
+
     L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
     N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
 
-    vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
+    vPQRdot(eP) = (L2*Izz + N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
     vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR)
                           - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
     vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
     vPQR += State->Integrate(FGState::TRAPZ, dt*rate, vPQRdot, vPQRdot_prev);
-    
+
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
     State->IntegrateQuat(vPQR, rate);
