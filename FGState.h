@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.57 2002/03/18 12:12:47 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.58 2002/04/01 12:00:07 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.57 2002/03/18 12:12:47 apeden Exp $
+    @version $Id: FGState.h,v 1.58 2002/04/01 12:00:07 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,38 +185,11 @@ public:
   /// Resumes the simulation by resetting delta T to the correct value.
   inline void Resume(void)  {dt = saved_dt;}
 
-  /** Retrieves a parameter.
-      The parameters that can be retrieved are enumerated in FGJSBBase.h.
-      @param val_idx one of the enumerated JSBSim parameters.
-      @return the value of the parameter.
-      */
-  double GetParameter(eParam val_idx);
-
-  /** Retrieves a parameter.
-      The parameters that can be retrieved are enumerated in FGJSBBase.h.
-      @param val_string a string representing one of the enumerated JSBSim parameters,
-             i.e. "FG_QBAR".
-      @return the value of the parameter.
-      */
-  double GetParameter(string val_string);
-
-  /** Retrieves the JSBSim parameter enumerated item given the text string.
-      @param val_string the parameter string, i.e. "FG_QBAR".
-      @return the JSBSim parameter index (an enumerated type) for the supplied string.
-      */
-  eParam GetParameterIndex(string val_string);
-
   /** Sets the speed of sound.
       @param speed the speed of sound in feet per second.
       */
   inline void Seta(double speed) { a = speed; }
 
-  /** Gets the name of the parameter given the index.
-      @param val_idx one of the enumerated JSBSim parameters.
-      @return the name of the parameter pointed to by the index.
-      */
-  string GetParameterName(eParam val_idx) {return paramdef[val_idx];}
-  
   /** Sets the current sim time.
       @param cur_time the current time
       @return the current time.
@@ -230,12 +203,6 @@ public:
       @param delta_t the time step in seconds.
       */
   inline void  Setdt(double delta_t) { dt = delta_t; }
-
-  /** Sets the JSBSim parameter to the supplied value.
-      @param prm the JSBSim parameter to set, i.e. FG_RUDDER_POS.
-      @param val the value to give the parameter.
-      */
-  void SetParameter(eParam prm, double val);
 
   /** Increments the simulation time.
       @return the new simulation time.
@@ -309,8 +276,9 @@ public:
   */
   void ReportState(void);
   
-  inline string GetPropertyName(eParam prm) { return ParamToProp[prm]; }
-  inline eParam GetParam(string property) { return PropToParam[property]; }
+  inline string GetPropertyName(string prm) { return ParamNameToProp[prm]; }
+  //inline string GetPropertyName(eParam prm) { return ParamIdxToProp[prm]; }
+  //inline eParam GetParam(string property) { return PropToParam[property]; }
   
   void bind();
   void unbind();
@@ -347,14 +315,19 @@ private:
   FGPropulsion* Propulsion;
   FGPropertyManager* PropertyManager;
 
-  typedef map<string, eParam> CoeffMap;
+ /*  typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
 
   typedef map<eParam, string> ParamMap;
-  ParamMap paramdef;
+  //ParamMap paramdef; */
+
   
-  ParamMap ParamToProp;
-  CoeffMap PropToParam;
+  typedef map<string,string> ParamNameMap;
+  ParamNameMap ParamNameToProp;
+  
+  typedef map<eParam,string> ParamIdxMap;
+  ParamIdxMap ParamIdxToProp;
+  //CoeffMap PropToParam;
 
   int ActiveEngine;
   
