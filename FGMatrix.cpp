@@ -48,7 +48,7 @@ void dealloc(double **A, int rows)
 
 /******************************************************************************/
 
-FGMatrix::FGMatrix(unsigned rows, unsigned cols)
+FGMatrix::FGMatrix(unsigned int rows, unsigned int cols)
 {
   this->rows = rows;
   this->cols = cols;
@@ -97,21 +97,21 @@ FGMatrix& FGMatrix::operator=(const FGMatrix& M)
 
 /******************************************************************************/
 
-double& FGMatrix::operator()(unsigned row, unsigned col) const
+double& FGMatrix::operator()(unsigned int row, unsigned int col) const
 {
   return data[row][col];
 }
 
 /******************************************************************************/
 
-unsigned FGMatrix::Rows(void) const
+unsigned int FGMatrix::Rows(void) const
 {
   return rows;
 }
 
 /******************************************************************************/
 
-unsigned FGMatrix::Cols(void) const
+unsigned int FGMatrix::Cols(void) const
 {
   return cols;
 }
@@ -382,7 +382,7 @@ void FGMatrix::TransposeNonSquare(void)
   dealloc(data,rows);
 
   data       = tran;
-  unsigned m = rows;
+  unsigned int m = rows;
   rows       = cols;
   cols       = m;
 }

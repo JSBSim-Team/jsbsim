@@ -63,23 +63,23 @@ protected:
   double **data;
 
 private:
-  unsigned rows,cols;
+  unsigned int rows,cols;
   char delim;
   int width,prec,origin;
   void TransposeSquare(void);
   void TransposeNonSquare(void);
 
 public:
-  FGMatrix(unsigned rows, unsigned cols);
+  FGMatrix(unsigned int rows, unsigned int cols);
   FGMatrix(const FGMatrix& A);
   ~FGMatrix(void);
 
   FGMatrix& operator=(const FGMatrix& A);
-  double& operator()(unsigned row, unsigned col) const;
+  double& operator()(unsigned int row, unsigned int col) const;
   FGColumnVector operator*(const FGColumnVector& Col);
 
-  unsigned FGMatrix::Rows(void) const;
-  unsigned FGMatrix::Cols(void) const;
+  unsigned int FGMatrix::Rows(void) const;
+  unsigned int FGMatrix::Cols(void) const;
 
   void FGMatrix::T(void);
   void InitMatrix(void);

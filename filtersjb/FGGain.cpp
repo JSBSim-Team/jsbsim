@@ -126,7 +126,7 @@ bool FGGain::Run(void )
     }
 
     if (Output >= 0.0) Output *= Max;
-    else Output *= Min;
+    else Output *= -Min;
   }
 
   return true;

@@ -142,13 +142,14 @@ private:
   float qbar;                       // dynamic pressure
   float sim_time, dt;
   float Mach;                       // Mach number
+  float T[4][4];
 
   FGFDMExec* FDMExec;
   float LocalAltitudeOverRunway;
-  FGMatrix* Tb2l;
-  FGMatrix* Tl2b;
-  FGMatrix* Ts2b;
-  FGColumnVector* Qtrn;
+//  FGMatrix Tb2l(3,3);
+//  FGMatrix Tl2b(3,3);
+//  FGMatrix Ts2b(3,3);
+//  FGColumnVector Qtrn(4);
 
   typedef map<string, long> CoeffMap;
   CoeffMap coeffdef;

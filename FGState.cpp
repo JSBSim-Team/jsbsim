@@ -94,7 +94,6 @@ FGState::FGState(FGFDMExec* fdex)
   coeffdef["FG_ALTITUDE"]  = 32768L;
   coeffdef["FG_BI2VEL"]    = 65536L;
   coeffdef["FG_CI2VEL"]    = 131072L;
-
 }
 
 
@@ -150,18 +149,6 @@ void FGState::Initialize(float U, float V, float W,
                          float Latitude, float Longitude, float H)
 {
   float alpha, beta, gamma;
-  float Q0, Q1, Q2, Q3;
-  float T[4][4];
-  float thtd2, psid2, phid2;
-  float Sthtd2, Spsid2, Sphid2;
-  float Cthtd2, Cpsid2, Cphid2;
-  float Cphid2Cthtd2;
-  float Cphid2Sthtd2;
-  float Sphid2Sthtd2;
-  float Sphid2Cthtd2;
-  float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
-  float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
-  float Q1Q3, Q2Q3;
 
   latitude = Latitude;
   longitude = Longitude;
@@ -185,50 +172,7 @@ void FGState::Initialize(float U, float V, float W,
   Vt = sqrt(U*U + V*V + W*W);
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
 
-  thtd2 = tht/2.0;
-  psid2 = psi/2.0;
-  phid2 = phi/2.0;
-
-  Sthtd2 = sin(thtd2);
-  Spsid2 = sin(psid2);
-  Sphid2 = sin(phid2);
-
-  Cthtd2 = cos(thtd2);
-  Cpsid2 = cos(psid2);
-  Cphid2 = cos(phid2);
-
-  Cphid2Cthtd2 = Cphid2*Cthtd2;
-  Cphid2Sthtd2 = Cphid2*Sthtd2;
-  Sphid2Sthtd2 = Sphid2*Sthtd2;
-  Sphid2Cthtd2 = Sphid2*Cthtd2;
-
-  Q0 =  Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-  Q1 =  Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-  Q2 =  Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-  Q3 =  Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
-
-  FDMExec->GetRotation()->SetQ0123(Q0, Q1, Q2, Q3);
-
-  Q0Q0 = Q0*Q0;
-  Q1Q1 = Q1*Q1;
-  Q2Q2 = Q2*Q2;
-  Q3Q3 = Q3*Q3;
-  Q0Q1 = Q0*Q1;
-  Q0Q2 = Q0*Q2;
-  Q0Q3 = Q0*Q3;
-  Q1Q2 = Q1*Q2;
-  Q1Q3 = Q1*Q3;
-  Q2Q3 = Q2*Q3;
-
-  T[1][1] = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-  T[1][2] = 2*(Q1Q2 + Q0Q3);
-  T[1][3] = 2*(Q1Q3 - Q0Q2);
-  T[2][1] = 2*(Q1Q2 - Q0Q3);
-  T[2][2] = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-  T[2][3] = 2*(Q2Q3 + Q0Q1);
-  T[3][1] = 2*(Q1Q3 + Q0Q2);
-  T[3][2] = 2*(Q2Q3 - Q0Q1);
-  T[3][3] = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+  CalcMatrices(phi, tht, psi);
 
   FDMExec->GetPosition()->SetT(T[1][1], T[1][2], T[1][3],
                                T[2][1], T[2][2], T[2][3],
@@ -337,7 +281,77 @@ float FGState::GetParameter(int val_idx)
 
 void FGState::CalcMatrices(float phi, float tht, float psi)
 {
-    //TODO: Add your source code here
+  float Q0, Q1, Q2, Q3;
+  float thtd2, psid2, phid2;
+  float Sthtd2, Spsid2, Sphid2;
+  float Cthtd2, Cpsid2, Cphid2;
+  float Cphid2Cthtd2;
+  float Cphid2Sthtd2;
+  float Sphid2Sthtd2;
+  float Sphid2Cthtd2;
+  float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
+  float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
+  float Q1Q3, Q2Q3;
+
+  thtd2 = tht/2.0;
+  psid2 = psi/2.0;
+  phid2 = phi/2.0;
+
+  Sthtd2 = sin(thtd2);
+  Spsid2 = sin(psid2);
+  Sphid2 = sin(phid2);
+
+  Cthtd2 = cos(thtd2);
+  Cpsid2 = cos(psid2);
+  Cphid2 = cos(phid2);
+
+  Cphid2Cthtd2 = Cphid2*Cthtd2;
+  Cphid2Sthtd2 = Cphid2*Sthtd2;
+  Sphid2Sthtd2 = Sphid2*Sthtd2;
+  Sphid2Cthtd2 = Sphid2*Cthtd2;
+
+  Q0 =  Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
+  Q1 =  Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
+  Q2 =  Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
+  Q3 =  Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+
+//  Qtrn[1] = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
+//  Qtrn[2] = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
+//  Qtrn[3] = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
+//  Qtrn[4] = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+
+  FDMExec->GetRotation()->SetQ0123(Q0, Q1, Q2, Q3);
+
+  Q0Q0 = Q0*Q0;
+  Q1Q1 = Q1*Q1;
+  Q2Q2 = Q2*Q2;
+  Q3Q3 = Q3*Q3;
+  Q0Q1 = Q0*Q1;
+  Q0Q2 = Q0*Q2;
+  Q0Q3 = Q0*Q3;
+  Q1Q2 = Q1*Q2;
+  Q1Q3 = Q1*Q3;
+  Q2Q3 = Q2*Q3;
+
+//  Tb2l[1][1] = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
+//  Tb2l[1][2] = 2*(Q1Q2 + Q0Q3);
+//  Tb2l[1][3] = 2*(Q1Q3 - Q0Q2);
+//  Tb2l[2][1] = 2*(Q1Q2 - Q0Q3);
+//  Tb2l[2][2] = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
+//  Tb2l[2][3] = 2*(Q2Q3 + Q0Q1);
+//  Tb2l[3][1] = 2*(Q1Q3 + Q0Q2);
+//  Tb2l[3][2] = 2*(Q2Q3 - Q0Q1);
+//  Tb2l[3][3] = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+
+  T[1][1] = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
+  T[1][2] = 2*(Q1Q2 + Q0Q3);
+  T[1][3] = 2*(Q1Q3 - Q0Q2);
+  T[2][1] = 2*(Q1Q2 - Q0Q3);
+  T[2][2] = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
+  T[2][3] = 2*(Q2Q3 + Q0Q1);
+  T[3][1] = 2*(Q1Q3 + Q0Q2);
+  T[3][2] = 2*(Q2Q3 - Q0Q1);
+  T[3][3] = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
 }
 
 

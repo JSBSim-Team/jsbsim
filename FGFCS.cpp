@@ -74,9 +74,9 @@ FGFCS::~FGFCS(void)
 bool FGFCS::Run(void)
 {
   if (!FGModel::Run()) {
-
+    // TEST
     for (unsigned int i=0;i<Components.size();i++) Components[i]->Run();
-
+    // END TEST
   } else {
   }
   return false;
@@ -92,23 +92,6 @@ void FGFCS::SetThrottle(int engineNum, float setting)
   }
 }
 
-
-// Supports the following components:
-//
-// LAG_FILTER
-// RECT_LAG_FILTER
-// LEAD_LAG_FILTER
-// SECOND_ORDER_FILTER
-// WASHOUT_FILTER
-// INTEGRATOR
-// PURE_GAIN
-// SCHEDULED_GAIN
-// AEROSURFACE_SCALE
-// SUMMER
-// DEADBAND
-// GRADIENT
-// SWITCH
-//
 
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 {
