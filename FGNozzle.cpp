@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.36 2004/09/11 12:32:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.37 2004/09/13 09:33:24 ehofman Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,7 @@ double FGNozzle::Calculate(double CfPc)
   Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
   vFn(1) = Thrust * cos(ReverserAngle);
 
-  ThrustCoeff = CfPc / ((pAtm - PE) * Area2);
+  ThrustCoeff = max((double)0.0, CfPc / ((pAtm - PE) * Area2));
 
   return Thrust;
 }

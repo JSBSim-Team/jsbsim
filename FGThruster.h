@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.35 2004/09/10 20:08:45 ehofman Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.36 2004/09/13 09:33:24 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.35 2004/09/10 20:08:45 ehofman Exp $
+    @version $Id: FGThruster.h,v 1.36 2004/09/13 09:33:24 ehofman Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +94,8 @@ public:
   double GetGearRatio(void) {return GearRatio; }
   virtual string GetThrusterLabels(int id);
   virtual string GetThrusterValues(int id);
+
+  inline void SetThrustCoefficient(double ct) { ThrustCoeff = ct; }
 
 protected:
   eType Type;

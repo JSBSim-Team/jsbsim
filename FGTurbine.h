@@ -45,7 +45,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.11 2004/06/20 16:14:51 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.12 2004/09/13 09:33:24 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.11 2004/06/20 16:14:51 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.12 2004/09/13 09:33:24 ehofman Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,12 +233,12 @@ private:
   double NozzlePosition;
 
   double Off(void);
-  double Run(void);
+  double Run(double &CT);
   double SpinUp(void);
   double Start(void);
   double Stall(void);
   double Seize(void);
-  double Trim(void);
+  double Trim(double &CT);
 
   void SetDefaults(void);
   bool Load(FGConfigFile *ENG_cfg);
