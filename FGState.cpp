@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.50 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.51 2001/04/06 19:07:23 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -107,6 +107,9 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_ALPHADOT,       " alphadot "       );
   RegisterVariable(FG_BETA,           " beta "           );
   RegisterVariable(FG_BETADOT,        " betadot "        );
+  RegisterVariable(FG_PHI,            " roll_angle "     );
+  RegisterVariable(FG_THT,            " pitch_angle "    );
+  RegisterVariable(FG_PSI,            " heading_angle "  );
   RegisterVariable(FG_PITCHRATE,      " pitch_rate "     );
   RegisterVariable(FG_ROLLRATE,       " roll_rate "      );
   RegisterVariable(FG_YAWRATE,        " yaw_rate "       );
@@ -168,12 +171,18 @@ float FGState::GetParameter(eParam val_idx) {
     return FDMExec->GetTranslation()->Getbeta();
   case FG_BETADOT:
     return FDMExec->GetTranslation()->Getbdot();
+  case FG_PHI:
+    return FDMExec->GetRotation()->Getphi();
+  case FG_THT:
+    return FDMExec->GetRotation()->Gettht();
+  case FG_PSI:
+    return FDMExec->GetRotation()->Getpsi();
   case FG_PITCHRATE:
-    return (FDMExec->GetRotation()->GetPQR())(2);
+    return FDMExec->GetRotation()->GetPQR(2);
   case FG_ROLLRATE:
-    return (FDMExec->GetRotation()->GetPQR())(1);
+    return FDMExec->GetRotation()->GetPQR(1);
   case FG_YAWRATE:
-    return (FDMExec->GetRotation()->GetPQR())(3);
+    return FDMExec->GetRotation()->GetPQR(3);
   case FG_ELEVATOR_POS:
     return FDMExec->GetFCS()->GetDePos();
   case FG_AILERON_POS:

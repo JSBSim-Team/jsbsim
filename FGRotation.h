@@ -75,7 +75,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.18 2001/03/29 00:06:11 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.19 2001/04/06 19:07:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -90,8 +90,10 @@ public:
   bool Run(void);
 
   inline FGColumnVector GetPQR(void) {return vPQR;}
+  inline float GetPQR(int axis) {return vPQR(axis);}
   inline FGColumnVector GetPQRdot(void) {return vPQRdot;}
   inline FGColumnVector GetEuler(void) {return vEuler;}
+  inline float GetEuler(int axis) {return vEuler(axis);}
   inline FGColumnVector GetEulerRates(void) { return vEulerRates; }
   inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector tt) {vEuler = tt;}

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.22 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.23 2001/04/06 19:07:23 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 extern short debug_lvl;
@@ -148,7 +148,7 @@ float FGPropeller::Calculate(float PowerAvailable)
   vFn(1) = Thrust;
   omega = RPS*2.0*M_PI;
 
-  if (omega <= 500) omega = 1.0;
+  if (omega <= 5) omega = 1.0;
 
   Torque = PowerAvailable / omega;
   RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
