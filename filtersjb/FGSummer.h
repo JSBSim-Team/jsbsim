@@ -70,6 +70,9 @@ class FGSummer  : public FGFCSComponent
   FGConfigFile* AC_cfg;
   vector<int> InputIndices;
   vector<int> InputTypes;
+  bool clip;
+  float clipmin,clipmax;
+  
 
 public:
   FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg);
