@@ -48,7 +48,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.11 2003/11/09 05:25:21 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.12 2003/11/09 05:32:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     therefore a seperate ignition system is not modeled.
 
 Configuration File Format
-
+<pre>
 <FG_SIMTURBINE NAME="<name>">
   MILTHRUST   <thrust>
   MAXTHRUST   <thrust>
@@ -102,34 +102,34 @@ Configuration File Format
   INJECTED    <0|1>
   ...
 </FG_SIMTURBINE>
-
+</pre>
 Definition of the turbine engine configuration file parameters:
-
-MILTHRUST - Maximum thrust, static, at sea level, lbf.
-MAXTHRUST - Afterburning thrust, static, at sea level, lbf
+<pre>
+<b>MILTHRUST</b> - Maximum thrust, static, at sea level, lbf.
+<b>MAXTHRUST</b> - Afterburning thrust, static, at sea level, lbf
 [this value will be ignored when AUGMENTED is zero (false)].
-BYPASSRATIO - Ratio of bypass air flow to core air flow.
-TSFC - Thrust-specific fuel consumption, lbm/hr/lbf
+<b>BYPASSRATIO</b> - Ratio of bypass air flow to core air flow.
+<b>TSFC</b> - Thrust-specific fuel consumption, lbm/hr/lbf
 [i.e. fuel flow divided by thrust].
-ATSFC - Afterburning TSFC, lbm/hr/lbf
+<b>ATSFC</b> - Afterburning TSFC, lbm/hr/lbf
 [this value will be ignored when AUGMENTED is zero (false)]
-IDLEN1 - Fan rotor rpm (% of max) at idle
-IDLEN2 - Core rotor rpm (% of max) at idle
-MAXN1 - Fan rotor rpm (% of max) at full throttle [not always 100!] 
-MAXN2 - Core rotor rpm (% of max) at full throttle [not always 100!]
-AUGMENTED
+<b>IDLEN1</b> - Fan rotor rpm (% of max) at idle
+<b>IDLEN2</b> - Core rotor rpm (% of max) at idle
+<b>MAXN1</b> - Fan rotor rpm (% of max) at full throttle [not always 100!] 
+<b>MAXN2</b> - Core rotor rpm (% of max) at full throttle [not always 100!]
+<b>AUGMENTED</b>
   0 == afterburner not installed
   1 == afterburner installed
-AUGMETHOD
+<b>AUGMETHOD</b>
   0 == afterburner activated by property /engines/engine[n]/augmentation
   1 == afterburner activated by pushing throttle above 99% position
   [this item will be ignored when AUGMENTED == 0]
-INJECTED
+<b>INJECTED</b>
   0 == Water injection not installed
   1 == Water injection installed
-
+</pre>
     @author David P. Culp
-    @version $Id: FGSimTurbine.h,v 1.11 2003/11/09 05:25:21 jberndt Exp $
+    @version $Id: FGSimTurbine.h,v 1.12 2003/11/09 05:32:57 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
