@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.96 2002/04/08 22:41:32 dmegginson Exp $
+  CVS Version: $Id: c172.xml,v 1.97 2002/04/10 22:00:10 dmegginson Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -45,7 +45,10 @@
     AC_EMPTYWT   1700
     AC_AERORP    43.2  0.0 59.4
     AC_CGLOC     41.0  0.0 36.5
+<!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
+<!-- Co-pilot -->
+    AC_POINTMASS 180.0 36.0  14.0 24.0
     AC_EYEPTLOC  37.0  0.0 48.0
     AC_ALPHALIMITS -0.087 0.28
 
