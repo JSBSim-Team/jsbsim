@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.63 2001/06/14 22:55:03 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.64 2001/06/15 00:04:21 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -77,7 +77,9 @@ FGJSBsim::FGJSBsim( double dt )
     Position     = fdmex->GetPosition();
     Auxiliary    = fdmex->GetAuxiliary();
     Aerodynamics = fdmex->GetAerodynamics();
-
+    
+    Atmosphere->UseInternal();
+    
     fgic=new FGInitialCondition(fdmex);
     needTrim=true;
   
@@ -130,15 +132,12 @@ FGJSBsim::~FGJSBsim(void) {
 // each subsequent iteration through the EOM
 
 void FGJSBsim::init() {
-                // Explicitly call the superclass's
-                // init method first.
-    FGInterface::init();
-
-    bool result;
-
+    
     SG_LOG( SG_FLIGHT, SG_INFO, "Starting and initializing JSBsim" );
-
-    Atmosphere->UseInternal();
+   
+    // Explicitly call the superclass's
+    // init method first.
+    FGInterface::init();
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Initializing JSBSim with:" );
 
