@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.1 2004/04/08 01:00:24 dpculp Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.2 2004/04/08 01:18:39 dpculp Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,8 +58,12 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models and electric motor.
+    FGElectric models an electric motor based on the configuration file 
+    POWER_WATTS parameter.  The throttle controls motor output linearly from
+    zero to POWER_WATTS.  This power value (converted internally to horsepower)
+    is then used by FGPropeller to apply torque to the propeller.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.1 2004/04/08 01:00:24 dpculp Exp $"
+    @version "$Id: FGElectric.h,v 1.2 2004/04/08 01:18:39 dpculp Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
