@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="DHC-6 Twin Otter" VERSION="1.65" RELEASE="ALPHA">
+<FDM_CONFIG NAME="F-16" VERSION="1.65">
 <!--
   File:     DHC-6 Twin Otter.xml
   Author:   Aero-Matic v 0.71
@@ -359,19 +359,68 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="PITCH">
-    <!-- UIUC -->
     <!-- AIAA -->
-    <COEFFICIENT NAME="DCmTr" TYPE="VALUE">
+    <!-- COEFFICIENT NAME="DCmTr" TYPE="TABLE">
        Pitching_moment_due_to_right_engine_thrust
+       22 2
+       aero/alpha-rad
+       fcs/flap-pos-deg
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|propulsion/c-thrust[0]
-       -0.625
-    </COEFFICIENT>
+                0.0    40.0
+      -0.3491   0.003   0.000
+      -0.2618   0.003   0.077
+      -0.1745   0.013   0.128
+      -0.1396   0.018   0.122
+      -0.1047   0.029   0.117
+      -0.0698   0.061   0.109
+      -0.0349   0.059   0.123
+      0.0000    0.072   0.144
+      0.0349    0.085   0.192
+      0.0698    0.094   0.320
+      0.1047    0.128   0.448
+      0.1396    0.189   0.504
+      0.1745    0.203   0.432
+      0.2094    0.224   0.376
+      0.2443    0.261   0.192
+      0.2793    0.291   0.000
+      0.3142    0.269   0.000
+      0.3491    0.234   0.000
+      0.4363    0.000   0.000
+      0.5236    0.000   0.000
+      0.6109    0.000   0.000
+      0.6981    0.000   0.000
+    </COEFFICIENT -->
     <!-- AIAA -->
-    <COEFFICIENT NAME="DCmTl" TYPE="VALUE">
+    <!-- COEFFICIENT NAME="DCmTl" TYPE="TABLE">
        Pitching_moment_due_to_left_engine_thrust
+       22 2
+       aero/alpha-rad
+       fcs/flap-pos-deg
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|propulsion/c-thrust[1]
-       -0.625
-    </COEFFICIENT>
+                0.0    40.0
+      -0.3491   0.003   0.000
+      -0.2618   0.003   0.077
+      -0.1745   0.013   0.128
+      -0.1396   0.018   0.122
+      -0.1047   0.029   0.117
+      -0.0698   0.061   0.109
+      -0.0349   0.059   0.123
+      0.0000    0.072   0.144
+      0.0349    0.085   0.192
+      0.0698    0.094   0.320
+      0.1047    0.128   0.448
+      0.1396    0.189   0.504
+      0.1745    0.203   0.432
+      0.2094    0.224   0.376
+      0.2443    0.261   0.192
+      0.2793    0.291   0.000
+      0.3142    0.269   0.000
+      0.3491    0.234   0.000
+      0.4363    0.000   0.000
+      0.5236    0.000   0.000
+      0.6109    0.000   0.000
+      0.6981    0.000   0.000
+    </COEFFICIENT -->
     <!-- AIAA -->
     <COEFFICIENT NAME="Cmalpha" TYPE="TABLE3D">
        Pitch_moment_due_to_alpha_and_elevator_and_flaps
