@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.86 2001/12/02 17:15:21 apeden Exp $
+// $Id: JSBSim.cxx,v 1.87 2001/12/03 00:40:39 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -268,20 +268,20 @@ bool FGJSBsim::update( int multiloop ) {
       msg = fdmex->ProcessMessage();
       switch (msg->type) {
       case FGJSBBase::Message::eText:
-        cout << msg->messageId << ": " << msg->text << endl;
+        SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text );
         break;
       case FGJSBBase::Message::eBool:
-        cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
+        SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text << " " << msg->bVal );
         break;
       case FGJSBBase::Message::eInteger:
-        cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
+        SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text << " " << msg->iVal );
         break;
       case FGJSBBase::Message::eDouble:
-        cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
+        SG_LOG( SG_FLIGHT, SG_INFO, msg->messageId << ": " << msg->text << " " << msg->dVal );
         break;
       default:
-        cerr << "Unrecognized message type." << endl;
-              break;
+        SG_LOG( SG_FLIGHT, SG_INFO, "Unrecognized message type." );
+        break;
       }
     }
 
@@ -650,9 +650,11 @@ void FGJSBsim::init_gear(void ) {
       if ( gr->GetGearUnit(i)->GetBrakeGroup() > 0 ) {
         gear->SetBrake(true);
       }
-      if ( gr->GetGearUnit(i)->GetGearUnitUp() ) {
-        gear->SetPosition( 0.0 );
-      }    
+      if ( gr->GetGearUnit(i)->GetRetractable() ) {
+        gear->SetPosition( FCS->GetGearPos() );
+      } else {
+        gear->SetPosition( 1.0 );
+      }  
     }  
 }
 
@@ -664,9 +666,9 @@ void FGJSBsim::update_gear(void) {
     for (int i=0;i<Ngear;i++) {
       gear=get_gear_unit(i);
       gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
-      if ( gr->GetGearUnit(i)->GetGearUnitUp() ) {
-        gear->SetPosition( 0.0 );
-      }    
+      if ( gr->GetGearUnit(i)->GetRetractable() ) {
+        gear->SetPosition( FCS->GetGearPos() );
+      }   
     }  
 }
 
@@ -674,8 +676,6 @@ void FGJSBsim::do_trim(void) {
 
         FGTrim *fgtrim;
         if(fgic->GetVcalibratedKtsIC() < 10 ) {
-            globals->get_controls()->set_gear_down(true);
-            FCS->SetGearCmd(1);
             fgic->SetVcalibratedKtsIC(0.0);
             fgtrim=new FGTrim(fdmex,fgic,tGround);
         } else {
