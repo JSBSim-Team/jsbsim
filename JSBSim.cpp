@@ -73,6 +73,7 @@ USEUNIT("filtersjb\FGSummer.cpp");
 USEUNIT("filtersjb\FGDeadBand.cpp");
 USEUNIT("FGTrimLong.cpp");
 USEUNIT("filtersjb\FGFlaps.cpp");
+USEFILE("JSBSim.cxx");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif

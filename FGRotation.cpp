@@ -120,8 +120,8 @@ bool FGRotation::Run(void)
 
 
         vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
-        if(cTht != 0.0) {
-          tTheta=sTht/cTht; // what's cheaper: / or tan() ?
+        if (cTht != 0.0) {
+          tTheta = sTht/cTht;       // what's cheaper: / or tan() ?
           vEulerRates(ePhi) = vPQR(1) + (vPQR(2)*sPhi + vPQR(3)*cPhi)*tTheta;
           vEulerRates(ePsi) = (vPQR(2)*sPhi + vPQR(3)*cPhi)/cTht;
         }

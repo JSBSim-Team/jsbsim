@@ -210,6 +210,18 @@ float FGState::GetParameter(eParam val_idx) {
 
 /******************************************************************************/
 
+float FGState::GetParameter(string val_string) {
+  return GetParameter(coeffdef[val_string]);
+}
+
+/******************************************************************************/
+
+eParam FGState::GetParameterIndex(string val_string) {
+  return coeffdef[val_string];
+}
+
+/******************************************************************************/
+
 void FGState::SetParameter(eParam val_idx, float val) {
   switch(val_idx) {
   case FG_ELEVATOR_POS:
@@ -369,18 +381,6 @@ bool FGState::StoreData(string fname) {
     cerr << "Could not open dump file " << fname << endl;
     return false;
   }
-}
-
-/******************************************************************************/
-
-float FGState::GetParameter(string val_string) {
-  return GetParameter(coeffdef[val_string]);
-}
-
-/******************************************************************************/
-
-eParam FGState::GetParameterIndex(string val_string) {
-  return coeffdef[val_string];
 }
 
 /******************************************************************************/
