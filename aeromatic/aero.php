@@ -314,7 +314,7 @@ if($ac_type == 0) $ac_gearrolling = 0.5;  // glider
 $ac_gearsteerable_nose = 'STEERABLE';
 $ac_gearsteerable_main = 'FIXED';
 $ac_gearsteerable_tail = 'CASTERED';
-$ac_gearmaxsteer = 80.0;
+$ac_gearmaxsteer = 5;
 if($ac_gearretract == 0)
   $ac_retract = 'FIXED';
 else
