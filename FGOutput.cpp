@@ -78,7 +78,7 @@ bool FGOutput::Run(void)
   if (!FGModel::Run()) {
 //    SocketOutput();
 //    DelimitedOutput("JSBSimData.csv");
-//    DelimitedOutput();
+    DelimitedOutput();
   } else {
   }
   return false;

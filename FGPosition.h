@@ -75,6 +75,7 @@ public:
   inline float GetVn(void)  {return vVel(1);}
   inline float GetVe(void)  {return vVel(2);}
   inline float GetVd(void)  {return vVel(3);}
+  void SetvVel(const FGColumnVector& v) {vVel = v;}
 
   bool Run(void);
 };

@@ -150,7 +150,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
 
-  numTanks = numEngines = 0;
+  numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
 }
 
 
@@ -288,7 +288,6 @@ void FGAircraft::MassChange()
     Weight += Tank[t]->GetContents();
 
   Mass = Weight / GRAVITY;
-
   // Calculate new CG here.
 
   Tw = 0;

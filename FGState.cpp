@@ -165,6 +165,7 @@ void FGState::Initialize(float U, float V, float W,
                          float Latitude, float Longitude, float H)
 {
   FGColumnVector vUVW(3);
+  FGColumnVector vLocalVelNED(3);
   FGColumnVector vEuler(3);
   float alpha, beta, gamma;
 
@@ -193,6 +194,9 @@ void FGState::Initialize(float U, float V, float W,
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
 
   InitMatrices(phi, tht, psi);
+
+  vLocalVelNED = mTb2l*vUVW;
+  FDMExec->GetPosition()->SetvVel(vLocalVelNED);
 }
 
 /******************************************************************************/
