@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.62 2003/06/03 09:53:41 ehofman Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.63 2003/10/24 12:44:29 ehofman Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +289,7 @@ void FGCoefficient::DisplayCoeffFactors(void)
 
 string FGCoefficient::GetSDstring(void)
 {
-  char buffer[10];
+  char buffer[16];
   string value;
 
   sprintf(buffer,"%9.6f",SD);
