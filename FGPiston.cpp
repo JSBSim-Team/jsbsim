@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.49 2002/01/19 03:01:58 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.50 2002/01/19 17:23:45 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,6 @@ FGPiston::~FGPiston()
 
 double FGPiston::Calculate(double PowerRequired)
 {
-  // FIXME: calculate from actual fuel flow
   ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
@@ -180,9 +179,6 @@ double FGPiston::Calculate(double PowerRequired)
 
 void FGPiston::doEngineStartup(void)
 {
-  // TODO: check magnetos, spark, starter, etc. and decide whether
-  // engine is running
-
   // Check parameters that may alter the operating state of the engine. 
   // (spark, fuel, starter motor etc)
   bool spark;
@@ -206,7 +202,7 @@ void FGPiston::doEngineStartup(void)
   if (Magnetos > 1)  Magneto_Right = true;
 
   // Assume we have fuel for now
-  fuel = true;
+  fuel = !Starved;
 
   // Check if we are turning the starter motor
   if (Cranking != Starter) {
@@ -586,6 +582,5 @@ void FGPiston::Debug(int from)
 double
 FGPiston::CalcFuelNeed(void)
 {
-				// FIXME: is this right?
-  return FuelFlow_gph * State->Getdt() * Propulsion->GetRate();
+  return FuelFlow_gph / 3600 * State->Getdt() * Propulsion->GetRate();
 }
