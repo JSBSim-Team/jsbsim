@@ -1,16 +1,16 @@
-CC = bcc32
+CC = g++
 INCLUDES = -I.
-LINKDIR= -Lfiltersjb
+LINKDIR= -Lfiltersjb/
 JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\
 FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\
 FGUtility.o FGEngine.o FGTank.o FGAuxiliary.o FGfdmSocket.o\
 FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix.o
 
-JSBSim : $(JSBSim_objects) JSBSim.o
-	cd filtersjb
-	make -fMakefile.solo
-	cd ..
-	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR)  $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
+JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
+	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
+
+libFCSComponents.a :
+	cd filtersjb; make -fMakefile.solo; cd ..
 
 FGAircraft.o : FGAircraft.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAircraft.cpp
@@ -75,32 +75,17 @@ FGMatrix.o : FGMatrix.cpp
 JSBSim.o : JSBSim.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
 
-gpswitch.o: gptest.cpp
-	$(CC) -DSWITCH $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpswitch.o
-
-gpaop.o: gptest.cpp
-	$(CC) -DAOP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpaop.o
-
-gpmap.o: gptest.cpp
-	$(CC) -DMAP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpmap.o
-
-gpswitch: $(JSBSim_objects) gpswitch.o
-	$(CC) -DSWITCH $(LINKDIR) -o gpswitch gpswitch.o $(JSBSim_objects)  -lm -lFCSComponents
-
-gpaop: $(JSBSim_objects) gpaop.o
-	$(CC) -Daop $(LINKDIR) -o gpaop gpaop.o $(JSBSim_objects)  -lm -lFCSComponents
-
-gpmap: $(JSBSim_objects) gpmap.o
-	$(CC) -Dmap $(LINKDIR) -o gpmap gpmap.o $(JSBSim_objects)  -lm -lFCSComponents
-
 clean:
-	mv *.*~ backup
-	rm *.o
+	-mv *.*~ backup
+	-rm *.o
 
 all:
 	touch *.cpp
-	make JSBSim
+	cd filtersjb; make all CCOPTS=-g -fMakefile.solo; cd ..
+	make JSBSim -fMakefile.solo
 
 debug:
-	env CCOPTS=-g -WALL
-	make all
+	touch *.cpp
+	touch filtersjb/*.cpp
+	cd filtersjb; make debug CCOPTS=-g -fMakefile.solo; cd ..
+	make JSBSim CCOPTS=-g -fMakefile.solo
