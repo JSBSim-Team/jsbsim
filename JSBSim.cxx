@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.148 2003/11/24 05:22:46 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.149 2003/11/24 14:31:09 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -137,9 +137,13 @@ FGJSBsim::FGJSBsim( double dt )
     // Set initial fuel levels if provided.
     for (unsigned int i = 0; i < Propulsion->GetNumTanks(); i++) {
       SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
-      if (node->getChild("level-gal_us", 0, false) != 0)
+      if (node->getChild("level-gal_us", 0, false) != 0) {
         Propulsion->GetTank(i)->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
+      } else {
+        node->setDoubleValue("level-lb", Propulsion->GetTank(i)->GetContents());
+        node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
       }
+    }
     
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
