@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.9 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.10 2004/03/11 13:31:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,18 +82,15 @@ public:
   
   double GetOutputPct() const { return OutputPct; }
     
-  bool Run (void );
+  bool Run (void);
   
 private:
   FGConfigFile* AC_cfg;
   vector<double> Detents;
   vector<double> TransitionTimes;
-  int NumDetents,fi;
-  double lastInputCmd;
-  double InputCmd;
-  double OutputPos;
+  int NumDetents;
   double OutputPct;
-  bool  InTransit;
+  bool  DoScale;
 
   void Debug(int from);
 };

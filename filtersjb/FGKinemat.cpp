@@ -1,47 +1,50 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Module:       FGKinemat.cpp
  Author:       Tony Peden, for flight control system authored by Jon S. Berndt
  Date started: 12/02/01
- 
+
  ------------- Copyright (C) 2000 Anthony K. Peden -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
- 
+
 HISTORY
 --------------------------------------------------------------------------------
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include <math.h>
+#include <float.h>
 
 #include "FGKinemat.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.18 2003/06/03 09:53:53 ehofman Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.19 2004/03/11 13:31:27 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,9 +60,9 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   Detents.clear();
   TransitionTimes.clear();
-  
+
   OutputPct=0;
-  InTransit=0;
+  DoScale = true;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -74,10 +77,13 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       } else  {
         *AC_cfg >> token;
         InputNodes.push_back( resolveSymbol(token) );
-      }  
+      }
 
     } else if ( token == "DETENTS" ) {
       *AC_cfg >> NumDetents;
+      if (NumDetents < 2) {
+        cerr << "Kinemat must have at least 2 DETENTS" << endl;
+      }
       for (int i=0;i<NumDetents;i++) {
         *AC_cfg >> tmpDetent;
         *AC_cfg >> tmpTime;
@@ -88,7 +94,10 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputNode = PropertyManager->GetNode(sOutputIdx);
+      OutputNode = PropertyManager->GetNode(sOutputIdx, true);
+    } else if (token == "NOSCALE") {
+
+      DoScale = false;
     }
   }
   FGFCSComponent::bind();
@@ -106,71 +115,58 @@ FGKinemat::~FGKinemat()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGKinemat::Run(void ) {
-  double dt=fcs->GetState()->Getdt();
-  double output_transit_rate=0;
+bool FGKinemat::Run(void )
+{
+  double dt = fcs->GetState()->Getdt();
 
   Input = InputNodes[0]->getDoubleValue();
-  InputCmd = Input*Detents[NumDetents-1];
-  OutputPos = OutputNode->getDoubleValue();
-  
-  if (InputCmd < Detents[0]) {
-    fi=0;
-    InputCmd=Detents[0];
-    lastInputCmd=InputCmd;
-    OutputPos=Detents[0];
-    Output=OutputPos;
-  } else if (InputCmd > Detents[NumDetents-1]) {
-    fi=NumDetents-1;
-    InputCmd=Detents[fi];
-    lastInputCmd=InputCmd;
-    OutputPos=Detents[fi];
-    Output=OutputPos;
-  } else {
-    //cout << "FGKinemat::Run Handle: " << InputCmd << " Position: " << OutputPos << endl;
-    if (dt <= 0)
-      OutputPos=InputCmd;
-    else {
-      if (InputCmd != lastInputCmd) {
-        InTransit=1;
-      }
-      //cout << "FGKinemat::Run, InTransit: " << InTransit << endl;
-      if (InTransit) {
-        //fprintf(stderr,"InputCmd: %g, OutputPos: %g\n",InputCmd,OutputPos);
-        fi=0;
-        while (Detents[fi] < InputCmd) {
-          fi++;
-        }
-        if (OutputPos < InputCmd) {
-          if (TransitionTimes[fi] > 0)
-            output_transit_rate=(Detents[fi] - Detents[fi-1])/TransitionTimes[fi];
-          else
-            output_transit_rate=(Detents[fi] - Detents[fi-1])/5;
-          //cout << "FGKinemat::Run, output_transit_rate: " << output_transit_rate << endl;  
-        } else {
-          if (TransitionTimes[fi+1] > 0)
-            output_transit_rate=(Detents[fi] - Detents[fi+1])/TransitionTimes[fi+1];
-          else
-            output_transit_rate=(Detents[fi] - Detents[fi+1])/5;
-        }
-        if (fabs(OutputPos - InputCmd) > fabs(dt*output_transit_rate) ) {
-          OutputPos+=output_transit_rate*dt;
-          //cout << "FGKinemat::Run, OutputPos: " << OutputPos 
-           //    << " dt: " << dt << endl;
-        } else {
-          InTransit=0;
-          OutputPos=InputCmd;
-        }
-      }
+
+  if (DoScale)  Input *= Detents[NumDetents-1];
+
+  Output = OutputNode->getDoubleValue();
+
+  if (Input < Detents[0])
+    Input = Detents[0];
+  else if (Detents[NumDetents-1] < Input)
+    Input = Detents[NumDetents-1];
+
+  // Process all detent intervals the movement traverses until either the
+  // final value is reached or the time interval has finished.
+  while (0.0 < dt && Input != Output) {
+
+    // Find the area where Output is in
+    int ind;
+    for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
+      if (NumDetents <= ind)
+        break;
+
+    // A transition time of 0.0 means an infinite rate.
+    // The output is reached in one step
+    if (TransitionTimes[ind] <= 0.0) {
+      Output = Input;
+      break;
+    } else {
+      // Compute the rate in this area
+      double Rate = (Detents[ind] - Detents[ind-1])/TransitionTimes[ind];
+      // Compute the maximum input value inside this area
+      double ThisInput = Input;
+      if (ThisInput < Detents[ind-1])   ThisInput = Detents[ind-1];
+      if (Detents[ind] < ThisInput)     ThisInput = Detents[ind];
+      // Compute the time to reach the value in ThisInput
+      double ThisDt = fabs((ThisInput-Output)/Rate);
+      // and clip to the timestep size
+      if (dt < ThisDt) ThisDt = dt;
+      dt -= ThisDt;
+      // Do the output calculation
+      if (Output < Input)
+        Output += ThisDt*Rate;
+      else
+        Output -= ThisDt*Rate;
     }
-    lastInputCmd = InputCmd;
-    Output = OutputPos;
   }
-  
-  if ( Detents[NumDetents-1] > 0 ) {
-    OutputPct = Output / Detents[NumDetents-1];
-  }
-  
+
+  OutputPct = (Output-Detents[0])/(Detents[NumDetents-1]-Detents[0]);
+
   if (IsOutput) SetOutput();
 
   return true;
@@ -207,6 +203,7 @@ void FGKinemat::Debug(int from)
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;
       }
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (!DoScale) cout << "      NOSCALE" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
