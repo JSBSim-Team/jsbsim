@@ -28,10 +28,6 @@ HISTORY
 08/24/00  JSB  Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -46,7 +42,45 @@ INCLUDES
 #include "FGTable.h"
 #include "FGTranslation.h"
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.4 2001/01/11 00:44:55 jsb Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.5 2001/01/19 23:36:06 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Propeller modeling class.
+    FGPropeller models a propeller given the tabular data for Ct, Cp, and
+    efficiency indexed by advance ratio "J". The data for the propeller is
+    stored in a config file named "prop_name.xml". The propeller config file
+    is referenced from the main aircraft config file in the "Propulsion" section.
+    See the constructor for FGPropeller to see what is read in and what should
+    be stored in the config file.<br>
+    Several references were helpful, here:<ul>
+    <li>Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+     Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
+    <li>Edwin Hartman, David Biermann, "The Aerodynamic Characteristics of
+    Full Scale Propellers Having 2, 3, and 4 Blades of Clark Y and R.A.F. 6
+    Airfoil Sections", NACA Report TN-640, 1938 (?)</li>
+    <li>Various NACA Technical Notes and Reports</li>
+    <ul>
+    @author Jon S. Berndt
+    @version $Id: FGPropeller.h,v 1.5 2001/01/19 23:36:06 jsb Exp $
+    @see FGEngine
+    @see FGThruster
+    @see FGTable
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -55,20 +89,63 @@ CLASS DECLARATION
 class FGPropeller : public FGThruster {
 
 public:
+  /** Constructor for FGPropeller.
+      @param exec a pointer to the main executive object
+      @param AC_cfg a pointer to the main aircraft config file object */
   FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg);
+  /// Destructor for FGPropeller - deletes the FGTable objects
   ~FGPropeller(void);
   
+  /** Sets the Revolutions Per Minute for the propeller. Normally the propeller
+      instance will calculate its own rotational velocity, given the Torque
+      produced by the engine and integrating over time using the standard 
+      equation for rotational acceleration "a": a = Q/I , where Q is Torque and
+      I is moment of inertia for the propeller.
+      @param rpm the rotational velocity of the propeller
+      */
+
   void SetRPM(float rpm) {RPM = rpm;}
+  /** This commands the pitch of the blade to change to the value supplied.
+      This call is meant to be issued either from the cockpit or by the flight
+      control system (perhaps to maintain constant RPM for a constant-speed
+      propeller). This value will be limited to be within whatever is specified
+      in the config file for Max and Min pitch. It is also one of the lookup
+      indices to the power, thrust, and efficiency tables for variable-pitch
+      propellers.
+      @param pitch the pitch of the blade in degrees.
+      */
   void SetPitch(float pitch) {Pitch = pitch;}
 
+  /// Retrieves the pitch of the propeller in degrees.
   float GetPitch(void)         { return Pitch;         }
+  
+  /// Retrieves the RPMs of the propeller
   float GetRPM(void)           { return RPM;           }
+  
+  /// Retrieves the propeller moment of inertia
   float GetIxx(void)           { return Ixx;           }
+  
+  /// Retrieves the Thrust in pounds
   float GetThrust(void)        { return Thrust;        }
-  float GetPowerRequired(void) { return PowerRequired; }
+  
+  /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   float GetTorque(void)        { return Torque;        }
-
-  void Calculate(void);
+  
+  /** Retrieves the power required (or "absorbed") by the propeller -
+      i.e. the power required to keep spinning the propeller at the current
+      velocity, air density,  and rotational rate. */
+  float GetPowerRequired(void);
+  
+  /** Calculates and returns the thrust produced by this propeller.
+      Given the power available by the engine (in foot-pounds/sec), the thrust is
+      calculated, as well as the current RPM. The RPM is calculated by integrating
+      the excess torque provided by the engine over what the propeller "absorbs"
+      (essentially the "drag" of the propeller).
+      @param PowerAvailable the power available to the propeller to increase its
+             rotational rate. Or, conversely, this could be negative, dictating
+	           that the propeller would be slowed.
+		  @return the thrust in pounds */
+  float Calculate(float PowerAvailable);
   
 private:
   string PropName;
@@ -80,7 +157,6 @@ private:
   float MinPitch;
   float Pitch;
   float Thrust;
-  float PowerRequired;
   float Torque;
   FGTable *Efficiency;
   FGTable *cThrust;

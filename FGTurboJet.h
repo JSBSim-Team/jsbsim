@@ -57,7 +57,7 @@ public:
   FGTurboJet(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGTurboJet(void) {}
 
-  float Calculate(void);
+  float Calculate(float);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

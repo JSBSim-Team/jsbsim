@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.5 2001/01/19 13:43:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.6 2001/01/19 23:36:07 jsb Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,22 +47,5 @@ CLASS IMPLEMENTATION
 
 FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
 {
-
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGThruster::Calculate(void)
-{
-
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-float FGThruster::CalculatePReq(void)
-{
-  //TODO: Add your source code here
-  return 0.0;
 }
 

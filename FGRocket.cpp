@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.12 2001/01/12 00:25:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.13 2001/01/19 23:36:06 jsb Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,10 +89,10 @@ FGRocket::~FGRocket(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGRocket::Calculate(void) {
+float FGRocket::Calculate(float) {
   float lastThrust;
 
-  FGEngine::Calculate();
+  ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
   lastThrust = Thrust;                 // last actual thrust

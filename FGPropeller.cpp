@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.4 2001/01/11 00:44:55 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.5 2001/01/19 23:36:06 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,10 +102,30 @@ FGPropeller::~FGPropeller(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropeller::Calculate(void)
+float FGPropeller::Calculate(float  PReq)
 {
-  FGThruster::Calculate();
   float Vel = (fdmex->GetTranslation()->GetUVW())(1);
+  
+  return 0.0; // return thrust in pounds
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropeller::GetPowerRequired(void)
+{
+  float J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPM / 60.0);
+  float rho = fdmex->GetAtmosphere()->GetDensity();
+  float cPReq;
+
+  if (RPM <= 1) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
+
+  if (MaxPitch == MinPitch) { // Fixed pitch prop
+    cPReq = cPower->GetValue(J);
+  } else {                    // Variable pitch prop
+    cPReq = cPower->GetValue(J, Pitch);
+  }
+
+  return cPReq*RPM*RPM*RPM*Diameter*Diameter*Diameter*Diameter*Diameter*rho/(216000.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

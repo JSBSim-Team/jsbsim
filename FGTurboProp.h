@@ -57,7 +57,7 @@ public:
   FGTurboProp(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGTurboProp(void) {}
 
-  float Calculate(void);
+  float Calculate(float);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -52,7 +52,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.23 2001/01/19 13:43:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.24 2001/01/19 23:36:05 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,12 +80,12 @@ FGEngine::FGEngine(FGFDMExec* exec) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// This base class Calculate() function should be called from within the
+// This base class function should be called from within the
 // derived class' Calculate() function before any other calculations are done.
 // This base class method removes fuel from the fuel tanks as appropriate,
 // and sets the starved flag if necessary.
 
-float FGEngine::Calculate(void) {
+void FGEngine::ConsumeFuel(void) {
   float Fshortage, Oshortage;
   FGTank* Tank;
   
@@ -99,13 +99,8 @@ float FGEngine::Calculate(void) {
     }
   }
 
-  if (Fshortage < 0.00 || Oshortage < 0.00) {
-    Starved = true;
-  } else {
-    Starved = false;
-  }
-
-  return 0.0;
+  if (Fshortage < 0.00 || Oshortage < 0.00) Starved = true;
+  else Starved = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,11 +127,4 @@ void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
   EngineYaw = yaw;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-float FGEngine::CalculatePAvail(void)
-{
-    //TODO: Add your source code here
-  return 0.0;
-}
 

@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_NOZZLE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.h,v 1.4 2001/01/11 00:44:55 jsb Exp $";
+#define ID_NOZZLE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.h,v 1.5 2001/01/19 23:36:06 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -56,7 +56,7 @@ public:
   FGNozzle(FGFDMExec* exec, FGConfigFile* AC_cfg);
   ~FGNozzle(void);
 
-  void Calculate(void);
+  float Calculate(float PowerRequired);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
