@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.3 2001/11/30 05:46:55 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.4 2001/11/30 17:07:45 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -11,7 +11,17 @@
 -->
 
   <METRICS>
-    <!--
+    <!-- 
+    The XYZorigin for measurements is the bottom centre of the
+    firewall in front of the rudder pedals; the estimates here take
+    the bottom of the airframe directly below the bottom of the
+    sloping front windshield, since the 3-views available are external
+    only.
+
+    Positive values in the X axis move back towards the tail of the
+    plane, positive values in the Y axis move out towards the right
+    wing, and positive values in the Z axis move up.
+
     Wing area (ft^2)
     Wing span (ft)
     Wing avg. chord (ft)
@@ -19,33 +29,35 @@
     Wing MAC to H.Tail MAC (ft)
     V. Tail Area (ft^2)
     Wing MAC to V.Tail MAC (ft)
-    Ixx
-    Iyy
-    Izz
-    Ixz
-    Empty weight
-    Center of gravity location, empty weight, in aircraft's own structural coord
-      system. X, Y, Z, in inches
+    Ixx (slug-ft^2)
+    Iyy (slug-ft^2)
+    Izz (slug-ft^2)
+    Ixz (slug-ft^2)
+    Empty weight (lbs)
+    Aerodynamic reference point (close to CG), in aircraft's own
+      structural coord system. X, Y, Z, in inches.
+    Center of gravity location, empty weight, in aircraft's own
+      structural coord system. X, Y, Z, in inches
     Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
      X, Y, Z, in inches
     AC_AERORP   43.2  0.0    59.4
     -->
 
-    AC_WINGAREA  175
-    AC_WINGSPAN  36.5
-    AC_CHORD     4.9
-    AC_HTAILAREA 21.9
-    AC_HTAILARM  15.7
-    AC_VTAILAREA 16.5
-    AC_LV        15.7
-    AC_IXX    8884
-    AC_IYY    1939
-    AC_IZZ    11001
-    AC_IXZ    0
-    AC_EMPTYWT  3166
-    AC_AERORP   43.2  0.0 59.4
-    AC_CGLOC    41.0  0.0 36.5
-    AC_EYEPTLOC 37.0  0.0 48.0
+    AC_WINGAREA   175
+    AC_WINGSPAN    36.5
+    AC_CHORD        4.9
+    AC_HTAILAREA   21.9
+    AC_HTAILARM    15.7
+    AC_VTAILAREA   16.5
+    AC_LV          15.7
+    AC_IXX       8884
+    AC_IYY       1939
+    AC_IZZ      11001
+    AC_IXZ          0
+    AC_EMPTYWT   3166
+    AC_AERORP      38.0   0.0  8.6
+    AC_CGLOC       38.0   0.0  8.6
+    AC_EYEPTLOC    35.0 -12.0 38.0
     AC_ALPHALIMITS -0.087 0.28
 
   </METRICS>
@@ -53,7 +65,7 @@
   <UNDERCARRIAGE>
 
     <!--
-    The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+    The gear parameters that can be specified are as follows, IN ORDER OF APPEAANCE:
 
     AC_GEAR
     <name>                           name of gear entry - no spaces allowed
@@ -69,12 +81,12 @@
     -->
 
 
-     AC_GEAR	NOSE        -6.8   0.0 -20.0  1800  600  0.5  0.8 0.02 STEERABLE NONE 20
-     AC_GEAR	LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0
-     AC_GEAR	RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0
-     AC_GEAR	TAIL_SKID  188.0  0.0    8.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0
-     AC_GEAR	LEFT_TIP    43.2 -214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0
-     AC_GEAR	RIGHT_TIP   43.2  214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0
+     AC_GEAR	NOSE       -60.2   0.0 -27.0  5400 1600  0.5  0.8 0.02 STEERABLE NONE 20
+     AC_GEAR	LEFT_MAIN   50.7 -70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0
+     AC_GEAR	RIGHT_MAIN  50.7  70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0
+     AC_GEAR	TAIL_SKID  221.8   0.0   0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0
+     AC_GEAR	LEFT_TIP    48.1 -222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0
+     AC_GEAR	RIGHT_TIP   48.1  222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0
 
 </UNDERCARRIAGE>
 
@@ -103,7 +115,7 @@
       AC_THRUSTER name x y z pitch yaw
     -->
 
-    <AC_ENGINE FILE="engIO360C">
+    <AC_ENGINE FILE="engIO470D">
       XLOC   48.0
       YLOC   -70.0
       ZLOC   59.4
@@ -112,7 +124,7 @@
       FEED      0
     </AC_ENGINE>
 
-    <AC_ENGINE FILE="engIO360C">
+    <AC_ENGINE FILE="engIO470D">
       XLOC   48.0
       YLOC   70.0
       ZLOC   59.4
@@ -138,7 +150,7 @@
       PITCH   0.0
       YAW     0.0
       P_FACTOR 1.0
-      SENSE   1.0
+      SENSE   -1.0
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
