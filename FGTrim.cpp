@@ -56,7 +56,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.21 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.22 2001/04/07 13:44:43 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 extern short debug_lvl;
@@ -165,9 +165,9 @@ void FGTrim::ReportState(void) {
   cout << endl << "  JSBSim State" << endl;
   sprintf(out,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
                    fdmex->GetAircraft()->GetWeight(),
-                   fdmex->GetAircraft()->GetXYZcg()(1),
-                   fdmex->GetAircraft()->GetXYZcg()(2),
-                   fdmex->GetAircraft()->GetXYZcg()(3) );
+                   fdmex->GetAircraft()->GetXYZcg(1),
+                   fdmex->GetAircraft()->GetXYZcg(2),
+                   fdmex->GetAircraft()->GetXYZcg(3));
   cout << out;             
   if( fdmex->GetFCS()->GetDfPos() <= 0.01)
     sprintf(flap,"Up");

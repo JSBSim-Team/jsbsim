@@ -70,7 +70,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.21 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.22 2001/04/07 13:44:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -81,9 +81,12 @@ public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation();
 
-  inline FGColumnVector GetUVW(void) { return vUVW; }
-  inline FGColumnVector GetUVWdot(void) { return vUVWdot; }
-  inline FGColumnVector GetNcg(void) { return vNcg; }
+  inline FGColumnVector GetUVW   (void)    { return vUVW; }
+  inline float          GetUVW   (int idx) { return vUVW(idx); }
+  inline FGColumnVector GetUVWdot(void)    { return vUVWdot; }
+  inline float          GetUVWdot(int idx) { return vUVWdot(idx); }
+  inline FGColumnVector GetNcg   (void)    { return vNcg; }
+  inline float          GetNcg   (int idx) { return vNcg(idx); }
 
   inline float Getalpha(void) { return alpha; }
   inline float Getbeta (void) { return beta; }

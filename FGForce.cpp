@@ -47,7 +47,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.12 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.13 2001/04/07 13:44:43 jberndt Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 extern short debug_lvl;
@@ -88,9 +88,9 @@ FGColumnVector FGForce::GetBodyForces(void) {
 
   //find the distance from this vector's location to the cg
   //needs to be done like this to convert from structural to body coords
-  vDXYZ(1) = -(vXYZn(1) - fdmex->GetAircraft()->GetXYZcg()(1))*INCHTOFT;
-  vDXYZ(2) =  (vXYZn(2) - fdmex->GetAircraft()->GetXYZcg()(2))*INCHTOFT;  //cg and rp values are in inches
-  vDXYZ(3) = -(vXYZn(3) - fdmex->GetAircraft()->GetXYZcg()(3))*INCHTOFT;
+  vDXYZ(1) = -(vXYZn(1) - fdmex->GetAircraft()->GetXYZcg(1))*INCHTOFT;
+  vDXYZ(2) =  (vXYZn(2) - fdmex->GetAircraft()->GetXYZcg(2))*INCHTOFT;  //cg and rp values are in inches
+  vDXYZ(3) = -(vXYZn(3) - fdmex->GetAircraft()->GetXYZcg(3))*INCHTOFT;
 
   vM=vMn +vDXYZ*vFb;
 

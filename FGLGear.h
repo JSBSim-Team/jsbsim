@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.32 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.33 2001/04/07 13:44:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.32 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.33 2001/04/07 13:44:43 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -194,8 +194,10 @@ public:
 
   /// Gets the location of the gear in Body axes
   FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
-  
+  float GetBodyLocation(int idx) { return vWhlBodyVec(idx); }
+
   FGColumnVector GetLocalGear(void) { return vLocalGear; }
+  float GetLocalGear(int idx) { return vLocalGear(idx); }
 
   /// Gets the name of the gear
   inline string GetName(void)      {return name;          }

@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.19 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.20 2001/04/07 13:44:43 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 extern short debug_lvl;
@@ -152,12 +152,12 @@ FGTrimAxis::~FGTrimAxis()
 
 void FGTrimAxis::getState(void) {
   switch(state) {
-  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot()(1); break;
-  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot()(2); break;
-  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot()(3); break;
-  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot()(2);break;
-  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot()(1); break;
-  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot()(3); break;
+  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot(1); break;
+  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot(2); break;
+  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot(3); break;
+  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot(2);break;
+  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot(1); break;
+  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot(3); break;
   case tHmgt: state_value=computeHmgt(); break;
   }
 }
@@ -246,7 +246,7 @@ void FGTrimAxis::SetThetaOnGround(float ff) {
   i=0; ref=-1; center=-1;
   while( (ref < 0) && (i < fdmex->GetAircraft()->GetNumGearUnits()) ) {
     if(fdmex->GetAircraft()->GetGearUnit(i)->GetWOW()) {
-      if(fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(2)) > 0.01)
+      if(fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation(2)) > 0.01)
         ref=i;
       else
         center=i;
@@ -260,9 +260,9 @@ void FGTrimAxis::SetThetaOnGround(float ff) {
   if(ref >= 0) {
     float sp=fdmex->GetRotation()->GetSinphi();
     float cp=fdmex->GetRotation()->GetCosphi();
-    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(1);
-    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
-    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
+    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(1);
+    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(2);
+    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(3);
     float hagl = -1*lx*sin(ff) +
                     ly*sp*cos(ff) +
                     lz*cp*cos(ff);
@@ -291,22 +291,22 @@ bool FGTrimAxis::initTheta(void) {
   //find the first wheel unit forward of the cg
   //the list is short so a simple linear search is fine
   for( i=0; i<N; i++ ) {
-    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) > 0 ) {
+    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation(1) > 0 ) {
         iForward=i;
         break;
     }
   }
   //now find the first wheel unit aft of the cg
   for( i=0; i<N; i++ ) {
-    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) < 0 ) {
+    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation(1) < 0 ) {
         iAft=i;
         break;
     }
   }
   	  
   // now adjust theta till the wheels are the same distance from the ground
-  zAft=fdmex->GetAircraft()->GetGearUnit(1)->GetLocalGear()(3);
-  zForward=fdmex->GetAircraft()->GetGearUnit(0)->GetLocalGear()(3);
+  zAft=fdmex->GetAircraft()->GetGearUnit(1)->GetLocalGear(3);
+  zForward=fdmex->GetAircraft()->GetGearUnit(0)->GetLocalGear(3);
   zDiff = zForward - zAft;
   level=false;
   theta=fgic->GetPitchAngleDegIC(); 
@@ -314,8 +314,8 @@ bool FGTrimAxis::initTheta(void) {
 	theta+=2.0*zDiff;
 	fgic->SetPitchAngleDegIC(theta);   
 	fdmex->RunIC(fgic);
-	zAft=fdmex->GetAircraft()->GetGearUnit(1)->GetLocalGear()(3);
-        zForward=fdmex->GetAircraft()->GetGearUnit(0)->GetLocalGear()(3);
+	zAft=fdmex->GetAircraft()->GetGearUnit(1)->GetLocalGear(3);
+        zForward=fdmex->GetAircraft()->GetGearUnit(0)->GetLocalGear(3);
         zDiff = zForward - zAft;
 	//cout << endl << theta << "  " << zDiff << endl;
 	//cout << "0: " << fdmex->GetAircraft()->GetGearUnit(0)->GetLocalGear() << endl;
@@ -345,16 +345,16 @@ void FGTrimAxis::SetPhiOnGround(float ff) {
   //must have an off-center unit here 
   while( (ref < 0) && (i < fdmex->GetAircraft()->GetNumGearUnits()) ) {
     if( (fdmex->GetAircraft()->GetGearUnit(i)->GetWOW()) && 
-      (fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(2)) > 0.01))
+      (fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation(2)) > 0.01))
         ref=i;
     i++; 
   }
   if(ref >= 0) {
     float st=fdmex->GetRotation()->GetSintht();
     float ct=fdmex->GetRotation()->GetCostht();
-    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(1);
-    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
-    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
+    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(1);
+    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(2);
+    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation(3);
     float hagl = -1*lx*st +
                     ly*sin(ff)*ct +
                     lz*cos(ff)*ct;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.54 2001/03/30 21:32:36 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.55 2001/04/07 13:44:43 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -142,17 +142,17 @@ void FGJSBsim::init() {
     SG_LOG( SG_FLIGHT, SG_INFO, "  Initializing JSBSim with:" );
     switch(fgic->GetSpeedSet()) {
     case setned:
-	SG_LOG(SG_FLIGHT,SG_INFO, "  Vn,Ve,Vd= " 
+	SG_LOG(SG_FLIGHT,SG_INFO, "  Vn,Ve,Vd= "
 	       << fdmex->GetPosition()->GetVn()
 	       << ", " << fdmex->GetPosition()->GetVe()
 	       << ", " << fdmex->GetPosition()->GetVd()
 	       << " ft/s");
-	break;       
+	break;
     case setuvw:
-	SG_LOG(SG_FLIGHT,SG_INFO, "  U,V,W= " 
-	       << fdmex->GetTranslation()->GetUVW()(1)
-	       << ", " << fdmex->GetTranslation()->GetUVW()(2)
-	       << ", " << fdmex->GetTranslation()->GetUVW()(3)
+	SG_LOG(SG_FLIGHT,SG_INFO, "  U,V,W= "
+	       << fdmex->GetTranslation()->GetUVW(1)
+	       << ", " << fdmex->GetTranslation()->GetUVW(2)
+	       << ", " << fdmex->GetTranslation()->GetUVW(3)
 	       << " ft/s");
 	break;       
     case setmach:
@@ -329,29 +329,29 @@ bool FGJSBsim::copy_from_JSBsim() {
 		   fdmex->GetAircraft()->GetIzz(),
 		   fdmex->GetAircraft()->GetIxz() );
   
-    _set_CG_Position( fdmex->GetAircraft()->GetXYZcg()(1),
-		      fdmex->GetAircraft()->GetXYZcg()(2),
-		      fdmex->GetAircraft()->GetXYZcg()(3) );
+    _set_CG_Position( fdmex->GetAircraft()->GetXYZcg(1),
+		      fdmex->GetAircraft()->GetXYZcg(2),
+		      fdmex->GetAircraft()->GetXYZcg(3) );
+
+    _set_Accels_Body( fdmex->GetTranslation()->GetUVWdot(1),
+		      fdmex->GetTranslation()->GetUVWdot(2),
+		      fdmex->GetTranslation()->GetUVWdot(3) );
   
-    _set_Accels_Body( fdmex->GetTranslation()->GetUVWdot()(1),
-		      fdmex->GetTranslation()->GetUVWdot()(2),
-		      fdmex->GetTranslation()->GetUVWdot()(3) );
+    _set_Accels_CG_Body( fdmex->GetTranslation()->GetUVWdot(1),
+			 fdmex->GetTranslation()->GetUVWdot(2),
+			 fdmex->GetTranslation()->GetUVWdot(3) );
   
-    _set_Accels_CG_Body( fdmex->GetTranslation()->GetUVWdot()(1),
-			 fdmex->GetTranslation()->GetUVWdot()(2),
-			 fdmex->GetTranslation()->GetUVWdot()(3) );
-  
-    //_set_Accels_CG_Body_N ( fdmex->GetTranslation()->GetNcg()(1),
-    //                       fdmex->GetTranslation()->GetNcg()(2),
-    //                       fdmex->GetTranslation()->GetNcg()(3) );
+    //_set_Accels_CG_Body_N ( fdmex->GetTranslation()->GetNcg(1),
+    //                       fdmex->GetTranslation()->GetNcg(2),
+    //                       fdmex->GetTranslation()->GetNcg(3) );
     //
-    _set_Accels_Pilot_Body( fdmex->GetAuxiliary()->GetPilotAccel()(1),
-			    fdmex->GetAuxiliary()->GetPilotAccel()(2),
-			    fdmex->GetAuxiliary()->GetPilotAccel()(3) );
+    _set_Accels_Pilot_Body( fdmex->GetAuxiliary()->GetPilotAccel(1),
+			    fdmex->GetAuxiliary()->GetPilotAccel(2),
+			    fdmex->GetAuxiliary()->GetPilotAccel(3) );
   
-    //_set_Accels_Pilot_Body_N( fdmex->GetAuxiliary()->GetNpilot()(1),
-    //                         fdmex->GetAuxiliary()->GetNpilot()(2),
-    //                         fdmex->GetAuxiliary()->GetNpilot()(3) );
+    //_set_Accels_Pilot_Body_N( fdmex->GetAuxiliary()->GetNpilot(1),
+    //                         fdmex->GetAuxiliary()->GetNpilot(2),
+    //                         fdmex->GetAuxiliary()->GetNpilot(3) );
   
     _set_Nlf( fdmex->GetAircraft()->GetNlf() );
   
@@ -361,9 +361,9 @@ bool FGJSBsim::copy_from_JSBsim() {
 			   fdmex->GetPosition()->GetVe(),
 			   fdmex->GetPosition()->GetVd() );
 
-    _set_Velocities_Wind_Body( fdmex->GetTranslation()->GetUVW()(1),
-			       fdmex->GetTranslation()->GetUVW()(2),
-			       fdmex->GetTranslation()->GetUVW()(3) );
+    _set_Velocities_Wind_Body( fdmex->GetTranslation()->GetUVW(1),
+			       fdmex->GetTranslation()->GetUVW(2),
+			       fdmex->GetTranslation()->GetUVW(3) );
     
     _set_V_rel_wind( fdmex->GetTranslation()->GetVt() );
     
@@ -375,13 +375,13 @@ bool FGJSBsim::copy_from_JSBsim() {
   
     _set_V_ground_speed( fdmex->GetPosition()->GetVground() );
 
-    _set_Omega_Body( fdmex->GetRotation()->GetPQR()(1),
-		     fdmex->GetRotation()->GetPQR()(2),
-		     fdmex->GetRotation()->GetPQR()(3) );
+    _set_Omega_Body( fdmex->GetRotation()->GetPQR(1),
+		     fdmex->GetRotation()->GetPQR(2),
+		     fdmex->GetRotation()->GetPQR(3) );
 
-    _set_Euler_Rates( fdmex->GetRotation()->GetEulerRates()(1),
-		      fdmex->GetRotation()->GetEulerRates()(2),
-		      fdmex->GetRotation()->GetEulerRates()(3) );
+    _set_Euler_Rates( fdmex->GetRotation()->GetEulerRates(1),
+		      fdmex->GetRotation()->GetEulerRates(2),
+		      fdmex->GetRotation()->GetEulerRates(3) );
 
     _set_Geocentric_Rates(fdmex->GetPosition()->GetLatitudeDot(),
 			  fdmex->GetPosition()->GetLongitudeDot(),

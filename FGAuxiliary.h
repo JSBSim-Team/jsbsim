@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.17 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.18 2001/04/07 13:44:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.17 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.18 2001/04/07 13:44:43 jberndt Exp $
     @see -
 */
 
@@ -89,8 +89,10 @@ public:
   inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
   
   inline FGColumnVector GetPilotAccel(void) { return vPilotAccel; }
+  inline float GetPilotAccel(int idx) { return vPilotAccel(idx); }
   inline FGColumnVector GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
-  
+  inline float GetNpilot(int idx) { return (vPilotAccel*INVGRAVITY)(idx); }
+
   inline float GetEarthPositionAngle(void) { return earthPosAngle; }
   
   float GetHeadWind(void);
