@@ -5,7 +5,8 @@
 
 <FG_SIMTURBINE NAME="PT6A-68">
   <!--
-     MAXMILTHRUST  max static thrust at S.L. (installed), lbf
+     MILTHRUST     max static thrust at S.L. (installed), lbf
+     MAXTHRUST     max static thrust with afterburning at S.L. (installed), lbf
      BYPASSRATIO   bypass ratio
      TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
      ATSFC         augmented TSFC (lbm/hr/lbf)
@@ -23,8 +24,9 @@
      TABLE(2)      augmented thrust multiplier vs. altitude and mach
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
-
-  MAXMILTHRUST 1500
+  <!-- 1100 horsepower X 2.24 lb/hp -->
+  MILTHRUST    2464
+  MAXTHRUST    2464
   BYPASSRATIO  0
   TSFC         0.55
   ATSFC        0.00
@@ -52,59 +54,20 @@
     1.0   -0.2839 -0.1104 -0.0469 -0.0270 -0.0158  0.0552
   </TABLE>
 
-  <!-- data from EngineSim,  http://www.grc.nasa.gov/WWW/K-12/airplane/ngnsim.html -->
-  <TABLE NAME="MilThrust" TYPE="TABLE">
-    Military_power_thrust_factor
-    8
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-               0    10000   20000     30000    40000    50000
-    0.0   1.0000   0.7400   0.5340   0.3720   0.2410   0.1490
-    0.2   0.9340   0.6970   0.5060   0.3550   0.2310   0.1430
-    0.4   0.9210   0.6920   0.5060   0.3570   0.2330   0.1450
-    0.6   0.9510   0.7210   0.5320   0.3780   0.2480   0.1540
-    0.8   1.0200   0.7820   0.5820   0.4170   0.2750   0.1700
-    1.0   1.1200   0.8710   0.6510   0.4750   0.3150   0.1950
-    1.2   1.2300   0.9750   0.7440   0.5450   0.3640   0.2250
-    1.4   1.3400   1.0860   0.8450   0.6280   0.4240   0.2630
-  </TABLE>
-
-  <TABLE NAME="AugThrust" TYPE="TABLE">
-    Augmented_thrust_factor
-    8
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0    10000   20000     30000    40000    50000
-    0.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.6    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.8    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-  </TABLE>
-
-  <TABLE NAME="WaterFactor" TYPE="TABLE">
-    Water_Injection_factor
-    8
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0    10000   20000     30000    40000    50000
-    0.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.6    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.8    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-  </TABLE>
+ <TABLE NAME="MilThrust" TYPE="TABLE">
+  Military_power_thrust_factor
+  6
+  6
+  velocities/mach-norm
+  position/h-sl-ft
+  none
+              0   10000   20000   30000   40000   50000
+  0.0    1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
+  0.2    0.7340  0.6970  0.5060  0.3550  0.2310  0.1430
+  0.4    0.6210  0.5920  0.4060  0.3570  0.2330  0.1450
+  0.6    0.3510  0.2710  0.2020  0.1780  0.1020  0.0640
+  0.8    0.0200  0.0200  0.0200  0.0200  0.0200  0.0200
+  1.0    0.0     0.0     0.0     0.0     0.0     0.0
+ </TABLE>
 
 </FG_SIMTURBINE>

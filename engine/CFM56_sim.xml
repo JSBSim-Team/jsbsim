@@ -6,7 +6,8 @@
 
 <FG_SIMTURBINE NAME="CFM56">
   <!--
-     MAXMILTHRUST  max static thrust at S.L. (installed), lbf
+     MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
+     MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
      BYPASSRATIO   bypass ratio
      TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
      ATSFC         augmented TSFC (lbm/hr/lbf)
@@ -23,7 +24,8 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  MAXMILTHRUST 20000
+  MILTHRUST    20000
+  MAXTHRUST    20000
   BYPASSRATIO  5.9
   TSFC         0.657
   ATSFC        0.0
@@ -66,42 +68,6 @@
     0.8   0.9771   0.8025   0.6112   0.4196   0.2563   0.1522
     0.9   0.9300   0.7900   0.6000   0.3900   0.2300   0.1300
     1.0   0.5000   0.5000   0.4000   0.2000   0.1500   0.0900
-  </TABLE>
-
-  <TABLE NAME="AugThrust" TYPE="TABLE">
-    Augmented_thrust_factor
-    8
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0    10000   20000     30000    40000    50000
-    0.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.6    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    0.8    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-    1.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
-  </TABLE>
-
-  <TABLE NAME="WaterFactor" TYPE="TABLE">
-    Water_Injection_factor
-    8
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0    10000   20000     30000    40000    50000
-    0.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.6    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    0.8    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
-    1.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
   </TABLE>
 
 </FG_SIMTURBINE>
