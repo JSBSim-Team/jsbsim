@@ -5,6 +5,8 @@ EXTRA_DIST = \
 	CFM56_sim.xml \
 	GE-CF6-80C2-B1F.xml \
 	F100-PW-229_sim.xml \
+	F119-PW1_sim.xml
+	J69-T25_sim.xml
 	J85-GE-5.xml \
 	J85-GE-5_sim.xml \
 	J85_nozzle.xml \
