@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.6 2002/09/22 18:06:02 apeden Exp $
+  CVS Version: $Id: c172x.xml,v 1.7 2003/01/09 03:10:12 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -162,7 +162,15 @@
        OUTPUT        fcs/elevator-pos-rad
        GAIN          0.01745
      </COMPONENT>
+     <COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
+       <TEST LOGIC="DEFAULT" VALUE="0.0">
+       </TEST>
+       <TEST LOGIC="AND" VALUE="ap/aileron_cmd">
+         position/h-agl-ft > 6.0
+       </TEST>
+     </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+       INPUT        ap/aileron_cmd
        INPUT        fcs/aileron-cmd-norm
        INPUT        fcs/roll-trim-cmd-norm
        CLIPTO       -1 1

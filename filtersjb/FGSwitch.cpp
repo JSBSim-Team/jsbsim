@@ -33,13 +33,34 @@ HISTORY
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+The SWITCH component is defined as follows (see the API documentation for more
+information):
+
+<COMPONENT NAME="switch1" TYPE="SWITCH">
+  <TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}">
+    {property} {conditional} {property|value}
+    <CONDITION_GROUP LOGIC="{AND|OR}">
+      {property} {conditional} {property|value}
+      ...
+    </CONDITION_GROUP>
+    ...
+  </TEST>
+  <TEST LOGIC="{AND|OR}" OUTPUT="{property|value}">
+    {property} {conditional} {property|value}
+    ...
+  </TEST>
+  ...
+</COMPONENT>
+
+Also, see the header file (FGSwitch.h) for further details.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.20 2002/12/27 13:04:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.21 2003/01/09 03:10:12 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,53 +71,53 @@ CLASS IMPLEMENTATION
 FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
-  string token, logic, param, strCompare, strCompVal;
+  string token, value;
   struct test *current_test;
-  struct condition *current_condition;
-
-  mComparison["EQ"] = eEQ;
-  mComparison["NE"] = eNE;
-  mComparison["GT"] = eGT;
-  mComparison["GE"] = eGE;
-  mComparison["LT"] = eLT;
-  mComparison["LE"] = eLE;
+  struct FGCondition *current_condition;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
 
   AC_cfg->GetNextConfigLine();
-
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
+
+    // See the above documentation, or the API docs, for information on what
+    // the SWITCH component is supposed to look like in the configuration file.
+    // Below, the switch component is read in.
+
     if (token == "TEST") {
       tests.push_back(*(new test));
       current_test = &tests.back();
+
       if (AC_cfg->GetValue("LOGIC") == "OR") {
-        current_test->Logic = eOr;
-      } else {
-        current_test->Logic = eAnd;
+        current_test->Logic = eOR;
+      } else if (AC_cfg->GetValue("LOGIC") == "AND") {
+        current_test->Logic = eAND;
+      } else if (AC_cfg->GetValue("LOGIC") == "DEFAULT") {
+        current_test->Logic = eDefault;
+      } else { // error
+        cerr << "Unrecognized LOGIC token  in switch component: " << Name << endl;
       }
+      
+      value = AC_cfg->GetValue("VALUE");
+      if (value.empty()) {
+        cerr << "No VALUE supplied for switch component: " << Name << endl;
+      } else {
+        if (value.find_first_not_of("-.0123456789eE") == string::npos) {
+          // if true (and execution falls into this block), "value" is a number.
+          current_test->OutputVal = atof(value.c_str());
+        } else {
+          // "value" must be a property if execution passes to here.
+          current_test->OutputProp = PropertyManager->GetNode(value);
+        }
+      }
+
       AC_cfg->GetNextConfigLine();
       while (AC_cfg->GetValue() != "/TEST") {
-        current_test->conditions.push_back(*(new condition));
-        current_condition = &current_test->conditions.back();
-	current_condition->TestValue = 0.0;
-	current_condition->TestParam2 = 0L;
-        *AC_cfg >> param;
-        current_condition->TestParam1 = PropertyManager->GetNode(param);
-        *AC_cfg >> strCompare;
-        current_condition->Comparison = mComparison[strCompare];
-        *AC_cfg >> strCompVal;
-        if (strCompVal.find_first_not_of("-.0123456789eE") == string::npos) {
-          current_condition->TestValue = atof(strCompVal.c_str());
-        } else {
-          current_condition->TestParam2 = PropertyManager->GetNode(param);
-        }
-        // read comparison value (property or value)
-        AC_cfg->GetNextConfigLine();
+        current_test->conditions.push_back(*(new FGCondition(AC_cfg, PropertyManager)));
       }
-    } else if (token == "VALUE") {
-    } else {
     }
+    AC_cfg->GetNextConfigLine();
   }
 
   FGFCSComponent::bind();
@@ -115,7 +136,39 @@ FGSwitch::~FGSwitch()
 
 bool FGSwitch::Run(void )
 {
+  vector <test>::iterator iTests = tests.begin();
+  vector <FGCondition>::iterator iConditions;
+  bool pass = false;
+
   FGFCSComponent::Run(); // call the base class for initialization of Input
+
+  while (iTests < tests.end()) {
+    iConditions = iTests->conditions.begin();
+ 
+    if (iTests->Logic == eDefault) {
+      Output = iTests->GetValue();
+    } else if (iTests->Logic == eAND) {
+      pass = true;
+      while (iConditions < iTests->conditions.end()) {
+        if (!iConditions->Evaluate()) pass = false;
+        *iConditions++;
+      }
+    } else if (iTests->Logic == eOR) {
+      pass = false;
+      while (iConditions < iTests->conditions.end()) {
+        if (iConditions->Evaluate()) pass = true;
+        *iConditions++;
+      }
+    } else {
+      cerr << "Invalid logic test" << endl;
+    }
+
+    if (pass) {
+      Output = iTests->GetValue();
+      break;
+    }
+    *iTests++;
+  }
 
   return true;
 }
@@ -141,11 +194,57 @@ bool FGSwitch::Run(void )
 
 void FGSwitch::Debug(int from)
 {
+  vector <test>::iterator iTests = tests.begin();
+  vector <FGCondition>::iterator iConditions;
+  string comp, scratch;
+  string indent = "        ";
+  bool first = false;
+
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      while (iTests < tests.end()) {
 
+        scratch = " if ";
+
+        switch(iTests->Logic) {
+        case (elUndef):
+          comp = " UNSET ";
+          cerr << "Unset logic for test condition" << endl;
+          break;
+        case (eAND):
+          comp = " AND ";
+          break;
+        case (eOR):
+          comp=" OR ";
+          break;
+        case (eDefault):
+          scratch = " by default.";
+          break;
+        default:
+          comp = " UNKNOWN ";
+          cerr << "Unknown logic for test condition" << endl;
+        }
+
+        if (iTests->OutputProp != 0L)
+          cout << indent << "Switch VALUE is " << iTests->OutputProp->GetName() << scratch << endl;
+        else 
+          cout << indent << "Switch VALUE is " << iTests->OutputVal << scratch << endl;
+
+        iConditions = iTests->conditions.begin();
+        first = true;
+        while (iConditions < iTests->conditions.end()) {
+          if (!first) cout << indent << comp << " ";
+          else cout << indent << " ";
+          first = false;
+          iConditions->PrintCondition();
+          cout << endl;
+          *iConditions++;
+        }
+        cout << endl;
+        *iTests++;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

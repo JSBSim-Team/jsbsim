@@ -1,6 +1,7 @@
 CC = g++
 libFCSComponents_OBJECTS = FGDeadBand.o FGFilter.o FGGradient.o FGSwitch.o\
-                           FGFCSComponent.o FGGain.o FGSummer.o FGKinemat.o
+                           FGFCSComponent.o FGGain.o FGSummer.o FGKinemat.o\
+                           FGCondition.o
 
 INCLUDES = -I../
 
@@ -8,6 +9,10 @@ libFCSComponents.a: $(libFCSComponents_OBJECTS)
 	-rm -f libFCSComponents.a
 	ar cru libFCSComponents.a $(libFCSComponents_OBJECTS)
 	ranlib libFCSComponents.a
+
+FGCondition.o: FGCondition.cpp FGCondition.h ../FGConfigFile.h \
+ ../FGJSBBase.h ../FGPropertyManager.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGCondition.o -c FGCondition.cpp
 
 FGDeadBand.o: FGDeadBand.cpp FGDeadBand.h FGFCSComponent.h \
  ../FGJSBBase.h ../FGPropertyManager.h ../FGFCS.h \
@@ -120,7 +125,7 @@ FGSwitch.o: FGSwitch.cpp FGSwitch.h FGFCSComponent.h ../FGJSBBase.h \
  ../FGTable.h ../FGFactorGroup.h ../FGOutput.h ../FGfdmSocket.h \
  ../FGGroundReactions.h ../FGInertial.h ../FGAuxiliary.h ../FGPiston.h \
  ../FGTurbine.h ../FGTank.h ../FGPropeller.h ../FGThruster.h \
- ../FGForce.h ../FGNozzle.h
+ ../FGForce.h ../FGNozzle.h FGCondition.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGSwitch.o -c FGSwitch.cpp
 
 clean:

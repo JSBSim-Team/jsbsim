@@ -11,7 +11,7 @@ FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o FGScript
 FGJSBBase.o FGPropertyManager.o
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a
-	$(CC) $(INCLUDES) $(CCOPTS) -Wl,-Map output.map -Wl,--cref $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties
+	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties
 
 libFCSComponents.a:
 	cd filtersjb; make -fMakefile.solo; cd ..
@@ -132,8 +132,8 @@ FGFCS.o: FGFCS.cpp FGFCS.h filtersjb/FGFCSComponent.h \
  FGTank.h FGPropeller.h FGThruster.h FGForce.h FGNozzle.h \
  filtersjb/FGFilter.h filtersjb/../FGConfigFile.h \
  filtersjb/FGDeadBand.h filtersjb/FGGain.h filtersjb/../FGTable.h \
- filtersjb/FGGradient.h filtersjb/FGSwitch.h filtersjb/FGSummer.h \
- filtersjb/FGKinemat.h
+ filtersjb/FGGradient.h filtersjb/FGSwitch.h filtersjb/FGCondition.h \
+ filtersjb/FGSummer.h filtersjb/FGKinemat.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCS.o -c FGFCS.cpp
 
 FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGJSBBase.h \

@@ -5,7 +5,8 @@ if (length($ENV{CC}) gt 0) {
   print "CC = g++\n";
 }
 print "libFCSComponents_OBJECTS = FGDeadBand.o FGFilter.o FGGradient.o FGSwitch.o\\\n";
-print "                           FGFCSComponent.o FGGain.o FGSummer.o FGKinemat.o\n\n";
+print "                           FGFCSComponent.o FGGain.o FGSummer.o FGKinemat.o\\\n";
+print "                           FGCondition.o\n\n";
 print "INCLUDES = -I../\n\n";
 print "libFCSComponents.a: \$(libFCSComponents_OBJECTS)\n";
 print "	-rm -f libFCSComponents.a\n";
