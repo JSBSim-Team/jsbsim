@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.85 2001/12/02 15:59:29 apeden Exp $
+// $Id: JSBSim.cxx,v 1.86 2001/12/02 17:15:21 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -54,6 +54,7 @@
 #include <FDM/JSBSim/FGAtmosphere.h>
 #include <FDM/JSBSim/FGMassBalance.h>
 #include <FDM/JSBSim/FGAerodynamics.h>
+#include <FDM/JSBSim/FGLGear.h>
 #include "JSBSim.hxx"
 
 /******************************************************************************/
@@ -217,6 +218,9 @@ void FGJSBsim::init() {
     SG_LOG( SG_FLIGHT, SG_INFO, "  set dt" );
 
     SG_LOG( SG_FLIGHT, SG_INFO, "Finished initializing JSBSim" );
+    
+    SG_LOG( SG_FLIGHT, SG_INFO, "FGControls::get_gear_down()= " << 
+                                  globals->get_controls()->get_gear_down() );
     
 
    
@@ -646,7 +650,7 @@ void FGJSBsim::init_gear(void ) {
       if ( gr->GetGearUnit(i)->GetBrakeGroup() > 0 ) {
         gear->SetBrake(true);
       }
-      if ( gr->GetGearUp() ) {
+      if ( gr->GetGearUnit(i)->GetGearUnitUp() ) {
         gear->SetPosition( 0.0 );
       }    
     }  
@@ -660,7 +664,7 @@ void FGJSBsim::update_gear(void) {
     for (int i=0;i<Ngear;i++) {
       gear=get_gear_unit(i);
       gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
-      if ( gr->GetGearUp() ) {
+      if ( gr->GetGearUnit(i)->GetGearUnitUp() ) {
         gear->SetPosition( 0.0 );
       }    
     }  
@@ -670,6 +674,8 @@ void FGJSBsim::do_trim(void) {
 
         FGTrim *fgtrim;
         if(fgic->GetVcalibratedKtsIC() < 10 ) {
+            globals->get_controls()->set_gear_down(true);
+            FCS->SetGearCmd(1);
             fgic->SetVcalibratedKtsIC(0.0);
             fgtrim=new FGTrim(fdmex,fgic,tGround);
         } else {
