@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.24 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.25 2003/06/03 09:53:49 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.24 2003/05/02 10:47:34 jberndt Exp $
+    @version $Id: FGRocket.h,v 1.25 2003/06/03 09:53:49 ehofman Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce

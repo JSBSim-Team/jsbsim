@@ -72,7 +72,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.41 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.42 2003/06/03 09:53:49 ehofman Exp $"
 
 namespace JSBSim {
 

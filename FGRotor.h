@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.13 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.14 2003/06/03 09:53:49 ehofman Exp $"
 
 namespace JSBSim {
 

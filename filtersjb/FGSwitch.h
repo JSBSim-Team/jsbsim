@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.19 2003/05/22 03:22:26 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.20 2003/06/03 09:53:53 ehofman Exp $"
 
 namespace JSBSim {
 

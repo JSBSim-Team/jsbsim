@@ -46,7 +46,7 @@ INCLUDES
 #include "FGPropulsion.h"
 #include <vector>
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.19 2003/05/02 10:47:33 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.20 2003/06/03 09:53:46 ehofman Exp $"
 
 namespace JSBSim {
 

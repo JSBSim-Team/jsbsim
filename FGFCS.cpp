@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.92 2003/05/28 17:57:07 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.93 2003/06/03 09:53:44 ehofman Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)

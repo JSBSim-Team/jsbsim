@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.23 2003/03/24 13:51:02 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.24 2003/06/03 09:53:52 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -39,7 +39,7 @@
     AC_IXZ        982.0
     AC_EMPTYWT  17400.0 <!-- w. oil, oxygen, unusable fuel and tip missile launchers -->
     AC_AERORP           -201.3  0.0   0.0
-    AC_CGLOC            -216.3  0.0   0.0 <!-- 35% CBAR -->
+    AC_CGLOC            -210.3  0.0   0.0 <!-- 35% CBAR -->
     AC_EYEPTLOC         -384.7  0.0  33.2
     AC_POINTMASS  230.0 -384.7  0.0   0.0 <!-- pilot -->
   </METRICS>
@@ -156,10 +156,9 @@
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       INPUT        fcs/flap-cmd-norm
-       DETENTS      3
+       INPUT        fcs/gear-cmd-norm
+       DETENTS      1
                     0    0
-                    15   3
                     25   3
        OUTPUT      fcs/flap-pos-deg
      </COMPONENT>

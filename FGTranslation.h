@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.43 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.44 2003/06/03 09:53:50 ehofman Exp $"
 
 namespace JSBSim {
 

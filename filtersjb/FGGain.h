@@ -58,7 +58,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.22 2003/01/22 15:53:38 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.23 2003/06/03 09:53:53 ehofman Exp $"
 
 namespace JSBSim {
 

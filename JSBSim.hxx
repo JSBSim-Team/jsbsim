@@ -53,7 +53,7 @@ DEFINITIONS
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <simgear/misc/props.hxx>
+#include <simgear/props/props.hxx>
 
 #include <FDM/JSBSim/FGFDMExec.h>
 
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.41 2003/03/24 10:47:45 ehofman Exp $
+    @version $Id: JSBSim.hxx,v 1.42 2003/06/03 09:53:51 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.hxx?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
@@ -257,8 +257,8 @@ private:
     SGPropertyNode *right_aileron_pos_pct;
     SGPropertyNode *rudder_pos_pct;
     SGPropertyNode *flap_pos_pct;
-    SGPropertyNode *speed_brake_pos_pct;
-    SGPropertyNode *spoiler_pos_pct;
+    SGPropertyNode *speedbrake_pos_pct;
+    SGPropertyNode *spoilers_pos_pct;
     
     SGPropertyNode *gear_pos_pct;
     

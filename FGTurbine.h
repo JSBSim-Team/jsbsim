@@ -47,7 +47,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.4 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.5 2003/06/03 09:53:50 ehofman Exp $"
 
 namespace JSBSim {
 

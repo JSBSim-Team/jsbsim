@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.26 2003/05/02 10:47:33 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.27 2003/06/03 09:53:47 ehofman Exp $"
 
 namespace JSBSim {
 

@@ -17,7 +17,7 @@ JSBSim_SOURCES = \
 JSBSim_LDADD = \
 	$(top_builddir)/libJSBSim.a \
 	$(top_builddir)/filtersjb/libFCSComponents.a \
-	$(top_builddir)/simgear/misc/libProperties.a \
+	$(top_builddir)/simgear/props/libProperties.a \
 	-lm
 
 lib_LIBRARIES = libJSBSim.a
@@ -112,7 +112,7 @@ libJSBSim_a_SOURCES = \
 
 libJSBSim_a_LIBADD = \
 	filtersjb/libFCSComponents.a \
-	simgear/misc/libProperties.a
+	simgear/props/libProperties.a
 
 EXTRA_DIST = \
 	autogen.sh

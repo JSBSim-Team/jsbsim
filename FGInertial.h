@@ -59,7 +59,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.28 2003/05/02 10:47:33 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.29 2003/06/03 09:53:45 ehofman Exp $"
 
 namespace JSBSim {
 

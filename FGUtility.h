@@ -44,7 +44,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_UTILITY "$Id: FGUtility.h,v 1.15 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_UTILITY "$Id: FGUtility.h,v 1.16 2003/06/03 09:53:51 ehofman Exp $"
 
 namespace JSBSim {
 

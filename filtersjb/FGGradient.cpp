@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.20 2003/01/22 15:53:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.21 2003/06/03 09:53:53 ehofman Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

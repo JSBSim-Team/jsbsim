@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.5 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.6 2003/06/03 09:53:52 ehofman Exp $"
 
 namespace JSBSim {
 

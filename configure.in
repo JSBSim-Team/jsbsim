@@ -74,5 +74,5 @@ scripts/Makefile \
 tools/Makefile \
 utilities/Makefile \
 simgear/Makefile \
-simgear/misc/Makefile \
+simgear/props/Makefile \
 ])

@@ -68,7 +68,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.24 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.25 2003/06/03 09:53:50 ehofman Exp $"
 
 namespace JSBSim {
 

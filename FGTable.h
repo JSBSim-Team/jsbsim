@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.15 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.16 2003/06/03 09:53:50 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,7 +64,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.15 2003/05/02 10:47:34 jberndt Exp $
+    @version $Id: FGTable.h,v 1.16 2003/06/03 09:53:50 ehofman Exp $
     @see FGCoefficient
     @see FGPropeller
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTable.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">

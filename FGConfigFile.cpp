@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.44 2003/01/31 12:49:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.45 2003/06/03 09:53:43 ehofman Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

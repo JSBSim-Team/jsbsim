@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.31 2003/05/02 10:47:33 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.32 2003/06/03 09:53:48 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.31 2003/05/02 10:47:33 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.32 2003/06/03 09:53:48 ehofman Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable

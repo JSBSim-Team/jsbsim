@@ -1,5 +1,0 @@
-libProperties.a: props.cxx props.hxx
-	g++ -I. -I../../ -DNOSIMGEAR -c props.cxx
-	ar -r libProperties.a props.o
-all: libProperties.a
-	make -fMakefile.solo libProperties.a

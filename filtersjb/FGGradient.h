@@ -48,7 +48,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GRADIENT "$Id: FGGradient.h,v 1.12 2003/01/22 15:53:38 jberndt Exp $"
+#define ID_GRADIENT "$Id: FGGradient.h,v 1.13 2003/06/03 09:53:53 ehofman Exp $"
 
 namespace JSBSim {
 

@@ -58,7 +58,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.32 2003/01/22 15:53:34 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.33 2003/06/03 09:53:46 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS

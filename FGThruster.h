@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.28 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.29 2003/06/03 09:53:50 ehofman Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.28 2003/05/02 10:47:34 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.29 2003/06/03 09:53:50 ehofman Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

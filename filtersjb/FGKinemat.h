@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.7 2003/05/02 10:47:34 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.8 2003/06/03 09:53:53 ehofman Exp $"
 
 namespace JSBSim {
 

@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.82 2003/03/16 13:01:08 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.83 2003/06/03 09:53:49 ehofman Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

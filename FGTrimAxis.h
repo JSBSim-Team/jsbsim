@@ -44,7 +44,7 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGInitialCondition.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.18 2003/01/22 15:53:36 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.19 2003/06/03 09:53:50 ehofman Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
