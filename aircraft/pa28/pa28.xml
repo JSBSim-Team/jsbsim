@@ -3,7 +3,7 @@
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
   Function:    Models a Piper Cherokee 180 (PA28-180)
-  CVS Version: $Id: pa28.xml,v 1.6 2002/09/22 18:06:03 apeden Exp $
+  CVS Version: $Id: pa28.xml,v 1.7 2003/11/04 16:05:58 dpculp Exp $
 -->
 
   <METRICS>
@@ -75,7 +75,7 @@
     <retractable>                    One of RETRACT or FIXED
     -->
 
-     AC_GEAR  NOSE        35.8   0.0 -50.0  1500  100  0.5  0.8 0.02 STEERABLE NONE  30  FIXED
+     AC_GEAR  NOSE        35.8   0.0 -50.0  1500  100  0.5  0.8 0.02 STEERABLE NONE  15  FIXED
      AC_GEAR  LEFT_MAIN  111.1 -60.0 -42.4  5000  150  0.5  0.8 0.02 CASTERED  LEFT   0  FIXED
      AC_GEAR  RIGHT_MAIN 111.1  60.0 -42.4  5000  150  0.5  0.8 0.02 CASTERED  RIGHT  0  FIXED
      AC_GEAR  TAIL_SKID  271.9   0.0  -1.6 20000 1000  0.2   0.2 0.2 FIXED     NONE   0  FIXED
