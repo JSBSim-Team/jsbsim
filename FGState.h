@@ -46,18 +46,16 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
 #  else
 #    include <fstream.h>
 #  endif
-FG_USING_STD(string);
 #else
-#  include <string>
 #  include <fstream>
 #endif
 
+#include <string>
 #include <map>
 #include "FGDefs.h"
 #include "FGInitialCondition.h"
@@ -66,8 +64,6 @@ FG_USING_STD(string);
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
-
-using namespace std;
 
 /*******************************************************************************
 CLASS DECLARATION

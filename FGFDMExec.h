@@ -44,8 +44,6 @@ INCLUDES
 #include "FGModel.h"
 #include "FGInitialCondition.h"
 
-using namespace std;
-
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

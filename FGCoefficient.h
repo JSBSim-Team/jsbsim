@@ -37,14 +37,12 @@ SENTRY
 /*******************************************************************************
 INCLUDES
 *******************************************************************************/
+
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-   FG_USING_STD(string);
-#else
-#  include <string>
 #endif
 
+#include <string>
 #include <map>
 #include "FGConfigFile.h"
 #include "FGDefs.h"
@@ -52,8 +50,6 @@ INCLUDES
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
-
-using namespace std;
 
 /*******************************************************************************
 FORWARD DECLARATIONS

@@ -40,8 +40,6 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-FG_USING_STD(string);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
 #  else
@@ -52,6 +50,7 @@ FG_USING_STD(string);
 #  include <string>
 #endif
 
+#include <string>
 #include "filtersjb/FGFCSComponent.h"
 #include "FGModel.h"
 #include "FGConfigFile.h"
@@ -60,8 +59,6 @@ FG_USING_STD(string);
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
-
-using namespace std;
 
 class FGFCS : public FGModel {
 private:

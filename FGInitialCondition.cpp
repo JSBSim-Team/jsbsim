@@ -61,10 +61,6 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-
-
-
-
 FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   vt=vc=ve=0;
   mach=0;

@@ -105,9 +105,9 @@ INCLUDES
 #include <sys/types.h>
 
 #ifdef FGFS
-# ifndef __BORLANDC__
-#  include <simgear/compiler.h>
-# endif
+#  ifndef __BORLANDC__
+#    include <simgear/compiler.h>
+#  endif
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <cmath>
 #  else

@@ -44,8 +44,6 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-FG_USING_STD(string);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
 #  else
@@ -53,9 +51,9 @@ FG_USING_STD(string);
 #  endif
 #else
 #  include <vector>
-#  include <string>
 #endif
 
+#include <string>
 #include "FGFCSComponent.h"
 #include "../FGConfigFile.h"
 

@@ -48,7 +48,6 @@ INCLUDES
 #ifdef FGFS
 #  pragma message("FGFS defined")
 #  include <simgear/compiler.h>
-#  include STL_STRING
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
 #    include <iostream>
@@ -56,14 +55,13 @@ INCLUDES
 #    include <fstream.h>
 #    include <iostream.h>
 #  endif
-   FG_USING_STD(string);
 #else
 #  pragma message("FGFS not defined")
-#  include <string>
 #  include <fstream>
 #  include <iostream>
 #endif
 
+#include <string>
 #include <sys/types.h>
 
 #if defined(__BORLANDC__) || defined(_MSC_VER)
@@ -84,7 +82,7 @@ DEFINITIONS
 CLASS DECLARATION
 *******************************************************************************/
 
-using namespace std;
+using std::string;
 
 class FGfdmSocket {
 public:

@@ -46,19 +46,14 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-   FG_USING_STD(string);
-#else
-#  include <string>
 #endif
 
+#include <string>
 #include "FGConfigFile.h"
 
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
-
-using namespace std;
 
 /*******************************************************************************
 CLASS DECLARATION

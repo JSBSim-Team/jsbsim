@@ -80,7 +80,8 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
     vNcg(3),
     vPQR(3),
     vForces(3),
-vEuler(3) {
+    vEuler(3)
+{
   Name = "FGTranslation";
   qbar = 0;
   Vt = 0.0;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.4 2000/04/26 10:55:57 jsb Exp $
+// $Id: FGControls.h,v 1.5 2000/05/12 22:45:35 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -29,8 +29,6 @@
 #ifndef __cplusplus                                                          
 # error This library requires C++
 #endif                                   
-
-//using namespace std;
 
 // Define a structure containing the control parameters
 
@@ -177,6 +175,9 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.5  2000/05/12 22:45:35  jsb
+// Removed extraneous namespace identifiers and header files
+//
 // Revision 1.4  2000/04/26 10:55:57  jsb
 // Made changes as required by Curt to install JSBSim into FGFS
 //

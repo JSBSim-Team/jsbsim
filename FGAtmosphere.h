@@ -55,9 +55,6 @@ COMMENTS, REFERENCES,  and NOTES
 CLASS DECLARATION
 *******************************************************************************/
 
-
-using namespace std;
-
 class FGAtmosphere : public FGModel
 {
 public:

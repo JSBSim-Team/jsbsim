@@ -95,7 +95,6 @@ bool FGFCS::Run(void) {
 void FGFCS::SetThrottleCmd(int engineNum, float setting) {
   if (engineNum < 0) {
     for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
-
   } else {
     ThrottleCmd[engineNum] = setting;
   }
@@ -112,8 +111,6 @@ void FGFCS::SetThrottlePos(int engineNum, float setting) {
 }
 
 /******************************************************************************/
-
-#pragma warn -8030
 
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
   string token;
@@ -149,14 +146,11 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
       } else if (token == "FLAPS") {
         Components.push_back(new FGFlaps(this, AC_cfg));
       }
-      cout << "    Load complete" << endl;
       AC_cfg->GetNextConfigLine();
     }
   }
   return true;
 }
-
-#pragma warn .8030
 
 /******************************************************************************/
 
@@ -170,4 +164,5 @@ string FGFCS::GetComponentName(int idx) {
   return Components[idx]->GetName();
 }
 
+#pragma warn .8030
 

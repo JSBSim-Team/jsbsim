@@ -40,24 +40,24 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
 #  else
 #    include <fstream.h>
 #  endif
-   FG_USING_STD(string);
 #else
-#  include <string>
 #  include <fstream>
 #endif
+
+#include <string>
 
 /*******************************************************************************
 DEFINES
 *******************************************************************************/
 
 #ifndef FGFS
-using namespace std;
+using std::string;
+using std::ifstream;
 #endif
 
 /*******************************************************************************

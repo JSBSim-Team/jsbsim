@@ -44,11 +44,9 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  include STL_STRING
-   FG_USING_STD(string);
-#else
-#  include <string>
 #endif
+
+#include <string>
 
 /*******************************************************************************
 DEFINES
@@ -56,7 +54,7 @@ DEFINES
 
 class FGFCS;
 
-using namespace std;
+using std::string;
 
 /*******************************************************************************
 CLASS DECLARATION
