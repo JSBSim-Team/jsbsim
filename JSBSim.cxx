@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.42 2000/11/01 11:38:37 jsb Exp $
+// $Id: JSBSim.cxx,v 1.43 2000/11/01 12:15:19 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -210,8 +210,7 @@ bool FGJSBsim::update( int multiloop ) {
 	set_Altitude( 0.0 );
     }
 
-    if(needTrim) {
-	
+    if(needTrim && (globals->get_options()->get_trim_mode() > 0)) {
 	FGTrim *fgtrim;
 	if(fgic->GetVcalibratedKtsIC() < 10 ) {
 		fgic->SetVcalibratedKtsIC(0.0);
@@ -228,8 +227,6 @@ bool FGJSBsim::update( int multiloop ) {
     
 	needTrim=false;
     
-        cout << "fdmex->GetFCS()->GetPitchTrimCmd(): " << fdmex->GetFCS()->GetPitchTrimCmd() << endl;
-	cout << "fdmex->GetFCS()->GetDeCmd(): " << fdmex->GetFCS()->GetDeCmd() << endl;
          
 	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
 	controls.set_elevator(fdmex->GetFCS()->GetDeCmd());
@@ -413,7 +410,7 @@ void FGJSBsim::snap_shot(void) {
   	fgic->SetAltitudeFtIC( get_Altitude() );
   	fgic->SetTerrainAltitudeFtIC( get_Runway_altitude() );
   	fgic->SetVtrueFpsIC( get_V_rel_wind() );
-  	//fgic->SetPitchAngleRadIC( get_Theta() );
+  	fgic->SetPitchAngleRadIC( get_Theta() );
   	fgic->SetRollAngleRadIC( get_Phi() );
   	fgic->SetTrueHeadingRadIC( get_Psi() );
   	fgic->SetClimbRateFpsIC( get_Climb_Rate() );
