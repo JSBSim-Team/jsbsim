@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.75 2002/05/10 21:34:24 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.76 2002/06/05 03:47:48 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -466,7 +466,7 @@ string FGPropulsion::GetPropulsionValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGPropulsion::GetTanksCG(void)
+FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 {
   iTank = Tanks.begin();
   vXYZtank.InitMatrix();

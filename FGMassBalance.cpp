@@ -41,7 +41,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.26 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.27 2002/06/05 03:47:48 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,8 +77,8 @@ bool FGMassBalance::Run(void)
 
 // Calculate new CG here.
 
-    vXYZcg = (Propulsion->GetTanksCG() + EmptyWeight*vbaseXYZcg
-                                       + GetPointMassCG()       ) / Weight;
+    vXYZcg = (Propulsion->GetTanksMoment() + EmptyWeight*vbaseXYZcg
+                                       + GetPointMassMoment() ) / Weight;
 
 // Calculate new moments of inertia here
 
@@ -118,7 +118,7 @@ double FGMassBalance::GetPointMassWeight(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGMassBalance::GetPointMassCG(void)
+FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 {
   PointMassCG.InitMatrix();
 
