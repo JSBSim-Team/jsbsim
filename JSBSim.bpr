@@ -103,18 +103,19 @@ Count=1
 Item0=filtersjb;$(BCB)\lib
 
 [HistoryLists\hlRunParameters]
-Count=5
-Item0=x15 reset01
+Count=6
+Item0=c172 reset00
 Item1=c172 reset01
-Item2=X15 reset00 
-Item3=X15 reset00 > output.dat
-Item4=X15 reset00
+Item2=x15 reset01
+Item3=X15 reset00 
+Item4=X15 reset00 > output.dat
+Item5=X15 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=x15 reset01
+RunParams=c172 reset00
 HostApplication=
 RemoteHost=
 RemotePath=
