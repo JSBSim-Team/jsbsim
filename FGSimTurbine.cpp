@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.9 2003/10/18 13:21:25 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.10 2003/10/24 12:45:21 ehofman Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,13 +123,14 @@ double FGSimTurbine::Off(void)
 {
     double qbar = Translation->Getqbar();
     Running = false;
-    FuelFlow_pph = 0.0;
+    FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
     N1 = Seek(&N1, qbar/10.0, N1/2.0, N1/2.0);
     N2 = Seek(&N2, qbar/15.0, N2/2.0, N2/2.0);
     EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
     OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);  
     OilPressure_psi = N2 * 0.62;
-    EPR = 1.0;
+    NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
+    EPR = Seek(&EPR, 1.0, 0.2, 0.2);
     return 0.0; 
 }
 
@@ -150,13 +151,15 @@ double FGSimTurbine::Run(void)
     N2norm = (N2 - IdleN2) / N2_factor;
     thrust = idlethrust + (milthrust * N2norm * N2norm); 
     thrust = thrust * (1.0 - BleedDemand);
-    FuelFlow_pph = thrust * TSFC;
-    if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
     OilPressure_psi = N2 * 0.62;
-    OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0);
+    OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
     EPR = 1.0 + thrust/MilThrust;
-    NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
+    if (!Augmentation) {
+      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * TSFC, 1000.0, 100000);
+      if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
+      NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
+    }
     if (Reversed) thrust = thrust * -0.2;
 
     if (AugMethod == 1) {
@@ -166,7 +169,7 @@ double FGSimTurbine::Run(void)
 
     if ((Augmented == 1) && Augmentation) {
       thrust = MaxThrust * ThrustTables[2]->TotalValue();
-      FuelFlow_pph = thrust * ATSFC;
+      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
       NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
       }
 
@@ -187,9 +190,9 @@ double FGSimTurbine::SpinUp(void)
     FuelFlow_pph = 0.0;
     N2 = Seek(&N2, 25.18, 3.0, N2/2.0);
     N1 = Seek(&N1, 5.21, 1.0, N1/2.0);
-    EGT_degC = TAT;
+    EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
     OilPressure_psi = N2 * 0.62;
-    OilTemp_degK = TAT + 273.0;
+    OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
     EPR = 1.0;
     NozzlePosition = 1.0;
     return 0.0;
