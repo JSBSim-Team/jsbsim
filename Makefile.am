@@ -109,6 +109,8 @@ libJSBSim_a_SOURCES = \
 	FGTurboShaft.h \
 	FGUtility.cpp \
 	FGUtility.h \
+  FGTurbine.cpp \
+  FGTurbine.h \
   FGPropertyManager.h
 
 libJSBSim_a_LIBADD = \
