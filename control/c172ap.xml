@@ -34,13 +34,13 @@
 
 <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
    INPUT         attitude/phi-rad
-   GAIN          1.0
+   GAIN          2.0
    MIN           -0.255
    MAX            0.255
 </COMPONENT>
 <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
    INPUT         attitude/phi-rad
-   C1            1
+   C1            0.125
 </COMPONENT>
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
    INPUT         velocities/p-rad_sec

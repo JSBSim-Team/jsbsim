@@ -5,8 +5,8 @@ if (length($ENV{CC}) gt 0) {
   print "CC = g++\n";
 }
 #print "CCOPTS = -pg -O2\n";
-print "INCLUDES = -I. -Isimgear/misc\n";
-print "LINKDIR= -Lfiltersjb/ -Lsimgear/misc/\n";
+print "INCLUDES = -I. -Isimgear/props\n";
+print "LINKDIR= -Lfiltersjb/ -Lsimgear/props/\n";
 print "JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\\\n";
 print "FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\\\n";
 print "FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
@@ -20,7 +20,7 @@ print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -
 print "libFCSComponents.a:\n";
 print "	cd filtersjb; make -fMakefile.solo; cd ..\n\n";
 print "libProperties.a:\n";
-print "	cd simgear/misc; make -fMakefile.solo; cd ../../\n\n";
+print "	cd simgear/props; make -fMakefile.solo; cd ../../\n\n";
 @files =  glob("*.cpp");
 foreach $file (@files) {
   system "g++ -DNOSIMGEAR -I. -MM $file";
@@ -39,12 +39,12 @@ print "	-rm *.o\n\n";
 print "all:\n";
 print "	touch *.cpp\n";
 print "	cd filtersjb; make all -fMakefile.solo; cd ..\n";
-print "	cd simgear/misc; make all -fMakefile.solo; cd ..\n";
+print "	cd simgear/props; make all -fMakefile.solo; cd ..\n";
 print "	make JSBSim -fMakefile.solo\n\n";
 print "debug:\n";
 print "	touch *.cpp\n";
 print "	touch filtersjb/*.cpp\n";
-print "	touch simgear/misc/*.cxx\n";
+print "	touch simgear/props/*.cxx\n";
 print "	cd filtersjb; make debug CCOPTS=-g -fMakefile.solo; cd ..\n";
-print "	cd simgear/misc; make debug CCOPTS=-g -fMakefile.solo; cd ..\n";
+print "	cd simgear/props; make debug CCOPTS=-g -fMakefile.solo; cd ..\n";
 print "	make JSBSim CCOPTS=-g -fMakefile.solo\n";
