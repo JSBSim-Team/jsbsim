@@ -13,6 +13,6 @@
   THETA       0.0
   PSI       150.0
   ALTITUDE    5.5
-  WINDDIR     0.0
-  VWIND       0.0
+  WINDDIR     120.0
+  VWIND       20.0
 </initialize>

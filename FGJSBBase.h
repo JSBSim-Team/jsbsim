@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.22 2002/01/28 23:16:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -151,7 +151,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.22 2002/01/28 23:16:46 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,6 +256,7 @@ public:
       @return pointer to a Message structure (or NULL if no mesage) */
   Message* ProcessMessage(void);
   //@}
+  string GetVersion(void) {return JSBSim_version;}
 
 protected:
   static Message localMsg;
