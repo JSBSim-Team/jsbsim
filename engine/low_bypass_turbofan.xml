@@ -10,9 +10,9 @@
     Idle_power_thrust
     6
     6
-    FG_MACH
-    FG_ALTITUDE
-    FG_NONE
+    velocities/mach-norm
+    position/h-sl-ft
+    none
                 0   10000   20000   30000   40000  50000
     0.0    0.0836  0.0528  0.0694  0.0899  0.1183  0.1467
     0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
@@ -26,9 +26,9 @@
     Military_power_thrust
     6
     6
-    FG_MACH
-    FG_ALTITUDE
-    FG_NONE
+    velocities/mach-norm
+    position/h-sl-ft
+    none
                0    10000   20000     30000    40000    50000
     0.0   1.0000   0.7216   0.4890   0.3115   0.1932   0.1104
     0.2   1.0000   0.7216   0.4979   0.3186   0.1948   0.1104
@@ -42,9 +42,9 @@
     Augmented_thrust
     6
     6
-    FG_MACH
-    FG_ALTITUDE
-    FG_NONE
+    velocities/mach-norm
+    position/h-sl-ft
+    none
                 0    10000   20000     30000    40000    50000
     0.0    0.6924   0.5193   0.3739   0.2423   0.1385   0.0865
     0.2    0.7415   0.5435   0.3886   0.2535   0.1535   0.0900
