@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.105 2002/02/28 00:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.106 2002/02/28 12:20:09 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,7 +284,7 @@ double FGState::GetParameter(eParam val_idx) {
   case FG_NSPOILERS_POS:
     return FCS->GetDspPosN();
   case FG_FLAPS_POS:
-    return FCS->GetDfPosN();
+    return FCS->GetDfPos();
   case FG_NFLAPS_POS:
     return FCS->GetDfPosN();
   case FG_ELEVATOR_CMD:
