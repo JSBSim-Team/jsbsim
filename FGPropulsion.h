@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.52 2003/11/11 13:49:12 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.53 2003/11/12 03:25:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.52 2003/11/11 13:49:12 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.53 2003/11/12 03:25:45 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -206,8 +206,28 @@ public:
   double GetTanksIxz(const FGColumnVector3& vXYZcg);
   double GetTanksIxy(const FGColumnVector3& vXYZcg);
 
-  double GetN1(void);
-  double GetN2(void);
+  inline double GetN1(void) const
+  {
+    if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
+      return Engines[0]->GetN1();
+    else
+      return Engines[ActiveEngine]->GetN1();
+  }
+
+  inline double GetN2(void) const
+  {
+    if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
+      return Engines[0]->GetN2();
+    else
+      return Engines[ActiveEngine]->GetN2();
+  }
+
+  inline int GetActiveEngine(void) const
+  {
+    return ActiveEngine;
+  }
+
+  inline int GetActiveEngine(void);
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);

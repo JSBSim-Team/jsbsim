@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.30 2003/11/11 06:38:54 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.31 2003/11/12 03:25:45 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.30 2003/11/11 06:38:54 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.31 2003/11/12 03:25:45 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ public:
 
   enum eType {ttNozzle, ttRotor, ttPropeller, ttDirect};
 
-  virtual double Calculate(double Thrust) { vFn(1)=Thrust; return 0.0; }
+  virtual double Calculate(double tt) { Thrust = tt; vFn(1) = Thrust; return 0.0; }
   void SetName(string name) {Name = name;}
   void SetThrusterNumber(int nn) {ThrusterNumber = nn;}
   virtual void SetRPM(double rpm) {};

@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.86 2003/11/11 13:49:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.87 2003/11/12 03:25:45 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -625,30 +625,10 @@ void FGPropulsion::SetCutoff(int setting)
 
 void FGPropulsion::SetActiveEngine(int engine)
 {
-  if ( unsigned(engine) > Engines.size())
+  if (engine >= Engines.size() || engine < 0)
     ActiveEngine = -1;
   else
     ActiveEngine = engine;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetN1(void)
-{
-  if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
-    return Engines[0]->GetN1();
-  else
-    return Engines[ActiveEngine]->GetN1();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetN2(void)
-{
-  if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
-    return Engines[0]->GetN2();
-  else
-    return Engines[ActiveEngine]->GetN2();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -663,21 +643,11 @@ void FGPropulsion::bind(void)
                        &FGPropulsion::GetNumTanks); */
 
   PropertyManager->Tie("propulsion/magneto_cmd", this,
-                       (iPMF)0,
-                       &FGPropulsion::SetMagnetos,
-                       true);
+                       (iPMF)0, &FGPropulsion::SetMagnetos, true);
   PropertyManager->Tie("propulsion/starter_cmd", this,
-                       (iPMF)0,
-                       &FGPropulsion::SetStarter,
-                       true);
+                       (iPMF)0, &FGPropulsion::SetStarter,  true);
   PropertyManager->Tie("propulsion/cutoff_cmd", this,
-                       (iPMF)0,
-                       &FGPropulsion::SetCutoff,
-                       true);
-  PropertyManager->Tie("propulsion/active_engine", this,
-                       (iPMF)0,
-                       &FGPropulsion::SetActiveEngine,
-                       true);
+                       (iPMF)0, &FGPropulsion::SetCutoff,   true);
 
   PropertyManager->Tie("propulsion/num-sel-fuel-tanks", this,
                        &FGPropulsion::GetnumSelectedFuelTanks);
@@ -696,11 +666,12 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("moments/n-prop-lbsft", this,3,
                        (PMF)&FGPropulsion::GetMoments);
 
-  PropertyManager->Tie("propulsion/n1", this,3,
-                       (PMF)&FGPropulsion::GetN1);
-  PropertyManager->Tie("propulsion/n2", this,3,
-                       (PMF)&FGPropulsion::GetN2);
-  
+  PropertyManager->Tie("propulsion/n1", this, &FGPropulsion::GetN1);
+  PropertyManager->Tie("propulsion/n2", this, &FGPropulsion::GetN2);
+
+  PropertyManager->Tie("propulsion/active_engine", this,
+           &FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
+
   //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
   //                     &FGPropulsion::GetTanksWeight);
 }
