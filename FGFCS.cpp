@@ -93,13 +93,23 @@ FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
       // FCS COMPONENT CREATION LOGIC HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      // MOST LIKELY WILL CALL CONSTRUCTOR FOR COMPONENT HERE AND ADD TO STL VECTOR
-      // -----------------------------------------------------------------------
+      //
+      // Example reference implementation:
+      //
+      // if ((token = GetValue("TYPE") == LAG_FILTER) {
+      //   Components.push_back(new FGLagFilter(AC_cfg));
+      // } else if (token == "GRADIENT") {
+      //   Components.push_back(new FGGradient(AC_cfg));
+      // } else if ...
+      //
       // remove lines below after component creation logic added ********* START
+
       while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
         AC_cfg->GetNextConfigLine();
       }
+
       // remove above                                            *********** END
+
       AC_cfg->GetNextConfigLine();
     }
   }
