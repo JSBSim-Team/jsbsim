@@ -31,6 +31,7 @@ INCLUDES
    SG_USING_STD(cerr);
    SG_USING_STD(cout);
    SG_USING_STD(endl);
+   SG_USING_STD(sqrt);
 #else
 #  include <string>
 #  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
@@ -50,6 +51,7 @@ INCLUDES
      using std::cerr;
      using std::cout;
      using std::endl;
+     using std::sqrt;
 #  endif
    using std::string;
 #endif
@@ -60,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.18 2003/12/29 10:57:39 ehofman Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.19 2004/02/22 21:42:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +76,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.18 2003/12/29 10:57:39 ehofman Exp $
+    @version $Id: FGColumnVector3.h,v 1.19 2004/02/22 21:42:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,15 +90,15 @@ public:
   FGColumnVector3(double X, double Y, double Z);
   FGColumnVector3(const FGColumnVector3& b);
   ~FGColumnVector3(void);
-  
+
   FGColumnVector3 operator=(const FGColumnVector3& b);
-  
+
   FGColumnVector3 operator*(const double scalar);
   FGColumnVector3 operator*(const FGColumnVector3& V);   // Cross product operator
   FGColumnVector3 operator/(const double scalar);
   FGColumnVector3 operator+(const FGColumnVector3& B); // must not return reference
   FGColumnVector3 operator-(const FGColumnVector3& B);
-  
+
   void operator-=(const FGColumnVector3 &B);
   void operator+=(const FGColumnVector3 &B);
   void operator*=(const FGColumnVector3 &B);

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.24 2004/01/17 19:32:21 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.25 2004/02/22 21:41:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,9 +118,9 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.24 2004/01/17 19:32:21 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.25 2004/02/22 21:41:51 jberndt Exp $
 */
-   
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -133,12 +133,12 @@ public:
 
   bool Run(void);
 
+  enum eLogic {elUndef=0, eAND, eOR, eDefault};
+  enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
+
 private:
   FGFCS* fcs;
   FGConfigFile* AC_cfg;
-
-  enum eLogic {elUndef=0, eAND, eOR, eDefault};
-  enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
 
   struct test {
     vector <FGCondition> conditions;
@@ -146,7 +146,7 @@ private:
     double OutputVal;
     FGPropertyManager *OutputProp;
     float sign;
-    
+
     double GetValue(void) {
       if (OutputProp == 0L) return OutputVal;
       else                  return OutputProp->getDoubleValue()*sign;
@@ -162,7 +162,7 @@ private:
   };
 
   vector <test> tests;
-  
+
   void Debug(int from);
 };
 }

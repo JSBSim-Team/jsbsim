@@ -1,29 +1,29 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGPropertyManager.h
  Author:       Tony Peden
                Based on work originally by David Megginson
  Date:         2/2002
- 
+
  ------------- Copyright (C) 2002 -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
 
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -36,13 +36,17 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <string>
+#ifdef FGFS
 #include <simgear/props/props.hxx>
+#else
+#include "simgear/props/props.hxx"
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.20 2003/12/02 12:56:04 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.21 2004/02/22 21:42:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,7 +63,7 @@ CLASS DOCUMENTATION
 /** Class wrapper for property handling.
     @author David Megginson, Tony Peden
   */
-  
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -69,17 +73,17 @@ class FGPropertyManager : public SGPropertyNode {
     /// Constructor
     FGPropertyManager(void) {}
     /// Destructor
-    ~FGPropertyManager(void) {}   
-    
+    ~FGPropertyManager(void) {}
+
     /** Property-ify a name
      *  replaces spaces with '-' and, optionally, makes name all lower case
      *  @param name string to change
      *  @param lowercase true to change all upper case chars to lower
      *  NOTE: this function changes its argument and thus relies
      *  on pass by value
-     */ 
+     */
     string mkPropertyName(string name, bool lowercase);
-    
+
     /**
      * Get a property node.
      *
@@ -87,10 +91,10 @@ class FGPropertyManager : public SGPropertyNode {
      * @param create true to create the node if it doesn't exist.
      * @return The node, or 0 if none exists and none was created.
      */
-    FGPropertyManager* 
+    FGPropertyManager*
     GetNode (const string &path, bool create = false);
-  
-    FGPropertyManager* 
+
+    FGPropertyManager*
     GetNode (const string &relpath, int index, bool create = false);
 
     /**
@@ -105,7 +109,7 @@ class FGPropertyManager : public SGPropertyNode {
      * Get the name of a node
      */
     string GetName( void );
-    
+
     /**
      * Get the fully qualified name of a node
      * This function is very slow, so is probably useful for debugging only.
@@ -455,25 +459,25 @@ class FGPropertyManager : public SGPropertyNode {
     Tie (const string &name, double *pointer, bool useDefault = true);
 
 //============================================================================
-//  
-//  All of the following functions *must* be inlined, otherwise linker 
+//
+//  All of the following functions *must* be inlined, otherwise linker
 //  errors will result
 //
 //============================================================================
-   
+
     /* template <class V> void
     Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
            bool useDefault = true);
-    
+
     template <class V> void
     Tie (const string &name, int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true);
-    
+
     template <class T, class V> void
     Tie (const string &name, T * obj, V (T::*getter)() const,
            void (T::*setter)(V) = 0, bool useDefault = true);
 
-    template <class T, class V> void 
+    template <class T, class V> void
     Tie (const string &name, T * obj, int index,
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
            bool useDefault = true); */
@@ -490,12 +494,12 @@ class FGPropertyManager : public SGPropertyNode {
      * @param name The property name to tie (full path).
      * @param getter The getter function, or 0 if the value is unreadable.
      * @param setter The setter function, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing 
+     * @param useDefault true if the setter should be invoked with any existing
      *        property value should be; false if the old value should be
      *        discarded; defaults to true.
      */
-    
-    template <class V> inline void 
+
+    template <class V> inline void
     Tie (const string &name, V (*getter)(), void (*setter)(V) = 0,
                                               bool useDefault = true)
     {
@@ -522,11 +526,11 @@ class FGPropertyManager : public SGPropertyNode {
      *        setter functions.
      * @param getter The getter function, or 0 if the value is unreadable.
      * @param setter The setter function, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing 
+     * @param useDefault true if the setter should be invoked with any existing
      *        property value should be; false if the old value should be
      *        discarded; defaults to true.
      */
-    template <class V> inline void Tie (const string &name, 
+    template <class V> inline void Tie (const string &name,
                                         int index, V (*getter)(int),
            void (*setter)(int, V) = 0, bool useDefault = true)
     {
@@ -554,7 +558,7 @@ class FGPropertyManager : public SGPropertyNode {
      *        unreadable.
      * @param setter The object's setter method, or 0 if the value is
      *        unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing 
+     * @param useDefault true if the setter should be invoked with any existing
      *        property value should be; false if the old value should be
      *        discarded; defaults to true.
      */
@@ -569,7 +573,7 @@ class FGPropertyManager : public SGPropertyNode {
          "Failed to tie property " << name << " to object methods" << endl;
       }
     }
-    
+
     /**
      * Tie a property to a pair of indexed object methods.
      *
@@ -585,11 +589,11 @@ class FGPropertyManager : public SGPropertyNode {
      *        setter methods.
      * @param getter The getter method, or 0 if the value is unreadable.
      * @param setter The setter method, or 0 if the value is unmodifiable.
-     * @param useDefault true if the setter should be invoked with any existing 
+     * @param useDefault true if the setter should be invoked with any existing
      *        property value should be; false if the old value should be
      *        discarded; defaults to true.
      */
-    template <class T, class V> inline void 
+    template <class T, class V> inline void
     Tie (const string &name, T * obj, int index,
            V (T::*getter)(int) const, void (T::*setter)(int, V) = 0,
                                               bool useDefault = true)
@@ -601,7 +605,7 @@ class FGPropertyManager : public SGPropertyNode {
          "Failed to tie property " << name << " to indexed object methods" << endl;
       }
    }
-};                                                                                       
+};
 }
 #endif // FGPROPERTYMANAGER_H
 
