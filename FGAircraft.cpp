@@ -120,6 +120,7 @@ INCLUDES
 
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
+#include "FGInertial.h"
 #include "FGAerodynamics.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -139,7 +140,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.77 2001/04/24 22:14:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.78 2001/04/28 00:04:47 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -284,9 +285,7 @@ void FGAircraft::FMGear(void)
 
 void FGAircraft::FMMass(void)
 {
-  vForces(eX) += -GRAVITY*sin(vEuler(eTht)) * MassBalance->GetMass();
-  vForces(eY) +=  GRAVITY*sin(vEuler(ePhi))*cos(vEuler(eTht)) * MassBalance->GetMass();
-  vForces(eZ) +=  GRAVITY*cos(vEuler(ePhi))*cos(vEuler(eTht)) * MassBalance->GetMass();
+  vForces += Inertial->GetForces();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
