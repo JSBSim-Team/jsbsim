@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.160 2004/03/23 12:32:53 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.161 2004/03/23 13:47:18 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -317,11 +317,11 @@ void FGJSBsim::init()
     stall_warning->setDoubleValue(0);
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
-            <<  Rotation->Getphi()*RADTODEG << " deg" );
+            <<  Auxiliary->Getphi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
-            << Rotation->Gettht()*RADTODEG << " deg" );
+            << Auxiliary->Gettht()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
-            << Rotation->Getpsi()*RADTODEG << " deg" );
+            << Auxiliary->Getpsi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
             << Position->GetLatitude() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
@@ -563,9 +563,9 @@ bool FGJSBsim::copy_from_JSBsim()
                      Rotation->GetPQR(2),
                      Rotation->GetPQR(3) );
 
-    _set_Euler_Rates( Rotation->GetEulerRates(1),
-                      Rotation->GetEulerRates(2),
-                      Rotation->GetEulerRates(3) );
+    _set_Euler_Rates( Auxiliary->GetEulerRates(1),
+                      Auxiliary->GetEulerRates(2),
+                      Auxiliary->GetEulerRates(3) );
 
     _set_Geocentric_Rates(Position->GetLatitudeDot(),
                           Position->GetLongitudeDot(),
@@ -586,9 +586,9 @@ bool FGJSBsim::copy_from_JSBsim()
 */
     _set_Altitude_AGL( Position->GetDistanceAGL() );
 
-    _set_Euler_Angles( Rotation->Getphi(),
-                       Rotation->Gettht(),
-                       Rotation->Getpsi() );
+    _set_Euler_Angles( Auxiliary->Getphi(),
+                       Auxiliary->Gettht(),
+                       Auxiliary->Getpsi() );
 
     _set_Alpha( Auxiliary->Getalpha() );
     _set_Beta( Auxiliary->Getbeta() );
