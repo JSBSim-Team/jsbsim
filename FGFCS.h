@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.59 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.60 2003/12/02 05:42:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,9 +75,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates the Flight Control System (FCS) functionality.
-    <ul><li>\URL[Source Code]{FGFCS.cpp.html}</li>
-    <li>\URL[Header File]{FGFCS.h.html}</li></ul>
-    This class owns and contains the list of \URL[components]{FGFCSComponent.html}
+    This class owns and contains the list of FGFCSComponents
     that define the control system for this aircraft. The config file for the
     aircraft contains a description of the control path that starts at an input
     or command and ends at an effector, e.g. an aerosurface. The FCS components
@@ -139,7 +137,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.59 2003/11/26 13:37:36 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.60 2003/12/02 05:42:12 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain

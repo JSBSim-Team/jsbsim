@@ -58,20 +58,16 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.40 2003/06/03 09:53:45 ehofman Exp $"
-
-namespace JSBSim {
-
-typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
-typedef enum { setwned, setwmd, setwhc } windset; 
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.41 2003/12/02 05:42:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+namespace JSBSim {
+
+typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
+typedef enum { setwned, setwmd, setwhc } windset; 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -127,11 +123,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.40 2003/06/03 09:53:45 ehofman Exp $
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
+   @version $Id: FGInitialCondition.h,v 1.41 2003/12/02 05:42:12 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
