@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.12 2002/04/16 06:31:01 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.13 2002/05/08 11:28:39 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.12 2002/04/16 06:31:01 jberndt Exp $
+    @version $Id: FGTable.h,v 1.13 2002/05/08 11:28:39 apeden Exp $
     @see FGCoefficient
     @see FGPropeller
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTable.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -100,8 +100,6 @@ public:
   FGTable& operator<<(const int n);
   inline double GetElement(int r, int c) {return Data[r][c];}
   void Print(void);
-  template <class T> T Clamp(T lower, T value, T upper)
-    {return value < lower ? lower : (value > upper ? upper : value);}
 
 private:
   enum type {tt1D, tt2D} Type;
@@ -109,6 +107,7 @@ private:
   int nRows, nCols;
   int colCounter;
   int rowCounter;
+  int lastRowIndex, lastColumnIndex;
   double** Allocate(void);
   void Debug(int from);
 };

@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.25 2002/04/16 06:31:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.26 2002/05/08 11:28:39 apeden Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols)
   }
 
   Data = Allocate();
-
+  lastRowIndex=lastColumnIndex=2;
   Debug(0);
 }
 
@@ -82,6 +82,7 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1)
 
   Data = Allocate();
   Debug(0);
+  lastRowIndex=lastColumnIndex=2;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,14 +113,33 @@ FGTable::~FGTable()
 double FGTable::GetValue(double key)
 {
   double Factor, Value, Span;
-  int r;
+  int r=lastRowIndex;
+  
+  //if the key is off the end of the table, just return the 
+  //end-of-table value, do not extrapolate
+  if( key <= Data[1][0] ) {
+    lastRowIndex=2;
+    //cout << "Key underneath table: " << key << endl;
+    return Data[1][1];
+  } else if ( key >= Data[nRows][0] ) {
+    lastRowIndex=nRows;
+    //cout << "Key over table: " << key << endl;
+    return Data[nRows][1];
+  }    
 
-  for (r=1; r<=nRows; r++) if (Data[r][0] >= key) break;
-  r   = Clamp(2, r, nRows);
-  key = Clamp(Data[1][0], key, Data[nRows][0]);
-
+  // the key is somewhere in the middle, search for the right breakpoint
+  // assume the correct breakpoint has not changed since last frame or
+  // has only changed very little
+  
+  if ( r > 2 && Data[r-1][0] > key ) {
+    while( Data[r-1][0] > key && r > 2) { r--; }
+  } else if ( Data[r][0] < key ) { 
+    while( Data[r][0] <= key && r <= nRows) { r++; }  
+  }  
+  
+  lastRowIndex=r;  
   // make sure denominator below does not go to zero.
-
+  
   Span = Data[r][0] - Data[r-1][0];
   if (Span != 0.0) {
     Factor = (key - Data[r-1][0]) / Span;
@@ -135,19 +155,31 @@ double FGTable::GetValue(double key)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 double FGTable::GetValue(double rowKey, double colKey)
 {
   double rFactor, cFactor, col1temp, col2temp, Value;
-  int r, c;
+  int r=lastRowIndex;
+  int c=lastColumnIndex;
+  
+  if ( r > 2 && Data[r-1][0] > rowKey ) {
+    while ( Data[r-1][0] > rowKey && r > 2) { r--; }
+  } else if ( Data[r][0] < rowKey ) { 
+    cout << Data[r][0] << endl;
+    while ( r <= nRows && Data[r][0] <= rowKey ) { r++; }
+    if ( r > nRows ) r = nRows;  
+  }  
+  
+  if ( c > 2 && Data[0][c-1] > colKey ) {
+    while( Data[0][c-1] > colKey && c > 2) { c--; }
+  } else if ( Data[0][c] < colKey ) { 
+    while( Data[0][c] <= colKey && c <= nCols) { c++; } 
+    if ( c > nCols ) c = nCols;  
+  }  
 
-  for (r=1;r<=nRows;r++) if (Data[r][0] >= rowKey) break;
-  r = Clamp(2, r, nRows);
-  rowKey = Clamp(Data[1][0], rowKey, Data[nRows][0]);
-
-  for (c=1;c<=nCols;c++) if (Data[0][c] >= colKey) break;
-  c = Clamp(2, c, nCols);
-  colKey = Clamp(Data[0][1], colKey, Data[0][nCols]);
-
+  lastRowIndex=r;
+  lastColumnIndex=c;
+  
   rFactor = (rowKey - Data[r-1][0]) / (Data[r][0] - Data[r-1][0]);
   cFactor = (colKey - Data[0][c-1]) / (Data[0][c] - Data[0][c-1]);
 
