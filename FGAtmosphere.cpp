@@ -62,7 +62,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.41 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.42 2002/06/08 00:11:09 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,14 +109,18 @@ bool FGAtmosphere::InitModel(void)
   FGModel::InitModel();
 
   Calculate(h);
-  SLtemperature = temperature;
-  SLpressure    = pressure;
-  SLdensity     = density;
-  SLsoundspeed  = sqrt(SHRatio*Reng*temperature);
-  rSLtemperature = 1.0/temperature;
-  rSLpressure    = 1.0/pressure;
-  rSLdensity     = 1.0/density;
+  SLtemperature = intTemperature;
+  SLpressure    = intPressure;
+  SLdensity     = intDensity;
+  SLsoundspeed  = sqrt(SHRatio*Reng*intTemperature);
+  rSLtemperature = 1.0/intTemperature;
+  rSLpressure    = 1.0/intPressure;
+  rSLdensity     = 1.0/intDensity;
   rSLsoundspeed  = 1.0/SLsoundspeed;
+  temperature=&intTemperature;
+  pressure=&intPressure;
+  density=&intDensity;
+  
   useExternal=false;
   
   return true;
@@ -131,11 +135,7 @@ bool FGAtmosphere::Run(void)
     if (!useExternal) {
       h = Position->Geth();
       Calculate(h);
-    } else {
-      density = exDensity;
-      pressure = exPressure;
-      temperature = exTemperature;
-    }
+    } 
 
     if (turbType != ttNone) {
       Turbulence();
@@ -146,7 +146,7 @@ bool FGAtmosphere::Run(void)
 
     if (psiw < 0) psiw += 2*M_PI;
 
-    soundspeed = sqrt(SHRatio*Reng*temperature);
+    soundspeed = sqrt(SHRatio*Reng*(*temperature));
 
     State->Seta(soundspeed);
 
@@ -240,18 +240,18 @@ void FGAtmosphere::Calculate(double altitude)
   }
  
   if (slope == 0) {
-    temperature = reftemp;
-    pressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
-    //density = refdens*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
-    density = pressure/(Reng*temperature);
+    intTemperature = reftemp;
+    intPressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
+    //intDensity = refdens*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
+    intDensity = intPressure/(Reng*intTemperature);
   } else {
-    temperature = reftemp+slope*(altitude-htab[i]);
-    pressure = refpress*pow(temperature/reftemp,-Inertial->SLgravity()/(slope*Reng));
-    //density = refdens*pow(temperature/reftemp,-(Inertial->SLgravity()/(slope*Reng)+1));
-    density = pressure/(Reng*temperature);
+    intTemperature = reftemp+slope*(altitude-htab[i]);
+    intPressure = refpress*pow(intTemperature/reftemp,-Inertial->SLgravity()/(slope*Reng));
+    //intDensity = refdens*pow(intTemperature/reftemp,-(Inertial->SLgravity()/(slope*Reng)+1));
+    intDensity = intPressure/(Reng*intTemperature);
   }
   lastIndex=i;
-  //cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+  //cout << "Atmosphere:  h=" << altitude << " rho= " << intDensity << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,6 +294,25 @@ void FGAtmosphere::Turbulence(void)
     break;
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAtmosphere::UseExternal(void) {
+  temperature=&exTemperature;
+  pressure=&exPressure;
+  density=&exDensity;
+  useExternal=true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAtmosphere::UseInternal(void) {
+  temperature=&intTemperature;
+  pressure=&intPressure;
+  density=&intDensity;
+  useExternal=false;
+}
+  
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

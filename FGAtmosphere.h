@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.30 2002/04/30 11:23:39 apeden Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.31 2002/06/08 00:11:09 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.30 2002/04/30 11:23:39 apeden Exp $
+    @version $Id: FGAtmosphere.h,v 1.31 2002/06/08 00:11:09 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -96,12 +96,12 @@ public:
   bool InitModel(void);
 
   /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature(void) const {return temperature;}
+  inline double GetTemperature(void) const {return *temperature;}
   /** Returns the density in slugs/ft^3.
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  inline double GetDensity(void)  const {return density;}
+  inline double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
-  inline double GetPressure(void)  const {return pressure;}
+  inline double GetPressure(void)  const {return *pressure;}
   /// Returns the speed of sound in ft/sec.
   inline double GetSoundSpeed(void) const {return soundspeed;}
 
@@ -115,18 +115,18 @@ public:
   inline double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
-  inline double GetTemperatureRatio(void) const { return temperature*rSLtemperature; }
+  inline double GetTemperatureRatio(void) const { return (*temperature)*rSLtemperature; }
   /// Returns the ratio of at-altitude density over the sea level value.
-  inline double GetDensityRatio(void) const { return density*rSLdensity; }
+  inline double GetDensityRatio(void) const { return (*density)*rSLdensity; }
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  inline double GetPressureRatio(void) const { return pressure*rSLpressure; }
+  inline double GetPressureRatio(void) const { return (*pressure)*rSLpressure; }
   /// Returns the ratio of at-altitude sound speed over the sea level value.
   inline double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
 
   /// Tells the simulator to use an externally calculated atmosphere model.
-  inline void UseExternal(void)          { useExternal=true;  }
+  void UseExternal(void);
   /// Tells the simulator to use the internal atmosphere model.
-  inline void UseInternal(void)          { useExternal=false; } //this is the default
+  void UseInternal(void);  //this is the default
   /// Gets the boolean that tells if the external atmosphere model is being used.
   bool External(void) { return useExternal; }
 
@@ -166,9 +166,11 @@ private:
   double htab[8];
   double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
   double rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
-  double temperature,density,pressure,soundspeed;
+  double *temperature,*density,*pressure;
+  double soundspeed;
   bool useExternal;
   double exTemperature,exDensity,exPressure;
+  double intTemperature, intDensity, intPressure;
   
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
