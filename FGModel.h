@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.22 2001/07/02 13:42:14 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.23 2001/07/13 12:55:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -109,7 +109,7 @@ public:
   /** Loads this model.
       @param Config a pointer to the config file instance
       @return true if model is successfully loaded*/
-  virtual bool Load(FGConfigFile* Config) {}
+  virtual bool Load(FGConfigFile* Config) {return true;}
  
   FGModel* NextModel;
   string Name;
