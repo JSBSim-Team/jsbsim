@@ -83,3 +83,25 @@ void FGFCS::SetThrottle(int engineNum, float setting)
   }
 }
 
+
+FGFCS::LoadFCS(FGConfigFile* AC_cfg)
+{
+  string token;
+  
+  FCSName = AC_cfg->GetValue("NAME");
+  AC_cfg->GetNextConfigLine();
+  while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
+    if (token == "COMPONENT") {
+      // FCS COMPONENT CREATION LOGIC HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+      // MOST LIKELY WILL CALL CONSTRUCTOR FOR COMPONENT HERE AND ADD TO STL VECTOR
+      // -----------------------------------------------------------------------
+      // remove lines below after component creation logic added ********* START
+      while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+        AC_cfg->GetNextConfigLine();
+      }
+      // remove above                                            *********** END
+      AC_cfg->GetNextConfigLine();
+    }
+  }
+}
+

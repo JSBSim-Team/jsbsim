@@ -38,7 +38,16 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 
+#ifdef FGFS
+#  include <Include/compiler.h>
+#  include STL_STRING
+   FG_USING_STD(string);
+#else
+#  include <string>
+#endif
+
 #include "FGModel.h"
+#include "FGConfigFile.h"
 
 /*******************************************************************************
 CLASS DECLARATION
@@ -56,7 +65,7 @@ public:
 	~FGFCS(void);
 
 	bool Run(void);
-  
+
 	inline float GetDa(void) {return Da;}
 	inline float GetDe(void) {return De;}
 	inline float GetDr(void) {return Dr;}
@@ -70,6 +79,8 @@ public:
 	inline void SetDf(float tt) {Df = tt*fScale;}
 	inline void SetDs(float tt) {Ds = tt*sScale;}
 	void SetThrottle(int ii, float tt);
+  LoadFCS(FGConfigFile* AC_cfg);
+  string FCSName;
 
 protected:
 

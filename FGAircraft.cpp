@@ -474,12 +474,7 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg)
 {
   string token;
 
-  AC_cfg->GetNextConfigLine();
-
-  while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
-
-    AC_cfg->GetNextConfigLine();
-  }
+  FCS->LoadFCS(AC_cfg);
 }
 
 /******************************************************************************/
