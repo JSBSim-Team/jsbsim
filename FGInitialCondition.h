@@ -118,7 +118,8 @@ public:
 
   void SetVcalibratedKtsIC(float tt);
   void SetVequivalentKtsIC(float tt);
-  void SetVtrueKtsIC(float tt);
+  inline void SetVtrueKtsIC(float tt) { SetVtrueFpsIC(tt*jsbKTSTOFPS); }
+  void SetVtrueFpsIC(float tt);
   void SetMachIC(float tt);
 
   void SetUBodyFpsIC(float tt);
@@ -206,6 +207,9 @@ public:
   inline float GetThetaRadIC(void) { return theta; }
   inline float GetPhiRadIC(void)   { return phi; }
   inline float GetPsiRadIC(void)   { return psi; }
+  
+  inline float GetSeaLevelRadiusFtIC(void)  { return sea_level_radius; }
+  inline float GetTerrainAltitudeFtIC(void) { return terrain_altitude; }
 
 
 

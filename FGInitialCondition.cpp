@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.21 2000/10/22 14:01:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.22 2000/10/27 10:13:47 jsb Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 
@@ -110,8 +110,8 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
   vc=calcVcas(mach);
 }
 
-void FGInitialCondition::SetVtrueKtsIC(float tt) {
-  vt=tt*jsbKTSTOFPS;
+void FGInitialCondition::SetVtrueFpsIC(float tt) {
+  vt=tt;
   lastSpeedSet=setvt;
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
