@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.45 2004/04/30 12:06:20 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.46 2004/07/11 21:39:36 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.45 2004/04/30 12:06:20 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.46 2004/07/11 21:39:36 dpculp Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -129,6 +129,19 @@ public:
   /// Provides the external atmosphere model with an interface to set the pressure.
   inline void SetExPressure(double p)     { exPressure=p; }
 
+  /// Sets the temperature deviation at sea-level in degrees Fahrenheit
+  inline void SetSLTempDev(double d)  { T_dev_sl = d; }
+  /// Gets the temperature deviation at sea-level in degrees Fahrenheit
+  inline double GetSLTempDev(void) const { return T_dev_sl; }
+  /// Sets the current delta-T in degrees Fahrenheit
+  inline void SetDeltaT(double d)  { delta_T = d; } 
+  /// Gets the current delta-T in degrees Fahrenheit
+  inline double GetDeltaT(void) const  { return delta_T; } 
+  /// Gets the at-altitude temperature deviation in degrees Fahrenheit
+  inline double GetTempDev(void) const { return T_dev; }
+  /// Gets the density altitude in feet
+  inline double GetDensityAltitude(void) const { return density_altitude; }
+
   /// Sets the wind components in NED frame.
   inline void SetWindNED(double wN, double wE, double wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
@@ -164,6 +177,7 @@ protected:
   bool useExternal;
   double exTemperature,exDensity,exPressure;
   double intTemperature, intDensity, intPressure;
+  double T_dev_sl, T_dev, delta_T, density_altitude;
   
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
