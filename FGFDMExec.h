@@ -96,6 +96,7 @@ public:
 private:
   bool frozen;
   bool terminate;
+  bool allocated;
   int Error;
 
   string AircraftPath;
@@ -112,6 +113,9 @@ private:
   FGPosition*    Position;
   FGAuxiliary*   Auxiliary;
   FGOutput*      Output;
+  
+  bool Allocate(void);
+  bool DeAllocate(void);
 
 protected:
 };

@@ -84,8 +84,21 @@ FGFDMExec::FGFDMExec(void)
   Auxiliary   = 0;
   Output      = 0;
 
-  // Instantiate this FDM Executive's Models
+  allocated = false;
+  terminate = false;
+  frozen = false;
+}
 
+FGFDMExec::~FGFDMExec(void){
+  
+  DeAllocate();
+
+}
+
+bool FGFDMExec::Allocate(void) {
+  
+  bool result=true;
+  
   Atmosphere  = new FGAtmosphere(this);
   FCS         = new FGFCS(this);
   Aircraft    = new FGAircraft(this);
@@ -107,7 +120,9 @@ FGFDMExec::FGFDMExec(void)
   if (!Position->InitModel())   {cerr << "Position model init failed"; Error+=32;}
   if (!Auxiliary->InitModel())  {cerr << "Auxiliary model init failed"; Error+=64;}
   if (!Output->InitModel())     {cerr << "Output model init failed"; Error+=128;}
-
+  
+  if(Error > 0) result=false;
+  
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
@@ -120,24 +135,41 @@ FGFDMExec::FGFDMExec(void)
   Schedule(Position,    1);
   Schedule(Auxiliary,   1);
   Schedule(Output,     1);
+  
+  allocated = true;
+  
+  return result;
 
-  terminate = false;
-  frozen = false;
 }
 
+bool FGFDMExec::DeAllocate(void) {
+  if(allocated) {
+    if ( Atmosphere != 0 )  delete Atmosphere;
+    if ( FCS != 0 )         delete FCS;
+    if ( Aircraft != 0 )    delete Aircraft;
+    if ( Translation != 0 ) delete Translation;
+    if ( Rotation != 0 )    delete Rotation;
+    if ( Position != 0 )    delete Position;
+    if ( Auxiliary != 0 )   delete Auxiliary;
+    if ( Output != 0 )      delete Output;
+    if ( State != 0 )       delete State;
 
-FGFDMExec::~FGFDMExec(void){
+    FirstModel  = 0L;
+    Error       = 0;
+
+    State       = 0;
+    Atmosphere  = 0;
+    FCS         = 0;
+    Aircraft    = 0;
+    Translation = 0;
+    Rotation    = 0;
+    Position    = 0;
+    Auxiliary   = 0;
+    Output      = 0;
+    
+    allocated = false;
   
-  if ( Atmosphere != NULL )  delete Atmosphere;
-  if ( FCS != NULL )         delete FCS;
-  if ( Aircraft != NULL )    delete Aircraft;
-  if ( Translation != NULL ) delete Translation;
-  if ( Rotation != NULL )    delete Rotation;
-  if ( Position != NULL )    delete Position;
-  if ( Auxiliary != NULL )   delete Auxiliary;
-  if ( Output != NULL )      delete Output;
-  if ( State != NULL )       delete State;
-
+  }
 }
 
 
@@ -199,7 +231,9 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
-	AircraftPath = APath;
+	DeAllocate();
+  Allocate();
+  AircraftPath = APath;
 	EnginePath = EPath;
   return Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
 }
