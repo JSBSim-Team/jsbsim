@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.49 2003/06/05 12:36:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.50 2003/11/09 21:54:00 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,19 +72,19 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
     if (token == "INPUT") {
-      token = AC_cfg->GetValue("INPUT");
+      *AC_cfg >> token;
 
       if (token[0] == '-') {
         invert = true;
         token.erase(0,1);
-      }      
+      }
 
       if (InputNodes.size() > 0) {
         cerr << "Gains can only accept one input" << endl;
       } else  {
-        *AC_cfg >> token;
         InputNodes.push_back( resolveSymbol(token) );
-      }  
+      }
+
     } else if (token == "GAIN") {
       *AC_cfg >> Gain;
     } else if (token == "MIN") {
@@ -113,7 +113,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *Table << *AC_cfg;
     }
   }
-  
+
   FGFCSComponent::bind();
   if (Type == "AEROSURFACE_SCALE")
     treenode->Tie( "output-norm", this, &FGGain::GetOutputPct );
@@ -198,7 +198,6 @@ void FGGain::Debug(int from)
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       cout << "      MIN: " << Min << endl;
       cout << "      MAX: " << Max << endl;
-      if(invert) cout << "      Invert mapping" << endl;
       if (ScheduledBy != 0) {
         cout << "      Scheduled by parameter: " << ScheduledBy->getName() << endl;
         Table->Print();

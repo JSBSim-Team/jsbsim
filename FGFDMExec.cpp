@@ -75,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.98 2003/06/03 09:53:44 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.99 2003/11/09 21:54:00 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -501,6 +501,7 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
   scratch = AC_cfg->GetValue("VERSION").c_str();
 
   CFGVersion = AC_cfg->GetValue("VERSION");
+  Release    = AC_cfg->GetValue("RELEASE");
 
   if (debug_lvl > 0)
     cout << "                            Version: " << highint << CFGVersion
@@ -511,6 +512,25 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
     cerr << "Current version needed is: " << needed_cfg_version << endl;
     cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
     return false;
+  }
+  
+  if (Release == "ALPHA") {
+    system("banner ALPHA");
+    cout << endl << endl
+         << highint << "This aircraft model is an " << fgred << Release
+         << reset << highint << " release!!!" << endl << endl << reset
+         << "This aircraft model may not even properly load, and probably"
+         << " will not fly as expected." << endl << endl
+         << fgred << highint << "Use this model for development purposes ONLY!!!"
+         << normint << endl << endl;
+  } else if (Release == "BETA") {
+    system("banner BETA");
+    cout << endl << endl
+         << highint << "This aircraft model is a " << fgred << Release
+         << reset << highint << " release!!!" << endl << endl << reset
+         << "This aircraft model probably will not fly as expected." << endl << endl
+         << fgblue << highint << "Use this model for development purposes ONLY!!!"
+         << normint << reset << endl << endl;
   }
 
   return true;

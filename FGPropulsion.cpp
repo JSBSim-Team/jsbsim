@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.83 2003/06/03 09:53:49 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.84 2003/11/09 21:54:00 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -226,7 +226,6 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
       if (Eng_cfg.IsOpen()) {
         Eng_cfg.GetNextConfigLine();
         engType = Eng_cfg.GetValue();
-        cout << engType << endl;
 
         FCS->AddThrottle();
         ThrottleAdded = true;

@@ -11,8 +11,9 @@ $version = 0.7;
 //                                                   * 
 //****************************************************
 // Updated: 29 Sep 2003, DPC - added high alpha/beta drag
-// Updated: 5 Sep 2003, DPC - added prop transport
+// Updated:  5 Sep 2003, DPC - added prop transport
 // Updated: 16 Oct 2003, DPC - added better FCS
+// Updated:  9 Nov 2003, JSB - removed INVERT keyword and inserted "-"
 
 header("Content-type: text/plain");
 
@@ -949,10 +950,9 @@ print("      MAX     0.35\n");
 print("      OUTPUT  fcs/left-aileron-pos-rad\n");
 print("   </COMPONENT>\n");
 print("   <COMPONENT NAME=\"Right Aileron Control\" TYPE=\"AEROSURFACE_SCALE\">\n");
-print("      INPUT   fcs/roll-trim-sum\n");
+print("      INPUT  -fcs/roll-trim-sum\n");
 print("      MIN    -0.35\n");
 print("      MAX     0.35\n");
-print("      INVERT\n");
 print("      OUTPUT  fcs/right-aileron-pos-rad\n");
 print("   </COMPONENT>\n");
 

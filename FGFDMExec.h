@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.61 2003/06/03 09:53:44 ehofman Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.62 2003/11/09 21:54:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.61 2003/06/03 09:53:44 ehofman Exp $
+    @version $Id: FGFDMExec.h,v 1.62 2003/11/09 21:54:00 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -285,6 +285,7 @@ private:
   string ControlPath;
   
   string CFGVersion;
+  string Release;
 
   FGState*           State;
   FGAtmosphere*      Atmosphere;

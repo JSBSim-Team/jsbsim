@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.10 2003/10/24 12:45:21 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.11 2003/11/09 21:54:00 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -330,8 +330,9 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
 {
   int i;
   string token;
+/*
   Name = Eng_cfg->GetValue("NAME");
-  cout << Name << endl;
+  cout << "\n    Engine Name: "         << Name << endl;
   Eng_cfg->GetNextConfigLine();
   *Eng_cfg >> token >> MilThrust;
   *Eng_cfg >> token >> MaxThrust;
@@ -351,13 +352,46 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
     ThrustTables.back()->Load(Eng_cfg);
     i++;
   }
-  
-  // pre-calculations and initializations
-  delay= 60.0 / (BypassRatio + 3.0);
+*/
+
+  Name = Eng_cfg->GetValue("NAME");
+  Eng_cfg->GetNextConfigLine();
+  int counter=0;
+
+  while (Eng_cfg->GetValue() != string("/FG_SIMTURBINE")) {
+    *Eng_cfg >> token;
+
+    if (token[0] == '<') token.erase(0,1); // Tables are read "<TABLE"
+
+    if      (token == "MILTHRUST") *Eng_cfg >> MilThrust;
+    else if (token == "MAXTHRUST") *Eng_cfg >> MaxThrust;
+    else if (token == "BYPASSRATIO") *Eng_cfg >> BypassRatio;
+    else if (token == "TSFC") *Eng_cfg >> TSFC;
+    else if (token == "ATSFC") *Eng_cfg >> ATSFC;
+    else if (token == "IDLEN1") *Eng_cfg >> IdleN1;
+    else if (token == "IDLEN2") *Eng_cfg >> IdleN2;
+    else if (token == "MAXN1") *Eng_cfg >> MaxN1;
+    else if (token == "MAXN2") *Eng_cfg >> MaxN2;
+    else if (token == "AUGMENTED") *Eng_cfg >> Augmented;
+    else if (token == "AUGMETHOD") *Eng_cfg >> AugMethod;
+    else if (token == "INJECTED") *Eng_cfg >> Injected;
+    else if (token == "MINTHROTTLE") *Eng_cfg >> MinThrottle;
+    else if (token == "TABLE") {
+      if (counter++ == 0) Debug(2); // print engine specs prior to table read
+      ThrustTables.push_back( new FGCoefficient(FDMExec) );
+      ThrustTables.back()->Load(Eng_cfg);
+    }
+    else cerr << "Unhandled token in Engine config file: " << token << endl;
+  }
+
+  // Pre-calculations and initializations
+
+  delay = 60.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
   OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
+
   return true;
 }
 
@@ -388,6 +422,24 @@ void FGSimTurbine::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
+    }
+    if (from == 2) { // called from Load()
+      cout << "\n    Engine Name: "         << Name << endl;
+      cout << "      MilThrust:   "         << MilThrust << endl;
+      cout << "      MaxThrust:   "         << MaxThrust << endl;
+      cout << "      BypassRatio: "         << BypassRatio << endl;
+      cout << "      TSFC:        "         << TSFC << endl;
+      cout << "      ATSFC:       "         << ATSFC << endl;
+      cout << "      IdleN1:      "         << IdleN1 << endl;
+      cout << "      IdleN2:      "         << IdleN2 << endl;
+      cout << "      MaxN1:       "         << MaxN1 << endl;
+      cout << "      MaxN2:       "         << MaxN2 << endl;
+      cout << "      Augmented:   "         << Augmented << endl;
+      cout << "      AugMethod:   "         << AugMethod << endl;
+      cout << "      Injected:    "         << Injected << endl;
+      cout << "      MinThrottle: "         << MinThrottle << endl;
+
+      cout << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
