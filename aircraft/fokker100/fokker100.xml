@@ -379,6 +379,11 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="PITCH">
+    <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+       Pitching_moment_at_zero_alpha
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
+       -0.09
+    </COEFFICIENT>
     <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
        Pitch_moment_due_to_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/alpha-rad
