@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.102 2002/02/22 12:12:33 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.103 2002/02/23 13:10:18 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -832,12 +832,14 @@ void FGState::ReportState(void) {
                     Aircraft->GetNlf(),
                     GetParameter(FG_PITCHRATE)*radtodeg );
   cout << out;
-  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
+  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
                     Rotation->Getpsi()*radtodeg,
-                    GetParameter(FG_BETA)*radtodeg );                  
+                    GetParameter(FG_BETA)*radtodeg,
+                    Rotation->GetPQR(3)*radtodeg  );                  
   cout << out;
-  snprintf(out,80, "    Bank Angle: %5.2f deg\n",
-                    Rotation->Getphi()*radtodeg );
+  snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
+                    Rotation->Getphi()*radtodeg, 
+                    Rotation->GetPQR(1)*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
                     GetParameter(FG_ELEVATOR_POS)*radtodeg,
