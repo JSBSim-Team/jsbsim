@@ -74,7 +74,7 @@ class FGFilter  : public FGFCSComponent
   FGConfigFile* AC_cfg;
 
 protected:
-  enum {eLag, eRectLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType; 
+  enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType; 
 
 public:
   FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg);

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.9 2000/10/16 12:32:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.10 2000/11/14 23:40:49 jsb Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +50,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
   string token;
+  float denom;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -58,7 +59,6 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   C1 = C2 = C3 = C4 = C5 = C6 = 0.0;
 
   if      (Type == "LAG_FILTER")          FilterType = eLag        ;
-  else if (Type == "RECT_LAG_FILTER")     FilterType = eRectLag    ;
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;
   else if (Type == "SECOND_ORDER_FILTER") FilterType = eOrder2     ;
   else if (Type == "WASHOUT_FILTER")      FilterType = eWashout    ;
@@ -96,18 +96,25 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   switch (FilterType) {
     case eLag:
-      ca = dt*C1 / (2.00 + dt*C1);
-      cb = (2.00 - dt*C1) / (2.00 + dt*C1);
-      break;
-    case eRectLag:
+      denom = 2.00 + dt*C1;
+      ca = dt*C1 / denom;
+      cb = (2.00 - dt*C1) / denom;
       break;
     case eLeadLag:
+      denom = 2.00*C3 + dt*C4;
+      ca = (2.00*C1 + dt*C2) / denom;
+      cb = (dt*C2 - 2.00*C1) / denom;
+      cc = (2.00*C3 - dt*C2) / denom;
       break;
     case eOrder2:
       break;
     case eWashout:
+      denom = 2.00 + dt*C1;
+      ca = 2.00 / denom;
+      cb = (2.00 - dt*C1) / denom;
       break;
     case eIntegrator:
+      ca = dt*C1 / 2.00;
       break;
   }
 
@@ -125,16 +132,18 @@ bool FGFilter::Run(void)
 
   switch (FilterType) {
     case eLag:
-      break;
-    case eRectLag:
+      Output = Input * ca + PreviousOutput1 * cb;
       break;
     case eLeadLag:
+      Output = Input * ca + PreviousInput1 * cb + PreviousOutput1 * cc;
       break;
     case eOrder2:
       break;
     case eWashout:
+      Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;
       break;
     case eIntegrator:
+      Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
       break;
   }
 
@@ -142,6 +151,8 @@ bool FGFilter::Run(void)
   PreviousOutput1 = Output;
   PreviousInput2  = PreviousInput1;
   PreviousInput1  = Input;
+
+  if (IsOutput) SetOutput();
 
   return true;
 }
