@@ -167,10 +167,14 @@ void FGTrim::ReportState(void) {
     sprintf(gear,"Down");
   sprintf(out, "    Flaps: %3s  Gear: %4s\n",flap,gear);
   cout << out;
-  sprintf(out, "    Speed: %4.0f KCAS  Mach: %5.2f  Altitude: %7.0f ft.\n",
+  sprintf(out, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
                     fdmex->GetAuxiliary()->GetVcalibratedKTS(),
                     fdmex->GetState()->GetParameter(FG_MACH),
                     fdmex->GetPosition()->Geth() );
+  cout << out;
+  sprintf(out, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
+                    fdmex->GetPosition()->Geth(),
+                    fdmex->GetPosition()->GetDistanceAGL() );
   cout << out;
   sprintf(out, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
                     fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG,
