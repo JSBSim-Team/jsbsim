@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.87 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.88 2004/05/21 20:45:27 frohlich Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,9 +179,6 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Drag, Side, Lift, ";
       outstream << "L/D, ";
       outstream << "Xforce, Yforce, Zforce, ";
-      outstream << "xGravity, yGravity, zGravity, ";
-      outstream << "xCoriolis, yCoriolis, zCoriolis, ";
-      outstream << "xCentrifugal, yCentrifugal, zCentrifugal";
     }
     if (SubSystems & ssMoments) {
       outstream << ", ";
@@ -276,9 +273,6 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Aerodynamics->GetvFs() << ", ";
     outstream << Aerodynamics->GetLoD() << ", ";
     outstream << Aircraft->GetForces() << ", ";
-    outstream << Inertial->GetGravity() << ", ";
-    outstream << Inertial->GetCoriolis() << ", ";
-    outstream << Inertial->GetCentrifugal();
   }
   if (SubSystems & ssMoments) {
     outstream << ", ";

@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.57 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.58 2004/05/21 20:45:35 frohlich Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,7 @@ bool FGAuxiliary::Run()
        vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
        vPilotAccel += vPQR * (vPQR * vToEyePt);
     } else {
-       vPilotAccel = -1*( Propagate->GetTl2b() * Inertial->GetGravity() );
+       vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, Inertial->gravity() );
     }
 
     vPilotAccelN = vPilotAccel/Inertial->gravity();

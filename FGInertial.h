@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.36 2004/05/21 16:01:09 frohlich Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.37 2004/05/21 20:45:35 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,11 +83,6 @@ public:
   ~FGInertial(void);
 
   bool Run(void);
-  FGColumnVector3& GetForces(void) {return vForces;}
-  FGColumnVector3& GetGravity(void) {return vGravity;}
-  FGColumnVector3& GetCoriolis(void) {return vCoriolis;}
-  FGColumnVector3& GetCentrifugal(void) {return vCentrifugal;}
-  double GetForces(int n) const {return vForces(n);}
   bool LoadInertial(FGConfigFile* AC_cfg);
   double SLgravity(void) const {return gAccelReference;}
   double gravity(void) const {return gAccel;}
@@ -95,14 +90,7 @@ public:
   double GetGAccel(double r) const { return GM/(r*r); }
   double RefRadius(void) const {return RadiusReference;}
 
-  void bind(void);
-  void unbind(void);
-
 private:
-  FGColumnVector3 vForces;
-  FGColumnVector3 vGravity;
-  FGColumnVector3 vCoriolis;
-  FGColumnVector3 vCentrifugal;
   double gAccel;
   double gAccelReference;
   double RadiusReference;

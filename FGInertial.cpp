@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.39 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.40 2004/05/21 20:45:35 frohlich Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,11 +60,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   RadiusReference = 20925650.00;
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
-  vCoriolis.InitMatrix();
-  vCentrifugal.InitMatrix();
-  vGravity.InitMatrix();
-
-  bind();
 
   Debug(0);
 }
@@ -73,7 +68,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 
 FGInertial::~FGInertial(void)
 {
-  unbind();
   Debug(1);
 }
 
@@ -81,32 +75,14 @@ FGInertial::~FGInertial(void)
 
 bool FGInertial::Run(void)
 {
-  if (!FGModel::Run()) {
+  // Fast return if we have nothing to do ...
+  if (FGModel::Run()) return true;
 
-    double Vn = Propagate->GetVel(eNorth);
-    double Ve = Propagate->GetVel(eEast);
-    double Vd = Propagate->GetVel(eDown);
-    double lat = Propagate->GetLocation().GetLatitude();
-    double R = Propagate->GetRadius();
+  // Gravitation accel
+  double r = Propagate->GetRadius();
+  gAccel = GetGAccel(r);
 
-    gAccel = GM / (R*R);
-
-    vGravity(eDown) = gAccel;
-
-    vCoriolis(eNorth) = (Vn*Vd - Ve*Ve*tan(lat)) / R;
-    vCoriolis(eEast)  = (Ve*Vd + Vn*Ve*tan(lat)) / R;
-    vCoriolis(eDown)  = 0.00;
-
-    vCentrifugal(eNorth) = 0.0;
-    vCentrifugal(eEast) = 0.0;
-    vCentrifugal(eDown) = -(Vn*Vn + Ve*Ve) / R;
-
-    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
-
-    return false;
-  } else {
-    return true;
-  }
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,27 +94,6 @@ bool FGInertial::LoadInertial(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGInertial::bind(void)
-{
-  typedef double (FGInertial::*PMF)(int) const;
-  PropertyManager->Tie("forces/fbx-inertial-lbs", this,1,
-                       (PMF)&FGInertial::GetForces);
-  PropertyManager->Tie("forces/fby-inertial-lbs", this,2,
-                       (PMF)&FGInertial::GetForces);
-  PropertyManager->Tie("forces/fbz-inertial-lbs", this,3,
-                       (PMF)&FGInertial::GetForces);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGInertial::unbind(void)
-{
-  PropertyManager->Untie("forces/fbx-inertial-lbs");
-  PropertyManager->Untie("forces/fby-inertial-lbs");
-  PropertyManager->Untie("forces/fbz-inertial-lbs");
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
