@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.23 2002/02/13 22:17:10 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.24 2002/02/22 12:11:49 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -114,8 +114,11 @@ enum eParam {
   FG_BI2VEL,
   FG_CI2VEL,
   FG_ELEVATOR_POS,
+  FG_AELEVATOR_POS,
   FG_AILERON_POS,
+  FG_AAILERON_POS,
   FG_RUDDER_POS,
+  FG_ARUDDER_POS,
   FG_SPDBRAKE_POS,
   FG_SPOILERS_POS,
   FG_FLAPS_POS,
@@ -162,7 +165,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.23 2002/02/13 22:17:10 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.24 2002/02/22 12:11:49 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
