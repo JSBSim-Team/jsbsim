@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.60 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.61 2002/07/30 12:18:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.60 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGState.h,v 1.61 2002/07/30 12:18:38 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -313,13 +313,6 @@ private:
   FGPropulsion* Propulsion;
   FGPropertyManager* PropertyManager;
 
- /*  typedef map<string, eParam> CoeffMap;
-  CoeffMap coeffdef;
-
-  typedef map<eParam, string> ParamMap;
-  //ParamMap paramdef; */
-
-  
   typedef map<string,string> ParamNameMap;
   ParamNameMap ParamNameToProp;
   
@@ -327,8 +320,6 @@ private:
   ParamIdxMap ParamIdxToProp;
   //CoeffMap PropToParam;
 
-  int ActiveEngine;
-  
   void InitPropertyMaps(void);
   
   void Debug(int from);

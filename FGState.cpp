@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.116 2002/07/26 04:49:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.117 2002/07/30 12:18:37 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,6 @@ FGState::FGState(FGFDMExec* fdex)
   a = 1000.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
-  ActiveEngine = -1;
 
   Aircraft     = FDMExec->GetAircraft();
   Translation  = FDMExec->GetTranslation();
@@ -546,17 +545,17 @@ void FGState::InitPropertyMaps(void)
   ParamNameToProp[  "FG_THROTTLE_POS" ]="fcs/throttle-pos-norm";
   ParamNameToProp[  "FG_MIXTURE_CMD" ]="fcs/mixture-cmd-norm";
   ParamNameToProp[  "FG_MIXTURE_POS" ]="fcs/mixture-pos-norm";
-  ParamNameToProp[  "FG_MAGNETO_CMD" ]="zero";
-  ParamNameToProp[  "FG_STARTER_CMD" ]="zero";
-  ParamNameToProp[  "FG_ACTIVE_ENGINE" ]="zero";
+  ParamNameToProp[  "FG_MAGNETO_CMD" ]="propulsion/magneto_cmd";
+  ParamNameToProp[  "FG_STARTER_CMD" ]="propulsion/starter_cmd";
+  ParamNameToProp[  "FG_ACTIVE_ENGINE" ]="propulsion/active_engine";
   ParamNameToProp[  "FG_HOVERB" ]="aero/h_b-mac-ft";
   ParamNameToProp[  "FG_PITCH_TRIM_CMD" ]="fcs/pitch-trim-cmd-norm";
   ParamNameToProp[  "FG_YAW_TRIM_CMD" ]="fcs/yaw-trim-cmd-norm";
   ParamNameToProp[  "FG_ROLL_TRIM_CMD" ]="fcs/roll-trim-cmd-norm";
-  ParamNameToProp[  "FG_LEFT_BRAKE_CMD" ]="zero";
-  ParamNameToProp[  "FG_CENTER_BRAKE_CMD" ]="zero";
-  ParamNameToProp[  "FG_RIGHT_BRAKE_CMD" ]="zero";
-  ParamNameToProp[  "FG_SET_LOGGING" ]="zero";
+  ParamNameToProp[  "FG_LEFT_BRAKE_CMD" ]="fcs/left_brake";
+  ParamNameToProp[  "FG_CENTER_BRAKE_CMD" ]="fcs/center_brake";
+  ParamNameToProp[  "FG_RIGHT_BRAKE_CMD" ]="fcs/right_brake";
+  ParamNameToProp[  "FG_SET_LOGGING" ]="sim/set_logging";
   ParamNameToProp[  "FG_ALPHAH" ]="aero/alpha-rad";
   ParamNameToProp[  "FG_ALPHAW" ]="aero/alpha-wing-rad";
   ParamNameToProp[  "FG_LBARH" ]="metrics/lh-norm";     

@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.76 2002/06/05 03:47:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.77 2002/07/30 12:18:36 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -82,6 +82,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;
   dt = 0.0;
+  ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   bind();
   Debug(0);
 }
@@ -560,13 +561,67 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropulsion::SetMagnetos(int setting)
+{
+  if (ActiveEngine == -1) {
+    for (unsigned i=0; i<Engines.size(); i++) {
+      Engines[i]->SetMagnetos(setting);
+    }
+  } else {
+    Engines[ActiveEngine]->SetMagnetos(setting);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::SetStarter(int setting)
+{
+  if (ActiveEngine == -1) {
+    for (unsigned i=0; i<Engines.size(); i++) {
+      Engines[i]->SetStarter(setting);
+    }
+  } else {
+    if (setting == 0)
+      Engines[ActiveEngine]->SetStarter(false);
+    else
+      Engines[ActiveEngine]->SetStarter(true);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::SetActiveEngine(int engine)
+{
+  if ( unsigned(engine) > Engines.size())
+    ActiveEngine = -1;
+  else
+    ActiveEngine = engine;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropulsion::bind(void)
 {
   typedef double (FGPropulsion::*PMF)(int) const;
+  typedef int (FGPropulsion::*iPMF)(void) const;
   /* PropertyManager->Tie("propulsion/num-engines", this,
                        &FGPropulsion::GetNumEngines);
   PropertyManager->Tie("propulsion/num-tanks", this,
                        &FGPropulsion::GetNumTanks); */
+
+  PropertyManager->Tie("propulsion/magneto_cmd", this,
+                       (iPMF)0,
+                       &FGPropulsion::SetMagnetos,
+                       true);
+  PropertyManager->Tie("propulsion/starter_cmd", this,
+                       (iPMF)0,
+                       &FGPropulsion::SetStarter,
+                       true);
+  PropertyManager->Tie("propulsion/active_engine", this,
+                       (iPMF)0,
+                       &FGPropulsion::SetActiveEngine,
+                       true);
+
   PropertyManager->Tie("propulsion/num-sel-fuel-tanks", this,
                        &FGPropulsion::GetnumSelectedFuelTanks);
   PropertyManager->Tie("propulsion/num-sel-ox-tanks", this,
@@ -595,6 +650,9 @@ void FGPropulsion::unbind(void)
   PropertyManager->Untie("propulsion/num-tanks"); */
   PropertyManager->Untie("propulsion/num-sel-fuel-tanks");
   PropertyManager->Untie("propulsion/num-sel-ox-tanks");
+  PropertyManager->Untie("propulsion/magneto_cmd");
+  PropertyManager->Untie("propulsion/starter_cmd");
+  PropertyManager->Untie("propulsion/active_engine");
   PropertyManager->Untie("forces/fbx-prop-lbs");
   PropertyManager->Untie("forces/fby-prop-lbs");
   PropertyManager->Untie("forces/fbz-prop-lbs");

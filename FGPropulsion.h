@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.43 2002/06/05 03:47:48 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.44 2002/07/30 12:18:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.43 2002/06/05 03:47:48 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.44 2002/07/30 12:18:37 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -192,6 +192,10 @@ public:
   double GetTanksIxz(const FGColumnVector3& vXYZcg);
   double GetTanksIxy(const FGColumnVector3& vXYZcg);
   
+  void SetMagnetos(int setting);
+  void SetStarter(int setting);
+  void SetActiveEngine(int engine);
+  
   void bind();
   void unbind();
    
@@ -207,6 +211,7 @@ private:
   unsigned int numEngines;
   unsigned int numTanks;
   unsigned int numThrusters;
+  int ActiveEngine;
   double dt;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
