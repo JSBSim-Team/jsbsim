@@ -107,7 +107,7 @@ void FGAtmosphere::Calculate(float altitude)
     float slope,reftemp,refpress,refdens;
     int i=0;
     float htab[]={0,36089,82020,154198,173882,259183,295272,344484}; //ft.
-      cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+//      cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
     if (altitude <= htab[0]) {
       altitude=0;
     } else if (altitude >= htab[7]){

@@ -191,11 +191,17 @@ private:
   FGTank* Tank[MAX_TANKS];
   FGEngine *Engine[MAX_ENGINES];
 
-//  FGCoefficient *Coeff[6][10];
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
+
   typedef vector<FGCoefficient*> CoeffArray;
-  CoeffArray *Coeff;
+  typedef vector<CoeffArray*> CoeffVector;
+
+  CoeffVector Coeff;
+
+//  vector <vector <FGCoefficient*> > Coeff;
+
+
 //  int coeff_ctr[6];
 
   bool GearUp;
@@ -217,6 +223,7 @@ private:
   void ReadFlightControls(FGConfigFile*);
   void ReadAerodynamics(FGConfigFile*);
   void ReadUndercarriage(FGConfigFile*);
+  void ReadPrologue(FGConfigFile*);
 
 protected:
 

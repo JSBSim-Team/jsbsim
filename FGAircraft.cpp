@@ -134,11 +134,7 @@ INCLUDES
 
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 {
-  int i;
-
   Name = "FGAircraft";
-
-//  for (i=0;i<6;i++) coeff_ctr[i] = 0;
 
   AxisIdx["LIFT"]  = 0;
   AxisIdx["SIDE"]  = 1;
@@ -146,8 +142,6 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
   AxisIdx["ROLL"]  = 3;
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
-
-  Coeff = new[CoeffArray] CoeffArray;
 }
 
 
@@ -315,8 +309,8 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
         if ( !(tag == "}") ) {
           while ( !(tag == "}") ) {
             aircraftfile.seekg(gpos);
-            Coeff[axis][coeff_ctr[axis]] = new FGCoefficient(FDMExec, aircraftfile);
-            coeff_ctr[axis]++;
+//            Coeff[axis][coeff_ctr[axis]] = new FGCoefficient(FDMExec, aircraftfile);
+//            coeff_ctr[axis]++;
             aircraftfile >> tag;
             gpos = aircraftfile.tellg();
             aircraftfile >> tag;
@@ -351,7 +345,7 @@ bool FGAircraft::LoadAircraftEx(string aircraft_path, string engine_path, string
   string filename;
   string aircraftCfgFileName;
   string token;
-  
+
   AircraftPath = aircraft_path;
   EnginePath = engine_path;
 
@@ -359,19 +353,7 @@ bool FGAircraft::LoadAircraftEx(string aircraft_path, string engine_path, string
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
 
-  token = AC_cfg.GetValue();
-
-  AircraftName = AC_cfg.GetValue("NAME");
-  cout << "Reading Aircraft Configuration File: " << AircraftName << endl;
-  CFGVersion = strtod(AC_cfg.GetValue("VERSION").c_str(),NULL);
-  cout << "                            Version: " << CFGVersion << endl;
-  if (CFGVersion < NEEDED_CFG_VERSION) {
-    cout << endl << "YOU HAVE AN OLD CFG FILE FOR THIS AIRCRAFT."
-                    " RESULTS WILL BE UNPREDICTABLE !!" << endl;
-    cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
-    cout << "         You have version: " << CFGVersion << endl << endl;
-    exit(-1);
-  }
+  ReadPrologue(&AC_cfg);
 
   while ((AC_cfg.GetNextConfigLine() != "EOF") &&
                                    (token = AC_cfg.GetValue()) != "/FDM_CONFIG")
@@ -519,14 +501,14 @@ void FGAircraft::FMAero(void)
   float ca, cb, sa, sb;
   int axis_ctr,ctr;
   F[0] = F[1] = F[2] = 0.0;
-
+/* THIS MUST BE FIXED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < coeff_ctr[axis_ctr]; ctr++) {
       F[axis_ctr] += Coeff[axis_ctr][ctr]->TotalValue();
 //      Coeff[axis_ctr][ctr]->DumpSD();
     }
   }
-
+*/
   ca = cos(alpha);
   sa = sin(alpha);
   cb = cos(beta);
@@ -556,7 +538,8 @@ void FGAircraft::FMAero(void)
   Moments[2] += -Forces[0]*dycg + Forces[1]*dxcg; //yawing moment
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-    for (ctr = 0; ctr < coeff_ctr[axis_ctr+3]; ctr++) {
+      for (ctr = 0; ctr < 3; ctr++) {                     // THIS MUST BE FIXED !!!!!!!!!!!!!!!!!!!!!
+//    for (ctr = 0; ctr < coeff_ctr[axis_ctr+3]; ctr++) { // THIS MUST BE FIXED !!!!!!!!!!!!!!!!!!!!!
       Moments[axis_ctr] += Coeff[axis_ctr+3][ctr]->TotalValue();
 //      Coeff[axis_ctr+3][ctr]->DumpSD();
     }
@@ -635,7 +618,6 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
     else if (parameter == "AC_CGLOC") *AC_cfg >> baseXcg >> baseYcg >> baseZcg;
     else if (parameter == "AC_EYEPTLOC") *AC_cfg >> Xep >> Yep >> Zep;
     else if (parameter == "AC_AERORP") *AC_cfg >> Xrp >> Yrp >> Zrp;
-    AC_cfg->GetNextConfigLine();
   }
 }
 
@@ -671,8 +653,8 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
       }
       numTanks++;
     }
-    
-    AC_cfg->GetNextConfigLine();
+
+//    AC_cfg->GetNextConfigLine();
   }
 }
 
@@ -701,12 +683,13 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != "/AERODYNAMICS") {
     if (token == "AXIS") {
       axis = AC_cfg->GetValue("NAME");
+      Coeff[AxisIdx[axis]]
       while ((token = AC_cfg->GetValue()) != "/AXIS") {
         Coeff[AxisIdx[axis]].push_back(new FGCoefficient(FDMExec, AC_cfg));
         AC_cfg->GetNextConfigLine();
       }
     }
-    AC_cfg->GetNextConfigLine();
+//    AC_cfg->GetNextConfigLine();
   }
 }
 
@@ -721,7 +704,27 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
     lGear.push_back(new FGLGear(AC_cfg));
 
-    AC_cfg->GetNextConfigLine();
+//    AC_cfg->GetNextConfigLine();
+  }
+}
+
+/******************************************************************************/
+
+void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg)
+{
+  string token = AC_cfg->GetValue();
+
+  AircraftName = AC_cfg->GetValue("NAME");
+  cout << "Reading Aircraft Configuration File: " << AircraftName << endl;
+  CFGVersion = strtod(AC_cfg->GetValue("VERSION").c_str(),NULL);
+  cout << "                            Version: " << CFGVersion << endl;
+
+  if (CFGVersion < NEEDED_CFG_VERSION) {
+    cout << endl << "YOU HAVE AN OLD CFG FILE FOR THIS AIRCRAFT."
+                    " RESULTS WILL BE UNPREDICTABLE !!" << endl;
+    cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
+    cout << "         You have version: " << CFGVersion << endl << endl;
+    exit(-1);
   }
 }
 
