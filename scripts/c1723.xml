@@ -44,6 +44,12 @@
       <set name="ap/altitude_setpoint" type="FG_VALUE" value="2000.0" action="FG_EXP" persistent="false" tc ="3.0">
       <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
     </when>
+
+    <when> <!-- Set Heading when reach 1900 ft -->
+      <set name="ap/heading_setpoint" type="FG_VALUE" value="200" action="FG_STEP" persistent="false" tc="1.0">
+      <set name="ap/attitude_hold" type="FG_VALUE" value="0" action="FG_STEP" persistent="false" tc="1.0">
+      <set name="ap/heading_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
+    </when>
   </run>
 
 </runscript>

@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.31 2004/05/04 12:22:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.32 2004/05/05 12:22:10 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,12 +124,13 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       while (AC_cfg->GetValue() != string("/TEST")) {
         current_test->conditions.push_back(FGCondition(AC_cfg, PropertyManager));
       }
+      AC_cfg->GetNextConfigLine();
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
+      *AC_cfg >> sOutputIdx;
       OutputNode = PropertyManager->GetNode( sOutputIdx, true );
     }
-    AC_cfg->GetNextConfigLine();
   }
 
   FGFCSComponent::bind();
@@ -262,6 +263,7 @@ void FGSwitch::Debug(int from)
         cout << endl;
         *iTests++;
       }
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

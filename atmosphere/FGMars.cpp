@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.6 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.7 2004/05/05 12:22:17 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,7 +202,7 @@ void FGMars::Turbulence(void)
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulence = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Propagate->GetHOverBMAC();
+    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
@@ -246,7 +246,7 @@ void FGMars::Turbulence(void)
 
                                 // Diminish z-vector within two wingspans
                                 // of the ground
-    double HOverBMAC = Propagate->GetHOverBMAC();
+    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 2.0)
         vDirection(eZ) *= HOverBMAC / 2.0;
 

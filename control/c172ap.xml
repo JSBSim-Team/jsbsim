@@ -159,13 +159,8 @@ ROLL CHANNEL
   <TEST LOGIC="AND" VALUE="fcs/roll-ap-aileron-command-normalizer">
     ap/attitude_hold == 1
   </TEST>
+  OUTPUT ap/aileron_cmd
 </COMPONENT>
-
-<COMPONENT NAME="AP Roll Command Output" TYPE="PURE_GAIN">
-  INPUT          fcs/roll-command-selector
-  OUTPUT         ap/aileron_cmd
-</COMPONENT>
-
 
 <!--
 =====================================================
@@ -179,7 +174,8 @@ PITCH CHANNEL
      the desired altitude (altitude_setpoint) from the actual altitude above sea
      level (_not_ Above Ground Level).  This error signal is interpreted as an
      hdot command (hdot is time rate of change of altitude, or rate of climb). As
-     such it is limited to a maximum absolute value of 10 fps here (600 fpm). -->
+     such it is limited to a maximum absolute value of 10 fps here (600 fpm).
+-->
 
 <COMPONENT NAME="Altitude Error" TYPE="SUMMER">
   INPUT         -position/h-sl-ft
