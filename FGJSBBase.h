@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.7 2001/11/10 14:55:15 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.8 2001/11/10 15:09:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.7 2001/11/10 14:55:15 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.8 2001/11/10 15:09:35 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,9 +103,11 @@ public:
   /// Constructor for FGJSBBase.
   FGJSBBase() {};
 
-  /// Destructor for FGJSBBase
+  /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
 
+  ///@name JSBSim Enums.
+  //@{
   enum {eL     = 1, eM,     eN    };
   enum {eP     = 1, eQ,     eR    };
   enum {eU     = 1, eV,     eW    };
@@ -114,7 +116,10 @@ public:
   enum {eDrag  = 1, eSide,  eLift };
   enum {eRoll  = 1, ePitch, eYaw  };
   enum {eNorth = 1, eEast,  eDown };
-
+  //@}
+  
+  ///@name JSBSim console output highlighting terms.
+  //@{
   static char highint[5];
   static char halfint[5];
   static char normint[6];
@@ -126,7 +131,10 @@ public:
   static char fgred[6];
   static char fggreen[6];
   static char fgdef[6];
+  //@}
 
+  ///@name JSBSim Messaging functions
+  //@{
   struct Message* PutMessage(struct Message* msg);
   struct Message* PutMessage(string text);
   struct Message* PutMessage(string text, bool bVal);
@@ -134,6 +142,7 @@ public:
   struct Message* PutMessage(string text, double dVal);
   struct Message* ReadMessage(void);
   struct Message* ProcessMessage(void);
+  //@}
 
 protected:
   static struct Message  localMsg;
