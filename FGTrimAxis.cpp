@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.22 2001/10/29 17:47:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.23 2001/11/06 12:50:28 apeden Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -150,9 +150,9 @@ FGTrimAxis::~FGTrimAxis()
 
 void FGTrimAxis::getState(void) {
   switch(state) {
-  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot(1); break;
-  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot(2); break;
-  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot(3); break;
+  case tUdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(1); break;
+  case tVdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(2); break;
+  case tWdot: state_value=fdmex->GetAircraft()->GetBodyAccel()(3); break;
   case tQdot: state_value=fdmex->GetRotation()->GetPQRdot(2);break;
   case tPdot: state_value=fdmex->GetRotation()->GetPQRdot(1); break;
   case tRdot: state_value=fdmex->GetRotation()->GetPQRdot(3); break;
@@ -397,7 +397,10 @@ void FGTrimAxis::setThrottlesPct(void) {
       tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
       tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
       //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
-      fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
+      fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
+      //cout << "setThrottlespct: " << fdmex->GetFCS()->GetThrottleCmd(i) << endl;
+      fdmex->RunIC(fgic); //apply throttle change
+      fdmex->GetPropulsion()->GetSteadyState();
   }
 }
 
