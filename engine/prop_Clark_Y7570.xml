@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<FG_PROPELLER  NAME="Simulated Clark Y Airfoil McCauley 7570 Propeller">
+  IXX       1.8
+  DIAMETER  75
+  NUMBLADES  2
+  MINPITCH 21.6
+  MAXPITCH 21.6
+  C_THRUST 7 1
+  0	0.108
+  0.2	0.104
+  0.4	0.100
+  0.6	0.080
+  0.8	0.052
+  1	0.020
+  1.11  0.000
+  C_POWER  7 1
+  0	0.080
+  0.2	0.075
+  0.4	0.069
+  0.6	0.061
+  0.8	0.050
+  1	0.022
+  1.11	0.000
+</FG_PROPELLER>
+
