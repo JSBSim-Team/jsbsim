@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.64 2001/11/14 23:53:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.65 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -320,6 +320,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
     model_iterator->NextModel->SetRate(rate);
 
   }
+  
   return 0;
 }
 
@@ -668,6 +669,9 @@ void FGFDMExec::RunScript(void)
           break;
         }
         State->SetParameter(iC->SetParam[i], newSetValue);
+        if ((unsigned long int)Propulsion->GetTank(0) == 0) {
+          cout << "Param # getting set: " << iC->SetParam[i] << " Value: " << newSetValue << endl;
+        }
       }
     }
     iC++;

@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.42 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.43 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
     n     = multparms.find("|");
     start = 0;
 
-    if(multparms != string("FG_NONE")) {
+    if (multparms != string("FG_NONE")) {
       while (n < end && n >= 0) {
         n -= start;
         mult = multparms.substr(start,n);

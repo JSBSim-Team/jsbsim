@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.24 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.25 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,9 +135,9 @@ bool FGAtmosphere::Run(void)
     soundspeed = sqrt(SHRatio*Reng*temperature);
 
     State->Seta(soundspeed);
-
   } else {                               // skip Run() execution this time
   }
+
   return false;
 }
 

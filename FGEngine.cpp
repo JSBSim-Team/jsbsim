@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.42 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.43 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,6 @@ void FGEngine::ConsumeFuel(void) {
   FGTank* Tank;
 
   if (TrimMode) return;
-
   Fshortage = Oshortage = 0.0;
   for (unsigned int i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(i);

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.53 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.54 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,8 @@ FGPropulsion::~FGPropulsion()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::Run(void) {
+bool FGPropulsion::Run(void)
+{
   double PowerAvailable;
   dt = State->Getdt();
 
@@ -102,7 +103,6 @@ bool FGPropulsion::Run(void) {
       *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
     }
-
     return false;
   } else {
     return true;

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.58 2001/11/14 23:53:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.59 2001/11/20 21:25:11 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,9 +111,9 @@ void FGFCS::SetThrottleCmd(int engineNum, double setting)
 {
   unsigned int ctr;
 
-  if ((int)ThrottleCmd.size() > engineNum) {
+  if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<=ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
+      for (ctr=0;ctr<ThrottleCmd.size();ctr++) ThrottleCmd[ctr] = setting;
     } else {
       ThrottleCmd[engineNum] = setting;
     }
@@ -130,9 +130,9 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
 {
   unsigned int ctr;
 
-  if ((int)ThrottlePos.size() > engineNum) {
+  if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
-      for (ctr=0;ctr<=ThrottlePos.size();ctr++) ThrottlePos[ctr] = setting;
+      for (ctr=0;ctr<ThrottlePos.size();ctr++) ThrottlePos[ctr] = setting;
     } else {
       ThrottlePos[engineNum] = setting;
     }
@@ -147,7 +147,7 @@ void FGFCS::SetThrottlePos(int engineNum, double setting)
 
 double FGFCS::GetThrottleCmd(int engineNum)
 {
-  if ((int)ThrottleCmd.size() > engineNum) {
+  if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
        cerr << "Cannot get throttle value for ALL engines" << endl;
     } else {
@@ -164,7 +164,7 @@ double FGFCS::GetThrottleCmd(int engineNum)
 
 double FGFCS::GetThrottlePos(int engineNum)
 {
-  if ((int)ThrottlePos.size() > engineNum) {
+  if (engineNum < (int)ThrottlePos.size()) {
     if (engineNum < 0) {
        cerr << "Cannot get throttle value for ALL engines" << endl;
     } else {
@@ -183,10 +183,12 @@ void FGFCS::SetMixtureCmd(int engineNum, double setting)
 {
   unsigned int ctr;
 
-  if (engineNum < 0) {
-    for (ctr=0;ctr<MixtureCmd.size();ctr++) MixtureCmd[ctr] = setting;
-  } else {
-    MixtureCmd[engineNum] = setting;
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<MixtureCmd.size();ctr++) MixtureCmd[ctr] = setting;
+    } else {
+      MixtureCmd[engineNum] = setting;
+    }
   }
 }
 
@@ -196,10 +198,12 @@ void FGFCS::SetMixturePos(int engineNum, double setting)
 {
   unsigned int ctr;
 
-  if (engineNum < 0) {
-    for (ctr=0;ctr<=MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
-  } else {
-    MixturePos[engineNum] = setting;
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<=MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
+    } else {
+      MixturePos[engineNum] = setting;
+    }
   }
 }
 
