@@ -43,9 +43,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifdef FGFS
+#  include <time.h>
 #  include <simgear/compiler.h>
 #  include STL_IOSTREAM
-#  include STL_CTIME
 #  include STL_ITERATOR
 #else
 #  include <iostream>
@@ -69,7 +69,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.50 2001/06/05 12:52:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.51 2001/06/05 19:00:39 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
