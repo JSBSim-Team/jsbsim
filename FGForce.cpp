@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.37 2004/03/09 12:32:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.38 2004/03/15 09:20:01 ehofman Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

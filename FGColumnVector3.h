@@ -33,7 +33,7 @@ INCLUDES
    SG_USING_STD(cerr);
    SG_USING_STD(cout);
    SG_USING_STD(endl);
-   SG_USING_STD(sqrt);
+//   SG_USING_STD(sqrt);
 #else
 #  include <string>
 #  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.23 2004/03/09 12:32:51 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.24 2004/03/15 09:20:02 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.23 2004/03/09 12:32:51 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.24 2004/03/15 09:20:02 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

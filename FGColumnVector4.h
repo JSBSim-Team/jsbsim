@@ -31,7 +31,7 @@ INCLUDES
    SG_USING_STD(cerr);
    SG_USING_STD(cout);
    SG_USING_STD(endl);
-   SG_USING_STD(sqrt);
+//   SG_USING_STD(sqrt);
 #else
 #  include <string>
 #  if defined (sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.17 2004/02/22 21:42:32 jberndt Exp $"
+#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.18 2004/03/15 09:20:02 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 4 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector4.h,v 1.17 2004/02/22 21:42:32 jberndt Exp $
+    @version $Id: FGColumnVector4.h,v 1.18 2004/03/15 09:20:02 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
