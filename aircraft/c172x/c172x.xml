@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.4 2002/08/18 15:36:44 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.5 2002/08/27 11:51:27 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -145,6 +145,9 @@
     </AC_TANK>
 
   </PROPULSION>
+  
+  <AUTOPILOT FILE="c172ap">
+  </AUTOPILOT>
 
   <FLIGHT_CONTROL NAME="c172">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
