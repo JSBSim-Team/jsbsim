@@ -68,6 +68,7 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
+#include "FGMatrix.h"
 
 using namespace std;
 
@@ -81,23 +82,13 @@ public:
    FGTranslation(FGFDMExec*);
    ~FGTranslation(void);
 
-   inline float GetU(void) {return U;}
-   inline float GetV(void) {return V;}
-   inline float GetW(void) {return W;}
-
-   inline float GetUdot(void) {return Udot;}
-   inline float GetVdot(void) {return Vdot;}
-   inline float GetWdot(void) {return Wdot;}
+   inline FGColumnVector GetUVW(void) {return vUVW;}
 
    inline float Getalpha(void) {return alpha;}
    inline float Getbeta (void) {return beta; }
    inline float Getgamma(void) {return gamma;}
 
-   inline void SetU(float tt) {U = tt;}
-   inline void SetV(float tt) {V = tt;}
-   inline void SetW(float tt) {W = tt;}
-
-   inline void SetUVW(float t1, float t2, float t3) {U=t1; V=t2; W=t3;}
+   inline void SetUVW(FGColumnVector tt) {vUVW = tt;}
 
    inline void Setalpha(float tt) {alpha = tt;}
    inline void Setbeta (float tt) {beta  = tt;}
@@ -110,13 +101,11 @@ public:
 protected:
 
 private:
-  float U, V, W;                 // Body frame velocities owned by FGTranslation
-  float P, Q, R;
+  FGColumnVector vUVW;
+  FGColumnVector vPQR;
+  FGColumnVector vForces;
+  FGColumnVector vEuler;
   float Vt, qbar, mach;
-  float Udot, Vdot, Wdot;
-  float lastUdot, lastVdot, lastWdot;
-  float phi, tht, psi;
-  float Fx, Fy, Fz;
   float Mass, dt;
   float alpha, beta, gamma;
   float rho;

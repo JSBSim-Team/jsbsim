@@ -63,7 +63,10 @@ INCLUDES
 *******************************************************************************/
 
 
-FGState::FGState(FGFDMExec* fdex)
+FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
+                                    mTl2b(3,3),
+                                    mTs2b(3,3),
+                                    vQtrn(4)
 {
   FDMExec = fdex;
 
@@ -96,11 +99,11 @@ FGState::FGState(FGFDMExec* fdex)
   coeffdef["FG_CI2VEL"]    = 131072L;
 }
 
+/******************************************************************************/
 
 FGState::~FGState(void)
 {
 }
-
 
 //***************************************************************************
 //
@@ -148,13 +151,15 @@ void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
                          float Latitude, float Longitude, float H)
 {
+  FGColumnVector vUVW(3);
+  FGColumnVector vEuler(3);
   float alpha, beta, gamma;
 
   latitude = Latitude;
   longitude = Longitude;
   h = H;
   FDMExec->GetAtmosphere()->Run();
-  
+
   gamma = 0.0;
   if (W != 0.0)
     alpha = U*U > 0.0 ? atan2(W, U) : 0.0;
@@ -165,20 +170,19 @@ void FGState::Initialize(float U, float V, float W,
   else
     beta = 0.0;
 
-  FDMExec->GetTranslation()->SetUVW(U, V, W);
-  FDMExec->GetRotation()->SetEuler(phi, tht, psi);
+  vUVW << U << V << W;
+  FDMExec->GetTranslation()->SetUVW(vUVW);
+  vEuler << phi << tht << psi;
+  FDMExec->GetRotation()->SetEuler(vEuler);
   FDMExec->GetTranslation()->SetABG(alpha, beta, gamma);
 
   Vt = sqrt(U*U + V*V + W*W);
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
 
   CalcMatrices(phi, tht, psi);
-
-  FDMExec->GetPosition()->SetT(T[1][1], T[1][2], T[1][3],
-                               T[2][1], T[2][2], T[2][3],
-                               T[3][1], T[3][2], T[3][3]);
 }
 
+/******************************************************************************/
 
 void FGState::Initialize(FGInitialCondition *FGIC)
 {
@@ -199,20 +203,21 @@ void FGState::Initialize(FGInitialCondition *FGIC)
   Initialize(U, V, W, phi, tht, psi, latitude, longitude, h);
 }
 
+/******************************************************************************/
 
 bool FGState::StoreData(string fname)
 {
   ofstream datafile(fname.c_str());
 
   if (datafile) {
-    datafile << FDMExec->GetTranslation()->GetU();
-    datafile << FDMExec->GetTranslation()->GetV();
-    datafile << FDMExec->GetTranslation()->GetW();
+    datafile << (FDMExec->GetTranslation()->GetUVW())(1);
+    datafile << (FDMExec->GetTranslation()->GetUVW())(2);
+    datafile << (FDMExec->GetTranslation()->GetUVW())(3);
     datafile << latitude;
     datafile << longitude;
-    datafile << FDMExec->GetRotation()->Getphi();
-    datafile << FDMExec->GetRotation()->Gettht();
-    datafile << FDMExec->GetRotation()->Getpsi();
+    datafile << (FDMExec->GetRotation()->GetEuler())(1);
+    datafile << (FDMExec->GetRotation()->GetEuler())(2);
+    datafile << (FDMExec->GetRotation()->GetEuler())(3);
     datafile << h;
     datafile.close();
     return true;
@@ -222,18 +227,21 @@ bool FGState::StoreData(string fname)
   }
 }
 
+/******************************************************************************/
 
 float FGState::GetParameter(string val_string)
 {
   return GetParameter(coeffdef[val_string]);
 }
 
+/******************************************************************************/
 
 int FGState::GetParameterIndex(string val_string)
 {
   return coeffdef[val_string];
 }
 
+/******************************************************************************/
 
 float FGState::GetParameter(int val_idx)
 {
@@ -255,11 +263,11 @@ float FGState::GetParameter(int val_idx)
   case FG_BETADOT:
     return Getbdot();
   case FG_PITCHRATE:
-    return FDMExec->GetRotation()->GetQ();
+    return (FDMExec->GetRotation()->GetPQR())(2);
   case FG_ROLLRATE:
-    return FDMExec->GetRotation()->GetP();
+    return (FDMExec->GetRotation()->GetPQR())(1);
   case FG_YAWRATE:
-    return FDMExec->GetRotation()->GetR();
+    return (FDMExec->GetRotation()->GetPQR())(3);
   case FG_ELEVATOR:
     return FDMExec->GetFCS()->GetDe();
   case FG_AILERON:
@@ -278,6 +286,7 @@ float FGState::GetParameter(int val_idx)
   return 0;
 }
 
+/******************************************************************************/
 
 void FGState::CalcMatrices(float phi, float tht, float psi)
 {
@@ -315,12 +324,10 @@ void FGState::CalcMatrices(float phi, float tht, float psi)
   Q2 =  Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
   Q3 =  Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
 
-//  Qtrn[1] = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-//  Qtrn[2] = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-//  Qtrn[3] = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-//  Qtrn[4] = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
-
-  FDMExec->GetRotation()->SetQ0123(Q0, Q1, Q2, Q3);
+  vQtrn(1) = Q0;
+  vQtrn(2) = Q1;
+  vQtrn(3) = Q2;
+  vQtrn(4) = Q3;
 
   Q0Q0 = Q0*Q0;
   Q1Q1 = Q1*Q1;
@@ -333,30 +340,85 @@ void FGState::CalcMatrices(float phi, float tht, float psi)
   Q1Q3 = Q1*Q3;
   Q2Q3 = Q2*Q3;
 
-//  Tb2l[1][1] = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-//  Tb2l[1][2] = 2*(Q1Q2 + Q0Q3);
-//  Tb2l[1][3] = 2*(Q1Q3 - Q0Q2);
-//  Tb2l[2][1] = 2*(Q1Q2 - Q0Q3);
-//  Tb2l[2][2] = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-//  Tb2l[2][3] = 2*(Q2Q3 + Q0Q1);
-//  Tb2l[3][1] = 2*(Q1Q3 + Q0Q2);
-//  Tb2l[3][2] = 2*(Q2Q3 - Q0Q1);
-//  Tb2l[3][3] = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+  mTb2l(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
+  mTb2l(1,2) = 2*(Q1Q2 + Q0Q3);
+  mTb2l(1,3) = 2*(Q1Q3 - Q0Q2);
+  mTb2l(2,1) = 2*(Q1Q2 - Q0Q3);
+  mTb2l(2,2) = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
+  mTb2l(2,3) = 2*(Q2Q3 + Q0Q1);
+  mTb2l(3,1) = 2*(Q1Q3 + Q0Q2);
+  mTb2l(3,2) = 2*(Q2Q3 - Q0Q1);
+  mTb2l(3,3) = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
 
-  T[1][1] = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-  T[1][2] = 2*(Q1Q2 + Q0Q3);
-  T[1][3] = 2*(Q1Q3 - Q0Q2);
-  T[2][1] = 2*(Q1Q2 - Q0Q3);
-  T[2][2] = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-  T[2][3] = 2*(Q2Q3 + Q0Q1);
-  T[3][1] = 2*(Q1Q3 + Q0Q2);
-  T[3][2] = 2*(Q2Q3 - Q0Q1);
-  T[3][3] = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+  mTl2b = mTb2l;
+  mTl2b.T();
 }
 
+/******************************************************************************/
 
-void FGState::IntegrateQuat(float P, float Q, float R)
+void FGState::IntegrateQuat(FGColumnVector vPQR, int rate)
 {
-    //TODO: Add your source code here
+  static FGColumnVector vlastQdot(4);
+  static FGColumnVector vQdot(4);
+
+  vQdot(1) = -0.5*(vQtrn(2)*vPQR(1) + vQtrn(3)*vPQR(2) + vQtrn(4)*vPQR(3));
+  vQdot(2) =  0.5*(vQtrn(1)*vPQR(1) + vQtrn(3)*vPQR(3) - vQtrn(4)*vPQR(2));
+  vQdot(3) =  0.5*(vQtrn(1)*vPQR(2) + vQtrn(4)*vPQR(1) - vQtrn(2)*vPQR(3));
+  vQdot(4) =  0.5*(vQtrn(1)*vPQR(3) + vQtrn(2)*vPQR(2) - vQtrn(3)*vPQR(1));
+
+  vQtrn += 0.5*dt*rate*(vlastQdot + vQdot);
+
+  vQtrn.Normalize();
+
+  vlastQdot = vQdot;
 }
+
+/******************************************************************************/
+
+FGColumnVector FGState::CalcEuler(void)
+{
+  static FGColumnVector vEuler(3);
+
+  if (mTb2l(3,3) == 0)
+    vEuler(1) = 0.0;
+  else
+    vEuler(1) = atan2(mTb2l(2,3), mTb2l(3,3));
+
+  vEuler(2) = asin(-mTb2l(1,3));
+
+  if (mTb2l(1,1) == 0.0)
+    vEuler(3) = 0.0;
+  else
+    vEuler(3) = atan2(mTb2l(1,2), mTb2l(1,1));
+
+  if (vEuler(3) < 0.0) vEuler(3) += 2*M_PI;
+
+  return vEuler;
+}
+
+/******************************************************************************/
+
+FGMatrix FGState::GetTs2b(float alpha, float beta)
+{
+  float ca, cb, sa, sb;
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTs2b(1,1) = -ca*cb;
+  mTs2b(1,2) = -ca*sb;
+  mTs2b(1,3) = sa;
+  mTs2b(2,1) = sb;
+  mTs2b(2,2) = cb;
+  mTs2b(2,3) = 0.0;
+  mTs2b(3,1) = -sa*cb;
+  mTs2b(3,2) = -sa*sb;
+  mTs2b(3,3) = -ca;
+
+  return mTs2b;
+}
+
+/******************************************************************************/
 

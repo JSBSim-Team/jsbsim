@@ -129,8 +129,11 @@ public:
 
   inline float IncrTime(void) {sim_time+=dt;return sim_time;}
   void CalcMatrices(float phi, float tht, float psi);
-  void IntegrateQuat(float P, float Q, float R);
-
+  void IntegrateQuat(FGColumnVector vPQR, int rate);
+  FGColumnVector CalcEuler(void);
+  FGMatrix GetTs2b(float alpha, float beta);
+  FGMatrix GetTl2b(void) {return mTl2b;}
+  FGMatrix GetTb2l(void) {return mTb2l;}
 
 private:
 
@@ -142,14 +145,13 @@ private:
   float qbar;                       // dynamic pressure
   float sim_time, dt;
   float Mach;                       // Mach number
-  float T[4][4];
 
   FGFDMExec* FDMExec;
   float LocalAltitudeOverRunway;
-//  FGMatrix Tb2l(3,3);
-//  FGMatrix Tl2b(3,3);
-//  FGMatrix Ts2b(3,3);
-//  FGColumnVector Qtrn(4);
+  FGMatrix mTb2l;
+  FGMatrix mTl2b;
+  FGMatrix mTs2b;
+  FGColumnVector vQtrn;
 
   typedef map<string, long> CoeffMap;
   CoeffMap coeffdef;

@@ -88,6 +88,13 @@ public:
   void SetRate(int tt) {rate = tt;};
 
 protected:
+  enum {eU=1, eV, eW};
+  enum {eNorth=1, eEast, eDown};
+  enum {eP=1, eQ, eR};
+  enum {eL=1, eM, eN};
+  enum {eX=1, eY, eZ};
+  enum {ePhi=1, eTht, ePsi};
+
   int exe_ctr;
   int rate;
   

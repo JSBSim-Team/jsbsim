@@ -77,106 +77,64 @@ INCLUDES
 *******************************************************************************/
 
 
-FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
+FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex),
+                                           vPQR(3),
+                                           vEuler(3),
+                                           vMoments(3)
 {
   Name = "FGRotation";
-  Q0dot = Q1dot = Q2dot = Q3dot = 0.0;
-  Pdot = Qdot = Rdot = 0.0;
 }
 
+/******************************************************************************/
 
 FGRotation::~FGRotation(void)
 {
 }
 
+/******************************************************************************/
 
 bool FGRotation::Run(void)
 {
-  float L2, N1, iQtot, sum;
+  float L2, N1;
+  static FGColumnVector vlastPQRdot(3);
+  static FGColumnVector vPQRdot(3);
 
   if (!FGModel::Run()) {
     GetState();
 
-    lastPdot = Pdot;
-    lastQdot = Qdot;
-    lastRdot = Rdot;
+    L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
+    N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
 
-    L2 = L + Ixz*P*Q - (Izz-Iyy)*R*Q;
-    N1 = N - (Iyy-Ixx)*P*Q - Ixz*R*Q;
+    vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
+    vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
+    vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
-    Pdot = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
-    Qdot = (M - (Ixx-Izz)*P*R - Ixz*(P*P - R*R))/Iyy;
-    Rdot = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
+    vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
 
-    P += dt*rate*(lastPdot + Pdot)/2.0;
-    Q += dt*rate*(lastQdot + Qdot)/2.0;
-    R += dt*rate*(lastRdot + Rdot)/2.0;
+    State->IntegrateQuat(vPQR, rate);
 
-    lastQ0dot = Q0dot;
-    lastQ1dot = Q1dot;
-    lastQ2dot = Q2dot;
-    lastQ3dot = Q3dot;
+    vEuler = State->CalcEuler();
 
-    Q0dot = -0.5*(Q1*P + Q2*Q + Q3*R);
-    Q1dot =  0.5*(Q0*P + Q2*R - Q3*Q);
-    Q2dot =  0.5*(Q0*Q + Q3*P - Q1*R);
-    Q3dot =  0.5*(Q0*R + Q1*Q - Q2*P);
+    vlastPQRdot = vPQRdot;
 
-    Q0 += 0.5*dt*rate*(lastQ0dot + Q0dot);
-    Q1 += 0.5*dt*rate*(lastQ1dot + Q1dot);
-    Q2 += 0.5*dt*rate*(lastQ2dot + Q2dot);
-    Q3 += 0.5*dt*rate*(lastQ3dot + Q3dot);
-
-    sum = Q0*Q0 + Q1*Q1 + Q2*Q2 + Q3*Q3;
-
-    iQtot = 1.0 / sqrt(sum);
-
-    Q0 *= iQtot;
-    Q1 *= iQtot;
-    Q2 *= iQtot;
-    Q3 *= iQtot;
-
-    if (T[3][3] == 0)
-      phi = 0.0;
-    else
-      phi = atan2(T[2][3], T[3][3]);
-
-    tht = asin(-T[1][3]);
-
-    if (T[1][1] == 0.0)
-      psi = 0.0;
-    else
-      psi = atan2(T[1][2], T[1][1]);
-
-    if (psi < 0.0) psi += 2*M_PI;
-
-    PutState();
   } else {
   }
   return false;
 }
 
+/******************************************************************************/
 
 void FGRotation::GetState(void)
 {
   dt = State->Getdt();
 
-  L = Aircraft->GetL();
-  M = Aircraft->GetM();
-  N = Aircraft->GetN();
+  vMoments = Aircraft->GetMoments();
 
   Ixx = Aircraft->GetIxx();
   Iyy = Aircraft->GetIyy();
   Izz = Aircraft->GetIzz();
   Ixz = Aircraft->GetIxz();
-
-  for (int r=1;r<=3;r++)
-    for (int c=1;c<=3;c++)
-      T[r][c] = Position->GetT(r,c);
 }
 
-
-void FGRotation::PutState(void)
-{
-}
+/******************************************************************************/
 

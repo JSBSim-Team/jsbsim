@@ -65,11 +65,13 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGFCS";
 }
 
+/******************************************************************************/
 
 FGFCS::~FGFCS(void)
 {
 }
 
+/******************************************************************************/
 
 bool FGFCS::Run(void)
 {
@@ -82,6 +84,7 @@ bool FGFCS::Run(void)
   return false;
 }
 
+/******************************************************************************/
 
 void FGFCS::SetThrottle(int engineNum, float setting)
 {
@@ -92,6 +95,7 @@ void FGFCS::SetThrottle(int engineNum, float setting)
   }
 }
 
+/******************************************************************************/
 
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 {
@@ -136,10 +140,14 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   return true;
 }
 
+/******************************************************************************/
+
 //TEST
 float FGFCS::GetComponentOutput(int idx)
 {
   return Components[idx]->GetOutput();
 }
-
 // END TEST
+
+/******************************************************************************/
+

@@ -410,6 +410,8 @@ float FGCoefficient::Value(void)
 
 float FGCoefficient::TotalValue()
 {
+  DumpSD();
+  
   switch(type) {
   case 0:
     return -1;
@@ -427,5 +429,5 @@ float FGCoefficient::TotalValue()
 
 void FGCoefficient::DumpSD(void)
 {
-  cout << "   " << name << " = " << SD << endl;
+  cout << "   " << name << ": " << SD << endl;
 }

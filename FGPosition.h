@@ -41,7 +41,9 @@ SENTRY
 /*******************************************************************************
 INCLUDES
 *******************************************************************************/
+
 #include "FGModel.h"
+#include "FGMatrix.h"
 
 using namespace std;
 
@@ -51,40 +53,11 @@ CLASS DECLARATION
 
 class FGPosition : public FGModel
 {
-public:
-  FGPosition(FGFDMExec*);
-  ~FGPosition(void);
+  FGColumnVector vUVW;
+  FGColumnVector vVel;
 
-  inline float GetFn(void) {return Fn;}
-  inline float GetFe(void) {return Fe;}
-  inline float GetFd(void) {return Fd;}
-
-  inline float GetVn(void) {return Vn;}
-  inline float GetVe(void) {return Ve;}
-  inline float GetVd(void) {return Vd;}
-
-  inline float GetT(int r, int c) {return T[r][c];}
-  inline void SetT(float t1, float t2, float t3, float t4, float t5, float t6,
-                                                   float t7, float t8, float t9)
-                                         {T[1][1]=t1; T[1][2]=t2 ;T[1][3]=t3;
-                                          T[2][1]=t4; T[2][2]=t5 ;T[2][3]=t6;
-                                          T[3][1]=t7; T[3][2]=t8 ;T[3][3]=t9;}
-
-  bool Run(void);
-
-protected:
-
-private:
-  float T[4][4];
-  float Q0, Q1, Q2, Q3;
-  float Fn, Fe, Fd;
-  float Fx, Fy, Fz;
-  float U, V, W;
-  float Vn, Ve, Vd, Vee;
-  float invMass, invRadius;
+  float Vee, invMass, invRadius;
   double Radius;
-  float AccelN, AccelE, AccelD;
-  float lastAccelN, lastAccelE, lastAccelD;
   float LatitudeDot, LongitudeDot, RadiusDot;
   float lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
   float Longitude, Latitude;
@@ -92,6 +65,15 @@ private:
 
   void GetState(void);
   void PutState(void);
+
+public:
+  FGPosition(FGFDMExec*);
+  ~FGPosition(void);
+
+  inline FGColumnVector GetVel(void) {return vVel;}
+  inline FGColumnVector GetUVW(void) {return vUVW;}
+
+  bool Run(void);
 };
 
 /******************************************************************************/

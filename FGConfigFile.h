@@ -86,7 +86,7 @@ private:
   ifstream cfgfile;
   string   CurrentLine;
   bool     CommentsOn;
-  int      CurrentIndex;
+  unsigned int      CurrentIndex;
 };
 
 /******************************************************************************/

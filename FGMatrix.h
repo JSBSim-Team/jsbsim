@@ -68,9 +68,10 @@ private:
   int width,prec,origin;
   void TransposeSquare(void);
   void TransposeNonSquare(void);
+  unsigned int rowCtr, colCtr;
 
 public:
-  FGMatrix(unsigned int rows, unsigned int cols);
+  FGMatrix(unsigned int r, unsigned int c);
   FGMatrix(const FGMatrix& A);
   ~FGMatrix(void);
 
@@ -78,17 +79,21 @@ public:
   double& operator()(unsigned int row, unsigned int col) const;
   FGColumnVector operator*(const FGColumnVector& Col);
 
-  unsigned int FGMatrix::Rows(void) const;
-  unsigned int FGMatrix::Cols(void) const;
+  unsigned int Rows(void) const;
+  unsigned int Cols(void) const;
 
-  void FGMatrix::T(void);
+  void T(void);
   void InitMatrix(void);
   void InitMatrix(double value);
 
   FGMatrix operator-(const FGMatrix& B);
   FGMatrix operator+(const FGMatrix& B);
-  FGMatrix operator*(const FGMatrix& Right);
+  FGMatrix operator*(const FGMatrix& B);
   FGMatrix operator/(const double scalar);
+  FGMatrix& operator<<(const float ff);
+
+  friend ostream& operator<<(ostream& os, const FGMatrix& M);
+  friend istream& operator>>(istream& is, FGMatrix& M);
 
   void operator-=(const FGMatrix &B);
   void operator+=(const FGMatrix &B);
@@ -114,7 +119,10 @@ public:
   ~FGColumnVector();
 
   FGColumnVector operator*(const double scalar);
+  FGColumnVector operator/(const double scalar);
   FGColumnVector operator+(const FGColumnVector& B);
+  float Magnitude(void); 
+  FGColumnVector Normalize(void);
 
   friend FGColumnVector operator*(const double scalar, const FGColumnVector& A);
 

@@ -73,46 +73,59 @@ INCLUDES
 *******************************************************************************/
 
 
-FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex)
+FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
+                                                 vUVW(3),
+                                                 vPQR(3),
+                                                 vForces(3),
+                                                 vEuler(3) 
 {
   Name = "FGTranslation";
-  Udot = Vdot = Wdot = 0.0;
 }
 
+/******************************************************************************/
 
 FGTranslation::~FGTranslation(void)
 {
 }
 
+/******************************************************************************/
 
 bool FGTranslation::Run(void)
 {
+  static FGColumnVector vlastUVWdot(3);
+  static FGColumnVector vUVWdot(3);
+  static FGMatrix       mVel(3,3);
+
   if (!FGModel::Run()) {
 
     GetState();
 
-    lastUdot = Udot;
-    lastVdot = Vdot;
-    lastWdot = Wdot;
+    mVel(1,1) =  0.0;
+    mVel(1,2) = -vUVW(eW);
+    mVel(1,3) =  vUVW(eV);
+    mVel(2,1) =  vUVW(eW);
+    mVel(2,2) =  0.0;
+    mVel(2,3) = -vUVW(eU);
+    mVel(3,1) = -vUVW(eV);
+    mVel(3,2) =  vUVW(eU);
+    mVel(3,3) =  0.0;
 
-    Udot = V*R - W*Q + Fx/Mass;
-    Vdot = W*P - U*R + Fy/Mass;
-    Wdot = U*Q - V*P + Fz/Mass;
+    vUVWdot = mVel*vPQR + vForces/Mass;
 
-    U += 0.5*dt*rate*(lastUdot + Udot);
-    V += 0.5*dt*rate*(lastVdot + Vdot);
-    W += 0.5*dt*rate*(lastWdot + Wdot);
+    vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot);
 
-    Vt = U*U+V*V+W*W > 0.0 ? sqrt(U*U + V*V + W*W) : 0.0;
+    Vt = vUVW.Magnitude();
 
-    if (W != 0.0)
-      alpha = U*U > 0.0 ? atan2(W, U) : 0.0;
-    if (V != 0.0)
-      beta = U*U+W*W > 0.0 ? atan2(V, (fabs(U)/U)*sqrt(U*U + W*W)) : 0.0;
+    if (vUVW(eW) != 0.0)
+      alpha = vUVW(eU)*vUVW(eU) > 0.0 ? atan2(vUVW(eW), vUVW(eU)) : 0.0;
+    if (vUVW(eV) != 0.0)
+      beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV), (fabs(vUVW(eU))/vUVW(eU))*sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
 
     qbar = 0.5*rho*Vt*Vt;
 
     mach = Vt / State->Geta();
+
+    vlastUVWdot = vUVWdot;
 
     PutState();
   } else {
@@ -120,27 +133,22 @@ bool FGTranslation::Run(void)
   return false;
 }
 
+/******************************************************************************/
 
 void FGTranslation::GetState(void)
 {
   dt = State->Getdt();
 
-  P = Rotation->GetP();
-  Q = Rotation->GetQ();
-  R = Rotation->GetR();
-
-  Fx = Aircraft->GetFx();
-  Fy = Aircraft->GetFy();
-  Fz = Aircraft->GetFz();
+  vPQR = Rotation->GetPQR();
+  vForces = Aircraft->GetForces();
 
   Mass = Aircraft->GetMass();
   rho = Atmosphere->GetDensity();
 
-  phi = Rotation->Getphi();
-  tht = Rotation->Gettht();
-  psi = Rotation->Getpsi();
+  vEuler = Rotation->GetEuler();
 }
 
+/******************************************************************************/
 
 void FGTranslation::PutState(void)
 {

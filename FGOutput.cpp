@@ -64,221 +64,154 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 #endif
 }
 
+/******************************************************************************/
 
 FGOutput::~FGOutput(void)
 {
   if (socket) delete socket;
 }
 
+/******************************************************************************/
 
 bool FGOutput::Run(void)
 {
   if (!FGModel::Run()) {
 //    SocketOutput();
 //    DelimitedOutput("JSBSimData.csv");
-//    DelimitedOutput();
+    DelimitedOutput();
   } else {
   }
   return false;
 }
 
+/******************************************************************************/
 
 void FGOutput::DelimitedOutput(void)
 {
   if (dFirstPass) {
     cout << "Time,";
-    cout << "Altitude,";
-    cout << "Phi,";
-    cout << "Tht,";
-    cout << "Psi,";
-    cout << "Rho,";
-    cout << "Vtotal,";
-    cout << "U,";
-    cout << "V,";
-    cout << "W,";
-    cout << "Vn,";
-    cout << "Ve,";
-    cout << "Vd,";
-    cout << "Udot,";
-    cout << "Vdot,";
-    cout << "Wdot,";
-    cout << "P,";
-    cout << "Q,";
-    cout << "R,";
-    cout << "PDot,";
-    cout << "QDot,";
-    cout << "RDot,";
-    cout << "Fx,";
-    cout << "Fy,";
-    cout << "Fz,";
-    cout << "Latitude,";
-    cout << "Longitude,";
     cout << "QBar,";
-    cout << "Alpha,";
-    cout << "L,";
-    cout << "M,";
-    cout << "N,";
+    cout << "Vtotal,";
     cout << "Throttle,";
     cout << "Aileron,";
     cout << "Elevator,";
     cout << "Rudder,";
+    cout << "Rho,";
     cout << "Ixx,";
     cout << "Iyy,";
     cout << "Izz,";
     cout << "Ixz,";
     cout << "Mass,";
-    cout << "X CG";
+    cout << "XYZ CG,";
+    cout << "Forces,";
+    cout << "Moments,";
+    cout << "Altitude,";
+    cout << "Phi, Tht, Psi,";
+    cout << "PQR,";
+    cout << "UVW,";
+    cout << "Alpha,";
+    cout << "Vned,";
+    cout << "Latitude,";
+    cout << "Longitude";
     cout << endl;
     dFirstPass = false;
   }
 
   cout << State->Getsim_time() << ",";
-  cout << State->Geth() << ",";
-  cout << Rotation->Getphi() << ",";
-  cout << Rotation->Gettht() << ",";
-  cout << Rotation->Getpsi() << ",";
-  cout << Atmosphere->GetDensity() << ",";
-  cout << State->GetVt() << ",";
-  cout << Translation->GetU() << ",";
-  cout << Translation->GetV() << ",";
-  cout << Translation->GetW() << ",";
-  cout << Position->GetVn() << ",";
-  cout << Position->GetVe() << ",";
-  cout << Position->GetVd() << ",";
-  cout << Translation->GetUdot() << ",";
-  cout << Translation->GetVdot() << ",";
-  cout << Translation->GetWdot() << ",";
-  cout << Rotation->GetP() << ",";
-  cout << Rotation->GetQ() << ",";
-  cout << Rotation->GetR() << ",";
-  cout << Rotation->GetPdot() << ",";
-  cout << Rotation->GetQdot() << ",";
-  cout << Rotation->GetRdot() << ",";
-  cout << Aircraft->GetFx() << ",";
-  cout << Aircraft->GetFy() << ",";
-  cout << Aircraft->GetFz() << ",";
-  cout << State->Getlatitude() << ",";
-  cout << State->Getlongitude() << ",";
   cout << State->Getqbar() << ",";
-  cout << Translation->Getalpha() << ",";
-  cout << Aircraft->GetL() << ",";
-  cout << Aircraft->GetM() << ",";
-  cout << Aircraft->GetN() << ",";
+  cout << State->GetVt() << ",";
   cout << FCS->GetThrottle(0) << ",";
   cout << FCS->GetDa() << ",";
   cout << FCS->GetDe() << ",";
   cout << FCS->GetDr() << ",";
+  cout << Atmosphere->GetDensity() << ",";
   cout << Aircraft->GetIxx() << ",";
   cout << Aircraft->GetIyy() << ",";
   cout << Aircraft->GetIzz() << ",";
   cout << Aircraft->GetIxz() << ",";
   cout << Aircraft->GetMass() << ",";
-  cout << Aircraft->GetXcg() << "";
+  cout << Aircraft->GetXYZcg() << ",";
+  cout << Aircraft->GetForces() << ",";
+  cout << Aircraft->GetMoments() << ",";
+  cout << State->Geth() << ",";
+  cout << Rotation->GetEuler() << ",";
+  cout << Rotation->GetPQR() << ",";
+  cout << Translation->GetUVW() << ",";
+  cout << Translation->Getalpha() << ",";
+  cout << Position->GetVel() << ",";
+  cout << State->Getlatitude() << ",";
+  cout << State->Getlongitude();
   cout << endl;
-
 }
 
+/******************************************************************************/
 
 void FGOutput::DelimitedOutput(string fname)
 {
   if (sFirstPass) {
     datafile.open(fname.c_str());
     datafile << "Time,";
-    datafile << "Altitude,";
-    datafile << "Phi,";
-    datafile << "Tht,";
-    datafile << "Psi,";
-    datafile << "Rho,";
-    datafile << "Vtotal,";
-    datafile << "U,";
-    datafile << "V,";
-    datafile << "W,";
-    datafile << "Vn,";
-    datafile << "Ve,";
-    datafile << "Vd,";
-    datafile << "Udot,";
-    datafile << "Vdot,";
-    datafile << "Wdot,";
-    datafile << "P,";
-    datafile << "Q,";
-    datafile << "R,";
-    datafile << "PDot,";
-    datafile << "QDot,";
-    datafile << "RDot,";
-    datafile << "Fx,";
-    datafile << "Fy,";
-    datafile << "Fz,";
-    datafile << "Latitude,";
-    datafile << "Longitude,";
     datafile << "QBar,";
-    datafile << "Alpha,";
-    datafile << "L,";
-    datafile << "M,";
-    datafile << "N,";
+    datafile << "Vtotal,";
     datafile << "Throttle,";
     datafile << "Aileron,";
     datafile << "Elevator,";
     datafile << "Rudder,";
+    datafile << "Rho,";
     datafile << "Ixx,";
     datafile << "Iyy,";
     datafile << "Izz,";
     datafile << "Ixz,";
     datafile << "Mass,";
-    datafile << "X CG";
+    datafile << "XYZ CG,";
+    datafile << "Forces,";
+    datafile << "Moments,";
+    datafile << "Altitude,";
+    datafile << "Phi, Tht, Psi,";
+    datafile << "PQR,";
+    datafile << "UVW,";
+    datafile << "Alpha,";
+    datafile << "Vned,";
+    datafile << "Latitude,";
+    datafile << "Longitude";
     datafile << endl;
     sFirstPass = false;
   }
 
   datafile << State->Getsim_time() << ",";
-  datafile << State->Geth() << ",";
-  datafile << Rotation->Getphi() << ",";
-  datafile << Rotation->Gettht() << ",";
-  datafile << Rotation->Getpsi() << ",";
-  datafile << Atmosphere->GetDensity() << ",";
-  datafile << State->GetVt() << ",";
-  datafile << Translation->GetU() << ",";
-  datafile << Translation->GetV() << ",";
-  datafile << Translation->GetW() << ",";
-  datafile << Position->GetVn() << ",";
-  datafile << Position->GetVe() << ",";
-  datafile << Position->GetVd() << ",";
-  datafile << Translation->GetUdot() << ",";
-  datafile << Translation->GetVdot() << ",";
-  datafile << Translation->GetWdot() << ",";
-  datafile << Rotation->GetP() << ",";
-  datafile << Rotation->GetQ() << ",";
-  datafile << Rotation->GetR() << ",";
-  datafile << Rotation->GetPdot() << ",";
-  datafile << Rotation->GetQdot() << ",";
-  datafile << Rotation->GetRdot() << ",";
-  datafile << Aircraft->GetFx() << ",";
-  datafile << Aircraft->GetFy() << ",";
-  datafile << Aircraft->GetFz() << ",";
-  datafile << State->Getlatitude() << ",";
-  datafile << State->Getlongitude() << ",";
   datafile << State->Getqbar() << ",";
-  datafile << Translation->Getalpha() << ",";
-  datafile << Aircraft->GetL() << ",";
-  datafile << Aircraft->GetM() << ",";
-  datafile << Aircraft->GetN() << ",";
+  datafile << State->GetVt() << ",";
   datafile << FCS->GetThrottle(0) << ",";
   datafile << FCS->GetDa() << ",";
   datafile << FCS->GetDe() << ",";
   datafile << FCS->GetDr() << ",";
+  datafile << Atmosphere->GetDensity() << ",";
   datafile << Aircraft->GetIxx() << ",";
   datafile << Aircraft->GetIyy() << ",";
   datafile << Aircraft->GetIzz() << ",";
   datafile << Aircraft->GetIxz() << ",";
   datafile << Aircraft->GetMass() << ",";
-  datafile << Aircraft->GetXcg() << "";
+  datafile << Aircraft->GetXYZcg() << ",";
+  datafile << Aircraft->GetForces() << ",";
+  datafile << Aircraft->GetMoments() << ",";
+  datafile << State->Geth() << ",";
+  datafile << Rotation->GetEuler() << ",";
+  datafile << Rotation->GetPQR() << ",";
+  datafile << Translation->GetUVW() << ",";
+  datafile << Translation->Getalpha() << ",";
+  datafile << Position->GetVel() << ",";
+  datafile << State->Getlatitude() << ",";
+  datafile << State->Getlongitude();
   datafile << endl;
   datafile.flush();
 }
 
+/******************************************************************************/
+
 void FGOutput::SocketOutput(void)
 {
   string asciiData;
-
+  /*
   if (socket <= 0) return;
 
   socket->Clear();
@@ -361,9 +294,10 @@ void FGOutput::SocketOutput(void)
   socket->Append(FCS->GetDa());
   socket->Append(FCS->GetDe());
   socket->Append(FCS->GetDr());
-  socket->Send();
+  socket->Send(); */
 }
 
+/******************************************************************************/
 
 void FGOutput::SocketStatusOutput(string out_str)
 {
@@ -376,4 +310,6 @@ void FGOutput::SocketStatusOutput(string out_str)
   socket->Append(asciiData.c_str());
   socket->Send();
 }
+
+/******************************************************************************/
 

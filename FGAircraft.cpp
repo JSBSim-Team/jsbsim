@@ -132,7 +132,14 @@ INCLUDES
 ************************************ CODE **************************************
 *******************************************************************************/
 
-FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
+FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
+                                           vMoments(3),
+                                           vForces(3),
+                                           vXYZrp(3),
+                                           vbaseXYZcg(3),
+                                           vXYZcg(3),
+                                           vXYZep(3),
+                                           vEuler(3)
 {
   Name = "FGAircraft";
 
@@ -201,13 +208,14 @@ bool FGAircraft::Run(void)
   if (!FGModel::Run()) {                 // if false then execute this Run()
     GetState();
 
-    for (int i = 0; i < 3; i++)  Forces[i] = Moments[i] = 0.0;
+    for (int i = 1; i <= 3; i++)  vForces(i) = vMoments(i) = 0.0;
 
     MassChange();
 
-    FMProp(); FMAero(); FMGear(); FMMass();
-
-    PutState();
+    FMProp();
+    FMAero();
+    FMGear();
+    FMMass();
   } else {                               // skip Run() execution this time
   }
   return false;
@@ -217,9 +225,13 @@ bool FGAircraft::Run(void)
 
 void FGAircraft::MassChange()
 {
-  float Xt, Yt, Zt, Tw;
+  static FGColumnVector vXYZtank(3);
+  float Tw;
   float IXXt, IYYt, IZZt, IXZt;
   int t;
+  unsigned int axis_ctr;
+
+  for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vXYZtank(axis_ctr) = 0.0;
 
   // UPDATE TANK CONTENTS
   //
@@ -277,27 +289,25 @@ void FGAircraft::MassChange()
 
   // Calculate new CG here.
 
-  Xt = Yt = Zt = Tw = 0;
+  Tw = 0;
   for (t=0; t<numTanks; t++) {
-    Xt += Tank[t]->GetX()*Tank[t]->GetContents();
-    Yt += Tank[t]->GetY()*Tank[t]->GetContents();
-    Zt += Tank[t]->GetZ()*Tank[t]->GetContents();
+    vXYZtank(eX) += Tank[t]->GetX()*Tank[t]->GetContents();
+    vXYZtank(eY) += Tank[t]->GetY()*Tank[t]->GetContents();
+    vXYZtank(eZ) += Tank[t]->GetZ()*Tank[t]->GetContents();
 
     Tw += Tank[t]->GetContents();
   }
 
-  Xcg = (Xt + EmptyWeight*baseXcg) / (Tw + EmptyWeight);
-  Ycg = (Yt + EmptyWeight*baseYcg) / (Tw + EmptyWeight);
-  Zcg = (Zt + EmptyWeight*baseZcg) / (Tw + EmptyWeight);
+  vXYZcg = (vXYZtank + EmptyWeight*vbaseXYZcg) / (Tw + EmptyWeight);
 
   // Calculate new moments of inertia here
 
   IXXt = IYYt = IZZt = IXZt = 0.0;
   for (t=0; t<numTanks; t++) {
-    IXXt += ((Tank[t]->GetX()-Xcg)/12.0)*((Tank[t]->GetX() - Xcg)/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IYYt += ((Tank[t]->GetY()-Ycg)/12.0)*((Tank[t]->GetY() - Ycg)/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IZZt += ((Tank[t]->GetZ()-Zcg)/12.0)*((Tank[t]->GetZ() - Zcg)/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IXZt += ((Tank[t]->GetX()-Xcg)/12.0)*((Tank[t]->GetZ() - Zcg)/12.0)*Tank[t]->GetContents()/GRAVITY;
+    IXXt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetX() - vXYZcg(eX))/12.0)*Tank[t]->GetContents()/GRAVITY;
+    IYYt += ((Tank[t]->GetY()-vXYZcg(eY))/12.0)*((Tank[t]->GetY() - vXYZcg(eY))/12.0)*Tank[t]->GetContents()/GRAVITY;
+    IZZt += ((Tank[t]->GetZ()-vXYZcg(eZ))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
+    IXZt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
   }
 
   Ixx = baseIxx + IXXt;
@@ -311,31 +321,19 @@ void FGAircraft::MassChange()
 
 void FGAircraft::FMAero(void)
 {
-  float F[3];
-  float dxcg,dycg,dzcg;
-  float ca, cb, sa, sb;
+  static FGColumnVector vFs(3);
+  static FGColumnVector vDXYZcg(3);
   unsigned int axis_ctr,ctr;
-  F[0] = F[1] = F[2] = 0.0;
+
+  for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vFs(axis_ctr) = 0.0;
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-      F[axis_ctr] += Coeff[axis_ctr][ctr].TotalValue();
+      vFs(axis_ctr+1) += Coeff[axis_ctr][ctr].TotalValue();
     }
   }
 
-  ca = cos(alpha);
-  sa = sin(alpha);
-  cb = cos(beta);
-  sb = sin(beta);
-
-  Forces[0] += - F[DragCoeff]*ca*cb
-               - F[SideCoeff]*ca*sb
-               + F[LiftCoeff]*sa;
-  Forces[1] +=   F[DragCoeff]*sb
-                 + F[SideCoeff]*cb;
-  Forces[2] += - F[DragCoeff]*sa*cb
-               - F[SideCoeff]*sa*sb
-               - F[LiftCoeff]*ca;
+  vForces += State->GetTs2b(alpha, beta)*vFs;
 
   // The d*cg distances below, given in inches, are the distances FROM the c.g.
   // TO the reference point. Since the c.g. and ref point are given in inches in
@@ -343,17 +341,17 @@ void FGAircraft::FMAero(void)
   // is given with X positive out the nose, the dxcg and dzcg values are
   // *rotated* 180 degrees about the Y axis.
 
-  dxcg = -(Xrp - Xcg)/12; //cg and rp values are in inches
-  dycg =  (Yrp - Ycg)/12;
-  dzcg = -(Zrp - Zcg)/12;
+  vDXYZcg(eX) = -(vXYZrp(eX) - vXYZcg(eX))/12.0;  //cg and rp values are in inches
+  vDXYZcg(eY) =  (vXYZrp(eY) - vXYZcg(eY))/12.0;
+  vDXYZcg(eZ) = -(vXYZrp(eZ) - vXYZcg(eZ))/12.0;
 
-  Moments[0] +=  Forces[2]*dycg - Forces[1]*dzcg; //rolling moment
-  Moments[1] +=  Forces[0]*dzcg - Forces[2]*dxcg; //pitching moment
-  Moments[2] += -Forces[0]*dycg + Forces[1]*dxcg; //yawing moment
+  vMoments(eL) += vForces(eZ)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eZ); // rolling moment
+  vMoments(eM) += vForces(eX)*vDXYZcg(eZ) - vForces(eZ)*vDXYZcg(eX); // pitching moment
+  vMoments(eN) += vForces(eX)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eX); // yawing moment
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
-      Moments[axis_ctr] += Coeff[axis_ctr+3][ctr].TotalValue();
+      vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr].TotalValue();
     }
   }
 }
@@ -375,9 +373,9 @@ void FGAircraft::FMGear(void)
 
 void FGAircraft::FMMass(void)
 {
-  Forces[0] += -GRAVITY*sin(tht) * Mass;
-  Forces[1] +=  GRAVITY*sin(phi)*cos(tht) * Mass;
-  Forces[2] +=  GRAVITY*cos(phi)*cos(tht) * Mass;
+  vForces(eX) += -GRAVITY*sin(vEuler(eTht)) * Mass;
+  vForces(eY) +=  GRAVITY*sin(vEuler(ePhi))*cos(vEuler(eTht)) * Mass;
+  vForces(eZ) +=  GRAVITY*cos(vEuler(ePhi))*cos(vEuler(eTht)) * Mass;
 }
 
 /******************************************************************************/
@@ -385,7 +383,7 @@ void FGAircraft::FMMass(void)
 void FGAircraft::FMProp(void)
 {
   for (int i=0;i<numEngines;i++) {
-    Forces[0] += Engine[i]->CalcThrust();
+    vForces(eX) += Engine[i]->CalcThrust();
   }
 }
 
@@ -397,15 +395,7 @@ void FGAircraft::GetState(void)
 
   alpha = Translation->Getalpha();
   beta = Translation->Getbeta();
-  phi = Rotation->Getphi();
-  tht = Rotation->Gettht();
-  psi = Rotation->Getpsi();
-}
-
-/******************************************************************************/
-
-void FGAircraft::PutState(void)
-{
+  vEuler = Rotation->GetEuler();
 }
 
 /******************************************************************************/
@@ -427,9 +417,9 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
     else if (parameter == "AC_IZZ") *AC_cfg >> baseIzz;
     else if (parameter == "AC_IXZ") *AC_cfg >> baseIxz;
     else if (parameter == "AC_EMPTYWT") *AC_cfg >> EmptyWeight;
-    else if (parameter == "AC_CGLOC") *AC_cfg >> baseXcg >> baseYcg >> baseZcg;
-    else if (parameter == "AC_EYEPTLOC") *AC_cfg >> Xep >> Yep >> Zep;
-    else if (parameter == "AC_AERORP") *AC_cfg >> Xrp >> Yrp >> Zrp;
+    else if (parameter == "AC_CGLOC") *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
+    else if (parameter == "AC_EYEPTLOC") *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
+    else if (parameter == "AC_AERORP") *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
   }
 }
 

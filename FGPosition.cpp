@@ -80,96 +80,61 @@ INCLUDES
 *******************************************************************************/
 
 
-FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
+FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
+                                           vUVW(3),
+                                           vVel(3)
 {
   Name = "FGPosition";
-  AccelN = AccelE = AccelD = 0.0;
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
+  lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
 }
 
+/******************************************************************************/
 
 FGPosition::~FGPosition(void)
 {
 }
 
+/******************************************************************************/
 
 bool FGPosition:: Run(void)
 {
-  float /*tanLat,*/ cosLat;
+  float cosLat;
 
   if (!FGModel::Run()) {
     GetState();
-    T[1][1] = Q0*Q0 + Q1*Q1 - Q2*Q2 - Q3*Q3;                    // Page A-11
-    T[1][2] = 2*(Q1*Q2 + Q0*Q3);                                // From
-    T[1][3] = 2*(Q1*Q3 - Q0*Q2);                                // Reference [2]
-    T[2][1] = 2*(Q1*Q2 - Q0*Q3);
-    T[2][2] = Q0*Q0 - Q1*Q1 + Q2*Q2 - Q3*Q3;
-    T[2][3] = 2*(Q2*Q3 + Q0*Q1);
-    T[3][1] = 2*(Q1*Q3 + Q0*Q2);
-    T[3][2] = 2*(Q2*Q3 - Q0*Q1);
-    T[3][3] = Q0*Q0 - Q1*Q1 - Q2*Q2 + Q3*Q3;
 
-    Fn = T[1][1]*Fx + T[2][1]*Fy + T[3][1]*Fz;                  // Eqn. 3.5
-    Fe = T[1][2]*Fx + T[2][2]*Fy + T[3][2]*Fz;                  // From
-    Fd = T[1][3]*Fx + T[2][3]*Fy + T[3][3]*Fz;                  // Reference [3]
+    vVel = State->GetTb2l()*vUVW;
 
-//    tanLat = tan(Latitude);                                     // I made this up
     cosLat = cos(Latitude);
+    if (cosLat != 0) LongitudeDot = vVel(eEast) / (Radius * cosLat);
 
-    lastAccelN = AccelN;
-    lastAccelE = AccelE;
-    lastAccelD = AccelD;
-
-    Vn = T[1][1]*U + T[2][1]*V + T[3][1]*W;
-    Ve = T[1][2]*U + T[2][2]*V + T[3][2]*W;
-    Vd = T[1][3]*U + T[2][3]*V + T[3][3]*W;
-
-/*    AccelN = invMass * Fn + invRadius * (Vn*Vd - Ve*Ve*tanLat); // Eqn. 3.6
-    AccelE = invMass * Fe + invRadius * (Ve*Vd + Vn*Ve*tanLat); // From
-    AccelD = invMass * Fd - invRadius * (Vn*Vn + Ve*Ve);        // Reference [3]
-
-    Vn += 0.5*dt*rate*(3.0*AccelN - lastAccelN);                // Eqn. 3.7
-    Ve += 0.5*dt*rate*(3.0*AccelE - lastAccelE);                // From
-    Vd += 0.5*dt*rate*(3.0*AccelD - lastAccelD);                // Reference [3]
-
-    Vee = Ve - OMEGAEARTH * (Radius) * cosLat;                  // From Eq. 3.8
-*/                                                                // Reference [3]
-    lastLatitudeDot = LatitudeDot;
-    lastLongitudeDot = LongitudeDot;
-    lastRadiusDot = RadiusDot;
-
-    if (cosLat != 0) LongitudeDot = Ve / (Radius * cosLat);
-    LatitudeDot = Vn * invRadius;
-    RadiusDot = -Vd;
+    LatitudeDot = vVel(eNorth) * invRadius;
+    RadiusDot   = -vVel(eDown);
 
     Longitude += 0.5*dt*rate*(LongitudeDot + lastLongitudeDot);
     Latitude  += 0.5*dt*rate*(LatitudeDot + lastLatitudeDot);
     Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
 
+    lastLatitudeDot = LatitudeDot;
+    lastLongitudeDot = LongitudeDot;
+    lastRadiusDot = RadiusDot;
+
     PutState();
     return false;
+
   } else {
     return true;
   }
 }
 
+/******************************************************************************/
 
 void FGPosition::GetState(void)
 {
   dt = State->Getdt();
 
-  Q0 = Rotation->GetQ0();
-  Q1 = Rotation->GetQ1();
-  Q2 = Rotation->GetQ2();
-  Q3 = Rotation->GetQ3();
-
-  Fx = Aircraft->GetFx();
-  Fy = Aircraft->GetFy();
-  Fz = Aircraft->GetFz();
-
-  U = Translation->GetU();
-  V = Translation->GetV();
-  W = Translation->GetW();
+  vUVW = Translation->GetUVW();
 
   Latitude = State->Getlatitude();
   Longitude = State->Getlongitude();
@@ -179,6 +144,7 @@ void FGPosition::GetState(void)
   Radius = State->Geth() + EARTHRAD;
 }
 
+/******************************************************************************/
 
 void FGPosition::PutState(void)
 {
@@ -186,4 +152,6 @@ void FGPosition::PutState(void)
   State->Setlongitude(Longitude);
   State->Seth(Radius - EARTHRAD);
 }
+
+/******************************************************************************/
 

@@ -19,6 +19,7 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGMatrix.h"
+#include <math>
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -48,11 +49,10 @@ void dealloc(double **A, int rows)
 
 /******************************************************************************/
 
-FGMatrix::FGMatrix(unsigned int rows, unsigned int cols)
+FGMatrix::FGMatrix(const unsigned int r, const unsigned int c) : rows(r), cols(c)
 {
-  this->rows = rows;
-  this->cols = cols;
   data = FGalloc(rows,cols);
+  rowCtr = colCtr = 1;
 }
 
 /******************************************************************************/
@@ -60,6 +60,7 @@ FGMatrix::FGMatrix(unsigned int rows, unsigned int cols)
 FGMatrix::FGMatrix(const FGMatrix& M)
 {
   data  = NULL;
+  rowCtr = colCtr = 1;
   *this = M;
 }
 
@@ -68,7 +69,45 @@ FGMatrix::FGMatrix(const FGMatrix& M)
 FGMatrix::~FGMatrix(void)
 {
   dealloc(data,rows);
-  rows=cols=0;
+  rowCtr = colCtr = 1;
+  rows = cols = 0;
+}
+
+/******************************************************************************/
+
+ostream& operator<<(ostream& os, const FGMatrix& M)
+{
+  for (unsigned int i=1; i<=M.Rows(); i++) {
+    for (unsigned int j=1; j<=M.Cols(); j++) {
+      os << " " << M.data[i][j];
+    }
+  }
+  return os;
+}
+
+/******************************************************************************/
+
+FGMatrix& FGMatrix::operator<<(const float ff)
+{
+  data[rowCtr][colCtr] = ff;
+  if (++colCtr > Cols()) {
+    colCtr = 1;
+    if (++rowCtr > Rows())
+      rowCtr = 1;
+  }
+  return *this;
+}
+
+/******************************************************************************/
+
+istream& operator>>(istream& is, FGMatrix& M)
+{
+  for (unsigned int i=1; i<=M.Rows(); i++) {
+    for (unsigned int j=1; j<=M.Cols(); j++) {
+      is >> M.data[i][j];
+    }
+  }
+  return is;
 }
 
 /******************************************************************************/
@@ -448,11 +487,20 @@ FGColumnVector FGColumnVector::operator*(const double scalar)
 {
   FGColumnVector Product(Rows());
 
-  for (unsigned int i=1; i<=Rows(); i++) {
-     Product(i) = scalar * data[i][1];
-  }
+  for (unsigned int i=1; i<=Rows(); i++) Product(i) = scalar * data[i][1];
 
   return Product;
+}
+
+/******************************************************************************/
+
+FGColumnVector FGColumnVector::operator/(const double scalar)
+{
+  FGColumnVector Quotient(Rows());
+
+  for (unsigned int i=1; i<=Rows(); i++) Quotient(i) = data[i][1] / scalar;
+
+  return Quotient;
 }
 
 /******************************************************************************/
@@ -466,5 +514,28 @@ FGColumnVector operator*(const double scalar, const FGColumnVector& C)
   }
 
   return Product;
+}
+
+/******************************************************************************/
+float FGColumnVector::Magnitude(void)
+{
+  float num=0.0;
+
+  if ((data[1][1] == 0.00) &&
+      (data[2][1] == 0.00) &&
+      (data[3][1] == 0.00))
+  {
+    return 0.00;
+  } else {
+    for (unsigned int i = 1; i<=Rows(); i++) num += data[i][1]*data[i][1];
+    return sqrt(num);
+  }
+}
+
+/******************************************************************************/
+
+FGColumnVector FGColumnVector::Normalize(void)
+{
+  return *this/Magnitude();
 }
 

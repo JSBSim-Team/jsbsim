@@ -116,6 +116,7 @@ INCLUDES
 #include "FGTank.h"
 #include "FGLGear.h"
 #include "FGConfigFile.h"
+#include "FGMatrix.h"
 
 /*******************************************************************************
 DEFINITIONS
@@ -129,6 +130,10 @@ CLASS DECLARATION
 
 class FGAircraft : public FGModel
 {
+  enum {eL=1, eM, eN};
+  enum {eX=1, eY, eZ};
+  enum {eP=1, eQ, eR};
+  enum {ePhi=1, eTht, ePsi};
 public:
   FGAircraft(FGFDMExec*);
   ~FGAircraft(void);
@@ -145,43 +150,38 @@ public:
   inline FGTank* GetTank(int tt) {return Tank[tt];}
   inline float GetWeight(void) {return Weight;}
   inline float GetMass(void) {return Mass;}
-  inline float GetL(void) {return Moments[0];}
-  inline float GetM(void) {return Moments[1];}
-  inline float GetN(void) {return Moments[2];}
-  inline float GetFx(void) {return Forces[0];}
-  inline float GetFy(void) {return Forces[1];}
-  inline float GetFz(void) {return Forces[2];}
+  inline FGColumnVector GetMoments(void) {return vMoments;}
+  inline FGColumnVector GetForces(void) {return vForces;}
   inline float GetIxx(void) {return Ixx;}
   inline float GetIyy(void) {return Iyy;}
   inline float GetIzz(void) {return Izz;}
   inline float GetIxz(void) {return Ixz;}
-  inline float GetXcg(void) {return Xcg;}
   inline int   GetNumEngines(void) {return numEngines;}
+  inline FGColumnVector GetXYZcg(void) {return vXYZcg;}
 
 private:
   void GetState(void);
-  void PutState(void);
   void FMAero(void);
   void FMGear(void);
   void FMMass(void);
   void FMProp(void);
   void MassChange(void);
-  float Moments[3];
-  float Forces[3];
-  string AircraftName;
+  FGColumnVector vMoments;
+  FGColumnVector vForces;
+  FGColumnVector vXYZrp;
+  FGColumnVector vbaseXYZcg;
+  FGColumnVector vXYZcg;
+  FGColumnVector vXYZep;
+  FGColumnVector vEuler;
   float baseIxx, baseIyy, baseIzz, baseIxz, EmptyMass, Mass;
   float Ixx, Iyy, Izz, Ixz;
-  float Xrp, Yrp, Zrp;
-  float baseXcg, baseYcg, baseZcg;
-  float Xcg, Ycg, Zcg;
-  float Xep, Yep, Zep;
   float rho, qbar, Vt;
   float alpha, beta;
   float WingArea, WingSpan, cbar;
-  float phi, tht, psi;
   float Weight, EmptyWeight;
   float dt;
   float CFGVersion;
+  string AircraftName;
   
   int numTanks;
   int numEngines;

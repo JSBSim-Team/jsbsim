@@ -68,6 +68,7 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
+#include "FGMatrix.h"
 
 using namespace std;
 
@@ -77,67 +78,25 @@ CLASS DECLARATION
 
 class FGRotation : public FGModel
 {
+  FGColumnVector vPQR;
+  FGColumnVector vMoments;
+  FGColumnVector vEuler;
+
+  float Ixx, Iyy, Izz, Ixz;
+  float dt;
+
+  void GetState(void);
+
 public:
   FGRotation(FGFDMExec*);
   ~FGRotation(void);
 
   bool Run(void);
 
-  inline float GetP(void) {return P;}
-  inline float GetQ(void) {return Q;}
-  inline float GetR(void) {return R;}
-
-  inline float GetPdot(void) {return Pdot;}
-  inline float GetQdot(void) {return Qdot;}
-  inline float GetRdot(void) {return Rdot;}
-
-  inline float Getphi(void) {return phi;}
-  inline float Gettht(void) {return tht;}
-  inline float Getpsi(void) {return psi;}
-
-  inline float GetQ0(void) {return Q0;}
-  inline float GetQ1(void) {return Q1;}
-  inline float GetQ2(void) {return Q2;}
-  inline float GetQ3(void) {return Q3;}
-
-  inline void SetP(float tt) {P = tt;}
-  inline void SetQ(float tt) {Q = tt;}
-  inline void SetR(float tt) {R = tt;}
-
-  inline void SetPQR(float t1, float t2, float t3) {P=t1;
-                                                    Q=t2;
-                                                    R=t3;}
-
-  inline void Setphi(float tt) {phi = tt;}
-  inline void Settht(float tt) {tht = tt;}
-  inline void Setpsi(float tt) {psi = tt;}
-
-  inline void SetEuler(float t1, float t2, float t3) {phi=t1;
-                                                      tht=t2;
-                                                      psi=t3;}
-
-  inline void SetQ0123(float t1, float t2, float t3, float t4) {Q0=t1;
-                                                                Q1=t2;
-                                                                Q2=t3;
-                                                                Q3=t4;}
-
-protected:
-
-private:
-  float P, Q, R;
-  float L, M, N;
-  float Ixx, Iyy, Izz, Ixz;
-  float Q0, Q1, Q2, Q3;
-  float phi, tht, psi;
-  float Pdot, Qdot, Rdot;
-  float Q0dot, Q1dot, Q2dot, Q3dot;
-  float lastPdot, lastQdot, lastRdot;
-  float lastQ0dot, lastQ1dot, lastQ2dot, lastQ3dot;
-  float dt;
-  float T[4][4];
-
-  void GetState(void);
-  void PutState(void);
+  inline FGColumnVector GetPQR(void) {return vPQR;}
+  inline FGColumnVector GetEuler(void) {return vEuler;}
+  inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
+  inline void SetEuler(FGColumnVector tt) {vEuler = tt;}
 };
 
 /******************************************************************************/
