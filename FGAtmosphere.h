@@ -45,7 +45,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.9 2000/10/22 14:00:27 jsb Exp $"
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.10 2001/01/28 14:01:54 jsb Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
@@ -90,12 +90,10 @@ public:
 
   inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
-  inline float GetWindN(void) { return vWindNED(1); }
-  inline float GetWindE(void) { return vWindNED(2); }
-  inline float GetWindD(void) { return vWindNED(3); }
-
-  inline FGColumnVector GetWindUVW(void) { return vWindUVW; }
-
+  inline FGColumnVector GetWindNED(void) { return vWindNED; }
+  
+  inline float GetWindPsi(void) { return psiw; }
+  
 protected:
 
 private:
@@ -106,7 +104,9 @@ private:
   float temperature,density,pressure,soundspeed;
   bool useExternal;
   float exTemperature,exDensity,exPressure;
-  FGColumnVector vWindNED,vWindUVW;
+  
+  FGColumnVector vWindNED;
+  float psiw;
 
   void Calculate(float altitude);
 

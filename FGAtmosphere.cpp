@@ -59,7 +59,7 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.cpp,v 1.9 2000/10/16 12:32:43 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.cpp,v 1.10 2001/01/28 14:01:53 jsb Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,8 +68,7 @@ CLASS IMPLEMENTATION
 
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                                    vWindNED(3),
-                                                    vWindUVW(3)
+                                                    vWindNED(3)
 {
     Name = "FGAtmosphere";
     h = 0;
@@ -79,7 +78,6 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
     SLdensity     = density;
     SLsoundspeed  = sqrt(SHRATIO*Reng*temperature);
     useExternal=false;
-    vWindUVW(1)=0;vWindUVW(2)=0;vWindUVW(3)=0;
     vWindNED(1)=0;vWindNED(2)=0;vWindNED(3)=0;
 }
 
@@ -103,19 +101,12 @@ bool FGAtmosphere::Run(void)
             density = exDensity;
             pressure = exPressure;
             temperature = exTemperature;
-            //switch sign of wind components so that they are
-            //in aircraft reference frame.  The classic example is
-            //takeoff or landing where you always want to fly
-            //into the wind.  Suppose that an aircraft is
-            //taking off into the wind on the runway heading
-            //of pure north.  Into the wind means the wind is
-            //flowing to the south (or negative) direction,
-            //and we know that headwinds increase the relative
-            //velocity, so to make a positive delta U from the
-            //southerly wind the sign must be switched.
-            vWindNED *= -1;
-            vWindUVW  = State->GetTl2b()*vWindNED;
-        }
+        }    
+        
+        psiw = atan2( vWindNED(2), vWindNED(1) );
+        if(psiw < 0)
+          psiw += 2*M_PI;
+        
         soundspeed = sqrt(SHRATIO*Reng*temperature);
         //cout << "Atmosphere: soundspeed: " << soundspeed << endl;
         State->Seta(soundspeed);
