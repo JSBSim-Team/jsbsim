@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.101 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.102 2002/02/22 12:12:33 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,8 +118,11 @@ FGState::FGState(FGFDMExec* fdex)
   RegisterVariable(FG_BI2VEL,         " BI2Vel "         );
   RegisterVariable(FG_CI2VEL,         " CI2Vel "         );
   RegisterVariable(FG_ELEVATOR_POS,   " elevator_pos "   );
+  RegisterVariable(FG_AELEVATOR_POS,  " |elevator_pos| " );
   RegisterVariable(FG_AILERON_POS,    " aileron_pos "    );
+  RegisterVariable(FG_AAILERON_POS,   " |aileron_pos| "  );
   RegisterVariable(FG_RUDDER_POS,     " rudder_pos "     );
+  RegisterVariable(FG_ARUDDER_POS,    " |rudder_pos| "   );
   RegisterVariable(FG_SPDBRAKE_POS,   " speedbrake_pos " );
   RegisterVariable(FG_SPOILERS_POS,   " spoiler_pos "    );
   RegisterVariable(FG_FLAPS_POS,      " flaps_pos "      );
@@ -231,10 +234,16 @@ double FGState::GetParameter(eParam val_idx) {
     return scratch*scratch;					   
   case FG_ELEVATOR_POS:
     return FCS->GetDePos();
+  case FG_AELEVATOR_POS:
+    return fabs(FCS->GetDePos());  
   case FG_AILERON_POS:
     return FCS->GetDaPos();
+  case FG_AAILERON_POS:
+    return fabs(FCS->GetDaPos());
   case FG_RUDDER_POS:
     return FCS->GetDrPos();
+  case FG_ARUDDER_POS:
+    return fabs(FCS->GetDrPos());
   case FG_SPDBRAKE_POS:
     return FCS->GetDsbPos();
   case FG_SPOILERS_POS:
