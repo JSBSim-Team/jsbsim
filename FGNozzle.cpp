@@ -43,10 +43,11 @@ INCLUDES
 #endif
 
 #include "FGNozzle.h"
+#include "FGAtmosphere.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.31 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.32 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

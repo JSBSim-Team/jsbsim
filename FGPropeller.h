@@ -40,14 +40,12 @@ INCLUDES
 
 #include "FGThruster.h"
 #include "FGTable.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.33 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.34 2004/02/26 15:03:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.33 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.34 2004/02/26 15:03:56 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable

@@ -37,13 +37,16 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAerodynamics.h"
+#include "FGTranslation.h"
+#include "FGAircraft.h"
+#include "FGState.h"
+#include "FGMassBalance.h"
 #include "FGFactorGroup.h"
-#include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.45 2004/02/02 21:02:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.46 2004/02/26 15:03:54 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           

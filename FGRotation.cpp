@@ -59,19 +59,14 @@ INCLUDES
 #include "FGAtmosphere.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
-#include "FGFCS.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
-#include "FGTranslation.h"
-#include "FGPosition.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
 #include "FGPropertyManager.h"
 
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.40 2004/01/03 11:51:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.41 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

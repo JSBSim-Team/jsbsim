@@ -39,7 +39,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
-//#include <algorithm>
 
 namespace JSBSim {
 
@@ -51,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.100 2004/02/13 15:52:09 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.101 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +207,6 @@ FGColumnVector3& FGLGear::Force(void)
   double SinWheel, CosWheel;
   double deltaSlip;
   double deltaT = State->Getdt()*Aircraft->GetRate();
-  double maxdeltaSlip = 0.5*deltaT;
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
@@ -262,9 +260,7 @@ FGColumnVector3& FGLGear::Force(void)
 // wheel velocity.
 
       vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
-
       vWhlVelVec     +=  Position->GetVel();
-
       compressSpeed   =  vWhlVelVec(eZ);
 
 // If this is the first time the wheel has made contact, remember some values
@@ -360,6 +356,8 @@ FGColumnVector3& FGLGear::Force(void)
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
 /*
+      double maxdeltaSlip = 0.5*deltaT;
+
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else if (RollingWhlVel < 1.0) {

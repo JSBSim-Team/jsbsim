@@ -52,15 +52,18 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
+#include "FGGroundReactions.h"
+#include "FGInertial.h"
 #include "FGAerodynamics.h"
 #include "FGColumnVector3.h"
+
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
 #endif
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.43 2004/02/18 02:45:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.44 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

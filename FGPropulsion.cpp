@@ -53,6 +53,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropulsion.h"
+#include "FGInertial.h"
+#include "FGRocket.h"
+#include "FGSimTurbine.h"
+#include "FGTurbine.h"
+#include "FGPropeller.h"
+#include "FGNozzle.h"
+#include "FGPiston.h"
 #include "FGPropertyManager.h"
 
 #if defined (__APPLE__)
@@ -66,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.89 2004/01/19 18:12:32 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.90 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

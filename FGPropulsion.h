@@ -53,20 +53,15 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-
-#include "FGRocket.h"
-#include "FGPiston.h"
-#include "FGTurbine.h"
-#include "FGSimTurbine.h"
+#include "FGEngine.h"
 #include "FGTank.h"
-#include "FGPropeller.h"
-#include "FGNozzle.h"
+#include "FGThruster.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.56 2003/12/06 14:09:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.57 2004/02/26 15:03:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +91,7 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.56 2003/12/06 14:09:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.57 2004/02/26 15:03:56 jberndt Exp $
     @see
     FGEngine
     FGTank

@@ -52,10 +52,9 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 #include "FGLGear.h"
-#include "FGInertial.h"
-#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.24 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.25 2004/02/26 15:03:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

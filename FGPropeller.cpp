@@ -36,11 +36,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropeller.h"
+#include "FGTranslation.h"
+#include "FGRotation.h"
 #include "FGFCS.h"
+#include "FGAtmosphere.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.58 2003/11/25 17:51:16 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.59 2004/02/26 15:03:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

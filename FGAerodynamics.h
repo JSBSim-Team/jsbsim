@@ -54,17 +54,14 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGConfigFile.h"
-#include "FGState.h"
-#include "FGMassBalance.h"
-#include "FGTranslation.h"
 #include "FGCoefficient.h"
-#include "FGFactorGroup.h"
+#include "FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.40 2003/12/06 18:05:20 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.41 2004/02/26 15:03:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +87,7 @@ CLASS DOCUMENTATION
     \</AERODYNAMICS> </pre>
     
     @author Jon S. Berndt, Tony Peden
-    $Id: FGAerodynamics.h,v 1.40 2003/12/06 18:05:20 jberndt Exp $
+    $Id: FGAerodynamics.h,v 1.41 2004/02/26 15:03:55 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

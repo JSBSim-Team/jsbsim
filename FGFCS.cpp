@@ -38,15 +38,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCS.h"
-#include "FGState.h"
 #include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
 #include "FGPropertyManager.h"
 
 #include "filtersjb/FGFilter.h"
@@ -59,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.94 2004/01/27 12:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.95 2004/02/26 15:03:55 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)

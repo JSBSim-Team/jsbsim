@@ -10,7 +10,7 @@ print "LINKDIR= -Lfiltersjb/ -Lsimgear/props/\n";
 #
 print "JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\\\n";
 print "FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\\\n";
-print "FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
+print "FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
 print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRocket.o\\\n";
 print "FGTurbine.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";

@@ -43,14 +43,13 @@ and the cg.
 #include "FGFDMExec.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
-#include "FGMatrix33.h"
-#include "FGColumnVector3.h"
-#include "FGColumnVector4.h"
+#include "FGMassBalance.h"
+#include "FGState.h"
 #include "FGForce.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.34 2004/02/02 21:02:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.35 2004/02/26 15:03:55 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
