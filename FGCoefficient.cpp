@@ -54,7 +54,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.34 2001/04/26 12:45:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.35 2001/07/22 18:48:17 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 extern char highint[5];
@@ -75,22 +75,35 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
+FGCoefficient::FGCoefficient( FGFDMExec* fdex )
 {
-  int start, end, n;
-  string multparms;
 
   FDMExec = fdex;
   State   = FDMExec->GetState();
   Table   = 0;
 
+  if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGCoefficient::~FGCoefficient()
+{
+  if (Table) delete Table;
+  if (debug_lvl & 2) cout << "Destroyed:    FGCoefficient" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
+  int start, end, n;
+  string multparms, mult;
+
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
     method = AC_cfg->GetValue("TYPE");
-
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
-
     if (debug_lvl > 0) {
       cout << "\n   " << highint << underon << name << underoff << normint << endl;
       cout << "   " << description << endl;
@@ -137,16 +150,17 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     n     = multparms.find("|");
     start = 0;
 
-    while (n < end && n >= 0) {
-      n -= start;
+    if(multparms != "FG_NONE") {
+      while (n < end && n >= 0) {
+        n -= start;
+        mult = multparms.substr(start,n);
+        multipliers.push_back( State->GetParameterIndex(mult) );
+        start += n+1;
+        n = multparms.find("|",start);
+      }
       multipliers.push_back(State->GetParameterIndex(multparms.substr(start,n)));
-      start += n+1;
-      n = multparms.find("|",start);
+      // End of non-dimensionalizing parameter read-in
     }
-
-    multipliers.push_back(State->GetParameterIndex(multparms.substr(start,n)));
-
-    // End of non-dimensionalizing parameter read-in
 
     switch(type) {
     case VALUE:
@@ -164,17 +178,14 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       break;
     }
     AC_cfg->GetNextConfigLine();
-  }
-  if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
+    if (debug_lvl > 0) DisplayCoeffFactors();
+    return true;
+  } else {
+    return false;
+  }  
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGCoefficient::~FGCoefficient()
-{
-  if (Table) delete Table;
-  if (debug_lvl & 2) cout << "Destroyed:    FGCoefficient" << endl;
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -253,3 +264,32 @@ void FGCoefficient::Debug(void)
     //TODO: Add your source code here
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGCoefficient::DisplayCoeffFactors(void)
+{
+  unsigned int i;
+
+  cout << "   Non-Dimensionalized by: ";
+
+  if( multipliers.size() == 0) {
+    cout << "none" << endl;
+  } else {
+    for (i=0; i<multipliers.size();i++) 
+        cout << FDMExec->GetState()->paramdef[multipliers[i]];
+  }
+  cout << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGCoefficient::GetCoefficientValues(void) {
+  char buffer[10];
+  string value;
+  //value = ", ";
+  snprintf(buffer,10,"%9.6f",SD);
+  value += string(buffer);
+  return value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
