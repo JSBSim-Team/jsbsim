@@ -58,11 +58,12 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
   *AC_cfg >> Capacity;                          // pounds (amount it can hold)
   *AC_cfg >> Contents;                          // pounds  (amount it is holding)
   Selected = true;
-  if(Capacity != 0)
+
+  if (Capacity != 0) {
     PctFull = 100.0*Contents/Capacity;            // percent full; 0 to 100.0
-  else {
-    Contents=0;
-    PctFull=0;
+  } else {
+    Contents = 0;
+    PctFull  = 0;
   }     
 }
 
