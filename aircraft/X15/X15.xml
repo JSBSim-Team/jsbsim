@@ -470,6 +470,7 @@
       </COEFFICIENT>
 
       <COEFFICIENT NAME="Clr" TYPE="VALUE">
+
         Roll_moment_due_to_yaw_rate
         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
         0.04
