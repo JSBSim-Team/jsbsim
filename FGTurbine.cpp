@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurbine.h"
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.1 2002/08/25 13:57:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.2 2002/08/31 05:17:31 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,7 @@ void FGTurbine::doTransition(void)
 
 bool FGTurbine::Load(FGConfigFile *AC_cfg)
 {
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
