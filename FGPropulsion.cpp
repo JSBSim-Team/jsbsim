@@ -34,12 +34,8 @@ propeller). Once the Propulsion class gets the config file, it reads in
 information which is specific to a type of engine. Then:
 
 1) The appropriate engine type instance is created
-2) At least one thruster object is instantiated, and is linked to the engine
+2) A thruster object is instantiated, and is linked to the engine
 3) At least one tank object is created, and is linked to an engine.
-
-Note: Thusters can be linked to more than one engine and engines can be linked
-to more than one thruster. It is the same with tanks - a many to many
-relationship can be established.
 
 At Run time each engines Calculate() method is called to return the excess power
 generated during that iteration. The drag from the previous iteration is sub-
@@ -58,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.36 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.37 2001/03/21 23:11:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
