@@ -177,9 +177,23 @@ PITCH CHANNEL
   C1             0.25
 </COMPONENT>
 
-<COMPONENT NAME="HDot Command" TYPE="PURE_GAIN">
+<COMPONENT NAME="HDot Command" TYPE="SCHEDULED_GAIN">
   INPUT          fcs/alt-error-lag
-  GAIN           0.1
+  SCHEDULED_BY   position/h-sl-ft
+  ROWS           13
+  0     0.12
+  1000  0.11
+  2000  0.10
+  3000  0.096
+  4000  0.093
+  5000  0.086
+  6000  0.078
+  7000  0.069
+  8000  0.061
+  9000  0.053
+  10000 0.045
+  11000 0.037
+  12000 0.028
 </COMPONENT>
 
 <COMPONENT NAME="HDot Error" TYPE="SUMMER">
