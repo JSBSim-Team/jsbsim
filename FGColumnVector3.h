@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.7 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.8 2001/10/15 11:49:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,12 +108,13 @@ public:
 
   friend ostream& operator<<(ostream& os, const FGColumnVector3& col);
 
-  inline double& operator()(int m) const { return data[m]; }
+  inline double operator()(int m) const { return data[m]; }
+  inline double& operator()(int m) { return data[m]; }
 
   FGColumnVector3 multElementWise(const FGColumnVector3& V);
 
 private:
-  double *data;
+  double data[4];
   int rowCtr;
   void Debug(void);
 };

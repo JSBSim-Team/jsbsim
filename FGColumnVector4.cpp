@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.4 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.5 2001/10/15 11:49:32 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR4;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -29,7 +29,6 @@ CLASS IMPLEMENTATION
 
 FGColumnVector4::FGColumnVector4(void)
 {
-  data = new double[5];
   rowCtr = 1;
   //cout << "Allocated: " <<  data << endl;
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector4" << endl;
@@ -39,7 +38,6 @@ FGColumnVector4::FGColumnVector4(void)
 
 FGColumnVector4::FGColumnVector4(int m)
 {
-  data = new double[5];
   rowCtr = 1;
   data[1]=0;data[2]=0;data[3]=0;data[4]=0;
   //cout << "Allocated: " <<  data << endl;
@@ -51,8 +49,6 @@ FGColumnVector4::FGColumnVector4(int m)
 FGColumnVector4::~FGColumnVector4(void)
 {
   //cout << "Freed: " << data << endl;
-  delete[] data;
-  data = NULL;
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector4" << endl;
 }
 
@@ -61,7 +57,6 @@ FGColumnVector4::~FGColumnVector4(void)
 
 FGColumnVector4::FGColumnVector4(const FGColumnVector4& b) 
 {
-  data = new double[5];
   data[1] = b.data[1];
   data[2] = b.data[2];
   data[3] = b.data[3];
@@ -76,7 +71,6 @@ FGColumnVector4::FGColumnVector4(const FGColumnVector4& b)
 
 FGColumnVector4 FGColumnVector4::operator=(const FGColumnVector4& b) 
 {
-  data = new double[5];
   data[1] = b.data[1];
   data[2] = b.data[2];
   data[3] = b.data[3];

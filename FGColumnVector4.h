@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.5 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.6 2001/10/15 11:49:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,8 @@ public:
   void operator*=(const double scalar);
   void operator/=(const double scalar);
   
-  inline double& operator()(int m) const { return data[m]; }
+  inline double operator()(int m) const { return data[m]; }
+  inline double& operator()(int m) { return data[m]; }
   
   FGColumnVector4& operator<<(const float ff);
 
@@ -110,7 +111,7 @@ public:
   FGColumnVector4 multElementWise(const FGColumnVector4& V);
 
 private:
-  double *data;
+  double data[5];
   int rowCtr;
   void Debug(void);
 };

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.6 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.7 2001/10/15 11:49:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,8 @@ public:
   ~FGMatrix33(void);
 
   FGMatrix33& operator=(const FGMatrix33& A);
-  inline double& operator()(unsigned int row, unsigned int col) const {return data[row][col];}
+  inline double operator()(unsigned int row, unsigned int col) const {return data[row][col];}
+  inline double& operator()(unsigned int row, unsigned int col) {return data[row][col];}
 
   FGColumnVector3 operator*(const FGColumnVector3& Col);
 
@@ -121,15 +122,10 @@ public:
   void operator*=(const double scalar);
   void operator/=(const double scalar);
 
-
-  void SetOParams(char delim,int width,int prec, int origin=0);
-
 protected:
-  double **data;
+  double data[4][4];
 
 private:
-  char delim;
-  int width,prec,origin;
   void TransposeSquare(void);
   unsigned int rowCtr, colCtr;
   void Debug(void);
