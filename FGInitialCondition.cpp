@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.46 2001/12/12 11:51:01 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.47 2001/12/19 10:28:34 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -722,7 +722,10 @@ bool FGInitialCondition::Load(string acpath, string acname, string rstfile)
 # endif
 
   FGConfigFile resetfile(resetDef);
-  if (!resetfile.IsOpen()) return false;
+  if (!resetfile.IsOpen()) {
+    cerr << "Failed to open reset file: " << resetDef << endl;
+    return false;
+  }  
 
   resetfile.GetNextConfigLine();
   token = resetfile.GetValue();
