@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.70 2002/03/09 11:57:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.71 2002/03/22 11:55:59 apeden Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -546,6 +546,49 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::bind(void){
+  /* PropertyManager->Tie("propulsion/num-engines", this,
+                       &FGPropulsion::GetNumEngines);
+  PropertyManager->Tie("propulsion/num-tanks", this,
+                       &FGPropulsion::GetNumTanks); */
+  PropertyManager->Tie("propulsion/num-sel-fuel-tanks", this,
+                       &FGPropulsion::GetnumSelectedFuelTanks);
+  PropertyManager->Tie("propulsion/num-sel-ox-tanks", this,
+                       &FGPropulsion::GetnumSelectedOxiTanks);
+  PropertyManager->Tie("forces/fbx-prop-lbs", this,1,
+                       &FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fby-prop-lbs", this,2,
+                       &FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fbz-prop-lbs", this,3,
+                       &FGPropulsion::GetForces);
+  PropertyManager->Tie("moments/l-prop-lbsft", this,1,
+                       &FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/m-prop-lbsft", this,2,
+                       &FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/n-prop-lbsft", this,3,
+                       &FGPropulsion::GetMoments);
+  //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
+  //                     &FGPropulsion::GetTanksWeight);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::unbind(void){
+  /* PropertyManager->Untie("propulsion/num-engines");
+  PropertyManager->Untie("propulsion/num-tanks"); */
+  PropertyManager->Untie("propulsion/num-sel-fuel-tanks");
+  PropertyManager->Untie("propulsion/num-sel-ox-tanks");
+  PropertyManager->Untie("forces/fbx-prop-lbs");
+  PropertyManager->Untie("forces/fby-prop-lbs");
+  PropertyManager->Untie("forces/fbz-prop-lbs");
+  PropertyManager->Untie("moments/l-prop-lbsft");
+  PropertyManager->Untie("moments/m-prop-lbsft");
+  PropertyManager->Untie("moments/n-prop-lbsft");
+  //PropertyManager->Untie("propulsion/tanks-weight-lbs");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -591,41 +634,3 @@ void FGPropulsion::Debug(int from)
   }
 }
 
-void FGPropulsion::bind(void){
-  /* PropertyManager->Tie("propulsion/num-engines", this,
-                       &FGPropulsion::GetNumEngines);
-  PropertyManager->Tie("propulsion/num-tanks", this,
-                       &FGPropulsion::GetNumTanks); */
-  PropertyManager->Tie("propulsion/num-sel-fuel-tanks", this,
-                       &FGPropulsion::GetnumSelectedFuelTanks);
-  PropertyManager->Tie("propulsion/num-sel-ox-tanks", this,
-                       &FGPropulsion::GetnumSelectedOxiTanks);
-  PropertyManager->Tie("propulsion/fbx-prop-lbs", this,1,
-                       &FGPropulsion::GetForces);
-  PropertyManager->Tie("propulsion/fby-prop-lbs", this,2,
-                       &FGPropulsion::GetForces);
-  PropertyManager->Tie("propulsion/fbz-prop-lbs", this,3,
-                       &FGPropulsion::GetForces);
-  PropertyManager->Tie("propulsion/l-prop-lbsft", this,1,
-                       &FGPropulsion::GetMoments);
-  PropertyManager->Tie("propulsion/m-prop-lbsft", this,2,
-                       &FGPropulsion::GetMoments);
-  PropertyManager->Tie("propulsion/n-prop-lbsft", this,3,
-                       &FGPropulsion::GetMoments);
-  //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
-  //                     &FGPropulsion::GetTanksWeight);
-}
-
-void FGPropulsion::unbind(void){
-  /* PropertyManager->Untie("propulsion/num-engines");
-  PropertyManager->Untie("propulsion/num-tanks"); */
-  PropertyManager->Untie("propulsion/num-sel-fuel-tanks");
-  PropertyManager->Untie("propulsion/num-sel-ox-tanks");
-  PropertyManager->Untie("propulsion/fbx-prop-lbs");
-  PropertyManager->Untie("propulsion/fby-prop-lbs");
-  PropertyManager->Untie("propulsion/fbz-prop-lbs");
-  PropertyManager->Untie("propulsion/l-prop-lbsft");
-  PropertyManager->Untie("propulsion/m-prop-lbsft");
-  PropertyManager->Untie("propulsion/n-prop-lbsft");
-  //PropertyManager->Untie("propulsion/tanks-weight-lbs");
-}
