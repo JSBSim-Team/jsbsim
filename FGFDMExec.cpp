@@ -59,6 +59,7 @@ INCLUDES
 #include "FGFCS.h"
 #include "FGPropulsion.h"
 #include "FGMassBalance.h"
+#include "FGGroundReactions.h"
 #include "FGAerodynamics.h"
 #include "FGInertial.h"
 #include "FGAircraft.h"
@@ -69,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.52 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.53 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -116,22 +117,23 @@ CLASS IMPLEMENTATION
 
 FGFDMExec::FGFDMExec(void)
 {
-  Frame        = 0;
-  FirstModel   = 0;
-  Error        = 0;
-  State        = 0;
-  Atmosphere   = 0;
-  FCS          = 0;
-  Propulsion   = 0;
-  MassBalance  = 0;
-  Aerodynamics = 0;
-  Inertial     = 0;
-  Aircraft     = 0;
-  Translation  = 0;
-  Rotation     = 0;
-  Position     = 0;
-  Auxiliary    = 0;
-  Output       = 0;
+  Frame           = 0;
+  FirstModel      = 0;
+  Error           = 0;
+  State           = 0;
+  Atmosphere      = 0;
+  FCS             = 0;
+  Propulsion      = 0;
+  MassBalance     = 0;
+  Aerodynamics    = 0;
+  Inertial        = 0;
+  GroundReactions = 0;
+  Aircraft        = 0;
+  Translation     = 0;
+  Rotation        = 0;
+  Position        = 0;
+  Auxiliary       = 0;
+  Output          = 0;
 
   terminate = false;
   frozen = false;
@@ -171,18 +173,19 @@ bool FGFDMExec::Allocate(void) {
 
   bool result=true;
 
-  Atmosphere   = new FGAtmosphere(this);
-  FCS          = new FGFCS(this);
-  Propulsion   = new FGPropulsion(this);
-  MassBalance  = new FGMassBalance(this);
-  Aerodynamics = new FGAerodynamics (this);
-  Inertial     = new FGInertial(this);
-  Aircraft     = new FGAircraft(this);
-  Translation  = new FGTranslation(this);
-  Rotation     = new FGRotation(this);
-  Position     = new FGPosition(this);
-  Auxiliary    = new FGAuxiliary(this);
-  Output       = new FGOutput(this);
+  Atmosphere      = new FGAtmosphere(this);
+  FCS             = new FGFCS(this);
+  Propulsion      = new FGPropulsion(this);
+  MassBalance     = new FGMassBalance(this);
+  Aerodynamics    = new FGAerodynamics (this);
+  Inertial        = new FGInertial(this);
+  GroundReactions = new FGGroundReactions(this);
+  Aircraft        = new FGAircraft(this);
+  Translation     = new FGTranslation(this);
+  Rotation        = new FGRotation(this);
+  Position        = new FGPosition(this);
+  Auxiliary       = new FGAuxiliary(this);
+  Output          = new FGOutput(this);
 
   State        = new FGState(this); // This must be done here, as the FGState
                                     // class needs valid pointers to the above
@@ -208,24 +211,27 @@ bool FGFDMExec::Allocate(void) {
   if (!Inertial->InitModel()) {
     cerr << fgred << "FGInertial model init failed" << fgdef << endl;
     Error+=32;}
+  if (!GroundReactions->InitModel())   {
+    cerr << fgred << "Ground Reactions model init failed" << fgdef << endl;
+    Error+=64;}
   if (!Aircraft->InitModel())   {
     cerr << fgred << "Aircraft model init failed" << fgdef << endl;
-    Error+=64;}
+    Error+=128;}
   if (!Translation->InitModel()){
     cerr << fgred << "Translation model init failed" << fgdef << endl;
-    Error+=128;}
+    Error+=256;}
   if (!Rotation->InitModel())   {
     cerr << fgred << "Rotation model init failed" << fgdef << endl;
-    Error+=256;}
+    Error+=512;}
   if (!Position->InitModel())   {
     cerr << fgred << "Position model init failed" << fgdef << endl;
-    Error+=512;}
+    Error+=1024;}
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
-    Error+=1024;}
+    Error+=2058;}
   if (!Output->InitModel())     {
     cerr << fgred << "Output model init failed" << fgdef << endl;
-    Error+=2048;}
+    Error+=4096;}
 
   if (Error > 0) result = false;
 
@@ -233,18 +239,19 @@ bool FGFDMExec::Allocate(void) {
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
 
-  Schedule(Atmosphere,   1);
-  Schedule(FCS,          1);
-  Schedule(Propulsion,   1);
-  Schedule(MassBalance,  1);
-  Schedule(Aerodynamics, 1);
-  Schedule(Inertial,     1);
-  Schedule(Aircraft,     1);
-  Schedule(Rotation,     1);
-  Schedule(Translation,  1);
-  Schedule(Position,     1);
-  Schedule(Auxiliary,    1);
-  Schedule(Output,       1);
+  Schedule(Atmosphere,      1);
+  Schedule(FCS,             1);
+  Schedule(Propulsion,      1);
+  Schedule(MassBalance,     1);
+  Schedule(Aerodynamics,    1);
+  Schedule(Inertial,        1);
+  Schedule(GroundReactions, 1);
+  Schedule(Aircraft,        1);
+  Schedule(Rotation,        1);
+  Schedule(Translation,     1);
+  Schedule(Position,        1);
+  Schedule(Auxiliary,       1);
+  Schedule(Output,          1);
 
   modelLoaded = false;
 
@@ -255,36 +262,38 @@ bool FGFDMExec::Allocate(void) {
 
 bool FGFDMExec::DeAllocate(void) {
 
-  if ( Atmosphere != 0 )  delete Atmosphere;
-  if ( FCS != 0 )         delete FCS;
-  if ( Propulsion != 0)   delete Propulsion;
-  if ( MassBalance != 0)  delete MassBalance;
-  if ( Aerodynamics != 0) delete Aerodynamics;
-  if ( Inertial != 0)     delete Inertial;
-  if ( Aircraft != 0 )    delete Aircraft;
-  if ( Translation != 0 ) delete Translation;
-  if ( Rotation != 0 )    delete Rotation;
-  if ( Position != 0 )    delete Position;
-  if ( Auxiliary != 0 )   delete Auxiliary;
-  if ( Output != 0 )      delete Output;
-  if ( State != 0 )       delete State;
+  if ( Atmosphere != 0 )     delete Atmosphere;
+  if ( FCS != 0 )            delete FCS;
+  if ( Propulsion != 0)      delete Propulsion;
+  if ( MassBalance != 0)     delete MassBalance;
+  if ( Aerodynamics != 0)    delete Aerodynamics;
+  if ( Inertial != 0)        delete Inertial;
+  if ( GroundReactions != 0) delete GroundReactions;
+  if ( Aircraft != 0 )       delete Aircraft;
+  if ( Translation != 0 )    delete Translation;
+  if ( Rotation != 0 )       delete Rotation;
+  if ( Position != 0 )       delete Position;
+  if ( Auxiliary != 0 )      delete Auxiliary;
+  if ( Output != 0 )         delete Output;
+  if ( State != 0 )          delete State;
 
   FirstModel  = 0L;
   Error       = 0;
 
-  State        = 0;
-  Atmosphere   = 0;
-  FCS          = 0;
-  Propulsion   = 0;
-  MassBalance  = 0;
-  Aerodynamics = 0;
-  Inertial     = 0;
-  Aircraft     = 0;
-  Translation  = 0;
-  Rotation     = 0;
-  Position     = 0;
-  Auxiliary    = 0;
-  Output       = 0;
+  State           = 0;
+  Atmosphere      = 0;
+  FCS             = 0;
+  Propulsion      = 0;
+  MassBalance     = 0;
+  Aerodynamics    = 0;
+  Inertial        = 0;
+  GroundReactions = 0;
+  Aircraft        = 0;
+  Translation     = 0;
+  Rotation        = 0;
+  Position        = 0;
+  Auxiliary       = 0;
+  Output          = 0;
 
   modelLoaded = false;
   return modelLoaded;

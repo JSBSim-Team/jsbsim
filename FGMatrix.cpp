@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.26 2001/04/09 05:28:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.27 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -31,8 +31,8 @@ CLASS IMPLEMENTATION
 
 double** FGalloc(int rows, int cols)
 {
-  double **A;
-
+  double** A;
+  
   A = new double *[rows+1];
   if (!A)  return NULL;
 
@@ -40,6 +40,7 @@ double** FGalloc(int rows, int cols)
     A[i] = new double [cols+1];
     if (!A[i]) return NULL;
   }
+
   return A;
 }
 
@@ -47,8 +48,11 @@ double** FGalloc(int rows, int cols)
 
 void dealloc(double **A, int rows)
 {
+/*
   for (int i=0; i <= rows; i++) delete[] A[i];
   delete[] A;
+*/
+  free(A);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,10 +135,6 @@ FGMatrix& FGMatrix::operator=(const FGMatrix& M)
   if (&M != this) {
     if (data != NULL) dealloc(data,rows);
 
-    width  = M.width;
-    prec   = M.prec;
-    delim  = M.delim;
-    origin = M.origin;
     rows   = M.rows;
     cols   = M.cols;
 
@@ -166,10 +166,6 @@ unsigned int FGMatrix::Cols(void) const
 
 void FGMatrix::SetOParams(char delim,int width,int prec,int origin)
 {
-  FGMatrix::delim  = delim;
-  FGMatrix::width  = width;
-  FGMatrix::prec   = prec;
-  FGMatrix::origin = origin;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,8 +452,15 @@ FGColumnVector::FGColumnVector(void):FGMatrix(3,1)
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector" << endl;
 }
 
-FGColumnVector::FGColumnVector(int m):FGMatrix(m,1) { }
-FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b) { }
+FGColumnVector::FGColumnVector(int m):FGMatrix(m,1)
+{
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector" << endl;
+}
+
+FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b)
+{
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector" << endl;
+}
 
 FGColumnVector::~FGColumnVector(void)
 {

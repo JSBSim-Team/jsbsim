@@ -47,7 +47,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.17 2001/07/28 15:23:35 apeden Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.18 2001/07/29 01:42:40 jberndt Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
@@ -92,12 +92,10 @@ public:
 
   inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
-  inline FGColumnVector3 GetWindNED(void) { return vWindNED; }
+  inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
   
   inline float GetWindPsi(void) { return psiw; }
   
-protected:
-
 private:
   float rho;
 

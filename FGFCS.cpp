@@ -58,7 +58,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.49 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.50 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 extern short debug_lvl;
@@ -138,7 +138,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 {
   string token;
 
-  Name = AC_cfg->GetValue("NAME");
+  Name = Name + ":" + AC_cfg->GetValue("NAME");
   if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.9 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.10 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 extern short debug_lvl;
@@ -47,17 +47,33 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
+FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
+                                                        vForces(3),
+                                                        vMoments(3)
 {
-  if (debug_lvl & 2) cout << "Instantiated: FGGroundReactions" << endl;
+  Name = "FGGroundReactions";
+
+  GearUp = false;
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGroundReactions:: Run(void) {
-
+bool FGGroundReactions:: Run(void)
+{
   if (!FGModel::Run()) {
-
+    vForces.InitMatrix();
+    vMoments.InitMatrix();
+    if ( !GearUp ) {
+      vector <FGLGear>::iterator iGear = lGear.begin();
+      while (iGear != lGear.end()) {
+        vForces  += iGear->Force();
+        vMoments += iGear->Moment();
+        iGear++;
+      }
+    } else {
+      // Crash Routine
+    }
     return false;
   } else {
     return true;
@@ -68,7 +84,57 @@ bool FGGroundReactions:: Run(void) {
 
 bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
 {
+  string token;
+
+  AC_cfg->GetNextConfigLine();
+
+  while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
+    lGear.push_back(FGLGear(AC_cfg, FDMExec));
+  }
+
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGGroundReactions::GetGroundReactionStrings(void)
+{
+  string GroundReactionStrings = "";
+  bool firstime = true;
+
+  for (unsigned int i=0;i<lGear.size();i++) {
+    if (!firstime) GroundReactionStrings += ", ";
+    GroundReactionStrings += (lGear[i].GetName() + "_WOW, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_compressLength, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_compressSpeed, ");
+    GroundReactionStrings += (lGear[i].GetName() + "_Force");
+
+    firstime = false;
+  }
+
+  return GroundReactionStrings;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGGroundReactions::GetGroundReactionValues(void)
+{
+  char buff[20];
+  string GroundReactionValues = "";
+
+  bool firstime = true;
+
+  for (unsigned int i=0;i<lGear.size();i++) {
+    if (!firstime) GroundReactionValues += ", ";
+    GroundReactionValues += string( lGear[i].GetWOW()?"1":"0" ) + ", ";
+    GroundReactionValues += (string(gcvt(lGear[i].GetCompLen(),    5, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetCompVel(),    6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i].GetCompForce(), 10, buff)));
+
+    firstime = false;
+  }
+
+  return GroundReactionValues;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.18 2001/07/28 15:23:35 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.19 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 extern short debug_lvl;
@@ -97,13 +97,10 @@ FGAtmosphere::~FGAtmosphere()
 
 bool FGAtmosphere::Run(void)
 {
-  //cout << "In FGAtmosphere::Run(void)" << endl;
   if (!FGModel::Run()) {                 // if false then execute this Run()
     //do temp, pressure, and density first
     if (!useExternal) {
-      //cout << "Atmosphere: Using internal model, altitude= ";
       h = Position->Geth();
-
       Calculate(h);
     } else {
       density = exDensity;
@@ -116,7 +113,7 @@ bool FGAtmosphere::Run(void)
     if (psiw < 0) psiw += 2*M_PI;
 
     soundspeed = sqrt(SHRATIO*Reng*temperature);
-    //cout << "Atmosphere: soundspeed: " << soundspeed << endl;
+
     State->Seta(soundspeed);
 
   } else {                               // skip Run() execution this time
@@ -133,16 +130,14 @@ void FGAtmosphere::Calculate(float altitude)
   float slope,reftemp,refpress,refdens;
   int i=0;
   float htab[]={0,36089,82020,154198,173882,259183,295272,344484}; //ft.
-  // cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+
   if (altitude <= htab[0]) {
     altitude=0;
   } else if (altitude >= htab[7]){
     i = 7;
     altitude = htab[7];
   } else {
-    while (htab[i+1] < altitude) {
-      i++;
-    }
+    while (htab[i+1] < altitude) i++;
   }
 
   switch(i) {
@@ -205,9 +200,6 @@ void FGAtmosphere::Calculate(float altitude)
     pressure = refpress*pow(temperature/reftemp,-GRAVITY/(slope*Reng));
     density = refdens*pow(temperature/reftemp,-(GRAVITY/(slope*Reng)+1));
   }
-
-  //cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

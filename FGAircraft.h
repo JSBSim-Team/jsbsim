@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.62 2001/07/28 15:22:43 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.63 2001/07/29 01:42:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.62 2001/07/28 15:22:43 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.63 2001/07/29 01:42:40 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -155,8 +155,6 @@ public:
   inline float Getcbar(void) { return cbar; }
   inline FGColumnVector3& GetMoments(void) { return vMoments; }
   inline FGColumnVector3& GetForces(void) { return vForces; }
-  inline FGColumnVector3& GetAeroBodyForces(void) { return vAeroBodyForces; }
-  inline float GetAeroBodyForces(int axis) { return vAeroBodyForces(axis); }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
   inline float GetXYZrp(int idx) { return vXYZrp(idx); }
@@ -169,9 +167,6 @@ public:
   inline void SetGearDown(bool tt) { GearUp = false; }
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
-
-  string GetGroundReactionStrings(void);
-  string GetGroundReactionValues(void);
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  SubSystems {
@@ -191,22 +186,14 @@ public:
   } subsystems;
 
 private:
-  void GetState(void);
-  void FMAero(void);
-  void FMGear(void);
-  void FMMass(void);
-  void FMProp(void);
   FGColumnVector3 vMoments;
   FGColumnVector3 vForces;
   FGColumnVector3 vXYZrp;
   FGColumnVector3 vXYZep;
   FGColumnVector3 vEuler;
   FGColumnVector3 vDXYZcg;
-  FGColumnVector3 vAeroBodyForces;
-  float alpha, beta;
   float WingArea, WingSpan, cbar;
   float alphaclmax,alphaclmin;
-  float dt;
   string CFGVersion;
   string AircraftName;
 

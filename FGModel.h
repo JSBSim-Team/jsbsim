@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.23 2001/07/13 12:55:15 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.24 2001/07/29 01:42:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -73,6 +73,7 @@ class FGPropulsion;
 class FGMassBalance;
 class FGAerodynamics;
 class FGInertial;
+class FGGroundReactions;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -133,20 +134,21 @@ protected:
   int exe_ctr;
   int rate;
 
-  FGFDMExec*      FDMExec;
-  FGState*        State;
-  FGAtmosphere*   Atmosphere;
-  FGFCS*          FCS;
-  FGPropulsion*   Propulsion;
-  FGMassBalance*  MassBalance;
-  FGAerodynamics* Aerodynamics;
-  FGInertial*     Inertial;
-  FGAircraft*     Aircraft;
-  FGTranslation*  Translation;
-  FGRotation*     Rotation;
-  FGPosition*     Position;
-  FGAuxiliary*    Auxiliary;
-  FGOutput*       Output;
+  FGFDMExec*         FDMExec;
+  FGState*           State;
+  FGAtmosphere*      Atmosphere;
+  FGFCS*             FCS;
+  FGPropulsion*      Propulsion;
+  FGMassBalance*     MassBalance;
+  FGAerodynamics*    Aerodynamics;
+  FGInertial*        Inertial;
+  FGGroundReactions* GroundReactions;
+  FGAircraft*        Aircraft;
+  FGTranslation*     Translation;
+  FGRotation*        Rotation;
+  FGPosition*        Position;
+  FGAuxiliary*       Auxiliary;
+  FGOutput*          Output;
   virtual void Debug(void);
 };
 

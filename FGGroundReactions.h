@@ -55,23 +55,34 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGConfigFile.h"
+#include "FGLGear.h"
+#include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.11 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.12 2001/07/29 01:42:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundReactions : public FGModel {
-
+class FGGroundReactions : public FGModel
+{
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions();
+  ~FGGroundReactions() {};
 
   bool Run(void);
   bool Load(FGConfigFile* AC_cfg);
+  FGColumnVector3& GetForces(void) {return vForces;}
+  FGColumnVector3& GetMoments(void) {return vMoments;}
+  string GetGroundReactionStrings(void);
+  string GetGroundReactionValues(void);
 
 private:
+  vector <FGLGear> lGear;
+  bool GearUp;
+  FGColumnVector3 vForces;
+  FGColumnVector3 vMoments;
+
   void Debug(void);
 };
 

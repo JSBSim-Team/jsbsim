@@ -120,6 +120,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGInertial.h"
+#include "FGGroundReactions.h"
 #include "FGAerodynamics.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -139,7 +140,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.82 2001/07/28 15:22:43 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.83 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -165,14 +166,10 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vForces(3),
     vXYZrp(3),
     vXYZep(3),
-    vEuler(3),
-    vDXYZcg(3),
-    vAeroBodyForces(3)
+    vDXYZcg(3)
 {
   Name = "FGAircraft";
-
   GearUp = false;
-
   alphaclmin = alphaclmax = 0;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
@@ -226,70 +223,19 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 bool FGAircraft::Run(void)
 {
   if (!FGModel::Run()) {                 // if false then execute this Run()
-    GetState();
+    vForces = Aerodynamics->GetForces()
+            + Inertial->GetForces()
+            + Propulsion->GetForces()
+            + GroundReactions->GetForces();
 
-    vForces.InitMatrix();
-    vMoments.InitMatrix();
-
-    FMProp();
-    FMAero();
-    FMMass();
-    FMGear();
+    vMoments = Aerodynamics->GetMoments()
+             + Propulsion->GetMoments()
+             + GroundReactions->GetMoments();
 
     return false;
   } else {                               // skip Run() execution this time
     return true;
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::FMAero(void)
-{
-    vForces += Aerodynamics->GetForces();
-    vMoments += Aerodynamics->GetMoments();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::FMGear(void)
-{
-  if ( !GearUp ) {
-    vector <FGLGear>::iterator iGear = lGear.begin();
-    while (iGear != lGear.end()) {
-      vForces  += iGear->Force();
-      vMoments += iGear->Moment();
-      iGear++;
-    }
-  } else {
-    // Crash Routine
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::FMMass(void)
-{
-  vForces += Inertial->GetForces();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::FMProp(void)
-{
-  vForces += Propulsion->GetForces();
-  vMoments += Propulsion->GetMoments();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::GetState(void)
-{
-  dt = State->Getdt();
-
-  alpha = Translation->Getalpha();
-  beta = Translation->Getbeta();
-  vEuler = Rotation->GetEuler();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -359,7 +305,8 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
+{
   if (!Propulsion->Load(AC_cfg)) {
     cerr << "Propulsion not successfully loaded" << endl;
   }
@@ -367,7 +314,8 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg)
+{
   if (!FCS->Load(AC_cfg)) {
     cerr << "Flight Controls not successfully loaded" << endl;
   }
@@ -380,24 +328,21 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
   if (!Aerodynamics->Load(AC_cfg)) {
     cerr << "Aerodynamics not successfully loaded" << endl;
   }
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg) {
-  string token;
-
-  AC_cfg->GetNextConfigLine();
-
-  while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
-    lGear.push_back(FGLGear(AC_cfg, FDMExec));
+void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
+{
+  if (!GroundReactions->Load(AC_cfg)) {
+    cerr << "Ground Reactions not successfully loaded" << endl;
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
+{
   string token, parameter;
   int OutRate = 0;
   int subsystems = 0;
@@ -473,7 +418,8 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg)
+{
   string token = AC_cfg->GetValue();
   string scratch;
   AircraftName = AC_cfg->GetValue("NAME");
@@ -492,46 +438,6 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
     cerr << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
     cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
   }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGAircraft::GetGroundReactionStrings(void) {
-  string GroundReactionStrings = "";
-  bool firstime = true;
-
-  for (unsigned int i=0;i<lGear.size();i++) {
-    if (!firstime) GroundReactionStrings += ", ";
-    GroundReactionStrings += (lGear[i].GetName() + "_WOW, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_compressLength, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_compressSpeed, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_Force");
-
-    firstime = false;
-  }
-
-  return GroundReactionStrings;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGAircraft::GetGroundReactionValues(void) {
-  char buff[20];
-  string GroundReactionValues = "";
-
-  bool firstime = true;
-
-  for (unsigned int i=0;i<lGear.size();i++) {
-    if (!firstime) GroundReactionValues += ", ";
-    GroundReactionValues += string( lGear[i].GetWOW()?"1":"0" ) + ", ";
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompLen(),    5, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompVel(),    6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompForce(), 10, buff)));
-
-    firstime = false;
-  }
-
-  return GroundReactionValues;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

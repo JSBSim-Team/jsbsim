@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.5 2001/07/29 01:05:21 apeden Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.6 2001/07/29 01:42:40 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 extern short debug_lvl;
@@ -308,8 +308,9 @@ void FGColumnVector3::Debug(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ostream& operator<<(ostream& os, const FGColumnVector3& col) {
-  cout << "[ " << col(1) << " , " << col(2) << " , " << col(3) << " ]";
+ostream& operator<<(ostream& os, const FGColumnVector3& col)
+{
+  os << col(1) << " , " << col(2) << " , " << col(3);
   return os;
 }  
 
