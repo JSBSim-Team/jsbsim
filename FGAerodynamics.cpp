@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.38 2002/05/26 15:25:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.39 2002/06/05 05:12:04 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -232,7 +232,7 @@ string FGAerodynamics::GetCoefficientStrings(void)
       } else {
         CoeffStrings += ", ";
       }
-      CoeffStrings += Coeff[axis][sd]->GetCoefficientStrings();
+      CoeffStrings += Coeff[axis][sd]->GetCoefficientName();
     }
   }
   return CoeffStrings;
@@ -252,7 +252,7 @@ string FGAerodynamics::GetCoefficientValues(void)
       } else {
         SDValues += ", ";
       }
-      SDValues += Coeff[axis][sd]->GetCoefficientValues();
+      SDValues += Coeff[axis][sd]->GetSDstring();
     }
   }
 

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.12 2002/04/20 14:05:17 apeden Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.13 2002/06/05 05:12:04 jberndt Exp $"
 
 using std::vector;
 
@@ -104,8 +104,6 @@ public:
   bool Load(FGConfigFile *AC_cfg);
   double TotalValue(void);
   inline double GetValue(void) const { return totalValue; }
-  //string GetCoefficientStrings(void);
-  //string GetCoefficientValues(void);
   inline double GetSD(void) { return SDtotal; }
   inline double GetFactorSD(void) { return FGCoefficient::GetSD(); }
   

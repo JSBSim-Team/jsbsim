@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.42 2002/05/04 02:48:03 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.43 2002/06/05 05:12:04 jberndt Exp $"
 
 using std::vector;
 
@@ -83,12 +83,13 @@ something that may be fixed someday.
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** This class models the stability derivative coefficient lookup tables.
+/** This class models the aero coefficient and stability derivative coefficient
+    lookup table, value, vector, or equation (equation not modeled, yet).
     Each coefficient for an axis is stored in that axes' vector of coefficients.
-    Each FDM execution frame the Run() method of the [currently] FGAircraft model
-    is called and the coefficient value is calculated.
+    Each FDM execution frame the Run() method of the FGAerodynamics model
+    is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.42 2002/05/04 02:48:03 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.43 2002/06/05 05:12:04 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -102,26 +103,58 @@ CLASS DECLARATION
 class FGCoefficient : public FGJSBBase
 {
 public:
-  FGCoefficient(FGFDMExec*);
+  /** Constructor.
+      @param exec a pointer to the main FGFDMExecutive instance. */
+  FGCoefficient(FGFDMExec* exec);
+  /// Destructor.
   virtual ~FGCoefficient();
   
+  /** Loads the stability derivative/aero coefficient data from the config file
+      as directed by the FGAerodynamics instance.
+      @param AC_cfg a pointer to the current config file instance. */
   virtual bool Load(FGConfigFile* AC_cfg);
   
   typedef vector <FGPropertyManager*> MultVec;
+
+  enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
+
+  /** Returns the value for this coefficient.
+      Each instance of FGCoefficient stores a value for the "type" of coefficient
+      it is, one of: VALUE, VECTOR, TABLE, or EQUATION. This TotalValue function 
+      is called when the value for a coefficient needs to be known. When it is called,
+      depending on what type of coefficient is represented by the FGCoefficient
+      instance, TotalValue() directs the appropriate Value() function to be called.
+      The type of coefficient represented is determined when the config file is read.
+      The coefficient definition includes the "type" specifier.
+      @return the current value of the coefficient represented by this instance of
+      FGCoefficient. */
   virtual double TotalValue(void);
+  
+  /** Returns the value for this coefficient.
+      TotalValue is stored each time TotalValue() is called. This function returns
+      the stored value but does not calculate it anew. This is valuable for merely
+      printing out the value.
+      @return the most recently calculated and stored value of the coefficient
+      represented by this instance of FGCoefficient. */
   virtual inline double GetValue(void) const { return totalValue; }
+  
+  /// Returns the name of this coefficient.
   virtual inline string Getname(void) const {return name;}
+  
+  /// Returns the value of the coefficient only - before it is re-dimensionalized.
   virtual inline double GetSD(void) const { return SD;}
-  inline MultVec Getmultipliers(void) {return multipliers;}
-  void DumpSD(void);  
   
   /** Outputs coefficient information.
       Non-dimensionalizing parameter descriptions are output
       for each aero coefficient defined.
       @param multipliers the list of multipliers for this coefficient.*/
   virtual void DisplayCoeffFactors(void);
-  virtual inline string GetCoefficientStrings(void) { return name; }
-  virtual string GetCoefficientValues(void);
+  
+  /// Returns the name of the coefficient.
+  virtual inline string GetCoefficientName(void) { return name; }
+  /// Returns the stability derivative or coefficient value as a string.
+  virtual string GetSDstring(void);
+  
   
   inline void setBias(double b) { bias=b; }
   inline void setGain(double g) { gain=g; };
@@ -135,8 +168,6 @@ protected:
   FGFDMExec* FDMExec;
 
 private:
-  enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
-
   int numInstances;
   string description;
   string name;

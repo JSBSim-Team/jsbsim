@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.54 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.55 2002/06/05 05:12:04 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +195,6 @@ double FGCoefficient::Value(double rVal, double cVal)
   unsigned int midx;
 
   SD = Value = gain*Table->GetValue(rVal, cVal) + bias;
-  
 
   for (midx=0; midx < multipliers.size(); midx++) {
       Value *= multipliers[midx]->getDoubleValue();
@@ -236,31 +235,29 @@ double FGCoefficient::Value(void)
 double FGCoefficient::TotalValue(void)
 {
   switch(type) {
-  case 0:
-    totalValue=-1;
-    return totalValue;
-  case 1:
-    totalValue=Value();
-    return totalValue;
-  case 2:
-    totalValue=Value( LookupR->getDoubleValue() );
-    return totalValue;
-  case 3:
-    totalValue=Value( LookupR->getDoubleValue(),
-                        LookupC->getDoubleValue() );
-    return totalValue;
-  case 4:
-    totalValue=0.0;
-    return totalValue;
+
+  case UNKNOWN:
+    totalValue = -1;
+    break;
+
+  case VALUE:
+    totalValue = Value();
+    break;
+
+  case VECTOR:
+    totalValue = Value( LookupR->getDoubleValue() );
+    break;
+
+  case TABLE:
+    totalValue = Value( LookupR->getDoubleValue(),
+                      LookupC->getDoubleValue() );
+    break;
+
+  case EQUATION:
+    totalValue = 0.0;
+    break;
   }
   return totalValue;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGCoefficient::DumpSD(void)
-{
-  cout << "   " << name << ": " << SD << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -282,7 +279,7 @@ void FGCoefficient::DisplayCoeffFactors(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGCoefficient::GetCoefficientValues(void)
+string FGCoefficient::GetSDstring(void)
 {
   char buffer[10];
   string value;
