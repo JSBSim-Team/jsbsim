@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.32 2002/03/19 12:14:19 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.33 2002/03/22 11:47:24 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -164,11 +164,9 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
         if( token == "COEFFICIENT" ) {
           ca.push_back( new FGCoefficient(FDMExec) );
           ca.back()->Load(AC_cfg);
-          cm[ca.back()->Getname()]=ca.back();
         } else if ( token == "GROUP" ) {
           ca.push_back( new FGFactorGroup(FDMExec) );
           ca.back()->Load(AC_cfg);
-          cm[ca.back()->Getname()]=ca.back();
         }
       }
       Coeff[AxisIdx[axis]] = ca;
@@ -257,15 +255,14 @@ void FGAerodynamics::bindModel(void) {
  
   unsigned i,j;
   FGPropertyManager* node;
-  string prop_name;
-  
+  string axis_node_name;
+  node = PropertyManager->GetNode("aero/buildup",true);
   for(i=0;i<NAxes;i++) {
+     node=node->GetNode( string(AxisNames[i]),true );
      for (j=0; j < Coeff[i].size(); j++) { 
-       prop_name = "aero/buildup/" + string(AxisNames[i]) 
-                    + "/" + Coeff[i][j]->Getname();
-       node= PropertyManager->GetNode(prop_name,true);
        Coeff[i][j]->bind(node);
-     }                                          
+     } 
+     node=(FGPropertyManager*)node->getParent();                                         
   }
 }
 
