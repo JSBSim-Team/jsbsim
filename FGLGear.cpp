@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.97 2004/02/02 21:02:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.98 2004/02/02 21:26:45 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -231,9 +231,7 @@ FGColumnVector3& FGLGear::Force(void)
       
   if (GearDown) {
 
-    vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
-    vWhlBodyVec(eX) = -vWhlBodyVec(eX);
-    vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
+    vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
 
 // vWhlBodyVec now stores the vector from the cg to this wheel
 
