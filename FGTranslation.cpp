@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.29 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.30 2001/08/30 11:24:19 apeden Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,27 +127,35 @@ bool FGTranslation::Run(void)
     vUVW += Tc * (vlastUVWdot + vUVWdot);
     vAero = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
+/*     cout << "vUVW: " << vUVW << endl;
+    cout << "vwUVW: " << State->GetTl2b()*Atmosphere->GetWindNED() << endl;
+    cout << "vaUVW: " << vAero << endl;
+ */
+
     Vt = vAero.Magnitude();
+    if( Vt > 1) {
+      if (vAero(eW) != 0.0)
+        alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
+      if (vAero(eV) != 0.0)
+        beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV),
+               sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
 
-    if (vAero(eW) != 0.0)
-      alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
-    if (vAero(eV) != 0.0)
-      beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV),
-             sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
+      // stolen, quite shamelessly, from LaRCsim
+      float mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
+      float signU=1;
+      if (vAero(eU) != 0.0)
+        signU = vAero(eU)/fabs(vAero(eU));
 
-    // stolen, quite shamelessly, from LaRCsim
-    float mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
-    float signU=1;
-    if (vAero(eU) != 0.0)
-      signU = vAero(eU)/fabs(vAero(eU));
-
-    if ( (mUW == 0.0) || (Vt == 0.0) ) {
-      adot = 0.0;
-      bdot = 0.0;
+      if ( (mUW == 0.0) || (Vt == 0.0) ) {
+        adot = 0.0;
+        bdot = 0.0;
+      } else {
+        adot = (vAero(eU)*vAero(eW) - vAero(eW)*vUVWdot(eU))/mUW;
+        bdot = (signU*mUW*vUVWdot(eV) - vAero(eV)*(vAero(eU)*vUVWdot(eU)
+                + vAero(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+      }
     } else {
-      adot = (vAero(eU)*vAero(eW) - vAero(eW)*vUVWdot(eU))/mUW;
-      bdot = (signU*mUW*vUVWdot(eV) - vAero(eV)*(vAero(eU)*vUVWdot(eU)
-              + vAero(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+      alpha = beta = adot = bdot = 0;
     }
 
     qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
