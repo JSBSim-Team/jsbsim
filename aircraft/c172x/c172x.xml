@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.23 2004/05/26 12:29:59 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.24 2004/05/29 12:20:42 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -208,7 +208,7 @@
 
    <AERODYNAMICS>
 
-     AC_ALPHALIMITS -0.087 0.28
+     AC_ALPHALIMITS -0.087 0.28 <!-- this is a test comment -->
      AC_HYSTLIMITS   0.09  0.36
 
      <AXIS NAME="LIFT">
