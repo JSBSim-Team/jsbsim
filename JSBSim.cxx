@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.96 2002/01/14 13:23:11 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.97 2002/01/19 03:01:59 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -111,9 +111,6 @@ FGJSBsim::FGJSBsim( double dt )
 
     int Neng = Propulsion->GetNumEngines();
     SG_LOG( SG_FLIGHT, SG_INFO, "num engines = " << Neng );
-    for(int i=0;i<Neng;i++) {
-        add_engine( FGEngInterface() );
-    }  
     
     if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
@@ -250,16 +247,6 @@ FGJSBsim::update( int multiloop ) {
       needTrim = false;  
     }    
     
-    for( i=0; i<get_num_engines(); i++ ) {
-      FGEngInterface * e = get_engine(i);
-      FGEngine * eng = Propulsion->GetEngine(i);
-      FGThruster * thrust = Propulsion->GetThruster(i);
-      eng->SetMagnetos( globals->get_controls()->get_magnetos(i) );
-      eng->SetStarter( globals->get_controls()->get_starter(i) );
-      e->set_Throttle( globals->get_controls()->get_throttle(i) );
-    }
-
-
     for ( i=0; i < multiloop; i++ ) {
         fdmex->Run();
     }
@@ -286,24 +273,6 @@ FGJSBsim::update( int multiloop ) {
       }
     }
 
-    for( i=0; i<get_num_engines(); i++ ) {
-      FGEngInterface * e = get_engine(i);
-      FGEngine * eng = Propulsion->GetEngine(i);
-      FGThruster * thrust = Propulsion->GetThruster(i);
-      e->set_Manifold_Pressure( eng->getManifoldPressure_inHg() );
-      e->set_RPM( thrust->GetRPM() );
-      e->set_EGT( eng->getExhaustGasTemp_degF() );
-      e->set_CHT( eng->getCylinderHeadTemp_degF() );
-      e->set_Oil_Temp( eng->getOilTemp_degF() );
-      e->set_Running_Flag( eng->GetRunning() );
-      e->set_Cranking_Flag( eng->GetCranking() );
-    }
-
-    
-    update_gear();
-    
-    stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
-    
     // translate JSBsim back to FG structure so that the
     // autopilot (and the rest of the sim can use the updated values
     copy_from_JSBsim();
@@ -314,6 +283,8 @@ FGJSBsim::update( int multiloop ) {
 // Convert from the FGInterface struct to the JSBsim generic_ struct
 
 bool FGJSBsim::copy_to_JSBsim() {
+    int i;
+
     // copy control positions into the JSBsim structure
 
     FCS->SetDaCmd( globals->get_controls()->get_aileron());
@@ -329,11 +300,15 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetRBrake( globals->get_controls()->get_brake( 1 ) );
     FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
     FCS->SetGearCmd( globals->get_controls()->get_gear_down());
-    for (int i = 0; i < get_num_engines(); i++) {
+    for (i = 0; i < Propulsion->GetNumEngines(); i++) {
+      FGEngine * eng = Propulsion->GetEngine(i);
+      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
       FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
       FCS->SetPropAdvanceCmd(i, globals->get_controls()->get_prop_advance(i));
-      Propulsion->GetThruster(i)->SetRPM(get_engine(i)->get_RPM());
+      Propulsion->GetThruster(i)->SetRPM(node->getDoubleValue("rpm"));
+      eng->SetMagnetos( globals->get_controls()->get_magnetos(i) );
+      eng->SetStarter( globals->get_controls()->get_starter(i) );
     }
 
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
@@ -350,6 +325,12 @@ bool FGJSBsim::copy_to_JSBsim() {
 //                  << get_V_north_airmass() << ", "
 //                  << get_V_east_airmass()  << ", "
 //                  << get_V_down_airmass() );
+
+    for (i = 0; i < Propulsion->GetNumTanks(); i++) {
+      FGTank * tank = Propulsion->GetTank(i);
+      tank->SetContents(fgGetNode("consumables/fuel/tank", i, true)
+			->getDoubleValue());
+    }
 
     return true;
 }
@@ -455,6 +436,33 @@ bool FGJSBsim::copy_from_JSBsim() {
             _set_T_Local_to_Body( i, j, State->GetTl2b(i,j) );
         }
     }
+
+				// Copy the engine values from JSBSim.
+    for( i=0; i < Propulsion->GetNumEngines(); i++ ) {
+      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
+      FGEngine * eng = Propulsion->GetEngine(i);
+      FGThruster * thrust = Propulsion->GetThruster(i);
+
+      node->setDoubleValue("mp-osi", eng->getManifoldPressure_inHg());
+      node->setDoubleValue("rpm", thrust->GetRPM());
+      node->setDoubleValue("egt-degf", eng->getExhaustGasTemp_degF());
+      node->setDoubleValue("fuel-flow-gph", eng->getFuelFlow_gph());
+      node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
+      node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
+      node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
+      node->setBoolValue("running", eng->GetRunning());
+      node->setBoolValue("cranking", eng->GetCranking());
+    }
+
+				// Copy the fuel levels from JSBSim.
+    for (i = 0; i < Propulsion->GetNumTanks(); i++)
+      fgGetNode("consumables/fuel/tank", i, true)
+	->setDoubleValue(Propulsion->GetTank(i)->GetContents());
+
+    update_gear();
+    
+    stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
+    
     return true;
 }
 
@@ -637,38 +645,32 @@ void FGJSBsim::set_Velocities_Local_Airmass (double wnorth,
 
 void FGJSBsim::init_gear(void ) {
     
-    FGGearInterface *gear;
     FGGroundReactions* gr=fdmex->GetGroundReactions();
     int Ngear=GroundReactions->GetNumGearUnits();
     for (int i=0;i<Ngear;i++) {
-      add_gear_unit( FGGearInterface() );
-      gear=get_gear_unit(i);
-      gear->SetX( gr->GetGearUnit(i)->GetBodyLocation()(1) );
-      gear->SetY( gr->GetGearUnit(i)->GetBodyLocation()(2) );
-      gear->SetZ( gr->GetGearUnit(i)->GetBodyLocation()(3) );
-      gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
-      if ( gr->GetGearUnit(i)->GetBrakeGroup() > 0 ) {
-        gear->SetBrake(true);
-      }
-      if ( gr->GetGearUnit(i)->GetRetractable() ) {
-        gear->SetPosition( FCS->GetGearPos() );
-      } else {
-        gear->SetPosition( 1.0 );
-      }  
+      SGPropertyNode * node = fgGetNode("gear/gear", i, true);
+      node->setDoubleValue("xoffset-in",
+			   gr->GetGearUnit(i)->GetBodyLocation()(1));
+      node->setDoubleValue("yoffset-in",
+			   gr->GetGearUnit(i)->GetBodyLocation()(2));
+      node->setDoubleValue("zoffset-in",
+			   gr->GetGearUnit(i)->GetBodyLocation()(3));
+      node->setBoolValue("wow", gr->GetGearUnit(i)->GetWOW());
+      node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
+      node->setDoubleValue("position", FCS->GetGearPos());
     }  
 }
 
 void FGJSBsim::update_gear(void) {
     
-    FGGearInterface* gear;
     FGGroundReactions* gr=fdmex->GetGroundReactions();
     int Ngear=GroundReactions->GetNumGearUnits();
     for (int i=0;i<Ngear;i++) {
-      gear=get_gear_unit(i);
-      gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
-      if ( gr->GetGearUnit(i)->GetRetractable() ) {
-        gear->SetPosition( FCS->GetGearPos() );
-      }   
+      SGPropertyNode * node = fgGetNode("gear/gear", i, true);
+      node->getChild("wow", 0, true)
+	->setBoolValue(gr->GetGearUnit(i)->GetWOW());
+      node->getChild("position", 0, true)
+	->setDoubleValue(FCS->GetGearPos());
     }  
 }
 

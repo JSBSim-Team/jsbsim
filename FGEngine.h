@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.48 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.49 2002/01/19 03:01:58 dmegginson Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.48 2001/12/11 05:33:09 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.49 2002/01/19 03:01:58 dmegginson Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,17 +115,21 @@ public:
 
   virtual double  GetThrottleMin(void) { return MinThrottle; }
   virtual double  GetThrottleMax(void) { return MaxThrottle; }
-  double  GetThrottle(void) { return Throttle; }
-  double  GetMixture(void) { return Mixture; }
-  int     GetMagnetos(void) { return Magnetos; }
-  bool    GetStarter(void) { return Starter; }
-  double  GetThrust(void) { return Thrust; }
-  bool    GetStarved(void) { return Starved; }
-  bool    GetFlameout(void) { return Flameout; }
-  bool    GetRunning(void) { return Running; }
-  bool    GetCranking(void) { return Cranking; }
-  int     GetType(void) { return Type; }
-  string  GetName(void) { return Name; }
+  virtual double  GetThrottle(void) { return Throttle; }
+  virtual double  GetMixture(void) { return Mixture; }
+  virtual int     GetMagnetos(void) { return Magnetos; }
+  virtual bool    GetStarter(void) { return Starter; }
+  virtual double  GetThrust(void) { return Thrust; }
+  virtual bool    GetStarved(void) { return Starved; }
+  virtual bool    GetFlameout(void) { return Flameout; }
+  virtual bool    GetRunning(void) { return Running; }
+  virtual bool    GetCranking(void) { return Cranking; }
+  virtual int     GetType(void) { return Type; }
+  virtual string  GetName(void) { return Name; }
+
+  virtual double getFuelFlow_gph () const {
+    return FuelFlow_gph;
+  }
 
   virtual double getManifoldPressure_inHg () const {
     return ManifoldPressure_inHg;
@@ -143,15 +147,15 @@ public:
     return (OilTemp_degK - 273.0) * (9.0 / 5.0) + 32.0;
   }
 
-  void SetStarved(bool tt) {Starved = tt;}
-  void SetStarved(void)    {Starved = true;}
+  virtual void SetStarved(bool tt) {Starved = tt;}
+  virtual void SetStarved(void)    {Starved = true;}
 
-  void SetRunning(bool bb) { Running=bb; }
-  void SetName(string name) {Name = name;}
-  void AddFeedTank(int tkID);
+  virtual void SetRunning(bool bb) { Running=bb; }
+  virtual void SetName(string name) {Name = name;}
+  virtual void AddFeedTank(int tkID);
 
-  void SetMagnetos(int m) { Magnetos = m; }
-  void SetStarter(bool s) { Starter = s;}
+  virtual void SetMagnetos(int m) { Magnetos = m; }
+  virtual void SetStarter(bool s) { Starter = s;}
 
   /** Calculates the thrust of the engine, and other engine functions.
       @param PowerRequired this is the power required to run the thrusting device
@@ -165,30 +169,30 @@ public:
       derived class' Calculate() function before any other calculations are
       done. This base class method removes fuel from the fuel tanks as
       appropriate, and sets the starved flag if necessary. */
-  void ConsumeFuel(void);
+  virtual void ConsumeFuel(void);
 
   /** The fuel need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total fuel requirement for this engine in pounds. */
-  double CalcFuelNeed(void);
+  virtual double CalcFuelNeed(void);
 
   /** The oxidizer need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total oxidizer requirement for this engine in pounds. */
-  double CalcOxidizerNeed(void);
+  virtual double CalcOxidizerNeed(void);
 
   /// Sets engine placement information
-  void SetPlacement(double x, double y, double z, double pitch, double yaw);
+  virtual void SetPlacement(double x, double y, double z, double pitch, double yaw);
 
   /// Sets the engine number
-  void SetEngineNumber(int nn) {EngineNumber = nn;}
+  virtual void SetEngineNumber(int nn) {EngineNumber = nn;}
 
   virtual double GetPowerAvailable(void) {return 0.0;};
 
-  bool GetTrimMode(void) {return TrimMode;}
-  void SetTrimMode(bool state) {TrimMode = state;}
+  virtual bool GetTrimMode(void) {return TrimMode;}
+  virtual void SetTrimMode(bool state) {TrimMode = state;}
 
 protected:
   string Name;

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.25 2001/12/10 23:34:58 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.26 2002/01/19 03:01:58 dmegginson Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,7 +69,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.25 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.26 2002/01/19 03:01:58 dmegginson Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,7 @@ public:
 
   double Calculate(double PowerRequired);
   double GetPowerAvailable(void) {return PowerAvailable;}
+  double CalcFuelNeed(void);
 
 private:
   int crank_counter;

@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.38 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.39 2002/01/19 03:01:59 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.38 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.39 2002/01/19 03:01:59 dmegginson Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -135,6 +135,9 @@ public:
   inline FGEngine* GetEngine(unsigned int index) {
                       if (index <= Engines.size()-1) return Engines[index];
                       else                           return 0L;      }
+
+  // Retrieves the number of tanks defined for the aircraft.
+  inline unsigned int GetNumTanks(void) {return Tanks.size();}
 
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container

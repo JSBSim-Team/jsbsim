@@ -9,7 +9,6 @@
   IDLERPM:       minimum RPM when the engine is running
   MAXTHROTTLE:   maximum throttle setting (as before)
   MINTHROTTLE:   minimum throttle setting (as before)
-  SLFUELFLOWMAX: maximum fuel flow (as before; units unknown)
 -->
 <FG_PISTON NAME="IO470D">
   MINMP             6.5
@@ -20,6 +19,4 @@
   IDLERPM         900.0
   MAXTHROTTLE       1.0
   MINTHROTTLE       0.2
-  SLFUELFLOWMAX     8.7
 </FG_PISTON>
-

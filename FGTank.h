@@ -70,7 +70,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.20 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.21 2002/01/19 03:01:59 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -90,6 +90,8 @@ public:
   double inline GetX(void) {return X;}
   double inline GetY(void) {return Y;}
   double inline GetZ(void) {return Z;}
+
+  void SetContents(double contents) { Contents = contents; }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
 

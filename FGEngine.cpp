@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.49 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.50 2002/01/19 03:01:58 dmegginson Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,28 +65,41 @@ CLASS IMPLEMENTATION
 
 
 FGEngine::FGEngine(FGFDMExec* exec)
+  : Name(""),
+    Type(etUnknown),
+    X(0), Y(0), Z(0),
+    EnginePitch(0), EngineYaw(0),
+    SLFuelFlowMax(0), SLOxiFlowMax(0),
+    MaxThrottle(1.0), MinThrottle(0.0),
+    Thrust(0.0),
+    Throttle(0.0),
+    Mixture(1.0),
+    Magnetos(0),
+    Starter(false),
+    FuelNeed(0.0), OxidizerNeed(0.0),
+    Starved(false), Flameout(false), Running(false), Cranking(false),
+    PctPower(0.0),
+    EngineNumber(-1),
+    TrimMode(false),
+    FuelFlow_gph(0.0),
+    ManifoldPressure_inHg(0.0),
+    ExhaustGasTemp_degK(0.0),
+    CylinderHeadTemp_degK(0.0),
+    OilPressure_psi(0.0),
+    OilTemp_degK(0.0),
+    FDMExec(exec),
+    State(FDMExec->GetState()),
+    Atmosphere(FDMExec->GetAtmosphere()),
+    FCS(FDMExec->GetFCS()),
+    Propulsion(FDMExec->GetPropulsion()),
+    Aircraft(FDMExec->GetAircraft()),
+    Translation(FDMExec->GetTranslation()),
+    Rotation(FDMExec->GetRotation()),
+    Position(FDMExec->GetPosition()),
+    Auxiliary(FDMExec->GetAuxiliary()),
+    Output(FDMExec->GetOutput())
 {
-  FDMExec     = exec;
-  State       = FDMExec->GetState();
-  Atmosphere  = FDMExec->GetAtmosphere();
-  FCS         = FDMExec->GetFCS();
-  Propulsion  = FDMExec->GetPropulsion();
-  Aircraft    = FDMExec->GetAircraft();
-  Translation = FDMExec->GetTranslation();
-  Rotation    = FDMExec->GetRotation();
-  Position    = FDMExec->GetPosition();
-  Auxiliary   = FDMExec->GetAuxiliary();
-  Output      = FDMExec->GetOutput();
-
-  Mixture = 1.0;		// FIXME: get actual value
-
-  Thrust = PctPower = 0.0;
-  Starved = Flameout = false;
-  Running = false;
-  Cranking = Starter = false;
-
   Debug(0);
-  TrimMode = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

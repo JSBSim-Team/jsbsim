@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.48 2002/01/14 19:43:23 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.49 2002/01/19 03:01:58 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,6 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
     else if (token == "IDLERPM") *Eng_cfg >> IdleRPM;
     else if (token == "MAXTHROTTLE") *Eng_cfg >> MaxThrottle;
     else if (token == "MINTHROTTLE") *Eng_cfg >> MinThrottle;
-    else if (token == "SLFUELFLOWMAX") *Eng_cfg >> SLFuelFlowMax;
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
 
@@ -332,6 +331,10 @@ void FGPiston::doFuelFlow(void)
   double thi_sea_level = 1.3 * Mixture;
   equivalence_ratio = thi_sea_level * p_amb_sea_level / p_amb;
   m_dot_fuel = m_dot_air / 14.7 * equivalence_ratio;
+  FuelFlow_gph = m_dot_fuel
+    * 3600			// seconds to hours
+    * 2.2046			// kg to lb
+    / 6.6;			// lb to gal_us of kerosene
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -549,7 +552,6 @@ void FGPiston::Debug(int from)
       cout << "      IdleRPM: "             << IdleRPM                  << endl;
       cout << "      MaxThrottle: "         << MaxThrottle              << endl;
       cout << "      MinThrottle: "         << MinThrottle              << endl;
-      cout << "      SLFuelFlowMax: "       << SLFuelFlowMax            << endl;
 
       cout << endl;
       cout << "      Combustion Efficiency table:" << endl;
@@ -581,3 +583,9 @@ void FGPiston::Debug(int from)
   }
 }
 
+double
+FGPiston::CalcFuelNeed(void)
+{
+				// FIXME: is this right?
+  return FuelFlow_gph * State->Getdt() * Propulsion->GetRate();
+}
