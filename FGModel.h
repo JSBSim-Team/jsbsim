@@ -58,7 +58,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.30 2002/03/09 11:57:03 apeden Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.31 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -97,6 +97,10 @@ CLASS DOCUMENTATION
 
 /** Base class for all scheduled JSBSim models
     @author Jon S. Berndt
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGModel.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGModel.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

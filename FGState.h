@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.59 2002/04/01 14:43:48 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.60 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,11 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.59 2002/04/01 14:43:48 jberndt Exp $
+    @version $Id: FGState.h,v 1.60 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

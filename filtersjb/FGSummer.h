@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.20 2002/04/01 12:00:56 apeden Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.21 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,8 +74,11 @@ CLASS DOCUMENTATION
     The Summer component sums multiple inputs. These can be pilot control inputs,
     state variables, or even floating point numbers (e.g. for a bias).
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.20 2002/04/01 12:00:56 apeden Exp $
-    @see
+    @version $Id: FGSummer.h,v 1.21 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.25 2002/03/22 12:34:44 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.26 2002/04/02 05:34:26 jberndt Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
@@ -139,7 +139,11 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.25 2002/03/22 12:34:44 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.26 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.22 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,13 +87,17 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGRocket.h,v 1.22 2002/04/02 05:34:26 jberndt Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce
     @see FGEngine
     @see FGPropulsion
     @see FGTank
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGRocket.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGRocket.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

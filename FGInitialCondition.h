@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.36 2002/03/09 11:56:26 apeden Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.37 2002/04/02 05:34:26 jberndt Exp $"
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 typedef enum { setwned, setwmd, setwhc } windset; 
@@ -125,7 +125,11 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.36 2002/03/09 11:56:26 apeden Exp $
+   @version $Id: FGInitialCondition.h,v 1.37 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.19 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.20 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,11 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.19 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.20 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.9 2002/03/22 11:50:12 apeden Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.10 2002/04/02 05:34:26 jberndt Exp $"
 
 using std::vector;
 
@@ -85,7 +85,10 @@ CLASS DOCUMENTATION
 /** This class encapsulates the functionality needed to manage a factor group
     i.e. factor*(coeff1 + coeff2 + coeff3)
     @author Tony Peden
-    @see -
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFactorGroup.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFactorGroup.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

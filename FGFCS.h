@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.51 2002/04/01 11:58:43 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.52 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.51 2002/04/01 11:58:43 apeden Exp $
+    @version $Id: FGFCS.h,v 1.52 2002/04/02 05:34:26 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -150,6 +150,10 @@ CLASS DOCUMENTATION
     @see FGGradient
     @see FGFilter
     @see FGDeadBand
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFCS.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFCS.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

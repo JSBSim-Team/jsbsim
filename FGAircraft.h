@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.83 2002/03/27 02:44:09 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.84 2002/04/02 05:34:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.83 2002/03/27 02:44:09 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.84 2002/04/02 05:34:25 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -99,6 +99,10 @@ CLASS DOCUMENTATION
      Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
      <li>Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
      1982 ISBN 0-471-08936-2</li></ol>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAircraft.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAircraft.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.30 2002/03/22 11:47:24 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.31 2002/04/02 05:34:25 jberndt Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,8 +84,11 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.30 2002/03/22 11:47:24 apeden Exp $
-    @see -
+    @version $Id: FGAerodynamics.h,v 1.31 2002/04/02 05:34:25 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

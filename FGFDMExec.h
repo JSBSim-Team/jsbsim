@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.54 2002/03/20 14:27:09 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.55 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,11 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.54 2002/03/20 14:27:09 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.55 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFDMExec.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or

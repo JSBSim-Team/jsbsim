@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.28 2002/03/09 11:54:28 apeden Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.29 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,11 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.28 2002/03/09 11:54:28 apeden Exp $
+    @version $Id: FGAtmosphere.h,v 1.29 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /******************************************************************************

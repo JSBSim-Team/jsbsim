@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.26 2002/01/19 03:01:58 dmegginson Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.27 2002/04/02 05:34:26 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,7 +69,11 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.26 2002/01/19 03:01:58 dmegginson Exp $
+    @version $Id: FGPiston.h,v 1.27 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

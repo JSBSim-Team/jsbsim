@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.28 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,10 +77,14 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.28 2002/04/02 05:34:26 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropeller.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropeller.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

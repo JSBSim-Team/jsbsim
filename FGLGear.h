@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.48 2002/01/25 17:32:45 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.49 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,13 +162,17 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.48 2002/01/25 17:32:45 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.49 2002/04/02 05:34:26 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
 	   Wiley & Sons, 1979 ISBN 0-471-03032-5
     @see W. A. Ragsdale, "A Generic Landing Gear Dynamics Model for LASRS++",
      AIAA-2000-4303
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGLGear.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGLGear.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

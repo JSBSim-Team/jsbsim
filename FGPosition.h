@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.45 2002/03/09 11:57:24 apeden Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.46 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,11 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.45 2002/03/09 11:57:24 apeden Exp $
+    @version $Id: FGPosition.h,v 1.46 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPosition.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPosition.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

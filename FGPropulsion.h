@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.41 2002/03/27 02:44:09 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.42 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,10 +86,14 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.41 2002/03/27 02:44:09 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.42 2002/04/02 05:34:26 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropulsion.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropulsion.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

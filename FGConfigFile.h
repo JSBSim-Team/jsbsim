@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.31 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.32 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,8 +95,11 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.31 2001/12/10 23:34:58 jberndt Exp $
-    @see -
+    @version $Id: FGConfigFile.h,v 1.32 2002/04/02 05:34:26 jberndt Exp $
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

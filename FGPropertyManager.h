@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.9 2002/04/01 11:59:05 apeden Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.10 2002/04/02 05:34:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,6 +61,8 @@ CLASS DOCUMENTATION
     @author David Megginson, Tony Peden
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropertyManager.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
+    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPropertyManager.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
+         Source File </a>
   */
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
