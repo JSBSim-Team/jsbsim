@@ -123,7 +123,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.32 2000/10/23 12:56:37 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.33 2000/11/13 12:41:41 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -139,7 +139,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.32 2000/10/23 12:56:37 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.33 2000/11/13 12:41:41 jsb Exp $
     @see -
 */
 
@@ -180,15 +180,15 @@ int main(int argc, char** argv)
     if (FDMExec->GetState()->Getsim_time() >= 1.00 &&
         FDMExec->GetState()->Getsim_time() < 2.0)
     {
-      cmd = -(FDMExec->GetState()->Getsim_time() - 1.00)/2.0;
+      cmd = -(FDMExec->GetState()->Getsim_time() - 1.00)/4.0;
     } else if (FDMExec->GetState()->Getsim_time() >= 2.00 &&
         FDMExec->GetState()->Getsim_time() < 6.0)
     {
-      cmd = -1.00/2.0;
+      cmd = -1.00/4.0;
     } else if (FDMExec->GetState()->Getsim_time() >= 6.00 &&
         FDMExec->GetState()->Getsim_time() < 7.0)
     {
-      cmd = -(7.0 - FDMExec->GetState()->Getsim_time())/2.0;
+      cmd = -(7.0 - FDMExec->GetState()->Getsim_time())/4.0;
     } else {
       cmd = 0.00;
     }

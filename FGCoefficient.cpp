@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.18 2000/11/12 14:12:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.19 2000/11/13 12:41:40 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,22 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
 
-    cout << "   " << name << endl;
+    char bolden[5];
+    char unbolden[5];
+
+    bolden[0] = 27;
+    bolden[1] = '[';
+    bolden[2] = '1';
+    bolden[3] = 'm';
+    bolden[4] = '\0';
+
+    unbolden[0] = 27;
+    unbolden[1] = '[';
+    unbolden[2] = '0';
+    unbolden[3] = 'm';
+    unbolden[4] = '\0';
+
+    cout << "   " << bolden << name << unbolden << endl;
     cout << "   " << description << endl;
     cout << "   " << method << endl;
 
@@ -156,19 +171,21 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       Allocate(rows, columns);
 
       Table[0][0] = 0.0;
-      //read the table in -- it should be in matrix format with the row
-      //independents as the first column and the column independents in 
-      //the first row.  The implication of this layout is that there should
-      //be no value in the upper left corner of the matrix e.g:
-      //     0  10  20 30 ...
-      //-5   1  2   3  4  ...
-      // ...
-      for( r=0;r<=rows;r++ ) {
-        for( c=0;c<=columns;c++ ) {
-          if( !((r == 0) && (c == 0)) ) {
+
+      // Read the table in -- it should be in matrix format with the row
+      // independents as the first column and the column independents in
+      // the first row.  The implication of this layout is that there should
+      // be no value in the upper left corner of the matrix e.g:
+      //      0  10  20 30 ...
+      // -5   1  2   3  4  ...
+      //  ...
+
+      for (r=0; r<=rows; r++) {
+        for (c=0; c <= columns; c++) {
+          if ( !((r == 0) && (c == 0)) ) {
             *AC_cfg >> Table[r][c];
           }
-         }
+        }
       }   
       
       /* for (c=1;c<=columns;c++) {
