@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.52 2003/06/03 09:53:50 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.53 2003/12/31 06:15:02 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,7 +126,7 @@ bool FGTranslation::Run(void)
 
     vUVWdot = mVel*Rotation->GetPQR() + Aircraft->GetBodyAccel();
 
-    vUVW += State->Integrate(FGState::TRAPZ, State->Getdt()*rate, vUVWdot, vUVWdot_prev);
+    vUVW += State->Integrate(FGState::AB2, State->Getdt()*rate, vUVWdot, vUVWdot_prev);
 
     vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 

@@ -49,7 +49,7 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
+#  if defined(sgi) && !defined(__GNUC__)
 #    include <fstream.h>
 #  else
 #    include <fstream>
@@ -80,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.70 2003/12/29 10:57:39 ehofman Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.71 2003/12/31 06:15:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.70 2003/12/29 10:57:39 ehofman Exp $
+    @version $Id: FGState.h,v 1.71 2003/12/31 06:15:02 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ class FGState : public FGJSBBase
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGState(FGFDMExec* Executive);
+  FGState(FGFDMExec*);
   /// Destructor
   ~FGState();
 
@@ -205,7 +205,7 @@ public:
   
   // ======================================= General Purpose INTEGRATOR
 
-  enum iType {AB4, AB3, AB2, AM3, EULER, TRAPZ};
+  enum iType {AB4, AB3, AB2, AM3, AM4, EULER, TRAPZ};
   
   /** Multi-method integrator.
       @param type Type of intergation scheme to use. Can be one of:
@@ -214,6 +214,7 @@ public:
              <li>AB3 - Adams-Bashforth, third order</li>
              <li>AB2 - Adams-Bashforth, second order</li>
              <li>AM3 - Adams Moulton, third order</li>
+             <li>AM4 - Adams Moulton, fourth order</li>
              <li>EULER - Euler</li>
              <li>TRAPZ - Trapezoidal</li>
              </ul>
@@ -257,6 +258,15 @@ public:
       vResult = (delta_t/12.0)*(  5.0 * vTDeriv
                                 + 8.0 * vLastArray[0]
                                 - 1.0 * vLastArray[1] );
+      vLastArray[1] = vLastArray[0];
+      vLastArray[0] = vTDeriv;
+      break;
+    case AM4:
+      vResult = (delta_t/24.0)*(   9.0 * vTDeriv
+                                + 19.0 * vLastArray[0]
+                                -  5.0 * vLastArray[1]
+                                +  1.0 * vLastArray[2] );
+      vLastArray[2] = vLastArray[1];
       vLastArray[1] = vLastArray[0];
       vLastArray[0] = vTDeriv;
       break;
@@ -311,7 +321,7 @@ public:
       @param c matrix column index.
       @return the matrix element described by the row and column supplied.
       */
-  double GetTb2l(int r, int c) { return mTb2l(r,c);}
+  double GetTb2l(int i, int j) { return mTb2l(i,j);}
   
   /** Prints a summary of simulator state (speed, altitude, 
       configuration, etc.)

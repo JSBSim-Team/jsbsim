@@ -39,7 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGLGear.h"
-#include <algorithm>
+//#include <algorithm>
 
 namespace JSBSim {
 
@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.95 2003/11/11 06:38:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.96 2003/12/31 06:15:02 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -355,7 +355,7 @@ FGColumnVector3& FGLGear::Force(void)
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
 // Calculate tire slip angle.
-/*
+
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else if (fabs(RollingWhlVel) < 1.0) {
@@ -363,7 +363,7 @@ FGColumnVector3& FGLGear::Force(void)
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
-*/
+/*
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else if (RollingWhlVel < 1.0) {
@@ -379,7 +379,7 @@ FGColumnVector3& FGLGear::Force(void)
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
-/*
+
       if ((WheelSlip < 0.0 && lastWheelSlip > 0.0) ||
           (WheelSlip > 0.0 && lastWheelSlip < 0.0))
       {
