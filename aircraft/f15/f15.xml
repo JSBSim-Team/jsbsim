@@ -3,10 +3,10 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.8 2003/02/21 12:09:56 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.9 2003/02/21 12:46:44 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
-  Status:   First production
+  Status:   Early production
 
   Sources:
     Stability and Control of Flight Vehicle, Uy-Loi Ly, 1997
@@ -133,6 +133,10 @@
        INPUT        fcs/pitch-trim-cmd-norm
        CLIPTO       -1 1
     </COMPONENT>
+    <COMPONENT NAME="Pattch Damper Gain" TYPE="PURE_GAIN">
+       INPUT        velocities/q-rad_sec
+       GAIN         0.000698
+     </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/pitch-trim-sum
        MIN          -26
@@ -160,10 +164,18 @@
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
+     <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
+      INPUT          velocities/p-rad_sec
+      GAIN           0.013963
+    </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
        CLIPTO       -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Damper Gain" TYPE="PURE_GAIN">
+       INPUT        velocities/r-rad_sec
+       GAIN         0.001745
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT        fcs/yaw-trim-sum
