@@ -3,7 +3,7 @@
  Module:       FGSwitch.cpp
  Author:       Jon S. Berndt
  Date started: 4/2000
- 
+
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.26 2003/06/11 13:39:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.27 2004/03/06 13:48:13 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     // Below, the switch component is read in.
 
     if (token == "TEST") {
-      tests.push_back(*(new test));
+      tests.push_back(test());
       current_test = &tests.back();
 
       if (AC_cfg->GetValue("LOGIC") == "OR") {
@@ -100,7 +100,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       } else { // error
         cerr << "Unrecognized LOGIC token  in switch component: " << Name << endl;
       }
-      
+
       value = AC_cfg->GetValue("VALUE");
       if (value.empty()) {
         cerr << "No VALUE supplied for switch component: " << Name << endl;
@@ -122,7 +122,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
       AC_cfg->GetNextConfigLine();
       while (AC_cfg->GetValue() != string("/TEST")) {
-        current_test->conditions.push_back(*(new FGCondition(AC_cfg, PropertyManager)));
+        current_test->conditions.push_back(FGCondition(AC_cfg, PropertyManager));
       }
     }
     AC_cfg->GetNextConfigLine();
@@ -152,7 +152,7 @@ bool FGSwitch::Run(void )
 
   while (iTests < tests.end()) {
     iConditions = iTests->conditions.begin();
- 
+
     if (iTests->Logic == eDefault) {
       Output = iTests->GetValue();
     } else if (iTests->Logic == eAND) {
@@ -240,7 +240,7 @@ void FGSwitch::Debug(int from)
             cout << indent << "Switch VALUE is - " << iTests->OutputProp->GetName() << scratch << endl;
           else
             cout << indent << "Switch VALUE is " << iTests->OutputProp->GetName() << scratch << endl;
-        else 
+        else
           cout << indent << "Switch VALUE is " << iTests->OutputVal << scratch << endl;
 
         iConditions = iTests->conditions.begin();

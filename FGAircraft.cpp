@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.126 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.127 2004/03/06 13:48:24 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,26 +194,26 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       if (debug_lvl > 0) cout << "    V. Tail Arm: " << VTailArm << endl;
     } else if (parameter == "AC_IXX") {
       *AC_cfg >> bixx;
-      if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
+      if (debug_lvl > 0) cout << "    baseIxx: " << bixx << " slug-ft2" << endl;
     } else if (parameter == "AC_IYY") {
       *AC_cfg >> biyy;
-      if (debug_lvl > 0) cout << "    baseIyy: " << biyy << endl;
+      if (debug_lvl > 0) cout << "    baseIyy: " << biyy << " slug-ft2" << endl;
     } else if (parameter == "AC_IZZ") {
       *AC_cfg >> bizz;
-      if (debug_lvl > 0) cout << "    baseIzz: " << bizz << endl;
+      if (debug_lvl > 0) cout << "    baseIzz: " << bizz << " slug-ft2" << endl;
     } else if (parameter == "AC_IXY") {
       *AC_cfg >> bixy;
-      if (debug_lvl > 0) cout << "    baseIxy: " << bixy  << endl;
+      if (debug_lvl > 0) cout << "    baseIxy: " << bixy << " slug-ft2" << endl;
     } else if (parameter == "AC_IXZ") {
       *AC_cfg >> bixz;
-      if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
+      if (debug_lvl > 0) cout << "    baseIxz: " << bixz << " slug-ft2" << endl;
     } else if (parameter == "AC_IYZ") {
       *AC_cfg >> biyz;
-      if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
+      if (debug_lvl > 0) cout << "    baseIyz: " << biyz << " slug-ft2" << endl;
     } else if (parameter == "AC_EMPTYWT") {
       *AC_cfg >> EW;
       MassBalance->SetEmptyWeight(EW);
-      if (debug_lvl > 0) cout << "    EmptyWeight: " << EW  << endl;
+      if (debug_lvl > 0) cout << "    EmptyWeight: " << EW << " lbm" << endl;
     } else if (parameter == "AC_CGLOC") {
       *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
       MassBalance->SetBaseCG(vbaseXYZcg);
@@ -294,17 +294,17 @@ void FGAircraft::bind(void)
                        (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("forces/fbz-total-lbs", this,3,
                        (PMF)&FGAircraft::GetForces);
-  PropertyManager->Tie("metrics/aero-rp-x-ft", this,1,
+  PropertyManager->Tie("metrics/aero-rp-x-in", this,1,
                        (PMF)&FGAircraft::GetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-y-ft", this,2,
+  PropertyManager->Tie("metrics/aero-rp-y-in", this,2,
                        (PMF)&FGAircraft::GetXYZrp);
-  PropertyManager->Tie("metrics/aero-rp-z-ft", this,3,
+  PropertyManager->Tie("metrics/aero-rp-z-in", this,3,
                        (PMF)&FGAircraft::GetXYZrp);
-  PropertyManager->Tie("metrics/eyepoint-x-ft", this,1,
+  PropertyManager->Tie("metrics/eyepoint-x-in", this,1,
                        (PMF)&FGAircraft::GetXYZep);
-  PropertyManager->Tie("metrics/eyepoint-y-ft", this,2,
+  PropertyManager->Tie("metrics/eyepoint-y-in", this,2,
                        (PMF)&FGAircraft::GetXYZep);
-  PropertyManager->Tie("metrics/eyepoint-z-ft", this,3,
+  PropertyManager->Tie("metrics/eyepoint-z-in", this,3,
                        (PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/visualrefpoint-x-in", this,1,
                        (PMF)&FGAircraft::GetXYZvrp);
@@ -336,12 +336,12 @@ void FGAircraft::unbind(void)
   PropertyManager->Untie("forces/fbx-total-lbs");
   PropertyManager->Untie("forces/fby-total-lbs");
   PropertyManager->Untie("forces/fbz-total-lbs");
-  PropertyManager->Untie("metrics/aero-rp-x-ft");
-  PropertyManager->Untie("metrics/aero-rp-y-ft");
-  PropertyManager->Untie("metrics/aero-rp-z-ft");
-  PropertyManager->Untie("metrics/eyepoint-x-ft");
-  PropertyManager->Untie("metrics/eyepoint-y-ft");
-  PropertyManager->Untie("metrics/eyepoint-z-ft");
+  PropertyManager->Untie("metrics/aero-rp-x-in");
+  PropertyManager->Untie("metrics/aero-rp-y-in");
+  PropertyManager->Untie("metrics/aero-rp-z-in");
+  PropertyManager->Untie("metrics/eyepoint-x-in");
+  PropertyManager->Untie("metrics/eyepoint-y-in");
+  PropertyManager->Untie("metrics/eyepoint-z-in");
   PropertyManager->Untie("metrics/visualrefpoint-x-in");
   PropertyManager->Untie("metrics/visualrefpoint-y-in");
   PropertyManager->Untie("metrics/visualrefpoint-z-in");
