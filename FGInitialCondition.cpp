@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.48 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.49 2002/01/20 14:17:17 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -501,6 +501,9 @@ bool FGInitialCondition::getMachFromVcas(double *Mach,double vcas) {
 bool FGInitialCondition::getAlpha(void) {
   bool result=false;
   double guess=theta-gamma;
+  
+  if(vt < 0.01) return 0;
+  
   xlo=xhi=0;
   xmin=fdmex->GetAircraft()->GetAlphaCLMin();
   xmax=fdmex->GetAircraft()->GetAlphaCLMax();
@@ -521,6 +524,9 @@ bool FGInitialCondition::getAlpha(void) {
 bool FGInitialCondition::getTheta(void) {
   bool result=false;
   double guess=alpha+gamma;
+  
+  if(vt < 0.01) return 0;
+  
   xlo=xhi=0;
   xmin=-89;xmax=89;
   sfunc=&FGInitialCondition::GammaEqOfTheta;
@@ -555,7 +561,6 @@ double FGInitialCondition::GammaEqOfTheta(double Theta) {
 double FGInitialCondition::GammaEqOfAlpha(double Alpha) {
   double a,b,c;
   double sAlpha,cAlpha;
-
   sAlpha=sin(Alpha); cAlpha=cos(Alpha);
   a=wdown + vt*cAlpha*cbeta + uw;
   b=vt*sphi*sbeta + vw*sphi;
@@ -666,6 +671,7 @@ bool FGInitialCondition::solve(double *y,double x)
   i=0;
   while ((fabs(d) > eps) && (i < 100)) {
     d=(x3-x1)/d0;
+    cout << "f3-f1= " << f3-f1 << endl;
     x2 = x1-d*d0*f1/(f3-f1);
     
     f2=(this->*sfunc)(x2)-x;
