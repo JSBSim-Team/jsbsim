@@ -3,7 +3,7 @@
 <!--                                                                                              --
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.4 2002/01/04 14:08:44 jberndt Exp $
+  CVS Version: $Id: f16.xml,v 1.5 2002/01/07 23:44:45 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 
@@ -457,16 +457,18 @@
         -0.02
       </COEFFICIENT>
 
+      <!-- -0.21*AIL/20.0 -->
       <COEFFICIENT NAME="CYda" TYPE="VALUE">
         Side_force_due_to_aileron
         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
-        -0.021  	<!-- -0.21*AIL/20.0 -->
+        -0.021
       </COEFFICIENT>
 
+      <!-- 0.086*RDR/30.0 -->
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
         Side_force_due_to_rudder
         FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
-        0.086   	<!-- 0.086*RDR/30.0 -->
+        0.086
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYp" TYPE="VECTOR">
