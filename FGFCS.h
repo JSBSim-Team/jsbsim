@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.36 2001/11/14 23:53:26 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.37 2001/12/01 21:20:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.36 2001/11/14 23:53:26 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.37 2001/12/01 21:20:04 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -203,6 +203,11 @@ public:
       @return mixture command in percent ( 0 - 100) for the given engine */
   inline double GetMixtureCmd(int engine) { return MixtureCmd[engine]; }
 
+  /** Gets the prop pitch command.
+      @param engine engine ID number
+      @return pitch command in percent ( 0.0 - 1.0) for the given engine */
+  inline double GetPropPitchCmd(int engine) { return PropPitchCmd[engine]; }
+
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
   inline double GetPitchTrimCmd(void) { return PTrimCmd; }
@@ -243,6 +248,11 @@ public:
       @param engine engine ID number
       @return mixture position for the given engine in percent ( 0 - 100)*/
   inline double GetMixturePos(int engine) { return MixturePos[engine]; }
+
+  /** Gets the prop pitch position.
+      @param engine engine ID number
+      @return prop pitch position for the given engine in percent ( 0.0-1.0)*/
+  inline double GetPropPitchPos(int engine) { return PropPitchPos[engine]; }
   //@}
 
   /** Retrieves the State object pointer.
@@ -305,6 +315,11 @@ public:
       @param engine engine ID number
       @param cmd mixture command in percent (0 - 100)*/
   void SetMixtureCmd(int engine, double cmd);
+
+  /** Sets the propeller pitch command for the specified engine
+      @param engine engine ID number
+      @param cmd mixture command in percent (0.0 - 1.0)*/
+  void SetPropPitchCmd(int engine, double cmd);
   //@}
 
   /// @name Aerosurface position setting
@@ -342,6 +357,11 @@ public:
       @param engine engine ID number
       @param cmd mixture setting in percent (0 - 100)*/
   void SetMixturePos(int engine, double cmd);
+
+  /** Sets the actual prop pitch setting for the specified engine
+      @param engine engine ID number
+      @param cmd prop pitch setting in percent (0.0 - 1.0)*/
+  void SetPropPitchPos(int engine, double cmd);
   //@}
 
   /// @name Landing Gear brakes
@@ -382,6 +402,8 @@ private:
   vector <double> ThrottlePos;
   vector <double> MixtureCmd;
   vector <double> MixturePos;
+  vector <double> PropPitchCmd;
+  vector <double> PropPitchPos;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;

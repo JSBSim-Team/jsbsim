@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.5 2001/12/01 00:45:03 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.6 2001/12/01 21:20:04 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -139,7 +139,7 @@
       ZLOC   59.4
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 1.0
+      P_FACTOR 0.1
       SENSE   1.0
     </AC_THRUSTER>
 
@@ -149,7 +149,7 @@
       ZLOC   59.4
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 1.0
+      P_FACTOR 0.1
       SENSE   -1.0
     </AC_THRUSTER>
 
@@ -262,24 +262,24 @@
        <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_Elevator_Deflection
          FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
-         0.347
+         0.81
        </COEFFICIENT>
        <COEFFICIENT NAME="CLadot" TYPE="VALUE">
          Lift_due_to_alpha_rate
          FG_QBAR|FG_WINGAREA|FG_ALPHADOT|FG_CI2VEL
-         1.7
+         5.3
        </COEFFICIENT>
        <COEFFICIENT NAME="CLq" TYPE="VALUE">
          Lift_due_to_pitch_rate
          FG_QBAR|FG_WINGAREA|FG_PITCHRATE|FG_CI2VEL
-         3.9
+         9.7
        </COEFFICIENT>
     </AXIS>
     <AXIS NAME="DRAG">
       <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
          FG_QBAR|FG_WINGAREA
-         0.036
+         0.029
       </COEFFICIENT>
        <COEFFICIENT NAME="CDDf" TYPE="VECTOR">
          Delta_drag_due_to_flap_deflection
@@ -329,7 +329,7 @@
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
          FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
-         0.06
+         0
        </COEFFICIENT>
        <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
          Drag_due_to_sideslip
@@ -344,29 +344,29 @@
        <COEFFICIENT NAME="CYb" TYPE="VALUE">
          Side_force_due_to_beta
          FG_QBAR|FG_WINGAREA|FG_BETA
-         -0.31
+         -0.698
        </COEFFICIENT>
 
        <COEFFICIENT NAME="CYda" TYPE="VALUE">
          Side_force_due_to_aileron
          FG_QBAR|FG_WINGAREA|FG_AILERON_POS
-        -0.05
+         0
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
          Side_force_due_to_rudder
          FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
-         0.45
+         0.23
       </COEFFICIENT>
       <COEFFICIENT NAME="CYp" TYPE="VALUE">
          Side_force_due_to_roll_rate
          FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_ROLLRATE
-         -0.037
+         -0.141
       </COEFFICIENT>
       <COEFFICIENT NAME="CYr" TYPE="VALUE">
          Side_force_due_to_yaw_rate
          FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_YAWRATE
-         0.21
+         0.355
       </COEFFICIENT>
     </AXIS>
 
@@ -385,25 +385,25 @@
        <COEFFICIENT NAME="Clp" TYPE="VALUE">
          Roll_moment_due_to_roll_rate_(roll_damping)
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
-         -0.47
+         -0.551
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Clr" TYPE="VALUE">
          Roll_moment_due_to_yaw_rate
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
-         0.096
+         0.0729
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Clda" TYPE="VALUE">
          Roll_moment_due_to_aileron
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
-         0.09
+         0.172
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cldr" TYPE="VALUE">
          Roll_moment_due_to_rudder
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
-         -0.0147
+         -0.0192
         </COEFFICIENT>
 
       </AXIS>
@@ -428,23 +428,23 @@
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
          Pitch_moment_due_to_pitch_rate
          FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
-         -12.4
+         -26.3
       </COEFFICIENT>
       <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
         Pitch_moment_due_to_alpha_rate
         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
-        -5.2
+        -12.7
       </COEFFICIENT>
       <COEFFICIENT NAME="Cmo" TYPE="VALUE">
         Pitching_moment_at_zero_alpha
         FG_QBAR|FG_WINGAREA|FG_CBAR
-        0.1
+        0.07
       </COEFFICIENT>
 
       <COEFFICIENT NAME="Cmde" TYPE="VALUE">
         Pitch_moment_due_to_elevator_deflection
         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
-        -1.28
+        -2.26
       </COEFFICIENT>
 
     </AXIS>
@@ -453,30 +453,30 @@
        <COEFFICIENT NAME="Cnb" TYPE="VALUE">
          Yaw_moment_due_to_beta
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
-         0.065
+         0.1444
        </COEFFICIENT>
        <COEFFICIENT NAME="Cnp" TYPE="VALUE">
          Yaw_moment_due_to_roll_rate
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
-         -0.03
+         -0.0257
         </COEFFICIENT>
 
        <COEFFICIENT NAME="Cnr" TYPE="VALUE">
          Yaw_moment_due_to_yaw_rate
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
-         -0.099
+         -0.1495
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cnda" TYPE="VALUE">
          Yaw_moment_due_to_aileron
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
-         0.0053
+         0.0168
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cndr" TYPE="VALUE">
          Yaw_moment_due_to_rudder
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
-         -0.043
+         -0.1152
        </COEFFICIENT>
 
     </AXIS>
@@ -525,7 +525,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.61 2001/12/01 17:58:41 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.62 2001/12/01 21:20:03 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,8 @@ FGFCS::~FGFCS()
   ThrottlePos.clear();
   MixtureCmd.clear();
   MixturePos.clear();
+  PropPitchCmd.clear();
+  PropPitchPos.clear();
 
   unsigned int i;
 
@@ -98,6 +100,7 @@ bool FGFCS::Run(void)
   if (!FGModel::Run()) {
     for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
     for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
+    for (i=0; i<PropPitchPos.size(); i++) PropPitchPos[i] = PropPitchCmd[i];
     for (i=0; i<Components.size(); i++)  Components[i]->Run();
   } else {
   }
@@ -157,7 +160,6 @@ double FGFCS::GetThrottleCmd(int engineNum)
     cerr << "Throttle " << engineNum << " does not exist! " << ThrottleCmd.size()
          << " engines exist, but throttle setting for engine " << engineNum
 	       << " is selected" << endl;
-         
   }
   return 0.0;
 }
@@ -176,7 +178,6 @@ double FGFCS::GetThrottlePos(int engineNum)
     cerr << "Throttle " << engineNum << " does not exist! " << ThrottlePos.size()
          << " engines exist, but attempted throttle position setting is for engine "
          << engineNum << endl;
-        
   }
   return 0.0; 
 }
@@ -207,6 +208,36 @@ void FGFCS::SetMixturePos(int engineNum, double setting)
       for (ctr=0;ctr<=MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
     } else {
       MixturePos[engineNum] = setting;
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetPropPitchCmd(int engineNum, double setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<PropPitchCmd.size();ctr++) PropPitchCmd[ctr] = setting;
+    } else {
+      PropPitchCmd[engineNum] = setting;
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetPropPitchPos(int engineNum, double setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<=PropPitchCmd.size();ctr++) PropPitchPos[ctr] = PropPitchCmd[ctr];
+    } else {
+      PropPitchPos[engineNum] = setting;
     }
   }
 }
@@ -334,6 +365,8 @@ void FGFCS::AddThrottle(void)
   ThrottlePos.push_back(0.0);
   MixtureCmd.push_back(0.0);	// assume throttle and mixture are coupled
   MixturePos.push_back(0.0);
+  PropPitchCmd.push_back(0.0);	// assume throttle and prop pitch are coupled
+  PropPitchPos.push_back(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
