@@ -66,9 +66,18 @@ FGColumnVector FGLGear::Force(void)
 {
   static FGColumnVector vForce(3);
   static FGColumnVector vLocalGear(3);
+  static FGColumnVector vTmpRot(3);
 
-  vLocalGear = State->GetTb2l() * (vXYZ - Aircraft->GetXYZcg());
+  vTmpRot = vXYZ - Aircraft->GetXYZcg();
+  vTmpRot(1) = -vTmpRot(1);
+  vTmpRot(3) = -vTmpRot(1);
+  vTmpRot = vTmpRot/12.0;
+
+  vLocalGear = State->GetTb2l() * vTmpRot;
   vLocalGear(3) = -vLocalGear(3);
+
+  cout << name << " Z Gear Local: " << vLocalGear(3);
+  cout << " Distance AGL: " << Position->GetDistanceAGL() << endl;
 
   return vForce;
 }

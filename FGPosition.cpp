@@ -95,12 +95,10 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   h = gamma = Vt = 0.0;
-  b = Aircraft->GetWingSpan();
   SeaLevelRadius = EARTHRAD;               // For initialization ONLY
   Radius         = SeaLevelRadius + h;
   RunwayRadius   = SeaLevelRadius;
   DistanceAGL    = Radius - RunwayRadius;  // Geocentric
-  hoverb = DistanceAGL/b;
 }
 
 /******************************************************************************/
@@ -144,9 +142,9 @@ bool FGPosition:: Run(void) {
 
     if (Vt > 0) {
       hdot_Vt = RadiusDot/Vt;
-      if (fabs(hdot_Vt) <= 1) gamma= asin(hdot_Vt);
+      if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
     } else {
-      gamma=0.0;
+      gamma = 0.0;
     }
 
     lastLatitudeDot  = LatitudeDot;
@@ -168,5 +166,7 @@ void FGPosition::GetState(void) {
   vUVW      = Translation->GetUVW();
   Vt        = Translation->GetVt();
   vVel = State->GetTl2b()*vUVW;
+
+  b = Aircraft->GetWingSpan();
 }
 

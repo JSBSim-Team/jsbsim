@@ -140,7 +140,8 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vXYZcg(3),
     vXYZep(3),
     vEuler(3),
-vFs(3) {
+    vFs(3)
+{
   Name = "FGAircraft";
 
   AxisIdx["DRAG"]  = 0;
@@ -149,6 +150,8 @@ vFs(3) {
   AxisIdx["ROLL"]  = 3;
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
+
+  GearUp = false;
 
   numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
 }
