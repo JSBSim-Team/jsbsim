@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.50 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.51 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +157,8 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssRates) {
       outstream << ", ";
-      outstream << "P, Q, R";
+      outstream << "P, Q, R, ";
+      outstream << "Pdot, Qdot, Rdot";
     }
     if (SubSystems & ssVelocities) {
       outstream << ", ";
@@ -179,7 +180,8 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssAtmosphere) {
       outstream << ", ";
-      outstream << "Rho";
+      outstream << "Rho, ";
+      outstream << "NWind, EWind, DWind";
     }
     if (SubSystems & ssMassProps) {
       outstream << ", ";
@@ -232,7 +234,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssRates) {
     outstream << ", ";
-    outstream << Rotation->GetPQR();
+    outstream << Rotation->GetPQR() << ", ";
+    outstream << Rotation->GetPQRdot();
   }
   if (SubSystems & ssVelocities) {
     outstream << ", ";
@@ -254,7 +257,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssAtmosphere) {
     outstream << ", ";
-    outstream << Atmosphere->GetDensity();
+    outstream << Atmosphere->GetDensity() << ", ";
+    outstream << Atmosphere->GetWindNED();
   }
   if (SubSystems & ssMassProps) {
     outstream << ", ";

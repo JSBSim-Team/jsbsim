@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.29 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.30 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,7 @@ FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGRotation";
   cTht=cPhi=cPsi=1.0;
   sTht=sPhi=sPsi=0.0;
-
+  
   Debug(0);
 }
 

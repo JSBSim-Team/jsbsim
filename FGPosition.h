@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.43 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.44 2001/12/14 00:16:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.43 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.44 2001/12/14 00:16:28 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,7 +123,6 @@ private:
   FGColumnVector3 vVelDot;
   FGColumnVector3 vRunwayNormal;
   
-  double Vee, invMass, invRadius;
   double Radius, h;
   double LatitudeDot, LongitudeDot, RadiusDot;
   double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;

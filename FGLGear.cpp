@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.72 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.73 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
                   >> rollingFCoeff >> sSteerType >> sBrakeGroup 
-                     >> maxSteerAngle >> Retractable;
+                     >> maxSteerAngle >> sRetractable;
 
   if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
   else if (sBrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
@@ -85,13 +85,14 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
          << sSteerType << " is undefined." << endl;
   }
   
-  if ( Retractable == "RETRACT" ) {
-    isRetractable=true;
+  if ( sRetractable == "RETRACT" ) {
+    isRetractable = true;
   } else  {
-    isRetractable=false;
+    isRetractable = false;
   }  
   
-  GearUp=false; GearDown=true;
+  GearUp = false;
+  GearDown = true;
 
 // Add some AI here to determine if gear is located properly according to its
 // brake group type ??
@@ -159,6 +160,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   Reported        = lgear.Reported;
   name            = lgear.name;
   sSteerType      = lgear.sSteerType;
+  sRetractable    = lgear.sRetractable;
   eSteerType      = lgear.eSteerType;
   sBrakeGroup     = lgear.sBrakeGroup;
   eBrakeGrp       = lgear.eBrakeGrp;
@@ -166,8 +168,6 @@ FGLGear::FGLGear(const FGLGear& lgear)
   isRetractable   = lgear.isRetractable;
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
-
-  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -474,17 +474,17 @@ void FGLGear::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "    Name: " << name << endl;
-      cout << "      Location: " << vXYZ << endl;
-      cout << "      Spring Constant:  " << kSpring << endl;
-      cout << "      Damping Constant: " << bDamp << endl;
+      cout << "    Name: "               << name          << endl;
+      cout << "      Location: "         << vXYZ          << endl;
+      cout << "      Spring Constant:  " << kSpring       << endl;
+      cout << "      Damping Constant: " << bDamp         << endl;
       cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
-      cout << "      Static Friction:  " << staticFCoeff << endl;
+      cout << "      Static Friction:  " << staticFCoeff  << endl;
       cout << "      Rolling Friction: " << rollingFCoeff << endl;
-      cout << "      Steering Type:    " << sSteerType << endl;
-      cout << "      Grouping:         " << sBrakeGroup << endl;
+      cout << "      Steering Type:    " << sSteerType    << endl;
+      cout << "      Grouping:         " << sBrakeGroup   << endl;
       cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
-      cout << "      Retractable:      " << Retractable << endl;
+      cout << "      Retractable:      " << sRetractable  << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

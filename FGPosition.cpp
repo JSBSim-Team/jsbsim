@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.50 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.51 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,6 +102,8 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   gamma = Vt = Vground = 0.0;
+  hoverbmac = hoverbcg = 0.0;
+  psigt = 0.0;
 
   Debug(0);
 }
@@ -148,17 +150,15 @@ bool FGPosition::Run(void) {
 
     Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
     psigt =  atan2(vVel(eEast), vVel(eNorth));
-    if(psigt < 0.0)
+    if (psigt < 0.0)
       psigt += 2*M_PI;
 
-    invMass   = 1.0 / MassBalance->GetMass();
     Radius    = h + SeaLevelRadius;
-    invRadius = 1.0 / Radius;
 
     cosLat = cos(Latitude);
     if (cosLat != 0) LongitudeDot = vVel(eEast) / (Radius * cosLat);
 
-    LatitudeDot = vVel(eNorth) * invRadius;
+    LatitudeDot = vVel(eNorth) / Radius;
     RadiusDot   = -vVel(eDown);
 
     Longitude += 0.5*dt*rate*(LongitudeDot + lastLongitudeDot);

@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.97 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.98 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,10 +477,12 @@ bool FGState::Reset(string path, string acname, string fname)
     cerr << "The reset file " << resetDef
          << " does not appear to be a reset file" << endl;
     return false;
+  } else {
+    resetfile.GetNextConfigLine();
+    resetfile >> token;
+    cout << "Resetting using: " << token << endl << endl;
   }
   
-  resetfile.GetNextConfigLine();
-  resetfile >> token;
   while (token != string("/initialize") && token != string("EOF")) {
     if (token == "UBODY") resetfile >> U;
     if (token == "VBODY") resetfile >> V;

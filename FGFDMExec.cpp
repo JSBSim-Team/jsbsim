@@ -71,8 +71,9 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGConfigFile.h"
+#include "FGInitialCondition.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.75 2001/12/12 18:31:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.76 2001/12/14 00:16:28 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,8 +404,8 @@ bool FGFDMExec::LoadScript(string script)
   string token="";
   string aircraft="";
   string initialize="";
-  bool result=false;
-  double dt=0.0;
+  bool result = false;
+  double dt = 0.0;
   unsigned i;
   struct condition *newCondition;
 
@@ -505,6 +506,12 @@ bool FGFDMExec::LoadScript(string script)
   if (!result) {
     cerr << "Aircraft file " << aircraft << " was not found" << endl;
 	  exit(-1);
+  }
+
+  FGInitialCondition IC(this);
+  if ( ! IC.Load("aircraft", aircraft, initialize)) {
+    cerr << "Initialization unsuccessful" << endl;
+    exit(-1);
   }
 
   return true;
