@@ -48,7 +48,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.13 2003/11/17 12:50:56 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.14 2003/11/24 03:17:11 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -129,7 +129,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version $Id: FGSimTurbine.h,v 1.13 2003/11/17 12:50:56 jberndt Exp $
+    @version $Id: FGSimTurbine.h,v 1.14 2003/11/24 03:17:11 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,7 @@ public:
   double GetN1(void) {return N1;}
   double GetN2(void) {return N2;}
   double GetEPR(void) {return EPR;}
+  double GetEGT(void) {return EGT_degC;}
 
   double getOilPressure_psi () const {return OilPressure_psi;}
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
