@@ -92,6 +92,8 @@ public:
   inline float  GetCompVel(void)   {return compressSpeed; }
   inline float  GetCompForce(void) {return Force()(3);    }
   
+  inline void SetBrake(double bp) {brakePct = bp;}
+  
   inline void SetReport(bool bb) { ReportEnable=bb; }
   inline bool GetReport(void)    { return ReportEnable; }
   

@@ -115,6 +115,20 @@ void FGFCS::SetThrottlePos(int engineNum, float setting) {
 
 /******************************************************************************/
 
+void FGFCS::SetLBrake(float setting) {
+  
+}
+
+/******************************************************************************/
+
+void FGFCS::SetRBrake(float setting) {
+}
+
+/******************************************************************************/
+void FGFCS::SetCBrake(float setting) {
+}
+
+/******************************************************************************/
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
   string token;
 

@@ -113,6 +113,9 @@ public:
   inline void SetDsbPos(float tt) { DsbPos = tt; }
   inline void SetDspPos(float tt) { DspPos = tt; }
 
+  void SetLBrake(float);
+  void SetRBrake(float);
+  void SetCBrake(float);
 
   void SetThrottlePos(int ii, float tt);
 
