@@ -48,7 +48,7 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.29 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.30 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,14 +61,14 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
   mT(2,2) = 1;
   mT(3,3) = 1;
   vSense.InitMatrix(1);
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::~FGForce()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +155,9 @@ void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw)
 
 void FGForce::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.67 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.68 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +72,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,7 @@ FGFCS::~FGFCS()
   unsigned int i;
 
   for (i=0;i<Components.size();i++) delete Components[i];
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,7 +390,9 @@ void FGFCS::AddThrottle(void)
 
 void FGFCS::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

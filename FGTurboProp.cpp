@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboProp.h"
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.15 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.16 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,14 +49,14 @@ CLASS IMPLEMENTATION
 
 FGTurboProp::FGTurboProp(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTurboProp::~FGTurboProp()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,9 @@ double FGTurboProp::Calculate(double dummy)
 
 void FGTurboProp::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

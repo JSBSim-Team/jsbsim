@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.17 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.18 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,14 +50,14 @@ FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
 {
   SetTransformType(FGForce::tCustom);
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGThruster::~FGThruster()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,9 @@ FGThruster::~FGThruster()
 
 void FGThruster::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

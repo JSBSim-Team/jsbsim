@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.66 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.67 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ FGPropulsion::~FGPropulsion()
 {
   for (unsigned int i=0; i<Engines.size(); i++) delete Engines[i];
   Engines.clear();
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -563,7 +563,9 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 void FGPropulsion::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

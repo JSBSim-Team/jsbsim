@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.47 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.48 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ FGEngine::FGEngine(FGFDMExec* exec)
   Running = false;
   Cranking = Starter = false;
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
   TrimMode = false;
 }
 
@@ -93,7 +93,7 @@ FGEngine::FGEngine(FGFDMExec* exec)
 
 FGEngine::~FGEngine()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,7 +174,9 @@ void FGEngine::AddFeedTank(int tkID)
 
 void FGEngine::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.40 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.41 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,14 +121,14 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   *Power_Mixture_Correlation << 20 <<  74.0;
   *Power_Mixture_Correlation << (14.7/0.6) << 58;
 
-  if (debug_lvl > 0) Debug(0); // Call Debug() routine from constructor if needed
+  Debug(0); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGPiston::~FGPiston()
 {
-  if (debug_lvl > 0) Debug(1); // Call Debug() routine from constructor if needed
+  Debug(1); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -515,7 +515,9 @@ void FGPiston::doOilPressure(void)
 
 void FGPiston::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
       cout << "\n    Engine Name: "         << Name << endl;

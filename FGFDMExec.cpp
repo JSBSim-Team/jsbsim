@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.74 2001/12/12 12:59:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.75 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,7 +143,7 @@ FGFDMExec::FGFDMExec(void)
     debug_lvl = 1;
   }
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 
   Allocate();
 }
@@ -154,7 +154,7 @@ FGFDMExec::~FGFDMExec()
 {
   DeAllocate();
 
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -332,7 +332,7 @@ bool FGFDMExec::Run(void)
     if (State->Getsim_time() >= EndTime) return false;
   }
 
-  if (debug_lvl > 0) Debug(2);
+  Debug(2);
 
   while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;
@@ -385,7 +385,7 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 
   if (result) {
     modelLoaded = true;
-    if (debug_lvl > 0) Debug(3);
+    Debug(3);
   } else {
     cerr << fgred
          << "  FGFDMExec: Failed to load aircraft and/or engine model"
@@ -499,7 +499,7 @@ bool FGFDMExec::LoadScript(string script)
     exit(-1);
   }
 
-  if (debug_lvl > 0) Debug(4);
+  Debug(4);
 
   result = LoadModel("aircraft", "engine", aircraft);
   if (!result) {
@@ -618,7 +618,9 @@ void FGFDMExec::Debug(int from)
 {
   unsigned int i;
 
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
                                      << JSBSim_version << underoff << normint << endl;

@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.33 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.34 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,14 +87,14 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 //  turbType = ttBerndt; // temporarily disable turbulence until fully tested
   TurbGain = 100.0;
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGAtmosphere::~FGAtmosphere()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +145,7 @@ bool FGAtmosphere::Run(void)
 
     State->Seta(soundspeed);
 
-    if (debug_lvl > 0) Debug(2);
+    Debug(2);
 
   } else {                               // skip Run() execution this time
   }
@@ -311,7 +311,9 @@ void FGAtmosphere::Turbulence(void)
 
 void FGAtmosphere::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
     }
   }

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.34 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.35 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,7 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 
   EngineNumber = 0;
   Type = etRocket;
@@ -80,7 +80,7 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 
 FGRocket::~FGRocket()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,9 @@ double FGRocket::Calculate(double pe)
 
 void FGRocket::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      Engine Name: " << Name << endl;
       cout << "      Specific Heat Ratio = " << SHR << endl;

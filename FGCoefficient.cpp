@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.46 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.47 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,7 +151,7 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     }
 
     AC_cfg->GetNextConfigLine();
-    if (debug_lvl > 0) Debug(2);
+    Debug(2);
 
     return true;
   } else {
@@ -280,7 +280,9 @@ string FGCoefficient::GetCoefficientValues(void)
 
 void FGCoefficient::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loading
       cout << "\n   " << highint << underon << name << underoff << normint << endl;
       cout << "   " << description << endl;

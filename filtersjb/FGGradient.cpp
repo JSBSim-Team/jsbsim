@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGradient.h"
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.15 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.16 2001/12/12 18:31:09 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,14 +53,14 @@ FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGGradient::~FGGradient()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +93,9 @@ bool FGGradient::Run(void )
 
 void FGGradient::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

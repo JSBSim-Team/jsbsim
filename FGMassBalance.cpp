@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.20 2001/12/11 12:37:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.21 2001/12/12 18:31:08 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,14 +52,14 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGMassBalance";
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMassBalance::~FGMassBalance()
 {
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ bool FGMassBalance::Run(void)
     Ixy = baseIxy + Propulsion->GetTanksIxy(vXYZcg) + GetPMIxy();
     Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg) + GetPMIxz();
 
-    if (debug_lvl > 0) Debug(2);
+    Debug(2);
 
     return false;
   } else {
@@ -206,7 +206,9 @@ double FGMassBalance::GetPMIxz(void)
 
 void FGMassBalance::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
     }

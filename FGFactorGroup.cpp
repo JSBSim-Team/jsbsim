@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.14 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.15 2001/12/12 18:31:07 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGFactorGroup::FGFactorGroup( FGFDMExec* fdmex ) : FGCoefficient( fdmex)
 {
   FDMExec = fdmex;
 
-  if (debug_lvl > 0) Debug(0);
+  Debug(0);
 }  
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -80,7 +80,7 @@ FGFactorGroup::~FGFactorGroup()
 {
   for (unsigned int i=0; i<sum.size(); i++) delete sum[i];
 
-  if (debug_lvl > 0) Debug(1);
+  Debug(1);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -123,7 +123,7 @@ double FGFactorGroup::TotalValue(void)
   }
   totalsum *= FGCoefficient::TotalValue();
   SDtotal *= FGCoefficient::GetSD();
-  if (debug_lvl > 0) Debug(2);
+  Debug(2);
   return totalsum;
 }
 
@@ -148,7 +148,9 @@ double FGFactorGroup::TotalValue(void)
 
 void FGFactorGroup::Debug(int from)
 {
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
     if (from == 0) cout << "Instantiated: FGFactorGroup" << endl;
