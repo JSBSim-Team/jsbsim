@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.95 2002/03/01 01:41:04 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.96 2002/04/08 22:41:32 dmegginson Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -167,7 +167,7 @@
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
        ID            3
-       INPUT         FG_AILERON_CMD
+       INPUT         2
        MIN          -20
        MAX           15
        GAIN          0.01745
@@ -190,7 +190,7 @@
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        ID            6
-       INPUT        FG_RUDDER_CMD
+       INPUT        5
        MIN         -16
        MAX          16
        GAIN         0.01745
