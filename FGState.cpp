@@ -480,7 +480,7 @@ FGMatrix FGState::GetTs2b(float alpha, float beta)
   mTs2b(1,1) = -ca*cb;
   mTs2b(1,2) = -ca*sb;
   mTs2b(1,3) = sa;
-  mTs2b(2,1) = sb;
+  mTs2b(2,1) = -sb;
   mTs2b(2,2) = cb;
   mTs2b(2,3) = 0.0;
   mTs2b(3,1) = -sa*cb;

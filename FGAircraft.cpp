@@ -662,6 +662,7 @@ string FGAircraft::GetCoefficientStrings(void)
 string FGAircraft::GetCoefficientValues(void)
 {
   string SDValues = "";
+  char buffer[10];
   bool firstime = true;
 
   for (unsigned int axis = 0; axis < 6; axis++) {
@@ -671,7 +672,8 @@ string FGAircraft::GetCoefficientValues(void)
       } else {
         SDValues += ", ";
       }
-      SDValues += Coeff[axis][sd].GetSD();
+      sprintf(buffer, "%9.6f", Coeff[axis][sd].GetSD());
+      SDValues += string(buffer);
     }
   }
 
