@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.38 2003/12/06 14:09:31 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.39 2003/12/06 18:01:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,7 +80,8 @@ CLASS DOCUMENTATION
     This class owns and contains the list of coefficients that define the
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
-    @config <pre>
+    @config
+    <pre>
     \<AERODYNAMICS>
        \<AXIS NAME="{LIFT|DRAG|SIDE|ROLL|PITCH|YAW}">
          {Coefficient definitions}
@@ -88,9 +89,8 @@ CLASS DOCUMENTATION
        {Additional axis definitions}
     \</AERODYNAMICS> </pre>
     
-    @author Jon S. Berndt
-    Tony Peden
-    @version $Id: FGAerodynamics.h,v 1.38 2003/12/06 14:09:31 jberndt Exp $
+    @author Jon S. Berndt, Tony Peden
+    @version "$Id: FGAerodynamics.h,v 1.39 2003/12/06 18:01:36 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
