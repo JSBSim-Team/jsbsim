@@ -322,6 +322,13 @@ bool FGTrimLong::DoTrim(void) {
   int its;
   float step,temp,min,max;
 
+  if(fgic->GetVtrueKtsIC() < 1)
+    cout << "Trim failed, on-ground trimming not yet implemented." << endl;
+    cout << "Or did you *really* mean to start in-air"
+         << " with less than 1 knot airspeed?" << endl;
+    return false;
+  }  
+  
   trimfp fp;
 
   fgic -> SetAlphaDegIC((alphaMin+alphaMax)/2);
