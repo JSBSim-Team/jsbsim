@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.40 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.41 2001/11/03 17:00:29 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.40 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.41 2001/11/03 17:00:29 apeden Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -228,6 +228,9 @@ public:
   inline bool GetReport(void)    { return ReportEnable; }
   inline float GetSteerAngle(void) { return SteerAngle;}
   inline float GetstaticFCoeff(void) { return staticFCoeff;}
+  
+  inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
+  inline int GetSteerType(void)  { return (int)eSteerType; }
 
 private:
   FGColumnVector3 vXYZ;
