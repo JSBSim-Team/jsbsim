@@ -67,7 +67,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.4 2004/02/20 15:06:00 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.5 2004/04/03 01:40:26 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,8 +152,8 @@ bool MSIS::Run(void)
     //do temp, pressure, and density first
     if (!useExternal) {
       // get sea-level values
-      Calculate(100,
-                43200.0, 
+      Calculate(Auxiliary->GetDayOfYear(),
+                Auxiliary->GetSecondsInDay(), 
                 0.0, 
                 Position->GetLatitude() * radtodeg,
                 Position->GetLongitude() * radtodeg);
@@ -167,8 +167,8 @@ bool MSIS::Run(void)
       rSLsoundspeed  = 1.0/SLsoundspeed;
 
       // get at-altitude values
-      Calculate(100,
-                43200.0, 
+      Calculate(Auxiliary->GetDayOfYear(),
+                Auxiliary->GetSecondsInDay(), 
                 Position->Geth(), 
                 Position->GetLatitude() * radtodeg,
                 Position->GetLongitude() * radtodeg);

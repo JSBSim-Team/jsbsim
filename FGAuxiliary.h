@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.39 2004/03/26 04:51:54 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.40 2004/04/03 01:40:26 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.39 2004/03/26 04:51:54 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.40 2004/04/03 01:40:26 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,11 @@ public:
   inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
   inline double GetEarthPositionAngle(void) const { return earthPosAngle; }
 
+  inline void SetDayOfYear(int doy) { day_of_year = doy; }
+  inline int  GetDayOfYear(void) const { return day_of_year; }
+  inline void   SetSecondsInDay(double sid) { seconds_in_day = sid; } 
+  inline double GetSecondsInDay(void) const { return seconds_in_day; }
+
   double GetHeadWind(void);
   double GetCrossWind(void);
 
@@ -196,6 +201,8 @@ private:
   double adot,bdot;
 
   double earthPosAngle;
+  int    day_of_year;     // GMT day, 1 .. 366
+  double seconds_in_day;  // seconds since current GMT day began
 
   void Debug(int from);
 };
