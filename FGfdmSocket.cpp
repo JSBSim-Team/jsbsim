@@ -131,10 +131,8 @@ void FGfdmSocket::Append(long item)
 
 void FGfdmSocket::Send(void)
 {
-  int len;
-  
   buffer += string("\n");
-  if ((len = send(sckt,buffer.c_str(),buffer.size(),0)) <= 0) {
+  if ((send(sckt,buffer.c_str(),buffer.size(),0)) <= 0) {
     perror("send");
   } else {
   }

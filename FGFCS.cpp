@@ -67,6 +67,8 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
     ThrottleCmd[i] = 0.0;
     ThrottlePos[i] = 0.0;
   }
+  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
+  DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
 }
 
 /******************************************************************************/
@@ -113,6 +115,8 @@ void FGFCS::SetThrottlePos(int engineNum, float setting)
 
 /******************************************************************************/
 
+#pragma warn -8030
+
 bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 {
   string token;
@@ -149,6 +153,8 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   }
   return true;
 }
+
+#pragma warn .8030
 
 /******************************************************************************/
 

@@ -76,6 +76,8 @@ using namespace std;
 CLASS DECLARATION
 *******************************************************************************/
 
+#pragma warn -8026
+
 class FGTranslation : public FGModel
 {
 public:
@@ -113,6 +115,7 @@ private:
   void GetState(void);
   void PutState(void);
 };
+#pragma warn .8026
 
 /******************************************************************************/
 #endif

@@ -76,6 +76,8 @@ using namespace std;
 CLASS DECLARATION
 *******************************************************************************/
 
+#pragma warn -8026
+
 class FGRotation : public FGModel
 {
   FGColumnVector vPQR;
@@ -101,6 +103,7 @@ public:
   inline float Gettht(void) {return vEuler(2);}
   inline float Getpsi(void) {return vEuler(3);}
 };
+#pragma warn .8026
 
 /******************************************************************************/
 #endif
