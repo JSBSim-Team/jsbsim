@@ -2,7 +2,7 @@
 <!--
   File:        c172p.xml
   Author:      David Megginson (based on c172r.xml by Tony Peden)
-  CVS Version: $Id: c172p.xml,v 1.9 2003/11/04 16:02:49 dpculp Exp $
+  CVS Version: $Id: c172p.xml,v 1.10 2003/11/25 17:08:58 dmegginson Exp $
 
   Function: Models a 1981 Cessna 172P.
 
@@ -190,8 +190,7 @@
        INPUT         fcs/roll-trim-sum
        MIN          -20
        MAX           15
-       INVERT
-       GAIN          0.01745
+       GAIN         -0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
