@@ -1,39 +1,17 @@
 <FDM_CONFIG NAME="F-16" VERSION="1.60">
 
-<!--                                                                                             -
+<!--                                                                                       -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.13 2002/09/22 18:06:02 apeden Exp $
+  CVS Version: $Id: f16.xml,v 1.14 2002/10/01 12:04:46 apeden Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 -->
 
   <METRICS>
 
-    <!--
-    Wing area (ft^2)
-    Wing span (ft)
-    Wing avg. chord (ft)
-    H. Tail Area (ft^2)
-    Wing MAC to H.Tail MAC (ft)
-    V. Tail Area (ft^2)
-    Wing MAC to V.Tail MAC (ft)
-    Ixx
-    Iyy
-    Izz
-    Ixz
-    Empty weight
-
-    Center of gravity location, empty weight, in aircraft's own structural coord
-    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
-    right wing.
-
-    Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
-    X, Y, Z, in inches
-    -->
-
     AC_WINGAREA   300.0
-    AC_WINGSPAN    30.0  <!-- 31.0 with tip missile launchers and 32.83 with missiles also -->
+    AC_WINGSPAN    30.0 <!-- 31.0 w. tip missile launchers and 32.83 w. missiles also -->
     AC_CHORD       11.32 <!-- ft  -->
     AC_HTAILAREA   63.7  <!-- ft2 -->
     AC_HTAILARM   190.43 <!-- ft  -->
@@ -45,75 +23,36 @@
     AC_IXZ        982.0
     AC_EMPTYWT  17400.0	 <!-- w. oil, oxygen, unusable fuel and tip missile launchers -->
     AC_CGLOC        0.0  0.0   0.0
-    AC_AERORP       1.1  0.0   0.0
-    AC_EYEPTLOC   228.5  0.0  23.2
-    AC_POINTMASS  228.5  0.0  23.2 160.0 <!-- pilot -->
+    AC_AERORP       0.0  0.0   0.0
+    AC_EYEPTLOC   157.6  0.0  33.8
+    AC_POINTMASS  180.0 157.6  0.0  33.8 <!-- pilot -->
 
   </METRICS>
 
   <UNDERCARRIAGE>
-
-    <!--
-    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-
-    AC_GEAR
-    <name>                           name of gear entry - no spaces allowed
-    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
-    <spring constant>                spring constant in lbs/ft
-    <damping coefficient>            damping coefficient in lbs/ft/sec
-    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
-    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
-    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
-    <max steer angle>                Maximum steerable angle in degrees
-    -->
 
     <!--   Legenda:
        -    LG   Landing Gear       MLG   Main Landing Gear
        -    WT   Wing Tip           VFT   Ventral Fin Tip
        -    VS   Vertical Stabilizer
       -->
-    AC_GEAR NOSE_LG    150.7    0.0  -79.6   1621   700 0.05 0.08 0.2 STEERABLE NOSE  72.0 RETRACT
-    AC_GEAR LEFT_MLG    -5.2  -46.5  -79.6  22704 10000 0.05 0.08 0.2 FIXED     LEFT   0   RETRACT
-    AC_GEAR RIGHT_MLG   -5.2   46.5  -79.6  22704 10000 0.05 0.08 0.2 FIXED     RIGHT  0   RETRACT
-    AC_GEAR LEFT_WT    -66.1 -186.0   -5.0  10000  2000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR RIGHT_WT   -66.1  186.0   -5.0  10000  2000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR TOP_VS    -188.5    0.0  120.9  10000  2000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR LEFT_VFT   -88.3  -20.7  -68.6    200  5000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR RIGHT_VFT  -88.3   20.7  -68.6    200  5000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR INTAKE     107.2    0.0  -16.1  10000  2000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
-    AC_GEAR RADOME     364.8    0.0  -17.7  10000  2000 0.2  0.2  0.2 FIXED     NONE   0   FIXED
+    AC_GEAR NOSE_LG  -123.9    0.0 -57.1  2200   800 0.5 0.8 0.2 STEERABLE NOSE 72.0 RETRACT
+    AC_GEAR LEFT_MLG   37.2  -46.7 -57.1 22704 10000 0.5 0.8 0.2 FIXED     LEFT  0   RETRACT
+    AC_GEAR RIGHT_MLG  37.2   46.7 -57.1 22704 10000 0.5 0.8 0.2 FIXED     RIGHT 0   RETRACT
+    AC_GEAR LEFT_WT    56.3 -186.9   0.0 10000  2000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR RIGHT_WT   56.3  186.9   0.0 10000  2000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR TOP_VS    213.9    0.0 123.9 10000  2000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR LEFT_VFT   95.7  -20.7 -50.7   200  5000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR RIGHT_VFT  95.7   20.7 -50.7   200  5000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR INTAKE   -149.2    0.0 -39.4 10000  2000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
+    AC_GEAR RADOME   -320.9    0.0 -11.3 10000  2000 0.2 0.2 0.2 FIXED     NONE  0   FIXED
 
   </UNDERCARRIAGE>
 
   <PROPULSION>
 
-    <!--
-      TANKS SECTION
-
-      Tank locations and characteristics, empty weight, in aircraft's own coord system:
-      X, Y, Z, in inches
-      effective radius of tank, in inches (for fuel slosh, if/when modeled)
-      capacity in pounds
-      Current contents, in pounds
-
-      ENGINE[S] SECTION
-
-      Engine[s] is|are specified by giving engine name (which corresponds to an engine
-      definition file in the "engines" directory) followed by x, y, z placement and
-      pitch and yaw orientation. Coordinates are given in inches in the structural
-      coordinate frame. Angles for pitch and yaw are specified in radians.
-
-      AC_ENGINE name x y z pitch yaw
-
-      THRUSTER[S] SECTION
-
-      AC_THRUSTER name x y z pitch yaw
-    -->
-
     <AC_ENGINE FILE="low_bypass_turbofan">
-      XLOC      -93.0
+      XLOC      202.7
       YLOC        0.0
       ZLOC        0.0
       PITCH       0.0
@@ -123,7 +62,7 @@
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="direct">
-      XLOC      191.5
+      XLOC      202.7
       YLOC        0.0
       ZLOC        0.0
       PITCH       0.0
@@ -131,66 +70,24 @@
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC        0.0
-      YLOC       92.1
-      ZLOC       -5.0
+      XLOC       33.8
+      YLOC       39.4
+      ZLOC        0.0
       RADIUS     78.8
       CAPACITY 3486.0
       CONTENTS 3486.0
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="2">
-      XLOC        0.0
-      YLOC      -92.1
-      ZLOC       -5.0
+      XLOC       33.8
+      YLOC      -39.4
+      ZLOC        0.0
       RADIUS     78.8
       CAPACITY 3486.0
       CONTENTS 3486.0
     </AC_TANK>	
 
   </PROPULSION>
-
-  <!--
-  In the following section for flight controls the TYPE parameter may be one of
-  the following:
-
-    LAG_FILTER
-    LEAD_LAG_FILTER
-    SECOND_ORDER_FILTER
-    WASHOUT_FILTER
-    INTEGRATOR
-    PURE_GAIN
-    SCHEDULED_GAIN
-    HYSTERESIS
-    SUMMER
-    DEADBAND
-    GRADIENT
-    AEROSURFACE_SCALE
-
-  Most flight control systems should be able to be modeled by the above
-  components.
-
-  According to Etkin, (From the Flight Safety Foundation Human Engineering
-  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
-  are as follows (averaged, for a right-handed pilot):
-
-  Stick Pull:  50 lbs.
-        Push:  50
-        Right: 20
-        Left:  20
-
-  Pedal Push: 300 lbs.
-
-  It is assumed that most flight control systems will list the pilot input in
-  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
-  will all have limits specified, and that the joystick inputs from FlightGear will be
-  from -1 to 0 to +1. Given all those parameters, it should be possible to
-  calculate a scaling factor that will convert the +/-1 range into a push/pull
-  force command ready for input to the FCS.
-
-  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
-  pounds.
-  -->
 
   <FLIGHT_CONTROL NAME="F-16 Direct">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
@@ -241,61 +138,7 @@
 
   <AERODYNAMICS>
 
-    <!--
-    For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
-
-    The aerodynamics section is arranged as follows:
-
-     <AERODYNAMICS>
-       <AXIS NAME="LIFT">                   // {LIFT|DRAG|SIDE|ROLL|PITCH|YAW}
-
-         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">   // example for CLalpha
-
-           Lift_due_to_alpha                // e.g. Lift_at_zero_alpha (no embedded spaces)
-           [[rows] cols]                    // calc_type: {TABLE|VECTOR|TABLE|EQUATION}
-                                            // number of rows and number of columns
-                                            // are present depending on calc_type
-           row_lookup column_lookup         // the lookup parameters for row and column
-                                            // based on the above chart, i.e. if the
-                                            // row and column lookups are 16384 &
-                                            // 32768 that means the rows are indexed
-                                            // by mach and the columns by altitude
-                                            // if the type is VECTOR, then the table
-                                            // is referenced only by a single lookup.
-           multipliers                      // this is an OR'ed value of all the
-                                            // parameters this coefficient must be
-                                            // multiplied by to get a force or moment,
-                                            // i.e.0  these are the non-dimensionalizing
-                                            // values. Alternatively, the values can
-                                            // be given as the FG_* descriptors
-                                            // delimited with the "|" pipe character.
-           column_value                     // if a TABLE, the row values for _this_
-                                            // column follow. I.e.0  if the column
-                                            // represents altitude and this value is
-                                            // 40,000, then what follows are the rows
-                                            // of data for this coefficient at this
-                                            // altitude
-           row_value coeff_value            // The actual value for the data at this
-                                            // row, where for instance, 0.0 might
-                                            // a mach number of 0; and the second value
-                                            // represents the coefficient value for
-                                            // this column at this row. Using the
-                                            // example mentioned: 2.4 0.98 would mean,
-                                            // for this column of data and at mach 2.4,
-                                            // the value of the coefficient is 0.98.
-           <...> <...>                      // a <row> <coeff> value entry is present
-                                            // each row of data. ADDITIONALLY, for each
-                                            // column, the row_value series must be
-                                            // identical.
-           column_value2                    // repeat row/coeff value mapping for
-           row_value coeff_value            // each column in the table
-              0...> <...>                      //
-           </COEFFICIENT>
-
-         </AXIS>
-    -->
-
-    AC_ALPHALIMITS -0.3491 0.6109
+    AC_ALPHALIMITS -0.3491 1.5708
 
     <AXIS NAME="LIFT">
 
@@ -1055,51 +898,6 @@
     </AXIS>
 
   </AERODYNAMICS>
-
-  <!--
-    OUTPUT section definition
-
-    The following specifies the way that JSBSim writes out data.
-
-    NAME is the filename you want the output to go to
-
-    TYPE can be:
-      CSV       Comma separated data. If a filename is supplied then the data
-                goes to that file. If COUT or cout is specified, the data goes
-                to stdout. If the filename is a null filename the data goes to
-                stdout, as well.
-      SOCKET    Will eventually send data to a socket output, where NAME
-                would then be the IP address of the machine the data should be
-                sent to. DON'T USE THIS YET!
-      TABULAR   Columnar data. NOT IMPLEMENTED YET!
-      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
-      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
-                off the data output without having to mess with anything else.
-
-    The arguments that can be supplied, currently, are
-
-    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
-                value may not be *exactly* what you want, due to the dependence
-                on dt, the cycle rate for the FDM.
-
-    The following parameters tell which subsystems of data to output:
-
-    SIMULATION       ON|OFF
-    ATMOSPHERE       ON|OFF
-    MASSPROPS        ON|OFF
-    AEROSURFACES     ON|OFF
-    RATES            ON|OFF
-    VELOCITIES       ON|OFF
-    FORCES           ON|OFF
-    MOMENTS          ON|OFF
-    POSITION         ON|OFF
-    COEFFICIENTS     ON|OFF
-    GROUND_REACTIONS ON|OFF
-    FCS              ON|OFF
-    PROPULSION       ON|OFF
-
-    NOTE that Time is always output with the data.
-  -->
 
   <OUTPUT NAME="f16.csv" TYPE="NONE">
     RATE_IN_HZ       20
