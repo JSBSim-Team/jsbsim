@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.31 2002/03/18 12:12:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.32 2002/03/19 12:14:19 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -68,6 +68,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   
   clsq=lod=0;
   
+  bind();
 
   Debug(0);
 }
@@ -77,6 +78,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 FGAerodynamics::~FGAerodynamics()
 {
   unsigned int i,j;
+  
   unbind();
   
   for (i=0; i<6; i++) {
@@ -86,8 +88,6 @@ FGAerodynamics::~FGAerodynamics()
   }
   delete[] Coeff;
   
- 
-
   Debug(1);
 }
 
@@ -176,7 +176,7 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
     }
   }
 
-  bind();
+  bindModel();
   
   return true;
 }
@@ -226,9 +226,6 @@ string FGAerodynamics::GetCoefficientValues(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAerodynamics::bind(void){
-  unsigned i,j;
-  FGPropertyManager* node;
-  string prop_name;
   
   PropertyManager->Tie("forces/fbx-aero-lbs", this,1,
                        &FGAerodynamics::GetForces);
@@ -252,6 +249,15 @@ void FGAerodynamics::bind(void){
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared-norm", this,
                        &FGAerodynamics::GetClSquared); 
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAerodynamics::bindModel(void) { 
+ 
+  unsigned i,j;
+  FGPropertyManager* node;
+  string prop_name;
   
   for(i=0;i<NAxes;i++) {
      for (j=0; j < Coeff[i].size(); j++) { 

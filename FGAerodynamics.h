@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.28 2002/03/18 12:12:46 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.29 2002/03/19 12:14:19 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.28 2002/03/18 12:12:46 apeden Exp $
+    @version $Id: FGAerodynamics.h,v 1.29 2002/03/19 12:14:19 apeden Exp $
     @see -
 */
 
@@ -138,6 +138,7 @@ public:
   inline FGCoefficient* GetCoefficient(string name) { return cm[name]; }
 
   void bind(void);
+  void bindModel(void);
   void unbind(void);
   
 private:
