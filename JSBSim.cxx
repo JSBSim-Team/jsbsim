@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.2 2000/04/28 16:01:50 jsb Exp $
+// $Id: JSBSim.cxx,v 1.3 2000/04/28 18:41:15 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -64,10 +64,12 @@ int FGJSBsim::init( double dt ) {
     FGPath engine_path( current_options.get_fg_root() );
     engine_path.append( "Engine" );
 
+    FDMExec.GetState()->Setdt( dt );
+
     FDMExec.GetAircraft()->LoadAircraft( aircraft_path.str(), 
-					 engine_path.str(), 
+					 engine_path.str(),
 					 current_options.get_aircraft() );
-    FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft" << 
+    FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft" <<
 	    current_options.get_aircraft() );
 
     FG_LOG( FG_FLIGHT, FG_INFO, "Initializing JSBsim with:" );
@@ -95,7 +97,6 @@ int FGJSBsim::init( double dt ) {
 
     FG_LOG( FG_FLIGHT, FG_INFO, "  loaded initial conditions" );
 
-    FDMExec.GetState()->Setdt( dt );
     FG_LOG( FG_FLIGHT, FG_INFO, "  set dt" );
 
     FG_LOG( FG_FLIGHT, FG_INFO, "Finished initializing JSBsim" );

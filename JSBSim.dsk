@@ -38,23 +38,24 @@ File_4=SourceModule,'D:\CBuilder4\Projects\FDM\JSBSim\FGCoefficient.cpp',0,1,31,
 File_5=SourceModule,'D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim\FGAircraft.cpp',0,1,1,1,1,0,0
 
 [Modules]
-Module0=D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.cpp
+Module0=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
 Module1=D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp
-Module2=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx
-Module3=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
-Module4=D:\CBuilder4\Projects\FDM\JSBSim\FGEngine.cpp
-Module5=D:\CBuilder4\Projects\FDM\JSBSim\FGAtmosphere.cpp
-Module6=D:\CBuilder4\Projects\FDM\JSBSim\FGAuxiliary.cpp
-Module7=D:\CBuilder4\Projects\FDM\JSBSim\FGTranslation.cpp
-Module8=D:\CBuilder4\Projects\FDM\JSBSim\FGMatrix.cpp
-Module9=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
-Module10=D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp
-Module11=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp
-Module12=D:\CBuilder4\Projects\FDM\JSBSim\FGRotation.cpp
-Count=13
+Module2=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg
+Module3=D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp
+Module4=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
+Module5=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx
+Module6=D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.cpp
+Module7=D:\CBuilder4\Projects\FDM\JSBSim\FGEngine.cpp
+Module8=D:\CBuilder4\Projects\FDM\JSBSim\FGAtmosphere.cpp
+Module9=D:\CBuilder4\Projects\FDM\JSBSim\FGAuxiliary.cpp
+Module10=D:\CBuilder4\Projects\FDM\JSBSim\FGTranslation.cpp
+Module11=D:\CBuilder4\Projects\FDM\JSBSim\FGMatrix.cpp
+Module12=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp
+Module13=D:\CBuilder4\Projects\FDM\JSBSim\FGRotation.cpp
+Count=14
 EditWindowCount=1
 
-[D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
@@ -64,12 +65,27 @@ ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx]
+[D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg]
+ModuleType=SourceModule
+FormState=0
+FormOnTop=0
+
+[D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
 [D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp]
+ModuleType=SourceModule
+FormState=0
+FormOnTop=0
+
+[D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx]
+ModuleType=SourceModule
+FormState=0
+FormOnTop=0
+
+[D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
@@ -95,16 +111,6 @@ FormState=0
 FormOnTop=0
 
 [D:\CBuilder4\Projects\FDM\JSBSim\FGMatrix.cpp]
-ModuleType=SourceModule
-FormState=0
-FormOnTop=0
-
-[D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp]
-ModuleType=SourceModule
-FormState=0
-FormOnTop=0
-
-[D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
@@ -149,8 +155,8 @@ RightPanelSize=0
 BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
 BottomPanelData=00000400010000000B0000004D657373616765566965770000000000000000000000000000000000FFFFFFFF
-ViewCount=18
-CurrentView=11
+ViewCount=22
+CurrentView=8
 View0=0
 View1=1
 View2=2
@@ -169,6 +175,10 @@ View14=14
 View15=15
 View16=16
 View17=17
+View18=18
+View19=19
+View20=20
+View21=21
 
 [ClassHierarchy@EditWindow0]
 TreeWidth=185
@@ -251,82 +261,110 @@ LeftCol=1
 
 [View6]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp
-CursorX=50
-CursorY=85
+CursorX=65
+CursorY=80
 TopLine=79
 LeftCol=1
 
 [View7]
-Module=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
-CursorX=67
-CursorY=348
-TopLine=210
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGModel.h
+CursorX=1
+CursorY=88
+TopLine=67
 LeftCol=1
 
 [View8]
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
+CursorX=1
+CursorY=521
+TopLine=480
+LeftCol=1
+
+[View9]
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.h
+CursorX=34
+CursorY=223
+TopLine=202
+LeftCol=1
+
+[View10]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.cpp
 CursorX=73
 CursorY=52
 TopLine=43
 LeftCol=1
 
-[View9]
+[View11]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGFCS.h
 CursorX=1
 CursorY=1
 TopLine=61
 LeftCol=1
 
-[View10]
+[View12]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp
-CursorX=3
-CursorY=81
-TopLine=209
+CursorX=74
+CursorY=85
+TopLine=73
 LeftCol=1
 
-[View11]
+[View13]
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.h
+CursorX=57
+CursorY=72
+TopLine=61
+LeftCol=1
+
+[View14]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.cpp
 CursorX=26
 CursorY=121
 TopLine=95
 LeftCol=1
 
-[View12]
+[View15]
+Module=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg
+CursorX=1
+CursorY=515
+TopLine=494
+LeftCol=1
+
+[View16]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGPosition.h
 CursorX=48
 CursorY=57
 TopLine=49
 LeftCol=1
 
-[View13]
+[View17]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGAtmosphere.cpp
 CursorX=19
 CursorY=88
 TopLine=60
 LeftCol=1
 
-[View14]
+[View18]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
 CursorX=27
 CursorY=171
 TopLine=167
 LeftCol=1
 
-[View15]
+[View19]
 Module=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx
-CursorX=37
-CursorY=225
-TopLine=183
+CursorX=1
+CursorY=69
+TopLine=57
 LeftCol=1
 
-[View16]
+[View20]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.h
-CursorX=73
-CursorY=109
-TopLine=95
+CursorX=1
+CursorY=96
+TopLine=77
 LeftCol=1
 
-[View17]
+[View21]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGEngine.cpp
 CursorX=13
 CursorY=178
