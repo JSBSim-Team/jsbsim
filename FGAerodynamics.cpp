@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.43 2003/06/03 09:53:40 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.44 2003/12/03 04:42:42 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -107,7 +107,7 @@ bool FGAerodynamics::Run(void)
   if (!FGModel::Run()) {
 
     twovel = 2*Translation->GetVt();
-    if (twovel > 0) {
+    if (twovel != 0) {
       bi2vel = Aircraft->GetWingSpan() / twovel;
       ci2vel = Aircraft->Getcbar() / twovel;
     }  

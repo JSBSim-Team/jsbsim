@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.91 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.92 2003/12/03 04:42:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,22 +81,21 @@ CLASS DOCUMENTATION
     the Engines, Tanks, Propellers, Nozzles, Aerodynamic and Mass properties,
     landing gear, etc. These constituent parts may actually run as separate
     JSBSim models themselves, but the responsibility for initializing them and
-    for retrieving their force and moment contributions falls to FGAircraft.<br>
-    
+    for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.91 2003/11/26 13:37:36 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.92 2003/12/03 04:42:42 jberndt Exp $
     @see
-     <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+     Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-	   School, January 1994</li>
-     <li>D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-     JSC 12960, July 1977</li>
-     <li>Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-     NASA-Ames", NASA CR-2497, January 1975</li>
-     <li>Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-     Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
-     <li>Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-     1982 ISBN 0-471-08936-2</li></ol>
+	   School, January 1994
+     D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+     JSC 12960, July 1977
+     Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+     NASA-Ames", NASA CR-2497, January 1975
+     Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+     Wiley & Sons, 1979 ISBN 0-471-03032-5
+     Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+     1982 ISBN 0-471-08936-2
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
