@@ -3,7 +3,7 @@
   Author:   Jon Berndt
   Date:     18 August 2002
   Function: C-172 autopilot test file
-  
+
   Note: this file represents a test only of the new autopilot
         setup in JSBSim. The same components used in the FCS
         can also be used in the autopilot section. There are
@@ -38,32 +38,16 @@
    MIN           -0.255
    MAX            0.255
 </COMPONENT>
-
 <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
    INPUT         attitude/phi-rad
    C1            0.125
 </COMPONENT>
-
-<COMPONENT NAME="Roll A/P Derivative Error" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="velocities/p-rad_sec">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="-velocities/p-rad_sec">
-    attitude/phi-rad < 0
-  </TEST>
-</COMPONENT>
-
-<COMPONENT NAME="Roll A/P Deriv Gain" TYPE="PURE_GAIN">
-   INPUT       fcs/roll-ap-derivative-error
-   GAIN        0.1
-</COMPONENT>
-
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
-   INPUT         fcs/roll-ap-deriv-gain
+   INPUT         velocities/p-rad_sec
    INPUT         fcs/roll-ap-wing-leveler
    INPUT         fcs/roll-ap-error-integrator
    CLIPTO       -1 1
 </COMPONENT>
-
 <COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
   <TEST LOGIC="DEFAULT" VALUE="0.0">
   </TEST>
@@ -71,13 +55,70 @@
     ap/attitude_hold == 1
   </TEST>
 </COMPONENT>
-
 <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
    INPUT         fcs/roll-ap-autoswitch
    GAIN          -1
    OUTPUT        ap/aileron_cmd
 </COMPONENT>
 
+
 <!-- Altitude hold -->
 
+<!-- The Altitude Error component below computes the altitude error, subtracting
+     the desired altitude (altitude_setpoint) from the actual altitude above sea
+     level (_not_ Above Ground Level).  This error signal is interpreted as an
+     hdot command (hdot is time rate of change of altitude, or rate of climb). As
+     such it is limited to a maximum value of 40 fps here (which corresponds to
+     about a 20 degree climb angle for a C-172) and a maximum descent rate of 20
+     fps. -->
 
+<COMPONENT NAME="Altitude Error" TYPE="SUMMER">
+  INPUT         -position/h-sl-ft
+  INPUT          ap/altitude_setpoint
+  CLIPTO        -100 100
+</COMPONENT>
+
+<COMPONENT NAME="Alt Error Lag" TYPE="LAG_FILTER">
+  INPUT          fcs/altitude-error
+  C1             0.25
+</COMPONENT>
+
+<COMPONENT NAME="HDot Command" TYPE="PURE_GAIN">
+  INPUT          fcs/alt-error-lag
+  GAIN           0.1
+</COMPONENT>
+
+<COMPONENT NAME="HDot Error" TYPE="SUMMER">
+  INPUT          fcs/hdot-command
+  INPUT         -velocities/h-dot-fps
+</COMPONENT>
+
+<COMPONENT NAME="AP Alt Hold Switch" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="0.0">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/hdot-error">
+    ap/altitude_hold == 1
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="Integral" TYPE="INTEGRATOR">
+  INPUT          fcs/ap-alt-hold-switch
+  C1             0.0041
+</COMPONENT>
+
+<COMPONENT NAME="Proportional" TYPE="PURE_GAIN">
+  INPUT          fcs/ap-alt-hold-switch
+  GAIN           0.035
+</COMPONENT>
+
+<COMPONENT NAME="Control Summer" TYPE="SUMMER">
+  INPUT          fcs/integral
+  INPUT          fcs/proportional
+  CLIPTO         -1.0 1.0
+</COMPONENT>
+
+<COMPONENT NAME="Elevator" TYPE="PURE_GAIN">
+  INPUT          fcs/control-summer
+  GAIN          -1.0
+  OUTPUT         ap/elevator_cmd
+</COMPONENT>
