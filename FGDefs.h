@@ -39,7 +39,6 @@ SENTRY
 #define GRAVITY         32.174
 #define INVGRAVITY      0.031081
 #define EARTHRAD        20925650.00       // feet, equatorial
-#define OMEGAEARTH      7.2685E-3         // rad/sec
 #define EARTHRADSQRD    437882827922500.0
 #define ONESECOND       4.848136811E-6
 #define ECCENT          0.996647186

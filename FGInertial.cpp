@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGInertial.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.7 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.8 2001/04/25 22:47:59 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 extern short debug_lvl;
@@ -47,16 +47,37 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
+FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex),
+    vMoments(3),
+    vForces(3),
+    vOmegaEarth(3),
+    vOmegaAircraft(3)
 {
+  vOmegaEarth.InitMatrix();
+  vOmegaEarth(1) = OMEGA_EARTH;
+
   if (debug_lvl & 2) cout << "Instantiated: FGInertial" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGInertial:: Run(void) {
+FGInertial::~FGInertial(void)
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGInertial" << endl;
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGInertial::Run(void)
+{
   if (!FGModel::Run()) {
+
+    vOmegaAircraft = Position->GetvVel() / EARTHRAD;
+    vForces = ( 2.0 * (vOmegaAircraft + vOmegaEarth)
+                * (Position->GetvVel() + vOmegaEarth * EARTHRAD) )
+		            * MassBalance->GetMass();
+    
+    vForces += 
 
     return false;
   } else {

@@ -55,8 +55,9 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGConfigFile.h"
+#include "FGMatrix.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.10 2001/04/18 13:51:07 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.11 2001/04/25 22:47:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -67,13 +68,15 @@ class FGInertial : public FGModel {
 
 public:
   FGInertial(FGFDMExec*);
-  ~FGInertial();
+  ~FGInertial(void);
 
   bool Run(void);
   bool LoadInertial(FGConfigFile* AC_cfg);
 
 private:
   void Debug(void);
+  FGColumnVector vOmegaEarth;
+  FGColumnVector vOmegaAircraft;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
