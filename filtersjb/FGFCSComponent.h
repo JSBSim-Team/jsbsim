@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.18 2000/10/20 00:00:24 jsb Exp $
+    @version $Id: FGFCSComponent.h,v 1.19 2000/11/15 23:48:06 jsb Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -91,14 +91,23 @@ CLASS DECLARATION
 
 class FGFCSComponent
 {
-private:
+public:
+  /// Constructor
+  FGFCSComponent(FGFCS*);
+  /// Destructor
+  virtual ~FGFCSComponent ( ) { }       //Destructor
+
+  virtual bool Run(void);
+  virtual void SetOutput(void);
+  inline float GetOutput (void) {return Output;}
+  inline string GetName(void) {return Name;}
 
 protected:
+   /// Pilot/Aircraft, FCS, Autopilot inputs
+  enum eInputType {itPilotAC, itFCS, itAP} InputType;
   FGFCS* fcs;
   string Type;
   string Name;
-   /// Pilot/Aircraft, FCS, Autopilot inputs
-  enum eInputType {itPilotAC, itFCS, itAP} InputType;
   int ID;
   eParam InputIdx;
   float Input;
@@ -106,17 +115,6 @@ protected:
   eParam OutputIdx;
   float Output;
   bool IsOutput;
-
-public:
-  /// Constructor
-  FGFCSComponent(FGFCS*);
-  /// Destructor
-  virtual ~FGFCSComponent ( ) { }       //Destructor
-
-  virtual bool Run (void);
-  virtual void SetOutput(void);
-  inline float GetOutput (void) {return Output;}
-  inline string GetName(void) {return Name;}
 };
 
 #include "../FGFCS.h"
