@@ -560,6 +560,10 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
       *AC_cfg >> parameter;
       if (parameter == "ON") subsystems += ssCoefficients;
     }
+    if (parameter == "GROUND_REACTIONS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssGroundReactions;
+    }
   }
 
   Output->SetSubsystems(subsystems);
@@ -672,4 +676,43 @@ string FGAircraft::GetCoefficientValues(void) {
   ;
 }
 
+/******************************************************************************/
+
+string FGAircraft::GetGroundReactionStrings(void) {
+  string GroundReactionStrings = "";
+  bool firstime = true;
+
+  for (unsigned int i=0;i<lGear.size();i++) {
+    if (!firstime) GroundReactionStrings += ", ";
+    GroundReactionStrings += (lGear[i]->GetName() + "_WOW, ");
+    GroundReactionStrings += (lGear[i]->GetName() + "_compressLength, ");
+    GroundReactionStrings += (lGear[i]->GetName() + "_compressSpeed, ");
+    GroundReactionStrings += (lGear[i]->GetName() + "_Force");
+
+    firstime = false;
+  }
+
+  return GroundReactionStrings;
+}
+
+/******************************************************************************/
+
+string FGAircraft::GetGroundReactionValues(void) {
+  char buff[20];
+  string GroundReactionValues = "";
+
+  bool firstime = true;
+
+  for (unsigned int i=0;i<lGear.size();i++) {
+    if (!firstime) GroundReactionValues += ", ";
+    GroundReactionValues += string( lGear[i]->GetWOW()?"1":"0" ) + ", ";
+    GroundReactionValues += (string(gcvt(lGear[i]->GetCompLen(),    5, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i]->GetCompVel(),    6, buff)) + ", ");
+    GroundReactionValues += (string(gcvt(lGear[i]->GetCompForce(), 10, buff)));
+
+    firstime = false;
+  }
+
+  return GroundReactionValues;
+}
 

@@ -532,6 +532,7 @@ FGColumnVector operator*(const double scalar, const FGColumnVector& C)
 }
 
 /******************************************************************************/
+
 float FGColumnVector::Magnitude(void)
 {
   double num=0.0;
@@ -553,4 +554,25 @@ FGColumnVector FGColumnVector::Normalize(void)
 {
   return *this/Magnitude();
 }
+
+/******************************************************************************/
+
+FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
+{
+  if (Rows() != 3 || V.Rows() != 3) {
+    MatrixException mE;
+    mE.Message = "Invalid row count in vector cross product function";
+    throw mE;
+  }
+
+  FGColumnVector Product(3);
+
+  Product(1) = data[2][1] * V(3) - data[3][1] * V(2);
+  Product(2) = data[3][1] * V(1) - data[1][1] * V(3);
+  Product(3) = data[1][1] * V(2) - data[2][1] * V(1);
+
+  return Product;
+}
+
+/******************************************************************************/
 

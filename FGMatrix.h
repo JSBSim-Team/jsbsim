@@ -121,6 +121,7 @@ public:
   ~FGColumnVector();
 
   FGColumnVector operator*(const double scalar);
+  FGColumnVector operator*(const FGColumnVector& V);   // Cross product operator
   FGColumnVector operator/(const double scalar);
   FGColumnVector operator+(const FGColumnVector& B);
   FGColumnVector operator-(const FGColumnVector& B);

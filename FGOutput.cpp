@@ -186,6 +186,10 @@ void FGOutput::DelimitedOutput(void)
       cout << ", ";
       cout << Aircraft->GetCoefficientStrings();
     }
+    if (SubSystems & FGAircraft::ssGroundReactions) {
+      cout << ", ";
+      cout << Aircraft->GetGroundReactionStrings();
+    }
 
     cout << endl;
     dFirstPass = false;
@@ -250,6 +254,10 @@ void FGOutput::DelimitedOutput(void)
   if (SubSystems & FGAircraft::ssCoefficients) {
     cout << ", ";
     cout << Aircraft->GetCoefficientValues();
+  }
+  if (SubSystems & FGAircraft::ssGroundReactions) {
+    cout << ", ";
+    cout << Aircraft->GetGroundReactionValues();
   }
   cout << endl;
 }
@@ -321,6 +329,10 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << ", ";
       datafile << Aircraft->GetCoefficientStrings();
     }
+    if (SubSystems & FGAircraft::ssGroundReactions) {
+      datafile << ", ";
+      datafile << Aircraft->GetGroundReactionStrings();
+    }
     datafile << endl;
     sFirstPass = false;
   }
@@ -384,6 +396,10 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & FGAircraft::ssCoefficients) {
     datafile << ", ";
     datafile << Aircraft->GetCoefficientValues();
+  }
+  if (SubSystems & FGAircraft::ssGroundReactions) {
+    datafile << ", ";
+    datafile << Aircraft->GetGroundReactionValues();
   }
   datafile << endl;
   datafile.flush();

@@ -160,22 +160,27 @@ public:
   inline float GetNlf(void) { return nlf; }
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
+
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
+
   string GetCoefficientStrings(void);
   string GetCoefficientValues(void);
+  string GetGroundReactionStrings(void);
+  string GetGroundReactionValues(void);
 
-  enum { ssSimulation   = 1,
-         ssAerosurfaces = 2,
-         ssRates        = 4,
-         ssVelocities   = 8,
-         ssForces       = 16,
-         ssMoments      = 32,
-         ssAtmosphere   = 64,
-         ssMassProps    = 128,
-         ssCoefficients = 256,
-         ssPosition     = 512 } subsystems;
+  enum { ssSimulation      = 1,
+         ssAerosurfaces    = 2,
+         ssRates           = 4,
+         ssVelocities      = 8,
+         ssForces          = 16,
+         ssMoments         = 32,
+         ssAtmosphere      = 64,
+         ssMassProps       = 128,
+         ssCoefficients    = 256,
+         ssPosition        = 512,
+         ssGroundReactions = 1024 } subsystems;
 
 private:
   void GetState(void);

@@ -50,10 +50,13 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3) >> kSpring >> bDamp
                                                     >> statFCoeff >> brakeCoeff;
-  State = Exec->GetState();
-  Aircraft = Exec->GetAircraft();
-  Position = Exec->GetPosition();
-  WOW = false;                                                  
+  State       = Exec->GetState();
+  Aircraft    = Exec->GetAircraft();
+  Position    = Exec->GetPosition();
+  Rotation    = Exec->GetRotation();
+  Translation = Exec->GetTranslation();
+  
+  WOW = false;
 }
 
 
@@ -70,25 +73,32 @@ FGColumnVector FGLGear::Force(void)
   static FGColumnVector vForce(3);
   static FGColumnVector vLocalForce(3);
   static FGColumnVector vLocalGear(3);
-  static FGColumnVector vTmpRot(3);
+  static FGColumnVector vWhlBodyVec(3);
+  static FGColumnVector vWhlVelVec(3);
 
-  vTmpRot = vXYZ - Aircraft->GetXYZcg();
-  vTmpRot(eX) = -vTmpRot(eX);
-  vTmpRot(eZ) = -vTmpRot(eZ);
-  vTmpRot = vTmpRot/12.0;
+  vWhlBodyVec     = vXYZ - Aircraft->GetXYZcg();
+  vWhlBodyVec(eX) = -vWhlBodyVec(eX);
+  vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
+  vWhlBodyVec     = vWhlBodyVec/12.0;
 
-  vLocalGear = State->GetTb2l() * vTmpRot;
+  vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
   compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
 
   if (compressLength > 0.00) {
+
     WOW = true;
-    vLocalForce(eZ) = -compressLength * kSpring;
-    vForce = State->GetTl2b() * vLocalForce;
+
+    vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec + Translation->GetUVW());
+    compressSpeed = vWhlVelVec(eZ);
+
+    vLocalForce(eZ) = -compressLength * kSpring - compressSpeed * bDamp;
+
+    vForce = State->GetTl2b() * vLocalForce ;
 
     // currently only aircraft body axis Z-force modeled
-    vMoment(eX) = vForce(eZ) * vTmpRot(eY);
-    vMoment(eY) = vForce(eZ) * vTmpRot(eX);
+    vMoment(eX) = vForce(eZ) * vWhlBodyVec(eY);
+    vMoment(eY) = vForce(eZ) * vWhlBodyVec(eX);
     vMoment(eZ) = 0.0;
 
   } else {
