@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.24 2003/01/25 16:10:50 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.25 2003/01/26 06:54:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -107,6 +107,7 @@ private:
   enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
   ofstream datafile;
   FGfdmSocket* socket;
+  vector <FGPropertyManager*> OutputProperties;
   void Debug(int from);
 };
 }

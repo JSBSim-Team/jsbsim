@@ -12,4 +12,5 @@
     GROUND_REACTIONS ON
     FCS              ON
     PROPULSION       ON
-
+    PROPERTY         moments/l-total-lbsft
+ 

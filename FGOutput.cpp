@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.62 2003/01/25 16:10:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.63 2003/01/26 06:54:39 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,6 +226,11 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << ", ";
       outstream << Propulsion->GetPropulsionStrings();
     }
+    if (OutputProperties.size() > 0) {
+      for (int i=0;i<OutputProperties.size();i++) {
+        outstream << ", " << OutputProperties[i]->GetName();
+      }
+    }
 
     outstream << endl;
     dFirstPass = false;
@@ -312,6 +317,10 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0) {
     outstream << ", ";
     outstream << Propulsion->GetPropulsionValues();
+  }
+
+  for (int i=0;i<OutputProperties.size();i++) {
+    outstream << ", " << OutputProperties[i]->getDoubleValue();
   }
 
   outstream << endl;
@@ -440,6 +449,7 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
   string name="", fname="";
   int OutRate = 0;
   FGConfigFile* Output_cfg;
+  string property;
 
 # ifndef macintosh
     separator = "/";
@@ -527,6 +537,20 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
     if (parameter == "PROPULSION") {
       *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssPropulsion;
+    }
+    /*
+    Tony/David: Does this look like the right approach for adding a property
+    to be data logged, where the format specified in the OUTPUT section of the
+    config file is:
+
+    PROPERTY {property name}
+
+    ??
+
+    */
+    if (parameter == "PROPERTY") {
+      *Output_cfg >> property;
+      OutputProperties.push_back(PropertyManager->GetNode(property));
     }
     if (Output_cfg->GetNextConfigLine() == "EOF") break;
   }

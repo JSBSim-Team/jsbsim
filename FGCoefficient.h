@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.46 2003/01/22 15:53:32 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.47 2003/01/26 06:54:39 jberndt Exp $"
 
 using std::vector;
 
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.46 2003/01/22 15:53:32 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.47 2003/01/26 06:54:39 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -131,7 +131,7 @@ public:
       @return the current value of the coefficient represented by this instance of
       FGCoefficient. */
   virtual double TotalValue(void);
-  
+
   /** Returns the value for this coefficient.
       TotalValue is stored each time TotalValue() is called. This function returns
       the stored value but does not calculate it anew. This is valuable for merely
@@ -139,19 +139,19 @@ public:
       @return the most recently calculated and stored value of the coefficient
       represented by this instance of FGCoefficient. */
   virtual inline double GetValue(void) const { return totalValue; }
-  
+
   /// Returns the name of this coefficient.
   virtual inline string Getname(void) const {return name;}
-  
+
   /// Returns the value of the coefficient only - before it is re-dimensionalized.
   virtual inline double GetSD(void) const { return SD;}
-  
+
   /** Outputs coefficient information.
       Non-dimensionalizing parameter descriptions are output
       for each aero coefficient defined.
       @param multipliers the list of multipliers for this coefficient.*/
   virtual void DisplayCoeffFactors(void);
-  
+
   /// Returns the name of the coefficient.
   virtual inline string GetCoefficientName(void) { return name; }
   /// Returns the stability derivative or coefficient value as a string.
