@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.45 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.46 2001/07/12 14:50:02 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -152,6 +152,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
   string enginePath = FDMExec->GetEnginePath();
   float xLoc, yLoc, zLoc, Pitch, Yaw;
   int Feed;
+  bool ThrottleAdded = false;
 
 # ifndef macintosh
       fullpath = enginePath + "/";
@@ -176,6 +177,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         engType = Eng_cfg.GetValue();
 
         FCS->AddThrottle();
+        ThrottleAdded = true;
 
         if (engType == "FG_ROCKET") {
           Engines.push_back(new FGRocket(FDMExec, &Eng_cfg));
@@ -213,7 +215,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           cout << "      Z = " << zLoc << endl;
           cout << "      Pitch = " << Pitch << endl;
           cout << "      Yaw = " << Yaw << endl;
-	}
+        }
 	
         Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, Pitch, Yaw);
         numEngines++;
@@ -287,6 +289,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
     }
     AC_cfg->GetNextConfigLine();
   }
+
+  if (!ThrottleAdded) FCS->AddThrottle(); // need to have at least one throttle
 
   return true;
 }

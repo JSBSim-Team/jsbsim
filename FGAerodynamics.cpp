@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.14 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.15 2001/07/12 14:50:02 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -185,7 +185,6 @@ string FGAerodynamics::GetCoefficientStrings(void)
       CoeffStrings += Coeff[axis][sd]->Getname();
     }
   }
-
   return CoeffStrings;
 }
 
