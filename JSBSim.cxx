@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.100 2002/02/04 12:32:34 apeden Exp $
+// $Id: JSBSim.cxx,v 1.101 2002/02/13 20:09:24 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -172,6 +172,7 @@ void FGJSBsim::init() {
     // Explicitly call the superclass's
     // init method first.
     common_init();
+    copy_to_JSBsim();
 
     fdmex->GetState()->Initialize(fgic);
     fdmex->RunIC(fgic); //loop JSBSim once w/o integrating
