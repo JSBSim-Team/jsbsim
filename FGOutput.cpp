@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.57 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.58 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,8 +98,9 @@ bool FGOutput::Run(void)
       } else {
         // Not a valid type of output
       }
-
+	  return false;
     } else {
+	  return true;
     }
   }
   return false;

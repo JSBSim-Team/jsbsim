@@ -62,7 +62,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.42 2002/06/08 00:11:09 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.43 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,10 +152,10 @@ bool FGAtmosphere::Run(void)
 
     Debug(2);
 
+	return false;
   } else {                               // skip Run() execution this time
+	return true;
   }
-
-  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

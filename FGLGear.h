@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.49 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.50 2002/07/26 04:49:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.49 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.50 2002/07/26 04:49:06 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -244,6 +244,7 @@ public:
   inline double GetBodyXForce(void)        { return vLocalForce(eX); }
   inline double GetBodyYForce(void)        { return vLocalForce(eY); }
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
+  double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
   
 private:
   FGColumnVector3 vXYZ;
@@ -270,6 +271,7 @@ private:
   double SideWhlVel, RollingWhlVel;
   double RollingForce, SideForce, FCoeff;
   double WheelSlip;
+  double lastWheelSlip;
   bool WOW;
   bool lastWOW;
   bool FirstContact;

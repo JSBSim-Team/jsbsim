@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.83 2002/04/10 22:14:33 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.84 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   FCS         = Exec->GetFCS();
   MassBalance = Exec->GetMassBalance();
 
-  WOW = lastWOW = false;
+  WOW = lastWOW = true; // should the value be initialized to true?
   ReportEnable = true;
   FirstContact = false;
   Reported = false;
@@ -115,8 +115,15 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
-
+  
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
+
+  compressLength  = 0.0;
+  compressSpeed   = 0.0;
+  brakePct        = 0.0;
+  maxCompLen      = 0.0;
+
+  WheelSlip = lastWheelSlip = 0.0;
 
   compressLength  = 0.0;
   compressSpeed   = 0.0;
@@ -173,6 +180,8 @@ FGLGear::FGLGear(const FGLGear& lgear)
   isRetractable   = lgear.isRetractable;
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
+  WheelSlip       = lgear.WheelSlip;
+  lastWheelSlip   = lgear.lastWheelSlip;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,17 +275,17 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eBrakeGrp) {
       case bgLeft:
-        SteerGain = -0.10;
+        SteerGain = 0.10;
         BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
                                               staticFCoeff*FCS->GetBrake(bgLeft);
         break;
       case bgRight:
-        SteerGain = -0.10;
+        SteerGain = 0.10;
         BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
                                              staticFCoeff*FCS->GetBrake(bgRight);
         break;
       case bgCenter:
-        SteerGain = -0.10;
+        SteerGain = 0.10;
         BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
                                              staticFCoeff*FCS->GetBrake(bgCenter);
         break;
@@ -289,7 +298,7 @@ FGColumnVector3& FGLGear::Force(void)
         BrakeFCoeff = rollingFCoeff;
         break;
       case bgNone:
-        SteerGain = -0.10;
+        SteerGain = 0.0;
         BrakeFCoeff = rollingFCoeff;
         break;
       default:
@@ -326,17 +335,31 @@ FGColumnVector3& FGLGear::Force(void)
 
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
+      } else if (fabs(RollingWhlVel) < 0.10) {
+        WheelSlip = 0.05*radtodeg*atan2(SideWhlVel, RollingWhlVel) + 0.95*WheelSlip;
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
+
+      if ((WheelSlip < 0.0 && lastWheelSlip > 0.0) ||
+          (WheelSlip > 0.0 && lastWheelSlip < 0.0))
+      {
+        WheelSlip = 0.0;
+      }
+      
+      lastWheelSlip = WheelSlip;
 
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
 // transition from static to dynamic friction.  There are more complicated formulations
 // of this that avoid the discrete jump.  Will fix this later.
 
-      if (fabs(WheelSlip) <= 10.0) {
-        FCoeff = staticFCoeff*WheelSlip/10.0;
+      if (fabs(WheelSlip) <= 20.0) {
+        FCoeff = staticFCoeff*WheelSlip/20.0;
+      } else if (fabs(WheelSlip) <= 40.0) {
+//        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
+        FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 20.0)/20.0 + 
+                  staticFCoeff*(40.0 - fabs(WheelSlip))/20.0)*fabs(WheelSlip)/WheelSlip;
       } else {
         FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
       }
@@ -406,7 +429,7 @@ FGColumnVector3& FGLGear::Force(void)
     }
 
     if (lastWOW != WOW) {
-      PutMessage("GEAR_CONTACT", WOW);
+      PutMessage("GEAR_CONTACT: " + name, WOW);
     }
 
     lastWOW = WOW;

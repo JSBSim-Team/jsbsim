@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.115 2002/05/17 10:40:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.116 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,13 +63,6 @@ MACROS
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// For every term registered here there must be a corresponding handler in
-// GetParameter() below that retrieves that parameter. Also, there must be an
-// entry in the enum eParam definition in FGJSBBase.h. The ID is what must be used
-// in any config file entry which references that item.
 
 FGState::FGState(FGFDMExec* fdex)
 {

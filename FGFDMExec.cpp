@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.86 2002/05/04 02:48:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.87 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,9 +337,9 @@ bool FGFDMExec::Run(void)
     // Run(i)
   }
 
-  while (!model_iterator->Run()) {
+  while (model_iterator != 0L) {
+    model_iterator->Run();
     model_iterator = model_iterator->NextModel;
-    if (model_iterator == 0L) break;
   }
 
   frame = Frame++;

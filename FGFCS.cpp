@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.80 2002/05/10 21:34:24 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.81 2002/07/26 04:49:06 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -120,10 +120,11 @@ bool FGFCS::Run(void)
     for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
     for (i=0; i<Components.size(); i++)  Components[i]->Run();
     if (DoNormalize) Normalize();
-  } else {
-  }
 
-  return false;
+	return false;
+  } else {
+	return true;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
