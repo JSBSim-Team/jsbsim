@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.46 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.47 2001/12/11 12:37:21 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

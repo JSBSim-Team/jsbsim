@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.27 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.28 2001/12/11 12:37:22 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

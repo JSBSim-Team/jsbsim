@@ -48,7 +48,7 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.28 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.29 2001/12/11 12:37:21 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -21,7 +21,7 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.9 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.10 2001/12/11 12:37:22 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

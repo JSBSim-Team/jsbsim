@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.4 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.5 2001/12/11 12:37:23 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

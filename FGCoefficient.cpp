@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.45 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.46 2001/12/11 12:37:21 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,20 +85,16 @@ FGCoefficient::~FGCoefficient()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
+bool FGCoefficient::Load(FGConfigFile *AC_cfg)
+{
   int start, end, n;
-  string multparms, mult;
+  string mult;
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
     method = AC_cfg->GetValue("TYPE");
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
-    if (debug_lvl > 0) {
-      cout << "\n   " << highint << underon << name << underoff << normint << endl;
-      cout << "   " << description << endl;
-      cout << "   " << method << endl;
-    }
 
     if      (method == "EQUATION") type = EQUATION;
     else if (method == "TABLE")    type = TABLE;
@@ -108,26 +104,20 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
 
     if (type == VECTOR || type == TABLE) {
       *AC_cfg >> rows;
-      if (debug_lvl > 0) cout << "   Rows: " << rows << " ";
       if (type == TABLE) {
         *AC_cfg >> columns;
-        if (debug_lvl > 0) cout << "Cols: " << columns;
         Table = new FGTable(rows, columns);
       } else {
         Table = new FGTable(rows);
       }
 
-      if (debug_lvl > 0) cout << endl;
-
-      *AC_cfg >> multparms;
-      LookupR = State->GetParameterIndex(multparms);
-      if (debug_lvl > 0) cout << "   Row indexing parameter: " << multparms << endl;
+      *AC_cfg >> multparmsRow;
+      LookupR = State->GetParameterIndex(multparmsRow);
     }
 
     if (type == TABLE) {
-      *AC_cfg >> multparms;
-      LookupC = State->GetParameterIndex(multparms);
-      if (debug_lvl > 0) cout << "   Column indexing parameter: " << multparms << endl;
+      *AC_cfg >> multparmsCol;
+      LookupC = State->GetParameterIndex(multparmsCol);
     }
 
     // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
@@ -152,23 +142,17 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg) {
       // End of non-dimensionalizing parameter read-in
     }
 
-    switch(type) {
-    case VALUE:
+    if (type == VALUE) {
       *AC_cfg >> StaticValue;
-      if (debug_lvl > 0) cout << "      Value = " << StaticValue << endl;
-      break;
-    case VECTOR:
-    case TABLE:
+    } else if (type == VECTOR || type == TABLE) {
       *Table << *AC_cfg;
-      if (debug_lvl > 0) Table->Print();
-      break;
-    case EQUATION:
-    case UNKNOWN:
+    } else {
       cerr << "Unimplemented coefficient type: " << type << endl;
-      break;
     }
+
     AC_cfg->GetNextConfigLine();
-    if (debug_lvl > 0) DisplayCoeffFactors();
+    if (debug_lvl > 0) Debug(2);
+
     return true;
   } else {
     return false;
@@ -224,7 +208,6 @@ double FGCoefficient::Value(void)
 
 double FGCoefficient::TotalValue()
 {
-  
   switch(type) {
   case 0:
     return -1;
@@ -255,10 +238,10 @@ void FGCoefficient::DisplayCoeffFactors(void)
 
   cout << "   Non-Dimensionalized by: ";
 
-  if( multipliers.size() == 0) {
+  if (multipliers.size() == 0) {
     cout << "none" << endl;
   } else {
-    for (i=0; i<multipliers.size();i++) 
+    for (i=0; i<multipliers.size(); i++) 
         cout << FDMExec->GetState()->paramdef[multipliers[i]];
   }
   cout << endl;
@@ -266,7 +249,8 @@ void FGCoefficient::DisplayCoeffFactors(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGCoefficient::GetCoefficientValues(void) {
+string FGCoefficient::GetCoefficientValues(void)
+{
   char buffer[10];
   string value;
 
@@ -276,9 +260,62 @@ string FGCoefficient::GetCoefficientValues(void) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGCoefficient::Debug(int from)
 {
-    //TODO: Add your source code here
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 2) { // Loading
+      cout << "\n   " << highint << underon << name << underoff << normint << endl;
+      cout << "   " << description << endl;
+      cout << "   " << method << endl;
+
+      if (type == VECTOR || type == TABLE) {
+        cout << "   Rows: " << rows << " ";
+        if (type == TABLE) {
+          cout << "Cols: " << columns;
+        }
+        cout << endl << "   Row indexing parameter: " << multparmsRow << endl;
+      }
+
+      if (type == TABLE) {
+        cout << "   Column indexing parameter: " << multparmsCol << endl;
+      }
+
+      if (type == VALUE) {
+        cout << "      Value = " << StaticValue << endl;
+      } else if (type == VECTOR || type == TABLE) {
+        Table->Print();
+      }
+
+      DisplayCoeffFactors();
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGCoefficient" << endl;
+    if (from == 1) cout << "Destroyed:    FGCoefficient" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
 

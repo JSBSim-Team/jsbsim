@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.14 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.15 2001/12/11 12:37:23 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

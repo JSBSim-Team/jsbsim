@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.72 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.73 2001/12/11 12:37:21 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -490,6 +490,8 @@ bool FGFDMExec::LoadScript(string script)
         }
 
       }
+    } else if (token.empty()) {
+     // do nothing
     } else {
       cerr << "Unrecognized keyword in script file: \"" << token << "\" [runscript] " << endl;
     }

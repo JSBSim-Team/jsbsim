@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.13 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.14 2001/12/11 12:37:21 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

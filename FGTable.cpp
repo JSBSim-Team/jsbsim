@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.17 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.18 2001/12/11 12:37:22 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.16 2001/12/11 05:33:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.17 2001/12/11 12:37:22 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
