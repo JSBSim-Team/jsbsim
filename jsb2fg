@@ -5,16 +5,16 @@ if [ x$1 = x ]; then
    exit;
 fi
 
-for n in `find . -type f -name '*.h' -o -name '*.c??'`; do
+for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h`; do
 
    if [ -f $1/src/FDM/JSBSim/$n ]; then
 
-      NUM=`diff $n $1/src/FDM/JSBSim/$n | grep ">" | wc -l`;
-      ID=`diff $n $1/src/FDM/JSBSim/$n | grep ">" | grep "\$Id:" | wc -l`;
+      NUM=`diff $n $1/src/FDM/JSBSim/$n | grep -e ">" -e "<" | wc -l`;
+      NUM_ID=`diff $n $1/src/FDM/JSBSim/$n | grep -e ">" -e "<" | grep "\$Id:" | wc -l`;
 
-      if [ ! $NUM -eq $ID ]; then
-         echo "cp $n $1/src/FDM/JSBSim/$n";
-         cp $n $1/src/FDM/JSBSim/$n
+      if [ ! $NUM -eq $NUM_ID ]; then
+         echo "$1/src/FDM/JSBSim/$n";
+         cp -p $n $1/src/FDM/JSBSim/$n
       fi;
 
    fi;
