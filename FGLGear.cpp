@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.45 2001/03/30 14:06:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.46 2001/03/31 16:17:13 apeden Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -259,7 +259,7 @@ FGColumnVector FGLGear::Force(void)
 
     switch (eSteerType) {
     case stSteer:
-      SteerAngle = SteerGain*RudderPedal;
+      SteerAngle = SteerGain*FCS->GetDrCmd();
       break;
     case stFixed:
       SteerAngle = 0.0;
@@ -322,7 +322,9 @@ FGColumnVector FGLGear::Force(void)
 
 // Compute the forces in the wheel ground plane.
 
-    RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
+    if(fabs(RollingWhlVel) > 1E-3) { 
+      RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
+    }
     SideForce    = vLocalForce(eZ) * FCoeff;
 
 // Transform these forces back to the local reference frame.
