@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<initialize name="reset01">
+  <!--
+    This file sets up the aircraft to start off
+    at altitude of 8000 feet in cruise
+  -->
+  LATITUDE   47.0
+  LONGITUDE 122.0
+  PHI         0.0
+  THETA       0.0
+  PSI       200.0
+  ALTITUDE 8000.0
+  VC        122.0 
+</initialize>
