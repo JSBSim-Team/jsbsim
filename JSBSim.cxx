@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.91 2001/12/12 23:23:26 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.92 2001/12/17 02:05:53 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -317,9 +317,11 @@ bool FGJSBsim::copy_to_JSBsim() {
     // copy control positions into the JSBsim structure
 
     FCS->SetDaCmd( globals->get_controls()->get_aileron());
+    FCS->SetRollTrimCmd(globals->get_controls()->get_aileron_trim());
     FCS->SetDeCmd( globals->get_controls()->get_elevator());
     FCS->SetPitchTrimCmd(globals->get_controls()->get_elevator_trim());
     FCS->SetDrCmd( -globals->get_controls()->get_rudder());
+    FCS->SetYawTrimCmd(globals->get_controls()->get_rudder_trim());
     FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
     FCS->SetDsbCmd( 0.0 ); //speedbrakes
     FCS->SetDspCmd( 0.0 ); //spoilers
