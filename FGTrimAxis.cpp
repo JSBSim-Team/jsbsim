@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.48 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.49 2004/05/11 16:35:24 frohlich Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -289,8 +289,11 @@ void FGTrimAxis::SetThetaOnGround(double ff) {
 /*****************************************************************************/
 
 bool FGTrimAxis::initTheta(void) {
-  int i,N,iAft, iForward;
+  int i,N;
+  int iForward = 0;
+  int iAft = 1;
   double zAft,zForward,zDiff,theta;
+  double xAft,xForward,xDiff;
   bool level;
   double saveAlt;
 
@@ -317,15 +320,21 @@ bool FGTrimAxis::initTheta(void) {
   }
 
   // now adjust theta till the wheels are the same distance from the ground
-  zAft=fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear(3);
-  zForward=fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear(3);
+  xAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(1);
+  xForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(1);
+  xDiff = xForward - xAft;
+  zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
+  zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
   zDiff = zForward - zAft;
   level=false;
   theta=fgic->GetPitchAngleDegIC();
   while(!level && (i < 100)) {
-    theta+=2.0*zDiff;
+    theta+=180.0/M_PI*zDiff/fabs(xDiff);
     fgic->SetPitchAngleDegIC(theta);
     fdmex->RunIC();
+    xAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(1);
+    xForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(1);
+    xDiff = xForward - xAft;
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
