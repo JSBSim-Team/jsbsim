@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.92 2002/09/07 21:45:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.93 2002/09/10 01:54:15 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,7 +390,7 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model) {
   FGFDMExec::AircraftPath=AircraftPath;
   FGFDMExec::EnginePath=EnginePath;
-  LoadModel(model);
+  return LoadModel(model);
 }  
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
