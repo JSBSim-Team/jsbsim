@@ -188,12 +188,12 @@ void FGOutput::DelimitedOutput(void)
   if (SubSystems & FGAircraft::ssAerosurfaces) {
     cout << ", ";
     cout << FCS->GetThrottlePos(0) << ", ";
-    cout << FCS->GetDaPos() << ", ";
-    cout << FCS->GetDePos() << ", ";
-    cout << FCS->GetDrPos() << ", ";
     cout << FCS->GetDaCmd() << ", ";
     cout << FCS->GetDeCmd() << ", ";
-    cout << FCS->GetDrCmd();
+    cout << FCS->GetDrCmd() << ", ";
+    cout << FCS->GetDaPos() << ", ";
+    cout << FCS->GetDePos() << ", ";
+    cout << FCS->GetDrPos();
   }
   if (SubSystems & FGAircraft::ssRates) {
     cout << ", ";
@@ -307,12 +307,12 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & FGAircraft::ssAerosurfaces) {
     datafile << ", ";
     datafile << FCS->GetThrottlePos(0) << ", ";
-    datafile << FCS->GetDaPos() << ", ";
-    datafile << FCS->GetDePos() << ", ";
-    datafile << FCS->GetDrPos() << ", ";
     datafile << FCS->GetDaCmd() << ", ";
     datafile << FCS->GetDeCmd() << ", ";
-    datafile << FCS->GetDrCmd();
+    datafile << FCS->GetDrCmd() << ", ";
+    datafile << FCS->GetDaPos() << ", ";
+    datafile << FCS->GetDePos() << ", ";
+    datafile << FCS->GetDrPos();
   }
   if (SubSystems & FGAircraft::ssRates) {
     datafile << ", ";
