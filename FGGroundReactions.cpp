@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.19 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.20 2001/12/07 21:50:49 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,7 @@ bool FGGroundReactions::Run(void)
       }
 
       // Only execute this code when the aircraft ground speed is very, very small.
+      /*
       if (fabs(Translation->GetUVW(eX)) < 0.1 &&
           fabs(Translation->GetUVW(eZ)) < 0.1)
       {
@@ -124,6 +125,7 @@ bool FGGroundReactions::Run(void)
 
         vMoments(eZ) = -(Aerodynamics->GetMoments(eZ) + Propulsion->GetMoments(eZ));
       }
+      */
     } else {
       // Crash Routine
     }
