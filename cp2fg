@@ -1,0 +1,9 @@
+cp JSBSim.cxx $FG_SRC/FDM/
+cp *.cpp $FG_SRC/FDM/JSBSim/
+cp *.h   $FG_SRC/FDM/JSBSim/
+cp filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
+cp filtersjb/*.h   $FG_SRC/FDM/JSBSim/filtersjb/
+cp aircraft/c172/c172.xml       $FG_ROOT/Aircraft/c172/
+cp aircraft/X15/X15.xml         $FG_ROOT/Aircraft/X15/
+cp aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
+cp engine/*.xml $FG_ROOT/Engine/
