@@ -59,6 +59,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGNozzle.h"
 #include "FGPiston.h"
+#include "FGElectric.h"
 #include "FGPropertyManager.h"
 
 #if defined (__APPLE__)
@@ -72,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.97 2004/03/24 00:13:20 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.98 2004/04/08 01:01:17 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -265,6 +266,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_SIMTURBINE") {
           Engines.push_back(new FGSimTurbine(FDMExec, Cfg_ptr));
+        } else if (engType == "FG_ELECTRIC") {
+          Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
         } else {
           cerr << fgred << "    Unrecognized engine type: " << underon << engType
                     << underoff << " found in config file." << fgdef << endl;
@@ -424,6 +427,8 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
       PropulsionStrings += (Engines[i]->GetName() + "_N2[" + buffer + "]");
       break;
+    case FGEngine::etElectric:
+      break;
     default:
       PropulsionStrings += "INVALID ENGINE TYPE";
       break;
@@ -484,6 +489,8 @@ string FGPropulsion::GetPropulsionValues(void)
     case FGEngine::etSimTurbine:
       PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
       PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN2(), 10, buff)));
+      break;
+    case FGEngine::etElectric:
       break;
     }
 

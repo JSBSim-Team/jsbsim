@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.162 2004/03/26 04:51:54 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.163 2004/04/08 01:01:17 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -65,6 +65,7 @@
 #include <FDM/JSBSim/FGPiston.h>
 #include <FDM/JSBSim/FGSimTurbine.h>
 #include <FDM/JSBSim/FGRocket.h>
+#include <FDM/JSBSim/FGElectric.h>
 #include <FDM/JSBSim/FGNozzle.h>
 #include <FDM/JSBSim/FGPropeller.h>
 #include <FDM/JSBSim/FGRotor.h>
@@ -156,7 +157,8 @@ FGJSBsim::FGJSBsim( double dt )
     if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
                 << GroundReactions->GetNumGearUnits() );
-        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground trimming");
+        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground
+trimming");
          SG_LOG( SG_FLIGHT, SG_ALERT, "routine (coming up later in the code) will core dump.");
          SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
          exit(-1);
@@ -651,6 +653,12 @@ bool FGJSBsim::copy_from_JSBsim()
         globals->get_controls()->set_water_injection(i, eng->GetInjection() );
         globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
         } // end FGSimTurbine code block
+        break;
+      case FGEngine::etElectric:
+        { // FGElectric code block
+        FGElectric* eng = (FGElectric*)Propulsion->GetEngine(i);
+        node->setDoubleValue("rpm", eng->getRPM());
+        } // end FGElectric code block
         break;
       }
 
