@@ -69,10 +69,9 @@ class FGInitialCondition
     FGInitialCondition(FGFDMExec *fdmex);
     ~FGInitialCondition(void);
 
-    /* void SetVcalibratedKtsIC(float tt); */
-
+    void SetVcalibratedKtsIC(float tt);
     void SetVtrueKtsIC(float tt);
-    /* void SetMachIC(float tt); */
+    void SetMachIC(float tt); 
 
     void SetAltitudeFtIC(float tt);
     void SetFlightPathAngleDegIC(float tt);  //"vertical" flight path, solve for alpha using speed
@@ -106,7 +105,11 @@ class FGInitialCondition
     float u,v,w;
     float latitude,longitude;
 
-    FGAtmosphere *atm;
+    FGFDMExec *fdmex;
+	
+	float calcVcas(float Mach);
+	bool findMachInterval(float *mlo, float *mhi,float vcas);
+	bool getMachFromVcas(float *Mach,float vcas);
 };
 
 #endif
