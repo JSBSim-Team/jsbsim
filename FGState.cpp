@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.56 2001/04/11 22:34:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.57 2001/04/13 23:10:06 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -344,7 +344,7 @@ bool FGState::Reset(string path, string acname, string fname) {
 
   resetDef = path + "/" + acname + "/" + fname + ".xml";
 
-  ifstream resetfile(resetDef.c_str());
+  ifstream resetfile(resetDef.c_str(), ios::in | ios::binary );
 
   if (resetfile) {
     resetfile >> U;

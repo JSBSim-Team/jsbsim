@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.17 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.18 2001/04/13 23:10:06 jberndt Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 extern short debug_lvl;
@@ -32,7 +32,7 @@ CLASS IMPLEMENTATION
 
 FGConfigFile::FGConfigFile(string cfgFileName)
 {
-  cfgfile.open(cfgFileName.c_str());
+  cfgfile.open(cfgFileName.c_str(), ios::in | ios::binary );
   CommentsOn = false;
   CurrentIndex = 0;
   Opened = true;
