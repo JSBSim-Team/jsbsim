@@ -73,14 +73,14 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
     theta=phi=psi=0;
     altitude=hdot=0;
     latitude=longitude=0;
-	lastSpeedSet=setvt;
-	if(fdmex != NULL ) {
-       fdmex=FDMExec;
-       fdmex->GetPosition()->Seth(altitude);
-       fdmex->GetAtmosphere()->Run();
-	} else {
-		cout << "FGInitialCondition: This class requires a pointer to an initialized FGFDMExec object" << endl;
-	}	   
+    lastSpeedSet=setvt;
+    if(fdmex != NULL ) {
+        fdmex=FDMExec;
+        fdmex->GetPosition()->Seth(altitude);
+        fdmex->GetAtmosphere()->Run();
+    } else {
+        cout << "FGInitialCondition: This class requires a pointer to an initialized FGFDMExec object" << endl;
+    }
 
 }
 
@@ -90,69 +90,69 @@ FGInitialCondition::~FGInitialCondition(void) {};
 
 void FGInitialCondition::SetVcalibratedKtsIC(float tt)
 {
-    
+
     if(getMachFromVcas(&mach,tt*KTSTOFPS)) {
-	    cout << "Mach: " << mach << endl;
-	    lastSpeedSet=setvc;
-	    vc=tt*KTSTOFPS;
+        //cout << "Mach: " << mach << endl;
+        lastSpeedSet=setvc;
+        vc=tt*KTSTOFPS;
         vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
-		ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-		cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
+        ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+        //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
     } else {
-		cout << "Failed to get Mach number for given Vc and altitude, Vc unchanged." << endl;
-		cout << "Please mail the set of initial conditions used to apeden@earthlink.net" << endl;
-	}	
+        cout << "Failed to get Mach number for given Vc and altitude, Vc unchanged." << endl;
+        cout << "Please mail the set of initial conditions used to apeden@earthlink.net" << endl;
+    }
 }
 
 void FGInitialCondition::SetVequivalentKtsIC(float tt) {
-	ve=tt*KTSTOFPS;
-	lastSpeedSet=setve;
-	vt=ve*1/sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-	mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
-	vc=calcVcas(mach);
-}	
+    ve=tt*KTSTOFPS;
+    lastSpeedSet=setve;
+    vt=ve*1/sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+    mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+    vc=calcVcas(mach);
+}
 
 void FGInitialCondition::SetVtrueKtsIC(float tt)
 {
     vt=tt*KTSTOFPS;
-	lastSpeedSet=setvt;
+    lastSpeedSet=setvt;
     mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
     vc=calcVcas(mach);
-	ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+    ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
 }
 
 void FGInitialCondition::SetMachIC(float tt)
 {
     mach=tt;
-	lastSpeedSet=setmach;
+    lastSpeedSet=setmach;
     vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
     vc=calcVcas(mach);
-	ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+    ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
     //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
 }
 
 
 void FGInitialCondition::SetClimbRateFpmIC(float tt) {
-	 
-	 if(vt != 0) {
-	    hdot=tt/60; 
-	 	gamma=asin(hdot/vt);    
-     }
-}	 
+
+    if(vt != 0) {
+        hdot=tt/60;
+        gamma=asin(hdot/vt);
+    }
+}
 
 void FGInitialCondition::SetAltitudeFtIC(float tt)
 {
     altitude=tt;
     fdmex->GetPosition()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
-	//lets try to make sure the user gets what they intended
-	switch(lastSpeedSet) {
-		setvt:   SetVtrueKtsIC(vt); break;
-		setvc:   SetVcalibratedKtsIC(vc); break;
-		setve:   SetVequivalentKtsIC(ve); break;
-		setmach: SetMachIC(mach); break;
-	}		
-    
+    //lets try to make sure the user gets what they intended
+    switch(lastSpeedSet) {
+setvt:   SetVtrueKtsIC(vt); break;
+setvc:   SetVcalibratedKtsIC(vc); break;
+setve:   SetVequivalentKtsIC(ve); break;
+setmach: SetMachIC(mach); break;
+    }
+
 }
 
 float FGInitialCondition::calcVcas(float Mach) {
@@ -225,7 +225,7 @@ bool FGInitialCondition::findMachInterval(float *mlo, float *mhi, float vcas) {
                 lo=hi-step;
             }
         }
-        cout << "findMachInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
+        //cout << "findMachInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
     }
     while((found == 0) && (i <= 100));
     *mlo=lo;
@@ -245,18 +245,18 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
     bool success=false;
 
     //initializations
-	d=1;
+    d=1;
     if(findMachInterval(&x1,&x3,vcas)) {
 
-        
-		f1=calcVcas(x1)-vcas;
+
+        f1=calcVcas(x1)-vcas;
         f3=calcVcas(x3)-vcas;
         d0=fabs(x3-x1);
 
         //iterations
         i=0;
         while ((fabs(d) > eps) && (i < 100)){
-            cout << "getMachFromVcas x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
+            //cout << "getMachFromVcas x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
             d=(x3-x1)/d0;
             x2=x1-d*d0*f1/(f3-f1);
             f2=calcVcas(x2)-vcas;
@@ -279,6 +279,6 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
         }
 
     }
-    cout << "Success= " << success << " Vcas: " << vcas*FPSTOKTS << " Mach: " << x2 << endl;
+    //cout << "Success= " << success << " Vcas: " << vcas*FPSTOKTS << " Mach: " << x2 << endl;
     return success;
 }

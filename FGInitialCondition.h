@@ -97,58 +97,58 @@ typedef enum { none,setvt, setvc, setve, setmach } speedset;
 */
 class FGInitialCondition
 {
-  public:
+public:
 
     FGInitialCondition(FGFDMExec *fdmex);
     ~FGInitialCondition(void);
 
     void SetVcalibratedKtsIC(float tt);
-	void SetVequivalentKtsIC(float tt);
+    void SetVequivalentKtsIC(float tt);
     void SetVtrueKtsIC(float tt);
-    void SetMachIC(float tt); 
+    void SetMachIC(float tt);
 
     void SetAltitudeFtIC(float tt);
-    
-	 //"vertical" flight path, recalculate theta
-	inline void SetFlightPathAngleDegIC(float tt) { gamma=tt*DEGTORAD;theta=alpha+gamma;} 
-    //set speed first 
-	void SetClimbRateFpmIC(float tt);
+
+    //"vertical" flight path, recalculate theta
+    inline void SetFlightPathAngleDegIC(float tt) { gamma=tt*DEGTORAD;theta=alpha+gamma;}
+    //set speed first
+    void SetClimbRateFpmIC(float tt);
     //use currently stored gamma, recalcualte theta
-	inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD;theta=alpha+gamma;} 
-	 //use currently stored gamma, recalcualte alpha   
-	inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD;alpha=theta-gamma;}       
-    
-	inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; }
+    inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD;theta=alpha+gamma;}
+    //use currently stored gamma, recalcualte alpha
+    inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD;alpha=theta-gamma;}
+
+    inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; }
 
     inline void SetRollAngleDegIC(float tt) { phi=tt*DEGTORAD; }
     inline void SetHeadingDegIC(float tt)   { psi=tt*DEGTORAD; }
-    
-	inline void SetLatitudeDegIC(float tt)  { latitude=tt*DEGTORAD; }
+
+    inline void SetLatitudeDegIC(float tt)  { latitude=tt*DEGTORAD; }
     inline void SetLongitudeDegIC(float tt) { longitude=tt*DEGTORAD; }
-	
-	
-	inline float GetVcalibratedKtsIC(void) { return vc*FPSTOKTS; }
-	inline float GetVequivalentKtsIC(void){ return ve*FPSTOKTS; }
-	inline float GetVtrueKtsIC(void){ return vt*FPSTOKTS; }
-	inline float GetMachIC(void){ return mach; }
 
-	inline float GetAltitudeFtIC(void){ return altitude; }
 
-	inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG;} 
-	inline float GetClimbRateFpmIC(void) { return hdot*60; }
-	inline float GetAlphaDegIC(void)      { return alpha*RADTODEG;} 
-	inline float GetPitchAngleDegIC(void) { return theta*RADTODEG;}       
+    inline float GetVcalibratedKtsIC(void) { return vc*FPSTOKTS; }
+    inline float GetVequivalentKtsIC(void){ return ve*FPSTOKTS; }
+    inline float GetVtrueKtsIC(void){ return vt*FPSTOKTS; }
+    inline float GetMachIC(void){ return mach; }
 
-	inline float GetBetaDegIC(void)       { return beta*RADTODEG; }
+    inline float GetAltitudeFtIC(void){ return altitude; }
 
-	inline float GetRollAngleDegIC(void) { return phi*RADTODEG; }
-	inline float GetHeadingDegIC(void)   { return psi*RADTODEG; }
+    inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG;}
+    inline float GetClimbRateFpmIC(void) { return hdot*60; }
+    inline float GetAlphaDegIC(void)      { return alpha*RADTODEG;}
+    inline float GetPitchAngleDegIC(void) { return theta*RADTODEG;}
 
-	inline float GetLatitudeDegIC(void)  { return latitude*RADTODEG; }
-	inline float GetLongitudeDegIC(void) { return longitude*RADTODEG; }
-	
-    
-	inline float GetUBodyFpsIC(void) { return vt*cos(alpha)*cos(beta); }
+    inline float GetBetaDegIC(void)       { return beta*RADTODEG; }
+
+    inline float GetRollAngleDegIC(void) { return phi*RADTODEG; }
+    inline float GetHeadingDegIC(void)   { return psi*RADTODEG; }
+
+    inline float GetLatitudeDegIC(void)  { return latitude*RADTODEG; }
+    inline float GetLongitudeDegIC(void) { return longitude*RADTODEG; }
+
+
+    inline float GetUBodyFpsIC(void) { return vt*cos(alpha)*cos(beta); }
     inline float GetVBodyFpsIC(void) { return vt*sin(beta);}
     inline float GetWBodyFpsIC(void) { return vt*sin(alpha)*cos(beta);}
 
@@ -160,19 +160,19 @@ class FGInitialCondition
     inline float GetLongitudeRadIC(void) { return longitude; }
 
 
-  private:
+private:
     float vt,vc,ve;
     float alpha,beta,gamma,theta,phi,psi;
     float mach;
     float altitude,hdot;
     float latitude,longitude;
-	speedset lastSpeedSet;
+    speedset lastSpeedSet;
 
     FGFDMExec *fdmex;
-	
-	float calcVcas(float Mach);
-	bool findMachInterval(float *mlo, float *mhi,float vcas);
-	bool getMachFromVcas(float *Mach,float vcas);
+
+    float calcVcas(float Mach);
+    bool findMachInterval(float *mlo, float *mhi,float vcas);
+    bool getMachFromVcas(float *Mach,float vcas);
 };
 
 #endif
