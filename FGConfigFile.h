@@ -44,6 +44,7 @@ INCLUDES
    SG_USING_STD(string);
    SG_USING_STD(ostream);
    SG_USING_STD(istream);
+   SG_USING_STD(ifstream);
    SG_USING_STD(cerr);
    SG_USING_STD(endl);
    SG_USING_STD(ios);
@@ -57,12 +58,12 @@ INCLUDES
 #  endif
 #else
 #  include <fstream>
-#  include <fstream>
 #  include <iostream>
 #  include <string>
    using std::string;
    using std::ostream;
    using std::istream;
+   using std::ifstream;
    using std::ios;
    using std::cerr;
    using std::endl;
@@ -75,10 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.18 2001/05/29 20:13:31 jberndt Exp $"
-
-using std::string;
-using std::ifstream;
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.19 2001/05/30 17:38:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +93,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.18 2001/05/29 20:13:31 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.19 2001/05/30 17:38:56 jberndt Exp $
     @see -
 */
 

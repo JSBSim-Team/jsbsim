@@ -49,12 +49,12 @@ INCLUDES
 
 #ifndef M_PI 
 #  include <simgear/constants.h>
-#  define M_PI FG_PI
+#  define M_PI SG_PI
 #endif
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.60 2001/05/29 20:13:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.61 2001/05/30 17:38:56 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;

@@ -46,7 +46,12 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.13 2001/03/31 15:43:13 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.14 2001/05/30 17:38:56 jberndt Exp $"
+
+#ifndef M_PI
+#  include <simgear/constants.h>
+#  define M_PI SG_PI
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +81,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.13 2001/03/31 15:43:13 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.14 2001/05/30 17:38:56 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable

@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.48 2001/05/29 20:13:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.49 2001/05/30 17:38:56 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -111,8 +111,8 @@ short debug_lvl;  // This describes to any interested entity the debug level
                   //    FGModel object executes its Run() method
                   // f) 8: When this value is set, various runtime state variables
                   //    are printed out periodically
-		  // g) 16: When set various parameters are sanity checked and
-		  //    a message is printed out when they go out of bounds.
+                  // g) 16: When set various parameters are sanity checked and
+                  //    a message is printed out when they go out of bounds.
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -401,6 +401,7 @@ bool FGFDMExec::LoadScript(string script)
   string initialize="";
   bool result=false;
   float dt=0.0;
+  int i;
   struct condition *newCondition;
 
   if (!Script.IsOpen()) return false;
@@ -505,7 +506,7 @@ bool FGFDMExec::LoadScript(string script)
       cout << "  Condition: " << count++ << endl;
       cout << "    if (";
 
-      for (int i=0; i<iterConditions->TestValue.size(); i++) {
+      for (i=0; i<iterConditions->TestValue.size(); i++) {
         if (i>0) cout << " and" << endl << "        ";
         cout << "(" << State->paramdef[iterConditions->TestParam[i]]
                     << iterConditions->Comparison[i] << " "
@@ -513,7 +514,7 @@ bool FGFDMExec::LoadScript(string script)
       }
       cout << ") then {" << endl;
 
-      for (int i=0; i<iterConditions->SetValue.size(); i++) {
+      for (i=0; i<iterConditions->SetValue.size(); i++) {
         cout << "      set" << State->paramdef[iterConditions->SetParam[i]]
              << "to " << iterConditions->SetValue[i];
 
@@ -581,6 +582,7 @@ void FGFDMExec::RunScript(void)
   vector <struct condition>::iterator iC = Conditions.begin();
   bool truth;
   bool WholeTruth;
+  int i;
 
   int count=0;
 
@@ -590,7 +592,7 @@ void FGFDMExec::RunScript(void)
   while (iC < Conditions.end()) {
     // determine whether the set of conditional tests for this condition equate
     // to true
-    for (int i=0; i<iC->TestValue.size(); i++) {
+    for (i=0; i<iC->TestValue.size(); i++) {
            if (iC->Comparison[i] == "lt")
               truth = State->GetParameter(iC->TestParam[i]) <  iC->TestValue[i];
       else if (iC->Comparison[i] == "le")
@@ -615,7 +617,7 @@ void FGFDMExec::RunScript(void)
     // if the conditions are true, do the setting of the desired parameters
 
     if (WholeTruth) {
-      for (int i=0; i<iC->SetValue.size(); i++) {
+      for (i=0; i<iC->SetValue.size(); i++) {
         if ( ! iC->Triggered[i]) {
           iC->OriginalValue[i] = State->GetParameter(iC->SetParam[i]);
           switch (iC->Type[i]) {

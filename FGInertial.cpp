@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.11 2001/04/28 00:04:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.12 2001/05/30 17:38:56 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 extern short debug_lvl;
@@ -115,7 +115,7 @@ bool FGInertial::Run(void)
 
 bool FGInertial::LoadInertial(FGConfigFile* AC_cfg)
 {
-//
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
