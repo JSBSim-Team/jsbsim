@@ -72,9 +72,9 @@ public:
 
   inline FGColumnVector GetVel(void) {return vVel;}
   inline FGColumnVector GetUVW(void) {return vUVW;}
-  inline FGColumnVector GetVn(void)  {return vVel(1);}
-  inline FGColumnVector GetVe(void)  {return vVel(2);}
-  inline FGColumnVector GetVd(void)  {return vVel(3);}
+  inline float GetVn(void)  {return vVel(1);}
+  inline float GetVe(void)  {return vVel(2);}
+  inline float GetVd(void)  {return vVel(3);}
 
   bool Run(void);
 };

@@ -81,7 +81,7 @@ protected:
 
 public:
   FGFCSComponent(FGFCS*);
-  ~FGFCSComponent ( ) { }       //Destructor
+  virtual ~FGFCSComponent ( ) { }       //Destructor
 
   virtual bool Run (void);
   virtual void SetOutput(void);
