@@ -39,13 +39,13 @@ INCLUDES
 
 #include "../FGConfigFile.h"
 #include <map>
-#include "FGPropertyManager.h"
+#include "../FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.1 2003/01/09 03:11:28 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.2 2003/01/20 13:16:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -66,7 +66,7 @@ class FGCondition : public FGJSBBase
 {
 public:
   FGCondition(FGConfigFile* AC_cfg, FGPropertyManager* PropertyManager);
-  ~FGCondition();
+  ~FGCondition(void);
 
   bool Evaluate(void);
   void PrintCondition(void);

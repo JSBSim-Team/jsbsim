@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.86 2002/11/27 21:08:53 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.87 2003/01/20 13:16:32 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,8 +107,9 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   WOW = lastWOW = true; // should the value be initialized to true?
   ReportEnable = true;
   FirstContact = false;
-  Reported = false;
-  DistanceTraveled = 0.0;
+  StartedGroundRun = false;
+  TakeoffReported = LandingReported = false;
+  LandingDistanceTraveled = TakeoffDistanceTraveled = TakeoffDistanceTraveled50ft = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
   SinkRate = GroundSpeed = 0.0;
 
@@ -154,7 +155,10 @@ FGLGear::FGLGear(const FGLGear& lgear)
   lastWOW            = lgear.lastWOW;
   ReportEnable       = lgear.ReportEnable;
   FirstContact       = lgear.FirstContact;
-  DistanceTraveled   = lgear.DistanceTraveled;
+  StartedGroundRun   = lgear.StartedGroundRun;
+  LandingDistanceTraveled   = lgear.LandingDistanceTraveled;
+  TakeoffDistanceTraveled   = lgear.TakeoffDistanceTraveled;
+  TakeoffDistanceTraveled50ft   = lgear.TakeoffDistanceTraveled50ft;
   MaximumStrutForce  = lgear.MaximumStrutForce;
   MaximumStrutTravel = lgear.MaximumStrutTravel;
 
@@ -169,7 +173,8 @@ FGLGear::FGLGear(const FGLGear& lgear)
   maxCompLen      = lgear.maxCompLen;
   SinkRate        = lgear.SinkRate;
   GroundSpeed     = lgear.GroundSpeed;
-  Reported        = lgear.Reported;
+  LandingReported = lgear.LandingReported;
+  TakeoffReported = lgear.TakeoffReported;
   name            = lgear.name;
   sSteerType      = lgear.sSteerType;
   sRetractable    = lgear.sRetractable;
@@ -197,6 +202,7 @@ FGColumnVector3& FGLGear::Force(void)
 {
   double SteerGain = 0;
   double SinWheel, CosWheel;
+  double deltaT;
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
@@ -264,6 +270,19 @@ FGColumnVector3& FGLGear::Force(void)
         FirstContact  = true;
         SinkRate      =  compressSpeed;
         GroundSpeed   =  Position->GetVel().Magnitude();
+        TakeoffReported = false;
+      }
+
+// If the takeoff run is starting, initialize.
+
+      if ((Position->GetVel().Magnitude() > 0.1) &&
+          (FCS->GetBrake(bgLeft) == 0) &&
+          (FCS->GetBrake(bgRight) == 0) &&
+          (FCS->GetThrottlePos(0) == 1) && !StartedGroundRun)
+      {
+        TakeoffDistanceTraveled = 0;
+        TakeoffDistanceTraveled50ft = 0;
+        StartedGroundRun = true;
       }
 
 // The following needs work regarding friction coefficients and braking and
@@ -412,20 +431,32 @@ FGColumnVector3& FGLGear::Force(void)
 
       if (Position->GetDistanceAGL() > 200.0) {
         FirstContact = false;
-        Reported = false;
-        DistanceTraveled = 0.0;
+        StartedGroundRun = false;
+        LandingReported = false;
+        LandingDistanceTraveled = 0.0;
         MaximumStrutForce = MaximumStrutTravel = 0.0;
       }
 
       compressLength = 0.0; // reset compressLength to zero for data output validity
     }
 
-    if (FirstContact) {
-      DistanceTraveled += Position->GetVel().Magnitude()*State->Getdt()*Aircraft->GetRate();
-    }
+    deltaT = State->Getdt()*Aircraft->GetRate();
+
+    if (FirstContact) LandingDistanceTraveled += Position->GetVel().Magnitude()*deltaT;
   
-    if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
-      if (debug_lvl > 0) Report();
+    if (StartedGroundRun) {
+       TakeoffDistanceTraveled50ft += Position->GetVel().Magnitude()*deltaT;
+      if (WOW) TakeoffDistanceTraveled += Position->GetVel().Magnitude()*deltaT;
+    }
+
+    if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !LandingReported) {
+      if (debug_lvl > 0) Report(erLand);
+    }
+
+    if (ReportEnable && !TakeoffReported &&
+       (vLocalGear(eZ) - Position->GetDistanceAGL()) < -50.0)
+    {
+      if (debug_lvl > 0) Report(erTakeoff);
     }
 
     if (lastWOW != WOW) {
@@ -450,20 +481,32 @@ FGColumnVector3& FGLGear::Force(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGLGear::Report(void)
+void FGLGear::Report(ReportType repType)
 {
-  cout << endl << "Touchdown report for " << name << endl;
-  cout << "  Sink rate at contact:  " << SinkRate                << " fps,    "
-                              << SinkRate*0.3408          << " mps"     << endl;
-  cout << "  Contact ground speed:  " << GroundSpeed*.5925       << " knots,  "
-                              << GroundSpeed*0.3408       << " mps"     << endl;
-  cout << "  Maximum contact force: " << MaximumStrutForce       << " lbs,    "
-                              << MaximumStrutForce*4.448  << " Newtons" << endl;
-  cout << "  Maximum strut travel:  " << MaximumStrutTravel*12.0 << " inches, "
-                              << MaximumStrutTravel*30.48 << " cm"      << endl;
-  cout << "  Distance traveled:     " << DistanceTraveled        << " ft,     "
-                              << DistanceTraveled*0.3408  << " meters"  << endl;
-  Reported = true;
+  switch(repType) {
+  case erLand:
+    cout << endl << "Touchdown report for " << name << endl;
+    cout << "  Sink rate at contact:  " << SinkRate                << " fps,    "
+                                << SinkRate*0.3408          << " mps"     << endl;
+    cout << "  Contact ground speed:  " << GroundSpeed*.5925       << " knots,  "
+                                << GroundSpeed*0.3408       << " mps"     << endl;
+    cout << "  Maximum contact force: " << MaximumStrutForce       << " lbs,    "
+                                << MaximumStrutForce*4.448  << " Newtons" << endl;
+    cout << "  Maximum strut travel:  " << MaximumStrutTravel*12.0 << " inches, "
+                                << MaximumStrutTravel*30.48 << " cm"      << endl;
+    cout << "  Distance traveled:     " << LandingDistanceTraveled        << " ft,     "
+                                << LandingDistanceTraveled*0.3408  << " meters"  << endl;
+    LandingReported = true;
+    break;
+  case erTakeoff:
+    cout << endl << "Takeoff report for " << name << endl;
+    cout << "  Distance traveled:                " << TakeoffDistanceTraveled
+         << " ft,     " << TakeoffDistanceTraveled*0.3408  << " meters"  << endl;
+    cout << "  Distance traveled (over 50'):     " << TakeoffDistanceTraveled50ft
+         << " ft,     " << TakeoffDistanceTraveled50ft*0.3408 << " meters" << endl;
+    TakeoffReported = true;
+    break;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

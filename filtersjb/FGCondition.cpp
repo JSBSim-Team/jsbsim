@@ -36,7 +36,7 @@ INCLUDES
 
 #include "FGCondition.h"
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.1 2003/01/09 03:11:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.2 2003/01/20 13:16:32 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,7 @@ FGCondition::FGCondition(FGConfigFile* AC_cfg, FGPropertyManager* PropertyManage
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGCondition::~FGCondition()
+FGCondition::~FGCondition(void)
 {
   Debug(1);
 }

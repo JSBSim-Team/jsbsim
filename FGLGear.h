@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.50 2002/07/26 04:49:06 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.51 2003/01/20 13:16:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.50 2002/07/26 04:49:06 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.51 2003/01/20 13:16:32 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -186,6 +186,8 @@ public:
   enum BrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
   /// Steering group membership enumerators
   enum SteerType {stSteer, stFixed, stCaster};
+  /// Report type enumerators
+  enum ReportType {erNone=0, erTakeoff, erLand};
   /** Constructor
       @param Executive a pointer to the parent executive object
       @param File a pointer to the config file instance */
@@ -265,7 +267,9 @@ private:
   double maxCompLen;
   double SinkRate;
   double GroundSpeed;
-  double DistanceTraveled;
+  double TakeoffDistanceTraveled;
+  double TakeoffDistanceTraveled50ft;
+  double LandingDistanceTraveled;
   double MaximumStrutForce;
   double MaximumStrutTravel;
   double SideWhlVel, RollingWhlVel;
@@ -275,7 +279,9 @@ private:
   bool WOW;
   bool lastWOW;
   bool FirstContact;
-  bool Reported;
+  bool StartedGroundRun;
+  bool LandingReported;
+  bool TakeoffReported;
   bool ReportEnable;
   bool isRetractable;
   bool GearUp, GearDown;
@@ -296,7 +302,7 @@ private:
   FGFCS*      FCS;
   FGMassBalance* MassBalance;
 
-  void Report(void);
+  void Report(ReportType rt);
   void Debug(int from);
 };
 
