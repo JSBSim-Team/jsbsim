@@ -37,7 +37,7 @@ and throttle setting required to fly steady level. This is currently for in-air
 conditions only.  It is implemented using an iterative, one-axis-at-a-time 
 scheme. */
 
-
+//  !!!!!!! BEWARE ALL YE WHO ENTER HERE !!!!!!!
 
 
 /*******************************************************************************
@@ -64,11 +64,16 @@ FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
   Naxis=10;
   Tolerance=1E-3;
   A_Tolerance = Tolerance / 10;
-  alphaMin=-5;
-  alphaMax=16;
+
   Debug=0;
   fdmex=FDMExec;
   fgic=FGIC;
+  alphaMin=fdmex->GetAircraft()->GetAlphaCLMin()*RADTODEG;
+  alphaMax=fdmex->GetAircraft()->GetAlphaCLMax()*RADTODEG;
+  if(alphaMax <= alphaMin) {
+    alphaMax=20;
+    alphaMin=-5;
+  }
   udotf=&FGTrimLong::udot_func;
   wdotf=&FGTrimLong::wdot_func;
   qdotf=&FGTrimLong::qdot_func;
@@ -324,8 +329,6 @@ bool FGTrimLong::DoTrim(void) {
   setThrottlesPct(0.5);
   fdmex -> RunIC(fgic);
 
-
-
   if(trimudot == false)
     udot=0;
   do {
@@ -376,6 +379,7 @@ bool FGTrimLong::DoTrim(void) {
           k=Ncycles; //force the trim to fail
         }
 
+
       }
       if( udot > Tolerance ) {
         if(checkLimits(udotf,dth,0,1) == false) {
@@ -383,6 +387,7 @@ bool FGTrimLong::DoTrim(void) {
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
+
 
       }
       if(qdot > A_Tolerance) {
@@ -392,6 +397,7 @@ bool FGTrimLong::DoTrim(void) {
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
+
 
       }
     }
@@ -410,4 +416,4 @@ bool FGTrimLong::DoTrim(void) {
 }
 
 
-
+//YOU WERE WARNED, BUT YOU DID IT ANYWAY.

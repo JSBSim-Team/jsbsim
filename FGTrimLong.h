@@ -110,32 +110,20 @@ public:
   void ReportState(void);
   void TrimStats();
 
-  inline void SetUdotTrim(bool bb) {
-    trimudot=bb;
-  }
+  inline void SetUdotTrim(bool bb) { trimudot=bb; }
 
-  inline bool GetUdotTrim(void) {
-    return trimudot;
-  }
+  inline bool GetUdotTrim(void) { return trimudot; }
 
-  inline void SetMaxCycles(int ii) {
-    Ncycles = ii;
-  }
-  inline void SetMaxCyclesPerAxis(int ii) {
-    Naxis = ii;
-  }
+  inline void SetMaxCycles(int ii) { Ncycles = ii; }
+  inline void SetMaxCyclesPerAxis(int ii) { Naxis = ii; }
   inline void SetTolerance(float tt) {
     Tolerance = tt;
     A_Tolerance = tt / 10;
   }
   //Debug level 1 shows results of each top-level iteration
   //Debug level 2 shows level 1 & results of each per-axis iteration
-  inline void SetDebug(int level) {
-    Debug = level;
-  }
-  inline void ClearDebug(void) {
-    Debug = 0;
-  }
+  inline void SetDebug(int level) { Debug = level; }
+  inline void ClearDebug(void) { Debug = 0; }
 
 };
 
