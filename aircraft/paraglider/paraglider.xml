@@ -1,0 +1,138 @@
+<FDM_CONFIG NAME="paraglider" VERSION="1.60">
+<!--
+  File:     paraglider.xml
+  Author:   David Culp
+  Adapted from glider model
+
+  Recommended command line parameters:
+  --in-air
+  --notrim
+  --altitude=1000
+  --heading=280
+  --uBody=10
+  --wBody=8
+
+-->
+ <METRICS>
+   AC_WINGAREA  160.0 
+   AC_WINGSPAN  20.0 
+   AC_CHORD     8.0 
+   AC_HTAILAREA 1.0 
+   AC_HTAILARM  1.0 
+   AC_VTAILAREA 1.0 
+   AC_LV        1.0 
+   AC_IXX       2000.0 
+   AC_IYY       2000.0 
+   AC_IZZ       100.0 
+   AC_IXZ       0 
+   AC_EMPTYWT   200.0 
+   AC_CGLOC     48.0 0 -144.0 
+   AC_AERORP    48.0 0 0 
+   AC_EYEPTLOC  48.0 0 -120.0 
+ </METRICS>
+ <UNDERCARRIAGE>
+  AC_GEAR LMLG       48.0 -10 -180.0 200.0 50.0 0.5 0.8 0.5 FIXED NONE 0 FIXED
+  AC_GEAR RMLG       48.0  10 -180.0 200.0 50.0 0.5 0.8 0.5 FIXED NONE 0 FIXED
+  AC_GEAR NOSE_LG    30.0   0 -180.0 200.0 50.0 0.5 0.8 0.5 STEERABLE NONE 80 FIXED
+ </UNDERCARRIAGE>
+ <PROPULSION>
+ </PROPULSION>
+ <FLIGHT_CONTROL NAME="paraglider_FCS">
+   <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+      INPUT   fcs/elevator-cmd-norm
+      INPUT   fcs/pitch-trim-cmd-norm
+      CLIPTO  -1 1
+   </COMPONENT>
+   <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
+      INPUT   fcs/pitch-trim-sum
+      MIN     -25
+      MAX     35
+      GAIN    0.018
+      OUTPUT  fcs/elevator-pos-rad
+   </COMPONENT>
+   <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+      INPUT   fcs/aileron-cmd-norm
+      INPUT   fcs/roll-trim-cmd-norm
+      CLIPTO  -1 1
+   </COMPONENT>
+   <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
+      INPUT   fcs/roll-trim-sum
+      MIN     -20
+      MAX     15
+      GAIN    0.02
+      OUTPUT  fcs/left-aileron-pos-rad
+   </COMPONENT>
+   <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
+      INPUT   fcs/roll-trim-sum
+      MIN     -20
+      MAX     15
+      INVERT
+      GAIN    0.02
+      OUTPUT  fcs/right-aileron-pos-rad
+   </COMPONENT>
+ </FLIGHT_CONTROL>
+ <AERODYNAMICS>
+  <AXIS NAME="LIFT">
+    <COEFFICIENT NAME="CLalpha" TYPE="VALUE">
+      Lift_due_to_alpha
+      aero/qbar-psf|metrics/Sw-sqft|aero/alpha-rad
+      10
+    </COEFFICIENT>
+  </AXIS>
+  <AXIS NAME="DRAG">
+    <COEFFICIENT NAME="CD0" TYPE="VALUE">
+       Drag_at_zero_lift
+       aero/qbar-psf|metrics/Sw-sqft
+       0.05
+    </COEFFICIENT>
+    <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
+       Drag_due_to_alpha
+       aero/qbar-psf|metrics/Sw-sqft|aero/alpha-rad
+       0.5
+    </COEFFICIENT>
+    <COEFFICIENT NAME="CDde" TYPE="VALUE">
+       Drag_due_to_Elevator_Deflection
+       aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-norm
+       0.03
+    </COEFFICIENT>
+  </AXIS>
+  <AXIS NAME="SIDE">
+  </AXIS>
+  <AXIS NAME="ROLL">
+    <COEFFICIENT NAME="Clt" TYPE="VALUE">
+       Roll_moment_due_to_roll_angle
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
+       -5
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Clp" TYPE="VALUE">
+       Roll_moment_due_to_roll_rate
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
+       -3
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Clda" TYPE="VALUE">
+       Roll_moment_due_to_aileron
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
+       0.2
+    </COEFFICIENT>
+  </AXIS>
+  <AXIS NAME="PITCH">
+    <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+       Pitch_moment_due_to_alpha
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/alpha-rad
+       -3
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+       Pitch_moment_due_to_elevator
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
+       -2
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+       Pitch_moment_due_to_pitch_rate
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
+       -30
+    </COEFFICIENT>
+  </AXIS>
+  <AXIS NAME="YAW">
+  </AXIS>
+ </AERODYNAMICS>
+</FDM_CONFIG>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<!-- CFM56-5 turbofan engine model
+     Version 1.0, 4 Jun 2003, David Culp, davidculp2@attbi.com
+-->
+
+<FG_SIMTURBINE NAME="CFM56_5">
+  <!--
+     MAXMILTHRUST  max static thrust at S.L. (installed), lbf
+     BYPASSRATIO   bypass ratio
+     TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
+     ATSFC         augmented TSFC (lbm/hr/lbf)
+     IDLEN1        idle percent rpm of fan spool
+     IDLEN2        idle percent rpm of inner spool
+     MAXN1         N1 at 100% throttle
+     MAXN2         N2 at 100% throttle
+     AUGMENTED     =1 if augmentation installed, else =0
+     INJECTED      =1 if water injection installed, else =0  
+
+     TABLE(0)      idle thrust vs. altitude and mach
+     TABLE(1)      maximum un-augmented thrust vs. altitude and mach
+     TABLE(2)      augmented thrust multiplier vs. altitude and mach
+     TABLE(3)      water-injection multiplier vs. altitude and mach
+  -->
+
+  MAXMILTHRUST 25000
+  BYPASSRATIO  5.9
+  TSFC         0.657
+  ATSFC        0.0
+  IDLEN1       30.0
+  IDLEN2       60.0
+  MAXN1        100.0
+  MAXN2        100.0
+  AUGMENTED    0
+  INJECTED     0
+
+
+  <TABLE NAME="IdleThrust" TYPE="TABLE">
+    Idle_power_thrust_factor
+    6
+    6
+    velocities/mach-norm
+    position/h-sl-ft
+    none
+                0   10000   20000   30000   40000  50000
+    0.0    0.0836  0.0528  0.0694  0.0899  0.1183  0.1467
+    0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
+    0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
+    0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073
+    0.8   -0.2129 -0.1498 -0.1025 -0.0195  0.0473  0.0868
+    1.0   -0.2839 -0.1104 -0.0469 -0.0270 -0.0158  0.0552
+  </TABLE>
+
+  <TABLE NAME="MilThrust" TYPE="TABLE">
+    Effects_of_altitude_and_mach_on_thrust
+    7
+    6
+    velocities/mach-norm
+    position/h-sl-ft
+    none
+               0    10000   20000     30000    40000    50000
+    0.0   1.0000   0.7216   0.4890   0.3115   0.1932   0.1104
+    0.2   1.0000   0.7216   0.4979   0.3186   0.1948   0.1104
+    0.4   0.9945   0.7344   0.5213   0.3383   0.2050   0.1230
+    0.6   0.9968   0.7759   0.5591   0.3675   0.2240   0.1309
+    0.8   0.9771   0.8025   0.6112   0.4196   0.2563   0.1522
+    0.9   0.9300   0.7900   0.6000   0.3900   0.2300   0.1300
+    1.0   0.5000   0.5000   0.4000   0.2000   0.1500   0.0900
+  </TABLE>
+
+  <TABLE NAME="AugThrust" TYPE="TABLE">
+    Augmented_thrust_factor
+    8
+    6
+    velocities/mach-norm
+    position/h-sl-ft
+    none
+                0    10000   20000     30000    40000    50000
+    0.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    0.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    0.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    0.6    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    0.8    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    1.0    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    1.2    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+    1.4    1.4146   1.4146   1.4146   1.4146   1.4146   1.4146
+  </TABLE>
+
+  <TABLE NAME="WaterFactor" TYPE="TABLE">
+    Water_Injection_factor
+    8
+    6
+    velocities/mach-norm
+    position/h-sl-ft
+    none
+                0    10000   20000     30000    40000    50000
+    0.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    0.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    0.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    0.6    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    0.8    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    1.0    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    1.2    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+    1.4    1.2000   1.2000   1.2000   1.2000   1.2000   1.2000
+  </TABLE>
+
+</FG_SIMTURBINE>
