@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.88 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.89 2004/01/19 18:12:32 ehofman Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -662,7 +662,7 @@ void FGPropulsion::bind(void)
                        (PMF)&FGPropulsion::GetMoments);
 
   PropertyManager->Tie("propulsion/active_engine", this,
-           &FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
+           (iPMF)&FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
