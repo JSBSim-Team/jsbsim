@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.36 2002/12/17 14:42:15 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.37 2003/01/12 11:50:31 jberndt Exp $"
 
 using std::string;
 
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.36 2002/12/17 14:42:15 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.37 2003/01/12 11:50:31 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -119,8 +119,7 @@ protected:
   FGPropertyManager* treenode;
   string Type;
   string Name;
-  vector<FGPropertyManager*> InputNodes;
-  int InputIdx;
+  vector <FGPropertyManager*> InputNodes;
   double Input;
   FGPropertyManager* OutputNode;
   double Output;

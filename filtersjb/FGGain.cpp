@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h" 
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.45 2002/12/17 14:42:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.46 2003/01/12 11:50:31 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      if( InputNodes.size() > 0 ) {
+      if (InputNodes.size() > 0) {
         cerr << "Gains can only accept one input" << endl;
       } else  {
         *AC_cfg >> token;

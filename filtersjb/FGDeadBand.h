@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.13 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.14 2003/01/12 11:50:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,6 +62,16 @@ CLASS DOCUMENTATION
 
 /** Models a deadband object.
     Owned and Operated by the FGFCS class.
+
+    <COMPONENT NAME="Deadbeat1" TYPE="DEADBAND">
+      INPUT {input}
+      WIDTH {deadband width}
+      GAIN {optional deadband gain}
+      MIN {minimum value}
+      MAX {maximum value}
+      OUTPUT {optional output parameter to set}
+    </COMPONENT>
+
     @author Jon S. Berndt
     @see -
   */
@@ -80,6 +90,10 @@ public:
 
 private:
   FGConfigFile* AC_cfg;
+  double width;
+  double clipmax, clipmin;
+  bool clip;
+  double gain;
   
   void Debug(int from);
 };

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.32 2002/12/17 14:42:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.33 2003/01/12 11:50:31 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,14 +81,14 @@ bool FGFCSComponent::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager* FGFCSComponent::resolveSymbol(string token) {
+FGPropertyManager* FGFCSComponent::resolveSymbol(string token)
+{
   string prop;
-  FGPropertyManager* tmp=PropertyManager->GetNode(token,false);
-  if( !tmp ){
-    if( token.find("/") == token.npos ) 
-      prop = "model/" + token;
+  FGPropertyManager* tmp = PropertyManager->GetNode(token,false);
+  if (!tmp) {
+    if (token.find("/") == token.npos) prop = "model/" + token;
     cerr << "Creating new property " << prop << endl;
-    tmp=PropertyManager->GetNode(token,true);
+    tmp = PropertyManager->GetNode(token,true);
   }
   return tmp;  
 }              
@@ -96,7 +96,8 @@ FGPropertyManager* FGFCSComponent::resolveSymbol(string token) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCSComponent::bind(void) {
+void FGFCSComponent::bind(void)
+{
   string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
   FGPropertyManager *tmpn;
   PropertyManager->Tie( tmp,this, &FGFCSComponent::GetOutput);
