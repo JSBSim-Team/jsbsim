@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.14 2004/06/20 16:14:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.15 2004/06/20 19:28:16 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,14 +185,16 @@ double FGTurbine::Run(void)
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   }
 
-  if ((AugmentCmd > 0.0) && (AugMethod == 2)) {
-    Augmentation = true;
-    double tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
-    thrust += (tdiff * AugmentCmd);
-    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
-    NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
-  } else {
-    Augmentation = false;
+  if (AugMethod == 2) {
+    if (AugmentCmd > 0.0) {
+      Augmentation = true;
+      double tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
+      thrust += (tdiff * AugmentCmd);
+      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
+      NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
+    } else {
+      Augmentation = false;
+    }
   }
 
   if ((Injected == 1) && Injection)
