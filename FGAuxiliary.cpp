@@ -50,11 +50,12 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGOutput.h"
+#include "FGInertial.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.19 2001/08/30 11:04:41 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.20 2001/09/07 11:56:33 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,16 +144,16 @@ bool FGAuxiliary::Run()
     //
     // In JSBSim the acceleration of the body frame in inertial space is given
     // by the F = ma relation. If the vForces vector is divided by the aircraft
-    // mass, the acceleration vector is calculated. The gravity field is already
-    // included in the vForces vector. the term wdot is equivalent to the JSBSim
-    // vPQRdot vector, and the w parameter is equivalent to vPQR. The radius R is
-    // calculated below in the vector vToEyePt.
+    // mass, the acceleration vector is calculated. The term wdot is equivalent
+    // to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
+    // The radius R is calculated below in the vector vToEyePt.
         
     vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
 
-    vPilotAccel = Aircraft->GetForces()/MassBalance->GetMass()
-                    + Rotation->GetPQRdot() * vToEyePt
-                    + Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
+    vPilotAccel = Aircraft->GetBodyAccel()
+                  + Rotation->GetPQRdot() * vToEyePt
+                  + Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt)
+                  + Inertial->GetGravity();
 
     earthPosAngle += State->Getdt()*OMEGA_EARTH;
     return false;

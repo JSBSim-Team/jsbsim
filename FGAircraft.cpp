@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.89 2001/09/04 12:04:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.90 2001/09/07 11:56:33 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +103,8 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vForces(3),
     vXYZrp(3),
     vXYZep(3),
-    vDXYZcg(3)
+    vDXYZcg(3),
+    vBodyAccel(3)
 {
   Name = "FGAircraft";
   GearUp = false;
@@ -173,6 +174,8 @@ bool FGAircraft::Run(void)
     vMoments += Aerodynamics->GetMoments();
     vMoments += Propulsion->GetMoments();
     vMoments += GroundReactions->GetMoments();
+    
+    vBodyAccel = vForces/MassBalance->GetMass();
     
     return false;
   } else {                               // skip Run() execution this time

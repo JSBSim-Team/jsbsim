@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.13 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.14 2001/09/07 11:56:33 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,8 @@ CLASS IMPLEMENTATION
 FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex),
     vForces(3),
     vOmegaLocal(3),
-    vRadius(3)
+    vRadius(3),
+    vGravity(3)
 {
   Name = "FGInertial";
 
@@ -79,9 +80,9 @@ bool FGInertial::Run(void)
     sphi = sin(Rotation->GetEuler(ePhi));
     cphi = cos(Rotation->GetEuler(ePhi));
 
-    vForces(eX) = -GRAVITY*stht;
-    vForces(eY) =  GRAVITY*sphi*ctht;
-    vForces(eZ) =  GRAVITY*cphi*ctht;
+    vGravity(eX) = vForces(eX) = -GRAVITY*stht;
+    vGravity(eY) = vForces(eY) =  GRAVITY*sphi*ctht;
+    vGravity(eZ) = vForces(eZ) =  GRAVITY*cphi*ctht;
     
     // The following equation for vOmegaLocal terms shows the angular velocity
     // calculation _for_the_local_frame_ given the earth's rotation (first set)
