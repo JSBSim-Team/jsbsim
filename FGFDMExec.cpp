@@ -68,7 +68,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.29 2001/02/25 17:05:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.30 2001/02/26 16:41:50 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -356,6 +356,11 @@ bool FGFDMExec::LoadScript(string script)
             } else if (token == "set") {
               newCondition->SetParam.push_back(State->GetParameterIndex(Script.GetValue("name")));
               newCondition->SetValue.push_back(strtod(Script.GetValue("value").c_str(), NULL));
+              newCondition->Triggered.push_back(false);
+              newCondition->OriginalValue.push_back(0.0);
+              newCondition->newValue.push_back(0.0);
+              newCondition->StartTime.push_back(0.0);
+              newCondition->EndTime.push_back(0.0);
               string tempCompare = Script.GetValue("type");
               if      (tempCompare == "FG_DELTA") newCondition->Type.push_back(FG_DELTA);
               else if (tempCompare == "FG_BOOL")  newCondition->Type.push_back(FG_BOOL);
@@ -484,23 +489,25 @@ bool FGFDMExec::RunScript(void)
 
   int count=0;
 
-  while (iC < Conditions.end()) {
+  float currentTime = State->Getsim_time();
+  float newSetValue;
 
+  while (iC < Conditions.end()) {
     // determine whether the set of conditional tests for this condition equate
     // to true
     for (int i=0; i<iC->TestValue.size(); i++) {
            if (iC->Comparison[i] == "lt")
-              truth = iC->TestValue[i] <  State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) <  iC->TestValue[i];
       else if (iC->Comparison[i] == "le")
-              truth = iC->TestValue[i] <= State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) <= iC->TestValue[i];
       else if (iC->Comparison[i] == "eq")
-              truth = iC->TestValue[i] == State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) == iC->TestValue[i];
       else if (iC->Comparison[i] == "ge")
-              truth = iC->TestValue[i] >= State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) >= iC->TestValue[i];
       else if (iC->Comparison[i] == "gt")
-              truth = iC->TestValue[i] >  State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) >  iC->TestValue[i];
       else if (iC->Comparison[i] == "ne")
-              truth = iC->TestValue[i] != State->GetParameter(iC->TestParam[i]);
+              truth = State->GetParameter(iC->TestParam[i]) != iC->TestValue[i];
       else
               cerr << "Bad comparison" << endl;
 
@@ -510,9 +517,6 @@ bool FGFDMExec::RunScript(void)
 
     // if the conditions are true, do the setting of the desired parameters
 
-    float currentTime = State->Getsim_time();
-    float newSetValue;
-    
     if (WholeTruth) {
       for (int i=0; i<iC->SetValue.size(); i++) {
         if ( ! iC->Triggered[i]) {
@@ -527,6 +531,7 @@ bool FGFDMExec::RunScript(void)
           case FG_BOOL:
             break;
           default:
+            cerr << "Invalid Type specified" << endl;
             break;
           }
           iC->Triggered[i] = true;
@@ -546,6 +551,7 @@ bool FGFDMExec::RunScript(void)
               * (iC->newValue[i] - iC->OriginalValue[i]) + iC->OriginalValue[i];
           break;
         default:
+          cerr << "Invalid Action specified" << endl;
           break;
         }
         State->SetParameter(iC->SetParam[i], newSetValue);
