@@ -56,7 +56,6 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGCoefficient.h"
 #include "FGPropulsion.h"
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
@@ -66,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.55 2001/04/24 11:50:04 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.56 2001/04/24 22:14:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +90,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.55 2001/04/24 11:50:04 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.56 2001/04/24 22:14:42 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -161,15 +160,10 @@ public:
   inline FGColumnVector GetForces(void) { return vForces; }
   inline FGColumnVector GetAeroBodyForces(void) { return vAeroBodyForces; }
   inline float GetAeroBodyForces(int axis) { return vAeroBodyForces(axis); }
-  inline FGColumnVector GetvFs(void) { return vFs; }
-  inline float GetvFs(int axis) { return vFs(axis); }
-  inline FGColumnVector GetvLastFs(void) { return vLastFs; }
-  inline float GetvLastFs(int axis) { return vLastFs(axis); }
   inline FGColumnVector GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector GetXYZep(void) { return vXYZep; }
   inline float GetXYZrp(int idx) { return vXYZrp(idx); }
   inline float GetXYZep(int idx) { return vXYZep(idx); }
-  inline float GetNlf(void) { return nlf; }
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
 
@@ -207,8 +201,6 @@ private:
   void FMProp(void);
   FGColumnVector vMoments;
   FGColumnVector vForces;
-  FGColumnVector vFs;
-  FGColumnVector vLastFs;
   FGColumnVector vXYZrp;
   FGColumnVector vXYZep;
   FGColumnVector vEuler;
@@ -216,7 +208,7 @@ private:
   FGColumnVector vAeroBodyForces;
   float alpha, beta;
   float WingArea, WingSpan, cbar;
-  float nlf,alphaclmax,alphaclmin;
+  float alphaclmax,alphaclmin;
   float dt;
   string CFGVersion;
   string AircraftName;

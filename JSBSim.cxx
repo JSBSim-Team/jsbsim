@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.59 2001/04/19 23:26:48 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.60 2001/04/24 22:14:42 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -323,7 +323,7 @@ bool FGJSBsim::copy_from_JSBsim() {
     //                         Auxiliary->GetNpilot(2),
     //                         Auxiliary->GetNpilot(3) );
 
-    _set_Nlf( Aircraft->GetNlf() );
+    _set_Nlf( Aerodynamics->GetNlf() );
 
     // Velocities
 

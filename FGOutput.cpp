@@ -51,7 +51,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.31 2001/04/23 19:35:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.32 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -237,8 +237,8 @@ void FGOutput::DelimitedOutput(void)
   }
   if (SubSystems & FGAircraft::ssForces) {
     cout << ", ";
-    cout << Aircraft->GetvFs() << ", ";
-    cout << Aircraft->GetLoD() << ", ";
+    cout << Aerodynamics->GetvFs() << ", ";
+    cout << Aerodynamics->GetLoD() << ", ";
     cout << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {
@@ -394,8 +394,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & FGAircraft::ssForces) {
     datafile << ", ";
-    datafile << Aircraft->GetvFs() << ", ";
-    datafile << Aircraft->GetLoD() << ", ";
+    datafile << Aerodynamics->GetvFs() << ", ";
+    datafile << Aerodynamics->GetLoD() << ", ";
     datafile << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {

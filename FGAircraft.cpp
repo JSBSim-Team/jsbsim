@@ -139,7 +139,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.76 2001/04/24 11:50:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.77 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -163,8 +163,6 @@ CLASS IMPLEMENTATION
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vMoments(3),
     vForces(3),
-    vFs(3),
-    vLastFs(3),
     vXYZrp(3),
     vXYZep(3),
     vEuler(3),
@@ -252,10 +250,6 @@ bool FGAircraft::Run(void)
     FMMass();
     FMGear();
 
-    nlf = 0;
-    if (fabs(Position->GetGamma()) < 1.57) {
-        nlf = vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma()));
-    }
     return false;
   } else {                               // skip Run() execution this time
     return true;
@@ -267,16 +261,13 @@ bool FGAircraft::Run(void)
 void FGAircraft::FMAero(void)
 {
     vForces += Aerodynamics->GetForces();
-cout << vForces << endl;
     vMoments += Aerodynamics->GetMoments();
-cout << vMoments << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMGear(void)
 {
-
   if ( !GearUp ) {
     vector <FGLGear>::iterator iGear = lGear.begin();
     while (iGear != lGear.end()) {
@@ -302,13 +293,14 @@ void FGAircraft::FMMass(void)
 
 void FGAircraft::FMProp(void)
 {
-    vForces += Propulsion->GetForces();
-    vMoments += Propulsion->GetMoments();
+  vForces += Propulsion->GetForces();
+  vMoments += Propulsion->GetMoments();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::GetState(void) {
+void FGAircraft::GetState(void)
+{
   dt = State->Getdt();
 
   alpha = Translation->Getalpha();
@@ -318,7 +310,8 @@ void FGAircraft::GetState(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
+{
   string token = "";
   string parameter;
   float EW, bixx, biyy, bizz, bixz, biyz;
@@ -555,18 +548,6 @@ string FGAircraft::GetGroundReactionValues(void) {
   }
 
   return GroundReactionValues;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-float FGAircraft::GetLoD(void) {
-  float LoD;
-  if (vFs(1) != 0.00)
-    LoD = vFs(3)/vFs(1);
-  else
-    LoD = 0.00;
-
-  return LoD;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

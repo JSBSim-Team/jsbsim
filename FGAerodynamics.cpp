@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.11 2001/04/24 11:50:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.12 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -53,8 +53,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec),
     vForces(3),
     vFs(3),
     vLastFs(3),
-    vDXYZcg(3),
-    vAeroBodyForces(3)
+    vDXYZcg(3)
 {
   Name = "FGAerodynamics";
 
@@ -90,10 +89,9 @@ FGAerodynamics::~FGAerodynamics()
 bool FGAerodynamics::Run(void)
 {
   float alpha, beta;
+  unsigned int axis_ctr,ctr;
 
   if (!FGModel::Run()) {
-
-    unsigned int axis_ctr,ctr;
 
     alpha = Translation->Getalpha();
     beta = Translation->Getbeta();
@@ -107,8 +105,7 @@ bool FGAerodynamics::Run(void)
       }
     }
 
-    vAeroBodyForces = State->GetTs2b(alpha, beta)*vFs;
-    vForces += vAeroBodyForces;
+    vForces = State->GetTs2b(alpha, beta)*vFs;
 
     // see http://home.earthlink.net/~apeden/jsbsim_moments_due_to_forces.txt
     // for details on this
@@ -117,16 +114,15 @@ bool FGAerodynamics::Run(void)
     vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) - MassBalance->GetXYZcg(eY))/12.0;
     vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) - MassBalance->GetXYZcg(eZ))/12.0;
 
-    vMoments(eL) += vAeroBodyForces(eZ)*vDXYZcg(eY) - vAeroBodyForces(eY)*vDXYZcg(eZ);
-    vMoments(eM) += vAeroBodyForces(eX)*vDXYZcg(eZ) - vAeroBodyForces(eZ)*vDXYZcg(eX);
-    vMoments(eN) += vAeroBodyForces(eY)*vDXYZcg(eX) - vAeroBodyForces(eX)*vDXYZcg(eY);
+    vMoments(eL) = vForces(eZ)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eZ);
+    vMoments(eM) = vForces(eX)*vDXYZcg(eZ) - vForces(eZ)*vDXYZcg(eX);
+    vMoments(eN) = vForces(eY)*vDXYZcg(eX) - vForces(eX)*vDXYZcg(eY);
 
     for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
       for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
         vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->TotalValue();
       }
     }
-
     return false;
   } else {
     return true;
@@ -214,6 +210,27 @@ string FGAerodynamics::GetCoefficientValues(void)
   }
 
   return SDValues;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGAerodynamics::GetNlf(void)
+{
+  if (fabs(Position->GetGamma()) < 1.57) {
+    return (vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma())));
+  } else {
+    return 0.0;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGAerodynamics::GetLoD(void)
+{
+  float LoD;
+
+  if (vFs(1) != 0.00) return vFs(3)/vFs(1);
+  else                return 0.00;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

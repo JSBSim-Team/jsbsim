@@ -52,12 +52,12 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
-
+#include "FGAerodynamics.h"
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.23 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.24 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 extern short debug_lvl;
@@ -198,7 +198,7 @@ void FGTrim::ReportState(void) {
                     fdmex->GetPosition()->Gethdot()*60 );
   cout << out;                  
   sprintf(out, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
-                    fdmex->GetAircraft()->GetNlf(),
+                    fdmex->GetAerodynamics()->GetNlf(),
                     fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG );
   cout << out;
   sprintf(out, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",

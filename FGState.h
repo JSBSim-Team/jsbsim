@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.33 2001/04/11 15:53:01 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.34 2001/04/24 22:14:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,6 +165,7 @@ private:
   FGOutput* Output;
   FGAtmosphere* Atmosphere;
   FGFCS* FCS;
+  FGAerodynamics* Aerodynamics;
 
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
@@ -184,7 +185,7 @@ private:
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGPosition.h"
-//#include "FGAuxiliary.h"
+#include "FGAerodynamics.h"
 #include "FGOutput.h"
 #include "FGAircraft.h"
 

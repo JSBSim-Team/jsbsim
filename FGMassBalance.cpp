@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.11 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.12 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 extern short debug_lvl;
@@ -52,6 +52,8 @@ CLASS IMPLEMENTATION
 
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
+  Name = "FGMassBalance";
+
   if (debug_lvl & 2) cout << "Instantiated: FGMassBalance" << endl;
 }
 

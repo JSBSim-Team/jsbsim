@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.58 2001/04/14 17:44:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.59 2001/04/24 22:14:42 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -92,13 +92,14 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   dt = 1.0/120.0;
   ActiveEngine = -1;
 
-  Aircraft    = FDMExec->GetAircraft();
-  Translation = FDMExec->GetTranslation();
-  Rotation    = FDMExec->GetRotation();
-  Position    = FDMExec->GetPosition();
-  FCS         = FDMExec->GetFCS();
-  Output      = FDMExec->GetOutput();
-  Atmosphere  = FDMExec->GetAtmosphere();
+  Aircraft     = FDMExec->GetAircraft();
+  Translation  = FDMExec->GetTranslation();
+  Rotation     = FDMExec->GetRotation();
+  Position     = FDMExec->GetPosition();
+  FCS          = FDMExec->GetFCS();
+  Output       = FDMExec->GetOutput();
+  Atmosphere   = FDMExec->GetAtmosphere();
+  Aerodynamics = FDMExec->GetAerodynamics();
 
   RegisterVariable(FG_TIME,           " time "           );
   RegisterVariable(FG_QBAR,           " qbar "           );
@@ -190,7 +191,7 @@ float FGState::GetParameter(eParam val_idx) {
     return Rotation->GetPQR(eR);
   case FG_CL_SQRD:
     if (Translation->Getqbar() > 0.00)
-      scratch = Aircraft->GetvLastFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());
+      scratch = Aerodynamics->GetvLastFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());
     else
       scratch = 0.0;
     return scratch*scratch;					   
