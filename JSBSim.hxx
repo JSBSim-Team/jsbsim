@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.20 2001/10/31 12:37:25 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.21 2001/11/03 16:59:54 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -326,6 +326,7 @@ private:
     FGPosition*     Position;
     FGAuxiliary*    Auxiliary;
     FGAerodynamics* Aerodynamics;
+    FGGroundReactions *GroundReactions;
 
     int runcount;
     float trim_elev;
@@ -337,9 +338,11 @@ private:
     SGPropertyNode *throttle_trim;
     SGPropertyNode *aileron_trim;
     SGPropertyNode *rudder_trim;
-    SGPrpertryNode *stall_warning;
+    SGPropertyNode *stall_warning;
     
     void snap_shot(void);
+    void init_gear(void);
+    void update_gear(void);
 };
 
 

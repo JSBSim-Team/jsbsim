@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.74 2001/10/31 12:37:25 apeden Exp $
+// $Id: JSBSim.cxx,v 1.75 2001/11/03 16:59:54 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -66,17 +66,19 @@ FGJSBsim::FGJSBsim( double dt )
    
     fdmex = new FGFDMExec;
     
-    State        = fdmex->GetState();
-    Atmosphere   = fdmex->GetAtmosphere();
-    FCS          = fdmex->GetFCS();
-    MassBalance  = fdmex->GetMassBalance();
-    Propulsion   = fdmex->GetPropulsion();
-    Aircraft     = fdmex->GetAircraft();
-    Translation  = fdmex->GetTranslation();
-    Rotation     = fdmex->GetRotation();
-    Position     = fdmex->GetPosition();
-    Auxiliary    = fdmex->GetAuxiliary();
-    Aerodynamics = fdmex->GetAerodynamics();
+    State           = fdmex->GetState();
+    Atmosphere      = fdmex->GetAtmosphere();
+    FCS             = fdmex->GetFCS();
+    MassBalance     = fdmex->GetMassBalance();
+    Propulsion      = fdmex->GetPropulsion();
+    Aircraft        = fdmex->GetAircraft();
+    Translation     = fdmex->GetTranslation();
+    Rotation        = fdmex->GetRotation();
+    Position        = fdmex->GetPosition();
+    Auxiliary       = fdmex->GetAuxiliary();
+    Aerodynamics    = fdmex->GetAerodynamics();
+    GroundReactions = fdmex->GetGroundReactions();  
+  
     
     Atmosphere->UseInternal();
     
@@ -113,15 +115,17 @@ FGJSBsim::FGJSBsim( double dt )
         add_engine( FGEngInterface() );
     }  
     
-    if ( fdmex->GetGroundReactions()->GetNumGearUnits() <= 0 ) {
+    if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
-                << fdmex->GetGroundReactions()->GetNumGearUnits() );
+                << GroundReactions->GetNumGearUnits() );
         SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground trimming");
          SG_LOG( SG_FLIGHT, SG_ALERT, "routine (coming up later in the code) will core dump.");
          SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
          exit(-1);
     }
         
+    
+    init_gear();
     
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
@@ -139,8 +143,8 @@ FGJSBsim::FGJSBsim( double dt )
     rudder_trim = fgGetNode("/fdm/trim/rudder", true );
     
     
-    stall_warning = fgGetNode("/sim/stall-warning",true);
-    stall_warning->setBoolValue(false);
+    stall_warning = fgGetNode("/sim/aircraft/alarms/stall-warning",true);
+    stall_warning->setDoubleValue(0);
 }
 
 /******************************************************************************/
@@ -237,7 +241,7 @@ bool FGJSBsim::update( int multiloop ) {
       fdmex->RunIC(fgic);  //apply any changes made through the set_ functions
       //State->ReportState();
       if ( startup_trim->getBoolValue() ) {
-        cout << "num gear units = " << fdmex->GetGroundReactions()->GetNumGearUnits() << endl;
+        cout << "num gear units = " << GroundReactions->GetNumGearUnits() << endl;
         //fgic->SetSeaLevelRadiusFtIC( get_Sea_level_radius() );
         //fgic->SetTerrainAltitudeFtIC( scenery.cur_elev * SG_METER_TO_FEET );
 
@@ -274,6 +278,11 @@ bool FGJSBsim::update( int multiloop ) {
       needTrim = false;  
     }    
   
+
+    for ( i=0; i < multiloop; i++ ) {
+        fdmex->Run();
+    }
+
     for( i=0; i<get_num_engines(); i++ ) {
       FGEngInterface * e = get_engine(i);
       FGEngine * eng = Propulsion->GetEngine(i);
@@ -291,11 +300,9 @@ bool FGJSBsim::update( int multiloop ) {
     }
 
     
-    for ( i=0; i < multiloop; i++ ) {
-        fdmex->Run();
-    }
-
-    stall_warning->setBoolValue( Aircraft->GetStallWarn() );
+    update_gear();
+    
+    stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
     
     // translate JSBsim back to FG structure so that the
     // autopilot (and the rest of the sim can use the updated values
@@ -832,3 +839,37 @@ void FGJSBsim::update_Velocities_Local_Airmass (double wnorth,
         needTrim=true;
 }     
 
+void FGJSBsim::init_gear(void ) {
+    
+    FGGearInterface *gear;
+    FGGroundReactions* gr=fdmex->GetGroundReactions();
+    int Ngear=GroundReactions->GetNumGearUnits();
+    for (int i=0;i<Ngear;i++) {
+      add_gear_unit( FGGearInterface() );
+      gear=get_gear_unit(i);
+      gear->SetX( gr->GetGearUnit(i)->GetBodyLocation()(1) );
+      gear->SetY( gr->GetGearUnit(i)->GetBodyLocation()(2) );
+      gear->SetZ( gr->GetGearUnit(i)->GetBodyLocation()(3) );
+      gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
+      if ( gr->GetGearUnit(i)->GetBrakeGroup() > 0 ) {
+        gear->SetBrake(true);
+      }
+      if ( gr->GetGearUp() ) {
+        gear->SetPosition( 0.0 );
+      }    
+    }  
+}
+
+void FGJSBsim::update_gear(void) {
+    
+    FGGearInterface* gear;
+    FGGroundReactions* gr=fdmex->GetGroundReactions();
+    int Ngear=GroundReactions->GetNumGearUnits();
+    for (int i=0;i<Ngear;i++) {
+      gear=get_gear_unit(i);
+      gear->SetWoW( gr->GetGearUnit(i)->GetWOW() );
+      if ( gr->GetGearUp() ) {
+        gear->SetPosition( 0.0 );
+      }    
+    }  
+}
