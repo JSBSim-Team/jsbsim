@@ -57,7 +57,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.33 2002/09/29 13:17:10 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.34 2002/09/29 14:12:50 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,17 +155,21 @@ bool FGAuxiliary::Run()
     
     vPilotAccel.InitMatrix();   
     if ( Translation->GetVt() > 1 ) {
-      vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
-      vToEyePt *= inchtoft;
-      vPilotAccel =  Aerodynamics->GetForces() 
+       vPilotAccel =  Aerodynamics->GetForces() 
                   +  Propulsion->GetForces()
                   +  GroundReactions->GetForces();
-      vPilotAccel /= MassBalance->GetMass();
-      vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
-      vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
-      //vPilotAccel(2)*=-1;
-      vPilotAccelN = vPilotAccel/Inertial->gravity();
-    }
+       vPilotAccel /= MassBalance->GetMass();
+       vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
+       vToEyePt *= inchtoft;
+       vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
+       vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
+    } else {
+       vPilotAccel = -1*( State->GetTl2b() * Inertial->GetGravity() );
+    }   
+
+    vPilotAccelN = vPilotAccel/Inertial->gravity();
+      
+    
     earthPosAngle += State->Getdt()*Inertial->omega();
     return false;
   } else {
