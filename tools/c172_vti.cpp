@@ -66,58 +66,6 @@ INCLUDES
 #include <iomanip>
 #include <fstream>
 
-#if __BORLANDC__ > 0x540
-#include <condefs.h>
-USEUNIT("FGUtility.cpp");
-USEUNIT("FGAircraft.cpp");
-USEUNIT("FGAtmosphere.cpp");
-USEUNIT("FGAuxiliary.cpp");
-USEUNIT("FGCoefficient.cpp");
-USEUNIT("FGConfigFile.cpp");
-USEUNIT("FGEngine.cpp");
-USEUNIT("FGFCS.cpp");
-USEUNIT("FGFDMExec.cpp");
-USEUNIT("FGfdmSocket.cpp");
-USEUNIT("FGForce.cpp");
-USEUNIT("FGGroundReactions.cpp");
-USEUNIT("FGInertial.cpp");
-USEUNIT("FGInitialCondition.cpp");
-USEUNIT("FGLGear.cpp");
-USEUNIT("FGMassBalance.cpp");
-USEUNIT("FGMatrix33.cpp");
-USEUNIT("FGModel.cpp");
-USEUNIT("FGNozzle.cpp");
-USEUNIT("FGOutput.cpp");
-USEUNIT("FGPiston.cpp");
-USEUNIT("FGPosition.cpp");
-USEUNIT("FGJSBBase.cpp");
-USEUNIT("FGPropulsion.cpp");
-USEUNIT("FGRocket.cpp");
-USEUNIT("FGRotation.cpp");
-USEUNIT("FGRotor.cpp");
-USEUNIT("FGState.cpp");
-USEUNIT("FGTable.cpp");
-USEUNIT("FGTank.cpp");
-USEUNIT("FGThruster.cpp");
-USEUNIT("FGTranslation.cpp");
-USEUNIT("FGTrim.cpp");
-USEUNIT("FGTrimAxis.cpp");
-USEUNIT("FGTurboJet.cpp");
-USEUNIT("FGTurboProp.cpp");
-USEUNIT("FGTurboShaft.cpp");
-USEUNIT("FGAerodynamics.cpp");
-USEUNIT("filtersjb\FGSwitch.cpp");
-USEUNIT("filtersjb\FGFCSComponent.cpp");
-USEUNIT("filtersjb\FGFilter.cpp");
-USEUNIT("filtersjb\FGKinemat.cpp");
-USEUNIT("filtersjb\FGGain.cpp");
-USEUNIT("filtersjb\FGGradient.cpp");
-USEUNIT("filtersjb\FGSummer.cpp");
-USEUNIT("filtersjb\FGDeadBand.cpp");
-USEUNIT("FGPropeller.cpp");
-//---------------------------------------------------------------------------
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -126,7 +74,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: c172_vti.cpp,v 1.1 2001/12/17 12:35:45 apeden Exp $";
+static const char *IdSrc = "$Id: c172_vti.cpp,v 1.2 2001/12/18 22:06:56 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -142,7 +90,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: c172_vti.cpp,v 1.1 2001/12/17 12:35:45 apeden Exp $
+    @version $Id: c172_vti.cpp,v 1.2 2001/12/18 22:06:56 jberndt Exp $
     @see -
 */
 
@@ -192,7 +140,7 @@ int main(int argc, char** argv)
   FGInitialCondition* fgic = new FGInitialCondition(fdmex);
   
   //set speed, etc from reset file
-  fgic->Load("/home/tony/JSBSim-CVS/JSBSim/aircraft","c172","reset01");
+  fgic->Load("../JSBSim/aircraft","c172","reset01");
   fdmex->RunIC(fgic);
   
   //compute cyo and clo from config file cno

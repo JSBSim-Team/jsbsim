@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.42 2001/12/17 02:06:27 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.43 2001/12/18 22:06:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.42 2001/12/17 02:06:27 apeden Exp $
+    @version $Id: FGFCS.h,v 1.43 2001/12/18 22:06:55 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -146,7 +146,6 @@ CLASS DOCUMENTATION
     @see FGSwitch
     @see FGGradient
     @see FGFilter
-    @see FGFlaps
     @see FGDeadBand
 */
 
