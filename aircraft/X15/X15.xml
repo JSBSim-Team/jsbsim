@@ -3,12 +3,13 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.44 2004/05/26 12:29:58 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.45 2004/06/20 16:15:00 jberndt Exp $
 
   Function: Models an X-15
   -->
 
   <!-- MODE can be MATED or DETACHED -->
+  <!--
   <SLAVE NAME="MK-82 (Drop tank #1 stand-in)" FILE="mk82" MODE="MATED">
     XLOC 600.0
     YLOC   0.0
@@ -17,7 +18,7 @@
     YAW    0.0
     ROLL   0.0
   </SLAVE>
-
+  -->
   <METRICS>
 
     <!--

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.29 2004/05/26 12:29:54 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.30 2004/06/20 16:14:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.29 2004/05/26 12:29:54 jberndt Exp $
+    $Id: FGRocket.h,v 1.30 2004/06/20 16:14:51 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -103,8 +103,9 @@ class FGRocket : public FGEngine
 public:
   /** Constructor.
       @param exec pointer to JSBSim parent object, the FDM Executive.
-      @param Eng_cfg pointer to the config file object. */
-  FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+      @param Eng_cfg pointer to the config file object.
+      @param engine_number engine number */
+  FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number);
 
   /** Destructor */
   ~FGRocket(void);

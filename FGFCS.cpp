@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.98 2004/06/06 13:37:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.99 2004/06/20 16:14:50 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -746,7 +746,6 @@ void FGFCS::bindModel(void)
 {
   unsigned i;
   char tmp[80];
-
 
   for (i=0; i<ThrottleCmd.size(); i++) {
     snprintf(tmp,80,"fcs/throttle-cmd-norm[%u]",i);

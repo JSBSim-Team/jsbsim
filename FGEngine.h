@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.66 2004/05/26 12:29:53 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.67 2004/06/20 16:14:50 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.66 2004/05/26 12:29:53 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.67 2004/06/20 16:14:50 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,7 @@ CLASS DECLARATION
 class FGEngine : public FGJSBBase
 {
 public:
-  FGEngine(FGFDMExec* exec);
+  FGEngine(FGFDMExec* exec, int engine_number);
   virtual ~FGEngine();
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etElectric};
@@ -164,9 +164,6 @@ public:
   /// Sets engine placement information
   virtual void SetPlacement(double x, double y, double z, double pitch, double yaw);
 
-  /// Sets the engine number
-  virtual void SetEngineNumber(int nn) {EngineNumber = nn;}
-
   virtual double GetPowerAvailable(void) {return 0.0;};
 
   virtual bool GetTrimMode(void) {return TrimMode;}
@@ -184,6 +181,7 @@ public:
 protected:
   FGPropertyManager* PropertyManager;
   string Name;
+  const int   EngineNumber;
   EngineType Type;
   double X, Y, Z;
   double EnginePitch;
@@ -199,7 +197,6 @@ protected:
   double FuelNeed;
   double OxidizerNeed;
   double PctPower;
-  int   EngineNumber;
   bool  Starter;
   bool  Starved;
   bool  Running;

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.3 2004/05/26 12:29:53 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.4 2004/06/20 16:14:50 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
     zero to POWER_WATTS.  This power value (converted internally to horsepower)
     is then used by FGPropeller to apply torque to the propeller.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.3 2004/05/26 12:29:53 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.4 2004/06/20 16:14:50 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@ class FGElectric : public FGEngine
 {
 public:
   /// Constructor
-  FGElectric(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+  FGElectric(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number);
   /// Destructor
   ~FGElectric();
 

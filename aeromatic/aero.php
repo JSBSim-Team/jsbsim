@@ -15,6 +15,7 @@ $version = 0.71;
 // Updated: 16 Oct 2003, DPC - added better FCS
 // Updated:  9 Nov 2003, JSB - removed INVERT keyword and inserted "-"
 // Updated: 21 Feb 2004, DPC - added VRP, increased version to 1.61
+// Updated: 17 Jun 2004, JSB - increased version number to 1.65
 
 header("Content-type: text/plain");
 
@@ -749,7 +750,7 @@ switch($ac_type) {                   // adverse yaw
 //*                                              *
 //************************************************
 
-print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.61\" RELEASE=\"ALPHA\">\n");
+print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.65\" RELEASE=\"ALPHA\">\n");
 print("<!--\n  File:     $ac_name.xml\n");
 print("  Author:   Aero-Matic v $version\n\n");
 print("  Inputs:\n");

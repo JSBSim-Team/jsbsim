@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.40 2004/05/26 12:29:54 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.41 2004/06/20 16:14:51 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.40 2004/05/26 12:29:54 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.41 2004/06/20 16:14:51 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +142,7 @@ class FGPiston : public FGEngine
 {
 public:
   /// Constructor
-  FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+  FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number);
   /// Destructor
   ~FGPiston();
 

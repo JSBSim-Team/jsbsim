@@ -43,19 +43,19 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.2 2004/05/26 12:29:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.3 2004/06/20 16:14:50 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGElectric::FGElectric(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
+FGElectric::FGElectric(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number)
+  : FGEngine(exec, engine_number)
 {
   string token;
 
   Type = etElectric;
-  EngineNumber = 0;
   PowerWatts = 745.7;
   hptowatts = 745.7;
 

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.10 2004/05/26 12:29:54 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.11 2004/06/20 16:14:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.10 2004/05/26 12:29:54 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.11 2004/06/20 16:14:51 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,8 +139,9 @@ class FGTurbine : public FGEngine
 public:
   /** Constructor
       @param Executive pointer to executive structure
-      @param Eng_cfg pointer to engine config file instance */
-  FGTurbine(FGFDMExec* Executive, FGConfigFile* Eng_cfg);
+      @param Eng_cfg pointer to engine config file instance
+      @param engine_number engine number*/
+  FGTurbine(FGFDMExec* Executive, FGConfigFile* Eng_cfg, int engine_number);
   /// Destructor
   ~FGTurbine();
 
@@ -241,6 +242,8 @@ private:
 
   void SetDefaults(void);
   bool Load(FGConfigFile *ENG_cfg);
+  void bindmodel(void);
+  void unbind(void);
   void Debug(int from);
 
 };

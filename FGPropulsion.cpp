@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.111 2004/06/14 11:44:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.112 2004/06/20 16:14:51 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -108,7 +108,7 @@ bool FGPropulsion::Run(void)
 
   for (unsigned int i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( dt * rate );
-  }     
+  }
 
   if (refuel) DoRefuel( dt * rate );
 
@@ -231,20 +231,20 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         ThrottleAdded = true;
 
         if (engType == "FG_ROCKET") {
-          Engines.push_back(new FGRocket(FDMExec, Cfg_ptr));
+          Engines.push_back(new FGRocket(FDMExec, Cfg_ptr, numEngines));
         } else if (engType == "FG_PISTON") {
-          Engines.push_back(new FGPiston(FDMExec, Cfg_ptr));
+          Engines.push_back(new FGPiston(FDMExec, Cfg_ptr, numEngines));
         } else if (engType == "FG_TURBINE") {
-          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
+          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr, numEngines));
         } else if (engType == "FG_SIMTURBINE") {
           cerr << endl;
           cerr << "The FG_SIMTURBINE engine type has been renamed to FG_TURBINE." << endl;
           cerr << "To fix this problem, simply replace the FG_SIMTURBINE name " << endl;
           cerr << "in your engine file to FG_TURBINE." << endl;
           cerr << endl;
-          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
+          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr, numEngines));
         } else if (engType == "FG_ELECTRIC") {
-          Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
+          Engines.push_back(new FGElectric(FDMExec, Cfg_ptr, numEngines));
         } else {
           cerr << fgred << "    Unrecognized engine type: " << underon << engType
                     << underoff << " found in config file." << fgdef << endl;
@@ -281,7 +281,6 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         }
 
         Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, Pitch, Yaw);
-        Engines[numEngines]->SetEngineNumber(numEngines);
         numEngines++;
 
       } else {
@@ -328,7 +327,7 @@ string FGPropulsion::GetPropulsionStrings(void)
     if (firstime)  firstime = false;
     else           PropulsionStrings += ", ";
 
-    PropulsionStrings += Engines[i]->GetEngineLabels() + ", ";
+    PropulsionStrings += Engines[i]->GetEngineLabels();
   }
 
   return PropulsionStrings;
@@ -345,7 +344,7 @@ string FGPropulsion::GetPropulsionValues(void)
     if (firstime)  firstime = false;
     else           PropulsionValues += ", ";
 
-    PropulsionValues += Engines[i]->GetEngineValues() + ", ";
+    PropulsionValues += Engines[i]->GetEngineValues();
   }
 
   return PropulsionValues;
@@ -494,7 +493,7 @@ void FGPropulsion::DoRefuel(double time_slice)
       if (Tanks[i]->GetPctFull() < 99.99)
           Transfer(-1, i, fillrate/TanksNotFull);
     }
-  }      
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

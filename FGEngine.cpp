@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.68 2004/06/14 11:44:04 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.69 2004/06/20 16:14:50 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGEngine::FGEngine(FGFDMExec* exec)
+FGEngine::FGEngine(FGFDMExec* exec, int engine_number) : EngineNumber(engine_number)
 {
   Name = "";
   Type = etUnknown;
@@ -84,7 +84,6 @@ FGEngine::FGEngine(FGFDMExec* exec)
   FuelNeed = OxidizerNeed = 0.0;
   Starved = Running = Cranking = false;
   PctPower = 0.0;
-  EngineNumber = -1;
   TrimMode = false;
   FuelFlow_gph = 0.0;
   FuelFlow_pph = 0.0;
@@ -124,7 +123,7 @@ void FGEngine::ConsumeFuel(void)
 
   if (TrimMode) return;
   Fshortage = Oshortage = TanksWithFuel = 0.0;
- 
+
   // count how many assigned tanks have fuel
   for (unsigned int i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);

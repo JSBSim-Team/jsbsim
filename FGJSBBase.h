@@ -61,6 +61,7 @@ SG_USING_STD(string);
 #    include <math.h>
 #  else
 #    include <cmath>
+#    include <math>
 #  endif
 
 using std::string;
@@ -79,7 +80,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.60 2004/06/02 18:50:55 dpculp Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.61 2004/06/20 16:14:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.60 2004/06/02 18:50:55 dpculp Exp $
+    @version $Id: FGJSBBase.h,v 1.61 2004/06/20 16:14:50 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +199,6 @@ public:
   static double CelsiusToFahrenheit (double celsius) {
     return celsius * 1.8 + 32.0;
   }
-
 
   /** Finite precision comparison.
       @param a first value to compare

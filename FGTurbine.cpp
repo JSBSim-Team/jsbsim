@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.13 2004/06/07 01:28:51 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.14 2004/06/20 16:14:51 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGTurbine::FGTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
+FGTurbine::FGTurbine(FGFDMExec* exec, FGConfigFile* cfg, int engine_number)
+  : FGEngine(exec, engine_number)
 {
   SetDefaults();
 
@@ -66,6 +67,7 @@ FGTurbine::FGTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 
 FGTurbine::~FGTurbine()
 {
+  unbind();
   Debug(1);
 }
 
@@ -402,6 +404,7 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
   OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
   IdleFF = pow(MilThrust, 0.2) * 107.0;  // just an estimate
 
+  bindmodel();
   return true;
 }
 
@@ -429,6 +432,30 @@ string FGTurbine::GetEngineValues(void)
       << Thruster->GetThrusterValues(EngineNumber);
 
   return buf.str();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTurbine::bindmodel()
+{
+  char property_name[80];
+
+  snprintf(property_name, 80, "propulsion/n1[%u]", EngineNumber);
+  PropertyManager->Tie( property_name, &N1);
+  snprintf(property_name, 80, "propulsion/n2[%u]", EngineNumber);
+  PropertyManager->Tie( property_name, &N2);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTurbine::unbind()
+{
+  char property_name[80];
+
+  snprintf(property_name, 80, "propulsion/n1[%u]", EngineNumber);
+  PropertyManager->Untie(property_name);
+  snprintf(property_name, 80, "propulsion/n2[%u]", EngineNumber);
+  PropertyManager->Untie(property_name);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,14 +44,15 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.44 2004/06/18 03:35:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.45 2004/06/20 16:14:51 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
+FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number)
+  : FGEngine(exec, engine_number)
 {
   string token;
 
@@ -73,7 +74,6 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 
   Debug(0);
 
-  EngineNumber = 0;
   Type = etRocket;
   Flameout = false;
 
