@@ -32,7 +32,6 @@ libJSBSim_a_SOURCES = \
 	FGColumnVector4.h \
 	FGConfigFile.cpp \
 	FGConfigFile.h \
-	FGDefs.h \
 	FGEngine.cpp \
 	FGEngine.h \
 	FGFactorGroup.cpp \
