@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.10 2000/05/07 15:44:41 jsb Exp $
+// $Id: JSBSim.cxx,v 1.11 2000/05/11 11:20:56 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -34,7 +34,7 @@
 #include <simgear/math/fg_geodesy.hxx>
 #include <simgear/misc/fgpath.hxx>
 
-#include <scenery/scenery.hxx>
+#include <Scenery/scenery.hxx>
 
 #include <Aircraft/aircraft.hxx>
 #include <Controls/controls.hxx>
@@ -51,6 +51,7 @@
 #include <FDM/JSBsim/FGDefs.h>
 #include <FDM/JSBsim/FGInitialCondition.h>
 #include <FDM/JSBsim/FGTrimLong.h>
+#include <FDM/JSBsim/FGAtmosphere.h>
 
 #include "JSBsim.hxx"
 
@@ -66,6 +67,8 @@ extern double globalSeaLevelRadius;
 
 int FGJSBsim::init( double dt ) {
 
+
+
   FG_LOG( FG_FLIGHT, FG_INFO, "Starting and initializing JSBsim" );
   FG_LOG( FG_FLIGHT, FG_INFO, "  created FDMExec" );
 
@@ -78,36 +81,69 @@ int FGJSBsim::init( double dt ) {
   FDMExec.GetState()->Setdt( dt );
 
   FDMExec.GetAircraft()->LoadAircraft( aircraft_path.str(),
-         engine_path.str(),
-         current_options.get_aircraft() );
+                                       engine_path.str(),
+                                       current_options.get_aircraft() );
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft" <<
-    current_options.get_aircraft() );
-  
-  FDMExec.GetAtmosphere()->useExternal(false);
-  
-  FG_LOG( FG_FLIGHT, FG_INFO, "Initializing JSBsim with:" );
-  FG_LOG( FG_FLIGHT, FG_INFO, "    U: " <<  current_options.get_uBody() );
-  FG_LOG( FG_FLIGHT, FG_INFO, "    V: " <<  current_options.get_vBody() );
-  FG_LOG( FG_FLIGHT, FG_INFO, "    W: " <<  current_options.get_wBody() );
-  FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi() );
-  FG_LOG( FG_FLIGHT, FG_INFO, "theta: " <<  get_Theta() );
+          current_options.get_aircraft() );
+
+  FDMExec.GetAtmosphere()->UseInternal();
+
+  FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBsim with:" );
+
+  FGInitialCondition *fgic = new FGInitialCondition(&FDMExec);
+  fgic->SetAltitudeFtIC(get_Altitude());
+  if((current_options.get_mach() < 0) && (current_options.get_vc() < 0 )) {
+    fgic->SetUBodyFpsIC(current_options.get_uBody());
+    fgic->SetVBodyFpsIC(current_options.get_vBody());
+    fgic->SetWBodyFpsIC(current_options.get_wBody());
+    FG_LOG(FG_FLIGHT,FG_INFO, "  U,V,W= " << current_options.get_uBody()
+           << ", " << current_options.get_vBody()
+           << ", " << current_options.get_wBody());
+  } else if (current_options.get_vc() < 0) {
+    fgic->SetMachIC(current_options.get_mach());
+    FG_LOG(FG_FLIGHT,FG_INFO, "  mach: " << current_options.get_mach() );
+  } else {
+    fgic->SetVcalibratedKtsIC(current_options.get_vc());
+    FG_LOG(FG_FLIGHT,FG_INFO, "  vc: " << current_options.get_vc() );
+    //this should cover the case in which no speed switches are used
+    //current_options.get_vc() will return zero by default
+  }
+
+  fgic->SetRollAngleRadIC(get_Phi());
+  fgic->SetPitchAngleRadIC(get_Theta());
+  fgic->SetHeadingRadIC(get_Psi());
+  fgic->SetLatitudeRadIC(get_Latitude());
+  fgic->SetLongitudeRadIC(get_Longitude());
+
+
+  FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi());
+  FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  psi: " <<  get_Psi() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  lat: " <<  get_Latitude() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  lon: " <<  get_Longitude() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  alt: " <<  get_Altitude() );
 
-  FDMExec.GetState()->Initialize(
-    current_options.get_uBody(),
-    current_options.get_vBody(),
-    current_options.get_wBody(),
-    get_Phi(),
-    get_Theta(),
-    get_Psi(),
-    get_Latitude(),
-    get_Longitude(),
-    get_Altitude()
-  );
+  if(current_options.get_trim_mode() == true) {
+    FG_LOG( FG_FLIGHT, FG_INFO, "  Starting trim..." );
+    FGTrimLong *fgtrim=new FGTrimLong(&FDMExec,fgic);
+    fgtrim->DoTrim();
+    fgtrim->Report();
+    fgtrim->TrimStats();
+    fgtrim->ReportState();
+    controls.set_elevator(FDMExec.GetFCS()->GetDeCmd());
+    for(int i=0;i<FDMExec.GetAircraft()->GetNumEngines();i++) {
+      controls.set_throttle(i,FDMExec.GetFCS()->GetThrottleCmd(i)/100);
+    }
+    delete fgtrim;
+    FG_LOG( FG_FLIGHT, FG_INFO, "  Trim complete." );
+  } else {
+    FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing without trim" );
+    FDMExec.GetState()->Initialize(fgic);
+
+  }
+
+  delete fgic;
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  loaded initial conditions" );
 
@@ -139,22 +175,22 @@ int FGJSBsim::update( int multiloop ) {
 
   FDMExec.GetFCS()->SetDaCmd( controls.get_aileron());
   FDMExec.GetFCS()->SetDeCmd( controls.get_elevator()
-                                             + controls.get_elevator_trim() );
+                              + controls.get_elevator_trim() );
   FDMExec.GetFCS()->SetDrCmd( controls.get_rudder());
   FDMExec.GetFCS()->SetDfCmd( 0.0 );
   FDMExec.GetFCS()->SetDsbCmd( 0.0 );
   FDMExec.GetFCS()->SetDspCmd( 0.0 );
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
-                                         controls.get_throttle( 0 ) * 100.0 );
+                                    controls.get_throttle( 0 ) * 100.0 );
   FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
-                                         controls.get_throttle( 0 ) * 100.0 );
+                                    controls.get_throttle( 0 ) * 100.0 );
   // FCS->SetBrake( controls.get_brake( 0 ) );
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
   FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude());
-  
-  FDMExec.GetAtmosphere()->SetExTemperature(get_Static_Temperature());
-  FDMExec.GetAtmosphere()->SetExPressure(get_Static_Pressure());
+
+  FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
+  FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
   FDMExec.GetAtmosphere()->SetExDensity(get_Density());
   FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
                                       get_V_east_airmass(),
@@ -204,8 +240,8 @@ int FGJSBsim::copy_from_JSBsim() {
   // Velocities
 
   set_Velocities_Local( FDMExec.GetPosition()->GetVn(),
-      FDMExec.GetPosition()->GetVe(),
-      FDMExec.GetPosition()->GetVd() );
+                        FDMExec.GetPosition()->GetVe(),
+                        FDMExec.GetPosition()->GetVd() );
 
   set_V_equiv_kts( FDMExec.GetAuxiliary()->GetVequivalentKTS() );
 
@@ -214,12 +250,12 @@ int FGJSBsim::copy_from_JSBsim() {
   set_V_calibrated_kts( FDMExec.GetAuxiliary()->GetVcalibratedKTS() );
 
   set_Omega_Body( FDMExec.GetState()->GetParameter(FG_ROLLRATE),
-      FDMExec.GetState()->GetParameter(FG_PITCHRATE),
-      FDMExec.GetState()->GetParameter(FG_YAWRATE) );
+                  FDMExec.GetState()->GetParameter(FG_PITCHRATE),
+                  FDMExec.GetState()->GetParameter(FG_YAWRATE) );
 
   set_Euler_Rates( FDMExec.GetRotation()->Getphi(),
-       FDMExec.GetRotation()->Gettht(),
-       FDMExec.GetRotation()->Getpsi() );
+                   FDMExec.GetRotation()->Gettht(),
+                   FDMExec.GetRotation()->Getpsi() );
 
   // ***FIXME*** set_Geocentric_Rates( Latitude_dot, Longitude_dot, Radius_dot );
 
@@ -233,31 +269,33 @@ int FGJSBsim::copy_from_JSBsim() {
   double lat_geod, tmp_alt, sl_radius1, sl_radius2, tmp_lat_geoc;
 
   fgGeocToGeod( lat_geoc, EQUATORIAL_RADIUS_M + alt * FEET_TO_METER,
-    &lat_geod, &tmp_alt, &sl_radius1 );
+                &lat_geod, &tmp_alt, &sl_radius1 );
   fgGeodToGeoc( lat_geod, alt * FEET_TO_METER, &sl_radius2, &tmp_lat_geoc );
 
   FG_LOG( FG_FLIGHT, FG_DEBUG, "lon = " << lon << " lat_geod = " << lat_geod
-    << " lat_geoc = " << lat_geoc
-    << " alt = " << alt << " tmp_alt = " << tmp_alt * METER_TO_FEET
-    << " sl_radius1 = " << sl_radius1 * METER_TO_FEET
-    << " sl_radius2 = " << sl_radius2 * METER_TO_FEET
-    << " Equator = " << EQUATORIAL_RADIUS_FT );
+          << " lat_geoc = " << lat_geoc
+          << " alt = " << alt << " tmp_alt = " << tmp_alt * METER_TO_FEET
+          << " sl_radius1 = " << sl_radius1 * METER_TO_FEET
+          << " sl_radius2 = " << sl_radius2 * METER_TO_FEET
+          << " Equator = " << EQUATORIAL_RADIUS_FT );
 
   set_Geocentric_Position( lat_geoc, lon,
-           sl_radius2 * METER_TO_FEET + alt );
+                           sl_radius2 * METER_TO_FEET + alt );
   set_Geodetic_Position( lat_geod, lon, alt );
   set_Euler_Angles( FDMExec.GetRotation()->Getphi(),
-        FDMExec.GetRotation()->Gettht(),
-        FDMExec.GetRotation()->Getpsi() );
+                    FDMExec.GetRotation()->Gettht(),
+                    FDMExec.GetRotation()->Getpsi() );
 
   set_Alpha( FDMExec.GetTranslation()->Getalpha() );
   set_Beta( FDMExec.GetTranslation()->Getbeta() );
 
-  set_Gamma_vert_rad( FDMExec.GetPosition->GetGamma() );
+  set_Gamma_vert_rad( FDMExec.GetPosition()->GetGamma() );
   // set_Gamma_horiz_rad( Gamma_horiz_rad );
 
-  /* **FIXME*** */ set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
-  /* **FIXME*** */ set_Earth_position_angle( 0.0 );
+  /* **FIXME*** */
+  set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
+  /* **FIXME*** */
+  set_Earth_position_angle( 0.0 );
 
   // /* ***FIXME*** */ set_Runway_altitude( 0.0 );
 
