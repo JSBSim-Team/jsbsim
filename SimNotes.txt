@@ -28,4 +28,7 @@ Input type (pilot, A/P, or fcs path) might be tracked by a parameter in
 the component such as component_type, or something.
 
 =========================================================================|
+3 : JSB : 4/19/00 : fcs
 
+Need a way to do initialization of filters in the FCS so there are no
+spikes.

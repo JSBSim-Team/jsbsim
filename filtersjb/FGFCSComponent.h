@@ -72,7 +72,6 @@ protected:
   string Name;
   enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopilot inputs
   int ID;
-  int QueueOrder;
   int InputIdx;
   float Input;
   string sOutputIdx;

@@ -54,7 +54,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 {
   Type       = "";
   ID         = 0;
-  QueueOrder = 0;
   Input      = 0.0;
   InputIdx   = 0;
   Output     = 0.0;

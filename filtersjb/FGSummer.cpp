@@ -67,8 +67,6 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;
-    } else if (token == "QUEUE_ORDER") {
-      *AC_cfg >> QueueOrder;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {

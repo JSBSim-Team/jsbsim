@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 
  Module:       FGFilter.cpp
@@ -55,6 +54,8 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
+  AC_cfg->GetNextConfigLine();
+  
 }
 
 // *****************************************************************************
