@@ -176,7 +176,9 @@ float FGEngine::CalcPistonThrust(void) {
     v=10;
   if(h < 0)
     h=0;
+  
   pa=(SpeedSlope*v + SpeedIntercept)*(1 +AltitudeSlope*h)*BrakeHorsePower;
+  
   Thrust= Throttle*(pa*HPTOFTLBSSEC)/v;
 
   return Thrust;

@@ -78,30 +78,14 @@ public:
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurboProp, etTurboJet};
 
-  float  GetThrottle(void) {
-    return Throttle;
-  }
-  float  GetThrust(void) {
-    return Thrust;
-  }
-  float  GetThrottleMin(void) {
-    return MinThrottle;
-  }
-  float  GetThrottleMax(void) {
-    return MaxThrottle;
-  }
-  bool   GetStarved(void) {
-    return Starved;
-  }
-  bool   GetFlameout(void) {
-    return Flameout;
-  }
-  int    GetType(void) {
-    return Type;
-  }
-  string GetName() {
-    return Name;
-  }
+  float  GetThrottle(void) { return Throttle; }
+  float  GetThrust(void) { return Thrust; }
+  float  GetThrottleMin(void) { return MinThrottle; }
+  float  GetThrottleMax(void) { return MaxThrottle; }
+  bool   GetStarved(void) { return Starved; }
+  bool   GetFlameout(void) { return Flameout; }
+  int    GetType(void) { return Type; }
+  string GetName() { return Name; }
 
   void SetStarved(bool tt) {
     Starved = tt;
