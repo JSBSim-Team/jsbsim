@@ -116,6 +116,8 @@ FGColumnVector FGLGear::Force(void)
     vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
     vWhlVelVec(eZ)  =  0.00;
 
+// the following needs work regarding friction coefficients and braking and steering
+
     vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
     vLocalForce(eX) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eX);
     vLocalForce(eY) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eY);
