@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.8 2002/02/15 23:14:18 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.9 2002/02/28 12:15:35 apeden Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,6 +55,8 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   Detents.clear();
   TransitionTimes.clear();
+  
+  OutputPct=0;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -106,7 +108,7 @@ bool FGKinemat::Run(void ) {
   FGFCSComponent::Run(); // call the base class for initialization of Input
   InputCmd = Input*Detents[NumDetents-1];
   OutputPos = fcs->GetState()->GetParameter(OutputIdx);
-
+  
   if(InputCmd < Detents[0]) {
     fi=0;
     InputCmd=Detents[0];
@@ -128,6 +130,7 @@ bool FGKinemat::Run(void ) {
 
         InTransit=1;
       }
+      //cout << "FGKinemat::Run, InTransit: " << InTransit << endl;
       if(InTransit) {
 
         //fprintf(stderr,"InputCmd: %g, OutputPos: %g\n",InputCmd,OutputPos);
@@ -140,15 +143,18 @@ bool FGKinemat::Run(void ) {
             output_transit_rate=(Detents[fi] - Detents[fi-1])/TransitionTimes[fi];
           else
             output_transit_rate=(Detents[fi] - Detents[fi-1])/5;
+          //cout << "FGKinemat::Run, output_transit_rate: " << output_transit_rate << endl;  
         } else {
           if(TransitionTimes[fi+1] > 0)
             output_transit_rate=(Detents[fi] - Detents[fi+1])/TransitionTimes[fi+1];
           else
             output_transit_rate=(Detents[fi] - Detents[fi+1])/5;
         }
-        if(fabs(OutputPos - InputCmd) > fabs(dt*output_transit_rate) )
+        if(fabs(OutputPos - InputCmd) > fabs(dt*output_transit_rate) ) {
           OutputPos+=output_transit_rate*dt;
-        else {
+          //cout << "FGKinemat::Run, OutputPos: " << OutputPos 
+          //     << " dt: " << dt << endl;
+        } else {
           InTransit=0;
           OutputPos=InputCmd;
         }
@@ -157,7 +163,11 @@ bool FGKinemat::Run(void ) {
     lastInputCmd = InputCmd;
     Output = OutputPos;
   }
-
+  
+  if( Detents[NumDetents-1] > 0 ) {
+    OutputPct = Output / Detents[NumDetents-1];
+  }
+  
   if (IsOutput) SetOutput();
 
   return true;

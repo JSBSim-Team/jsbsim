@@ -57,7 +57,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.18 2002/02/27 14:25:05 apeden Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.19 2002/02/28 12:15:35 apeden Exp $"
 
 class FGFCS;
 
@@ -71,10 +71,8 @@ public:
   FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGGain();
   
-  double GetMin(void) { return Min; };
-  double GetMax(void) { return Max; };
-  double GetGain(void) { return Gain; };
-
+  double GetOutputPct() { return OutputPct; }
+  
   bool Run (void);
 
 private:
@@ -83,6 +81,7 @@ private:
   FGState* State;
   double Gain;
   double Min, Max;
+  double OutputPct;
   bool invert;
   int Rows;
   eParam ScheduledBy;

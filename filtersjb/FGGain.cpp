@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.37 2002/02/27 14:25:05 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.38 2002/02/28 12:15:35 apeden Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,6 +58,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Gain = 1.000;
   Rows = 0;
   Min = Max = 0.0;
+  OutputPct=0;
   invert=false;
   ScheduledBy = FG_UNDEF;
 
@@ -134,9 +135,11 @@ bool FGGain::Run(void )
     Output = Gain * SchedGain * Input;
   } else if (Type == "AEROSURFACE_SCALE") {
     if(!invert) {
+      OutputPct = Input;
       if (Input >= 0.0) Output = Input * Max;
       else Output = Input * -Min;
     } else {
+      OutputPct=-1*Input;
       if (Input <= 0.0) Output = Input * -Max;
       else Output = Input * Min;
     } 

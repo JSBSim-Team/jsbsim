@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.30 2002/02/27 14:25:05 apeden Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.31 2002/02/28 12:15:35 apeden Exp $"
 
 using std::string;
 
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.30 2002/02/27 14:25:05 apeden Exp $
+    @version $Id: FGFCSComponent.h,v 1.31 2002/02/28 12:15:35 apeden Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -103,9 +103,7 @@ public:
   inline int GetOutputIdx(void) { return OutputIdx; }
   inline string GetName(void) {return Name;}
   inline string GetType(void) { return Type; }
-  virtual double GetMin(void) { return -1; }
-  virtual double GetMax(void) { return 1; }
-  virtual double GetGain(void) { return 1; }
+  virtual double GetOutputPct(void) { return 0; }
 
 protected:
    /// Pilot/Aircraft, FCS, Autopilot inputs
