@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.22 2001/12/28 17:35:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -82,7 +82,7 @@ public:
   bool Load(FGConfigFile* AC_cfg);
 
   /// Subsystem types for specifying which will be output in the FDM data logging
-  enum  SubSystems {
+  enum  eSubSystems {
     /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
     /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
     /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
