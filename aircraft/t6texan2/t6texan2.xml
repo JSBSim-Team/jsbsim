@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        t6texan2.xml
   Author:      David Culp
-  CVS Version: $Id: t6texan2.xml,v 1.5 2004/02/14 09:58:47 ehofman Exp $
+  CVS Version: $Id: t6texan2.xml,v 1.6 2004/05/01 12:55:02 dpculp Exp $
 
   Function: Models a Raytheon T-6A Texan II trainer
 -->
@@ -23,6 +23,7 @@
     AC_CGLOC      188.8   0.0   0.0
     AC_AERORP     188.8   0.0   0.0
     AC_EYEPTLOC   120.1   0.0  29.8
+    AC_VRP  0 0 0
   </METRICS>
   <UNDERCARRIAGE>
     <!--
@@ -47,7 +48,7 @@
   </UNDERCARRIAGE>
 
   <PROPULSION>
-    <AC_ENGINE FILE="PT6A-68_sim">
+    <AC_ENGINE FILE="PT6A-68">
       XLOC       12.0
       YLOC        0.0
       ZLOC        0.0
