@@ -132,7 +132,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.71 2002/04/02 05:40:49 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.72 2002/09/07 22:05:34 apeden Exp $";
 
 string ScriptName;
 string AircraftName;
@@ -161,7 +161,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.71 2002/04/02 05:40:49 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.72 2002/09/07 22:05:34 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Source File </a>
 */
@@ -199,13 +199,13 @@ int main(int argc, char* argv[])
 
   } else if (!AircraftName.empty() || !ResetName.empty()) {        // form jsbsim <acname> <resetfile>
 
-    if ( ! FDMExec->LoadModel("aircraft", "engine", AircraftName)) {
+    if ( ! FDMExec->LoadModel("aircraft", "engine",AircraftName)) {
     	cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
     }
-
-    FGInitialCondition IC(FDMExec);
-    if ( ! IC.Load("aircraft",AircraftName,ResetName)) {
+    
+    FGInitialCondition *IC=FDMExec->GetIC();
+    if ( ! IC->Load(ResetName)) {
     	cerr << "Initialization unsuccessful" << endl;
       exit(-1);
     }

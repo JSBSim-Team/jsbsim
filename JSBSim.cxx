@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.124 2002/06/08 01:31:18 apeden Exp $
+// $Id: JSBSim.cxx,v 1.125 2002/09/07 22:05:34 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -87,7 +87,7 @@ FGJSBsim::FGJSBsim( double dt )
     Aerodynamics    = fdmex->GetAerodynamics();
     GroundReactions = fdmex->GetGroundReactions(); 
     
-    fgic=new FGInitialCondition(fdmex);
+    fgic=fdmex->GetIC();
     needTrim=true;
   
     SGPath aircraft_path( globals->get_fg_root() );
