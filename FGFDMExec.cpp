@@ -64,8 +64,20 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.21 2000/12/29 23:34:16 jsb Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.22 2001/01/02 12:40:14 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
+
+char highint[5]  = {27, '[', '1', 'm', '\0'      };
+char halfint[5]  = {27, '[', '2', 'm', '\0'      };
+char normint[6]  = {27, '[', '2', '2', 'm', '\0' };
+char reset[5]    = {27, '[', '0', 'm', '\0'      };
+char underon[5]  = {27, '[', '4', 'm', '\0'      };
+char underoff[6] = {27, '[', '2', '4', 'm', '\0' };
+char fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
+char fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
+char fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
+char fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
+char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -92,13 +104,13 @@ FGFDMExec::FGFDMExec(void)
   terminate = false;
   frozen = false;
   modelLoaded = false;
-  
-  Allocate();
 
-  cout << "\n\nJSBSim Flight Dynamics Model v" << JSBSIM_VERSION << endl;
-  cout << "  requires models to comply with config file spec v" <<
-                                                  NEEDED_CFG_VERSION << "\n\n";
-  cout << "  JSBSim startup beginning ...\n\n";						  
+  cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
+                                 << JSBSIM_VERSION << underoff << normint << endl;
+  cout << halfint << "            [cfg file spec v" << NEEDED_CFG_VERSION << "]\n\n";
+  cout << normint << "JSBSim startup beginning ...\n\n";
+
+  Allocate();
 }
 
 FGFDMExec::~FGFDMExec(void) {
@@ -106,9 +118,9 @@ FGFDMExec::~FGFDMExec(void) {
 }
 
 bool FGFDMExec::Allocate(void) {
-  
+
   bool result=true;
-  
+
   Atmosphere  = new FGAtmosphere(this);
   FCS         = new FGFCS(this);
   Propulsion  = new FGPropulsion(this);
@@ -123,18 +135,36 @@ bool FGFDMExec::Allocate(void) {
 
   // Initialize models so they can communicate with each other
 
-  if (!Atmosphere->InitModel()) {cerr << "Atmosphere model init failed"; Error+=1;}
-  if (!FCS->InitModel())        {cerr << "FCS model init failed"; Error+=2;}
-  if (!Propulsion->InitModel()) {cerr << "FGPropulsion model init failed"; Error+=4;}
-  if (!Aircraft->InitModel())   {cerr << "Aircraft model init failed"; Error+=8;}
-  if (!Translation->InitModel()){cerr << "Translation model init failed"; Error+=16;}
-  if (!Rotation->InitModel())   {cerr << "Rotation model init failed"; Error+=32;}
-  if (!Position->InitModel())   {cerr << "Position model init failed"; Error+=64;}
-  if (!Auxiliary->InitModel())  {cerr << "Auxiliary model init failed"; Error+=128;}
-  if (!Output->InitModel())     {cerr << "Output model init failed"; Error+=256;}
-  
+  if (!Atmosphere->InitModel()) {
+    cerr << fgred << "Atmosphere model init failed" << fgdef << endl;
+    Error+=1;}
+  if (!FCS->InitModel())        {
+    cerr << fgred << "FCS model init failed" << fgdef << endl;
+    Error+=2;}
+  if (!Propulsion->InitModel()) {
+    cerr << fgred << "FGPropulsion model init failed" << fgdef << endl;
+    Error+=4;}
+  if (!Aircraft->InitModel())   {
+    cerr << fgred << "Aircraft model init failed" << fgdef << endl;
+    Error+=8;}
+  if (!Translation->InitModel()){
+    cerr << fgred << "Translation model init failed" << fgdef << endl;
+    Error+=16;}
+  if (!Rotation->InitModel())   {
+    cerr << fgred << "Rotation model init failed" << fgdef << endl;
+    Error+=32;}
+  if (!Position->InitModel())   {
+    cerr << fgred << "Position model init failed" << fgdef << endl;
+    Error+=64;}
+  if (!Auxiliary->InitModel())  {
+    cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
+    Error+=128;}
+  if (!Output->InitModel())     {
+    cerr << fgred << "Output model init failed" << fgdef << endl;
+    Error+=256;}
+
   if (Error > 0) result = false;
-  
+
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
@@ -148,14 +178,14 @@ bool FGFDMExec::Allocate(void) {
   Schedule(Position,    1);
   Schedule(Auxiliary,   1);
   Schedule(Output,     1);
-  
+
   modelLoaded = false;
 
   return result;
 }
 
 bool FGFDMExec::DeAllocate(void) {
- 
+
   if ( Atmosphere != 0 )  delete Atmosphere;
   if ( FCS != 0 )         delete FCS;
   if ( Propulsion != 0)   delete Propulsion;
@@ -240,7 +270,7 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
   State->Resume();
   return true;
 }
-  
+
 
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
@@ -256,10 +286,12 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
   if (result) {
     modelLoaded = true;
   } else {
-    cerr << "FGFDMExec: Failed to load aircraft and/or engine model" << endl;
+    cerr << fgred
+      << "FGFDMExec: Failed to load aircraft and/or engine model"
+      << fgdef << endl;
   }
 
-  cout << "\n\nJSBSim startup complete\n\n";						  
+  cout << "\n\nJSBSim startup complete\n\n";
   return result;
 }
 

@@ -50,8 +50,20 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.19 2000/11/13 12:41:40 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.20 2001/01/02 12:40:13 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
+
+extern char highint[5];
+extern char halfint[5];
+extern char normint[6];
+extern char reset[5];
+extern char underon[5];
+extern char underoff[6];
+extern char fgblue[6];
+extern char fgcyan[6];
+extern char fgred[6];
+extern char fggreen[6];
+extern char fgdef[6];
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -64,12 +76,12 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
   string multparms;
   char nullstring[13] = "            ";
   
-  bias =0.0;
+  bias = 0.0;
   gain = 1.0;
   
-  FDMExec     = fdex;
-  State       = FDMExec->GetState();
-  Table = 0;
+  FDMExec = fdex;
+  State   = FDMExec->GetState();
+  Table   = 0;
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
@@ -78,22 +90,7 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
 
-    char bolden[5];
-    char unbolden[5];
-
-    bolden[0] = 27;
-    bolden[1] = '[';
-    bolden[2] = '1';
-    bolden[3] = 'm';
-    bolden[4] = '\0';
-
-    unbolden[0] = 27;
-    unbolden[1] = '[';
-    unbolden[2] = '0';
-    unbolden[3] = 'm';
-    unbolden[4] = '\0';
-
-    cout << "   " << bolden << name << unbolden << endl;
+    cout << "\n   " << highint << underon << name << underoff << normint << endl;
     cout << "   " << description << endl;
     cout << "   " << method << endl;
 

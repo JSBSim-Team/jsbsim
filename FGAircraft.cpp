@@ -137,8 +137,20 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.54 2000/12/29 23:34:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.55 2001/01/02 12:40:13 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
+
+extern char highint[5];
+extern char halfint[5];
+extern char normint[6];
+extern char reset[5];
+extern char underon[5];
+extern char underoff[6];
+extern char fgblue[6];
+extern char fgcyan[6];
+extern char fgred[6];
+extern char fggreen[6];
+extern char fgdef[6];
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -222,21 +234,22 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   while ((AC_cfg.GetNextConfigLine() != "EOF") &&
          (token = AC_cfg.GetValue()) != "/FDM_CONFIG") {
     if (token == "METRICS") {
-      cout << "\n  Reading Metrics" << endl;
+      cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
       ReadMetrics(&AC_cfg);
     } else if (token == "AERODYNAMICS") {
-      cout << "\n  Reading Aerodynamics" << endl;
+      cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
       ReadAerodynamics(&AC_cfg);
     } else if (token == "UNDERCARRIAGE") {
-      cout << "\n  Reading Landing Gear" << endl;
+      cout << fgcyan << "\n  Reading Landing Gear" << fgdef << endl;
       ReadUndercarriage(&AC_cfg);
     } else if (token == "PROPULSION") {
-      cout << "\n  Reading Propulsion" << endl;
+      cout << fgcyan << "\n  Reading Propulsion" << fgdef << endl;
       ReadPropulsion(&AC_cfg);
     } else if (token == "FLIGHT_CONTROL") {
-      cout << "\n  Reading Flight Control" << endl;
+      cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
       ReadFlightControls(&AC_cfg);
     } else if (token == "OUTPUT") {
+      cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;
       ReadOutput(&AC_cfg);
     }
   }
@@ -622,16 +635,18 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   string token = AC_cfg->GetValue();
   string scratch;
   AircraftName = AC_cfg->GetValue("NAME");
-  cout << "Reading Aircraft Configuration File: " << AircraftName << endl;
-  scratch=AC_cfg->GetValue("VERSION").c_str();
+  cout << underon << "Reading Aircraft Configuration File" << underoff << ": "
+                       << highint << AircraftName << normint << endl;
+  scratch = AC_cfg->GetValue("VERSION").c_str();
 
   CFGVersion = AC_cfg->GetValue("VERSION");
-  cout << "                            Version: " << CFGVersion << endl;
+  cout << "                            Version: " << highint << CFGVersion
+                                                             << normint << endl;
   if (CFGVersion != NEEDED_CFG_VERSION) {
-    cout << endl << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
+    cout << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
     " RESULTS WILL BE UNPREDICTABLE !!" << endl;
     cout << "Current version needed is: " << NEEDED_CFG_VERSION << endl;
-    cout << "         You have version: " << CFGVersion << endl << endl;
+    cout << "         You have version: " << CFGVersion << endl << fgdef << endl;
     //exit(-1);
   }
 
