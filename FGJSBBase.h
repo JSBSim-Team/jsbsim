@@ -64,6 +64,7 @@ SG_USING_STD(string);
 #  endif
 
 using std::string;
+using std::fabs;
 
 # ifndef M_PI
 #  define M_PI 3.14159265358979323846
@@ -79,7 +80,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.63 2004/07/07 16:59:51 frohlich Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.64 2004/10/05 07:58:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.63 2004/07/07 16:59:51 frohlich Exp $
+    @version $Id: FGJSBBase.h,v 1.64 2004/10/05 07:58:11 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
