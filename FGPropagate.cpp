@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.16 2004/08/21 11:51:04 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.17 2004/09/01 03:10:07 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,13 +289,13 @@ void FGPropagate::bind(void)
 
   PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius, &FGPropagate::SetRunwayRadius);
 
-  PropertyManager->Tie("attitude/phi-rad", this, (int)ePhi, &FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/theta-rad", this, (int)eTht, &FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/psi-rad", this, (int)ePsi, &FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/phi-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/theta-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/psi-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
 
-  PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, &FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, &FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, &FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
