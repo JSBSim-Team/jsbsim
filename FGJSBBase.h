@@ -79,7 +79,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.58 2004/05/30 11:46:25 frohlich Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.59 2004/05/31 10:00:18 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.58 2004/05/30 11:46:25 frohlich Exp $
+    @version $Id: FGJSBBase.h,v 1.59 2004/05/31 10:00:18 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +197,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(double a, double b) {
     double eps = 2.0*std::numeric_limits<double>::epsilon();
-    return fabs(a - b) < eps*max(fabs(a), fabs(b));
+    return fabs(a - b) <= eps*max(fabs(a), fabs(b));
   }
 
   /** Finite precision comparison.
@@ -206,7 +206,7 @@ public:
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(float a, float b) {
     float eps = 2.0*std::numeric_limits<float>::epsilon();
-    return fabs(a - b) < eps*max(fabs(a), fabs(b));
+    return fabs(a - b) <= eps*max(fabs(a), fabs(b));
   }
 
   /** Finite precision comparison.
