@@ -48,67 +48,74 @@
    AC_IZZ       2519272
    AC_IXZ       0
    AC_EMPTYWT   54218			<!-- BH -->
-   AC_CGLOC     761.2  0.0 -34.6
-   AC_AERORP    761.2  0.0  0.0
-   AC_EYEPTLOC  96.9 -30.0 70.0
+   AC_CGLOC     587.4  0.0 -16.5
+   AC_AERORP    587.4  0.0 18.1
+   AC_EYEPTLOC  94.5 -22.4 49.2
    AC_VRP       0 0 0
+
+   <!-- pilot -->
+   AC_POINTMASS  230.0 94.5  -22.4 25.6
+   <!-- co-pilot -->
+   AC_POINTMASS  230.0 94.5 22.4 25.6
+   <!-- 2 stuward(esse)s -->
+   AC_POINTMASS  400.0 206.0 22.4 25.6
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   179.9  0.0 -166.1 28504.0 9501.3  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
-  AC_GEAR LEFT_MLG  791.6 -99.5 -166.1 95013.4 19002.7  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
-  AC_GEAR RIGHT_MLG 791.6 99.5 -166.1 95013.4 19002.7  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
+  AC_GEAR NOSE_LG   137.0  0.0 -81.5 28504.0 9501.3  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
+  AC_GEAR LEFT_MLG  700.4 -113.0 -89.8 95013.4 19002.7  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
+  AC_GEAR RIGHT_MLG 700.4 113.0 -89.8 95013.4 19002.7  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
   <AC_ENGINE FILE="Tay-651">
-    XLOC 761.15919
-    YLOC -20
-    ZLOC -12
+    XLOC 1028.74
+    YLOC -101.6
+    ZLOC -49.2
     PITCH 0
     YAW 0
     FEED 0
     <AC_THRUSTER FILE="direct">
-      XLOC 761.15919
-      YLOC -20
-      ZLOC -12
+      XLOC 1028.74
+      YLOC -101.6
+      ZLOC -49.2
       PITCH 0
       YAW 0
     </AC_THRUSTER>
   </AC_ENGINE>
   <AC_ENGINE FILE="Tay-651">
-    XLOC 761.15919
-    YLOC 20
-    ZLOC -12
+    XLOC 1028.74
+    YLOC 101.6
+    ZLOC -49.2
     PITCH 0
     YAW 0
     FEED 1
     <AC_THRUSTER FILE="direct">
-      XLOC 761.15919
-      YLOC 20
-      ZLOC -12
+      XLOC 1028.74
+      YLOC 101.6
+      ZLOC -49.2
       PITCH 0
       YAW 0
     </AC_THRUSTER>
   </AC_ENGINE>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 761.15919 
-    YLOC 0 
-    ZLOC -34.598145 
+    XLOC 587.4
+    YLOC 0
+    ZLOC -16.5
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 761.15919 
+    XLOC 587.4
     YLOC 0 
-    ZLOC -34.598145 
+    ZLOC -16.5
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 761.15919 
+    XLOC 587.4
     YLOC 0 
-    ZLOC -34.598145 
+    ZLOC -16.5
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
@@ -253,7 +260,7 @@
     <COEFFICIENT NAME="dCLsp" TYPE="VALUE">
        Delta_Lift_due_to_spoiler
        aero/qbar-psf|metrics/Sw-sqft|fcs/spoiler-pos-norm
-       -0.5
+       -0.1
     </COEFFICIENT>
     <COEFFICIENT NAME="CLde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
@@ -309,13 +316,13 @@
     <COEFFICIENT NAME="CDsb" TYPE="VALUE">
        Drag_due_to_speedbrakes
        aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
-       0.8
+       0.08
     </COEFFICIENT>
     <!-- wild guess -->
     <COEFFICIENT NAME="CDsp" TYPE="VALUE">
        Drag_due_to_spoilers
        aero/qbar-psf|metrics/Sw-sqft|fcs/spoiler-pos-norm
-       0.5
+       0.028
     </COEFFICIENT>
     <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
        Drag_due_to_sideslip
@@ -384,16 +391,6 @@
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
        0.0       -1.2
        2.0       -0.300
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Cmsb" TYPE="VALUE">
-       Pitch_moment_due_to_speedbrake_deflection
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/speedbrake-pos-norm
-       -0.07
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Cmsp" TYPE="VALUE">
-       Pitch_moment_due_to_spoiler_deflection
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/spoiler-pos-norm
-       -0.08
     </COEFFICIENT>
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
