@@ -22,10 +22,10 @@ INCLUDES
 
 #include <stdlib.h>
 #ifdef FGFS
+#  include <math.h>
 #  include <simgear/compiler.h>
 #  include STL_STRING
 #  include STL_FSTREAM
-#  include STL_CMATH
 #  include STL_IOSTREAM
    SG_USING_STD(string);
    SG_USING_STD(ostream);
@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.28 2001/06/05 12:52:09 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.29 2001/06/05 18:25:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
