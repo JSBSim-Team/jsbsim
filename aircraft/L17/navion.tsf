@@ -1,0 +1,50 @@
+SAD	file:Navion.tsf
+
+2.153		1 Alt1		[ft]
+0.00237254	2 Density1	[slugs/ft3]
+175.215		3 U1	175.054	[ft/sec]
+0		4 Attitude1	[rad]
+184		5 Area		[ft2]
+33.4		6 Span		[ft]
+5.7		7 Chord		[ft]
+2750		8 Weight	[lbs]
+1048		9 Ixx		[slug-ft2]
+3000		10 Iyy		[slug-ft2]
+3530		11 Izz		[slug-ft2]
+0		12 Ixz		[slug-ft2]
+0.41		13 CL1	.41
+0.05		14 CD1
+0.05		15 CTX1
+0		16 Cm1
+0		17 CmT1
+0		18 Cmu
+-0.683		19 Cma
+-4.36		20 Cmadothat
+-9.96		21 Cmqhat
+0		22 CmTu
+0		23 CmTa
+0		24 CLu
+4.44		25 CLa
+0.0		26 CLadothat
+3.8		27 CLqhat
+0.33		28 CDa
+0		29 CDu
+0.0		30 CTXu
+0.355		31 CLdE
+0.00		32 CDdE
+-0.923		33 CmdE
+-0.074		34 CRollbeta	Clbeta
+-0.41		35 CRollphat	Clp	-.92
+0.107		36 CRollrhat	Clr
+0.134		37 CRolldA	CldA
+0.0107		38 CRolldR	CldR
+0.071		39 Cnbeta
+-0.0575		40 Cnphat
+-0.125		41 Cnrhat
+-0.0035		42 CndA
+-0.072		43 CndR
+-0.564		44 Cybeta
+0.0		45 Cyphat
+0.0		46 Cyrhat
+0		47 CydA
+0.0		48 CydR
