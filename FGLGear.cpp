@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.70 2001/12/11 12:37:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.71 2001/12/11 17:25:37 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -400,7 +400,7 @@ FGColumnVector3& FGLGear::Force(void)
         MaximumStrutForce = MaximumStrutTravel = 0.0;
       }
 
-      compressLength = 0.0;// reset compressLength to zero for data output validity
+      compressLength = 0.0; // reset compressLength to zero for data output validity
     }
 
     if (FirstContact) {
@@ -427,8 +427,6 @@ FGColumnVector3& FGLGear::Force(void)
       PutMessage("Crash Detected");
       Exec->Freeze();
     }
-
-    
   } 
   return vForce; 
 }
