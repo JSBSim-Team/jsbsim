@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.70 2005/01/16 14:53:37 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.71 2005/01/27 12:23:10 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.70 2005/01/16 14:53:37 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.71 2005/01/27 12:23:10 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +114,9 @@ public:
 
   EngineType      GetType(void) { return Type; }
   virtual string  GetName(void) { return Name; }
+  string GetThrusterFileName(void) {return thrusterFileName;}
+  void SetEngineFileName(string eng) {engineFileName = eng;}
+  string GetEngineFileName(void) {return engineFileName;}
 
   // Engine controls
   virtual double  GetThrottleMin(void) { return MinThrottle; }
@@ -189,6 +192,8 @@ public:
 protected:
   FGPropertyManager* PropertyManager;
   string Name;
+  string thrusterFileName;
+  string engineFileName;
   const int   EngineNumber;
   EngineType Type;
   double X, Y, Z;

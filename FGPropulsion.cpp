@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.116 2004/12/06 03:59:52 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.117 2005/01/27 12:23:10 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -254,6 +254,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
                     << underoff << " found in config file." << fgdef << endl;
           return false;
         }
+
+        Engines.back()->SetEngineFileName(engineFileName);
 
         AC_cfg->GetNextConfigLine();
         while ((token = AC_cfg->GetValue()) != string("/AC_ENGINE")) {

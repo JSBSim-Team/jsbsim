@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.28 2005/01/20 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.29 2005/01/27 12:23:11 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ void FGDeadBand::convert(void)
   cout << endl;
   cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
 
-  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+  cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
 
   if (gain != 1.0)
     cout << "            <gain>" << gain << "</gain>" << endl;
@@ -143,7 +143,7 @@ void FGDeadBand::convert(void)
   }
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

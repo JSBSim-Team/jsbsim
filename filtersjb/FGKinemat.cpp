@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.26 2005/01/20 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.27 2005/01/27 12:23:11 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +185,7 @@ void FGKinemat::convert(void)
   cout << endl;
   cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
 
-  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+  cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
 
   cout << "            <traverse>" << endl;
   for (int i=0; i<Detents.size(); i++) {
@@ -197,7 +197,7 @@ void FGKinemat::convert(void)
   cout << "            </traverse>" << endl;
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

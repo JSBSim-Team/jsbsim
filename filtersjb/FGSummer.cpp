@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.45 2005/01/20 07:27:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.46 2005/01/27 12:23:12 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +142,7 @@ void FGSummer::convert(void)
   for (int i=0; i<InputNodes.size(); i++) {
     if (InputSigns[i] < 0.0) sSign = "-";
     else                     sSign = "";
-    cout << "            <input>" << sSign << InputNodes[i]->GetName() << "</input>" << endl;
+    cout << "            <input>" << sSign << (InputNodes[i]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
   }
 
   if (Bias != 0.0)
@@ -156,7 +156,7 @@ void FGSummer::convert(void)
   }
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

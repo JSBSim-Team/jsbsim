@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.53 2005/01/20 07:27:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.54 2005/01/27 12:23:11 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +182,7 @@ void FGGain::convert(void)
   cout << endl;
   cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
 
-  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+  cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
 
   if (Gain != 1.0)
     cout << "            <gain>" << Gain << "</gain>" << endl;
@@ -204,7 +204,7 @@ void FGGain::convert(void)
   }
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.36 2005/01/20 12:45:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.37 2005/01/27 12:23:12 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,17 +202,17 @@ void FGSwitch::convert(void)
       if (tests[i].OutputProp == 0L)
         cout << "            <default value=\"" << tests[i].OutputVal << "\"/>" << endl;
       else
-        cout << "            <default value=\"" << tests[i].OutputProp->GetName() << "\"/>" << endl;
+        cout << "            <default value=\"" << (tests[i].OutputProp->GetFullyQualifiedName()).substr(12) << "\"/>" << endl;
     } else if (tests[i].Logic == eAND) {
       if (tests[i].OutputProp == 0L)
         cout << "            <test logic=\"AND\" value=\"" << tests[i].OutputVal << "\">" << endl;
       else
-        cout << "            <test logic=\"AND\" value=\"" << tests[i].OutputProp->GetName() << "\">" << endl;
+        cout << "            <test logic=\"AND\" value=\"" << (tests[i].OutputProp->GetFullyQualifiedName()).substr(12) << "\">" << endl;
     } else if (tests[i].Logic == eOR) {
       if (tests[i].OutputProp == 0L)
         cout << "            <test logic=\"OR\" value=\"" << tests[i].OutputVal << "\">" << endl;
       else
-        cout << "            <test logic=\"OR\" value=\"" << tests[i].OutputProp->GetName() << "\">" << endl;
+        cout << "            <test logic=\"OR\" value=\"" << (tests[i].OutputProp->GetFullyQualifiedName()).substr(12) << "\">" << endl;
     }
     for (int j=0; j<tests[i].conditions.size(); j++) {
       tests[i].conditions[j].convert();
@@ -221,7 +221,7 @@ void FGSwitch::convert(void)
   }
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.41 2005/01/20 07:27:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.42 2005/01/27 12:23:11 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,7 +212,7 @@ void FGFilter::convert(void)
   cout << endl;
   cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
 
-  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+  cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
 
   if (C1 != 0) cout << "            <c1>" << C1 << "</c1>" << endl;
   if (C2 != 0) cout << "            <c2>" << C2 << "</c2>" << endl;
@@ -224,7 +224,7 @@ void FGFilter::convert(void)
   if (Trigger != 0) cout << "            <trigger>" << Trigger << "</trigger>" << endl;
 
   if (IsOutput)
-    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+    cout << "            <output>" << (OutputNode->GetFullyQualifiedName()).substr(12) << "</output>" << endl;
 
   cout << "        </component>" << endl;
 }

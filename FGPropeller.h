@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.37 2004/11/02 05:19:43 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.38 2005/01/27 12:23:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.37 2004/11/02 05:19:43 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.38 2005/01/27 12:23:10 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -124,6 +124,9 @@ public:
                viewed by someone standing behind the engine looking forward into
                the direction of flight. */
   void SetSense(double s) { Sense = s;}
+
+  double GetSense(void) {return Sense;}
+  double GetPFactorValue(void) {return P_Factor;}
 
   /// Retrieves the pitch of the propeller in degrees.
   double GetPitch(void)         { return Pitch;         }

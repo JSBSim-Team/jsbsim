@@ -52,6 +52,7 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGTrim.h"
 #include "FGLGear.h"
+#include "FGPropeller.h"
 
 #if !defined(__GNUC__)
 #  include <time>
@@ -63,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.94 2005/01/26 04:08:59 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.95 2005/01/27 12:23:11 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -501,7 +502,7 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   for (int i=0; i<FDMExec->GetPropulsion()->GetNumEngines(); i++) {
     JSBSim::FGEngine* engine = FDMExec->GetPropulsion()->GetEngine(i);
 
-    cout << "        <engine file=\"  \">" << endl;
+    cout << "        <engine file=\"" << engine->GetEngineFileName() << "\">" << endl;
     cout << "            <location unit=\"IN\">" << endl;
     cout << "                <x> " << engine->GetPlacementX() << " </x>" << endl;
     cout << "                <y> " << engine->GetPlacementY() << " </y>" << endl;
@@ -519,7 +520,7 @@ void convert(JSBSim::FGFDMExec* FDMExec)
 
     JSBSim::FGThruster* thruster = engine->GetThruster();
 
-    cout << "            <thruster file=\" \">" << endl;
+    cout << "            <thruster file=\"" << engine->GetThrusterFileName() << "\">" << endl;
     cout << "                <location unit=\"IN\">" << endl;
     cout << "                    <x> " << thruster->GetLocationX() << " </x>" << endl;
     cout << "                    <y> " << thruster->GetLocationY() << " </y>" << endl;
@@ -527,11 +528,15 @@ void convert(JSBSim::FGFDMExec* FDMExec)
     cout << "                </location>" << endl;
     cout << "                <orient unit=\"DEG\">" << endl;
     cout << "                    <roll> 0.0 </roll>" << endl;
-    cout << "                    <pitch> </pitch>" << endl;
-    cout << "                    <yaw> </yaw>" << endl;
+    cout << "                    <pitch> 0.0 </pitch>" << endl;
+    cout << "                    <yaw> 0.0 </yaw>" << endl;
     cout << "                </orient>" << endl;
-    cout << "                <sense> </sense>" << endl;
-    cout << "                <p_factor> </p_factor>" << endl;
+    if (thruster->GetType() == 2) { // propeller type
+      if (((JSBSim::FGPropeller*)thruster)->GetSense() != 0)
+        cout << "                <sense> " << ((JSBSim::FGPropeller*)thruster)->GetSense() << " </sense>" << endl;
+      if (((JSBSim::FGPropeller*)thruster)->GetPFactorValue() != 0)
+        cout << "                <p_factor> " << ((JSBSim::FGPropeller*)thruster)->GetPFactorValue() << " </p_factor>" << endl;
+    }
     cout << "            </thruster>" << endl;
     cout << "        </engine>" << endl;
   }

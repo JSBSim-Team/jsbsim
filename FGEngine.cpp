@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.75 2004/12/06 03:59:52 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.76 2005/01/27 12:23:10 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,7 +212,7 @@ FGColumnVector3& FGEngine::GetMoments(void)
 bool FGEngine::LoadThruster(FGConfigFile* AC_cfg)
 {
   string token, fullpath, localpath;
-  string thrusterFileName, thrType, engineFileName;
+  string thrType, engineFileName;
   FGConfigFile* Cfg_ptr = 0;
   double xLoc, yLoc, zLoc, Pitch, Yaw;
   double P_Factor = 0, Sense = 0.0;
