@@ -79,7 +79,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.37 2001/07/09 23:23:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.38 2001/07/22 18:50:17 apeden Exp $";
 static const char *IdHdr = ID_POSITION;
 
 extern short debug_lvl;
@@ -108,6 +108,8 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   RunwayRadius   = SeaLevelRadius;
   DistanceAGL    = Radius - RunwayRadius;  // Geocentric
   vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
+  b =1;
+  
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -157,7 +159,7 @@ bool FGPosition:: Run(void) {
     h = Radius - SeaLevelRadius;           // Geocentric
 
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
-
+    
     hoverb = DistanceAGL/b;
 
     if (Vt > 0) {
@@ -186,7 +188,7 @@ void FGPosition::GetState(void) {
   Vt        = Translation->GetVt();
   vVel      = State->GetTb2l() * Translation->GetUVW();
   vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
-
+  
   b = Aircraft->GetWingSpan();
 }
 
@@ -196,6 +198,7 @@ void FGPosition::Seth(double tt) {
  h = tt;
  Radius    = h + SeaLevelRadius;
  DistanceAGL = Radius - RunwayRadius;   // Geocentric
+ hoverb = DistanceAGL/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,6 +207,7 @@ void FGPosition::SetDistanceAGL(double tt) {
   DistanceAGL=tt;
   Radius = RunwayRadius + DistanceAGL;
   h = Radius - SeaLevelRadius;
+  hoverb = DistanceAGL/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

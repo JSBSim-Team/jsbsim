@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.36 2001/07/09 23:23:42 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.37 2001/07/22 18:50:17 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.36 2001/07/09 23:23:42 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.37 2001/07/22 18:50:17 apeden Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,7 @@ private:
   double SeaLevelRadius;
   double gamma;
   double Vt, Vground;
-  double hoverb,b;
+  float hoverb,b;
 
   double psigt;
 
