@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.74 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.75 2004/03/18 12:34:15 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,7 +300,7 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssPosition) {
     outstream << ", ";
     outstream << Position->Geth() << ", ";
-    outstream << Rotation->GetEuler() << ", ";
+    outstream << Auxiliary->GetEuler() << ", ";
     outstream << Translation->Getalpha() << ", ";
     outstream << Translation->Getbeta() << ", ";
     outstream << Position->GetLatitude() << ", ";
@@ -392,9 +392,9 @@ void FGOutput::SocketOutput(void)
   socket->Clear();
   socket->Append(State->Getsim_time());
   socket->Append(Position->Geth());
-  socket->Append(Rotation->Getphi());
-  socket->Append(Rotation->Gettht());
-  socket->Append(Rotation->Getpsi());
+  socket->Append(Auxiliary->Getphi());
+  socket->Append(Auxiliary->Gettht());
+  socket->Append(Auxiliary->Getpsi());
   socket->Append(Atmosphere->GetDensity());
   socket->Append(Translation->GetVt());
   socket->Append(Translation->GetUVW(eU));
@@ -641,5 +641,4 @@ void FGOutput::Debug(int from)
     }
   }
 }
-
-} // namespace JSBSim
+}

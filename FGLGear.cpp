@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.105 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.106 2004/03/18 12:34:15 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,6 +102,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
+  Auxiliary   = Exec->GetAuxiliary();
   FCS         = Exec->GetFCS();
   MassBalance = Exec->GetMassBalance();
 
@@ -144,6 +145,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   Aircraft = lgear.Aircraft;
   Position = lgear.Position;
   Rotation = lgear.Rotation;
+  Auxiliary = lgear.Auxiliary;
   Exec     = lgear.Exec;
   FCS      = lgear.FCS;
   MassBalance = lgear.MassBalance;
@@ -344,8 +346,8 @@ FGColumnVector3& FGLGear::Force(void)
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-      SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
-      CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
+      SinWheel      = sin(Auxiliary->Getpsi() + SteerAngle);
+      CosWheel      = cos(Auxiliary->Getpsi() + SteerAngle);
       RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
@@ -583,3 +585,4 @@ void FGLGear::Debug(int from)
 }
 
 } // namespace JSBSim
+
