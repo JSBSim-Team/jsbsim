@@ -1,11 +1,11 @@
-#! perl -w
+#! /usr/bin/perl -w
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #
 # File:         CreateFGFS.pl
 # Author:       Jon Berndt based on scripts by Norman Vine and Curt Olson
 # Date started: 12/20/00
 # Purpose:      gets and builds code for FGFS; or updates / makes as requested
-#               type:
+#               type;
 #                 ./createfgfs help
 #               at the command line for more info. Should work on any platform.
 
@@ -86,11 +86,11 @@ if ($HELP) {
   print "\nThis script assumes that the code will be kept in directories\n";
   print "under the user home directory, under an src directory\n";
   print "FlightGear base files are kept under the user home directory\n";
-  print "under a FlightGear directory\n";
+  print "under a fgfsbase directory\n";
   die "\n";
 }
 
-system("export FG_ROOT='~/FlightGear'");
+system("export FG_ROOT='~/fgfsbase'");
 
 if (!chdir) {die "Cannot chdir to ~\n";}
 
@@ -105,7 +105,7 @@ if (!chdir "src") {
   $FGFS    = 1;
 } else {
   chdir; # go back to $HOME
-  if (!chdir "FlightGear/CVS") {
+  if (!chdir "fgfsbase/CVS") {
     print "\nYou have not yet installed the base package. Base package will be installed\n";
     $UPDATE = 1;
     $BUILD   = 1;
@@ -171,14 +171,14 @@ if ($UPDATE) { #start update code
       print "Checking out simgear from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/SimGear-0.0 login");
-      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/SimGear-0.0 co SimGear");
+      system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 login");
+      system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 co SimGear");
     } else {
       if (!chdir "src/SimGear/") {die "Cannot chdir to ~/src/SimGear/\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating simgear from cvs\n\n";
       print "--------------------------------\n";
-      system("cvs -z3 update -Pd");
+      system("cvs update -Pd");
     }
   }
 
@@ -186,17 +186,17 @@ if ($UPDATE) { #start update code
 
   if ($FGB) {
     if (!chdir "") {die "Cannot chdir to ~\n";}
-    $result = open (FGBFILE, "FlightGear/CVS/root" ) ;
+    $result = open (FGBFILE, "fgfsbase/CVS/root" ) ;
     close(FGBFILE);
     if (!$result) {
       print "\n\n--------------------------------\n\n";
       print "Checking out flightgear base from cvs\n\n";
       print "Enter 'cvsguest' when requested for cvs password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvsguest\@bitless.net:/home/cvsroot login");
-      system("cvs -d :pserver:cvsguest\@bitless.net:/home/cvsroot co FlightGear");
+      system("cvs -d :pserver:cvsguest\@rockfish.net:/home/cvsroot login");
+      system("cvs -d :pserver:cvsguest\@rockfish.net:/home/cvsroot co fgfsbase");
     } else {
-      if (!chdir "FlightGear") {die "Cannot chdir to ~/FlightGear\n";}
+      if (!chdir "fgfsbase") {die "Cannot chdir to ~/fgfsbase\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating flightgear base from cvs\n\n";
       print "--------------------------------\n";
@@ -213,11 +213,11 @@ if ($UPDATE) { #start update code
     if (!$result) {
       if (!chdir "src") {die "Cannot chdir to ~/src\n";}
       print "\n\n--------------------------------\n\n";
-      print "Checking out flightgear source from cvs\n\n";
+      print "Checking out flightgear DEVELOPMENT source from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/FlightGear-0.7 login");
-      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/FlightGear-0.7 co FlightGear");
+      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 login");
+      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co FlightGear");
     } else {
       if (!chdir "src/FlightGear/") {die "Cannot chdir to ~/src/FlightGear/\n";}
       print "\n\n--------------------------------\n\n";
@@ -240,8 +240,8 @@ if ($PLIB) { #make plib
     system("rm config.cache");
     print "\n\n   --- make distclean ---\n\n";
     system("if (!(make distclean)) then echo ' ... already clean\n\n'; fi;");
-    print "\n\n   --- aclocal -I . ---\n\n";
-    system("aclocal -I .");
+    print "\n\n   --- aclocal ---\n\n";
+    system("aclocal");
     print "\n\n   --- automake -a ---\n\n";
     system("automake -a");
     print "\n\n   --- autoconf ---\n\n";
@@ -267,10 +267,12 @@ if ($SIMGEAR) { #make simgear
     system("rm config.cache");
     print "\n\n   --- make distclean ---\n\n";
     system("if (!(make distclean)) then echo ' ... already clean\n\n'; fi;");
-    print "\n\n   --- aclocal -I . ---\n\n";
-    system("aclocal -I .");
-    print "\n\n   --- automake -a ---\n\n";
-    system("automake -a");
+    print "\n\n   --- aclocal ---\n\n";
+    system("aclocal");
+    print "\n\n   --- autoheader ---\n\n";
+    system("autoheader");
+    print "\n\n   --- automake --add-missing ---\n\n";
+    system("automake --add-missing");
     print "\n\n   --- autoconf ---\n\n";
     system("autoconf");
     print "\n\n   --- configure ---\n\n";
@@ -294,10 +296,12 @@ if ($FGFS) { #make flightgear
     system("rm config.cache");
     print "\n\n   --- make distclean ---\n\n";
     system("if (!(make distclean)) then echo ' ... already clean\n\n'; fi;");
-    print "\n\n   --- aclocal -I . ---\n\n";
-    system("aclocal -I .");
-    print "\n\n   --- automake -a ---\n\n";
-    system("automake -a");
+    print "\n\n   --- aclocal ---\n\n";
+    system("aclocal");
+    print "\n\n   --- autoheader ---\n\n";
+    system("autoheader");
+    print "\n\n   --- automake --add-missing ---\n\n";
+    system("automake --add-missing");
     print "\n\n   --- autoconf ---\n\n";
     system("autoconf");
     print "\n\n   --- configure ---\n\n";
