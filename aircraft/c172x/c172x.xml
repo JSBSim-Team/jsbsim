@@ -1,13 +1,13 @@
 <FDM_CONFIG NAME="c172" VERSION="1.61">
 <!--
 
-  File:        c172.xml
+  File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.20 2004/04/18 02:08:11 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.21 2004/04/30 07:34:21 jberndt Exp $
 
-  Function: Models a Cessna 172
+  Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
-            fgfs -fdm=jsb -aircraft=c172
+            fgfs --aircraft=c172r
 -->
 
   <METRICS>
@@ -48,9 +48,9 @@
 <!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
 <!-- Co-pilot -->
-    AC_POINTMASS 180.0 36.0  14.0 24.0
+<!-- AC_POINTMASS 180.0 36.0  14.0 24.0 -->
     AC_EYEPTLOC  37.0  0.0 48.0
-    AC_VRP -10.0 0.0 0.0
+    AC_VRP       42.6  0.0 38.5
 
   </METRICS>
 
@@ -74,13 +74,13 @@
     -->
 
      AC_GEAR  NOSE        -6.8   0.0 -20.0  1800  600  0.5  0.8 0.02 STEERABLE NONE 10 FIXED
-     AC_GEAR  LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0 FIXED
-     AC_GEAR  RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0 FIXED
+     AC_GEAR  LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.5  0.8 0.02 FIXED  LEFT  0 FIXED
+     AC_GEAR  RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.5  0.8 0.02 FIXED  RIGHT 0 FIXED
      AC_GEAR  TAIL_SKID  188.0  0.0    8.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR  LEFT_TIP    43.2 -214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR  RIGHT_TIP   43.2  214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
 
-</UNDERCARRIAGE>
+  </UNDERCARRIAGE>
 
   <PROPULSION>
 
@@ -152,6 +152,7 @@
 
   <FLIGHT_CONTROL NAME="c172">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       INPUT        ap/elevator_cmd
        INPUT        fcs/elevator-cmd-norm
        INPUT        fcs/pitch-trim-cmd-norm
        CLIPTO       -1 1
@@ -164,10 +165,10 @@
        GAIN          0.01745
      </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
-       INPUT        ap/aileron_cmd
-       INPUT        fcs/aileron-cmd-norm
-       INPUT        fcs/roll-trim-cmd-norm
-       CLIPTO       -1 1
+       INPUT         ap/aileron_cmd
+       INPUT         fcs/aileron-cmd-norm
+       INPUT         fcs/roll-trim-cmd-norm
+       CLIPTO        -1 1
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/roll-trim-sum
@@ -536,14 +537,12 @@
                 goes to that file. If COUT or cout is specified, the data goes
                 to stdout. If the filename is a null filename the data goes to
                 stdout, as well.
-      SOCKET    Will eventually send data to a socket output, where
-                NAME is IP address of the machine the data should be sent to, and
-                PORT is the port number.
-                Note that the name can be either (for example): data.jsbsim.org or
-                a dotted address like: 10.0.0.1
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
       TABULAR   Columnar data. NOT IMPLEMENTED YET!
       TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
-      NONE      Specifies to do nothing. This setting makes it easy to turn on and
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
                 off the data output without having to mess with anything else.
 
     The arguments that can be supplied, currently, are
@@ -569,25 +568,22 @@
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-
-  <OUTPUT NAME="localhost" TYPE="SOCKET" PORT="1138">
   -->
-
-  <OUTPUT NAME="JSBOut172.csv" TYPE="CSV">
-    RATE_IN_HZ       20
-    SIMULATION       ON
-    ATMOSPHERE       ON
-    MASSPROPS        ON
+  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+    RATE_IN_HZ       10
+    SIMULATION       OFF
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
     AEROSURFACES     ON
     RATES            ON
     VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          ON
+    FORCES           OFF
+    MOMENTS          OFF
     POSITION         ON
-    COEFFICIENTS     ON
-    GROUND_REACTIONS ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS OFF
     FCS              ON
-    PROPULSION       ON
+    PROPULSION       OFF
   </OUTPUT>
 </FDM_CONFIG>
 
