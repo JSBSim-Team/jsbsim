@@ -59,16 +59,14 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.49 2002/03/22 12:46:23 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.50 2002/03/22 12:50:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf } FcIdx;
-int const NNorm=7;
-typedef enum { ofRad=0, ofNorm, ofMag } OutputForm;
-int const NForms=3;
+typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf, NNorm } FcIdx;
+typedef enum { ofRad=0, ofNorm, ofMag , NForms} OutputForm;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -143,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.49 2002/03/22 12:46:23 apeden Exp $
+    @version $Id: FGFCS.h,v 1.50 2002/03/22 12:50:12 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -458,7 +456,6 @@ public:
   
   void bind(void);
   void unbind(void);
-
   
 private:
   double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
