@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.12 2001/04/24 22:14:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.13 2001/06/04 19:52:14 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 extern short debug_lvl;
@@ -59,7 +59,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMassBalance::~FGMassBalance(void)
+FGMassBalance::~FGMassBalance()
 {
   if (debug_lvl & 2) cout << "Destroyed:    FGMassBalance" << endl;
 }

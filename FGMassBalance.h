@@ -45,7 +45,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGPropulsion.h"
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.10 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.11 2001/06/04 19:52:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -56,7 +56,7 @@ class FGMassBalance : public FGModel
 
 public:
   FGMassBalance(FGFDMExec*);
-  ~FGMassBalance(void);
+  ~FGMassBalance();
 
   bool Run(void);
 
