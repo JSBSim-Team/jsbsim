@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.89 2001/12/06 20:56:54 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.90 2001/12/06 22:30:17 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -95,19 +95,19 @@ FGJSBsim::FGJSBsim( double dt )
 
     result = fdmex->LoadModel( aircraft_path.str(),
                                engine_path.str(),
-                               fgGetString("/sim/aircraft") );
+                               fgGetString("/sim/aero") );
     
     if (result) {
-      SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aircraft.");
+      SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aero.");
     } else {
       SG_LOG( SG_FLIGHT, SG_INFO,
-              "  aircraft does not exist (you may have mis-typed the name).");
+              "  aero does not exist (you may have mis-typed the name).");
       throw(-1);
     }
 
     SG_LOG( SG_FLIGHT, SG_INFO, "" );
     SG_LOG( SG_FLIGHT, SG_INFO, "" );
-    SG_LOG( SG_FLIGHT, SG_INFO, "After loading aircraft definition file ..." );
+    SG_LOG( SG_FLIGHT, SG_INFO, "After loading aero definition file ..." );
 
     int Neng = Propulsion->GetNumEngines();
     SG_LOG( SG_FLIGHT, SG_INFO, "num engines = " << Neng );
@@ -143,7 +143,7 @@ FGJSBsim::FGJSBsim( double dt )
     rudder_trim = fgGetNode("/fdm/trim/rudder", true );
     
     
-    stall_warning = fgGetNode("/sim/aircraft/alarms/stall-warning",true);
+    stall_warning = fgGetNode("/sim/aero/alarms/stall-warning",true);
     stall_warning->setDoubleValue(0);
 }
 
