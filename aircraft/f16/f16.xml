@@ -3,7 +3,7 @@
 <!--                                                                                       -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.15 2002/12/10 06:28:14 jberndt Exp $
+  CVS Version: $Id: f16.xml,v 1.16 2002/12/10 12:53:12 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 -->
@@ -657,8 +657,11 @@
          1.3963  0.0868
          1.5708 -0.0183
       </COEFFICIENT>
+
     </AXIS>
+
     <AXIS NAME="PITCH">
+
       <COEFFICIENT NAME="Cmalpha" TYPE="TABLE">
         Pitch_moment_due_to_alpha
         20 7
