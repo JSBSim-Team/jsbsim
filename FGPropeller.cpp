@@ -35,6 +35,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+
 #include "FGPropeller.h"
 #include "FGPropagate.h"
 #include "FGAtmosphere.h"
@@ -42,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.65 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.66 2004/05/27 11:52:46 frohlich Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,39 +245,35 @@ FGColumnVector3 FGPropeller::GetPFactor()
 
 string FGPropeller::GetThrusterLabels(int id)
 {
-  string PropulsionStrings;
-  char buffer[11];
+  std::ostringstream buf;
 
-  itoa(id, buffer, 10);
-  PropulsionStrings = Name + "_Torque[" + buffer + "], ";
-  PropulsionStrings += Name + "_PFactor_Pitch[" + buffer + "], ";
-  PropulsionStrings += Name + "_PFactor_Yaw[" + buffer + "], ";
-  PropulsionStrings += Name + "_Thrust[" + buffer + "], ";
+  buf << Name << "_Torque[" << id << "], "
+      << Name << "_PFactor_Pitch[" << id << "], "
+      << Name << "_PFactor_Yaw[" << id << "], "
+      << Name << "_Thrust[" << id << "], ";
   if (IsVPitch())
-    PropulsionStrings += Name + "_Pitch[" + buffer + "], ";
-  PropulsionStrings += Name + "_RPM[" + buffer + "]";
+    buf << Name << "_Pitch[" << id << "], ";
+  buf << Name << "_RPM[" << id << "]";
 
-  return PropulsionStrings;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGPropeller::GetThrusterValues(int id)
 {
-  string PropulsionValues;
-  char buffer[11];
+  std::ostringstream buf;
 
-  itoa(id, buffer, 10);
   FGColumnVector3 vPFactor = GetPFactor();
-  PropulsionValues += string(gcvt(vTorque(eX), 10, buffer)) + ", ";
-  PropulsionValues += string(gcvt(vPFactor(ePitch), 10, buffer)) + ", ";
-  PropulsionValues += string(gcvt(vPFactor(eYaw), 10, buffer)) + ", ";
-  PropulsionValues += string(gcvt(Thrust, 10, buffer)) + ", ";
+  buf << vTorque(eX) << ", "
+      << vPFactor(ePitch) << ", "
+      << vPFactor(eYaw) << ", "
+      << Thrust << ", ";
   if (IsVPitch())
-    PropulsionValues += string(gcvt(Pitch, 10, buffer)) + ", ";
-  PropulsionValues += string(gcvt(RPM, 10, buffer));
+    buf << Pitch << ", ";
+  buf << RPM;
 
-  return PropulsionValues;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

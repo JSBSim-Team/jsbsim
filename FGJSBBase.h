@@ -73,22 +73,11 @@ using std::string;
 using std::max;
 #endif
 
-#ifdef __FreeBSD__ // define gcvt on FreeBSD
-
-#include <stdio.h>
-
-static char *gcvt(double number, size_t ndigit, char *buf)
-{
-  sprintf(buf, "%f", number);
-  return buf;
-}
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.55 2004/05/25 11:46:45 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.56 2004/05/27 11:52:46 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.55 2004/05/25 11:46:45 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.56 2004/05/27 11:52:46 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -51,18 +51,9 @@ INCLUDES
 #include "FGElectric.h"
 #include "FGPropertyManager.h"
 
-#if defined (__APPLE__)
-/* Not all systems have the gcvt function */
-inline char* gcvt (double value, int ndigits, char *buf) {
-    /* note that this is not exactly what gcvt is supposed to do! */
-    snprintf (buf, ndigits+1, "%f", value);
-    return buf;
-}
-#endif
-
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.104 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.105 2004/05/27 11:52:47 frohlich Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

@@ -40,11 +40,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <vector>
+#include <sstream>
+
 #include "FGTurbine.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.11 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.12 2004/05/27 11:52:47 frohlich Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -406,26 +408,26 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
 
 string FGTurbine::GetEngineLabels(void)
 {
-  string PropulsionStrings;
-  char buff[11];
+  std::ostringstream buf;
 
-  PropulsionStrings = Name + "_N1[" + itoa(EngineNumber, buff, 10) + "], ";
-  PropulsionStrings += Name + "_N2[" + itoa(EngineNumber, buff, 10) + "]";
+  buf << Name << "_N1[" << EngineNumber << "], "
+      << Name << "_N2[" << EngineNumber << "], "
+      << Thruster->GetThrusterLabels(EngineNumber);
 
-  return (PropulsionStrings + ", " + Thruster->GetThrusterLabels(EngineNumber));
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGTurbine::GetEngineValues(void)
 {
-  string PropulsionValues;
-  char buff[11];
+  std::ostringstream buf;
 
-  PropulsionValues = string(gcvt(N1, 10, buff)) + ", ";
-  PropulsionValues += gcvt(N2, 10, buff);
+  buf << N1 << ", "
+      << N2 << ", "
+      << Thruster->GetThrusterValues(EngineNumber);
 
-  return (PropulsionValues + ", " + Thruster->GetThrusterValues(EngineNumber));
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -39,13 +39,15 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 #include "FGPropeller.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.65 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.66 2004/05/27 11:52:46 frohlich Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -698,18 +700,23 @@ void FGPiston::doOilPressure(void)
 
 string FGPiston::GetEngineLabels(void)
 {
-  char buff[11];
-  return (Name + "_PwrAvail[" + itoa(EngineNumber, buff, 10) + "]" + ", " +
-          Thruster->GetThrusterLabels(EngineNumber));
+  std::ostringstream buf;
+
+  buf << Name << "_PwrAvail[" << EngineNumber << "], "
+      << Thruster->GetThrusterLabels(EngineNumber);
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGPiston::GetEngineValues(void)
 {
-  char buff[11];
-  return (string(gcvt(PowerAvailable, 10, buff)) + ", " +
-          Thruster->GetThrusterValues(EngineNumber));
+  std::ostringstream buf;
+
+  buf << PowerAvailable << ", " << Thruster->GetThrusterValues(EngineNumber);
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

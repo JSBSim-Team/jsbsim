@@ -38,11 +38,13 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+
 #include "FGRocket.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.42 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.43 2004/05/27 11:52:47 frohlich Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,17 +116,23 @@ double FGRocket::Calculate(void)
 
 string FGRocket::GetEngineLabels(void)
 {
-  char buff[11];
-  return (Name + "_ChamberPress[" + itoa(EngineNumber, buff, 10) + "]" + ", " +
-          Thruster->GetThrusterLabels(EngineNumber));
+  std::ostringstream buf;
+
+  buf << Name << "_ChamberPress[" << EngineNumber << "], "
+      << Thruster->GetThrusterLabels(EngineNumber);
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGRocket::GetEngineValues(void)
 {
-  char buff[11];
-  return (string(gcvt(PC, 10, buff)) + ", " + Thruster->GetThrusterValues(EngineNumber));
+  std::ostringstream buf;
+
+  buf << PC << ", " << Thruster->GetThrusterValues(EngineNumber);
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

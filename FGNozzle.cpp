@@ -35,19 +35,14 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  include STL_ALGORITHM
-#else
-#  include <algorithm>
-#endif
+#include <sstream>
 
 #include "FGNozzle.h"
 #include "FGAtmosphere.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.33 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.34 2004/05/27 11:52:46 frohlich Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,18 +103,22 @@ double FGNozzle::GetPowerRequired(void)
 
 string FGNozzle::GetThrusterLabels(int id)
 {
-  char buff[11];
+  std::ostringstream buf;
 
-  return Name + "_Thrust[" + itoa(id, buff, 10) + "]";
+  buf << Name << "_Thrust[" << id << ']';
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGNozzle::GetThrusterValues(int id)
 {
-  char buff[11];
+  std::ostringstream buf;
 
-  return string(gcvt(Thrust, 10, buff));
+  buf << Thrust;
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

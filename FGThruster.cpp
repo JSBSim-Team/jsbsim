@@ -35,11 +35,13 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+
 #include "FGThruster.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.25 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.26 2004/05/27 11:52:47 frohlich Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,19 +80,22 @@ FGThruster::~FGThruster()
 
 string FGThruster::GetThrusterLabels(int id)
 {
-  char buffer[11];
+  std::ostringstream buf;
 
-  itoa(id, buffer, 10);
-  return Name + "_Thrust[" + buffer + "]";
+  buf << Name << "_Thrust[" << id << "]";
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGThruster::GetThrusterValues(int id)
 {
-  char buffer[11];
+  std::ostringstream buf;
 
-  return string(gcvt(Thrust, 10, buffer));
+  buf << Thrust;
+
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

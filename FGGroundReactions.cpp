@@ -35,22 +35,16 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <sstream>
+#include <iomanip>
+
 #include "FGGroundReactions.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.38 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.39 2004/05/27 11:52:46 frohlich Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
-
-#if defined (__APPLE__)
-/* Not all systems have the gcvt function */
-inline char* gcvt (double value, int ndigits, char *buf) {
-    /* note that this is not exactly what gcvt is supposed to do! */
-    snprintf (buf, ndigits+1, "%f", value);
-    return buf;
-}
-#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -126,70 +120,62 @@ bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
 
 string FGGroundReactions::GetGroundReactionStrings(void)
 {
-  string GroundReactionStrings = "";
-  bool firstime = true;
+  std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
-    if (!firstime) GroundReactionStrings += ", ";
-    GroundReactionStrings += (lGear[i].GetName() + "_WOW, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_stroke, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_strokeVel, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_CompressForce, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_WhlSideForce, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_WhlVelVecX, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_WhlVelVecY, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_WhlRollForce, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_BodyXForce, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_BodyYForce, ");
-    GroundReactionStrings += (lGear[i].GetName() + "_WhlSlipDegrees");
-
-    firstime = false;
+    string name = lGear[i].GetName();
+    buf << name << "_WOW, "
+        << name << "_stroke, "
+        << name << "_strokeVel, "
+        << name << "_CompressForce, "
+        << name << "_WhlSideForce, "
+        << name << "_WhlVelVecX, "
+        << name << "_WhlVelVecY, "
+        << name << "_WhlRollForce, "
+        << name << "_BodyXForce, "
+        << name << "_BodyYForce, "
+        << name << "_WhlSlipDegrees, ";
   }
 
-  GroundReactionStrings += ", TotalGearForce_X, ";
-  GroundReactionStrings += "TotalGearForce_Y, ";
-  GroundReactionStrings += "TotalGearForce_Z, ";
-  GroundReactionStrings += "TotalGearMoment_L, ";
-  GroundReactionStrings += "TotalGearMoment_M, ";
-  GroundReactionStrings += "TotalGearMoment_N";
+  buf << "TotalGearForce_X, "
+      << "TotalGearForce_Y, "
+      << "TotalGearForce_Z, "
+      << "TotalGearMoment_L, "
+      << "TotalGearMoment_M, "
+      << "TotalGearMoment_N";
 
-  return GroundReactionStrings;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGGroundReactions::GetGroundReactionValues(void)
 {
-  char buff[20];
-  string GroundReactionValues = "";
-
-  bool firstime = true;
+  std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
-    if (!firstime) GroundReactionValues += ", ";
-    GroundReactionValues += string( lGear[i].GetWOW()?"1":"0" ) + ", ";
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompLen(),    5, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompVel(),    6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetCompForce(), 10, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetWheelVel(eX), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetWheelVel(eY), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetWheelSideForce(), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetWheelRollForce(), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetBodyXForce(), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetBodyYForce(), 6, buff)) + ", ");
-    GroundReactionValues += (string(gcvt(lGear[i].GetWheelSlipAngle(), 6, buff)));
-
-    firstime = false;
+    FGLGear& gear = lGear[i];
+    buf << (gear.GetWOW() ? "1, " : "0, ")
+        << setprecision(5) << gear.GetCompLen() << ", "
+        << setprecision(6) << gear.GetCompVel() << ", "
+        << setprecision(10) << gear.GetCompForce() << ", "
+        << setprecision(6) << gear.GetWheelVel(eX) << ", "
+        << gear.GetWheelVel(eY) << ", "
+        << gear.GetWheelSideForce() << ", "
+        << gear.GetWheelRollForce() << ", "
+        << gear.GetBodyXForce() << ", "
+        << gear.GetBodyYForce() << ", "
+        << gear.GetWheelSlipAngle() << ", ";
   }
 
-  GroundReactionValues += (", " + string(gcvt(vForces(eX), 6, buff)) + ", ");
-  GroundReactionValues += (string(gcvt(vForces(eY), 6, buff)) + ", ");
-  GroundReactionValues += (string(gcvt(vForces(eZ), 6, buff)) + ", ");
-  GroundReactionValues += (string(gcvt(vMoments(eX), 6, buff)) + ", ");
-  GroundReactionValues += (string(gcvt(vMoments(eY), 6, buff)) + ", ");
-  GroundReactionValues += (string(gcvt(vMoments(eZ), 6, buff)));
+  buf << vForces(eX) << ", "
+      << vForces(eY) << ", "
+      << vForces(eZ) << ", "
+      << vMoments(eX) << ", "
+      << vMoments(eY) << ", "
+      << vMoments(eZ);
 
-  return GroundReactionValues;
+  return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
