@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.63 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.64 2004/04/30 12:34:57 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.63 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.64 2004/04/30 12:34:57 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,7 @@ public:
   FGEngine(FGFDMExec* exec);
   virtual ~FGEngine();
 
-  enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etSimTurbine, etElectric};
+  enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etElectric};
 
   EngineType      GetType(void) { return Type; }
   virtual string  GetName(void) { return Name; }

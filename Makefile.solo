@@ -5,18 +5,16 @@ JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o
 FGModel.o FGOutput.o FGState.o \
 FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\
 FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRocket.o\
-FGPiston.o FGForce.o FGThruster.o FGEngine.o FGTurbine.o\
+FGPiston.o FGForce.o FGThruster.o FGEngine.o\
 FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\
 FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\
-FGJSBBase.o FGPropertyManager.o FGSimTurbine.o FGElectric.o FGPropagate.o
+FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o
 
-JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx
-control/*.xml\
+JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\
 Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a
-	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
--lProperties
+	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties
 
 libFCSComponents.a:
 	cd filtersjb; make -fMakefile.solo; cd ..
@@ -265,8 +263,8 @@ FGPropulsion.o: FGPropulsion.cpp FGPropulsion.h FGModel.h FGJSBBase.h \
   filtersjb/FGFCSComponent.h FGLGear.h FGConfigFile.h FGAircraft.h \
   FGPropagate.h FGAuxiliary.h FGMassBalance.h FGAerodynamics.h \
   FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
-  FGTank.h FGThruster.h FGForce.h FGRocket.h FGSimTurbine.h FGPropeller.h \
-  FGNozzle.h FGPiston.h FGElectric.h FGTurbine.h
+  FGTank.h FGThruster.h FGForce.h FGRocket.h FGTurbine.h FGPropeller.h \
+  FGNozzle.h FGPiston.h FGElectric.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGPropulsion.o -c FGPropulsion.cpp
 
 FGQuaternion.o: FGQuaternion.cpp FGMatrix33.h FGColumnVector3.h \

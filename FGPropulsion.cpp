@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 #include "FGRocket.h"
-#include "FGSimTurbine.h"
+#include "FGTurbine.h"
 #include "FGTurbine.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.100 2004/04/30 01:32:43 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.101 2004/04/30 12:34:57 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -262,9 +262,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGRocket(FDMExec, Cfg_ptr));
         } else if (engType == "FG_PISTON") {
           Engines.push_back(new FGPiston(FDMExec, Cfg_ptr));
-        } else if (engType == "FG_SIMTURBINE") {
-          Engines.push_back(new FGSimTurbine(FDMExec, Cfg_ptr));
-        } else if (engType == "FG_TURBINE") {
+        } else if (engType == "FG_TURBINE" || engType == "FG_SIMTURBINE") {
           Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_ELECTRIC") {
           Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
@@ -425,10 +423,6 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
       PropulsionStrings += (Engines[i]->GetName() + "_N2[" + buffer + "]");
       break;
-    case FGEngine::etSimTurbine:
-      PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
-      PropulsionStrings += (Engines[i]->GetName() + "_N2[" + buffer + "]");
-      break;
     case FGEngine::etElectric:
       break;
     default:
@@ -487,12 +481,8 @@ string FGPropulsion::GetPropulsionValues(void)
       PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
       break;
     case FGEngine::etTurbine:
-      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
-      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN2(), 10, buff)));
-      break;
-    case FGEngine::etSimTurbine:
-      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
-      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN2(), 10, buff)));
+      PropulsionValues += (string(gcvt(((FGTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
+      PropulsionValues += (string(gcvt(((FGTurbine*)Engines[i])->GetN2(), 10, buff)));
       break;
     case FGEngine::etElectric:
       break;
@@ -613,15 +603,15 @@ void FGPropulsion::SetCutoff(int setting)
   if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
       if (setting == 0)
-        ((FGSimTurbine*)Engines[i])->SetCutoff(false);
+        ((FGTurbine*)Engines[i])->SetCutoff(false);
       else
-        ((FGSimTurbine*)Engines[i])->SetCutoff(true);
+        ((FGTurbine*)Engines[i])->SetCutoff(true);
     }
   } else {
     if (setting == 0)
-      ((FGSimTurbine*)Engines[ActiveEngine])->SetCutoff(false);
+      ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(false);
     else
-      ((FGSimTurbine*)Engines[ActiveEngine])->SetCutoff(true);
+      ((FGTurbine*)Engines[ActiveEngine])->SetCutoff(true);
   }
 }
 
