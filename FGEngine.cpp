@@ -85,6 +85,7 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
 
   Name = engineName;
   fullpath = enginePath + "/" + engineName + ".dat";
+  cout << "    Reading engine: " << engineName << " from file: " << fullpath << endl;
   ifstream enginefile(fullpath.c_str());
 
   if (enginefile) {
@@ -138,6 +139,7 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
   EngineNumber = num;
   Thrust = PctPower = 0.0;
   Starved = Flameout = false;
+  Running=true;
 }
 
 
@@ -162,7 +164,9 @@ float FGEngine::CalcRocketThrust(void) {
   }
 
 
-  Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
+  if(State->Getdt() > 0.0) {
+    Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
+  }  
 
   return Thrust;
 }
@@ -190,18 +194,21 @@ float FGEngine::CalcPistonThrust(void) {
 
 
 float FGEngine::CalcThrust(void) {
-  switch(Type) {
-  case etRocket:
-    return CalcRocketThrust();
-    // break;
-  case etPiston:
-    return CalcPistonThrust();
-    // break;
-  default:
-    return 9999.0;
-    // break;
-  }
-
+  if(Running) {
+    switch(Type) {
+    case etRocket:
+      return CalcRocketThrust();
+      // break;
+    case etPiston:
+      return CalcPistonThrust();
+      // break;
+    default:
+      return 9999.0;
+      // break;
+    }
+  } else {
+    return 0;
+  }  
 }
 
 float FGEngine::CalcFuelNeed() {

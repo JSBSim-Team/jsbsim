@@ -86,6 +86,7 @@ public:
   float  GetThrottleMax(void) { return MaxThrottle; }
   bool   GetStarved(void) { return Starved; }
   bool   GetFlameout(void) { return Flameout; }
+  bool   GetRunning(void) { return Running; }
   int    GetType(void) { return Type; }
   string GetName() { return Name; }
 
@@ -95,7 +96,9 @@ public:
   void SetStarved(void) {
     Starved = true;
   }
-
+  
+  bool SetRunning(bool bb) { Running=bb; }
+  
   float CalcThrust(void);
   float CalcFuelNeed(void);
   float CalcOxidizerNeed(void);
@@ -123,6 +126,7 @@ private:
   float FuelNeed, OxidizerNeed;
   bool  Starved;
   bool  Flameout;
+  bool  Running;
   float PctPower;
   int   EngineNumber;
 
