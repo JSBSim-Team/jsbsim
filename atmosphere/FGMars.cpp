@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.1 2004/01/10 22:10:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.2 2004/02/20 15:06:00 dpculp Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,8 +130,6 @@ bool FGMars::Run(void)
     if (psiw < 0) psiw += 2*M_PI;
 
     soundspeed = sqrt(SHRatio*Reng*(*temperature));
-
-    State->Seta(soundspeed);
 
     Debug(2);
 

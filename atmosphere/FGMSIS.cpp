@@ -67,7 +67,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.3 2004/02/01 05:34:56 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.4 2004/02/20 15:06:00 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,8 +188,6 @@ bool MSIS::Run(void)
     if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
 
     if (psiw < 0) psiw += 2*M_PI;
-
-    State->Seta(soundspeed);
 
     Debug(2);
 
