@@ -3,7 +3,7 @@
 
   File:        f22.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f22.xml,v 1.4 2003/03/28 20:39:41 ehofman Exp $
+  CVS Version: $Id: f22.xml,v 1.5 2003/03/28 21:26:14 ehofman Exp $
 
   Function: models a Lockheed-Martin F-22 Raptor
 -->
@@ -21,16 +21,16 @@
     AC_IZZ    258201
     AC_IXZ         0
     AC_EMPTYWT 29446.93
-    AC_AERORP                    0.0    0.0
-    AC_CGLOC                     0.0    0.0
+    AC_AERORP          -427.6    0.0    6.9
+    AC_CGLOC           -448.0    0.0    6.2
     AC_EYEPTLOC        -910.0    0.0   85.7
     AC_POINTMASS 230.0 -910.0    0.0   85.7
   </METRICS>
 
   <UNDERCARRIAGE>
      AC_GEAR  NOSE      -759.8    0.0 -154.1 12200 5000 0.5 0.8 0.02 STEERABLE NOSE 60 RETRACT
-     AC_GEAR  MLG_LEFT  -555.4 -135.8 -154.1 22704 9000 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
-     AC_GEAR  MLG_RIGHT -555.4 -135.8 -154.1 22704 9000 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
+     AC_GEAR  MLG_LEFT  -296.3 -135.8 -154.1 22704 9000 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
+     AC_GEAR  MLG_RIGHT -296.3  135.8 -154.1 22704 9000 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
 
      AC_GEAR  WT_LEFT   -242.5 -267.0    0.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
      AC_GEAR  WT_RIGHT  -242.5  267.0    0.0 10000 2000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
@@ -38,7 +38,7 @@
   </UNDERCARRIAGE>
 
   <PROPULSION>
-    <AC_ENGINE FILE="F100-PW-229_sim">
+    <AC_ENGINE FILE="low_bypass_turbofan">
       XLOC    0.0
       YLOC  -52.8
       ZLOC    0.0
@@ -47,7 +47,7 @@
       FEED    0
       FEED    1
     </AC_ENGINE>
-    <AC_ENGINE FILE="F100-PW-229_sim">
+    <AC_ENGINE FILE="low_bypass_turbofan">
       XLOC    0.0
       YLOC   52.8
       ZLOC    0.0
@@ -176,12 +176,6 @@
       1.3963   1.0726
      </COEFFICIENT>
 
-     <COEFFICIENT NAME="CLDh" TYPE="VALUE">
-      Lift_due_to_horizontal_tail_deflection
-      aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
-      4.0679
-     </COEFFICIENT>
-
      <COEFFICIENT NAME="CLadot" TYPE="VALUE">
       Lift_due_to_alpha_rate
       aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
@@ -220,6 +214,12 @@
 
     <AXIS NAME="SIDE">
 
+     <COEFFICIENT NAME="CYb" TYPE="VALUE">
+      Side_force_due_to_beta
+      aero/qbar-psf | metrics/Sw-sqft | aero/beta-rad
+      -0.2875
+     </COEFFICIENT>
+
      <COEFFICIENT NAME="CYbdot" TYPE="VALUE">
       Side_force_due_to_beta_rate
       aero/qbar-psf | metrics/Sw-sqft | aero/betadot-rad_sec
@@ -243,16 +243,13 @@
       aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/r-aero-rad_sec
       0.1218
      </COEFFICIENT>
-
     </AXIS>
-
     <AXIS NAME="ROLL">
- 
      <COEFFICIENT NAME="Clb" TYPE="VECTOR">
       Roll_moment_due_to_beta
       9
       aero/alpha-rad
-      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
       -0.0873   0.0339
        0.0      0.0339
        0.0873   0.0197
@@ -263,28 +260,24 @@
        0.5236   0.0273
        0.6109   0.0021
      </COEFFICIENT>
- 
      <COEFFICIENT NAME="Clbdot" TYPE="VALUE">
       Roll_moment_due_to_beta_rate
-      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/betadot-rad_sec
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/ci2vel | aero/betadot-rad_sec
       -0.0037
      </COEFFICIENT>
-
      <COEFFICIENT NAME="ClDa" TYPE="VALUE">
       Roll_moment_due_to_aileron
       aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
       0.0489
      </COEFFICIENT>
-     
     </AXIS>
 
     <AXIS NAME="PITCH">
-
      <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
       Pitch_moment_due_to_alpha
       15
       aero/alpha-rad
-      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
       -0.0873  -0.1597
        0.0     -0.0742
        0.0873   0.0000
@@ -301,35 +294,39 @@
        1.2217   0.2681
        1.3963  -0.4678
      </COEFFICIENT>
-
      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
       Pitch_moment_due_to_alpha_rate
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
       -1.5611
      </COEFFICIENT>
-
      <COEFFICIENT NAME="Cmo" TYPE="VALUE">
       Pitching_moment_at_zero_alpha
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
       0.0603
      </COEFFICIENT>
-
      <COEFFICIENT NAME="CmDh" TYPE="VALUE">
-      Pitch_moment_due_to_horizontal_tail_deflection
+      Pitch_moment_due_to_alpha_rate_and_horizontal_tail_deflection
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
-      0.0000
+      -0.9016
      </COEFFICIENT>
-
+     <COEFFICIENT NAME="CmadotDh" TYPE="VALUE">
+      Pitch_moment_due_to_horizontal_tail_deflection
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec | fcs/elevator-pos-rad
+      -1.5611
+     </COEFFICIENT>
      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
       Pitch_moment_due_to_pitch_rate
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-rad_sec
       -1.7830
      </COEFFICIENT>
-
+     <COEFFICIENT NAME="CmqDh" TYPE="VALUE">
+      Pitch_moment_due_to_pitch_rate_and_horizontal_tail_deflection
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-rad_sec | fcs/elevator-pos-rad
+      -1.1726
+     </COEFFICIENT>
     </AXIS>
 
     <AXIS NAME="YAW">
-
      <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
       Yaw_moment_due_to_beta
       9
@@ -345,15 +342,15 @@
        0.5236  -0.0012
        0.6109  -0.0017
      </COEFFICIENT>
-
      <COEFFICIENT NAME="Cnbdot" TYPE="VALUE">
       Yaw_moment_due_to_beta_rate
-      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/betadot-rad_sec
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/ci2vel | aero/betadot-rad_sec
       -0.0115
      </COEFFICIENT>
-
-     <COEFFICIENT NAME="CnDr" TYPE="VALUE">
+     <COEFFICIENT NAME="CnDr" TYPE="VECTOR">
       Yaw_moment_due_to_rudder
+      9
+      aero/alpha-rad
       aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
       -0.0873  -0.0327
        0.0     -0.0342
@@ -365,13 +362,11 @@
        0.5236  -0.0100
        0.6109  -0.0038
      </COEFFICIENT>
-
      <COEFFICIENT NAME="Cnp" TYPE="VALUE">
       Yaw_moment_due_to_roll_rate
       aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-rad_sec
       -0.0035
      </COEFFICIENT>
-
     </AXIS>
 
   </AERODYNAMICS>
