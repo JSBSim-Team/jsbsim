@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.36 2003/03/17 13:49:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.37 2003/04/24 04:52:22 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  vcas = veas = mach = qbar = pt = 0;
+  vcas = veas = mach = qbar = pt = tat = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
   

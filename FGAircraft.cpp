@@ -94,7 +94,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.119 2003/01/22 15:53:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.120 2003/04/24 04:52:21 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,6 +104,7 @@ CLASS IMPLEMENTATION
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAircraft";
+  WingSpan = 0.0;
   HTailArea = VTailArea = 0.0;
   HTailArm  = VTailArm  = 0.0;
   lbarh = lbarv = 0.0;
