@@ -209,6 +209,20 @@
              1   1
      OUTPUT  fcs/speedbrake-pos-norm
    </COMPONENT>
+   <COMPONENT NAME="Spoiler Control" TYPE="KINEMAT">
+     INPUT   fcs/spoiler-cmd-norm
+     DETENTS 2
+             0   0
+             1   1
+     OUTPUT  fcs/spoiler-pos-norm
+   </COMPONENT>
+   <COMPONENT NAME="Spoiler Control" TYPE="KINEMAT">
+     INPUT   fcs/spoiler-cmd-norm
+     DETENTS 2
+             0   0
+             1   1
+     OUTPUT  fcs/reverser-pos-norm
+   </COMPONENT>
  </FLIGHT_CONTROL>
  <AERODYNAMICS>
   <AXIS NAME="LIFT">
@@ -235,10 +249,11 @@
        0.595   1.390
        1.000   2.250
     </COEFFICIENT>
-    <COEFFICIENT NAME="dCLsb" TYPE="VALUE">
-       Delta_Lift_due_to_speedbrake
-       aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
-       -0.1
+    <!-- wild guess -->
+    <COEFFICIENT NAME="dCLsp" TYPE="VALUE">
+       Delta_Lift_due_to_spoiler
+       aero/qbar-psf|metrics/Sw-sqft|fcs/spoiler-pos-norm
+       -0.5
     </COEFFICIENT>
     <COEFFICIENT NAME="CLde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
@@ -263,7 +278,13 @@
     <COEFFICIENT NAME="CDi" TYPE="VALUE">
        Induced_drag
        aero/qbar-psf|metrics/Sw-sqft|aero/cl-squared-norm
-       0.00867
+       0.04478
+    </COEFFICIENT>
+    <!-- Linssys -->
+    <COEFFICIENT NAME="CDcomp" TYPE="VALUE">
+       Drag_due_to_compressibility
+       aero/qbar-psf|metrics/Sw-sqft
+       0.00115
     </COEFFICIENT>
     <COEFFICIENT NAME="CDmach" TYPE="VECTOR">
        Drag_due_to_mach
@@ -288,7 +309,13 @@
     <COEFFICIENT NAME="CDsb" TYPE="VALUE">
        Drag_due_to_speedbrakes
        aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
-       0.12
+       0.8
+    </COEFFICIENT>
+    <!-- wild guess -->
+    <COEFFICIENT NAME="CDsp" TYPE="VALUE">
+       Drag_due_to_spoilers
+       aero/qbar-psf|metrics/Sw-sqft|fcs/spoiler-pos-norm
+       0.5
     </COEFFICIENT>
     <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
        Drag_due_to_sideslip
@@ -357,6 +384,16 @@
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
        0.0       -1.2
        2.0       -0.300
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Cmsb" TYPE="VALUE">
+       Pitch_moment_due_to_speedbrake_deflection
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/speedbrake-pos-norm
+       -0.07
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Cmsp" TYPE="VALUE">
+       Pitch_moment_due_to_spoiler_deflection
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/spoiler-pos-norm
+       -0.08
     </COEFFICIENT>
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
