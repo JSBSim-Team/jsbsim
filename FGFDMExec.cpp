@@ -56,6 +56,7 @@ INCLUDES
 #include "FGState.h"
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
+#include "FGPropulsion.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -63,7 +64,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.18 2000/10/29 17:03:40 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.19 2000/11/22 23:49:01 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +81,7 @@ FGFDMExec::FGFDMExec(void)
   State       = 0;
   Atmosphere  = 0;
   FCS         = 0;
+  Propulsion  = 0;
   Aircraft    = 0;
   Translation = 0;
   Rotation    = 0;
@@ -95,10 +97,8 @@ FGFDMExec::FGFDMExec(void)
   
 }
 
-FGFDMExec::~FGFDMExec(void){
-  
+FGFDMExec::~FGFDMExec(void) {
   DeAllocate();
-
 }
 
 bool FGFDMExec::Allocate(void) {
@@ -107,6 +107,7 @@ bool FGFDMExec::Allocate(void) {
   
   Atmosphere  = new FGAtmosphere(this);
   FCS         = new FGFCS(this);
+  Propulsion  = new FGPropulsion(this);
   Aircraft    = new FGAircraft(this);
   Translation = new FGTranslation(this);
   Rotation    = new FGRotation(this);
@@ -120,12 +121,13 @@ bool FGFDMExec::Allocate(void) {
 
   if (!Atmosphere->InitModel()) {cerr << "Atmosphere model init failed"; Error+=1;}
   if (!FCS->InitModel())        {cerr << "FCS model init failed"; Error+=2;}
-  if (!Aircraft->InitModel())   {cerr << "Aircraft model init failed"; Error+=4;}
-  if (!Translation->InitModel()){cerr << "Translation model init failed"; Error+=8;}
-  if (!Rotation->InitModel())   {cerr << "Rotation model init failed"; Error+=16;}
-  if (!Position->InitModel())   {cerr << "Position model init failed"; Error+=32;}
-  if (!Auxiliary->InitModel())  {cerr << "Auxiliary model init failed"; Error+=64;}
-  if (!Output->InitModel())     {cerr << "Output model init failed"; Error+=128;}
+  if (!Propulsion->InitModel()) {cerr << "FGPropulsion model init failed"; Error+=4;}
+  if (!Aircraft->InitModel())   {cerr << "Aircraft model init failed"; Error+=8;}
+  if (!Translation->InitModel()){cerr << "Translation model init failed"; Error+=16;}
+  if (!Rotation->InitModel())   {cerr << "Rotation model init failed"; Error+=32;}
+  if (!Position->InitModel())   {cerr << "Position model init failed"; Error+=64;}
+  if (!Auxiliary->InitModel())  {cerr << "Auxiliary model init failed"; Error+=128;}
+  if (!Output->InitModel())     {cerr << "Output model init failed"; Error+=256;}
   
   if(Error > 0) result=false;
   
@@ -135,6 +137,7 @@ bool FGFDMExec::Allocate(void) {
 
   Schedule(Atmosphere,  1);
   Schedule(FCS,         1);
+  Schedule(Propulsion,  1);
   Schedule(Aircraft,    1);
   Schedule(Rotation,    1);
   Schedule(Translation, 1);
@@ -151,6 +154,7 @@ bool FGFDMExec::DeAllocate(void) {
  
   if ( Atmosphere != 0 )  delete Atmosphere;
   if ( FCS != 0 )         delete FCS;
+  if ( Propulsion != 0)   delete Propulsion;
   if ( Aircraft != 0 )    delete Aircraft;
   if ( Translation != 0 ) delete Translation;
   if ( Rotation != 0 )    delete Rotation;
@@ -165,6 +169,7 @@ bool FGFDMExec::DeAllocate(void) {
   State       = 0;
   Atmosphere  = 0;
   FCS         = 0;
+  Propulsion  = 0;
   Aircraft    = 0;
   Translation = 0;
   Rotation    = 0;
@@ -173,7 +178,7 @@ bool FGFDMExec::DeAllocate(void) {
   Output      = 0;
 
   modelLoaded = false;
-  
+  return modelLoaded;
 }
 
 
@@ -235,13 +240,13 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
-	bool result=false;
-  if(modelLoaded) {
-     DeAllocate();
-     Allocate();
-  }   
+  bool result = false;
+  if (modelLoaded) {
+    DeAllocate();
+    Allocate();
+  }
   AircraftPath = APath;
-	EnginePath = EPath;
+  EnginePath   = EPath;
   result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
 
   if (result) {
@@ -256,4 +261,6 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 
 bool FGFDMExec::RunScript(string script)
 {
+    return true;
 }
+

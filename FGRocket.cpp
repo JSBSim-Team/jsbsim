@@ -40,23 +40,14 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.6 2000/11/21 23:07:57 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.7 2000/11/22 23:49:02 jsb Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-FGRocket::FGRocket(FGFDMExec* fdex, string enginePath, string engineName, int num) :
-                                 FGEngine(fdex, enginePath, engineName, num)
-{
-  //
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGRocket::FGRocket(FGConfigFile* Eng_cfg) : FGEngine()
+FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 {
   *Eng_cfg >> SLThrustMax;
   *Eng_cfg >> VacThrustMax;
@@ -64,6 +55,32 @@ FGRocket::FGRocket(FGConfigFile* Eng_cfg) : FGEngine()
   *Eng_cfg >> MinThrottle;
   *Eng_cfg >> SLFuelFlowMax;
   *Eng_cfg >> SLOxiFlowMax;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGRocket::Calculate(void) {
+  float lastThrust;
+
+  Throttle = FCS->GetThrottlePos(EngineNumber);
+  lastThrust = Thrust;                 // last actual thrust
+
+  if (Throttle < MinThrottle || Starved) {
+    PctPower = Thrust = 0.0; // desired thrust
+    Flameout = true;
+  } else {
+    PctPower = Throttle / MaxThrottle;
+    Thrust = PctPower*((1.0 - Atmosphere->GetPressureRatio())*(VacThrustMax - SLThrustMax) +
+                       SLThrustMax); // desired thrust
+    Flameout = false;
+  }
+
+
+  if(State->Getdt() > 0.0) {
+    Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
+  }
+
+  return Thrust;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

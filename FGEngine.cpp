@@ -50,19 +50,8 @@ INCLUDES
 #endif
 
 #include "FGEngine.h"
-#include "FGState.h"
-#include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
-#include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.16 2000/11/19 23:12:51 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.17 2000/11/22 23:49:01 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,12 +59,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int num) {
-  string fullpath;
-  string tag;
-
-  FDMExec = fdex;
-
+FGEngine::FGEngine(FGFDMExec* exec) : FDMExec(exec) {
   State       = FDMExec->GetState();
   Atmosphere  = FDMExec->GetAtmosphere();
   FCS         = FDMExec->GetFCS();
@@ -86,139 +70,16 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
   Auxiliary   = FDMExec->GetAuxiliary();
   Output      = FDMExec->GetOutput();
 
-  Name = engineName;
-
-# ifndef macintosh  
-    fullpath = enginePath + "/" + engineName + ".xml";
-# else
-    fullpath = enginePath + ";" + engineName + ".xml";
-# endif
-      
-  cout << "    Reading engine: " << engineName << " from file: " << fullpath << endl;
-  ifstream enginefile(fullpath.c_str());
-
-  if (enginefile) {
-    enginefile >> tag;
-
-    if      (tag == "ROCKET")    Type = etRocket;
-    else if (tag == "PISTON")    Type = etPiston;
-    else if (tag == "TURBOPROP") Type = etTurboProp;
-    else if (tag == "TURBOJET")  Type = etTurboJet;
-    else                         Type = etUnknown;
-
-    switch(Type) {
-    case etTurboProp:
-    case etTurboJet: 
-      cerr << "Unsupported Engine type" << tag << endl;
-      break;
-    case etUnknown:
-      cerr << "Unknown engine type: " << tag << endl;
-      break;
-    case etPiston:
-      enginefile >> BrakeHorsePower;
-      enginefile >> MaxThrottle;
-      enginefile >> MinThrottle;
-      enginefile >> SLFuelFlowMax;
-      enginefile >> SpeedSlope;
-      enginefile >> SpeedIntercept;
-      enginefile >> AltitudeSlope;
-
-      break;
-    case etRocket:
-      enginefile >> SLThrustMax;
-      enginefile >> VacThrustMax;
-      enginefile >> MaxThrottle;
-      enginefile >> MinThrottle;
-      enginefile >> SLFuelFlowMax;
-      enginefile >> SLOxiFlowMax;
-      break;
-    }
-
-    enginefile.close();
-  } else {
-    cerr << "Unable to open engine definition file " << fullpath.c_str() << endl;
-  }
-
-  EngineNumber = num;
+//  EngineNumber = num;
   Thrust = PctPower = 0.0;
   Starved = Flameout = false;
   Running = true;
-}
-
-
-FGEngine::~FGEngine(void) {}
-
-
-float FGEngine::CalcRocketThrust(void) {
-  float lastThrust;
-
-  Throttle = FCS->GetThrottlePos(EngineNumber);
-  lastThrust = Thrust;                 // last actual thrust
-
-  if (Throttle < MinThrottle || Starved) {
-    PctPower = Thrust = 0.0; // desired thrust
-    Flameout = true;
-  } else {
-    PctPower = Throttle / MaxThrottle;
-    Thrust = PctPower*((1.0 - Atmosphere->GetDensityRatio())*(VacThrustMax - SLThrustMax) +
-                       SLThrustMax); // desired thrust
-    Flameout = false;
-  }
-
-
-  if(State->Getdt() > 0.0) {
-    Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
-  }
-
-  return Thrust;
-}
-
-
-float FGEngine::CalcPistonThrust(void) {
-  float v,h,pa;
-
-  Throttle = FCS->GetThrottlePos(EngineNumber);
-  Throttle /= 100;
-
-  v = Translation->GetVt();
-  h = Position->Geth();
-
-  if (v < 10)
-    v = 10;
-  if (h < 0)
-    h = 0;
-
-  pa=(SpeedSlope*v + SpeedIntercept)*(1 +AltitudeSlope*h)*BrakeHorsePower;
-
-  Thrust = Throttle*(pa*HPTOFTLBSSEC)/v;
-
-  return Thrust;
-}
-
-
-float FGEngine::CalcThrust(void) {
-  if(Running) {
-    switch(Type) {
-    case etRocket:
-      return CalcRocketThrust();
-      // break;
-    case etPiston:
-      return CalcPistonThrust();
-      // break;
-    default:
-      return 9999.0;
-      // break;
-    }
-  } else {
-    return 0;
-  }
 }
 
 float FGEngine::CalcFuelNeed(void) {
   FuelNeed = SLFuelFlowMax*PctPower;
   return FuelNeed;
 }
-
 
 float FGEngine::CalcOxidizerNeed(void) {
   OxidizerNeed = SLOxiFlowMax*PctPower;

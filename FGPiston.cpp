@@ -40,17 +40,46 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.4 2000/10/16 12:32:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.5 2000/11/22 23:49:01 jsb Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-FGPiston::FGPiston(FGFDMExec* fdex, string enginePath, string engineName, int num) :
-                                 FGEngine(fdex, enginePath, engineName, num)
+FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 {
-  //
+  *Eng_cfg >> BrakeHorsePower;
+  *Eng_cfg >> MaxThrottle;
+  *Eng_cfg >> MinThrottle;
+  *Eng_cfg >> SLFuelFlowMax;
+  *Eng_cfg >> SpeedSlope;
+  *Eng_cfg >> SpeedIntercept;
+  *Eng_cfg >> AltitudeSlope;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPiston::Calculate(void) {
+  float v,h,pa;
+
+  Throttle = FCS->GetThrottlePos(EngineNumber);
+  Throttle /= 100;
+
+  v = Translation->GetVt();
+  h = Position->Geth();
+
+  if (v < 10)
+    v = 10;
+  if (h < 0)
+    h = 0;
+
+  pa=(SpeedSlope*v + SpeedIntercept)*(1 +AltitudeSlope*h)*BrakeHorsePower;
+
+  Thrust = Throttle*(pa*HPTOFTLBSSEC)/v;
+
+  return Thrust;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

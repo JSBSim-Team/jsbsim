@@ -43,6 +43,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGEngine.h"
+#include "FGConfigFile.h"
 
 #define ID_TURBOPROP "$Header"
 
@@ -52,11 +53,11 @@ CLASS DECLARATION
 
 class FGTurboProp : public FGEngine
 {
-
 public:
-  FGTurboProp(FGFDMExec*, string, string, int);
+  FGTurboProp(FGFDMExec* exec, FGConfigFile* Eng_cfg);
   ~FGTurboProp();
 
+  float Calculate(void) {return 0.0;}
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

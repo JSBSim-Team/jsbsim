@@ -54,7 +54,7 @@ class FGThruster : public FGForce {
 
 public:
   FGThruster(FGFDMExec *FDMExec);
-  ~FGThruster(void);
+  ~FGThruster(void) {}
 
   enum Type {ttNozzle, ttRotor, ttPropeller};
 

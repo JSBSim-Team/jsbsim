@@ -57,6 +57,7 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGCoefficient.h"
+#include "FGPropulsion.h"
 #include "FGEngine.h"
 #include "FGTank.h"
 #include "FGLGear.h"
@@ -67,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.38 2000/11/12 12:21:42 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.39 2000/11/22 23:49:00 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +89,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.38 2000/11/12 12:21:42 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.39 2000/11/22 23:49:00 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -157,11 +158,11 @@ public:
   /** Gets an engine instance.
       @param engine index of the engine instance
       @return a pointer to the FGEngine instance of the requested engine */
-  inline FGEngine* GetEngine(int engine) { return Engine[engine]; }
+//  inline FGEngine* GetEngine(int engine) { return Engine[engine]; }
   /** Gets a tank instance.
       @param tank index of the tank instance
       @return a pointer to the FGTank instance of the requested tank */
-  inline FGTank* GetTank(int tank) { return Tank[tank]; }
+//  inline FGTank* GetTank(int tank) { return Tank[tank]; }
   inline float GetWeight(void) { return Weight; }
   inline float GetMass(void) { return Mass; }
   inline FGColumnVector GetMoments(void) { return vMoments; }
@@ -171,7 +172,7 @@ public:
   inline float GetIyy(void) { return Iyy; }
   inline float GetIzz(void) { return Izz; }
   inline float GetIxz(void) { return Ixz; }
-  inline unsigned int GetNumEngines(void) { return numEngines; }
+//  inline unsigned int GetNumEngines(void) { return numEngines; }
   inline FGColumnVector GetXYZcg(void) { return vXYZcg; }
   inline FGColumnVector GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector GetXYZep(void) { return vXYZep; }
@@ -230,12 +231,12 @@ private:
   string CFGVersion;
   string AircraftName;
 
-  unsigned int numTanks;
-  unsigned int numEngines;
-  unsigned int numSelectedOxiTanks;
-  unsigned int numSelectedFuelTanks;
-  FGTank* Tank[MAX_TANKS];           // need to make a vector
-  FGEngine *Engine[MAX_ENGINES];     // need to make a vector
+//  unsigned int numTanks;
+//  unsigned int numEngines;
+//  unsigned int numSelectedOxiTanks;
+//  unsigned int numSelectedFuelTanks;
+//  FGTank* Tank[MAX_TANKS];           // need to make a vector
+//  FGEngine *Engine[MAX_ENGINES];     // need to make a vector
 
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;

@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.51 2000/11/20 23:59:45 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.52 2000/11/22 23:49:00 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,7 +170,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   
   alphaclmin = alphaclmax = 0;
 
-  numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
+//  numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
 }
 
 
@@ -179,15 +179,16 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 
 FGAircraft::~FGAircraft(void) { 
   unsigned int i,j;
-
+/*
   if (Engine != NULL) {
     for (i=0; i<numEngines; i++)
       delete Engine[i];
-  }    
+  }
   if (Tank != NULL) {
     for (i=0; i<numTanks; i++)
       delete Tank[i];
-  }    
+  }
+*/
   for (i=0; i<6; i++) {
     for (j=0; j<Coeff[i].size(); j++) {
       delete Coeff[i][j];
@@ -277,7 +278,7 @@ void FGAircraft::MassChange() {
   float IXXt, IYYt, IZZt, IXZt;
   unsigned int t;
   unsigned int axis_ctr;
-
+/*
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vXYZtank(axis_ctr) = 0.0;
 
   // UPDATE TANK CONTENTS
@@ -327,34 +328,34 @@ void FGAircraft::MassChange() {
     if ((Fshortage <= 0.0) || (Oshortage <= 0.0)) Engine[e]->SetStarved();
     else Engine[e]->SetStarved(false);
   }
-
+*/
   Weight = EmptyWeight;
-  for (t=0; t<numTanks; t++)
-    Weight += Tank[t]->GetContents();
+//  for (t=0; t<numTanks; t++)
+//    Weight += Tank[t]->GetContents();
 
   Mass = Weight / GRAVITY;
   // Calculate new CG here.
 
   Tw = 0;
-  for (t=0; t<numTanks; t++) {
-    vXYZtank(eX) += Tank[t]->GetX()*Tank[t]->GetContents();
-    vXYZtank(eY) += Tank[t]->GetY()*Tank[t]->GetContents();
-    vXYZtank(eZ) += Tank[t]->GetZ()*Tank[t]->GetContents();
-
-    Tw += Tank[t]->GetContents();
-  }
+//  for (t=0; t<numTanks; t++) {
+//    vXYZtank(eX) += Tank[t]->GetX()*Tank[t]->GetContents();
+//    vXYZtank(eY) += Tank[t]->GetY()*Tank[t]->GetContents();
+//    vXYZtank(eZ) += Tank[t]->GetZ()*Tank[t]->GetContents();
+//
+//    Tw += Tank[t]->GetContents();
+//  }
 
   vXYZcg = (vXYZtank + EmptyWeight*vbaseXYZcg) / (Tw + EmptyWeight);
 
   // Calculate new moments of inertia here
 
   IXXt = IYYt = IZZt = IXZt = 0.0;
-  for (t=0; t<numTanks; t++) {
-    IXXt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetX() - vXYZcg(eX))/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IYYt += ((Tank[t]->GetY()-vXYZcg(eY))/12.0)*((Tank[t]->GetY() - vXYZcg(eY))/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IZZt += ((Tank[t]->GetZ()-vXYZcg(eZ))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
-    IXZt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
-  }
+//  for (t=0; t<numTanks; t++) {
+//    IXXt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetX() - vXYZcg(eX))/12.0)*Tank[t]->GetContents()/GRAVITY;
+//    IYYt += ((Tank[t]->GetY()-vXYZcg(eY))/12.0)*((Tank[t]->GetY() - vXYZcg(eY))/12.0)*Tank[t]->GetContents()/GRAVITY;
+//    IZZt += ((Tank[t]->GetZ()-vXYZcg(eZ))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
+//    IXZt += ((Tank[t]->GetX()-vXYZcg(eX))/12.0)*((Tank[t]->GetZ() - vXYZcg(eZ))/12.0)*Tank[t]->GetContents()/GRAVITY;
+//  }
 
   Ixx = baseIxx + IXXt;
   Iyy = baseIyy + IYYt;
@@ -425,13 +426,10 @@ void FGAircraft::FMMass(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMProp(void) {
-  for (unsigned int i=0;i<numEngines;i++) {
-
+//  for (unsigned int i=0;i<numEngines;i++) {
     // Changes required here for new engine placement parameters (i.e. location and direction)
-
-    vForces(eX) += Engine[i]->CalcThrust();
-  }
-  
+//    vForces(eX) += Engine[i]->Calculate();
+//  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -497,7 +495,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   string token;
   string engine_name;
@@ -536,15 +534,15 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
     }
   }
 }
-
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
+
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   if (!Propulsion->LoadPropulsion(AC_cfg)) {
     cerr << "Propulsion not successfully loaded\n";
   }
 }
-*/
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {

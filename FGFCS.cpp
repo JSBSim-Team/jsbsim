@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.34 2000/11/15 14:14:58 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.35 2000/11/22 23:49:01 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ FGFCS::~FGFCS(void) {
 bool FGFCS::Run(void) {
   if (!FGModel::Run()) {
 
-    for (unsigned int i=0; i<Aircraft->GetNumEngines(); i++) ThrottlePos[i]=ThrottleCmd[i];
+//    for (unsigned int i=0; i<Aircraft->GetNumEngines(); i++) ThrottlePos[i]=ThrottleCmd[i];
 
     for (unsigned int i=0; i<Components.size(); i++) {
       Components[i]->Run();
@@ -101,7 +101,7 @@ bool FGFCS::Run(void) {
 
 void FGFCS::SetThrottleCmd(int engineNum, float setting) {
   if (engineNum < 0) {
-    for (unsigned int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
+//    for (unsigned int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
   } else {
     ThrottleCmd[engineNum] = setting;
   }
@@ -111,7 +111,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting) {
 
 void FGFCS::SetThrottlePos(int engineNum, float setting) {
   if (engineNum < 0) {
-    for (unsigned int ctr=0;ctr<=Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+//    for (unsigned int ctr=0;ctr<=Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
   } else {
     ThrottlePos[engineNum] = setting;
   }

@@ -53,6 +53,7 @@ CLASS DECLARATION
 class FGState;
 class FGAtmosphere;
 class FGFCS;
+class FGPropulsion;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -83,15 +84,17 @@ public:
   bool LoadModel(string AircraftPath, string EnginePath, string model);
   bool RunScript(string script);
 
-  inline FGState* GetState(void)             {return State;}
-  inline FGAtmosphere* GetAtmosphere(void)   {return Atmosphere;}
-  inline FGFCS* GetFCS(void)                 {return FCS;}
-  inline FGAircraft* GetAircraft(void)       {return Aircraft;}
-  inline FGTranslation* GetTranslation(void) {return Translation;}
-  inline FGRotation* GetRotation(void)       {return Rotation;}
-  inline FGPosition* GetPosition(void)       {return Position;}
-  inline FGAuxiliary* GetAuxiliary(void)     {return Auxiliary;}
-  inline FGOutput* GetOutput(void)           {return Output;}
+  inline FGState* GetState(void) const             {return State;}
+  inline FGAtmosphere* GetAtmosphere(void) const   {return Atmosphere;}
+  inline FGFCS* GetFCS(void) const                 {return FCS;}
+  inline FGPropulsion* GetPropulsion(void) const   {return Propulsion;}
+  inline FGAircraft* GetAircraft(void) const       {return Aircraft;}
+  inline FGTranslation* GetTranslation(void) const {return Translation;}
+  inline FGRotation* GetRotation(void) const       {return Rotation;}
+  inline FGPosition* GetPosition(void) const       {return Position;}
+  inline FGAuxiliary* GetAuxiliary(void) const     {return Auxiliary;}
+  inline FGOutput* GetOutput(void) const           {return Output;}
+  
   inline string GetEnginePath(void)          {return EnginePath;}
   inline string GetAircraftPath(void)        {return AircraftPath;}
 
@@ -108,6 +111,7 @@ private:
   FGState*       State;
   FGAtmosphere*  Atmosphere;
   FGFCS*         FCS;
+  FGPropulsion*  Propulsion;
   FGAircraft*    Aircraft;
   FGTranslation* Translation;
   FGRotation*    Rotation;

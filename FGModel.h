@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.10 2000/10/18 19:18:36 jsb Exp $"
+#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.11 2000/11/22 23:49:01 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -69,6 +69,7 @@ class FGFDMExec;
 class FGState;
 class FGAtmosphere;
 class FGFCS;
+class FGPropulsion;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -127,6 +128,7 @@ protected:
   FGState*        State;
   FGAtmosphere*   Atmosphere;
   FGFCS*          FCS;
+  FGPropulsion*   Propulsion;
   FGAircraft*     Aircraft;
   FGTranslation*  Translation;
   FGRotation*     Rotation;

@@ -50,7 +50,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.3 2000/10/16 12:32:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.4 2000/11/22 23:49:01 jsb Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,6 +65,7 @@ FGModel::FGModel(FGFDMExec* fdmex)
   State       = 0;
   Atmosphere  = 0;
   FCS         = 0;
+  Propulsion  = 0;
   Aircraft    = 0;
   Translation = 0;
   Rotation    = 0;
@@ -86,6 +87,7 @@ bool FGModel::InitModel(void)
   State       = FDMExec->GetState();
   Atmosphere  = FDMExec->GetAtmosphere();
   FCS         = FDMExec->GetFCS();
+  Propulsion  = FDMExec->GetPropulsion();
   Aircraft    = FDMExec->GetAircraft();
   Translation = FDMExec->GetTranslation();
   Rotation    = FDMExec->GetRotation();
@@ -96,6 +98,7 @@ bool FGModel::InitModel(void)
   if (!State ||
       !Atmosphere ||
       !FCS ||
+      !Propulsion ||
       !Aircraft ||
       !Translation ||
       !Rotation ||
