@@ -103,6 +103,7 @@ typedef enum { setvt, setvc, setve, setmach } speedset;
 	 considered equivalent to setting gamma.
  
 */
+
 class FGInitialCondition {
 public:
 
