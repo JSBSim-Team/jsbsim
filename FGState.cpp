@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.42 2001/02/25 00:56:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.43 2001/02/26 23:37:27 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,6 +249,32 @@ void FGState::SetParameter(eParam val_idx, float val) {
     break;
   case FG_THROTTLE_POS:
     FDMExec->GetFCS()->SetThrottlePos(-1,val);
+    break;
+
+  case FG_ELEVATOR_CMD:
+    FDMExec->GetFCS()->SetDeCmd(val);
+    break;
+  case FG_AILERON_CMD:
+    FDMExec->GetFCS()->SetDaCmd(val);
+    break;
+  case FG_RUDDER_CMD:
+    FDMExec->GetFCS()->SetDrCmd(val);
+    break;
+  case FG_SPDBRAKE_CMD:
+    FDMExec->GetFCS()->SetDsbCmd(val);
+    break;
+  case FG_SPOILERS_CMD:
+    FDMExec->GetFCS()->SetDspCmd(val);
+    break;
+  case FG_FLAPS_CMD:
+    FDMExec->GetFCS()->SetDfCmd(val);
+    break;
+  case FG_THROTTLE_CMD:
+    FDMExec->GetFCS()->SetThrottleCmd(-1,val);
+    break;
+  
+  default:
+    cerr << "Parameter '" << val_idx << "' (" << paramdef[val_idx] << ") not handled" << endl;
   }
 }
 

@@ -68,7 +68,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.30 2001/02/26 16:41:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.31 2001/02/26 23:37:27 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
