@@ -1,6 +1,7 @@
 SUBDIRS =		\
 	737		\
 	A320		\
+	B747		\
 	LM		\
 	OV10		\
 	SGS		\
