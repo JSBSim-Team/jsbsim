@@ -4,9 +4,13 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.2 2002/03/20 11:42:46 apeden Exp $
+// $Id: props.cxx,v 1.3 2002/04/30 11:24:18 apeden Exp $
 
 #include "props.hxx"
+
+#include <algorithm>
+#include <stdio.h>
+#include <string.h>
 
 #if PROPS_STANDALONE
 
@@ -23,10 +27,6 @@ using std::sort;
 SG_USING_STD(sort);
 
 #endif
-
-#include <algorithm>
-#include <stdio.h>
-#include <string.h>
 
 
 
@@ -215,15 +215,14 @@ parse_path (const string &path, vector<PathComponent> &components)
 ////////////////////////////////////////////////////////////////////////
 
 
-static const char *
+static char *
 copy_string (const char * s)
 {
 				// FIXME: potential buffer overflow.
 				// For some reason, strnlen and
 				// strncpy cause all kinds of crashes.
-  string str = s;
-  char * copy = new char[str.size() + 1];
-  strcpy(copy, str.c_str());
+  char * copy = new char[strlen(s) + 1];
+  strcpy(copy, s);
   return copy;
 }
 
@@ -418,7 +417,7 @@ SGPropertyNode::set_string (const char * val)
   if (_tied) {
     return _value.string_val->setValue(val);
   } else {
-    delete _local_val.string_val;
+    delete [] _local_val.string_val;
     _local_val.string_val = copy_string(val);
     return true;
   }
@@ -429,39 +428,53 @@ SGPropertyNode::clear_value ()
 {
   switch (_type) {
   case NONE:
+    break;
   case ALIAS:
     _value.alias = 0;
     break;
   case BOOL:
-    delete _value.bool_val;
-    _value.bool_val = 0;
+    if (_tied) {
+      delete _value.bool_val;
+      _value.bool_val = 0;
+    }
     _local_val.bool_val = SGRawValue<bool>::DefaultValue;
     break;
   case INT:
-    delete _value.int_val;
-    _value.int_val = 0;
+    if (_tied) {
+      delete _value.int_val;
+      _value.int_val = 0;
+    }
     _local_val.int_val = SGRawValue<int>::DefaultValue;
     break;
   case LONG:
-    delete _value.long_val;
-    _value.long_val = 0L;
+    if (_tied) {
+      delete _value.long_val;
+      _value.long_val = 0L;
+    }
     _local_val.long_val = SGRawValue<long>::DefaultValue;
     break;
   case FLOAT:
-    delete _value.float_val;
-    _value.float_val = 0;
+    if (_tied) {
+      delete _value.float_val;
+      _value.float_val = 0;
+    }
     _local_val.float_val = SGRawValue<float>::DefaultValue;
     break;
   case DOUBLE:
-    delete _value.double_val;
-    _value.double_val = 0;
+    if (_tied) {
+      delete _value.double_val;
+      _value.double_val = 0;
+    }
     _local_val.double_val = SGRawValue<double>::DefaultValue;
     break;
   case STRING:
   case UNSPECIFIED:
-    delete _value.string_val;
-    _value.string_val = 0;
-    delete _local_val.string_val;
+    if (_tied) {
+      delete _value.string_val;
+      _value.string_val = 0;
+    } else {
+      delete [] _local_val.string_val;
+    }
     _local_val.string_val = 0;
     break;
   }
@@ -662,11 +675,11 @@ SGPropertyNode::SGPropertyNode (const char * name,
  */
 SGPropertyNode::~SGPropertyNode ()
 {
-  delete _name;
+  delete [] _name;
   for (int i = 0; i < (int)_children.size(); i++) {
     delete _children[i];
   }
-//   delete _path_cache;
+  delete _path_cache;
   clear_value();
 }
 
@@ -1463,9 +1476,10 @@ SGPropertyNode::tie (const SGRawValue<float> &rawValue, bool useDefault)
 bool
 SGPropertyNode::tie (const SGRawValue<double> &rawValue, bool useDefault)
 {
+  
+  
   if (_type == ALIAS || _tied)
     return false;
-
   useDefault = useDefault && hasValue();
   double old_val = 0.0;
   if (useDefault)
@@ -1585,22 +1599,19 @@ SGPropertyNode::getRootNode () const
 SGPropertyNode *
 SGPropertyNode::getNode (const char * relative_path, bool create)
 {
-//   if (_path_cache == 0)
-//     _path_cache = new cache_map;
+  if (_path_cache == 0)
+    _path_cache = new hash_table;
 
-//   SGPropertyNode * result = (*_path_cache)[relative_path];
-//   if (result == 0) {
-//     vector<PathComponent> components;
-//     parse_path(relative_path, components);
-//     result = find_node(this, components, 0, create);
-//     if (result != 0)
-//       (*_path_cache)[relative_path] = result;
-//   }
+  SGPropertyNode * result = _path_cache->get(relative_path);
+  if (result == 0) {
+    vector<PathComponent> components;
+    parse_path(relative_path, components);
+    result = find_node(this, components, 0, create);
+    if (result != 0)
+      _path_cache->put(relative_path, result);
+  }
   
-//   return result;
-  vector<PathComponent> components;
-  parse_path(relative_path, components);
-  return find_node(this, components, 0, create);
+  return result;
 }
 
 SGPropertyNode *
@@ -1887,6 +1898,131 @@ SGPropertyNode::untie (const char * relative_path)
 {
   SGPropertyNode * node = getNode(relative_path);
   return (node == 0 ? false : node->untie());
+}
+
+
+
+////////////////////////////////////////////////////////////////////////
+// Simplified hash table for caching paths.
+////////////////////////////////////////////////////////////////////////
+
+#define HASH_TABLE_SIZE 199
+
+SGPropertyNode::hash_table::entry::entry ()
+  : _key(0),
+    _value(0)
+{
+}
+
+SGPropertyNode::hash_table::entry::~entry ()
+{
+				// Don't delete the value; we don't own
+				// the pointer.
+  delete _key;
+}
+
+void
+SGPropertyNode::hash_table::entry::set_key (const char * key)
+{
+  _key = copy_string(key);
+}
+
+void
+SGPropertyNode::hash_table::entry::set_value (SGPropertyNode * value)
+{
+  _value = value;
+}
+
+SGPropertyNode::hash_table::bucket::bucket ()
+  : _length(0),
+    _entries(0)
+{
+}
+
+SGPropertyNode::hash_table::bucket::~bucket ()
+{
+  for (int i = 0; i < _length; i++)
+    delete _entries[i];
+}
+
+SGPropertyNode::hash_table::entry *
+SGPropertyNode::hash_table::bucket::get_entry (const char * key, bool create)
+{
+  int i;
+  for (i = 0; i < _length; i++) {
+    if (!strcmp(_entries[i]->get_key(), key))
+      return _entries[i];
+  }
+  if (create) {
+    entry ** new_entries = new entry*[_length+1];
+    for (i = 0; i < _length; i++) {
+      new_entries[i] = _entries[i];
+    }
+    delete _entries;
+    _entries = new_entries;
+    _entries[_length] = new entry;
+    _entries[_length]->set_key(key);
+    _length++;
+    return _entries[_length - 1];
+  } else {
+    return 0;
+  }
+}
+
+
+SGPropertyNode::hash_table::hash_table ()
+  : _data_length(0),
+    _data(0)
+{
+}
+
+SGPropertyNode::hash_table::~hash_table ()
+{
+  for (int i = 0; i < _data_length; i++)
+    delete _data[i];
+}
+
+SGPropertyNode *
+SGPropertyNode::hash_table::get (const char * key)
+{
+  if (_data_length == 0)
+    return 0;
+  unsigned int index = hashcode(key) % _data_length;
+  if (_data[index] == 0)
+    return 0;
+  entry * e = _data[index]->get_entry(key);
+  if (e == 0)
+    return 0;
+  else
+    return e->get_value();
+}
+
+void
+SGPropertyNode::hash_table::put (const char * key, SGPropertyNode * value)
+{
+  if (_data_length == 0) {
+    _data = new bucket*[HASH_TABLE_SIZE];
+    _data_length = HASH_TABLE_SIZE;
+    for (unsigned int i = 0; i < HASH_TABLE_SIZE; i++)
+      _data[i] = 0;
+  }
+  unsigned int index = hashcode(key) % _data_length;
+  if (_data[index] == 0) {
+    _data[index] = new bucket;
+  }
+  entry * e = _data[index]->get_entry(key, true);
+  e->set_value(value);
+}
+
+unsigned int
+SGPropertyNode::hash_table::hashcode (const char * key)
+{
+  unsigned int hash = 0;
+  while (*key != 0) {
+    hash = 31 * hash + *key;
+    key++;
+  }
+  return hash;
 }
 
 // end of props.cxx
