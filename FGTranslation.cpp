@@ -68,7 +68,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.14 2000/10/16 12:32:48 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.15 2001/01/28 14:00:52 jsb Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,6 @@ CLASS IMPLEMENTATION
 
 FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
     vUVW(3),
-    vWindUVW(3),
     vUVWdot(3),
     vNcg(3),
     vPQR(3),
@@ -103,6 +102,7 @@ FGTranslation::~FGTranslation(void) {}
 bool FGTranslation::Run(void) {
   static FGColumnVector vlastUVWdot(3);
   static FGMatrix       mVel(3,3);
+  
 
   if (!FGModel::Run()) {
 
@@ -120,9 +120,9 @@ bool FGTranslation::Run(void) {
 
     vUVWdot = mVel*vPQR + vForces/Mass;
     
-    vNcg=vUVWdot*INVGRAVITY;
+    vNcg = vUVWdot*INVGRAVITY;
 
-    vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot) + vWindUVW;
+    vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot);
     
     Vt = vUVW.Magnitude();
 
@@ -150,6 +150,8 @@ bool FGTranslation::Run(void) {
 	  }
     //
     
+   
+    
     qbar = 0.5*rho*Vt*Vt;
 
     Mach = Vt / State->Geta();
@@ -173,7 +175,5 @@ void FGTranslation::GetState(void) {
   rho = Atmosphere->GetDensity();
 
   vEuler = Rotation->GetEuler();
-
-  vWindUVW = Atmosphere->GetWindUVW();
 }
 

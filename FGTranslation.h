@@ -104,13 +104,13 @@ public:
   inline void Setbdot (float tt) { bdot = tt; }
 
   inline void SetAB(float t1, float t2) { alpha=t1; beta=t2; }
-
+  
   bool Run(void);
 
 protected:
 
 private:
-  FGColumnVector vUVW,vWindUVW;
+  FGColumnVector vUVW;
   FGColumnVector vUVWdot;
   FGColumnVector vNcg;
   FGColumnVector vPQR;
