@@ -72,7 +72,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.45 2001/02/25 00:56:58 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.46 2001/02/25 17:05:08 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -88,7 +88,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.45 2001/02/25 00:56:58 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.46 2001/02/25 17:05:08 jberndt Exp $
     @see -
 */
 
@@ -144,30 +144,7 @@ int main(int argc, char** argv)
                    FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
   }
 
-  while (FDMExec->GetState()->Getsim_time() <= 10.0)
-  {
-    // Fake an elevator ramp here after 1 second, hold for one second, ramp down
-    
-    if (FDMExec->GetState()->Getsim_time() >= 1.00 &&
-        FDMExec->GetState()->Getsim_time() < 2.0)
-    {
-      cmd = -(FDMExec->GetState()->Getsim_time() - 1.00)/4.0;
-      FDMExec->GetFCS()->SetThrottleCmd(0,FDMExec->GetState()->Getsim_time() - 1.00);
-    } else if (FDMExec->GetState()->Getsim_time() >= 2.00 &&
-        FDMExec->GetState()->Getsim_time() < 6.0)
-    {
-      cmd = -1.00/4.0;
-    } else if (FDMExec->GetState()->Getsim_time() >= 6.00 &&
-        FDMExec->GetState()->Getsim_time() < 7.0)
-    {
-      cmd = -(7.0 - FDMExec->GetState()->Getsim_time())/4.0;
-    } else {
-      cmd = 0.00;
-    }
-    FDMExec->GetFCS()->SetDeCmd(cmd);    // input between -1 and 1
-    
-    FDMExec->Run();
-  }
+  while (FDMExec->Run()) {}
 
   delete FDMExec;
 

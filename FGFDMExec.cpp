@@ -68,7 +68,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.28 2001/02/25 00:56:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.29 2001/02/25 17:05:08 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -108,6 +108,7 @@ FGFDMExec::FGFDMExec(void)
   terminate = false;
   frozen = false;
   modelLoaded = false;
+  Scripted = false;
 
   cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
                                  << JSBSIM_VERSION << underoff << normint << endl;
@@ -256,6 +257,10 @@ bool FGFDMExec::Run(void)
 
   while (!model_iterator->Run())
   {
+    if (Scripted) {                                              
+      RunScript();
+      if (State->Getsim_time() >= EndTime) return false;
+    }
     model_iterator = model_iterator->NextModel;
     if (model_iterator == 0L) break;
   }
@@ -314,6 +319,7 @@ bool FGFDMExec::LoadScript(string script)
 
   Script.GetNextConfigLine();
   ScriptName = Script.GetValue("name");
+  Scripted = true;
   cout << "Reading Script File " << ScriptName << endl;
 
   while (Script.GetNextConfigLine() != "EOF" && Script.GetValue() != "/runscript") {
@@ -330,6 +336,7 @@ bool FGFDMExec::LoadScript(string script)
       }
     } else if (token == "run") {
       StartTime = strtod(Script.GetValue("start").c_str(), NULL);
+      State->Setsim_time(StartTime);
       EndTime   = strtod(Script.GetValue("end").c_str(), NULL);
       dt        = strtod(Script.GetValue("dt").c_str(), NULL);
       State->Setdt(dt);
@@ -479,6 +486,8 @@ bool FGFDMExec::RunScript(void)
 
   while (iC < Conditions.end()) {
 
+    // determine whether the set of conditional tests for this condition equate
+    // to true
     for (int i=0; i<iC->TestValue.size(); i++) {
            if (iC->Comparison[i] == "lt")
               truth = iC->TestValue[i] <  State->GetParameter(iC->TestParam[i]);
@@ -499,42 +508,49 @@ bool FGFDMExec::RunScript(void)
       else        WholeTruth = WholeTruth && truth;
     }
 
-    for (int i=0; i<iC->SetValue.size(); i++) {
+    // if the conditions are true, do the setting of the desired parameters
 
-      switch (iC->Type[i]) {
-      case FG_VALUE:
-        break;
-      case FG_DELTA:
-        break;
-      case FG_BOOL:
-        break;
-      default:
-        break;
+    float currentTime = State->Getsim_time();
+    float newSetValue;
+    
+    if (WholeTruth) {
+      for (int i=0; i<iC->SetValue.size(); i++) {
+        if ( ! iC->Triggered[i]) {
+          iC->OriginalValue[i] = State->GetParameter(iC->SetParam[i]);
+          switch (iC->Type[i]) {
+          case FG_VALUE:
+            iC->newValue[i] = iC->SetValue[i];
+            break;
+          case FG_DELTA:
+            iC->newValue[i] = iC->OriginalValue[i] + iC->SetValue[i];
+            break;
+          case FG_BOOL:
+            break;
+          default:
+            break;
+          }
+          iC->Triggered[i] = true;
+          iC->StartTime[i] = currentTime;
+        }
+
+        switch (iC->Action[i]) {
+        case FG_RAMP:
+          newSetValue = (currentTime - iC->StartTime[i])/(iC->TC[i])
+                      * (iC->newValue[i] - iC->OriginalValue[i]) + iC->OriginalValue[i];
+          break;
+        case FG_STEP:
+          newSetValue = iC->newValue[i];
+          break;
+        case FG_EXP:
+          newSetValue = (1 - exp(-(currentTime - iC->StartTime[i])/(iC->TC[i])))
+              * (iC->newValue[i] - iC->OriginalValue[i]) + iC->OriginalValue[i];
+          break;
+        default:
+          break;
+        }
+        State->SetParameter(iC->SetParam[i], newSetValue);
       }
-
-      switch (iC->Action[i]) {
-      case FG_RAMP:
-        break;
-      case FG_STEP:
-        break;
-      case FG_EXP:
-        break;
-      default:
-        break;
-      }
-
-      if (iC->Repeat[i] == 0) cout << endl
-                         << "                              once";
-      else cout << endl
-                         << "                              repeating "
-                         << iC->Repeat[i] << " time[s]";
-
-      if (iC->Action[i] == FG_RAMP ||
-          iC->Action[i] == FG_EXP) cout << endl
-                         << "                              with time constant "
-                         << iC->TC[i];
     }
-
     iC++;
   }
 }

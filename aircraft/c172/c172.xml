@@ -435,7 +435,7 @@
     NOTE that Time is always output with the data.
   -->
   </COMMENT>
-  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       OFF

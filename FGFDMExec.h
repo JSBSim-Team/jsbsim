@@ -41,7 +41,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.19 2001/02/25 00:56:58 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.20 2001/02/25 17:05:08 jberndt Exp $"
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -71,6 +71,14 @@ struct condition {
   vector <int>     Repeat;
   vector <eAction> Action;
   vector <eType>   Type;
+  vector <bool>    Triggered;
+  vector <float>   newValue;
+  vector <float>   OriginalValue;
+  vector <float>   StartTime;
+  vector <float>   EndTime;
+
+  condition() {
+  }
 };
 
 class FGState;
@@ -127,6 +135,7 @@ private:
   bool terminate;
   int  Error;
   bool modelLoaded;
+  bool Scripted;
 
   string AircraftPath;
   string EnginePath;
