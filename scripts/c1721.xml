@@ -9,7 +9,7 @@
 
   <use initialize="reset00"> 
 
-  <run start="0.0" end="10.0" dt="0.05"> 
+  <run start="0.0" end="2.0" dt="0.05"> 
     <when> 
       <parameter name="FG_TIME" comparison="ge" value="0.5">
       <parameter name="FG_TIME" comparison="le" value="1.5">
