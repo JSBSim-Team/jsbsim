@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.50 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.51 2001/11/17 13:19:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.50 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGState.h,v 1.51 2001/11/17 13:19:33 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,11 +265,9 @@ public:
   FGColumnVector3& CalcEuler(void);
 
   /** Calculates and returns the stability-to-body axis transformation matrix.
-      @param alpha angle of attack in radians.
-      @param beta angle of sideslip in radians.
       @return a reference to the stability-to-body transformation matrix.
       */
-  FGMatrix33& GetTs2b(double alpha, double beta);
+  FGMatrix33& GetTs2b(void);
 
   /** Retrieves the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.

@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.22 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.23 2001/11/17 13:19:33 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,13 +88,9 @@ FGAerodynamics::~FGAerodynamics()
 
 bool FGAerodynamics::Run(void)
 {
-  double alpha, beta;
   unsigned int axis_ctr,ctr;
 
   if (!FGModel::Run()) {
-
-    alpha = Translation->Getalpha();
-    beta = Translation->Getbeta();
 
     vLastFs = vFs;
     vFs.InitMatrix();
@@ -105,7 +101,7 @@ bool FGAerodynamics::Run(void)
       }
     }
 
-    vForces = State->GetTs2b(alpha, beta)*vFs;
+    vForces = State->GetTs2b()*vFs;
 
     vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
                       - MassBalance->GetXYZcg(eX))*inchtoft;

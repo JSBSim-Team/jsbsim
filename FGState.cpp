@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.83 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.84 2001/11/17 13:19:33 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -664,9 +664,12 @@ FGColumnVector3& FGState::CalcEuler(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGState::GetTs2b(double alpha, double beta)
+FGMatrix33& FGState::GetTs2b(void)
 {
   double ca, cb, sa, sb;
+
+  double alpha = Translation->Getalpha();
+  double beta  = Translation->Getbeta();
 
   ca = cos(alpha);
   sa = sin(alpha);

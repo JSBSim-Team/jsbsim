@@ -48,7 +48,7 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.23 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.24 2001/11/17 13:19:33 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,7 @@ FGColumnVector3& FGForce::GetBodyForces(void) {
 FGMatrix33 FGForce::Transform(void) {
   switch(ttype) {
   case tWindBody:
-    return fdmex->GetState()->GetTs2b(fdmex->GetTranslation()->Getalpha(),fdmex->GetTranslation()->Getbeta());
+    return fdmex->GetState()->GetTs2b();
   case tLocalBody:
     return fdmex->GetState()->GetTl2b();
   case tCustom:
