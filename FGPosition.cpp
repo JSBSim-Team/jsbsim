@@ -57,11 +57,14 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <cmath>
+#    include <iomanip>
 #  else
 #    include <math.h>
+#    include <iomanip.h>
 #  endif
 #else
 #  include <cmath>
+#  include <iomanip>
 #endif
 
 #include "FGPosition.h"
@@ -92,9 +95,10 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   h = 0.0;
-  Radius = EARTHRAD + h;
-  gamma=Vt=0.0;
-  RunwayRadius = EARTHRAD;
+  SeaLevelRadius = EARTHRAD;
+  Radius = SeaLevelRadius + h;
+  gamma = Vt = 0.0;
+  RunwayRadius = SeaLevelRadius;
 }
 
 /******************************************************************************/
@@ -122,7 +126,7 @@ bool FGPosition:: Run(void) {
     Latitude  += 0.5*dt*rate*(LatitudeDot + lastLatitudeDot);
     Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
 
-    h = Radius - EARTHRAD;                 // Geocentric
+    h = Radius - SeaLevelRadius;           // Geocentric
 
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
 
@@ -154,8 +158,8 @@ void FGPosition::GetState(void) {
   vUVW = Translation->GetUVW();
   Vt = Translation->GetVt();
   invMass = 1.0 / Aircraft->GetMass();
-  invRadius = 1.0 / (h + EARTHRAD);
-  Radius = h + EARTHRAD;
+  invRadius = 1.0 / (h + SeaLevelRadius);
+  Radius = h + SeaLevelRadius;
   b = Aircraft->GetWingSpan();
 }
 

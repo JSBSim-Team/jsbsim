@@ -38,7 +38,7 @@ SENTRY
 #define MAX_TANKS       30
 #define GRAVITY         32.174
 #define INVGRAVITY      0.031081
-#define EARTHRAD        20898908.00       // feet
+#define EARTHRAD        20925650.00       // feet, equatorial
 #define OMEGAEARTH      7.2685E-3         // rad/sec
 #define EARTHRADSQRD    437882827922500.0
 #define ONESECOND       4.848136811E-6

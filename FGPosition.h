@@ -61,6 +61,7 @@ class FGPosition : public FGModel {
   float dt;
   double RunwayRadius;
   double DistanceAGL;
+  double SeaLevelRadius;
   double gamma;
   double Vt;
   double hoverb,b;
@@ -89,6 +90,7 @@ public:
   void SetLongitude(double tt) { Longitude = tt; }
   void Seth(double tt) { h = tt; }
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
+  void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt;}
   void SetDistanceAGL(double tt) { DistanceAGL = tt; }
 
   bool Run(void);

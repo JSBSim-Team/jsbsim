@@ -69,9 +69,6 @@ INCLUDES
 
 FGUtility::FGUtility()
 {
-  // Move constant stuff to here (if any) so it won't take CPU time
-  // in the methods below.
-  SeaLevelR   = EARTHRAD * ECCENT;
 }
 
 

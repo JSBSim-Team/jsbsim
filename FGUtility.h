@@ -58,7 +58,6 @@ public:
 protected:
 
 private:
-  float SeaLevelR;
   FGState* State;
   FGFDMExec* FDMExec;
 };

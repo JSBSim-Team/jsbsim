@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.17 2000/05/16 22:39:17 jsb Exp $
+// $Id: JSBSim.cxx,v 1.18 2000/05/17 23:04:33 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -112,7 +112,8 @@ int FGJSBsim::init( double dt ) {
   fgic->SetLatitudeRadIC(get_Latitude());
   fgic->SetLongitudeRadIC(get_Longitude());
 
-  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius);
+  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
+  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi());
   FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
@@ -188,7 +189,8 @@ int FGJSBsim::update( int multiloop ) {
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
   //  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
-  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius);
+  FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
+  FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
 
   FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
   FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
