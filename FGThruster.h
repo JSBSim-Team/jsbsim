@@ -45,7 +45,20 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.20 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.21 2001/08/18 23:46:07 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Base class for specific thrusting devices such as propellers, nozzles, etc.
+    @author Jon Berndt
+    @version $Id: FGThruster.h,v 1.21 2001/08/18 23:46:07 jberndt Exp $
+    */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -54,7 +67,9 @@ CLASS DECLARATION
 class FGThruster : public FGForce {
 
 public:
+  /// Constructor
   FGThruster(FGFDMExec *FDMExec);
+  /// Destructor
   virtual ~FGThruster();
 
   enum eType {ttNozzle, ttRotor, ttPropeller};
