@@ -106,7 +106,7 @@ bool FGPosition:: Run(void)
   if (!FGModel::Run()) {
     GetState();
 
-    vVel = State->GetTb2l()*vUVW;
+    vVel = State->GetTl2b()*vUVW;
 
     cosLat = cos(Latitude);
     if (cosLat != 0) LongitudeDot = vVel(eEast) / (Radius * cosLat);

@@ -97,7 +97,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
   if (engineNum < 0) {
     for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
   } else {
-    ThrottlePos[engineNum] = setting;
+    ThrottleCmd[engineNum] = setting;
   }
 }
 
@@ -106,8 +106,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
 void FGFCS::SetThrottlePos(int engineNum, float setting)
 {
   if (engineNum < 0) {
-    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++)
-      ThrottlePos[ctr] = ThrottleCmd[ctr];
+    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
   } else {
     ThrottlePos[engineNum] = setting;
   }

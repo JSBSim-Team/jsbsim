@@ -350,7 +350,7 @@ void FGAircraft::FMAero(void)
 
   vMoments(eL) += vForces(eZ)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eZ); // rolling moment
   vMoments(eM) += vForces(eX)*vDXYZcg(eZ) - vForces(eZ)*vDXYZcg(eX); // pitching moment
-  vMoments(eN) += vForces(eX)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eX); // yawing moment
+  vMoments(eN) += vForces(eY)*vDXYZcg(eX) - vForces(eX)*vDXYZcg(eY); // yawing moment
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {

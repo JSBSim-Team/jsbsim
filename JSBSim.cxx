@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.4 2000/05/01 12:33:10 jsb Exp $
+// $Id: JSBSim.cxx,v 1.5 2000/05/01 20:07:56 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -83,17 +83,13 @@ int FGJSBsim::init( double dt ) {
     FG_LOG( FG_FLIGHT, FG_INFO, "  lon: " <<  get_Longitude() );
     FG_LOG( FG_FLIGHT, FG_INFO, "  alt: " <<  get_Altitude() );
 
-    cout << "JSBSim Phi (Pre-init): " << get_Phi() << endl;
-    cout << "JSBSim Tht (Pre-init): " << get_Theta() << endl;
-    cout << "JSBSim Psi (Pre-init): " << get_Psi() << endl;
-
     FDMExec.GetState()->Initialize(
       current_options.get_uBody(),
       current_options.get_vBody(),
       current_options.get_wBody(),
-      get_Phi() * DEGTORAD,
-      get_Theta() * DEGTORAD,
-      get_Psi() * DEGTORAD,
+      get_Phi(),
+      get_Theta(),
+      get_Psi(),
       get_Latitude(),
       get_Longitude(),
       get_Altitude()
@@ -133,6 +129,8 @@ int FGJSBsim::update( int multiloop ) {
     FDMExec.GetFCS()->SetDsbCmd( 0.0 );
     FDMExec.GetFCS()->SetDspCmd( 0.0 );
     FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
+                                           controls.get_throttle( 0 ) * 100.0 );
+    FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
                                            controls.get_throttle( 0 ) * 100.0 );
     // FCS->SetBrake( controls.get_brake( 0 ) );
 
