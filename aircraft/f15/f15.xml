@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.10 2003/02/27 13:10:23 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.11 2003/02/27 22:52:25 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -15,6 +15,9 @@
     Dryden Technical Reports Server documents:
         H-823:  Initial results from flight testing a large, remotely piloted
                 airplane model.
+	H-889:	Summary of flight tests to determine the spin and
+                controllability characteristics of a remotely piloted,
+                large-scale (3/8) fighter airplane model.
         H-905:  Subsonic stability and control deratives for an unpowered,
                 remotely piloted 3/8-scale F-15 airplane model obtained
                 from flight test.
@@ -221,10 +224,6 @@
             1.0   1.000
             1.1   1.000
          </FACTOR>
-         <!--
-              CL is accurate for alpha of 0 ... 0.558, the rest is an estimate
-              based on the fact that CL=0 for alpha=-0.0349 and CLmax = 1.2
-           -->
          <COEFFICIENT NAME="CLalpha" TYPE="TABLE">
            Lift_due_to_alpha
            16 2
@@ -245,9 +244,9 @@
            0.419	1.08	0.29
            0.489	1.16	0.31
            0.559	1.19	0.32
-           0.698	1.01	0.27
-           0.785	0.93	0.25
-           0.873	0.81	0.22
+           0.698	1.17	0.31
+           0.785	1.09	0.29
+           0.873	1.05	0.28
          </COEFFICIENT>
        </GROUP>
 
@@ -295,13 +294,24 @@
             1.1   1.00
          </FACTOR>
 
-         <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
-           Drag_minimum
-           2
+         <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
+           Drag_due_to_alpha
+           11 2
+           aero/alpha-rad
            velocities/mach-norm
            aero/qbar-psf | metrics/Sw-sqft
-           0.5  0.01468
-           1.4  0.00737
+                   0.5    1.4
+           -0.419  0.38   0.097
+           -0.279  0.22   0.025
+           -0.140  0.07   0.018
+           -0.070  0.04   0.010
+            0.0    0.0147 0.0074
+            0.070  0.04   0.010
+            0.140  0.07   0.018
+            0.279  0.22   0.025
+            0.419  0.38   0.097
+            0.559  0.80   0.203
+            0.698  1.01   0.257
          </COEFFICIENT>
 
          <COEFFICIENT NAME="CDi" TYPE="VECTOR">
@@ -327,10 +337,6 @@
            0.873        0.721
          </COEFFICIENT>
 
-         <!--
-              CDalpha is calculated based on CL and CNb and therefore is accurate
-              for alpha of 0 ... 0.558
-           -->
          <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
            Drag_due_to_beta
            16
