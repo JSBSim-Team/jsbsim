@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.39 2003/01/23 03:10:32 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.40 2003/02/12 00:29:07 dmegginson Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.hxx?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
@@ -263,6 +263,7 @@ private:
     SGPropertyNode *temperature;
     SGPropertyNode *pressure;
     SGPropertyNode *density;
+    SGPropertyNode *turbulence;
     
     SGPropertyNode *wind_from_north;
     SGPropertyNode *wind_from_east;
