@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.19 2005/01/20 07:27:36 jberndt Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.20 2005/01/20 12:45:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     produce no output. For example, say that the WIDTH value is 2.0.  If the
     input is between -1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @version $Id: FGDeadBand.h,v 1.19 2005/01/20 07:27:36 jberndt Exp $
+    @version $Id: FGDeadBand.h,v 1.20 2005/01/20 12:45:00 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.52 2005/01/20 07:27:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.53 2005/01/20 12:45:00 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
