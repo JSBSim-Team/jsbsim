@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.4 2001/12/19 22:28:27 dmegginson Exp $
+  CVS Version: $Id: c182.xml,v 1.5 2002/01/15 02:56:39 dmegginson Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -104,7 +104,7 @@
       AC_THRUSTER name x y z pitch yaw
     -->
 
-    <AC_ENGINE FILE="engIO470D">
+    <AC_ENGINE FILE="engIO540AB1A5">
       XLOC  -19.7
       YLOC    0.0
       ZLOC   26.6
@@ -113,13 +113,13 @@
       FEED      0
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="prop_generic2f">
+    <AC_THRUSTER FILE="prop_81in2v">
       XLOC  -37.7
       YLOC    0.0
       ZLOC   26.6
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 0.1
+      P_FACTOR 10.0
       SENSE   1.0
     </AC_THRUSTER>
 
@@ -241,7 +241,7 @@
          -->
          <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
             Lift_due_to_alpha
-            12
+            11
             FG_ALPHA
             FG_QBAR|FG_WINGAREA
             -0.09  -0.527
@@ -255,7 +255,6 @@
              0.32   1.074
              0.34   0.991
              0.36   0.663
-             0.52  -0.307
           </COEFFICIENT>
 
           <!--
