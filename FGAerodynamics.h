@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.12 2001/04/23 14:37:29 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.13 2001/04/23 19:35:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.12 2001/04/23 14:37:29 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.13 2001/04/23 19:35:48 jberndt Exp $
     @see -
 */
 
@@ -120,6 +120,15 @@ public:
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
   FGColumnVector& GetMoments(void) {return vMoments;}
+
+  /** Gets the strings for the current set of coefficients.
+      @return a string containing the descriptive names for all coefficients */
+  string GetCoefficientStrings(void);
+
+  /** Gets the coefficient values.
+      @return a string containing the numeric values for the current set of
+      coefficients */
+  string GetCoefficientValues(void);
 
 private:
   typedef map<string,int> AxisIndex;

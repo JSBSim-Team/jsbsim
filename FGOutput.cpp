@@ -43,6 +43,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
+#include "FGAerodynamics.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGTranslation.h"
@@ -50,7 +51,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.30 2001/04/17 23:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.31 2001/04/23 19:35:48 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -195,7 +196,7 @@ void FGOutput::DelimitedOutput(void)
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       cout << ", ";
-      cout << Aircraft->GetCoefficientStrings();
+      cout << Aerodynamics->GetCoefficientStrings();
     }
     if (SubSystems & FGAircraft::ssGroundReactions) {
       cout << ", ";
@@ -269,7 +270,7 @@ void FGOutput::DelimitedOutput(void)
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     cout << ", ";
-    cout << Aircraft->GetCoefficientValues();
+    cout << Aerodynamics->GetCoefficientValues();
   }
   if (SubSystems & FGAircraft::ssGroundReactions) {
     cout << ", ";
@@ -349,7 +350,7 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       datafile << ", ";
-      datafile << Aircraft->GetCoefficientStrings();
+      datafile << Aerodynamics->GetCoefficientStrings();
     }
     if (SubSystems & FGAircraft::ssGroundReactions) {
       datafile << ", ";
@@ -426,7 +427,7 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     datafile << ", ";
-    datafile << Aircraft->GetCoefficientValues();
+    datafile << Aerodynamics->GetCoefficientValues();
   }
   if (SubSystems & FGAircraft::ssGroundReactions) {
     datafile << ", ";

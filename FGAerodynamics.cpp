@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.9 2001/04/23 14:37:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.10 2001/04/23 19:35:48 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -56,6 +56,8 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec),
     vDXYZcg(3),
     vAeroBodyForces(3)
 {
+  Name = "FGAerodynamics";
+
   AxisIdx["DRAG"]  = 0;
   AxisIdx["SIDE"]  = 1;
   AxisIdx["LIFT"]  = 2;
@@ -167,6 +169,50 @@ void FGAerodynamics::DisplayCoeffFactors(vector <eParam> multipliers)
   for (i=0; i<multipliers.size();i++) cout << State->paramdef[multipliers[i]];
 
   cout << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGAerodynamics::GetCoefficientStrings(void)
+{
+  string CoeffStrings = "";
+  bool firstime = true;
+
+  for (unsigned int axis = 0; axis < 6; axis++) {
+    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+      if (firstime) {
+        firstime = false;
+      } else {
+        CoeffStrings += ", ";
+      }
+      CoeffStrings += Coeff[axis][sd]->Getname();
+    }
+  }
+
+  return CoeffStrings;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGAerodynamics::GetCoefficientValues(void)
+{
+  string SDValues = "";
+  char buffer[10];
+  bool firstime = true;
+
+  for (unsigned int axis = 0; axis < 6; axis++) {
+    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+      if (firstime) {
+        firstime = false;
+      } else {
+        SDValues += ", ";
+      }
+      sprintf(buffer, "%9.6f", Coeff[axis][sd]->GetSD());
+      SDValues += string(buffer);
+    }
+  }
+
+  return SDValues;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

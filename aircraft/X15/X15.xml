@@ -2,7 +2,7 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.29 2001/04/20 13:11:03 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.30 2001/04/23 19:35:48 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
@@ -37,7 +37,7 @@
   <UNDERCARRIAGE>
 
     <!--
-    The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
 
     AC_GEAR
     <name>                           name of gear entry - no spaces allowed
@@ -699,7 +699,7 @@
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     ON
+    COEFFICIENTS     OFF
     GROUND_REACTIONS ON
     FCS              ON
     PROPULSION       ON
