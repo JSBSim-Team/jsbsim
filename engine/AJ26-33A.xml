@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+  File:     AJ26-33A.xml
+  Author:   Aero-Matic v 0.7; refined by Jon Berndt
+
+  Inputs:
+    Name:           AJ26-33A (Aerojet)
+    Type:           rocket
+    Thrust:         339000.0 lb
+    Propellants     LO2/HC (LOX Kerosene)
+    Propellant flow rate (est.): 1130 lbs/sec (lbs weight - not mass)
+    Mixture Ratio   2.6 (by mass, Ox/Fuel)
+    Ox. Flow Rate (SL) 816
+    Fuel Flow Rate (SL) 314
+    Lox-HC Mol Wt.  22
+    Flame temp      3200+ K (~5300 Fahrenheit)
+    Chamber Pressure 2109 psia (303,700 psf)
+    ISP (sea level) 297
+    ISP (vacuum)    331
+    Weight          2725 lbm
+    Thrust Weight   125
+    Length/Diameter 12.2/6.7 feet
+    Nozzle Exp. Ratio 27:1
+    Nozzle exit velocity 5920 ft/sec
+    Nozzle exit pressure 14.7 psi (2117 psf)
+
+    Molecular mass of HC (Kerosene): 175
+
+    Throttleable Control  55% - 104%
+    Mixture Ratio Control  Yes
+    Status Flight Qualified
+
+-->
+
+<FG_ROCKET NAME="AJ26-33A">
+  SHR              1.24
+  MAX_PC      303700.0
+  PROP_EFF         0.67
+  MAXTHROTTLE      1.0
+  MINTHROTTLE      0.4
+  SLFUELFLOWMAX  314.0
+  SLOXIFLOWMAX   816.0
+</FG_ROCKET>

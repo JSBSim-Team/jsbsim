@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+  MINMP:         minimum manifold pressure in inches Hg
+  MAXMP:         maximum manifold pressure in inches Hg
+  DISPLACEMENT:  total cylinder space (??) in cubic inches
+  MAXHP:         maximum horsepower produced (=BRAKEHORSEPOWER in the old
+                 config)
+  CYCLES:        cycles/power stroke
+  IDLERPM:       minimum RPM when the engine is running
+  MAXTHROTTLE:   maximum throttle setting (as before)
+  MINTHROTTLE:   minimum throttle setting (as before)
+-->
+<FG_PISTON NAME="RR-Merlin_61">
+  MINMP             6.5
+  MAXMP            29.92
+  DISPLACEMENT    360.0
+  MAXHP           160.0
+  CYCLES            2.0
+  IDLERPM         550.0
+  MAXTHROTTLE       1.0
+  MINTHROTTLE       0.2
+  NUMBOOSTSPEEDS  2
+  BOOSTOVERRIDE     1
+  RATEDBOOST1      9
+  RATEDPOWER1      1400
+  RATEDRPM1          2850
+  RATEDALTITUDE1  12000
+  RATEDBOOST2      9
+  RATEDPOWER2      1250
+  RATEDRPM2          2850
+  RATEDALTITUDE2  24000
+  TAKEOFFBOOST    12
+</FG_PISTON>
