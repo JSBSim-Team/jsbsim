@@ -1,0 +1,282 @@
+<FDM_CONFIG NAME="f22" VERSION="1.60">
+<!--
+
+  File:        f22.xml
+  Author:      Erik Hofman
+  CVS Version: $Id: f22.xml,v 1.1 2003/03/27 19:00:23 ehofman Exp $
+
+  Function: models a Lockheed-Martin F-22 Raptor
+  Notes:    {notes}
+
+-->
+
+  <METRICS>
+    <!--
+    Data source: {source}
+    -->
+    AC_WINGAREA  848.28
+    AC_WINGSPAN   44.5
+    AC_CHORD      23.0
+    AC_HTAILAREA 238.9
+    AC_HTAILARM   18.66
+    AC_VTAILAREA  79.1
+    AC_LV         18.66
+    AC_IXX     40843
+    AC_IYY    204751
+    AC_IZZ    258201
+    AC_IXZ         0
+    AC_EMPTYWT 29446.93
+    AC_AERORP    {X Y Z}  <!-- inches      -->
+    AC_CGLOC     {X Y Z}  <!-- inches      -->
+    AC_EYEPTLOC  {X Y Z}  <!-- inches      -->
+    <!-- Pilot -->
+    AC_POINTMASS {weight X Y Z} <!-- pounds, inches -->
+  </METRICS>
+
+  <UNDERCARRIAGE>
+    <!--
+      Data source: {source}
+    -->
+     AC_GEAR NOSE  {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+     AC_GEAR LMAIN {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+     AC_GEAR RMAIN {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+    <!--
+      Data source: {source}
+    -->
+    <AC_ENGINE FILE="{name}">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      FEED  0
+      FEED  1
+    </AC_ENGINE>
+    <AC_THRUSTER FILE="{name}">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      P_FACTOR {factor}
+      SENSE   {sense}
+    </AC_THRUSTER>
+    <AC_TANK TYPE="FUEL" NUMBER="0">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+  </PROPULSION>
+
+  <FLIGHT_CONTROL NAME="{name}">
+    <!--
+      Data source: {source}
+    -->
+    <COMPONENT NAME="{name}" TYPE="{type}">
+    </COMPONENT>
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+
+    <!--
+      Data sources: {sources}
+    -->
+
+    <AXIS NAME="LIFT">
+
+     <COEFFICIENT NAME="CLalpha" TYPE="VALUE">
+        Lift_due_to_alpha
+        aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
+        2.7265
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CLadot" TYPE="VALUE">
+      Lift_due_to_alpha_rate
+      aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
+      2.5602
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CLo" TYPE="VALUE">
+      Lift_at_zero_alpha
+      aero/qbar-psf | metrics/Sw-sqft
+      0.0479
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CLq" TYPE="VALUE">
+      Lift_due_to_pitch_rate
+      aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
+ R     2.7711
+     </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+
+     <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
+      Drag_due_to_alpha
+      aero/qbar-psf | metrics/Sw-sqft
+      0.1786
+     </COEFFICIENT>
+
+     COEFFICIENT NAME="CDo" TYPE="VALUE">
+      Drag_at_zero_lift
+      17
+      velocities/mach-norm
+      aero/qbar-psf | metrics/Sw-sqft
+      0.0111
+     </COEFFICIENT>
+
+     COEFFICIENT NAME="CDzero" TYPE="VALUE">
+      Drag_at_zero_lift
+      aero/qbar-psf | metrics/Sw-sqft
+      0.0101
+     </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+
+     <COEFFICIENT NAME="CYbdot" TYPE="VALUE">
+      Side_force_due_to_beta_rate
+      aero/qbar-psf | metrics/Sw-sqft | aero/betadot-rad_sec
+      -0.0458
+    </COEFFICIENT>
+
+    <COEFFICIENT NAME="CYDr" TYPE="VALUE">
+      Side_force_due_to_rudder
+      aero/qbar-psf | metrics/Sw-sqft | fcs/rudder-pos-rad
+      0.0619
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CYp" TYPE="VALUE">
+      Side_force_due_to_roll_rate
+      aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/p-aero-rad_sec
+      0.0399
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CYr" TYPE="VALUE">
+      Side_force_due_to_yaw_rate
+      aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/r-aero-rad_sec
+      0.1218
+     </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+ 
+     <COEFFICIENT NAME="Clb" TYPE="VALUE">
+      Roll_moment_due_to_beta
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
+      0.0176
+     </COEFFICIENT>
+ 
+     COEFFICIENT NAME="Clbdot" TYPE="VALUE">
+      Roll_moment_due_to_beta_rate
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/betadot-rad_sec
+      -0.0037
+     </COEFFICIENT>
+
+     COEFFICIENT NAME="ClDa" TYPE="VALUE">
+      Roll_moment_due_to_aileron
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
+      0.0489
+     </COEFFICIENT>
+     
+    </AXIS>
+
+    <AXIS NAME="PITCH">
+
+     <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+      Pitch_moment_due_to_alpha
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
+      0.1218
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+      Pitch_moment_due_to_alpha_rate
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
+      -1.5611
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+      Pitching_moment_at_zero_alpha
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
+      0.0603
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CmDh" TYPE="VALUE">
+      Pitch_moment_due_to_horizontal_tail_deflection
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
+      0.0000
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+      Pitch_moment_due_to_pitch_rate
+      aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-rad_sec
+      -1.7830
+     </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+
+     <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+      Yaw_moment_due_to_beta
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
+      -0.0016
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="Cnbdot" TYPE="VALUE">
+      Yaw_moment_due_to_beta_rate
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/betadot-rad_sec
+      -0.0115
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="CnDr" TYPE="VALUE">
+      Yaw_moment_due_to_rudder
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
+      -0.0131
+     </COEFFICIENT>
+
+     <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+      Yaw_moment_due_to_roll_rate
+      aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-rad_sec
+      -0.0035
+     </COEFFICIENT>
+
+    </AXIS>
+
+  </AERODYNAMICS>
+
+  <OUTPUT NAME="f22.cvs" TYPE="NONE">
+    RATE_IN_HZ       {rate}
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+</FDM_CONFIG>
+
