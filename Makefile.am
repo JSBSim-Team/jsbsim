@@ -1,54 +1,100 @@
-SUBDIRS = filtersjb
+SUBDIRS = filtersjb simgear
 
-EXTRA_DIST = Makefile.solo
+INCLUDES = -I$(top_srcdir)
+
+bin_PROGRAMS = JSBSim
+
+JSBSim_SOURCES = JSBSim.cpp
+
+JSBSim_LDADD = \
+	$(top_builddir)/libJSBSim.a \
+	$(top_builddir)/filtersjb/libFCSComponents.a \
+	$(top_builddir)/simgear/props/libProperties.a \
+	-lm
 
 noinst_LIBRARIES = libJSBSim.a
 
 libJSBSim_a_SOURCES = \
-	FGAerodynamics.cpp FGAerodynamics.h \
-	FGAircraft.cpp FGAircraft.h \
-	FGAtmosphere.cpp FGAtmosphere.h \
-	FGAuxiliary.cpp FGAuxiliary.h \
-	FGCoefficient.cpp FGCoefficient.h \
-        FGColumnVector3.cpp FGColumnVector3.h \
-	FGConfigFile.cpp FGConfigFile.h \
-	FGDefs.h \
-        FGElectric.cpp FGElectric.h \
-	FGFCS.cpp FGFCS.h \
-	FGFDMExec.cpp FGFDMExec.h \
-	FGFactorGroup.cpp FGFactorGroup.h \
-	FGForce.cpp FGForce.h \
-        FGGroundReactions.cpp FGGroundReactions.h \
-        FGInertial.cpp FGInertial.h \
-	FGInitialCondition.cpp FGInitialCondition.h \
-        FGJSBBase.cpp FGJSBBase.h \
-	FGLGear.cpp FGLGear.h \
-        FGMassBalance.cpp FGMassBalance.h \
-        FGMatrix33.cpp FGMatrix33.h \
-	FGModel.cpp FGModel.h \
-	FGNozzle.cpp FGNozzle.h \
-	FGOutput.cpp FGOutput.h \
-        FGPiston.cpp FGPiston.h \
-        FGPropagate.cpp FGPropagate.h \
-        FGPropeller.cpp FGPropeller.h \
-        FGPropulsion.cpp FGPropulsion.h \
-        FGQuaternion.cpp FGQuaternion.h \
- 	FGRotor.cpp FGRotor.h \
-	FGRocket.cpp FGRocket.h \
-	FGScript.cpp FGScript.h \
-	FGState.cpp FGState.h \
-	FGTable.cpp FGTable.h \
-	FGThruster.cpp FGThruster.h \
-	FGTrim.cpp FGTrim.h \
-	FGTrimAxis.cpp FGTrimAxis.h \
-	FGEngine.cpp FGEngine.h \
-	FGTank.cpp FGTank.h \
-	FGfdmSocket.cpp FGfdmSocket.h \
-	FGPropertyManager.cpp FGPropertyManager.h  \
-	FGSimTurbine.cpp FGSimTurbine.h \
-	JSBSim.cxx JSBSim.hxx
+	FGAerodynamics.cpp \
+	FGAircraft.cpp \
+	FGAtmosphere.cpp \
+	FGAuxiliary.cpp \
+	FGCoefficient.cpp \
+	FGColumnVector3.cpp \
+	FGConfigFile.cpp \
+	FGElectric.cpp \
+	FGFCS.cpp \
+	FGFDMExec.cpp \
+	FGFactorGroup.cpp \
+	FGForce.cpp \
+	FGGroundReactions.cpp \
+	FGInertial.cpp \
+	FGInitialCondition.cpp \
+	FGJSBBase.cpp \
+	FGLGear.cpp \
+	FGMassBalance.cpp \
+	FGMatrix33.cpp \
+	FGModel.cpp \
+	FGNozzle.cpp \
+	FGOutput.cpp \
+	FGPiston.cpp \
+	FGPropagate.cpp \
+	FGPropeller.cpp \
+	FGPropulsion.cpp \
+	FGQuaternion.cpp \
+	FGRotor.cpp \
+	FGRocket.cpp \
+	FGScript.cpp \
+	FGState.cpp \
+	FGTable.cpp \
+	FGThruster.cpp \
+	FGTrim.cpp \
+	FGTrimAxis.cpp \
+	FGEngine.cpp \
+	FGTank.cpp \
+	FGfdmSocket.cpp \
+	FGPropertyManager.cpp \
+	FGSimTurbine.cpp
 
-
-# noinst_PROGRAMS = testJSBsim
-
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src
+noinst_HEADERS = \
+	FGAerodynamics.h \
+	FGAircraft.h \
+	FGAtmosphere.h \
+	FGAuxiliary.h \
+	FGCoefficient.h \
+	FGColumnVector3.h \
+	FGConfigFile.h \
+	FGElectric.h \
+	FGFCS.h \
+	FGFDMExec.h \
+	FGFactorGroup.h \
+	FGForce.h \
+	FGGroundReactions.h \
+	FGInertial.h \
+	FGInitialCondition.h \
+	FGJSBBase.h \
+	FGLGear.h \
+	FGMassBalance.h \
+	FGMatrix33.h \
+	FGModel.h \
+	FGNozzle.h \
+	FGOutput.h \
+	FGPiston.h \
+	FGPropagate.h \
+	FGPropeller.h \
+	FGPropulsion.h \
+	FGQuaternion.h \
+	FGRotor.h \
+	FGRocket.h \
+	FGScript.h \
+	FGState.h \
+	FGTable.h \
+	FGThruster.h \
+	FGTrim.h \
+	FGTrimAxis.h \
+	FGEngine.h \
+	FGTank.h \
+	FGfdmSocket.h \
+	FGPropertyManager.h  \
+	FGSimTurbine.h \
+	JSBSim.hxx

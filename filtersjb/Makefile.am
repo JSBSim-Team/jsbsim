@@ -1,23 +1,25 @@
 INCLUDES = -I$(top_srcdir)
 
-lib_LIBRARIES = libFCSComponents.a
+noinst_LIBRARIES = libFCSComponents.a
 
 libFCSComponents_a_SOURCES = \
 	FGDeadBand.cpp \
-	FGDeadBand.h \
 	FGFCSComponent.cpp \
-	FGFCSComponent.h \
 	FGFilter.cpp \
-	FGFilter.h \
 	FGKinemat.cpp \
-	FGKinemat.h \
 	FGGain.cpp \
-	FGGain.h \
 	FGGradient.cpp \
-	FGGradient.h \
 	FGSummer.cpp \
-	FGSummer.h \
 	FGSwitch.cpp \
+	FGCondition.cpp
+
+noinst_HEADERS = \
+	FGDeadBand.h \
+	FGFCSComponent.h \
+	FGFilter.h \
+	FGKinemat.h \
+	FGGain.h \
+	FGGradient.h \
+	FGSummer.h \
 	FGSwitch.h \
-	FGCondition.cpp \
 	FGCondition.h

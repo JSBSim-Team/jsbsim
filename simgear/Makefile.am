@@ -1,4 +1,3 @@
 SUBDIRS = props
 
-EXTRA_DIST = compiler.h
-
+noinst_HEADERS = compiler.h
