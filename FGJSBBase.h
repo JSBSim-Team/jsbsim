@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.15 2001/11/21 23:47:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,6 +94,9 @@ enum eParam {
   FG_PITCHRATE,
   FG_ROLLRATE,
   FG_YAWRATE,
+  FG_AEROPDOT,
+  FG_AEROQDOT,
+  FG_AERORDOT,
   FG_CL_SQRD,
   FG_MACH,
   FG_ALTITUDE,
@@ -146,7 +149,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.14 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.15 2001/11/21 23:47:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

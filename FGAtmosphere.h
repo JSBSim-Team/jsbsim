@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.23 2001/11/14 23:53:25 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.24 2001/11/21 23:47:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.23 2001/11/14 23:53:25 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.24 2001/11/21 23:47:29 jberndt Exp $
 */
 
 /******************************************************************************
@@ -142,8 +142,12 @@ public:
       increases counterclockwise. The wind heading is returned in radians.*/
   inline double GetWindPsi(void) { return psiw; }
   
+  inline void SetTurbGain(double tt) {TurbGain = tt;}
+  
 private:
   double rho;
+
+  enum tType {ttBerndt, ttNone} turbType;
 
   int lastIndex;
   double h;
@@ -154,10 +158,19 @@ private:
   bool useExternal;
   double exTemperature,exDensity,exPressure;
   
+  double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
+  double TurbGain;
+  FGColumnVector3 vDirectiondAccelDt;
+  FGColumnVector3 vDirectionAccel;
+  FGColumnVector3 vDirection;
+  FGColumnVector3 vTurbulence;
+  FGColumnVector3 vTurbulenceGrad;
+
   FGColumnVector3 vWindNED;
   double psiw;
 
   void Calculate(double altitude);
+  void Turbulence(void);
   void Debug(void);
 };
 

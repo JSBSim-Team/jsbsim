@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.25 2001/11/20 21:25:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.26 2001/11/21 23:47:29 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,12 @@ CLASS IMPLEMENTATION
 
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                               vWindNED(3)
+                                               vWindNED(3),
+                                               vDirectiondAccelDt(3),
+                                               vDirectionAccel(3),
+                                               vDirection(3),
+                                               vTurbulence(3),
+                                               vTurbulenceGrad(3)
 {
   Name = "FGAtmosphere";
   lastIndex=0;
@@ -82,6 +87,10 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   htab[5]=170603.675;
   htab[6]=200131.234;
   htab[7]=259186.352; //ft.
+
+  MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
+  turbType = ttBerndt;
+  TurbGain = 1.0;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -126,6 +135,11 @@ bool FGAtmosphere::Run(void)
       density = exDensity;
       pressure = exPressure;
       temperature = exTemperature;
+    }
+
+    if (turbType != ttNone) {
+      Turbulence();
+      vWindNED += vTurbulence;
     }
 
     if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
@@ -231,6 +245,35 @@ void FGAtmosphere::Calculate(double altitude)
   }
   lastIndex=i;
   //cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAtmosphere::Turbulence(void)
+{
+  switch (turbType) {
+  case ttBerndt:
+    vDirectiondAccelDt(0) = 1 - 2.0*(rand()/RAND_MAX);
+    vDirectiondAccelDt(1) = 1 - 2.0*(rand()/RAND_MAX);
+    vDirectiondAccelDt(2) = 1 - 2.0*(rand()/RAND_MAX);
+
+    MagnitudedAccelDt = 1 - 2.0*(rand()/RAND_MAX);
+    MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
+    Magnitude         += MagnitudeAccel*rate*State->Getdt();
+
+    vDirectiondAccelDt.Normalize();
+    vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
+    vDirectionAccel.Normalize();
+    vDirection      += vDirectionAccel*rate*State->Getdt();
+    vDirection.Normalize();
+    
+    vTurbulence = TurbGain*Magnitude * vDirection;
+    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
+
+    break;
+  default:
+    break;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
