@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.47 2003/02/12 23:00:23 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.48 2003/02/26 19:19:48 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,12 +262,12 @@ void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
   case ttBerndt: {
-    vDirectiondAccelDt(eX) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
-    vDirectiondAccelDt(eY) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
-    vDirectiondAccelDt(eZ) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
+    vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
 
     
-    MagnitudedAccelDt = 1 - 2.0*(((double)(rand()))/RAND_MAX) - Magnitude;
+    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
