@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.49 2001/02/04 13:16:20 jsb Exp $
+// $Id: JSBSim.cxx,v 1.50 2001/02/17 14:54:35 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -422,6 +422,7 @@ void FGJSBsim::set_Latitude(double lat) {
     
     snap_shot();
     sgGeodToGeoc( lat, get_Altitude() , &sea_level_radius_meters, &lat_geoc);
+    _set_Sea_level_radius( sea_level_radius_meters * METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * METER_TO_FEET  );
     fgic->SetLatitudeRadIC( lat_geoc );
     fdmex->RunIC(fgic); //loop JSBSim once
@@ -447,6 +448,7 @@ void FGJSBsim::set_Altitude(double alt) {
     
     snap_shot();
     sgGeodToGeoc( get_Latitude(), alt , &sea_level_radius_meters, &lat_geoc);
+    _set_Sea_level_radius( sea_level_radius_meters * METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
     fgic->SetAltitudeFtIC(alt);
