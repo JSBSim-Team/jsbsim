@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.44 2001/12/14 18:59:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.45 2001/12/14 20:01:50 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -404,7 +404,7 @@ void FGPiston::doEGT(void)
   enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
   heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
 
-  if (heat_capacity_exhaust <= 0.0000001)
+  if (heat_capacity_exhaust >= 0.0000001)
     delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
   else
     delta_T_exhaust = 0.0;
