@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<runscript name="C310-01A takeoff run">
+  <!--
+    This run is for testing C310 runs
+  -->
+
+  <use aircraft="c310">
+  <use initialize="reset00">
+  <run start="0.0" end="120" dt="0.00833333">
+    <when>
+      <parameter name="FG_TIME" comparison="ge" value="0.25">
+      <parameter name="FG_TIME" comparison="le" value="1.00">
+      <set name="FG_THROTTLE_CMD" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05">
+      <set name="FG_MIXTURE_CMD" type="FG_VALUE" value="0.55" action="FG_RAMP" persistent="false" tc ="0.05">
+      <set name="FG_MAGNETO_CMD" type="FG_VALUE" value="3" action="FG_STEP" persistent="false" tc ="1.00">
+      <set name="FG_STARTER_CMD" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="1.00">
+    </when>
+
+    <when> <!-- Set the Elevator to takeoff -->
+      <parameter name="FG_QBAR" comparison="ge" value="20.0">
+      <parameter name="FG_ALTITUDE" comparison="le" value="2000">
+      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.007" action="FG_EXP" persistent="false" tc ="2.0">
+    </when>
+
+    <when>
+      <parameter name="FG_ALTITUDE" comparison="le" value="2000">
+      <parameter name="FG_THT" comparison="ge" value="0.30">
+      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="0.06" action="FG_EXP" persistent="true" tc ="12.0">
+    </when>
+
+    <when>
+      <parameter name="FG_ALTITUDE" comparison="le" value="2000">
+      <parameter name="FG_THT" comparison="le" value="0.25">
+      <set name="FG_ELEVATOR_CMD" type="FG_DELTA" value="-0.06" action="FG_EXP" persistent="true" tc ="12.0">
+    </when>
+
+    <when>
+      <parameter name="FG_ALTITUDE" comparison="ge" value="2000">
+      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="0.00" action="FG_EXP" persistent="false" tc ="1.0">
+    </when>
+
+  </run>
+
+</runscript>

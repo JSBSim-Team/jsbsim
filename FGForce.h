@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.22 2001/12/06 20:56:53 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.23 2001/12/06 21:31:34 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.22 2001/12/06 20:56:53 jberndt Exp $
+    @version $Id: FGForce.h,v 1.23 2001/12/06 21:31:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -273,9 +273,9 @@ public:
   inline void SetLocationX(double x) {vXYZn(eX) = x; vActingXYZn(eX) = x;}
   inline void SetLocationY(double y) {vXYZn(eY) = y; vActingXYZn(eY) = y;}
   inline void SetLocationZ(double z) {vXYZn(eZ) = z; vActingXYZn(eZ) = z;}
-  inline void SetActingLocationX(double x) {vActingXYZn(eX) = x;}
-  inline void SetActingLocationY(double y) {vActingXYZn(eY) = y;}
-  inline void SetActingLocationZ(double z) {vActingXYZn(eZ) = z;}
+  inline double SetActingLocationX(double x) {vActingXYZn(eX) = x; return x;}
+  inline double SetActingLocationY(double y) {vActingXYZn(eY) = y; return y;}
+  inline double SetActingLocationZ(double z) {vActingXYZn(eZ) = z; return z;}
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; SetActingLocation(vv);}
   inline void SetActingLocation(FGColumnVector3 vv) { vActingXYZn = vv; }
   
