@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.9 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.10 2001/11/24 14:12:38 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -32,8 +32,9 @@ CLASS IMPLEMENTATION
 FGColumnVector3::FGColumnVector3(void)
 {
   rowCtr = 1;
-  //cout << "Allocated: " <<  data << endl;
-  //if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+  data[0]=0; data[1]=0; data[2]=0; data[3]=0;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -41,16 +42,15 @@ FGColumnVector3::FGColumnVector3(void)
 FGColumnVector3::FGColumnVector3(int m)
 {
   rowCtr = 1;
-  data[1]=0;data[2]=0;data[3]=0;
-  //cout << "Allocated: " <<  data << endl;
-  //if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+  data[0]=0; data[1]=0; data[2]=0; data[3]=0;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector3::~FGColumnVector3(void)
 {
-  //cout << "Freed: " << data << endl;
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector3" << endl;
 }
 

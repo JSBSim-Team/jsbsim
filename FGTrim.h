@@ -68,9 +68,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.20 2001/11/24 14:12:38 jberndt Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
+
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -129,7 +133,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.20 2001/11/24 14:12:38 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

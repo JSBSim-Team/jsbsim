@@ -47,9 +47,13 @@ INCLUDES
 #  endif
 #endif
 
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif
+
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.86 2001/11/22 14:56:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.87 2001/11/24 14:12:38 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.42 2001/11/16 23:24:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.43 2001/11/24 14:12:38 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -664,7 +664,8 @@ bool FGInitialCondition::solve(double *y,double x)
   i=0;
   while ((fabs(d) > eps) && (i < 100)) {
     d=(x3-x1)/d0;
-    x2=x1-d*d0*f1/(f3-f1);
+    if (f3-f1 != 0.0) x2 = x1-d*d0*f1/(f3-f1);
+    else              x2 = x1-d*d0*f1/0.01; // TONY: What is correct? This is a WAG.
 
     f2=(this->*sfunc)(x2)-x;
     //cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
