@@ -1,7 +1,7 @@
 <FDM_CONFIG NAME="737" VERSION="1.60" RELEASE="ALPHA">
 <!--
   File:     737.xml
-  Author:   Aero-Matic v 0.7
+  Author:   Aero-Matic v 0.7, David Culp
 
   Inputs:
     name:          737
@@ -27,81 +27,81 @@
 -->
 
  <METRICS>
-   AC_WINGAREA  1135.00
-   AC_WINGSPAN  94.75
-   AC_CHORD     11.98
-   AC_HTAILAREA 283.75
-   AC_HTAILARM  49.32
-   AC_VTAILAREA 227.00
-   AC_LV        49.32
-   AC_IXX       849488
-   AC_IYY       2626075
-   AC_IZZ       3344442
-   AC_IXZ       0
-   AC_EMPTYWT   78000
-   AC_CGLOC     723.4  0.0 -32.9
-   AC_AERORP    723.4  0.0  0.0
-   AC_EYEPTLOC  92.1 -30.0 70.0
+   AC_WINGAREA  1171.0
+   AC_WINGSPAN  94.7
+   AC_CHORD     12.31
+   AC_HTAILAREA 348.0
+   AC_HTAILARM  48.04
+   AC_VTAILAREA 297.00
+   AC_LV        44.50
+   AC_IXX       562000.0
+   AC_IYY       1473000.0
+   AC_IZZ       1894000.0
+   AC_IXZ       8000
+   AC_EMPTYWT   83000
+   AC_CGLOC     620.0  0.0 -40.0
+   AC_AERORP    600.0  0.0  24.0
+   AC_EYEPTLOC   80.0 -30.0 70.0
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   171.0  0.0 -157.8 182000.0 13000.0  0.5  0.8  0.02 STEERABLE NONE  7 RETRACT
-  AC_GEAR LEFT_MLG  760.0 -102.3 -157.8 650000.0 26000.0  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
-  AC_GEAR RIGHT_MLG 760.0  102.3 -157.8 650000.0 26000.0  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
+  AC_GEAR NOSE_LG   158.0    0.0  -84.0   90000.0  4000.0  0.5  0.8  0.02 STEERABLE NONE  7 RETRACT
+  AC_GEAR LEFT_MLG  648.0 -100.0  -84.0  120000.0 10000.0  0.5  0.8  0.02 FIXED     LEFT  0 RETRACT
+  AC_GEAR RIGHT_MLG 648.0  100.0  -84.0  120000.0 10000.0  0.5  0.8  0.02 FIXED     RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
   <AC_ENGINE FILE="CFM56_sim">
-    XLOC 723.36
-    YLOC -189.5
-    ZLOC -40
-    PITCH 0
-    YAW 0
-    FEED 0
+    XLOC  540.0
+    YLOC -193.0
+    ZLOC -40.0
+    PITCH 0.0
+    YAW   0.0
+    FEED  0
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 723.36
-    YLOC -189.5
+    XLOC  540.0
+    YLOC -193.0
     ZLOC -40
-    PITCH 0
-    YAW 0
+    PITCH 0.0
+    YAW   0.0
   </AC_THRUSTER>
   <AC_ENGINE FILE="CFM56_sim">
-    XLOC 723.36
-    YLOC 189.5
+    XLOC  540.0
+    YLOC  193.0
     ZLOC -40
-    PITCH 0
-    YAW 0
-    FEED 1
+    PITCH 0.0
+    YAW   0.0
+    FEED  1
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 723.36
-    YLOC 189.5
+    XLOC 540.0
+    YLOC 193.0
     ZLOC -40
-    PITCH 0
-    YAW 0
+    PITCH 0.0
+    YAW   0.0
   </AC_THRUSTER>
-  <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 723.36 
-    YLOC 0 
-    ZLOC -32.88 
-    RADIUS 1 
-    CAPACITY  1884.1
-    CONTENTS   942.0
+  <AC_TANK TYPE="FUEL" NUMBER="0"> <!-- left wing -->
+    XLOC       520.0 
+    YLOC       -80.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
+    CAPACITY 10200.0
+    CONTENTS 10000.0
   </AC_TANK>
-  <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 723.36 
-    YLOC 0 
-    ZLOC -32.88 
-    RADIUS 1 
-    CAPACITY  1884.1
-    CONTENTS   942.0
+  <AC_TANK TYPE="FUEL" NUMBER="1"> <!-- right wing -->
+    XLOC       520.0 
+    YLOC        80.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
+    CAPACITY 10200.0
+    CONTENTS 10000.0
   </AC_TANK>
-  <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 723.36 
-    YLOC 0 
-    ZLOC -32.88 
-    RADIUS 1 
-    CAPACITY  1884.1
-    CONTENTS   942.0
+  <AC_TANK TYPE="FUEL" NUMBER="2"> <!-- center -->
+    XLOC       480.0 
+    YLOC         0.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
+    CAPACITY 15000.0
+    CONTENTS     0.0
   </AC_TANK>
  </PROPULSION>
  <FLIGHT_CONTROL NAME="737">
@@ -112,8 +112,8 @@
    </COMPONENT>
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/pitch-trim-sum
-      MIN     -0.350
-      MAX      0.275
+      MIN     -0.300
+      MAX      0.300
       OUTPUT  fcs/elevator-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
@@ -128,10 +128,9 @@
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/roll-trim-sum
+      INPUT  -fcs/roll-trim-sum
       MIN    -0.35
       MAX     0.35
-      INVERT
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Rudder Command Sum" TYPE="SUMMER">
@@ -178,10 +177,16 @@
    </COMPONENT>
    <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
      INPUT   fcs/flap-cmd-norm
-     DETENTS 3
+     DETENTS 9
              0   0
-             15  4
-             30  3
+             1   4
+             2   4
+             5   3
+             10  2
+             15  2
+             25  2
+             30  2
+             40  2  
      OUTPUT  fcs/flap-pos-deg
    </COMPONENT>
    <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
@@ -195,7 +200,7 @@
      INPUT   fcs/speedbrake-cmd-norm
      DETENTS 2
              0   0
-             1   1
+             1   0.6
      OUTPUT  fcs/speedbrake-pos-norm
    </COMPONENT>
  </FLIGHT_CONTROL>
@@ -214,7 +219,7 @@
     <COEFFICIENT NAME="dCLflap" TYPE="VALUE">
        Delta_Lift_due_to_flaps
        aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
-       1.5
+       0.9
     </COEFFICIENT>
     <COEFFICIENT NAME="dCLsb" TYPE="VALUE">
        Delta_Lift_due_to_speedbrake
@@ -340,12 +345,12 @@
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-       -17
+       -27
     </COEFFICIENT>
     <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
        Pitch_moment_due_to_alpha_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|aero/alphadot-rad_sec
-       -6
+       -16
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="YAW">
@@ -362,7 +367,7 @@
     <COEFFICIENT NAME="Cndr" TYPE="VALUE">
        Yaw_moment_due_to_rudder
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
-       -0.1
+       -0.2
     </COEFFICIENT>
     <COEFFICIENT NAME="Cnda" TYPE="VALUE">
        Adverse_yaw

@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.28 2003/12/15 17:44:40 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.29 2004/01/15 10:06:02 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -147,7 +147,7 @@
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
        INPUT        gear/gear-cmd-norm
-       DETENTS      1
+       DETENTS      2
                     0    0
                     25   3
        OUTPUT      fcs/flap-pos-deg
