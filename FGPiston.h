@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.35 2003/12/02 12:56:04 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.36 2003/12/03 03:03:23 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.35 2003/12/02 12:56:04 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.36 2003/12/03 03:03:23 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,7 @@ private:
   double IAS;                // knots
   bool Magneto_Left;
   bool Magneto_Right;
-  bool Magnetos;
+  int Magnetos;
 
   //
   // Outputs (in addition to those in FGEngine).
