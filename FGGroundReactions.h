@@ -54,6 +54,7 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
+#include "FGConfigFile.h"
 
 #define ID_GROUNDREACTIONS "$Header"
 

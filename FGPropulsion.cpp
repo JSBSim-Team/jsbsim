@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.4 2000/10/13 19:21:05 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.5 2000/10/14 15:58:47 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*******************************************************************************
@@ -88,6 +88,7 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
   string token;
   string engine_name;
   string parameter;
+  int numEngines=0, numTanks=0;
 
   AC_cfg->GetNextConfigLine();
 
@@ -97,18 +98,18 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
     if (parameter == "AC_ENGINE") {
 
       *AC_cfg >> engine_name;
-      Engine[numEngines] = new FGEngine(FDMExec, EnginePath, engine_name, numEngines);
+      Engines[numEngines] = *(new FGEngine(FDMExec, FDMExec->GetEnginePath(), engine_name, numEngines));
       numEngines++;
 
     } else if (parameter == "AC_TANK") {
 
-      Tank[numTanks] = new FGTank(AC_cfg);
-      switch(Tank[numTanks]->GetType()) {
+      Tanks[numTanks] = *(new FGTank(AC_cfg));
+      switch(Tanks[numTanks].GetType()) {
       case FGTank::ttFUEL:
-        numSelectedFuelTanks++;
+//        numSelectedFuelTanks++;
         break;
       case FGTank::ttOXIDIZER:
-        numSelectedOxiTanks++;
+//        numSelectedOxiTanks++;
         break;
       }
       numTanks++;

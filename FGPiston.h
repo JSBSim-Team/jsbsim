@@ -44,6 +44,8 @@ INCLUDES
 
 #include "FGEngine.h"
 
+#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.3 2000/10/14 15:58:47 jsb Exp $";
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

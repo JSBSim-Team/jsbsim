@@ -44,6 +44,8 @@ INCLUDES
 
 #include "FGThruster.h"
 
+#define ID_NOZZLE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.h,v 1.2 2000/10/14 15:58:47 jsb Exp $";
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.15 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.16 2000/10/14 15:58:47 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 /*******************************************************************************
@@ -248,11 +248,13 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
   AircraftPath = APath;
 	EnginePath = EPath;
   result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
-  if(result) {
-    modelLoaded=true;
+
+  if (result) {
+    modelLoaded = true;
   } else {
     cerr << "FGFDMExec: Failed to load aircraft and/or engine model" << endl;
-  }  
+  }
+
   cout << "FGFDMExec::LoadModel complete." << endl;;
   return result;
 }
