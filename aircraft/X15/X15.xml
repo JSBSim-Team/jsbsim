@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.36">
+<FDM_CONFIG NAME="X-15" VERSION="1.37">
 
   <METRICS>
 
@@ -40,7 +40,7 @@
     <damping coefficient>            damping coefficient in lbs/ft/sec
     <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
     <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-    <rolling friction coefficient>   Self-explanatory: rolling friction coefficient
+    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
     <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
@@ -48,8 +48,8 @@
     </COMMENT>
 
     AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 0.02 FIXED NONE 0
-    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 0.02 FIXED NONE 0
-    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 0.02 FIXED NONE 0
+    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 0.00 FIXED NONE 0
+    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 0.00 FIXED NONE 0
 
   </UNDERCARRIAGE>
 
