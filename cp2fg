@@ -1,9 +1,53 @@
-cp JSBSim.cxx $FG_SRC/FDM/
-cp *.cpp $FG_SRC/FDM/JSBSim/
-cp *.h   $FG_SRC/FDM/JSBSim/
-cp filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
-cp filtersjb/*.h   $FG_SRC/FDM/JSBSim/filtersjb/
-cp aircraft/c172/c172.xml       $FG_ROOT/Aircraft/c172/
-cp aircraft/X15/X15.xml         $FG_ROOT/Aircraft/X15/
-cp aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
-cp engine/*.xml $FG_ROOT/Engine/
+#!/bin/sh
+#
+# Copy JSBSim source into the FlightGear source tree
+#
+# Assumes you've set the environment variables:
+#  FG_SRC=~/FlightGear/src
+#  FG_BASE=~/fgfsbase
+
+INSTALL="cp -v"
+
+# Gather or default settings. Assumes the current directory is
+# a JSBSim working directory, with FlightGear and fgfsbase siblings
+if [ "x$FG_SRC" = "x" ]; then
+	FG_SRC=`pwd`/../FlightGear/src
+	echo "Defaulting FG_SRC to $FG_SRC"
+fi
+
+if [ "x$FG_BASE" = "x" ]; then
+	FG_BASE=`pwd`/../fgfsbase
+	echo "Defaulting FG_BASE to $FG_BASE"
+fi
+
+# Check directories exist
+if [ ! -d "$FG_SRC/FDM/JSBSim/filtersjb" ]; then
+	echo "No $FG_SRC/FDM/JSBSim/filtersjb directory";
+	mkdir $FG_SRC/FDM/JSBSim/filtersjb
+	exit;
+fi
+
+if [ ! -d "$FG_BASE/Engine" ]; then
+	echo "No $FG_BASE/Engine directory";
+	exit;
+fi
+
+for i in c172 X15 shuttle c310; do
+    if [ ! -d "$FG_BASE/Aircraft/$i" ]; then
+	echo "No $FG_BASE/Aircraft/$i";
+	exit;
+    fi
+done
+
+# Perform the copy
+$INSTALL JSBSim.cxx $FG_SRC/FDM/
+$INSTALL *.cpp $FG_SRC/FDM/JSBSim/
+$INSTALL *.h $FG_SRC/FDM/JSBSim/
+$INSTALL filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
+$INSTALL filtersjb/*.h $FG_SRC/FDM/JSBSim/filtersjb/
+$INSTALL engine/*.xml $FG_BASE/Engine/
+$INSTALL aircraft/c172/c172.xml $FG_BASE/Aircraft/c172/
+$INSTALL aircraft/X15/X15.xml $FG_BASE/Aircraft/X15/
+$INSTALL aircraft/shuttle/shuttle.xml $FG_BASE/Aircraft/shuttle/
+$INSTALL aircraft/c310/c310.xml $FG_BASE/Aircraft/c310
+
