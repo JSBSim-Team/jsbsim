@@ -92,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.62 2004/01/11 19:46:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.63 2004/01/11 22:59:22 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,6 +192,15 @@ bool FGPosition::Run(void)
     // frame, where X points north, Y points East, and Z points down. This needs
     // to be converted to Lat/Lon/Alt, now.
 
+    if (cosLat != 0)
+      LongitudeVRP = vVRPoffset(eEast) / (Radius * cosLat) + Longitude;
+
+    LatitudeVRP = vVRPoffset(eNorth) / Radius + Latitude;
+    hVRP = vVRPoffset(eDown) + h;
+/*
+cout << "Lat/Lon/Alt : " << Latitude << " / " << Longitude << " / " << h << endl;
+cout << "Lat/Lon/Alt VRP: " << LatitudeVRP << " / " << LongitudeVRP << " / " << hVRP << endl << endl;
+*/
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
     
     hoverbcg = DistanceAGL/b;
