@@ -375,7 +375,7 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGLGear.h FGConfigFile.h FGAircraft.h FGPropagate.h FGLocation.h \
   FGAuxiliary.h FGMassBalance.h FGAerodynamics.h FGCoefficient.h \
   FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h FGPropulsion.h \
-  FGEngine.h FGThruster.h FGForce.h FGTank.h FGScript.h
+  FGEngine.h FGThruster.h FGForce.h FGTank.h FGScript.h FGPropeller.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
 
 
