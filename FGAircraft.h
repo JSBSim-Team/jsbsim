@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.73 2001/11/29 01:26:02 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.74 2001/11/29 12:57:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.73 2001/11/29 01:26:02 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.74 2001/11/29 12:57:42 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -206,23 +206,6 @@ public:
   float GetNlf(void);
   
   inline FGColumnVector3& GetNwcg(void) { return vNwcg; }
-
-  /// Subsystem types for specifying which will be output in the FDM data logging
-  enum  SubSystems {
-    /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
-    /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
-    /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
-    /** Subsystem: Velocities (= 8)          */ ssVelocities      = 8,
-    /** Subsystem: Forces (= 16)             */ ssForces          = 16,
-    /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
-    /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
-    /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
-    /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
-    /** Subsystem: Position (= 512)          */ ssPosition        = 512,
-    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
-    /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
-    /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
-  } subsystems;
 
 private:
   FGColumnVector3 vMoments;
