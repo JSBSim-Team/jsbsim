@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.98 2002/01/19 20:37:29 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.99 2002/01/24 14:28:28 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -125,7 +125,7 @@ FGJSBsim::FGJSBsim( double dt )
     init_gear();
 
 				// Set initial fuel levels if provided.
-    for (int i = 0; i < Propulsion->GetNumTanks(); i++) {
+    for (unsigned int i = 0; i < Propulsion->GetNumTanks(); i++) {
       SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
       if (node->getChild("level-gal_us", 0, false) != 0)
 	Propulsion->GetTank(i)
@@ -240,7 +240,7 @@ FGJSBsim::update( int multiloop ) {
 
     int i;
 
-    double save_alt = 0.0;
+    // double save_alt = 0.0;
 
     copy_to_JSBsim();
 
@@ -291,7 +291,7 @@ FGJSBsim::update( int multiloop ) {
 // Convert from the FGInterface struct to the JSBsim generic_ struct
 
 bool FGJSBsim::copy_to_JSBsim() {
-    int i;
+    unsigned int i;
 
     // copy control positions into the JSBsim structure
 
@@ -463,12 +463,19 @@ bool FGJSBsim::copy_from_JSBsim() {
       node->setBoolValue("cranking", eng->GetCranking());
     }
 
-				// Copy the fuel levels from JSBSim.
-    for (i = 0; i < Propulsion->GetNumTanks(); i++) {
-      SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
-      double contents = Propulsion->GetTank(i)->GetContents();
-      node->setDoubleValue("level-gal_us", contents/6.6);
-//       node->setDoubleValue("level-lb", contents);
+    static const SGPropertyNode *fuel_freeze
+	= fgGetNode("/sim/freeze/fuel");
+
+				// Copy the fuel levels from JSBSim if fuel
+				// freeze not enabled.
+    if ( ! fuel_freeze->getBoolValue() ) {
+	for (i = 0; i < Propulsion->GetNumTanks(); i++) {
+	    SGPropertyNode * node
+		= fgGetNode("/consumables/fuel/tank", i, true);
+	    double contents = Propulsion->GetTank(i)->GetContents();
+	    node->setDoubleValue("level-gal_us", contents/6.6);
+	    // node->setDoubleValue("level-lb", contents);
+	}
     }
 
     update_gear();
