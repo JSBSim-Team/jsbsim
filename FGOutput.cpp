@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.53 2002/02/04 23:05:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.54 2002/02/22 12:13:09 apeden Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,9 +148,11 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Aileron Cmd, ";
       outstream << "Elevator Cmd, ";
       outstream << "Rudder Cmd, ";
+      outstream << "Flap Cmd, ";
       outstream << "Aileron Pos, ";
       outstream << "Elevator Pos, ";
-      outstream << "Rudder Pos";
+      outstream << "Rudder Pos, ";
+      outstream << "Flap Pos"; 
     }
     if (SubSystems & ssRates) {
       outstream << ", ";
@@ -225,9 +227,11 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << FCS->GetDaCmd() << ", ";
     outstream << FCS->GetDeCmd() << ", ";
     outstream << FCS->GetDrCmd() << ", ";
+    outstream << FCS->GetDfCmd() << ", ";
     outstream << FCS->GetDaPos() << ", ";
     outstream << FCS->GetDePos() << ", ";
-    outstream << FCS->GetDrPos();
+    outstream << FCS->GetDrPos() << ", ";
+    outstream << FCS->GetDfPos();
   }
   if (SubSystems & ssRates) {
     outstream << ", ";
