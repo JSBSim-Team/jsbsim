@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.63 2004/06/06 13:37:09 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.64 2004/07/06 09:39:43 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.63 2004/06/06 13:37:09 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.64 2004/07/06 09:39:43 frohlich Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -175,6 +175,10 @@ public:
   /** Gets the rudder command.
       @return rudder command in percent */
   inline double GetDrCmd(void) const { return DrCmd; }
+
+  /** Gets the steering command.
+      @return steering command in percent */
+  inline double GetDsCmd(void) const { return DsCmd; }
 
   /** Gets the flaps command.
       @return flaps command in percent */
@@ -402,6 +406,10 @@ public:
       @return mixture position for the given engine in percent ( 0 - 100)*/
   inline double GetMixturePos(int engine) const { return MixturePos[engine]; }
 
+  /** Gets the steering position.
+      @return steering position in degrees */
+  double GetSteerPosDeg(int gear) const { return SteerPosDeg[gear]; }
+
   /** Gets the gear position (0 up, 1 down), defaults to down
       @return gear position (0 up, 1 down) */
   inline double GetGearPos(void) const { return GearPos; }
@@ -436,6 +444,10 @@ public:
   /** Sets the rudder command
       @param cmd rudder command in percent*/
   inline void SetDrCmd(double cmd) { DrCmd = cmd; }
+
+  /** Sets the steering command
+      @param cmd steering command in percent*/
+  inline void SetDsCmd(double cmd) { DsCmd = cmd; }
 
   /** Sets the flaps command
       @param cmd flaps command in percent*/
@@ -547,6 +559,10 @@ public:
       @param cmd mixture setting in percent (0 - 100)*/
   void SetMixturePos(int engine, double cmd);
 
+  /** Sets the steering position
+      @param cmd steering position in degrees*/
+  void SetSteerPosDeg(int gear, double pos) { SteerPosDeg[gear] = pos; }
+
   /** Set the gear extend/retract position, defaults to down
       @param gear position 0 up, 1 down       */
    void SetGearPos(double gearpos) { GearPos = gearpos; }
@@ -587,6 +603,7 @@ public:
   bool Load(FGConfigFile* AC_cfg);
 
   void AddThrottle(void);
+  void AddGear(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
@@ -595,7 +612,7 @@ public:
   void unbind(FGPropertyManager *node);
 
 private:
-  double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
+  double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;
   double AP_DaCmd, AP_DeCmd, AP_DrCmd, AP_ThrottleCmd;
   double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];
   double DfPos[NForms], DsbPos[NForms], DspPos[NForms];
@@ -606,6 +623,7 @@ private:
   vector <double> MixturePos;
   vector <double> PropAdvanceCmd;
   vector <double> PropAdvance;
+  vector <double> SteerPosDeg;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
 

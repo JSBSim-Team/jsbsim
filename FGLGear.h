@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.60 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.61 2004/07/06 09:39:44 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.60 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.61 2004/07/06 09:39:44 frohlich Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -183,7 +183,7 @@ public:
   /** Constructor
       @param Executive a pointer to the parent executive object
       @param File a pointer to the config file instance */
-  FGLGear(FGConfigFile* File, FGFDMExec* Executive);
+  FGLGear(FGConfigFile* File, FGFDMExec* Executive, int number);
   /** Constructor
       @param lgear a reference to an existing FGLGear object     */
   FGLGear(const FGLGear& lgear);
@@ -229,12 +229,14 @@ public:
   /** Get the console touchdown reporting feature
       @return true if reporting is turned on */
   inline bool GetReport(void)    { return ReportEnable; }
-  inline double GetSteerAngle(void) { return SteerAngle;}
-  inline double GetstaticFCoeff(void) { return staticFCoeff;}
+  double GetSteerNorm(void) const { return radtodeg/maxSteerAngle*SteerAngle; }
+  double GetDefaultSteerAngle(double cmd) const { return cmd*maxSteerAngle; }
+  double GetstaticFCoeff(void) { return staticFCoeff; }
 
   inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
   inline int GetSteerType(void)  { return (int)eSteerType; }
 
+  bool GetSteerable(void) const { return eSteerType != stFixed; }
   inline bool GetRetractable(void)         { return isRetractable;   }
   inline bool GetGearUnitUp(void)          { return GearUp;          }
   inline bool GetGearUnitDown(void)        { return GearDown;        }
@@ -246,6 +248,7 @@ public:
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
 
 private:
+  int GearNumber;
   FGColumnVector3 vXYZ;
   FGColumnVector3 vMoment;
   FGColumnVector3 vWhlBodyVec;

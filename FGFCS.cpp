@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.99 2004/06/20 16:14:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.100 2004/07/06 09:39:43 frohlich Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -100,6 +100,7 @@ FGFCS::~FGFCS()
   MixturePos.clear();
   PropAdvanceCmd.clear();
   PropAdvance.clear();
+  SteerPosDeg.clear();
 
   unsigned int i;
 
@@ -117,9 +118,16 @@ bool FGFCS::Run(void)
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
 
+  // Set the default engine commands
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
   for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
+
+  // Set the default steering angle
+  for (i=0; i<SteerPosDeg.size(); i++) {
+    FGLGear* gear = GroundReactions->GetGearUnit(i);
+    SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
+  }
 
   for (i=0; i<APComponents.size(); i++) APComponents[i]->Run(); // cycle AP components
   for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run(); // cycle FCS components
@@ -473,6 +481,13 @@ void FGFCS::AddThrottle(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFCS::AddGear(void)
+{
+  SteerPosDeg.push_back(0.0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGFCS::Normalize(void) {
 
   //not all of these are guaranteed to be defined for every model
@@ -532,6 +547,10 @@ void FGFCS::bind(void)
   PropertyManager->Tie("fcs/rudder-cmd-norm", this,
                        &FGFCS::GetDrCmd,
                        &FGFCS::SetDrCmd,
+                       true);
+  PropertyManager->Tie("fcs/steer-cmd-norm", this,
+                       &FGFCS::GetDsCmd,
+                       &FGFCS::SetDsCmd,
                        true);
   PropertyManager->Tie("fcs/flap-cmd-norm", this,
                        &FGFCS::GetDfCmd,
@@ -780,6 +799,16 @@ void FGFCS::bindModel(void)
       PropertyManager->Tie( tmp,this,i,
                             &FGFCS::GetPropAdvance,
                             &FGFCS::SetPropAdvance,
+                            true );
+    }
+  }
+
+  for (i=0; i<SteerPosDeg.size(); i++) {
+    if (GroundReactions->GetGearUnit(i)->GetSteerable()) {
+      snprintf(tmp,80,"fcs/steer-pos-deg[%u]",i);
+      PropertyManager->Tie( tmp, this, i,
+                            &FGFCS::GetSteerPosDeg,
+                            &FGFCS::SetSteerPosDeg,
                             true );
     }
   }

@@ -50,16 +50,18 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.116 2004/06/15 09:30:18 frohlich Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.117 2004/07/06 09:39:44 frohlich Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
+FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex, int number) : Exec(fdmex)
 {
   string tmp;
+
+  GearNumber = number;
 
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
@@ -140,6 +142,8 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 
 FGLGear::FGLGear(const FGLGear& lgear)
 {
+  GearNumber = lgear.GearNumber;
+
   State    = lgear.State;
   Aircraft = lgear.Aircraft;
   Propagate = lgear.Propagate;
@@ -207,7 +211,6 @@ FGLGear::~FGLGear()
 FGColumnVector3& FGLGear::Force(void)
 {
   double SinWheel, CosWheel;
-  double deltaSlip;
   double deltaT = State->Getdt()*Aircraft->GetRate();
 
   vForce.InitMatrix();
@@ -227,6 +230,24 @@ FGColumnVector3& FGLGear::Force(void)
   } else {
       GearUp   = false;
       GearDown = true;
+  }
+
+  // Compute the steering angle in any case.
+  // Will make shure that animations will look right.
+  switch (eSteerType) {
+  case stSteer:
+    SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
+    break;
+  case stFixed:
+    SteerAngle = 0.0;
+    break;
+  case stCaster:
+    // Note to Jon: This is not correct for castering gear.  I'll fix it later.
+    SteerAngle = 0.0;
+    break;
+  default:
+    cerr << "Improper steering type membership detected for this gear." << endl;
+    break;
   }
 
   if (GearDown) {
@@ -320,22 +341,6 @@ FGColumnVector3& FGLGear::Force(void)
         break;
       default:
         cerr << "Improper brake group membership detected for this gear." << endl;
-        break;
-      }
-
-      switch (eSteerType) {
-      case stSteer:
-        SteerAngle = -maxSteerAngle * FCS->GetDrCmd() * 0.01745;
-        break;
-      case stFixed:
-        SteerAngle = 0.0;
-        break;
-      case stCaster:
-// Note to Jon: This is not correct for castering gear.  I'll fix it later.
-        SteerAngle = 0.0;
-        break;
-      default:
-        cerr << "Improper steering type membership detected for this gear." << endl;
         break;
       }
 
@@ -446,6 +451,9 @@ FGColumnVector3& FGLGear::Force(void)
     } else { // Gear is NOT compressed
 
       WOW = false;
+
+      // Return to neutral position between 1.0 and 0.8 gear pos.
+      SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
 
       if (Propagate->GetDistanceAGL() > 200.0) {
         FirstContact = false;
