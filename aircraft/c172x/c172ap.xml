@@ -83,36 +83,25 @@ ROLL CHANNEL
   INPUT          ap/heading_setpoint
 </COMPONENT>
 
-<COMPONENT NAME="Heading Error Low" TYPE="SUMMER">
+<COMPONENT NAME="Heading Error Bias Switch" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="0.0">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="360.0">
+    fcs/heading-error < -180
+  </TEST>
+  <TEST LOGIC="AND" VALUE="-360.0">
+    fcs/heading-error > 180
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="Heading Corrected" TYPE="SUMMER">
+  INPUT          fcs/heading-error-bias-switch
   INPUT          fcs/heading-error
-  BIAS           360
   CLIPTO         -30 30
 </COMPONENT>
 
-<COMPONENT NAME="Heading Error Mid" TYPE="SUMMER">
-  INPUT          fcs/heading-error
-  CLIPTO        -30 30
-</COMPONENT>
-
-<COMPONENT NAME="Heading Error High" TYPE="SUMMER">
-  INPUT          fcs/heading-error
-  BIAS          -360
-  CLIPTO        -30 30
-</COMPONENT>
-
-<COMPONENT NAME="Heading Error Switch" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="fcs/heading-error-mid">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/heading-error-low">
-    fcs/heading-error <= -180
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/heading-error-high">
-    fcs/heading-error >= 180
-  </TEST>
-</COMPONENT>
-
 <COMPONENT NAME="Heading Command" TYPE="PURE_GAIN">
-  INPUT          fcs/heading-error-switch
+  INPUT          fcs/heading-corrected
   GAIN           0.01745
 </COMPONENT>
 
