@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.27 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.28 2002/02/09 00:06:05 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   eParam tmpInputIndex;
 
   clip = false;
+  Bias = 0.0;
   InputIndices.clear();
   InputTypes.clear();
 
@@ -73,6 +74,10 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
         tmpInputIndex = fcs->GetState()->GetParameterIndex(token);
         InputIndices.push_back(tmpInputIndex);
         InputTypes.push_back(itPilotAC);
+      } else if (token.find(".") != token.npos) { // bias
+        *AC_cfg >> Bias;
+        InputIndices.push_back((eParam)0);
+        InputTypes.push_back(itBias);
       } else {
         *AC_cfg >> tmpInputIndex;
         InputIndices.push_back(tmpInputIndex);
@@ -118,6 +123,9 @@ bool FGSummer::Run(void )
       break;
     case itFCS:
       Output += fcs->GetComponentOutput(InputIndices[idx]);
+      break;
+    case itBias:
+      Output += Bias;
       break;
     }
   }

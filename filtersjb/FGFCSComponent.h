@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.28 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.29 2002/02/09 00:06:05 jberndt Exp $"
 
 using std::string;
 
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.28 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.29 2002/02/09 00:06:05 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -104,7 +104,7 @@ public:
 
 protected:
    /// Pilot/Aircraft, FCS, Autopilot inputs
-  enum eInputType {itPilotAC, itFCS, itAP} InputType;
+  enum eInputType {itPilotAC, itFCS, itAP, itBias} InputType;
   FGFCS* fcs;
   string Type;
   string Name;
