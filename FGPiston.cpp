@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.56 2002/08/25 13:57:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.57 2002/12/30 22:15:57 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,5 +567,5 @@ void FGPiston::Debug(int from)
 double
 FGPiston::CalcFuelNeed(void)
 {
-  return FuelFlow_gph / 3600 * State->Getdt() * Propulsion->GetRate();
+  return FuelFlow_gph / 3600 * 6 * State->Getdt() * Propulsion->GetRate();
 }
