@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.81 2002/01/04 11:39:56 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.82 2002/01/04 23:03:31 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -325,7 +325,7 @@
          FG_QBAR|FG_WINGAREA
          -0.001284
        </COEFFICIENT>
-       <COEFFICIENT NAME="CYb" TYPE="VALUE">
+       <COEFFICIENT NAME="CYb" TYPE="VECTOR">
          Side_force_due_to_beta
          3
          FG_BETA
@@ -448,7 +448,7 @@
          0.000563
        </COEFFICIENT>
 
-       <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+       <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
          Yaw_moment_due_to_beta
          3
          FG_BETA
