@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.134 2003/03/24 10:08:02 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.135 2003/03/24 10:47:44 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -166,6 +166,9 @@ FGJSBsim::FGJSBsim( double dt )
     right_aileron_pos_pct
         =fgGetNode("/surface-positions/right-aileron-pos-norm",true);
     rudder_pos_pct=fgGetNode("/surface-positions/rudder-pos-norm",true);
+    speed_brake_pos_pct
+        =fgGetNode("/surface-positions/speed-brake-pos-norm",true);
+    spoiler_pos_pct=fgGetNode("/surface-positions/spoiler-pos-norm",true);
     
     
 
@@ -174,6 +177,8 @@ FGJSBsim::FGJSBsim( double dt )
     right_aileron_pos_pct->setDoubleValue(0);
     rudder_pos_pct->setDoubleValue(0);
     flap_pos_pct->setDoubleValue(0);
+    speed_brake_pos_pct->setDoubleValue(0);
+    spoiler_pos_pct->setDoubleValue(0);
 
     temperature = fgGetNode("/environment/temperature-degc",true);
     pressure = fgGetNode("/environment/pressure-inhg",true);
@@ -579,13 +584,15 @@ bool FGJSBsim::copy_from_JSBsim() {
     right_aileron_pos_deg->setDoubleValue( FCS->GetDaRPos()*SG_RADIANS_TO_DEGREES );
     rudder_pos_deg->setDoubleValue( -1*FCS->GetDrPos()*SG_RADIANS_TO_DEGREES );
     flap_pos_deg->setDoubleValue( FCS->GetDfPos() ); */
-
     
+
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
     right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
     rudder_pos_pct->setDoubleValue( -1*FCS->GetDrPos(ofNorm) );
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
+    speed_brake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
+    spoiler_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
 
     
     return true;
