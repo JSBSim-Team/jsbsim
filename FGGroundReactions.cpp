@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.17 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.18 2001/12/02 15:55:46 apeden Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,6 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
 {
   Name = "FGGroundReactions";
 
-  GearUp = false;
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
@@ -69,7 +68,7 @@ bool FGGroundReactions::Run(void)
     vMoments.InitMatrix();
 
     // Only execute gear force code below 300 feet
-    if ( !GearUp && Position->GetDistanceAGL() < 300.0 ) {
+    if ( Position->GetDistanceAGL() < 300.0 ) {
       vector <FGLGear>::iterator iGear = lGear.begin();
       // Sum forces and moments for all gear, here.
       // Some optimizations may be made here - or rather in the gear code itself.
