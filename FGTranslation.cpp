@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.46 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.47 2002/05/17 10:40:01 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,6 +149,8 @@ bool FGTranslation::Run(void)
     }
 
     qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
+    qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+    qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
     Mach = Vt / State->Geta();
 
     vlastUVWdot = vUVWdot;
@@ -204,6 +206,14 @@ void FGTranslation::bind(void)
                        &FGTranslation::Getqbar,
                        &FGTranslation::Setqbar,
                        true);
+  PropertyManager->Tie("aero/qbarUW-psf", this,
+                       &FGTranslation::GetqbarUW,
+                       &FGTranslation::SetqbarUW,
+                       true);
+  PropertyManager->Tie("aero/qbarUV-psf", this,
+                       &FGTranslation::GetqbarUV,
+                       &FGTranslation::SetqbarUV,
+                       true);
   PropertyManager->Tie("velocities/vt-fps", this,
                        &FGTranslation::GetVt,
                        &FGTranslation::SetVt,
@@ -238,6 +248,8 @@ void FGTranslation::unbind(void)
   PropertyManager->Untie("aero/alpha-rad");
   PropertyManager->Untie("aero/beta-rad");
   PropertyManager->Untie("aero/qbar-psf");
+  PropertyManager->Untie("aero/qbarUW-psf");
+  PropertyManager->Untie("aero/qbarUV-psf");
   PropertyManager->Untie("velocities/vt-fps");
   PropertyManager->Untie("velocities/mach-norm");
   PropertyManager->Untie("aero/alphadot-rad_sec");

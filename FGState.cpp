@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.114 2002/05/05 13:58:53 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.115 2002/05/17 10:40:01 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -498,6 +498,8 @@ void FGState::InitPropertyMaps(void)
 {
   ParamNameToProp[  "FG_TIME" ]="sim-time-sec";
   ParamNameToProp[  "FG_QBAR" ]="aero/qbar-psf";
+  ParamNameToProp[  "FG_QBARUW" ]="aero/qbarUW-psf";
+  ParamNameToProp[  "FG_QBARUV" ]="aero/qbarUV-psf";
   ParamNameToProp[  "FG_WINGAREA" ]="metrics/Sw-sqft";
   ParamNameToProp[  "FG_WINGSPAN" ]="metrics/bw-ft";
   ParamNameToProp[  "FG_CBAR" ]="metrics/cbarw-ft";

@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.38 2002/03/20 14:27:09 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.39 2002/05/17 10:40:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -98,6 +98,8 @@ public:
   double Getbeta (void) const { return beta; }
   inline double GetMagBeta(void) const { return fabs(beta); }
   double Getqbar (void) const { return qbar; }
+  double GetqbarUW (void) const { return qbarUW; }
+  double GetqbarUV (void) const { return qbarUV; }
   inline double GetVt   (void) const { return Vt; }
   double GetMach (void) const { return Mach; }
   double Getadot (void) const { return adot; }
@@ -109,6 +111,8 @@ public:
   inline void Setalpha(double tt) { alpha = tt; }
   inline void Setbeta (double tt) { beta  = tt; }
   inline void Setqbar (double tt) { qbar = tt; }
+  inline void SetqbarUW (double tt) { qbarUW = tt; }
+  inline void SetqbarUV (double tt) { qbarUV = tt; }
   inline void SetVt   (double tt) { Vt = tt; }
   inline void SetMach (double tt) { Mach=tt; }
   inline void Setadot (double tt) { adot = tt; }
@@ -128,7 +132,8 @@ private:
   FGMatrix33       mVel;
   FGColumnVector3 vAeroUVW;
 
-  double Vt, qbar, Mach;
+  double Vt, Mach;
+  double qbar, qbarUW, qbarUV;
   double dt;
   double alpha, beta;
   double adot,bdot;
