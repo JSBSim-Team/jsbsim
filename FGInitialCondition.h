@@ -59,7 +59,7 @@ INCLUDES
 CLASS DECLARATION
 *******************************************************************************/
 
-typedef enum { setvt, setvc, setve, setmach, setuvw, setned } speedset;
+typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 
 #define jsbFPSTOKTS 0.5924838
 #define jsbKTSTOFPS 1.6878099
@@ -114,118 +114,121 @@ public:
   FGInitialCondition(FGFDMExec *fdmex);
   ~FGInitialCondition(void);
   
-  inline speedset GetSpeedSet(void) { return lastSpeedSet; }
 
   void SetVcalibratedKtsIC(float tt);
   void SetVequivalentKtsIC(float tt);
-  inline void SetVtrueKtsIC(float tt) { SetVtrueFpsIC(tt*jsbKTSTOFPS); }
-  void SetVtrueFpsIC(float tt);
+  inline void SetVtrueKtsIC(float tt)   { SetVtrueFpsIC(tt*jsbKTSTOFPS);   }
+  inline void SetVgroundKtsIC(float tt) { SetVgroundFpsIC(tt*jsbKTSTOFPS); }
   void SetMachIC(float tt);
+  
+  inline void SetAlphaDegIC(float tt)      { SetAlphaRadIC(tt*DEGTORAD); }
+  inline void SetBetaDegIC(float tt)       { SetBetaRadIC(tt*DEGTORAD);}
+  
+  inline void SetPitchAngleDegIC(float tt) { SetPitchAngleRadIC(tt*DEGTORAD); }
+  inline void SetRollAngleDegIC(float tt)  { SetRollAngleRadIC(tt*DEGTORAD);}
+  inline void SetTrueHeadingDegIC(float tt){ SetTrueHeadingRadIC(tt*DEGTORAD); }
+  
+  void SetClimbRateFpmIC(float tt);
+  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(tt*DEGTORAD); }
 
-  void SetUBodyFpsIC(float tt);
-  void SetVBodyFpsIC(float tt);
-  void SetWBodyFpsIC(float tt);
-  
-  void SetVnorthFpsIC(float tt);
-  void SetVeastFpsIC(float tt);
-  void SetVdownFpsIC(float tt);
-  
   void SetAltitudeFtIC(float tt);
   void SetAltitudeAGLFtIC(float tt);
   
   void SetSeaLevelRadiusFtIC(double tt);
   void SetTerrainAltitudeFtIC(double tt);
-  
-  //"vertical" flight path, recalculate theta
-  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(tt*DEGTORAD); }
-  void SetFlightPathAngleRadIC(float tt);
-  //set speed first
-  void SetClimbRateFpmIC(float tt);
-  void SetClimbRateFpsIC(float tt);
-  //use currently stored gamma, recalcualte theta
-  inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD; getTheta(); }
-  inline void SetAlphaRadIC(float tt)      { alpha=tt; getTheta(); }
-  //use currently stored gamma, recalcualte alpha
-  inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD; getAlpha(); }
-  inline void SetPitchAngleRadIC(float tt) { theta=tt; getAlpha(); }
-
-  inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; getTheta();}
-  inline void SetBetaRadIC(float tt)       { beta=tt; getTheta(); }
-  
-  inline void SetRollAngleDegIC(float tt) { phi=tt*DEGTORAD; getTheta(); }
-  inline void SetRollAngleRadIC(float tt) { phi=tt; getTheta(); }
-
-  inline void SetTrueHeadingDegIC(float tt)   { psi=tt*DEGTORAD; }
-  inline void SetTrueHeadingRadIC(float tt)   { psi=tt; }
 
   inline void SetLatitudeDegIC(float tt)  { latitude=tt*DEGTORAD; }
-  inline void SetLatitudeRadIC(float tt)  { latitude=tt; }
-
   inline void SetLongitudeDegIC(float tt) { longitude=tt*DEGTORAD; }
-  inline void SetLongitudeRadIC(float tt) { longitude=tt; }
 
+  
   inline float GetVcalibratedKtsIC(void) { return vc*jsbFPSTOKTS; }
   inline float GetVequivalentKtsIC(void) { return ve*jsbFPSTOKTS; }
+  inline float GetVgroundKtsIC(void) { return vg*jsbFPSTOKTS; }
   inline float GetVtrueKtsIC(void) { return vt*jsbFPSTOKTS; }
-  inline float GetVtrueFpsIC(void) { return vt; }
   inline float GetMachIC(void) { return mach; }
-
-  inline float GetAltitudeFtIC(void) { return altitude; }
-  inline float GetAltitudeAGLFtIC(void) { return altitude - terrain_altitude; }
   
-  inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG; }
-  inline float GetFlightPathAngleRadIC(void) { return gamma; }
-
   inline float GetClimbRateFpmIC(void) { return hdot*60; }
-  inline float GetClimbRateFpsIC(void) { return hdot; }
-
+  inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG; }
+  
   inline float GetAlphaDegIC(void)      { return alpha*RADTODEG; }
-  inline float GetAlphaRadIC(void)      { return alpha; }
-
-  inline float GetPitchAngleDegIC(void) { return theta*RADTODEG; }
-  inline float GetPitchAngleRadIC(void) { return theta; }
-
-
   inline float GetBetaDegIC(void)       { return beta*RADTODEG; }
-  inline float GetBetaRadIC(void)       { return beta*RADTODEG; }
-
+  
+  inline float GetPitchAngleDegIC(void) { return theta*RADTODEG; }
   inline float GetRollAngleDegIC(void) { return phi*RADTODEG; }
-  inline float GetRollAngleRadIC(void) { return phi; }
-
   inline float GetHeadingDegIC(void)   { return psi*RADTODEG; }
-  inline float GetHeadingRadIC(void)   { return psi; }
 
   inline float GetLatitudeDegIC(void)  { return latitude*RADTODEG; }
-  inline float GetLatitudeRadIC(void) { return latitude; }
-
   inline float GetLongitudeDegIC(void) { return longitude*RADTODEG; }
-  inline float GetLongitudeRadIC(void) { return longitude; }
-
-  inline float GetUBodyFpsIC(void) { return vt*cos(alpha)*cos(beta); }
-  inline float GetVBodyFpsIC(void) { return vt*sin(beta); }
-  inline float GetWBodyFpsIC(void) { return vt*sin(alpha)*cos(beta); }
-
-  inline float GetThetaRadIC(void) { return theta; }
-  inline float GetPhiRadIC(void)   { return phi; }
-  inline float GetPsiRadIC(void)   { return psi; }
+  
+  inline float GetAltitudeFtIC(void) { return altitude; }
+  inline float GetAltitudeAGLFtIC(void) { return altitude - terrain_altitude; }
   
   inline float GetSeaLevelRadiusFtIC(void)  { return sea_level_radius; }
   inline float GetTerrainAltitudeFtIC(void) { return terrain_altitude; }
 
+  
+  
+  void SetVgroundFpsIC(float tt);
+  void SetVtrueFpsIC(float tt);
+  void SetUBodyFpsIC(float tt);
+  void SetVBodyFpsIC(float tt);
+  void SetWBodyFpsIC(float tt);
+  void SetVnorthFpsIC(float tt);
+  void SetVeastFpsIC(float tt);
+  void SetVdownFpsIC(float tt);
+  void SetWindNEDFpsIC(float wN, float wE, float wD);
+  void SetClimbRateFpsIC(float tt);
+  inline float GetVgroundFpsIC(void) { return vg; }
+  inline float GetVtrueFpsIC(void) { return vt; }
+  inline float GetWindUFpsIC(void) { return uw; }
+  inline float GetWindVFpsIC(void) { return vw; }
+  inline float GetWindWFpsIC(void) { return ww; }
+  inline float GetWindNFpsIC(void) { return wnorth; }
+  inline float GetWindEFpsIC(void) { return weast; }
+  inline float GetWindDFpsIC(void) { return wdown; }
+  inline float GetClimbRateFpsIC(void) { return hdot; }
+  float GetUBodyFpsIC(void);
+  float GetVBodyFpsIC(void);
+  float GetWBodyFpsIC(void);
+  void SetFlightPathAngleRadIC(float tt);
+  void SetAlphaRadIC(float tt);
+  void SetPitchAngleRadIC(float tt); 
+  void SetBetaRadIC(float tt);   
+  void SetRollAngleRadIC(float tt);
+  void SetTrueHeadingRadIC(float tt);
+  inline void SetLatitudeRadIC(float tt)  { latitude=tt; }
+  inline void SetLongitudeRadIC(float tt) { longitude=tt; }
+  inline float GetFlightPathAngleRadIC(void) { return gamma; }
+  inline float GetAlphaRadIC(void)      { return alpha; }
+  inline float GetPitchAngleRadIC(void) { return theta; }
+  inline float GetBetaRadIC(void)       { return beta; }
+  inline float GetRollAngleRadIC(void) { return phi; }
+  inline float GetHeadingRadIC(void)   { return psi; }
+  inline float GetLatitudeRadIC(void) { return latitude; }
+  inline float GetLongitudeRadIC(void) { return longitude; }
+  inline float GetThetaRadIC(void) { return theta; }
+  inline float GetPhiRadIC(void)   { return phi; }
+  inline float GetPsiRadIC(void)   { return psi; }
 
+  inline speedset GetSpeedSet(void) { return lastSpeedSet; }
 
 private:
-  float vt,vc,ve;
-  float alpha,beta,gamma,theta,phi,psi;
+  float vt,vc,ve,vg;
   float mach;
   float altitude,hdot;
   float latitude,longitude;
   float u,v,w;
+  float uw,vw,ww;
   float vnorth,veast,vdown;
+  float wnorth,weast,wdown;
   double sea_level_radius;
   double terrain_altitude;
   double radius_to_vehicle;
   
+  float  alpha, beta, theta, phi, psi, gamma;
+  float salpha,sbeta,stheta,sphi,spsi,sgamma;
+  float calpha,cbeta,ctheta,cphi,cpsi,cgamma; 
+
   float xlo, xhi,xmin,xmax;
   
   typedef float (FGInitialCondition::*fp)(float x);
@@ -244,6 +247,7 @@ private:
   float GammaEqOfAlpha(float Alpha);
   float calcVcas(float Mach);
   void calcUVWfromNED(void);
+  void calcWindUVW(void);
   
   bool findInterval(float x,float guess);
   bool solve(float *y, float x);

@@ -55,23 +55,29 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.22 2000/10/27 10:13:47 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.23 2001/01/28 13:57:15 jsb Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 
-FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
-  vt=vc=ve=0;
+FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
+  
+  vt=vc=ve=vg=0;
   mach=0;
   alpha=beta=gamma=0;
   theta=phi=psi=0;
   altitude=hdot=0;
   latitude=longitude=0;
-  u=v=w=0;  
+  u=v=w=0;
+  vw=vw=ww=0;  
   vnorth=veast=vdown=0;
   lastSpeedSet=setvt;
   sea_level_radius = EARTHRAD;
   radius_to_vehicle = EARTHRAD;
   terrain_altitude = 0;
+  
+  salpha=sbeta=stheta=sphi=spsi=sgamma=0;
+  calpha=cbeta=ctheta=cphi=cpsi=cgamma=1; 
+  
   if(FDMExec != NULL ) {
     fdmex=FDMExec;
     fdmex->GetPosition()->Seth(altitude);
@@ -110,6 +116,33 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
   vc=calcVcas(mach);
 }
 
+void FGInitialCondition::SetVgroundFpsIC(float tt) {
+  float ua,va,wa,vxz;
+  
+  //cout << "FGInitialCondition::SetVgroundFpsIC" << endl;
+  vg=tt;
+  lastSpeedSet=setvg;
+  vnorth = vg*cos(psi); veast = vg*sin(psi); vdown = 0;
+  calcUVWfromNED();
+  //cout << "\tu,v,w: " << u << ", " << v << ", " << w << endl;
+  calcWindUVW();
+  //cout << "\tuw,vw,ww: " << uw << ", " << vw << ", " << ww << endl;
+  u = -uw; v = -vw; w = -ww;
+  //ua = u - uw; va = v - vw; wa = w - ww;
+  //cout << "\tua,va,wa: " << ua << ", " << va << ", " << wa << endl;
+  vt = sqrt( u*u + v*v + w*w );
+  alpha = beta = 0;
+  vxz = sqrt( u*u + w*w );
+  if( w != 0 ) alpha = atan2( w, u );
+  if( vxz != 0 ) beta = atan2( v, vxz );
+  //cout << "\tvt,alpha,beta: " << vt << ", " << alpha*RADTODEG << ", " 
+  //          << beta*RADTODEG << endl;
+  mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+  vc=calcVcas(mach);
+  ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+}
+  
+
 void FGInitialCondition::SetVtrueFpsIC(float tt) {
   vt=tt;
   lastSpeedSet=setvt;
@@ -136,35 +169,120 @@ void FGInitialCondition::SetClimbRateFpsIC(float tt) {
   if(vt > 0.1) {
     hdot=tt;
     gamma=asin(hdot/vt);
+    sgamma=sin(gamma); cgamma=cos(gamma);
   }
 }
 
 void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
   gamma=tt;
+  sgamma=sin(gamma); cgamma=cos(gamma);
   getTheta();
-  hdot=vt*sin(tt);
+  hdot=vt*sgamma;
+}
+
+void FGInitialCondition::SetAlphaRadIC(float tt) { 
+  alpha=tt; 
+  salpha=sin(alpha); calpha=cos(alpha); 
+  getTheta(); 
+}
+
+void FGInitialCondition::SetPitchAngleRadIC(float tt) { 
+  theta=tt; 
+  stheta=sin(theta); ctheta=cos(theta); 
+  calcWindUVW(); 
+  getAlpha();
+}
+
+void FGInitialCondition::SetBetaRadIC(float tt) { 
+  beta=tt; 
+  sbeta=sin(beta); cbeta=cos(beta); 
+  getTheta();
+}
+
+void FGInitialCondition::SetRollAngleRadIC(float tt) { 
+  phi=tt; 
+  sphi=sin(phi); cphi=cos(phi); 
+  getTheta();
+}
+
+void FGInitialCondition::SetTrueHeadingRadIC(float tt) { 
+    psi=tt; 
+    spsi=sin(psi); cpsi=cos(psi); 
+    calcWindUVW();
 }
 
 
 void FGInitialCondition::SetUBodyFpsIC(float tt) {
   u=tt;
-  vt=sqrt(u*u+v*v+w*w);
+  vt=sqrt(u*u + v*v + w*w);
   lastSpeedSet=setuvw;
 }
-
   
 void FGInitialCondition::SetVBodyFpsIC(float tt) {
   v=tt;
-  vt=sqrt(u*u+v*v+w*w);
+  vt=sqrt(u*u + v*v + w*w);
   lastSpeedSet=setuvw;
 }
 
 void FGInitialCondition::SetWBodyFpsIC(float tt) {
   w=tt;
-  vt=sqrt(u*u+v*v+w*w);
+  vt=sqrt( u*u + v*v + w*w );
   lastSpeedSet=setuvw;
 }
 
+float FGInitialCondition::GetUBodyFpsIC(void) { 
+    if(lastSpeedSet == setvg ) 
+      return u;
+    else  
+      return vt*calpha*cbeta; 
+}
+
+float FGInitialCondition::GetVBodyFpsIC(void) { 
+    if( lastSpeedSet == setvg ) 
+      return v;
+    else  
+      return vt*sbeta; 
+}
+
+float FGInitialCondition::GetWBodyFpsIC(void) { 
+    if( lastSpeedSet == setvg )
+      return w;
+    else {
+      return vt*salpha*cbeta; 
+   }   
+}
+
+void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) { 
+  wnorth = wN; weast = wE; wdown = wD;
+  if(lastSpeedSet == setvg)
+    SetVgroundFpsIC(vg);
+  
+      
+}  
+
+void FGInitialCondition::calcWindUVW(void) {
+  if(lastSpeedSet == setvg ) {
+  
+    uw=wnorth*ctheta*cpsi + 
+       weast*ctheta*spsi - 
+       wdown*stheta;
+    vw=wnorth*( sphi*stheta*cpsi - cphi*spsi ) +
+        weast*( sphi*stheta*spsi + cphi*cpsi ) +
+       wdown*sphi*ctheta;
+    ww=wnorth*(cphi*stheta*cpsi + sphi*spsi) +
+       weast*(cphi*stheta*spsi - sphi*cpsi) +
+       wdown*cphi*ctheta;
+    /* cout << "FGInitialCondition::calcWindUVW: wnorth, weast, wdown " 
+         << wnorth << ", " << weast << ", " << wdown << endl;
+    cout << "FGInitialCondition::calcWindUVW: theta, phi, psi "
+          << theta << ", " << phi << ", " << psi << endl; 
+    cout << "FGInitialCondition::calcWindUVW: uw, vw, ww "
+          << uw << ", " << vw << ", " << ww << endl;   */
+          
+  } else {
+    uw=vw=ww=0;
+  }  
+}  
 
 void FGInitialCondition::SetAltitudeFtIC(float tt) {
   altitude=tt;
@@ -188,6 +306,9 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
   case setmach:
     SetMachIC(mach);
     break;
+  case setvg:
+    SetVgroundFpsIC(vg);
+    break;  
   }
 }
 
@@ -207,15 +328,15 @@ void FGInitialCondition::SetTerrainAltitudeFtIC(double tt) {
 }  
 
 void FGInitialCondition::calcUVWfromNED(void) {
-  u=vnorth*cos(theta)*cos(psi) + 
-     veast*cos(theta)*sin(psi) - 
-     vdown*sin(theta);
-  v=vnorth*(sin(phi)*sin(theta)*cos(psi) - cos(phi)*sin(psi)) +
-     veast*(sin(phi)*sin(theta)*sin(psi) + cos(phi)*cos(psi)) +
-     vdown*sin(phi)*cos(theta);
-  w=vnorth*(cos(phi)*sin(theta)*cos(psi) + sin(phi)*sin(psi)) +
-     veast*(cos(phi)*sin(theta)*sin(psi) - sin(phi)*cos(psi)) +
-     vdown*cos(phi)*cos(theta);
+  u=vnorth*ctheta*cpsi + 
+     veast*ctheta*spsi - 
+     vdown*stheta;
+  v=vnorth*( sphi*stheta*cpsi - cphi*spsi ) +
+     veast*( sphi*stheta*spsi + cphi*cpsi ) +
+     vdown*sphi*ctheta;
+  w=vnorth*( cphi*stheta*cpsi + sphi*spsi ) +
+     veast*( cphi*stheta*spsi - sphi*cpsi ) +
+     vdown*cphi*ctheta;
 }     
  
 void FGInitialCondition::SetVnorthFpsIC(float tt) {
@@ -264,6 +385,8 @@ bool FGInitialCondition::getAlpha(void) {
   if(findInterval(0,guess)){
     if(solve(&alpha,0)){
       result=true;
+      salpha=sin(alpha);
+      calpha=cos(alpha);
     }
   }
   return result;
@@ -278,32 +401,38 @@ bool FGInitialCondition::getTheta(void) {
   if(findInterval(0,guess)){
     if(solve(&theta,0)){
       result=true;
+      stheta=sin(theta);
+      ctheta=cos(theta);
     }
   }
   return result;
 }      
   
-
-
 float FGInitialCondition::GammaEqOfTheta(float Theta) {
-  float a,b,c;
+  float a,b,c,d;
+  float sTheta,cTheta;
   
-  a=cos(alpha)*cos(beta)*sin(Theta);
-  b=sin(beta)*sin(phi);
-  c=sin(alpha)*cos(beta)*cos(phi);
-  return sin(gamma)-a+(b+c)*cos(Theta);
-}
+  //theta=Theta; stheta=sin(theta); ctheta=cos(theta);
+  sTheta=sin(Theta); cTheta=cos(Theta);
+  calcWindUVW();
+  a=wdown + vt*calpha*cbeta + uw;
+  b=vt*sphi*sbeta + vw*sphi;
+  c=vt*cphi*salpha*cbeta + ww*cphi;
+  return vt*sgamma - ( a*sTheta - (b+c)*cTheta);
+}  
 
 float FGInitialCondition::GammaEqOfAlpha(float Alpha) {
-  float a,b,c;
+  float a,b,c,d;
+  float sAlpha,cAlpha;
   
-  a=cos(Alpha)*cos(beta)*sin(theta);
-  b=sin(beta)*sin(phi);
-  c=sin(Alpha)*cos(beta)*cos(phi);
-  return sin(gamma)-a+(b+c)*cos(theta);
-}
-
+  sAlpha=sin(Alpha); cAlpha=cos(Alpha);
+  a=wdown + vt*cAlpha*cbeta + uw;
+  b=vt*sphi*sbeta + vw*sphi;
+  c=vt*cphi*sAlpha*cbeta + ww*cphi;
   
+  return vt*sgamma - ( a*stheta - (b+c)*ctheta );
+}  
+ 
 float FGInitialCondition::calcVcas(float Mach) {
 
   float p=fdmex->GetAtmosphere()->GetPressure();
