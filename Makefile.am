@@ -1,4 +1,10 @@
-SUBDIRS = filtersjb
+SUBDIRS = \
+	aircraft \
+	engine \
+	filtersjb \
+	scripts \
+	tools \
+	utilities
 
 INCLUDES = \
 	-Wall
@@ -105,3 +111,6 @@ libJSBSim_a_SOURCES = \
 
 libJSBSim_a_LIBADD = \
 	filtersjb/libFCSComponents.a
+
+EXTRA_DIST = \
+	autogen.sh

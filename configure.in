@@ -19,6 +19,19 @@ AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
 
 AC_OUTPUT([
-filtersjb/Makefile
 Makefile
+aircraft/X15/Makefile
+aircraft/c172/Makefile
+aircraft/c310/Makefile
+aircraft/shuttle/Makefile
+aircraft/c182/Makefile
+aircraft/mk82/Makefile
+aircraft/pa28/Makefile
+aircraft/f16/Makefile
+aircraft/Makefile
+engine/Makefile
+filtersjb/Makefile
+scripts/Makefile
+tools/Makefile
+utilities/Makefile
 ])
