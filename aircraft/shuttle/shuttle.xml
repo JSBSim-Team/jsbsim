@@ -3,7 +3,7 @@
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.13 2003/03/14 15:53:24 jberndt Exp $
+  CVS Version: $Id: shuttle.xml,v 1.14 2003/03/15 00:40:41 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -338,7 +338,7 @@
       <COEFFICIENT NAME="CDmin" TYPE="VALUE">
         Drag_minimum
         aero/qbar-psf | metrics/Sw-sqft
-        0.000
+        0.061
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CDi" TYPE="VECTOR">
