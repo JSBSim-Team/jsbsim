@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.29 2001/10/04 23:10:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.30 2001/10/05 11:00:19 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +126,26 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   Lookup_Combustion_Efficiency->Print();
   cout << endl;
 
+  Power_Mixture_Correlation = new FGTable(13);
+  *Power_Mixture_Correlation << (14.7/1.6) << 78.0;
+  *Power_Mixture_Correlation << 10 <<  86.0;
+  *Power_Mixture_Correlation << 11 <<  93.5;
+  *Power_Mixture_Correlation << 12 <<  98.0;
+  *Power_Mixture_Correlation << 13 << 100.0;
+  *Power_Mixture_Correlation << 14 <<  99.0;
+  *Power_Mixture_Correlation << 15 <<  96.4;
+  *Power_Mixture_Correlation << 16 <<  92.5;
+  *Power_Mixture_Correlation << 17 <<  88.0;
+  *Power_Mixture_Correlation << 18 <<  83.0;
+  *Power_Mixture_Correlation << 19 <<  78.5;
+  *Power_Mixture_Correlation << 20 <<  74.0;
+  *Power_Mixture_Correlation << (14.7/0.6) << 58;
+
+  cout << endl;
+  cout << "      Power Mixture Correlation table:" << endl;
+  Power_Mixture_Correlation->Print();
+  cout << endl;
+
   if (debug_lvl & 2) cout << "Instantiated: FGPiston" << endl;
 }
 
@@ -151,14 +171,14 @@ float FGPiston::Calculate(float PowerRequired)
   //
   // Input values.
   //
-        // convert from lbs/ft2 to Pa
-  p_amb = Atmosphere->GetPressure() * 48;
+
+  p_amb = Atmosphere->GetPressure() * 48;              // convert from lbs/ft2 to Pa
   p_amb_sea_level = Atmosphere->GetPressureSL() * 48;
-        // convert from Rankine to Kelvin
-  T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);
+  T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
+
   RPM = Propulsion->GetThruster(EngineNumber)->GetRPM();
-  if (RPM < IdleRPM)    // kludge
-    RPM = IdleRPM;
+  if (RPM < IdleRPM) RPM = IdleRPM;  // kludge
+    
   IAS = Auxiliary->GetVcalibratedKTS();
 
   if (Mixture >= 0.5) {
@@ -177,54 +197,6 @@ float FGPiston::Calculate(float PowerRequired)
 
   PowerAvailable = (HP * HPTOFTLBSSEC) - PowerRequired;
   return PowerAvailable;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/**
- * Look up the power/mixture correlation.
- *
- * FIXME: this should use JSBSim's interpolation support.
- */
-
-static float Power_Mixture_Correlation(float thi_actual)
-{
-  float AFR_actual = 14.7 / thi_actual;
-  const int NUM_ELEMENTS = 13;
-  float AFR[NUM_ELEMENTS] = 
-    {(14.7/1.6), 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, (14.7/0.6)};
-  float mixPerPow[NUM_ELEMENTS] = 
-    {78, 86, 93.5, 98, 100, 99, 96.4, 92.5, 88, 83, 78.5, 74, 58};
-  float mixPerPow_actual = 0.0f;
-  float factor;
-  float dydx;
-
-  int i;
-  int j = NUM_ELEMENTS;
-
-  for (i=0;i<j;i++) {
-    if (i == (j-1)) {
-      dydx = (mixPerPow[i] - mixPerPow[i-1]) / (AFR[i] - AFR[i-1]);
-      mixPerPow_actual = mixPerPow[i] + dydx * (AFR_actual - AFR[i]);
-      return mixPerPow_actual;
-    }
-    if ((i == 0) && (AFR_actual < AFR[i])) {
-      dydx = (mixPerPow[i] - mixPerPow[i-1]) / (AFR[i] - AFR[i-1]);
-      mixPerPow_actual = mixPerPow[i] + dydx * (AFR_actual - AFR[i]);
-      return mixPerPow_actual;
-    }
-    if (AFR_actual == AFR[i]) {
-      mixPerPow_actual = mixPerPow[i];
-      return mixPerPow_actual;
-    }
-    if ((AFR_actual > AFR[i]) && (AFR_actual < AFR[i + 1])) {
-      factor = (AFR_actual - AFR[i]) / (AFR[i+1] - AFR[i]);
-      mixPerPow_actual = (factor * (mixPerPow[i+1] - mixPerPow[i])) + mixPerPow[i];
-      return mixPerPow_actual;
-    }
-  }
-
-  cerr << "ERROR: error in FGNewEngine::Power_Mixture_Correlation\n";
-  return mixPerPow_actual;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +298,7 @@ void FGPiston::doEnginePower(void)
   Percentage_Power =
     Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
   float Percentage_of_best_power_mixture_power =
-    Power_Mixture_Correlation(equivalence_ratio);
+    Power_Mixture_Correlation->GetValue(equivalence_ratio);
   Percentage_Power =
     Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
   if (Percentage_Power < 0.0)
@@ -412,11 +384,12 @@ void FGPiston::doOilTemperature(void)
     target_oil_temp = 363;
     time_constant = 500;        // Time constant for engine-on idling.
     if (Percentage_Power > idle_percentage_power) {
-      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0);       // adjust for power 
+      time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0); // adjust for power 
     }
   } else {
     target_oil_temp = 298;
-    time_constant = 1000;  // Time constant for engine-off; reflects the fact that oil is no longer getting circulated
+    time_constant = 1000;  // Time constant for engine-off; reflects the fact
+                           // that oil is no longer getting circulated
   }
 
   float dOilTempdt = (target_oil_temp - OilTemp_degK) / time_constant;
