@@ -365,10 +365,17 @@
   </AXIS>
   <AXIS NAME="PITCH">
     <!-- UIUC -->
-    <COEFFICIENT NAME="Cmo" TYPE="VALUE">
-       Pitching_moment_at_zero_alpha
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
-       -0.040
+    <!-- AIAA -->
+    <COEFFICIENT NAME="DCmTr" TYPE="VALUE">
+       Pitching_moment_due_to_right_engine_thrust
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|propulsion/c-thrust[0]
+       -0.625
+    </COEFFICIENT>
+    <!-- AIAA -->
+    <COEFFICIENT NAME="DCmTl" TYPE="VALUE">
+       Pitching_moment_due_to_left_engine_thrust
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|propulsion/c-thrust[1]
+       -0.625
     </COEFFICIENT>
     <!-- AIAA -->
     <COEFFICIENT NAME="Cmalpha" TYPE="TABLE3D">
