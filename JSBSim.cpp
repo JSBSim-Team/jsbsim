@@ -144,24 +144,24 @@ int main(int argc, char** argv)
   while (FDMExec->GetState()->Getsim_time() <= 10.0)
   {
     // Fake an elevator ramp here after 1 second, hold for one second, ramp down
-    /*
+    
     if (FDMExec->GetState()->Getsim_time() >= 1.00 &&
         FDMExec->GetState()->Getsim_time() < 2.0)
     {
-      cmd = FDMExec->GetState()->Getsim_time() - 1.00;
+      cmd = -(FDMExec->GetState()->Getsim_time() - 1.00)/2.0;
     } else if (FDMExec->GetState()->Getsim_time() >= 2.00 &&
-        FDMExec->GetState()->Getsim_time() < 3.0)
+        FDMExec->GetState()->Getsim_time() < 6.0)
     {
-      cmd = 1.00;
-    } else if (FDMExec->GetState()->Getsim_time() >= 3.00 &&
-        FDMExec->GetState()->Getsim_time() < 4.0)
+      cmd = -1.00/2.0;
+    } else if (FDMExec->GetState()->Getsim_time() >= 6.00 &&
+        FDMExec->GetState()->Getsim_time() < 7.0)
     {
-      cmd = 4.0 - FDMExec->GetState()->Getsim_time();
+      cmd = -(7.0 - FDMExec->GetState()->Getsim_time())/2.0;
     } else {
       cmd = 0.00;
     }
     FDMExec->GetFCS()->SetDeCmd(cmd);    // input between -1 and 1
-    */
+    
     FDMExec->Run();
   }
 

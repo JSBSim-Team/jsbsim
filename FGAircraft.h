@@ -125,15 +125,18 @@ INCLUDES
 DEFINITIONS
 *******************************************************************************/
 
+/** Encapsulates an Aircraft and its systems.
+    Owns all the parts (other classes) which make
+    up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
+    aerodynamic and mass properties, landing gear, etc.
+    @author Jon S. Berndt
+    @version $Id: FGAircraft.h,v 1.30 2000/10/10 12:53:59 jsb Exp $
+  */
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
-/** Encapsulates an aircraft and 'owns' all the parts (other classes) which make
-    up this aircraft.
-    @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.29 2000/10/10 04:09:57 jsb Exp $
-  */
 class FGAircraft : public FGModel {
   enum {eL=1, eM, eN};
   enum {eX=1, eY, eZ};
@@ -141,14 +144,26 @@ class FGAircraft : public FGModel {
   enum {ePhi=1, eTht, ePsi};
 
 public:
-  /// Constructor
-  FGAircraft(FGFDMExec*);
+  /** Constructor
+      @param Executive a pointer to the parent executive object
+    */
+  FGAircraft(FGFDMExec *Executive);
   /// Destructor
   ~FGAircraft(void);
 
-  /// Runs the model; called by the Executive
+  /** Runs the model; called by the Executive
+      @see JSBSim.cpp documentation
+      @return bool returns false if no error
+    */
   bool Run(void);
-  bool LoadAircraft(string, string, string);
+  /** Loads the aircraft.
+      The executive calls this method to load the aircraft into JSBSim.
+      @param apath path to the aircraft files (e.g. "aircraft/X15/")
+      @param epath path to engine files (e.g. "engine/")
+      @param acname name of aircraft (e.g. "X15")
+      @return true if succesful
+    */
+  bool LoadAircraft(string apath, string epath, string acname);
   inline string GetAircraftName(void) { return AircraftName; }
   inline void SetGearUp(bool tt) { GearUp = tt; }
   inline bool GetGearUp(void) { return GearUp; }
