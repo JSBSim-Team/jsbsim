@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.65 2001/07/13 14:52:08 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.66 2001/07/15 23:41:54 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -95,6 +95,14 @@ FGJSBsim::FGJSBsim( double dt )
                                engine_path.str(),
                                fgGetString("/sim/aircraft") );
     
+
+    if (result) {
+      SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aircraft.");
+    } else {
+      SG_LOG( SG_FLIGHT, SG_INFO, "  aircraft does not exist (you may have mis-typed the name).");
+      throw(-1);
+    }
+
     int Neng = Propulsion->GetNumEngines();
     SG_LOG(SG_FLIGHT,SG_INFO, "Neng: " << Neng );
     
