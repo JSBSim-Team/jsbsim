@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.21 2004/03/18 12:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.22 2004/05/19 07:58:54 frohlich Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +136,7 @@ bool FGKinemat::Run(void )
 
     // Find the area where Output is in
     int ind;
-    for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
+    for (ind = 1; (Input < Output) ? Detents[ind] <= Output : Detents[ind] < Output ; ++ind)
       if (NumDetents <= ind)
         break;
 
@@ -155,13 +155,18 @@ bool FGKinemat::Run(void )
       // Compute the time to reach the value in ThisInput
       double ThisDt = fabs((ThisInput-Output)/Rate);
       // and clip to the timestep size
-      if (dt < ThisDt) ThisDt = dt;
+      if (dt < ThisDt) {
+        ThisDt = dt;
+        if (Output < Input)
+          Output += ThisDt*Rate;
+        else
+          Output -= ThisDt*Rate;
+      } else
+        // Handle this case separate to make shure the termination condition
+        // is met even in inexact arithmetics ...
+        Output = Input;
+
       dt -= ThisDt;
-      // Do the output calculation
-      if (Output < Input)
-        Output += ThisDt*Rate;
-      else
-        Output -= ThisDt*Rate;
     }
   }
 
