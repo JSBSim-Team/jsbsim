@@ -55,7 +55,7 @@ class FGTurboJet : public FGEngine
 {
 public:
   FGTurboJet(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGTurboJet();
+  ~FGTurboJet(void) {}
 
   float Calculate(void) {return 0.0;}
 };

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.7 2000/11/22 23:49:02 jsb Exp $"
+#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.8 2000/11/23 04:56:23 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -56,7 +56,7 @@ class FGRocket : public FGEngine
 public:
   /** Constructor */
   FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGRocket();
+  ~FGRocket(void);
 
   float Calculate(void);
 

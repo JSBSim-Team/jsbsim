@@ -41,7 +41,7 @@ INCLUDES
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.11 2000/11/01 12:14:48 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.12 2000/11/23 04:56:23 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -337,9 +337,9 @@ void FGTrimAxis::Run(void) {
     last_accel_value=accel_value;
     fdmex->RunIC(fgic);
     getAccel();
-    if(i > 1) {
-      if((fabs(last_accel_value - accel_value) < tolerance) || (i >= 100) )
-        stable=true;
+    if (i > 1) {
+      if ((fabs(last_accel_value - accel_value) < tolerance) || (i >= 100) )
+        stable = true;
     }
   }
 
@@ -351,12 +351,13 @@ void FGTrimAxis::Run(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::setThrottlesPct(void) {
-  float tMin,tMax;
-  for(unsigned i=0;i<fdmex->GetAircraft()->GetNumEngines();i++) {
-      tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
-      tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
-      //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
-      fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
+  float tMin, tMax;
+
+  for (unsigned int i=0; i<fdmex->GetPropulsion()->GetNumEngines(); i++) {
+    tMin = fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
+    tMax = fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
+    //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
+    fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
   }
 }
 

@@ -38,7 +38,7 @@ SENTRY
 #ifndef FGPROPULSION_H
 #define FGPROPULSION_H
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.5 2000/11/20 23:59:45 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.6 2000/11/23 04:56:22 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -79,6 +79,11 @@ public:
 
   bool Run(void);
   bool LoadPropulsion(FGConfigFile* AC_cfg);
+  inline GetNumEngines(void) {return Engines.size();}
+  /** Retrieves an FGEngine object */
+  inline FGEngine* GetEngine(int n) {
+                              if (n <= Engines.size()-1) return &Engines[n];
+                              else                       return 0L;          }
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

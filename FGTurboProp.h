@@ -55,7 +55,7 @@ class FGTurboProp : public FGEngine
 {
 public:
   FGTurboProp(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGTurboProp();
+  ~FGTurboProp(void) {}
 
   float Calculate(void) {return 0.0;}
 };

@@ -78,14 +78,14 @@ class FGOutput;
 class FGEngine {
 public:
   FGEngine(FGFDMExec* exec);
-  ~FGEngine(void) {};
+  ~FGEngine(void) {}
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurboProp, etTurboJet};
 
+  virtual float  GetThrottleMin(void) { return MinThrottle; }
+  virtual float  GetThrottleMax(void) { return MaxThrottle; }
   float  GetThrottle(void) { return Throttle; }
   float  GetThrust(void) { return Thrust; }
-  float  GetThrottleMin(void) { return MinThrottle; }
-  float  GetThrottleMax(void) { return MaxThrottle; }
   bool   GetStarved(void) { return Starved; }
   bool   GetFlameout(void) { return Flameout; }
   bool   GetRunning(void) { return Running; }
@@ -110,8 +110,6 @@ protected:
   float X, Y, Z;
   float EnginePitch;
   float EngineYaw;
-  float SLThrustMax;
-  float VacThrustMax;
   float SLFuelFlowMax;
   float SLOxiFlowMax;
   float MaxThrottle;
@@ -126,7 +124,7 @@ protected:
   float PctPower;
   int   EngineNumber;
 
-  const FGFDMExec* FDMExec;
+  FGFDMExec*      FDMExec;
   FGState*        State;
   FGAtmosphere*   Atmosphere;
   FGFCS*          FCS;
