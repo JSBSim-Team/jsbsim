@@ -15,7 +15,7 @@
   MINMP             6.5
   MAXMP            28.5
   DISPLACEMENT    360.0
-  MAXHP           180.0
+  MAXHP           160.0
   CYCLES            2.0
   IDLERPM         900.0
   MAXTHROTTLE       1.0
