@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.35 2002/09/22 18:10:05 apeden Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.36 2002/09/23 11:52:50 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.35 2002/09/22 18:10:05 apeden Exp $
+    @version $Id: FGConfigFile.h,v 1.36 2002/09/23 11:52:50 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -134,7 +134,6 @@ public:
   FGConfigFile& operator>>(double&);
   FGConfigFile& operator>>(int&);
   FGConfigFile& operator>>(string&);
-  FGConfigFile& operator>>(eParam&);
   void ResetLineIndexToZero(void);
 
 private:
