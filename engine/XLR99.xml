@@ -6,7 +6,7 @@
     PROP_EFF = propulsive efficiency. This is largely a fudge factor.
   -->
   SHR              1.23
-  MAX_PC        86556.0
+  MAX_PC       86556.0
   PROP_EFF         0.80
   MAXTHROTTLE    100.0
   MINTHROTTLE     40.0

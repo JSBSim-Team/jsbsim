@@ -28,10 +28,6 @@ HISTORY
 09/12/2000  JSB  Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -45,7 +41,59 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.16 2001/03/23 00:53:33 jberndt Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_ROCKET "$Id: FGRocket.h,v 1.17 2001/03/23 06:55:57 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Models a generic rocket engine.
+    The rocket engine is modeled given the following parameters:
+    <ul>
+        <li>Chamber pressure (in psf)</li>
+        <li>Specific heat ratio (usually about 1.2 for hydrocarbon fuel and LOX)</li>
+        <li>Propulsive efficiency (in percent, from 0 to 1.0)</li>
+    </ul>
+    Additionally, the following control inputs, operating characteristics, and
+    location are required, as with all other engine types:</font>
+    <ul>
+        <li>Throttle setting (in percent, from 0 to 1.0)</font></li>
+        <li>Maximum allowable throttle setting</li>
+        <li>Minimum working throttle setting</li>
+        <li>Sea level fuel flow at maximum thrust</li>
+        <li>Sea level oxidizer flow at maximum thrust</li>
+        <li>X, Y, Z location in structural coordinate frame</li>
+        <li>Pitch and Yaw</li>
+    </ul>
+    The nozzle exit pressure (p2) is returned via a
+    call to FGNozzle::GetPowerRequired(). This exit pressure is used,
+    along with chamber pressure and specific heat ratio, to get the
+    thrust coefficient for the throttle setting. This thrust
+    coefficient is multiplied by the chamber pressure and then passed
+    to the nozzle Calculate() routine, where the thrust force is
+    determined.
+
+    @author Jon S. Berndt
+    @version $Id: FGRocket.h,v 1.17 2001/03/23 06:55:57 jberndt Exp $
+    @see FGNozzle
+    @see FGThruster
+    @see FGForce
+    @see FGEngine
+    @see FGPropulsion
+    @see FGTank
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -54,11 +102,20 @@ CLASS DECLARATION
 class FGRocket : public FGEngine
 {
 public:
-  /** Constructor */
+  /** Constructor.
+      @param exec pointer to JSBSim parent object, the FDM Executive.
+      @param Eng_cfg pointer to the config file object. */
   FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+
+  /** Destructor */
   ~FGRocket();
 
-  float Calculate(float);
+  /** Determines the thrust coefficient.
+      This routine takes the nozzle exit pressure and calculates the thrust
+      coefficient times the chamber pressure.
+      @param pe nozzle exit pressure
+      @return thrust coefficient times chamber pressure */
+  float Calculate(float pe);
 
 private:
   float SHR;
