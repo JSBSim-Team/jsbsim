@@ -61,6 +61,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   Type = otNone;
   Filename = "JSBSim.out";
   SubSystems = 0;
+  enabled = true;
   
 #ifdef FG_WITH_JSBSIM_SOCKET
   socket = new FGfdmSocket("localhost",1138);
