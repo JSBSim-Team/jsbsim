@@ -37,8 +37,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAerodynamics.h"
+#include "FGFactorGroup.h"
+#include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.15 2001/07/12 14:50:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.16 2001/07/22 18:49:23 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -143,8 +145,13 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
       while ((token = AC_cfg->GetValue()) != "/AXIS") {
-        ca.push_back(new FGCoefficient(FDMExec, AC_cfg));
-        if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
+        if( token == "COEFFICIENT" ) {
+          ca.push_back( new FGCoefficient(FDMExec) );
+          ca.back()->Load(AC_cfg);
+        } else if ( token == "GROUP" ) {
+          ca.push_back( new FGFactorGroup(FDMExec) );
+          ca.back()->Load(AC_cfg);
+        }
       }
       Coeff[AxisIdx[axis]] = ca;
       AC_cfg->GetNextConfigLine();
@@ -152,19 +159,6 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
   }
 
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAerodynamics::DisplayCoeffFactors(vector <eParam> multipliers)
-{
-  unsigned int i;
-
-  cout << "   Non-Dimensionalized by: ";
-
-  for (i=0; i<multipliers.size();i++) cout << State->paramdef[multipliers[i]];
-
-  cout << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +176,7 @@ string FGAerodynamics::GetCoefficientStrings(void)
       } else {
         CoeffStrings += ", ";
       }
-      CoeffStrings += Coeff[axis][sd]->Getname();
+      CoeffStrings += Coeff[axis][sd]->GetCoefficientStrings();
     }
   }
   return CoeffStrings;
@@ -203,8 +197,7 @@ string FGAerodynamics::GetCoefficientValues(void)
       } else {
         SDValues += ", ";
       }
-      sprintf(buffer, "%9.6f", Coeff[axis][sd]->GetSD());
-      SDValues += string(buffer);
+      SDValues += Coeff[axis][sd]->GetCoefficientValues();
     }
   }
 

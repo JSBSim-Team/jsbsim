@@ -58,12 +58,14 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGTranslation.h"
 #include "FGCoefficient.h"
+#include "FGFactorGroup.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.16 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.17 2001/07/22 18:49:23 apeden Exp $"
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.16 2001/06/26 00:21:31 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.17 2001/07/22 18:49:23 apeden Exp $
     @see -
 */
 
@@ -106,12 +108,6 @@ public:
   /** Loads the Aerodynamics model
       @return true if successful */
   bool Load(FGConfigFile* AC_cfg);
-
-  /** Outputs coefficient information.
-      Non-dimensionalizing parameter descriptions are output
-      for each aero coefficient defined.
-      @param multipliers the list of multipliers for this coefficient.*/
-  void DisplayCoeffFactors(vector <eParam> multipliers);
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
