@@ -92,6 +92,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   h = 0.0;
+  Radius = EARTHRAD + h;
   gamma=Vt=0.0;
   RunwayRadius = EARTHRAD;
 }
@@ -121,11 +122,11 @@ bool FGPosition:: Run(void) {
     Latitude  += 0.5*dt*rate*(LatitudeDot + lastLatitudeDot);
     Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
 
-    h = Radius - EARTHRAD;
+    h = Radius - EARTHRAD;                 // Geocentric
 
-    DistanceAGL = h - RunwayRadius;
+    DistanceAGL = Radius - RunwayRadius;   // Geocentric
 
-    hoverb=h/b;
+    hoverb = h/b;
 
     if(Vt > 0) {
       hdot_Vt=RadiusDot/Vt;
