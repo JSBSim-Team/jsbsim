@@ -21,10 +21,8 @@ AC_SUBST(LDFLAGS)
 AC_CHECK_HEADER(dislin.h)
 AM_CONDITIONAL(ENABLE_SIMPLOT, test "x$ac_cv_header_dislin_h" = "xyes")  
 
+dnl set the $host variable based on local machine/os
 AC_CANONICAL_HOST
-
-WFLAG="-Wall"
-AR="ar"
 
 case "$host" in
 mips-sgi-irix*)
@@ -32,9 +30,21 @@ mips-sgi-irix*)
         WFLAG="-fullwarn";
         AR="CC -ar"
         AC_SUBST(AR)
+        ARFLAGS="-o"
+    else
+        WFLAG="-Wall"
+        AR="ar"
+        ARFLAGS="cru"
     fi
     ;;
+*)
+    WFLAG="-Wall"
+    AR="ar"
+    ARFLAGS="cru"
+    ;;
 esac
+AC_SUBST(AR)
+AC_SUBST(ARFLAGS)
 
 CFLAGS="$CFLAGS $WFLAG"
 CXXFLAGS="$CXXFLAGS $WFLAG"
@@ -42,21 +52,27 @@ CXXFLAGS="$CXXFLAGS $WFLAG"
 
 AC_OUTPUT([
 Makefile
-aircraft/X15/Makefile
-aircraft/c172p/Makefile
-aircraft/c172r/Makefile
-aircraft/c310/Makefile
-aircraft/shuttle/Makefile
-aircraft/c182/Makefile
-aircraft/mk82/Makefile
-aircraft/pa28/Makefile
-aircraft/f16/Makefile
-aircraft/Makefile
-engine/Makefile
-filtersjb/Makefile
-scripts/Makefile
-tools/Makefile
-utilities/Makefile
-simgear/Makefile
-simgear/misc/Makefile
+aircraft/737/Makefile \
+aircraft/c172p/Makefile \
+aircraft/c172r/Makefile \
+aircraft/c182/Makefile \
+aircraft/c310/Makefile \
+aircraft/f104/Makefile \
+aircraft/f15/Makefile \
+aircraft/f16/Makefile \
+aircraft/mk82/Makefile \
+aircraft/pa28/Makefile \
+aircraft/shuttle/Makefile \
+aircraft/t38/Makefile \
+aircraft/SGS/Makefile \
+aircraft/minisgs/Makefile \
+aircraft/X15/Makefile \
+aircraft/Makefile \
+engine/Makefile \
+filtersjb/Makefile \
+scripts/Makefile \
+tools/Makefile \
+utilities/Makefile \
+simgear/Makefile \
+simgear/misc/Makefile \
 ])
