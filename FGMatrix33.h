@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.20 2004/03/06 18:18:18 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.21 2004/03/06 18:49:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,8 @@ public:
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Handles matrix math operations.
+  /** Handles matrix math operations.
+      @author Tony Peden, Jon Berndt, Mathias Frolich
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +113,7 @@ public:
 
   /** Default initializer.
    *
-   * Creat a zero matrix.
+   * Create a zero matrix.
    */
   FGMatrix33(void);
 
@@ -246,7 +247,7 @@ public:
    *
    * Computes and returns if the inverse of the matrix. It is computed
    * by Cramers Rule. Also there are no checks performed if the matrix
-   * is invertible. If you are not shure that it really is check this
+   * is invertible. If you are not sure that it really is check this
    * with the \ref Invertible() call before.
    */
   FGMatrix33 Inverse(void) const;
