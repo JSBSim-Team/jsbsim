@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.57 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.58 2004/03/14 09:10:54 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ CLASS IMPLEMENTATION
 
 FGEngine::FGEngine(FGFDMExec* exec)
 {
-  Name.clear();
+  Name = "";
   Type = etUnknown;
   X = Y = Z = 0.0;
   EnginePitch = EngineYaw = 0.0;
