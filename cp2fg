@@ -4,9 +4,9 @@
 #
 # Assumes you've set the environment variables:
 #  FG_SRC=~/FlightGear/src
-#  FG_BASE=~/fgfsbase
+#  FG_ROOT=~/FlightGear
 
-INSTALL="cp -v"
+INSTALL="cp -uv"
 
 # Gather or default settings. Assumes the current directory is
 # a JSBSim working directory, with FlightGear and fgfsbase siblings
@@ -15,9 +15,9 @@ if [ "x$FG_SRC" = "x" ]; then
 	echo "Defaulting FG_SRC to $FG_SRC"
 fi
 
-if [ "x$FG_BASE" = "x" ]; then
-	FG_BASE=`pwd`/../fgfsbase
-	echo "Defaulting FG_BASE to $FG_BASE"
+if [ "x$FG_ROOT" = "x" ]; then
+	FG_ROOT=`pwd`/../FlightGear
+	echo "Defaulting FG_ROOT to $FG_ROOT"
 fi
 
 # Check directories exist
@@ -27,14 +27,14 @@ if [ ! -d "$FG_SRC/FDM/JSBSim/filtersjb" ]; then
 	exit;
 fi
 
-if [ ! -d "$FG_BASE/Engine" ]; then
-	echo "No $FG_BASE/Engine directory";
+if [ ! -d "$FG_ROOT/Engine" ]; then
+	echo "No $FG_ROOT/Engine directory";
 	exit;
 fi
 
-for i in c172 X15 shuttle c310; do
-    if [ ! -d "$FG_BASE/Aircraft/$i" ]; then
-	echo "No $FG_BASE/Aircraft/$i";
+for i in c172 X15 shuttle c310 c182; do
+    if [ ! -d "$FG_ROOT/Aircraft/$i" ]; then
+	echo "No $FG_ROOT/Aircraft/$i";
 	exit;
     fi
 done
@@ -45,9 +45,10 @@ $INSTALL *.cpp $FG_SRC/FDM/JSBSim/
 $INSTALL *.h $FG_SRC/FDM/JSBSim/
 $INSTALL filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
 $INSTALL filtersjb/*.h $FG_SRC/FDM/JSBSim/filtersjb/
-$INSTALL engine/*.xml $FG_BASE/Engine/
-$INSTALL aircraft/c172/c172.xml $FG_BASE/Aircraft/c172/
-$INSTALL aircraft/X15/X15.xml $FG_BASE/Aircraft/X15/
-$INSTALL aircraft/shuttle/shuttle.xml $FG_BASE/Aircraft/shuttle/
-$INSTALL aircraft/c310/c310.xml $FG_BASE/Aircraft/c310
+$INSTALL engine/*.xml $FG_ROOT/Engine/
+$INSTALL aircraft/c172/c172.xml $FG_ROOT/Aircraft/c172/
+$INSTALL aircraft/X15/X15.xml $FG_ROOT/Aircraft/X15/
+$INSTALL aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
+$INSTALL aircraft/c310/c310.xml $FG_ROOT/Aircraft/c310/
+$INSTALL aircraft/c182/c182.xml $FG_ROOT/Aircraft/c182/
 
