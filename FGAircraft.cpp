@@ -517,16 +517,56 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
 {
   string token, parameter;
   int OutRate = 0;
+  int subsystems = 0;
 
   token = AC_cfg->GetValue("NAME");
   Output->SetFilename(token);
   token = AC_cfg->GetValue("TYPE");
   Output->SetType(token);
   AC_cfg->GetNextConfigLine();
+
   while ((token = AC_cfg->GetValue()) != "/OUTPUT") {
     *AC_cfg >> parameter;
     if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
+    if (parameter == "SIMULATION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssSimulation;
+    }
+    if (parameter == "AEROSURFACES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssAerosurfaces;
+    }
+    if (parameter == "RATES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssRates;
+    }
+    if (parameter == "VELOCITIES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssVelocities;
+    }
+    if (parameter == "FORCES") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssForces;
+    }
+    if (parameter == "MOMENTS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssMoments;
+    }
+    if (parameter == "ATMOSPHERE") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssAtmosphere;
+    }
+    if (parameter == "MASSPROPS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssMassProps;
+    }
+    if (parameter == "POSITION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssPosition;
+    }
   }
+
+  Output->SetSubsystems(subsystems);
 
   OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
   Output->SetRate( (int)(0.5 + 1.0/(State->Getdt()*OutRate)) );

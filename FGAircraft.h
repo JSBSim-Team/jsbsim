@@ -134,6 +134,7 @@ class FGAircraft : public FGModel
   enum {eX=1, eY, eZ};
   enum {eP=1, eQ, eR};
   enum {ePhi=1, eTht, ePsi};
+
 public:
   FGAircraft(FGFDMExec*);
   ~FGAircraft(void);
@@ -159,6 +160,16 @@ public:
   inline int   GetNumEngines(void) {return numEngines;}
   inline FGColumnVector GetXYZcg(void) {return vXYZcg;}
 
+  enum { ssSimulation   = 1,
+         ssAerosurfaces = 2,
+         ssRates        = 4,
+         ssVelocities   = 8,
+         ssForces       = 16,
+         ssMoments      = 32,
+         ssAtmosphere   = 64,
+         ssMassProps    = 128,
+         ssPosition     = 256 } subsystems;
+         
 private:
   void GetState(void);
   void FMAero(void);

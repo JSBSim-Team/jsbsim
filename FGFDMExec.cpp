@@ -176,13 +176,16 @@ bool FGFDMExec::Run(void)
   return true;
 }
 
+
 bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 {
-  float save_dt=State->Getdt();
+  float save_dt = State->Getdt();
+
   State->Setdt(0.0);
   State->Initialize(fgic);
   Run();
   State->Setdt(save_dt);
+
   return true;
 }
   
