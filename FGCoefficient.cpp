@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.36 2001/07/29 22:15:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.37 2001/08/09 23:46:46 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 extern char highint[5];
@@ -291,10 +291,11 @@ void FGCoefficient::DisplayCoeffFactors(void)
 string FGCoefficient::GetCoefficientValues(void) {
   char buffer[10];
   string value;
-  //value = ", ";
+
   snprintf(buffer,10,"%9.6f",SD);
-  value += string(buffer);
+  value = string(buffer);
   return value;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

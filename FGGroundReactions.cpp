@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.12 2001/08/07 23:05:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.13 2001/08/09 23:46:46 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 extern short debug_lvl;
@@ -63,7 +63,6 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
 
 bool FGGroundReactions:: Run(void)
 {
-  int wow_count=0;
   float steerAngle = 0.0;
   float xForces = 0.0, yForces = 0.0;
 
@@ -108,7 +107,6 @@ bool FGGroundReactions:: Run(void)
                   iGear->GetstaticFCoeff()*cos(steerAngle)*iGear->GetCompForce();
             vMaxStaticGrip(eZ)  = 0.0;
 //            vMaxMomentResist += 1;
-            wow_count++;
           }
           iGear++;
         }
@@ -122,6 +120,7 @@ bool FGGroundReactions:: Run(void)
                           + Propulsion->GetForces(eY)
                           + Inertial->GetForces(eY));
 
+        // These if statement comparisons probably need some validation and work
         if (fabs(xForces) < fabs(vMaxStaticGrip(eX))) { // forces exceed gear power
           vForces(eX) = xForces;
         }

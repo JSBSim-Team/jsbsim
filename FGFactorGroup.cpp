@@ -63,7 +63,7 @@ INCLUDES
 
 extern short debug_lvl;
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.4 2001/07/29 22:15:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.5 2001/08/09 23:46:46 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,7 +132,7 @@ float FGFactorGroup::TotalValue(void) {
 }        
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
+/*
 string FGFactorGroup::GetCoefficientStrings(void) {
   int i;
   string CoeffStrings;
@@ -146,9 +146,9 @@ string FGFactorGroup::GetCoefficientStrings(void) {
   }
   return CoeffStrings;    
 }
-
+*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
+/*
 string FGFactorGroup::GetCoefficientValues(void) {
     int i;
     char buffer[10];
@@ -165,7 +165,7 @@ string FGFactorGroup::GetCoefficientValues(void) {
     }
     return values;
 }       
-
+*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 void FGFactorGroup::Debug(void)

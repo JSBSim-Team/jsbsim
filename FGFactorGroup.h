@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.3 2001/07/23 20:39:47 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.4 2001/08/09 23:46:46 jberndt Exp $"
 
 using std::vector;
 
@@ -100,8 +100,8 @@ class FGFactorGroup: public FGCoefficient {
     
     bool Load(FGConfigFile *AC_cfg);
     float TotalValue(void);
-    string GetCoefficientStrings(void);
-    string GetCoefficientValues(void);
+    //string GetCoefficientStrings(void);
+    //string GetCoefficientValues(void);
     inline float GetSD(void) { return SDtotal; }
     inline float GetFactorSD(void) { return FGCoefficient::GetSD(); }
     
