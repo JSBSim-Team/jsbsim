@@ -51,9 +51,11 @@ INCLUDES
 #include "FGElectric.h"
 #include "FGPropertyManager.h"
 
+#include <sstream>
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.112 2004/06/20 16:14:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.113 2004/10/23 11:15:35 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -322,13 +324,19 @@ string FGPropulsion::GetPropulsionStrings(void)
 {
   string PropulsionStrings = "";
   bool firstime = true;
+  stringstream buf;
 
   for (unsigned int i=0;i<Engines.size();i++) {
     if (firstime)  firstime = false;
     else           PropulsionStrings += ", ";
-
     PropulsionStrings += Engines[i]->GetEngineLabels();
   }
+
+  for (unsigned int i=0;i<Tanks.size();i++) {
+    if (Tanks[i]->GetType() == FGTank::ttFUEL) buf << ", Fuel Tank " << i;
+    else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << ", Oxidizer Tank " << i;
+  }
+  PropulsionStrings += buf.str();
 
   return PropulsionStrings;
 }
@@ -337,15 +345,21 @@ string FGPropulsion::GetPropulsionStrings(void)
 
 string FGPropulsion::GetPropulsionValues(void)
 {
+  stringstream buf;
+
   string PropulsionValues = "";
   bool firstime = true;
 
   for (unsigned int i=0;i<Engines.size();i++) {
     if (firstime)  firstime = false;
     else           PropulsionValues += ", ";
-
     PropulsionValues += Engines[i]->GetEngineValues();
   }
+  for (unsigned int i=0;i<Tanks.size();i++) {
+    buf << ", ";
+    buf << Tanks[i]->GetContents();
+  }
+  PropulsionValues += buf.str();
 
   return PropulsionValues;
 }
