@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="T37" VERSION="1.60" RELEASE="BETA">
+<FDM_CONFIG NAME="T37" VERSION="1.60">
 <!--
   File:     T37.xml
   Author:   Aero-Matic v 0.7
@@ -15,7 +15,7 @@
     # engines:     2
     engine type:   turbine
     engine layout: aft fuselage
-    yaw damper?    yes
+    yaw damper?    no
   Outputs:
     wing loading:  41.42 lb/sq-ft
     CL-alpha:      3.6 per radian
@@ -61,11 +61,11 @@
    AC_VTAILAREA 28.59
    AC_LV        11.73
    AC_IXX       7985		<!-- Roskam -->
-   AC_IYY       3326		<!-- Roskam -->
+   AC_IYY       6000		<!-- David Culp, Roskam defines 3326 -->
    AC_IZZ       11183		<!-- Roskam -->
    AC_IXZ       0		<!-- Roskam -->
    AC_EMPTYWT   6360		<!-- Roskam -->
-   AC_CGLOC     200.2  0.0 -8.8
+   AC_CGLOC     211.2  0.0 -8.8
    AC_AERORP    211.2  0.0  0.0
    AC_EYEPTLOC  70.4  0.0 38.0
  </METRICS>
@@ -420,11 +420,11 @@
        0.0       -1.12
        2.0       -0.200
     </COEFFICIENT>
-    <!-- Roslam -->
+    <!-- David Culp -->
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-       -14.9
+      -50.0  <!-- Roskam defines -14.9 -->
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="YAW">
