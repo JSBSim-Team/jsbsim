@@ -80,7 +80,7 @@
   AC_GEAR RIGHT_MLG 221.8 36.5 -42.2 6580.0 1316.0  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
-  <AC_ENGINE FILE="J69-T25_sim">
+  <AC_ENGINE FILE="J69-T25">
     XLOC 291.996
     YLOC -20
     ZLOC 0
@@ -95,7 +95,7 @@
     PITCH 0
     YAW 0
   </AC_THRUSTER>
-  <AC_ENGINE FILE="J69-T25_sim">
+  <AC_ENGINE FILE="J69-T25">
     XLOC 291.996
     YLOC 20
     ZLOC 0
@@ -465,7 +465,8 @@
     <!-- H-912 -->
     <COEFFICIENT NAME="DClrDf" TYPE="VALUE">
        Delta_Roll_moment_due_to_yaw_rate_due_to_flaps
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec|fcs/components/flaps-control/output-norm
+      
+aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec|fcs/components/flaps-control/output-norm
        0.18
     </COEFFICIENT>
     <!-- H-912 -->
@@ -496,7 +497,8 @@
     <!-- H-912 -->
     <COEFFICIENT NAME="DCldaDf" TYPE="VALUE">
        Delta_Roll_moment_due_to_aileron_due_to_flaps
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad|fcs/components/flaps-control/output-norm
+      
+aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad|fcs/components/flaps-control/output-norm
        -0.02
     </COEFFICIENT>
     <!-- H-912 -->
@@ -562,7 +564,8 @@
        Delta_Pitch_moment_due_to_elevator_due_to_flaps
        7
        aero/alpha-rad
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad|fcs/components/flaps-control/output-norm
+      
+aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad|fcs/components/flaps-control/output-norm
        -0.0349   0.0057
         0        0.0023
         0.0349   0.0086

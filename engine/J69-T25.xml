@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <!--
-  File:     J69-T25_sim.xml
+  File:     J69-T25.xml
   Author:   Aero-Matic v 0.7
 
   Inputs:
-    name:           J69-T25_sim
+    name:           J69-T25
     type:           turbine
     thrust:         1025 lb
     augmented?      no
     injected?       no
 -->
 
-<FG_SIMTURBINE NAME="J69-T25_sim">
+<FG_TURBINE NAME="J69-T25">
   MILTHRUST 1025
   MAXTHRUST 1025
   BYPASSRATIO    1.0
@@ -59,4 +59,4 @@
   1.4   1.5941  1.3400  1.0860  0.8450  0.6280  0.4240  0.2630
 </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
