@@ -70,11 +70,93 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Landing gear model
-    Calculates forces and moments due to landing gear reactions.
+/** Landing gear model.
+    Calculates forces and moments due to landing gear reactions. This is done in
+    several steps, and is dependent on what kind of gear is being modeled. Here
+    are the parameters that can be specified in the config file for modeling
+    landing gear:
+    <p>
+    <b><u>Physical Characteristics</u></b><br>
+    <ol>
+    <li>X, Y, Z location, in inches in structural coordinate frame</li>
+    <li>Spring constant, in lbs/ft</li>
+    <li>Damping coefficient, in lbs/ft/sec</li>
+    <li>Dynamic Friction Coefficient</li>
+    <li>Static Friction Coefficient</li>
+    </ol></p><p>
+    <b><u>Operational Properties</b></u><br>
+    <ol>
+    <li>Name</li>
+    <li>Steerability attribute {one of STEERABLE | FIXED | CASTERED}</li>
+    <li>Brake Group Membership {one of LEFT | CENTER | RIGHT | NOSE | TAIL | NONE}</li>
+    <li>Max Steer Angle, in degrees</li>
+    </ol></p>
+    <p>
+    <b><u>Algorithm and Approach to Modeling</u></b><br>
+    <ol>
+    <li>Find the location of the uncompressed landing gear relative to the CG of
+    the aircraft. Remember, the structural coordinate frame that the aircraft is
+    defined in is: X positive towards the tail, Y positive out the right side, Z
+    positive upwards. The locations of the various parts are given in inches in
+    the config file.</li>
+    <li>The vector giving the location of the gear (relative to the cg) is
+    rotated 180 degrees about the Y axis to put the coordinates in body frame (X
+    positive forwards, Y positive out the right side, Z positive downwards, with
+    the origin at the cg). The lengths are also now given in feet.</li>
+    <li>The new gear location is now transformed to the local coordinate frame
+    using the body-to-local matrix. (Mb2l).</li>
+    <li>Knowing the location of the center of gravity relative to the ground
+    (height above ground level or AGL) now enables gear deflection to be
+    calculated. The gear compression value is the local frame gear Z location
+    value minus the height AGL. [Currently, we make the assumption that the gear
+    is oriented - and the deflection occurs in - the Z axis only. Additionally,
+    the vector to the landing gear is currently not modified - which would
+    (correctly) move the point of contact to the actual compressed-gear point of
+    contact. Eventually, articulated gear may be modeled, but initially an
+    effort must be made to model a generic system.] As an example, say the
+    aircraft left main gear location (in local coordinates) is Z = 3 feet
+    (positive) and the height AGL is 2 feet. This tells us that the gear is
+    compressed 1 foot.</li>
+    <li>If the gear is compressed, a Weight-On-Wheels (WOW) flag is set.</li>
+    <li>With the compression length calculated, the compression velocity may now
+    be calculated. This will be used to determine the damping force in the
+    strut. The aircraft rotational rate is multiplied by the vector to the wheel
+    to get a wheel velocity in body frame. That velocity vector is then
+    transformed into the local coordinate frame.</li>
+    <li>The aircraft cg velocity in the local frame is added to the
+    just-calculated wheel velocity (due to rotation) to get a total wheel
+    velocity in the local frame.</li>
+    <li>The compression speed is the Z-component of the vector.</li>
+    <li>With the wheel velocity vector no longer needed, it is normalized and
+    multiplied by a -1 to reverse it. This will be used in the friction force
+    calculation.</li>
+    <li>Since the friction force takes place solely in the runway plane, the Z
+    coordinate of the normalized wheel velocity vector is set to zero.</li>
+    <li>The gear deflection force (the force on the aircraft acting along the
+    local frame Z axis) is now calculated given the spring and damper
+    coefficients, and the gear deflection speed and stroke length. Keep in mind
+    that gear forces always act in the negative direction (in both local and
+    body frames), and are not capable of generating a force in the positive
+    sense (one that would attract the aircraft to the ground). So, the gear
+    forces are always negative - they are limited to values of zero or less. The
+    gear force is simply the negative of the sum of the spring compression
+    length times the spring coefficient and the gear velocity times the damping
+    coefficient.</li>
+    <li>The lateral/directional force acting on the aircraft through the landing
+    gear (along the local frame X and Y axes) is calculated next. First, the
+    friction coefficient is multiplied by the recently calculated Z-force. This
+    is the friction force. It must be given direction in addition to magnitude.
+    We want the components in the local frame X and Y axes. From step 9, above,
+    the conditioned wheel velocity vector is taken and the X and Y parts are
+    multiplied by the friction force to get the X and Y components of friction.
+    </li>
+    <li>The wheel force in local frame is next converted to body frame.</li>
+    <li>The moment due to the gear force is calculated by multiplying r x F
+    (radius to wheel crossed into the wheel force). Both of these operands are
+    in body frame.</li>
+    </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.26 2000/10/29 17:05:24 jsb Exp $
-    @see -
+    @version $Id: FGLGear.h,v 1.27 2000/11/03 12:45:19 jsb Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -128,7 +210,7 @@ public:
       @param flag true turns on touchdown reporting, false turns it off */
   inline void SetReport(bool flag) { ReportEnable = flag; }
   /** Get the console touchdown reporting feature
-      @return flag true turns on touchdown reporting, false turns it off */
+      @return true if reporting is turned on */
   inline bool GetReport(void)    { return ReportEnable; }
 
 private:
