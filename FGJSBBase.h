@@ -41,16 +41,16 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include <math.h>
-#  include <stack.h>
+#  include <queue.h>
 #  include <string.h>
 #else
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
-#    include <stack.h>
+#    include <queue.h>
 #    include <string.h>
 #  else
 #    include <cmath>
-#    include <stack>
+#    include <queue>
 #    include <string>
 #  endif
 #endif
@@ -64,13 +64,22 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.6 2001/11/09 23:39:34 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.7 2001/11/10 14:55:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-struct Message;
+struct Message {
+  unsigned int fdmId;
+  unsigned int messageId;
+  string text;
+  string subsystem;
+  enum mType {eText, eInteger, eDouble, eBool} type;
+  bool bVal;
+  int  iVal;
+  double dVal;
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -82,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.6 2001/11/09 23:39:34 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.7 2001/11/10 14:55:15 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,26 +127,24 @@ public:
   static char fggreen[6];
   static char fgdef[6];
 
+  struct Message* PutMessage(struct Message* msg);
+  struct Message* PutMessage(string text);
+  struct Message* PutMessage(string text, bool bVal);
+  struct Message* PutMessage(string text, int iVal);
+  struct Message* PutMessage(string text, double dVal);
+  struct Message* ReadMessage(void);
+  struct Message* ProcessMessage(void);
+
 protected:
-  struct Message* PutMessage(struct Message*) {}
-  struct Message* ReadMessage(void) {}
-  struct Message* ProcessMessage(void) {}
+  static struct Message  localMsg;
   
-  static stack <struct Message*> Messages;
+  static queue <struct Message*> Messages;
 
   virtual void Debug(void) {};
 
   static short debug_lvl;
   static int frame;
-};
-
-struct Message {
-  string msg;
-  string subsystem;
-  enum mType {eText, eInteger, eDouble, eBool} type;
-  bool bVal;
-  int  iVal;
-  double dVal;
+  static unsigned int messageId;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

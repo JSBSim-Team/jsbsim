@@ -77,7 +77,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.57 2001/09/28 02:33:44 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.58 2001/11/10 14:55:15 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.57 2001/09/28 02:33:44 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.58 2001/11/10 14:55:15 jberndt Exp $
     @see -
 */
 
@@ -152,7 +152,29 @@ int main(int argc, char** argv)
                    FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000, 0, 0, 0);
   }
 
-  while (FDMExec->Run()) {}
+  struct Message* msg;
+  while (FDMExec->Run()) {
+    while (FDMExec->ReadMessage()) {
+      msg = FDMExec->ProcessMessage();
+      switch (msg->type) {
+      case Message::eText:
+        cout << msg->messageId << ": " << msg->text << endl;
+        break;
+      case Message::eBool:
+        cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
+        break;
+      case Message::eInteger:
+        cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
+        break;
+      case Message::eDouble:
+        cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
+        break;
+      default:
+        cerr << "Unrecognized message type." << endl;
+	      break;
+      }
+    }
+  }
 
   delete FDMExec;
 
