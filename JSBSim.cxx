@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.99 2002/01/24 14:28:28 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.100 2002/02/04 12:32:34 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -373,9 +373,9 @@ bool FGJSBsim::copy_from_JSBsim() {
                             Aircraft->GetNcg()(2),
                             Aircraft->GetNcg()(3) );
     
-    _set_Accels_Pilot_Body( Auxiliary->GetNpilot()(1),
-                            Auxiliary->GetNpilot()(2),
-                            Auxiliary->GetNpilot()(3) );
+    _set_Accels_Pilot_Body( Auxiliary->GetPilotAccel()(1),
+                            Auxiliary->GetPilotAccel()(2),
+                            Auxiliary->GetPilotAccel()(3) );
 
    // _set_Accels_Pilot_Body_N( Auxiliary->GetPilotAccel()(1)/32.1739,
    //                           Auxiliary->GetNpilot(2)/32.1739,
