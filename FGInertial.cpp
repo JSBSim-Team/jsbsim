@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.31 2004/02/26 15:03:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.32 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   vCoriolis.InitMatrix();
   vCentrifugal.InitMatrix();
   vGravity.InitMatrix();
-    
+
   bind();
 
   Debug(0);
@@ -111,8 +111,9 @@ bool FGInertial::Run(void)
     vRadius(eDown) = Position->GetRadius();
     vCentrifugal(eDown) = -vOmegaLocal.Magnitude() * vOmegaLocal.Magnitude() * vRadius(eDown);
 
-    vForces = State->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
-    
+//    vForces = State->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
+    vForces = State->GetTl2b() * MassBalance->GetMass() * vGravity;
+
     return false;
   } else {
     return true;

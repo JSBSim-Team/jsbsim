@@ -1,43 +1,43 @@
 /*******************************************************************************
- 
+
  Header:       FGInitialCondition.cpp
  Author:       Tony Peden
  Date started: 7/1/99
- 
+
  ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
- 
+
+
  HISTORY
 --------------------------------------------------------------------------------
 7/1/99   TP   Created
- 
- 
+
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
- 
+
 The purpose of this class is to take a set of initial conditions and provide
 a kinematically consistent set of body axis velocity components, euler
 angles, and altitude.  This class does not attempt to trim the model i.e.
 the sim will most likely start in a very dynamic state (unless, of course,
 you have chosen your IC's wisely) even after setting it up with this class.
- 
+
 ********************************************************************************
 INCLUDES
 *******************************************************************************/
@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.57 2004/02/26 15:03:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.58 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -90,7 +90,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
-  
+
   Debug(0);
 }
 
@@ -220,7 +220,7 @@ void FGInitialCondition::SetBetaRadIC(double tt) {
   beta=tt;
   sbeta=sin(beta); cbeta=cos(beta);
   getTheta();
-  
+
 }
 
 //******************************************************************************
@@ -279,7 +279,7 @@ double FGInitialCondition::GetVBodyFpsIC(void) {
       return v;
     else {
       return vt*sbeta - vw;
-    }  
+    }
 }
 
 //******************************************************************************
@@ -287,7 +287,7 @@ double FGInitialCondition::GetVBodyFpsIC(void) {
 double FGInitialCondition::GetWBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return w;
-    else 
+    else
       return vt*salpha*cbeta -ww;
 }
 
@@ -304,41 +304,41 @@ void FGInitialCondition::SetWindNEDFpsIC(double wN, double wE, double wD ) {
 //******************************************************************************
 
 // positive from left
-void FGInitialCondition::SetHeadWindKtsIC(double head){ 
+void FGInitialCondition::SetHeadWindKtsIC(double head){
     whead=head*ktstofps;
-    lastWindSet=setwhc; 
+    lastWindSet=setwhc;
     calcWindUVW();
     if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
 
-} 
+}
 
 //******************************************************************************
 
-void FGInitialCondition::SetCrossWindKtsIC(double cross){ 
-    wcross=cross*ktstofps; 
-    lastWindSet=setwhc; 
+void FGInitialCondition::SetCrossWindKtsIC(double cross){
+    wcross=cross*ktstofps;
+    lastWindSet=setwhc;
     calcWindUVW();
     if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
 
-} 
+}
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindDownKtsIC(double wD) { 
-    wdown=wD; 
+void FGInitialCondition::SetWindDownKtsIC(double wD) {
+    wdown=wD;
     calcWindUVW();
     if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
-} 
+}
 
 //******************************************************************************
 
 void FGInitialCondition::SetWindMagKtsIC(double mag) {
   wmag=mag*ktstofps;
   lastWindSet=setwmd;
-  calcWindUVW();    
+  calcWindUVW();
   if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
 }
@@ -348,7 +348,7 @@ void FGInitialCondition::SetWindMagKtsIC(double mag) {
 void FGInitialCondition::SetWindDirDegIC(double dir) {
   wdir=dir*degtorad;
   lastWindSet=setwmd;
-  calcWindUVW();    
+  calcWindUVW();
   if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
 }
@@ -357,7 +357,7 @@ void FGInitialCondition::SetWindDirDegIC(double dir) {
 //******************************************************************************
 
 void FGInitialCondition::calcWindUVW(void) {
-    
+
     switch(lastWindSet) {
       case setwmd:
         wnorth=wmag*cos(wdir);
@@ -369,7 +369,7 @@ void FGInitialCondition::calcWindUVW(void) {
       break;
       case setwned:
       break;
-    }    
+    }
     uw=wnorth*ctheta*cpsi +
        weast*ctheta*spsi -
        wdown*stheta;
@@ -379,14 +379,14 @@ void FGInitialCondition::calcWindUVW(void) {
     ww=wnorth*(cphi*stheta*cpsi + sphi*spsi) +
        weast*(cphi*stheta*spsi - sphi*cpsi) +
        wdown*cphi*ctheta;
-            
-   
+
+
     /* cout << "FGInitialCondition::calcWindUVW: wnorth, weast, wdown "
          << wnorth << ", " << weast << ", " << wdown << endl;
     cout << "FGInitialCondition::calcWindUVW: theta, phi, psi "
           << theta << ", " << phi << ", " << psi << endl;
     cout << "FGInitialCondition::calcWindUVW: uw, vw, ww "
-          << uw << ", " << vw << ", " << ww << endl;   */
+          << uw << ", " << vw << ", " << ww << endl; */
 
 }
 
@@ -502,9 +502,9 @@ bool FGInitialCondition::getMachFromVcas(double *Mach,double vcas) {
 bool FGInitialCondition::getAlpha(void) {
   bool result=false;
   double guess=theta-gamma;
-  
+
   if(vt < 0.01) return 0;
-  
+
   xlo=xhi=0;
   xmin=fdmex->GetAerodynamics()->GetAlphaCLMin();
   xmax=fdmex->GetAerodynamics()->GetAlphaCLMax();
@@ -525,9 +525,9 @@ bool FGInitialCondition::getAlpha(void) {
 bool FGInitialCondition::getTheta(void) {
   bool result=false;
   double guess=alpha+gamma;
-  
+
   if(vt < 0.01) return 0;
-  
+
   xlo=xhi=0;
   xmin=-89;xmax=89;
   sfunc=&FGInitialCondition::GammaEqOfTheta;
@@ -673,7 +673,7 @@ bool FGInitialCondition::solve(double *y,double x)
   while ((fabs(d) > eps) && (i < 100)) {
     d=(x3-x1)/d0;
     x2 = x1-d*d0*f1/(f3-f1);
-    
+
     f2=(this->*sfunc)(x2)-x;
     //cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
     //cout << "                " << f1 << "," << f2 << "," << f3 << endl;
@@ -704,19 +704,19 @@ bool FGInitialCondition::solve(double *y,double x)
 //******************************************************************************
 
 double FGInitialCondition::GetWindDirDegIC(void) {
-  if(weast != 0.0) 
+  if(weast != 0.0)
     return atan2(weast,wnorth)*radtodeg;
-  else if(wnorth > 0) 
+  else if(wnorth > 0)
     return 0.0;
   else
     return 180.0;
-}        
+}
 
 //******************************************************************************
 
 bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
-  string resetDef;
+  string resetDef, acpath;
   string token="";
 
   double temp;
@@ -724,20 +724,20 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     string sep = "/";
   # else
     string sep = ";";
-  #endif     
-  
+  #endif
+
   if( useStoredPath ) {
-    string acpath = fdmex->GetAircraftPath() + sep + fdmex->GetModelName();
+    acpath = fdmex->GetAircraftPath() + sep + fdmex->GetModelName();
     resetDef = acpath + sep + rstfile + ".xml";
   } else {
     resetDef = rstfile;
-  }  
-  
+  }
+
   FGConfigFile resetfile(resetDef);
   if (!resetfile.IsOpen()) {
     cerr << "Failed to open reset file: " << resetDef << endl;
     return false;
-  }  
+  }
 
   resetfile.GetNextConfigLine();
   token = resetfile.GetValue();
@@ -746,13 +746,13 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
          << " does not appear to be a reset file" << endl;
     return false;
   }
-  
+
   resetfile.GetNextConfigLine();
   resetfile >> token;
   while (token != string("/initialize") && token != string("EOF")) {
-    if (token == "UBODY" ) { resetfile >> temp; SetUBodyFpsIC(temp); } 
-    if (token == "VBODY" ) { resetfile >> temp; SetVBodyFpsIC(temp); } 
-    if (token == "WBODY" ) { resetfile >> temp; SetWBodyFpsIC(temp); }  
+    if (token == "UBODY" ) { resetfile >> temp; SetUBodyFpsIC(temp); }
+    if (token == "VBODY" ) { resetfile >> temp; SetVBodyFpsIC(temp); }
+    if (token == "WBODY" ) { resetfile >> temp; SetWBodyFpsIC(temp); }
     if (token == "LATITUDE" ) { resetfile >> temp; SetLatitudeDegIC(temp); }
     if (token == "LONGITUDE" ) { resetfile >> temp; SetLongitudeDegIC(temp); }
     if (token == "PHI" ) { resetfile >> temp; SetRollAngleDegIC(temp); }
@@ -774,7 +774,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   }
 
   fdmex->RunIC();
-  
+
   return true;
 }
 
@@ -960,7 +960,7 @@ void FGInitialCondition::unbind(void){
   /* PropertyManager->Untie("ic/vw-dir-deg"); */
 
   PropertyManager->Untie("ic/roc-fps");
-  
+
   /*  PropertyManager->Untie("ic/u-fps");
   PropertyManager->Untie("ic/v-fps");
   PropertyManager->Untie("ic/w-fps"); */

@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.90 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.91 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -324,7 +324,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Thrusters.push_back(new FGNozzle(FDMExec, &Thruster_cfg ));
         } else if (thrType == "FG_DIRECT") {
           Thrusters.push_back(new FGThruster( FDMExec, &Thruster_cfg) );
-        }  
+        }
 
         AC_cfg->GetNextConfigLine();
         while ((token = AC_cfg->GetValue()) != string("/AC_THRUSTER")) {
@@ -562,6 +562,19 @@ double FGPropulsion::GetTanksIxz(const FGColumnVector3& vXYZcg)
   iTank = Tanks.begin();
   while (iTank < Tanks.end()) {
     I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
+    iTank++;
+  }
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropulsion::GetTanksIyz(const FGColumnVector3& vXYZcg)
+{
+  double I = 0.0;
+  iTank = Tanks.begin();
+  while (iTank < Tanks.end()) {
+    I += ((*iTank)->GetY() - vXYZcg(eY))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
     iTank++;
   }
   return I;

@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.32 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.33 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,8 +57,8 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGMassBalance";
   Weight = EmptyWeight = Mass = 0.0;
-  Ixx = Iyy = Izz = Ixy = Ixz = 0.0;
-  baseIxx = baseIyy = baseIzz = baseIxy = baseIxz = 0.0;
+  Ixx = Iyy = Izz = Ixy = Ixz = Iyz = 0.0;
+  baseIxx = baseIyy = baseIzz = baseIxy = baseIxz = baseIyz = 0.0;
   vbaseXYZcg(eX) = 0.0;
   vbaseXYZcg(eY) = 0.0;
   vbaseXYZcg(eZ) = 0.0;
@@ -97,6 +97,7 @@ bool FGMassBalance::Run(void)
     Izz = baseIzz + Propulsion->GetTanksIzz(vXYZcg) + GetPMIzz();
     Ixy = baseIxy + Propulsion->GetTanksIxy(vXYZcg) + GetPMIxy();
     Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg) + GetPMIxz();
+    Iyz = baseIyz + Propulsion->GetTanksIyz(vXYZcg) + GetPMIyz();
 
     Debug(2);
 
@@ -200,6 +201,18 @@ double FGMassBalance::GetPMIxz(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGMassBalance::GetPMIyz(void)
+{
+  double I = 0.0;
+  for (unsigned int i=0; i<PointMassLoc.size(); i++) {
+    I += (PointMassLoc[i](eY)-vXYZcg(eY))*(PointMassLoc[i](eZ)-vXYZcg(eZ))*PointMassWeight[i];
+  }
+  I /= (144.0*Inertial->gravity());
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
 {
   // Under the assumption that in the structural frame the:
@@ -234,7 +247,7 @@ FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMassBalance::bind(void)
-{ 
+{
   typedef double (FGMassBalance::*PMF)(int) const;
   PropertyManager->Tie("inertia/mass-slugs", this,
                        &FGMassBalance::GetMass);
@@ -250,6 +263,8 @@ void FGMassBalance::bind(void)
                        &FGMassBalance::GetIxy);
   PropertyManager->Tie("inertia/ixz-lbsft2", this,
                        &FGMassBalance::GetIxz);
+  PropertyManager->Tie("inertia/iyz-lbsft2", this,
+                       &FGMassBalance::GetIyz);
   PropertyManager->Tie("inertia/cg-x-ft", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-ft", this,2,
@@ -269,6 +284,7 @@ void FGMassBalance::unbind(void)
   PropertyManager->Untie("inertia/izz-lbsft2");
   PropertyManager->Untie("inertia/ixy-lbsft2");
   PropertyManager->Untie("inertia/ixz-lbsft2");
+  PropertyManager->Untie("inertia/iyz-lbsft2");
   PropertyManager->Untie("inertia/cg-x-ft");
   PropertyManager->Untie("inertia/cg-y-ft");
   PropertyManager->Untie("inertia/cg-z-ft");

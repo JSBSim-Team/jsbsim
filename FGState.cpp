@@ -1,37 +1,37 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                                                                       
+
  Module:       FGState.cpp
  Author:       Jon Berndt
  Date started: 11/17/98
  Called by:    FGFDMExec and accessed by all models.
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 See header file.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 11/17/98   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.126 2004/02/18 02:45:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.127 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGState::FGState(FGFDMExec* fdex)
   for(int i=0;i<4;i++) vQdot_prev[i].InitMatrix();
 
   bind();
-  
+
   Debug(0);
 }
 
@@ -120,19 +120,19 @@ void FGState::Initialize(double U, double V, double W,
   Position->Seth(H);
 
   Atmosphere->Run();
-  
+
   vLocalEuler << phi << tht << psi;
   Rotation->SetEuler(vLocalEuler);
 
   InitMatrices(phi, tht, psi);
- 
+
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
-  
+
   Atmosphere->SetWindNED(wnorth, weast, wdown);
-  
+
   vAeroUVW = vUVW + mTl2b*Atmosphere->GetWindNED();
-  
+
   if (vAeroUVW(eW) != 0.0)
     alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
   else
@@ -164,7 +164,7 @@ void FGState::Initialize(FGInitialCondition *FGIC)
   double U, V, W, h;
   double latitude, longitude;
   double wnorth,weast, wdown;
-  
+
   latitude = FGIC->GetLatitudeRadIC();
   longitude = FGIC->GetLongitudeRadIC();
   h = FGIC->GetAltitudeFtIC();
@@ -177,12 +177,12 @@ void FGState::Initialize(FGInitialCondition *FGIC)
   wnorth = FGIC->GetWindNFpsIC();
   weast = FGIC->GetWindEFpsIC();
   wdown = FGIC->GetWindDFpsIC();
-  
+
   Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
-  Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() + 
+  Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() +
                                              FGIC->GetTerrainAltitudeFtIC() );
 
-  // need to fix the wind speed args, here.  
+  // need to fix the wind speed args, here.
   Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
 }
 
@@ -319,10 +319,10 @@ FGMatrix33& FGState::GetTb2s(void)
 {
   float alpha,beta;
   float ca, cb, sa, sb;
-  
+
   alpha = Translation->Getalpha();
   beta  = Translation->Getbeta();
-  
+
   ca = cos(alpha);
   sa = sin(alpha);
   cb = cos(beta);
@@ -347,14 +347,14 @@ void FGState::ReportState(void)
 {
 #if !defined(__BORLANDCPP__)
   char out[80], flap[10], gear[12];
-  
+
   cout << endl << "  JSBSim State" << endl;
   snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
                    FDMExec->GetMassBalance()->GetWeight(),
                    FDMExec->GetMassBalance()->GetXYZcg(1),
                    FDMExec->GetMassBalance()->GetXYZcg(2),
                    FDMExec->GetMassBalance()->GetXYZcg(3));
-  cout << out;             
+  cout << out;
   if ( FCS->GetDfPos() <= 0.01)
     snprintf(flap,10,"Up");
   else
@@ -384,7 +384,7 @@ void FGState::ReportState(void)
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
                     Position->GetGamma()*radtodeg,
                     Position->Gethdot()*60 );
-  cout << out;                  
+  cout << out;
   snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
                     Aircraft->GetNlf(),
                     Rotation->GetPQR(2)*radtodeg );
@@ -392,32 +392,32 @@ void FGState::ReportState(void)
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
                     Rotation->Getpsi()*radtodeg,
                     Translation->Getbeta()*radtodeg,
-                    Rotation->GetPQR(3)*radtodeg  );                  
+                    Rotation->GetPQR(3)*radtodeg  );
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
-                    Rotation->Getphi()*radtodeg, 
+                    Rotation->Getphi()*radtodeg,
                     Rotation->GetPQR(1)*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
                     FCS->GetDePos(ofRad)*radtodeg,
                     FCS->GetDaLPos(ofRad)*radtodeg,
                     FCS->GetDrPos(ofRad)*radtodeg );
-  cout << out;                  
+  cout << out;
   snprintf(out,80, "    Throttle: %5.2f%c\n",
                     FCS->GetThrottlePos(0)*100,'%' );
   cout << out;
-  
+
   snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
                     FDMExec->GetAuxiliary()->GetHeadWind()*fpstokts,
                     FDMExec->GetAuxiliary()->GetCrossWind()*fpstokts );
-  cout << out; 
-  
+  cout << out;
+
   snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
                     Position->GetVground()*fpstokts,
                     Position->GetGroundTrack()*radtodeg );
-  cout << out;                                   
+  cout << out;
 #endif
-} 
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -428,7 +428,7 @@ void FGState::bind(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                        
+
 void FGState::unbind(void)
 {
   PropertyManager->Untie("sim-time-sec");

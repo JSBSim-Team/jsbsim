@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.23 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.24 2004/03/01 13:56:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -81,6 +81,7 @@ public:
   inline double GetIzz(void) const {return Izz;}
   inline double GetIxy(void) const {return Ixy;}
   inline double GetIxz(void) const {return Ixz;}
+  inline double GetIyz(void) const {return Iyz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
 
@@ -98,8 +99,9 @@ public:
   inline void SetBaseIzz(double bizz)   { baseIzz = bizz;}
   inline void SetBaseIxy(double bixy)   { baseIxy = bixy;}
   inline void SetBaseIxz(double bixz)   { baseIxz = bixz;}
+  inline void SetBaseIyz(double biyz)   { baseIyz = biyz;}
   inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = CG;}
-  
+
   void AddPointMass(double weight, double X, double Y, double Z);
   double GetPointMassWeight(void);
   FGColumnVector3& GetPointMassMoment(void);
@@ -108,7 +110,8 @@ public:
   double GetPMIzz(void);
   double GetPMIxy(void);
   double GetPMIxz(void);
-  
+  double GetPMIyz(void);
+
   void bind(void);
   void unbind(void);
 
@@ -121,11 +124,13 @@ private:
   double Izz;
   double Ixy;
   double Ixz;
+  double Iyz;
   double baseIxx;
   double baseIyy;
   double baseIzz;
   double baseIxy;
   double baseIxz;
+  double baseIyz;
   FGColumnVector3 vXYZcg;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;

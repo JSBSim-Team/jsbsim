@@ -1,49 +1,49 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Module:       FGAircraft.cpp
  Author:       Jon S. Berndt
- Date started: 12/12/98                                   
+ Date started: 12/12/98
  Purpose:      Encapsulates an aircraft
  Called by:    FGFDMExec
 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 Models the aircraft reactions and forces. This class is instantiated by the
-FGFDMExec class and scheduled as an FDM entry. 
- 
+FGFDMExec class and scheduled as an FDM entry.
+
 HISTORY
 --------------------------------------------------------------------------------
 12/12/98   JSB   Created
 04/03/99   JSB   Changed Aero() method to correct body axis force calculation
                  from wind vector. Fix provided by Tony Peden.
 05/03/99   JSB   Changed (for the better?) the way configurations are read in.
-9/17/99     TP   Combined force and moment functions. Added aero reference 
-                 point to config file. Added calculations for moments due to 
+9/17/99     TP   Combined force and moment functions. Added aero reference
+                 point to config file. Added calculations for moments due to
                  difference in cg and aero reference point
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.124 2004/02/26 15:03:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.125 2004/03/01 13:56:39 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,14 +133,14 @@ bool FGAircraft::Run(void)
     vMoments += Aerodynamics->GetMoments();
     vMoments += Propulsion->GetMoments();
     vMoments += GroundReactions->GetMoments();
-    
+
     vBodyAccel = vForces/MassBalance->GetMass();
-    
+
     vNcg = vBodyAccel/Inertial->gravity();
 
     vNwcg = State->GetTb2s() * vNcg;
     vNwcg(3) = -1*vNwcg(3) + 1;
-    
+
     return false;
   } else {                               // skip Run() execution this time
     return true;
@@ -160,7 +160,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 {
   string token = "";
   string parameter;
-  double EW, bixx, biyy, bizz, bixy, bixz;
+  double EW, bixx, biyy, bizz, bixy, bixz, biyz;
   double pmWt, pmX, pmY, pmZ;
   FGColumnVector3 vbaseXYZcg;
 
@@ -212,6 +212,10 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       *AC_cfg >> bixz;
       if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
       MassBalance->SetBaseIxz(bixz);
+    } else if (parameter == "AC_IYZ") {
+        *AC_cfg >> biyz;
+        if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
+        MassBalance->SetBaseIyz(biyz);
     } else if (parameter == "AC_EMPTYWT") {
       *AC_cfg >> EW;
       MassBalance->SetEmptyWeight(EW);
@@ -238,7 +242,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
                          << endl;
     }
   }
-  
+
   // calculate some derived parameters
   if (cbar != 0.0) {
     lbarh = HTailArm/cbar;
@@ -247,7 +251,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       vbarh = HTailArm*HTailArea / (cbar*WingArea);
       vbarv = VTailArm*VTailArea / (cbar*WingArea);
     }
-  }     
+  }
   return true;
 }
 

@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.46 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.47 2004/03/01 13:56:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -115,11 +115,11 @@ public:
                                                         vAeroPQR(eQ)=q;
                                                         vAeroPQR(eR)=r;}
   inline void SetEuler(FGColumnVector3 tt) {vEuler = tt;}
-  
+
   inline double Getphi(void) const {return vEuler(1);}
   inline double Gettht(void) const {return vEuler(2);}
   inline double Getpsi(void) const {return vEuler(3);}
-  
+
   inline double GetCosphi(void) const {return cPhi;}
   inline double GetCostht(void) const {return cTht;}
   inline double GetCospsi(void) const {return cPsi;}
@@ -127,7 +127,7 @@ public:
   inline double GetSinphi(void) const {return sPhi;}
   inline double GetSintht(void) const {return sTht;}
   inline double GetSinpsi(void) const {return sPsi;}
-  
+
   void bind(void);
   void unbind(void);
 
@@ -139,12 +139,12 @@ private:
   FGColumnVector3 vMoments;
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
-  
+
   double cTht,sTht;
   double cPhi,sPhi;
   double cPsi,sPsi;
-  
-  double Ixx, Iyy, Izz, Ixz;
+
+  double Ixx, Iyy, Izz, Ixz, Ixy, Iyz;
   double dt;
 
   void GetState(void);
