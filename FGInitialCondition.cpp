@@ -46,6 +46,7 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGState.h"
 #include "FGAtmosphere.h"
+#include "FGAerodynamics.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
@@ -56,7 +57,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.53 2002/05/16 13:04:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.54 2002/09/07 21:49:25 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -717,19 +718,25 @@ double FGInitialCondition::GetWindDirDegIC(void) {
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(string acpath, string acname, string rstfile)
+bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
   string resetDef;
   string token="";
 
   double temp;
-
-# ifndef macintosh
-  resetDef = acpath + "/" + acname + "/" + rstfile + ".xml";
-# else
-  resetDef = acpath + ";" + acname + ";" + rstfile + ".xml";
-# endif
-
+  # ifndef macintosh
+    string sep = "/";
+  # else
+    string sep = ";";
+  #endif     
+  
+  if( useStoredPath ) {
+    string acpath = fdmex->GetAircraftPath() + sep + fdmex->GetModelName();
+    resetDef = acpath + sep + rstfile + ".xml";
+  } else {
+    resetDef = rstfile;
+  }  
+  
   FGConfigFile resetfile(resetDef);
   if (!resetfile.IsOpen()) {
     cerr << "Failed to open reset file: " << resetDef << endl;
@@ -770,7 +777,7 @@ bool FGInitialCondition::Load(string acpath, string acname, string rstfile)
     resetfile >> token;
   }
 
-  fdmex->RunIC(this);
+  fdmex->RunIC();
   
   return true;
 }
