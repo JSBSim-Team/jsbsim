@@ -98,7 +98,7 @@ public:
   void SetRunning(bool bb) { Running=bb; }
   void SetName(string name) {Name = name;}
 
-  virtual float Calculate(void);
+  virtual float Calculate(void) { return 0;}
   float CalcFuelNeed(void);
   float CalcOxidizerNeed(void);
   /// Sets engine placement information

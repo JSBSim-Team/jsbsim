@@ -11,7 +11,7 @@ BCB = $(MAKEDIR)\..
 # section.
 # ---------------------------------------------------------------------------
 
-VERSION = BCB.03
+VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
 OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \
@@ -28,8 +28,8 @@ RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = vcldbx35.lib vcldb35.lib vclx35.lib vcl35.lib
-SPARELIBS = vcl35.lib vclx35.lib vcldb35.lib vcldbx35.lib
+LIBRARIES = vcldbx40.lib vcldb40.lib vclx40.lib vcl40.lib
+SPARELIBS = vcl40.lib vclx40.lib vcldb40.lib vcldbx40.lib
 PACKAGES = Vcl40.bpi Vclx40.bpi Vcldb40.bpi vcldbx40.bpi bcbsmp40.bpi Qrpt40.bpi \
   WinshoesPkgCB4.bpi nmfast40.bpi ibsmp40.bpi y32cb4.bpi Rxctl.bpi Rxdb.bpi \
   TeeUI40.bpi teedb40.bpi tee40.bpi Auxiliary.bpi
@@ -41,19 +41,21 @@ PATHPAS = .;
 PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
-SYSDEFINES = _NO_VCL
-USERDEFINES =
+SYSDEFINES = NO_STRICT
+USERDEFINES = $(SYSDEFINES);$(USERDEFINES)
 # ---------------------------------------------------------------------------
-CFLAG1 = -Od -w-par -r- -a8 -k -y -v -vi- -Ifiltersjb;$(BCB)\include -xp -Tkh30000 -5 -c \
-  -tWM -tWC -D$(SYSDEFINES);$(USERDEFINES)
-CFLAG2 = -Ifiltersjb;
-CFLAG3 = -w-lvc -w-aus -5
+CFLAG1 = -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -Od -w-par -Tkh30000 -r- -a8 -5 \
+  -k -y -v -vi- -D$(SYSDEFINES);$(USERDEFINES) -c -tWM -tWC -tWM
+CFLAG2 =
+CFLAG3 =
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -N2. -N0. -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb; -$Y -$W -$R -$Q \
-  -$O- -$YD -v -JPHN -M
-RFLAGS = -ifiltersjb;
-AFLAGS = /ifiltersjb /mx /w2 /zi
-LFLAGS = -Lfiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
+PFLAGS = -U$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) \
+  -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -N2. -N0. \
+  -D$(SYSDEFINES);$(USERDEFINES) -$YD -$W -$R -$Q -$O- -v -M -JPHNE
+RFLAGS = -i$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -D$(SYSDEFINES);$(USERDEFINES)
+AFLAGS = /i$(BCB)\Include\vcl /i$(BCB)\Include /ifiltersjb /d$(SYSDEFINES) \
+  /d$(USERDEFINES) /mx /w2 /zi
+LFLAGS = -L$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
 IFLAGS =
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj sysinit.obj $(OBJFILES)
@@ -68,7 +70,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=21
+Build=22
 Debug=0
 PreRelease=0
 Special=0
@@ -80,7 +82,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.21
+FileVersion=0.7.2.22
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -90,13 +92,22 @@ ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
 
 [HistoryLists\hlIncludePath]
-Count=2
-Item0=filtersjb;
-Item1=filtersjb;$(BCB)\include
+Count=5
+Item0=$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
+Item1=$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
+Item2=$(BCB)\Include;filtersjb
+Item3=filtersjb;
+Item4=filtersjb;$(BCB)\include
 
 [HistoryLists\hlLibraryPath]
+Count=3
+Item0=$(BCB)\lib;$(BCB)\lib\obj;filtersjb
+Item1=filtersjb;$(BCB)\lib;$(BCB)\lib\obj
+Item2=filtersjb;$(BCB)\lib
+
+[HistoryLists\hlConditionals]
 Count=1
-Item0=filtersjb;$(BCB)\lib
+Item0=$(SYSDEFINES);$(USERDEFINES)
 
 [HistoryLists\hlIntOutputDir]
 Count=1
@@ -112,6 +123,13 @@ DebugSourceDirs=
 [Parameters]
 RunParams=X15 reset00
 HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+InMemoryExe=0
+ShowInfoMsgs=0
 
 !endif
 

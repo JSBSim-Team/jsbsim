@@ -38,7 +38,7 @@ SENTRY
 #ifndef FGPROPULSION_H
 #define FGPROPULSION_H
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.6 2000/11/23 04:56:22 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.7 2000/11/23 05:39:47 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -71,19 +71,21 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGPropulsion : public FGModel {
-  vector <FGEngine>   Engines;
-  vector <FGTank>     Tanks;
-  vector <FGThruster> Thrusters;
 public:
   FGPropulsion(FGFDMExec*);
-
+  ~FGPropulsion(void) {};
+  
   bool Run(void);
   bool LoadPropulsion(FGConfigFile* AC_cfg);
-  inline GetNumEngines(void) {return Engines.size();}
+  inline int GetNumEngines(void) {return Engines.size();}
   /** Retrieves an FGEngine object */
   inline FGEngine* GetEngine(int n) {
                               if (n <= Engines.size()-1) return &Engines[n];
                               else                       return 0L;          }
+private:
+  vector <FGEngine>   Engines;
+  vector <FGTank>     Tanks;
+  vector <FGThruster> Thrusters;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

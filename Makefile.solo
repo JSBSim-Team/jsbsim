@@ -119,7 +119,7 @@ clean:
 
 all:
 	touch *.cpp
-	cd filtersjb; make all CCOPTS=-g -fMakefile.solo; cd ..
+	cd filtersjb; make all -fMakefile.solo; cd ..
 	make JSBSim -fMakefile.solo
 
 debug:
