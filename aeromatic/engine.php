@@ -110,7 +110,7 @@ function MakeTurbine() {
     $ac_maxthrust = $ac_enginepower;
   }
 
-  print("<FG_SIMTURBINE NAME=\"$ac_enginename\">\n");  
+  print("<FG_TURBINE NAME=\"$ac_enginename\">\n");  
   print("  MILTHRUST $ac_enginepower\n");
   print("  MAXTHRUST $ac_maxthrust\n");
   print("  BYPASSRATIO    1.0\n");
@@ -208,7 +208,7 @@ function MakeTurbine() {
   print("</TABLE>\n\n");
  }
 
-  print("</FG_SIMTURBINE>\n");
+  print("</FG_TURBINE>\n");
   }
 
 
@@ -225,7 +225,7 @@ if(($ac_engineunits == 0) || ($ac_engineunits == 1)) {
   $ac_enginepower *= 2.24;
   }
 
-  print("<FG_SIMTURBINE NAME=\"$ac_enginename\">\n");  
+  print("<FG_TURBINE NAME=\"$ac_enginename\">\n");  
   printf("  MILTHRUST %2.2f\n", $ac_enginepower);
   printf("  MAXTHRUST %2.2f\n", $ac_enginepower);
   print("  BYPASSRATIO    0.0\n");
@@ -271,7 +271,7 @@ if(($ac_engineunits == 0) || ($ac_engineunits == 1)) {
   print("  1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0\n");
   print("</TABLE>\n\n");
 
-  print("</FG_SIMTURBINE>\n");
+  print("</FG_TURBINE>\n");
   }
 
 
