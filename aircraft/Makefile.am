@@ -5,6 +5,7 @@ SUBDIRS =		\
 	LM		\
 	OV10		\
 	SGS		\
+	T37		\
 	T38		\
 	X15		\
 	c172p		\
