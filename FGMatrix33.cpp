@@ -21,10 +21,8 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.4 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.5 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -67,10 +65,6 @@ double** FGalloc(void)
 void dealloc(double **A)
 {
   delete[] A[0];
-//  delete[] A[1];
-//  delete[] A[2];
-//  delete[] A[3];
- 
   delete[] A;
 }
 

@@ -39,12 +39,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGConfigFile.h"
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.5 2001/03/23 06:55:57 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.6 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +62,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.5 2001/03/23 06:55:57 jberndt Exp $
+    @version $Id: FGTable.h,v 1.6 2001/08/14 20:31:49 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -71,8 +72,8 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-class FGTable {
-
+class FGTable : public FGJSBBase
+{
 public:
   ~FGTable();
   FGTable(int nRows);

@@ -75,20 +75,8 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.56 2001/08/10 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.57 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
-
-char highint[5]  = {27, '[', '1', 'm', '\0'      };
-char halfint[5]  = {27, '[', '2', 'm', '\0'      };
-char normint[6]  = {27, '[', '2', '2', 'm', '\0' };
-char reset[5]    = {27, '[', '0', 'm', '\0'      };
-char underon[5]  = {27, '[', '4', 'm', '\0'      };
-char underoff[6] = {27, '[', '2', '4', 'm', '\0' };
-char fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
-char fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
-char fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
-char fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
-char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DECLARATIONS

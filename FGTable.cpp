@@ -44,10 +44,8 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.10 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.11 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

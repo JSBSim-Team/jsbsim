@@ -57,10 +57,8 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.25 2001/07/12 23:50:35 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.26 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
-
-extern short debug_lvl;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

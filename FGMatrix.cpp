@@ -20,10 +20,8 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.27 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.28 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -640,13 +638,6 @@ FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
   Product(3) = data[3][1] * V(3);
 
   return Product;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGColumnVector::Debug(void)
-{
-    //TODO: Add your source code here
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

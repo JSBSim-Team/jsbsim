@@ -39,10 +39,8 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.13 2001/03/29 22:26:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.14 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

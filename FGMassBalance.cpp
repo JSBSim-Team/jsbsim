@@ -40,10 +40,8 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.13 2001/06/04 19:52:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.14 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

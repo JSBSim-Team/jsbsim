@@ -22,15 +22,12 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.6 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.7 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 
 FGColumnVector3::FGColumnVector3(void)
 {

@@ -39,10 +39,8 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.19 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.20 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

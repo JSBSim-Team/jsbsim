@@ -61,10 +61,8 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.20 2001/07/29 16:00:20 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.21 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

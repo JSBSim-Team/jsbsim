@@ -40,10 +40,8 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.17 2001/08/01 11:52:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.18 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

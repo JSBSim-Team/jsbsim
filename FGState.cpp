@@ -54,10 +54,8 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.70 2001/08/11 14:42:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.71 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MACROS

@@ -40,10 +40,8 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.14 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.15 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

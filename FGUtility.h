@@ -38,11 +38,13 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGJSBBase.h"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_UTILITY "$Id: FGUtility.h,v 1.11 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_UTILITY "$Id: FGUtility.h,v 1.12 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -51,7 +53,7 @@ CLASS DECLARATION
 class FGFDMExec;
 class FGState;
 
-class FGUtility
+class FGUtility : public FGJSBBase
 {
 public:
   FGUtility(void);

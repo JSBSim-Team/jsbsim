@@ -39,10 +39,8 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.10 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.11 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

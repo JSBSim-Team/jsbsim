@@ -58,11 +58,13 @@ INCLUDES
 #  include <string>
 #endif
 
+#include "FGJSBBase.h"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.36 2001/08/14 20:31:49 jberndt Exp $"
 
 using std::string;
 
@@ -96,14 +98,15 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.36 2001/08/14 20:31:49 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGEngine {
+class FGEngine : public FGJSBBase
+{
 public:
   FGEngine(FGFDMExec* exec);
   virtual ~FGEngine();

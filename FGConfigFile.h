@@ -73,12 +73,13 @@ INCLUDES
 #endif
 
 #include "FGDefs.h"
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.23 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.24 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +96,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.23 2001/07/29 22:15:18 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.24 2001/08/14 20:31:49 jberndt Exp $
     @see -
 */
 
@@ -103,7 +104,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGConfigFile
+class FGConfigFile : public FGJSBBase
 {
 public:
   /** Constructor

@@ -41,6 +41,7 @@ INCLUDES
 #include <string>
 
 #include "FGFDMExec.h"
+#include "FGJSBBase.h"
 #include "FGRotation.h"
 #include "FGAtmosphere.h"
 #include "FGState.h"
@@ -51,7 +52,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.13 2001/08/14 20:31:49 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -72,7 +73,8 @@ enum State { tUdot,tVdot,tWdot,tQdot,tPdot,tRdot,tHmgt };
 enum Control { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
                tTheta, tPhi, tGamma, tPitchTrim, tRollTrim, tYawTrim, tHeading };
 
-class FGTrimAxis {
+class FGTrimAxis : public FGJSBBase
+{
 public:
   FGTrimAxis(FGFDMExec* fdmex, FGInitialCondition *ic, State st,
              Control ctrl );

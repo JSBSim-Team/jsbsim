@@ -20,15 +20,12 @@ INCLUDES
 
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.3 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.4 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR4;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 
 FGColumnVector4::FGColumnVector4(void)
 {

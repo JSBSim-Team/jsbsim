@@ -67,6 +67,7 @@ INCLUDES
 #endif
 
 #include <sys/types.h>
+#include "FGJSBBase.h"
 
 #if defined(__BORLANDC__) || defined(_MSC_VER)
   #include <winsock.h>
@@ -81,7 +82,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.17 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.18 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -89,7 +90,8 @@ CLASS DECLARATION
 
 using std::string;
 
-class FGfdmSocket {
+class FGfdmSocket : public FGJSBBase
+{
 public:
   FGfdmSocket(string, int);
   ~FGfdmSocket();

@@ -57,9 +57,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.14 2001/07/28 15:29:53 apeden Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.15 2001/08/14 20:31:49 jberndt Exp $"
 
 #include "FGFDMExec.h"
+#include "FGJSBBase.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
@@ -68,11 +69,9 @@ INCLUDES
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-class FGForce {
-
+class FGForce : public FGJSBBase
+{
 public:
-
   FGForce(FGFDMExec *FDMExec);
   ~FGForce();
 
@@ -134,7 +133,7 @@ protected:
   FGColumnVector3 vFn;
   FGColumnVector3 vMn;
   FGFDMExec *fdmex;
-  void Debug(void);
+  virtual void Debug(void);
 
 private:
   FGColumnVector3 vFb;

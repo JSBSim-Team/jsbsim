@@ -59,22 +59,8 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.37 2001/08/09 23:46:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.38 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
-
-extern char highint[5];
-extern char halfint[5];
-extern char normint[6];
-extern char reset[5];
-extern char underon[5];
-extern char underoff[6];
-extern char fgblue[6];
-extern char fgcyan[6];
-extern char fgred[6];
-extern char fggreen[6];
-extern char fgdef[6];
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -292,7 +278,7 @@ string FGCoefficient::GetCoefficientValues(void) {
   char buffer[10];
   string value;
 
-  snprintf(buffer,10,"%9.6f",SD);
+  sprintf(buffer,"%9.6f",SD);
   value = string(buffer);
   return value;
 }

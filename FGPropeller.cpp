@@ -37,10 +37,8 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.26 2001/07/09 23:23:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.27 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

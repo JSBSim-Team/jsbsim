@@ -49,6 +49,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
+#include "FGJSBBase.h"
 #include "FGRotation.h"
 #include "FGAtmosphere.h"
 #include "FGState.h"
@@ -67,13 +68,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.16 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.17 2001/08/14 20:31:49 jberndt Exp $"
+
+typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -128,14 +129,15 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.16 2001/04/17 23:00:31 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.17 2001/08/14 20:31:49 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGTrim {
+class FGTrim : public FGJSBBase
+{
 private:
 
   vector<FGTrimAxis*> TrimAxes;

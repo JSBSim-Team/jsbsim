@@ -49,10 +49,8 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.17 2001/07/28 15:29:53 apeden Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.18 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
-
-extern short debug_lvl;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

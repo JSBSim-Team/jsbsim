@@ -42,10 +42,8 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.20 2001/04/07 13:44:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.21 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
-
-extern short debug_lvl;
 
 /*****************************************************************************/
 

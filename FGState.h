@@ -62,6 +62,7 @@ INCLUDES
 #include <string>
 #include <map>
 #include "FGDefs.h"
+#include "FGJSBBase.h"
 #include "FGInitialCondition.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
@@ -71,7 +72,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.40 2001/08/11 13:03:33 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.41 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,20 +96,16 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.40 2001/08/11 13:03:33 jberndt Exp $
+    @version $Id: FGState.h,v 1.41 2001/08/14 20:31:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGState {
+class FGState : public FGJSBBase
+{
 public:
-  enum {ePhi=1, eTht, ePsi};
-  enum {eP=1, eQ, eR};
-  enum {eU=1, eV, eW};
-  enum {eDrag=1, eSide, eLift};
-
   /** Constructor
       @param Executive a pointer to the parent executive object */
   FGState(FGFDMExec*);

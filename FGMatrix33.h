@@ -55,13 +55,13 @@ INCLUDES
 #endif
 
 #include "FGColumnVector3.h"
-
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.4 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.5 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ class FGColumnVector3;
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
- class MatrixException /* :  public exception */
+class MatrixException : public FGJSBBase
 {
 public:
   string Message;
@@ -83,7 +83,7 @@ public:
 DECLARATION: FGMatrix33
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGMatrix33
+class FGMatrix33 : public FGJSBBase
 {
 public:
   FGMatrix33(void);

@@ -43,12 +43,13 @@ INCLUDES
 
 #include <string>
 #include "../FGDefs.h"
+#include "../FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.24 2001/03/22 17:58:19 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.25 2001/08/14 20:31:49 jberndt Exp $"
 
 using std::string;
 
@@ -80,7 +81,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.24 2001/03/22 17:58:19 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.25 2001/08/14 20:31:49 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -89,7 +90,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFCSComponent
+class FGFCSComponent : public FGJSBBase
 {
 public:
   /// Constructor
@@ -115,7 +116,7 @@ protected:
   eParam OutputIdx;
   float Output;
   bool IsOutput;
-  void Debug(void);
+  virtual void Debug(void);
 };
 
 #include "../FGFCS.h"

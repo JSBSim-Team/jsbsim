@@ -39,10 +39,8 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.16 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.17 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

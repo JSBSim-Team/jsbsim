@@ -39,10 +39,8 @@ INCLUDES
 
 #include "FGGradient.h"
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.11 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.12 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

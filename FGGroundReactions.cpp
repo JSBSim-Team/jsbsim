@@ -37,10 +37,8 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.13 2001/08/09 23:46:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.14 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

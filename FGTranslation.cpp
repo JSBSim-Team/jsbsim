@@ -69,10 +69,8 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.28 2001/07/29 15:35:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.29 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

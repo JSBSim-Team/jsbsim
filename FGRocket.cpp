@@ -41,10 +41,8 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.26 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.27 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

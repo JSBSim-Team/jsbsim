@@ -39,10 +39,8 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.14 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.15 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

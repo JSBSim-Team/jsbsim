@@ -23,11 +23,9 @@
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
  
- 
  HISTORY
 --------------------------------------------------------------------------------
 7/1/99   TP   Created
- 
  
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -50,24 +48,42 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGFDMExec.h"
+#include "FGJSBBase.h"
 #include "FGAtmosphere.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.27 2001/07/28 15:30:56 apeden Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/*******************************************************************************
-CLASS DECLARATION
-*******************************************************************************/
-
-typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
-
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.28 2001/08/14 20:31:49 jberndt Exp $"
 #define jsbFPSTOKTS 0.5924838
 #define jsbKTSTOFPS 1.6878099
 
+typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 
-/* USAGE NOTES
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Takes a set of initial conditions and provide a kinematically consistent set
+    of body axis velocity components, euler angles, and altitude.  This class
+    does not attempt to trim the model i.e. the sim will most likely start in a
+    very dynamic state (unless, of course, you have chosen your IC's wisely)
+    even after setting it up with this class.
+
+   USAGE NOTES
+
    With a valid object of FGFDMExec and an aircraft model loaded
    FGInitialCondition fgic=new FGInitialCondition(FDMExec);
    fgic->SetVcalibratedKtsIC()
@@ -84,6 +100,7 @@ typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
    FDMExec->RunIC(fgic)
    
    Speed:
+   
 	 Since vc, ve, vt, and mach all represent speed, the remaining
 	 three are recalculated each time one of them is set (using the
 	 current altitude).  The most recent speed set is remembered so 
@@ -93,10 +110,12 @@ typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 	 most recent speed set.
    
    Alpha,Gamma, and Theta:
-     This class assumes that it will be used to set up the sim for a
+   
+   This class assumes that it will be used to set up the sim for a
 	 steady, zero pitch rate condition. Since any two of those angles 
    specifies the third gamma (flight path angle) is favored when setting
    alpha and theta and alpha is favored when setting gamma. i.e.
+   
     	set alpha : recalculate theta using gamma as currently set
 		  set theta : recalculate alpha using gamma as currently set
 		  set gamma : recalculate theta using alpha as currently set
@@ -106,12 +125,20 @@ typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 	 
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
- 
+   @author Anthony K. Peden
+   @version $Id: FGInitialCondition.h,v 1.28 2001/08/14 20:31:49 jberndt Exp $
 */
-class FGInitialCondition {
-public:
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DECLARATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+class FGInitialCondition : public FGJSBBase
+{
+public:
+  /// Constructor
   FGInitialCondition(FGFDMExec *fdmex);
+  /// Destructor
   ~FGInitialCondition();
 
   void SetVcalibratedKtsIC(float tt);
@@ -247,7 +274,6 @@ private:
 
   bool findInterval(float x,float guess);
   bool solve(float *y, float x);
-  void Debug(void);
 };
 
 #endif

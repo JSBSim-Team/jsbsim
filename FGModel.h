@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGDefs.h"
+#include "FGJSBBase.h"
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -57,7 +58,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.25 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.26 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -102,7 +103,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGModel
+class FGModel : public FGJSBBase
 {
 public:
 
@@ -128,13 +129,6 @@ public:
   virtual int  GetRate(void)   {return rate;}
 
 protected:
-  enum {eU=1, eV, eW};
-  enum {eNorth=1, eEast, eDown};
-  enum {eP=1, eQ, eR};
-  enum {eL=1, eM, eN};
-  enum {eX=1, eY, eZ};
-  enum {ePhi=1, eTht, ePsi};
-
   int exe_ctr;
   int rate;
 
@@ -153,7 +147,6 @@ protected:
   FGPosition*        Position;
   FGAuxiliary*       Auxiliary;
   FGOutput*          Output;
-  virtual void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

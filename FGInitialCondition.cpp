@@ -55,10 +55,8 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.33 2001/08/01 11:49:09 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.34 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
-
-extern short debug_lvl;
 
 //******************************************************************************
 
@@ -627,9 +625,4 @@ bool FGInitialCondition::solve(float *y,float x) {
 }
 
 //******************************************************************************
-
-void FGInitialCondition::Debug(void)
-{
-    //TODO: Add your source code here
-}
 

@@ -50,10 +50,8 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.58 2001/08/07 23:05:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.59 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

@@ -48,12 +48,13 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 #include "FGFDMExec.h"
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.39 2001/08/07 23:05:46 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.40 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -161,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.39 2001/08/07 23:05:46 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.40 2001/08/14 20:31:49 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -174,7 +175,7 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGLGear
+class FGLGear : public FGJSBBase
 {
 public:
   /// Brake grouping enumerators
@@ -229,7 +230,6 @@ public:
   inline float GetstaticFCoeff(void) { return staticFCoeff;}
 
 private:
-  enum {eX=1, eY, eZ};
   FGColumnVector3 vXYZ;
   FGColumnVector3 vMoment;
   FGColumnVector3 vWhlBodyVec;

@@ -37,26 +37,24 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.1 2001/08/11 21:16:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.2 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGJSBBase::FGJSBBase(void) {
-/*
-  highint[5]  = {27, '[', '1', 'm', '\0'      };
-  halfint[5]  = {27, '[', '2', 'm', '\0'      };
-  normint[6]  = {27, '[', '2', '2', 'm', '\0' };
-  reset[5]    = {27, '[', '0', 'm', '\0'      };
-  underon[5]  = {27, '[', '4', 'm', '\0'      };
-  underoff[6] = {27, '[', '2', '4', 'm', '\0' };
-  fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
-  fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
-  fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
-  fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
-  fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
-*/
-}
+char FGJSBBase::highint[5]  = {27, '[', '1', 'm', '\0'      };
+char FGJSBBase::halfint[5]  = {27, '[', '2', 'm', '\0'      };
+char FGJSBBase::normint[6]  = {27, '[', '2', '2', 'm', '\0' };
+char FGJSBBase::reset[5]    = {27, '[', '0', 'm', '\0'      };
+char FGJSBBase::underon[5]  = {27, '[', '4', 'm', '\0'      };
+char FGJSBBase::underoff[6] = {27, '[', '2', '4', 'm', '\0' };
+char FGJSBBase::fgblue[6]   = {27, '[', '3', '4', 'm', '\0' };
+char FGJSBBase::fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
+char FGJSBBase::fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
+char FGJSBBase::fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
+char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
+
+short FGJSBBase::debug_lvl  = 0;
 

@@ -41,10 +41,8 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.24 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.25 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

@@ -54,10 +54,8 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.47 2001/07/28 15:33:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.48 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

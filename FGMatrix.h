@@ -54,12 +54,13 @@ INCLUDES
    using std::string;
 #endif
 
+#include "FGJSBBase.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.31 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.32 2001/08/14 20:31:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,7 +82,7 @@ public:
 DECLARATION: FGMatrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGMatrix
+class FGMatrix : public FGJSBBase
 {
 public:
   FGMatrix(unsigned int r, unsigned int c);
@@ -130,7 +131,6 @@ private:
   void TransposeSquare(void);
   void TransposeNonSquare(void);
   unsigned int rowCtr, colCtr;
-  void Debug(void);
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

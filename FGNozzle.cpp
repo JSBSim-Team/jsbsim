@@ -44,10 +44,8 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.20 2001/07/13 14:52:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.21 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

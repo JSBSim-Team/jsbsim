@@ -58,10 +58,8 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.52 2001/08/11 13:47:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.53 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
-
-extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION

@@ -13,7 +13,8 @@ print "FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\
 print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRocket.o\\\n";
 print "FGTurboShaft.o FGTurboJet.o FGTurboProp.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
-print "FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o\n\n";
+print "FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o\\\n";
+print "FGJSBBase.o\n\n";
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a\n";
 print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents\n\n";
 print "libFCSComponents.a:\n";
@@ -21,7 +22,9 @@ print "	cd filtersjb; make -fMakefile.solo; cd ..\n\n";
 @files =  glob("*.cpp");
 foreach $file (@files) {
   system "g++ -MM $file";
-  print "	\$(CC) \$(INCLUDES) \$(CCOPTS) -c $file\n\n";
+  print "	\$(CC) \$(INCLUDES) \$(CCOPTS) -o";
+  print substr($file,0,length($file)-4);
+  print ".o -c $file\n\n";
 }
 print "\n"; 
 print "x15trim.o:x15trim.cpp\n";

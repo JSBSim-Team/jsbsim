@@ -61,9 +61,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-extern short debug_lvl;
-
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.5 2001/08/09 23:46:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.6 2001/08/14 20:31:49 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,41 +129,6 @@ float FGFactorGroup::TotalValue(void) {
   return totalsum;
 }        
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-/*
-string FGFactorGroup::GetCoefficientStrings(void) {
-  int i;
-  string CoeffStrings;
-  
-  CoeffStrings += name;
-  CoeffStrings += ", ";
-  CoeffStrings += FGCoefficient::Getname();
-  for(i=0;i<sum.size();i++) {
-    CoeffStrings += ", ";
-    CoeffStrings += sum[i]->Getname();
-  }
-  return CoeffStrings;    
-}
-*/
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-/*
-string FGFactorGroup::GetCoefficientValues(void) {
-    int i;
-    char buffer[10];
-    string values;
-    
-    snprintf(buffer,10,"%9.6f",SDtotal);
-    values += string(buffer);
-    values += ", ";
-    snprintf(buffer,10,"%9.6f",FGCoefficient::GetSD() );
-    values += string(buffer);
-    values += ", ";
-    for(i=0;i<sum.size();i++) {
-       values += sum[i]->GetCoefficientValues();
-    }
-    return values;
-}       
-*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 void FGFactorGroup::Debug(void)
