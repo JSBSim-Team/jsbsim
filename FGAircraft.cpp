@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.92 2001/10/29 17:47:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.93 2001/10/31 12:33:44 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,13 +104,15 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vXYZrp(3),
     vXYZep(3),
     vDXYZcg(3),
-    vBodyAccel(3)
+    vBodyAccel(3),
+    vNcg(3)
 {
   Name = "FGAircraft";
   alphaclmin = alphaclmax = 0;
   HTailArea = VTailArea = HTailArm = VTailArm = 0.0;
   lbarh = lbarv = vbarh = vbarv = 0.0;
   WingIncidence=0;
+  impending_stall = false;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -175,6 +177,16 @@ bool FGAircraft::Run(void)
     vMoments += GroundReactions->GetMoments();
     
     vBodyAccel = vForces/MassBalance->GetMass();
+    
+    vNcg = vBodyAccel*INVGRAVITY;
+    
+    if(alphaclmax != 0) {
+      if(Translation->Getalpha() > 0.9*alphaclmax) {
+        impending_stall=true;
+      } else {
+         impending_stall=false;
+      }
+    }      
     
     return false;
   } else {                               // skip Run() execution this time

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.69 2001/10/29 17:47:34 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.70 2001/10/31 12:33:44 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.69 2001/10/29 17:47:34 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.70 2001/10/31 12:33:44 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -189,6 +189,7 @@ public:
   inline FGColumnVector3& GetMoments(void) { return vMoments; }
   inline FGColumnVector3& GetForces(void) { return vForces; }
   inline FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
+  inline FGColumnVector3& GetNcg   (void)    { return vNcg; }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
   inline float GetXYZrp(int idx) { return vXYZrp(idx); }
@@ -198,6 +199,8 @@ public:
 
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
+  
+  inline bool GetStallWarn(void) { return impending_stall; }
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  SubSystems {
@@ -224,10 +227,13 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vBodyAccel;
+  FGColumnVector3 vNcg;
+
   float WingArea, WingSpan, cbar, WingIncidence;
   float HTailArea, VTailArea, HTailArm, VTailArm;
   float lbarh,lbarv,vbarh,vbarv;
   float alphaclmax,alphaclmin;
+  bool impending_stall;
   string CFGVersion;
   string AircraftName;
 
