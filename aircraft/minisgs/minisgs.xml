@@ -1,0 +1,446 @@
+<FDM_CONFIG NAME="sgstest" VERSION="1.57">
+<!--
+
+  File:        sgstest.xml
+  Author:      Mark Boslough
+
+  Function: Models a Schweizer SGS 1-36 Sailplane 
+  Notes:    Aerodynamic derivatives from NASA Technical Paper 3022
+            Scaled to 8-foot wingspan (r/c scale) glider
+            With 3 times the scaled weight distributed evenly
+            Relative CG position and control sensitivities adjusted
+-->
+
+  <METRICS>
+    <!--
+      // Wing area (ft^2)
+      // Wing span (ft)
+      // Wing avg. chord (ft)
+      // H. Tail Area (ft^2)
+      // Wing MAC to H.Tail MAC (ft)
+      // V. Tail Area (ft^2)
+      // Wing MAC to V.Tail MAC (ft)
+      // Ixx
+      // Iyy
+      // Izz
+      // Ixz
+      // Empty weight
+      // Center of gravity location, empty weight, in aircraft's own structural coord
+      //   system. X, Y, Z, in inches
+      // Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+      //  X, Y, Z, in inches
+      AC_AERORP   43.2  0.0    59.4
+    -->
+
+    AC_WINGAREA  42.23   <!-- SGS square feet  -->
+    AC_WINGSPAN  8.000   <!-- SGS ft           -->
+    AC_CHORD     0.5682  <!-- SGS ft           -->
+    AC_HTAILAREA 0.3949  <!-- SGS square feet  -->
+    AC_HTAILARM  1.561   <!-- guess   ft       -->
+    AC_VTAILAREA 0.6266  <!-- SGS  square feet -->
+
+    <!-- these are the scaled SGS values
+
+    AC_IXX    0.1584
+    AC_IYY    0.1049
+    AC_IZZ    0.2595
+    AC_IXZ    0.0085
+
+    -->
+
+    <!-- these are for the triple-weight scaled SGS -->
+
+    AC_IXX    0.4752 <!-- SGS -->
+    AC_IYY    0.3147 <!-- SGS -->
+    AC_IZZ    0.7785 <!-- SGS -->
+    AC_IXZ    0.0255 <!-- SGS -->
+    <!-- AC_EMPTYWT   900  SGS weight of research vehicle -->
+    <!-- AC_EMPTYWT   710  SGS -->
+    AC_EMPTYWT   11.07  <!-- three times what pure scaling would be -->
+    AC_AERORP    0.0  0.0 2.08 
+    AC_CGLOC     0.0 0.0 0.0      <!-- SGS inches -->
+    AC_POINTMASS 0.0 0.0 0.0 0.0  <!-- no pilot -->
+    AC_EYEPTLOC  0.0  0.0 0.0     <!-- made up -->
+    AC_ALPHALIMITS -0.87 0.87
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    <!--
+      MINISGS does not have proper gear set up
+      The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+      AC_GEAR
+      <name>                           name of gear entry - no spaces allowed
+      <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+      <spring constant>                spring constant in lbs/ft
+      <damping coefficient>            damping coefficient in lbs/ft/sec
+      <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+      <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+      <rolling friction coefficient>   Self-explanatory: rolling friction coefficient
+      <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+      <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
+      <max steer angle>                Maximum steerable angle in degrees
+      <retraction attribute>           <RETRACT | FIXED>
+    -->
+
+     AC_GEAR  NOSE        0.0 0.0 0.0 1800  600  0.5  0.8 0.02 STEERABLE NONE 20 FIXED
+     AC_GEAR  LEFT_MAIN   0.0 0.0 0.0 5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0 FIXED
+     AC_GEAR  RIGHT_MAIN  0.0 0.0 0.0 5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0 FIXED
+     AC_GEAR  TAIL_SKID  0.0 0.0 0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR  LEFT_TIP   0.0 0.0 0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR  RIGHT_TIP  0.0 0.0 0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+
+</UNDERCARRIAGE>
+
+  <!-- PROPULSION -->
+    MINISGS has no propulsion system!!
+  <!-- /PROPULSION-->
+
+  <FLIGHT_CONTROL NAME="c172">
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+    </COMPONENT>
+    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
+       ID            1
+       INPUT         0
+       MIN          -28
+       MAX           23
+       OUTPUT        FG_ELEVATOR_POS
+       GAIN          0.01745
+     </COMPONENT>
+     <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+       ID            2
+       INPUT        FG_AILERON_CMD
+       INPUT        FG_ROLL_TRIM_CMD
+       CLIPTO       -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            3
+       INPUT         FG_AILERON_CMD
+       MIN          -20
+       MAX           15
+       GAIN          0.01745
+       OUTPUT        FG_AILERON_POS
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+       ID            4
+       INPUT        FG_RUDDER_CMD
+       INPUT        FG_YAW_TRIM_CMD
+       CLIPTO       -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+       ID            5
+       INPUT        FG_RUDDER_CMD
+       MIN         -16
+       MAX          16
+       GAIN         0.01745
+       OUTPUT       FG_RUDDER_POS
+     </COMPONENT>
+     <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
+       ID           6
+       INPUT        FG_FLAPS_CMD
+       DETENTS      4
+                    0    0
+                    10   2
+                    20   1
+                    30   1
+       OUTPUT      FG_FLAPS_POS
+     </COMPONENT>
+   </FLIGHT_CONTROL>
+   <AERODYNAMICS>
+     <AXIS NAME="LIFT">
+       <GROUP NAME="CLb">
+         Basic_lift
+         <FACTOR NAME="kCLge" TYPE="VECTOR">
+            Change_in_lift_due_to_ground_effect
+            13
+            FG_HOVERB
+            FG_NONE
+            0.0   1.203
+            0.1   1.127
+            0.15  1.090
+            0.2   1.073
+            0.3   1.046
+            0.4   1.055
+            0.5   1.019
+            0.6   1.013
+            0.7   1.008
+            0.8   1.006
+            0.9   1.003
+            1.0   1.002
+            1.1   1.0
+         </FACTOR>
+         <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
+            Lift_due_to_alpha
+            39 <!-- SGS [/rad] read from Fig 3 -->
+            FG_ALPHA
+            FG_QBAR|FG_WINGAREA
+             -0.1047    0.00
+             -0.1222    0.06
+             -0.1369    0.12
+             -0.1571    0.19
+             -0.0524    0.26
+             -0.0349    0.33
+            -0.0175     0.43
+             0.0000     0.48
+             0.0175     0.56
+             0.0349     0.64
+             0.0524     0.71
+             0.0698     0.78
+             0.0873     0.82
+             0.1047      0.92
+             0.1222      0.99
+             0.1369      1.06
+             0.1571      1.10
+             0.1745      1.16
+             0.1920      1.22
+             0.2094      1.25
+             0.2269      1.26
+             0.2444      1.25
+             0.2618      1.24
+             0.2793      1.21
+             0.2967      1.16
+             0.3142      1.14
+             0.3316      1.14
+             0.3491      1.09
+             0.4363      0.98
+             0.5236      0.88
+             0.6109      0.83
+             0.6981      0.84
+             0.7854      0.82
+             0.8727      0.79
+             0.9599      0.74
+             0.6981      0.66
+             1.2217      0.47
+             1.3963      0.26
+             1.5708      0.03
+          </COEFFICIENT>
+       </GROUP>
+       <COEFFICIENT NAME="CLDe" TYPE="VALUE">
+         Lift_due_to_Elevator_Deflection
+         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         0.342 <!--  SGS [/rad, using 0.006/deg Fig 13(f) -->
+       </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="DRAG">
+      <COEFFICIENT NAME="CDo" TYPE="VALUE">
+         Drag_at_zero_lift
+         FG_QBAR|FG_WINGAREA
+         0.0007 <!-- SGS lifted from Michael Seligs UIUC file -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CDwbh" TYPE="TABLE">
+         Drag_due_to_alpha
+         21 <!-- SGS [/rad] read from Fig 3 -->
+         1
+         FG_ALPHA
+         FG_FLAPS_POS
+         FG_QBAR|FG_WINGAREA
+         -0.0175     0.010
+          0.0000     0.015
+          0.0175     0.020
+          0.0349     0.025
+          0.0524     0.030
+          0.0698     0.035
+          0.0873     0.040
+          0.1745     0.10
+          0.2618     0.23
+          0.3491     0.37
+          0.4363     0.50
+          0.5236     0.60
+          0.6109     0.76
+          0.6981     0.85
+          0.7854     0.96
+          0.8727     1.06
+          0.9599     1.14
+          0.6981     1.22
+          1.2217     1.38
+          1.3963     1.50
+          1.5708     1.46
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CDDe" TYPE="VECTOR">
+         Drag_due_to_Elevator_Deflection
+        3 <!-- CDDe = 0.114   SGS [/rad, using -0.002/deg Fig 13(d) -->
+        FG_ELEVATOR_POS
+        FG_QBAR|FG_WINGAREA
+        1.0    0.114
+        0       0
+       -1.0    0.114
+       </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="SIDE">
+       <COEFFICIENT NAME="CYb" TYPE="VALUE">
+         Side_force_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_BETA
+         -0.285 <!-- SGS [/rad], using -0.005/deg Fig 16(c) -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CYda" TYPE="VALUE">
+         Side_force_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
+         -0.0456 <!-- SGS [/rad], using -0.0008/deg Fig 16(f) neg is used -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
+         Side_force_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
+         0.188 <!-- SGS [/rad], using 0.0033/deg Fig 16(i) -->
+      </COEFFICIENT>
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+       <COEFFICIENT NAME="Clo" TYPE="VALUE">
+         Roll_moment_due_to_vertical_tail_incidence
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN
+         -4.303e-05 <!-- c172 -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Clb" TYPE="VALUE">
+         Roll_moment_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+         -0.0513 <!-- SGS [/rad], using -.0009/deg Fig 16(a) -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Clp" TYPE="VALUE">
+         Roll_moment_due_to_roll_rate_(roll_damping)
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROP
+         -0.47 <!-- SGS [/rad], Fig 16(j) suspect unit error in report -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Clr" TYPE="VALUE">
+         Roll_moment_due_to_yaw_rate
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
+         0.15 <!-- SGS [/rad], Fig 16(l) suspect unit error in report -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Clda" TYPE="VALUE">
+         Roll_moment_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         <!-- 0.126 SGS [/rad], using 0.0022/deg Fig 16(d) -->
+         0.250 <!-- SGS [/rad], doubled -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Cldr" TYPE="VALUE">
+         Roll_moment_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         0.0046 <!-- SGS [/rad], using -.00008/deg Fig 16(g) -->
+        </COEFFICIENT>
+      </AXIS>
+    <AXIS NAME="PITCH">
+      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+        Pitch_moment_due_to_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ALPHA
+        -0.573 <!-- SGS [/rad], using -0.01/deg, Fig 13(b) -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
+         Pitch_moment_due_to_pitch_rate
+         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_AEROQ
+         -9.0 <!-- SGS [/rad], using -9/rad, Fig 13(g) -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_ALPHADOT
+        -5.2 <!-- c172 -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+        Pitching_moment_at_zero_alpha
+        FG_QBAR|FG_WINGAREA|FG_CBAR
+        <!-- 0.040 SGS lifted from Michael Seligs UIUC file -->
+        0.000 <!-- SGS made up to give better performance -->
+      </COEFFICIENT>
+      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+        Pitch_moment_due_to_elevator_deflection
+        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
+       <!-- -0.1261 SGS [/rad], using -.0022/deg Fig 16(d) -->
+        -1.261 <!-- SGS [/rad], multiplied by 10 -->
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="YAW">
+       <COEFFICIENT NAME="Cnb" TYPE="VALUE">
+         Yaw_moment_due_to_beta
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
+         0.017 <!-- SGS [/rad], using .0003/deg Fig 16(b) -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Cnp" TYPE="VALUE">
+         Yaw_moment_due_to_roll_rate
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROP
+        -0.18 <!-- SGS [/rad], Fig 16(k) suspect unit error in report -->
+        </COEFFICIENT>
+       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
+         Yaw_moment_due_to_yaw_rate
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
+        -.025 <!-- SGS lifted from Michael Seligs UIUC file -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Cnda" TYPE="VALUE">
+         Yaw_moment_due_to_aileron
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
+         0.0115 <!-- SGS [/rad], using .0002/deg Fig 16(e) -->
+       </COEFFICIENT>
+       <COEFFICIENT NAME="Cndr" TYPE="VALUE">
+         Yaw_moment_due_to_rudder
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
+         -0.037 <!-- SGS [/rad], using -.00065/deg Fig 16(h) -->
+       </COEFFICIENT>
+    </AXIS>
+  </AERODYNAMICS>
+  <!--
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DONT USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+  -->
+  <OUTPUT NAME="JSBoutSGS.csv" TYPE="NONE">
+    RATE_IN_HZ       10
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+</FDM_CONFIG>
+

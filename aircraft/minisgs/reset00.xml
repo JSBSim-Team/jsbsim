@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up the aircraft to start off
+    from the runway in preparation for takeoff.
+  -->
+  UBODY       0.0
+  VBODY       0.0
+  WBODY       0.0
+  LATITUDE   47.0
+  LONGITUDE 122.0
+  PHI         0.0
+  THETA       0.0
+  PSI       150.0
+  ALTITUDE    5.5
+  WINDDIR     120.0
+  VWIND       20.0
+</initialize>

@@ -47,13 +47,14 @@ INCLUDES
 #  endif
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)||defined(__BORLANDCPP__)
+#pragma message("\n\nRedefining snprintf\n")
 #define snprintf _snprintf
 #endif
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.104 2002/02/27 14:36:51 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.105 2002/02/28 00:00:13 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -856,7 +857,9 @@ FGMatrix33& FGState::GetTb2s(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::ReportState(void) {
+void FGState::ReportState(void)
+{
+#if !defined(__BORLANDCPP__)
   char out[80], flap[10], gear[12];
   
   cout << endl << "  JSBSim State" << endl;
@@ -925,7 +928,7 @@ void FGState::ReportState(void) {
                     Position->GetVground()*fpstokts,
                     Position->GetGroundTrack()*radtodeg );
   cout << out;                                   
-
+#endif
 } 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
