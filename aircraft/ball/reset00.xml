@@ -4,16 +4,16 @@
     This file sets up the mk82 to start off
     from altitude.
   -->
-  UBODY     25442.0
-  VBODY         0.0
-  WBODY         0.0
-  LATITUDE      0.0
-  LONGITUDE    90.0
-  PHI           0.0
-  THETA         0.0
-  PSI          60.0
-  ALTITUDE 800000.0
-  WINDDIR       0.0
-  VWIND         0.0
+  UBODY    23976.6
+  VBODY        0.0
+  WBODY        0.0
+  LATITUDE     28.6
+  LONGITUDE  -80.5
+  PHI          0.0
+  THETA        0.0
+  PSI         90.0
+  ALTITUDE   918720.0
+  WINDDIR      0.0
+  VWIND        0.0
 </initialize>
 

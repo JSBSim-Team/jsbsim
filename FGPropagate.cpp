@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.13 2004/05/21 16:01:09 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.14 2004/05/25 11:46:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,8 +198,6 @@ bool FGPropagate::Run(void)
   // frame expressed in the horizontal local frame.
   vVel = Tb2l * vUVW;
 
-
-
   // First compute the time derivatives of the vehicles' state values.
 
   // Compute the body rotational accelerations based on the current body moments
@@ -212,7 +210,7 @@ bool FGPropagate::Run(void)
   FGColumnVector3 ecVel = Tl2ec*vVel;
   FGColumnVector3 ace = 2.0*omega*ecVel;
   vUVWdot -= Tl2b*(Tec2l*ace);
-  
+
   // Coriolis acceleration.
   FGColumnVector3 aeec = omega*(omega*vLocation);
   vUVWdot -= Tl2b*(Tec2l*aeec);
@@ -221,8 +219,6 @@ bool FGPropagate::Run(void)
   double r = GetRadius();
   FGColumnVector3 gAccel( 0.0, 0.0, Inertial->GetGAccel(r) );
   vUVWdot += Tl2b*gAccel;
-
- 
 
   // Compute the velocity of the vehicle with respect to the earth centered
   // frame expressed in the earth centered frame.
@@ -243,8 +239,6 @@ bool FGPropagate::Run(void)
   // Compute the quaternion orientation derivative on the current
   // body rotational rates
   FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR - Tl2b*omegaLocal );
-
-
 
   // Now do propagation.
   // This is for now done with a simple explicit euler scheme.
@@ -285,8 +279,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/h-dot-fps", this, &FGPropagate::Gethdot);
 
   PropertyManager->Tie("velocities/v-north-fps", this, eNorth, (PMF)&FGPropagate::GetVel);
-  PropertyManager->Tie("velocities/v-east-fps", this, eEast, &FGPropagate::GetVel);
-  PropertyManager->Tie("velocities/v-down-fps", this, eDown, &FGPropagate::GetVel);
+  PropertyManager->Tie("velocities/v-east-fps", this, eEast, (PMF)&FGPropagate::GetVel);
+  PropertyManager->Tie("velocities/v-down-fps", this, eDown, (PMF)&FGPropagate::GetVel);
 
   PropertyManager->Tie("velocities/u-fps", this, eU, (PMF)&FGPropagate::GetUVW);
   PropertyManager->Tie("velocities/v-fps", this, eV, (PMF)&FGPropagate::GetUVW);

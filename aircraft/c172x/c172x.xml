@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.21 2004/04/30 07:34:21 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.22 2004/05/25 11:46:47 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -584,6 +584,8 @@
     GROUND_REACTIONS OFF
     FCS              ON
     PROPULSION       OFF
+    PROPERTY         aero/alpha-rad
+    PROPERTY         aero/alpha-deg
   </OUTPUT>
 </FDM_CONFIG>
 

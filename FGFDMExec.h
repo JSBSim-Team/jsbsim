@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.68 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.69 2004/05/25 11:46:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.68 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.69 2004/05/25 11:46:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ public:
       @param path path to the control directory. For instance:
       "control".
   */
-  bool SetControlPath(string path) { ControlPath = path; return true; }
+//  bool SetControlPath(string path) { ControlPath = path; return true; }
 
 
   /// @name Top-level executive State and Model retrieval mechanism
@@ -223,8 +223,8 @@ public:
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
-  /// Retrieves the control path.
-  inline string GetControlPath(void)        {return ControlPath;}
+//  /// Retrieves the control path.
+//  inline string GetControlPath(void)        {return ControlPath;}
 
   string GetModelName(void) { return modelName; }
 
@@ -268,7 +268,7 @@ private:
 
   string AircraftPath;
   string EnginePath;
-  string ControlPath;
+//  string ControlPath;
 
   string CFGVersion;
   string Release;

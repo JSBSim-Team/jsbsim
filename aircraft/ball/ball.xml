@@ -24,13 +24,13 @@
       <COEFFICIENT NAME="CD" TYPE="VALUE">
          Drag
          aero/qbar-psf | metrics/Sw-sqft
-         0.01
+         0.0001
       </COEFFICIENT>
     </AXIS>
   </AERODYNAMICS>
 
   <OUTPUT NAME="JSBoutBall.csv" TYPE="CSV">
-    RATE_IN_HZ       4
+    RATE_IN_HZ      1 
     SIMULATION       ON
     ATMOSPHERE       OFF
     MASSPROPS        OFF

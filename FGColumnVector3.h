@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.25 2004/05/21 12:44:44 frohlich Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.26 2004/05/25 11:46:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.25 2004/05/21 12:44:44 frohlich Exp $
+    @version $Id: FGColumnVector3.h,v 1.26 2004/05/25 11:46:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,11 +95,11 @@ public:
   FGColumnVector3(void);
 
   /** Initialization by given values.
-    
+
       @param X value of the x-conponent.
       @param Y value of the y-conponent.
       @param Z value of the z-conponent.
-    
+
       Create a vector from the doubles given in the arguments.
    */
   FGColumnVector3(double X, double Y, double Z) {
@@ -110,9 +110,9 @@ public:
   }
 
   /** Copy constructor.
-    
+
       @param v Vector which is used for initialization.
-    
+
       Create copy of the vector given in the argument.
    */
   FGColumnVector3(const FGColumnVector3& v) {
@@ -128,61 +128,61 @@ public:
 
 
   /** Read access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double operator()(unsigned int idx) const { return Entry(idx); }
 
   /** Write access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double& operator()(unsigned int idx) { return Entry(idx); }
 
   /** Read access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-    
+
       This function is just a shortcut for the @ref double
       operator()(unsigned int idx) const function. It is
       used internally to access the elements in a more convenient way.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double Entry(unsigned int idx) const { return data[idx-1]; }
 
   /** Write access the entries of the vector.
-    
+
       @param idx the component index.
-    
+
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
-    
+
       This function is just a shortcut for the @ref double&
       operator()(unsigned int idx) function. It is
       used internally to access the elements in a more convenient way.
-    
+
       Note that the index given in the argument is unchecked.
    */
   double& Entry(unsigned int idx) { return data[idx-1]; }
 
   /** Assignment operator.
-    
+
       @param b source vector.
-    
+
       Copy the content of the vector given in the argument into *this.
    */
   FGColumnVector3& operator=(const FGColumnVector3& b) {
@@ -195,7 +195,7 @@ public:
   /**  Comparison operator.
 
       @param b other vector.
-    
+
       Returns true if both vectors are exactly the same.
    */
   bool operator==(const FGColumnVector3& b) const {
@@ -205,16 +205,16 @@ public:
   /** Comparison operator.
 
       @param b other vector.
-    
+
       Returns false if both vectors are exactly the same.
    */
   bool operator!=(const FGColumnVector3& b) const { return ! operator==(b); }
 
   /** Multiplication by a scalar.
-    
+
       @param scalar scalar value to multiply the vector with.
       @return The resulting vector from the multiplication with that scalar.
-    
+
       Multiply the vector with the scalar given in the argument.
    */
   FGColumnVector3 operator*(const double scalar) const {
@@ -222,19 +222,19 @@ public:
   }
 
   /** Multiply by 1/scalar.
-    
+
       @param scalar scalar value to devide the vector through.
       @return The resulting vector from the division through that scalar.
-    
+
       Multiply the vector with the 1/scalar given in the argument.
    */
   FGColumnVector3 operator/(const double scalar) const;
 
   /** Cross product multiplication.
-    
+
       @param v vector to multiply with.
       @return The resulting vector from the cross product multiplication.
-    
+
       Compute and return the cross product of the current vector with
       the given argument.
    */
@@ -294,13 +294,13 @@ public:
   }
 
   /** Length of the vector.
-    
+
       Compute and return the euclidean norm of this vector.
    */
   double Magnitude(void) const;
 
-  /** Normialze.
-    
+  /** Normalize.
+
       Normalize the vector to have the Magnitude() == 1.0. If the vector
       is equal to zero it is left untouched.
    */

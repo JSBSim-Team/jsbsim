@@ -51,9 +51,11 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGInertial.h"
 
+#include <iomanip>
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.88 2004/05/21 20:45:27 frohlich Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.89 2004/05/25 11:46:46 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,22 +91,17 @@ FGOutput::~FGOutput()
 bool FGOutput::Run(void)
 {
   if (enabled) {
-    if (!FGModel::Run()) {
-
-      if (Type == otSocket) {
-        SocketOutput();
-      } else if (Type == otCSV) {
-        DelimitedOutput(Filename);
-      } else if (Type == otTerminal) {
-        // Not done yet
-      } else if (Type == otNone) {
-        // Do nothing
-      } else {
-        // Not a valid type of output
-      }
-    return false;
+    if (FGModel::Run()) return true;
+    if (Type == otSocket) {
+      SocketOutput();
+    } else if (Type == otCSV) {
+      DelimitedOutput(Filename);
+    } else if (Type == otTerminal) {
+      // Not done yet
+    } else if (Type == otNone) {
+      // Do nothing
     } else {
-    return true;
+      // Not a valid type of output
     }
   }
   return false;
@@ -263,8 +260,8 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssVelocities) {
     outstream << ", ";
     outstream << Auxiliary->Getqbar() << ", ";
-    outstream << Auxiliary->GetVt() << ", ";
-    outstream << Propagate->GetUVW() << ", ";
+    outstream << setprecision(12) << Auxiliary->GetVt() << ", ";
+    outstream << setprecision(12) << Propagate->GetUVW() << ", ";
     outstream << Auxiliary->GetAeroUVW() << ", ";
     outstream << Propagate->GetVel();
   }
@@ -293,8 +290,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << ", ";
     outstream << Propagate->Geth() << ", ";
     outstream << Propagate->GetEuler() << ", ";
-    outstream << Auxiliary->Getalpha() << ", ";
-    outstream << Auxiliary->Getbeta() << ", ";
+    outstream << Auxiliary->Getalpha(inDegrees) << ", ";
+    outstream << Auxiliary->Getbeta(inDegrees) << ", ";
     outstream << Propagate->GetLocation().GetLatitudeDeg() << ", ";
     outstream << Propagate->GetLocation().GetLongitudeDeg() << ", ";
     outstream << Propagate->GetDistanceAGL() << ", ";
@@ -413,7 +410,7 @@ void FGOutput::SocketOutput(void)
   socket->Append(Propagate->GetLocation().GetLatitudeDeg());
   socket->Append(Propagate->GetLocation().GetLongitudeDeg());
   socket->Append(Auxiliary->Getqbar());
-  socket->Append(Auxiliary->Getalpha());
+  socket->Append(Auxiliary->Getalpha(inDegrees));
   socket->Append(Aircraft->GetMoments(eL));
   socket->Append(Aircraft->GetMoments(eM));
   socket->Append(Aircraft->GetMoments(eN));
@@ -611,10 +608,14 @@ void FGOutput::Debug(int from)
       if (SubSystems & ssAtmosphere)      cout << "    Atmosphere parameters logged" << endl;
       if (SubSystems & ssMassProps)       cout << "    Mass parameters logged" << endl;
       if (SubSystems & ssCoefficients)    cout << "    Coefficient parameters logged" << endl;
-      if (SubSystems & ssPropagate)        cout << "   Propagate parameters logged" << endl;
+      if (SubSystems & ssPropagate)       cout << "    Propagate parameters logged" << endl;
       if (SubSystems & ssGroundReactions) cout << "    Ground parameters logged" << endl;
       if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
       if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;
+      if (OutputProperties.size() > 0)    cout << "    Properties logged:" << endl;
+      for (unsigned int i=0;i<OutputProperties.size();i++) {
+        cout << "      - " << OutputProperties[i]->GetName() << endl;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

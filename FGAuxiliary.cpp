@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.58 2004/05/21 20:45:35 frohlich Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.59 2004/05/25 11:46:45 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,109 +266,53 @@ double FGAuxiliary::GetCrossWind(void)
 void FGAuxiliary::bind(void)
 {
   typedef double (FGAuxiliary::*PMF)(int) const;
-  PropertyManager->Tie("velocities/vc-fps", this,
-                       &FGAuxiliary::GetVcalibratedFPS);
-  PropertyManager->Tie("velocities/vc-kts", this,
-                       &FGAuxiliary::GetVcalibratedKTS);
-  PropertyManager->Tie("velocities/ve-fps", this,
-                       &FGAuxiliary::GetVequivalentFPS);
-  PropertyManager->Tie("velocities/ve-kts", this,
-                       &FGAuxiliary::GetVequivalentKTS);
-  PropertyManager->Tie("velocities/machU", this,
-                       &FGAuxiliary::GetMachU);
-  PropertyManager->Tie("velocities/tat-r", this,
-                       &FGAuxiliary::GetTotalTemperature);
-  PropertyManager->Tie("velocities/tat-c", this,
-                       &FGAuxiliary::GetTAT_C);
-  PropertyManager->Tie("velocities/pt-lbs_sqft", this,
-                       &FGAuxiliary::GetTotalPressure);
-  PropertyManager->Tie("velocities/p-aero-rad_sec", this,1,
-                       (PMF)&FGAuxiliary::GetAeroPQR);
-  PropertyManager->Tie("velocities/q-aero-rad_sec", this,2,
-                       (PMF)&FGAuxiliary::GetAeroPQR);
-  PropertyManager->Tie("velocities/r-aero-rad_sec", this,3,
-                       (PMF)&FGAuxiliary::GetAeroPQR);
-
-  PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this,1,
-                       (PMF)&FGAuxiliary::GetPilotAccel);
-  PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this,2,
-                       (PMF)&FGAuxiliary::GetPilotAccel);
-  PropertyManager->Tie("accelerations/a-pilot-z-ft_sec2", this,3,
-                       (PMF)&FGAuxiliary::GetPilotAccel);
-  PropertyManager->Tie("accelerations/n-pilot-x-norm", this,1,
-                       (PMF)&FGAuxiliary::GetNpilot);
-  PropertyManager->Tie("accelerations/n-pilot-y-norm", this,2,
-                       (PMF)&FGAuxiliary::GetNpilot);
-  PropertyManager->Tie("accelerations/n-pilot-z-norm", this,3,
-                       (PMF)&FGAuxiliary::GetNpilot);
-  PropertyManager->Tie("position/epa-rad", this,
-                       &FGAuxiliary::GetEarthPositionAngle);
-  PropertyManager->Tie("velocities/phidot-rad_sec", this,1,
-                       (PMF)&FGAuxiliary::GetEulerRates);
-  PropertyManager->Tie("velocities/thetadot-rad_sec", this,2,
-                       (PMF)&FGAuxiliary::GetEulerRates);
-  PropertyManager->Tie("velocities/psidot-rad_sec", this,3,
-                       (PMF)&FGAuxiliary::GetEulerRates);
-
-  /* PropertyManager->Tie("atmosphere/headwind-fps", this,
-                       &FGAuxiliary::GetHeadWind,
-                       true);
-  PropertyManager->Tie("atmosphere/crosswind-fps", this,
-                       &FGAuxiliary::GetCrossWind,
-                       true); */
-  PropertyManager->Tie("velocities/u-aero-fps", this,1,
-                      (PMF)&FGAuxiliary::GetAeroUVW);
-  PropertyManager->Tie("velocities/v-aero-fps", this,2,
-                      (PMF)&FGAuxiliary::GetAeroUVW);
-  PropertyManager->Tie("velocities/w-aero-fps", this,3,
-                      (PMF)&FGAuxiliary::GetAeroUVW);
-  PropertyManager->Tie("aero/alpha-rad", this,
-                      &FGAuxiliary::Getalpha,
-                      &FGAuxiliary::Setalpha,
-                      true);
-  PropertyManager->Tie("aero/beta-rad", this,
-                      &FGAuxiliary::Getbeta,
-                      &FGAuxiliary::Setbeta,
-                      true);
-  PropertyManager->Tie("aero/mag-beta-rad", this,
-                      &FGAuxiliary::GetMagBeta);
-  PropertyManager->Tie("aero/qbar-psf", this,
-                      &FGAuxiliary::Getqbar,
-                      &FGAuxiliary::Setqbar,
-                      true);
-  PropertyManager->Tie("aero/qbarUW-psf", this,
-                      &FGAuxiliary::GetqbarUW,
-                      &FGAuxiliary::SetqbarUW,
-                      true);
-  PropertyManager->Tie("aero/qbarUV-psf", this,
-                      &FGAuxiliary::GetqbarUV,
-                      &FGAuxiliary::SetqbarUV,
-                      true);
-  PropertyManager->Tie("velocities/vt-fps", this,
-                      &FGAuxiliary::GetVt,
-                      &FGAuxiliary::SetVt,
-                      true);
-  PropertyManager->Tie("velocities/mach-norm", this,
-                      &FGAuxiliary::GetMach,
-                      &FGAuxiliary::SetMach,
-                      true);
-  PropertyManager->Tie("aero/alphadot-rad_sec", this,
-                      &FGAuxiliary::Getadot,
-                      &FGAuxiliary::Setadot,
-                      true);
-  PropertyManager->Tie("aero/betadot-rad_sec", this,
-                      &FGAuxiliary::Getbdot,
-                      &FGAuxiliary::Setbdot,
-                      true);
-  PropertyManager->Tie("flight-path/gamma-rad", this,
-                      &FGAuxiliary::GetGamma,
-                      &FGAuxiliary::SetGamma);
-  PropertyManager->Tie("velocities/vg-fps", this,
-                      &FGAuxiliary::GetVground);
-  PropertyManager->Tie("flight-path/psi-gt-rad", this,
-                      &FGAuxiliary::GetGroundTrack);
+  typedef double (FGAuxiliary::*PF)(void) const;
+  PropertyManager->Tie("velocities/vc-fps", this, &FGAuxiliary::GetVcalibratedFPS);
+  PropertyManager->Tie("velocities/vc-kts", this, &FGAuxiliary::GetVcalibratedKTS);
+  PropertyManager->Tie("velocities/ve-fps", this, &FGAuxiliary::GetVequivalentFPS);
+  PropertyManager->Tie("velocities/ve-kts", this, &FGAuxiliary::GetVequivalentKTS);
+  PropertyManager->Tie("velocities/machU", this, &FGAuxiliary::GetMachU);
+  PropertyManager->Tie("velocities/tat-r", this, &FGAuxiliary::GetTotalTemperature);
+  PropertyManager->Tie("velocities/tat-c", this, &FGAuxiliary::GetTAT_C);
+  PropertyManager->Tie("velocities/pt-lbs_sqft", this, &FGAuxiliary::GetTotalPressure);
+  PropertyManager->Tie("velocities/p-aero-rad_sec", this, eX, (PMF)&FGAuxiliary::GetAeroPQR);
+  PropertyManager->Tie("velocities/q-aero-rad_sec", this, eY, (PMF)&FGAuxiliary::GetAeroPQR);
+  PropertyManager->Tie("velocities/r-aero-rad_sec", this, eZ, (PMF)&FGAuxiliary::GetAeroPQR);
+  PropertyManager->Tie("velocities/phidot-rad_sec", this, ePhi, (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("velocities/thetadot-rad_sec", this, eTht, (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("velocities/psidot-rad_sec", this, ePsi, (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("velocities/u-aero-fps", this, eU, (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("velocities/v-aero-fps", this, eV, (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("velocities/w-aero-fps", this, eW, (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("velocities/vt-fps", this, &FGAuxiliary::GetVt, &FGAuxiliary::SetVt, true);
+  PropertyManager->Tie("velocities/mach-norm", this, &FGAuxiliary::GetMach, &FGAuxiliary::SetMach, true);
+  PropertyManager->Tie("velocities/vg-fps", this, &FGAuxiliary::GetVground);
+  PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this, eX, (PMF)&FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this, eY, (PMF)&FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/a-pilot-z-ft_sec2", this, eZ, (PMF)&FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/n-pilot-x-norm", this, eX, (PMF)&FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("position/epa-rad", this, &FGAuxiliary::GetEarthPositionAngle);
+  /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
+  PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */
+  PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha, &FGAuxiliary::Setalpha, true);
+  PropertyManager->Tie("aero/beta-rad", this, (PF)&FGAuxiliary::Getbeta, &FGAuxiliary::Setbeta, true);
+  PropertyManager->Tie("aero/mag-beta-rad", this, (PF)&FGAuxiliary::GetMagBeta);
+  PropertyManager->Tie("aero/alpha-deg", this, inDegrees, (PMF)&FGAuxiliary::Getalpha);
+  PropertyManager->Tie("aero/beta-deg", this, inDegrees, (PMF)&FGAuxiliary::Getbeta);
+  PropertyManager->Tie("aero/mag-beta-deg", this, inDegrees, (PMF)&FGAuxiliary::GetMagBeta);
+  PropertyManager->Tie("aero/qbar-psf", this, &FGAuxiliary::Getqbar, &FGAuxiliary::Setqbar, true);
+  PropertyManager->Tie("aero/qbarUW-psf", this, &FGAuxiliary::GetqbarUW, &FGAuxiliary::SetqbarUW, true);
+  PropertyManager->Tie("aero/qbarUV-psf", this, &FGAuxiliary::GetqbarUV, &FGAuxiliary::SetqbarUV, true);
+  PropertyManager->Tie("aero/alphadot-rad_sec", this, (PF)&FGAuxiliary::Getadot, &FGAuxiliary::Setadot, true);
+  PropertyManager->Tie("aero/betadot-rad_sec", this, (PF)&FGAuxiliary::Getbdot, &FGAuxiliary::Setbdot, true);
+  PropertyManager->Tie("aero/alphadot-deg_sec", this, inDegrees, (PMF)&FGAuxiliary::Getadot);
+  PropertyManager->Tie("aero/betadot-deg_sec", this, inDegrees, (PMF)&FGAuxiliary::Getbdot);
   PropertyManager->Tie("aero/h_b-cg-ft", this, &FGAuxiliary::GetHOverBCG);
   PropertyManager->Tie("aero/h_b-mac-ft", this, &FGAuxiliary::GetHOverBMAC);
+  PropertyManager->Tie("flight-path/gamma-rad", this, &FGAuxiliary::GetGamma, &FGAuxiliary::SetGamma);
+  PropertyManager->Tie("flight-path/psi-gt-rad", this, &FGAuxiliary::GetGroundTrack);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -386,6 +330,15 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("velocities/q-aero-rad_sec");
   PropertyManager->Untie("velocities/r-aero-rad_sec");
   PropertyManager->Untie("velocities/pt-lbs_sqft");
+  PropertyManager->Untie("velocities/phidot-rad_sec");
+  PropertyManager->Untie("velocities/thetadot-rad_sec");
+  PropertyManager->Untie("velocities/psidot-rad_sec");
+  PropertyManager->Untie("velocities/u-aero-fps");
+  PropertyManager->Untie("velocities/v-aero-fps");
+  PropertyManager->Untie("velocities/w-aero-fps");
+  PropertyManager->Untie("velocities/vt-fps");
+  PropertyManager->Untie("velocities/mach-norm");
+  PropertyManager->Untie("velocities/vg-fps");
   PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
@@ -393,29 +346,25 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("accelerations/n-pilot-y-norm");
   PropertyManager->Untie("accelerations/n-pilot-z-norm");
   PropertyManager->Untie("position/epa-rad");
-  PropertyManager->Untie("velocities/phidot-rad_sec");
-  PropertyManager->Untie("velocities/thetadot-rad_sec");
-  PropertyManager->Untie("velocities/psidot-rad_sec");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
-  PropertyManager->Untie("velocities/u-aero-fps");
-  PropertyManager->Untie("velocities/v-aero-fps");
-  PropertyManager->Untie("velocities/w-aero-fps");
-  PropertyManager->Untie("aero/alpha-rad");
-  PropertyManager->Untie("aero/beta-rad");
   PropertyManager->Untie("aero/qbar-psf");
   PropertyManager->Untie("aero/qbarUW-psf");
   PropertyManager->Untie("aero/qbarUV-psf");
-  PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocities/mach-norm");
+  PropertyManager->Untie("aero/alpha-rad");
+  PropertyManager->Untie("aero/beta-rad");
+//  PropertyManager->Untie("aero/alpha-deg");
+//  PropertyManager->Untie("aero/beta-deg");
   PropertyManager->Untie("aero/alphadot-rad_sec");
   PropertyManager->Untie("aero/betadot-rad_sec");
   PropertyManager->Untie("aero/mag-beta-rad");
-  PropertyManager->Untie("flight-path/gamma-rad");
-  PropertyManager->Untie("velocities/vg-fps");
-  PropertyManager->Untie("flight-path/psi-gt-rad");
+//  PropertyManager->Untie("aero/alphadot-deg_sec");
+//  PropertyManager->Untie("aero/betadot-deg_sec");
+//  PropertyManager->Untie("aero/mag-beta-deg");
   PropertyManager->Untie("aero/h_b-cg-ft");
   PropertyManager->Untie("aero/h_b-mac-ft");
+  PropertyManager->Untie("flight-path/gamma-rad");
+  PropertyManager->Untie("flight-path/psi-gt-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

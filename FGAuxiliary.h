@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.46 2004/05/21 12:52:54 frohlich Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.47 2004/05/25 11:46:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.46 2004/05/21 12:52:54 frohlich Exp $
+    @version $Id: FGAuxiliary.h,v 1.47 2004/05/25 11:46:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,6 +153,18 @@ public:
   double Getadot    (void) const { return adot;       }
   double Getbdot    (void) const { return bdot;       }
   double GetMagBeta (void) const { return fabs(beta); }
+
+  double Getalpha   (int unit) const { if (unit == inDegrees) return alpha*radtodeg;
+                                       else cerr << "Bad units" << endl; return 0.0;}
+  double Getbeta    (int unit) const { if (unit == inDegrees) return beta*radtodeg;
+                                       else cerr << "Bad units" << endl; return 0.0;}
+  double Getadot    (int unit) const { if (unit == inDegrees) return adot*radtodeg;
+                                       else cerr << "Bad units" << endl; return 0.0;}
+  double Getbdot    (int unit) const { if (unit == inDegrees) return bdot*radtodeg;
+                                       else cerr << "Bad units" << endl; return 0.0;}
+  double GetMagBeta (int unit) const { if (unit == inDegrees) return fabs(beta)*radtodeg;
+                                       else cerr << "Bad units" << endl; return 0.0;}
+
   double Getqbar    (void) const { return qbar;       }
   double GetqbarUW  (void) const { return qbarUW;     }
   double GetqbarUV  (void) const { return qbarUV;     }

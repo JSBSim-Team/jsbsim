@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.64 2004/04/30 12:34:57 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.65 2004/05/25 11:46:45 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.64 2004/04/30 12:34:57 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.65 2004/05/25 11:46:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ public:
              such as a propeller. This resisting effect must be provided to the
              engine model.
       @return Thrust in pounds */
-  virtual double Calculate(double PowerRequired) {return 0.0;};
+  virtual double Calculate(double PowerRequired) {return 0.0;}
 
   /** Reduces the fuel in the active tanks by the amount required.
       This function should be called from within the
