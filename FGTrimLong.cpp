@@ -406,7 +406,9 @@ bool FGTrimLong::DoTrim(void) {
         if(checkLimits(udotf,dth,0,1) == false) {
           cout << "    Sorry, udot doesn't appear to be trimmable" << endl;
           cout << "    Resetting throttles to zero" << endl;
+          setThrottlesPct(0);
           fdmex->GetFCS()->SetThrottleCmd(-1,0);
+          fdmex->RunIC(fgic);
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
