@@ -55,14 +55,16 @@ INCLUDES
 #include "FGModel.h"
 #include "FGPropulsion.h"
 #include "FGConfigFile.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 #include "FGLGear.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.61 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.62 2001/07/28 15:22:43 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +89,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.61 2001/07/26 23:11:04 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.62 2001/07/28 15:22:43 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -151,12 +153,12 @@ public:
   inline float GetWingSpan(void) { return WingSpan; }
   /// Gets the average wing chord
   inline float Getcbar(void) { return cbar; }
-  inline FGColumnVector& GetMoments(void) { return vMoments; }
-  inline FGColumnVector& GetForces(void) { return vForces; }
-  inline FGColumnVector& GetAeroBodyForces(void) { return vAeroBodyForces; }
+  inline FGColumnVector3& GetMoments(void) { return vMoments; }
+  inline FGColumnVector3& GetForces(void) { return vForces; }
+  inline FGColumnVector3& GetAeroBodyForces(void) { return vAeroBodyForces; }
   inline float GetAeroBodyForces(int axis) { return vAeroBodyForces(axis); }
-  inline FGColumnVector& GetXYZrp(void) { return vXYZrp; }
-  inline FGColumnVector& GetXYZep(void) { return vXYZep; }
+  inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
+  inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
   inline float GetXYZrp(int idx) { return vXYZrp(idx); }
   inline float GetXYZep(int idx) { return vXYZep(idx); }
   inline float GetAlphaCLMax(void) { return alphaclmax; }
@@ -194,13 +196,13 @@ private:
   void FMGear(void);
   void FMMass(void);
   void FMProp(void);
-  FGColumnVector vMoments;
-  FGColumnVector vForces;
-  FGColumnVector vXYZrp;
-  FGColumnVector vXYZep;
-  FGColumnVector vEuler;
-  FGColumnVector vDXYZcg;
-  FGColumnVector vAeroBodyForces;
+  FGColumnVector3 vMoments;
+  FGColumnVector3 vForces;
+  FGColumnVector3 vXYZrp;
+  FGColumnVector3 vXYZep;
+  FGColumnVector3 vEuler;
+  FGColumnVector3 vDXYZcg;
+  FGColumnVector3 vAeroBodyForces;
   float alpha, beta;
   float WingArea, WingSpan, cbar;
   float alphaclmax,alphaclmin;

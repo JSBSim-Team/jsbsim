@@ -139,7 +139,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.81 2001/06/26 00:21:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.82 2001/07/28 15:22:43 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -299,7 +299,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
   string token = "";
   string parameter;
   float EW, bixx, biyy, bizz, bixz, biyz;
-  FGColumnVector vbaseXYZcg(3);
+  FGColumnVector3 vbaseXYZcg(3);
 
   AC_cfg->GetNextConfigLine();
 

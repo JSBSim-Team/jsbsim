@@ -57,9 +57,11 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGDefs.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.17 2001/04/09 23:36:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.18 2001/07/28 15:23:35 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 extern short debug_lvl;

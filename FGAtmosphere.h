@@ -43,9 +43,11 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGModel.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.16 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.17 2001/07/28 15:23:35 apeden Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
@@ -90,7 +92,7 @@ public:
 
   inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
-  inline FGColumnVector GetWindNED(void) { return vWindNED; }
+  inline FGColumnVector3 GetWindNED(void) { return vWindNED; }
   
   inline float GetWindPsi(void) { return psiw; }
   
@@ -105,7 +107,7 @@ private:
   bool useExternal;
   float exTemperature,exDensity,exPressure;
   
-  FGColumnVector vWindNED;
+  FGColumnVector3 vWindNED;
   float psiw;
 
   void Calculate(float altitude);
