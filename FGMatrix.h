@@ -40,7 +40,17 @@ INCLUDES
 
 #include <string>
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 #define ID_MATRIX "$Header"
+
+using std::string;
+using std::ostream;
+using std::istream;
+using std::cerr;
+using std::endl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -52,13 +62,7 @@ class FGColumnVector;
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-using std::string;
-using std::ostream;
-using std::istream;
-using std::cerr;
-using std::endl;
-
-class MatrixException /* :  public exception */  
+class MatrixException /* :  public exception */
 {
 public:
   string Message;

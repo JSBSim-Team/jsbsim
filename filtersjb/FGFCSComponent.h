@@ -1,9 +1,8 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGFCSComponent.h
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 05/01/2000
 
  ------------- Copyright (C)  -------------
 
@@ -28,10 +27,6 @@ HISTORY
 --------------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -50,14 +45,41 @@ INCLUDES
 #include "../FGDefs.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINES
+DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #define ID_FCSCOMPONENT "$Header"
 
 using std::string;
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 class FGFCS;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Base class for JSBSim Flight Control System Components.
+    The Flight Control System (FCS) for JSBSim consists of the FCS container
+    class (see \Ref{FGFCS.html}), the FGFCSComponent base class, and the
+    component classes from which can be constructed a string, or channel. See:
+    FGGain
+    FGSummer
+    DeadBand
+    FGFlaps
+    FGGradient
+    FGSwitch
+    @author Jon S. Berndt
+    @version $Id: FGFCSComponent.h,v 1.16 2000/10/19 14:42:18 jsb Exp $
+    @see -
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -71,7 +93,8 @@ protected:
   FGFCS* fcs;
   string Type;
   string Name;
-  enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopilot inputs
+   /// Pilot/Aircraft, FCS, Autopilot inputs
+  enum eInputType {itPilotAC, itFCS, itAP} InputType;
   int ID;
   eParam InputIdx;
   float Input;
@@ -81,7 +104,9 @@ protected:
   bool IsOutput;
 
 public:
+  /// Constructor
   FGFCSComponent(FGFCS*);
+  /// Destructor
   virtual ~FGFCSComponent ( ) { }       //Destructor
 
   virtual bool Run (void);
