@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.73 2001/08/18 15:46:18 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.74 2001/08/30 11:06:50 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,6 +142,14 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_LEFT_BRAKE_CMD, " left_brake_cmd " );
   RegisterVariable(FG_RIGHT_BRAKE_CMD," right_brake_cmd ");
   RegisterVariable(FG_CENTER_BRAKE_CMD," center_brake_cmd ");
+  RegisterVariable(FG_ALPHAH,          " h-tail alpha " );
+  RegisterVariable(FG_ALPHAW,          " wing alpha " );
+  RegisterVariable(FG_LBARH,           " h-tail arm " );
+  RegisterVariable(FG_LBARV,           " v-tail arm " );
+  RegisterVariable(FG_HTAILAREA,       " h-tail area " );
+  RegisterVariable(FG_VTAILAREA,       " v-tail area " );
+  RegisterVariable(FG_VBARH,           " h-tail volume " );
+  RegisterVariable(FG_VBARV,           " v-tail volume " );
   RegisterVariable(FG_SET_LOGGING,    " data_logging "   );
 
   if (debug_lvl & 2) cout << "Instantiated: FGState" << endl;
@@ -170,8 +178,22 @@ float FGState::GetParameter(eParam val_idx) {
     return Aircraft->GetWingSpan();
   case FG_CBAR:
     return Aircraft->Getcbar();
+  case FG_LBARH:
+    return Aircraft->Getlbarh();
+  case FG_LBARV:
+    return Aircraft->Getvbarh();
+  case FG_HTAILAREA:
+    return Aircraft->GetHTailArea();
+  case FG_VTAILAREA:
+    return Aircraft->GetVTailArea();
+  case FG_VBARH:
+    return Aircraft->Getvbarh();
+  case FG_VBARV:
+    return Aircraft->Getvbarv();
   case FG_ALPHA:
     return Translation->Getalpha();
+  case FG_ALPHAW:
+    return  Translation->Getalpha() + Aircraft->GetWingIncidence();
   case FG_ALPHADOT:
     return Translation->Getadot();
   case FG_BETA:
@@ -629,6 +651,76 @@ FGMatrix33& FGState::GetTs2b(float alpha, float beta)
   return mTs2b;
 }
 
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGState::ReportState(void) {
+  char out[80], flap[10], gear[10];
+  
+  cout << endl << "  JSBSim State" << endl;
+  snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
+                   FDMExec->GetMassBalance()->GetWeight(),
+                   FDMExec->GetMassBalance()->GetXYZcg(1),
+                   FDMExec->GetMassBalance()->GetXYZcg(2),
+                   FDMExec->GetMassBalance()->GetXYZcg(3));
+  cout << out;             
+  if( FCS->GetDfPos() <= 0.01)
+    snprintf(flap,10,"Up");
+  else
+    snprintf(flap,10,"%2.0f",FCS->GetDfPos());
+  if(Aircraft->GetGearUp() == true)
+    snprintf(gear,10,"Up");
+  else
+    snprintf(gear,10,"Down");
+  snprintf(out,80, "    Flaps: %3s  Gear: %4s\n",flap,gear);
+  cout << out;
+  snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
+                    FDMExec->GetAuxiliary()->GetVcalibratedKTS(),
+                    GetParameter(FG_MACH) );
+  cout << out;
+  snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
+                    Position->Geth(),
+                    Position->GetDistanceAGL() );
+  cout << out;
+  snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
+                    GetParameter(FG_ALPHA)*RADTODEG,
+                    Rotation->Gettht()*RADTODEG );
+  cout << out;
+  snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
+                    Position->GetGamma()*RADTODEG,
+                    Position->Gethdot()*60 );
+  cout << out;                  
+  snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
+                    Aerodynamics->GetNlf(),
+                    GetParameter(FG_PITCHRATE)*RADTODEG );
+  cout << out;
+  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
+                    Rotation->Getpsi()*RADTODEG,
+                    GetParameter(FG_BETA)*RADTODEG );                  
+  cout << out;
+  snprintf(out,80, "    Bank Angle: %5.2f deg\n",
+                    Rotation->Getphi()*RADTODEG );
+  cout << out;
+  snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
+                    GetParameter(FG_ELEVATOR_POS)*RADTODEG,
+                    GetParameter(FG_AILERON_POS)*RADTODEG,
+                    GetParameter(FG_RUDDER_POS)*RADTODEG );
+  cout << out;                  
+  snprintf(out,80, "    Throttle: %5.2f%c\n",
+                    FCS->GetThrottlePos(0),'%' );
+  cout << out;
+  
+  snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
+                    FDMExec->GetAuxiliary()->GetHeadWind()*jsbFPSTOKTS,
+                    FDMExec->GetAuxiliary()->GetCrossWind()*jsbFPSTOKTS );
+  cout << out; 
+  
+  snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
+                    Position->GetVground()*jsbFPSTOKTS,
+                    Position->GetGroundTrack()*RADTODEG );
+  cout << out;                                   
+
+} 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGState::Debug(void)

@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.44 2001/08/18 22:10:18 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.45 2001/08/30 11:06:50 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.44 2001/08/18 22:10:18 jberndt Exp $
+    @version $Id: FGState.h,v 1.45 2001/08/30 11:06:50 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,6 +293,12 @@ public:
       @return the matrix element described by the row and column supplied.
       */
   float GetTb2l(int i, int j) { return mTb2l(i,j);}
+  
+  /** Prints a summary of simulator state (speed, altitude, 
+      configuration, etc.)
+  */
+  void ReportState(void);
+
 
   typedef map<eParam, string> ParamMap;
   ParamMap paramdef;
