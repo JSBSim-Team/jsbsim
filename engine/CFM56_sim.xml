@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!-- CFM56 turbofan engine model
-     Version 1.0, 14 Mar 2003, David Culp, davidculp2@attbi.com
+     Version 1.1, 23 Nov 2003, David Culp, davidculp2@comcast.net
 -->
 
 <FG_SIMTURBINE NAME="CFM56">
@@ -24,8 +24,8 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  MILTHRUST    20000
-  MAXTHRUST    20000
+  MILTHRUST    19600
+  MAXTHRUST    19600
   BYPASSRATIO  5.9
   TSFC         0.657
   ATSFC        0.0
@@ -45,7 +45,7 @@
     position/h-sl-ft
     none
                 0   10000   20000   30000   40000  50000
-    0.0    0.0836  0.0528  0.0694  0.0899  0.1183  0.1467
+    0.0    0.0436  0.0528  0.0694  0.0899  0.1183  0.1467
     0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
     0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
     0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073
