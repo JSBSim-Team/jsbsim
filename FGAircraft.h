@@ -107,7 +107,7 @@ INCLUDES
 #  endif
 #else
 #  include <vector>
-#include <map>
+#  include <map>
 #endif
 
 #include "FGModel.h"

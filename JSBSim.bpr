@@ -18,7 +18,9 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
-  FGTranslation.obj FGAircraft.obj
+  FGTranslation.obj FGAircraft.obj filtersjb\FGfcsComponent.obj \
+  filtersjb\FGSwitch.obj filtersjb\FGFilter.obj filtersjb\FGGain.obj \
+  filtersjb\FGGradient.obj filtersjb\FGSummer.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
@@ -32,7 +34,7 @@ PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi dclocx40.bpi bcbsmp40.bpi
   GraphWin.bpi WinshoesPkgCB4.bpi ibsmp40.bpi Auxiliary.bpi
 DEFFILE =
 # ---------------------------------------------------------------------------
-PATHCPP = .;
+PATHCPP = .;filtersjb
 PATHASM = .;
 PATHPAS = .;
 PATHRC = .;
@@ -41,13 +43,14 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -I$(BCB)\include -Od -w -Tkh30000 -r- -a8 -6 -k -y -v -vi- -c -tWM -tWC \
-  -D$(SYSDEFINES);$(USERDEFINES)
+CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a8 -6 -k -y -v -vi- -c -tWM \
+  -tWC -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -U$(BCB)\lib;$(DEBUGLIBPATH) -I$(BCB)\include -$YD -$W -$O- -v -JPHN -M
-RFLAGS = -i$(BCB)\include
+PFLAGS = -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W -$O- \
+  -v -JPHN -M
+RFLAGS = -ifiltersjb;$(BCB)\include
 AFLAGS = /i$(BCB)\include /mx /w2 /zd /la /z /x /n /c
-LFLAGS = -L$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
+LFLAGS = -Lfiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj $(OBJFILES)
 ALLRES = $(RESFILES)

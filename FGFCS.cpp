@@ -48,9 +48,12 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-// test
-#include "filtersjb/FGfcsComponent.h"
-// end test
+#include "filtersjb/FGFilter.h"
+#include "filtersjb/FGDeadBand.h"
+#include "filtersjb/FGGain.h"
+#include "filtersjb/FGGradient.h"
+#include "filtersjb/FGSwitch.h"
+#include "filtersjb/FGSummer.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -72,7 +75,7 @@ bool FGFCS::Run(void)
 {
   if (!FGModel::Run()) {
 
-//    for (int i=0;i<Components.size();i++) Components[i].Run();
+    for (unsigned int i=0;i<Components.size();i++) Components[i]->Run();
 
   } else {
   }
@@ -90,7 +93,24 @@ void FGFCS::SetThrottle(int engineNum, float setting)
 }
 
 
-FGFCS::LoadFCS(FGConfigFile* AC_cfg)
+// Supports the following components:
+//
+// LAG_FILTER
+// RECT_LAG_FILTER
+// LEAD_LAG_FILTER
+// SECOND_ORDER_FILTER
+// WASHOUT_FILTER
+// INTEGRATOR
+// PURE_GAIN
+// SCHEDULED_GAIN
+// AEROSURFACE_SCALE
+// SUMMER
+// DEADBAND
+// GRADIENT
+// SWITCH
+//
+
+bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 {
   string token;
 
@@ -98,61 +118,33 @@ FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
-
-      // FCS COMPONENT CREATION LOGIC HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-      //
-      // ** Example ** reference implementation:
-      //
-      // Supports the following filters:
-      //
-      // LAG_FILTER
-      // RECT_LAG_FILTER
-      // LEAD_LAG_FILTER
-      // SECOND_ORDER_FILTER
-      // WASHOUT_FILTER
-      // INTEGRATOR
-      // PURE_GAIN
-      // SCHEDULED_GAIN
-      // AEROSURFACE_SCALE
-      // SUMMER
-      // DEADBAND
-      // GRADIENT
-      // SWITCH
-      //
-      // if ((token = GetValue("TYPE") == "LAG_FILTER") ||
-      //     (token = GetValue("TYPE") == "RECT_LAG_FILTER") ||
-      //     (token = GetValue("TYPE") == "LEAD_LAG_FILTER") ||
-      //     (token = GetValue("TYPE") == "SECOND_ORDER_FILTER") ||
-      //     (token = GetValue("TYPE") == "WASHOUT_FILTER") ||
-      //     (token = GetValue("TYPE") == "INTEGRATOR") )
-      // {
-      //   Components.push_back(new FGFilter(this, AC_cfg));
-      // } else if ((token == "PURE_GAIN") ||
-      //            (token == "SCHEDULED_GAIN") ||
-      //            (token == "AEROSURFACE_SCALE") )
-      // {
-      //   Components.push_back(new FGGain(this, AC_cfg));
-      // } else if (token == "SUMMER") {
-      //   Components.push_back(new FGSummer(this, AC_cfg));
-      // } else if (token == "DEADBAND") {
-      //   Components.push_back(new FGDeadBand(this, AC_cfg));
-      // } else if (token == "GRADIENT") {
-      //   Components.push_back(new FGGradient(this, AC_cfg));
-      // } else if (token == "SWITCH") {
-      //   Components.push_back(new FGSwitch(this, AC_cfg));
-      // }
-      //
-      // remove lines below after component creation logic added ********* START
-
-      while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
-        AC_cfg->GetNextConfigLine();
-      }
-
-      // remove above                                            *********** END
-      // FCS COMPONENT CREATION LOGIC END  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
+// TEST
+       if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
+            (token == "RECT_LAG_FILTER") ||
+            (token == "LEAD_LAG_FILTER") ||
+            (token == "SECOND_ORDER_FILTER") ||
+            (token == "WASHOUT_FILTER") ||
+            (token == "INTEGRATOR") )
+       {
+         Components.push_back(new FGFilter(this, AC_cfg));
+       } else if ((token == "PURE_GAIN") ||
+                  (token == "SCHEDULED_GAIN") ||
+                  (token == "AEROSURFACE_SCALE") )
+       {
+         Components.push_back(new FGGain(this, AC_cfg));
+       } else if (token == "SUMMER") {
+         Components.push_back(new FGSummer(this, AC_cfg));
+       } else if (token == "DEADBAND") {
+         Components.push_back(new FGDeadBand(this, AC_cfg));
+       } else if (token == "GRADIENT") {
+         Components.push_back(new FGGradient(this, AC_cfg));
+       } else if (token == "SWITCH") {
+         Components.push_back(new FGSwitch(this, AC_cfg));
+       }
+// END TEST
       AC_cfg->GetNextConfigLine();
     }
   }
+  return true;
 }
 

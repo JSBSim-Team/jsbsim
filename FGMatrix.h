@@ -47,7 +47,7 @@ DECLARATION: MatrixException
 
 using namespace std;
 
-class MatrixException : public exception
+class MatrixException /* :  public exception */  
 {
 public:
   string Message;

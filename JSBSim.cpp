@@ -64,6 +64,12 @@ USEUNIT("FGTank.cpp");
 USEUNIT("FGTranslation.cpp");
 USEUNIT("FGAircraft.cpp");
 USERES("JSBSim.res");
+USEUNIT("filtersjb\FGfcsComponent.cpp");
+USEUNIT("filtersjb\FGSwitch.cpp");
+USEUNIT("filtersjb\FGFilter.cpp");
+USEUNIT("filtersjb\FGGain.cpp");
+USEUNIT("filtersjb\FGGradient.cpp");
+USEUNIT("filtersjb\FGSummer.cpp");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif
