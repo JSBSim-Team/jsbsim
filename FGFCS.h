@@ -81,29 +81,29 @@ CLASS DOCUMENTATION
     the configuration file. For instance, for the X-15:
     
     <pre>
-    &ltFLIGHT_CONTROL NAME="X-15 SAS"&gt
+    &lt FLIGHT_CONTROL NAME="X-15 SAS"&gt
 
-    &ltCOMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER"&gt
+    &lt COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER"&gt
       ID            0
       INPUT        FG_ELEVATOR_CMD
       INPUT        FG_PITCH_TRIM_CMD
       CLIPTO       -1 1
     &lt/COMPONENT&gt
 
-    &ltCOMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE"&gt
+    &lt COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE"&gt
       ID           1
       INPUT        0
       MIN         -50
       MAX          50
     &lt/COMPONENT&gt
 
-    &ltCOMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN"&gt
+    &lt COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN"&gt
       ID           2
       INPUT        1
       GAIN         -0.36
     &lt/COMPONENT&gt
 
-    &ltCOMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN"&gt
+    &lt COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN"&gt
       ID           3
       INPUT        2
       GAIN         0.017
@@ -124,11 +124,27 @@ CLASS DOCUMENTATION
     sum" component, is really the sum of two parameters: elevator command (from
     the stick - a pilot input), and pitch trim. The type of this component is
     "Summer". Its ID is 0 - the ID is used by other components to reference it.
+    The next component created is an aerosurface scale component - a type of
+    gain (see the LoadFCS() method for insight on how the various types of
+    components map into the actual component classes). You can see the input of
+    the "Pitch Command Scale" component takes "0" as input. When a number is
+    specified as an input, it refers to the ID of another FCS component. In this
+    case, ID 0 refers to the previously defined and discussed "Pitch Trim Sum"
+    component. This continues until the final component for an axis when the
+    OUTPUT keyword specifies where the output is supposed to go. See the
+    individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.18 2000/10/20 00:00:24 jsb Exp $
+    @version $Id: FGFCS.h,v 1.19 2000/10/20 11:25:36 jsb Exp $
     @see FGFCSComponent
     @see FGConfigFile
+    @see FGGain
+    @see FGSummer
+    @see FGSwitch
+    @see FGGradient
+    @see FGFilter
+    @see FGFlaps
+    @see FGDeadBand
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
