@@ -88,10 +88,10 @@ public:
   void SetvVel(const FGColumnVector& v) { vVel = v; }
   void SetLatitude(float tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
-  void Seth(double tt) { h = tt; }
+  void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt;}
-  void SetDistanceAGL(double tt) { DistanceAGL = tt; }
+  void SetDistanceAGL(double tt);
 
   bool Run(void);
 };

@@ -169,5 +169,17 @@ void FGPosition::GetState(void) {
   vVel      = State->GetTb2l()*vUVW;
 
   b = Aircraft->GetWingSpan();
+  
 }
 
+void FGPosition::Seth(double tt) { 
+ h=tt;
+ Radius    = h + SeaLevelRadius;
+ DistanceAGL = Radius - RunwayRadius;   // Geocentric 
+}  
+
+void FGPosition::SetPositionAGL(double tt) {
+  DistanceAGL=tt;
+  Radius = RunwayRadius + DistanceAGL;
+  h = Radius - SeaLevelRadius;
+}  
