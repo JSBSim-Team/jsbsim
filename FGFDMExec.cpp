@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.65 2001/11/20 21:25:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.66 2001/11/23 20:06:17 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,7 +349,7 @@ bool FGFDMExec::Run(void)
     if (model_iterator == 0L) break;
   }
 
-  Frame++;
+  frame = Frame++;
   State->IncrTime();
 
   return true;

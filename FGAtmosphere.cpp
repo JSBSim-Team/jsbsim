@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.27 2001/11/22 14:56:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.28 2001/11/23 20:06:17 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,9 +91,9 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   htab[7]=259186.352; //ft.
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-  turbType = ttNone;
-//  turbType = ttBerndt; // temporarily disable turbulence until fully tested
-  TurbGain = 1.0;
+//  turbType = ttNone;
+  turbType = ttBerndt; // temporarily disable turbulence until fully tested
+  TurbGain = 100.0;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -152,6 +152,9 @@ bool FGAtmosphere::Run(void)
     soundspeed = sqrt(SHRatio*Reng*temperature);
 
     State->Seta(soundspeed);
+
+    if (debug_lvl > 1) Debug();
+
   } else {                               // skip Run() execution this time
   }
 
@@ -259,11 +262,11 @@ void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
   case ttBerndt:
-    vDirectiondAccelDt(0) = 1 - 2.0*(rand()/RAND_MAX);
-    vDirectiondAccelDt(1) = 1 - 2.0*(rand()/RAND_MAX);
-    vDirectiondAccelDt(2) = 1 - 2.0*(rand()/RAND_MAX);
+    vDirectiondAccelDt(eX) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
+    vDirectiondAccelDt(eY) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
+    vDirectiondAccelDt(eZ) = 1 - 2.0*(((double)(rand()))/RAND_MAX);
 
-    MagnitudedAccelDt = 1 - 2.0*(rand()/RAND_MAX);
+    MagnitudedAccelDt = 1 - 2.0*(((double)(rand()))/RAND_MAX);
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
@@ -298,6 +301,14 @@ void FGAtmosphere::Turbulence(void)
 
 void FGAtmosphere::Debug(void)
 {
-    //TODO: Add your source code here
+  if (frame == 0) {
+    cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
+         << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
+         << "vDirection(X), vDirection(Y), vDirection(Z), "
+         << "Magnitude, "
+         << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
+  } else {
+    cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+  }
 }
 

@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.16 2001/11/22 14:56:36 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.17 2001/11/23 20:06:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -149,7 +149,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.16 2001/11/22 14:56:36 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.17 2001/11/23 20:06:17 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,7 +263,7 @@ protected:
   virtual void Debug(void) {};
 
   static short debug_lvl;
-  static int frame;
+  static unsigned int frame;
   static unsigned int messageId;
   
   static const double radtodeg;

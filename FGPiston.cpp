@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.36 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.37 2001/11/23 20:06:17 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   }
 
   Type = etPiston;
+  crank_counter = 0;
   EngineNumber = 0;    // FIXME: this should be the actual number
   OilTemp_degK = 298;  // FIXME: should be initialized in FGEngine
 
@@ -211,7 +212,6 @@ void FGPiston::doEngineStartup(void)
   // (spark, fuel, starter motor etc)
   bool spark;
   bool fuel;
-  static int crank_counter = 0;
 
   // Check for spark
   Magneto_Left = false;
