@@ -141,6 +141,8 @@ bool FGGain::Run(void )
 
     if (Output >= 0.0) Output = Input * Max;
     else Output = Input * (-Min);
+
+    Output *= Gain;
   }
 
   if (IsOutput) SetOutput();
