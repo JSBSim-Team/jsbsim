@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.62 2003/11/25 17:51:16 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.63 2004/02/05 13:43:38 ehofman Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,21 +59,6 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   Cp_fuel(1700)
 {
   string token;
-
-  Name = Eng_cfg->GetValue("NAME");
-  Eng_cfg->GetNextConfigLine();
-  while (Eng_cfg->GetValue() != string("/FG_PISTON")) {
-    *Eng_cfg >> token;
-    if      (token == "MINMP") *Eng_cfg >> MinManifoldPressure_inHg;
-    else if (token == "MAXMP") *Eng_cfg >> MaxManifoldPressure_inHg;
-    else if (token == "DISPLACEMENT") *Eng_cfg >> Displacement;
-    else if (token == "MAXHP") *Eng_cfg >> MaxHP;
-    else if (token == "CYCLES") *Eng_cfg >> Cycles;
-    else if (token == "IDLERPM") *Eng_cfg >> IdleRPM;
-    else if (token == "MAXTHROTTLE") *Eng_cfg >> MaxThrottle;
-    else if (token == "MINTHROTTLE") *Eng_cfg >> MinThrottle;
-    else cerr << "Unhandled token in Engine config file: " << token << endl;
-  }
 
   Type = etPiston;
   crank_counter = 0;
@@ -125,6 +110,21 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   *Power_Mixture_Correlation << 19 <<  78.5;
   *Power_Mixture_Correlation << 20 <<  74.0;
   *Power_Mixture_Correlation << (14.7/0.6) << 58;
+
+  Name = Eng_cfg->GetValue("NAME");
+  Eng_cfg->GetNextConfigLine();
+  while (Eng_cfg->GetValue() != string("/FG_PISTON")) {
+    *Eng_cfg >> token;
+    if      (token == "MINMP") *Eng_cfg >> MinManifoldPressure_inHg;
+    else if (token == "MAXMP") *Eng_cfg >> MaxManifoldPressure_inHg;
+    else if (token == "DISPLACEMENT") *Eng_cfg >> Displacement;
+    else if (token == "MAXHP") *Eng_cfg >> MaxHP;
+    else if (token == "CYCLES") *Eng_cfg >> Cycles;
+    else if (token == "IDLERPM") *Eng_cfg >> IdleRPM;
+    else if (token == "MAXTHROTTLE") *Eng_cfg >> MaxThrottle;
+    else if (token == "MINTHROTTLE") *Eng_cfg >> MinThrottle;
+    else cerr << "Unhandled token in Engine config file: " << token << endl;
+  }
 
   Debug(0); // Call Debug() routine from constructor if needed
 }
