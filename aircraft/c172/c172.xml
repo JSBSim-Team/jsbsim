@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.79 2001/12/22 00:12:39 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.80 2001/12/26 13:50:42 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -113,7 +113,7 @@
       FEED      0
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="prop_75in2f">
+    <AC_THRUSTER FILE="prop_generic2f">
       XLOC  -37.7
       YLOC    0.0
       ZLOC   26.6
@@ -259,7 +259,7 @@
       <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
          FG_QBAR|FG_WINGAREA
-         0.042
+         0.026
       </COEFFICIENT>
        <COEFFICIENT NAME="CDDf" TYPE="VECTOR">
          Delta_drag_due_to_flap_deflection
