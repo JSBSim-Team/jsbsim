@@ -144,7 +144,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.86 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.87 2001/08/30 11:02:58 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,6 +161,9 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   Name = "FGAircraft";
   GearUp = false;
   alphaclmin = alphaclmax = 0;
+  HTailArea = VTailArea = HTailArm = VTailArm = 0.0;
+  lbarh = lbarv = vbarh = vbarv = 0.0;
+  WingIncidence=0;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -204,7 +207,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       ReadOutput(AC_cfg);
     }
   }
-
+  
   return true;
 }
 
@@ -213,14 +216,16 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 bool FGAircraft::Run(void)
 {
   if (!FGModel::Run()) {                 // if false then execute this Run()
-    vForces = Aerodynamics->GetForces()
-            + Inertial->GetForces()
-            + Propulsion->GetForces()
-            + GroundReactions->GetForces();
+    vForces.InitMatrix();
+    vForces += Aerodynamics->GetForces();
+    vForces += Inertial->GetForces();
+    vForces += Propulsion->GetForces();
+    vForces += GroundReactions->GetForces();
 
-    vMoments = Aerodynamics->GetMoments()
-             + Propulsion->GetMoments()
-             + GroundReactions->GetMoments();
+    vMoments.InitMatrix();
+    vMoments += Aerodynamics->GetMoments();
+    vMoments += Propulsion->GetMoments();
+    vMoments += GroundReactions->GetMoments();
     
     return false;
   } else {                               // skip Run() execution this time
@@ -247,9 +252,24 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
     } else if (parameter == "AC_WINGSPAN") {
       *AC_cfg >> WingSpan;
       if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
+    } else if (parameter == "AC_WINGINCIDENCE") {
+      *AC_cfg >> WingIncidence;
+      if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
     } else if (parameter == "AC_CHORD") {
       *AC_cfg >> cbar;
       if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
+    } else if (parameter == "AC_HTAILAREA") {
+      *AC_cfg >> HTailArea;
+      if (debug_lvl > 0) cout << "    H. Tail Area: " << HTailArea << endl;
+    } else if (parameter == "AC_HTAILARM") {
+      *AC_cfg >> HTailArm;
+      if (debug_lvl > 0) cout << "    H. Tail Arm: " << HTailArm << endl;
+    } else if (parameter == "AC_VTAILAREA") {
+      *AC_cfg >> VTailArea;
+      if (debug_lvl > 0) cout << "    V. Tail Area: " << VTailArea << endl;
+    } else if (parameter == "AC_VTAILARM") {
+      *AC_cfg >> VTailArm;
+      if (debug_lvl > 0) cout << "    V. Tail Arm: " << VTailArm << endl;
     } else if (parameter == "AC_IXX") {
       *AC_cfg >> bixx;
       if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
@@ -291,6 +311,17 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
              << endl;
     }
   }
+  
+  //calculate some derived parameters
+  if(cbar != 0.0) {
+    lbarh = HTailArm/cbar;
+    lbarv = VTailArm/cbar;
+    if(WingArea != 0.0) {
+      vbarh = HTailArm*HTailArea / (cbar*WingArea);
+      vbarv = VTailArm*VTailArea / (cbar*WingArea);
+    }
+  }     
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
