@@ -17,6 +17,7 @@
      AUGMENTED     = 1 if afterburning installed, else = 0
      AUGMETHOD     = 0 if using property /engine[n]/augmentation
                    = 1 if using last 1% of throttle movement
+                   = 2 if using FCS-defined throttle control 
      INJECTED      = 1 if water injection installed
 
      TABLE(0)      idle thrust vs. altitude and mach
@@ -35,7 +36,7 @@
   MAXN1        100.0
   MAXN2        100.0
   AUGMENTED    1
-  AUGMETHOD    1
+  AUGMETHOD    2
   INJECTED     0
 
   <TABLE NAME="IdleThrust" TYPE="TABLE">

@@ -39,10 +39,10 @@
    AC_IZZ       31319
    AC_IXZ       0
    AC_EMPTYWT   7574
-   AC_CGLOC     310.0  0.0 -10.0
+   AC_CGLOC     314.0  0.0 -10.0
    AC_AERORP    320.0  0.0  0.0
    AC_EYEPTLOC  154.0  0.0 36.0
-   AC_VRP       317.87 0.0 -6.72
+   AC_VRP       0 0 0
  </METRICS>
  <UNDERCARRIAGE>
   AC_GEAR NOSE_LG   140.0   0.0 -60.0 5000   500 0.5 0.8 0.02 STEERABLE NONE  5  RETRACT
@@ -104,25 +104,17 @@
       INPUT   fcs/pitch-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
-   <COMPONENT NAME="Flap Slab Interconnect" TYPE="PURE_GAIN">
-      INPUT   fcs/flap-pos-deg
-      GAIN    -0.002
-   </COMPONENT>
-   <COMPONENT NAME="Pitch Sum" TYPE="SUMMER">
-      INPUT   fcs/pilot-pitch-sum
-      INPUT   fcs/flap-slab-interconnect
-   </COMPONENT>
    <COMPONENT NAME="Pitch Feel" TYPE="SCHEDULED_GAIN">
-      INPUT        fcs/pitch-sum
+      INPUT        fcs/pilot-pitch-sum
       SCHEDULED_BY velocities/mach-norm
       ROWS         2
        0.2         1.0
-       1.2         0.2 
+       1.4         0.2 
    </COMPONENT>
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/pitch-feel
-      MIN    -0.3
-      MAX     0.2
+      MIN    -0.300
+      MAX     0.175
       OUTPUT  fcs/elevator-pos-rad
    </COMPONENT>
    <!-- ROLL FCS ********************************************************** -->
@@ -135,8 +127,8 @@
       INPUT        fcs/pilot-roll-sum
       SCHEDULED_BY velocities/mach-norm
       ROWS         2
-       0.2         1.0
-       1.2         0.4 
+       0.4         1.0
+       1.4         0.4 
    </COMPONENT>
    <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/roll-feel
@@ -159,10 +151,9 @@
    <COMPONENT NAME="Yaw SAS Rate" TYPE="SCHEDULED_GAIN">
       INPUT        velocities/r-aero-rad_sec
       SCHEDULED_BY velocities/ve-kts
-      ROWS         3
+      ROWS         2
        30          0.00
-       60          5.00
-      220          3.00
+       60          3.00
    </COMPONENT>
    <COMPONENT NAME="Yaw SAS Beta" TYPE="SCHEDULED_GAIN">
       INPUT        aero/beta-rad
@@ -174,7 +165,7 @@
    <COMPONENT NAME="Yaw SAS Sum" TYPE="SUMMER">
       INPUT        fcs/yaw-sas-rate
       INPUT        fcs/yaw-sas-beta
-      CLIPTO       -0.2 0.2
+      CLIPTO       -0.1 0.1
    </COMPONENT>
    <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
       INPUT        fcs/rudder-command-sum
@@ -187,6 +178,19 @@
       MAX          0.35
       OUTPUT       fcs/rudder-pos-rad
    </COMPONENT>
+
+   <!-- THROTTLES ********************************************************* -->
+   <COMPONENT NAME="Throttle1" TYPE="PURE_GAIN">
+      INPUT        fcs/throttle-cmd-norm[0]
+      GAIN         2.0
+      OUTPUT       fcs/throttle-pos-norm[0] 
+   </COMPONENT>
+   <COMPONENT NAME="Throttle2" TYPE="PURE_GAIN">
+      INPUT        fcs/throttle-cmd-norm[1]
+      GAIN         2.0
+      OUTPUT       fcs/throttle-pos-norm[1]
+   </COMPONENT>
+
    <!-- FLAPS TRAVEL TIME ************************************************* -->
    <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
      INPUT   fcs/flap-cmd-norm
@@ -223,10 +227,10 @@
       fcs/components/flaps-control/output-norm
       aero/qbar-psf|metrics/Sw-sqft
                    0     1.0
-      -0.20   -0.571     0.279
-       0.00    0.000     0.850
-       0.25    0.716     1.564
-       0.33    0.945     0.700
+      -0.20   -0.571     0.100
+       0.00    0.000     0.600
+       0.25    0.716     1.300
+       0.33    0.945     0.300
        0.60    0.174     0.000 
     </COEFFICIENT>
     <COEFFICIENT NAME="CLde" TYPE="VALUE">
@@ -250,7 +254,7 @@
     <COEFFICIENT NAME="CDi" TYPE="VALUE">
        Induced_drag
        aero/qbar-psf|metrics/Sw-sqft|aero/cl-squared-norm
-       0.11
+       0.1
     </COEFFICIENT>
     <COEFFICIENT NAME="CDmach" TYPE="VECTOR">
        Drag_due_to_mach
@@ -265,7 +269,7 @@
     <COEFFICIENT NAME="CDflap" TYPE="VALUE">
        Drag_due_to_flaps
        aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
-       0.08
+       0.09
     </COEFFICIENT>
     <COEFFICIENT NAME="CDgear" TYPE="VALUE">
        Drag_due_to_gear
@@ -307,8 +311,8 @@
        2
        aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
-       0.00    -0.07
-       0.52    -0.13
+       0.00    -0.05
+       0.52    -0.12
     </COEFFICIENT>
     <COEFFICIENT NAME="Clp" TYPE="VALUE">
        Roll_moment_due_to_roll_rate
@@ -323,12 +327,12 @@
     <COEFFICIENT NAME="CldaL" TYPE="VALUE">
        Roll_moment_due_to_left_aileron
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-       0.065
+       0.055
     </COEFFICIENT>
     <COEFFICIENT NAME="CldaR" TYPE="VALUE">
        Roll_moment_due_to_right_aileron
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/right-aileron-pos-rad
-       -0.065
+       -0.055
     </COEFFICIENT>
     <COEFFICIENT NAME="Cldr" TYPE="VALUE">
        Roll_moment_due_to_rudder
@@ -345,7 +349,7 @@
     <COEFFICIENT NAME="Cmde" TYPE="VALUE">
        Pitch_moment_due_to_elevator
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-       -0.9
+       -0.65
     </COEFFICIENT>
     <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
@@ -360,14 +364,14 @@
     <COEFFICIENT NAME="Cmflaps" TYPE="VALUE">
        Pitch_moment_due_to_flaps
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/components/flaps-control/output-norm
-       -0.12
+       -0.1
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="YAW">
     <COEFFICIENT NAME="Cnb" TYPE="VALUE">
        Yaw_moment_due_to_beta
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
-       0.18
+       0.1
     </COEFFICIENT>
     <COEFFICIENT NAME="Cnr" TYPE="VALUE">
        Yaw_moment_due_to_yaw_rate

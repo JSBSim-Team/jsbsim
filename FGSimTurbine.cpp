@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.20 2004/04/09 20:49:37 dpculp Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.21 2004/04/17 21:17:53 dpculp Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,10 +75,10 @@ double FGSimTurbine::Calculate(double dummy)
 {
   TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
   dt = State->Getdt() * Propulsion->GetRate();
-  ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
-  if (ThrottleCmd > 1.0) {
-    AugmentCmd = ThrottleCmd - 1.0;
-    ThrottleCmd -= AugmentCmd;
+  ThrottlePos = FCS->GetThrottlePos(EngineNumber);
+  if (ThrottlePos > 1.0) {
+    AugmentCmd = ThrottlePos - 1.0;
+    ThrottlePos -= AugmentCmd;
   } else {
     AugmentCmd = 0.0;
   }
@@ -87,8 +87,8 @@ double FGSimTurbine::Calculate(double dummy)
   if ((phase == tpTrim) && (dt > 0)) {
     if (Running && !Starved) {
       phase = tpRun;
-      N2 = IdleN2 + ThrottleCmd * N2_factor;
-      N1 = IdleN1 + ThrottleCmd * N1_factor;
+      N2 = IdleN2 + ThrottlePos * N2_factor;
+      N1 = IdleN1 + ThrottlePos * N1_factor;
       OilTemp_degK = 366.0;
       Cutoff = false;
       }
@@ -153,12 +153,12 @@ double FGSimTurbine::Run(void)
   Running = true;
   Starter = false;
 
-  N2 = Seek(&N2, IdleN2 + ThrottleCmd * N2_factor, delay, delay * 3.0);
-  N1 = Seek(&N1, IdleN1 + ThrottleCmd * N1_factor, delay, delay * 2.4);
+  N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, delay, delay * 3.0);
+  N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, delay, delay * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
   thrust = thrust * (1.0 - BleedDemand);
-  EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
+  EGT_degC = TAT + 363.1 + ThrottlePos * 357.1;
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
   EPR = 1.0 + thrust/MilThrust;
@@ -170,20 +170,25 @@ double FGSimTurbine::Run(void)
   }
 
   if (AugMethod == 1) {
-    if ((ThrottleCmd > 0.99) && (N2 > 97.0)) {Augmentation = true;}
+    if ((ThrottlePos > 0.99) && (N2 > 97.0)) {Augmentation = true;}
     else {Augmentation = false;}
   }
 
-  if ((Augmented == 1) && Augmentation) {
+  if ((Augmented == 1) && Augmentation && (AugMethod < 2)) {
     thrust = MaxThrust * ThrustTables[2]->TotalValue();
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   }
 
-  if (AugmentCmd > 0.0) {
+  if ((AugmentCmd > 0.0) && (AugMethod == 2)) {
+    Augmentation = true;
     double tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
     thrust += (tdiff * AugmentCmd);
-  }     
+    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
+    NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
+  } else {
+    Augmentation = false;
+  }    
 
   if ((Injected == 1) && Injection)
     thrust = thrust * ThrustTables[3]->TotalValue();
@@ -249,7 +254,7 @@ double FGSimTurbine::Stall(void)
   FuelFlow_pph = IdleFF;
   N1 = Seek(&N1, qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
-  if (ThrottleCmd == 0) phase = tpRun;        // clear the stall with throttle
+  if (ThrottlePos == 0) phase = tpRun;        // clear the stall with throttle
 
   return 0.0;
 }
@@ -275,7 +280,7 @@ double FGSimTurbine::Trim(void)
     double idlethrust, milthrust, thrust, tdiff;
     idlethrust = MilThrust * ThrustTables[0]->TotalValue();
     milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
-    thrust = idlethrust + (milthrust * ThrottleCmd * ThrottleCmd);
+    thrust = idlethrust + (milthrust * ThrottlePos * ThrottlePos);
     if (AugmentCmd > 0.0) {
       tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
       thrust += (tdiff * AugmentCmd);
@@ -293,10 +298,10 @@ double FGSimTurbine::CalcFuelNeed(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::GetPowerAvailable(void) {
-  if( ThrottleCmd <= 0.77 )
-    return 64.94*ThrottleCmd;
+  if( ThrottlePos <= 0.77 )
+    return 64.94*ThrottlePos;
   else
-    return 217.38*ThrottleCmd - 117.38;
+    return 217.38*ThrottlePos - 117.38;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -333,7 +338,7 @@ void FGSimTurbine::SetDefaults(void)
   AugMethod = 0;
   Injected = 0;
   BleedDemand = 0.0;
-  ThrottleCmd = 0.0;
+  ThrottlePos = 0.0;
   AugmentCmd = 0.0;
   InletPosition = 1.0;
   NozzlePosition = 1.0;

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.50 2003/11/09 21:54:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.51 2004/04/17 21:17:46 dpculp Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;      
-      OutputNode = PropertyManager->GetNode( sOutputIdx );
+      OutputNode = PropertyManager->GetNode( sOutputIdx, true );
 
     } else {
       AC_cfg->ResetLineIndexToZero();
