@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.21 2001/01/10 13:09:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.22 2001/01/22 23:34:31 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
@@ -71,10 +71,8 @@ CLASS IMPLEMENTATION
 
 FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 {
-  int r, c, start, end, n;
-  float ftrashcan;
+  int start, end, n;
   string multparms;
-  char nullstring[13] = "            ";
 
   FDMExec = fdex;
   State   = FDMExec->GetState();
@@ -173,7 +171,6 @@ FGCoefficient::~FGCoefficient(void) {
 float FGCoefficient::Value(float rVal, float cVal)
 {
   float Value;
-  unsigned int midx;
 
   SD = Table->GetValue(rVal, cVal);
 
@@ -188,7 +185,6 @@ float FGCoefficient::Value(float rVal, float cVal)
 float FGCoefficient::Value(float Val)
 {
   float Value;
-  unsigned int midx;
 
   SD = Table->GetValue(Val);
 
@@ -203,13 +199,11 @@ float FGCoefficient::Value(float Val)
 float FGCoefficient::Value(void)
 {
 	float Value;
-  unsigned int midx;
 
   SD = Value = StaticValue;
 
-  for (midx=0; midx < multipliers.size(); midx++) {
+  for (unsigned int midx=0; midx < multipliers.size(); midx++)
     Value *= State->GetParameter(multipliers[midx]);
-  }
 
   return Value;
 }

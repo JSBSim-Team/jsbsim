@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.55 2001/01/02 12:40:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.56 2001/01/22 23:34:31 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -289,8 +289,8 @@ void FGAircraft::MassChange() {
   static FGColumnVector vXYZtank(3);
   float Tw;
   float IXXt, IYYt, IZZt, IXZt;
-  unsigned int t;
-  unsigned int axis_ctr;
+//  unsigned int t;
+//  unsigned int axis_ctr;
 /*
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vXYZtank(axis_ctr) = 0.0;
 

@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.9 2000/10/16 12:32:43 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.10 2001/01/22 23:34:31 jsb Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,7 @@ bool FGConfigFile::IsCommentLine(void)
 string FGConfigFile::GetLine(void)
 {
   string scratch = "";
-  unsigned int test;
+  int test;
 
   while ((test = cfgfile.get()) != EOF) {
     if (test >= 0x20) {

@@ -45,7 +45,6 @@ INCLUDES
 #include <stdio.h>
 
 #ifdef FGFS
-#  pragma message("FGFS defined")
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <iostream>
@@ -55,7 +54,6 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  pragma message("FGFS not defined")
 #  include <iostream>
 #  include <fstream>
 #endif

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.10 2001/01/22 15:38:57 jsb Exp $"
+#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.11 2001/01/22 23:34:32 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -55,7 +55,7 @@ class FGThruster : public FGForce {
 
 public:
   FGThruster(FGFDMExec *FDMExec);
-  ~FGThruster(void) {}
+  virtual ~FGThruster(void) {}
 
   enum Type {ttNozzle, ttRotor, ttPropeller};
 
