@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.8 2001/11/10 15:09:35 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.9 2001/11/10 15:23:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.8 2001/11/10 15:09:35 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.9 2001/11/10 15:23:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,39 +108,80 @@ public:
 
   ///@name JSBSim Enums.
   //@{
+  /// Moments
   enum {eL     = 1, eM,     eN    };
+  /// Rates
   enum {eP     = 1, eQ,     eR    };
+  /// Velocities
   enum {eU     = 1, eV,     eW    };
+  /// Positions
   enum {eX     = 1, eY,     eZ    };
+  /// Euler angles
   enum {ePhi   = 1, eTht,   ePsi  };
+  /// Stability axis forces
   enum {eDrag  = 1, eSide,  eLift };
+  /// Local frame orientation
   enum {eRoll  = 1, ePitch, eYaw  };
+  /// Local frame position
   enum {eNorth = 1, eEast,  eDown };
   //@}
   
   ///@name JSBSim console output highlighting terms.
   //@{
+  /// highlights text
   static char highint[5];
+  /// low intensity text
   static char halfint[5];
+  /// normal intensity text
   static char normint[6];
+  /// resets text properties
   static char reset[5];
+  /// underlines text
   static char underon[5];
+  /// underline off
   static char underoff[6];
+  /// blue text
   static char fgblue[6];
+  /// cyan text
   static char fgcyan[6];
+  /// red text
   static char fgred[6];
+  /// green text
   static char fggreen[6];
+  /// default text
   static char fgdef[6];
   //@}
 
   ///@name JSBSim Messaging functions
   //@{
+  /** Places a Message structure on the Message queue.
+      @param msg pointer to a Message structure
+      @return pointer to a Message structure */
   struct Message* PutMessage(struct Message* msg);
+  /** Creates a message with the given text and places it on the queue.
+      @param text message text
+      @return pointer to a Message structure */
   struct Message* PutMessage(string text);
+  /** Creates a message with the given text and boolean value and places it on the queue.
+      @param text message text
+      @param bVal boolean value associated with the message
+      @return pointer to a Message structure */
   struct Message* PutMessage(string text, bool bVal);
+  /** Creates a message with the given text and integer value and places it on the queue.
+      @param text message text
+      @param iVal integer value associated with the message
+      @return pointer to a Message structure */
   struct Message* PutMessage(string text, int iVal);
+  /** Creates a message with the given text and double value and places it on the queue.
+      @param text message text
+      @param dVal double value associated with the message
+      @return pointer to a Message structure */
   struct Message* PutMessage(string text, double dVal);
+  /** Reads the message on the queue (but does not delete it).
+      @return pointer to a Message structure (or NULL if no mesage) */
   struct Message* ReadMessage(void);
+  /** Reads the message on the queue and removes it from the queue.
+      @return pointer to a Message structure (or NULL if no mesage) */
   struct Message* ProcessMessage(void);
   //@}
 
