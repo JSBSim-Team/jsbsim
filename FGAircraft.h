@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.82 2002/03/18 12:12:46 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.83 2002/03/27 02:44:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.82 2002/03/18 12:12:46 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.83 2002/03/27 02:44:09 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -167,7 +167,6 @@ public:
   double GetCI2Vel(void) const { return ci2vel; }
   double GetAlphaW(void) const { return alphaw; }
                                                            
-  
   float GetNlf(void);
   
   inline FGColumnVector3& GetNwcg(void) { return vNwcg; }

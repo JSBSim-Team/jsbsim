@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.76 2002/01/25 17:32:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.77 2002/03/27 02:44:09 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,6 +117,11 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
 
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
+
+  compressLength  = 0.0;
+  compressSpeed   = 0.0;
+  brakePct        = 0.0;
+  maxCompLen      = 0.0;
 
   Debug(0);
 }

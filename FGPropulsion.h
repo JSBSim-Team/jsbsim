@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.40 2002/03/09 11:57:42 apeden Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.41 2002/03/27 02:44:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.40 2002/03/09 11:57:42 apeden Exp $
+    @version $Id: FGPropulsion.h,v 1.41 2002/03/27 02:44:09 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -96,9 +96,12 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGPropulsion : public FGModel {
+class FGPropulsion : public FGModel
+{
 public:
+  /// Constructor
   FGPropulsion(FGFDMExec*);
+  /// Destructor
   ~FGPropulsion();
 
   /** Executes the propulsion model.

@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.38 2002/03/20 14:27:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.39 2002/03/27 02:44:09 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,8 +72,9 @@ CLASS IMPLEMENTATION
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAtmosphere";
-  lastIndex=0;
-  h = 0;
+  lastIndex = 0;
+  h = 0.0;
+  psiw = 0.0;
   htab[0]=0;
   htab[1]=36089.239;
   htab[2]=65616.798;
