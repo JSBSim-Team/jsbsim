@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.35 2002/08/17 00:05:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.36 2002/09/22 18:15:11 apeden Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,13 +51,10 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
   string token,sOutputIdx;
-  eParam tmpInputIndex;
-  InputRec *input;
 
   clip = false;
   clipmin = clipmax = 0.0;
   Bias = 0.0;
-  Inputs.clear();
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -69,32 +66,9 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     if (token == "ID") {
       *AC_cfg >> ID;
     } else if (token == "INPUT") {
-      input = new InputRec;
       token = AC_cfg->GetValue("INPUT");
-      if (token.find("FG_") != token.npos) {
-        *AC_cfg >> token;
-        input->Node = PropertyManager->GetNode( 
-                            fcs->GetState()->GetPropertyName(token) );
-        input->Idx=-1;                    
-        input->Type = itPilotAC;
-      } else if (token.find("AP_") != token.npos) {
-        *AC_cfg >> token;
-        input->Node = PropertyManager->GetNode( 
-                            fcs->GetState()->GetPropertyName(token) );
-        input->Idx=-1;                    
-        input->Type = itAP;
-      } else if (token.find(".") != token.npos) { // bias
-        *AC_cfg >> Bias;
-        input->Node=0;
-        input->Idx=0;
-        input->Type=itBias;
-      } else {
-        *AC_cfg >> tmpInputIndex;
-        input->Idx=tmpInputIndex;
-        input->Node=0;
-        input->Type=itFCS;
-      }
-      Inputs.push_back(input);
+      *AC_cfg >> token;
+      InputNodes.push_back( resolveSymbol(token) );
     } else if (token == "CLIPTO") {
       *AC_cfg >> clipmin >> clipmax;
       if (clipmax > clipmin) {
@@ -103,10 +77,11 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputNode = PropertyManager->GetNode( 
-                            fcs->GetState()->GetPropertyName(sOutputIdx) );
+      OutputNode = PropertyManager->GetNode(sOutputIdx);
     }
   }
+ 
+  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components",true) );
 
   Debug(0);
 }
@@ -115,10 +90,6 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
 FGSummer::~FGSummer()
 {
-  unsigned i;
-  for (i=0;i<Inputs.size();i++) {
-    delete Inputs[i];
-  }  
   Debug(1);
 }
 
@@ -133,19 +104,8 @@ bool FGSummer::Run(void )
 
   Output = 0.0;
 
-  for (idx=0; idx<Inputs.size(); idx++) {
-    switch (Inputs[idx]->Type) {
-    case itAP:
-    case itPilotAC:
-      Output += Inputs[idx]->Node->getDoubleValue();
-      break;
-    case itFCS:
-      Output += fcs->GetComponentOutput(Inputs[idx]->Idx);
-      break;
-    case itBias:
-      Output += Bias;
-      break;
-    }
+  for (idx=0; idx<InputNodes.size(); idx++) {
+    Output += InputNodes[idx]->getDoubleValue();
   }
 
   if (clip) {
@@ -183,22 +143,9 @@ void FGSummer::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      ID: " << ID << endl;
       cout << "      INPUTS: " << endl;
-      for (unsigned i=0;i<Inputs.size();i++) {
-        switch (Inputs[i]->Type) {
-        case itAP:
-        case itPilotAC:
-          cout << "       " << Inputs[i]->Node->getName() << endl;
-          break;
-        case itFCS:
-          cout << "        FCS Component " << Inputs[i]->Idx << " (" << 
-                              fcs->GetComponentName(Inputs[i]->Idx) << ")" << endl;
-          break;
-        case itBias:
-          cout << "        " << "Bias of " << Bias << endl;
-          break;
-        }
+      for (unsigned i=0;i<InputNodes.size();i++) {
+        cout << "       " << InputNodes[i]->getName() << endl;
       }
       if (clip) cout << "      CLIPTO: " << clipmin 
                                   << ", " << clipmax << endl;

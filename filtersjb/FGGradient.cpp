@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGradient.h"
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.17 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.18 2002/09/22 18:15:11 apeden Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,6 +52,8 @@ FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
+  
+  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components",true) );
 
   Debug(0);
 }

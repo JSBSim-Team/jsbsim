@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.12 2002/07/10 22:17:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.13 2002/09/22 18:15:11 apeden Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,15 +69,13 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> ID;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      if (token.find("FG_") != token.npos) {
+      if( InputNodes.size() > 0 ) {
+        cerr << "Kinemat can only accept one input" << endl;
+      } else  {
         *AC_cfg >> token;
-        InputNode = PropertyManager->GetNode( 
-                    fcs->GetState()->GetPropertyName(token) );
-        InputType = itPilotAC;
-      } else {
-        *AC_cfg >> InputIdx;
-        InputType = itFCS;
-      }
+        InputNodes.push_back( resolveSymbol(token) );
+      }  
+
     } else if ( token == "DETENTS" ) {
       *AC_cfg >> NumDetents;
       for (int i=0;i<NumDetents;i++) {
@@ -90,10 +88,10 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputNode = PropertyManager->GetNode( 
-                     fcs->GetState()->GetPropertyName(sOutputIdx) );
+      OutputNode = PropertyManager->GetNode(sOutputIdx);
     }
   }
+  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components") );
 
   Debug(0);
 }
@@ -202,8 +200,7 @@ void FGKinemat::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      ID: " << ID << endl;
-      cout << "      INPUT: " << InputNode->getName() << endl;
+      cout << "      INPUT: " << InputNodes[0]->getName() << endl;
       cout << "      DETENTS: " << NumDetents << endl;
       for (int i=0;i<NumDetents;i++) {
         cout << "        " << Detents[i] << " " << TransitionTimes[i] << endl;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.40 2002/08/17 00:05:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.41 2002/09/22 18:15:11 apeden Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,20 +73,12 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> ID;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      if (token.find("FG_") != token.npos) {
+      if( InputNodes.size() > 0 ) {
+        cerr << "Gains can only accept one input" << endl;
+      } else  {
         *AC_cfg >> token;
-        InputNode = PropertyManager->GetNode( 
-                    fcs->GetState()->GetPropertyName(token) );
-        InputType = itPilotAC;
-      } else if (token.find("AP_") != token.npos) {
-        *AC_cfg >> token;
-        InputNode = PropertyManager->GetNode( 
-                    fcs->GetState()->GetPropertyName(token) );
-        InputType = itAP;
-      } else {
-        *AC_cfg >> InputIdx;
-        InputType = itFCS;
-      }
+        InputNodes.push_back( resolveSymbol(token) );
+      }  
     } else if (token == "GAIN") {
       *AC_cfg >> Gain;
     } else if (token == "MIN") {
@@ -102,20 +94,21 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       token = AC_cfg->GetValue("SCHEDULED_BY");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> strScheduledBy;
-        ScheduledBy = PropertyManager->GetNode( 
-                       fcs->GetState()->GetPropertyName(strScheduledBy) ); 
+        ScheduledBy = PropertyManager->GetNode( strScheduledBy ); 
       } 
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;      
-      OutputNode = PropertyManager->GetNode( 
-                     fcs->GetState()->GetPropertyName(sOutputIdx) );
+      OutputNode = PropertyManager->GetNode( sOutputIdx );
 
     } else {
       AC_cfg->ResetLineIndexToZero();
       *Table << *AC_cfg;
     }
   }
+  
+  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components",true) );
+
   Debug(0);
 }
 
@@ -134,7 +127,7 @@ bool FGGain::Run(void )
   double LookupVal = 0;
 
   FGFCSComponent::Run(); // call the base class for initialization of Input
-
+  Input = InputNodes[0]->getDoubleValue();
   if (Type == "PURE_GAIN") {
     Output = Gain * Input;
   } else if (Type == "SCHEDULED_GAIN") {
@@ -184,19 +177,7 @@ void FGGain::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      ID: " << ID << endl;
-      switch(InputType) {
-      case itAP:
-      case itPilotAC:
-        cout << "      INPUT: " << InputNode->getName() << endl;
-        break;
-      case itFCS:
-        cout << "      INPUT: FCS Component " << InputIdx << " (" << 
-                                        fcs->GetComponentName(InputIdx) << ")" << endl;
-        break;
-      case itBias:
-        break;  
-      }
+      cout << "      INPUT: " << InputNodes[0]->getName() << endl;
       cout << "      GAIN: " << Gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       cout << "      MIN: " << Min << endl;

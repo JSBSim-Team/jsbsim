@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.21 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.22 2002/09/22 18:15:11 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     The Summer component sums multiple inputs. These can be pilot control inputs,
     state variables, or even floating point numbers (e.g. for a bias).
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.21 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.22 2002/09/22 18:15:11 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -100,12 +100,6 @@ public:
 
 private:
   FGConfigFile* AC_cfg;
-  typedef struct {
-    FGPropertyManager* Node;
-    int Idx;
-    int Type;
-  } InputRec;   
-  vector <InputRec*> Inputs;
   bool clip;
   double clipmin,clipmax;
   double Bias;

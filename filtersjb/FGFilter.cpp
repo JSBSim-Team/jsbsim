@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.31 2002/08/17 00:05:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.32 2002/09/22 18:15:11 apeden Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,27 +79,18 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     else if (token == "INPUT")
     {
       token = AC_cfg->GetValue("INPUT");
-      if (token.find("FG_") != token.npos) {
+      if( InputNodes.size() > 0 ) {
+        cerr << "Filters can only accept one input" << endl;
+      } else  {
         *AC_cfg >> token;
-        InputNode = PropertyManager->GetNode( 
-                    fcs->GetState()->GetPropertyName(token) );
-        InputType = itPilotAC;
-      } else if (token.find("AP_") != token.npos) {
-        *AC_cfg >> token;
-        InputNode = PropertyManager->GetNode( 
-                    fcs->GetState()->GetPropertyName(token) );
-        InputType = itAP;
-      } else {
-        *AC_cfg >> InputIdx;
-        InputType = itFCS;
-      }
+        InputNodes.push_back( resolveSymbol(token) );
+      }  
     }
     else if (token == "OUTPUT")
     {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputNode = PropertyManager->GetNode( 
-                     fcs->GetState()->GetPropertyName(sOutputIdx) );
+      OutputNode = PropertyManager->GetNode( sOutputIdx );
     }
     else cerr << "Unknown filter type: " << token << endl;
   }
@@ -138,6 +129,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       cerr << "Unknown filter type" << endl;
     break;
   }
+  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components",true) );
 
   Debug(0);
 }
@@ -161,7 +153,7 @@ bool FGFilter::Run(void)
     Initialize = false;
 
   } else {
-
+    Input = InputNodes[0]->getDoubleValue();
     switch (FilterType) {
       case eLag:
         Output = Input * ca + PreviousInput1 * ca + PreviousOutput1 * cb;
@@ -220,19 +212,7 @@ void FGFilter::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      cout << "      ID: " << ID << endl;
-      switch(InputType) {
-      case itAP:
-      case itPilotAC:
-        cout << "      INPUT: " << InputNode->getName() << endl;
-        break;
-      case itFCS:
-        cout << "      INPUT: FCS Component " << InputIdx << " (" << 
-                                        fcs->GetComponentName(InputIdx) << ")" << endl;
-        break;
-      case itBias:
-        break; 
-      }
+      cout << "      INPUT: " << InputNodes[0]->getName() << endl;
       cout << "      C1: " << C1 << endl;
       cout << "      C2: " << C2 << endl;
       cout << "      C3: " << C3 << endl;
