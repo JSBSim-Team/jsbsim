@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBSIMXX "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.hxx,v 1.19 2001/06/14 22:55:03 jberndt Exp $"
+#define ID_JSBSIMXX "$Header JSBSim.hxx,v 1.4 2000/10/22 14:02:16 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.19 2001/06/14 22:55:03 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.20 2001/10/31 12:37:25 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -205,6 +205,102 @@ public:
     void set_Velocities_Local_Airmass (double wnorth,
 				       double weast,
 				       double wdown );
+    /// @name Position Parameter Update
+    //@{
+    /** Update geocentric latitude
+        @param lat latitude in radians measured from the 0 meridian where
+	                 the westerly direction is positive and east is negative */
+    void update_Latitude(double lat);  // geocentric
+
+    /** Update longitude
+        @param lon longitude in radians measured from the equator where
+	                 the northerly direction is positive and south is negative */
+    void update_Longitude(double lon);
+
+    /** Update altitude
+        Note: this triggers a recalculation of AGL altitude
+	      @param alt altitude in feet */
+    void update_Altitude(double alt);        // triggers re-calc of AGL altitude
+    //@}
+
+    //void update_AltitudeAGL(double altagl); // and vice-versa
+
+    /// @name Velocity Parameter Update
+    //@{
+    /** Updates calibrated airspeed
+        Updateting this will trigger a recalc of the other velocity terms.
+	      @param vc Calibrated airspeed in ft/sec */
+    void update_V_calibrated_kts(double vc);
+
+    /** Updates Mach number.
+        Updateting this will trigger a recalc of the other velocity terms.
+	      @param mach Mach number */
+    void update_Mach_number(double mach);
+
+    /** Updates velocity in N-E-D coordinates.
+        Updateting this will trigger a recalc of the other velocity terms.
+	      @param north velocity northward in ft/sec
+	      @param east velocity eastward in ft/sec
+	      @param down velocity downward in ft/sec */
+    void update_Velocities_Local( double north, double east, double down );
+
+    /** Updates aircraft velocity in stability frame.
+        Updateting this will trigger a recalc of the other velocity terms.
+	      @param u X velocity in ft/sec
+	      @param v Y velocity  in ft/sec
+	      @param w Z velocity in ft/sec */
+    void update_Velocities_Wind_Body( double u, double v, double w);
+    //@}
+
+    /** Euler Angle Parameter Update
+        @param phi roll angle in radians
+	      @param theta pitch angle in radians
+	      @param psi heading angle in radians */
+    void update_Euler_Angles( double phi, double theta, double psi );
+
+    /// @name Flight Path Parameter Update
+    //@{
+    /** Updates rate of climb
+        @param roc Rate of climb in ft/sec */
+    void update_Climb_Rate( double roc);
+
+    /** Updates the flight path angle in radians
+        @param gamma flight path angle in radians. */
+    void update_Gamma_vert_rad( double gamma);
+    //@}
+
+    /// @name Earth Parameter Update
+    //@{
+    /** Updates the sea level radius in feet.
+        @param slr Sea Level Radius in feet */
+    void update_Sea_level_radius(double slr);
+
+    /** Updates the runway altitude in feet above sea level.
+        @param ralt Runway altitude in feet above sea level. */
+    void update_Runway_altitude(double ralt);
+    //@}
+
+    /// @name Atmospheric Parameter Update
+    //@{
+    /** Updates the atmospheric static pressure
+        @param p pressure in psf */
+    void update_Static_pressure(double p);
+
+    /** Updates the atmospheric temperature
+        @param T temperature in degrees rankine */
+    void update_Static_temperature(double T);
+
+    /** Updates the atmospheric density.
+        @param rho air density slugs/cubic foot */
+    void update_Density(double rho);
+
+    /** Updates the velocity of the local airmass for wind modeling.
+        @param wnorth velocity north in fps
+        @param weast velocity east in fps
+        @param wdown velocity down in fps*/
+    void update_Velocities_Local_Airmass (double wnorth,
+				       double weast,
+				       double wdown );
     //@}
 
     /** Update the position based on inputs, positions, velocities, etc.
@@ -241,6 +337,7 @@ private:
     SGPropertyNode *throttle_trim;
     SGPropertyNode *aileron_trim;
     SGPropertyNode *rudder_trim;
+    SGPrpertryNode *stall_warning;
     
     void snap_shot(void);
 };
