@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.51 2001/11/17 13:19:33 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.52 2001/11/30 13:20:13 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.51 2001/11/17 13:19:33 jberndt Exp $
+    @version $Id: FGState.h,v 1.52 2001/11/30 13:20:13 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,6 +268,11 @@ public:
       @return a reference to the stability-to-body transformation matrix.
       */
   FGMatrix33& GetTs2b(void);
+  
+  /** Calculates and returns the body-to-stability axis transformation matrix.
+      @return a reference to the stability-to-body transformation matrix.
+      */
+  FGMatrix33& GetTb2s(void);
 
   /** Retrieves the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.
@@ -311,6 +316,7 @@ private:
   FGMatrix33 mTb2l;
   FGMatrix33 mTl2b;
   FGMatrix33 mTs2b;
+  FGMatrix33 mTb2s;
   FGColumnVector4 vQtrn;
   FGColumnVector4 vlastQdot;
   FGColumnVector3 vUVW;
