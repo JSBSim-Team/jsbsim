@@ -58,11 +58,12 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.28 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.29 2001/08/18 12:05:24 apeden Exp $"
 #define jsbFPSTOKTS 0.5924838
 #define jsbKTSTOFPS 1.6878099
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
+typedef enum { setwned, setwmd, setwhc } windset; 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -126,7 +127,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.28 2001/08/14 20:31:49 jberndt Exp $
+   @version $Id: FGInitialCondition.h,v 1.29 2001/08/18 12:05:24 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +201,12 @@ public:
   void SetVnorthFpsIC(float tt);
   void SetVeastFpsIC(float tt);
   void SetVdownFpsIC(float tt);
+  
   void SetWindNEDFpsIC(float wN, float wE, float wD);
+  void SetWindKtsIC(float mag, float dir); 
+  void SetWindHCKtsIC(float head, float cross);// positive from left
+  void SetWindDownKtsIC(float wD);                                          
+  
   void SetClimbRateFpsIC(float tt);
   inline float GetVgroundFpsIC(void) { return vg; }
   inline float GetVtrueFpsIC(void) { return vt; }
@@ -210,6 +216,8 @@ public:
   inline float GetWindNFpsIC(void) { return wnorth; }
   inline float GetWindEFpsIC(void) { return weast; }
   inline float GetWindDFpsIC(void) { return wdown; }
+  inline float GetWindFpsIC(void)  { return sqrt(wnorth*wnorth + weast*weast); }
+  float GetWindDirDegIC(void); 
   inline float GetClimbRateFpsIC(void) { return hdot; }
   float GetUBodyFpsIC(void);
   float GetVBodyFpsIC(void);
@@ -235,6 +243,7 @@ public:
   inline float GetPsiRadIC(void)   { return psi; }
 
   inline speedset GetSpeedSet(void) { return lastSpeedSet; }
+  inline windset GetWindSet(void) { return lastWindSet; }
 
 private:
   float vt,vc,ve,vg;
@@ -245,6 +254,7 @@ private:
   float uw,vw,ww;
   float vnorth,veast,vdown;
   float wnorth,weast,wdown;
+  float whead, wcross, wdir, wmag;
   double sea_level_radius;
   double terrain_altitude;
   double radius_to_vehicle;
@@ -259,6 +269,7 @@ private:
   fp sfunc;
 
   speedset lastSpeedSet;
+  windset lastWindSet;
 
   FGFDMExec *fdmex;
 

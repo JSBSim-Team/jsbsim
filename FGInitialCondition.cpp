@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.34 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.35 2001/08/18 12:05:24 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -72,10 +72,14 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
   uw=vw=ww=0;
   vnorth=veast=vdown=0;
   wnorth=weast=wdown=0;
+  whead=wcross=0;
+  wdir=wmag=0;
   lastSpeedSet=setvt;
+  lastWindSet=setwned;
   sea_level_radius = EARTHRAD;
   radius_to_vehicle = EARTHRAD;
   terrain_altitude = 0;
+  
 
   salpha=sbeta=stheta=sphi=spsi=sgamma=0;
   calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
@@ -207,7 +211,6 @@ void FGInitialCondition::SetAlphaRadIC(float tt) {
 void FGInitialCondition::SetPitchAngleRadIC(float tt) {
   theta=tt;
   stheta=sin(theta); ctheta=cos(theta);
-  calcWindUVW();
   getAlpha();
 }
 
@@ -217,6 +220,7 @@ void FGInitialCondition::SetBetaRadIC(float tt) {
   beta=tt;
   sbeta=sin(beta); cbeta=cos(beta);
   getTheta();
+  
 }
 
 //******************************************************************************
@@ -273,8 +277,9 @@ float FGInitialCondition::GetUBodyFpsIC(void) {
 float FGInitialCondition::GetVBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return v;
-    else
+    else {
       return vt*sbeta - vw;
+    }  
 }
 
 //******************************************************************************
@@ -282,25 +287,66 @@ float FGInitialCondition::GetVBodyFpsIC(void) {
 float FGInitialCondition::GetWBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return w;
-    else {
+    else 
       return vt*salpha*cbeta -ww;
-   }
 }
 
 //******************************************************************************
 
 void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
   wnorth = wN; weast = wE; wdown = wD;
+  lastWindSet = setwned;
   calcWindUVW();
   if(lastSpeedSet == setvg)
     SetVgroundFpsIC(vg);
-
-
 }
 
 //******************************************************************************
 
+void FGInitialCondition::SetWindKtsIC(float mag, float dir) { 
+    wmag=mag*KTSTOFPS; wdir=dir*DEGTORAD; 
+    lastWindSet=setwmd; 
+    calcWindUVW();
+    
+    if(lastSpeedSet == setvg)
+      SetVgroundFpsIC(vg);
+}
+
+//******************************************************************************
+
+// positive from left
+void FGInitialCondition::SetWindHCKtsIC(float head, float cross){ 
+    whead=head*KTSTOFPS; wcross=cross*KTSTOFPS; 
+    lastWindSet=setwhc; 
+    calcWindUVW();
+    if(lastSpeedSet == setvg)
+      SetVgroundFpsIC(vg);
+
+} 
+
+//******************************************************************************
+
+void FGInitialCondition::SetWindDownKtsIC(float wD) { 
+    wdown=wD; 
+    calcWindUVW();
+    if(lastSpeedSet == setvg)
+      SetVgroundFpsIC(vg);
+} 
+
+//******************************************************************************
+
 void FGInitialCondition::calcWindUVW(void) {
+    
+    switch(lastWindSet) {
+      case setwmd:
+        wnorth=wmag*cos(wdir);
+        weast=wmag*sin(wdir);
+      break;
+      case setwhc:
+        wnorth=whead*cos(psi) + wcross*cos(psi+M_PI/2);
+        weast=whead*sin(psi) + wcross*sin(psi+M_PI/2);
+      break;
+    }    
     uw=wnorth*ctheta*cpsi +
        weast*ctheta*spsi -
        wdown*stheta;
@@ -310,6 +356,8 @@ void FGInitialCondition::calcWindUVW(void) {
     ww=wnorth*(cphi*stheta*cpsi + sphi*spsi) +
        weast*(cphi*stheta*spsi - sphi*cpsi) +
        wdown*cphi*ctheta;
+            
+   
     /* cout << "FGInitialCondition::calcWindUVW: wnorth, weast, wdown "
          << wnorth << ", " << weast << ", " << wdown << endl;
     cout << "FGInitialCondition::calcWindUVW: theta, phi, psi "
@@ -366,8 +414,6 @@ void FGInitialCondition::SetSeaLevelRadiusFtIC(double tt) {
 
 void FGInitialCondition::SetTerrainAltitudeFtIC(double tt) {
   terrain_altitude=tt;
- // fdmex->GetPosition()->SetDistanceAGL(altitude-terrain_altitude);
-  //fdmex->GetPosition()->SetRunwayRadius(sea_level_radius + terrain_altitude);
 }
 
 //******************************************************************************
@@ -444,6 +490,7 @@ bool FGInitialCondition::getAlpha(void) {
       calpha=cos(alpha);
     }
   }
+  calcWindUVW();
   return result;
 }
 
@@ -462,6 +509,7 @@ bool FGInitialCondition::getTheta(void) {
       ctheta=cos(theta);
     }
   }
+  calcWindUVW();
   return result;
 }
 
@@ -626,3 +674,11 @@ bool FGInitialCondition::solve(float *y,float x) {
 
 //******************************************************************************
 
+float FGInitialCondition::GetWindDirDegIC(void) {
+  if(weast != 0.0) 
+    return atan2(weast,wnorth)*RADTODEG;
+  else if(wnorth > 0) 
+    return 0.0;
+  else
+    return 180.0;
+}        
