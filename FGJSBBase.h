@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.19 2001/11/28 00:20:18 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.20 2001/12/02 15:57:15 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,7 +136,9 @@ enum eParam {
   FG_HTAILAREA,
   FG_VTAILAREA,
   FG_VBARH,    //horizontal tail volume 
-  FG_VBARV     //vertical tail volume 
+  FG_VBARV,     //vertical tail volume 
+  FG_GEAR_CMD,
+  FG_GEAR_POS
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +151,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.19 2001/11/28 00:20:18 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.20 2001/12/02 15:57:15 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
