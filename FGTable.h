@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.6 2001/08/14 20:31:49 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.7 2001/10/04 23:10:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.6 2001/08/14 20:31:49 jberndt Exp $
+    @version $Id: FGTable.h,v 1.7 2001/10/04 23:10:28 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -92,15 +92,18 @@ public:
        </pre>
        */
   void operator<<(FGConfigFile&);
+  FGTable& operator<<(const float n);
+  FGTable& operator<<(const int n);
+  FGTable& operator<<(const double n);
   inline float GetElement(int r, int c) {return Data[r][c];}
   void Print(void);
   
 private:
   enum type {tt1D, tt2D} Type;
-  unsigned int rowCounter;
-  unsigned int colCounter;
   float** Data;
   int nRows, nCols;
+  unsigned int colCounter;
+  unsigned int rowCounter;
   float** Allocate(void);
   void Debug(void);
 };

@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.12 2001/08/15 15:18:26 apeden Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.13 2001/10/04 23:10:28 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,6 +174,35 @@ void FGTable::operator<<(FGConfigFile& infile)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGTable& FGTable::operator<<(const double n)
+{
+  Data[rowCounter][colCounter] = n;
+  if (colCounter == nCols) {
+    colCounter = 0;
+    rowCounter++;
+  } else {
+    colCounter++;
+  }
+  return *this;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTable& FGTable::operator<<(const int n)
+{
+  *this << (double)n;
+  return *this;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTable& FGTable::operator<<(const float n)
+{
+  *this << (double)n;
+  return *this;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTable::Print(void)
 {

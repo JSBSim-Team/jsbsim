@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.28 2001/10/04 20:44:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.29 2001/10/04 23:10:28 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,26 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
 
   // Initialisation
   volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
+
+  // First column is thi, second is neta (combustion efficiency)
+  Lookup_Combustion_Efficiency = new FGTable(12);
+  *Lookup_Combustion_Efficiency << 0.00 << 0.980;
+  *Lookup_Combustion_Efficiency << 0.90 << 0.980;
+  *Lookup_Combustion_Efficiency << 1.00 << 0.970;
+  *Lookup_Combustion_Efficiency << 1.05 << 0.950;
+  *Lookup_Combustion_Efficiency << 1.10 << 0.900;
+  *Lookup_Combustion_Efficiency << 1.15 << 0.850;
+  *Lookup_Combustion_Efficiency << 1.20 << 0.790;
+  *Lookup_Combustion_Efficiency << 1.30 << 0.700;
+  *Lookup_Combustion_Efficiency << 1.40 << 0.630;
+  *Lookup_Combustion_Efficiency << 1.50 << 0.570;
+  *Lookup_Combustion_Efficiency << 1.60 << 0.525;
+  *Lookup_Combustion_Efficiency << 2.00 << 0.345;
+
+  cout << endl;
+  cout << "      Combustion Efficiency table:" << endl;
+  Lookup_Combustion_Efficiency->Print();
+  cout << endl;
 
   if (debug_lvl & 2) cout << "Instantiated: FGPiston" << endl;
 }
@@ -205,50 +225,6 @@ static float Power_Mixture_Correlation(float thi_actual)
 
   cerr << "ERROR: error in FGNewEngine::Power_Mixture_Correlation\n";
   return mixPerPow_actual;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/**
- * Look up the combustion efficiency.
- *
- *
- * FIXME: this should use JSBSim's interpolation support.
- */
-
-static float Lookup_Combustion_Efficiency(float thi_actual)
-{
-  const int NUM_ELEMENTS = 11;
-  float thi[NUM_ELEMENTS] = {0.0, 0.9, 1.0, 1.05, 1.1, 1.15, 1.2, 1.3, 1.4, 1.5, 1.6};  //array of equivalence ratio values
-  float neta_comb[NUM_ELEMENTS] = {0.98, 0.98, 0.97, 0.95, 0.9, 0.85, 0.79, 0.7, 0.63, 0.57, 0.525};  //corresponding array of combustion efficiency values
-  //combustion efficiency values from Heywood, "Internal Combustion Engine Fundamentals", ISBN 0-07-100499-8
-  float neta_comb_actual = 0.0f;
-  float factor;
-
-  int i;
-  int j = NUM_ELEMENTS;  //This must be equal to the number of elements in the lookup table arrays
-
-  for (i=0;i<j;i++) {
-    if(i == (j-1)) {
-      // Assume linear extrapolation of the slope between the last two points beyond the last point
-      float dydx = (neta_comb[i] - neta_comb[i-1]) / (thi[i] - thi[i-1]);
-      neta_comb_actual = neta_comb[i] + dydx * (thi_actual - thi[i]);
-      return neta_comb_actual;
-    }
-    if(thi_actual == thi[i]) {
-      neta_comb_actual = neta_comb[i];
-      return neta_comb_actual;
-    }
-    if((thi_actual > thi[i]) && (thi_actual < thi[i + 1])) {
-      //do linear interpolation between the two points
-      factor = (thi_actual - thi[i]) / (thi[i+1] - thi[i]);
-      neta_comb_actual = (factor * (neta_comb[i+1] - neta_comb[i])) + neta_comb[i];
-      return neta_comb_actual;
-    }
-  }
-
-  //if we get here something has gone badly wrong
-  cerr << "ERROR: error in FGNewEngine::Lookup_Combustion_Efficiency\n";
-  return neta_comb_actual;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,7 +348,7 @@ void FGPiston::doEnginePower(void)
 
 void FGPiston::doEGT(void)
 {
-  combustion_efficiency = Lookup_Combustion_Efficiency(equivalence_ratio);
+  combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
   float enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * 
     combustion_efficiency * 0.33;
   float heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
