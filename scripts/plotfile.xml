@@ -3,16 +3,16 @@
    <plot>
       <!--This plot normally shows a straight line; need to fix it up so it is more descriptive. It might be nice to even do a 3D plot of flight path.-->
       <title>Ground Track</title>
-      <label axis="x">Longitude (rad)</label>
-      <label axis="y">Latitude (rad)</label>
+      <label axis="x">Longitude (deg)</label>
+      <label axis="y">Latitude (deg)</label>
       <scale>
-         <min axis="x">2.0</min>
-         <min axis="y">0.0</min>
-         <max axis="x">3.0</max>
-         <max axis="y">1.0</max>
+         <min axis="x">121.5</min>
+         <min axis="y">46.5</min>
+         <max axis="x">122.5</max>
+         <max axis="y">47.5</max>
       </scale>
-      <parameter axis="x">Longitude</parameter>
-      <parameter axis="y">Latitude</parameter>
+      <parameter axis="x">Longitude (Deg)</parameter>
+      <parameter axis="y">Latitude (Deg)</parameter>
    </plot>
    <plot>
       <title>Body Rates</title>

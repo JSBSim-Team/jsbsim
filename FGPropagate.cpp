@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.9 2004/04/24 17:12:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.10 2004/04/25 14:02:00 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,18 +96,6 @@ CLASS IMPLEMENTATION
 FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPropagate";
-
-  vUVWdot.InitMatrix();
-  vUVWdot_prev[0].InitMatrix();
-  vUVWdot_prev[1].InitMatrix();
-  vUVWdot_prev[2].InitMatrix();
-  vUVWdot_prev[3].InitMatrix();
-
-  vPQRdot.InitMatrix();
-  vPQRdot_prev[0].InitMatrix();
-  vPQRdot_prev[1].InitMatrix();
-  vPQRdot_prev[2].InitMatrix();
-  vPQRdot_prev[3].InitMatrix();
 
   hoverbmac = hoverbcg = 0.0;
   bind();
@@ -144,43 +132,64 @@ Notes:   [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
 
 bool FGPropagate::Run(void)
 {
-  double DistanceAGL;
+  // Fast return if we have nothing to do ...
+  if (FGModel::Run()) return true;
 
-  if (!FGModel::Run()) {
-    double dt = State->Getdt()*rate;
-    const FGColumnVector3& vMoments = Aircraft->GetMoments();
+  // The 'stepsize'
+  double dt = State->Getdt()*rate;
 
-    // Propagate body rotational rates based on body moments
-    vPQRdot = MassBalance->GetJinv()*(vMoments - vPQR*(MassBalance->GetJ()*vPQR));
-    vPQR += State->Integrate(FGState::TRAPZ, dt, vPQRdot, vPQRdot_prev);
+  // Get current forces and moments.
+  const FGColumnVector3& vForces = Aircraft->GetForces();
+  const FGColumnVector3& vMoments = Aircraft->GetMoments();
 
-    // Propagate quaternion orientation based on body rotational rates
-    FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR );
-    vQtrn += State->Integrate(FGState::TRAPZ, dt, vQtrndot, vQtrndot_prev);
+  // Get the mass and inertia values.
+  double mass = MassBalance->GetMass();
+  const FGMatrix33& J = MassBalance->GetJ();
+  const FGMatrix33& Jinv = MassBalance->GetJinv();
 
-    // Propagate body frame velocity based on aircraft accelerations
-    vUVWdot = vUVW*vPQR + Aircraft->GetBodyAccel();
-    vUVW += State->Integrate(FGState::TRAPZ, dt, vUVWdot, vUVWdot_prev);
+  // First compute the time derivatives of the vehicles' state values.
 
-    // Convert local frame velocity vector based on body frame velocity
-    vVel = vQtrn.GetTInv() * vUVW;
+  // Compute the body rotational accelerations based on the current body moments
+  vPQRdot = Jinv*(vMoments - vPQR*(J*vPQR));
 
-    // Propagate globe ("map") location based on local frame velocity
-    vLocationDot = toGlobe(vVel);
-    vLocation += State->Integrate(FGState::TRAPZ, dt, vLocationDot, vLocationDot_prev);
+  // Compute the body frame accelerations based on the current body forces
+  vUVWdot = vUVW*vPQR + vForces/mass;
 
-    DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
+  // Compute the quaternion orientation derivative on the current
+  // body rotational rates
+  FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR );
 
-    b = Aircraft->GetWingSpan();
-    hoverbcg = DistanceAGL/b;
+  // Convert local frame velocity vector based on body frame velocity
+  vVel = vQtrn.GetTInv() * vUVW;
 
-    vMac = vQtrn.GetTInv()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-    hoverbmac = (DistanceAGL + vMac(3)) / b;
-    return false;
+  // Convert to globe ("map") location derivative based on current
+  // local frame velocity
+  vLocationDot = toGlobe(vVel);
 
-  } else {
-    return true;
-  }
+  // Now do propagation.
+  // This is for now done with a simple explicit euler scheme.
+  // That means use the current state values and their current derivatives.
+  // Based on these values compute an approximatioin to the state values at the
+  // time (now + dt).
+
+  // Propagate the velocities
+  vPQR += dt*vPQRdot;
+  vUVW += dt*vUVWdot;
+
+  // Propagate the positions
+  vQtrn += dt*vQtrndot;
+  vLocation += dt*vLocationDot;
+
+  // Recompute some derived values ...
+  double DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
+
+  b = Aircraft->GetWingSpan();
+  hoverbcg = DistanceAGL/b;
+
+  FGColumnVector3 vMac = vQtrn.GetTInv()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+  hoverbmac = (DistanceAGL + vMac(3)) / b;
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

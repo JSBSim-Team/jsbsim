@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.9 2004/04/24 17:12:58 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.10 2004/04/25 14:02:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.9 2004/04/24 17:12:58 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.10 2004/04/25 14:02:01 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,10 +99,6 @@ public:
   double GetPQRdot(int idx) const {return vPQRdot(idx);}
   double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
   double Gethdot(void) const { return vLocationDot(eRad); }
-//  double GetLatitude(void) const { return vLocation(eLat); }
-//  double GetLatitudeDot(void) const { return vLocationDot(eLat); }
-//  double GetLongitude(void) const { return vLocation(eLong); }
-//  double GetLongitudeDot(void) const { return vLocationDot(eLong); }
 
   /** Returns the "constant" RunwayRadius.
       The RunwayRadius parameter is set by the calling application or set to
@@ -143,8 +139,6 @@ public:
 // SET functions
 
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
-//  void SetLatitude(double tt) { vLocation(eLat) = tt; }
-//  void SetLongitude(double tt) { vLocation(eLong) = tt; }
   void SetLocation(int idx, double val) { vLocation(idx) = val; }
   void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
@@ -160,18 +154,13 @@ public:
 
 private:
   FGColumnVector3 vVel;
-  FGColumnVector3 vMac;
   FGColumnVector3 vLocation;
   FGColumnVector3 vLocationDot;
-  FGColumnVector3 vLocationDot_prev[4];
   FGColumnVector3 vPQR;
   FGColumnVector3 vPQRdot;
-  FGColumnVector3 vPQRdot_prev[4];
   FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
-  FGColumnVector3 vUVWdot_prev[4];
   FGQuaternion vQtrn;
-  FGQuaternion vQtrndot_prev[4];
 
   double dt;
   double RunwayRadius, SeaLevelRadius;

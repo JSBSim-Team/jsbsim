@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.80 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.81 2004/04/25 14:02:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.80 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGState.h,v 1.81 2004/04/25 14:02:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,99 +175,6 @@ public:
     sim_time+=dt;
     return sim_time;
   }
-
-  /** Integrates the quaternion.
-      Given the supplied rotational rate vector and integration rate, the quaternion
-      is integrated. The quaternion is later used to update the transformation
-      matrices.
-      @param vPQR the body rotational rate column vector.
-      @param rate the integration rate in seconds.
-      */
-  void IntegrateQuat(FGColumnVector3 vPQR, int rate);
-
-  // ======================================= General Purpose INTEGRATOR
-
-  enum iType {AB4, AB3, AB2, AM3, AM4, EULER, TRAPZ};
-
-  /** Multi-method integrator.
-      @param type Type of intergation scheme to use. Can be one of:
-             <ul>
-             <li>AB4 - Adams-Bashforth, fourth order</li>
-             <li>AB3 - Adams-Bashforth, third order</li>
-             <li>AB2 - Adams-Bashforth, second order</li>
-             <li>AM3 - Adams Moulton, third order</li>
-             <li>AM4 - Adams Moulton, fourth order</li>
-             <li>EULER - Euler</li>
-             <li>TRAPZ - Trapezoidal</li>
-             </ul>
-      @param delta_t the integration time step in seconds
-      @param vTDeriv a reference to the current value of the time derivative of
-             the quantity being integrated (i.e. if vUVW is being integrated
-             vTDeriv is the current value of vUVWdot)
-      @param vLastArray an array of previously calculated and saved values of
-             the quantity being integrated (i.e. if vUVW is being integrated
-             vLastArray[0] is the past value of vUVWdot, vLastArray[1] is the value of
-             vUVWdot prior to that, etc.)
-      @return the current, incremental value of the item integrated to add to the
-              previous value. */
-
-  template <class T> T Integrate(iType type, double delta_t, T& vTDeriv, T *vLastArray)
-  {
-    T vResult;
-
-    switch (type) {
-    case AB4:
-      vResult = (delta_t/24.0)*(  55.0 * vLastArray[0]
-                                - 59.0 * vLastArray[1]
-                                + 37.0 * vLastArray[2]
-                                -  9.0 * vLastArray[3] );
-      vLastArray[3] = vLastArray[2];
-      vLastArray[2] = vLastArray[1];
-      vLastArray[1] = vLastArray[0];
-      vLastArray[0] = vTDeriv;
-      break;
-    case AB3:
-      vResult = (delta_t/12.0)*(  23.0 * vLastArray[0]
-                                - 16.0 * vLastArray[1]
-                                +  5.0 * vLastArray[2] );
-      vLastArray[2] = vLastArray[1];
-      vLastArray[1] = vLastArray[0];
-      vLastArray[0] = vTDeriv;
-      break;
-    case AB2:
-      vResult = (delta_t/2.0)*( 3.0 * vLastArray[0] - vLastArray[1] );
-      vLastArray[1] = vLastArray[0];
-      vLastArray[0] = vTDeriv;
-      break;
-    case AM4:
-      vResult = (delta_t/24.0)*(   9.0 * vTDeriv
-                                + 19.0 * vLastArray[0]
-                                -  5.0 * vLastArray[1]
-                                +  1.0 * vLastArray[2] );
-      vLastArray[2] = vLastArray[1];
-      vLastArray[1] = vLastArray[0];
-      vLastArray[0] = vTDeriv;
-      break;
-    case AM3:
-      vResult = (delta_t/12.0)*(  5.0 * vTDeriv
-                                + 8.0 * vLastArray[0]
-                                - 1.0 * vLastArray[1] );
-      vLastArray[1] = vLastArray[0];
-      vLastArray[0] = vTDeriv;
-      break;
-    case EULER:
-      vResult = delta_t * vTDeriv;
-      break;
-    case TRAPZ:
-      vResult = (delta_t*0.5) * (vTDeriv + vLastArray[0]);
-      vLastArray[0] = vTDeriv;
-      break;
-    }
-
-    return vResult;
-  }
-
-  // =======================================
 
   /** Calculates and returns the stability-to-body axis transformation matrix.
       @return a reference to the stability-to-body transformation matrix.
