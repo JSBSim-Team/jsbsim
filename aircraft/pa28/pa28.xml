@@ -1,13 +1,9 @@
 <FDM_CONFIG NAME="PA28-180" VERSION="1.57">
 <!--
-
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
-  CVS Version: $Id: pa28.xml,v 1.3 2002/05/16 13:04:59 jberndt Exp $
-
-  Function: Models a Piper PA28-180 Cherokee
-  Notes:    Try running FlightGear using this command line,
-            fgfs -fdm=jsb -aircraft=PA28-180
+  Function:    Models a Piper Cherokee 180 (PA28-180)
+  CVS Version: $Id: pa28.xml,v 1.4 2002/05/31 11:57:08 jberndt Exp $
 -->
 
   <METRICS>
@@ -53,6 +49,7 @@
     AC_EMPTYWT   1650
     AC_AERORP      102   0.0 -6 <!-- Set at wing AC approx. -->
     AC_CGLOC       88.32  0.0  0.0
+    <!-- Pilot -->
     AC_POINTMASS 180.0 81.6 -9.6 0
     AC_EYEPTLOC    81.6 -9.6 21
     AC_ALPHALIMITS -0.175 0.349
@@ -114,7 +111,7 @@
       AC_THRUSTER name x y z pitch yaw
     -->
 
-<!-- NEED TO UPDATE ENGOINE/PROP GEOMETRY -->
+<!-- FIXME: NEED TO UPDATE ENGINE/PROP -->
 
     <AC_ENGINE FILE="engIO360C">
       XLOC   35.0
@@ -131,17 +128,18 @@
       ZLOC    0.0
       PITCH   0.0
       YAW     0.0
-      P_FACTOR 0.1
+      P_FACTOR 10.0
       SENSE   1.0
     </AC_THRUSTER>
 
+<!-- FIXME: should have two fuel tanks -->
     <AC_TANK TYPE="FUEL" NUMBER="1">
       XLOC   90.0
       YLOC    0.0
       ZLOC    0.0
       RADIUS 29.4
-      CAPACITY 336.0
-      CONTENTS 336.0
+      CAPACITY 150.0
+      CONTENTS 150.0
     </AC_TANK>
 
   </PROPULSION>
@@ -161,24 +159,45 @@
        OUTPUT        FG_ELEVATOR_POS
        GAIN          0.01745
      </COMPONENT>
-     <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID             2
-       INPUT          FG_AILERON_CMD
-       MIN            -30
-       MAX             15
-       GAIN           0.01745
-       OUTPUT        FG_AILERON_POS
+     <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+       ID            2
+       INPUT        FG_AILERON_CMD
+       INPUT        FG_ROLL_TRIM_CMD
+       CLIPTO       -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            3
+       INPUT         2
+       MIN          -30
+       MAX           15
+       GAIN          0.01745
+       OUTPUT        FG_LEFT_AILERON_POS
+     </COMPONENT>
+      <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            4
+       INPUT         2
+       MIN          -30
+       MAX           15
+       INVERT
+       GAIN          0.01745
+       OUTPUT        FG_RIGHT_AILERON_POS
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+       ID            5
+       INPUT        FG_RUDDER_CMD
+       INPUT        FG_YAW_TRIM_CMD
+       CLIPTO       -1 1
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-       ID            3
-       INPUT        FG_RUDDER_CMD
+       ID            6
+       INPUT         5
        MIN         -27
        MAX          27
        GAIN         0.01745
        OUTPUT       FG_RUDDER_POS
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       ID           4
+       ID           7
        INPUT        FG_FLAPS_CMD
        DETENTS      4
                     0    0
@@ -189,9 +208,6 @@
      </COMPONENT>
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
-
-     AC_ALPHALIMITS -0.175 0.349
-
      <AXIS NAME="LIFT">
        <GROUP NAME="CLb">
          Basic_lift
@@ -298,7 +314,7 @@
        </COEFFICIENT>
     </AXIS>
     <AXIS NAME="DRAG">
-      <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+      <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
          FG_QBAR|FG_WINGAREA
          0.019
@@ -313,7 +329,7 @@
          25  0.03
          40  0.05
        </COEFFICIENT>
-      <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+       <COEFFICIENT NAME="CDi" TYPE="VECTOR">
          Drag_induced
          16
          FG_ALPHA
@@ -334,7 +350,7 @@
          0.279   0.196
          0.314   0.205
          0.349   0.201
-        </COEFFICIENT>
+       </COEFFICIENT>
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
          FG_QBAR|FG_WINGAREA|FG_AELEVATOR_POS
@@ -388,7 +404,7 @@
 
        <COEFFICIENT NAME="Clb" TYPE="VALUE">
          Roll_moment_due_to_beta
-         FG_QBAR|FG_WINGAREA|FG_WINGSPAN
+         FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BETA
          -0.01067
        </COEFFICIENT>
 
@@ -535,18 +551,18 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       20
-    SIMULATION       ON
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
     AEROSURFACES     ON
     RATES            ON
     VELOCITIES       ON
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     OFF
+    COEFFICIENTS     ON
     GROUND_REACTIONS ON
     FCS              ON
     PROPULSION       ON
