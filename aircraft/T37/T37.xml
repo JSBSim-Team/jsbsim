@@ -151,13 +151,13 @@
       MAX     0.35
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
-   <COMPONENT NAME="Rudder Command Sum" TYPE="SUMMER">
+   <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
       INPUT   fcs/rudder-cmd-norm
       INPUT   fcs/yaw-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
    <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/rudder-sum
+      INPUT   fcs/yaw-trim-sum
       MIN     -0.35
       MAX      0.35
       OUTPUT  fcs/rudder-pos-rad

@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.30 2004/02/05 10:44:04 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.31 2004/02/06 15:09:50 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -152,6 +152,11 @@
       ROWS         2
       2.99         0.0
       3.00         1.0
+     </COMPONENT>
+     <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
+      INPUT   fcs/rudder-command-sum
+      INPUT   fcs/yaw-damper-final
+      CLIPTO  -1 1
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT        fcs/rudder-sum
