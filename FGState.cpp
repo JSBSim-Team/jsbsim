@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.69 2001/08/10 17:04:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.70 2001/08/11 14:42:01 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -428,6 +428,8 @@ void FGState::Initialize(float U, float V, float W,
 
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
+  
+  Atmosphere->SetWindNED(wmag*cos(wdir*DEGTORAD),wmag*sin(wdir*DEGTORAD),0.0);
 
   vLocalEuler << phi << tht << psi;
   Rotation->SetEuler(vLocalEuler);
