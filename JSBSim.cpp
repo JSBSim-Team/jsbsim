@@ -132,7 +132,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.69 2002/01/28 23:16:46 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.70 2002/02/01 14:50:55 jberndt Exp $";
 
 string ScriptName;
 string AircraftName;
@@ -161,7 +161,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.69 2002/01/28 23:16:46 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.70 2002/02/01 14:50:55 jberndt Exp $
     @see -
 */
 
