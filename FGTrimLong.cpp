@@ -1,40 +1,40 @@
 /*******************************************************************************
- 
+
  Header:       FGTrimLong.cpp
  Author:       Tony Peden
  Date started: 9/8/99
- 
- ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
- 
+
+ --------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) ---------
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
- 
+
+
  HISTORY
 --------------------------------------------------------------------------------
 9/8/99   TP   Created
- 
- 
+
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
- 
+
 This class takes the given set of IC's and finds the angle of attack, elevator,
 and throttle setting required to fly steady level. This is currently for in-air
-conditions only.  It is implemented using an iterative, one-axis-at-a-time 
+conditions only.  It is implemented using an iterative, one-axis-at-a-time
 scheme. */
 
 //  !!!!!!! BEWARE ALL YE WHO ENTER HERE !!!!!!!
@@ -53,10 +53,6 @@ INCLUDES
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
-
-
-
-
 
 FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
 
@@ -82,14 +78,13 @@ FGTrimLong::FGTrimLong(FGFDMExec *FDMExec,FGInitialCondition *FGIC ) {
   trimudot=true;
   axis_count=0;
 
-
 }
+
+/******************************************************************************/
 
 FGTrimLong::~FGTrimLong(void) {}
 
-
-
-
+/******************************************************************************/
 
 void FGTrimLong::TrimStats() {
   cout << endl << "  Trim Statistics: " << endl;
@@ -101,6 +96,8 @@ void FGTrimLong::TrimStats() {
     cout << "      qdot: " << qdot_subits << " average: " << qdot_subits/total_its << endl;
   }
 }
+
+/******************************************************************************/
 
 void FGTrimLong::Report(void) {
   cout << endl << "  Trim Results" << endl;
@@ -116,6 +113,8 @@ void FGTrimLong::Report(void) {
   << " qdot: " << fdmex->GetRotation()->GetPQRdot()(2)
   << " Tolerance " << A_Tolerance << endl;
 }
+
+/******************************************************************************/
 
 void FGTrimLong::ReportState(void) {
   cout << endl << "  JSBSim Trim Report" << endl;
@@ -175,6 +174,8 @@ void FGTrimLong::ReportState(void) {
   cout << "    Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)/100 << endl;
 }
 
+/******************************************************************************/
+
 void FGTrimLong::setThrottlesPct(float tt) {
 
   float tMin,tMax;
@@ -187,6 +188,7 @@ void FGTrimLong::setThrottlesPct(float tt) {
   }
 }
 
+/******************************************************************************/
 
 int FGTrimLong::checkLimits(trimfp fp, float current, float min, float max) {
   float lo,hi;
@@ -209,7 +211,10 @@ int FGTrimLong::checkLimits(trimfp fp, float current, float min, float max) {
   return result;
 }
 
-bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result, float eps, float min, float max, int max_iterations, int *actual_its) {
+/******************************************************************************/
+
+bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result,
+         float eps, float min, float max, int max_iterations, int *actual_its) {
 
   float x1,x2,x3,f1,f2,f3,d,d0;
   float const relax =0.9;
@@ -233,8 +238,8 @@ bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result, float
     i=0;
     while ((fabs(d) > eps) && (i < max_iterations)) {
       if(Debug > 1)
-        cout << "FGTrimLong::solve i,x1,x2,x3: " << i << ", " << x1 << ", " << x2 << ", " << x3 << endl;
-
+        cout << "FGTrimLong::solve i,x1,x2,x3: " << i << ", " << x1
+                                            << ", " << x2 << ", " << x3 << endl;
       d=(x3-x1)/d0;
       x2=x1-d*d0*f1/(f3-f1);
       // if(x2 < min)
@@ -265,8 +270,10 @@ bool FGTrimLong::solve(trimfp fp,float guess,float desired, float *result, float
   return success;
 }
 
-bool FGTrimLong::findInterval(trimfp fp, float *lo, float *hi,float guess,float desired,int max_iterations) {
+/******************************************************************************/
 
+bool FGTrimLong::findInterval(trimfp fp, float *lo, float *hi,float guess,
+                                             float desired,int max_iterations) {
   int i=0;
   bool found=false;
   float flo,fhi,fguess;
@@ -292,12 +299,15 @@ bool FGTrimLong::findInterval(trimfp fp, float *lo, float *hi,float guess,float 
       }
     }
     if(Debug > 1)
-      cout << "FGTrimLong::findInterval: i=" << i << " Lo= " << xlo << " Hi= " << xhi << " flo*fhi: " << flo*fhi << endl;
+      cout << "FGTrimLong::findInterval: i=" << i << " Lo= " << xlo
+                           << " Hi= " << xhi << " flo*fhi: " << flo*fhi << endl;
   } while((found == 0) && (i <= max_iterations));
   *lo=xlo;
   *hi=xhi;
   return found;
 }
+
+/******************************************************************************/
 
 float FGTrimLong::udot_func(float x) {
   setThrottlesPct(x);
@@ -305,11 +315,15 @@ float FGTrimLong::udot_func(float x) {
   return fdmex->GetTranslation()->GetUVWdot()(1);
 }
 
+/******************************************************************************/
+
 float FGTrimLong::wdot_func(float x) {
   fgic->SetAlphaDegIC(x);
   fdmex->RunIC(fgic);
   return fdmex->GetTranslation()->GetUVWdot()(3);
 }
+
+/******************************************************************************/
 
 float FGTrimLong::qdot_func(float x) {
   fdmex->GetFCS()->SetPitchTrimCmd(x);
@@ -317,18 +331,20 @@ float FGTrimLong::qdot_func(float x) {
   return fdmex->GetRotation()->GetPQRdot()(2);
 }
 
+/******************************************************************************/
+
 bool FGTrimLong::DoTrim(void) {
   int k=0,j=0,sum=0,trim_failed=0,jmax=Naxis;
   int its;
   float step,temp,min,max;
 
-  if(fgic->GetVtrueKtsIC() < 1)
+  if(fgic->GetVtrueKtsIC() < 1) {
     cout << "Trim failed, on-ground trimming not yet implemented." << endl;
     cout << "Or did you *really* mean to start in-air"
          << " with less than 1 knot airspeed?" << endl;
     return false;
-  }  
-  
+  }
+
   trimfp fp;
 
   fgic -> SetAlphaDegIC((alphaMin+alphaMax)/2);
@@ -428,5 +444,5 @@ bool FGTrimLong::DoTrim(void) {
 
 }
 
-
 //YOU WERE WARNED, BUT YOU DID IT ANYWAY.
+
