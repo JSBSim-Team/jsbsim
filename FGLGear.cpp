@@ -116,6 +116,12 @@ FGColumnVector FGLGear::Force(void)
       GroundSpeed   =  Position->GetVel().Magnitude();
     }
 
+    // The following code normalizes the wheel velocity vector, reverses it, and zeroes out
+    // the z component of the velocity. The question is, should the Z axis velocity be zeroed
+    // out first before the normalization takes place or not? Subsequent to that, the Wheel
+    // Velocity vector now points as a unit vector backwards and parallel to the wheel
+    // velocity vector. It acts AT the wheel.
+
     vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
     vWhlVelVec(eZ)  =  0.00;
 
