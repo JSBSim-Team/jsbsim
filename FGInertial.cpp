@@ -36,8 +36,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInertial.h"
+#include "FGPosition.h"
+#include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.8 2001/04/25 22:47:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.9 2001/04/26 12:45:19 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 extern short debug_lvl;
@@ -48,13 +50,15 @@ CLASS IMPLEMENTATION
 
 
 FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex),
-    vMoments(3),
     vForces(3),
     vOmegaEarth(3),
-    vOmegaAircraft(3)
+    vOmegaAircraft(3),
+    vRadius(3)
 {
   vOmegaEarth.InitMatrix();
   vOmegaEarth(1) = OMEGA_EARTH;
+  vRadius.InitMatrix();
+  vRadius(3) = -EARTHRAD;
 
   if (debug_lvl & 2) cout << "Instantiated: FGInertial" << endl;
 }
@@ -71,14 +75,16 @@ FGInertial::~FGInertial(void)
 bool FGInertial::Run(void)
 {
   if (!FGModel::Run()) {
-
-    vOmegaAircraft = Position->GetvVel() / EARTHRAD;
+/*
+    vOmegaAircraft = Position->GetVel / EARTHRAD;
     vForces = ( 2.0 * (vOmegaAircraft + vOmegaEarth)
-                * (Position->GetvVel() + vOmegaEarth * EARTHRAD) )
+                * (Position->GetVel() + vOmegaEarth * EARTHRAD) )
 		            * MassBalance->GetMass();
-    
-    vForces += 
 
+    vForces = ( (vOmegaAircraft + vOmegaEarth)
+                 * ((vOmegaAircraft + vOmegaEarth) * EARTHRAD ))
+                 * MassBalance->GetMass();
+*/
     return false;
   } else {
     return true;

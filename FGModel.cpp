@@ -46,6 +46,7 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGMassBalance.h"
 #include "FGAerodynamics.h"
+#include "FGInertial.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -53,7 +54,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.15 2001/04/23 14:37:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.16 2001/04/26 12:45:19 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +78,7 @@ FGModel::FGModel(FGFDMExec* fdmex)
   Propulsion   = 0;
   MassBalance  = 0;
   Aerodynamics = 0;
+  Inertial     = 0;
   Aircraft     = 0;
   Translation  = 0;
   Rotation     = 0;
@@ -106,6 +108,7 @@ bool FGModel::InitModel(void)
   Propulsion   = FDMExec->GetPropulsion();
   MassBalance  = FDMExec->GetMassBalance();
   Aerodynamics = FDMExec->GetAerodynamics();
+  Inertial     = FDMExec->GetInertial();
   Aircraft     = FDMExec->GetAircraft();
   Translation  = FDMExec->GetTranslation();
   Rotation     = FDMExec->GetRotation();
@@ -119,6 +122,7 @@ bool FGModel::InitModel(void)
       !Propulsion ||
       !MassBalance ||
       !Aerodynamics ||
+      !Inertial ||
       !Aircraft ||
       !Translation ||
       !Rotation ||

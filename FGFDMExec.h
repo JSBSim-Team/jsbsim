@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.38 2001/04/23 14:37:29 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.39 2001/04/26 12:45:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,6 +70,7 @@ class FGFCS;
 class FGPropulsion;
 class FGMassBalance;
 class FGAerodynamics;
+class FGInertial;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -108,7 +109,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.38 2001/04/23 14:37:29 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.39 2001/04/26 12:45:19 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -282,6 +283,8 @@ public:
   inline FGMassBalance* GetMassBalance(void)  {return MassBalance;}
   /// Returns the FGAerodynamics pointer
   inline FGAerodynamics* GetAerodynamics(void){return Aerodynamics;}
+  /// Returns the FGInertial pointer.
+  inline FGInertial* GetInertial(void)        {return Inertial;}
   /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
   /// Returns the FGTranslation pointer.
@@ -325,6 +328,7 @@ private:
   FGPropulsion*   Propulsion;
   FGMassBalance*  MassBalance;
   FGAerodynamics* Aerodynamics;
+  FGInertial*     Inertial;
   FGAircraft*     Aircraft;
   FGTranslation*  Translation;
   FGRotation*     Rotation;

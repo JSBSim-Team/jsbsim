@@ -54,7 +54,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.33 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.34 2001/04/26 12:45:19 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 extern char highint[5];
@@ -157,7 +157,6 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     case TABLE:
       *Table << *AC_cfg;
       if (debug_lvl > 0) Table->Print();
-
       break;
     case EQUATION:
     case UNKNOWN:

@@ -57,7 +57,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.11 2001/04/25 22:47:59 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.12 2001/04/26 12:45:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -77,6 +77,8 @@ private:
   void Debug(void);
   FGColumnVector vOmegaEarth;
   FGColumnVector vOmegaAircraft;
+  FGColumnVector vRadius;
+  FGColumnVector vForces;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

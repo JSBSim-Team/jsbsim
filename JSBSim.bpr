@@ -15,8 +15,8 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
 OBJFILES = JSBSim.obj FGUtility.obj FGAircraft.obj FGAtmosphere.obj FGAuxiliary.obj \
-  FGCoefficient.obj FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj \
-  FGFDMExec.obj FGfdmSocket.obj FGForce.obj FGGroundReactions.obj FGInertial.obj \
+  FGCoefficient.obj FGConfigFile.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
+  FGfdmSocket.obj FGForce.obj FGGroundReactions.obj FGInertial.obj \
   FGInitialCondition.obj FGLGear.obj FGMassBalance.obj FGMatrix.obj FGModel.obj \
   FGNozzle.obj FGOutput.obj FGPiston.obj FGPosition.obj FGPropeller.obj \
   FGPropulsion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGState.obj \
