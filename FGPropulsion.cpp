@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.84 2003/11/09 21:54:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.85 2003/11/11 06:38:54 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -406,6 +406,8 @@ string FGPropulsion::GetPropulsionStrings(void)
         PropulsionStrings += (Thrusters[i]->GetName() + "_Pitch[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_RPM[" + buffer + "]");
       break;
+    case FGThruster::ttDirect:
+      break;
     default:
       PropulsionStrings += "INVALID THRUSTER TYPE";
       break;
@@ -447,6 +449,8 @@ string FGPropulsion::GetPropulsionValues(void)
       PropulsionValues += (string(gcvt(((FGNozzle*)Thrusters[i])->GetThrust(), 10, buff)));
       break;
     case FGThruster::ttRotor:
+      break;
+    case FGThruster::ttDirect:
       break;
     case FGThruster::ttPropeller:
       FGPropeller* Propeller = (FGPropeller*)Thrusters[i];

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.12 2003/11/09 22:32:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.13 2003/11/11 06:38:54 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 FGSimTurbine::FGSimTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
   SetDefaults();
-  FGEngine::Type=etSimTurbine;
+  Type = etSimTurbine;
   Load(cfg);
   Debug(0);
 }

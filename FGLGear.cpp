@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.94 2003/11/04 15:45:31 dpculp Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.95 2003/11/11 06:38:54 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +208,9 @@ FGColumnVector3& FGLGear::Force(void)
 {
   double SteerGain = 0;
   double SinWheel, CosWheel;
-  double deltaT;
+  double deltaSlip;
+  double deltaT = State->Getdt()*Aircraft->GetRate();
+  double maxdeltaSlip = 0.5*deltaT;
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
@@ -250,7 +252,7 @@ FGColumnVector3& FGLGear::Force(void)
 
     if (compressLength > 0.00) {
 
-      WOW = true;// Weight-On-Wheels is true
+      WOW = true; // Weight-On-Wheels is true
 
 // The next equation should really use the vector to the contact patch of the tire
 // including the strut compression and not vWhlBodyVec.  Will fix this later.
@@ -353,21 +355,37 @@ FGColumnVector3& FGLGear::Force(void)
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
 // Calculate tire slip angle.
-
+/*
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
-      } else if (fabs(RollingWhlVel) < 0.10) {
+      } else if (fabs(RollingWhlVel) < 1.0) {
         WheelSlip = 0.05*radtodeg*atan2(SideWhlVel, RollingWhlVel) + 0.95*WheelSlip;
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
       }
-
+*/
+      if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
+        WheelSlip = 0.0;
+      } else if (RollingWhlVel < 1.0) {
+        WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
+        deltaSlip = WheelSlip - lastWheelSlip;
+        if (fabs(deltaSlip) > maxdeltaSlip) {
+          if (WheelSlip > lastWheelSlip) {
+            WheelSlip = lastWheelSlip + maxdeltaSlip;
+          } else if (WheelSlip < lastWheelSlip) {
+            WheelSlip = lastWheelSlip - maxdeltaSlip;
+          }
+        }
+      } else {
+        WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
+      }
+/*
       if ((WheelSlip < 0.0 && lastWheelSlip > 0.0) ||
           (WheelSlip > 0.0 && lastWheelSlip < 0.0))
       {
         WheelSlip = 0.0;
       }
-      
+*/    
       lastWheelSlip = WheelSlip;
 
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
@@ -429,7 +447,7 @@ FGColumnVector3& FGLGear::Force(void)
       vForce  = State->GetTl2b() * vLocalForce;
       vMoment = vWhlBodyVec * vForce;
 
-    } else {
+    } else { // Gear is NOT compressed
 
       WOW = false;
 
@@ -443,8 +461,6 @@ FGColumnVector3& FGLGear::Force(void)
 
       compressLength = 0.0; // reset compressLength to zero for data output validity
     }
-
-    deltaT = State->Getdt()*Aircraft->GetRate();
 
     if (FirstContact) LandingDistanceTraveled += Position->GetVground()*deltaT;
   
