@@ -1,19 +1,18 @@
 <FDM_CONFIG NAME="X-15" VERSION="1.38">
 
-<!--
+  <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.24 2001/04/09 13:03:51 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.25 2001/04/11 00:46:57 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
             fgfs --fdm=jsb --aircraft=X15 --altitude=60000 --uBody=2000 --wBody=120
--->
+  -->
 
   <METRICS>
 
-    <COMMENT>
     <!--
     Center of gravity location, empty weight, in aircraft's own structural coord
     system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
@@ -22,7 +21,6 @@
     Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
     X, Y, Z, in inches
     -->
-    </COMMENT>
 
     AC_WINGAREA 200
     AC_WINGSPAN 22.36
@@ -40,7 +38,6 @@
 
   <UNDERCARRIAGE>
 
-    <COMMENT>
     <!--
     The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
     
@@ -56,7 +53,6 @@
     <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
     -->
-    </COMMENT>
 
     AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 0.02 FIXED NONE 0
     AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 0.20 FIXED NONE 0
@@ -66,7 +62,6 @@
 
   <PROPULSION>
 
-    <COMMENT>
     <!--
       TANKS SECTION
 
@@ -89,7 +84,6 @@
 
       AC_THRUSTER name x y z pitch yaw
     -->
-    </COMMENT>
 
     <AC_TANK TYPE="OXIDIZER" NUMBER="0">
       XLOC 282.3
@@ -128,7 +122,6 @@
     </AC_THRUSTER>
   </PROPULSION>
 
-  <COMMENT>
   <!--
   In the following section for flight controls the TYPE parameter may be one of
   the following:
@@ -170,7 +163,6 @@
   The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
   pounds.
   -->
-  </COMMENT>
 
   <FLIGHT_CONTROL NAME="X-15 SAS">
 
@@ -194,14 +186,12 @@
       GAIN         -0.36
     </COMPONENT>
 
-    <COMMENT>
     <!--
       In the following component, the GAIN value is actually in addition to the
       scheduled gain in the next component. If the GAIN in a scheduled component
       is not required, it may be ignored and not specified here - it is initialized
       to one in the contructor.
     -->
-    </COMMENT>
 
     <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
       ID           3
@@ -334,7 +324,6 @@
 
   <AERODYNAMICS>
 
-    <COMMENT>
     <!--
     For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
 
@@ -388,7 +377,6 @@
 
          </AXIS>
     -->
-    </COMMENT>
 
     <AXIS NAME="LIFT">
 
@@ -407,16 +395,38 @@
         9.00 1.00
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="CLDe" TYPE="VALUE">
+      <COEFFICIENT NAME="CLDe" TYPE="VECTOR">
         Lift_due_to_Elevator_Deflection
+        11
+        FG_MACH
         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
-        0.5
+        0.0 1.00
+        0.6 1.05
+        1.0 1.15
+        1.2 1.00
+        1.6 0.66
+        2.0 0.50
+        2.4 0.40
+        3.0 0.31
+        5.6 0.21
+        6.0 0.20
+        9.0 0.20
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="CLM" TYPE="VALUE">
+      <COEFFICIENT NAME="CLM" TYPE="TABLE">
         Lift_due_to_Mach
+        8 4
+        FG_MACH FG_ALTITUDE
         FG_QBAR|FG_WINGAREA|FG_MACH
-        0.0
+             0.00  40000  60000  80000
+        0.0  0.00   0.00   0.00   0.00
+        0.6  0.00   0.00   0.00   0.00
+        0.8  0.00   0.00   0.20   0.00
+        1.0  0.01   0.04   0.60   0.00
+        1.2  0.00   0.02   0.15   0.00
+        1.4  0.00   0.00   0.00   0.00
+        1.6  0.00   0.00   0.00   0.00
+        9.0  0.00   0.00   0.00   0.00
       </COEFFICIENT>
 
     </AXIS>
@@ -429,18 +439,45 @@
         0.095
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
+      <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
         Drag_due_to_alpha
+        12 5
+        FG_MACH FG_ALTITUDE
         FG_QBAR|FG_WINGAREA|FG_ALPHA
-        0.6
+              0.00  20000  40000  60000  80000
+        0.0   2.00   3.00   4.00   5.60   8.00
+        0.4   0.60   1.40   2.00   3.40   6.00
+        0.6   0.20   0.50   1.10   2.20   4.00
+        0.8   0.15   0.35   0.80   1.70   3.50
+        1.2   0.10   0.20   0.50   1.30   2.60
+        1.6   0.10   0.15   0.40   0.80   2.20
+        2.0   0.10   0.12   0.20   0.60   1.70
+        2.4   0.10   0.12   0.17   0.45   1.20
+        2.8   0.10   0.12   0.15   0.40   0.90
+        3.2   0.10   0.12   0.14   0.30   0.70
+        6.0   0.10   0.12   0.13   0.14   0.15
+        9.0   0.10   0.12   0.12   0.14   0.15
       </COEFFICIENT>
-
-      <COEFFICIENT NAME="CDM" TYPE="VALUE">
+<!--
+      <COEFFICIENT NAME="CDM" TYPE="VECTOR">
         Drag_due_to_Mach
+        12
+        FG_MACH
         FG_QBAR|FG_WINGAREA|FG_MACH
-        -0.03
+        0.00  0.00
+        0.60  0.00
+        1.00  0.20
+        1.10  0.40
+        1.11  0.40
+        1.16  0.00
+        1.20 -0.07
+        1.40 -0.11
+        1.60 -0.06
+        2.00 -0.03
+        3.00 -0.01
+        9.00 -0.01
       </COEFFICIENT>
-
+-->
     </AXIS>
 
     <AXIS NAME="SIDE">
@@ -536,16 +573,36 @@
         0.0
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="CmM" TYPE="VALUE">
+      <COEFFICIENT NAME="CmM" TYPE="TABLE">
         Pitch_moment_due_to_Mach
+        10 4
+        FG_MACH FG_ALTITUDE
         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_MACH
-        0.0
+              0.00  40000  60000  80000
+        0.00  0.00   0.00   0.00   0.00
+        0.60  0.00  -0.01  -0.01   0.00
+        0.80  0.00  -0.13  -0.13   0.00
+        1.00  0.00  -0.11  -0.18   0.00
+        1.10  0.00  -0.16  -0.18   0.00
+        1.20  0.00  -0.25  -0.17   0.00
+        1.40  0.00  -0.06  -0.15   0.00
+        1.70  0.00  -0.03  -0.03   0.00
+        2.00  0.00  -0.01  -0.01   0.00
+        9.00  0.00   0.00   0.00   0.00
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+      <COEFFICIENT NAME="Cmde" TYPE="VECTOR">
         Pitch_moment_due_to_elevator_deflection
+        7
+        FG_MACH
         FG_QBAR|FG_WINGAREA|FG_CBAR|FG_ELEVATOR_POS
-        -0.9
+        0.00 -1.50
+        0.80 -1.60
+        1.00 -1.75
+        1.60 -1.30
+        2.80 -0.60
+        6.00 -0.25
+        9.00 -0.20
       </COEFFICIENT>
 
     </AXIS>
@@ -586,7 +643,6 @@
 
   </AERODYNAMICS>
 
-  <COMMENT>
   <!--
     OUTPUT section definition
 
@@ -631,7 +687,6 @@
 
     NOTE that Time is always output with the data.
   -->
-  </COMMENT>
 
   <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       20
@@ -651,3 +706,4 @@
   </OUTPUT>
 
 </FDM_CONFIG>
+
