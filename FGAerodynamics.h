@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.25 2001/12/17 01:39:27 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.25 2001/12/17 01:39:27 apeden Exp $
     @see -
 */
 
@@ -133,6 +133,8 @@ public:
       @return a string containing the numeric values for the current set of
       coefficients */
   string GetCoefficientValues(void);
+  
+  inline FGCoefficient* GetCoefficient(string name) { return cm[name]; }
 
 
 private:
@@ -140,6 +142,8 @@ private:
   AxisIndex AxisIdx;
   typedef vector<FGCoefficient*> CoeffArray;
   CoeffArray* Coeff;
+  typedef map<string,FGCoefficient*> CoeffMap;
+  CoeffMap cm;
   FGColumnVector3 vFs;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
@@ -150,5 +154,15 @@ private:
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+class CoeffPointer {
+  public:
+    CoeffPointer(int a, int o);
+    int getAxis(void) { return axis; }
+    int getOrd(void) { return ord; }
+  private:
+    int axis,ord;
+};      
+     
 #endif
 
