@@ -1,12 +1,6 @@
-SUBDIRS = \
-	aircraft \
-	engine \
-	filtersjb \
-	scripts \
-	simgear \ 
-	utilities
+SUBDIRS = aircraft engine filtersjb scripts simgear
 
-INCLUDES = \
+INCLUDES = -I. \
 	-Wall
 
 bin_PROGRAMS = JSBSim
