@@ -92,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.61 2004/01/03 11:51:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.62 2004/01/11 19:46:02 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,8 +113,11 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
     LongitudeDot_prev[i] = 0.0;
     RadiusDot_prev[i]    = 0.0;
   }
-  
+
+  vVRPoffset.InitMatrix();
+
   Longitude = Latitude = 0.0;
+  LongitudeVRP = LatitudeVRP = 0.0;
   gamma = Vt = Vground = 0.0;
   hoverbmac = hoverbcg = 0.0;
   psigt = 0.0;
@@ -159,7 +162,6 @@ bool FGPosition::Run(void)
 {
   double cosLat;
   double hdot_Vt;
-  FGColumnVector3 vMac;
 
   if (!FGModel::Run()) {
     GetState();
@@ -181,6 +183,14 @@ bool FGPosition::Run(void)
     Radius    += State->Integrate(FGState::TRAPZ, dt*rate, RadiusDot, RadiusDot_prev);
 
     h = Radius - SeaLevelRadius;           // Geocentric
+
+    vVRPoffset = State->GetTb2l() * (vVRP - MassBalance->GetXYZcg());
+    vVRPoffset /= 12.0; // converted to feet
+
+    // vVRP  - the vector to the Visual Reference Point - now contains the 
+    // offset from the CG to the VRP, in units of feet, in the Local coordinate
+    // frame, where X points north, Y points East, and Z points down. This needs
+    // to be converted to Lat/Lon/Alt, now.
 
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
     

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.54 2004/01/03 11:51:42 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.55 2004/01/11 19:46:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.54 2004/01/03 11:51:42 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.55 2004/01/11 19:46:02 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,10 +92,13 @@ public:
   inline double GetVground(void) const { return Vground; }
   inline double GetGroundTrack(void) const { return psigt; }
   inline double Geth(void)  const { return h; }
+  inline double GethVRP(void)  const { return hVRP; }
   inline double Gethdot(void) const { return RadiusDot; }
   inline double GetLatitude(void) const { return Latitude; }
+  inline double GetLatitudeVRP(void) const { return LatitudeVRP; }
   inline double GetLatitudeDot(void) const { return LatitudeDot; }
   inline double GetLongitude(void) const { return Longitude; }
+  inline double GetLongitudeVRP(void) const { return LongitudeVRP; }
   inline double GetLongitudeDot(void) const { return LongitudeDot; }
   inline double GetRunwayRadius(void) const { return RunwayRadius; }
   inline double GetDistanceAGL(void)  const { return DistanceAGL; }
@@ -116,6 +119,7 @@ public:
   inline void SetRunwayNormal(double fgx, double fgy, double fgz ) {
       vRunwayNormal << fgx << fgy << fgz;
   }
+  void SetVRP(FGColumnVector3& vrp) {vVRP = vrp;}
   
   void bind(void);
   void unbind(void);
@@ -124,11 +128,15 @@ private:
   FGColumnVector3 vVel;
   FGColumnVector3 vVelDot;
   FGColumnVector3 vRunwayNormal;
+  FGColumnVector3 vVRP;
+  FGColumnVector3 vVRPoffset;
+  FGColumnVector3 vMac;
   
-  double Radius, h;
+  double Radius, h, hVRP;
   double LatitudeDot, LongitudeDot, RadiusDot;
   double LatitudeDot_prev[4], LongitudeDot_prev[4], RadiusDot_prev[4];
   double Longitude, Latitude;
+  double LongitudeVRP, LatitudeVRP;
   double dt;
   double RunwayRadius;
   double DistanceAGL;

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.93 2003/12/03 12:45:29 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.94 2004/01/11 19:46:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.93 2003/12/03 12:45:29 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.94 2004/01/11 19:46:02 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -149,8 +149,10 @@ public:
   inline FGColumnVector3& GetNcg   (void)  { return vNcg; }
   inline double GetNcg(int idx)  { return vNcg(idx); }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
+  inline FGColumnVector3& GetXYZvrp(void) { return vXYZvrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
   inline double GetXYZrp(int idx) const { return vXYZrp(idx); }
+  inline double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
   inline double GetXYZep(int idx) const { return vXYZep(idx); }
   inline void SetAircraftName(string name) {AircraftName = name;}
 
@@ -165,6 +167,7 @@ private:
   FGColumnVector3 vMoments;
   FGColumnVector3 vForces;
   FGColumnVector3 vXYZrp;
+  FGColumnVector3 vXYZvrp;
   FGColumnVector3 vXYZep;
   FGColumnVector3 vEuler;
   FGColumnVector3 vDXYZcg;
