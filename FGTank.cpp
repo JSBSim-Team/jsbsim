@@ -46,7 +46,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.36 2004/06/02 18:50:55 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.37 2004/06/07 13:45:08 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,7 @@ FGTank::~FGTank()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTank::Reduce(double used)
+double FGTank::Drain(double used)
 {
   double shortage = Contents - used;
 
@@ -118,6 +118,37 @@ double FGTank::Reduce(double used)
     Selected = false;
   }
   return shortage;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTank::Fill(double amount)
+{
+  double overage = 0.0;
+
+  Contents += amount;
+
+  if (Contents > Capacity) {
+    overage = Contents - Capacity;
+    Contents = Capacity;
+    PctFull = 100.0;
+  } else {
+    PctFull = Contents/Capacity*100.0;
+  }
+  return overage;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTank::SetContents(double amount)
+{
+  Contents = amount;
+  if (Contents > Capacity) {
+    Contents = Capacity;
+    PctFull = 100.0;
+  } else {
+    PctFull = Contents/Capacity*100.0;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.109 2004/06/07 01:28:51 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.110 2004/06/07 13:45:08 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -72,6 +72,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numOxiTanks = numFuelTanks = 0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
+  refuel = false;
 
   bind();
 
@@ -108,6 +109,8 @@ bool FGPropulsion::Run(void)
   for (unsigned int i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( dt * rate );
   }     
+
+  if (refuel) DoRefuel( dt * rate );
 
   return false;
 }
@@ -454,6 +457,44 @@ void FGPropulsion::SetActiveEngine(int engine)
     ActiveEngine = -1;
   else
     ActiveEngine = engine;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropulsion::Transfer(int source, int target, double amount)
+{
+ double shortage, overage;
+
+  if (source == -1) {
+     shortage = 0.0;
+  } else {
+     shortage = Tanks[source]->Drain(amount);
+  }
+  if (target == -1) {
+     overage = 0.0;
+  } else {
+     overage = Tanks[target]->Fill(amount - shortage);
+  }
+  return overage;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::DoRefuel(double time_slice)
+{
+  double fillrate = 100 * time_slice;   // 100 lbs/sec = 6000 lbs/min
+  int TanksNotFull = 0;
+
+  for (unsigned int i=0; i<numTanks; i++) {
+    if (Tanks[i]->GetPctFull() < 99.99) ++TanksNotFull;
+  }
+
+  if (TanksNotFull) {
+    for (unsigned int i=0; i<numTanks; i++) {
+      if (Tanks[i]->GetPctFull() < 99.99)
+          Transfer(-1, i, fillrate/TanksNotFull);
+    }
+  }      
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.31 2004/06/02 18:50:55 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.32 2004/06/07 13:45:08 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +137,7 @@ public:
   FGTank(FGConfigFile*, FGFDMExec*);
   ~FGTank();
 
-  double Reduce(double);
+  double Drain(double);
   double Calculate(double dt);
   int GetType(void) {return Type;}
   bool GetSelected(void) {return Selected;}
@@ -148,7 +148,8 @@ public:
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 
-  void SetContents(double contents) { Contents = contents; }
+  double Fill(double amount);
+  void SetContents(double amount);
   void SetTemperature(double temp) { Temperature = temp; }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};

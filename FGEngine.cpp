@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.66 2004/06/02 16:37:21 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.67 2004/06/07 13:45:08 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,9 +137,9 @@ void FGEngine::ConsumeFuel(void)
   for (unsigned int i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetType() == FGTank::ttFUEL) {
-       Fshortage += Tank->Reduce(CalcFuelNeed()/TanksWithFuel);
+       Fshortage += Tank->Drain(CalcFuelNeed()/TanksWithFuel);
     } else {
-       Oshortage += Tank->Reduce(CalcOxidizerNeed()/TanksWithFuel);
+       Oshortage += Tank->Drain(CalcOxidizerNeed()/TanksWithFuel);
     }
   }
 

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.62 2004/05/30 11:46:57 frohlich Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.63 2004/06/07 13:45:07 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.62 2004/05/30 11:46:57 frohlich Exp $
+    @version $Id: FGPropulsion.h,v 1.63 2004/06/07 13:45:07 dpculp Exp $
     @see
     FGEngine
     FGTank
@@ -158,6 +158,11 @@ public:
   inline FGColumnVector3& GetMoments(void) {return vMoments;}
   inline double GetMoments(int n) const {return vMoments(n);}
 
+  inline bool GetRefuel(void) {return refuel;}
+  inline void SetRefuel(bool setting) {refuel = setting;} 
+  double Transfer(int source, int target, double amount);
+  void DoRefuel(double time_slice);
+
   FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void);
 
@@ -193,6 +198,7 @@ private:
   FGColumnVector3 vTankXYZ;
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
+  bool refuel;
 
   void Debug(int from);
 };

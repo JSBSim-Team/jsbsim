@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.177 2004/06/02 17:30:22 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.178 2004/06/07 13:45:08 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -468,6 +468,7 @@ bool FGJSBsim::copy_to_JSBsim()
       } // end FGEngine code block
     }
 
+ 
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
     Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
     Propagate->SetRunwayRadius( get_Runway_altitude()
@@ -498,6 +499,8 @@ bool FGJSBsim::copy_to_JSBsim()
       tank->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
 //       tank->SetContents(node->getDoubleValue("level-lb"));
     }
+    SGPropertyNode* node = fgGetNode("/systems/refuel", true);
+    Propulsion->SetRefuel(node->getDoubleValue("contact"));
 
     return true;
 }
