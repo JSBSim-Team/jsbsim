@@ -7,10 +7,12 @@
     http://www.aoc.noaa.gov/aircraft_otter.htm (NOAA)
     http://users.chariot.net.au/~theburfs/twinotterMAIN.html
     http://www.bihrle.com/pdfs/aiaa2002-01-1527.pdf (AIAA)
+    http://gltrs.grc.nasa.gov/reports/2000/TP-2000-209908.pdf (NASA)
     http://www.aae.uiuc.edu/m-selig/apasim/Aircraft-uiuc/twinOtter-nl-v1 (UIUC)
     http://gltrs.grc.nasa.gov/cgi-bin/GLTRS/browse.pl?2003/TM-2003-212114.html
     http://gltrs.grc.nasa.gov/cgi-bin/GLTRS/browse.pl?2000/CR-2000-209921-VOL1.html
     http://gltrs.grc.nasa.gov/cgi-bin/GLTRS/browse.pl?2000/CR-2000-209921-VOL2.html
+    http://www.ae.uiuc.edu/sis/papers/AIAA2000-0360.pdf
 
 
   Inputs:
@@ -41,7 +43,7 @@
    AC_WINGAREA  422.50
    AC_WINGSPAN  65.00
    AC_CHORD      6.50		<!-- AIAA -->
-   AC_HTAILAREA 67.60
+   AC_HTAILAREA 98.18		<!-- NASA -->
    AC_HTAILARM  24.75
    AC_VTAILAREA 76.05
    AC_LV        24.75
@@ -117,7 +119,7 @@
       INPUT   fcs/pitch-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
-   <!-- AIAA, -26 to 14 degrees -->
+   <!-- NASA: -26 to 14 degrees -->
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/pitch-trim-sum
       MIN     -0.454
@@ -129,16 +131,18 @@
       INPUT   fcs/roll-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
+   <!-- NASA: +19 to -16 degrees -->
    <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/roll-trim-sum
-      MIN    -0.35
-      MAX     0.35
+      MIN    -0.28
+      MAX     0.33
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
+   <!-- NASA: +19 to -16 degrees -->
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT  -fcs/roll-trim-sum
-      MIN    -0.35
-      MAX     0.35
+      MIN    -0.28
+      MAX     0.33
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Rudder Command Sum" TYPE="SUMMER">
@@ -146,12 +150,14 @@
       INPUT   fcs/yaw-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
+   <!-- NASA: +/- 16 degrees -->
    <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/rudder-command-sum
-      MIN     -0.35
-      MAX      0.35
+      MIN     -0.28
+      MAX      0.28
       OUTPUT  fcs/rudder-pos-rad
    </COMPONENT>
+   <!-- NASA: 0 to 40 degrees -->
    <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
      INPUT   fcs/flap-cmd-norm
      DETENTS 4
