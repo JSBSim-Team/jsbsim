@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.9 2003/02/21 12:46:44 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.10 2003/02/27 13:10:23 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -133,7 +133,7 @@
        INPUT        fcs/pitch-trim-cmd-norm
        CLIPTO       -1 1
     </COMPONENT>
-    <COMPONENT NAME="Pattch Damper Gain" TYPE="PURE_GAIN">
+    <COMPONENT NAME="Pitch Damper Gain" TYPE="PURE_GAIN">
        INPUT        velocities/q-rad_sec
        GAIN         0.000698
      </COMPONENT>
@@ -295,7 +295,7 @@
             1.1   1.00
          </FACTOR>
 
-         <<COEFFICIENT NAME="CDmin" TYPE="VECTOR">
+         <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
            Drag_minimum
            2
            velocities/mach-norm
