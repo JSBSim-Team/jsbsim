@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.45 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.46 2001/03/23 13:08:14 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -95,7 +95,8 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   a = 1000.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
-
+  ActiveEngine = -1;
+  
   RegisterVariable(FG_TIME,           " time "           );
   RegisterVariable(FG_QBAR,           " qbar "           );
   RegisterVariable(FG_WINGAREA,       " wing_area "      );
@@ -126,6 +127,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_FLAPS_CMD,      " flaps_cmd "      );
   RegisterVariable(FG_THROTTLE_CMD,   " throttle_cmd "   );
   RegisterVariable(FG_THROTTLE_POS,   " throttle_pos "   );
+  RegisterVariable(FG_ACTIVE_ENGINE,  " active_engine "  );
   RegisterVariable(FG_HOVERB,         " height/span "    );
   RegisterVariable(FG_PITCH_TRIM_CMD, " pitch_trim_cmd " );
 
@@ -255,7 +257,7 @@ void FGState::SetParameter(eParam val_idx, float val) {
     FDMExec->GetFCS()->SetDfPos(val);
     break;
   case FG_THROTTLE_POS:
-    FDMExec->GetFCS()->SetThrottlePos(-1,val);
+    FDMExec->GetFCS()->SetThrottlePos(ActiveEngine,val);
     break;
 
   case FG_ELEVATOR_CMD:
@@ -277,9 +279,13 @@ void FGState::SetParameter(eParam val_idx, float val) {
     FDMExec->GetFCS()->SetDfCmd(val);
     break;
   case FG_THROTTLE_CMD:
-    FDMExec->GetFCS()->SetThrottleCmd(-1,val);
+    FDMExec->GetFCS()->SetThrottleCmd(ActiveEngine,val);
     break;
-  
+
+  case FG_ACTIVE_ENGINE:
+    ActiveEngine = val;
+    break;
+
   default:
     cerr << "Parameter '" << val_idx << "' (" << paramdef[val_idx] << ") not handled" << endl;
   }

@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.27 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.28 2001/03/23 13:08:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -134,6 +134,7 @@ private:
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
   void Debug(void);
+  int ActiveEngine;
 
 protected:
   enum {ePhi=1, eTht, ePsi};
