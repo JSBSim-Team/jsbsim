@@ -80,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.71 2003/12/31 06:15:02 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.72 2004/01/03 11:51:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.71 2003/12/31 06:15:02 jberndt Exp $
+    @version $Id: FGState.h,v 1.72 2004/01/03 11:51:42 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,29 +235,25 @@ public:
 
     switch (type) {
     case AB4:
-      vResult = (delta_t/24.0)*(  55.0 * vTDeriv
-                                - 59.0 * vLastArray[0]
-                                + 37.0 * vLastArray[1]
-                                -  9.0 * vLastArray[2] );
+      vResult = (delta_t/24.0)*(  55.0 * vLastArray[0]
+                                - 59.0 * vLastArray[1]
+                                + 37.0 * vLastArray[2]
+                                -  9.0 * vLastArray[3] );
+      vLastArray[3] = vLastArray[2];
       vLastArray[2] = vLastArray[1];
       vLastArray[1] = vLastArray[0];
       vLastArray[0] = vTDeriv;
       break;
     case AB3:
-      vResult = (delta_t/12.0)*(  23.0 * vTDeriv
-                                - 16.0 * vLastArray[0]
-                                +  5.0 * vLastArray[1] );
+      vResult = (delta_t/12.0)*(  23.0 * vLastArray[0]
+                                - 16.0 * vLastArray[1]
+                                +  5.0 * vLastArray[2] );
+      vLastArray[2] = vLastArray[1];
       vLastArray[1] = vLastArray[0];
       vLastArray[0] = vTDeriv;
       break;
     case AB2:
-      vResult = (delta_t/2.0)*( 3.0 * vTDeriv - vLastArray[0] );
-      vLastArray[0] = vTDeriv;
-      break;
-    case AM3:
-      vResult = (delta_t/12.0)*(  5.0 * vTDeriv
-                                + 8.0 * vLastArray[0]
-                                - 1.0 * vLastArray[1] );
+      vResult = (delta_t/2.0)*( 3.0 * vLastArray[0] - vLastArray[1] );
       vLastArray[1] = vLastArray[0];
       vLastArray[0] = vTDeriv;
       break;
@@ -267,6 +263,13 @@ public:
                                 -  5.0 * vLastArray[1]
                                 +  1.0 * vLastArray[2] );
       vLastArray[2] = vLastArray[1];
+      vLastArray[1] = vLastArray[0];
+      vLastArray[0] = vTDeriv;
+      break;
+    case AM3:
+      vResult = (delta_t/12.0)*(  5.0 * vTDeriv
+                                + 8.0 * vLastArray[0]
+                                - 1.0 * vLastArray[1] );
       vLastArray[1] = vLastArray[0];
       vLastArray[0] = vTDeriv;
       break;
@@ -342,7 +345,7 @@ private:
   FGMatrix33 mTs2b;
   FGMatrix33 mTb2s;
   FGColumnVector4 vQtrn;
-  FGColumnVector4 vQdot_prev[3];
+  FGColumnVector4 vQdot_prev[4];
   FGColumnVector4 vQdot;
   FGColumnVector3 vUVW;
   FGColumnVector3 vLocalVelNED;

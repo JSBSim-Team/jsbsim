@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.10 2003/11/04 16:02:50 dpculp Exp $
+  CVS Version: $Id: c172x.xml,v 1.11 2004/01/03 11:51:42 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -569,7 +569,7 @@
     NOTE that Time is always output with the data.
   -->
   <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
-    RATE_IN_HZ       20
+    RATE_IN_HZ       120
     SIMULATION       OFF
     ATMOSPHERE       ON
     MASSPROPS        ON

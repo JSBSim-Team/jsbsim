@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.39 2003/12/31 06:15:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.40 2004/01/03 11:51:42 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +89,7 @@ FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
   vPQRdot_prev[0].InitMatrix();
   vPQRdot_prev[1].InitMatrix();
   vPQRdot_prev[2].InitMatrix();
+  vPQRdot_prev[3].InitMatrix();
 
   bind();
   
@@ -121,7 +122,7 @@ bool FGRotation::Run(void)
                           - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
     vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
-    vPQR += State->Integrate(FGState::AB2, dt*rate, vPQRdot, vPQRdot_prev);
+    vPQR += State->Integrate(FGState::TRAPZ, dt*rate, vPQRdot, vPQRdot_prev);
     
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 

@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.46 2003/12/02 12:56:04 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.47 2004/01/03 11:51:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATION
@@ -140,7 +140,7 @@ public:
 private:
   FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
-  FGColumnVector3 vUVWdot_prev[3];
+  FGColumnVector3 vUVWdot_prev[4];
   FGMatrix33      mVel;
   FGColumnVector3 vAeroUVW;
 

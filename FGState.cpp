@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.124 2003/06/03 09:53:49 ehofman Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.125 2004/01/03 11:51:42 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ FGState::FGState(FGFDMExec* fdex)
   Propulsion      = FDMExec->GetPropulsion();
   PropertyManager = FDMExec->GetPropertyManager();
 
-  for(int i=0;i<3;i++) vQdot_prev[i].InitMatrix();
+  for(int i=0;i<4;i++) vQdot_prev[i].InitMatrix();
 
   bind();
   

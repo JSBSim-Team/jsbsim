@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.53 2003/12/02 13:28:39 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.54 2004/01/03 11:51:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.53 2003/12/02 13:28:39 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.54 2004/01/03 11:51:42 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +127,7 @@ private:
   
   double Radius, h;
   double LatitudeDot, LongitudeDot, RadiusDot;
-  double LatitudeDot_prev[3], LongitudeDot_prev[3], RadiusDot_prev[3];
+  double LatitudeDot_prev[4], LongitudeDot_prev[4], RadiusDot_prev[4];
   double Longitude, Latitude;
   double dt;
   double RunwayRadius;

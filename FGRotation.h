@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.44 2003/12/04 05:12:53 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.45 2004/01/03 11:51:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -137,7 +137,7 @@ private:
   FGColumnVector3 vPQR;
   FGColumnVector3 vAeroPQR;
   FGColumnVector3 vPQRdot;
-  FGColumnVector3 vPQRdot_prev[3];
+  FGColumnVector3 vPQRdot_prev[4];
   FGColumnVector3 vMoments;
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;

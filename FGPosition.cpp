@@ -92,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.60 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.61 2004/01/03 11:51:42 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +108,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
   
-  for (int i=0;i<3;i++) {
+  for (int i=0;i<4;i++) {
     LatitudeDot_prev[i]  = 0.0;
     LongitudeDot_prev[i] = 0.0;
     RadiusDot_prev[i]    = 0.0;
