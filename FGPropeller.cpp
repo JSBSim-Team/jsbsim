@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.7 2001/01/22 23:34:32 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.8 2001/01/23 01:40:10 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,7 +119,7 @@ float FGPropeller::Calculate(float ExcessPwrAvail)
   float rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (RPM > 0.10) {
-    J = (Vel / (Diameter * RPM / 60.0);
+    J = Vel / (Diameter * RPM / 60.0);
   } else {
     J = 0.0;
   }
