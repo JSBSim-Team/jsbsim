@@ -128,8 +128,6 @@ bool FGFilter::Run(void)
 
   switch (FilterType) {
     case eLag:
-      ca = dt*C1 / (2.00 + dt*C1);
-      cb = (2.00 - dt*C1) / (2.00 + dt*C1);
       break;
     case eRectLag:
       break;

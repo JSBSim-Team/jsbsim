@@ -76,7 +76,8 @@ public:
   ~FGMatrix(void);
 
   FGMatrix& operator=(const FGMatrix& A);
-  double& operator()(unsigned int row, unsigned int col) const;
+  inline double& operator()(unsigned int row, unsigned int col) const {return data[row][col];}
+
   FGColumnVector operator*(const FGColumnVector& Col);
 
   unsigned int Rows(void) const;

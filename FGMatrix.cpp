@@ -138,13 +138,6 @@ FGMatrix& FGMatrix::operator=(const FGMatrix& M)
 
 /******************************************************************************/
 
-double& FGMatrix::operator()(unsigned int row, unsigned int col) const
-{
-  return data[row][col];
-}
-
-/******************************************************************************/
-
 unsigned int FGMatrix::Rows(void) const
 {
   return rows;
