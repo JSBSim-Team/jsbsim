@@ -54,17 +54,22 @@ INCLUDES
      SG_USING_STD(cout);
 #  endif
 #else
-#  include <fstream>
-#  include <iostream>
 #  include <string>
-   using std::string;
-   using std::ostream;
-   using std::istream;
-   using std::ifstream;
-   using std::ios;
-   using std::cerr;
-   using std::endl;
-   using std::cout;
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <fstream.h>
+#    include <iostream.h>
+#  else
+#    include <fstream>
+#    include <iostream>
+     using std::ostream;
+     using std::istream;
+     using std::ifstream;
+     using std::ios;
+     using std::cerr;
+     using std::endl;
+     using std::cout;
+#  endif
+    using std::string;
 #endif
 
 #include "FGDefs.h"
@@ -73,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.22 2001/06/14 22:55:03 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.23 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.22 2001/06/14 22:55:03 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.23 2001/07/29 22:15:18 jberndt Exp $
     @see -
 */
 

@@ -63,8 +63,13 @@ INCLUDES
 #    include <iomanip.h>
 #  endif
 #else
-#  include <cmath>
-#  include <iomanip>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <math.h>
+#    include <iomanip.h>
+#  else
+#    include <cmath>
+#    include <iomanip>
+#  endif
 #endif
 
 #include "FGPosition.h"
@@ -79,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.38 2001/07/22 18:50:17 apeden Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.39 2001/07/29 22:15:18 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 extern short debug_lvl;

@@ -45,20 +45,25 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGDefs.h"
 #include "FGCoefficient.h"
 #include "FGFactorGroup.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
 
 #ifndef FGFS
-#  include <iomanip>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <iomanip.h>
+#  else
+#    include <iomanip>
+#  endif
 #else
 #  include STL_IOMANIP
 #endif
 
 extern short debug_lvl;
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.3 2001/07/23 20:39:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.4 2001/07/29 22:15:18 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -64,7 +64,11 @@ INCLUDES
 #    include <math.h>
 #  endif
 #else
-#  include <cmath>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <math.h>
+#  else
+#    include <cmath>
+#  endif
 #endif
 
 #include "FGModel.h"
@@ -72,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.28 2001/07/29 15:35:37 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.29 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

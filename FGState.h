@@ -52,7 +52,11 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  include <fstream>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <fstream.h>
+#  else
+#    include <fstream>
+#  endif
 #endif
 
 #include <string>
@@ -67,7 +71,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.37 2001/07/28 15:34:31 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.38 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

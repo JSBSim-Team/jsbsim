@@ -36,16 +36,22 @@ INCLUDES
      SG_USING_STD(endl);
 #  endif
 #else
-#  include <fstream>
-#  include <cmath>
-#  include <iostream>
 #  include <string>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <fstream.h>
+#    include <math.h>
+#    include <iostream.h>
+#  else
+#    include <fstream>
+#    include <cmath>
+#    include <iostream>
+     using std::ostream;
+     using std::istream;
+     using std::cerr;
+     using std::cout;
+     using std::endl;
+#  endif
    using std::string;
-   using std::ostream;
-   using std::istream;
-   using std::cerr;
-   using std::cout;
-   using std::endl;
 #endif
 
 #include "FGColumnVector3.h"
@@ -55,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.3 2001/07/29 01:42:40 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.4 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

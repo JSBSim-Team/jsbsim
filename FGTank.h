@@ -58,16 +58,18 @@ INCLUDES
 #else
 # include <string>
   using std::string;
-  using std::cerr;
-  using std::endl;
-  using std::cout;
+# if !defined(sgi) || defined(_GNUC_)
+   using std::cerr;
+   using std::endl;
+   using std::cout;
+# endif
 #endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.14 2001/06/14 22:55:03 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.15 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

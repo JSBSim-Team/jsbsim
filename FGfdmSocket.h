@@ -54,11 +54,16 @@ INCLUDES
      SG_USING_STD(endl);
 #  endif
 #else
-#  include <iostream>
-#  include <fstream>
 #  include <string>
-   using std::cout;
-   using std::endl;
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <iostream.h>
+#    include <fstream.h>
+#  else
+#    include <iostream>
+#    include <fstream>
+     using std::cout;
+     using std::endl;
+#  endif
 #endif
 
 #include <sys/types.h>
@@ -76,7 +81,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.16 2001/06/14 22:55:03 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.17 2001/07/29 22:15:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

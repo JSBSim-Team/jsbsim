@@ -44,17 +44,22 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include "FGDefs.h"
 #include "FGCoefficient.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
 
 #ifndef FGFS
-#  include <iomanip>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <iomanip.h>
+#  else
+#    include <iomanip>
+#  endif
 #else
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.35 2001/07/22 18:48:17 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.36 2001/07/29 22:15:18 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 extern char highint[5];

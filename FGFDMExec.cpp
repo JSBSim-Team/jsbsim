@@ -48,8 +48,13 @@ INCLUDES
 #  include STL_IOSTREAM
 #  include STL_ITERATOR
 #else
-#  include <iostream>
-#  include <ctime>
+#  if defined(sgi) && !defined(_GNUC_)
+#    include <iostream.h>
+#    include <time.h>
+#  else
+#    include <iostream>
+#    include <ctime>
+#  endif
 #  include <iterator>
 #endif
 
@@ -70,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.53 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.54 2001/07/29 22:15:18 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
