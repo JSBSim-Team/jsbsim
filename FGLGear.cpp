@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.68 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.69 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,26 +60,11 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 {
   string tmp;
-  string Retractable;
   
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
                   >> rollingFCoeff >> sSteerType >> sBrakeGroup 
                      >> maxSteerAngle >> Retractable;
-
-  if (debug_lvl > 0) {
-    cout << "    Name: " << name << endl;
-    cout << "      Location: " << vXYZ << endl;
-    cout << "      Spring Constant:  " << kSpring << endl;
-    cout << "      Damping Constant: " << bDamp << endl;
-    cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
-    cout << "      Static Friction:  " << staticFCoeff << endl;
-    cout << "      Rolling Friction: " << rollingFCoeff << endl;
-    cout << "      Steering Type:    " << sSteerType << endl;
-    cout << "      Grouping:         " << sBrakeGroup << endl;
-    cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
-    cout << "      Retractable:      " << Retractable << endl;
-  }
 
   if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
   else if (sBrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
@@ -100,7 +85,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
          << sSteerType << " is undefined." << endl;
   }
   
-  if( Retractable == "RETRACT" ) {
+  if ( Retractable == "RETRACT" ) {
     isRetractable=true;
   } else  {
     isRetractable=false;
@@ -132,7 +117,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
-  if (debug_lvl & 2) cout << "Instantiated: FGLGear" << endl;
+  if (debug_lvl > 0) Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,13 +166,15 @@ FGLGear::FGLGear(const FGLGear& lgear)
   isRetractable   = lgear.isRetractable;
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
+
+  if (debug_lvl > 0) Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLGear::~FGLGear()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGLGear" << endl;
+  if (debug_lvl > 0) Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -414,8 +401,6 @@ FGColumnVector3& FGLGear::Force(void)
       }
 
       compressLength = 0.0;// reset compressLength to zero for data output validity
-
-      
     }
 
     if (FirstContact) {
@@ -467,9 +452,50 @@ void FGLGear::Report(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGLGear::Debug(int from)
 {
-  // TODO: Add user code here
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+      cout << "    Name: " << name << endl;
+      cout << "      Location: " << vXYZ << endl;
+      cout << "      Spring Constant:  " << kSpring << endl;
+      cout << "      Damping Constant: " << bDamp << endl;
+      cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
+      cout << "      Static Friction:  " << staticFCoeff << endl;
+      cout << "      Rolling Friction: " << rollingFCoeff << endl;
+      cout << "      Steering Type:    " << sSteerType << endl;
+      cout << "      Grouping:         " << sBrakeGroup << endl;
+      cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
+      cout << "      Retractable:      " << Retractable << endl;
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGLGear" << endl;
+    if (from == 1) cout << "Destroyed:    FGLGear" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
 

@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.24 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.25 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,27 +67,19 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
     else cerr << "Unhandled token in Nozzle config file: " << token << endl;
   }
 
-  if (debug_lvl > 0) {
-    cout << "      Nozzle Name: " << Name << endl;
-    cout << "      Nozzle Exit Pressure = " << PE << endl;
-    cout << "      Nozzle Expansion Ratio = " << ExpR << endl;
-    cout << "      Nozzle Efficiency = " << nzlEff << endl;
-    cout << "      Nozzle Diameter = " << Diameter << endl;
-  }
-
   Thrust = 0;
   Type = ttNozzle;
   Area2 = (Diameter*Diameter/4.0)*M_PI;
   AreaT = Area2/ExpR;
 
-  if (debug_lvl & 2) cout << "Instantiated: FGNozzle" << endl;
+  if (debug_lvl > 0) Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGNozzle::~FGNozzle()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGNozzle" << endl;
+  if (debug_lvl > 0) Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,9 +101,44 @@ double FGNozzle::GetPowerRequired(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGNozzle::Debug(int from)
 {
-    //TODO: Add your source code here
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+      cout << "      Nozzle Name: " << Name << endl;
+      cout << "      Nozzle Exit Pressure = " << PE << endl;
+      cout << "      Nozzle Expansion Ratio = " << ExpR << endl;
+      cout << "      Nozzle Efficiency = " << nzlEff << endl;
+      cout << "      Nozzle Diameter = " << Diameter << endl;
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGNozzle" << endl;
+    if (from == 1) cout << "Destroyed:    FGNozzle" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
 

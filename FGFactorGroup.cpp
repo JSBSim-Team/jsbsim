@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.12 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.13 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,41 +69,39 @@ CLASS IMPLEMENTATION
 
 FGFactorGroup::FGFactorGroup( FGFDMExec* fdmex ) : FGCoefficient( fdmex)
 {
-  FDMExec=fdmex;
-  if (debug_lvl & 2) cout << "Instantiated: FGFactorGroup" << endl;
+  FDMExec = fdmex;
+
+  if (debug_lvl > 0) Debug(0);
 }  
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
                           
 FGFactorGroup::~FGFactorGroup()
 {
-  unsigned i;
-  for (i=0; i<sum.size(); i++) {
-    delete sum[i];
-  }
-  if (debug_lvl & 2) cout << "Destroyed:    FGFactorGroup" << endl;
+  for (unsigned int i=0; i<sum.size(); i++) delete sum[i];
+
+  if (debug_lvl > 0) Debug(1);
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-bool FGFactorGroup::Load(FGConfigFile *AC_cfg) {
+bool FGFactorGroup::Load(FGConfigFile *AC_cfg)
+{
   string token;
   
-  if(AC_cfg) {
+  if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
     token = AC_cfg->GetValue();
-    if( token == "FACTOR") {
+    if (token == "FACTOR") {
       FGCoefficient::Load(AC_cfg);
-      //if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
     } 
     token = AC_cfg->GetValue();  
-    while ( token != string("/GROUP") ) {
-          sum.push_back( new FGCoefficient(FDMExec) );
-          sum.back()->Load(AC_cfg);
-          //if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
-          token = AC_cfg->GetValue(); 
+    while (token != string("/GROUP") ) {
+      sum.push_back( new FGCoefficient(FDMExec) );
+      sum.back()->Load(AC_cfg);
+      token = AC_cfg->GetValue(); 
     }
     AC_cfg->GetNextConfigLine();
     return true;
@@ -114,25 +112,56 @@ bool FGFactorGroup::Load(FGConfigFile *AC_cfg) {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-double FGFactorGroup::TotalValue(void) {
-  unsigned i;
-  double totalsum=0;
-  SDtotal=0.0;
-  for(i=0;i<sum.size();i++) {
-     totalsum+=sum[i]->TotalValue();
+double FGFactorGroup::TotalValue(void)
+{
+  unsigned int i;
+  double totalsum = 0;
+  SDtotal = 0.0;
+  for (i=0; i<sum.size(); i++) {
+     totalsum += sum[i]->TotalValue();
      SDtotal += sum[i]->GetSD();
   }
   totalsum *= FGCoefficient::TotalValue();
   SDtotal *= FGCoefficient::GetSD();
-  if (debug_lvl & 8) Debug(1);
+  if (debug_lvl > 0) Debug(2);
   return totalsum;
-}        
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGFactorGroup::Debug(int from)
 {
-  cout << "FGCoefficient::GetSD(): " << FGCoefficient::GetSD() << endl;
-  cout << "FGFactorGroup::SDtotal: " << SDtotal << endl;
+  if (debug_lvl & 1 ) { // Standard console startup message output
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGFactorGroup" << endl;
+    if (from == 1) cout << "Destroyed:    FGFactorGroup" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+    if (from == 2) {
+      cout << "FGCoefficient::GetSD(): " << FGCoefficient::GetSD() << endl;
+      cout << "FGFactorGroup::SDtotal: " << SDtotal << endl;
+    }
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
-

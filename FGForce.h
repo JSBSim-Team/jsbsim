@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.25 2001/12/11 05:33:09 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGForce.h,v 1.25 2001/12/11 05:33:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,8 +316,6 @@ protected:
   FGColumnVector3 vMn;
   FGColumnVector3 vH;
   
-  virtual void Debug(int from);
-
 private:
   FGColumnVector3 vFb;
   FGColumnVector3 vM;
@@ -327,6 +325,8 @@ private:
   FGColumnVector3 vSense;
 
   FGMatrix33 mT;
+
+  virtual void Debug(int from);
 };
 
 #endif

@@ -59,7 +59,7 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.17 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.18 2001/12/11 05:33:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -69,7 +69,7 @@ class FGGroundReactions : public FGModel
 {
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions() {};
+  ~FGGroundReactions(void);
 
   bool Run(void);
   bool Load(FGConfigFile* AC_cfg);

@@ -48,7 +48,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.11 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.12 2001/12/11 05:33:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -63,9 +63,9 @@ public:
   bool Run(void);
 
 private:
-  void Debug(int from);
   FGFCS* fcs;
   FGConfigFile* AC_cfg;
+  void Debug(int from);
 };
 
 #endif

@@ -70,7 +70,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.19 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.20 2001/12/11 05:33:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -95,6 +95,7 @@ public:
 
 private:
   TankType Type;
+  string type;
   double X, Y, Z;
   double Capacity;
   double Radius;

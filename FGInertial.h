@@ -59,7 +59,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.22 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.23 2001/12/11 05:33:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -83,7 +83,6 @@ public:
   double RefRadius(void) {return RadiusReference;}
 
 private:
-  void Debug(int from);
   FGColumnVector3 vOmegaLocal;
   FGColumnVector3 vForces;
   FGColumnVector3 vRadius;
@@ -93,6 +92,7 @@ private:
   double RadiusReference;
   double RotationRate;
   double GM;
+  void Debug(int from);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.32 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.33 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,32 +67,20 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
 
-  if (debug_lvl > 0) {
-    cout << "      Engine Name: " << Name << endl;
-    cout << "      Specific Heat Ratio = " << SHR << endl;
-    cout << "      Maximum Chamber Pressure = " << maxPC << endl;
-    cout << "      Propulsive Efficiency = " << propEff << endl;
-    cout << "      MaxThrottle = " << MaxThrottle << endl;
-    cout << "      MinThrottle = " << MinThrottle << endl;
-    cout << "      FuelFlowMax = " << SLFuelFlowMax << endl;
-    cout << "      OxiFlowMax = " << SLOxiFlowMax << endl;
-    cout << "      Variance = " << Variance << endl;
-  }
+  if (debug_lvl > 0) Debug(0);
 
   EngineNumber = 0;
   Type = etRocket;
 
   PC = 0.0;
   kFactor = (2.0*SHR*SHR/(SHR-1.0))*pow(2.0/(SHR+1), (SHR+1)/(SHR-1));
-
-  if (debug_lvl & 2) cout << "Instantiated: FGRocket" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGRocket::~FGRocket()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGRocket" << endl;
+  if (debug_lvl > 0) Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,9 +108,48 @@ double FGRocket::Calculate(double pe)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGRocket::Debug(int from)
 {
-    //TODO: Add your source code here
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+      cout << "      Engine Name: " << Name << endl;
+      cout << "      Specific Heat Ratio = " << SHR << endl;
+      cout << "      Maximum Chamber Pressure = " << maxPC << endl;
+      cout << "      Propulsive Efficiency = " << propEff << endl;
+      cout << "      MaxThrottle = " << MaxThrottle << endl;
+      cout << "      MinThrottle = " << MinThrottle << endl;
+      cout << "      FuelFlowMax = " << SLFuelFlowMax << endl;
+      cout << "      OxiFlowMax = " << SLOxiFlowMax << endl;
+      cout << "      Variance = " << Variance << endl;
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGRocket" << endl;
+    if (from == 1) cout << "Destroyed:    FGRocket" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
 

@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.26 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.27 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,14 +81,14 @@ FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
   cTht=cPhi=cPsi=1.0;
   sTht=sPhi=sPsi=0.0;
 
-  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
+  if (debug_lvl > 0) Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGRotation::~FGRotation()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGRotation" << endl;
+  if (debug_lvl > 0) Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ bool FGRotation::Run(void)
 
     vlastPQRdot = vPQRdot;
 
-    if (debug_lvl > 1) Debug(1);
+    if (debug_lvl > 1) Debug(2);
 
     return false;
   } else {
@@ -150,16 +150,47 @@ void FGRotation::GetState(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
 void FGRotation::Debug(int from)
 {
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGRotation" << endl;
+    if (from == 1) cout << "Destroyed:    FGRotation" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
   if (debug_lvl & 16) { // Sanity check variables
-    if (fabs(vPQR(eP)) > 100)
-      cout << "FGRotation::P (Roll Rate) out of bounds: " << vPQR(eP) << endl;
-    if (fabs(vPQR(eQ)) > 100)
-      cout << "FGRotation::Q (Pitch Rate) out of bounds: " << vPQR(eQ) << endl;
-    if (fabs(vPQR(eR)) > 100)
-      cout << "FGRotation::R (Yaw Rate) out of bounds: " << vPQR(eR) << endl;
+    if (from == 2) {
+      if (fabs(vPQR(eP)) > 100)
+        cout << "FGRotation::P (Roll Rate) out of bounds: " << vPQR(eP) << endl;
+      if (fabs(vPQR(eQ)) > 100)
+        cout << "FGRotation::Q (Pitch Rate) out of bounds: " << vPQR(eQ) << endl;
+      if (fabs(vPQR(eR)) > 100)
+        cout << "FGRotation::R (Yaw Rate) out of bounds: " << vPQR(eR) << endl;
+    }
   }
 }
-

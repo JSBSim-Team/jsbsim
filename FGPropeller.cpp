@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.46 2001/12/10 23:34:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.47 2001/12/11 05:33:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,24 +94,11 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
     }
   }
 
-  if (debug_lvl > 0) {
-    cout << "\n    Propeller Name: " << Name << endl;
-    cout << "      IXX = " << Ixx << endl;
-    cout << "      Diameter = " << Diameter << " ft." << endl;
-    cout << "      Number of Blades  = " << numBlades << endl;
-    cout << "      Minimum Pitch  = " << MinPitch << endl;
-    cout << "      Maximum Pitch  = " << MaxPitch << endl;
-    cout << "      Thrust Coefficient: " <<  endl;
-    cThrust->Print();
-    cout << "      Power Coefficient: " <<  endl;
-    cPower->Print();
-  }
-
   Type = ttPropeller;
   RPM = 0;
   vTorque.InitMatrix();
 
-  if (debug_lvl & 2) cout << "Instantiated: FGPropeller" << endl;
+  if (debug_lvl > 0) Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,7 +107,7 @@ FGPropeller::~FGPropeller()
 {
   if (cThrust)    delete cThrust;
   if (cPower)     delete cPower;
-  if (debug_lvl & 2) cout << "Destroyed:    FGPropeller" << endl;
+  if (debug_lvl > 0) Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,15 +246,29 @@ FGColumnVector3 FGPropeller::GetPFactor()
 
 void FGPropeller::Debug(int from)
 {
-  if (debug_lvl & 16) { // Sanity checking
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+      cout << "\n    Propeller Name: " << Name << endl;
+      cout << "      IXX = " << Ixx << endl;
+      cout << "      Diameter = " << Diameter << " ft." << endl;
+      cout << "      Number of Blades  = " << numBlades << endl;
+      cout << "      Minimum Pitch  = " << MinPitch << endl;
+      cout << "      Maximum Pitch  = " << MaxPitch << endl;
+      cout << "      Thrust Coefficient: " <<  endl;
+      cThrust->Print();
+      cout << "      Power Coefficient: " <<  endl;
+      cPower->Print();
+    }
   }
-  if (debug_lvl & 8 ) { // Runtime state variables
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGPropeller" << endl;
+    if (from == 1) cout << "Destroyed:    FGPropeller" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
-  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+  if (debug_lvl & 8 ) { // Runtime state variables
   }
-  if (debug_lvl & 1 ) { // Standard console startup message output
+  if (debug_lvl & 16) { // Sanity checking
   }
 }
 
