@@ -47,14 +47,13 @@ INCLUDES
 #  endif
 #endif
 
-#if defined(_MSC_VER)||defined(__BORLANDCPP__)
-#pragma message("\n\nRedefining snprintf\n")
+#ifdef _WIN32
 #define snprintf _snprintf
 #endif
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.108 2002/03/22 11:56:37 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.109 2002/03/22 12:34:44 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
