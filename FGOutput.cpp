@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.79 2004/04/01 12:24:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.80 2004/04/02 03:36:56 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -471,11 +471,9 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
 
   Output->SetType(token);
 
-#if defined( FG_WITH_JSBSIM_SOCKET ) || !defined( FGFS )
   if (token == "SOCKET") {
     socket = new FGfdmSocket(name,port);
   }
-#endif
 
   if (!fname.empty()) {
     outputInFileName = FDMExec->GetAircraftPath() + separator
