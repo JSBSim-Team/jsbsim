@@ -2,7 +2,7 @@
 <!--
   File:        c172p.xml
   Author:      David Megginson (based on c172r.xml by Tony Peden)
-  CVS Version: $Id: c172p.xml,v 1.4 2002/11/27 16:39:13 dmegginson Exp $
+  CVS Version: $Id: c172p.xml,v 1.5 2002/11/27 16:51:14 dmegginson Exp $
 
   Function: Models a 1981 Cessna 172P.
 
@@ -626,16 +626,13 @@
       </COEFFICIENT>
 
       <!-- based on Roskam p.482 -->
-      <COEFFICIENT NAME="Cnda" TYPE="TABLE">
+      <COEFFICIENT NAME="Cnda" TYPE="VECTOR">
         Yaw_moment_due_to_aileron
         2
-        2
-        aero/alpha-rad
         fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
-                0      30
-        0      -0.0216 -0.0573
-        0.0943 -0.0504 -0.0861
+        0  -0.0216
+        30 -0.0573
       </COEFFICIENT>
 
       <!-- based on Roskam p.482 -->
@@ -696,7 +693,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
