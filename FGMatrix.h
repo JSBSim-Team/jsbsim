@@ -135,6 +135,8 @@ public:
   friend FGColumnVector operator*(const FGMatrix& M, const FGColumnVector& V);
 
   double& operator()(int m) const;
+  
+  FGColumnVector multElementWise(const FGColumnVector& V);
 };
 
 /******************************************************************************/
