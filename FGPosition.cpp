@@ -78,7 +78,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.26 2000/10/16 12:32:46 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.27 2001/01/28 14:01:18 jsb Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,6 +128,9 @@ bool FGPosition:: Run(void) {
     GetState();
 
     Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
+    psigt =  atan2(vVel(eEast), vVel(eNorth));
+    if(psigt < 0.0) 
+      psigt += 2*M_PI;
     
     invMass   = 1.0 / Aircraft->GetMass();
     Radius    = h + SeaLevelRadius;
@@ -174,7 +177,7 @@ void FGPosition::GetState(void) {
 
   vUVW      = Translation->GetUVW();
   Vt        = Translation->GetVt();
-  vVel      = State->GetTb2l()*vUVW;
+  vVel      = State->GetTb2l()*vUVW + Atmosphere->GetWindNED();
   vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
 
   b = Aircraft->GetWingSpan();
