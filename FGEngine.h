@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.53 2003/03/16 13:01:07 ehofman Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.54 2003/03/19 13:35:19 ehofman Exp $"
 
 using std::string;
 using std::vector;
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.53 2003/03/16 13:01:07 ehofman Exp $ 
+    @version $Id: FGEngine.h,v 1.54 2003/03/19 13:35:19 ehofman Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,6 +136,7 @@ public:
   virtual bool    GetAugmentation(void) { return Augmentation; } 
   virtual bool    GetInjection(void) { return Injection; }
   virtual bool    GetIgnition(void) { return Ignition; }
+  virtual bool    GetReversed(void) { return Reversed; }
 
   virtual double getFuelFlow_gph () const {
     return FuelFlow_gph;
@@ -251,6 +252,7 @@ protected:
   bool Augmentation;
   bool Injection;
   bool Ignition;
+  bool Reversed;
 
   FGFDMExec*      FDMExec;
   FGState*        State;
