@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.52 2004/08/27 10:54:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.53 2004/09/15 12:21:05 ehofman Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -437,7 +437,7 @@ void FGTrimAxis::AxisReport(void) {
            GetStateName().c_str(), GetState()+state_target, GetTolerance());
   cout << out;
 
-  if( abs(GetState()+state_target) < abs(GetTolerance()) )
+  if( fabs(GetState()+state_target) < fabs(GetTolerance()) )
      cout << "  Passed" << endl;
   else
      cout << "  Failed" << endl;
