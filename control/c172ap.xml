@@ -38,16 +38,19 @@
    MIN           -0.255
    MAX            0.255
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
    INPUT         attitude/phi-rad
    C1            0.125
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
    INPUT         velocities/p-rad_sec
    INPUT         fcs/roll-ap-wing-leveler
    INPUT         fcs/roll-ap-error-integrator
    CLIPTO       -1 1
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
   <TEST LOGIC="DEFAULT" VALUE="0.0">
   </TEST>
@@ -55,12 +58,12 @@
     ap/attitude_hold == 1
   </TEST>
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
    INPUT         fcs/roll-ap-autoswitch
    GAIN          -1
    OUTPUT        ap/aileron_cmd
 </COMPONENT>
-
 
 <!-- Altitude hold -->
 

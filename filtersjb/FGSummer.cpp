@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.42 2003/06/05 12:36:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.43 2003/06/13 05:41:24 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,8 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       }
       
       InputNodes.push_back( resolveSymbol(token) );
+    } else if (token == "BIAS") {
+      *AC_cfg >> Bias;
     } else if (token == "CLIPTO") {
       *AC_cfg >> clipmin >> clipmax;
       if (clipmax > clipmin) {
@@ -115,6 +117,8 @@ bool FGSummer::Run(void )
   for (idx=0; idx<InputNodes.size(); idx++) {
     Output += InputNodes[idx]->getDoubleValue()*InputSigns[idx];
   }
+
+  Output += Bias;
 
   if (clip) {
     if (Output > clipmax)      Output = clipmax;
@@ -158,6 +162,7 @@ void FGSummer::Debug(int from)
         else
           cout << "       " << InputNodes[i]->getName() << endl;
       }
+      if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
       if (clip) cout << "      CLIPTO: " << clipmin 
                                   << ", " << clipmax << endl;
       if (IsOutput) cout << "      OUTPUT: " <<OutputNode->getName() <<  endl;
