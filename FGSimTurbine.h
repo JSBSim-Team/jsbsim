@@ -48,7 +48,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.10 2003/10/18 13:21:26 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.11 2003/11/09 05:25:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,24 +69,67 @@ CLASS DOCUMENTATION
     case the engine will go to the Run phase.  Once an engine is in the Off phase
     the full starting procedure (or airstart) must be used to get it running.
 <P>
-    -STARTING (on ground):
-      -#  Set the control FGEngine::Starter to true.  The engine will spin up to
-          a maximum of about %25 N2 (%5.2 N1).  This simulates the action of a
-          pneumatic starter.
-      -#  After reaching %15 N2 set the control FGEngine::Cutoff to false. If fuel
-          is available the engine will now accelerate to idle.  The starter will
-          automatically be set to false after the start cycle.
+    - STARTING (on ground):
+      -# Set the control FGEngine::Starter to true.  The engine will spin up to
+         a maximum of about %25 N2 (%5.2 N1).  This simulates the action of a
+         pneumatic starter.
+      -# After reaching %15 N2 set the control FGEngine::Cutoff to false. If fuel
+         is available the engine will now accelerate to idle.  The starter will
+         automatically be set to false after the start cycle.
 <P>
-    -STARTING (in air):
-      -#  Increase speed to obtain a minimum of %15 N2.  If this is not possible,
-          the starter may be used to assist.
-      -#  Place the control FGEngine::Cutoff to false.
+    - STARTING (in air):
+      -# Increase speed to obtain a minimum of %15 N2.  If this is not possible,
+         the starter may be used to assist.
+      -# Place the control FGEngine::Cutoff to false.
 <P>
     Ignition is assumed to be on anytime the Cutoff control is set to false, 
     therefore a seperate ignition system is not modeled.
 
+Configuration File Format
+
+<FG_SIMTURBINE NAME="<name>">
+  MILTHRUST   <thrust>
+  MAXTHRUST   <thrust>
+  BYPASSRATIO <bypass ratio>
+  TSFC        <thrust specific fuel consumption>
+  ATSFC       <afterburning thrust specific fuel consumption>
+  IDLEN1      <idle N1>
+  IDLEN2      <idle N2>
+  MAXN1       <max N1>
+  MAXN2       <max N2>
+  AUGMENTED   <0|1>
+  AUGMETHOD   <0|1>
+  INJECTED    <0|1>
+  ...
+</FG_SIMTURBINE>
+
+Definition of the turbine engine configuration file parameters:
+
+MILTHRUST - Maximum thrust, static, at sea level, lbf.
+MAXTHRUST - Afterburning thrust, static, at sea level, lbf
+[this value will be ignored when AUGMENTED is zero (false)].
+BYPASSRATIO - Ratio of bypass air flow to core air flow.
+TSFC - Thrust-specific fuel consumption, lbm/hr/lbf
+[i.e. fuel flow divided by thrust].
+ATSFC - Afterburning TSFC, lbm/hr/lbf
+[this value will be ignored when AUGMENTED is zero (false)]
+IDLEN1 - Fan rotor rpm (% of max) at idle
+IDLEN2 - Core rotor rpm (% of max) at idle
+MAXN1 - Fan rotor rpm (% of max) at full throttle [not always 100!] 
+MAXN2 - Core rotor rpm (% of max) at full throttle [not always 100!]
+AUGMENTED
+  0 == afterburner not installed
+  1 == afterburner installed
+AUGMETHOD
+  0 == afterburner activated by property /engines/engine[n]/augmentation
+  1 == afterburner activated by pushing throttle above 99% position
+  [this item will be ignored when AUGMENTED == 0]
+INJECTED
+  0 == Water injection not installed
+  1 == Water injection installed
+
     @author David P. Culp
-    @version $Id: FGSimTurbine.h,v 1.10 2003/10/18 13:21:26 ehofman Exp $
+    @version $Id: FGSimTurbine.h,v 1.11 2003/11/09 05:25:21 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.19 2003/06/03 09:53:51 ehofman Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.20 2003/11/09 05:25:21 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ FGfdmSocket::FGfdmSocket(string address, int port)
   size = 0;
   connected = false;
 
-#if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
     int wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.21 2003/06/11 13:39:48 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.22 2003/11/09 05:25:22 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -85,20 +85,20 @@ complex groupings of logical comparisons. Each CONDITION_GROUP contains
 additional conditions, as well as possibly additional CONDITION_GROUPs.
 
 <pre>
-\<COMPONENT NAME="switch1" TYPE="SWITCH"\><BR>
-  \<TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}"\><BR>
-    {property} {conditional} {property|value}<BR>
-    \<CONDITION_GROUP LOGIC="{AND|OR}"\><BR>
-      {property} {conditional} {property|value}<BR>
-      ...<BR>
-    \</CONDITION_GROUP\><BR>
-    ...<BR>
-  \</TEST><BR>
-  \<TEST LOGIC="{AND|OR}" OUTPUT="{property|value}"\><BR>
-    {property} {conditional} {property|value}<BR>
-    ...<BR>
-  \</TEST\><BR>
-  ...<BR>
+\<COMPONENT NAME="switch1" TYPE="SWITCH"\>
+  \<TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}"\>
+    {property} {conditional} {property|value}
+    \<CONDITION_GROUP LOGIC="{AND|OR}"\>
+      {property} {conditional} {property|value}
+      ...
+    \</CONDITION_GROUP\>
+    ...
+  \</TEST>
+  \<TEST LOGIC="{AND|OR}" OUTPUT="{property|value}"\>
+    {property} {conditional} {property|value}
+    ...
+  \</TEST\>
+  ...
 \</COMPONENT\>
 </pre>
 */
