@@ -52,7 +52,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.16 2001/02/04 13:16:18 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.17 2001/02/18 15:50:52 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +224,7 @@ void FGTrim::ReportState(void) {
 void FGTrim::ClearStates(void) {
     FGTrimAxis* ta;
     
+    mode=tCustom;
     vector<FGTrimAxis*>::iterator iAxes;
     iAxes = TrimAxes.begin();
     while (iAxes != TrimAxes.end()) {
