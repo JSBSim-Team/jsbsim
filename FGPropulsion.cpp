@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.108 2004/06/04 16:33:16 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.109 2004/06/07 01:28:51 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -239,6 +239,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           cerr << "To fix this problem, simply replace the FG_SIMTURBINE name " << endl;
           cerr << "in your engine file to FG_TURBINE." << endl;
           cerr << endl;
+          Engines.push_back(new FGTurbine(FDMExec, Cfg_ptr));
         } else if (engType == "FG_ELECTRIC") {
           Engines.push_back(new FGElectric(FDMExec, Cfg_ptr));
         } else {

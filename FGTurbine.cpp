@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.12 2004/05/27 11:52:47 frohlich Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.13 2004/06/07 01:28:51 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,7 +366,8 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
   Eng_cfg->GetNextConfigLine();
   int counter=0;
 
-  while (Eng_cfg->GetValue() != string("/FG_TURBINE")) {
+  while ( ((token = Eng_cfg->GetValue()) != string("/FG_TURBINE")) &&
+          (token != string("/FG_SIMTURBINE")) ) {
     *Eng_cfg >> token;
 
     if (token[0] == '<') token.erase(0,1); // Tables are read "<TABLE"
