@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.16 2001/07/22 18:49:23 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.17 2001/08/01 11:52:44 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -116,9 +116,7 @@ bool FGAerodynamics::Run(void)
     vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) - MassBalance->GetXYZcg(eY))/12.0;
     vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) - MassBalance->GetXYZcg(eZ))/12.0;
 
-    vMoments(eL) = vForces(eZ)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eZ);
-    vMoments(eM) = vForces(eX)*vDXYZcg(eZ) - vForces(eZ)*vDXYZcg(eX);
-    vMoments(eN) = vForces(eY)*vDXYZcg(eX) - vForces(eX)*vDXYZcg(eY);
+    vMoments = vDXYZcg*vForces; // M = r X F
 
     for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
       for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {

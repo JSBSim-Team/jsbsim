@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.56 2001/07/28 15:32:13 apeden Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.57 2001/08/01 11:52:44 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -222,13 +222,12 @@ FGColumnVector3& FGLGear::Force(void)
 // the wheel in local frame is then known. Subsequently, the compression speed
 // (used for calculating damping force) is found by taking the Z-component of the
 // wheel velocity.
-//cout << "Gear Matrix Calculations" << endl;
+
     vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
-//cout << "..." << endl;
+
     vWhlVelVec     +=  Position->GetVel();
-//cout << "..." << endl;
+
     compressSpeed   =  vWhlVelVec(eZ);
-//cout << "Gear Matrix Calculations" << endl;
 
 // If this is the first time the wheel has made contact, remember some values
 // for later printout.
