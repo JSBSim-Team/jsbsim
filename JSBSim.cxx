@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.102 2002/02/17 14:30:47 apeden Exp $
+// $Id: JSBSim.cxx,v 1.103 2002/02/18 12:58:17 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -612,7 +612,12 @@ void FGJSBsim::set_Climb_Rate( double roc) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Climb_Rate: " << roc );
     
     update_ic();
-    fgic->SetClimbRateFpsIC(roc);
+    //since both climb rate and flight path angle are set in the FG
+    //startup sequence, something is needed to keep one from cancelling
+    //out the other.
+    if( !(fabs(roc) > 1 && fabs(fgic->GetFlightPathAngleRadIC()) < 0.01) ) {
+      fgic->SetClimbRateFpsIC(roc);
+    }  
     needTrim=true;
 }
 
@@ -620,7 +625,9 @@ void FGJSBsim::set_Gamma_vert_rad( double gamma) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Gamma_vert_rad: " << gamma );
     
     update_ic();
-    fgic->SetFlightPathAngleRadIC(gamma);
+    if( !(fabs(gamma) < 0.01 && fabs(fgic->GetClimbRateFpsIC()) > 1) ) {
+      fgic->SetFlightPathAngleRadIC(gamma);
+    }  
     needTrim=true;
 }
 
@@ -657,7 +664,7 @@ void FGJSBsim::set_Velocities_Local_Airmass (double wnorth,
        << wnorth << ", " << weast << ", " << wdown );
     
     _set_Velocities_Local_Airmass( wnorth, weast, wdown );
-    Atmosphere->SetWindNED(wnorth, weast, wdown );
+    fgic->SetWindNEDFpsIC( wnorth, weast, wdown );
     if(Atmosphere->External() == true)
         needTrim=true;
 }     
