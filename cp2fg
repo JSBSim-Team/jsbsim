@@ -59,3 +59,4 @@ $INSTALL aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
 $INSTALL aircraft/c310/c310.xml $FG_ROOT/Aircraft/c310/
 $INSTALL aircraft/c182/c182.xml $FG_ROOT/Aircraft/c182/
 $INSTALL aircraft/x24b/x24b.xml $FG_ROOT/Aircraft/x24b/
+$INSTALL aircraft/B747/B747.xml $FG_ROOT/Aircraft/B747/

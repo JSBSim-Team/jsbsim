@@ -112,6 +112,28 @@ Aerodynamics:
   MAC is 327.8 inches long, with MAC leading edge at 1258 inches aft of datum
   Nose gear jack point is at 384.7 inches
   
+  From http://www.aoe.vt.edu/~mason/Mason_f/M96SC02.pdf
+  
+  CG range for B747:
+  
+  Estimated (permissible): between 4% and 63% MAC
+  Actual (operational): between 13% and 33% MAC
+  Loaded typical 21% MAC
+  
+  From: http://www.boeing.com/assocproducts/aircompat/acaps/7474sec4.pdf
+
+  Pilot eyepoint 28 ft 5 in above runway, 18 ft 2 in behind nose tip, 21 inches left of center.
+
+  Nose gear 25.85 ft. behind nose tip
+
+  Ground clearances shown here:
+
+  http://www.boeing.com/assocproducts/aircompat/acaps/7474sec2.pdf
+
+  Nose tip appears to be at about 17 feet from ground level.
+  
+  Fuel tanks shown here:
+  http://www.chevron.com/prodserv/fuels/bulletin/aviationfuel/images/chp6_fueltanks6_3.gif
 -->
 
  <METRICS>
