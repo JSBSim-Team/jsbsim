@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.10 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.11 2002/04/25 11:44:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -357,7 +357,6 @@ class FGPropertyManager:public SGPropertyNode {
     }
 
 
-    
     ////////////////////////////////////////////////////////////////////////
     // Convenience functions for setting property attributes.
     ////////////////////////////////////////////////////////////////////////
@@ -382,7 +381,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (node == 0)
         cout <<
 	       "Attempt to set archive flag for non-existant property "
-	       << name;
+	       << name << endl;
       else
         node->setAttribute(SGPropertyNode::ARCHIVE, state);
     }
@@ -407,7 +406,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (node == 0)
         cout <<
 	       "Attempt to set read flag for non-existant property "
-	       << name;
+	       << name << endl;
       else
         node->setAttribute(SGPropertyNode::READ, state);
     }
@@ -432,13 +431,12 @@ class FGPropertyManager:public SGPropertyNode {
       if (node == 0)
         cout <<
 	       "Attempt to set write flag for non-existant property "
-	       << name;
+	       << name << endl;
       else
         node->setAttribute(SGPropertyNode::WRITE, state);
     }
 
 
-    
     ////////////////////////////////////////////////////////////////////////
     // Convenience functions for tying properties, with logging.
     ////////////////////////////////////////////////////////////////////////
@@ -454,7 +452,7 @@ class FGPropertyManager:public SGPropertyNode {
     Untie (const string &name)
     {
       if (!untie(name.c_str()))
-        cout << "Failed to untie property " << name;
+        cout << "Failed to untie property " << name << endl;
     }
 
 
@@ -478,7 +476,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to a pointer";
+	       "Failed to tie property " << name << " to a pointer" << endl;
     }
 
 
@@ -500,7 +498,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValuePointer<int>(pointer),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to a pointer";
+	       "Failed to tie property " << name << " to a pointer" << endl;
     }
 
 
@@ -522,7 +520,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValuePointer<long>(pointer),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to a pointer";
+	       "Failed to tie property " << name << " to a pointer" << endl;
     }
 
 
@@ -544,7 +542,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValuePointer<float>(pointer),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to a pointer";
+	       "Failed to tie property " << name << " to a pointer" << endl;
     }
 
 
@@ -566,7 +564,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValuePointer<double>(pointer),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to a pointer";
+	       "Failed to tie property " << name << " to a pointer" << endl;
     }
 
     /* template <class V> void
@@ -610,7 +608,7 @@ class FGPropertyManager:public SGPropertyNode {
       if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to functions";
+	       "Failed to tie property " << name << " to functions" << endl;
     }
 
 
@@ -643,7 +641,7 @@ class FGPropertyManager:public SGPropertyNode {
 							           setter),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to indexed functions";
+	       "Failed to tie property " << name << " to indexed functions" << endl;
     }
 
 
@@ -675,7 +673,7 @@ class FGPropertyManager:public SGPropertyNode {
 				     SGRawValueMethods<T,V>(*obj, getter, setter),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to object methods";
+	       "Failed to tie property " << name << " to object methods" << endl;
     }
 
 
@@ -711,7 +709,7 @@ class FGPropertyManager:public SGPropertyNode {
 							           setter),
 				     useDefault))
         cout <<
-	       "Failed to tie property " << name << " to indexed object methods";
+	       "Failed to tie property " << name << " to indexed object methods" << endl;
     }
 
 };        
