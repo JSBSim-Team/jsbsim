@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.49 2001/11/06 12:48:54 apeden Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.50 2001/11/06 23:48:18 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +185,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
   string thrusterFileName, thrType;
   string parameter;
   string enginePath = FDMExec->GetEnginePath();
-  float xLoc, yLoc, zLoc, Pitch, Yaw;
+  double xLoc, yLoc, zLoc, Pitch, Yaw;
+  double P_Factor = 0, Sense = 0.0;
   int Feed;
   bool ThrottleAdded = false;
 
@@ -305,12 +306,20 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           else if (token == "ZLOC") *AC_cfg >> zLoc;
           else if (token == "PITCH") *AC_cfg >> Pitch;
           else if (token == "YAW") *AC_cfg >> Yaw;
+          else if (token == "P_FACTOR") *AC_cfg >> P_Factor;
+          else if (token == "SENSE")   *AC_cfg >> Sense;
           else cerr << "Unknown identifier: " << token << " in engine file: "
                                                         << engineFileName << endl;
         }
 
         Thrusters[numThrusters]->SetLocation(xLoc, yLoc, zLoc);
         Thrusters[numThrusters]->SetAnglesToBody(0, Pitch, Yaw);
+        if (thrType == "FG_PROPELLER" && P_Factor > 0.001) {
+          ((FGPropeller*)Thrusters[numThrusters])->SetPFactor(P_Factor);
+          cout << "      P-Factor: " << P_Factor << endl;
+          ((FGPropeller*)Thrusters[numThrusters])->SetSense(Sense);
+          cout << "      Sense: " << Sense <<  endl;
+        }
         Thrusters[numThrusters]->SetdeltaT(dt*rate);
 
         numThrusters++;

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.16 2001/11/05 18:23:22 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.17 2001/11/06 23:48:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.16 2001/11/05 18:23:22 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.17 2001/11/06 23:48:18 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -114,6 +114,10 @@ public:
       propellers.
       @param pitch the pitch of the blade in degrees. */
   void SetPitch(float pitch) {Pitch = pitch;}
+  
+  void SetPFactor(double pf) {P_Factor = pf;}
+  
+  void SetSense(double s) { Sense = s;}
 
   /// Retrieves the pitch of the propeller in degrees.
   float GetPitch(void)         { return Pitch;         }

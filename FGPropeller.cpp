@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.29 2001/11/06 13:17:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.30 2001/11/06 23:48:18 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,10 +67,6 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
       *Prop_cfg >> MinPitch;
     } else if (token == "MAXPITCH") {
       *Prop_cfg >> MaxPitch;
-    } else if (token == "P_FACTOR") {
-      *Prop_cfg >> P_Factor;
-    } else if (token == "SENSE") {
-      *Prop_cfg >> Sense;
     } else if (token == "EFFICIENCY") {
       *Prop_cfg >> rows >> cols;
       if (cols == 1) Efficiency = new FGTable(rows);
@@ -101,14 +97,6 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
     cout << "      Number of Blades  = " << numBlades << endl;
     cout << "      Minimum Pitch  = " << MinPitch << endl;
     cout << "      Maximum Pitch  = " << MaxPitch << endl;
-    if (P_Factor > 0.0) cout << "      P-Factor = " << P_Factor << endl;
-    if (Sense > 0.0) {
-      cout << "      Rotation Sense = CW (viewed from pilot looking forward)" << endl;
-    } else if (Sense < 0.0) {
-      cout << "      Rotation Sense = CCW (viewed from pilot looking forward)" << endl;
-    } else {
-      cout << "      Rotation Sense = indeterminate" << endl;
-    }
     cout << "      Efficiency: " <<  endl;
     Efficiency->Print();
     cout << "      Thrust Coefficient: " <<  endl;
