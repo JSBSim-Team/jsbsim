@@ -112,7 +112,7 @@ FGFDMExec::FGFDMExec(void)
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
 
-  Schedule(Atmosphere,  5);
+  Schedule(Atmosphere,  1);
   Schedule(FCS,         1);
   Schedule(Aircraft,    1);
   Schedule(Rotation,    1);
