@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.93 2003/07/28 14:04:00 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.94 2003/11/04 15:45:31 dpculp Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,30 +300,26 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eBrakeGrp) {
       case bgLeft:
-        SteerGain = 0.10;
-        BrakeFCoeff = ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+         BrakeFCoeff = ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
                         staticFCoeff*FCS->GetBrake(bgLeft) );
         break;
       case bgRight:
-        SteerGain = 0.10;
         BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
                          staticFCoeff*FCS->GetBrake(bgRight) );
         break;
       case bgCenter:
-        SteerGain = 0.10;
         BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
                          staticFCoeff*FCS->GetBrake(bgCenter) );
         break;
       case bgNose:
-        SteerGain = -0.50;
-        BrakeFCoeff =  rollingFCoeff;
+        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                         staticFCoeff*FCS->GetBrake(bgCenter) );
         break;
       case bgTail:
-        SteerGain = -0.10;
-        BrakeFCoeff =  rollingFCoeff;
+        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                         staticFCoeff*FCS->GetBrake(bgCenter) );
         break;
       case bgNone:
-        SteerGain = 0.0;
         BrakeFCoeff =  rollingFCoeff;
         break;
       default:
@@ -333,7 +329,7 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eSteerType) {
       case stSteer:
-        SteerAngle = SteerGain*FCS->GetDrCmd()*0.349; // 20 deg
+        SteerAngle = -maxSteerAngle * FCS->GetDrCmd() * 0.01745; 
         break;
       case stFixed:
         SteerAngle = 0.0;
