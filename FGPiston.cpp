@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.71 2004/12/05 04:06:56 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.72 2004/12/31 19:19:55 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg, int engine_number)
   MAP = Atmosphere->GetPressure() * 47.88;  // psf to Pa
   CylinderHeadTemp_degK = 0.0;
   Displacement = 360;
-  MaxHP = 200;
+  MaxHP = 0;
   Cycles = 2;
   IdleRPM = 600;
   Magnetos = 0;
@@ -708,6 +708,8 @@ string FGPiston::GetEngineLabels(string delimeter)
 
   buf << Name << "_PwrAvail[" << EngineNumber << "]" << delimeter
       << Name << "_HP[" << EngineNumber << "]" << delimeter
+      << Name << "_equiv_ratio[" << EngineNumber << "]" << delimeter
+      << Name << "_MAP[" << EngineNumber << "]" << delimeter
       << Thruster->GetThrusterLabels(EngineNumber, delimeter);
 
   return buf.str();
@@ -720,6 +722,7 @@ string FGPiston::GetEngineValues(string delimeter)
   std::ostringstream buf;
 
   buf << PowerAvailable << delimeter << HP << delimeter
+      << equivalence_ratio << delimeter << MAP << delimeter
       << Thruster->GetThrusterValues(EngineNumber, delimeter);
 
   return buf.str();

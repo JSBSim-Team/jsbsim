@@ -169,17 +169,10 @@
              1   5
      OUTPUT  gear/gear-pos-norm
    </COMPONENT>
-   <COMPONENT NAME="Speedbrake Control" TYPE="KINEMAT">
-     INPUT   fcs/speedbrake-cmd-norm
-     DETENTS 2
-             0   0
-             1   1
-     OUTPUT  fcs/speedbrake-pos-norm
-   </COMPONENT>
  </FLIGHT_CONTROL>
  <AERODYNAMICS>
   <AXIS NAME="LIFT">
-    <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
+    <COEFFICIENT NAME="Lalpha" TYPE="VECTOR">
       Lift_due_to_alpha
       4
       aero/alpha-rad
@@ -189,25 +182,36 @@
        0.22    1.300
        0.60    0.664
     </COEFFICIENT>
-    <COEFFICIENT NAME="dCLflap" TYPE="VALUE">
+    <COEFFICIENT NAME="dLflap" TYPE="VALUE">
        Delta_Lift_due_to_flaps
        aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
        0.5
     </COEFFICIENT>
-    <COEFFICIENT NAME="CLde" TYPE="VALUE">
+<!--    
+    <COEFFICIENT NAME="Lde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
        aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-rad
        0.2
     </COEFFICIENT>
-    <COEFFICIENT NAME="dCLprop" TYPE="VECTOR">
-       Lift_due_to_prop_pitch
-       3
-       fcs/throttle-pos-norm
-       aero/qbar-psf|metrics/Sw-sqft
-       0.00      -0.35
-       0.05       0.00
-       1.00       0.10
+-->    
+    <COEFFICIENT NAME="Lde" TYPE="VALUE">
+       Lift_due_to_Elevator_Deflection
+       aero/qbar-psf
+       0.2
     </COEFFICIENT>
+       
+    <!--
+    <COEFFICIENT NAME="Lprop0" TYPE="VALUE">
+       Lift_due_to_left_engine_prop_wash
+       propulsion/engine[0]/thrust 
+       0.288595
+    </COEFFICIENT>
+    <COEFFICIENT NAME="Lprop1" TYPE="VALUE">
+       Lift_due_to_right_engine_prop_wash
+       propulsion/engine[1]/thrust 
+       0.288595
+    </COEFFICIENT>
+    -->
   </AXIS>
   <AXIS NAME="DRAG">
     <COEFFICIENT NAME="CD0" TYPE="VECTOR">

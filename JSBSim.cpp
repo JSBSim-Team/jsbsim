@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.87 2004/11/17 12:40:17 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.88 2004/12/31 19:19:55 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -229,13 +229,13 @@ int main(int argc, char* argv[])
       cerr << "Initialization unsuccessful" << endl;
       exit(-1);
     }
-
+/*
     JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
     if ( !fgt.DoTrim() ) {
       cout << "Trim Failed" << endl;
     }
     fgt.Report();
-
+*/
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);

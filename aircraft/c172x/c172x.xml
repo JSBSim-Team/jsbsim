@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.28 2004/11/20 13:04:48 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.29 2004/12/31 19:19:56 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -134,7 +134,7 @@ Standard empty weight 1,620 lbs.
     -->
 
     AC_WINGAREA  174   <!-- square feet -->
-    AC_WINGSPAN  36.1  <!-- ft          -->
+    AC_WINGSPAN  35.8  <!-- ft          -->
     AC_CHORD     4.9   <!-- ft          -->
     AC_HTAILAREA 21.9  <!-- square feet -->
     AC_HTAILARM  15.7  <!-- ft          -->
@@ -145,8 +145,8 @@ Standard empty weight 1,620 lbs.
     AC_IZZ    1967
     AC_IXZ    0
     AC_EMPTYWT   1620
-    AC_AERORP    40.6  0.0 59.4
-    AC_CGLOC     39.0  0.0 36.5
+    AC_AERORP    43.2  0.0 59.4
+    AC_CGLOC     41.0  0.0 36.5
 <!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
 <!-- Co-pilot -->
@@ -403,7 +403,7 @@ Standard empty weight 1,620 lbs.
             13
             aero/h_b-mac-ft
             none
-            0.0   0.048
+            0.0   0.480
             0.1   0.515
             0.15  0.629
             0.2   0.709
@@ -675,17 +675,17 @@ Standard empty weight 1,620 lbs.
   <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
     RATE_IN_HZ     2 
     SIMULATION       OFF
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
     AEROSURFACES     ON
-    RATES            OFF
+    RATES            ON
     VELOCITIES       ON
-    FORCES           OFF
-    MOMENTS          OFF
+    FORCES           ON
+    MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     OFF
-    GROUND_REACTIONS OFF
-    FCS              OFF
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
     PROPULSION       ON
   </OUTPUT>
 </FDM_CONFIG>
