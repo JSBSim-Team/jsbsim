@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.39 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.40 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,4 +212,11 @@ void FGTranslation::Debug(int from)
     if (qbar > 1e6 || qbar < 0.00)
       cout << "FGTranslation::qbar is out of bounds: " << qbar << endl;
   }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
 }
+

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.24 2001/12/12 18:31:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.25 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,8 +62,8 @@ FGGroundReactions::~FGGroundReactions(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 bool FGGroundReactions::Run(void)
 {
-  double steerAngle = 0.0;
-  double xForces = 0.0, yForces = 0.0;
+//  double steerAngle = 0.0;
+//  double xForces = 0.0, yForces = 0.0;
 
   if (!FGModel::Run()) {
     vForces.InitMatrix();
@@ -236,6 +236,12 @@ void FGGroundReactions::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
   }
 }
 

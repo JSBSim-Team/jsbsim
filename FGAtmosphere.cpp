@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.34 2001/12/12 18:31:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.35 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -336,6 +336,12 @@ void FGAtmosphere::Debug(int from)
            << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
     } else if (from == 2) {
       cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
+    }
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
     }
   }
 }

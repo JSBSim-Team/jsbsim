@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.30 2001/12/14 00:16:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.31 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,4 +195,11 @@ void FGRotation::Debug(int from)
         cout << "FGRotation::R (Yaw Rate) out of bounds: " << vPQR(eR) << endl;
     }
   }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
 }
+

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.26 2001/12/12 18:31:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.27 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,6 +176,12 @@ void FGSummer::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
   }
 }
 

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.18 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.19 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,12 @@ void FGThruster::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
   }
 }
 

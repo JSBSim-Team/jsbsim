@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.21 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.22 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,6 +229,12 @@ void FGMassBalance::Debug(int from)
         cout << "MassBalance::Weight out of bounds: " << Weight << endl;
       if (Mass <= 0.0 || Mass > 1e9)
         cout << "MassBalance::Mass out of bounds: " << Mass << endl;
+    }
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
     }
   }
 }

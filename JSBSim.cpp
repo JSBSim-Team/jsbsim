@@ -71,7 +71,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.67 2001/12/22 15:22:19 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.68 2001/12/23 21:49:01 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -87,7 +87,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.67 2001/12/22 15:22:19 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.68 2001/12/23 21:49:01 jberndt Exp $
     @see -
 */
 
@@ -98,7 +98,6 @@ IMPLEMENTATION
 int main(int argc, char** argv)
 {
   FGFDMExec* FDMExec;
-  float cmd = 0.0;
   bool result = false;
   bool Scripted = false;
   FGScript* Script;

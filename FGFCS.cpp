@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.69 2001/12/17 00:27:56 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.70 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -408,4 +408,11 @@ void FGFCS::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
   }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
 }
+

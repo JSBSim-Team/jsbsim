@@ -72,7 +72,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGInitialCondition.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.79 2001/12/22 16:11:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.80 2001/12/23 21:49:01 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -509,8 +509,6 @@ bool FGFDMExec::ReadOutput(FGConfigFile* AC_cfg)
 
 void FGFDMExec::Debug(int from)
 {
-  unsigned int i;
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -537,4 +535,11 @@ void FGFDMExec::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
   }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
 }
+

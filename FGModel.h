@@ -57,7 +57,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.28 2001/11/12 05:06:27 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.29 2001/12/23 21:49:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -130,6 +130,8 @@ public:
 protected:
   int exe_ctr;
   int rate;
+  
+  virtual void Debug(int from);
 
   FGFDMExec*         FDMExec;
   FGState*           State;
