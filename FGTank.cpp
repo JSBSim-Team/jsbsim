@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.25 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.26 2002/01/19 17:25:39 dmegginson Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,19 +95,17 @@ FGTank::~FGTank()
 
 double FGTank::Reduce(double used)
 {
-  double shortage;
+  double shortage = Contents - used;
 
-  if (used < Contents) {
+  if (shortage >= 0) {
     Contents -= used;
     PctFull = 100.0*Contents/Capacity;
-    return 0.0;
   } else {
-    shortage = Contents - used;
     Contents = 0.0;
     PctFull = 0.0;
     Selected = false;
-    return shortage;
   }
+  return shortage;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
