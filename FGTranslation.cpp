@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.48 2002/07/10 22:17:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.49 2002/07/31 12:59:00 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,6 +88,12 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex)
   Mach = 0.0;
   alpha = beta = 0.0;
   adot = bdot = 0.0;
+
+  vUVWdot.InitMatrix();
+  vUVWdot_prev[0].InitMatrix();
+  vUVWdot_prev[1].InitMatrix();
+  vUVWdot_prev[2].InitMatrix();
+
   bind();
   Debug(0);
 }
@@ -104,8 +110,6 @@ FGTranslation::~FGTranslation(void)
 
 bool FGTranslation::Run(void)
 {
-  double Tc = 0.5*State->Getdt()*rate;
-
   if (!FGModel::Run()) {
 
     mVel(1,1) =  0.0;
@@ -120,7 +124,7 @@ bool FGTranslation::Run(void)
 
     vUVWdot = mVel*Rotation->GetPQR() + Aircraft->GetBodyAccel();
 
-    vUVW += Tc*(vUVWdot + vlastUVWdot);
+    vUVW += State->Integrate(FGState::TRAPZ, State->Getdt()*rate, vUVWdot, vUVWdot_prev);
 
     vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
@@ -154,8 +158,6 @@ bool FGTranslation::Run(void)
     qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
     qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
     Mach = Vt / State->Geta();
-
-    vlastUVWdot = vUVWdot;
 
     if (debug_lvl > 1) Debug(1);
 

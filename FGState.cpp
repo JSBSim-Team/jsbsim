@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.117 2002/07/30 12:18:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.118 2002/07/31 12:59:00 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,8 @@ FGState::FGState(FGFDMExec* fdex)
   GroundReactions = FDMExec->GetGroundReactions();
   Propulsion      = FDMExec->GetPropulsion();
   PropertyManager = FDMExec->GetPropertyManager();
+
+  for(int i=0;i<3;i++) vQdot_prev[i].InitMatrix();
 
   InitPropertyMaps();
 
@@ -150,7 +152,6 @@ bool FGState::Reset(string path, string acname, string fname)
 
     resetfile >> token;
   }
-  
   
   Position->SetLatitude(latitude*degtorad);
   Position->SetLongitude(longitude*degtorad);
@@ -328,11 +329,10 @@ void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate)
   vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
   vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
   vQdot(4) =  0.5*(vQtrn(1)*vPQR(eR) + vQtrn(2)*vPQR(eQ) - vQtrn(3)*vPQR(eP));
-  vQtrn += 0.5*dt*rate*(vlastQdot + vQdot);
+
+  vQtrn += Integrate(TRAPZ, dt*rate, vQdot, vQdot_prev);
 
   vQtrn.Normalize();
-
-  vlastQdot = vQdot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

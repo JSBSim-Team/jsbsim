@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.39 2002/05/17 10:40:01 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.40 2002/07/31 12:59:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -128,8 +128,8 @@ public:
 private:
   FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
-  FGColumnVector3 vlastUVWdot;
-  FGMatrix33       mVel;
+  FGColumnVector3 vUVWdot_prev[3];
+  FGMatrix33      mVel;
   FGColumnVector3 vAeroUVW;
 
   double Vt, Mach;
@@ -137,7 +137,6 @@ private:
   double dt;
   double alpha, beta;
   double adot,bdot;
-
   void Debug(int from);
 };
 

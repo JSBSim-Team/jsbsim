@@ -69,7 +69,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.34 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.35 2002/07/31 12:59:00 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,9 +80,14 @@ CLASS IMPLEMENTATION
 FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGRotation";
-  cTht=cPhi=cPsi=1.0;
-  sTht=sPhi=sPsi=0.0;
-  
+  cTht = cPhi = cPsi = 1.0;
+  sTht = sPhi = sPsi = 0.0;
+
+  vPQRdot.InitMatrix();
+  vPQRdot_prev[0].InitMatrix();
+  vPQRdot_prev[1].InitMatrix();
+  vPQRdot_prev[2].InitMatrix();
+
   bind();
   
   Debug(0);
@@ -110,10 +115,12 @@ bool FGRotation::Run(void)
     N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
 
     vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
-    vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
+    vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR)
+                          - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
     vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
-    vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
+    vPQR += State->Integrate(FGState::TRAPZ, dt*rate, vPQRdot, vPQRdot_prev);
+    
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
     State->IntegrateQuat(vPQR, rate);
@@ -130,8 +137,6 @@ bool FGRotation::Run(void)
       vEulerRates(ePhi) = vPQR(1) + (vPQR(2)*sPhi + vPQR(3)*cPhi)*tTheta;
       vEulerRates(ePsi) = (vPQR(2)*sPhi + vPQR(3)*cPhi)/cTht;
     }
-
-    vlastPQRdot = vPQRdot;
 
     if (debug_lvl > 1) Debug(2);
 

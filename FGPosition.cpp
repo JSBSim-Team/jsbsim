@@ -86,7 +86,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.55 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.56 2002/07/31 12:59:00 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,13 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
-  lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
+  
+  for (int i=0;i<3;i++) {
+    LatitudeDot_prev[i]  = 0.0;
+    LongitudeDot_prev[i] = 0.0;
+    RadiusDot_prev[i]    = 0.0;
+  }
+  
   Longitude = Latitude = 0.0;
   gamma = Vt = Vground = 0.0;
   hoverbmac = hoverbcg = 0.0;
@@ -143,7 +149,8 @@ Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
 	       In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
 */
 
-bool FGPosition::Run(void) {
+bool FGPosition::Run(void)
+{
   double cosLat;
   double hdot_Vt;
   FGColumnVector3 vMac;
@@ -160,22 +167,20 @@ bool FGPosition::Run(void) {
 
     cosLat = cos(Latitude);
     if (cosLat != 0) LongitudeDot = vVel(eEast) / (Radius * cosLat);
-
     LatitudeDot = vVel(eNorth) / Radius;
     RadiusDot   = -vVel(eDown);
 
-    Longitude += 0.5*dt*rate*(LongitudeDot + lastLongitudeDot);
-    Latitude  += 0.5*dt*rate*(LatitudeDot + lastLatitudeDot);
-    Radius    += 0.5*dt*rate*(RadiusDot + lastRadiusDot);
+    Longitude += State->Integrate(FGState::TRAPZ, dt*rate, LongitudeDot, LongitudeDot_prev);
+    Latitude  += State->Integrate(FGState::TRAPZ, dt*rate, LatitudeDot, LatitudeDot_prev);
+    Radius    += State->Integrate(FGState::TRAPZ, dt*rate, RadiusDot, RadiusDot_prev);
 
     h = Radius - SeaLevelRadius;           // Geocentric
 
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
     
-    
     hoverbcg = DistanceAGL/b;
     
-    vMac=State->GetTb2l()*Aircraft->GetXYZrp();
+    vMac = State->GetTb2l()*Aircraft->GetXYZrp();
     
     vMac *= inchtoft;
     hoverbmac = (DistanceAGL + vMac(3))/b;
@@ -187,10 +192,6 @@ bool FGPosition::Run(void) {
       gamma = 0.0;
     }
 
-    lastLatitudeDot  = LatitudeDot;
-    lastLongitudeDot = LongitudeDot;
-    lastRadiusDot    = RadiusDot;
-
     return false;
 
   } else {
@@ -200,7 +201,8 @@ bool FGPosition::Run(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPosition::GetState(void) {
+void FGPosition::GetState(void)
+{
   dt = State->Getdt();
 
   Vt        = Translation->GetVt();
@@ -212,7 +214,8 @@ void FGPosition::GetState(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPosition::Seth(double tt) {
+void FGPosition::Seth(double tt)
+{
  h = tt;
  Radius    = h + SeaLevelRadius;
  DistanceAGL = Radius - RunwayRadius;   // Geocentric
@@ -221,7 +224,8 @@ void FGPosition::Seth(double tt) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPosition::SetDistanceAGL(double tt) {
+void FGPosition::SetDistanceAGL(double tt)
+{
   DistanceAGL=tt;
   Radius = RunwayRadius + DistanceAGL;
   h = Radius - SeaLevelRadius;

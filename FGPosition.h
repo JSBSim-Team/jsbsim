@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.46 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.47 2002/07/31 12:59:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.46 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.47 2002/07/31 12:59:00 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPosition.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPosition.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -79,6 +79,7 @@ public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
   FGPosition(FGFDMExec*);
+
   /// Destructor
   ~FGPosition();
 
@@ -132,7 +133,7 @@ private:
   
   double Radius, h;
   double LatitudeDot, LongitudeDot, RadiusDot;
-  double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
+  double LatitudeDot_prev[3], LongitudeDot_prev[3], RadiusDot_prev[3];
   double Longitude, Latitude;
   double dt;
   double RunwayRadius;
