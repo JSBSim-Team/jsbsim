@@ -84,7 +84,6 @@ public:
   inline float Getadot(void) { return adot; }
   inline float Getbdot(void) { return bdot; }
 
-  inline float GetLocalAltitudeOverRunway(void) { return LocalAltitudeOverRunway; }
   inline float Geta(void) { return a; }
 
   inline float Getsim_time(void) { return sim_time; }
@@ -97,7 +96,6 @@ public:
   inline void Setadot(float tt) { adot = tt; }
   inline void Setbdot(float tt) { bdot = tt; }
 
-  inline void SetLocalAltitudeOverRunway(float tt) { LocalAltitudeOverRunway = tt; }
   inline void Seta(float tt) { a = tt; }
 
   inline float Setsim_time(float tt) {
@@ -127,7 +125,6 @@ private:
   float sim_time, dt;
 
   FGFDMExec* FDMExec;
-  float LocalAltitudeOverRunway;
   FGMatrix mTb2l;
   FGMatrix mTl2b;
   FGMatrix mTs2b;
