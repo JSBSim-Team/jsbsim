@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.36 2000/10/18 12:19:05 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.37 2000/10/20 18:29:02 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,11 +82,13 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates an Aircraft and its systems.
-    Owns all the parts (other classes) which make
-    up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
-    aerodynamic and mass properties, landing gear, etc.
+    Owns all the parts (other classes) which make up this aircraft. This includes
+    the Engines, Tanks, Propellers, Nozzles, Aerodynamic and Mass properties,
+    landing gear, etc. These constituent parts may actually run as separate
+    JSBSim models themselves, but the responsibility for initializing them and
+    for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.36 2000/10/18 12:19:05 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.37 2000/10/20 18:29:02 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
