@@ -1,0 +1,410 @@
+<FDM_CONFIG NAME="Lunar Module" VERSION="1.57">
+  <!--
+
+  File:        LM.xml
+  Author:      Jon S. Berndt
+  CVS Version: $Id: LM.xml,v 1.1 2002/06/03 04:45:23 jberndt Exp $
+
+  Function: Models a Grumman Aerospace Lunar Module
+  -->
+
+  <METRICS>
+
+    <!--
+    Center of gravity location, empty weight, in spacecraft own structural coord
+    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+    right wing.
+
+    Pilot eyepoint location, in aircraft own coord system, FROM cg.
+    X, Y, Z, in inches
+    -->
+
+    AC_WINGAREA 0
+    AC_WINGSPAN 0
+    AC_CHORD    0
+    AC_IXX      12750
+    AC_IYY      13629
+    AC_IZZ      16099
+    AC_IXZ      231
+    AC_IXY      652
+    AC_EMPTYWT  16370-0.6
+    AC_CGLOC      0.0   0.0   0.0
+    AC_EYEPTLOC -58.0 -21.0 104.9
+    AC_AERORP     0.0   0.0   0.0
+
+  </METRICS>
+
+  <UNDERCARRIAGE>
+
+    <!--
+    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
+    <max steer angle>                Maximum steerable angle in degrees
+    -->
+
+    AC_GEAR  LADDER -163.0    0.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
+    AC_GEAR  LEFT      0.0 -163.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
+    AC_GEAR  RIGHT     0.0 -163.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
+    AC_GEAR  REAR    163.0    0.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
+
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+
+    <!--
+      TANKS SECTION
+
+      Tank locations and characteristics, empty weight, in aircrafts own coord system:
+      X, Y, Z, in inches
+      effective radius of tank, in inches (for fuel slosh, if/when modeled)
+      capacity in pounds
+      Current contents, in pounds
+
+      ENGINE[S] SECTION
+
+      Engine[s] is|are specified by giving engine name (which corresponds to an engine
+      definition file in the "engines" directory) followed by x, y, z placement and
+      pitch and yaw orientation. Coordinates are given in inches in the structural
+      coordinate frame. Angles for pitch and yaw are specified in radians.
+
+      AC_ENGINE name x y z pitch yaw
+
+      THRUSTER[S] SECTION
+
+      AC_THRUSTER name x y z pitch yaw
+    -->
+
+    <AC_TANK TYPE="OXIDIZER" NUMBER="0">
+      XLOC 282.3
+      YLOC 0.0
+      ZLOC 0.0
+      RADIUS 26.0
+      CAPACITY 9470.0
+      CONTENTS 9470.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC 408.3
+      YLOC 0.0
+      ZLOC 0.0
+      RADIUS 26.0
+      CAPACITY 8236.0
+      CONTENTS 8236.0
+    </AC_TANK>
+
+    <AC_ENGINE FILE="LMdescent">
+      XLOC 600.0
+      YLOC   0.0
+      ZLOC   0.0
+      PITCH  0.0
+      YAW    0.0
+      FEED     0
+      FEED     1
+    </AC_ENGINE>
+
+    <AC_THRUSTER FILE="LM_descent_nozzle">
+      XLOC  600.0
+      YLOC    0.0
+      ZLOC    0.0
+      PITCH   0.0
+      YAW     0.0
+    </AC_THRUSTER>
+  </PROPULSION>
+
+  <!--
+  In the following section for flight controls the TYPE parameter may be one of
+  the following:
+
+    LAG_FILTER
+    LEAD_LAG_FILTER
+    SECOND_ORDER_FILTER
+    WASHOUT_FILTER
+    INTEGRATOR
+    PURE_GAIN
+    SCHEDULED_GAIN
+    HYSTERESIS
+    SUMMER
+    DEADBAND
+    GRADIENT
+    AEROSURFACE_SCALE
+
+  Most flight control systems should be able to be modeled by the above
+  components.
+
+  According to Etkin, (From the Flight Safety Foundation Human Engineering
+  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
+  are as follows (averaged, for a right-handed pilot):
+
+  Stick Pull:  50 lbs.
+        Push:  50
+        Right: 20
+        Left:  20
+
+  Pedal Push: 300 lbs.
+
+  It is assumed that most flight control systems will list the pilot input in
+  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
+  will all have limits specified, and that the joystick inputs from FlightGear will be
+  from -1 to 0 to +1. Given all those parameters, it should be possible to
+  calculate a scaling factor that will convert the +/-1 range into a push/pull
+  force command ready for input to the FCS.
+
+  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
+  pounds.
+  -->
+
+  <FLIGHT_CONTROL NAME="X-15 SAS">
+
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           1
+      INPUT        0
+      MIN         -50
+      MAX          50
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
+      ID           2
+      INPUT        1
+      GAIN         -0.36
+    </COMPONENT>
+
+    <!--
+      In the following component, the GAIN value is actually in addition to the
+      scheduled gain in the next component. If the GAIN in a scheduled component
+      is not required, it may be ignored and not specified here - it is initialized
+      to one in the contructor.
+    -->
+
+    <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
+      ID           3
+      INPUT        2
+      GAIN         0.017
+      ROWS         22
+      SCHEDULED_BY FG_ELEVATOR_POS
+      -0.68  -26.548
+      -0.595 -20.513
+      -0.51  -15.328
+      -0.425 -10.993
+      -0.34   -7.508
+      -0.255  -4.873
+      -0.17   -3.088
+      -0.085  -2.153
+       0      -2.068
+       0.085  -2.833
+       0.102  -3.088
+       0.119  -3.377
+       0.136  -3.7
+       0.153  -4.057
+       0.17   -4.448
+       0.187  -4.873
+       0.272  -7.508
+       0.357 -10.993
+       0.442 -15.328
+       0.527 -20.513
+       0.612 -26.548
+       0.697 -33.433
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           4
+      INPUT        FG_AILERON_CMD
+      MIN         -20
+      MAX          20
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 1" TYPE="PURE_GAIN">
+      ID           5
+      INPUT        4
+      GAIN         0.42
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll Gain 2" TYPE="PURE_GAIN">
+      ID           6
+      INPUT        5
+      GAIN         0.027
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Command Scale" TYPE="AEROSURFACE_SCALE">
+      ID           7
+      INPUT        FG_RUDDER_CMD
+      MIN         -250
+      MAX          250
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 1" TYPE="PURE_GAIN">
+      ID           8
+      INPUT        7
+      GAIN         0.082
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Gain 2" TYPE="PURE_GAIN">
+      ID           9
+      INPUT        8
+      GAIN         0.040
+    </COMPONENT>
+
+    <COMPONENT NAME="Pitch SAS Feedback" TYPE="PURE_GAIN">
+      ID           10
+      INPUT        FG_PITCHRATE
+      GAIN         0.75
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw-Roll Crossover Gain" TYPE="PURE_GAIN">
+      ID           11
+      INPUT        FG_YAWRATE
+      GAIN         -0.90
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw Coupled Aileron Feedback Sum" TYPE="SUMMER">
+      ID           12
+      INPUT        FG_ROLLRATE
+      INPUT        11
+    </COMPONENT>
+
+    <COMPONENT NAME="Roll SAS Gain" TYPE="PURE_GAIN">
+      ID           13
+      INPUT        12
+      GAIN         -0.50
+    </COMPONENT>
+
+    <COMPONENT NAME="Yaw SAS Gain" TYPE="PURE_GAIN">
+      ID           14
+      INPUT        FG_YAWRATE
+      GAIN         0.30
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
+      ID           15
+      INPUT         3
+      INPUT        10
+      CLIPTO       -0.26 0.61
+    </COMPONENT>
+
+    <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
+      ID           16
+      INPUT        15
+      C1           600
+      OUTPUT       FG_ELEVATOR_POS
+    </COMPONENT>
+
+    <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
+      ID           17
+      INPUT         6
+      INPUT        13
+      OUTPUT       FG_AILERON_POS
+      CLIPTO       -0.35 0.35
+    </COMPONENT>
+
+    <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
+      ID           18
+      INPUT         9
+      INPUT        14
+      OUTPUT       FG_RUDDER_POS
+      CLIPTO       -0.52 0.52
+    </COMPONENT>
+
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+
+    <AXIS NAME="LIFT">
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+    </AXIS>
+
+    <AXIS NAME="SIDE">
+    </AXIS>
+
+    <AXIS NAME="ROLL">
+    </AXIS>
+
+    <AXIS NAME="PITCH">
+    </AXIS>
+
+    <AXIS NAME="YAW">
+    </AXIS>
+
+  </AERODYNAMICS>
+
+  <!--
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DONT USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+  -->
+
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
+    RATE_IN_HZ       20
+    SIMULATION       ON
+    ATMOSPHERE       OFF
+    MASSPROPS        OFF
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+
+</FDM_CONFIG>
+

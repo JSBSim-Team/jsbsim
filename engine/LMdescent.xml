@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<FG_ROCKET NAME="LM_Descent">
+  <!--
+    SHR      = Specific Heat Ratio, for LOX/Ammonia this is 1.23
+    MAX_PC   = Maximum chamber pressure in psf
+    PROP_EFF = propulsive efficiency. This is largely a fudge factor.
+  -->
+  SHR              1.24
+  MAX_PC       15840.0
+  VARIANCE         0.10
+  PROP_EFF         0.67
+  MAXTHROTTLE      1.0
+  MINTHROTTLE      0.1
+  SLFUELFLOWMAX   34.0
+  SLOXIFLOWMAX    34.0
+</FG_ROCKET>
+
