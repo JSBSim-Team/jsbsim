@@ -134,6 +134,18 @@ Aerodynamics:
   
   Fuel tanks shown here:
   http://www.chevron.com/prodserv/fuels/bulletin/aviationfuel/images/chp6_fueltanks6_3.gif
+  
+  From http://www.boeing.com/assocproducts/aircompat/acaps/7474sec7.pdf:
+  
+  ~93% of weight on main gear at taxi
+  
+  Nose gear back 25'5" from nose tip
+  Center of main bogies back 84' from nose gear
+  Forward and aft pairs of main bogies 10'1" staggered in X
+  Outer main bogies are 36'1" apart in Y
+  Inner main bogies are 12'7" apart in Y
+  
+  Recall that datum is 90" forward of nose tip.
 -->
 
  <METRICS>
