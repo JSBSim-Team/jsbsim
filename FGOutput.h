@@ -56,13 +56,13 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.25 2003/01/26 06:54:39 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.26 2003/05/02 10:47:33 jberndt Exp $"
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-namespace JSBSim {
 
 class FGOutput : public FGModel
 {

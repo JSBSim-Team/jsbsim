@@ -59,14 +59,13 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.27 2003/01/22 15:53:32 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.28 2003/05/02 10:47:33 jberndt Exp $"
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-
-namespace JSBSim {
 
 class FGInertial : public FGModel {
 

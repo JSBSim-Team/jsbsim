@@ -47,13 +47,13 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.3 2003/01/22 15:53:37 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.4 2003/05/02 10:47:34 jberndt Exp $"
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-namespace JSBSim {
 
 class FGTurbine : public FGEngine
 {

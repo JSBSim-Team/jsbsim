@@ -59,13 +59,13 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.20 2003/01/22 15:53:32 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.21 2003/05/02 10:47:33 jberndt Exp $"
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-namespace JSBSim {
 
 class FGGroundReactions : public FGModel
 {
