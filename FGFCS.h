@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.48 2002/03/21 12:25:27 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.49 2002/03/22 12:46:23 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -143,7 +143,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.48 2002/03/21 12:25:27 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.49 2002/03/22 12:46:23 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -267,7 +267,7 @@ public:
   /** Gets the flaps position.
       @return flaps position in radians */
   inline double GetDfPos( int form = ofRad ) 
-                         const { return DspPos[form]; }
+                         const { return DfPos[form]; }
                          
   /** Gets the throttle position.
       @param engine engine ID number
