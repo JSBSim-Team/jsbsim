@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.67 2001/12/06 20:56:54 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.68 2001/12/07 13:03:41 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -258,7 +258,7 @@
          20  0.012
          30  0.018
        </COEFFICIENT>
-      <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
+      <COEFFICIENT NAME="CDwbh" TYPE="TABLE">
          Drag_due_to_alpha
          26
          4
