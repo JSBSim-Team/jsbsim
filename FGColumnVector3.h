@@ -48,20 +48,19 @@ INCLUDES
    using std::endl;
 #endif
 
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.2 2001/07/22 21:51:17 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.3 2001/07/24 11:55:49 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGColumnVector3;
-
+class FGMatrix33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DECLARATION: FGColumnVector3
@@ -74,17 +73,29 @@ public:
   FGColumnVector3(int m);
   FGColumnVector3(const FGColumnVector3& b);
   ~FGColumnVector3(void);
-
+  
+  FGColumnVector3 operator=(const FGColumnVector3& b);
+  
   FGColumnVector3 operator*(const double scalar);
   FGColumnVector3 operator*(const FGColumnVector3& V);   // Cross product operator
   FGColumnVector3 operator/(const double scalar);
   FGColumnVector3 operator+(const FGColumnVector3& B); // must not return reference
   FGColumnVector3 operator-(const FGColumnVector3& B);
+  
+  void operator-=(const FGColumnVector3 &B);
+  void operator+=(const FGColumnVector3 &B);
+  void operator*=(const FGColumnVector3 &B);
+  void operator*=(const double scalar);
+  void operator/=(const double scalar);
+
+  
   float Magnitude(void);
   FGColumnVector3 Normalize(void);
 
   friend FGColumnVector3 operator*(const double scalar, const FGColumnVector3& A);
-  friend FGColumnVector3 operator*(const FGMatrix& M, const FGColumnVector3& V);
+  friend FGColumnVector3 operator*(const FGMatrix33& M, const FGColumnVector3& V);
+
+  friend ostream& operator<<(ostream& os, const FGColumnVector3& col);
 
   double& operator()(int m) const;
 

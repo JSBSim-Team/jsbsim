@@ -19,10 +19,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGColumnVector3.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.2 2001/07/22 21:51:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.3 2001/07/24 11:55:49 apeden Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 extern short debug_lvl;
@@ -35,15 +35,46 @@ CLASS IMPLEMENTATION
 FGColumnVector3::FGColumnVector3(void)
 {
   data = new double[4];
+  //cout << "Allocated: " <<  data << endl;
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGColumnVector3::~FGColumnVector3(void)
 {
+  //cout << "Freed: " << data << endl;
   delete[] data;
   data = NULL;
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector3" << endl;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3::FGColumnVector3(const FGColumnVector3& b) 
+{
+  data = new double[4];
+  data[1] = b.data[1];
+  data[2] = b.data[2];
+  data[3] = b.data[3];
+
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGColumnVector3::operator=(const FGColumnVector3& b) 
+{
+  data = new double[4];
+  data[1] = b.data[1];
+  data[2] = b.data[2];
+  data[3] = b.data[3];
+  
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+  
+  return *this;
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -54,7 +85,7 @@ double& FGColumnVector3::operator()(int m) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 operator*(const FGMatrix& Mat, const FGColumnVector3& Col)
+FGColumnVector3 operator*(const FGMatrix33& Mat, const FGColumnVector3& Col)
 {
   FGColumnVector3 Product;
 
@@ -69,14 +100,21 @@ FGColumnVector3 operator*(const FGMatrix& Mat, const FGColumnVector3& Col)
 
 FGColumnVector3 FGColumnVector3::operator+(const FGColumnVector3& C)
 {
-  FGColumnVector3 Sum; // This must be created dynamically
-                                // because we don't know the size of "C",
-                                // it could be 3 or 4 or ...
+  FGColumnVector3 Sum; 
   Sum(1) = C(1) + data[1];
   Sum(2) = C(2) + data[2];
   Sum(3) = C(3) + data[3];
 
   return Sum;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector3::operator+=(const FGColumnVector3& C)
+{
+   data[1] += C(1);
+   data[2] += C(2);
+   data[3] += C(3);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,16 +132,34 @@ FGColumnVector3 FGColumnVector3::operator*(const double scalar)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGColumnVector3::operator*=(const double scalar)
+{
+  data[1] *= scalar;
+  data[2] *= scalar;
+  data[3] *= scalar;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGColumnVector3 FGColumnVector3::operator-(const FGColumnVector3& V)
 {
   
   FGColumnVector3 Diff; 
   
-  Diff(1) = V(1) - data[1];
-  Diff(2) = V(2) - data[2];
-  Diff(3) = V(3) - data[3];
+  Diff(1) = data[1] - V(1);
+  Diff(2) = data[2] - V(2);
+  Diff(3) = data[3] - V(3);
 
   return Diff;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector3::operator-=(const FGColumnVector3& V)
+{
+  data[1] -= V(1);
+  data[2] -= V(2);
+  data[3] -= V(3);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +176,21 @@ FGColumnVector3 FGColumnVector3::operator/(const double scalar)
     cerr << "Attempt to divide by zero in method FGColumnVector3::operator/(const double scalar), object " << this << endl; 
   }
   return Quotient;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector3::operator/=(const double scalar)
+{
+  FGColumnVector3 Quotient;
+
+  if (scalar != 0) {
+    data[1] /= scalar;
+    data[2] /= scalar;
+    data[3] /= scalar;
+  } else {
+    cerr << "Attempt to divide by zero in method FGColumnVector3::operator/=(const double scalar), object " << this << endl; 
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,6 +255,19 @@ FGColumnVector3 FGColumnVector3::operator*(const FGColumnVector3& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGColumnVector3::operator*=(const FGColumnVector3& V)
+{
+  double a,b,c;
+  a = data[1]; b=data[2]; c=data[3];
+  
+  data[1] = b * V(3) - c * V(2);
+  data[2] = c * V(1) - a * V(3);
+  data[3] = a * V(2) - b * V(1);
+
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGColumnVector3 FGColumnVector3::multElementWise(const FGColumnVector3& V)
 {
   FGColumnVector3 Product;
@@ -204,3 +288,7 @@ void FGColumnVector3::Debug(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+ostream& operator<<(ostream& os, const FGColumnVector3& col) {
+  cout << "[ " << col(1) << " , " << col(2) << " , " << col(3) << " ]";
+  return os;
+}  
