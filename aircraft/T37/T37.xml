@@ -64,7 +64,7 @@
    AC_IYY       6000		<!-- David Culp, Roskam defines 3326 -->
    AC_IZZ       11183		<!-- Roskam -->
    AC_IXZ       0		<!-- Roskam -->
-   AC_EMPTYWT   6360		<!-- Roskam -->
+   AC_EMPTYWT   4056		<!-- Roskam defines 6360 -->
    AC_CGLOC     211.2  0.0 -8.8
    AC_AERORP    211.2  0.0  0.0
    AC_EYEPTLOC  70.4  0.0 38.0
@@ -270,16 +270,15 @@
          1.0   1.00
          1.1   1.00
       </FACTOR>
-      <!-- Based on Roskam -->
       <COEFFICIENT NAME="CD0" TYPE="VECTOR">
          Drag_at_zero_lift
          5
          aero/alpha-rad
          aero/qbar-psf|metrics/Sw-sqft
          -1.57       1.500
-         -0.26       0.096
-          0.00       0.048
-          0.26       0.096
+         -0.26       0.048
+          0.00       0.024
+          0.26       0.048
           1.57       1.500
       </COEFFICIENT>
       <!-- Roskam -->
