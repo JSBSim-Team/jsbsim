@@ -85,7 +85,7 @@ public:
   string Name;
   virtual bool Run(void);
   virtual bool InitModel(void);
-  void SetRate(int tt) {rate = tt;};
+  virtual void SetRate(int tt) {rate = tt;};
 
 protected:
   enum {eU=1, eV, eW};

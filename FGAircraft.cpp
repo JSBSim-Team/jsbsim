@@ -197,6 +197,8 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
     } else if (token == "FLIGHT_CONTROL") {
       cout << "  Reading Flight Control" << endl;
       ReadFlightControls(&AC_cfg);
+    } else if (token == "OUTPUT") {
+      ReadOutput(&AC_cfg);
     }
   }
 
@@ -507,6 +509,27 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
   while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
     lGear.push_back(new FGLGear(AC_cfg));
   }
+}
+
+/******************************************************************************/
+
+void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
+{
+  string token, parameter;
+  int OutRate = 0;
+
+  token = AC_cfg->GetValue("NAME");
+  Output->SetFilename(token);
+  token = AC_cfg->GetValue("TYPE");
+  Output->SetType(token);
+  AC_cfg->GetNextConfigLine();
+  while ((token = AC_cfg->GetValue()) != "/OUTPUT") {
+    *AC_cfg >> parameter;
+    if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
+  }
+
+  OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
+  Output->SetRate( (int)(0.5 + 1.0/(State->Getdt()*OutRate)) );
 }
 
 /******************************************************************************/

@@ -72,11 +72,15 @@ public:
   void DelimitedOutput(string);
   void SocketOutput(void);
   void SocketStatusOutput(string);
+  void SetFilename(string fn) {Filename = fn;}
+  void SetType(string);
 
 protected:
 
 private:
   bool sFirstPass, dFirstPass;
+  string Filename;
+  enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
   ofstream datafile;
   FGfdmSocket* socket;
 };

@@ -59,6 +59,8 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGOutput";
   sFirstPass = dFirstPass = true;
   socket = 0;
+  Type = otNone;
+  Filename = "JSBSim.out";
 #ifdef FG_WITH_JSBSIM_SOCKET
   socket = new FGfdmSocket("localhost",1138);
 #endif
@@ -76,12 +78,45 @@ FGOutput::~FGOutput(void)
 bool FGOutput::Run(void)
 {
   if (!FGModel::Run()) {
-//    SocketOutput();
-//    DelimitedOutput("JSBSimData.csv");
-//    DelimitedOutput();
+
+    if (Type == otSocket) {
+      SocketOutput();
+    } else if (Type == otCSV) {
+      if (Filename != "COUT" && Filename != "cout" && Filename.size() > 0) {
+        DelimitedOutput(Filename);
+      } else {
+        DelimitedOutput();
+      }
+    } else if (Type == otTerminal) {
+      // Not done yet
+    } else if (Type == otNone) {
+      // Do nothing
+    } else {
+      // Not a valid type of output
+    }
+
   } else {
   }
+
   return false;
+}
+
+/******************************************************************************/
+
+void FGOutput::SetType(string type)
+{
+  if (type == "CSV") {
+    Type = otCSV;
+  } else if (type == "TABULAR") {
+    Type = otTab;
+  } else if (type == "SOCKET") {
+    Type = otSocket;
+  } else if (type == "TERMINAL") {
+    Type = otTerminal;
+  } else if (type != "NONE"){
+    Type = otUnknown;
+    cerr << "Unknown type of output specified in config file" << endl;
+  }
 }
 
 /******************************************************************************/

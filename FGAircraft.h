@@ -220,6 +220,7 @@ private:
   void ReadAerodynamics(FGConfigFile*);
   void ReadUndercarriage(FGConfigFile*);
   void ReadPrologue(FGConfigFile*);
+  void ReadOutput(FGConfigFile*);
 
 protected:
 
