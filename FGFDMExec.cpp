@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.32 2001/02/27 19:44:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.33 2001/03/01 23:48:52 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -297,10 +297,12 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
   bool result = false;
+  
   if (modelLoaded) {
     DeAllocate();
     Allocate();
   }
+  
   AircraftPath = APath;
   EnginePath   = EPath;
   result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
@@ -309,8 +311,8 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
     modelLoaded = true;
   } else {
     cerr << fgred
-      << "FGFDMExec: Failed to load aircraft and/or engine model"
-      << fgdef << endl;
+         << "FGFDMExec: Failed to load aircraft and/or engine model"
+         << fgdef << endl;
   }
 
   cout << "\n\nJSBSim startup complete\n\n";
@@ -385,8 +387,14 @@ bool FGFDMExec::LoadScript(string script)
               else if (tempCompare == "FG_STEP") newCondition->Action.push_back(FG_STEP);
               else if (tempCompare == "FG_EXP")  newCondition->Action.push_back(FG_EXP);
               else                               newCondition->Action.push_back((eAction)0);
-              newCondition->Repeat.push_back(strtol(Script.GetValue("repeat").c_str(), NULL, 10));
+              
+              if (Script.GetValue("persistent") == "true")
+                newCondition->Persistent.push_back(true);
+              else
+                newCondition->Persistent.push_back(false);
+		
               newCondition->TC.push_back(strtod(Script.GetValue("tc").c_str(), NULL));
+	      
             } else {
               cerr << "Unrecognized keyword in script file: \" [when] " << token << "\"" << endl;
             }
@@ -465,11 +473,10 @@ bool FGFDMExec::LoadScript(string script)
         cout << " via unspecified action";
       }
 
-      if (iterConditions->Repeat[i] == 0) cout << endl
+      if (!iterConditions->Persistent[i]) cout << endl
                          << "                              once";
       else cout << endl
-                         << "                              repeating "
-                         << iterConditions->Repeat[i] << " time[s]";
+                         << "                              repeatedly";
 
       if (iterConditions->Action[i] == FG_RAMP ||
           iterConditions->Action[i] == FG_EXP) cout << endl
@@ -496,7 +503,7 @@ bool FGFDMExec::LoadScript(string script)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::RunScript(void)
+void FGFDMExec::RunScript(void)
 {
   vector <struct condition>::iterator iC = Conditions.begin();
   bool truth;
@@ -528,6 +535,8 @@ bool FGFDMExec::RunScript(void)
 
       if (i == 0) WholeTruth = truth;
       else        WholeTruth = WholeTruth && truth;
+      
+      if (!truth && iC->Persistent[i] && iC->Triggered[i]) iC->Triggered[i] = false;
     }
 
     // if the conditions are true, do the setting of the desired parameters

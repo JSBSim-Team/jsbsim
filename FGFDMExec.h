@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.21 2001/02/27 19:44:16 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.22 2001/03/01 23:48:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,7 +84,7 @@ struct condition {
   vector <float>   SetValue;
   vector <string>  Comparison;
   vector <float>   TC;
-  vector <int>     Repeat;
+  vector <bool>    Persistent;
   vector <eAction> Action;
   vector <eType>   Type;
   vector <bool>    Triggered;
@@ -111,7 +111,7 @@ CLASS DOCUMENTATION
     another flight simulator) this class is typically instantiated by an interface
     class on the simulator side.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.21 2001/02/27 19:44:16 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.22 2001/03/01 23:48:52 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,24 +156,57 @@ public:
   /// Resumes the sim
   void Resume(void) {frozen = false;}
 
+  /** Loads an aircraft model.
+      @param AircraftPath path to the aircraft directory. For instance:
+      "aircraft". Under aircraft, then, would be directories for various
+      modeled aircraft such as C172/, x15/, etc.
+      @param EnginePath path to the directory under which engine config
+      files are kept, for instance "engine"
+      @param model the name of the aircraft model itself. This file will
+      be looked for in the directory specified in the AircraftPath variable,
+      and in turn under the directory with the same name as the model. For
+      instance: "aircraft/x15/x15.xml"
+      @return true if successful*/ 
   bool LoadModel(string AircraftPath, string EnginePath, string model);
+  
+  /** Loads a script to drive JSBSim (usually in standalone mode).
+      The language is the Simple Script Directives for JSBSim (SSDJ). 
+      @param script the filename (including path name, if any) for the script.
+      @return true if successful */
   bool LoadScript(string script);
-  bool RunScript(void);
+  
+  /** This function is called each pass through the executive Run() method IF
+      scripting is enabled. */
+  void RunScript(void);
 
   bool SetEnginePath(string path)   {EnginePath = path; return true;}
   bool SetAircraftPath(string path) {AircraftPath = path; return true;}
   bool SetScriptPath(string path)   {ScriptPath = path; return true;}
 
+  /** Top-level executive State and Model retrieval mechanism
+      @return a pointer to the FGState or FGModel instance as appropriate. */
+  //@{
+  /// Returns the FGState pointer.
   inline FGState* GetState(void)              {return State;}
+  /// Returns the FGAtmosphere pointer.
   inline FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
+  /// Returns the FGFCS pointer.
   inline FGFCS* GetFCS(void)                  {return FCS;}
+  /// Returns the FGPropulsion pointer.
   inline FGPropulsion* GetPropulsion(void)    {return Propulsion;}
+  /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
+  /// Returns the FGTranslation pointer.
   inline FGTranslation* GetTranslation(void)  {return Translation;}
+  /// Returns the FGRotation pointer.
   inline FGRotation* GetRotation(void)        {return Rotation;}
+  /// Returns the FGPosition pointer.
   inline FGPosition* GetPosition(void)        {return Position;}
+  /// Returns the FGAuxiliary pointer.
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
+  /// Returns the FGOutput pointer.
   inline FGOutput* GetOutput(void)            {return Output;}
+  //@}
   
   inline string GetEnginePath(void)          {return EnginePath;}
   inline string GetAircraftPath(void)        {return AircraftPath;}
