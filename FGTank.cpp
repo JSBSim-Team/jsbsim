@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.6 2000/10/16 12:32:48 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.7 2000/12/05 13:08:07 jsb Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ float FGTank::Reduce(float used)
   if (used < Contents) {
     Contents -= used;
     PctFull = 100.0*Contents/Capacity;
-    return Contents;
+    return 0.0;
   } else {
     shortage = Contents - used;
     Contents = 0.0;

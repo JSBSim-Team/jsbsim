@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.10 2000/12/04 13:26:24 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.11 2000/12/05 13:08:07 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.10 2000/12/04 13:26:24 jsb Exp $
+    @version $Id: FGPropulsion.h,v 1.11 2000/12/05 13:08:07 jsb Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -128,26 +128,25 @@ public:
       @param index the thruster index within the vector container
       @return the address of the specific thruster, or zero if no such thruster is
               available */
-  inline FGTank* GetThruster(int index) {
+  inline FGThruster* GetThruster(int index) {
                       if (index <= Thrusters.size()-1) return &Thrusters[index];
                       else                             return 0L;    }
+
+  /** Returns the number of fuel tanks currently actively supplying fuel */
+  inline int GetnumSelectedFuelTanks(void) {return numSelectedFuelTanks;}
+  /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
+  inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
 
 private:
   vector <FGEngine>   Engines;
   vector <FGTank>     Tanks;
   vector <FGThruster> Thrusters;
   vector <FGEngine>::iterator iEngine;
-  /** The number of fuel tanks currently actively supplying fuel */
   int numSelectedFuelTanks;
-  /** The number of oxidizer tanks currently actively supplying oxidizer */
   int numSelectedOxiTanks;
-  /** Number of fuel tanks */
   int numFuelTanks;
-  /** Number of oxidizer tanks */
   int numOxiTanks;
-  /** Number of engines */
   int numEngines;
-  /** Number of all types of tanks */
   int numTanks;
 };
 

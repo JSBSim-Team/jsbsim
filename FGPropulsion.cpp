@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.14 2000/11/27 23:51:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.15 2000/12/05 13:08:07 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,56 +97,6 @@ bool FGPropulsion:: Run(void) {
     return true;
   }
 }
-
-/*
-  // UPDATE TANK CONTENTS
-  //
-  // For each engine, cycle through the tanks and draw an equal amount of
-  // fuel (or oxidizer) from each active tank. The needed amount of fuel is
-  // determined by the engine in the FGEngine class. If more fuel is needed
-  // than is available in the tank, then that amount is considered a shortage,
-  // and will be drawn from the next tank. If the engine cannot be fed what it
-  // needs, it will be considered to be starved, and will shut down.
-
-  float Oshortage, Fshortage;
-
-  for (unsigned int e=0; e<numEngines; e++) {
-    Fshortage = Oshortage = 0.0;
-    for (t=0; t<numTanks; t++) {
-      switch(Engine[e]->GetType()) {
-      case FGEngine::etRocket:
-
-        switch(Tank[t]->GetType()) {
-        case FGTank::ttFUEL:
-          if (Tank[t]->GetSelected()) {
-            Fshortage = Tank[t]->Reduce((Engine[e]->CalcFuelNeed()/
-                                         numSelectedFuelTanks)*(dt*rate) + Fshortage);
-          }
-          break;
-        case FGTank::ttOXIDIZER:
-          if (Tank[t]->GetSelected()) {
-            Oshortage = Tank[t]->Reduce((Engine[e]->CalcOxidizerNeed()/
-                                         numSelectedOxiTanks)*(dt*rate) + Oshortage);
-          }
-          break;
-        }
-        break;
-
-      case FGEngine::etPiston:
-      case FGEngine::etTurboJet:
-      case FGEngine::etTurboProp:
-
-        if (Tank[t]->GetSelected()) {
-          Fshortage = Tank[t]->Reduce((Engine[e]->CalcFuelNeed()/
-                                       numSelectedFuelTanks)*(dt*rate) + Fshortage);
-        }
-        break;
-      }
-    }
-    if ((Fshortage <= 0.0) || (Oshortage <= 0.0)) Engine[e]->SetStarved();
-    else Engine[e]->SetStarved(false);
-  }
-*/
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -50,8 +50,9 @@ INCLUDES
 #endif
 
 #include "FGEngine.h"
+#include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.19 2000/12/04 13:26:24 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.20 2000/12/05 13:08:07 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +65,7 @@ FGEngine::FGEngine(FGFDMExec* exec) {
   State       = FDMExec->GetState();
   Atmosphere  = FDMExec->GetAtmosphere();
   FCS         = FDMExec->GetFCS();
+  Propulsion  = FDMExec->GetPropulsion();
   Aircraft    = FDMExec->GetAircraft();
   Translation = FDMExec->GetTranslation();
   Rotation    = FDMExec->GetRotation();
@@ -84,14 +86,23 @@ FGEngine::FGEngine(FGFDMExec* exec) {
 // and sets the starved flag if necessary.
 
 float FGEngine::Calculate(void) {
-  int i, numactivetanks=0;
+  float Fshortage, Oshortage;
+  FGTank* Tank;
 
-  for (i=0; i<SourceTanks.size(); i++)
-    if (SourceTanks[i]) numactivetanks++;
+  Fshortage = Oshortage = 0.0;
+  for (int i=0; i<SourceTanks.size(); i++) {
+    Tank = Propulsion->GetTank(i);
+    if (Tank->GetType() == FGTank::ttFUEL) {
+      Fshortage += Tank->Reduce(CalcFuelNeed()/Propulsion->GetnumSelectedFuelTanks());
+    } else {
+      Oshortage += Tank->Reduce(CalcFuelNeed()/Propulsion->GetnumSelectedFuelTanks());
+    }
+  }
 
-  for (i=0; i<SourceTanks.size(); i++) {
-    // must differentiate between oxidizer tanks and fuel !!
-    exec->Propulsion->GetTank(i).Reduce(
+  if (Fshortage < 0.00 || Oshortage < 0.00) {
+    Starved = true;
+  } else {
+    Starved = false;
   }
 
   return 0.0;
@@ -100,14 +111,14 @@ float FGEngine::Calculate(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGEngine::CalcFuelNeed(void) {
-  FuelNeed = SLFuelFlowMax*PctPower;
+  FuelNeed = SLFuelFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return FuelNeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGEngine::CalcOxidizerNeed(void) {
-  OxidizerNeed = SLOxiFlowMax*PctPower;
+  OxidizerNeed = SLOxiFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return OxidizerNeed;
 }
 

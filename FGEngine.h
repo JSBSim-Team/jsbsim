@@ -47,18 +47,41 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include STL_STRING
-FG_USING_STD(string);
+   FG_USING_STD(string);
+#  ifdef FG_HAVE_STD_INCLUDES
+#    include <vector>
+#  else
+#    include <vector.h>
+#  endif
 #else
+#  include <vector>
 #  include <string>
 #endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DEFINES
+DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #define ID_ENGINE "$Header"
 
 using std::string;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Base class for all engines.
+    @author Jon S. Berndt
+    @version $Id: FGEngine.h,v 1.18 2000/12/05 13:08:07 jsb Exp $
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -71,6 +94,7 @@ class FGFCS;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
+class FGPropulsion;
 class FGPosition;
 class FGAuxiliary;
 class FGOutput;
@@ -104,9 +128,17 @@ public:
       done. This base class method removes fuel from the fuel tanks as
       appropriate, and sets the starved flag if necessary.
       @param None
-      @return   */
+      @return Ignored: 0.0  */
   virtual float Calculate(void);
+  /** The fuel need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total fuel requirement for this engine in pounds. */
   float CalcFuelNeed(void);
+  /** The oxidizer need is calculated based on power levels and flow rate for that
+      power level. It is also turned from a rate into an actual amount (pounds)
+      by multiplying it by the delta T and the rate.
+      @return Total oxidizer requirement for this engine in pounds. */
   float CalcOxidizerNeed(void);
   /// Sets engine placement information
   void SetPlacement(float x, float y, float z, float pitch, float yaw);
@@ -137,6 +169,7 @@ protected:
   FGState*        State;
   FGAtmosphere*   Atmosphere;
   FGFCS*          FCS;
+  FGPropulsion*   Propulsion;
   FGAircraft*     Aircraft;
   FGTranslation*  Translation;
   FGRotation*     Rotation;
@@ -152,6 +185,7 @@ protected:
 #include "FGAircraft.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
+#include "FGPropulsion.h"
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
