@@ -69,7 +69,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.51 2001/06/05 19:00:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.52 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -364,14 +364,26 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
   bool result = false;
 
+  string aircraftCfgFileName;
+
+  AircraftPath = APath;
+  EnginePath   = EPath;
+
+# ifndef macintosh
+  aircraftCfgFileName = AircraftPath + "/" + model + "/" + model + ".xml";
+# else
+  aircraftCfgFileName = AircraftPath + ";" + model + ";" + model + ".xml";
+# endif
+
+  FGConfigFile AC_cfg(aircraftCfgFileName);
+  if (!AC_cfg.IsOpen()) return false;
+
   if (modelLoaded) {
     DeAllocate();
     Allocate();
   }
 
-  AircraftPath = APath;
-  EnginePath   = EPath;
-  result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
+  result = Aircraft->Load(&AC_cfg);
 
   if (result) {
     modelLoaded = true;

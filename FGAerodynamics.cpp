@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.13 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.14 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -131,7 +131,7 @@ bool FGAerodynamics::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAerodynamics::LoadAerodynamics(FGConfigFile* AC_cfg)
+bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
 {
   string token, axis;
 

@@ -58,7 +58,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.48 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.49 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 extern short debug_lvl;
@@ -134,12 +134,12 @@ void FGFCS::SetThrottlePos(int engineNum, float setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
+bool FGFCS::Load(FGConfigFile* AC_cfg)
 {
   string token;
 
-  FCSName = AC_cfg->GetValue("NAME");
-  if (debug_lvl > 0) cout << "    Control System Name: " << FCSName << endl;
+  Name = AC_cfg->GetValue("NAME");
+  if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {

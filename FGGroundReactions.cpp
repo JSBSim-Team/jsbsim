@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.8 2001/05/30 17:38:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.9 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 extern short debug_lvl;
@@ -66,9 +66,8 @@ bool FGGroundReactions:: Run(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGroundReactions::LoadGroundReactions(FGConfigFile* AC_cfg)
+bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
 {
-//
   return true;
 }
 

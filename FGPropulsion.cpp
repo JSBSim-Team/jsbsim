@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.44 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.45 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -143,7 +143,7 @@ bool FGPropulsion::GetSteadyState(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
+bool FGPropulsion::Load(FGConfigFile* AC_cfg)
 {
   string token, fullpath;
   string engineFileName, engType;

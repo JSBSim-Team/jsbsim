@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.29 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.30 2001/06/26 00:21:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.29 2001/05/29 20:13:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.30 2001/06/26 00:21:31 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -123,7 +123,7 @@ public:
       @param AC_cfg pointer to the config file instance that describes the
              aircraft being modeled.
       @return true if successfully loaded, otherwise false */
-  bool LoadPropulsion(FGConfigFile* AC_cfg);
+  bool Load(FGConfigFile* AC_cfg);
 
   /// Retrieves the number of engines defined for the aircraft.
   inline unsigned int GetNumEngines(void) {return Engines.size();}

@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.25 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.26 2001/06/26 00:21:31 jberndt Exp $"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.25 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.26 2001/06/26 00:21:31 jberndt Exp $
     @see -
 */
 
@@ -97,7 +97,21 @@ CLASS DECLARATION
 
 class FGCoefficient
 {
+public:
+  FGCoefficient(FGFDMExec*, FGConfigFile*);
+  ~FGCoefficient();
+
   typedef vector <eParam> MultVec;
+  float Value(float, float);
+  float Value(float);
+  float Value(void);
+  float TotalValue(void);
+  inline string Getname(void) {return name;}
+  inline float GetSD(void) {return SD;}
+  inline MultVec Getmultipliers(void) {return multipliers;}
+  void DumpSD(void);
+
+private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
 
   int numInstances;
@@ -124,19 +138,6 @@ class FGCoefficient
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
 
-public:
-  FGCoefficient(FGFDMExec*, FGConfigFile*);
-  ~FGCoefficient();
-
-  float Value(float, float);
-  float Value(float);
-  float Value(void);
-  float TotalValue(void);
-  inline string Getname(void) {return name;}
-  inline float GetSD(void) {return SD;}
-  inline MultVec Getmultipliers(void) {return multipliers;}
-  void DumpSD(void);
-private:
   void Debug(void);
 };
 

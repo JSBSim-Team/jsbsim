@@ -56,7 +56,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.10 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.11 2001/06/26 00:21:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -69,7 +69,7 @@ public:
   ~FGGroundReactions();
 
   bool Run(void);
-  bool LoadGroundReactions(FGConfigFile* AC_cfg);
+  bool Load(FGConfigFile* AC_cfg);
 
 private:
   void Debug(void);

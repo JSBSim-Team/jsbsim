@@ -28,8 +28,7 @@
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 Models the aircraft reactions and forces. This class is instantiated by the
-FGFDMExec class and scheduled as an FDM entry. LoadAircraft() is supplied with a
-name of a valid, registered aircraft, and the data file is parsed.
+FGFDMExec class and scheduled as an FDM entry. 
  
 HISTORY
 --------------------------------------------------------------------------------
@@ -140,7 +139,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.80 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.81 2001/06/26 00:21:31 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -190,46 +189,32 @@ FGAircraft::~FGAircraft()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string fname) {
-  string path;
-  string filename;
-  string aircraftCfgFileName;
+bool FGAircraft::Load(FGConfigFile* AC_cfg)
+{
   string token;
 
-  AircraftPath = aircraft_path;
-  EnginePath = engine_path;
+  ReadPrologue(AC_cfg);
 
-# ifndef macintosh
-  aircraftCfgFileName = AircraftPath + "/" + fname + "/" + fname + ".xml";
-# else
-  aircraftCfgFileName = AircraftPath + ";" + fname + ";" + fname + ".xml";
-# endif
-
-  FGConfigFile AC_cfg(aircraftCfgFileName);
-  if (!AC_cfg.IsOpen()) return false;
-
-  ReadPrologue(&AC_cfg);
-
-  while ((AC_cfg.GetNextConfigLine() != "EOF") &&
-         (token = AC_cfg.GetValue()) != "/FDM_CONFIG") {
+  while ((AC_cfg->GetNextConfigLine() != "EOF") &&
+         (token = AC_cfg->GetValue()) != "/FDM_CONFIG") {
     if (token == "METRICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
-      ReadMetrics(&AC_cfg);
+      ReadMetrics(AC_cfg);
     } else if (token == "AERODYNAMICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
-      ReadAerodynamics(&AC_cfg);
+      ReadAerodynamics(AC_cfg);
     } else if (token == "UNDERCARRIAGE") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Landing Gear" << fgdef << endl;
-      ReadUndercarriage(&AC_cfg);
+      ReadUndercarriage(AC_cfg);
     } else if (token == "PROPULSION") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Propulsion" << fgdef << endl;
-      ReadPropulsion(&AC_cfg);
+      ReadPropulsion(AC_cfg);
     } else if (token == "FLIGHT_CONTROL") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
-      ReadFlightControls(&AC_cfg);
+      ReadFlightControls(AC_cfg);
     } else if (token == "OUTPUT") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;
-      ReadOutput(&AC_cfg);
+      ReadOutput(AC_cfg);
     }
   }
 
@@ -375,7 +360,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
-  if (!Propulsion->LoadPropulsion(AC_cfg)) {
+  if (!Propulsion->Load(AC_cfg)) {
     cerr << "Propulsion not successfully loaded" << endl;
   }
 }
@@ -383,7 +368,7 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
-  if (!FCS->LoadFCS(AC_cfg)) {
+  if (!FCS->Load(AC_cfg)) {
     cerr << "Flight Controls not successfully loaded" << endl;
   }
 }
@@ -392,7 +377,7 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
 
 void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
 {
-  if (!Aerodynamics->LoadAerodynamics(AC_cfg)) {
+  if (!Aerodynamics->Load(AC_cfg)) {
     cerr << "Aerodynamics not successfully loaded" << endl;
   }
 

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.30 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.31 2001/06/26 00:21:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.30 2001/05/29 20:13:31 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.31 2001/06/26 00:21:31 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -350,11 +350,7 @@ public:
       the config file instance pointer. LoadFCS() is called from FGAircraft.
       @param AC_cfg pointer to the config file instance
       @return true if succesful */
-  bool LoadFCS(FGConfigFile* AC_cfg);
-
-  /** The name of the flight control laws for this aircraft.
-      This is given in the config file, and is not used for anything currently.*/
-  string FCSName;
+  bool Load(FGConfigFile* AC_cfg);
 
   void AddThrottle(void);
 

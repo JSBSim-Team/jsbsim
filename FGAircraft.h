@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.57 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.58 2001/06/26 00:21:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.57 2001/05/29 20:13:31 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.58 2001/06/26 00:21:31 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -130,11 +130,9 @@ public:
   
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
-      @param apath path to the aircraft files (e.g. "aircraft/X15/")
-      @param epath path to engine files (e.g. "engine/")
-      @param acname name of aircraft (e.g. "X15")
-      @return true if succesful */
-  bool LoadAircraft(string apath, string epath, string acname);
+      @param AC_cfg a pointer to the config file instance
+      @return true if successful */
+  bool Load(FGConfigFile* AC_cfg);
   
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */
@@ -217,8 +215,6 @@ private:
 
   vector <FGLGear> lGear;
 
-  string AircraftPath;
-  string EnginePath;
   void ReadMetrics(FGConfigFile*);
   void ReadPropulsion(FGConfigFile*);
   void ReadFlightControls(FGConfigFile*);

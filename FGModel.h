@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.20 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.21 2001/06/26 00:21:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -79,6 +79,7 @@ class FGRotation;
 class FGPosition;
 class FGAuxiliary;
 class FGOutput;
+class FGConfigFile;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -105,6 +106,11 @@ public:
   /// Destructor
   virtual ~FGModel();
 
+  /** Loads this model.
+      @param Config a pointer to the config file instance
+      @return true if model is successfully loaded*/
+  virtual bool Load(FGConfigFile* Config) {}
+ 
   FGModel* NextModel;
   string Name;
 
