@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.35 2004/02/14 09:58:45 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.36 2004/05/01 12:38:24 dpculp Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -56,7 +56,7 @@
     AC_GEAR RADOME    -486.6    0.0  -8.7 10000  2000 0.2 0.2 0.2  FIXED     NONE    0 FIXED
   </UNDERCARRIAGE>
   <PROPULSION>
-    <AC_ENGINE FILE="F100-PW-229_sim">
+    <AC_ENGINE FILE="F100-PW-229">
       XLOC        0.0
       YLOC        0.0
       ZLOC        0.0

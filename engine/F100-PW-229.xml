@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
 <!-- F100-PW-229 afterburning turbofan engine model
-     for the SimTurbine turbine model -->
+     for the FGTurbine turbine model -->
 
-<FG_SIMTURBINE NAME="F100">
+<FG_TURBINE NAME="F100">
   <!--
      MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
      MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
@@ -17,6 +17,7 @@
      AUGMENTED     = 1 if augmentation installed, else = 0
      AUGMETHOD     = 0 if using property /engine[n]/augmentation
                    = 1 if using last 1% of throttle movement
+                   = 2 if using FCS-defined throttle
      INJECTED      = 1 if water injection installed
 
      TABLE(0)      idle thrust vs. altitude and mach
@@ -99,4 +100,4 @@
     2.6    2.2000   1.9200   1.6400   1.4400   1.1000   0.8000   0.5200
   </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
