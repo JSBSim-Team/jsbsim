@@ -104,6 +104,8 @@ private:
   string Name;
   EngineType Type;
   float X, Y, Z;
+  float EnginePitch;
+  float EngineYaw;
   float SLThrustMax;
   float VacThrustMax;
   float SLFuelFlowMax;

@@ -104,6 +104,8 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
       enginefile >> X;
       enginefile >> Y;
       enginefile >> Z;
+      enginefile >> EnginePitch;
+      enginefile >> EngineYaw;
       enginefile >> BrakeHorsePower;
       enginefile >> MaxThrottle;
       enginefile >> MinThrottle;
@@ -117,6 +119,8 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
       enginefile >> X;
       enginefile >> Y;
       enginefile >> Z;
+      enginefile >> EnginePitch;
+      enginefile >> EngineYaw;
       enginefile >> SLThrustMax;
       enginefile >> VacThrustMax;
       enginefile >> MaxThrottle;

@@ -385,6 +385,9 @@ void FGAircraft::FMMass(void) {
 
 void FGAircraft::FMProp(void) {
   for (unsigned int i=0;i<numEngines;i++) {
+
+    // Changes required here for new engine placement parameters (i.e. location and direction)
+
     vForces(eX) += Engine[i]->CalcThrust();
   }
 }
