@@ -88,7 +88,7 @@ USEUNIT("FGNozzle.cpp");
 USEUNIT("FGOutput.cpp");
 USEUNIT("FGPiston.cpp");
 USEUNIT("FGPosition.cpp");
-USEUNIT("FGPropeller.cpp");
+USEUNIT("FGJSBBase.cpp");
 USEUNIT("FGPropulsion.cpp");
 USEUNIT("FGRocket.cpp");
 USEUNIT("FGRotation.cpp");
@@ -112,6 +112,7 @@ USEUNIT("filtersjb\FGGain.cpp");
 USEUNIT("filtersjb\FGGradient.cpp");
 USEUNIT("filtersjb\FGSummer.cpp");
 USEUNIT("filtersjb\FGDeadBand.cpp");
+USEUNIT("FGPropeller.cpp");
 //---------------------------------------------------------------------------
 #endif
 
@@ -123,7 +124,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.51 2001/05/29 20:13:31 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.52 2001/07/02 13:42:14 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -139,7 +140,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.51 2001/05/29 20:13:31 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.52 2001/07/02 13:42:14 jberndt Exp $
     @see -
 */
 

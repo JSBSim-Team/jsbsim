@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.21 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.22 2001/07/02 13:42:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -114,7 +114,7 @@ public:
   FGModel* NextModel;
   string Name;
 
-    /** Runs the model; called by the Executive
+  /** Runs the model; called by the Executive
       @see JSBSim.cpp documentation
       @return false if no error */
   virtual bool Run(void);
