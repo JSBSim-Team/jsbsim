@@ -73,12 +73,13 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
+#include "FGMassBalance.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.34 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.35 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 extern short debug_lvl;
@@ -140,7 +141,7 @@ bool FGPosition:: Run(void) {
     if(psigt < 0.0)
       psigt += 2*M_PI;
 
-    invMass   = 1.0 / Aircraft->GetMass();
+    invMass   = 1.0 / MassBalance->GetMass();
     Radius    = h + SeaLevelRadius;
     invRadius = 1.0 / Radius;
 

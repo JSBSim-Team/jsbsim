@@ -51,12 +51,13 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGTrim.h"
 #include "FGAircraft.h"
+#include "FGMassBalance.h"
 
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.22 2001/04/07 13:44:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.23 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 extern short debug_lvl;
@@ -164,10 +165,10 @@ void FGTrim::ReportState(void) {
   
   cout << endl << "  JSBSim State" << endl;
   sprintf(out,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
-                   fdmex->GetAircraft()->GetWeight(),
-                   fdmex->GetAircraft()->GetXYZcg(1),
-                   fdmex->GetAircraft()->GetXYZcg(2),
-                   fdmex->GetAircraft()->GetXYZcg(3));
+                   fdmex->GetMassBalance()->GetWeight(),
+                   fdmex->GetMassBalance()->GetXYZcg(1),
+                   fdmex->GetMassBalance()->GetXYZcg(2),
+                   fdmex->GetMassBalance()->GetXYZcg(3));
   cout << out;             
   if( fdmex->GetFCS()->GetDfPos() <= 0.01)
     sprintf(flap,"Up");

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.35 2001/04/11 15:53:01 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,6 +62,7 @@ class FGPosition;
 class FGRotation;
 class FGFCS;
 class FGState;
+class FGMassBalance;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -158,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.35 2001/04/11 15:53:01 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -257,6 +258,7 @@ private:
   FGPosition* Position;
   FGRotation* Rotation;
   FGFCS*      FCS;
+  FGMassBalance* MassBalance;
 
   void Report(void);
   void Debug(void);
@@ -266,6 +268,7 @@ private:
 #include "FGPosition.h"
 #include "FGRotation.h"
 #include "FGFCS.h"
+#include "FGMassBalance.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

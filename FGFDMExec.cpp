@@ -64,6 +64,7 @@ INCLUDES
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
 #include "FGPropulsion.h"
+#include "FGMassBalance.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -72,7 +73,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.42 2001/04/11 15:53:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.43 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -124,6 +125,7 @@ FGFDMExec::FGFDMExec(void)
   Atmosphere  = 0;
   FCS         = 0;
   Propulsion  = 0;
+  MassBalance = 0;
   Aircraft    = 0;
   Translation = 0;
   Rotation    = 0;
@@ -170,6 +172,7 @@ bool FGFDMExec::Allocate(void) {
   Atmosphere  = new FGAtmosphere(this);
   FCS         = new FGFCS(this);
   Propulsion  = new FGPropulsion(this);
+  MassBalance = new FGMassBalance(this);
   Aircraft    = new FGAircraft(this);
   Translation = new FGTranslation(this);
   Rotation    = new FGRotation(this);
@@ -192,24 +195,27 @@ bool FGFDMExec::Allocate(void) {
   if (!Propulsion->InitModel()) {
     cerr << fgred << "FGPropulsion model init failed" << fgdef << endl;
     Error+=4;}
+  if (!MassBalance->InitModel()) {
+    cerr << fgred << "FGMassBalance model init failed" << fgdef << endl;
+    Error+=8;}
   if (!Aircraft->InitModel())   {
     cerr << fgred << "Aircraft model init failed" << fgdef << endl;
-    Error+=8;}
+    Error+=16;}
   if (!Translation->InitModel()){
     cerr << fgred << "Translation model init failed" << fgdef << endl;
-    Error+=16;}
+    Error+=32;}
   if (!Rotation->InitModel())   {
     cerr << fgred << "Rotation model init failed" << fgdef << endl;
-    Error+=32;}
+    Error+=64;}
   if (!Position->InitModel())   {
     cerr << fgred << "Position model init failed" << fgdef << endl;
-    Error+=64;}
+    Error+=128;}
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
-    Error+=128;}
+    Error+=256;}
   if (!Output->InitModel())     {
     cerr << fgred << "Output model init failed" << fgdef << endl;
-    Error+=256;}
+    Error+=512;}
 
   if (Error > 0) result = false;
 
@@ -217,15 +223,16 @@ bool FGFDMExec::Allocate(void) {
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
 
-  Schedule(Atmosphere,  1);
-  Schedule(FCS,         1);
-  Schedule(Propulsion,  1);
-  Schedule(Aircraft,    1);
-  Schedule(Rotation,    1);
-  Schedule(Translation, 1);
-  Schedule(Position,    1);
-  Schedule(Auxiliary,   1);
-  Schedule(Output,     1);
+  Schedule(Atmosphere,   1);
+  Schedule(FCS,          1);
+  Schedule(Propulsion,   1);
+  Schedule(MassBalance, 10);
+  Schedule(Aircraft,     1);
+  Schedule(Rotation,     1);
+  Schedule(Translation,  1);
+  Schedule(Position,     1);
+  Schedule(Auxiliary,    1);
+  Schedule(Output,       1);
 
   modelLoaded = false;
 
@@ -239,6 +246,7 @@ bool FGFDMExec::DeAllocate(void) {
   if ( Atmosphere != 0 )  delete Atmosphere;
   if ( FCS != 0 )         delete FCS;
   if ( Propulsion != 0)   delete Propulsion;
+  if ( MassBalance != 0)  delete MassBalance;
   if ( Aircraft != 0 )    delete Aircraft;
   if ( Translation != 0 ) delete Translation;
   if ( Rotation != 0 )    delete Rotation;
@@ -254,6 +262,7 @@ bool FGFDMExec::DeAllocate(void) {
   Atmosphere  = 0;
   FCS         = 0;
   Propulsion  = 0;
+  MassBalance = 0;
   Aircraft    = 0;
   Translation = 0;
   Rotation    = 0;

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.42 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.43 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -378,6 +378,100 @@ string FGPropulsion::GetPropulsionValues(void)
   }
 
   return PropulsionValues;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector& FGPropulsion::GetTanksCG(void)
+{
+  iTank = *Tanks.begin();
+  vXYZtank.InitMatrix();
+  while (iTank < *Tanks.end()) {
+    vXYZtank(eX) += iTank->GetX()*iTank->GetContents();
+    vXYZtank(eY) += iTank->GetY()*iTank->GetContents();
+    vXYZtank(eZ) += iTank->GetZ()*iTank->GetContents();
+    iTank++;
+  }
+  return vXYZtank;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksWeight(void)
+{
+  float Tw = 0.0;
+
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    Tw += iTank->GetContents();
+    iTank++;
+  }
+  return Tw;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksIxx(const FGColumnVector& vXYZcg)
+{
+  float I = 0.0;
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetX() - vXYZcg(eX)) * iTank->GetContents()/(144.0*GRAVITY);
+    iTank++;
+  }
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksIyy(const FGColumnVector& vXYZcg)
+{
+  float I = 0.0;
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    I += (iTank->GetY() - vXYZcg(eY))*(iTank->GetY() - vXYZcg(eY)) * iTank->GetContents()/(144.0*GRAVITY);
+    iTank++;
+  }
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksIzz(const FGColumnVector& vXYZcg)
+{
+  float I = 0.0;
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    I += (iTank->GetZ() - vXYZcg(eZ))*(iTank->GetZ() - vXYZcg(eZ)) * iTank->GetContents()/(144.0*GRAVITY);
+    iTank++;
+  }
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksIxz(const FGColumnVector& vXYZcg)
+{
+  float I = 0.0;
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetZ() - vXYZcg(eZ)) * iTank->GetContents()/(144.0*GRAVITY);
+    iTank++;
+  }
+  return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGPropulsion::GetTanksIxy(const FGColumnVector& vXYZcg)
+{
+  float I = 0.0;
+  iTank = *Tanks.begin();
+  while (iTank < *Tanks.end()) {
+    I += (iTank->GetX() - vXYZcg(eX))*(iTank->GetY() - vXYZcg(eY)) * iTank->GetContents()/(144.0*GRAVITY);
+    iTank++;
+  }
+  return I;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.51 2001/04/09 23:36:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.52 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -107,6 +107,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
   FCS         = Exec->GetFCS();
+  MassBalance = Exec->GetMassBalance();
 
   WOW = false;
   ReportEnable = true;
@@ -115,7 +116,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   DistanceTraveled = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
 
-  vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
+  vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
 
@@ -134,6 +135,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   Rotation = lgear.Rotation;
   Exec     = lgear.Exec;
   FCS      = lgear.FCS;
+  MassBalance = lgear.MassBalance;
 
   vXYZ = lgear.vXYZ;
   vMoment = lgear.vMoment;
@@ -187,7 +189,7 @@ FGColumnVector FGLGear::Force(void)
   FGColumnVector vLocalForce(3);
   FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
 
-  vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
+  vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
 

@@ -44,12 +44,13 @@ INCLUDES
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
+#include "FGMassBalance.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.29 2001/04/17 11:58:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.30 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -249,12 +250,12 @@ void FGOutput::DelimitedOutput(void)
   }
   if (SubSystems & FGAircraft::ssMassProps) {
     cout << ", ";
-    cout << Aircraft->GetIxx() << ", ";
-    cout << Aircraft->GetIyy() << ", ";
-    cout << Aircraft->GetIzz() << ", ";
-    cout << Aircraft->GetIxz() << ", ";
-    cout << Aircraft->GetMass() << ", ";
-    cout << Aircraft->GetXYZcg();
+    cout << MassBalance->GetIxx() << ", ";
+    cout << MassBalance->GetIyy() << ", ";
+    cout << MassBalance->GetIzz() << ", ";
+    cout << MassBalance->GetIxz() << ", ";
+    cout << MassBalance->GetMass() << ", ";
+    cout << MassBalance->GetXYZcg();
   }
   if (SubSystems & FGAircraft::ssPosition) {
     cout << ", ";
@@ -406,12 +407,12 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & FGAircraft::ssMassProps) {
     datafile << ", ";
-    datafile << Aircraft->GetIxx() << ", ";
-    datafile << Aircraft->GetIyy() << ", ";
-    datafile << Aircraft->GetIzz() << ", ";
-    datafile << Aircraft->GetIxz() << ", ";
-    datafile << Aircraft->GetMass() << ", ";
-    datafile << Aircraft->GetXYZcg();
+    datafile << MassBalance->GetIxx() << ", ";
+    datafile << MassBalance->GetIyy() << ", ";
+    datafile << MassBalance->GetIzz() << ", ";
+    datafile << MassBalance->GetIxz() << ", ";
+    datafile << MassBalance->GetMass() << ", ";
+    datafile << MassBalance->GetXYZcg();
   }
   if (SubSystems & FGAircraft::ssPosition) {
     datafile << ", ";

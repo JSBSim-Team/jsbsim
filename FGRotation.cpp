@@ -61,12 +61,13 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
+#include "FGMassBalance.h"
 #include "FGTranslation.h"
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.18 2001/04/09 23:36:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.19 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 extern short debug_lvl;
@@ -146,10 +147,10 @@ void FGRotation::GetState(void)
     dt = State->Getdt();
     vMoments = Aircraft->GetMoments();
 
-    Ixx = Aircraft->GetIxx();
-    Iyy = Aircraft->GetIyy();
-    Izz = Aircraft->GetIzz();
-    Ixz = Aircraft->GetIxz();
+    Ixx = MassBalance->GetIxx();
+    Iyy = MassBalance->GetIyy();
+    Izz = MassBalance->GetIzz();
+    Ixz = MassBalance->GetIxz();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -63,12 +63,13 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGFCS.h"
+#include "FGMassBalance.h"
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.22 2001/04/09 05:28:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.23 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 extern short debug_lvl;
@@ -171,7 +172,7 @@ void FGTranslation::GetState(void) {
   vPQR = Rotation->GetPQR();
   vForces = Aircraft->GetForces();
 
-  Mass = Aircraft->GetMass();
+  Mass = MassBalance->GetMass();
   rho = Atmosphere->GetDensity();
 
   vEuler = Rotation->GetEuler();

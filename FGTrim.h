@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.15 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.16 2001/04/17 23:00:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.15 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.16 2001/04/17 23:00:31 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +162,7 @@ private:
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
    
-   bool solve(void);
+  bool solve(void);
   
   /** @return false if there is no change in the current axis accel
       between accel(control_min) and accel(control_max). If there is a

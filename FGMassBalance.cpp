@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.9 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.10 2001/04/17 23:00:31 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 extern short debug_lvl;
@@ -57,9 +57,30 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGMassBalance::Run(void) {
+FGMassBalance::~FGMassBalance(void)
+{
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGMassBalance::Run(void)
+{
   if (!FGModel::Run()) {
+
+    Weight = EmptyWeight + Propulsion->GetTanksWeight();
+
+    Mass = Weight / GRAVITY;
+
+// Calculate new CG here.
+
+    vXYZcg = (Propulsion->GetTanksCG() + EmptyWeight*vbaseXYZcg) / Weight;
+
+// Calculate new moments of inertia here
+
+    Ixx = baseIxx + Propulsion->GetTanksIxx(vXYZcg);
+    Iyy = baseIyy + Propulsion->GetTanksIyy(vXYZcg);
+    Izz = baseIzz + Propulsion->GetTanksIzz(vXYZcg);
+    Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg);
 
     return false;
   } else {
