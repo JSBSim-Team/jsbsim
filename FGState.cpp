@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.76 2001/09/28 02:33:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.77 2001/10/29 17:47:34 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   Output       = FDMExec->GetOutput();
   Atmosphere   = FDMExec->GetAtmosphere();
   Aerodynamics = FDMExec->GetAerodynamics();
+  GroundReactions = FDMExec->GetGroundReactions();
 
   RegisterVariable(FG_TIME,           " time "           );
   RegisterVariable(FG_QBAR,           " qbar "           );
@@ -663,7 +664,7 @@ void FGState::ReportState(void) {
     snprintf(flap,10,"Up");
   else
     snprintf(flap,10,"%2.0f",FCS->GetDfPos());
-  if(Aircraft->GetGearUp() == true)
+  if(GroundReactions->GetGearUp() == true)
     snprintf(gear,10,"Up");
   else
     snprintf(gear,10,"Down");

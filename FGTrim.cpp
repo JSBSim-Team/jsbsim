@@ -57,7 +57,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.26 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.27 2001/10/29 17:47:34 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,7 +172,7 @@ void FGTrim::ReportState(void) {
     snprintf(flap,10,"Up");
   else
     snprintf(flap,10,"%2.0f",fdmex->GetFCS()->GetDfPos());
-  if(fdmex->GetAircraft()->GetGearUp() == true)
+  if(fdmex->GetGroundReactions()->GetGearUp() == true)
     snprintf(gear,10,"Up");
   else
     snprintf(gear,10,"Down");
@@ -329,8 +329,8 @@ bool FGTrim::DoTrim(void) {
   trim_failed=false;
   int i;
 
-  for(i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
-    fdmex->GetAircraft()->GetGearUnit(i)->SetReport(false);
+  for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
+    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
   }
 
   fdmex->GetOutput()->Disable();
@@ -425,8 +425,8 @@ bool FGTrim::DoTrim(void) {
     total_its=N;
     cout << endl << "  Trim failed" << endl;
   }
-  for(i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
-    fdmex->GetAircraft()->GetGearUnit(i)->SetReport(true);
+  for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
+    fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
   fdmex->GetOutput()->Enable();
   return !trim_failed;

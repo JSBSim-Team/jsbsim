@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.68 2001/09/28 02:07:03 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.69 2001/10/29 17:47:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.68 2001/09/28 02:07:03 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.69 2001/10/29 17:47:34 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -171,16 +171,6 @@ public:
       @return the name of the aircraft as a string type */
   inline string GetAircraftName(void) { return AircraftName; }
   
-  /** Gets the gear status
-      @return true if gear is not deployed */
-  inline bool GetGearUp(void) { return GearUp; }
-  /** Gets the number of gear units defined for the aircraft
-      @return number of gear units defined */
-  inline int GetNumGearUnits(void) { return lGear.size(); }
-  /** Gets a gear instance
-      @param gear index of gear instance
-      @return a pointer to the FGLGear instance of the gear unit requested */
-  inline FGLGear* GetGearUnit(int gear) { return &(lGear[gear]); }
   /// Gets the wing area
   inline float GetWingArea(void) { return WingArea; }
   /// Gets the wing span
@@ -206,9 +196,6 @@ public:
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
 
-  inline void SetGear(bool tt) { GearUp = tt; }
-  inline void SetGearUp(void) { GearUp = true; }
-  inline void SetGearDown(bool tt) { GearUp = false; }
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
@@ -243,10 +230,6 @@ private:
   float alphaclmax,alphaclmin;
   string CFGVersion;
   string AircraftName;
-
-  bool GearUp;
-
-  vector <FGLGear> lGear;
 
   void ReadMetrics(FGConfigFile*);
   void ReadPropulsion(FGConfigFile*);

@@ -59,7 +59,7 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.14 2001/08/07 23:05:46 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.15 2001/10/29 17:47:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -78,6 +78,20 @@ public:
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
 
+  /** Gets the gear status
+      @return true if gear is not deployed */
+  inline bool GetGearUp(void) { return GearUp; }
+  /** Gets the number of gear units defined for the aircraft
+      @return number of gear units defined */
+  inline int GetNumGearUnits(void) { return lGear.size(); }
+  /** Gets a gear instance
+      @param gear index of gear instance
+      @return a pointer to the FGLGear instance of the gear unit requested */
+  inline FGLGear* GetGearUnit(int gear) { return &(lGear[gear]); }
+  inline void SetGear(bool tt) { GearUp = tt; }
+  inline void SetGearUp(void) { GearUp = true; }
+  inline void SetGearDown(bool tt) { GearUp = false; }
+  
 private:
   vector <FGLGear> lGear;
   bool GearUp;
