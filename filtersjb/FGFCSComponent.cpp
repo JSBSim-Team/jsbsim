@@ -58,7 +58,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
   Input      = 0.0;
   InputIdx   = 0;
   Output     = 0.0;
-  OutputIdx  = 0;
+  sOutputIdx  = "";
+  OutputIdx   = 0;
   IsOutput   = false;
 }
 
@@ -78,7 +79,7 @@ bool FGFCSComponent::Run(void)
     break;
   case itFCS:
     Input = fcs->GetComponentOutput(InputIdx);
-    cout << "Input: " << fcs->GetComponentName(InputIdx) << " Input Value: " << Input << endl;
+    cout << "Input: " << fcs->GetComponentName(InputIdx) << " Value: " << Input << endl;
     break;
   case itAP:
     // implement autopilot input mechanism

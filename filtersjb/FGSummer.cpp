@@ -79,7 +79,8 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       }
     } else if (token == "OUTPUT") {
       IsOutput = true;
-      *AC_cfg >> OutputIdx;
+      *AC_cfg >> sOutputIdx;
+      OutputIdx = fcs->GetState()->GetParameter(sOutputIdx);
     }
   }
 }
@@ -102,12 +103,13 @@ bool FGSummer::Run(void )
     switch (InputTypes[idx]) {
     case itPilotAC:
       Output += fcs->GetState()->GetParameter(InputIndices[idx]);
+      cout << "Input Value (Pilot/AC Value): " << fcs->GetState()->GetParameter(InputIndices[idx]) << endl;
       break;
     case itFCS:
       Output += fcs->GetComponentOutput(idx);
+      cout << "Input Value: " << fcs->GetComponentName(InputIndices[idx]) << " " << fcs->GetComponentOutput(InputIndices[idx]) << endl;
       break;
     }
-    cout << "Input Value: " << fcs->GetState()->GetParameter(InputIndices[idx]) << endl;
   }
 
   if (IsOutput) SetOutput();

@@ -116,14 +116,14 @@ int main(int argc, char** argv)
   if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
     FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
 
-  while (FDMExec->GetState()->Getsim_time() <= 25.0)
+  while (FDMExec->GetState()->Getsim_time() <= 5.0)
   {
     // Fake an elevator kick here after 5 seconds
 
-    if (FDMExec->GetState()->Getsim_time() > 5.0 &&
-        FDMExec->GetState()->Getsim_time() < 6.0)
+    if (FDMExec->GetState()->Getsim_time() > 1.0 &&
+        FDMExec->GetState()->Getsim_time() < 2.0)
     {
-      FDMExec->GetFCS()->SetDeCmd(0.2);    // input betwwen -1 and 1
+      FDMExec->GetFCS()->SetDeCmd(0.2);    // input between -1 and 1
     } else {
       FDMExec->GetFCS()->SetDeCmd(0.0);
     }

@@ -28,10 +28,8 @@ IDLFILES =
 IDLGENFILES =
 LIBRARIES = VCL40.lib
 SPARELIBS = VCL40.lib
-PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi dclocx40.bpi bcbsmp40.bpi \
-  TEEUI40.bpi TEEDB40.bpi TEE40.bpi VCLDBX40.bpi nmfast40.bpi y32cb4.bpi \
-  RXCTL.bpi RXDB.bpi calwdgA.bpi calwdgB.bpi CalCtrls.bpi Icsbcb30.bpi \
-  GraphWin.bpi WinshoesPkgCB4.bpi ibsmp40.bpi Auxiliary.bpi
+PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi bcbsmp40.bpi TEEUI40.bpi \
+  TEEDB40.bpi TEE40.bpi VCLDBX40.bpi y32cb4.bpi Icsbcb30.bpi WinshoesPkgCB4.bpi
 DEFFILE =
 # ---------------------------------------------------------------------------
 PATHCPP = .;filtersjb
@@ -64,7 +62,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=17
+Build=18
 Debug=0
 PreRelease=0
 Special=0
@@ -76,7 +74,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.17
+FileVersion=0.7.2.18
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -85,9 +83,25 @@ ProductName=JSBSim
 ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
 
-[HistoryLists\hlHostApplication]
+[Excluded Packages]
+$(BCB)\Bin\dclocx40.bpl=Borland Sample Imported ActiveX Controls
+C:\WINDOWS\SYSTEM\\nmfast40.bpl=NetMasters Fastnet Tools
+$(BCB)\Bin\Dclrxdb.bpl=RX Library Database Components
+$(BCB)\BIN\DCLRXCTL.BPL=RX Library Controls and Tools
+$(BCB)\Projects\Bpl\calwdgA.bpl=Sheridan Calendar Widgets 3-pack
+$(BCB)\Projects\Bpl\calwdgB.bpl=Sheridan Calendar Widgets Day control
+$(BCB)\Projects\Bpl\CalCtrls.bpl=f:\program files\borland\cbuilder4\Projects\Bpl\CalCtrls
+$(BCB)\Projects\Bpl\GraphWin.bpl=f:\program files\borland\cbuilder4\Projects\Bpl\GraphWin
+C:\WINDOWS\SYSTEM\\ibsmp40.bpl=Borland C++ InterBase Alerter Component
+$(BCB)\bin\Auxiliary.bpl=Auxiliary Controls
+
+[HistoryLists\hlIncludePath]
 Count=1
-Item0=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.exe
+Item0=filtersjb;$(BCB)\include
+
+[HistoryLists\hlLibraryPath]
+Count=1
+Item0=filtersjb;$(BCB)\lib
 
 [HistoryLists\hlRunParameters]
 Count=3
@@ -100,7 +114,7 @@ DebugSourceDirs=
 
 [Parameters]
 RunParams=X15 reset00 
-HostApplication=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.exe
+HostApplication=
 RemoteHost=
 RemotePath=
 RemoteDebug=0

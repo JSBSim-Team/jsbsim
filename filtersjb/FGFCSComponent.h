@@ -75,6 +75,7 @@ protected:
   int QueueOrder;
   int InputIdx;
   float Input;
+  string sOutputIdx;
   int OutputIdx;
   float Output;
   bool IsOutput;
