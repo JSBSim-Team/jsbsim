@@ -35,22 +35,6 @@ SENTRY
 #define FGLGEAR_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-	   School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-	   JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-	   NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-	   Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-	   1982 ISBN 0-471-08936-2
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -71,17 +55,52 @@ DEFINITIONS
 #define ID_LGEAR "$Header"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CLASS DECLARATION
+FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGAircraft;
 class FGPosition;
 class FGRotation;
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
+	   School, January 1994
+[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+	   JSC 12960, July 1977
+[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+	   NASA-Ames", NASA CR-2497, January 1975
+[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+	   Wiley & Sons, 1979 ISBN 0-471-03032-5
+[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+	   1982 ISBN 0-471-08936-2
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Landing gear model
+    Calculates forces and moments due to landing gear reactions.
+    @author Jon S. Berndt
+    @version $Id: FGLGear.h,v 1.19 2000/10/21 04:51:07 jsb Exp $
+    @see -
+*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DECLARATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 class FGLGear
 {
 public:
-  FGLGear(FGConfigFile*, FGFDMExec*);
+  /** Constructor
+      @param Executive a pointer to the parent executive object
+      @param File a pointer top the config file instance */
+  FGLGear(FGConfigFile* File, FGFDMExec* Executive);
+  /// Destructor
   ~FGLGear(void);
 
   FGColumnVector Force(void);
@@ -98,7 +117,6 @@ public:
   
   inline void SetReport(bool bb) { ReportEnable=bb; }
   inline bool GetReport(void)    { return ReportEnable; }
-  
 
 private:
   enum {eX=1, eY, eZ};
