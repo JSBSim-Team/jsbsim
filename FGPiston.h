@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.7 2001/01/19 23:36:06 jsb Exp $";
+#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.8 2001/01/22 15:38:56 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -58,13 +58,14 @@ public:
   ~FGPiston(void) {}
 
   float Calculate(float PowerRequired);
-  float GetPowerAvailable(void);
+  float GetPowerAvailable(void) {return PowerAvailable;}
 
 private:
   float BrakeHorsePower;
   float SpeedSlope;
   float SpeedIntercept;
   float AltitudeSlope;
+  float PowerAvailable;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

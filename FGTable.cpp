@@ -46,6 +46,8 @@ static const char *IdHdr = ID_TABLE;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+using namespace std;
+
 FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols)
 {
   Type = tt2D;

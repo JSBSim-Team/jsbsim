@@ -66,7 +66,6 @@ INCLUDES
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-typedef enum { tNone, tWindBody, tLocalBody, tCustom } TransformType;
 
 class FGForce {
 
@@ -74,6 +73,8 @@ public:
 
   FGForce(FGFDMExec *FDMExec);
   ~FGForce(void);
+
+  enum TransformType { tNone, tWindBody, tLocalBody, tCustom } ttype;
 
   inline void SetNativeForces(float Fnx, float Fny, float Fnz) {
     vFn(1)=Fnx;
@@ -140,9 +141,6 @@ private:
   FGColumnVector vSense;
 
   FGMatrix mT;
-
-  TransformType ttype;
-
 };
 
 #endif

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.5 2001/01/19 23:36:06 jsb Exp $"
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.6 2001/01/22 15:38:56 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.5 2001/01/19 23:36:06 jsb Exp $
+    @version $Id: FGPropeller.h,v 1.6 2001/01/22 15:38:56 jsb Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -93,18 +93,18 @@ public:
       @param exec a pointer to the main executive object
       @param AC_cfg a pointer to the main aircraft config file object */
   FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg);
+
   /// Destructor for FGPropeller - deletes the FGTable objects
   ~FGPropeller(void);
-  
+
   /** Sets the Revolutions Per Minute for the propeller. Normally the propeller
       instance will calculate its own rotational velocity, given the Torque
-      produced by the engine and integrating over time using the standard 
+      produced by the engine and integrating over time using the standard
       equation for rotational acceleration "a": a = Q/I , where Q is Torque and
       I is moment of inertia for the propeller.
-      @param rpm the rotational velocity of the propeller
-      */
-
+      @param rpm the rotational velocity of the propeller */
   void SetRPM(float rpm) {RPM = rpm;}
+
   /** This commands the pitch of the blade to change to the value supplied.
       This call is meant to be issued either from the cockpit or by the flight
       control system (perhaps to maintain constant RPM for a constant-speed
@@ -112,8 +112,7 @@ public:
       in the config file for Max and Min pitch. It is also one of the lookup
       indices to the power, thrust, and efficiency tables for variable-pitch
       propellers.
-      @param pitch the pitch of the blade in degrees.
-      */
+      @param pitch the pitch of the blade in degrees. */
   void SetPitch(float pitch) {Pitch = pitch;}
 
   /// Retrieves the pitch of the propeller in degrees.

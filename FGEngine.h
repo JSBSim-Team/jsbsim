@@ -37,8 +37,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGEngine_H
-#define FGEngine_H
+#ifndef FGENGINE_H
+#define FGENGINE_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -86,6 +86,8 @@ class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 
+using std::vector;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -94,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.22 2001/01/19 23:36:06 jsb Exp $ 
+    @version $Id: FGEngine.h,v 1.23 2001/01/22 15:38:56 jsb Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,38 +125,38 @@ public:
 
   void SetRunning(bool bb) { Running=bb; }
   void SetName(string name) {Name = name;}
-  void AddFeedTank(int tkID) {SourceTanks.push_back(tkID);}
+  void AddFeedTank(int tkID);
 
   /** Calculates the thrust of the engine, and other engine functions.
       @param PowerRequired this is the power required to run the thrusting device
              such as a propeller. This resisting effect must be provided to the 
 	           engine model.
       @return   */
-  virtual float Calculate(float PowerRequired) {};
-  
+  virtual float Calculate(float PowerRequired) {return 0.0;};
+
   /** Reduces the fuel in the active tanks by the amount required.
       This function should be called from within the
       derived class' Calculate() function before any other calculations are
       done. This base class method removes fuel from the fuel tanks as
       appropriate, and sets the starved flag if necessary. */
   void ConsumeFuel(void);
-  
+
   /** The fuel need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total fuel requirement for this engine in pounds. */
   float CalcFuelNeed(void);
-  
+
   /** The oxidizer need is calculated based on power levels and flow rate for that
       power level. It is also turned from a rate into an actual amount (pounds)
       by multiplying it by the delta T and the rate.
       @return Total oxidizer requirement for this engine in pounds. */
   float CalcOxidizerNeed(void);
-  
+
   /// Sets engine placement information
   void SetPlacement(float x, float y, float z, float pitch, float yaw);
-  
-  virtual float GetPowerAvailable(void) {};
+
+  virtual float GetPowerAvailable(void) {return 0.0;};
 
 protected:
   string Name;
@@ -176,8 +178,6 @@ protected:
   float PctPower;
   int   EngineNumber;
 
-  vector <int> SourceTanks;
-
   FGFDMExec*      FDMExec;
   FGState*        State;
   FGAtmosphere*   Atmosphere;
@@ -189,6 +189,8 @@ protected:
   FGPosition*     Position;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
+
+  vector <int> SourceTanks;
 };
 
 #include "FGState.h"

@@ -40,10 +40,10 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #if __BCPLUSPLUS__  == 0x0540   // If compiling under Borland C++Builder
+
 #pragma hdrstop
 #include <condefs.h>
 USEFILE("JSBSim.cxx");
-USEUNIT("FGUtility.cpp");
 USEUNIT("FGAtmosphere.cpp");
 USEUNIT("FGAuxiliary.cpp");
 USEUNIT("FGCoefficient.cpp");
@@ -89,6 +89,7 @@ USEUNIT("FGGroundReactions.cpp");
 USEUNIT("FGTurboProp.cpp");
 USEUNIT("FGTable.cpp");
 USEUNIT("FGAerodynamics.cpp");
+USEUNIT("FGUtility.cpp");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif
@@ -125,7 +126,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.36 2001/01/11 06:34:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.37 2001/01/22 15:38:57 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -141,7 +142,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.36 2001/01/11 06:34:03 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.37 2001/01/22 15:38:57 jsb Exp $
     @see -
 */
 

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.9 2001/01/20 14:11:26 jsb Exp $"
+#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.10 2001/01/22 15:38:57 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -59,9 +59,9 @@ public:
 
   enum Type {ttNozzle, ttRotor, ttPropeller};
 
-  virtual float Calculate(float) {};
+  virtual float Calculate(float) {return 0.0;}
   void SetName(string name) {Name = name;}
-  virtual float GetPowerRequired(void) {}
+  virtual float GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(float dt) {deltaT = dt;}
 
 protected:

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.3 2000/10/16 12:32:47 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.4 2001/01/22 15:38:56 jsb Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,8 +51,7 @@ FGRotor::FGRotor(FGFDMExec *FDMExec) : FGThruster(FDMExec)
 }
 
 
-void FGRotor::Calculate(void)
+float FGRotor::Calculate(float PowerAvailable)
 {
-  FGThruster::Calculate();
-
+  return 0.0;
 }

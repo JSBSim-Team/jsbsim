@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.6 2001/01/19 23:36:07 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.7 2001/01/22 15:38:57 jsb Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,5 +47,6 @@ CLASS IMPLEMENTATION
 
 FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
 {
+  SetTransformType(FGForce::tCustom);
 }
 

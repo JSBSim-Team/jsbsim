@@ -13,17 +13,17 @@ BCB = $(MAKEDIR)\..
 
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
-PROJECT = "F:\Program Files\Borland\CBuilder4\Bin\engine\JSBSim.exe"
-OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \
-  FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
-  FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
-  FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
-  FGTranslation.obj FGAircraft.obj FGfcsComponent.obj FGSwitch.obj FGFilter.obj \
-  FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
+PROJECT = JSBSim.exe
+OBJFILES = JSBSim.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj FGConfigFile.obj \
+  FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj FGfdmSocket.obj \
+  FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj FGOutput.obj \
+  FGPosition.obj FGRotation.obj FGState.obj FGTank.obj FGTranslation.obj \
+  FGAircraft.obj FGfcsComponent.obj FGSwitch.obj FGFilter.obj FGGain.obj \
+  FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
   FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj FGThruster.obj \
   FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj FGTurboShaft.obj \
   FGPropulsion.obj FGGroundReactions.obj FGTurboProp.obj FGTable.obj \
-  FGAerodynamics.obj
+  FGAerodynamics.obj FGUtility.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
@@ -45,18 +45,18 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = NO_STRICT
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -O2 -w-par -Tkh30000 -a8 -5 -k- \
+CFLAG1 = -I$(BCB)\Include;$(BCB)\Include\vcl;filtersjb -O2 -w-par -Tkh30000 -a8 -5 -k- \
   -vi -D$(SYSDEFINES);$(USERDEFINES) -c -tWM -tWC -tWM
 CFLAG2 =
 CFLAG3 =
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -U$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) \
-  -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -N2. -N0. -$Y- -$R -$Q -$L- -$D- \
+PFLAGS = -U$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(DEBUGLIBPATH) \
+  -I$(BCB)\Include;$(BCB)\Include\vcl;filtersjb -N2. -N0. -$Y- -$R -$Q -$L- -$D- \
   -v -M -JPHNE
-RFLAGS = -i$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
-AFLAGS = /i$(BCB)\Include\vcl /i$(BCB)\Include /ifiltersjb /mx /w2 /zn /d$(SYSDEFINES) \
+RFLAGS = -i$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
+AFLAGS = /i$(BCB)\Include /i$(BCB)\Include\vcl /ifiltersjb /mx /w2 /zn /d$(SYSDEFINES) \
   /d$(USERDEFINES)
-LFLAGS = -L$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn
+LFLAGS = -L$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn
 IFLAGS =
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj sysinit.obj $(OBJFILES)
@@ -94,17 +94,19 @@ Comments=Standalone version of JSBSim
 
 [HistoryLists\hlIncludePath]
 Count=5
-Item0=$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
-Item1=$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
+Item0=$(BCB)\Include;$(BCB)\Include\vcl;filtersjb
+Item1=$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
 Item2=$(BCB)\Include;filtersjb
 Item3=filtersjb;
 Item4=filtersjb;$(BCB)\include
 
 [HistoryLists\hlLibraryPath]
-Count=3
-Item0=$(BCB)\lib;$(BCB)\lib\obj;filtersjb
-Item1=filtersjb;$(BCB)\lib;$(BCB)\lib\obj
-Item2=filtersjb;$(BCB)\lib
+Count=5
+Item0=$(BCB)\lib\obj;$(BCB)\lib;filtersjb
+Item1=$(BCB)\lib\obj;$(BCB)\lib;filtersjb;$(BCB)\Bin
+Item2=$(BCB)\lib;$(BCB)\lib\obj;filtersjb
+Item3=filtersjb;$(BCB)\lib;$(BCB)\lib\obj
+Item4=filtersjb;$(BCB)\lib
 
 [HistoryLists\hlConditionals]
 Count=1
