@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.32 2001/08/07 13:00:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.33 2001/08/07 23:05:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.32 2001/08/07 13:00:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.33 2001/08/07 23:05:46 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -164,6 +164,7 @@ public:
   string GetPropulsionValues(void);
 
   inline FGColumnVector3& GetForces(void)  {return *Forces; }
+  inline float GetForces(int n) { return (*Forces)(n);}
   inline FGColumnVector3& GetMoments(void) {return *Moments;}
   inline float GetMoments(int n) {return (*Moments)(n);}
   

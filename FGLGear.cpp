@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.57 2001/08/01 11:52:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.58 2001/08/07 23:05:46 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -186,7 +186,7 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  float SteerGain, SteerAngle, BrakeFCoeff;
+  float SteerGain;
   float SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
   float RudderPedal, RollingForce, SideForce, FCoeff;
   float WheelSlip;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.11 2001/08/07 13:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.12 2001/08/07 23:05:46 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 extern short debug_lvl;
@@ -51,7 +51,6 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
                                                         vForces(3),
                                                         vMoments(3),
                                                         vMaxStaticGrip(3),
-                                                        vMaxSlideResist(3),
                                                         vMaxMomentResist(3)
 {
   Name = "FGGroundReactions";
@@ -64,43 +63,74 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
 
 bool FGGroundReactions:: Run(void)
 {
+  int wow_count=0;
+  float steerAngle = 0.0;
+  float xForces = 0.0, yForces = 0.0;
+
   if (!FGModel::Run()) {
     vForces.InitMatrix();
     vMoments.InitMatrix();
 
+    // Only execute gear force code below 300 feet
     if ( !GearUp && Position->GetDistanceAGL() < 300.0 ) {
       vector <FGLGear>::iterator iGear = lGear.begin();
+      // Sum forces and moments for all gear, here.
+      // Some optimizations may be made here - or rather in the gear code itself.
+      // The gear ::Run() method is called several times - once for each gear.
+      // Perhaps there is some commonality for things which only need to be
+      // calculated once.
       while (iGear != lGear.end()) {
         vForces  += iGear->Force();
         vMoments += iGear->Moment();
         iGear++;
       }
+
+      // Only execute this code when the aircraft ground speed is very, very small.
       if (fabs(Translation->GetUVW(eX)) < 0.1 &&
           fabs(Translation->GetUVW(eZ)) < 0.1)
       {
+        // Initialize the comparison matrices.
         vMaxStaticGrip.InitMatrix();
-        vMaxSlideResist.InitMatrix();
         vMaxMomentResist.InitMatrix();
         iGear = lGear.begin();
+        // For each gear that is touching the ground (which had better be all of them!)
+        // calculate the X and Y direction maximum "gripping" power. Also, keep track
+        // of the number of gear that have weight on wheels. This is probably unnecessary.
         while (iGear != lGear.end()) {
           // calculate maximum gripping power for each gear here based on brake
           // and steering settings
           // also calculate total number of wheels with WOW set true?
           if (iGear->GetWOW()) {
-            vMaxStaticGrip += 1;
-            vMaxSlideResist += 1;
-            vMaxMomentResist += 1;
+            steerAngle = iGear->GetSteerAngle();
+            vMaxStaticGrip(eX) += (iGear->GetBrakeFCoeff()*cos(steerAngle) - 
+                 iGear->GetstaticFCoeff()*sin(steerAngle))*iGear->GetCompForce();
+            vMaxStaticGrip(eY) += iGear->GetBrakeFCoeff()*sin(steerAngle) + 
+                  iGear->GetstaticFCoeff()*cos(steerAngle)*iGear->GetCompForce();
+            vMaxStaticGrip(eZ)  = 0.0;
+//            vMaxMomentResist += 1;
+            wow_count++;
           }
           iGear++;
         }
 
-        vForces =  -1.0 * ( Aerodynamics->GetForces()
-                          + Propulsion->GetForces()
-                          + Inertial->GetForces());
+        // Calculate the X and Y direction non-gear forces to counteract if needed.
+        xForces =  -1.0 * ( Aerodynamics->GetForces(eX)
+                          + Propulsion->GetForces(eX)
+                          + Inertial->GetForces(eX));
 
-        vMoments(1) = 0.0;
-        vMoments(2) = 0.0;
-        vMoments(3) = -(Aerodynamics->GetMoments(3) + Propulsion->GetMoments(3));
+        yForces =  -1.0 * ( Aerodynamics->GetForces(eY)
+                          + Propulsion->GetForces(eY)
+                          + Inertial->GetForces(eY));
+
+        if (fabs(xForces) < fabs(vMaxStaticGrip(eX))) { // forces exceed gear power
+          vForces(eX) = xForces;
+        }
+
+        if (fabs(yForces) < fabs(vMaxStaticGrip(eY))) { // forces exceed gear power
+          vForces(eY) = yForces;
+        }
+
+        vMoments(eZ) = -(Aerodynamics->GetMoments(eZ) + Propulsion->GetMoments(eZ));
       }
     } else {
       // Crash Routine

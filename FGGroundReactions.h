@@ -59,7 +59,7 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.13 2001/08/07 13:00:31 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.14 2001/08/07 23:05:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -84,7 +84,6 @@ private:
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   FGColumnVector3 vMaxStaticGrip;
-  FGColumnVector3 vMaxSlideResist;
   FGColumnVector3 vMaxMomentResist;
 
   void Debug(void);
