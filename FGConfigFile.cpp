@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.22 2001/10/19 12:32:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.23 2001/10/19 22:13:08 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,46 +60,39 @@ FGConfigFile::~FGConfigFile()
 
 string FGConfigFile::GetNextConfigLine(void)
 {
-  CommentString = "";
+  int deblank;
+
   do {
     CurrentLine = GetLine();
     if ((CurrentLine.find("<COMMENT>") != CurrentLine.npos) ||
-        (CurrentLine.find("<!--") != CurrentLine.npos)) CommentsOn = true;
+        (CurrentLine.find("<!--") != CurrentLine.npos)) {
+      CommentsOn = true;
+      CommentString = "";
+      if (CurrentLine.find("<!--") != CurrentLine.npos)
+        CurrentLine.erase(CurrentLine.find("<!--"),4);
+      else if (CurrentLine.find("<COMMENT>") != CurrentLine.npos)
+        CurrentLine.erase(CurrentLine.find("<COMMENT>"),9);
+      while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
+      if (CurrentLine.size() <= 2) CurrentLine = "";
+    }
+
     if ((CurrentLine.find("</COMMENT>") != CurrentLine.npos) ||
         (CurrentLine.find("-->") != CurrentLine.npos)) {
       CommentsOn = false;
+
+      if (CurrentLine.find("-->") != CurrentLine.npos)
+        CurrentLine.erase(CurrentLine.find("-->"),4);
+      else if (CurrentLine.find("</COMMENT>") != CurrentLine.npos)
+        CurrentLine.erase(CurrentLine.find("</COMMENT>"),10);
+
+      while((deblank = CurrentLine.find(" ")) != CurrentLine.npos) CurrentLine.erase(deblank,1);
+      if (CurrentLine.size() <= 2) CurrentLine = "";
+
+      CommentString += CurrentLine;
       GetNextConfigLine();
     }
 
-    if (CurrentLine.find("<!--") == 0) {
-      if (CurrentLine.size() > 5) {
-        CurrentLine = "";
-      } else {
-        CurrentLine.erase(CurrentLine.find("<!--"),4);
-      }
-    } else if (CurrentLine.find("<COMMENT>") == 0) {
-      if (CurrentLine.size() > 10) {
-        CurrentLine = "";
-      } else {
-        CurrentLine.erase(CurrentLine.find("<COMMENT>"),9);
-      }
-    }
-
-    if (CurrentLine.find("-->") == 0) {
-      if (CurrentLine.size() > 4) {
-        CurrentLine = "";
-      } else {
-        CurrentLine.erase(CurrentLine.find("-->"),4);
-      }
-    } else if (CurrentLine.find("</COMMENT>") == 0) {
-      if (CurrentLine.size() > 11) {
-        CurrentLine = "";
-      } else {
-        CurrentLine.erase(CurrentLine.find("</COMMENT>"),10);
-      }
-    }
-
-    CommentString += CurrentLine;
+    if (CommentsOn) CommentString += CurrentLine + "\r\n";
 
   } while (IsCommentLine());
 
