@@ -88,7 +88,7 @@ public:
    inline float Getbeta (void) {return beta; }
    inline float Getgamma(void) {return gamma;}
 
-   inline void SetUVW(FGColumnVector tt) {vUVW = tt;}
+   void SetUVW(FGColumnVector tt) {vUVW = tt;}
 
    inline void Setalpha(float tt) {alpha = tt;}
    inline void Setbeta (float tt) {beta  = tt;}

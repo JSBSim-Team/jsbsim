@@ -1,3 +1,4 @@
+CC=bcc32
 INCLUDES = -I.
 LINKDIR= -Lfiltersjb
 JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\
@@ -8,88 +9,88 @@ FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix.o
 JSBSim : $(JSBSim_objects) JSBSim.o
 	echo "Making JSBSim"
 	cd filtersjb && make -fMakefile.solo && cd ..
-	g++ $(INCLUDES) $(CCOPTS) $(LINKDIR)  $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
+        $(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR)  $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents
 
 FGAircraft.o : FGAircraft.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGAircraft.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGAircraft.cpp
 
 FGAtmosphere.o : FGAtmosphere.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGAtmosphere.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGAtmosphere.cpp
 
 FGAuxiliary.o : FGAuxiliary.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGAuxiliary.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGAuxiliary.cpp
 
 FGCoefficient.o : FGCoefficient.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGCoefficient.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGCoefficient.cpp
 
 FGFCS.o : FGFCS.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGFCS.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGFCS.cpp
 
 FGFDMExec.o : FGFDMExec.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGFDMExec.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGFDMExec.cpp
 
 FGModel.o : FGModel.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGModel.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGModel.cpp
 
 FGOutput.o : FGOutput.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
 
 FGPosition.o : FGPosition.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGPosition.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGPosition.cpp
 
 FGRotation.o : FGRotation.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGRotation.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGRotation.cpp
 
 FGState.o : FGState.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGState.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGState.cpp
 
 FGTranslation.o : FGTranslation.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGTranslation.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGTranslation.cpp
 
 FGUtility.o : FGUtility.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGUtility.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGUtility.cpp
 
 FGEngine.o : FGEngine.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGEngine.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGEngine.cpp
 
 FGTank.o : FGTank.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGTank.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGTank.cpp
 
 FGInitialCondition.o : FGInitialCondition.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGInitialCondition.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGInitialCondition.cpp
 
 FGfdmSocket.o : FGfdmSocket.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGfdmSocket.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGfdmSocket.cpp
 
 FGConfigFile.o : FGConfigFile.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
 
 FGLGear.o : FGLGear.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGLGear.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGLGear.cpp
 
 FGMatrix.o : FGMatrix.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c FGMatrix.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c FGMatrix.cpp
 
 JSBSim.o : JSBSim.cpp
-	g++ $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
+        $(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
 
 gpswitch.o: gptest.cpp
-	g++ -DSWITCH $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpswitch.o
+        $(CC) -DSWITCH $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpswitch.o
 
 gpaop.o: gptest.cpp
-	g++ -DAOP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpaop.o
+        $(CC) -DAOP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpaop.o
 
 gpmap.o: gptest.cpp
-	g++ -DMAP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpmap.o
+        $(CC) -DMAP $(INCLUDES) $(CCOPTS) -c gptest.cpp -o gpmap.o
 
 gpswitch: $(JSBSim_objects) gpswitch.o
-	g++ -DSWITCH $(LINKDIR) -o gpswitch gpswitch.o $(JSBSim_objects)  -lm -lFCSComponents
+        $(CC) -DSWITCH $(LINKDIR) -o gpswitch gpswitch.o $(JSBSim_objects)  -lm -lFCSComponents
 
 gpaop: $(JSBSim_objects) gpaop.o
-	g++ -Daop $(LINKDIR) -o gpaop gpaop.o $(JSBSim_objects)  -lm -lFCSComponents
+        $(CC) -Daop $(LINKDIR) -o gpaop gpaop.o $(JSBSim_objects)  -lm -lFCSComponents
 
 gpmap: $(JSBSim_objects) gpmap.o
-	g++ -Dmap $(LINKDIR) -o gpmap gpmap.o $(JSBSim_objects)  -lm -lFCSComponents
+        $(CC) -Dmap $(LINKDIR) -o gpmap gpmap.o $(JSBSim_objects)  -lm -lFCSComponents
 
 clean:
 	mv *.*~ backup

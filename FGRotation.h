@@ -97,6 +97,9 @@ public:
   inline FGColumnVector GetEuler(void) {return vEuler;}
   inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector tt) {vEuler = tt;}
+  inline float Getphi(void) {return vEuler(1);}
+  inline float Gettht(void) {return vEuler(2);}
+  inline float Getpsi(void) {return vEuler(3);}
 };
 
 /******************************************************************************/

@@ -39,7 +39,7 @@ HISTORY
 INCLUDES
 *******************************************************************************/
 
-#if __BCPLUSPLUS__  >= 0x0540   // If compiling under Borland C++Builder
+#if __BCPLUSPLUS__  == 0x0540   // If compiling under Borland C++Builder
 #pragma hdrstop
 #include <condefs.h>
 USEUNIT("FGUtility.cpp");
