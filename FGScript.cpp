@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.6 2002/04/01 11:58:43 apeden Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.7 2002/04/01 12:44:33 apeden Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,11 @@ bool FGScript::LoadScript(string script)
     if (token == "use") {
       if ((token = Script.GetValue("aircraft")) != string("")) {
         aircraft = token;
+        result = FDMExec->LoadModel("aircraft", "engine", aircraft);
+        if (!result) {
+          cerr << "Aircraft file " << aircraft << " was not found" << endl;
+	        exit(-1);
+        }
         if (debug_lvl > 0) cout << "  Use aircraft: " << token << endl;
       } else if ((token = Script.GetValue("initialize")) != string("")) {
         initialize = token;
@@ -198,11 +203,6 @@ bool FGScript::LoadScript(string script)
 
   Debug(4);
 
-  result = FDMExec->LoadModel("aircraft", "engine", aircraft);
-  if (!result) {
-    cerr << "Aircraft file " << aircraft << " was not found" << endl;
-	  exit(-1);
-  }
 
   FGInitialCondition IC(FDMExec);
   if ( ! IC.Load("aircraft", aircraft, initialize)) {
@@ -343,14 +343,14 @@ void FGScript::Debug(int from)
         for (i=0; i<iterConditions->TestValue.size(); i++) {
           if (i>0) cout << " and" << endl << "        ";
           cout << "(" << iterConditions->TestParam[i]->GetName()
-                      << iterConditions->Comparison[i] << " "
+                      << " " << iterConditions->Comparison[i] << " "
                       << iterConditions->TestValue[i] << ")";
         }
         cout << ") then {";
 
         for (i=0; i<iterConditions->SetValue.size(); i++) {
-          cout << endl << "      set" << iterConditions->SetParam[i]->GetName()
-               << "to " << iterConditions->SetValue[i];
+          cout << endl << "      set " << iterConditions->SetParam[i]->GetName()
+               << " to " << iterConditions->SetValue[i];
 
           switch (iterConditions->Type[i]) {
           case FG_VALUE:
