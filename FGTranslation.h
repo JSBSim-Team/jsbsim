@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.34 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.35 2001/12/22 15:16:15 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -88,11 +88,11 @@ public:
   ~FGTranslation();
 
   inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
-  inline double            GetUVW   (int idx) { return vUVW(idx); }
+  inline double           GetUVW   (int idx) { return vUVW(idx); }
   inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
-  inline double            GetUVWdot(int idx) { return vUVWdot(idx); }
+  inline double           GetUVWdot(int idx) { return vUVWdot(idx); }
   inline FGColumnVector3& GetvAeroUVW (void)    { return vAeroUVW; }
-  inline double            GetvAeroUVW (int idx) { return vAeroUVW(idx); }
+  inline double           GetvAeroUVW (int idx) { return vAeroUVW(idx); }
 
   inline double Getalpha(void) { return alpha; }
   inline double Getbeta (void) { return beta; }
