@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.65 2001/12/01 17:58:42 apeden Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.66 2001/12/02 15:58:16 apeden Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,9 +66,12 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
                                                            Exec(fdmex)
 {
   string tmp;
+  string Retractable;
+  
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
-                  >> rollingFCoeff >> sSteerType >> sBrakeGroup >> maxSteerAngle;
+                  >> rollingFCoeff >> sSteerType >> sBrakeGroup 
+                     >> maxSteerAngle >> Retractable;
 
   if (debug_lvl > 0) {
     cout << "    Name: " << name << endl;
@@ -81,6 +84,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
     cout << "      Steering Type:    " << sSteerType << endl;
     cout << "      Grouping:         " << sBrakeGroup << endl;
     cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
+    cout << "      Retractable:      " << Retractable << endl;
   }
 
   if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
@@ -101,6 +105,14 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
     cerr << "Improper steering type specification in config file: "
          << sSteerType << " is undefined." << endl;
   }
+  
+  if( Retractable == "RETRACT" ) {
+    isRetractable=true;
+  } else  {
+    isRetractable=false;
+  }  
+  
+  GearUp=false; GearDown=true;
 
 // Add some AI here to determine if gear is located properly according to its
 // brake group type ??
@@ -172,6 +184,9 @@ FGLGear::FGLGear(const FGLGear& lgear)
   sBrakeGroup     = lgear.sBrakeGroup;
   eBrakeGrp       = lgear.eBrakeGrp;
   maxSteerAngle   = lgear.maxSteerAngle;
+  isRetractable   = lgear.isRetractable;
+  GearUp          = lgear.GearUp;
+  GearDown        = lgear.GearDown;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,31 +200,46 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  double SteerGain = 0;
-  double SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
-  double RollingForce, SideForce, FCoeff;
-  double WheelSlip;
+  vForce.InitMatrix();
+  vMoment.InitMatrix();
+  if(isRetractable ) {
+    if( FCS->GetGearPos() < 0.01 ) {
+      GearUp=true;GearDown=false;
+     } else if(FCS->GetGearPos() > 0.99) {
+      GearDown=true;GearUp=false;
+     } else {
+      GearUp=false; GearDown=false;
+     }
+  } else {
+      GearUp=false; GearDown=true;
+  }         
+      
+  if( GearDown ) {
+    double SteerGain = 0;
+    double SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
+    double RollingForce, SideForce, FCoeff;
+    double WheelSlip;
 
-  vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
-  vWhlBodyVec(eX) = -vWhlBodyVec(eX);
-  vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
+    vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
+    vWhlBodyVec(eX) = -vWhlBodyVec(eX);
+    vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
 
 // vWhlBodyVec now stores the vector from the cg to this wheel
 
-  vLocalGear = State->GetTb2l() * vWhlBodyVec;
+    vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
 // vLocalGear now stores the vector from the cg to the wheel in local coords.
 
-  compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
+    compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
 
 // The compression length is currently measured in the Z-axis, only, at this time.
 // It should be measured along the strut axis. If the local-frame gear position
 // "hangs down" below the CG greater than the altitude, then the compressLength
 // will be positive - i.e. the gear will have made contact.
 
-  if (compressLength > 0.00) {
+    if (compressLength > 0.00) {
 
-    WOW = true; // Weight-On-Wheels is true
+      WOW = true;// Weight-On-Wheels is true
 
 // The next equation should really use the vector to the contact patch of the tire
 // including the strut compression and not vWhlBodyVec.  Will fix this later.
@@ -222,20 +252,20 @@ FGColumnVector3& FGLGear::Force(void)
 // (used for calculating damping force) is found by taking the Z-component of the
 // wheel velocity.
 
-    vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
+      vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
 
-    vWhlVelVec     +=  Position->GetVel();
+      vWhlVelVec     +=  Position->GetVel();
 
-    compressSpeed   =  vWhlVelVec(eZ);
+      compressSpeed   =  vWhlVelVec(eZ);
 
 // If this is the first time the wheel has made contact, remember some values
 // for later printout.
 
-    if (!FirstContact) {
-      FirstContact  = true;
-      SinkRate      =  compressSpeed;
-      GroundSpeed   =  Position->GetVel().Magnitude();
-    }
+      if (!FirstContact) {
+        FirstContact  = true;
+        SinkRate      =  compressSpeed;
+        GroundSpeed   =  Position->GetVel().Magnitude();
+      }
 
 // The following needs work regarding friction coefficients and braking and
 // steering The BrakeFCoeff formula assumes that an anti-skid system is used.
@@ -244,71 +274,71 @@ FGColumnVector3& FGLGear::Force(void)
 // [JSB] The braking force coefficients include normal rolling coefficient +
 // a percentage of the static friction coefficient based on braking applied.
 
-    switch (eBrakeGrp) {
-    case bgLeft:
-      SteerGain = -0.10;
-      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                                            staticFCoeff*FCS->GetBrake(bgLeft);
-      break;
-    case bgRight:
-      SteerGain = -0.10;
-      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
-                                           staticFCoeff*FCS->GetBrake(bgRight);
-      break;
-    case bgCenter:
-      SteerGain = -0.10;
-      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                                           staticFCoeff*FCS->GetBrake(bgCenter);
-      break;
-    case bgNose:
-      SteerGain = 0.10;
-      BrakeFCoeff = rollingFCoeff;
-      break;
-    case bgTail:
-      SteerGain = -0.10;
-      BrakeFCoeff = rollingFCoeff;
-      break;
-    case bgNone:
-      SteerGain = -0.10;
-      BrakeFCoeff = rollingFCoeff;
-      break;
-    default:
-      cerr << "Improper brake group membership detected for this gear." << endl;
-      break;
-    }
+      switch (eBrakeGrp) {
+      case bgLeft:
+        SteerGain = -0.10;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                                              staticFCoeff*FCS->GetBrake(bgLeft);
+        break;
+      case bgRight:
+        SteerGain = -0.10;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
+                                             staticFCoeff*FCS->GetBrake(bgRight);
+        break;
+      case bgCenter:
+        SteerGain = -0.10;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                                             staticFCoeff*FCS->GetBrake(bgCenter);
+        break;
+      case bgNose:
+        SteerGain = 0.10;
+        BrakeFCoeff = rollingFCoeff;
+        break;
+      case bgTail:
+        SteerGain = -0.10;
+        BrakeFCoeff = rollingFCoeff;
+        break;
+      case bgNone:
+        SteerGain = -0.10;
+        BrakeFCoeff = rollingFCoeff;
+        break;
+      default:
+        cerr << "Improper brake group membership detected for this gear." << endl;
+        break;
+      }
 
-    switch (eSteerType) {
-    case stSteer:
-      SteerAngle = SteerGain*FCS->GetDrPos();
-      break;
-    case stFixed:
-      SteerAngle = 0.0;
-      break;
-    case stCaster:
-    // Note to Jon: This is not correct for castering gear.  I'll fix it later.
-      SteerAngle = 0.0;
-      break;
-    default:
-      cerr << "Improper steering type membership detected for this gear." << endl;
-      break;
-    }
+      switch (eSteerType) {
+      case stSteer:
+        SteerAngle = SteerGain*FCS->GetDrPos();
+        break;
+      case stFixed:
+        SteerAngle = 0.0;
+        break;
+      case stCaster:
+// Note to Jon: This is not correct for castering gear.  I'll fix it later.
+        SteerAngle = 0.0;
+        break;
+      default:
+        cerr << "Improper steering type membership detected for this gear." << endl;
+        break;
+      }
 
 // Transform the wheel velocities from the local axis system to the wheel axis system.
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-    SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
-    CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
-    RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
-    SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
+      SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
+      CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
+      RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
+      SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
 // Calculate tire slip angle.
 
-    if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
-      WheelSlip = 0.0;
-    } else {
-      WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
-    }
+      if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
+        WheelSlip = 0.0;
+      } else {
+        WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
+      }
 
 // The following code normalizes the wheel velocity vector, reverses it, and zeroes out
 // the z component of the velocity. The question is, should the Z axis velocity be zeroed
@@ -325,11 +355,11 @@ FGColumnVector3& FGLGear::Force(void)
 // transition from static to dynamic friction.  There are more complicated formulations
 // of this that avoid the discrete jump.  Will fix this later.
 
-    if (fabs(WheelSlip) <= 10.0) {
-      FCoeff = staticFCoeff*WheelSlip/10.0;
-    } else {
-      FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
-    }
+      if (fabs(WheelSlip) <= 10.0) {
+        FCoeff = staticFCoeff*WheelSlip/10.0;
+      } else {
+        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
+      }
 
 // Compute the vertical force on the wheel using square-law damping (per comment
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
@@ -337,24 +367,24 @@ FGColumnVector3& FGLGear::Force(void)
 // possibly give a "rebound damping factor" that differs from the compression
 // case. NOTE: SQUARE LAW DAMPING NO GOOD!
 
-    vLocalForce(eZ) =  min(-compressLength * kSpring
-                           - compressSpeed * bDamp, (double)0.0);
+      vLocalForce(eZ) =  min(-compressLength * kSpring
+                             - compressSpeed * bDamp, (double)0.0);
 
-    MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
-    MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
+      MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
+      MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
 
 // Compute the forces in the wheel ground plane.
 
-    RollingForce = 0;
-    if (fabs(RollingWhlVel) > 1E-3) {
-      RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
-    }
-    SideForce    = vLocalForce(eZ) * FCoeff;
+      RollingForce = 0;
+      if (fabs(RollingWhlVel) > 1E-3) {
+        RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
+      }
+      SideForce    = vLocalForce(eZ) * FCoeff;
 
 // Transform these forces back to the local reference frame.
 
-    vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
-    vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
+      vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
+      vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
 
 // Note to Jon: At this point the forces will be too big when the airplane is
 // stopped or rolling to a stop.  We need to make sure that the gear forces just
@@ -370,52 +400,53 @@ FGColumnVector3& FGLGear::Force(void)
 
 // Transform the forces back to the body frame and compute the moment.
 
-    vForce  = State->GetTl2b() * vLocalForce;
-    vMoment = vWhlBodyVec * vForce;
+      vForce  = State->GetTl2b() * vLocalForce;
+      vMoment = vWhlBodyVec * vForce;
 
-  } else {
+    } else {
 
-    WOW = false;
+      WOW = false;
 
-    if (Position->GetDistanceAGL() > 200.0) {
-      FirstContact = false;
-      Reported = false;
-      DistanceTraveled = 0.0;
-      MaximumStrutForce = MaximumStrutTravel = 0.0;
+      if (Position->GetDistanceAGL() > 200.0) {
+        FirstContact = false;
+        Reported = false;
+        DistanceTraveled = 0.0;
+        MaximumStrutForce = MaximumStrutTravel = 0.0;
+      }
+
+      compressLength = 0.0;// reset compressLength to zero for data output validity
+
+      
     }
 
-    compressLength = 0.0; // reset compressLength to zero for data output validity
-
-    vForce.InitMatrix();
-    vMoment.InitMatrix();
-  }
-
-  if (FirstContact) {
-    DistanceTraveled += Position->GetVel().Magnitude()*State->Getdt()*Aircraft->GetRate();
-  }
-
-  if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
-    if (debug_lvl > 0) Report();
-  }
-
-  if (lastWOW != WOW) {
-    PutMessage("GEAR_CONTACT", WOW);
-  }
-
-  lastWOW = WOW;
-
-  // Crash detection logic (really out-of-bounds detection)
+    if (FirstContact) {
+      DistanceTraveled += Position->GetVel().Magnitude()*State->Getdt()*Aircraft->GetRate();
+    }
   
-  if (compressLength > 500.0 ||
-      vForce.Magnitude() > 100000000.0 ||
-      vMoment.Magnitude() > 5000000000.0 ||
-      SinkRate > 1.4666*30)
-  {
-    PutMessage("Crash Detected");
-    Exec->Freeze();
-  }
+    if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
+      if (debug_lvl > 0) Report();
+    }
 
-  return vForce;
+    if (lastWOW != WOW) {
+      PutMessage("GEAR_CONTACT", WOW);
+    }
+
+    lastWOW = WOW;
+
+// Crash detection logic (really out-of-bounds detection)
+
+    if (compressLength > 500.0 ||
+        vForce.Magnitude() > 100000000.0 ||
+        vMoment.Magnitude() > 5000000000.0 ||
+        SinkRate > 1.4666*30)
+    {
+      PutMessage("Crash Detected");
+      Exec->Freeze();
+    }
+
+    
+  } 
+  return vForce; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
