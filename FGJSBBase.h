@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.24 2002/02/22 12:11:49 apeden Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.25 2002/02/27 14:35:09 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -115,13 +115,25 @@ enum eParam {
   FG_CI2VEL,
   FG_ELEVATOR_POS,
   FG_AELEVATOR_POS,
+  FG_NELEVATOR_POS,
   FG_AILERON_POS,
   FG_AAILERON_POS,
+  FG_NAILERON_POS,
+  FG_LEFT_AILERON_POS,
+  FG_ALEFT_AILERON_POS,
+  FG_NLEFT_AILERON_POS,
+  FG_RIGHT_AILERON_POS,
+  FG_ARIGHT_AILERON_POS,
+  FG_NRIGHT_AILERON_POS,
   FG_RUDDER_POS,
   FG_ARUDDER_POS,
+  FG_NRUDDER_POS,
   FG_SPDBRAKE_POS,
+  FG_NSPDBRAKE_POS,
   FG_SPOILERS_POS,
+  FG_NSPOILERS_POS,
   FG_FLAPS_POS,
+  FG_NFLAPS_POS,
   FG_ELEVATOR_CMD,
   FG_AILERON_CMD,
   FG_RUDDER_CMD,
@@ -165,7 +177,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.24 2002/02/22 12:11:49 apeden Exp $
+    @version $Id: FGJSBBase.h,v 1.25 2002/02/27 14:35:09 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
