@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.61 2001/11/12 13:01:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.62 2001/11/13 13:51:18 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,6 +403,16 @@ FGColumnVector3& FGLGear::Force(void)
   }
 
   lastWOW = WOW;
+
+  // Crash detection logic (really out-of-bounds detection)
+  
+  if (compressLength > 500.0 ||
+      vForce.Magnitude() > 100000000.0 ||
+      vMoment.Magnitude() > 5000000000.0)
+  {
+    PutMessage("Crash Detected");
+    Exec->Freeze();
+  }
 
   return vForce;
 }
