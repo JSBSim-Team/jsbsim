@@ -21,8 +21,8 @@ INCLUDES
 #include "FGColumnVector4.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.1 2001/07/28 15:37:13 apeden Exp $";
-static const char *IdHdr = ID_COLUMNVECTOR3;
+static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.2 2001/07/29 01:06:16 apeden Exp $";
+static const char *IdHdr = ID_COLUMNVECTOR4;
 
 extern short debug_lvl;
 
@@ -171,10 +171,11 @@ FGColumnVector4 FGColumnVector4::operator/(const double scalar)
   FGColumnVector4 Quotient;
 
   if (scalar != 0) {
-    Quotient(1) = data[1] / scalar;
-    Quotient(2) = data[2] / scalar;
-    Quotient(3) = data[3] / scalar;
-    Quotient(4) = data[4] / scalar;
+	  double tmp = 1.0/scalar;
+    Quotient(1) = data[1] * tmp;
+    Quotient(2) = data[2] * tmp;
+    Quotient(3) = data[3] * tmp;
+    Quotient(4) = data[4] * tmp;
   } else {
     cerr << "Attempt to divide by zero in method FGColumnVector4::operator/(const double scalar), object " << this << endl; 
   }
@@ -188,10 +189,11 @@ void FGColumnVector4::operator/=(const double scalar)
   FGColumnVector4 Quotient;
 
   if (scalar != 0) {
-    data[1] /= scalar;
-    data[2] /= scalar;
-    data[3] /= scalar;
-    data[4] /= scalar;
+	  double tmp = 1.0/scalar;
+    data[1] *= tmp;
+    data[2] *= tmp;
+    data[3] *= tmp;
+    data[4] *= tmp;
   } else {
     cerr << "Attempt to divide by zero in method FGColumnVector4::operator/=(const double scalar), object " << this << endl; 
   }
@@ -238,10 +240,11 @@ FGColumnVector4 FGColumnVector4::Normalize(void)
   double Mag = Magnitude();
 
   if (Mag != 0) {
-     data[1] /= Mag;
-     data[2] /= Mag;
-     data[3] /= Mag;
-     data[4] /= Mag;  
+	  Mag = 1.0/Mag;
+     data[1] *= Mag;
+     data[2] *= Mag;
+     data[3] *= Mag;
+     data[4] *= Mag;  
   }    
 
   return *this;
