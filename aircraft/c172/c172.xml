@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.106 2002/08/16 12:42:31 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.107 2002/08/16 13:01:14 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -147,25 +147,31 @@
   </PROPULSION>
 <!--
   <AUTOPILOT NAME="c172">
-     <COMPONENT NAME="Roll Autopilot Wing Leveler" TYPE="PURE_GAIN">
+    <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
        ID            0
        INPUT         FG_PHI
        GAIN          1.0
        MIN           -0.255
        MAX            0.255
-     </COMPONENT>
-     <COMPONENT NAME="Roll Autopilot Error summer" TYPE="SUMMER">
+    </COMPONENT>
+    <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
        ID            1
+       INPUT         FG_PHI
+       C1            1
+    </COMPONENT>
+    <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
+       ID            2
        INPUT         FG_ROLLRATE
        INPUT         0
-       CLIPTO       -1 1
-     </COMPONENT>
-     <COMPONENT NAME="Roll Autopilot Aileron Command Normalizer" TYPE="PURE_GAIN">
-       ID            2
        INPUT         1
-       GAIN          0.5
+       CLIPTO       -1 1
+    </COMPONENT>
+    <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
+       ID            3
+       INPUT         2
+       GAIN          -1
        OUTPUT        AP_AILERON_CMD
-     </COMPONENT>
+    </COMPONENT>
   </AUTOPILOT>
 -->
   <FLIGHT_CONTROL NAME="c172">
