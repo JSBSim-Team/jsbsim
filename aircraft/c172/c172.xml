@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.78 2001/12/21 19:20:10 dmegginson Exp $
+  CVS Version: $Id: c172.xml,v 1.79 2001/12/22 00:12:39 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -135,17 +135,17 @@
   </PROPULSION>
 
   <FLIGHT_CONTROL NAME="c172">
-     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
        ID            0
        INPUT        FG_ELEVATOR_CMD
        INPUT        FG_PITCH_TRIM_CMD
        CLIPTO       -1 1
-     </COMPONENT>
+    </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        ID            1
-       INPUT        0
-       MIN            -28
-       MAX             23
+       INPUT         0
+       MIN          -28
+       MAX           23
        OUTPUT        FG_ELEVATOR_POS
        GAIN          0.01745
      </COMPONENT>
@@ -156,11 +156,11 @@
        CLIPTO       -1 1
      </COMPONENT>
      <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID             3
-       INPUT          FG_AILERON_CMD
-       MIN            -20
-       MAX             15
-       GAIN           0.01745
+       ID            3
+       INPUT         FG_AILERON_CMD
+       MIN          -20
+       MAX           15
+       GAIN          0.01745
        OUTPUT        FG_AILERON_POS
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">

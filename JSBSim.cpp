@@ -70,7 +70,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.64 2001/12/12 12:59:38 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.65 2001/12/22 00:12:39 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -86,7 +86,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.64 2001/12/12 12:59:38 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.65 2001/12/22 00:12:39 jberndt Exp $
     @see -
 */
 
@@ -101,7 +101,17 @@ int main(int argc, char** argv)
   bool result = false;
   bool scripted = false;
 
-  if (argc == 2) {
+  if (argc != 3) {
+
+    cout << endl
+         << "  You must enter the name of a registered aircraft and reset point:"
+         << endl << endl << "  FDM <aircraft name> <reset file>" << endl;
+    cout << endl << "  Alternatively, you may specify only the name of a script file:"
+         << endl << endl << "  FDM <script file>" << endl << endl;
+    exit(0);
+
+  } else if (argc == 2) {
+
     FGConfigFile testFile(argv[1]);
 
     if (!testFile.IsOpen()) {
@@ -115,13 +125,6 @@ int main(int argc, char** argv)
       exit(-1); 
     }
     scripted = true;
-  } else if (argc != 3) {
-    cout << endl
-         << "  You must enter the name of a registered aircraft and reset point:"
-         << endl << endl << "  FDM <aircraft name> <reset file>" << endl;
-    cout << endl << "  Alternatively, you may specify only the name of a script file:"
-         << endl << endl << "  FDM <script file>" << endl << endl;
-    exit(0);
   }
 
   FDMExec = new FGFDMExec();

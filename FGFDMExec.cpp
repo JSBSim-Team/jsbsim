@@ -4,7 +4,6 @@
  Author:       Jon S. Berndt
  Date started: 11/17/98
  Purpose:      Schedules and runs the model routines.
- Called by:    The GUI.
 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
 
@@ -73,32 +72,12 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGInitialCondition.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.76 2001/12/14 00:16:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.77 2001/12/22 00:12:39 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-short debug_lvl;  // This describes to any interested entity the debug level
-                  // requested by setting the JSBSIM_DEBUG environment variable.
-                  // The bitmasked value choices are as follows:
-                  // a) unset: In this case (the default) JSBSim would only print
-                  //    out the normally expected messages, essentially echoing
-                  //    the config files as they are read. If the environment
-                  //    variable is not set, debug_lvl is set to 1 internally
-                  // b) 0: This requests JSBSim not to output any messages
-                  //    whatsoever.
-                  // c) 1: This value explicity requests the normal JSBSim
-                  //    startup messages
-                  // d) 2: This value asks for a message to be printed out when
-                  //    a class is instantiated
-                  // e) 4: When this value is set, a message is displayed when a
-                  //    FGModel object executes its Run() method
-                  // f) 8: When this value is set, various runtime state variables
-                  //    are printed out periodically
-                  // g) 16: When set various parameters are sanity checked and
-                  //    a message is printed out when they go out of bounds.
 
 unsigned int FGFDMExec::FDMctr = 0;
 
