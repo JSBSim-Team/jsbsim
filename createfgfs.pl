@@ -171,8 +171,8 @@ if ($UPDATE) { #start update code
       print "Checking out simgear from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvs\@cvs.hfrl.umn.edu:/var/cvs/SimGear-0.0 login");
-      system("cvs -d :pserver:cvs\@cvs.hfrl.umn.edu:/var/cvs/SimGear-0.0 co SimGear");
+      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/SimGear-0.0 login");
+      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/SimGear-0.0 co SimGear");
     } else {
       if (!chdir "src/SimGear/") {die "Cannot chdir to ~/src/SimGear/\n";}
       print "\n\n--------------------------------\n\n";
@@ -216,8 +216,8 @@ if ($UPDATE) { #start update code
       print "Checking out flightgear source from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvs\@cvs.hfrl.umn.edu:/var/cvs/FlightGear-0.7 login");
-      system("cvs -d :pserver:cvs\@cvs.hfrl.umn.edu:/var/cvs/FlightGear-0.7 co FlightGear");
+      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/FlightGear-0.7 login");
+      system("cvs -d :pserver:cvs\@cvs.flightgear.org:/var/cvs/FlightGear-0.7 co FlightGear");
     } else {
       if (!chdir "src/FlightGear/") {die "Cannot chdir to ~/src/FlightGear/\n";}
       print "\n\n--------------------------------\n\n";

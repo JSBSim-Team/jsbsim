@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.20 2001/12/04 13:08:17 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.21 2001/12/04 20:03:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,8 +62,8 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Propeller modeling class.
-    FGPropeller models a propeller given the tabular data for Ct, Cp, and
-    efficiency indexed by advance ratio "J". The data for the propeller is
+    FGPropeller models a propeller given the tabular data for Ct and Cp
+    indexed by advance ratio "J". The data for the propeller is
     stored in a config file named "prop_name.xml". The propeller config file
     is referenced from the main aircraft config file in the "Propulsion" section.
     See the constructor for FGPropeller to see what is read in and what should
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.20 2001/12/04 13:08:17 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.21 2001/12/04 20:03:40 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -111,8 +111,7 @@ public:
       control system (perhaps to maintain constant RPM for a constant-speed
       propeller). This value will be limited to be within whatever is specified
       in the config file for Max and Min pitch. It is also one of the lookup
-      indices to the power, thrust, and efficiency tables for variable-pitch
-      propellers.
+      indices to the power and thrust tables for variable-pitch propellers.
       @param pitch the pitch of the blade in degrees. */
   void SetPitch(double pitch) {Pitch = pitch;}
   
@@ -161,7 +160,6 @@ private:
   double Sense;
   double Pitch;
   double Torque;
-  FGTable *Efficiency;
   FGTable *cThrust;
   FGTable *cPower;
   void Debug(void);

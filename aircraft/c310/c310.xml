@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.8 2001/12/04 13:08:17 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.9 2001/12/04 20:03:40 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -138,7 +138,7 @@
       FEED      0
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="prop_generic2v">
+    <AC_THRUSTER FILE="propC8v">
       XLOC   48.0
       YLOC   -70.0
       ZLOC   59.4
@@ -148,7 +148,7 @@
       SENSE   1.0
     </AC_THRUSTER>
 
-    <AC_THRUSTER FILE="prop_generic2v">
+    <AC_THRUSTER FILE="propC8v">
       XLOC   48.0
       YLOC   70.0
       ZLOC   59.4
