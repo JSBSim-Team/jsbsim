@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h" 
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.43 2002/09/29 13:23:57 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.44 2002/12/17 00:01:50 apeden Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,10 +92,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       Table = new FGTable(Rows);
     } else if (token == "SCHEDULED_BY") {
       token = AC_cfg->GetValue("SCHEDULED_BY");
-      if (token.find("FG_") != token.npos) {
-        *AC_cfg >> strScheduledBy;
-        ScheduledBy = PropertyManager->GetNode( strScheduledBy ); 
-      } 
+      *AC_cfg >> strScheduledBy;
+      ScheduledBy = PropertyManager->GetNode( strScheduledBy ); 
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;      
