@@ -39,7 +39,6 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGSummer.h"    				
-#include "FGFCS.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -53,6 +52,32 @@ INCLUDES
 
 FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
 {
+  Type = AC_cfg->GetValue("TYPE");
+  AC_cfg->GetNextConfigLine();
+  string token;
+  int Input;
+
+  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+    *AC_cfg >> token;
+    if (token == "ID") {
+      *AC_cfg >> ID;
+    } else if (token == "QUEUE_ORDER") {
+      *AC_cfg >> QueueOrder;
+    } else if (token == "INPUT") {
+      token = AC_cfg->GetValue("INPUT");
+      if (token.find("FG_") != token.npos) {
+        *AC_cfg >> token;
+        Input = fcs->GetState()->GetParameterIndex(token);
+        InputType = itPilotAC;
+        InputIndices.push_back(Input);
+        InputTypes.push_back(itFCS);
+      } else {
+        *AC_cfg >> Input;
+        InputIndices.push_back(Input);
+        InputTypes.push_back(itFCS);
+      }
+    }
+  }
 }
 
 // *****************************************************************************

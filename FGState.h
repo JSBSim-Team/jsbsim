@@ -58,6 +58,7 @@ INCLUDES
 #  include <fstream>
 #endif
 
+#include <map>
 #include "FGDefs.h"
 #include "FGInitialCondition.h"
 #include "FGMatrix.h"
@@ -104,6 +105,8 @@ public:
 
   inline float Getqbar(void) {return qbar;}
   float GetParameter(int val_idx);
+  float GetParameter(string val_string);
+  int GetParameterIndex(string val_string);
 
   inline void SetVt(float tt) {Vt = tt;}
 
@@ -125,8 +128,8 @@ public:
   inline void  Setdt(float tt) {dt = tt;}
 
   inline float IncrTime(void) {sim_time+=dt;return sim_time;}
-    void CalcMatrices(float phi, float tht, float psi);
-    void IntegrateQuat(float P, float Q, float R);
+  void CalcMatrices(float phi, float tht, float psi);
+  void IntegrateQuat(float P, float Q, float R);
 
 
 private:
@@ -146,6 +149,9 @@ private:
   FGMatrix* Tl2b;
   FGMatrix* Ts2b;
   FGColumnVector* Qtrn;
+
+  typedef map<string, long> CoeffMap;
+  CoeffMap coeffdef;
 
 protected:
 

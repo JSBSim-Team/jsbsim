@@ -39,7 +39,6 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGDeadBand.h"
-#include "FGFCS.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -53,7 +52,22 @@ INCLUDES
 
 FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
 {
-  
+  Type = AC_cfg->GetValue("TYPE");
+  AC_cfg->GetNextConfigLine();
+  string token;
+
+  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+    *AC_cfg >> token;
+    if (token == "ID") {
+      *AC_cfg >> ID;
+    } else if (token == "QUEUE_ORDER") {
+      *AC_cfg >> QueueOrder;
+    } else if (token == "INPUT") {
+      *AC_cfg >> InputIdx;
+    } else {
+      *AC_cfg >> token;
+    }
+  }
 }
 
 // *****************************************************************************

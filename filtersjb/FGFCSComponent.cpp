@@ -55,39 +55,7 @@ FGFCSComponent::FGFCSComponent(void )
   Type = "";
   ID = 0;
   QueueOrder = 0;
-  Input = Output = 0;
+  Output = 0;
+  InputIdx = 0;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:    
-//  Parameters: void 
-//  Comments:   
-/*
-BOOL FGFCSComponent::Run(void )
-{
-
-}
-*/
-// *****************************************************************************
-//  Function:   GetInput
-//  Purpose:
-//  Parameters: int component_id=0
-//  Comments:
-/*
-float FGFCSComponent::GetInput(int component_id)
-{
-
-}
-*/
-// *****************************************************************************
-//  Function:   SetInput
-//  Purpose:
-//  Parameters: float in=0.0
-//  Comments:
-/*
-void FGFCSComponent::SetInput(float in)
-{
-
-}
-*/

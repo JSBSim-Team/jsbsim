@@ -86,4 +86,6 @@ public:
   bool Run (void )  ;
 };
 
+#include "FGFCS.h"
+
 #endif

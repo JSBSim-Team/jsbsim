@@ -98,7 +98,24 @@ string FGConfigFile::GetValue(string val)
           }
         }
       } else {   // "=" not found
-
+        pos = CurrentLine.find(val);
+        pos = CurrentLine.find_first_of(" ",pos+1);
+        ptest = CurrentLine.find_first_not_of(" ",pos+1);
+        if (ptest != CurrentLine.npos) {
+          if (CurrentLine[ptest] == '"') { // quoted
+            p1 = ptest + 1;
+            p2 = CurrentLine.find_first_of("\"",p1);
+          } else { // not quoted
+            p1 = ptest;
+            p2 = CurrentLine.find_first_of(" ",p1);
+          }
+          if (p2 != CurrentLine.npos) {
+            return CurrentLine.substr(p1,p2-p1);
+          } else {
+            p2 = CurrentLine.length();
+            return CurrentLine.substr(p1,p2-p1);
+          }
+        }
       }
     }
   }

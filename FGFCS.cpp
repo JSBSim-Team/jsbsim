@@ -120,30 +120,32 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
     if (token == "COMPONENT") {
 
 #if 1 // TEST
-       if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
-            (token == "RECT_LAG_FILTER") ||
-            (token == "LEAD_LAG_FILTER") ||
-            (token == "SECOND_ORDER_FILTER") ||
-            (token == "WASHOUT_FILTER") ||
-            (token == "INTEGRATOR") )
-       {
-         Components.push_back(new FGFilter(this, AC_cfg));
-       } else if ((token == "PURE_GAIN") ||
-                  (token == "SCHEDULED_GAIN") ||
-                  (token == "AEROSURFACE_SCALE") )
-       {
-         Components.push_back(new FGGain(this, AC_cfg));
-       } else if (token == "SUMMER") {
-         Components.push_back(new FGSummer(this, AC_cfg));
-       } else if (token == "DEADBAND") {
-         Components.push_back(new FGDeadBand(this, AC_cfg));
-       } else if (token == "GRADIENT") {
-         Components.push_back(new FGGradient(this, AC_cfg));
-       } else if (token == "SWITCH") {
-         Components.push_back(new FGSwitch(this, AC_cfg));
-       }
+      if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
+          (token == "RECT_LAG_FILTER") ||
+          (token == "LEAD_LAG_FILTER") ||
+          (token == "SECOND_ORDER_FILTER") ||
+          (token == "WASHOUT_FILTER") ||
+          (token == "INTEGRATOR") )
+      {
+       Components.push_back(new FGFilter(this, AC_cfg));
+      } else if ((token == "PURE_GAIN") ||
+                (token == "SCHEDULED_GAIN") ||
+                (token == "AEROSURFACE_SCALE") )
+      {
+       Components.push_back(new FGGain(this, AC_cfg));
+      } else if (token == "SUMMER") {
+       Components.push_back(new FGSummer(this, AC_cfg));
+      } else if (token == "DEADBAND") {
+       Components.push_back(new FGDeadBand(this, AC_cfg));
+      } else if (token == "GRADIENT") {
+       Components.push_back(new FGGradient(this, AC_cfg));
+      } else if (token == "SWITCH") {
+       Components.push_back(new FGSwitch(this, AC_cfg));
+      }
 #else // END TEST
-
+      while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+        AC_cfg->GetNextConfigLine();
+      }
 #endif
       AC_cfg->GetNextConfigLine();
     }
@@ -151,3 +153,10 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   return true;
 }
 
+//TEST
+float FGFCS::GetComponentOutput(int idx)
+{
+  return Components[idx]->GetOutput();
+}
+
+// END TEST

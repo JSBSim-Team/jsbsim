@@ -75,6 +75,26 @@ FGState::FGState(FGFDMExec* fdex)
   qbar = 0.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
+
+  coeffdef["FG_QBAR"]      = 1;
+  coeffdef["FG_WINGAREA"]  = 2;
+  coeffdef["FG_WINGSPAN"]  = 4;
+  coeffdef["FG_CBAR"]      = 8;
+  coeffdef["FG_ALPHA"]     = 16;
+  coeffdef["FG_ALPHADOT"]  = 32;
+  coeffdef["FG_BETA"]      = 64;
+  coeffdef["FG_BETADOT"]   = 128;
+  coeffdef["FG_PITCHRATE"] = 256;
+  coeffdef["FG_ROLLRATE"]  = 512;
+  coeffdef["FG_YAWRATE"]   = 1024;
+  coeffdef["FG_ELEVATOR"]  = 2048;
+  coeffdef["FG_AILERON"]   = 4096;
+  coeffdef["FG_RUDDER"]    = 8192;
+  coeffdef["FG_MACH"]      = 16384;
+  coeffdef["FG_ALTITUDE"]  = 32768L;
+  coeffdef["FG_BI2VEL"]    = 65536L;
+  coeffdef["FG_CI2VEL"]    = 131072L;
+
 }
 
 
@@ -256,6 +276,18 @@ bool FGState::StoreData(string fname)
     cerr << "Could not open dump file " << fname << endl;
     return false;
   }
+}
+
+
+float FGState::GetParameter(string val_string)
+{
+  return GetParameter(coeffdef[val_string]);
+}
+
+
+int FGState::GetParameterIndex(string val_string)
+{
+  return coeffdef[val_string];
 }
 
 

@@ -20,7 +20,7 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
   FGTranslation.obj FGAircraft.obj filtersjb\FGfcsComponent.obj \
   filtersjb\FGSwitch.obj filtersjb\FGFilter.obj filtersjb\FGGain.obj \
-  filtersjb\FGGradient.obj filtersjb\FGSummer.obj
+  filtersjb\FGGradient.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =

@@ -87,6 +87,8 @@ public:
 	inline float GetDf(void) {return Df;}
 	inline float GetDs(void) {return Ds;}
 	inline float GetThrottle(int ii) {return Throttle[ii];}
+  inline FGState* GetState(void) {return State;}
+  float GetComponentOutput(int idx);
 
 	inline void SetDa(float tt) {Da = tt*aScale;} //0.3
 	inline void SetDe(float tt) {De = tt*eScale;} //0.6
@@ -98,5 +100,6 @@ public:
   string FCSName;
 };
 
-/******************************************************************************/
+#include "FGState.h"
+
 #endif

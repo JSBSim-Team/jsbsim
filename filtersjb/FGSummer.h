@@ -42,6 +42,20 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 
+#ifdef FGFS
+#  include <Include/compiler.h>
+#  include STL_STRING
+   FG_USING_STD(string);
+#  ifdef FG_HAVE_STD_INCLUDES
+#    include <vector>
+#  else
+#    include <vector.h>
+#  endif
+#else
+#  include <vector>
+#  include <string>
+#endif
+
 #include "FGFCSComponent.h"
 #include "../FGConfigFile.h"
 
@@ -59,6 +73,8 @@ class FGSummer  : public FGFCSComponent
 {
   FGFCS* fcs;
   FGConfigFile* AC_cfg;
+  vector<int> InputIndices;
+  vector<int> InputTypes;
 
 public:
   FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg);
@@ -66,5 +82,7 @@ public:
 
   bool Run (void );
 };
+
+#include "FGFCS.h"
 
 #endif

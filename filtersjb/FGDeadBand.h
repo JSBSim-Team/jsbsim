@@ -61,10 +61,12 @@ class FGDeadBand  : public FGFCSComponent
   FGConfigFile* AC_cfg;
   
 public:
-  FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg) {}
+  FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~ FGDeadBand ( ) { }       //Destructor
 
   bool Run (void )  ;
 };
+
+#include "FGFCS.h"
 
 #endif
