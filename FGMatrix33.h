@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.22 2004/03/06 23:47:16 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.23 2004/03/08 04:02:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -338,6 +338,18 @@ private:
 
   void Debug(int from);
 };
+
+/** Scalar multiplication.
+ *
+ * \param scalar scalar value to multiply with.
+ * \param A Matrix to multiply.
+ *
+ * Multiply the Matrix with a scalar value.
+ */
+inline FGMatrix33 operator*(double scalar, const FGMatrix33& A) {
+  // use already defined operation.
+  return A*scalar;
+}
 
 /** Write matrix to a stream.
  *

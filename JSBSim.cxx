@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.158 2004/03/05 05:16:10 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.159 2004/03/08 04:02:16 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -546,6 +546,11 @@ bool FGJSBsim::copy_from_JSBsim()
                                Translation->GetUVW(2),
                                Translation->GetUVW(3) );
 
+    // Make the HUD work ...
+    _set_Velocities_Ground( Position->GetVn(),
+                            Position->GetVe(),
+                            -Position->GetVd() );
+
     _set_V_rel_wind( Translation->GetVt() );
 
     _set_V_equiv_kts( Auxiliary->GetVequivalentKTS() );
@@ -707,7 +712,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
-    right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
+    right_aileron_pos_pct->setDoubleValue( FCS->GetDaRPos(ofNorm) );
     rudder_pos_pct->setDoubleValue( -1*FCS->GetDrPos(ofNorm) );
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
     speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
