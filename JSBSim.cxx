@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.33 2000/10/09 22:16:25 jsb Exp $
+// $Id: JSBSim.cxx,v 1.34 2000/10/11 03:25:04 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -73,11 +73,11 @@ int FGJSBsim::init( double dt ) {
   FGPath engine_path( current_options.get_fg_root() );
   engine_path.append( "Engine" );
 
-  FDMExec.GetState()->Setdt( dt );
-
+ 
   result = FDMExec.LoadModel( aircraft_path.str(),
                                        engine_path.str(),
                                        current_options.get_aircraft() );
+  FDMExec.GetState()->Setdt( dt );
 
   if (result) {
     FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft " << current_options.get_aircraft() );
@@ -162,7 +162,7 @@ int FGJSBsim::init( double dt ) {
     controls.set_throttle(FGControls::ALL_ENGINES,FDMExec.GetFCS()->GetThrottleCmd(0)/100);
     //the trimming routine only knows how to get 1 value for throttle
     
-//    delete fgtrim;
+    delete fgtrim;
     FG_LOG( FG_FLIGHT, FG_INFO, "  Trim complete." );
   } else {
     FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing without trim" );
