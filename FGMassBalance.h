@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.21 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.22 2004/02/02 21:02:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -83,6 +83,14 @@ public:
   inline double GetIxz(void) const {return Ixz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
+
+  /** Conversion from the structural frame to the body frame.
+   * Converts the argument \parm r given in the reference frame
+   * coordinate system to the body frame. The units of the structural
+   * frame are assumed to be in inches. The unit of the result is in
+   * ft.
+   */
+  FGColumnVector3 StructuralToBody(const FGColumnVector3& r) const;
 
   inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
   inline void SetBaseIxx(double bixx)   { baseIxx = bixx;}

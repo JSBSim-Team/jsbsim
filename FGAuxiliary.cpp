@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.40 2004/01/29 13:38:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.41 2004/02/02 21:02:34 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,13 +167,10 @@ bool FGAuxiliary::Run()
     vPilotAccel.InitMatrix();   
     if ( Translation->GetVt() > 1 ) {
        vPilotAccel =  Aerodynamics->GetForces() 
-                  +  Propulsion->GetForces()
-                  +  GroundReactions->GetForces();
+                      +  Propulsion->GetForces()
+                      +  GroundReactions->GetForces();
        vPilotAccel /= MassBalance->GetMass();
-       vToEyePt = Aircraft->GetXYZep() - MassBalance->GetXYZcg();
-       vToEyePt *= inchtoft;
-       vToEyePt(eX) *= -1.0;
-       vToEyePt(eZ) *= -1.0;
+       vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
        vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
        vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
     } else {
@@ -181,8 +178,7 @@ bool FGAuxiliary::Run()
     }   
 
     vPilotAccelN = vPilotAccel/Inertial->gravity();
-      
-    
+
     earthPosAngle += State->Getdt()*Inertial->omega();
     return false;
   } else {

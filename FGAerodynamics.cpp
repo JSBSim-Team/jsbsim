@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.44 2003/12/03 04:42:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.45 2004/02/02 21:02:34 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -157,12 +157,7 @@ bool FGAerodynamics::Run(void)
 
     vForces = State->GetTs2b()*vFs;
 
-    vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
-                      - MassBalance->GetXYZcg(eX))*inchtoft;
-    vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) 
-                      - MassBalance->GetXYZcg(eY))*inchtoft;
-    vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) 
-                      - MassBalance->GetXYZcg(eZ))*inchtoft;
+    vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
 
     vMoments = vDXYZcg*vForces; // M = r X F
 

@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.96 2003/12/31 06:15:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.97 2004/02/02 21:02:34 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,9 +115,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   MaximumStrutForce = MaximumStrutTravel = 0.0;
   SinkRate = GroundSpeed = 0.0;
 
-  vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
-  vWhlBodyVec(eX) = -vWhlBodyVec(eX);
-  vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
+  vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
   
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
 

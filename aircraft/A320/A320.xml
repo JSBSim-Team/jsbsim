@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.5 2004/01/15 10:31:32 ehofman Exp $
+  CVS Version: $Id: A320.xml,v 1.6 2004/02/02 21:02:36 jberndt Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 
@@ -113,10 +113,9 @@
        OUTPUT        fcs/left-aileron-pos-rad
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-       INPUT         fcs/roll-trim-sum
+       INPUT         -fcs/roll-trim-sum
        MIN          -20
        MAX           15
-       INVERT
        GAIN          0.02
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>

@@ -92,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.64 2004/01/29 13:38:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.65 2004/02/02 21:02:35 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,11 +184,7 @@ bool FGPosition::Run(void)
 
     h = Radius - SeaLevelRadius;           // Geocentric
 
-    vVRPoffset = vVRP - MassBalance->GetXYZcg(); // calc distance from CG to VRP (inches)
-    vVRPoffset(eX) *= -1.0;                      // Convert from structural frame
-    vVRPoffset(eZ) *= -1.0;                      //   to body frame
-    vVRPoffset *= inchtoft;                      // Convert to units of feet
-    vVRPoffset = State->GetTb2l() * vVRPoffset;  // Transform to Local frame
+    vVRPoffset = State->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
 
     // vVRP  - the vector to the Visual Reference Point - now contains the 
     // offset from the CG to the VRP, in units of feet, in the Local coordinate
@@ -199,19 +195,17 @@ bool FGPosition::Run(void)
       LongitudeVRP = vVRPoffset(eEast) / (Radius * cosLat) + Longitude;
 
     LatitudeVRP = vVRPoffset(eNorth) / Radius + Latitude;
-    hVRP = -vVRPoffset(eDown) + h;
+    hVRP = h - vVRPoffset(eDown);
 /*
 cout << "Lat/Lon/Alt : " << Latitude << " / " << Longitude << " / " << h << endl;
 cout << "Lat/Lon/Alt VRP: " << LatitudeVRP << " / " << LongitudeVRP << " / " << hVRP << endl << endl;
 */
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
-    
+
     hoverbcg = DistanceAGL/b;
-    
-    vMac = State->GetTb2l()*Aircraft->GetXYZrp();
-    
-    vMac *= inchtoft;
-    hoverbmac = (DistanceAGL + vMac(3))/b;
+
+    vMac = State->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    hoverbmac = (DistanceAGL + vMac(3)) / b;
 
     if (Vt > 0) {
       hdot_Vt = RadiusDot/Vt;

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.30 2003/06/03 09:53:46 ehofman Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.31 2004/02/02 21:02:35 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,6 +194,39 @@ double FGMassBalance::GetPMIxz(void)
   }
   I /= (144.0*Inertial->gravity());
   return I;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
+{
+  // Under the assumption that in the structural frame the:
+  //
+  // - X-axis is directed afterwards,
+  // - Y-axis is directed towards the right,
+  // - Z-axis is directed upwards,
+  //
+  // (as documented in http://jsbsim.sourceforge.net/JSBSimCoordinates.pdf)
+  // we have to subtract first the center of gravity of the plane which
+  // is also defined in the structural frame:
+  //
+  //   FGColumnVector3 cgOff = r - vXYZcg;
+  //
+  // Next, we do a change of units:
+  //
+  //   cgOff *= inchtoft;
+  //
+  // And then a 180 degree rotation is done about the Y axis so that the:
+  //
+  // - X-axis is directed forward,
+  // - Y-axis is directed towards the right,
+  // - Z-axis is directed downward.
+  //
+  // This is needed because the structural and body frames are 180 degrees apart.
+
+  return FGColumnVector3(inchtoft*(vXYZcg(1)-r(1)),
+                         inchtoft*(r(2)-vXYZcg(2)),
+                         inchtoft*(vXYZcg(3)-r(3)));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

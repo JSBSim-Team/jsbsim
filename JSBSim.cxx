@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.153 2004/01/14 15:12:44 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.154 2004/02/02 21:02:35 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -156,8 +156,7 @@ FGJSBsim::FGJSBsim( double dt )
          SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
          exit(-1);
     }
-        
-    
+
     init_gear();
 
     // Set initial fuel levels if provided.

@@ -50,7 +50,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.33 2003/06/03 09:53:44 ehofman Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.34 2004/02/02 21:02:34 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,9 +83,7 @@ FGColumnVector3& FGForce::GetBodyForces(void)
   // needs to be done like this to convert from structural to body coords.
   // CG and RP values are in inches
 
-  vDXYZ(eX) = -(vActingXYZn(eX) - fdmex->GetMassBalance()->GetXYZcg(eX))*inchtoft;
-  vDXYZ(eY) =  (vActingXYZn(eY) - fdmex->GetMassBalance()->GetXYZcg(eY))*inchtoft;
-  vDXYZ(eZ) = -(vActingXYZn(eZ) - fdmex->GetMassBalance()->GetXYZcg(eZ))*inchtoft;
+  vDXYZ = fdmex->GetMassBalance()->StructuralToBody(vActingXYZn);
 
   vM = vMn + vDXYZ*vFb;
 

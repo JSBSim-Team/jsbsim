@@ -129,10 +129,9 @@
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/roll-trim-sum
+      INPUT   -fcs/roll-trim-sum
       MIN    -0.35
       MAX     0.35
-      INVERT
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Rudder Command Sum" TYPE="SUMMER">

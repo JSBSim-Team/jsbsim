@@ -144,10 +144,9 @@
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/roll-feel
+      INPUT   -fcs/roll-feel
       MIN    -0.35
       MAX     0.26
-      INVERT
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
    <!-- YAW FCS *********************************************************** -->

@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.12 2004/01/11 19:46:02 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.13 2004/02/02 21:02:37 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -177,10 +177,9 @@
        OUTPUT        fcs/left-aileron-pos-rad
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-       INPUT         fcs/roll-trim-sum
+       INPUT         -fcs/roll-trim-sum
        MIN          -20
        MAX           15
-       INVERT
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>

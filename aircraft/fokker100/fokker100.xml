@@ -130,10 +130,9 @@
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/roll-trim-sum
+      INPUT   -fcs/roll-trim-sum
       MIN     -20
       MAX     15
-      INVERT
       GAIN    0.02
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>

@@ -3,7 +3,7 @@
 <!--                                                                                   - -
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.9 2003/11/04 16:02:51 dpculp Exp $
+  CVS Version: $Id: f104.xml,v 1.10 2004/02/02 21:02:37 jberndt Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -130,10 +130,9 @@
      1.0   1.0
     </COMPONENT>
     <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-     INPUT      fcs/roll-trim-sum
+     INPUT      -fcs/roll-trim-sum
      MIN        -20.0
      MAX         20.0
-     INVERT
      GAIN        0.01745
      OUTPUT     fcs/right-aileron-pos-rad
     </COMPONENT>

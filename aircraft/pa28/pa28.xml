@@ -3,7 +3,7 @@
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
   Function:    Models a Piper Cherokee 180 (PA28-180)
-  CVS Version: $Id: pa28.xml,v 1.7 2003/11/04 16:05:58 dpculp Exp $
+  CVS Version: $Id: pa28.xml,v 1.8 2004/02/02 21:02:38 jberndt Exp $
 -->
 
   <METRICS>
@@ -170,10 +170,9 @@
        OUTPUT        fcs/left-aileron-pos-rad
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-       INPUT         fcs/roll-trim-sum
+       INPUT         -fcs/roll-trim-sum
        MIN          -30
        MAX           15
-       INVERT
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
