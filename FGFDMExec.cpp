@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.88 2002/08/16 12:42:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.89 2002/08/20 13:45:01 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -486,6 +486,7 @@ bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
   // reset debug level to prior setting
 
   int saved_debug_lvl = debug_lvl;
+  string token;
 
   SlaveFDMList.push_back(new slaveData);
   SlaveFDMList.back()->exec = new FGFDMExec();
@@ -493,9 +494,30 @@ bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
 
   string AircraftName = AC_cfg->GetValue("FILE");
 
-  debug_lvl = 0;
+  debug_lvl = 0;                 // turn off debug output for slave vehicle
   SlaveFDMList.back()->exec->LoadModel("aircraft", "engine", AircraftName);
-  debug_lvl = saved_debug_lvl;
+  debug_lvl = saved_debug_lvl;   // turn debug output back on for master vehicle
+
+  AC_cfg->GetNextConfigLine();
+  while ((token = AC_cfg->GetValue()) != string("/SLAVE")) {
+    *AC_cfg >> token;
+    if      (token == "XLOC")  { *AC_cfg >> SlaveFDMList.back()->x;    }
+    else if (token == "YLOC")  { *AC_cfg >> SlaveFDMList.back()->y;    }
+    else if (token == "ZLOC")  { *AC_cfg >> SlaveFDMList.back()->z;    }
+    else if (token == "PITCH") { *AC_cfg >> SlaveFDMList.back()->pitch;}
+    else if (token == "YAW")   { *AC_cfg >> SlaveFDMList.back()->yaw;  }
+    else if (token == "ROLL")  { *AC_cfg >> SlaveFDMList.back()->roll;  }
+    else cerr << "Unknown identifier: " << token << " in slave vehicle definition" << endl;
+  }
+
+  if (debug_lvl > 0)  {
+    cout << "      X = " << SlaveFDMList.back()->x << endl;
+    cout << "      Y = " << SlaveFDMList.back()->y << endl;
+    cout << "      Z = " << SlaveFDMList.back()->z << endl;
+    cout << "      Pitch = " << SlaveFDMList.back()->pitch << endl;
+    cout << "      Yaw = " << SlaveFDMList.back()->yaw << endl;
+    cout << "      Roll = " << SlaveFDMList.back()->roll << endl;
+  }
 
   return true;
 }
