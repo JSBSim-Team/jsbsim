@@ -54,9 +54,9 @@ INCLUDES
 #include "filtersjb/FGGradient.h"
 #include "filtersjb/FGSwitch.h"
 #include "filtersjb/FGSummer.h"
-#include "filtersjb/FGFlaps.h"
+#include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.62 2001/12/01 21:20:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.63 2001/12/02 15:54:48 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = PTrimCmd = 0.0;
   DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
+  GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
@@ -277,8 +278,8 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
         Components.push_back(new FGGradient(this, AC_cfg));
       } else if (token == "SWITCH") {
         Components.push_back(new FGSwitch(this, AC_cfg));
-      } else if (token == "FLAPS") {
-        Components.push_back(new FGFlaps(this, AC_cfg));
+      } else if (token == "KINEMAT") {
+        Components.push_back(new FGKinemat(this, AC_cfg));
       } else {
         cerr << "Unknown token [" << token << "] in FCS portion of config file" << endl;
         return false;

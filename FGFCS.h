@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.37 2001/12/01 21:20:04 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.38 2001/12/02 15:54:48 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.37 2001/12/01 21:20:04 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.38 2001/12/02 15:54:48 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -211,6 +211,11 @@ public:
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
   inline double GetPitchTrimCmd(void) { return PTrimCmd; }
+  
+  /** Get the gear extend/retract command. 0 commands gear up, 1 down.
+      defaults to down.
+      @return the current value of the gear extend/retract command*/
+  inline double GetGearCmd(void) { return GearCmd; }    
   //@}
 
   /// @name Aerosurface position retrieval
@@ -248,6 +253,10 @@ public:
       @param engine engine ID number
       @return mixture position for the given engine in percent ( 0 - 100)*/
   inline double GetMixturePos(int engine) { return MixturePos[engine]; }
+  
+  /** Gets the gear position (0 up, 1 down), defaults to down
+      @return gear position (0 up, 1 down) */
+  inline double GetGearPos(void) { return GearPos; }    
 
   /** Gets the prop pitch position.
       @param engine engine ID number
@@ -315,6 +324,10 @@ public:
       @param engine engine ID number
       @param cmd mixture command in percent (0 - 100)*/
   void SetMixtureCmd(int engine, double cmd);
+  
+  /** Set the gear extend/retract command, defaults to down
+      @param gear command 0 for up, 1 for down */
+   void SetGearCmd(double gearcmd) { GearCmd = gearcmd; }   
 
   /** Sets the propeller pitch command for the specified engine
       @param engine engine ID number
@@ -357,6 +370,11 @@ public:
       @param engine engine ID number
       @param cmd mixture setting in percent (0 - 100)*/
   void SetMixturePos(int engine, double cmd);
+  
+  /** Set the gear extend/retract position, defaults to down
+      @param gear position 0 up, 1 down       */
+   void SetGearPos(double gearpos) { GearPos = gearpos; }   
+
 
   /** Sets the actual prop pitch setting for the specified engine
       @param engine engine ID number
@@ -405,6 +423,7 @@ private:
   vector <double> PropPitchCmd;
   vector <double> PropPitchPos;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
+  double GearCmd,GearPos;
 
   vector <FGFCSComponent*> Components;
   void Debug(void);
