@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.93 2002/02/22 12:14:46 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.94 2002/02/27 14:44:46 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -165,13 +165,22 @@
        INPUT        FG_ROLL_TRIM_CMD
        CLIPTO       -1 1
      </COMPONENT>
-     <COMPONENT NAME="Aileron Control" TYPE="AEROSURFACE_SCALE">
+     <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
        ID            3
        INPUT         FG_AILERON_CMD
        MIN          -20
        MAX           15
        GAIN          0.01745
-       OUTPUT        FG_AILERON_POS
+       OUTPUT        FG_LEFT_AILERON_POS
+     </COMPONENT>
+      <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            3
+       INPUT         FG_AILERON_CMD
+       MIN          -20
+       MAX           15
+       INVERT
+       GAIN          0.01745
+       OUTPUT        FG_RIGHT_AILERON_POS
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
        ID            4
@@ -383,7 +392,7 @@
        <COEFFICIENT NAME="Clr" TYPE="VALUE">
          Roll_moment_due_to_yaw_rate
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
-         0.096
+         0.18
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Clda" TYPE="VALUE">
