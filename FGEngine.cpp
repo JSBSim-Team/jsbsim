@@ -62,7 +62,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.15 2000/11/19 22:15:49 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.16 2000/11/19 23:12:51 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,11 +115,6 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
       cerr << "Unknown engine type: " << tag << endl;
       break;
     case etPiston:
-      enginefile >> X;
-      enginefile >> Y;
-      enginefile >> Z;
-      enginefile >> EnginePitch;
-      enginefile >> EngineYaw;
       enginefile >> BrakeHorsePower;
       enginefile >> MaxThrottle;
       enginefile >> MinThrottle;
@@ -130,11 +125,6 @@ FGEngine::FGEngine(FGFDMExec* fdex, string enginePath, string engineName, int nu
 
       break;
     case etRocket:
-      enginefile >> X;
-      enginefile >> Y;
-      enginefile >> Z;
-      enginefile >> EnginePitch;
-      enginefile >> EngineYaw;
       enginefile >> SLThrustMax;
       enginefile >> VacThrustMax;
       enginefile >> MaxThrottle;
