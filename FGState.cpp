@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.55 2001/04/11 15:53:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.56 2001/04/11 22:34:10 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -189,7 +189,7 @@ float FGState::GetParameter(eParam val_idx) {
   case FG_YAWRATE:
     return Rotation->GetPQR(eR);
   case FG_CL_SQRD:
-    scratch = Aircraft->GetvFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());
+    scratch = Aircraft->GetvLastFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());
     return scratch*scratch;					   
   case FG_ELEVATOR_POS:
     return FCS->GetDePos();

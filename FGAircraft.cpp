@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.68 2001/04/11 12:40:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.69 2001/04/11 22:34:10 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -162,6 +162,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vMoments(3),
     vForces(3),
     vFs(3),
+    vLastFs(3),
     vXYZrp(3),
     vbaseXYZcg(3),
     vXYZcg(3),
@@ -369,7 +370,6 @@ void FGAircraft::MassChange() {
   Iyy = baseIyy + IYYt;
   Izz = baseIzz + IZZt;
   Ixz = baseIxz + IXZt;
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -377,6 +377,7 @@ void FGAircraft::MassChange() {
 void FGAircraft::FMAero(void) {
   unsigned int axis_ctr,ctr;
 
+  vLastFs = vFs;
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vFs(axis_ctr) = 0.0;
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {

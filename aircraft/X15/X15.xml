@@ -3,7 +3,7 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.26 2001/04/11 12:40:51 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.27 2001/04/11 22:34:10 jberndt Exp $
 
   Function: Models an X-15
   Notes:    Try running FlightGear using this command line,
@@ -432,12 +432,53 @@
 
     <AXIS NAME="DRAG">
 
-      <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+      <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
         Drag_minimum
+	22
+	FG_MACH
         FG_QBAR|FG_WINGAREA
-        0.095
+        0.000	0.061
+        0.100	0.061
+        0.500	0.061
+        0.700	0.062
+        0.800	0.065
+        0.900	0.068
+        0.990	0.090
+        1.000	0.090
+        1.010	0.090
+        1.100	0.130
+        1.200	0.120
+        1.300	0.110
+        1.400	0.100
+        1.500	0.093
+        2.000	0.080
+        3.000	0.062
+        4.000	0.048
+        5.000	0.040
+        6.000	0.038
+        7.000	0.037
+        8.000	0.037
+        9.000	0.037
       </COEFFICIENT>
 
+      <COEFFICIENT NAME="CDi" TYPE="VECTOR">
+        Drag_induced
+	10
+	FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_CL_SQRD
+        0.0 0.20
+        0.5 0.20
+        1.0 0.23
+        1.5 0.40
+        2.0 0.50
+        3.0 0.80
+        4.0 0.93
+        5.0 1.05
+        6.0 1.15
+        9.0 1.33
+      </COEFFICIENT>
+
+<!--
       <COEFFICIENT NAME="CDalpha" TYPE="TABLE">
         Drag_due_to_alpha
         12 5
@@ -457,7 +498,7 @@
         6.0   0.10   0.12   0.13   0.14   0.15
         9.0   0.10   0.12   0.12   0.14   0.15
       </COEFFICIENT>
-<!--
+
       <COEFFICIENT NAME="CDM" TYPE="VECTOR">
         Drag_due_to_Mach
         12
