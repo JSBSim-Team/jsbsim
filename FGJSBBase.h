@@ -81,109 +81,12 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.29 2002/09/07 21:51:12 apeden Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.30 2002/09/23 11:52:25 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-enum eParam {
-  FG_UNDEF = 0,
-  FG_TIME,
-  FG_QBAR,
-  FG_WINGAREA,
-  FG_WINGSPAN,
-  FG_CBAR,
-  FG_ALPHA,
-  FG_ALPHADOT,
-  FG_BETA,
-  FG_ABETA,
-  FG_BETADOT,
-  FG_PHI,
-  FG_THT,
-  FG_PSI,
-  FG_PITCHRATE,
-  FG_ROLLRATE,
-  FG_YAWRATE,
-  FG_AEROP,
-  FG_AEROQ,
-  FG_AEROR,
-  FG_CL_SQRD,
-  FG_MACH,
-  FG_ALTITUDE,
-  FG_BI2VEL,
-  FG_CI2VEL,
-  FG_ELEVATOR_POS,
-  FG_AELEVATOR_POS,
-  FG_NELEVATOR_POS,
-  FG_AILERON_POS,
-  FG_AAILERON_POS,
-  FG_NAILERON_POS,
-  FG_LEFT_AILERON_POS,
-  FG_ALEFT_AILERON_POS,
-  FG_NLEFT_AILERON_POS,
-  FG_RIGHT_AILERON_POS,
-  FG_ARIGHT_AILERON_POS,
-  FG_NRIGHT_AILERON_POS,
-  FG_RUDDER_POS,
-  FG_ARUDDER_POS,
-  FG_NRUDDER_POS,
-  FG_SPDBRAKE_POS,
-  FG_NSPDBRAKE_POS,
-  FG_SPOILERS_POS,
-  FG_NSPOILERS_POS,
-  FG_FLAPS_POS,
-  FG_NFLAPS_POS,
-  FG_ELEVATOR_CMD,
-  FG_AILERON_CMD,
-  FG_RUDDER_CMD,
-  FG_SPDBRAKE_CMD,
-  FG_SPOILERS_CMD,
-  FG_FLAPS_CMD,
-  FG_THROTTLE_CMD,
-  FG_THROTTLE_POS,
-  FG_MIXTURE_CMD,
-  FG_MIXTURE_POS,
-  FG_MAGNETO_CMD,
-  FG_STARTER_CMD,
-  FG_ACTIVE_ENGINE,
-  FG_HOVERB,
-  FG_PITCH_TRIM_CMD,
-  FG_YAW_TRIM_CMD,
-  FG_ROLL_TRIM_CMD,
-  FG_LEFT_BRAKE_CMD,
-  FG_CENTER_BRAKE_CMD,
-  FG_RIGHT_BRAKE_CMD,
-  FG_SET_LOGGING,
-  FG_ALPHAH,
-  FG_ALPHAW,
-  FG_LBARH,     //normalized horizontal tail arm
-  FG_LBARV,     //normalized vertical tail arm
-  FG_HTAILAREA,
-  FG_VTAILAREA,
-  FG_VBARH,    //horizontal tail volume 
-  FG_VBARV,     //vertical tail volume 
-  FG_GEAR_CMD,
-  FG_GEAR_POS,
-  FG_HYSTPARM,
-  AP_ELEVATOR_CMD,
-  AP_AILERON_CMD,
-  AP_RUDDER_CMD,
-  AP_THROTTLE_CMD,
-  AP_SET_ATTITUDE,
-  AP_SET_ALTITUDE,
-  AP_SET_HEADING,
-  AP_SET_AIRSPEED,
-  AP_ACQUIRE_ATTITUDE,
-  AP_ACQUIRE_ALTITUDE,
-  AP_ACQUIRE_HEADING,
-  AP_ACQUIRE_AIRSPEED,
-  AP_ATTITUDE_HOLD_ON,
-  AP_ALTITUDE_HOLD_ON,
-  AP_HEADING_HOLD_ON,
-  AP_AIRSPEED_HOLD_ON,
-  AP_WINGSLEVEL_HOLD_ON
-};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -195,7 +98,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.29 2002/09/07 21:51:12 apeden Exp $
+    @version $Id: FGJSBBase.h,v 1.30 2002/09/23 11:52:25 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
