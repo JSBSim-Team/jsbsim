@@ -48,9 +48,13 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-#include <iomanip.h>
+#ifndef FGFS
+#  include <iomanip.h>
+#else
+#  include STL_IOMANIP
+#endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.29 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.30 2001/03/29 23:16:21 jberndt Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
