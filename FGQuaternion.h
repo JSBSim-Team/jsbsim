@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.7 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.8 2004/05/22 09:48:20 frohlich Exp $"
 
 namespace JSBSim {
 
@@ -88,15 +88,19 @@ namespace JSBSim {
   CLASS DECLARATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGQuaternion : private FGJSBBase {
+class FGQuaternion
+  : virtual FGJSBBase {
 public:
   /** Default initializer.
       Default initializer, initializes the class with the identity rotation.  */
-  FGQuaternion() : mQ0(1), mQ1(0), mQ2(0), mQ3(0), mCacheValid(false) {}
+  FGQuaternion() : mCacheValid(false) {
+    Entry(1) = 1.0;
+    Entry(2) = Entry(3) = Entry(4) = 0.0;
+  }
 
   /** Copy constructor.
       Copy constructor, initializes the quaternion.
-      @param q a constant reference to another FGQuaternion instance  */
+      @param q  a constant reference to another FGQuaternion instance  */
   FGQuaternion(const FGQuaternion& q);
 
   /** Initializer by euler angles.
@@ -236,6 +240,58 @@ public:
     return mEulerCosines(ePhi);
   }
 
+  /** Read access the entries of the vector.
+    
+      @param idx the component index.
+    
+      Return the value of the matrix entry at the given index.
+      Indices are counted starting with 1.
+    
+      Note that the index given in the argument is unchecked.
+   */
+  double operator()(unsigned int idx) const { return Entry(idx); }
+
+  /** Write access the entries of the vector.
+    
+      @param idx the component index.
+    
+      Return a reference to the vector entry at the given index.
+      Indices are counted starting with 1.
+    
+      Note that the index given in the argument is unchecked.
+   */
+  double& operator()(unsigned int idx) { return Entry(idx); }
+
+  /** Read access the entries of the vector.
+    
+      @param idx the component index.
+    
+      Return the value of the matrix entry at the given index.
+      Indices are counted starting with 1.
+    
+      This function is just a shortcut for the @ref double
+      operator()(unsigned int idx) const function. It is
+      used internally to access the elements in a more convenient way.
+    
+      Note that the index given in the argument is unchecked.
+  */
+  double Entry(unsigned int idx) const { return mData[idx-1]; }
+
+  /** Write access the entries of the vector.
+    
+      @param idx the component index.
+    
+      Return a reference to the vector entry at the given index.
+      Indices are counted starting with 1.
+    
+      This function is just a shortcut for the @ref double&
+      operator()(unsigned int idx) function. It is
+      used internally to access the elements in a more convenient way.
+    
+      Note that the index given in the argument is unchecked.
+  */
+  double& Entry(unsigned int idx) { mCacheValid = false; return mData[idx-1]; }
+
   /** Assignment operator "=".
       Assign the value of q to the current object. Cached values are
       conserved.
@@ -243,10 +299,10 @@ public:
       @return reference to a quaternion object  */
   const FGQuaternion& operator=(const FGQuaternion& q) {
     // Copy the master values ...
-    mQ0 = q.mQ0;
-    mQ1 = q.mQ1;
-    mQ2 = q.mQ2;
-    mQ3 = q.mQ3;
+    Entry(1) = q(1);
+    Entry(2) = q(2);
+    Entry(3) = q(3);
+    Entry(4) = q(4);
     // .. and copy the derived values if they are valid
     mCacheValid = q.mCacheValid;
     if (mCacheValid) {
@@ -263,7 +319,8 @@ public:
       @param q a quaternion reference
       @return true if both quaternions represent the same rotation.  */
   bool operator==(const FGQuaternion& q) const {
-    return mQ0 == q.mQ0 && mQ1 == q.mQ1 && mQ2 == q.mQ2 && mQ3 == q.mQ3;
+    return Entry(1) == q(1) && Entry(2) == q(2)
+      && Entry(3) == q(3) && Entry(4) == q(4);
   }
 
   /** Comparison operator "!=".
@@ -272,10 +329,10 @@ public:
   bool operator!=(const FGQuaternion& q) const { return ! operator==(q); }
   const FGQuaternion& operator+=(const FGQuaternion& q) {
     // Copy the master values ...
-    mQ0 += q.mQ0;
-    mQ1 += q.mQ1;
-    mQ2 += q.mQ2;
-    mQ3 += q.mQ3;
+    Entry(1) += q(1);
+    Entry(2) += q(2);
+    Entry(3) += q(3);
+    Entry(4) += q(4);
     mCacheValid = false;
     return *this;
   }
@@ -285,10 +342,10 @@ public:
       @return a quaternion reference representing Q, where Q = Q - q. */
   const FGQuaternion& operator-=(const FGQuaternion& q) {
     // Copy the master values ...
-    mQ0 -= q.mQ0;
-    mQ1 -= q.mQ1;
-    mQ2 -= q.mQ2;
-    mQ3 -= q.mQ3;
+    Entry(1) -= q(1);
+    Entry(2) -= q(2);
+    Entry(3) -= q(3);
+    Entry(4) -= q(4);
     mCacheValid = false;
     return *this;
   }
@@ -297,10 +354,10 @@ public:
       @param scalar a multiplicative value.
       @return a quaternion reference representing Q, where Q = Q * scalar. */
   const FGQuaternion& operator*=(double scalar) {
-    mQ0 *= scalar;
-    mQ1 *= scalar;
-    mQ2 *= scalar;
-    mQ3 *= scalar;
+    Entry(1) *= scalar;
+    Entry(2) *= scalar;
+    Entry(3) *= scalar;
+    Entry(4) *= scalar;
     mCacheValid = false;
     return *this;
   }
@@ -316,14 +373,16 @@ public:
       @param q a quaternion to be summed.
       @return a quaternion representing Q, where Q = Q + q. */
   FGQuaternion operator+(const FGQuaternion& q) const {
-    return FGQuaternion(mQ0+q.mQ0, mQ1+q.mQ1, mQ2+q.mQ2, mQ3+q.mQ3, false);
+    return FGQuaternion(Entry(1)+q(1), Entry(2)+q(2),
+                        Entry(3)+q(3), Entry(4)+q(4));
   }
 
   /** Arithmetic operator "-".
       @param q a quaternion to be subtracted.
       @return a quaternion representing Q, where Q = Q - q. */
   FGQuaternion operator-(const FGQuaternion& q) const {
-    return FGQuaternion(mQ0-q.mQ0, mQ1-q.mQ1, mQ2-q.mQ2, mQ3-q.mQ3, false);
+    return FGQuaternion(Entry(1)-q(1), Entry(2)-q(2),
+                        Entry(3)-q(3), Entry(4)-q(4));
   }
 
   /** Arithmetic operator "*".
@@ -331,11 +390,10 @@ public:
       @param q a quaternion to be multiplied.
       @return a quaternion representing Q, where Q = Q * q. */
   FGQuaternion operator*(const FGQuaternion& q) const {
-    return FGQuaternion(mQ0*q.mQ0-mQ1*q.mQ1-mQ2*q.mQ2-mQ3*q.mQ3,
-                        mQ0*q.mQ1+mQ1*q.mQ0+mQ2*q.mQ3-mQ3*q.mQ2,
-                        mQ0*q.mQ2-mQ1*q.mQ3+mQ2*q.mQ0+mQ3*q.mQ1,
-                        mQ0*q.mQ3+mQ1*q.mQ2-mQ2*q.mQ1+mQ3*q.mQ0,
-                        false);
+    return FGQuaternion(Entry(1)*q(1)-Entry(2)*q(2)-Entry(3)*q(3)-Entry(4)*q(4),
+                        Entry(1)*q(2)+Entry(2)*q(1)+Entry(3)*q(4)-Entry(4)*q(3),
+                        Entry(1)*q(3)-Entry(2)*q(4)+Entry(3)*q(1)+Entry(4)*q(2),
+                        Entry(1)*q(4)+Entry(2)*q(3)-Entry(3)*q(2)+Entry(4)*q(1));
   }
 
   /** Arithmetic operator "*=".
@@ -343,43 +401,74 @@ public:
       @param q a quaternion to be multiplied.
       @return a quaternion reference representing Q, where Q = Q * q. */
   const FGQuaternion& operator*=(const FGQuaternion& q) {
-    double q0 = mQ0*q.mQ0-mQ1*q.mQ1-mQ2*q.mQ2-mQ3*q.mQ3;
-    double q1 = mQ0*q.mQ1+mQ1*q.mQ0+mQ2*q.mQ3-mQ3*q.mQ2;
-    double q2 = mQ0*q.mQ2-mQ1*q.mQ3+mQ2*q.mQ0+mQ3*q.mQ1;
-    double q3 = mQ0*q.mQ3+mQ1*q.mQ2-mQ2*q.mQ1+mQ3*q.mQ0;
-    mQ0 = q0;
-    mQ1 = q1;
-    mQ2 = q2;
-    mQ3 = q3;
+    double q0 = Entry(1)*q(1)-Entry(2)*q(2)-Entry(3)*q(3)-Entry(4)*q(4);
+    double q1 = Entry(1)*q(2)+Entry(2)*q(1)+Entry(3)*q(4)-Entry(4)*q(3);
+    double q2 = Entry(1)*q(3)-Entry(2)*q(4)+Entry(3)*q(1)+Entry(4)*q(2);
+    double q3 = Entry(1)*q(4)+Entry(2)*q(3)-Entry(3)*q(2)+Entry(4)*q(1);
+    Entry(1) = q0;
+    Entry(2) = q1;
+    Entry(3) = q2;
+    Entry(4) = q3;
     mCacheValid = false;
     return *this;
   }
 
   friend FGQuaternion operator*(double, const FGQuaternion&);
+  
+  /** Length of the vector.
+    
+      Compute and return the euclidean norm of this vector.
+  */
+  double Magnitude() const { return sqrt(SqrMagnitude()); }
+
+  /** Square of the length of the vector.
+    
+      Compute and return the square of the euclidean norm of this vector.
+  */
+  double SqrMagnitude() const {
+    return Entry(1)*Entry(1)+Entry(2)*Entry(2)
+      +Entry(3)*Entry(3)+Entry(4)*Entry(4);
+  }
+
+  /** Normialze.
+    
+      Normalize the vector to have the Magnitude() == 1.0. If the vector
+      is equal to zero it is left untouched.
+   */
+  void Normalize();
+
+  /** Zero quaternion vector. Does not represent any orientation.
+      Useful for initialization of increments */
+  static FGQuaternion zero(void) { return FGQuaternion( 0.0, 0.0, 0.0, 0.0 ); }
 
 private:
   /** Copying by assigning the vector valued components.  */
-  FGQuaternion(double q0, double q1, double q2, double q3, bool valid)
-    : mQ0(q0), mQ1(q1), mQ2(q2), mQ3(q3), mCacheValid(valid) {}
+  FGQuaternion(double q1, double q2, double q3, double q4) : mCacheValid(false)
+    { Entry(1) = q1; Entry(2) = q2; Entry(3) = q3; Entry(4) = q4; }
+
+  /** Computation of derived values.
+      This function recomputes the derived values like euler angles and
+      transformation matrices. It does this unconditionally.  */
+  void ComputeDerivedUnconditional(void) const;
 
   /** Computation of derived values.
       This function checks if the derived values like euler angles and
       transformation matrices are already computed. If so, it
       returns. If they need to be computed this is done here.  */
-  void ComputeDerived(void) const;
+  void ComputeDerived(void) const {
+    if (!mCacheValid)
+      ComputeDerivedUnconditional();
+  }
 
-  /** The quaternion values themselves. These are the master copies.
-      The C++ keyword "mutable" tells the compiler that the data member is
-      allowed to change during a const member function.  */
-  mutable double mQ0;
-  mutable double mQ1;
-  mutable double mQ2;
-  mutable double mQ3;
+  /** The quaternion values itself. This is the master copy. */
+  double mData[4];
 
   /** A data validity flag.
       This class implements caching of the derived values like the
       orthogonal rotation matrices or the Euler angles. For caching we
-      carry a flag which signals if the values are valid or not.  */
+      carry a flag which signals if the values are valid or not.
+      The C++ keyword "mutable" tells the compiler that the data member is
+      allowed to change during a const member function.  */
   mutable bool mCacheValid;
 
   /** This stores the transformation matrices.  */
@@ -394,9 +483,15 @@ private:
   mutable FGColumnVector3 mEulerCosines;
 };
 
+/** Scalar multiplication.
+
+    @param scalar scalar value to multiply with.
+    @param p Vector to multiply.
+
+    Multiply the Vector with a scalar value.
+*/
 inline FGQuaternion operator*(double scalar, const FGQuaternion& q) {
-  return FGQuaternion(scalar*q.mQ0, scalar*q.mQ1, scalar*q.mQ2, scalar*q.mQ3,
-                      false);
+  return FGQuaternion(scalar*q(1), scalar*q(2), scalar*q(3), scalar*q(4));
 }
 
 } // namespace JSBSim

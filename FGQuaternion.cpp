@@ -73,17 +73,19 @@ SENTRY
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
-
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.5 2004/04/17 21:21:26 jberndt Exp $";
+  
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.6 2004/05/22 09:48:20 frohlich Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize from q
 FGQuaternion::FGQuaternion(const FGQuaternion& q)
-  : mQ0(q.mQ0), mQ1(q.mQ1), mQ2(q.mQ2), mQ3(q.mQ3),
-    mCacheValid(q.mCacheValid)
-{
+  : mCacheValid(q.mCacheValid) {
+  Entry(1) = q(1);
+  Entry(2) = q(2);
+  Entry(3) = q(3);
+  Entry(4) = q(4);
   if (mCacheValid) {
     mT = q.mT;
     mTInv = q.mTInv;
@@ -101,24 +103,24 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi)
   double thtd2 = 0.5*tht;
   double psid2 = 0.5*psi;
   double phid2 = 0.5*phi;
-
+  
   double Sthtd2 = sin(thtd2);
   double Spsid2 = sin(psid2);
   double Sphid2 = sin(phid2);
-
+  
   double Cthtd2 = cos(thtd2);
   double Cpsid2 = cos(psid2);
   double Cphid2 = cos(phid2);
-
+  
   double Cphid2Cthtd2 = Cphid2*Cthtd2;
   double Cphid2Sthtd2 = Cphid2*Sthtd2;
   double Sphid2Sthtd2 = Sphid2*Sthtd2;
   double Sphid2Cthtd2 = Sphid2*Cthtd2;
-
-  mQ0 = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-  mQ1 = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-  mQ2 = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-  mQ3 = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+  
+  Entry(1) = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
+  Entry(2) = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
+  Entry(3) = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
+  Entry(4) = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,72 +131,88 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi)
 */
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const {
   FGQuaternion QDot;
-  QDot.mQ0 = -0.5*(mQ1*PQR(eP) + mQ2*PQR(eQ) + mQ3*PQR(eR));
-  QDot.mQ1 =  0.5*(mQ0*PQR(eP) + mQ2*PQR(eR) - mQ3*PQR(eQ));
-  QDot.mQ2 =  0.5*(mQ0*PQR(eQ) + mQ3*PQR(eP) - mQ1*PQR(eR));
-  QDot.mQ3 =  0.5*(mQ0*PQR(eR) + mQ1*PQR(eQ) - mQ2*PQR(eP));
+  QDot(1) = -0.5*(Entry(2)*PQR(eP) + Entry(3)*PQR(eQ) + Entry(4)*PQR(eR));
+  QDot(2) =  0.5*(Entry(1)*PQR(eP) + Entry(3)*PQR(eR) - Entry(4)*PQR(eQ));
+  QDot(3) =  0.5*(Entry(1)*PQR(eQ) + Entry(4)*PQR(eP) - Entry(2)*PQR(eR));
+  QDot(4) =  0.5*(Entry(1)*PQR(eR) + Entry(2)*PQR(eQ) - Entry(3)*PQR(eP));
   return QDot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGQuaternion::Normalize()
+{
+  // Note: this does not touch the cache
+  // since it does not change the orientation ...
+  
+  double norm = Magnitude();
+  if (norm == 0.0)
+    return;
+  
+  double rnorm = 1.0/norm;
+  Entry(1) *= rnorm;
+  Entry(2) *= rnorm;
+  Entry(3) *= rnorm;
+  Entry(4) *= rnorm;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 // Compute the derived values if required ...
-void FGQuaternion::ComputeDerived(void) const {
-  if (mCacheValid)
+void FGQuaternion::ComputeDerivedUnconditional(void) const
+{
+  mCacheValid = true;
+  
+  // First normalize the 4-vector
+  double norm = Magnitude();
+  if (norm == 0.0)
     return;
 
-  mCacheValid = true;
-
-  // First normalize the 4-vector
-  double norm = sqrt(mQ0*mQ0+mQ1*mQ1+mQ2*mQ2+mQ3*mQ3);
-  if (1e-2 < fabs(norm-1.0))
-    std::cerr << "Renormalizing quaternion too much: error = "
-              << fabs(norm-1.0) << std::endl;
   double rnorm = 1.0/norm;
-  mQ0 *= rnorm;
-  mQ1 *= rnorm;
-  mQ2 *= rnorm;
-  mQ3 *= rnorm;
+  double q1 = rnorm*Entry(1);
+  double q2 = rnorm*Entry(2);
+  double q3 = rnorm*Entry(3);
+  double q4 = rnorm*Entry(4);
 
   // Now compute the transformation matrix.
-  double Q0Q0 = mQ0*mQ0;
-  double Q1Q1 = mQ1*mQ1;
-  double Q2Q2 = mQ2*mQ2;
-  double Q3Q3 = mQ3*mQ3;
-  double Q0Q1 = mQ0*mQ1;
-  double Q0Q2 = mQ0*mQ2;
-  double Q0Q3 = mQ0*mQ3;
-  double Q1Q2 = mQ1*mQ2;
-  double Q1Q3 = mQ1*mQ3;
-  double Q2Q3 = mQ2*mQ3;
-
-  mT(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-  mT(1,2) = 2.0*(Q1Q2 + Q0Q3);
-  mT(1,3) = 2.0*(Q1Q3 - Q0Q2);
-  mT(2,1) = 2.0*(Q1Q2 - Q0Q3);
-  mT(2,2) = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-  mT(2,3) = 2.0*(Q2Q3 + Q0Q1);
-  mT(3,1) = 2.0*(Q1Q3 + Q0Q2);
-  mT(3,2) = 2.0*(Q2Q3 - Q0Q1);
-  mT(3,3) = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
+  double q1q1 = q1*q1;
+  double q2q2 = q2*q2;
+  double q3q3 = q3*q3;
+  double q4q4 = q4*q4;
+  double q1q2 = q1*q2;
+  double q1q3 = q1*q3;
+  double q1q4 = q1*q4;
+  double q2q3 = q2*q3;
+  double q2q4 = q2*q4;
+  double q3q4 = q3*q4;
+  
+  mT(1,1) = q1q1 + q2q2 - q3q3 - q4q4;
+  mT(1,2) = 2.0*(q2q3 + q1q4);
+  mT(1,3) = 2.0*(q2q4 - q1q3);
+  mT(2,1) = 2.0*(q2q3 - q1q4);
+  mT(2,2) = q1q1 - q2q2 + q3q3 - q4q4;
+  mT(2,3) = 2.0*(q3q4 + q1q2);
+  mT(3,1) = 2.0*(q2q4 + q1q3);
+  mT(3,2) = 2.0*(q3q4 - q1q2);
+  mT(3,3) = q1q1 - q2q2 - q3q3 + q4q4;
   // Since this is an orthogonal matrix, the inverse is simply
   // the transpose.
   mTInv = mT;
   mTInv.T();
-
+  
   // Compute the Euler-angles
   if (mT(3,3) == 0.0)
     mEulerAngles(ePhi) = 0.5*M_PI;
   else
     mEulerAngles(ePhi) = atan2(mT(2,3), mT(3,3));
-
+  
   if (mT(1,3) < -1.0)
     mEulerAngles(eTht) = 0.5*M_PI;
   else if (1.0 < mT(1,3))
     mEulerAngles(eTht) = -0.5*M_PI;
   else
     mEulerAngles(eTht) = asin(-mT(1,3));
-
+  
   if (mT(1,1) == 0.0)
     mEulerAngles(ePsi) = 0.5*M_PI;
   else {
@@ -203,7 +221,7 @@ void FGQuaternion::ComputeDerived(void) const {
       psi += 2*M_PI;
     mEulerAngles(ePsi) = psi;
   }
-
+  
   // FIXME: may be one can compute those values easier ???
   mEulerSines(ePhi) = sin(mEulerAngles(ePhi));
   // mEulerSines(eTht) = sin(mEulerAngles(eTht));
