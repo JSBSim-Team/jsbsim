@@ -138,7 +138,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.72 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.73 2001/04/20 16:57:51 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -257,8 +257,8 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 bool FGAircraft::Run(void) {
   if (!FGModel::Run()) {                 // if false then execute this Run()
     GetState();
-
-    for (int i = 1; i <= 3; i++)  vForces(i) = vMoments(i) = 0.0;
+    vForces.InitMatrix();
+    vMoments.InitMatrix();
 
     FMProp();
     FMAero();
@@ -269,11 +269,10 @@ bool FGAircraft::Run(void) {
     if (fabs(Position->GetGamma()) < 1.57) {
         nlf = vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma()));
     }    
+    return false;
   } else {                               // skip Run() execution this time
+    return true;
   }
-
-
-  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
