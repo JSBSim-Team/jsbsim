@@ -144,7 +144,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.84 2001/07/29 22:15:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.85 2001/08/07 13:00:31 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -235,7 +235,7 @@ bool FGAircraft::Run(void)
     vMoments = Aerodynamics->GetMoments()
              + Propulsion->GetMoments()
              + GroundReactions->GetMoments();
-
+    
     return false;
   } else {                               // skip Run() execution this time
     return true;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.10 2001/07/29 01:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.11 2001/08/07 13:00:31 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 extern short debug_lvl;
@@ -49,7 +49,10 @@ CLASS IMPLEMENTATION
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex),
                                                         vForces(3),
-                                                        vMoments(3)
+                                                        vMoments(3),
+                                                        vMaxStaticGrip(3),
+                                                        vMaxSlideResist(3),
+                                                        vMaxMomentResist(3)
 {
   Name = "FGGroundReactions";
 
@@ -64,16 +67,45 @@ bool FGGroundReactions:: Run(void)
   if (!FGModel::Run()) {
     vForces.InitMatrix();
     vMoments.InitMatrix();
-    if ( !GearUp ) {
+
+    if ( !GearUp && Position->GetDistanceAGL() < 300.0 ) {
       vector <FGLGear>::iterator iGear = lGear.begin();
       while (iGear != lGear.end()) {
         vForces  += iGear->Force();
         vMoments += iGear->Moment();
         iGear++;
       }
+      if (fabs(Translation->GetUVW(eX)) < 0.1 &&
+          fabs(Translation->GetUVW(eZ)) < 0.1)
+      {
+        vMaxStaticGrip.InitMatrix();
+        vMaxSlideResist.InitMatrix();
+        vMaxMomentResist.InitMatrix();
+        iGear = lGear.begin();
+        while (iGear != lGear.end()) {
+          // calculate maximum gripping power for each gear here based on brake
+          // and steering settings
+          // also calculate total number of wheels with WOW set true?
+          if (iGear->GetWOW()) {
+            vMaxStaticGrip += 1;
+            vMaxSlideResist += 1;
+            vMaxMomentResist += 1;
+          }
+          iGear++;
+        }
+
+        vForces =  -1.0 * ( Aerodynamics->GetForces()
+                          + Propulsion->GetForces()
+                          + Inertial->GetForces());
+
+        vMoments(1) = 0.0;
+        vMoments(2) = 0.0;
+        vMoments(3) = -(Aerodynamics->GetMoments(3) + Propulsion->GetMoments(3));
+      }
     } else {
       // Crash Routine
     }
+
     return false;
   } else {
     return true;

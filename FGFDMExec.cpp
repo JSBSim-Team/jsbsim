@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.54 2001/07/29 22:15:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.55 2001/08/07 13:00:31 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -194,8 +194,8 @@ bool FGFDMExec::Allocate(void) {
 
   State        = new FGState(this); // This must be done here, as the FGState
                                     // class needs valid pointers to the above
-  // model classes
-
+                                    // model classes
+  
   // Initialize models so they can communicate with each other
 
   if (!Atmosphere->InitModel()) {

@@ -56,9 +56,10 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 #include "FGLGear.h"
+#include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.12 2001/07/29 01:42:40 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.13 2001/08/07 13:00:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -82,6 +83,9 @@ private:
   bool GearUp;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
+  FGColumnVector3 vMaxStaticGrip;
+  FGColumnVector3 vMaxSlideResist;
+  FGColumnVector3 vMaxMomentResist;
 
   void Debug(void);
 };
