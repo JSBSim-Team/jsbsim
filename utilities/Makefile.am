@@ -1,5 +1,5 @@
 INCLUDES = \
-	-Wall
+	-I/usr/local/dislin_2
 
 bin_PROGRAMS = simplot
 
@@ -8,11 +8,11 @@ simplot_SOURCES = \
 	datafile.h \
 	main.cpp
 
-simplot_CFLAGS = \
-	-I/usr/local/dislin
+simplot_CXXFLAGS = \
+	-Wall
 
 simplot_LDADD = \
-	-L/usr/local/dislin -ldisgcc -lgdi32 -lcomdlg32 \
+	-L/usr/local/dislin_2 -ldisgcc_d -lgdi32 -lcomdlg32 \
 	$(top_srcdir)/libJSBSim.a \
 	$(top_srcdir)/filtersjb/libFCSComponents.a
 

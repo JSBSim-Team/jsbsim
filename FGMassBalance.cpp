@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.41 2004/03/07 06:02:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.42 2004/03/09 12:32:51 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,18 +96,20 @@ bool FGMassBalance::Run(void)
 
 // Calculate new total moments of inertia
 
-    mJ = baseJ + CalculatePMInertias() + Propulsion->CalculateTankInertias();
+    // At first it is the base configuration inertia matrix ...
+    mJ = baseJ;
+    // ... with the additional term originating from the parallel axis theorem.
+    mJ += GetPointmassInertia( lbtoslug * EmptyWeight, vbaseXYZcg );
+    // Then add the contributions from the additional pointmasses.
+    mJ += CalculatePMInertias();
+    mJ += Propulsion->CalculateTankInertias();
 
     Ixx = mJ(1,1);
     Iyy = mJ(2,2);
     Izz = mJ(3,3);
-    Ixy = mJ(1,2);
-    Ixz = mJ(1,3);
-    Iyz = mJ(2,3);
-
-    mJ(1,2) = mJ(2,1) *= -1.0;
-    mJ(1,3) = mJ(3,1) *= -1.0;
-    mJ(2,3) = mJ(3,2) *= -1.0;
+    Ixy = -mJ(1,2);
+    Ixz = -mJ(1,3);
+    Iyz = -mJ(2,3);
 
 // Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
 
@@ -172,38 +174,16 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 FGMatrix33& FGMassBalance::CalculatePMInertias(void)
 {
   unsigned int size;
-  double XX, YY, ZZ;
-  double pmIxx, pmIyy, pmIzz, pmIxy, pmIxz, pmIyz;
 
   size = PointMassLoc.size();
   if (size == 0) return pmJ;
 
-  pmIxx = pmIyy = pmIzz = pmIxy = pmIxz = pmIyz = 0.0;
+  pmJ = FGMatrix33();
 
-  for (unsigned int i=0; i<size; i++) {
+  for (unsigned int i=0; i<size; i++)
+    pmJ += GetPointmassInertia( lbtoslug * PointMassWeight[i], PointMassLoc[i] );
 
-    vPMxyz = StructuralToBody(PointMassLoc[i]); // get vector, CG to PM
-
-    XX = vPMxyz(eX)*vPMxyz(eX);
-    YY = vPMxyz(eY)*vPMxyz(eY);
-    ZZ = vPMxyz(eZ)*vPMxyz(eZ);
-
-    pmIxx += (YY + ZZ)*PointMassWeight[i];
-    pmIyy += (XX + ZZ)*PointMassWeight[i];
-    pmIzz += (XX + YY)*PointMassWeight[i];
-    pmIxy += vPMxyz(eX)*vPMxyz(eY)*PointMassWeight[i];
-    pmIxz += vPMxyz(eX)*vPMxyz(eZ)*PointMassWeight[i];
-    pmIyz += vPMxyz(eY)*vPMxyz(eZ)*PointMassWeight[i];
-  }
-
-  pmJ(1,1) = lbtoslug * pmIxx;
-  pmJ(2,2) = lbtoslug * pmIyy;
-  pmJ(3,3) = lbtoslug * pmIzz;
-  pmJ(1,2) = pmJ(2,1) = lbtoslug * pmIxy;
-  pmJ(1,3) = pmJ(3,1) = lbtoslug * pmIxz;
-  pmJ(2,3) = pmJ(3,2) = lbtoslug * pmIyz;
-
-  return (pmJ);
+  return pmJ;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,25 +221,13 @@ FGColumnVector3 FGMassBalance::StructuralToBody(const FGColumnVector3& r) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMassBalance::bind(void) // UNITS SHOULD BE CHANGED FOR Ixx, etc. to SLUG-FT^2 ??
+void FGMassBalance::bind(void)
 {
   typedef double (FGMassBalance::*PMF)(int) const;
   PropertyManager->Tie("inertia/mass-slugs", this,
                        &FGMassBalance::GetMass);
   PropertyManager->Tie("inertia/weight-lbs", this,
                        &FGMassBalance::GetWeight);
-/*PropertyManager->Tie("inertia/ixx-lbsft2", this,
-                       &FGMassBalance::GetIxx);
-  PropertyManager->Tie("inertia/iyy-lbsft2", this,
-                       &FGMassBalance::GetIyy);
-  PropertyManager->Tie("inertia/izz-lbsft2", this,
-                       &FGMassBalance::GetIzz);
-  PropertyManager->Tie("inertia/ixy-lbsft2", this,
-                       &FGMassBalance::GetIxy);
-  PropertyManager->Tie("inertia/ixz-lbsft2", this,
-                       &FGMassBalance::GetIxz);
-  PropertyManager->Tie("inertia/iyz-lbsft2", this,
-                       &FGMassBalance::GetIyz); */
   PropertyManager->Tie("inertia/cg-x-ft", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-ft", this,2,

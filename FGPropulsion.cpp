@@ -72,7 +72,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.95 2004/03/06 13:15:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.96 2004/03/09 12:32:51 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -522,40 +522,17 @@ double FGPropulsion::GetTanksWeight(void)
 FGMatrix33& FGPropulsion::CalculateTankInertias(void)
 {
   unsigned int size;
-  double contents;
-  double XX, YY, ZZ;
-  double tankIxx, tankIyy, tankIzz, tankIxz, tankIxy, tankIyz;
 
   size = Tanks.size();
-  if (size == 0) return (tankJ);
+  if (size == 0) return tankJ;
 
-  tankIxx = tankIyy = tankIzz = tankIxy = tankIxz = tankIyz = 0.0;
+  tankJ = FGMatrix33();
 
-  for (unsigned int i=0; i<size; i++) {
+  for (unsigned int i=0; i<size; i++)
+    tankJ += MassBalance->GetPointmassInertia( lbtoslug * Tanks[i]->GetContents(),
+                                               Tanks[i]->GetXYZ() );
 
-    vTankXYZ = MassBalance->StructuralToBody(Tanks[i]->GetXYZ()); // get vector, CG to Tank
-                                                   // should we be passing vector
-                                                   // by reference to this?
-    contents = Tanks[i]->GetContents();
-    XX = vTankXYZ(eX)*vTankXYZ(eX);
-    YY = vTankXYZ(eY)*vTankXYZ(eY);
-    ZZ = vTankXYZ(eZ)*vTankXYZ(eZ);
-    tankIxx += (YY + ZZ)*contents;
-    tankIyy += (XX + ZZ)*contents;
-    tankIzz += (XX + YY)*contents;
-    tankIxy += vTankXYZ(eX)*vTankXYZ(eY)*contents;
-    tankIxz += vTankXYZ(eX)*vTankXYZ(eZ)*contents;
-    tankIyz += vTankXYZ(eY)*vTankXYZ(eZ)*contents;
-  }
-
-  tankJ(1,1) = lbtoslug * tankIxx;
-  tankJ(2,2) = lbtoslug * tankIyy;
-  tankJ(3,3) = lbtoslug * tankIzz;
-  tankJ(1,2) = tankJ(2,1) = lbtoslug * tankIxy;
-  tankJ(1,3) = tankJ(3,1) = lbtoslug * tankIxz;
-  tankJ(2,3) = tankJ(3,2) = lbtoslug * tankIyz;
-
-  return (tankJ);
+  return tankJ;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

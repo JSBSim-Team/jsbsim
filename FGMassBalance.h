@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.27 2004/03/05 04:53:12 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.28 2004/03/09 12:32:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -80,11 +80,37 @@ public:
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
 
+  /** Computes the inertia contribution of a pointmass.
+      Computes and returns the inertia matrix of a pointmass of mass
+      slugs at the given vector r in the structural frame. The units
+      should be for the mass in slug and the vector in the structural
+      frame as usual in inches.
+      @param slugs the mass of this single pointmass given in slugs
+      @param r the location of this single pointmass in the structural frame
+   */
+  FGMatrix33 GetPointmassInertia(double slugs, const FGColumnVector3& r) const
+  {
+    FGColumnVector3 v = StructuralToBody( r );
+    FGColumnVector3 sv = slugs*v;
+    double xx = sv(1)*v(1);
+    double yy = sv(2)*v(2);
+    double zz = sv(3)*v(3);
+    double xy = -sv(1)*v(2);
+    double xz = -sv(1)*v(3);
+    double yz = -sv(2)*v(3);
+    return FGMatrix33( yy+zz, xy, xz,
+                       xy, xx+zz, yz,
+                       xz, yz, xx+yy );
+  }
+
   /** Conversion from the structural frame to the body frame.
-   * Converts the argument \parm r given in the reference frame
-   * coordinate system to the body frame. The units of the structural
-   * frame are assumed to be in inches. The unit of the result is in
-   * ft.
+      Converts the location given in the structural frame
+      coordinate system to the body frame. The units of the structural
+      frame are assumed to be in inches. The unit of the result is in
+      ft.
+      @param r vector coordinate in the structural reference frame (X positive
+               aft, measurements in inches).
+      @return vector coordinate in the body frame, in feet.
    */
   FGColumnVector3 StructuralToBody(const FGColumnVector3& r) const;
 

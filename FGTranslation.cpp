@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.56 2004/02/18 02:45:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.57 2004/03/09 12:32:51 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,6 @@ bool FGTranslation::Run(void)
         beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
                sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
 
-      // stolen, quite shamelessly, from LaRCsim
       double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
       double signU=1;
       if (vAeroUVW(eU) != 0.0)

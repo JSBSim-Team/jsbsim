@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.23 2004/03/08 04:02:16 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.24 2004/03/09 12:32:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
   /** Handles matrix math operations.
-      @author Tony Peden, Jon Berndt, Mathias Frolich
+      @author Tony Peden, Jon Berndt, Mathias Froelich
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,16 +113,16 @@ public:
   };
 
   /** Default initializer.
-   *
-   * Create a zero matrix.
+
+      Create a zero matrix.
    */
   FGMatrix33(void);
 
   /** Copy constructor.
-   *
-   * \param M Matrix which is used for initialization.
-   *
-   * Create copy of the matrix given in the argument.
+
+      @param M Matrix which is used for initialization.
+
+      Create copy of the matrix given in the argument.
    */
   FGMatrix33(const FGMatrix33& M) {
     Entry(1,1) = M.Entry(1,1);
@@ -139,18 +139,18 @@ public:
   }
 
   /** Initialization by given values.
-   *
-   * \param m11 value of the 1,1 Matrix element.
-   * \param m12 value of the 1,2 Matrix element.
-   * \param m13 value of the 1,3 Matrix element.
-   * \param m21 value of the 2,1 Matrix element.
-   * \param m22 value of the 2,2 Matrix element.
-   * \param m23 value of the 2,3 Matrix element.
-   * \param m31 value of the 3,1 Matrix element.
-   * \param m32 value of the 3,2 Matrix element.
-   * \param m33 value of the 3,3 Matrix element.
-   *
-   * Create a matrix from the doubles given in the arguments.
+
+      @param m11 value of the 1,1 Matrix element.
+      @param m12 value of the 1,2 Matrix element.
+      @param m13 value of the 1,3 Matrix element.
+      @param m21 value of the 2,1 Matrix element.
+      @param m22 value of the 2,2 Matrix element.
+      @param m23 value of the 2,3 Matrix element.
+      @param m31 value of the 3,1 Matrix element.
+      @param m32 value of the 3,2 Matrix element.
+      @param m33 value of the 3,3 Matrix element.
+
+      Create a matrix from the doubles given in the arguments.
    */
   FGMatrix33(double m11, double m12, double m13,
              double m21, double m22, double m23,
@@ -173,78 +173,77 @@ public:
   ~FGMatrix33(void) { Debug(1); }
 
   /** Read access the entries of the matrix.
-   \param row Row index.
-   \param col Column index.
+      @param row Row index.
+      @param col Column index.
 
-   \return the value of the matrix entry at the given row and
-   column indices. Indices are counted starting with 1.
+      @return the value of the matrix entry at the given row and
+      column indices. Indices are counted starting with 1.
    */
   double operator()(unsigned int row, unsigned int col) const {
     return Entry(row, col);
   }
 
   /** Write access the entries of the matrix.
-   * Note that the indices given in the arguments are unchecked.
-   *
-   * \param row Row index.
-   * \param col Column index.
-   *
-   * \return a reference to the matrix entry at the given row and
-   * column indices. Indices are counted starting with 1.
+      Note that the indices given in the arguments are unchecked.
+
+      @param row Row index.
+      @param col Column index.
+
+      @return a reference to the matrix entry at the given row and
+      column indices. Indices are counted starting with 1.
    */
   double& operator()(unsigned int row, unsigned int col) {
     return Entry(row, col);
   }
 
   /** Read access the entries of the matrix.
-   * This function is just a shortcut for the \ref double&
-   * operator()(unsigned int row, unsigned int col) function. It is
-   * used internally to access the elements in a more convenient way.
-   *
-   * Note that the indices given in the arguments are unchecked.
-   *
-   * \param row Row index.
-   * \param col Column index.
-   *
-   * \return the value of the matrix entry at the given row and
-   * column indices. Indices are counted starting with 1.
+      This function is just a shortcut for the @ref double&
+      operator()(unsigned int row, unsigned int col) function. It is
+      used internally to access the elements in a more convenient way.
+
+      Note that the indices given in the arguments are unchecked.
+
+      @param row Row index.
+      @param col Column index.
+
+      @return the value of the matrix entry at the given row and
+      column indices. Indices are counted starting with 1.
    */
   double Entry(unsigned int row, unsigned int col) const {
     return data[(col-1)*eRows+row-1];
   }
 
   /** Write access the entries of the matrix.
-   * This function is just a shortcut for the \ref double&
-   * operator()(unsigned int row, unsigned int col) function. It is
-   * used internally to access the elements in a more convenient way.
-   *
-   * Note that the indices given in the arguments are unchecked.
-   *
-   * \param row Row index.
-   * \param col Column index.
-   *
-   * \return a reference to the matrix entry at the given row and
-   * column indices. Indices are counted starting with 1.
+      This function is just a shortcut for the @ref double&
+      operator()(unsigned int row, unsigned int col) function. It is
+      used internally to access the elements in a more convenient way.
+
+      Note that the indices given in the arguments are unchecked.
+
+      @param row Row index.
+      @param col Column index.
+
+      @return a reference to the matrix entry at the given row and
+      column indices. Indices are counted starting with 1.
    */
    double& Entry(unsigned int row, unsigned int col) {
      return data[(col-1)*eRows+row-1];
    }
 
-   /** Number of rows in the matrix.
-    *
-    * Return the number of rows in the matrix.
-    */
+  /** Number of rows in the matrix.
+      @return the number of rows in the matrix.
+   */
    unsigned int Rows(void) const { return eRows; }
 
-   /** Number of cloumns in the matrix.
-    *
-    * Return the number of columns in the matrix.
-    */
+  /** Number of cloumns in the matrix.
+      @return the number of columns in the matrix.
+   */
    unsigned int Cols(void) const { return eColumns; }
 
   /** Transposed matrix.
-   *
-   * Return the transposed matrix.
+      This function only returns the transpose of this matrix. This matrix itself
+      remains unchanged.
+      @return the transposed matrix.
    */
   FGMatrix33 Transposed(void) const {
     return FGMatrix33( Entry(1,1), Entry(2,1), Entry(3,1),
@@ -252,9 +251,19 @@ public:
                        Entry(1,3), Entry(2,3), Entry(3,3) );
   }
 
-  // Not shure of these. Provided for compatibility for now.
+  /** Transposes this matrix.
+      This function only transposes this matrix. Nothing is returned.
+   */
   void T(void);
+
+/** Initialize the matrix.
+    This function initializes a matrix to all 0.0.
+ */
   void InitMatrix(void);
+
+/** Initialize the matrix.
+    This function initializes a matrix to user specified values.
+ */
   void InitMatrix(double m11, double m12, double m13,
                   double m21, double m22, double m23,
                   double m31, double m32, double m33) {
@@ -270,34 +279,32 @@ public:
   }
 
   /** Determinant of the matrix.
-   *
-   * Compute and return the determinant of the matrix.
+      @return the determinant of the matrix.
    */
   double Determinant(void) const;
 
   /** Return if the matrix is invertible.
-   * Checks and returns if the matrix is nonsingular and thus
-   * invertible. This is done by simply computing the determinant and
-   * check if it is zero. Note that this test does not cover any
-   * instabilities caused by nearly singular matirces using finite
-   * arithmetics. It only checks exact singularity.
+      Checks and returns if the matrix is nonsingular and thus
+      invertible. This is done by simply computing the determinant and
+      check if it is zero. Note that this test does not cover any
+      instabilities caused by nearly singular matirces using finite
+      arithmetics. It only checks exact singularity.
    */
   bool Invertible(void) const { return 0.0 != Determinant(); }
 
   /** Return the inverse of the matrix.
-   *
-   * Computes and returns if the inverse of the matrix. It is computed
-   * by Cramers Rule. Also there are no checks performed if the matrix
-   * is invertible. If you are not sure that it really is check this
-   * with the \ref Invertible() call before.
+      Computes and returns if the inverse of the matrix. It is computed
+      by Cramers Rule. Also there are no checks performed if the matrix
+      is invertible. If you are not sure that it really is check this
+      with the @ref Invertible() call before.
    */
   FGMatrix33 Inverse(void) const;
 
   /** Assignment operator.
-   *
-   * \param A source matrix.
-   *
-   * Copy the content of the matrix given in the argument into *this.
+
+      @param A source matrix.
+
+      Copy the content of the matrix given in the argument into *this.
    */
   FGMatrix33& operator=(const FGMatrix33& A) {
     data[0] = A.data[0];
@@ -313,24 +320,113 @@ public:
   }
 
   /** Matrix vector multiplication.
-   *
-   * \param v vector to multiply with.
-   *
-   * Compute and return the matrix vector ptoduct (*this)*v.
+
+      @param v vector to multiply with.
+      @return matric vector product.
+
+      Compute and return the product of the current matrix with the
+      vector given in the argument.
    */
   FGColumnVector3 operator*(const FGColumnVector3& v) const;
 
-  // FIXME: write documentation.
+  /** Matrix subtraction.
+
+      @param B matrix to add to.
+      @return difference of the matrices.
+
+      Compute and return the sum of the current matrix and the matrix
+      B given in the argument.
+  */
   FGMatrix33 operator-(const FGMatrix33& B) const;
+
+  /** Matrix addition.
+
+      @param B matrix to add to.
+      @return sum of the matrices.
+
+      Compute and return the sum of the current matrix and the matrix
+      B given in the argument.
+  */
   FGMatrix33 operator+(const FGMatrix33& B) const;
+
+  /** Matrix product.
+
+      @param B matrix to add to.
+      @return product of the matrices.
+
+      Compute and return the product of the current matrix and the matrix
+      B given in the argument.
+  */
   FGMatrix33 operator*(const FGMatrix33& B) const;
+
+  /** Multiply the matrix with a scalar.
+
+      @param scalar scalar factor to multiply with.
+      @return scaled matrix.
+
+      Compute and return the product of the current matrix with the
+      scalar value scalar given in the argument.
+  */
   FGMatrix33 operator*(const double scalar) const;
+
+  /** Multiply the matrix with 1.0/scalar.
+
+      @param scalar scalar factor to divide through.
+      @return scaled matrix.
+
+      Compute and return the product of the current matrix with the
+      scalar value 1.0/scalar, where scalar is given in the argument.
+  */
   FGMatrix33 operator/(const double scalar) const;
 
+  /** In place matrix subtraction.
+
+      @param B matrix to subtract.
+      @return reference to the current matrix.
+
+      Compute the diffence from the current matrix and the matrix B
+      given in the argument.
+  */
   FGMatrix33& operator-=(const FGMatrix33 &B);
+
+  /** In place matrix addition.
+
+      @param B matrix to add.
+      @return reference to the current matrix.
+
+      Compute the sum of the current matrix and the matrix B
+      given in the argument.
+  */
   FGMatrix33& operator+=(const FGMatrix33 &B);
+
+  /** In place matrix multiplication.
+
+      @param B matrix to multiply with.
+      @return reference to the current matrix.
+
+      Compute the product of the current matrix and the matrix B
+      given in the argument.
+  */
   FGMatrix33& operator*=(const FGMatrix33 &B);
+
+  /** In place matrix scale.
+
+      @param scalar scalar value to multiply with.
+      @return reference to the current matrix.
+
+      Compute the product of the current matrix and the scalar value scalar
+      given in the argument.
+  */
   FGMatrix33& operator*=(const double scalar);
+
+  /** In place matrix scale.
+
+      @param scalar scalar value to divide through.
+      @return reference to the current matrix.
+
+      Compute the product of the current matrix and the scalar value
+      1.0/scalar, where scalar is given in the argument.
+  */
   FGMatrix33& operator/=(const double scalar);
 
 private:
@@ -340,34 +436,35 @@ private:
 };
 
 /** Scalar multiplication.
- *
- * \param scalar scalar value to multiply with.
- * \param A Matrix to multiply.
- *
- * Multiply the Matrix with a scalar value.
- */
+
+    @param scalar scalar value to multiply with.
+    @param A Matrix to multiply.
+
+    Multiply the Matrix with a scalar value.
+*/
 inline FGMatrix33 operator*(double scalar, const FGMatrix33& A) {
   // use already defined operation.
   return A*scalar;
 }
 
 /** Write matrix to a stream.
- *
- * \param os Stream to write to.
- * \param M Matrix to write.
- *
- * Write the matrix to a stream.
- */
+
+    @param os Stream to write to.
+    @param M Matrix to write.
+
+    Write the matrix to a stream.
+*/
 ostream& operator<<(ostream& os, const FGMatrix33& M);
 
 /** Read matrix from a stream.
- *
- * \param os Stream to read from.
- * \param M Matrix to initialize with the values from the stream.
- *
- * Read matrix from a stream.
- */
+
+    @param os Stream to read from.
+    @param M Matrix to initialize with the values from the stream.
+
+    Read matrix from a stream.
+*/
 istream& operator>>(istream& is, FGMatrix33& M);
 
-}
+} // namespace JSBSim
+
 #endif

@@ -30,7 +30,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <time.h>
-#include "dislin.h"
+#include "dislin_d.h"
 
 void plotdata(DataFile& df, ifstream* datafile);
 void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs);
@@ -210,7 +210,7 @@ savepng:
 
 // Plot data
 
-  float *timarray = new float[df.GetEndIdx()-df.GetStartIdx()+1]; // new jsb 11/9
+  double *timarray = new double[df.GetEndIdx()-df.GetStartIdx()+1]; // new jsb 11/9
 
   for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
     timarray[pti] = df.Data[pt][0];
@@ -264,7 +264,7 @@ savepng:
   grid(1,1);
 
   for (thisplot=0; thisplot < numtraces; thisplot++) {
-    float *datarray = new float[df.GetEndIdx()-df.GetStartIdx()+1];
+    double *datarray = new double[df.GetEndIdx()-df.GetStartIdx()+1];
     for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
       datarray[pti] = df.Data[pt][commands_vec[thisplot]];
     }
@@ -472,7 +472,7 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
 
 // Plot data
 
-  float *timarray = new float[df.GetEndIdx()-df.GetStartIdx()+1];
+  double *timarray = new double[df.GetEndIdx()-df.GetStartIdx()+1];
 
   for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
     timarray[pti] = df.Data[pt][0];
@@ -526,7 +526,7 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   grid(1,1);
 
   for (thisplot=0; thisplot < numtraces; thisplot++) {
-    float *datarray = new float[df.GetEndIdx()-df.GetStartIdx()+1];
+    double *datarray = new double[df.GetEndIdx()-df.GetStartIdx()+1];
     for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
       datarray[pti] = df.Data[pt][IDs[thisplot]];
     }

@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.128 2004/03/06 23:47:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.129 2004/03/09 12:32:50 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,9 +239,9 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
     }
   }
 
-  MassBalance->SetAircraftBaseInertias(FGMatrix33(  bixx,  bixy,  bixz,
-                                                    bixy,  biyy,  biyz,
-                                                    bixz,  biyz,  bizz ));
+  MassBalance->SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  -bixz,
+                                                    -bixy,  biyy,  -biyz,
+                                                    -bixz,  -biyz,  bizz ));
 
   // calculate some derived parameters
   if (cbar != 0.0) {
