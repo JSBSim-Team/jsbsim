@@ -43,8 +43,8 @@ scheme.
 SENTRY
 *******************************************************************************/
 
-#ifndef FGTrim_H
-#define FGTrim_H
+#ifndef FGTRIM_H
+#define FGTRIM_H
 
 /*******************************************************************************
 INCLUDES
@@ -65,11 +65,6 @@ INCLUDES
 
 #include <vector.h>
 
-#define ELEV_MIN -1
-#define ELEV_MAX 1
-
-#define THROTTLE_MIN 0
-#define THROTTLE_MAX 1
 
 /*******************************************************************************
 CLASS DECLARATION
@@ -82,6 +77,7 @@ private:
 
   vector<FGTrimAxis*> TrimAxes;
   int current_axis;
+  int N, Nsub;
   int NumAxes;
   TrimMode mode;
   int Debug;
@@ -90,6 +86,7 @@ private:
   float dth;
   float *sub_iterations;
   float *successful;
+  bool *solution;
   int max_sub_iterations;
   int max_iterations;
   int total_its;
@@ -98,6 +95,7 @@ private:
   bool trim_failed;
   int axis_count;
   int solutionDomain;
+  float xlo,xhi,alo,ahi;
 
 
   FGFDMExec* fdmex;
@@ -109,9 +107,9 @@ private:
   // 0 for no sign change,
   // -1 if sign change between accel(control_min) and accel(0)
   // 1 if sign between accel(0) and accel(control_max)
-  bool solve(int *actual_its);
-
-
+  bool solve(void);
+  bool findInterval(void);
+  bool checkLimits(void);
 
 public:
   FGTrim(FGFDMExec *FDMExec, FGInitialCondition *FGIC, TrimMode tt);
