@@ -66,7 +66,7 @@ class FGGroundReactions : public FGModel {
 
 public:
   FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions(void);
+  ~FGGroundReactions();
 
   bool Run(void);
   bool LoadGroundReactions(FGConfigFile* AC_cfg);

@@ -62,13 +62,13 @@ INCLUDES
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-const char *Id_Inertial = "JSBSim $Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.h,v 1.7 2001/02/04 13:16:14 jsb Exp $";
+const char *Id_Inertial = "JSBSim $Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.h,v 1.8 2001/03/20 16:10:48 jberndt Exp $";
 
 class FGInertial : public FGModel {
 
 public:
   FGInertial(FGFDMExec*);
-  ~FGInertial(void);
+  ~FGInertial();
 
   bool Run(void);
   bool LoadInertial(FGConfigFile* AC_cfg);

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.11 2001/03/19 14:07:19 jberndt Exp $";
+#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.12 2001/03/20 16:11:06 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -55,7 +55,7 @@ class FGPiston : public FGEngine
 {
 public:
   FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGPiston(void) {}
+  ~FGPiston();
 
   float Calculate(float PowerRequired);
   float GetPowerAvailable(void) {return PowerAvailable;}

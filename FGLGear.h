@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.30 2001/03/19 23:53:46 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.31 2001/03/20 16:10:48 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -184,7 +184,7 @@ public:
       @param lgear a reference to an existing FGLGear object     */
   FGLGear(const FGLGear& lgear);
   /// Destructor
-  ~FGLGear(void);
+  ~FGLGear();
 
 
   /// The Force vector for this gear

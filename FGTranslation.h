@@ -79,7 +79,7 @@ CLASS DECLARATION
 class FGTranslation : public FGModel {
 public:
   FGTranslation(FGFDMExec*);
-  ~FGTranslation(void);
+  ~FGTranslation();
 
   inline FGColumnVector GetUVW(void) { return vUVW; }
   inline FGColumnVector GetUVWdot(void) { return vUVWdot; }

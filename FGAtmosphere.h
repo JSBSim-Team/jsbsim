@@ -45,13 +45,13 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.14 2001/03/19 14:07:18 jberndt Exp $"
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.15 2001/03/20 16:10:47 jberndt Exp $"
 
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
 ********************************************************************************
  
-[1]    Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
+[1]   Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
       1989, ISBN 0-07-001641-0
  
 *******************************************************************************
@@ -62,7 +62,7 @@ class FGAtmosphere : public FGModel {
 public:
 
   FGAtmosphere(FGFDMExec*);
-  ~FGAtmosphere(void);
+  ~FGAtmosphere();
   bool Run(void);
 
   inline float GetTemperature(void) {return temperature;}

@@ -68,7 +68,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.19 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.20 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 extern short debug_lvl;
@@ -99,7 +99,10 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTranslation::~FGTranslation(void) {}
+FGTranslation::~FGTranslation()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGTranslation" << endl;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

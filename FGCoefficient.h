@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.23 2001/03/19 14:07:18 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.24 2001/03/20 16:10:48 jberndt Exp $
     @see -
 */
 
@@ -126,7 +126,7 @@ class FGCoefficient
 
 public:
   FGCoefficient(FGFDMExec*, FGConfigFile*);
-  ~FGCoefficient(void);
+  ~FGCoefficient();
 
   float Value(float, float);
   float Value(float);

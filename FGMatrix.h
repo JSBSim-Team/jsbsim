@@ -89,7 +89,7 @@ private:
 public:
   FGMatrix(unsigned int r, unsigned int c);
   FGMatrix(const FGMatrix& A);
-  ~FGMatrix(void);
+  ~FGMatrix();
 
   FGMatrix& operator=(const FGMatrix& A);
   inline double& operator()(unsigned int row, unsigned int col) const {return data[row][col];}
@@ -133,7 +133,7 @@ public:
   FGColumnVector(void);
   FGColumnVector(int m);
   FGColumnVector(const FGColumnVector& b);
-  ~FGColumnVector(void);
+  ~FGColumnVector();
 
   FGColumnVector operator*(const double scalar);
   FGColumnVector operator*(const FGColumnVector& V);   // Cross product operator

@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.h,v 1.11 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_OUTPUT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.h,v 1.12 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -66,7 +66,7 @@ class FGOutput : public FGModel
 {
 public:
   FGOutput(FGFDMExec*);
-  ~FGOutput(void);
+  ~FGOutput();
 
   bool Run(void);
 

@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.17 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.18 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 extern short debug_lvl;
@@ -143,7 +143,10 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
 
 /*****************************************************************************/
 
-FGTrimAxis::~FGTrimAxis() {}
+FGTrimAxis::~FGTrimAxis()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGTrimAxis" << endl;
+}
 
 /*****************************************************************************/
 

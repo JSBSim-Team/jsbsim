@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.7 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.8 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 extern short debug_lvl;
@@ -50,6 +50,13 @@ CLASS IMPLEMENTATION
 FGRotor::FGRotor(FGFDMExec *FDMExec) : FGThruster(FDMExec)
 {
   if (debug_lvl & 2) cout << "Instantiated: FGRotor" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGRotor::~FGRotor()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGRotor" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

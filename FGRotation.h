@@ -75,7 +75,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.15 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.16 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -100,7 +100,7 @@ class FGRotation : public FGModel
 
 public:
   FGRotation(FGFDMExec*);
-  ~FGRotation(void);
+  ~FGRotation();
 
   bool Run(void);
 

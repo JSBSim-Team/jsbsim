@@ -72,7 +72,7 @@ class FGForce {
 public:
 
   FGForce(FGFDMExec *FDMExec);
-  ~FGForce(void);
+  ~FGForce();
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom } ttype;
 

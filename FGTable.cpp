@@ -70,6 +70,7 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1)
   rowCounter = 1;
 
   Data = Allocate();
+  if (debug_lvl & 2) cout << "Instantiated: FGTable" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +89,7 @@ float** FGTable::Allocate(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTable::~FGTable(void)
+FGTable::~FGTable()
 {
   for (int r=0; r<=nRows; r++) if (Data[r]) delete Data[r];
   if (Data) delete Data;

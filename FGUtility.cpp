@@ -57,7 +57,7 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGUtility.cpp,v 1.10 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGUtility.cpp,v 1.11 2001/03/20 16:11:07 jberndt Exp $";
 static const char *IdHdr = ID_UTILITY;
 
 extern short debug_lvl;
@@ -75,6 +75,7 @@ FGUtility::FGUtility()
 
 FGUtility::~FGUtility()
 {
+  if (debug_lvl & 2) cout << "Destroyed:    FGUtility" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -49,7 +49,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.24 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.25 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -76,9 +76,10 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGOutput::~FGOutput(void)
+FGOutput::~FGOutput()
 {
   if (socket) delete socket;
+  if (debug_lvl & 2) cout << "Destroyed:    FGOutput" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.10 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.cpp,v 1.11 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 extern short debug_lvl;
@@ -52,6 +52,13 @@ FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
   SetTransformType(FGForce::tCustom);
 
   if (debug_lvl & 2) cout << "Instantiated: FGThruster" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGThruster::~FGThruster()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGThruster" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

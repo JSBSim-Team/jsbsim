@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.3 2001/03/19 23:53:46 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.4 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 /** Lookup table  class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.3 2001/03/19 23:53:46 jberndt Exp $
+    @version $Id: FGTable.h,v 1.4 2001/03/20 16:11:06 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -74,7 +74,7 @@ CLASS DECLARATION
 class FGTable {
 
 public:
-  ~FGTable(void);
+  ~FGTable();
   FGTable(int nRows);
   FGTable(int nRows, int nCols);
   float GetValue(float key);

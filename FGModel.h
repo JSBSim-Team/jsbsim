@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.14 2001/03/19 14:07:18 jberndt Exp $"
+#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.15 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -100,7 +100,7 @@ public:
   /// Constructor
   FGModel(FGFDMExec*);
   /// Destructor
-  virtual ~FGModel(void);
+  virtual ~FGModel();
 
   FGModel* NextModel;
   string Name;

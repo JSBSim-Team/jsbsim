@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.42 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.43 2001/03/20 16:10:48 jberndt Exp $";
 static const char *IdHdr = "ID_FCS";
 
 extern short debug_lvl;
@@ -77,7 +77,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGFCS::~FGFCS(void)
+FGFCS::~FGFCS()
 {
   ThrottleCmd.clear();
   ThrottlePos.clear();

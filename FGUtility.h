@@ -55,7 +55,7 @@ class FGUtility
 {
 public:
   FGUtility(void);
-  ~FGUtility(void);
+  ~FGUtility();
 
 private:
   FGState* State;

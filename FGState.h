@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.25 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.26 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -76,7 +76,7 @@ class FGFDMExec;
 class FGState {
 public:
   FGState(FGFDMExec*);
-  ~FGState(void);
+  ~FGState();
 
   bool Reset(string, string, string);
   void Initialize(float, float, float, float, float, float, float, float, float);

@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.33 2001/03/20 14:02:15 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.34 2001/03/20 16:10:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +106,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.33 2001/03/20 14:02:15 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.34 2001/03/20 16:10:48 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -206,7 +206,7 @@ public:
   FGFDMExec(void);
 
   /// Default destructor
-  ~FGFDMExec(void);
+  ~FGFDMExec();
 
   /** This routine places a model into the runlist at the specified rate. The
       "rate" is not really a clock rate. It represents how many calls to the

@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.12 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.13 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 extern short debug_lvl;
@@ -88,11 +88,14 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
   if (debug_lvl & 2) cout << "Instantiated: FGTank" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTank::~FGTank(void)
+FGTank::~FGTank()
 {
+  if (debug_lvl & 2) cout << "Destroyed:    FGTank" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGTank::Reduce(float used)
 {
@@ -110,6 +113,8 @@ float FGTank::Reduce(float used)
     return shortage;
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTank::Debug(void)
 {

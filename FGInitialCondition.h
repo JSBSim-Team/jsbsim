@@ -110,7 +110,7 @@ class FGInitialCondition {
 public:
 
   FGInitialCondition(FGFDMExec *fdmex);
-  ~FGInitialCondition(void);
+  ~FGInitialCondition();
 
   void SetVcalibratedKtsIC(float tt);
   void SetVequivalentKtsIC(float tt);

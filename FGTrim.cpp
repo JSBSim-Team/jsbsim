@@ -56,7 +56,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.19 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.20 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 extern short debug_lvl;
@@ -122,6 +122,7 @@ FGTrim::~FGTrim(void) {
   delete[] sub_iterations;
   delete[] successful;
   delete[] solution;
+  if (debug_lvl & 2) cout << "Destroyed:    FGTrim" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

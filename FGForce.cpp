@@ -47,7 +47,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.10 2001/03/20 14:02:15 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.11 2001/03/20 16:10:48 jberndt Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 extern short debug_lvl;
@@ -75,7 +75,7 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGForce::~FGForce(void)
+FGForce::~FGForce()
 {
   if (debug_lvl & 2) cout << "Destroyed:    FGForce" << endl;
 }

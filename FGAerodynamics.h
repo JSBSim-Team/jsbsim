@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.8 2001/03/19 23:53:46 jberndt Exp $"
+#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.9 2001/03/20 16:10:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.8 2001/03/19 23:53:46 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.9 2001/03/20 16:10:47 jberndt Exp $
     @see -
 */
 
@@ -90,7 +90,7 @@ public:
       @param Executive a pointer to the parent executive object */
   FGAerodynamics(FGFDMExec*);
   /// Destructor
-  ~FGAerodynamics(void);
+  ~FGAerodynamics();
 
   /** Runs the Aerodynamics model; called by the Executive
       @return false if no error */

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.22 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.23 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.22 2001/03/19 14:07:19 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.23 2001/03/20 16:11:06 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -96,7 +96,7 @@ CLASS DECLARATION
 class FGPropulsion : public FGModel {
 public:
   FGPropulsion(FGFDMExec*);
-  ~FGPropulsion(void);
+  ~FGPropulsion();
   
   /** Executes the propulsion model.
       The initial plan for the FGPropulsion class calls for Run() to be executed,

@@ -72,15 +72,15 @@ CLASS DECLARATION
 
 class FGDeadBand  : public FGFCSComponent         
 {
-  FGConfigFile* AC_cfg;
-  
 public:
   FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGDeadBand();
 
-  bool Run (void);
+  bool Run(void);
 
 private:
+  FGConfigFile* AC_cfg;
+  
   void Debug(void);
 };
 

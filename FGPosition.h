@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.32 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.33 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.32 2001/03/19 14:07:19 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.33 2001/03/20 16:11:06 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@ public:
       @param Executive a pointer to the parent executive object */
   FGPosition(FGFDMExec*);
   /// Destructor
-  ~FGPosition(void);
+  ~FGPosition();
 
   /** Runs the Position model; called by the Executive
       @see JSBSim.cpp documentation

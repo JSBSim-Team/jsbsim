@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.14 2001/03/19 14:07:18 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.15 2001/03/20 16:10:48 jberndt Exp $
     @see -
 */
 
@@ -91,7 +91,7 @@ public:
       @param Filename the name of the config file to be read. */
   FGConfigFile(string Filename);
   /// Destructor
-  ~FGConfigFile(void);
+  ~FGConfigFile();
 
   string GetLine(void);
   string GetNextConfigLine(void);

@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_ROTOR "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.h,v 1.7 2001/03/19 23:53:46 jberndt Exp $"
+#define ID_ROTOR "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.h,v 1.8 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -54,7 +54,7 @@ class FGRotor : public FGThruster {
 
 public:
   FGRotor(FGFDMExec *FDMExec);
-  ~FGRotor(void);
+  ~FGRotor();
 
   float Calculate(float);
 

@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.25 2001/03/19 14:07:18 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.26 2001/03/20 16:10:48 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -161,7 +161,7 @@ public:
       @param Executive a pointer to the parent executive object */
   FGFCS(FGFDMExec*);
   /// Destructor
-  ~FGFCS(void);
+  ~FGFCS();
 
   /** Runs the Flight Controls model; called by the Executive
       @return false if no error */

@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.22 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.23 2001/03/20 16:10:48 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -73,7 +73,7 @@ FGMatrix::FGMatrix(const FGMatrix& M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix::~FGMatrix(void)
+FGMatrix::~FGMatrix()
 {
   dealloc(data,rows);
   rowCtr = colCtr = 1;
@@ -456,7 +456,7 @@ FGColumnVector::FGColumnVector(void):FGMatrix(3,1)
 FGColumnVector::FGColumnVector(int m):FGMatrix(m,1) { }
 FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b) { }
 
-FGColumnVector::~FGColumnVector(void)
+FGColumnVector::~FGColumnVector()
 {
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector" << endl;
 }

@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.44 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.45 2001/03/20 16:11:06 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -134,7 +134,10 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGState::~FGState(void) {}
+FGState::~FGState()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGState" << endl;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

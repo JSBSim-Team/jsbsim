@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.12 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.13 2001/03/20 16:11:07 jberndt Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
 
 extern short debug_lvl;
@@ -52,6 +52,13 @@ CLASS IMPLEMENTATION
 FGTurboShaft::FGTurboShaft(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
   if (debug_lvl & 2) cout << "Instantiated: FGTurboShaft" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTurboShaft::~FGTurboShaft()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGTurboShaft" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -65,10 +65,12 @@ INCLUDES
 
 #include <vector>
 
-#define ID_TRIM "$Header"
+#define ID_TRIM "$Id: FGTrim.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $"
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 /** FGTrim -- the trimming routine for JSBSim
     FGTrim finds the aircraft attitude and control settings needed to maintain
     the steady state described by the FGInitialCondition object .  It does this
@@ -82,13 +84,14 @@ CLASS DOCUMENTATION
     last three are used for on-ground trimming. The state-control pairs used in
     a given trim are completely user configurable and several pre-defined modes
     are provided as well. They are:
-    tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator
-    tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
-           and heading minus ground track (hmgt) with beta
-    tGround: wdot with altitude, qdot with theta, and pdot with phi
-    The remaining modes include tCustom, which is completely user defined and
-    tNone.
-    
+    <ul>
+    <li> tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator</li>
+    <li> tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
+                and heading minus ground track (hmgt) with beta</li>
+    <li> tGround: wdot with altitude, qdot with theta, and pdot with phi</li>
+    The remaining modes include <b>tCustom</b>, which is completely user defined and
+    <b>tNone</b>.
+    </ul>
     Currently, this class cannot trim a non-1g condition and is limited to 
     trimming for constant true airspeed in climbs and descents.
     
@@ -97,8 +100,8 @@ CLASS DOCUMENTATION
     initial conditions: is the model capable of steady state flight
     at those conditions?  Check the speed, altitude, configuration (flaps,
     gear, etc.), weight, cg, and anything else that may be relavant.
-       
-    
+    @author Tony Peden
+    @version $Id: FGTrim.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,12 +137,13 @@ private:
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
 
-  // returns false if there is no change in the current axis accel
-  // between accel(control_min) and accel(control_max). if there is a
-  // change, sets solutionDomain to:
-  // 0 for no sign change,
-  // -1 if sign change between accel(control_min) and accel(0)
-  // 1 if sign between accel(0) and accel(control_max)
+  /** @return false if there is no change in the current axis accel
+      between accel(control_min) and accel(control_max). If there is a
+      change, sets solutionDomain to:
+      0 for no sign change,
+     -1 if sign change between accel(control_min) and accel(0)
+      1 if sign between accel(0) and accel(control_max)
+  */
   bool solve(void);
   bool findInterval(void);
   bool checkLimits(void);
@@ -149,7 +153,7 @@ public:
       @param FDMExec pointer to a JSBSim executive object.
       @param FGIC pointer to a FGInitialCondition object
       @param TrimMode the set of axes to trim. Can be:
-       tLongitudinal, tFull, tGround, tCustom, or tNone
+             tLongitudinal, tFull, tGround, tCustom, or tNone
   */
   FGTrim(FGFDMExec *FDMExec, FGInitialCondition *FGIC, TrimMode tt);
 

@@ -88,7 +88,7 @@ using std::string;
 class FGfdmSocket {
 public:
   FGfdmSocket(string, int);
-  ~FGfdmSocket(void);
+  ~FGfdmSocket();
   void Send(void);
   void Append(const char*);
   void Append(float);

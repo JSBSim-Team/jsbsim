@@ -65,7 +65,7 @@ class FGTank
 {
 public:
   FGTank(FGConfigFile*);
-  ~FGTank(void);
+  ~FGTank();
 
   float Reduce(float);
   int GetType(void) {return Type;}

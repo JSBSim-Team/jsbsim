@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.15 2001/03/19 14:07:18 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.16 2001/03/20 16:10:47 jberndt Exp $
     @see -
 */
 
@@ -76,7 +76,7 @@ public:
       @param Executive a pointer to the parent executive object */
   FGAuxiliary(FGFDMExec*);
   /// Destructor
-  ~FGAuxiliary(void);
+  ~FGAuxiliary();
 
   /** Runs the Auxiliary routines; called by the Executive
       @return false if no error */

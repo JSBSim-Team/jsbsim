@@ -55,7 +55,7 @@ class FGTurboShaft : public FGEngine
 {
 public:
   FGTurboShaft(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGTurboShaft(void) {}
+  ~FGTurboShaft();
 
   float Calculate(float);
 private:

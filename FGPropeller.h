@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.10 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.10 2001/03/19 14:07:19 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -95,7 +95,7 @@ public:
   FGPropeller(FGFDMExec* exec, FGConfigFile* AC_cfg);
 
   /// Destructor for FGPropeller - deletes the FGTable objects
-  ~FGPropeller(void);
+  ~FGPropeller();
 
   /** Sets the Revolutions Per Minute for the propeller. Normally the propeller
       instance will calculate its own rotational velocity, given the Torque

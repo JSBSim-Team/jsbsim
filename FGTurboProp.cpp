@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboProp.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboProp.cpp,v 1.8 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboProp.cpp,v 1.9 2001/03/20 16:11:07 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 extern short debug_lvl;
@@ -52,6 +52,13 @@ CLASS IMPLEMENTATION
 FGTurboProp::FGTurboProp(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
   if (debug_lvl & 2) cout << "Instantiated: FGTurboProp" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGTurboProp::~FGTurboProp()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGTurboProp" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
