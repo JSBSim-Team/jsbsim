@@ -58,23 +58,26 @@ INCLUDES
 #else
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <iostream.h>
+#    include <iomanip.h>
+#    include <fstream.h>
 #  else
 #    include <iostream>
+#    include <iomanip>
+#    include <fstream>
 #  endif
 #endif
 
-#include <iomanip>
-#include <fstream>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: c172_vti.cpp,v 1.3 2001/12/19 10:29:38 apeden Exp $";
+static const char *IdSrc = "$Id: c172_vti.cpp,v 1.4 2003/11/11 14:59:32 ehofman Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -90,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: c172_vti.cpp,v 1.3 2001/12/19 10:29:38 apeden Exp $
+    @version $Id: c172_vti.cpp,v 1.4 2003/11/11 14:59:32 ehofman Exp $
     @see -
 */
 

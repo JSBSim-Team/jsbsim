@@ -1,5 +1,4 @@
-INCLUDES = \
-	-Wall
+INCLUDES = -I$(top_srcdir)
 
 bin_PROGRAMS = c172_vti
 

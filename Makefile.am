@@ -4,7 +4,12 @@ endif
 
 # if this line is broken into multiple, make sure an actual directory
 # follows $(UTILITIES_DIR) on the same line
-SUBDIRS = aircraft engine filtersjb scripts simgear $(UTILITIES_DIR)
+SUBDIRS = \
+	aircraft engine filtersjb scripts simgear \
+	$(UTILITIES_DIR) aeromatic datcom
+
+dist-hook:
+	( cd $(top_srcdir); )
 
 INCLUDES = -I$(top_srcdir)
 

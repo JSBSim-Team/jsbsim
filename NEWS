@@ -1,0 +1,89 @@
+Aeromatic
+jberndt - 2003-11-05 21:28   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+The JSBSim aircraft configuration files can be a little confusing for beginners
+- especially for those who are not terribly familiar with aircraft dynamics and
+control. In an effort at easing the process of creating an aircraft flight model
+to use with JSBSim and FlightGear (www.flightgear.org), David Culp has created a
+clever web application called Aeromatic. With a few quick clicks of the mouse, a
+usable boilerplate model can be created. For maximum accuracy, the file can be
+further edited after examination, and as more refined data is acquired. The code
+for Aeromatic is managed as part of the JSBSim project (www.jsbsim.org). To try
+it out, go to the JSBSim home page and select the Aeromatic link in the left
+panel.
+
+
+New documentation
+jberndt - 2003-09-16 05:43   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+I have added a new document to the JSBSim web site that deals with automatic
+flight and flight controls using JSBSim. It is a work in progress (aren't they
+all?). Please send any comments/criticisms/praise to jon@jsbsim.org
+
+
+glHorizon
+jberndt - 2003-09-09 20:09   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+JSBSim is mentioned prominently by the glHorizon flight simulator developer[s].
+See the glHorizon web site at http://www.web-discovery.net.
+
+
+In the press
+jberndt - 2003-09-09 20:07   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+FlightGear (featuring JSBSim, YASim, and UIUC-LarcSim) is comparitively reviewed
+against MSFS and X-Plane (say that fast and it sounds like "explain") in the
+April 2003 issue of EAA's magazine, "Sport Aviation". JSBSim is mentioned
+explicitly a couple of times. The article was quite positive.
+
+
+New JSBSim Release
+jberndt - 2003-01-21 05:06   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+JSBSim 0.9.4 has been released in the form of a source gzipped tarball. It
+includes the new FCS switch and deadband components. See the release notes. It
+also includes a capability where a takeoff report is generated similar to the
+landing report.
+
+
+FCS Deadband control added
+jberndt - 2003-01-12 12:05   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+The Deadband control has been "fleshed out" and is now functional. Complete
+testing is pending.
+
+
+FCS Switches added
+jberndt - 2003-01-09 05:43   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+JSBSim now supports configurable switches in the flight control system. This
+allows switches - either panel on/off or conditional rotary switches - to be
+defined in the configuration file. The definition uses properties to define the
+conditions.
+
+
+Versatile "Property System" implemented fully in JSBSim
+jberndt - 2002-09-22 15:42   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+Tony has added a new feature to JSBSim, the ability to create variables (via the
+property tree) in the config file. These variables can be created and assigned
+values in the FCS (flight control system) then referenced anywhere else in the
+config file (such as in a coefficient). Every flight control system is unique,
+and we wanted to avoid having hard coded support for every permutation. The
+property tree gives us the opportunity to support almost any configuration
+without hard-coding.
+
+
+JSBSim Logo'ed items
+jberndt - 2002-07-24 05:51   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+Would you like a fancy JSBSim mug, T-shirt, Through CafeShops.com?
+JSBSim logo'ed items are now available at cost (we don't profit).
+http://www.CafeShops.com/jsbsim
+
+
+JSBSim Users page
+jberndt - 2002-07-24 05:50   -   JSBSim Flight Dynamics Model
+--------------------------------------------------------------------------------
+A new page has been added to the JSBSim web site highlighting users.
+Go to http://jsbsim.sf.net/users.html
