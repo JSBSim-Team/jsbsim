@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.54 2002/06/28 16:37:32 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.55 2002/07/03 02:13:15 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -459,7 +459,8 @@ void FGPiston::doCHT(void)
     
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
     
-  CylinderHeadTemp_degK += dqdt_cylinder_head / HeatCapacityCylinderHead;
+  CylinderHeadTemp_degK +=
+    (dqdt_cylinder_head / HeatCapacityCylinderHead) * dt;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
