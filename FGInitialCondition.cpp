@@ -138,19 +138,19 @@ void FGInitialCondition::SetClimbRateFpmIC(float tt) {
 
 void FGInitialCondition::SetUBodyFpsIC(float tt) {
   u=tt;
-  vt=u*u+v*v+w*w;
+  vt=sqrt(u*u+v*v+w*w);
   lastSpeedSet=setvt;
 }
 
 void FGInitialCondition::SetVBodyFpsIC(float tt) {
   v=tt;
-  vt=u*u+v*v+w*w;
+  vt=sqrt(u*u+v*v+w*w);
   lastSpeedSet=setvt;
 }
 
 void FGInitialCondition::SetWBodyFpsIC(float tt) {
   w=tt;
-  vt=u*u+v*v+w*w;
+  vt=sqrt(u*u+v*v+w*w);
   lastSpeedSet=setvt;
 }
 
