@@ -46,7 +46,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <fstream>
 #  else
 #    include <fstream.h>
@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.34 2001/04/24 22:14:42 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

@@ -48,7 +48,7 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  include STL_STRING
    SG_USING_STD(string);
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
 #  else
 #    include <vector.h>
@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.34 2001/04/05 23:05:30 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $"
 
 using std::string;
 
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.34 2001/04/05 23:05:30 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

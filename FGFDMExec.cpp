@@ -44,7 +44,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <iostream>
 #    include <ctime>
 #    include <iterator>
@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.47 2001/04/26 12:45:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.48 2001/05/29 20:13:31 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };

@@ -44,7 +44,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
 #  else
 #    include <vector.h>
@@ -56,7 +56,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.9 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.10 2001/05/29 20:13:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

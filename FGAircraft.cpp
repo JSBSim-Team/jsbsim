@@ -109,7 +109,7 @@ INCLUDES
 #  ifndef __BORLANDC__
 #    include <simgear/compiler.h>
 #  endif
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <cmath>
 #  else
 #    include <math.h>
@@ -140,7 +140,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.78 2001/04/28 00:04:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.79 2001/05/29 20:13:31 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];

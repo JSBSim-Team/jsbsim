@@ -48,7 +48,7 @@ INCLUDES
    SG_USING_STD(endl);
    SG_USING_STD(ios);
    SG_USING_STD(cout);
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <fstream>
 #    include <iostream>
 #  else
@@ -75,7 +75,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.17 2001/04/18 13:51:07 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.18 2001/05/29 20:13:31 jberndt Exp $"
 
 using std::string;
 using std::ifstream;
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.17 2001/04/18 13:51:07 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.18 2001/05/29 20:13:31 jberndt Exp $
     @see -
 */
 

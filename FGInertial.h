@@ -44,7 +44,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef FG_HAVE_STD_INCLUDES
+#  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
 #  else
 #    include <vector.h>
@@ -57,7 +57,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.14 2001/04/28 00:04:47 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.15 2001/05/29 20:13:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
