@@ -2,6 +2,7 @@
 
  Module:       FGLGear.cpp
  Author:       Jon S. Berndt
+               Norman H. Princen
  Date started: 11/18/99
  Purpose:      Encapsulates the landing gear elements
  Called by:    FGAircraft
@@ -49,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.47 2001/03/31 16:19:23 apeden Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.48 2001/04/05 12:12:32 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -64,10 +65,10 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
                                                            Exec(fdmex)
 {
   string tmp;
-  *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)  
+  *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
                   >> rollingFCoeff >> sSteerType >> sBrakeGroup >> maxSteerAngle;
-    
+
   cout << "    Name: " << name << endl;
   cout << "      Location: " << vXYZ << endl;
   cout << "      Spring Constant:  " << kSpring << endl;
@@ -106,14 +107,14 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
   FCS         = Exec->GetFCS();
-  
+
   WOW = false;
   ReportEnable = true;
   FirstContact = false;
   Reported = false;
   DistanceTraveled = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
-  
+
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
@@ -184,31 +185,47 @@ FGColumnVector FGLGear::Force(void)
 
   FGColumnVector vForce(3);
   FGColumnVector vLocalForce(3);
-  //FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
   FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
 
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
 
+// vWhlBodyVec now stores the vector from the cg to this wheel
+
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
-  
-// For now, gear compression is assumed to happen in the Local Z axis,
-// not the strut axis as it should be.  Will fix this later.
+
+// vLocalGear now stores the vector from the cg to the wheel in local coords.
 
   compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
 
+// The compression length is currently measured in the Z-axis, only, at this time.
+// It should be measured along the strut axis. If the local-frame gear position
+// "hangs down" below the CG greater than the altitude, then the compressLength
+// will be positive - i.e. the gear will have made contact.
+
   if (compressLength > 0.00) {
-     
-    WOW = true;
+
+    WOW = true; // Weight-On-Wheels is true
 
 // The next equation should really use the vector to the contact patch of the tire
 // including the strut compression and not vWhlBodyVec.  Will fix this later.
+// As it stands, now, the following equation takes the aircraft body-frame
+// rotational rate and calculates the cross-product with the vector from the CG
+// to the wheel, thus producing the instantaneous velocity vector of the tire
+// in Body coords. The frame is also converted to local coordinates. When the
+// aircraft local-frame velocity is added to this quantity, the total velocity of
+// the wheel in local frame is then known. Subsequently, the compression speed
+// (used for calculating damping force) is found by taking the Z-component of the
+// wheel velocity.
 
     vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
     vWhlVelVec     +=  Position->GetVel();
 
     compressSpeed   =  vWhlVelVec(eZ);
+
+// If this is the first time the wheel has made contact, remember some values
+// for later printout.
 
     if (!FirstContact) {
       FirstContact  = true;
@@ -220,22 +237,23 @@ FGColumnVector FGLGear::Force(void)
 // steering The BrakeFCoeff formula assumes that an anti-skid system is used.
 // It also assumes that we won't be turning and braking at the same time.
 // Will fix this later.
+// [JSB] The braking force coefficients include normal rolling coefficient +
+// a percentage of the static friction coefficient based on braking applied.
 
     switch (eBrakeGrp) {
     case bgLeft:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                                            staticFCoeff*FCS->GetBrake(bgLeft);
+//        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+//                                            staticFCoeff*FCS->GetBrake(bgLeft);
+        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgLeft) + rollingFCoeff;
       break;
     case bgRight:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
-                                            staticFCoeff*FCS->GetBrake(bgRight);
+        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgRight) + rollingFCoeff;
       break;
     case bgCenter:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                                            staticFCoeff*FCS->GetBrake(bgCenter);
+        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgCenter) + rollingFCoeff;
       break;
     case bgNose:
         SteerGain = maxSteerAngle;
@@ -254,9 +272,6 @@ FGColumnVector FGLGear::Force(void)
       break;
     }
 
-// Note to Jon: Need to substitute the correct variable for RudderPedal.
-// It is assumed that rudder pedal has a range of -1.0 to 1.0.
-
     switch (eSteerType) {
     case stSteer:
       SteerAngle = SteerGain*FCS->GetDrCmd();
@@ -265,7 +280,6 @@ FGColumnVector FGLGear::Force(void)
       SteerAngle = 0.0;
       break;
     case stCaster:
-
     // Note to Jon: This is not correct for castering gear.  I'll fix it later.
       SteerAngle = 0.0;
       break;
@@ -277,7 +291,6 @@ FGColumnVector FGLGear::Force(void)
 // Transform the wheel velocities from the local axis system to the wheel axis system.
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
-// Note to Jon: Please substitute the correct variable for Deg2Rad conversion.
 
     SinWheel      = sin(Rotation->Getpsi() + SteerAngle*DEGTORAD);
     CosWheel      = cos(Rotation->Getpsi() + SteerAngle*DEGTORAD);
@@ -292,11 +305,11 @@ FGColumnVector FGLGear::Force(void)
       WheelSlip = RADTODEG*atan2(SideWhlVel, RollingWhlVel);
     }
 
-    // The following code normalizes the wheel velocity vector, reverses it, and zeroes out
-    // the z component of the velocity. The question is, should the Z axis velocity be zeroed
-    // out first before the normalization takes place or not? Subsequent to that, the Wheel
-    // Velocity vector now points as a unit vector backwards and parallel to the wheel
-    // velocity vector. It acts AT the wheel.
+// The following code normalizes the wheel velocity vector, reverses it, and zeroes out
+// the z component of the velocity. The question is, should the Z axis velocity be zeroed
+// out first before the normalization takes place or not? Subsequent to that, the Wheel
+// Velocity vector now points as a unit vector backwards and parallel to the wheel
+// velocity vector. It acts AT the wheel.
 
 // Note to Jon: I commented out this line because I wasn't sure we want to do this.
 //    vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
@@ -323,7 +336,7 @@ FGColumnVector FGLGear::Force(void)
 // Compute the forces in the wheel ground plane.
 
     RollingForce = 0;
-    if(fabs(RollingWhlVel) > 1E-3) { 
+    if (fabs(RollingWhlVel) > 1E-3) {
       RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
     }
     SideForce    = vLocalForce(eZ) * FCoeff;
@@ -369,7 +382,7 @@ FGColumnVector FGLGear::Force(void)
   if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
     Report();
   }
-  
+
   return vForce;
 }
 

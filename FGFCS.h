@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.27 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.28 2001/04/05 12:12:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.27 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.28 2001/04/05 12:12:32 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -172,50 +172,63 @@ public:
   /** Gets the aileron command.
       @return aileron command in radians */
   inline float GetDaCmd(void) { return DaCmd; }
+
   /** Gets the elevator command.
       @return elevator command in radians */
   inline float GetDeCmd(void) { return DeCmd; }
+
   /** Gets the rudder command.
       @return rudder command in radians */
   inline float GetDrCmd(void) { return DrCmd; }
+
   /** Gets the flaps command.
       @return flaps command in radians */
   inline float GetDfCmd(void) { return DfCmd; }
+
   /** Gets the speedbrake command.
       @return speedbrake command in radians */
   inline float GetDsbCmd(void) { return DsbCmd; }
+
   /** Gets the spoiler command.
       @return spoiler command in radians */
   inline float GetDspCmd(void) { return DspCmd; }
+
   /** Gets the throttle command.
       @param engine engine ID number
       @return throttle command in percent ( 0 - 100) for the given engine */
   inline float GetThrottleCmd(int engine) { return ThrottleCmd[engine]; }
+
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
   inline float GetPitchTrimCmd(void) { return PTrimCmd; }
   //@}
-  
+
   /// @name Aerosurface position retrieval
   //@{
   /** Gets the aileron position.
       @return aileron position in radians */
   inline float GetDaPos(void) { return DaPos; }
+
   /** Gets the elevator position.
       @return elevator position in radians */
   inline float GetDePos(void) { return DePos; }
+
   /** Gets the rudder position.
       @return rudder position in radians */
   inline float GetDrPos(void) { return DrPos; }
+
   /** Gets the flaps position.
       @return flaps position in radians */
   inline float GetDfPos(void) { return DfPos; }
+
   /** Gets the speedbrake position.
       @return speedbrake position in radians */
   inline float GetDsbPos(void) { return DsbPos; }
+
   /** Gets the spoiler position.
       @return spoiler position in radians */
   inline float GetDspPos(void) { return DspPos; }
+
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
@@ -226,16 +239,20 @@ public:
       This is used by the FGFCS-owned components.
       @return pointer to the State object */
   inline FGState* GetState(void) { return State; }
+
   /** Retrieves a components output value
       @param idx the index of the component (the component ID)
       @return output value from the component */
   float GetComponentOutput(eParam idx);
+
   /** Retrieves the component name
       @param idx the index of the component (the component ID)
       @return name of the component */
   string GetComponentName(int idx);
+
   /** Retrieves all component names for inclusion in output stream */
   string GetComponentStrings(void);
+
   /** Retrieves all component outputs for inclusion in output stream */
   string GetComponentValues(void);
 
@@ -244,26 +261,33 @@ public:
   /** Sets the aileron command
       @param cmd aileron command in radians*/
   inline void SetDaCmd(float cmd) { DaCmd = cmd; }
+
   /** Sets the elevator command
       @param cmd elevator command in radians*/
   inline void SetDeCmd(float cmd) { DeCmd = cmd; }
+
   /** Sets the rudder command
       @param cmd rudder command in radians*/
   inline void SetDrCmd(float cmd) { DrCmd = cmd; }
+
   /** Sets the flaps command
       @param cmd flaps command in radians*/
   inline void SetDfCmd(float cmd) { DfCmd = cmd; }
+
   /** Sets the speedbrake command
       @param cmd speedbrake command in radians*/
   inline void SetDsbCmd(float cmd) { DsbCmd = cmd; }
+
   /** Sets the spoilers command
       @param cmd spoilers command in radians*/
   inline void SetDspCmd(float cmd) { DspCmd = cmd; }
+
   /** Sets the pitch trim command
       @param cmd pitch trim command in radians*/
   inline void SetPitchTrimCmd(float cmd) { PTrimCmd = cmd; }
+
   /** Sets the throttle command for the specified engine
-      @param engine engine ID number 
+      @param engine engine ID number
       @param cmd throttle command in percent (0 - 100)*/
   inline void SetThrottleCmd(int engine, float cmd);
   //@}
@@ -273,23 +297,29 @@ public:
   /** Sets the aileron position
       @param cmd aileron position in radians*/
   inline void SetDaPos(float cmd) { DaPos = cmd; }
+
   /** Sets the elevator position
       @param cmd elevator position in radians*/
   inline void SetDePos(float cmd) { DePos = cmd; }
+
   /** Sets the rudder position
       @param cmd rudder position in radians*/
   inline void SetDrPos(float cmd) { DrPos = cmd; }
+
   /** Sets the flaps position
       @param cmd flaps position in radians*/
   inline void SetDfPos(float cmd) { DfPos = cmd; }
+
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
   inline void SetDsbPos(float cmd) { DsbPos = cmd; }
+
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
   inline void SetDspPos(float cmd) { DspPos = cmd; }
+
   /** Sets the actual throttle setting for the specified engine
-      @param engine engine ID number 
+      @param engine engine ID number
       @param cmd throttle setting in percent (0 - 100)*/
   inline void SetThrottlePos(int engine, float cmd);
   //@}
@@ -299,12 +329,15 @@ public:
   /** Sets the left brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
   void SetLBrake(float cmd) {LeftBrake = cmd;}
+
   /** Sets the right brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
   void SetRBrake(float cmd) {RightBrake = cmd;}
+
   /** Sets the center brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
   void SetCBrake(float cmd) {CenterBrake = cmd;}
+
   /** Gets the brake for a specified group.
       @param bg which brakegroup to retrieve the command for
       @return the brake setting for the supplied brake group argument */
