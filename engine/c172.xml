@@ -1,4 +1,17 @@
-FG_PISTON
+<FG_PISTON NAME="IO320">
+
+  <COMMENT>
+
+    BrakeHorsePower;
+    MaxThrottle;
+    MinThrottle;
+    SLFuelFlowMax;
+    SpeedSlope;
+    SpeedIntercept;
+    AltitudeSlope;
+
+  </COMMENT>
+
   160.0
   100.0
     0.0
@@ -6,4 +19,4 @@ FG_PISTON
     0.00144
     0.546
    -1.6E-5
- 
+</FG_PISTON>

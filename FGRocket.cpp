@@ -40,21 +40,46 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.10 2001/01/02 20:14:36 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.11 2001/01/11 06:34:02 jsb Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec) {
-  cout << "\n    Instantiated rocket engine ...\n";
-  *Eng_cfg >> SLThrustMax;
-  *Eng_cfg >> VacThrustMax;
-  *Eng_cfg >> MaxThrottle;
-  *Eng_cfg >> MinThrottle;
-  *Eng_cfg >> SLFuelFlowMax;
-  *Eng_cfg >> SLOxiFlowMax;
+FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
+{
+  string token;
+
+  Name = Eng_cfg->GetValue("NAME");
+  cout << "\n    Engine Name: " << Name << endl;
+  Eng_cfg->GetNextConfigLine();
+  while (Eng_cfg->GetValue() != "/FG_ROCKET") {
+    *Eng_cfg >> token;
+    if (token == "SLTHRUSTMAX") {
+      *Eng_cfg >> SLThrustMax;
+      cout << "      SLThrustMax = " << SLThrustMax << endl;
+    } else if (token == "VACTHRUSTMAX") {
+      *Eng_cfg >> VacThrustMax;
+      cout << "      VacThrustMax = " << VacThrustMax << endl;
+    } else if (token == "MAXTHROTTLE") {
+      *Eng_cfg >> MaxThrottle;
+      cout << "      MaxThrottle = " << MaxThrottle << endl;
+    } else if (token == "MINTHROTTLE") {
+      *Eng_cfg >> MinThrottle;
+      cout << "      MinThrottle = " << MinThrottle << endl;
+    } else if (token == "SLFUELFLOWMAX") {
+      *Eng_cfg >> SLFuelFlowMax;
+      cout << "      SLFuelFlowMax = " << SLFuelFlowMax << endl;
+    } else if (token == "SLOXIFLOWMAX") {
+      *Eng_cfg >> SLOxiFlowMax;
+      cout << "      SLOxiFlowMax = " << SLOxiFlowMax << endl;
+    } else {
+      cout << "Unhandled token in Engine config file: " << token << endl;
+    }
+  }
+
+  EngineNumber = 0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -22,8 +22,8 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
   FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj FGThruster.obj \
   FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj FGTurboShaft.obj \
-  FGPropulsion.obj FGGroundReactions.obj FGAerodynamics.obj FGTurboProp.obj \
-  FGTable.obj
+  FGPropulsion.obj FGGroundReactions.obj FGTurboProp.obj FGTable.obj \
+  FGAerodynamics.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
@@ -43,20 +43,20 @@ PATHRC = .;
 DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = NO_STRICT
-USERDEFINES = $(SYSDEFINES);$(USERDEFINES)
+USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -Od -w-par -Tkh30000 -r- -a8 -5 \
-  -k -y -v -vi- -D$(SYSDEFINES);$(USERDEFINES) -c -tWM -tWC -tWM
+CFLAG1 = -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -O2 -w-par -Tkh30000 -a8 -5 -k- \
+  -vi -D$(SYSDEFINES);$(USERDEFINES) -c -tWM -tWC -tWM
 CFLAG2 =
 CFLAG3 =
 IDLCFLAGS = -src_suffixcpp
 PFLAGS = -U$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) \
-  -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -N2. -N0. \
-  -D$(SYSDEFINES);$(USERDEFINES) -$YD -$W -$R -$Q -$O- -v -M -JPHNE
-RFLAGS = -i$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -D$(SYSDEFINES);$(USERDEFINES)
-AFLAGS = /i$(BCB)\Include\vcl /i$(BCB)\Include /ifiltersjb /d$(SYSDEFINES) \
-  /d$(USERDEFINES) /mx /w2 /zi
-LFLAGS = -L$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
+  -I$(BCB)\Include\vcl;$(BCB)\Include;filtersjb -N2. -N0. -$Y- -$R -$Q -$L- -$D- \
+  -v -M -JPHNE
+RFLAGS = -i$(BCB)\Include\vcl;$(BCB)\Include;filtersjb
+AFLAGS = /i$(BCB)\Include\vcl /i$(BCB)\Include /ifiltersjb /mx /w2 /zn /d$(SYSDEFINES) \
+  /d$(USERDEFINES)
+LFLAGS = -L$(BCB)\lib;$(BCB)\lib\obj;filtersjb;$(DEBUGLIBPATH) -ap -Tpe -x -Gn
 IFLAGS =
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj sysinit.obj $(OBJFILES)
@@ -117,6 +117,10 @@ Item0=.
 [HistoryLists\hlRunParameters]
 Count=1
 Item0=X15 reset00
+
+[HistoryLists\hlFinalOutputDir]
+Count=1
+Item0=.
 
 [Debugging]
 DebugSourceDirs=

@@ -79,17 +79,18 @@
 
       AC_ENGINE name x y z pitch yaw
 
+NOTE: put the ID numbers for the tanks that an engine draws from within the engine
+config file !!!!!!!!!!!!!      ID the Tanks.     XML-ize the engine file.
+
       THRUSTER[S] SECTION
-      
-      AC_THRUSTER name x y z xOff yOff zOff pitch yaw
-      
+
+      AC_THRUSTER name x y z pitch yaw
+
     </COMMENT>
 
-    AC_TANK FUEL  48.0 0.0 59.4  29.4  336.0 336.0
-
-    AC_ENGINE     c172 -19.7 0.0 26.6 0.0 0.0
-
-    AC_THRUSTER prop_generic2f -19.7 0.0 26.6 0 0 0 0 0
+    AC_TANK       FUEL  48.0 0.0 59.4  29.4  336.0 336.0
+    AC_ENGINE     eng_io320      -19.7 0.0 26.6 0.0 0.0
+    AC_THRUSTER   prop_generic2f -19.7 0.0 26.6 0.0 0.0
     
   </PROPULSION>
   

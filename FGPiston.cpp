@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.8 2001/01/11 00:44:55 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.9 2001/01/11 06:34:02 jsb Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,14 +49,39 @@ CLASS IMPLEMENTATION
 
 FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 {
-  *Eng_cfg >> BrakeHorsePower;
-  *Eng_cfg >> MaxThrottle;
-  *Eng_cfg >> MinThrottle;
-  *Eng_cfg >> SLFuelFlowMax;
-  *Eng_cfg >> SpeedSlope;
-  *Eng_cfg >> SpeedIntercept;
-  *Eng_cfg >> AltitudeSlope;
-  
+  string token;
+
+  Name = Eng_cfg->GetValue("NAME");
+  cout << "\n    Engine Name: " << Name << endl;
+  Eng_cfg->GetNextConfigLine();
+  while (Eng_cfg->GetValue() != "/FG_PISTON") {
+    *Eng_cfg >> token;
+    if (token == "BRAKEHORSEPOWER") {
+      *Eng_cfg >> BrakeHorsePower;
+      cout << "      BrakeHorsePower = " << BrakeHorsePower << endl;
+    } else if (token == "MAXTHROTTLE") {
+      *Eng_cfg >> MaxThrottle;
+      cout << "      MaxThrottle = " << MaxThrottle << endl;
+    } else if (token == "MINTHROTTLE") {
+      *Eng_cfg >> MinThrottle;
+      cout << "      MinThrottle = " << MinThrottle << endl;
+    } else if (token == "SLFUELFLOWMAX") {
+      *Eng_cfg >> SLFuelFlowMax;
+      cout << "      SLFuelFlowMax = " << SLFuelFlowMax << endl;
+    } else if (token == "SPEEDSLOPE") {
+      *Eng_cfg >> SpeedSlope;
+      cout << "      SpeedSlope = " << SpeedSlope << endl;
+    } else if (token == "SPEEDINTERCEPT") {
+      *Eng_cfg >> SpeedIntercept;
+      cout << "      SpeedIntercept = " << SpeedIntercept << endl;
+    } else if (token == "ALTITUDESLOPE") {
+      *Eng_cfg >> AltitudeSlope;
+      cout << "      AltitudeSlope = " << AltitudeSlope << endl;
+    } else {
+      cout << "Unhandled token in Engine config file: " << token << endl;
+    }
+  }
+
   EngineNumber = 0;
 }
 

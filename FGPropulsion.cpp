@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.18 2001/01/11 00:44:55 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.19 2001/01/11 06:34:02 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,7 @@ CLASS IMPLEMENTATION
 FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
-  numTanks = numEngines = 0;
+  numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;
 }
 
@@ -101,13 +101,13 @@ bool FGPropulsion:: Run(void) {
 
 bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
-  string token, tag;
-  string engineName, fullpath;
+  string token, fullpath;
+  string engineName, engType;
   string thrusterName, thrType;
   string parameter;
   string enginePath = FDMExec->GetEnginePath();
-  float xLoc, yLoc, zLoc, engPitch, engYaw;
-  
+  float xLoc, yLoc, zLoc, Pitch, Yaw;
+
 # ifndef macintosh
       fullpath = enginePath + "/";
 # else
@@ -128,32 +128,32 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
       FGConfigFile Eng_cfg(fullpath + engineName + ".xml");
 
       if (Eng_cfg.IsOpen()) {
-        Eng_cfg >> tag;
+        engType = Eng_cfg.GetValue();
 
-        if (tag == "FG_ROCKET") {
+        if (engType == "FG_ROCKET") {
           Engines.push_back(new FGRocket(FDMExec, &Eng_cfg));
-        } else if (tag == "FG_PISTON") {
+        } else if (engType == "FG_PISTON") {
           Engines.push_back(new FGPiston(FDMExec, &Eng_cfg));
-        } else if (tag == "FG_TURBOJET") {
+        } else if (engType == "FG_TURBOJET") {
           Engines.push_back(new FGTurboJet(FDMExec, &Eng_cfg));
-        } else if (tag == "FG_TURBOSHAFT") {
+        } else if (engType == "FG_TURBOSHAFT") {
           Engines.push_back(new FGTurboShaft(FDMExec, &Eng_cfg));
-        } else if (tag == "FG_TURBOPROP") {
+        } else if (engType == "FG_TURBOPROP") {
           Engines.push_back(new FGTurboProp(FDMExec, &Eng_cfg));
         } else {
-          cerr << "    Unrecognized engine type: " << &Eng_cfg << " found in config file.\n";
+          cerr << "    Unrecognized engine type: " << engType << " found in config file.\n";
         }
 
         *AC_cfg >> xLoc >> yLoc >> zLoc;
-        *AC_cfg >> engPitch >> engYaw;
+        *AC_cfg >> Pitch >> Yaw;
 
-        Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
+        Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, Pitch, Yaw);
         Engines[numEngines]->SetName(engineName);
 
         numEngines++;
       } else {
         cerr << "Could not read engine config file: " << fullpath
-                                                   + engineName + ".xml" << endl;
+                                                  + engineName + ".xml" << endl;
         return false;
       }
 
@@ -171,27 +171,39 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         break;
       }
       numTanks++;
-      
+
     } else if (parameter == "AC_THRUSTER") {
-    
+
       *AC_cfg >> thrusterName;
 
-      cout << "    Reading thruster: " << thrusterName << " from file: " << fullpath
-                                                   + thrusterName + ".xml" << endl;
+      cout << "    Reading thruster: " << thrusterName << " from file: " <<
+                                       fullpath + thrusterName + ".xml" << endl;
       FGConfigFile Thruster_cfg(fullpath + thrusterName + ".xml");
 
       if (Thruster_cfg.IsOpen()) {
         thrType = Thruster_cfg.GetValue();
+
         if (thrType == "FG_PROPELLER") {
           Thrusters.push_back(new FGPropeller(FDMExec, &Thruster_cfg));
 	      } else if (thrType == "FG_NOZZLE") {
           Thrusters.push_back(new FGNozzle(FDMExec, &Thruster_cfg));
 	      }
+
+        *AC_cfg >> xLoc >> yLoc >> zLoc;
+        *AC_cfg >> Pitch >> Yaw;
+
+        Thrusters[numThrusters]->SetLocation(xLoc, yLoc, zLoc);
+        Thrusters[numThrusters]->SetAnglesToBody(0, Pitch, Yaw);
+        Thrusters[numThrusters]->SetName(thrusterName);
+
+        numThrusters++;
+
 	    } else {
-        cerr << "Could not read thruster engine config file: " << fullpath
-                                                   + thrusterName + ".xml" << endl;
+        cerr << "Could not read thruster config file: " << fullpath
+                                                + thrusterName + ".xml" << endl;
         return false;
       }
+
     }
   }
   return true;
