@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.61 2004/04/17 21:16:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.60 2004/04/17 21:13:21 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************

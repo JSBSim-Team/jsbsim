@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.80 2004/04/17 21:16:22 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.79 2004/04/17 21:13:23 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.80 2004/04/17 21:16:22 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.79 2004/04/17 21:13:23 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

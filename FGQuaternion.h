@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.6 2004/04/17 21:16:19 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.5 2004/04/17 21:13:22 jberndt Exp $"
 
 namespace JSBSim {
 

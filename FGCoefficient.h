@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.54 2004/04/17 21:16:19 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.53 2004/04/17 21:13:20 jberndt Exp $"
 
 using std::vector;
 
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.54 2004/04/17 21:16:19 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.53 2004/04/17 21:13:20 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

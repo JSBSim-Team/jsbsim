@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.47 2004/04/17 21:16:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.46 2004/04/17 21:13:23 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/

@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.18 2004/04/17 21:16:19 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.17 2004/04/17 21:13:21 jberndt Exp $"
 
 using std::vector;
 

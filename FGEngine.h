@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.62 2004/04/17 21:16:19 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.61 2004/04/17 21:13:21 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.62 2004/04/17 21:16:19 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.61 2004/04/17 21:13:21 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

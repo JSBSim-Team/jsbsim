@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.167 2004/04/17 21:16:22 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.166 2004/04/17 21:13:23 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H

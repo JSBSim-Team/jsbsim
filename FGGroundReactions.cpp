@@ -40,7 +40,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.37 2004/04/17 21:16:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.36 2004/04/17 21:13:21 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 #if defined (__APPLE__)

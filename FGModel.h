@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.37 2004/04/17 21:16:19 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.36 2004/04/17 21:13:22 jberndt Exp $"
 
 using namespace std;
 
