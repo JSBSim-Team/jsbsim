@@ -66,7 +66,41 @@ INCLUDES
 #include <vector>
 
 #define ID_TRIM "$Header"
-
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/** FGTrim -- the trimming routine for JSBSim
+    FGTrim finds the aircraft attitude and control settings needed to maintain
+    the steady state described by the FGInitialCondition object .  It does this
+    iteratively by assigning a control to each state and adjusting that control
+    until the state is within a specified tolerance of zero. States include the
+    recti-linear accelerations udot, vdot, and wdot, the angular accelerations 
+    qdot, pdot, and rdot, and the difference between heading and ground track.
+    Controls include the usual flight deck controls available to the pilot plus
+    angle of attack (alpha), sideslip angle(beta), flight path angle (gamma), 
+    pitch attitude(theta), roll attitude(phi), and altitude above ground.  The
+    last three are used for on-ground trimming. The state-control pairs used in
+    a given trim are completely user configurable and several pre-defined modes
+    are provided as well. They are:
+    tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator
+    tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
+           and heading minus ground track (hmgt) with beta
+    tGround: wdot with altitude, qdot with theta, and pdot with phi
+    The remaining modes include tCustom, which is completely user defined and
+    tNone.
+    
+    Currently, this class cannot trim a non-1g condition and is limited to 
+    trimming for constant true airspeed in climbs and descents.
+    
+    Note that trims can (and do) fail for reasons that are completely outside
+    the control of the trimming routine itself. The most common problem is the 
+    initial conditions: is the model capable of steady state flight
+    at those conditions?  Check the speed, altitude, configuration (flaps,
+    gear, etc.), weight, cg, and anything else that may be relavant.
+       
+    
+*/       
+  
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -111,29 +145,99 @@ private:
   bool checkLimits(void);
 
 public:
+  /** Initializes the trimming class
+      @param FDMExec pointer to a JSBSim executive object.
+      @param FGIC pointer to a FGInitialCondition object
+      @param TrimMode the set of axes to trim. Can be:
+       tLongitudinal, tFull, tGround, tCustom, or tNone
+  */
   FGTrim(FGFDMExec *FDMExec, FGInitialCondition *FGIC, TrimMode tt);
-  ~FGTrim(void);
 
+    ~FGTrim(void);
+
+  /** Execute the trim
+  */
   bool DoTrim(void);
 
+  /** Print the results of the trim. For each axis trimmed, this 
+      includes the final state value, control value, and tolerance
+      used.
+      @return true if trim succeeds
+  */     
   void Report(void);
+  
+  /** Prints a summary of simulator state (speed, altitude, 
+      configuration, etc.)
+  */
   void ReportState(void);
+  
+  /** Iteration statistics
+  */
   void TrimStats();
 
+  /** Clear all state-control pairs from the current configuration.
+      The trimming routine must have at least one state-control pair
+      configured to be useful
+  */    
   void ClearStates(void);
+
+  /** Add a state-control pair to the current configuration. See the enums
+      State and Control in FGTrimAxis.h for the available options.
+      Will fail if the given state is already configured.
+      @param state the accel or other condition to zero 
+      @param control the control used to zero the state
+      @return true if add is successful
+  */    
   bool AddState( State state, Control control );
+  
+  /** Remove a specific state-control pair from the current configuration
+      @param state the state to remove
+      @return true if removal is successful
+  */    
   bool RemoveState( State state );
+  
+  /** Change the control used to zero a state previously configured
+      @param state the accel or other condition to zero 
+      @param control the control used to zero the state
+  */
   bool EditState( State state, Control new_control );
 
+  /** automatically switch to trimming longitudinal acceleration with
+      flight path angle (gamma) once it becomes apparent that there
+      is not enough/too much thrust.
+      @param gamma_fallback true to enable fallback
+  */     
   inline void SetGammaFallback(bool bb) { gamma_fallback=true; }
+  
+  /** query the fallback state
+      @return true if fallback is enabled.
+  */
   inline bool GetGammaFallback(void) { return gamma_fallback; }
 
+  /** Set the iteration limit. DoTrim() will return false if limit
+      iterations are reached before trim is achieved.  The default
+      is 60.  This does not ordinarily need to be changed.
+      @param ii integer iteration limit 
+  */
   inline void SetMaxCycles(int ii) { max_iterations = ii; }
+  
+  /** Set the per-axis iteration limit.  Attempt to zero each state
+      by iterating limit times before moving on to the next. The
+      default limit is 100 and also does not ordinarily need to
+      be changed.
+      @param ii integer iteration limit 
+  */    
   inline void SetMaxCyclesPerAxis(int ii) { max_sub_iterations = ii; }
+  
+  /** Set the tolerance for declaring a state trimmed. Angular accels are
+      held to a tolerance of 1/10th of the given.  The default is 
+      0.001 for the recti-linear accelerations and 0.0001 for the angular.
+  */         
   inline void SetTolerance(float tt) {
     Tolerance = tt;
     A_Tolerance = tt / 10;
   }
+  
   //Debug level 1 shows results of each top-level iteration
   //Debug level 2 shows level 1 & results of each per-axis iteration
   inline void SetDebug(int level) { Debug = level; }
