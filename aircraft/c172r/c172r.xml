@@ -3,11 +3,113 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172r.xml,v 1.7 2004/05/26 12:29:59 jberndt Exp $
+  CVS Version: $Id: c172r.xml,v 1.8 2004/10/14 01:04:24 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
-            fgfs --aircraft=c172r
+            fgfs -aircraft=c172r
+
+Reference: FAA TCDS 3A12:
+
+Engine: Lycoming IO-360-L2A, Rated 160 Horsepower
+RPM Limit: 2,400
+Propeller: McCauley Model IC235/LFA7570  Weight: 41.7 lbs
+          75" 2 blade, Fixed pitch, Aluminum alloy, standard pitch 80"-40"
+          Static RPM at full throttle: Not over 2,165; Not Under 2,065
+Airspeed limits:
+Maneuvering 99 Knots IAS ( 97 Knots CAS)
+Max Structural Cruising 129 Knots IAS (126 Knots CAS)
+Never Exceed 163 Knots IAS (160 Knots CAS)
+Flaps Extended 85 Knots IAS ( 84 Knots CAS)
+
+C.G. range:
+
+Normal Category
+(1) Aft Limits 47.3 inches aft of datum at 2,450 pounds or less.
+(2) Forward Limits Linear variation from 40.0 inches aft of datum at 2,450
+pounds to 35.0 inches aft of datum at 1,950 pounds; 35.0
+inches aft of datum at 1,950 pounds or less.
+
+Utility category:
+(1) Aft Limits 40.5 inches aft of datum at 2,100 pounds or less.
+(2) Forward Limits Linear variation from 36.5 inches aft of datum at 2,100
+pounds to 35.0 inches aft of datum at 1,950 pounds; 35.0
+inches aft of datum at 1,950 pounds or less.
+
+Reference Datum Lower portion of front face of firewall
+
+MAC 58.8 inches; Leading edge of MAC 25.9 inches aft of datum
+
+Maximum Weights Normal Category
+Maximum Ramp 2,457 pounds
+Maximum Takeoff and Landing 2,450 pounds
+Utility Category
+Maximum Ramp 2,107 pounds
+Maximum Takeoff and Landing 2,100 pounds
+
+No. of Seats 4 (2 at 34.0 to 46.0 inches aft of datum; 2 at 73.0 inches aft of datum)
+
+Maximum Baggage 120 pounds at 95.0 inches aft of datum
+
+Fuel Capacity (Gal.) 56 gallons total; 53 gallons usable
+(Two 28 gallon tanks in wings at 48.0 inches aft of datum)
+See NOTE 1 for data on usable fuel.
+
+Fuel is at 6 pounds per gallon.
+
+Control surface movements Wing flaps Takeoff 0 - 10 (deg)
+Landing 0 - 30  +0/-2 (deg)
+Ailerons Up 20  +/- 1  Down 15  +/- 1 (deg)
+Elevator tab Up 22 +1/-0 Down 19 +1/-0 (deg)
+Elevator Up 28 +1/-0 Down 23 +1/-0 (deg)
+(Neutral position is with bottom of balance area flush with bottom of stabilizer)
+Rudder (Measured parallel to W.L.): Right 16 10' +/-1 Left same (deg)
+Rudder (Measured perpendicular to Hinge): Right 17 44' +/-1 (deg) Left same
+
+Reference: Performance (from Cessna.com)
+                                          English          Metric
+Cruise * 60% power at 10,000 ft
+  time                                    6.6 hrs
+  range                                   687 nm           1,272 km
+
+Cruise * 80% power at 8,000 ft
+  time                                    4.8 hrs
+  range                                   580 nm           1,074 km
+
+Engine: Textron Lycoming IO-360-L2A
+  160 BHP at 2,400 RPM
+
+Landing Performance
+  Ground roll                             550 ft             168 m
+  Total distance over 50 ft obstacle     1295 ft             395 m
+
+Power Loading                            15.3 lbs/hp         6.9 kg/hp
+
+Propeller: Fixed Pitch, Diameter           75 in            1.91 m
+
+Rate of Climb at Sea Level                720 ft/min         219 m/min
+
+Service Ceiling                        13,500 ft            4115 m
+
+Speed
+  Maximum at sea level                    123 kts            228 kph
+  Cruise, 80% power at 8,000 ft           122 kts            226 kph
+
+Stall Speed, CAS
+  Flaps up, power off                      51 kts             94 kph
+  Flaps down, power off                    47 kts             87 kph
+
+Takeoff Performance
+  Ground roll                             945 ft             288 m
+
+Takeoff Performance
+  Total distance over 50 ft obstacle    1,685 ft             514 m
+
+Wing Loading                             14.1 lbs/sqft      68.8 kg/sqm
+
+Fuel Capacity (total) 56 gallons (@6 lbs/g = 168*2 lbs)
+
+Standard empty weight 1,620 lbs.
 -->
 
   <METRICS>
@@ -32,7 +134,7 @@
     -->
 
     AC_WINGAREA  174   <!-- square feet -->
-    AC_WINGSPAN  35.8  <!-- ft          -->
+    AC_WINGSPAN  36.1  <!-- ft          -->
     AC_CHORD     4.9   <!-- ft          -->
     AC_HTAILAREA 21.9  <!-- square feet -->
     AC_HTAILARM  15.7  <!-- ft          -->
@@ -42,13 +144,14 @@
     AC_IYY    1346
     AC_IZZ    1967
     AC_IXZ    0
-    AC_EMPTYWT   1500
+    AC_EMPTYWT   1620
     AC_AERORP    43.2  0.0 59.4
     AC_CGLOC     41.0  0.0 36.5
 <!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
 <!-- Co-pilot -->
-<!-- AC_POINTMASS 180.0 36.0  14.0 24.0 -->
+    AC_POINTMASS 180.0 36.0  14.0 24.0
+    AC_POINTMASS 120.0 36.0  0.0 24.0 <!-- luggage -->
     AC_EYEPTLOC  37.0  0.0 48.0
     AC_VRP       42.6  0.0 38.5
 
@@ -115,7 +218,7 @@
       YAW     0.0
       FEED      0
       FEED      1
-      <AC_THRUSTER FILE="prop_75in2f">
+      <AC_THRUSTER FILE="prop_generic2f">
         XLOC  -37.7
         YLOC    0.0
         ZLOC   26.6
@@ -131,8 +234,8 @@
       YLOC -112.0
       ZLOC   59.4
       RADIUS 29.4
-      CAPACITY 185.0
-      CONTENTS 100.0
+      CAPACITY 168.0
+      CONTENTS 168.0
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
@@ -140,8 +243,8 @@
       YLOC  112.0
       ZLOC   59.4
       RADIUS 29.4
-      CAPACITY 185.0
-      CONTENTS 100.0
+      CAPACITY 168.0
+      CONTENTS 168.0
     </AC_TANK>
 
   </PROPULSION>
@@ -564,8 +667,8 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
-    RATE_IN_HZ       20
+  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+    RATE_IN_HZ      5
     SIMULATION       OFF
     ATMOSPHERE       ON
     MASSPROPS        ON
