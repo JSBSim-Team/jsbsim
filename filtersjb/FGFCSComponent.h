@@ -68,16 +68,19 @@ CLASS DOCUMENTATION
 
 /** Base class for JSBSim Flight Control System Components.
     The Flight Control System (FCS) for JSBSim consists of the FCS container
-    class (see \Ref{FGFCS.html}), the FGFCSComponent base class, and the
+    class (see \URL[FGFCS]{FGFCS.html}), the FGFCSComponent base class, and the
     component classes from which can be constructed a string, or channel. See:
-    FGGain
-    FGSummer
-    DeadBand
-    FGFlaps
-    FGGradient
-    FGSwitch
+    <ul>
+    <li>\URL[Switch Component]{FGSwitch.html}</li>
+    <li>\URL[Gain Component]{FGGain.html}</li>
+    <li>\URL[Flaps Component]{FGFlaps.html}</li>
+    <li>\URL[Filter Component]{FGFilter.html}</li>
+    <li>\URL[Deadband Component]{FGDeadBand.html}</li>
+    <li>\URL[Summer Component]{FGSummer.html}</li>
+    <li>\URL[Gradient Component]{FGGradient.html}</li>
+    </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.16 2000/10/19 14:42:18 jsb Exp $
+    @version $Id: FGFCSComponent.h,v 1.17 2000/10/19 18:37:53 jsb Exp $
     @see -
 */
 
