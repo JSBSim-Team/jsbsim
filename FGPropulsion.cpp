@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.30 2001/02/04 13:16:16 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.31 2001/02/05 13:05:24 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,19 +89,22 @@ FGPropulsion::~FGPropulsion(void)
 
 bool FGPropulsion::Run(void) {
   float PowerAvailable;
-
   dt = State->Getdt();
 
+cout << "Entered Propulsion::Run()\n";      
   Forces->InitMatrix();
   Moments->InitMatrix();
+cout << "Initialized matrices\n";
 
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
       Thrusters[i]->SetdeltaT(dt*rate);
+cout << "Set thruster dt\n";      
       PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
       Thrusters[i]->Calculate(PowerAvailable);
       *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+cout << "Thrust: " << *Forces << endl;      
     }
 
     return false;

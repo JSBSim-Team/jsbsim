@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.14 2001/02/04 13:16:16 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.15 2001/02/05 13:05:24 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +142,6 @@ float FGPropeller::Calculate(float PowerAvailable)
 
   Torque = PowerAvailable / omega;
   RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
-
   return Thrust; // return thrust in pounds
 }
 

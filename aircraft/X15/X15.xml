@@ -57,18 +57,26 @@
 
     <COMMENT>
     <!--
-    Tank locations and characteristics, empty weight, in aircraft's own coord system:
-    * X, Y, Z, in inches
-    * effective radius of tank, in inches (for fuel slosh, if/when modeled)
-    * capacity in pounds
-    * current contents, in pounds
+      TANKS SECTION
 
-    ENGINE[S] SECTION
+      Tank locations and characteristics, empty weight, in aircraft's own coord system:
+      X, Y, Z, in inches
+      effective radius of tank, in inches (for fuel slosh, if/when modeled)
+      capacity in pounds
+      Current contents, in pounds
 
-    Engine[s] is|are specified by giving engine name (which corresponds to an engine
-    definition file in the "engines" directory) followed by x, y, z placement and
-    pitch and yaw orientation. Coordinates are given in inches in the structural
-    coordinate frame. Angles for pitch and yaw are specified in radians.
+      ENGINE[S] SECTION
+
+      Engine[s] is|are specified by giving engine name (which corresponds to an engine
+      definition file in the "engines" directory) followed by x, y, z placement and
+      pitch and yaw orientation. Coordinates are given in inches in the structural
+      coordinate frame. Angles for pitch and yaw are specified in radians.
+
+      AC_ENGINE name x y z pitch yaw
+
+      THRUSTER[S] SECTION
+
+      AC_THRUSTER name x y z pitch yaw
     -->
     </COMMENT>
 
@@ -80,7 +88,7 @@
       CAPACITY 9470.0
       CONTENTS 9470.0
     </AC_TANK>
-    
+
     <AC_TANK TYPE="FUEL" NUMBER="1">
       XLOC 408.3
       YLOC 0.0
@@ -100,6 +108,13 @@
       FEED     1
     </AC_ENGINE>
 
+    <AC_THRUSTER FILE="xlr99_nozzle">
+      XLOC  600.0
+      YLOC    0.0
+      ZLOC    0.0
+      PITCH   0.0
+      YAW     0.0
+    </AC_THRUSTER>
   </PROPULSION>
 
   <COMMENT>
