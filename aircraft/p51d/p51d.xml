@@ -1,0 +1,155 @@
+<FDM_CONFIG NAME="p51d" VERSION="0">
+<!--
+
+  File:        p51d
+  Author:      Jon Berndt
+  CVS Version: $Id: p51d.xml,v 1.1 2003/03/11 14:35:42 jberndt Exp $
+
+  Function: Models a North American Aviation P-51D
+  Notes:    See NACA TN 1044, NACA Report 829, NASA SP-468
+
+-->
+
+  <METRICS>
+    <!--
+    Source: P-51D Operating Manual, etc.
+    -->
+    AC_WINGAREA  240.0    <!-- square feet -->
+    AC_WINGSPAN   37.1    <!-- ft          -->
+    AC_CHORD       6.6    <!-- ft          -->
+    AC_HTAILAREA  41.0    <!-- square feet -->
+    AC_HTAILARM   15.0    <!-- ft (guess)  -->
+    AC_VTAILAREA  20.0    <!-- square feet -->
+    AC_LV         16.0    <!-- ft (guess)  -->
+    AC_IXX      8031.0    <!-- slug-ft^2   -->
+    AC_IYY      9274.0    <!-- slug-ft^2   -->
+    AC_IZZ     14547.0    <!-- slug-ft^2   -->
+    AC_EMPTYWT   7125.0   <!-- pounds      -->
+    AC_AERORP    99.0 0.0 -26.5  <!-- inches      -->
+    AC_CGLOC     98.0 0.0  -9.0  <!-- inches      -->
+    AC_EYEPTLOC  128.0 0.0 30.0  <!-- inches      -->
+    <!-- Pilot -->
+    AC_POINTMASS 180.0 0.0 15.0  <!-- pounds, inches -->
+  </METRICS>
+
+  <UNDERCARRIAGE>
+    <!--
+    Source: P-51D Operating Manual, etc.
+    -->
+     AC_GEAR TAIL  282.0   0.0 -27.0 {K B D S R} {steer} {brake} 30 {retract}
+     AC_GEAR LMAIN  80.0 -71.0 -76.5 {K B D S R} {steer} {brake} 0 {retract}
+     AC_GEAR RMAIN  80.0  71.0 -76.5 {K B D S R} {steer} {brake} 0 {retract}
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+    <!--
+      Data source: {source}
+      Rolls Royce Merlin V1650-7 (1695 hp)
+    -->
+    <AC_ENGINE FILE="MerlinV1650">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      FEED  0
+      FEED  1
+    </AC_ENGINE>
+    <AC_THRUSTER FILE="{name}">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      P_FACTOR {factor}
+      SENSE   {sense}
+    </AC_THRUSTER>
+    <AC_TANK TYPE="FUEL" NUMBER="0">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+  </PROPULSION>
+
+  <FLIGHT_CONTROL NAME="{name}">
+    <!--
+      Data source: {source}
+    -->
+    <COMPONENT NAME="{name}" TYPE="{type}">
+    </COMPONENT>
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+    <!--
+      Data sources: {sources}
+    -->
+    <AXIS NAME="LIFT">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="DRAG">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="SIDE">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="ROLL">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="PITCH">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="YAW">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+  </AERODYNAMICS>
+
+  <OUTPUT NAME="{name}" TYPE="{type}">
+    <!--
+      Data sources: {sources}
+    -->
+    RATE_IN_HZ       {rate}
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+</FDM_CONFIG>
+
