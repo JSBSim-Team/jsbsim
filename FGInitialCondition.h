@@ -128,8 +128,8 @@ public:
   void SetAltitudeFtIC(float tt);
 
   //"vertical" flight path, recalculate theta
-  inline void SetFlightPathAngleDegIC(float tt) { gamma=tt*DEGTORAD; theta=alpha+gamma; }
-  inline void SetFlightPathAngleRadIC(float tt) { gamma=tt; theta=alpha+gamma; }
+  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(gamma=tt*DEGTORAD); }
+  void SetFlightPathAngleRadIC(float tt);
   //set speed first
   void SetClimbRateFpmIC(float tt);
   //use currently stored gamma, recalcualte theta
@@ -157,6 +157,7 @@ public:
   inline float GetVcalibratedKtsIC(void) { return vc*FPSTOKTS; }
   inline float GetVequivalentKtsIC(void) { return ve*FPSTOKTS; }
   inline float GetVtrueKtsIC(void) { return vt*FPSTOKTS; }
+  inline float GetVtrueFpsIC(void) { return vt; }
   inline float GetMachIC(void) { return mach; }
 
   inline float GetAltitudeFtIC(void) { return altitude; }

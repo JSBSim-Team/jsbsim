@@ -135,11 +135,20 @@ void FGInitialCondition::SetClimbRateFpmIC(float tt) {
   }
 }
 
+void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
+  gamma=tt;
+  theta=alpha+gamma;
+  hdot=vt*sin(tt);
+}
+
+
 void FGInitialCondition::SetUBodyFpsIC(float tt) {
   u=tt;
   vt=sqrt(u*u+v*v+w*w);
   lastSpeedSet=setvt;
 }
+
+  
 
 void FGInitialCondition::SetVBodyFpsIC(float tt) {
   v=tt;
