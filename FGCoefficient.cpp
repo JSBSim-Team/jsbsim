@@ -44,6 +44,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <stdio.h>
+
 #include "FGCoefficient.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
@@ -59,7 +61,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.56 2002/07/10 22:17:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.57 2002/09/07 21:34:02 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +210,7 @@ double FGCoefficient::Value(double rVal, double cVal)
 double FGCoefficient::Value(double Val)
 {
   double Value;
-
+  
   SD = Value = gain*Table->GetValue(Val) + bias;
   
   for (unsigned int midx=0; midx < multipliers.size(); midx++) 
