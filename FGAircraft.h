@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.94 2004/01/11 19:46:02 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.95 2004/02/18 02:45:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.94 2004/01/11 19:46:02 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.95 2004/02/18 02:45:38 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -169,7 +169,6 @@ private:
   FGColumnVector3 vXYZrp;
   FGColumnVector3 vXYZvrp;
   FGColumnVector3 vXYZep;
-  FGColumnVector3 vEuler;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vBodyAccel;
   FGColumnVector3 vNcg;

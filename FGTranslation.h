@@ -54,15 +54,13 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGMatrix33.h"
 #include "FGColumnVector3.h"
-#include "FGColumnVector4.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.48 2004/01/13 17:35:06 dpculp Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.49 2004/02/18 02:45:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATION
@@ -142,13 +140,11 @@ private:
   FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
   FGColumnVector3 vUVWdot_prev[4];
-  FGMatrix33      mVel;
   FGColumnVector3 vAeroUVW;
   FGColumnVector3 vMachUVW;
 
   double Vt, Mach;
   double qbar, qbarUW, qbarUV;
-  double dt;
   double alpha, beta;
   double adot,bdot;
   void Debug(int from);

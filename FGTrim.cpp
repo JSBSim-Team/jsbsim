@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.42 2003/11/24 18:22:12 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.43 2004/02/18 02:45:38 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -548,7 +548,6 @@ bool FGTrim::checkLimits(void) {
 
 void FGTrim::setupPullup() {
   float g,q,cgamma;
-  FGColumnVector3 vPQR;
   g=fdmex->GetInertial()->gravity();
   cgamma=cos(fgic->GetFlightPathAngleRadIC());
   cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
@@ -594,7 +593,6 @@ void FGTrim::updateRates(void){
     fdmex->GetRotation()->SetPQR(p,q,r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
       float g,q,cgamma;
-      FGColumnVector3 vPQR;
       g=fdmex->GetInertial()->gravity();
       cgamma=cos(fgic->GetFlightPathAngleRadIC());
       q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();

@@ -80,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.73 2004/01/19 18:41:52 ehofman Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.74 2004/02/18 02:45:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.73 2004/01/19 18:41:52 ehofman Exp $
+    @version $Id: FGState.h,v 1.74 2004/02/18 02:45:38 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,9 +143,6 @@ public:
       */
   void Initialize(FGInitialCondition *FGIC);
 
-  /// returns the speed of sound in feet per second.
-  inline double Geta(void) { return a; }
-
   /// Returns the simulation time in seconds.
   inline double Getsim_time(void) const { return sim_time; }
   /// Returns the simulation delta T.
@@ -155,11 +152,6 @@ public:
   inline void Suspend(void) {saved_dt = dt; dt = 0.0;}
   /// Resumes the simulation by resetting delta T to the correct value.
   inline void Resume(void)  {dt = saved_dt;}
-
-  /** Sets the speed of sound.
-      @param speed the speed of sound in feet per second.
-      */
-  inline void Seta(double speed) { a = speed; }
 
   /** Sets the current sim time.
       @param cur_time the current time
@@ -335,7 +327,6 @@ public:
   void unbind();
 
 private:
-  double a;                          // speed of sound
   double sim_time, dt;
   double saved_dt;
 
@@ -347,7 +338,6 @@ private:
   FGColumnVector4 vQtrn;
   FGColumnVector4 vQdot_prev[4];
   FGColumnVector4 vQdot;
-  FGColumnVector3 vUVW;
   FGColumnVector3 vLocalVelNED;
   FGColumnVector3 vLocalEuler;
   

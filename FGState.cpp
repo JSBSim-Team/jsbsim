@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.125 2004/01/03 11:51:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.126 2004/02/18 02:45:38 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,6 @@ FGState::FGState(FGFDMExec* fdex)
 {
   FDMExec = fdex;
 
-  a = 1000.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
 
@@ -114,6 +113,7 @@ void FGState::Initialize(double U, double V, double W,
   double alpha, beta;
   double qbar, Vt;
   FGColumnVector3 vAeroUVW;
+  FGColumnVector3 vUVW;
 
   Position->SetLatitude(Latitude);
   Position->SetLongitude(Longitude);
@@ -125,7 +125,7 @@ void FGState::Initialize(double U, double V, double W,
   Rotation->SetEuler(vLocalEuler);
 
   InitMatrices(phi, tht, psi);
-  
+ 
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
   

@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.56 2003/12/23 04:51:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.57 2004/02/18 02:45:38 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,8 +151,6 @@ bool FGAtmosphere::Run(void)
     if (psiw < 0) psiw += 2*M_PI;
 
     soundspeed = sqrt(SHRatio*Reng*(*temperature));
-
-    State->Seta(soundspeed);
 
     Debug(2);
 
