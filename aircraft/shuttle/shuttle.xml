@@ -1,10 +1,10 @@
-<FDM_CONFIG NAME="Space Shuttle" VERSION="1.4">
+<FDM_CONFIG NAME="Space Shuttle" VERSION="1.40">
 
   <!--
 
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.1 2001/07/10 22:36:11 jberndt Exp $
+  CVS Version: $Id: shuttle.xml,v 1.2 2001/07/10 22:48:43 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -639,18 +639,18 @@
   <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       5
     SIMULATION       ON
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
-    AEROSURFACES     ON
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     OFF
     RATES            ON
     VELOCITIES       ON
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     OFF
+    COEFFICIENTS     ON
     GROUND_REACTIONS ON
     FCS              ON
-    PROPULSION       OFF
+    PROPULSION       ON
   </OUTPUT>
 
 </FDM_CONFIG>
