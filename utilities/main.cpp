@@ -320,6 +320,7 @@ void plotdata(ifstream* datafile)
   string Ranges;
   double xmin, ymin, xmax, ymax;
   int delim;
+  vector <int> IDs;
   
   while (!datafile->eof()) {
     getline(*datafile, Title);
@@ -337,7 +338,19 @@ void plotdata(ifstream* datafile)
     } else {
       delim = Ranges.find_first_of("|");
       xmin = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
-      cout << "Range: " << xmin;
+      cout << "Range: xmin=" << xmin;
+      Ranges = Ranges.substr(delim+1);
+      delim = Ranges.find_first_of("|");
+      ymin = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      cout << " ymin=" << ymin;
+      Ranges = Ranges.substr(delim+1);
+      delim = Ranges.find_first_of("|");
+      xmax = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      cout << " xmax=" << xmax;
+      Ranges = Ranges.substr(delim+1);
+      delim = Ranges.find_first_of("|");
+      ymax = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      cout << " ymax=" << ymax;
     }
     
     
