@@ -135,7 +135,6 @@ public:
 
   bool Run(void);
   bool LoadAircraft(string, string, string);
-  bool LoadAircraftEx(string, string, string);
   inline string GetAircraftName(void) {return AircraftName;}
   inline void SetGearUp(bool tt) {GearUp = tt;}
   inline bool GetGearUp(void) {return GearUp;}
@@ -194,15 +193,10 @@ private:
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
 
-  typedef vector<FGCoefficient*> CoeffArray;
-  typedef vector<CoeffArray*> CoeffVector;
+  typedef vector<FGCoefficient> CoeffArray;
+  typedef vector<CoeffArray> CoeffVector;
 
   CoeffVector Coeff;
-
-//  vector <vector <FGCoefficient*> > Coeff;
-
-
-//  int coeff_ctr[6];
 
   bool GearUp;
 

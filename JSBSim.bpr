@@ -19,14 +19,17 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
   FGTranslation.obj FGAircraft.obj
-RESFILES =
+RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
 LIBRARIES = VCL40.lib
 SPARELIBS = VCL40.lib
-PACKAGES =
+PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi dclocx40.bpi bcbsmp40.bpi \
+  TEEUI40.bpi TEEDB40.bpi TEE40.bpi VCLDBX40.bpi nmfast40.bpi y32cb4.bpi \
+  RXCTL.bpi RXDB.bpi calwdgA.bpi calwdgB.bpi CalCtrls.bpi Icsbcb30.bpi \
+  GraphWin.bpi WinshoesPkgCB4.bpi ibsmp40.bpi Auxiliary.bpi
 DEFFILE =
 # ---------------------------------------------------------------------------
 PATHCPP = .;
@@ -38,7 +41,7 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -I$(BCB)\include -Od -w -Tkh30000 -r- -a8 -k -y -v -vi- -c -tWM -tWC \
+CFLAG1 = -I$(BCB)\include -Od -w -Tkh30000 -r- -a8 -6 -k -y -v -vi- -c -tWM -tWC \
   -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
 PFLAGS = -U$(BCB)\lib;$(DEBUGLIBPATH) -I$(BCB)\include -$YD -$W -$O- -v -JPHN -M
@@ -53,12 +56,12 @@ ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 !ifdef IDEOPTIONS
 
 [Version Info]
-IncludeVerInfo=0
-AutoIncBuild=0
-MajorVer=1
-MinorVer=0
-Release=0
-Build=0
+IncludeVerInfo=1
+AutoIncBuild=1
+MajorVer=0
+MinorVer=7
+Release=2
+Build=5
 Debug=0
 PreRelease=0
 Special=0
@@ -68,16 +71,16 @@ Locale=1033
 CodePage=1252
 
 [Version Info Keys]
-CompanyName=
+CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=1.0.0.0
-InternalName=
-LegalCopyright=
-LegalTrademarks=
-OriginalFilename=
-ProductName=
-ProductVersion=1.0.0.0
-Comments=
+FileVersion=0.7.2.5
+InternalName=JSBSim Standalone
+LegalCopyright=©2000 by Jon S. Berndt
+LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
+OriginalFilename=JSBSim.exe
+ProductName=JSBSim
+ProductVersion=0.7.2
+Comments=Standalone version of JSBSim
 
 [HistoryLists\hlRunParameters]
 Count=1

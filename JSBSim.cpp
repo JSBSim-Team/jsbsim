@@ -63,6 +63,8 @@ USEUNIT("FGState.cpp");
 USEUNIT("FGTank.cpp");
 USEUNIT("FGTranslation.cpp");
 USEUNIT("FGAircraft.cpp");
+USERES("JSBSim.res");
+//---------------------------------------------------------------------------
 #pragma argsused
 #endif
 
@@ -103,7 +105,7 @@ int main(int argc, char** argv)
 
   FDMExec = new FGFDMExec();
 
-  FDMExec->GetAircraft()->LoadAircraftEx("aircraft", "engine", string(argv[1]));
+  FDMExec->GetAircraft()->LoadAircraft("aircraft", "engine", string(argv[1]));
   FDMExec->GetState()->Reset("aircraft", string(argv[2]));
 
   while (FDMExec->GetState()->Getsim_time() <= 25.0)

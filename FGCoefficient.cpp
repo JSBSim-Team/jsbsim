@@ -97,7 +97,6 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
   Output      = FDMExec->GetOutput();
 
   if (AC_cfg) {
-    AC_cfg->GetNextConfigLine();
     name = AC_cfg->GetValue("NAME");
     method = AC_cfg->GetValue("TYPE");
 
@@ -272,9 +271,9 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
         *AC_cfg >> Table3D[r][1];
       }
 
-      for (r=0;r<=rows;r++) {
+      for (r=1;r<=rows;r++) {
         cout << "	";
-        for (c=0;c<=columns;c++) {
+        for (c=0;c<columns;c++) {
           cout << Table3D[r][c] << "	";
         }
         cout << endl;
@@ -304,6 +303,7 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
       break;
     }
+    AC_cfg->GetNextConfigLine();
   }
 }
 
