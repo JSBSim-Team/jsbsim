@@ -85,14 +85,15 @@ extern double globalSeaLevelRadius;
 
 FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
     vUVW(3),
-vVel(3) {
+    vVel(3)
+{
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   h = 0.0;
   gamma=Vt=0.0;
-  RunwayElevation = 0.0;
+  RunwayRadius = EARTHRAD;
 }
 
 /******************************************************************************/
@@ -122,7 +123,7 @@ bool FGPosition:: Run(void) {
 
     h = Radius - EARTHRAD;
 
-    DistanceAGL = h - RunwayElevation;
+    DistanceAGL = h - RunwayRadius;
 
     hoverb=h/b;
 

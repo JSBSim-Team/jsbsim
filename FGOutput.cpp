@@ -180,7 +180,7 @@ void FGOutput::DelimitedOutput(void)
       cout << "Latitude, ";
       cout << "Longitude, ";
       cout << "Distance AGL, ";
-      cout << "Runway Elevation";
+      cout << "Runway Radius";
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       cout << ", ";
@@ -245,7 +245,7 @@ void FGOutput::DelimitedOutput(void)
     cout << Position->GetLatitude() << ", ";
     cout << Position->GetLongitude() << ", ";
     cout << Position->GetDistanceAGL() << ", ";
-    cout << Position->GetRunwayElevation();
+    cout << Position->GetRunwayRadius();
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     cout << ", ";
@@ -315,7 +315,7 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << "Latitude, ";
       datafile << "Longitude, ";
       datafile << "Distance AGL, ";
-      datafile << "Runway Elevation";
+      datafile << "Runway Radius";
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
       datafile << ", ";
@@ -379,7 +379,7 @@ void FGOutput::DelimitedOutput(string fname)
     datafile << Position->GetLatitude() << ", ";
     datafile << Position->GetLongitude() << ", ";
     datafile << Position->GetDistanceAGL() << ", ";
-    datafile << Position->GetRunwayElevation();
+    datafile << Position->GetRunwayRadius();
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
     datafile << ", ";

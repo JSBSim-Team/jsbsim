@@ -59,7 +59,7 @@ class FGPosition : public FGModel {
   double lastLatitudeDot, lastLongitudeDot, lastRadiusDot;
   double Longitude, Latitude;
   float dt;
-  double RunwayElevation;
+  double RunwayRadius;
   double DistanceAGL;
   double gamma;
   double Vt;
@@ -80,7 +80,7 @@ public:
   inline double Gethdot(void) { return RadiusDot; }
   inline double GetLatitude(void) { return Latitude; }
   inline double GetLongitude(void) { return Longitude; }
-  inline double GetRunwayElevation(void) { return RunwayElevation; }
+  inline double GetRunwayRadius(void) { return RunwayRadius; }
   inline double GetDistanceAGL(void)  { return DistanceAGL; }
   inline double GetGamma(void) { return gamma; }
   inline double GetHOverB(void) { return hoverb; }
@@ -88,7 +88,7 @@ public:
   void SetLatitude(float tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
   void Seth(double tt) { h = tt; }
-  void SetRunwayElevation(double tt) { RunwayElevation = tt; }
+  void SetRunwayRadius(double tt) { RunwayRadius = tt; }
   void SetDistanceAGL(double tt) { DistanceAGL = tt; }
 
   bool Run(void);

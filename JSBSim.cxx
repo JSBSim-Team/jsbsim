@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.13 2000/05/14 12:13:17 jsb Exp $
+// $Id: JSBSim.cxx,v 1.14 2000/05/15 12:37:00 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -55,10 +55,7 @@
 
 #include "JSBsim.hxx"
 
-
-extern float globalTriNormal[3];
-extern double globalSceneryAltitude;
-extern double globalSeaLevelRadius;
+double geocRwyRadius;
 
 /******************************************************************************/
 
@@ -117,6 +114,7 @@ int FGJSBsim::init( double dt ) {
   fgic->SetLatitudeRadIC(get_Latitude());
   fgic->SetLongitudeRadIC(get_Longitude());
 
+  FDMExec.GetPosition()->SetRunwayRadius(geocRwyRadius);
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi());
   FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
@@ -183,12 +181,15 @@ int FGJSBsim::update( int multiloop ) {
   FDMExec.GetFCS()->SetDspCmd( 0.0 );
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
                                     controls.get_throttle( 0 ) * 100.0 );
+  FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
+                                    controls.get_throttle( 0 ) * 100.0 );
   //FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
   //                                  controls.get_throttle( 0 ) * 100.0 );
   // FCS->SetBrake( controls.get_brake( 0 ) );
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
-  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude());
+//  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
+  FDMExec.GetPosition()->SetRunwayRadius(geocRwyRadius);
 
   FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
   FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
