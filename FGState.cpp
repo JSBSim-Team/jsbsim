@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.cpp,v 1.37 2000/10/27 10:18:24 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.cpp,v 1.38 2000/11/05 23:51:17 jsb Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,7 +260,7 @@ bool FGState::Reset(string path, string acname, string fname) {
   float phi, tht, psi;
   float latitude, longitude, h;
 
-  resetDef = path + "/" + acname + "/" + fname;
+  resetDef = path + "/" + acname + "/" + fname + ".xml";
 
   ifstream resetfile(resetDef.c_str());
 
