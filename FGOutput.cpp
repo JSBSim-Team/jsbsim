@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.78 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.79 2004/04/01 12:24:07 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,6 +456,7 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
   int OutRate = 0;
   FGConfigFile* Output_cfg;
   string property;
+  unsigned int port;
 
 # ifndef macintosh
     separator = "/";
@@ -466,11 +467,13 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
   name = AC_cfg->GetValue("NAME");
   fname = AC_cfg->GetValue("FILE");
   token = AC_cfg->GetValue("TYPE");
+  port = atoi(AC_cfg->GetValue("PORT").c_str());
+
   Output->SetType(token);
 
 #if defined( FG_WITH_JSBSIM_SOCKET ) || !defined( FGFS )
   if (token == "SOCKET") {
-    socket = new FGfdmSocket("localhost",1138);
+    socket = new FGfdmSocket(name,port);
   }
 #endif
 

@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.36 2004/03/31 12:12:32 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.37 2004/04/01 12:24:01 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -578,7 +578,7 @@
 
     <AXIS NAME="YAW">
 
-      <!-- Reduced Cn_beta to match analgous aircraft from
+      <!-- Reduced Cn_beta to match analagous aircraft from
            NASA Tech Note TN D-4983, "Full-Scale Wind-Tunnel Investigation
            of Static Longitudinal and Lateral Characteristics of a Light
            Twin-Engine Airplane" -->
