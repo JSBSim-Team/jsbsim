@@ -79,6 +79,8 @@ public:
   ~ FGDeadBand ( ) { }       //Destructor
 
   bool Run (void )  ;
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -19,7 +19,7 @@
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
  
@@ -58,8 +58,6 @@ INCLUDES
 #include "FGModel.h"
 #include "FGCoefficient.h"
 #include "FGPropulsion.h"
-//#include "FGEngine.h"
-//#include "FGTank.h"
 #include "FGLGear.h"
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
@@ -68,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.43 2001/02/04 13:16:12 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.44 2001/03/19 14:07:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +91,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.43 2001/02/04 13:16:12 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.44 2001/03/19 14:07:18 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -159,14 +157,6 @@ public:
   inline float GetWingSpan(void) { return WingSpan; }
   /// Gets the average wing chord
   inline float Getcbar(void) { return cbar; }
-  /** Gets an engine instance.
-      @param engine index of the engine instance
-      @return a pointer to the FGEngine instance of the requested engine */
-//  inline FGEngine* GetEngine(int engine) { return Engine[engine]; }
-  /** Gets a tank instance.
-      @param tank index of the tank instance
-      @return a pointer to the FGTank instance of the requested tank */
-//  inline FGTank* GetTank(int tank) { return Tank[tank]; }
   inline float GetWeight(void) { return Weight; }
   inline float GetMass(void) { return Mass; }
   inline FGColumnVector GetMoments(void) { return vMoments; }
@@ -176,7 +166,6 @@ public:
   inline float GetIyy(void) { return Iyy; }
   inline float GetIzz(void) { return Izz; }
   inline float GetIxz(void) { return Ixz; }
-//  inline unsigned int GetNumEngines(void) { return numEngines; }
   inline FGColumnVector GetXYZcg(void) { return vXYZcg; }
   inline FGColumnVector GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector GetXYZep(void) { return vXYZep; }
@@ -235,18 +224,11 @@ private:
   string CFGVersion;
   string AircraftName;
 
-//  unsigned int numTanks;
-//  unsigned int numEngines;
-//  unsigned int numSelectedOxiTanks;
-//  unsigned int numSelectedFuelTanks;
-//  FGTank* Tank[MAX_TANKS];           // need to make a vector
-//  FGEngine *Engine[MAX_ENGINES];     // need to make a vector
-
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
 
   typedef vector<FGCoefficient*> CoeffArray;
-  
+
   CoeffArray* Coeff;
 
   void DisplayCoeffFactors(vector <eParam> multipliers);
@@ -265,7 +247,9 @@ private:
   void ReadUndercarriage(FGConfigFile*);
   void ReadPrologue(FGConfigFile*);
   void ReadOutput(FGConfigFile*);
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

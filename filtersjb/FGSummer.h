@@ -1,4 +1,3 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGSummer.h
@@ -81,6 +80,8 @@ public:
   ~FGSummer ( ) { }       //Destructor
 
   bool Run (void );
+private:
+  void Debug(void);
 };
 
 #endif

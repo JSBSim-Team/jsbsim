@@ -52,8 +52,10 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.29 2001/03/13 08:49:13 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.30 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = "ID_ENGINE";
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -61,7 +63,7 @@ CLASS IMPLEMENTATION
 
 
 FGEngine::FGEngine(FGFDMExec* exec) {
- FDMExec      = exec;
+  FDMExec     = exec;
   State       = FDMExec->GetState();
   Atmosphere  = FDMExec->GetAtmosphere();
   FCS         = FDMExec->GetFCS();
@@ -73,10 +75,11 @@ FGEngine::FGEngine(FGFDMExec* exec) {
   Auxiliary   = FDMExec->GetAuxiliary();
   Output      = FDMExec->GetOutput();
 
-//  EngineNumber = num;
   Thrust = PctPower = 0.0;
   Starved = Flameout = false;
   Running = true;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGEngine" << endl;
   TrimMode = false;
 }
 
@@ -135,5 +138,12 @@ void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
 void FGEngine::AddFeedTank(int tkID)
 {
   SourceTanks.push_back(tkID);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGEngine::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.13 2001/02/04 13:16:13 jsb Exp $
+    @version $Id: FGConfigFile.h,v 1.14 2001/03/19 14:07:18 jberndt Exp $
     @see -
 */
 
@@ -106,15 +106,15 @@ public:
   FGConfigFile& operator>>(eParam&);
   void ResetLineIndexToZero(void);
 
-protected:
-
 private:
   ifstream cfgfile;
   string   CurrentLine;
   bool     CommentsOn;
   bool     Opened;
   unsigned int      CurrentIndex;
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

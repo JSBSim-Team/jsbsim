@@ -66,8 +66,10 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.cpp,v 1.13 2001/02/04 13:16:16 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.cpp,v 1.14 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -81,9 +83,11 @@ FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex),
         vEuler(3),
         vEulerRates(3)
 {
-    Name = "FGRotation";
-    cTht=cPhi=cPsi=1.0;
-    sTht=sPhi=sPsi=0.0;
+  Name = "FGRotation";
+  cTht=cPhi=cPsi=1.0;
+  sTht=sPhi=sPsi=0.0;
+
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,4 +155,9 @@ void FGRotation::GetState(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGRotation::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

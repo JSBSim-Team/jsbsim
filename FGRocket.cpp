@@ -40,8 +40,10 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.16 2001/03/13 08:49:13 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.17 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -80,6 +82,8 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
   }
 
   EngineNumber = 0;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGRocket" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,3 +117,11 @@ float FGRocket::Calculate(float) {
 
   return Thrust;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGRocket::Debug(void)
+{
+    //TODO: Add your source code here
+}
+

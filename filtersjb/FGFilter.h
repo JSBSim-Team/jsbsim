@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.13 2001/02/04 13:16:20 jsb Exp $"
+#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.14 2001/03/19 14:07:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.13 2001/02/04 13:16:20 jsb Exp $
+    @version $Id: FGFilter.h,v 1.14 2001/03/19 14:07:19 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,7 +114,7 @@ private:
   float PreviousOutput1;
   float PreviousOutput2;
   FGConfigFile* AC_cfg;
-
+  void Debug(void);
 };
 
 #endif

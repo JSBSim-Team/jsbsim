@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.27 2001/03/13 08:49:13 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.28 2001/03/19 14:07:18 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,6 +195,7 @@ protected:
   FGOutput*       Output;
 
   vector <int> SourceTanks;
+  void Debug(void);
 };
 
 #include "FGState.h"
@@ -212,3 +213,4 @@ protected:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.60 2001/03/11 19:42:32 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.61 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -167,7 +167,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vXYZcg(3),
     vXYZep(3),
     vEuler(3)
-    
+
 {
   Name = "FGAircraft";
 
@@ -177,32 +177,22 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
   AxisIdx["ROLL"]  = 3;
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
-  
+
   Coeff = new CoeffArray[6];
 
   GearUp = false;
-  
+
   alphaclmin = alphaclmax = 0;
 
-//  numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-FGAircraft::~FGAircraft(void) { 
+FGAircraft::~FGAircraft(void) {
   unsigned int i,j;
-/*
-  if (Engine != NULL) {
-    for (i=0; i<numEngines; i++)
-      delete Engine[i];
-  }
-  if (Tank != NULL) {
-    for (i=0; i<numTanks; i++)
-      delete Tank[i];
-  }
-*/
   for (i=0; i<6; i++) {
     for (j=0; j<Coeff[i].size(); j++) {
       delete Coeff[i][j];
@@ -224,7 +214,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 
 # ifndef macintosh
   aircraftCfgFileName = AircraftPath + "/" + fname + "/" + fname + ".xml";
-# else  
+# else
   aircraftCfgFileName = AircraftPath + ";" + fname + ";" + fname + ".xml";
 # endif
 
@@ -744,5 +734,12 @@ string FGAircraft::GetGroundReactionValues(void) {
   }
 
   return GroundReactionValues;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAircraft::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

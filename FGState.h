@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.24 2001/02/23 00:08:28 jberndt Exp $"
+#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.25 2001/03/19 14:07:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -133,6 +133,7 @@ private:
 
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
+  void Debug(void);
 
 protected:
   enum {ePhi=1, eTht, ePsi};
@@ -141,3 +142,4 @@ protected:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

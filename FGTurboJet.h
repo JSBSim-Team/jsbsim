@@ -58,7 +58,10 @@ public:
   ~FGTurboJet(void) {}
 
   float Calculate(float);
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

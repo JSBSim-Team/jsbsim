@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.25 2001/02/04 13:16:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.26 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
@@ -64,6 +64,8 @@ extern char fgcyan[6];
 extern char fgred[6];
 extern char fggreen[6];
 extern char fgdef[6];
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -158,6 +160,7 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
     }
     AC_cfg->GetNextConfigLine();
   }
+  if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -237,4 +240,9 @@ void FGCoefficient::DumpSD(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGCoefficient::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

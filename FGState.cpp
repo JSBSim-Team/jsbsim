@@ -63,8 +63,10 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.43 2001/02/26 23:37:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.44 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 MACROS
@@ -126,6 +128,8 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_THROTTLE_POS,   " throttle_pos "   );
   RegisterVariable(FG_HOVERB,         " height/span "    );
   RegisterVariable(FG_PITCH_TRIM_CMD, " pitch_trim_cmd " );
+
+  if (debug_lvl & 2) cout << "Instantiated: FGState" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -546,4 +550,9 @@ FGMatrix FGState::GetTs2b(float alpha, float beta) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGState::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

@@ -132,6 +132,7 @@ protected:
   FGColumnVector vFn;
   FGColumnVector vMn;
   FGFDMExec *fdmex;
+  void Debug(void);
 
 private:
   FGColumnVector vFb;

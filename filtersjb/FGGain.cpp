@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.23 2001/02/04 13:16:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.24 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -116,6 +118,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       Schedule.push_back(lookup);
     }
   }
+
+  if (debug_lvl & 2) cout << "Instantiated: FGGain" << endl;
 }
 
 // *****************************************************************************
@@ -167,5 +171,11 @@ bool FGGain::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+
+void FGGain::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

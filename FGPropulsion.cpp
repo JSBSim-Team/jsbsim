@@ -58,8 +58,10 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.34 2001/03/13 08:49:13 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.35 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -74,6 +76,8 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numOxiTanks = numFuelTanks = 0;
   Forces  = new FGColumnVector(3);
   Moments = new FGColumnVector(3);
+
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -276,6 +280,14 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
     }
     AC_cfg->GetNextConfigLine();
   }
-  
+
   return true;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::Debug(void)
+{
+    //TODO: Add your source code here
+}
+

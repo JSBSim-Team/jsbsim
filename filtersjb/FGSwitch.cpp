@@ -1,4 +1,3 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Module:       FGSwitch.cpp
@@ -38,10 +37,12 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSwitch.h"    				
+#include "FGSwitch.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.8 2001/02/04 13:16:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.9 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -52,6 +53,8 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
+
+  if (debug_lvl & 2) cout << "Instantiated: FGSwitch" << endl;
 }
 
 // *****************************************************************************
@@ -65,5 +68,11 @@ bool FGSwitch::Run(void )
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   return true;
+}
+
+
+void FGSwitch::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

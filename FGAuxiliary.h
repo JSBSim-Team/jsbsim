@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.14 2001/02/04 13:16:12 jsb Exp $
+    @version $Id: FGAuxiliary.h,v 1.15 2001/03/19 14:07:18 jberndt Exp $
     @see -
 */
 
@@ -118,7 +118,9 @@ private:
   
 
   void GetState(void);
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

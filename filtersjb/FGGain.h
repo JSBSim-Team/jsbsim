@@ -1,4 +1,3 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGGain.h
@@ -69,7 +68,7 @@ class FGFCS;
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGain  : public FGFCSComponent         
+class FGGain  : public FGFCSComponent
 {
   FGConfigFile* AC_cfg;
   float Gain;
@@ -83,6 +82,8 @@ public:
   ~FGGain ( ) { }       //Destructor
 
   bool Run (void);
+private:
+  void Debug(void);
 };
 
 #endif

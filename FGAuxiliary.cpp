@@ -52,18 +52,23 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.11 2001/02/04 13:16:12 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.12 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGAuxiliary";
   vcas = veas = mach = qbar = pt = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
+  
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,4 +148,9 @@ void FGAuxiliary::GetState(void) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAuxiliary::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

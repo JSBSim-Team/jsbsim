@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGGradient.h"    				
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.8 2001/02/04 13:16:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.9 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -52,18 +54,25 @@ FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
   
+  if (debug_lvl & 2) cout << "Instantiated: FGGradient" << endl;
 }
 
 // *****************************************************************************
 //  Function:   Run
-//  Purpose:    
-//  Parameters: void 
-//  Comments:   
+//  Purpose:
+//  Parameters: void
+//  Comments:
 
 bool FGGradient::Run(void )
 {
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   return true;
+}
+
+
+void FGGradient::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

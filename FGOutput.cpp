@@ -49,8 +49,10 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.23 2001/02/04 13:16:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.cpp,v 1.24 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -69,6 +71,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 #ifdef FG_WITH_JSBSIM_SOCKET
   socket = new FGfdmSocket("localhost",1138);
 #endif
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -524,4 +527,9 @@ void FGOutput::SocketStatusOutput(string out_str)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGOutput::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

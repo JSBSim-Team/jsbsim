@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGDeadBand.cpp,v 1.9 2001/02/04 13:16:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGDeadBand.cpp,v 1.10 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -70,6 +72,8 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> token;
     }
   }
+
+  if (debug_lvl & 2) cout << "Instantiated: FGDeadBand" << endl;
 }
 
 // *****************************************************************************
@@ -83,5 +87,11 @@ bool FGDeadBand::Run(void )
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   return true;
+}
+
+
+void FGDeadBand::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

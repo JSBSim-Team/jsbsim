@@ -42,6 +42,8 @@ INCLUDES
 static const char *IdSrc = "$Id";
 static const char *IdHdr = ID_TABLE;
 
+extern short debug_lvl;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -55,6 +57,8 @@ FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols)
   rowCounter = 0;
 
   Data = Allocate();
+
+  if (debug_lvl & 2) cout << "Instantiated: FGTable" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

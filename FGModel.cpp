@@ -50,7 +50,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.9 2001/03/11 19:42:32 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.10 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,13 +80,17 @@ FGModel::FGModel(FGFDMExec* fdmex)
   Output      = 0;
 
   exe_ctr     = 1;
+
+  if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGModel::~FGModel(void)
 {
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGModel::InitModel(void)
 {
@@ -114,6 +118,7 @@ bool FGModel::InitModel(void)
   else return(true);
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGModel::Run()
 {
@@ -128,4 +133,10 @@ bool FGModel::Run()
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGModel::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

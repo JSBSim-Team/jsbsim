@@ -245,6 +245,8 @@ private:
 
   bool findInterval(float x,float guess);
   bool solve(float *y, float x);
+  void Debug(void);
 };
 
 #endif
+

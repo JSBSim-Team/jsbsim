@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.15 2001/02/04 13:16:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.16 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -99,6 +101,8 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     }
   }
+
+  if (debug_lvl & 2) cout << "Instantiated: FGSummer" << endl;
 }
 
 // *****************************************************************************
@@ -135,5 +139,11 @@ bool FGSummer::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+
+void FGSummer::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

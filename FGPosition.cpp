@@ -78,8 +78,10 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.30 2001/02/04 13:16:16 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.31 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -106,6 +108,8 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   RunwayRadius   = SeaLevelRadius;
   DistanceAGL    = Radius - RunwayRadius;  // Geocentric
   vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
+
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,4 +205,9 @@ void FGPosition::SetDistanceAGL(double tt) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPosition::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

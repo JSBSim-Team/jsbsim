@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.21 2001/02/04 13:16:20 jsb Exp $
+    @version $Id: FGFCSComponent.h,v 1.22 2001/03/19 14:07:19 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -115,6 +115,7 @@ protected:
   eParam OutputIdx;
   float Output;
   bool IsOutput;
+  void Debug(void);
 };
 
 #include "../FGFCS.h"

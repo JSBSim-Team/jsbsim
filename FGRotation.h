@@ -75,7 +75,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.14 2001/02/04 13:16:17 jsb Exp $"
+#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.15 2001/03/19 14:07:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -122,7 +122,10 @@ public:
   inline float GetSinphi(void) {return sPhi;}
   inline float GetSintht(void) {return sTht;}
   inline float GetSinpsi(void) {return sPsi;}
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

@@ -59,8 +59,10 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.cpp,v 1.13 2001/02/04 13:16:12 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.cpp,v 1.14 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -79,13 +81,17 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   SLsoundspeed  = sqrt(SHRATIO*Reng*temperature);
   useExternal=false;
   vWindNED(1)=0;vWindNED(2)=0;vWindNED(3)=0;
+
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGAtmosphere::~FGAtmosphere()
 {
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGAtmosphere::Run(void)
 {
@@ -116,6 +122,7 @@ bool FGAtmosphere::Run(void)
   return false;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAtmosphere::Calculate(float altitude)
 {
@@ -201,6 +208,10 @@ void FGAtmosphere::Calculate(float altitude)
 
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+void FGAtmosphere::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

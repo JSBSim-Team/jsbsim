@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.30 2001/03/11 19:42:32 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.31 2001/03/19 14:07:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,7 +107,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.30 2001/03/11 19:42:32 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.31 2001/03/19 14:07:18 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -125,7 +125,7 @@ CLASS DOCUMENTATION
     <li><b>unset</b>: In this case (the default) JSBSim would only print
        out the normally expected messages, essentially echoing
        the config files as they are read. If the environment
-       variable is not set, debug_lvl is set to -1 internally</li>
+       variable is not set, debug_lvl is set to 1 internally</li>
     <li><b>0</b>: This requests JSBSim not to output any messages
        whatsoever.</li>
     <li><b>1</b>: This value explicity requests the normal JSBSim
@@ -264,10 +264,12 @@ private:
   FGPosition*    Position;
   FGAuxiliary*   Auxiliary;
   FGOutput*      Output;
-  
+
   bool Allocate(void);
   bool DeAllocate(void);
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

@@ -1,11 +1,11 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Source:       FGForce.cpp
  Author:       Tony Peden
  Date started: 6/10/00
- 
+
  ------------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
@@ -47,8 +47,12 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.8 2001/02/04 13:16:14 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.9 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = "ID_FORCE";
+
+extern short debug_lvl;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
     vFn(3),
@@ -66,9 +70,14 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
   mT(2,2)=1;
   mT(3,3)=1;
   vSense.InitMatrix(1);
+  if (debug_lvl & 2) cout << "Instantiated: FGForce" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGForce::~FGForce(void) {}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGForce::GetBodyForces(void) {
 
@@ -85,6 +94,8 @@ FGColumnVector FGForce::GetBodyForces(void) {
   return vFb;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGMatrix FGForce::Transform(void) {
   switch(ttype) {
   case tWindBody:
@@ -100,6 +111,8 @@ FGMatrix FGForce::Transform(void) {
     exit(1);
   }
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGForce::SetAnglesToBody(float broll, float bpitch, float byaw) {
 
@@ -125,4 +138,10 @@ void FGForce::SetAnglesToBody(float broll, float bpitch, float byaw) {
 
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGForce::Debug(void)
+{
+    //TODO: Add your source code here
+}
 

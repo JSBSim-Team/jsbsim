@@ -80,10 +80,10 @@ class FGFlaps  : public FGFCSComponent {
 public:
   FGFlaps(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGFlaps ( ) { }       //Destructor
-
-
-
   bool Run (void );
+  
+private:
+  void Debug(void);
 };
 
 #endif

@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.35 2001/03/11 19:42:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.36 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -97,7 +97,7 @@ short debug_lvl;  // This describes to any interested entity the debug level
                   // a) unset: In this case (the default) JSBSim would only print
                   //    out the normally expected messages, essentially echoing
                   //    the config files as they are read. If the environment
-                  //    variable is not set, debug_lvl is set to -1 internally
+                  //    variable is not set, debug_lvl is set to 1 internally
                   // b) 0: This requests JSBSim not to output any messages
                   //    whatsoever.
                   // c) 1: This value explicity requests the normal JSBSim
@@ -142,11 +142,13 @@ FGFDMExec::FGFDMExec(void)
 
   try {
     char* num = getenv("JSBSIM_DEBUG");
-    if (!num) debug_lvl = -1;
+    if (!num) debug_lvl = 1;
     else debug_lvl = atoi(num); // set debug level
-  } catch (...) {                             // if error set to -1
-    debug_lvl = -1;
+  } catch (...) {               // if error set to -1
+    debug_lvl = 1;
   }
+
+  if (debug_lvl & 2) cout << "Instantiated: FGFDMExec" << endl;
 
   Allocate();
 }
@@ -300,9 +302,9 @@ bool FGFDMExec::Run(void)
     RunScript();
     if (State->Getsim_time() >= EndTime) return false;
   }
-cout << __FILE__ << " : " << __LINE__ << endl;
+
   if (debug_lvl & 4) cout << "=========================" << endl;
-cout << __FILE__ << " : " << __LINE__ << endl;
+
   while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;
     if (model_iterator == 0L) break;
@@ -567,7 +569,7 @@ void FGFDMExec::RunScript(void)
 
       if (i == 0) WholeTruth = truth;
       else        WholeTruth = WholeTruth && truth;
-      
+
       if (!truth && iC->Persistent[i] && iC->Triggered[i]) iC->Triggered[i] = false;
     }
 
@@ -615,5 +617,12 @@ void FGFDMExec::RunScript(void)
     }
     iC++;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

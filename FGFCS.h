@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.24 2001/02/02 01:16:57 jsb Exp $
+    @version $Id: FGFCS.h,v 1.25 2001/03/19 14:07:18 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -322,9 +322,9 @@ public:
   /** The name of the flight control laws for this aircraft.
       This is given in the config file, and is not used for anything currently.*/
   string FCSName;
-  
+
   void AddThrottle(void);
-  
+
 private:
   float DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
   float DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
@@ -334,8 +334,10 @@ private:
   float LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;
+  void Debug(void);
 };
 
 #include "FGState.h"
 
 #endif
+

@@ -58,7 +58,10 @@ public:
   ~FGTurboProp(void) {}
 
   float Calculate(float);
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

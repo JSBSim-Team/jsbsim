@@ -21,8 +21,10 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.13 2001/02/22 17:25:20 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.14 2001/03/19 14:07:18 jberndt Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -36,14 +38,18 @@ FGConfigFile::FGConfigFile(string cfgFileName)
   Opened = true;
   if (cfgfile.is_open()) GetNextConfigLine();
   else Opened = false;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGConfigFile" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGConfigFile::~FGConfigFile(void)
 {
   cfgfile.close();
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGConfigFile::GetNextConfigLine(void)
 {
@@ -62,6 +68,7 @@ string FGConfigFile::GetNextConfigLine(void)
   return CurrentLine;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGConfigFile::GetValue(string val)
 {
@@ -130,12 +137,14 @@ string FGConfigFile::GetValue(string val)
   return string("");
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGConfigFile::GetValue(void)
 {
   return GetValue("");
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGConfigFile::IsCommentLine(void)
 {
@@ -145,6 +154,7 @@ bool FGConfigFile::IsCommentLine(void)
   return false;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGConfigFile::GetLine(void)
 {
@@ -165,6 +175,8 @@ string FGConfigFile::GetLine(void)
   return scratch;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGConfigFile& FGConfigFile::operator>>(double& val)
 {
   unsigned int pos, end;
@@ -179,6 +191,8 @@ FGConfigFile& FGConfigFile::operator>>(double& val)
   if (CurrentIndex >= CurrentLine.length()) GetNextConfigLine();
   return *this;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGConfigFile& FGConfigFile::operator>>(float& val)
 {
@@ -195,6 +209,8 @@ FGConfigFile& FGConfigFile::operator>>(float& val)
   return *this;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGConfigFile& FGConfigFile::operator>>(int& val)
 {
   unsigned int pos, end;
@@ -209,6 +225,8 @@ FGConfigFile& FGConfigFile::operator>>(int& val)
   if (CurrentIndex >= CurrentLine.length()) GetNextConfigLine();
   return *this;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGConfigFile& FGConfigFile::operator>>(eParam& val)
 {
@@ -225,6 +243,8 @@ FGConfigFile& FGConfigFile::operator>>(eParam& val)
   return *this;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGConfigFile& FGConfigFile::operator>>(string& str)
 {
   unsigned int pos, end;
@@ -239,9 +259,17 @@ FGConfigFile& FGConfigFile::operator>>(string& str)
   return *this;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGConfigFile::ResetLineIndexToZero(void)
 {
   CurrentIndex = 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGConfigFile::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.13 2001/02/04 13:16:15 jsb Exp $"
+#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.14 2001/03/19 14:07:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -123,7 +123,7 @@ protected:
 
   int exe_ctr;
   int rate;
-  
+
   FGFDMExec*      FDMExec;
   FGState*        State;
   FGAtmosphere*   Atmosphere;
@@ -135,9 +135,9 @@ protected:
   FGPosition*     Position;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
-
-private:
+  virtual void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

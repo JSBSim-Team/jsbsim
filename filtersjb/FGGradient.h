@@ -1,4 +1,3 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGGradient.h
@@ -59,13 +58,15 @@ CLASS DECLARATION
 
 class FGGradient  : public FGFCSComponent
 {
-  FGConfigFile* AC_cfg;
-
 public:
   FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg);
  ~ FGGradient ( ) { }       //Destructor
 
   bool Run (void )  ;
+
+private:
+  FGConfigFile* AC_cfg;
+  void Debug(void);
 };
 
 #endif

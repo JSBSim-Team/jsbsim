@@ -86,9 +86,9 @@ private:
   float PctFull;
   float Contents;
   bool  Selected;
-
-protected:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
+

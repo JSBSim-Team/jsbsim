@@ -39,8 +39,10 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.9 2001/02/04 13:16:21 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.10 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -96,6 +98,8 @@ AC_cfg(AC_cfg) {
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     }
   }
+
+  if (debug_lvl & 2) cout << "Instantiated: FGFlaps" << endl;
 }
 
 // *****************************************************************************
@@ -169,5 +173,12 @@ bool FGFlaps::Run(void ) {
   }
   //cout << "Out FGFlap::Run" << endl;
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFlaps::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

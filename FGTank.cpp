@@ -38,8 +38,10 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.11 2001/02/04 13:16:17 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.12 2001/03/19 14:07:19 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -82,6 +84,8 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
   cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
   cout << "      Tank location (X, Y, Z): " << X << ", " << Y << ", " << Z << endl;
   cout << "      Effective radius: " << Radius << " inches" << endl;
+
+  if (debug_lvl & 2) cout << "Instantiated: FGTank" << endl;
 }
 
 
@@ -105,5 +109,10 @@ float FGTank::Reduce(float used)
     Selected = false;
     return shortage;
   }
+}
+
+void FGTank::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

@@ -65,6 +65,8 @@ public:
  ~ FGSwitch ( ) { }       //Destructor
 
   bool Run (void )  ;
+private:
+  void Debug(void);
 };
 
 #endif
