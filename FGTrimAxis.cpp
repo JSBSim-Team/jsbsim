@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.49 2004/05/11 16:35:24 frohlich Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.50 2004/05/11 21:15:43 frohlich Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -320,8 +320,8 @@ bool FGTrimAxis::initTheta(void) {
   }
 
   // now adjust theta till the wheels are the same distance from the ground
-  xAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(1);
-  xForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(1);
+  xAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetBodyLocation(1);
+  xForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetBodyLocation(1);
   xDiff = xForward - xAft;
   zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
   zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
@@ -329,12 +329,9 @@ bool FGTrimAxis::initTheta(void) {
   level=false;
   theta=fgic->GetPitchAngleDegIC();
   while(!level && (i < 100)) {
-    theta+=180.0/M_PI*zDiff/fabs(xDiff);
+    theta+=radtodeg*atan(zDiff/xDiff);
     fgic->SetPitchAngleDegIC(theta);
     fdmex->RunIC();
-    xAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(1);
-    xForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(1);
-    xDiff = xForward - xAft;
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
