@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.31 2001/07/28 15:30:56 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.32 2001/07/30 11:21:15 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 extern short debug_lvl;
@@ -130,27 +130,19 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetVgroundFpsIC(float tt) {
-  //float ua,va,wa;
+  float ua,va,wa;
   float vxz;
 
-  //cout << "FGInitialCondition::SetVgroundFpsIC" << endl;
   vg=tt;
   lastSpeedSet=setvg;
   vnorth = vg*cos(psi); veast = vg*sin(psi); vdown = 0;
   calcUVWfromNED();
-  //cout << "\tu,v,w: " << u << ", " << v << ", " << w << endl;
-  calcWindUVW();
-  //cout << "\tuw,vw,ww: " << uw << ", " << vw << ", " << ww << endl;
-  u = -uw; v = -vw; w = -ww;
-  //ua = u - uw; va = v - vw; wa = w - ww;
-  //cout << "\tua,va,wa: " << ua << ", " << va << ", " << wa << endl;
-  vt = sqrt( u*u + v*v + w*w );
+  ua = u + uw; va = v + vw; wa = w + ww;
+  vt = sqrt( ua*ua + va*va + wa*wa );
   alpha = beta = 0;
   vxz = sqrt( u*u + w*w );
   if( w != 0 ) alpha = atan2( w, u );
   if( vxz != 0 ) beta = atan2( v, vxz );
-  //cout << "\tvt,alpha,beta: " << vt << ", " << alpha*RADTODEG << ", "
-  //          << beta*RADTODEG << endl;
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
@@ -274,7 +266,7 @@ float FGInitialCondition::GetUBodyFpsIC(void) {
     if(lastSpeedSet == setvg )
       return u;
     else
-      return vt*calpha*cbeta;
+      return vt*calpha*cbeta - uw;
 }
 
 //******************************************************************************
@@ -283,7 +275,7 @@ float FGInitialCondition::GetVBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return v;
     else
-      return vt*sbeta;
+      return vt*sbeta - vw;
 }
 
 //******************************************************************************
@@ -292,7 +284,7 @@ float FGInitialCondition::GetWBodyFpsIC(void) {
     if( lastSpeedSet == setvg )
       return w;
     else {
-      return vt*salpha*cbeta;
+      return vt*salpha*cbeta -ww;
    }
 }
 
@@ -300,6 +292,7 @@ float FGInitialCondition::GetWBodyFpsIC(void) {
 
 void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
   wnorth = wN; weast = wE; wdown = wD;
+  calcWindUVW();
   if(lastSpeedSet == setvg)
     SetVgroundFpsIC(vg);
 
@@ -309,8 +302,6 @@ void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
 //******************************************************************************
 
 void FGInitialCondition::calcWindUVW(void) {
-  if(lastSpeedSet == setvg ) {
-
     uw=wnorth*ctheta*cpsi +
        weast*ctheta*spsi -
        wdown*stheta;
@@ -327,20 +318,14 @@ void FGInitialCondition::calcWindUVW(void) {
     cout << "FGInitialCondition::calcWindUVW: uw, vw, ww "
           << uw << ", " << vw << ", " << ww << endl;   */
 
-  } else {
-    uw=vw=ww=0;
-  }
 }
 
 //******************************************************************************
 
 void FGInitialCondition::SetAltitudeFtIC(float tt) {
   altitude=tt;
-  cout << "setting alt for atmosphere" << endl;
   fdmex->GetPosition()->Seth(altitude);
-  cout << "done" << endl;
   fdmex->GetAtmosphere()->Run();
-  cout << "atmosphere set" << endl;
   //lets try to make sure the user gets what they intended
 
   switch(lastSpeedSet) {
