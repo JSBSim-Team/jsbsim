@@ -178,7 +178,7 @@ void FGPosition::Seth(double tt) {
  DistanceAGL = Radius - RunwayRadius;   // Geocentric 
 }  
 
-void FGPosition::SetPositionAGL(double tt) {
+void FGPosition::SetDistanceAGL(double tt) {
   DistanceAGL=tt;
   Radius = RunwayRadius + DistanceAGL;
   h = Radius - SeaLevelRadius;
