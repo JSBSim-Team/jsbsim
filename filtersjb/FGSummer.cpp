@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.31 2002/03/05 13:05:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.32 2002/04/01 12:00:56 apeden Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,14 +50,14 @@ CLASS IMPLEMENTATION
 FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
 {
-  string token;
+  string token,sOutputIdx;
   eParam tmpInputIndex;
+  InputRec *input;
 
   clip = false;
   clipmin = clipmax = 0.0;
   Bias = 0.0;
-  InputIndices.clear();
-  InputTypes.clear();
+  Inputs.clear();
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -69,21 +69,26 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     if (token == "ID") {
       *AC_cfg >> ID;
     } else if (token == "INPUT") {
+      input = new InputRec;
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
-        tmpInputIndex = fcs->GetState()->GetParameterIndex(token);
-        InputIndices.push_back(tmpInputIndex);
-        InputTypes.push_back(itPilotAC);
+        input->Node = PropertyManager->GetNode( 
+                            fcs->GetState()->GetPropertyName(token) );
+        input->Idx=-1;                    
+        input->Type = itPilotAC;
       } else if (token.find(".") != token.npos) { // bias
         *AC_cfg >> Bias;
-        InputIndices.push_back((eParam)0);
-        InputTypes.push_back(itBias);
+        input->Node=0;
+        input->Idx=0;
+        input->Type=itBias;
       } else {
         *AC_cfg >> tmpInputIndex;
-        InputIndices.push_back(tmpInputIndex);
-        InputTypes.push_back(itFCS);
+        input->Idx=tmpInputIndex;
+        input->Node=0;
+        input->Type=itFCS;
       }
+      Inputs.push_back(input);
     } else if (token == "CLIPTO") {
       *AC_cfg >> clipmin >> clipmax;
       if (clipmax > clipmin) {
@@ -92,7 +97,8 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
+      OutputNode = PropertyManager->GetNode( 
+                            fcs->GetState()->GetPropertyName(sOutputIdx) );
     }
   }
 
@@ -103,6 +109,10 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
 FGSummer::~FGSummer()
 {
+  unsigned i;
+  for(i=0;i<Inputs.size();i++) {
+    delete Inputs[i];
+  }  
   Debug(1);
 }
 
@@ -117,13 +127,13 @@ bool FGSummer::Run(void )
 
   Output = 0.0;
 
-  for (idx=0; idx<InputIndices.size(); idx++) {
-    switch (InputTypes[idx]) {
+  for (idx=0; idx<Inputs.size(); idx++) {
+    switch (Inputs[idx]->Type) {
     case itPilotAC:
-      Output += fcs->GetState()->GetParameter(InputIndices[idx]);
+      Output += Inputs[idx]->Node->getDoubleValue();
       break;
     case itFCS:
-      Output += fcs->GetComponentOutput(InputIndices[idx]);
+      Output += fcs->GetComponentOutput(Inputs[idx]->Idx);
       break;
     case itBias:
       Output += Bias;
@@ -168,14 +178,14 @@ void FGSummer::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      ID: " << ID << endl;
       cout << "      INPUTS: " << endl;
-      for (unsigned i=0;i<InputIndices.size();i++) {
-        switch (InputTypes[i]) {
+      for (unsigned i=0;i<Inputs.size();i++) {
+        switch (Inputs[i]->Type) {
         case itPilotAC:
-          cout << "       " << fcs->GetState()->GetParameterName(InputIndices[i]) << endl;
+          cout << "       " << Inputs[i]->Node->getName() << endl;
           break;
         case itFCS:
-          cout << "        FCS Component " << InputIndices[i] << " (" << 
-                              fcs->GetComponentName(InputIndices[i]) << ")" << endl;
+          cout << "        FCS Component " << Inputs[i]->Idx << " (" << 
+                              fcs->GetComponentName(Inputs[i]->Idx) << ")" << endl;
           break;
         case itBias:
           cout << "        " << "Bias of " << Bias << endl;
@@ -184,7 +194,7 @@ void FGSummer::Debug(int from)
       }
       if (clip) cout << "      CLIPTO: " << clipmin 
                                   << ", " << clipmax << endl;
-      if (IsOutput) cout << "      OUTPUT: " <<sOutputIdx <<  endl;
+      if (IsOutput) cout << "      OUTPUT: " <<OutputNode->getName() <<  endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

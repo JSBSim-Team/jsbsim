@@ -53,11 +53,12 @@ INCLUDES
 #include "../FGConfigFile.h"
 #include "../FGTable.h"
 
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.19 2002/02/28 12:15:35 apeden Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.20 2002/04/01 12:00:56 apeden Exp $"
 
 class FGFCS;
 
@@ -84,7 +85,7 @@ private:
   double OutputPct;
   bool invert;
   int Rows;
-  eParam ScheduledBy;
+  FGPropertyManager* ScheduledBy;
 
   void Debug(int from);
 };

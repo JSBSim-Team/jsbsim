@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.38 2002/02/28 12:15:35 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.39 2002/04/01 12:00:56 apeden Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,6 +52,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   string token;
   string strScheduledBy;
+  string sOutputIdx;
 
   State = fcs->GetState();
 
@@ -60,7 +61,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Min = Max = 0.0;
   OutputPct=0;
   invert=false;
-  ScheduledBy = FG_UNDEF;
+  ScheduledBy = 0;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -74,7 +75,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
-        InputIdx = State->GetParameterIndex(token);
+        InputNode = PropertyManager->GetNode( 
+                    fcs->GetState()->GetPropertyName(token) );
         InputType = itPilotAC;
       } else {
         *AC_cfg >> InputIdx;
@@ -95,14 +97,15 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       token = AC_cfg->GetValue("SCHEDULED_BY");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> strScheduledBy;
-        ScheduledBy = State->GetParameterIndex(strScheduledBy);
-      } else {
-        *AC_cfg >> ScheduledBy;
-      }
+        ScheduledBy = PropertyManager->GetNode( 
+                       fcs->GetState()->GetPropertyName(strScheduledBy) ); 
+      } 
     } else if (token == "OUTPUT") {
       IsOutput = true;
-      *AC_cfg >> sOutputIdx;
-      OutputIdx = State->GetParameterIndex(sOutputIdx);
+      *AC_cfg >> sOutputIdx;      
+      OutputNode = PropertyManager->GetNode( 
+                     fcs->GetState()->GetPropertyName(sOutputIdx) );
+
     } else {
       AC_cfg->ResetLineIndexToZero();
       *Table << *AC_cfg;
@@ -130,7 +133,7 @@ bool FGGain::Run(void )
   if (Type == "PURE_GAIN") {
     Output = Gain * Input;
   } else if (Type == "SCHEDULED_GAIN") {
-    LookupVal = State->GetParameter(ScheduledBy);
+    LookupVal = ScheduledBy->getDoubleValue();
 	  SchedGain = Table->GetValue(LookupVal);
     Output = Gain * SchedGain * Input;
   } else if (Type == "AEROSURFACE_SCALE") {
@@ -179,20 +182,23 @@ void FGGain::Debug(int from)
       cout << "      ID: " << ID << endl;
       switch(InputType) {
       case itPilotAC:
-        cout << "      INPUT: " << State->GetParameterName(InputIdx) << endl;
+        cout << "      INPUT: " << InputNode->getName() << endl;
         break;
       case itFCS:
         cout << "      INPUT: FCS Component " << InputIdx << " (" << 
                                         fcs->GetComponentName(InputIdx) << ")" << endl;
         break;
+      case itAP:
+      case itBias:
+        break;  
       }
       cout << "      GAIN: " << Gain << endl;
-      if (IsOutput) cout << "      OUTPUT: " << sOutputIdx << endl;
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       cout << "      MIN: " << Min << endl;
       cout << "      MAX: " << Max << endl;
       if(invert) cout << "      Invert mapping" << endl;
-      if (ScheduledBy != FG_UNDEF) {
-        cout << "      Scheduled by parameter: " << ScheduledBy << endl;
+      if (ScheduledBy != 0) {
+        cout << "      Scheduled by parameter: " << ScheduledBy->getName() << endl;
         Table->Print();
       }
     }

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.25 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.26 2002/04/01 12:01:39 apeden Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,12 +51,11 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
   Type       = "";
   ID         = 0;
   Input      = 0.0;
-  InputIdx   = FG_UNDEF;
+  InputNode   = 0;
   Output     = 0.0;
-  sOutputIdx = "";
-  OutputIdx  = FG_UNDEF;
+  OutputNode  = 0;
   IsOutput   = false;
-
+  PropertyManager=fcs->GetPropertyManager();
   Debug(0);
 }
 
@@ -71,7 +70,7 @@ FGFCSComponent::~FGFCSComponent()
 
 void FGFCSComponent::SetOutput(void)
 {
-  fcs->GetState()->SetParameter(OutputIdx, Output);
+  OutputNode->setDoubleValue(Output);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,14 +79,15 @@ bool FGFCSComponent::Run(void)
 {
   switch(InputType) {
   case itPilotAC:
-    Input = fcs->GetState()->GetParameter(InputIdx);
+    Input = InputNode->getDoubleValue();
     break;
   case itFCS:
-    Input = fcs->GetComponentOutput(InputIdx);
-    break;
+    Input = fcs->GetComponentOutput(InputIdx);  
   case itAP:
     // implement autopilot input mechanism
     break;
+  case itBias:
+    break;  
   }
 
   return true;

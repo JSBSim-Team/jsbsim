@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.29 2002/02/14 23:41:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.30 2002/04/01 12:00:56 apeden Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,6 +51,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   string token;
   double denom;
+  string sOutputIdx;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -80,7 +81,8 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
-        InputIdx = fcs->GetState()->GetParameterIndex(token);
+        InputNode = PropertyManager->GetNode( 
+                    fcs->GetState()->GetPropertyName(token) );
         InputType = itPilotAC;
       } else {
         *AC_cfg >> InputIdx;
@@ -91,7 +93,8 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
+      OutputNode = PropertyManager->GetNode( 
+                     fcs->GetState()->GetPropertyName(sOutputIdx) );
     }
     else cerr << "Unknown filter type: " << token << endl;
   }
@@ -215,12 +218,15 @@ void FGFilter::Debug(int from)
       cout << "      ID: " << ID << endl;
       switch(InputType) {
       case itPilotAC:
-        cout << "      INPUT: " << fcs->GetState()->GetParameterName(InputIdx) << endl;
+        cout << "      INPUT: " << InputNode->getName() << endl;
         break;
       case itFCS:
         cout << "      INPUT: FCS Component " << InputIdx << " (" << 
                                         fcs->GetComponentName(InputIdx) << ")" << endl;
         break;
+      case itAP:
+      case itBias:
+        break; 
       }
       cout << "      C1: " << C1 << endl;
       cout << "      C2: " << C2 << endl;
@@ -228,7 +234,7 @@ void FGFilter::Debug(int from)
       cout << "      C4: " << C4 << endl;
       cout << "      C5: " << C5 << endl;
       cout << "      C6: " << C6 << endl;
-      if (IsOutput) cout << "      OUTPUT: " << sOutputIdx << endl;
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
