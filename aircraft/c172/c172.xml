@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.43 2001/08/31 22:56:41 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.44 2001/09/04 12:04:15 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -73,9 +73,9 @@
     -->
     </COMMENT>
 
-     AC_GEAR	NOSE        -6.8   0.0 -20.0  1800  600  0.01  0.6 0.02 STEERABLE NONE 20
-     AC_GEAR	LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.01  0.6 0.02 CASTERED  LEFT  0
-     AC_GEAR	RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.01  0.6 0.02 CASTERED  RIGHT 0
+     AC_GEAR	NOSE        -6.8   0.0 -20.0  1800  600  0.5  0.8 0.02 STEERABLE NONE 20
+     AC_GEAR	LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0
+     AC_GEAR	RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0
      AC_GEAR	TAIL_SKID  188.0  0.0    8.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0
      AC_GEAR	LEFT_TIP    43.2 -214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0
      AC_GEAR	RIGHT_TIP   43.2  214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.65 2001/08/30 11:03:59 apeden Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.66 2001/09/04 12:04:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,9 +72,48 @@ FORWARD DECLARATIONS
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Longitudinal
+  CL0 - Reference lift at zero alpha
+  CD0 - Reference drag at zero alpha
+  CDM - Drag due to Mach
+  CLa - Lift curve slope (w.r.t. alpha)
+  CDa - Drag curve slope (w.r.t. alpha)
+  CLq - Lift due to pitch rate
+  CLM - Lift due to Mach
+  CLadt - Lift due to alpha rate
+ 
+  Cmadt - Pitching Moment due to alpha rate
+  Cm0 - Reference Pitching moment at zero alpha
+  Cma - Pitching moment slope (w.r.t. alpha)
+  Cmq - Pitch damping (pitch moment due to pitch rate)
+  CmM - Pitch Moment due to Mach
+ 
+Lateral
+  Cyb - Side force due to sideslip
+  Cyr - Side force due to yaw rate
+ 
+  Clb - Dihedral effect (roll moment due to sideslip)
+  Clp - Roll damping (roll moment due to roll rate)
+  Clr - Roll moment due to yaw rate
+  Cnb - Weathercocking stability (yaw moment due to sideslip)
+  Cnp - Rudder adverse yaw (yaw moment due to roll rate)
+  Cnr - Yaw damping (yaw moment due to yaw rate)
+ 
+Control
+  CLDe - Lift due to elevator
+  CDDe - Drag due to elevator
+  CyDr - Side force due to rudder
+  CyDa - Side force due to aileron
+ 
+  CmDe - Pitch moment due to elevator
+  ClDa - Roll moment due to aileron
+  ClDr - Roll moment due to rudder
+  CnDr - Yaw moment due to rudder
+  CnDa - Yaw moment due to aileron
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -89,7 +128,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.65 2001/08/30 11:03:59 apeden Exp $
+    @version $Id: FGAircraft.h,v 1.66 2001/09/04 12:04:15 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate

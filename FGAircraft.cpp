@@ -43,59 +43,6 @@ HISTORY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-      Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-      School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-      JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-      NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-      Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-      1982 ISBN 0-471-08936-2
- 
-The aerodynamic coefficients used in this model are:
- 
-Longitudinal
-  CL0 - Reference lift at zero alpha
-  CD0 - Reference drag at zero alpha
-  CDM - Drag due to Mach
-  CLa - Lift curve slope (w.r.t. alpha)
-  CDa - Drag curve slope (w.r.t. alpha)
-  CLq - Lift due to pitch rate
-  CLM - Lift due to Mach
-  CLadt - Lift due to alpha rate
- 
-  Cmadt - Pitching Moment due to alpha rate
-  Cm0 - Reference Pitching moment at zero alpha
-  Cma - Pitching moment slope (w.r.t. alpha)
-  Cmq - Pitch damping (pitch moment due to pitch rate)
-  CmM - Pitch Moment due to Mach
- 
-Lateral
-  Cyb - Side force due to sideslip
-  Cyr - Side force due to yaw rate
- 
-  Clb - Dihedral effect (roll moment due to sideslip)
-  Clp - Roll damping (roll moment due to roll rate)
-  Clr - Roll moment due to yaw rate
-  Cnb - Weathercocking stability (yaw moment due to sideslip)
-  Cnp - Rudder adverse yaw (yaw moment due to roll rate)
-  Cnr - Yaw damping (yaw moment due to yaw rate)
- 
-Control
-  CLDe - Lift due to elevator
-  CDDe - Drag due to elevator
-  CyDr - Side force due to rudder
-  CyDa - Side force due to aileron
- 
-  CmDe - Pitch moment due to elevator
-  ClDa - Roll moment due to aileron
-  ClDr - Roll moment due to rudder
-  CnDr - Yaw moment due to rudder
-  CnDa - Yaw moment due to aileron
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -144,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.88 2001/08/30 21:42:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.89 2001/09/04 12:04:15 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
