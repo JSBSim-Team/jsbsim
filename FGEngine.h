@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.44 2001/11/28 13:29:35 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.45 2001/11/29 14:02:56 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.44 2001/11/28 13:29:35 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.45 2001/11/29 14:02:56 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,15 +117,15 @@ public:
   virtual double  GetThrottleMax(void) { return MaxThrottle; }
   double  GetThrottle(void) { return Throttle; }
   double  GetMixture(void) { return Mixture; }
-  int    GetMagnetos(void) { return Magnetos; }
+  int     GetMagnetos(void) { return Magnetos; }
   bool    GetStarter(void) { return Starter; }
   double  GetThrust(void) { return Thrust; }
-  bool   GetStarved(void) { return Starved; }
-  bool   GetFlameout(void) { return Flameout; }
-  bool   GetRunning(void) { return Running; }
-  bool   GetCranking(void) { return Cranking; }
-  int    GetType(void) { return Type; }
-  string GetName(void) { return Name; }
+  bool    GetStarved(void) { return Starved; }
+  bool    GetFlameout(void) { return Flameout; }
+  bool    GetRunning(void) { return Running; }
+  bool    GetCranking(void) { return Cranking; }
+  int     GetType(void) { return Type; }
+  string  GetName(void) { return Name; }
 
   virtual double getManifoldPressure_inHg () const {
     return ManifoldPressure_inHg;
