@@ -54,8 +54,8 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.32 2001/04/19 22:05:21 jberndt Exp $";
-static const char *IdHdr = "ID_COEFFICIENT";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.33 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdHdr = ID_COEFFICIENT;
 
 extern char highint[5];
 extern char halfint[5];

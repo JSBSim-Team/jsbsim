@@ -21,8 +21,8 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.18 2001/04/13 23:10:06 jberndt Exp $";
-static const char *IdHdr = "ID_CONFIGFILE";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.19 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdHdr = ID_CONFIGFILE;
 
 extern short debug_lvl;
 

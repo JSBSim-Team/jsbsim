@@ -5,7 +5,7 @@
  Date started: 12/12/98                                   
  Purpose:      Encapsulates an aircraft
  Called by:    FGFDMExec
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
  
  This program is free software; you can redistribute it and/or modify it under
@@ -138,7 +138,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.73 2001/04/20 16:57:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.74 2001/04/22 13:39:46 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -254,9 +254,11 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAircraft::Run(void) {
+bool FGAircraft::Run(void)
+{
   if (!FGModel::Run()) {                 // if false then execute this Run()
     GetState();
+
     vForces.InitMatrix();
     vMoments.InitMatrix();
 
@@ -363,54 +365,54 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
   while ((token = AC_cfg->GetValue()) != string("/METRICS")) {
     *AC_cfg >> parameter;
     if (parameter == string("AC_WINGAREA")) {
-        *AC_cfg >> WingArea;
-        if (debug_lvl > 0) cout << "    WingArea: " << WingArea  << endl; 
+      *AC_cfg >> WingArea;
+      if (debug_lvl > 0) cout << "    WingArea: " << WingArea  << endl;
     } else if (parameter == "AC_WINGSPAN") {
-        *AC_cfg >> WingSpan;
-        if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
+      *AC_cfg >> WingSpan;
+      if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
     } else if (parameter == "AC_CHORD") {
-        *AC_cfg >> cbar;
-        if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
+      *AC_cfg >> cbar;
+      if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
     } else if (parameter == "AC_IXX") {
-        *AC_cfg >> bixx;
-        if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
-	MassBalance->SetBaseIxx(bixx);
+      *AC_cfg >> bixx;
+      if (debug_lvl > 0) cout << "    baseIxx: " << bixx << endl;
+      MassBalance->SetBaseIxx(bixx);
     } else if (parameter == "AC_IYY") {
-        *AC_cfg >> biyy;
-        if (debug_lvl > 0) cout << "    baseIyy: " << biyy << endl;
-	MassBalance->SetBaseIyy(biyy);
-    } else if (parameter == "AC_IZZ") { 
-        *AC_cfg >> bizz;
-        if (debug_lvl > 0) cout << "    baseIzz: " << bizz << endl;
-	MassBalance->SetBaseIzz(bizz);
-    } else if (parameter == "AC_IXZ") { 
-        *AC_cfg >> bixz;
-        if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
-	MassBalance->SetBaseIxz(bixz);
-    } else if (parameter == "AC_IYZ") { 
-        *AC_cfg >> biyz;
-        if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
-	MassBalance->SetBaseIyz(biyz);
+      *AC_cfg >> biyy;
+      if (debug_lvl > 0) cout << "    baseIyy: " << biyy << endl;
+      MassBalance->SetBaseIyy(biyy);
+    } else if (parameter == "AC_IZZ") {
+      *AC_cfg >> bizz;
+      if (debug_lvl > 0) cout << "    baseIzz: " << bizz << endl;
+      MassBalance->SetBaseIzz(bizz);
+    } else if (parameter == "AC_IXZ") {
+      *AC_cfg >> bixz;
+      if (debug_lvl > 0) cout << "    baseIxz: " << bixz  << endl;
+      MassBalance->SetBaseIxz(bixz);
+    } else if (parameter == "AC_IYZ") {
+      *AC_cfg >> biyz;
+      if (debug_lvl > 0) cout << "    baseIyz: " << biyz  << endl;
+      MassBalance->SetBaseIyz(biyz);
     } else if (parameter == "AC_EMPTYWT") {
-        *AC_cfg >> EW;
-	MassBalance->SetEmptyWeight(EW);
-        if (debug_lvl > 0) cout << "    EmptyWeight: " << EW  << endl;
+      *AC_cfg >> EW;
+      MassBalance->SetEmptyWeight(EW);
+      if (debug_lvl > 0) cout << "    EmptyWeight: " << EW  << endl;
     } else if (parameter == "AC_CGLOC") {
-        *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
-	MassBalance->SetBaseCG(vbaseXYZcg);
-        if (debug_lvl > 0) cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
+      *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
+      MassBalance->SetBaseCG(vbaseXYZcg);
+      if (debug_lvl > 0) cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
     } else if (parameter == "AC_EYEPTLOC") {
-        *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
-        if (debug_lvl > 0) cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
+      *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
+      if (debug_lvl > 0) cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
     } else if (parameter == "AC_AERORP") {
-        *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
-        if (debug_lvl > 0) cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
+      *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
+      if (debug_lvl > 0) cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
     } else if (parameter == "AC_ALPHALIMITS") {
-        *AC_cfg >> alphaclmin >> alphaclmax;
-        if (debug_lvl > 0) cout << "    Maximum Alpha: " << alphaclmax
-             << "    Minimum Alpha: " << alphaclmin 
+      *AC_cfg >> alphaclmin >> alphaclmax;
+      if (debug_lvl > 0) cout << "    Maximum Alpha: " << alphaclmax
+             << "    Minimum Alpha: " << alphaclmin
              << endl;
-    }         
+    }
   }
 }
 

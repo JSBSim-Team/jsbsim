@@ -42,21 +42,28 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
+#    include <map>
 #  else
 #    include <vector.h>
+#    include <map.h>
 #  endif
 #else
 #  include <vector>
+#  include <map>
 #endif
 
 #include "FGModel.h"
 #include "FGConfigFile.h"
+#include "FGState.h"
+#include "FGMassBalance.h"
+#include "FGTranslation.h"
+#include "FGCoefficient.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.10 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.11 2001/04/22 13:39:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +82,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.10 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.11 2001/04/22 13:39:46 jberndt Exp $
     @see -
 */
 
@@ -99,8 +106,24 @@ public:
   /** Loads the Aerodynamics model
       @return true if successful */
   bool LoadAerodynamics(FGConfigFile* AC_cfg);
-  
+
+  void DisplayCoeffFactors(vector <eParam> multipliers);
+
 private:
+  typedef map<string,int> AxisIndex;
+  AxisIndex AxisIdx;
+  typedef vector<FGCoefficient*> CoeffArray;
+  CoeffArray* Coeff;
+  FGState* State;
+  FGMassBalance* MassBalance;
+  FGTranslation* Translation;
+  FGColumnVector vFs;
+  FGColumnVector vAeroBodyForces;
+  FGColumnVector vForces;
+  FGColumnVector vMoments;
+  FGColumnVector vLastFs;
+  FGColumnVector vDXYZcg;
+
   void Debug(void);
 };
 

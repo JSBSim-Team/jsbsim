@@ -30,6 +30,7 @@ FUNCTIONAL DESCRIPTION
 HISTORY
 --------------------------------------------------------------------------------
 09/13/00   JSB   Created
+04/22/01   JSB   Moved code into here from FGAircraft
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -37,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.7 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.8 2001/04/22 13:39:46 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -47,23 +48,78 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGAerodynamics::FGAerodynamics(FGFDMExec* fgex) : FGModel(fgex)
+FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec),
+    vMoments(3),
+    vForces(3),
+    vFs(3),
+    vLastFs(3),
+    vDXYZcg(3),
+    vAeroBodyForces(3)
 {
   if (debug_lvl & 2) cout << "Instantiated: FGAerodynamics" << endl;
+
+  State = FDMExec->GetState();
+  MassBalance = FDMExec->GetMassBalance();
+  Translation = FDMExec->GetTranslation();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGAerodynamics::~FGAerodynamics()
 {
+  AxisIdx["DRAG"]  = 0;
+  AxisIdx["SIDE"]  = 1;
+  AxisIdx["LIFT"]  = 2;
+  AxisIdx["ROLL"]  = 3;
+  AxisIdx["PITCH"] = 4;
+  AxisIdx["YAW"]   = 5;
+
+  Coeff = new CoeffArray[6];
+
   if (debug_lvl & 2) cout << "Destroyed:    FGAerodynamics" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAerodynamics:: Run(void) {
+bool FGAerodynamics:: Run(void)
+{
+  float alpha, beta;
 
   if (!FGModel::Run()) {
+
+    unsigned int axis_ctr,ctr;
+
+    alpha = Translation->Getalpha();
+    beta = Translation->Getbeta();
+
+    vLastFs = vFs;
+    vFs.InitMatrix();
+
+    for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
+      for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
+        vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->TotalValue();
+      }
+    }
+
+    vAeroBodyForces = State->GetTs2b(alpha, beta)*vFs;
+    vForces += vAeroBodyForces;
+
+    // see http://home.earthlink.net/~apeden/jsbsim_moments_due_to_forces.txt
+    // for details on this
+
+    vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) - MassBalance->GetXYZcg(eX))/12.0;
+    vDXYZcg(eY) =  (Aircraft->GetXYZrp(eY) - MassBalance->GetXYZcg(eY))/12.0;
+    vDXYZcg(eZ) = -(Aircraft->GetXYZrp(eZ) - MassBalance->GetXYZcg(eZ))/12.0;
+
+    vMoments(eL) += vAeroBodyForces(eZ)*vDXYZcg(eY) - vAeroBodyForces(eY)*vDXYZcg(eZ);
+    vMoments(eM) += vAeroBodyForces(eX)*vDXYZcg(eZ) - vAeroBodyForces(eZ)*vDXYZcg(eX);
+    vMoments(eN) += vAeroBodyForces(eY)*vDXYZcg(eX) - vAeroBodyForces(eX)*vDXYZcg(eY);
+
+    for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
+      for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
+        vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->TotalValue();
+      }
+    }
 
     return false;
   } else {
@@ -75,7 +131,36 @@ bool FGAerodynamics:: Run(void) {
 
 bool FGAerodynamics::LoadAerodynamics(FGConfigFile* AC_cfg)
 {
-//
+  string token, axis;
+
+  AC_cfg->GetNextConfigLine();
+
+  while ((token = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
+    if (token == "AXIS") {
+      CoeffArray ca;
+      axis = AC_cfg->GetValue("NAME");
+      AC_cfg->GetNextConfigLine();
+      while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
+        ca.push_back(new FGCoefficient(FDMExec, AC_cfg));
+        if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
+      }
+      Coeff[AxisIdx[axis]] = ca;
+      AC_cfg->GetNextConfigLine();
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAerodynamics::DisplayCoeffFactors(vector <eParam> multipliers)
+{
+  unsigned int i;
+
+  cout << "   Non-Dimensionalized by: ";
+
+  for (i=0; i<multipliers.size();i++) cout << State->paramdef[multipliers[i]];
+
+  cout << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
