@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.37 2002/09/29 13:22:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.38 2002/12/17 14:42:21 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,9 +63,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
 
-    if (token == "ID") {
-      *AC_cfg >> ID;
-    } else if (token == "INPUT") {
+    if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       *AC_cfg >> token;
       InputNodes.push_back( resolveSymbol(token) );

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.15 2002/09/29 13:22:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.16 2002/12/17 14:42:18 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,9 +65,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
-    if (token == "ID") {
-      *AC_cfg >> ID;
-    } else if (token == "INPUT") {
+    if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       if( InputNodes.size() > 0 ) {
         cerr << "Kinemat can only accept one input" << endl;

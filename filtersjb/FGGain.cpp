@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h" 
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.44 2002/12/17 00:01:50 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.45 2002/12/17 14:42:17 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,9 +69,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
-    if (token == "ID") {
-      *AC_cfg >> ID;
-    } else if (token == "INPUT") {
+    if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
       if( InputNodes.size() > 0 ) {
         cerr << "Gains can only accept one input" << endl;
@@ -132,10 +130,10 @@ bool FGGain::Run(void )
     Output = Gain * Input;
   } else if (Type == "SCHEDULED_GAIN") {
     LookupVal = ScheduledBy->getDoubleValue();
-	  SchedGain = Table->GetValue(LookupVal);
+    SchedGain = Table->GetValue(LookupVal);
     Output = Gain * SchedGain * Input;
   } else if (Type == "AEROSURFACE_SCALE") {
-    if(!invert) {
+    if (!invert) {
       OutputPct = Input;
       if (Input >= 0.0) Output = Input * Max;
       else Output = Input * -Min;

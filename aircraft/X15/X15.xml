@@ -3,7 +3,7 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.40 2002/09/22 18:06:02 apeden Exp $
+  CVS Version: $Id: X15.xml,v 1.41 2002/12/17 14:42:14 jberndt Exp $
 
   Function: Models an X-15
   -->
@@ -672,7 +672,7 @@
     NOTE that Time is always output with the data.
   -->
 
-  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       ON
     ATMOSPHERE       OFF

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.31 2002/09/29 13:22:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.32 2002/12/17 14:42:15 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,7 +49,6 @@ CLASS IMPLEMENTATION
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 {
   Type       = "";
-  ID         = 0;
   Input      = 0.0;
   Output     = 0.0;
   OutputNode = 0;

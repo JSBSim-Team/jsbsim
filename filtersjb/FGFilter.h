@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.20 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.21 2002/12/17 14:42:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,14 +69,13 @@ CLASS DOCUMENTATION
     <pre>
     
     &ltCOMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
-      ID           16
       INPUT        15
       C1           600
       OUTPUT       FG_ELEVATOR_POS
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.20 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.21 2002/12/17 14:42:16 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFilter.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
