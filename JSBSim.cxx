@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.27 2000/08/04 08:06:23 jsb Exp $
+// $Id: JSBSim.cxx,v 1.28 2000/08/05 06:37:26 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -93,7 +93,7 @@ int FGJSBsim::init( double dt ) {
   FDMExec.GetAtmosphere()->SetWindNED(get_V_north_airmass(),
                                       get_V_east_airmass(),
                                       get_V_down_airmass());
- 
+  
   FDMExec.GetAtmosphere()->UseInternal();
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
@@ -127,6 +127,9 @@ int FGJSBsim::init( double dt ) {
 
   FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
   FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
+  FDMExec.GetPosition()->SetRunwayNormal( scenery.cur_normal[0],
+                                          scenery.cur_normal[1],
+                                          scenery.cur_normal[2] );
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  phi: " <<  get_Phi());
   FG_LOG( FG_FLIGHT, FG_INFO, "  theta: " <<  get_Theta() );
@@ -204,6 +207,9 @@ int FGJSBsim::update( int multiloop ) {
   //  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
   FDMExec.GetPosition()->SetRunwayRadius(scenery.cur_radius*METER_TO_FEET);
   FDMExec.GetPosition()->SetSeaLevelRadius(get_Sea_level_radius());
+  FDMExec.GetPosition()->SetRunwayNormal( scenery.cur_normal[0],
+                                          scenery.cur_normal[1],
+                                          scenery.cur_normal[2] );
 
   FDMExec.GetAtmosphere()->SetExTemperature(get_Static_temperature());
   FDMExec.GetAtmosphere()->SetExPressure(get_Static_pressure());
