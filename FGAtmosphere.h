@@ -47,53 +47,97 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.19 2001/07/29 16:00:20 apeden Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/*******************************************************************************
-COMMENTS, REFERENCES,  and NOTES
-********************************************************************************
- 
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.20 2001/10/01 16:34:17 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 [1]   Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
       1989, ISBN 0-07-001641-0
- 
-*******************************************************************************
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Models the standard atmosphere.
+    @author Tony Peden, Jon Berndt
+    @version $Id: FGAtmosphere.h,v 1.20 2001/10/01 16:34:17 jberndt Exp $
+*/
+
+/******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
 class FGAtmosphere : public FGModel {
 public:
 
+  /// Constructor
   FGAtmosphere(FGFDMExec*);
+  /// Destructor
   ~FGAtmosphere();
+  /** Runs the Atmosphere model; called by the Executive
+      @return false if no error */
   bool Run(void);
 
+  /// Returns the temperature in degrees Rankine.
   inline float GetTemperature(void) {return temperature;}
-  inline float GetDensity(void)    {return density;}     // use only after Run() has been called
+  /** Returns the density in slugs/ft^3.
+      <i>This function may <b>only</b> be used if Run() is called first.</i> */
+  inline float GetDensity(void)    {return density;}
+  /// Returns the pressure in psf.
   inline float GetPressure(void)   {return pressure;}
+  /// Returns the speed of sound in ft/sec.
   inline float GetSoundSpeed(void) {return soundspeed;}
 
-  inline float GetTemperatureSL(void) { return SLtemperature; }  //Rankine, altitude in feet
-  inline float GetDensitySL(void)     { return SLdensity; }      //slugs/ft^3
-  inline float GetPressureSL(void)    { return SLpressure; }     //lbs/ft^2
-  inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }   //ft/s
+  /// Returns the sea level temperature in degrees Rankine.
+  inline float GetTemperatureSL(void) { return SLtemperature; }
+  /// Returns the sea level density in slugs/ft^3
+  inline float GetDensitySL(void)     { return SLdensity; }
+  /// Returns the sea level pressure in psf.
+  inline float GetPressureSL(void)    { return SLpressure; }
+  /// Returns the sea level speed of sound in ft/sec.
+  inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }
 
+  /// Returns the ratio of at-altitude temperature over the sea level value.
   inline float GetTemperatureRatio(void)  { return temperature*rSLtemperature; }
+  /// Returns the ratio of at-altitude density over the sea level value.
   inline float GetDensityRatio(void) 	  { return density*rSLdensity; }
+  /// Returns the ratio of at-altitude pressure over the sea level value.
   inline float GetPressureRatio(void)     { return pressure*rSLpressure; }
+  /// Returns the ratio of at-altitude sound speed over the sea level value.
   inline float GetSoundSpeedRatio(void)   { return soundspeed*rSLsoundspeed; }
 
+  /// Tells the simulator to use an externally calculated atmosphere model.
   inline void UseExternal(void)          { useExternal=true;  }
+  /// Tells the simulator to use the internal atmosphere model.
   inline void UseInternal(void)          { useExternal=false; } //this is the default
+  /// Gets the boolean that tells if the external atmosphere model is being used.
   bool External(void) { return useExternal; }
 
+  /// Provides the external atmosphere model with an interface to set the temperature.
   inline void SetExTemperature(float t)  { exTemperature=t; }
+  /// Provides the external atmosphere model with an interface to set the density.
   inline void SetExDensity(float d)      { exDensity=d; }
+  /// Provides the external atmosphere model with an interface to set the pressure.
   inline void SetExPressure(float p)     { exPressure=p; }
 
+  /// Sets the wind components in NED frame.
   inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
 
+  /// Retrieves the wind components in NED frame.
   inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
   
+  /** Retrieves the wind direction. The direction is defined as north=0 and
+      increases counterclockwise. The wind heading is returned in radians.*/
   inline float GetWindPsi(void) { return psiw; }
   
 private:
