@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.32 2003/02/03 18:48:29 dmegginson Exp $
+  CVS Version: $Id: c310.xml,v 1.33 2003/03/10 14:12:45 dmegginson Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -503,10 +503,11 @@
          0.349 -0.0382
       </COEFFICIENT>
 
+      <!-- dpm: kludge -->
       <COEFFICIENT NAME="Clp" TYPE="VALUE">
         Roll_moment_due_to_roll_rate_(roll_damping)
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
-        -0.551
+        -0.750
       </COEFFICIENT>
 
       <COEFFICIENT NAME="Clr" TYPE="VALUE">
@@ -549,10 +550,11 @@
         -12.7
       </COEFFICIENT>
 
+      <!-- dpm: kludge -->
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
         Pitch_moment_due_to_pitch_rate_(pitch_damping)
         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
-        -40
+        -80
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CmDe" TYPE="VALUE">
@@ -588,10 +590,11 @@
         -0.0257
        </COEFFICIENT>
 
+      <!-- dpm: kludge -->
       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
         Yaw_moment_due_to_yaw_rate_(yaw_damping)
         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-        -0.1495
+        -0.30
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CnDa" TYPE="VALUE">
