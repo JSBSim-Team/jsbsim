@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.78 2002/04/19 10:14:33 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.79 2002/04/28 11:31:44 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -605,32 +605,39 @@ void FGFCS::bind(void)
 void FGFCS::bindModel(void)
 {
   unsigned i;
-
+  char tmp[80];
+  
   for (i=0; i<ThrottleCmd.size(); i++) {
-    PropertyManager->Tie("fcs/throttle-cmd-norm",this,i,
+    snprintf(tmp,80,"fcs/throttle-cmd-norm[%u]",i);
+    PropertyManager->Tie( tmp,this,i,
                           &FGFCS::GetThrottleCmd,
                           &FGFCS::SetThrottleCmd,
                           true );
-    PropertyManager->Tie("fcs/throttle-pos-norm",this,i,
+    snprintf(tmp,80,"fcs/throttle-pos-norm[%u]",i);                      
+    PropertyManager->Tie( tmp,this,i,
                           &FGFCS::GetThrottlePos,
                           &FGFCS::SetThrottlePos,
                           true );
     if ( MixtureCmd.size() > i ) {
-      PropertyManager->Tie("fcs/mixture-cmd-norm",this,i,
+      snprintf(tmp,80,"fcs/mixture-cmd-norm[%u]",i); 
+      PropertyManager->Tie( tmp,this,i,
                             &FGFCS::GetMixtureCmd,
                             &FGFCS::SetMixtureCmd,
                             true );
-      PropertyManager->Tie("fcs/mixture-pos-norm",this,i,
+      snprintf(tmp,80,"fcs/mixture-pos-norm[%u]",i);                    
+      PropertyManager->Tie( tmp,this,i,
                             &FGFCS::GetMixturePos,
                             &FGFCS::SetMixturePos,
                             true );
     }
     if ( PropAdvanceCmd.size() > i ) {
-      PropertyManager->Tie("fcs/advance-cmd-norm",this,i,
+      snprintf(tmp,80,"fcs/advance-cmd-norm[%u]",i); 
+      PropertyManager->Tie( tmp,this,i,
                             &FGFCS::GetPropAdvanceCmd,
                             &FGFCS::SetPropAdvanceCmd,
                             true );
-      PropertyManager->Tie("fcs/advance-pos-norm",this,i,
+      snprintf(tmp,80,"fcs/advance-pos-norm[%u]",i);                       
+      PropertyManager->Tie( tmp,this,i,
                             &FGFCS::GetPropAdvance,
                             &FGFCS::SetPropAdvance,
                             true );
