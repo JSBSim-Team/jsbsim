@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.55 2004/05/03 09:19:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.56 2004/05/14 10:40:15 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,7 +116,7 @@ bool FGAuxiliary::Run()
     psl = Atmosphere->GetPressureSL();
     sat = Atmosphere->GetTemperature();
 
-// Propagate
+// Rotation
 
     double cTht = Propagate->GetCostht();
     double cPhi = Propagate->GetCosphi();
@@ -130,7 +130,7 @@ bool FGAuxiliary::Run()
 
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
-// Propagate
+// Translation
 
     vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
 
@@ -151,7 +151,7 @@ bool FGAuxiliary::Run()
         adot = 0.0;
         bdot = 0.0;
       } else {
-        adot = (vAeroUVW(eU)*vAeroUVW(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
+        adot = (vAeroUVW(eU)*vUVWdot(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
         bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
                 + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
       }
