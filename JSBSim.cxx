@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.168 2004/04/17 21:21:26 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.169 2004/04/18 11:50:51 frohlich Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -571,16 +571,16 @@ bool FGJSBsim::copy_from_JSBsim()
     _set_Mach_number( Auxiliary->GetMach() );
 
     // Positions
+/*
     _updateGeocentricPosition( Propagate->GetLatitude(),
              Propagate->GetLongitude(),
              Propagate->Geth() );
-
+*/
     // Positions of Visual Reference Point
-/*
     _updateGeocentricPosition( Propagate->GetLatitudeVRP(),
              Propagate->GetLongitudeVRP(),
              Propagate->GethVRP() );
-*/
+
     _set_Altitude_AGL( Propagate->GetDistanceAGL() );
 
     _set_Euler_Angles( Propagate->Getphi(),
