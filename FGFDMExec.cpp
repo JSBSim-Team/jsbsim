@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.17 2000/10/16 12:32:44 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFDMExec.cpp,v 1.18 2000/10/29 17:03:40 jsb Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +103,6 @@ FGFDMExec::~FGFDMExec(void){
 
 bool FGFDMExec::Allocate(void) {
   
-  cout << "FGFDMExec::Allocate ... ";
   bool result=true;
   
   Atmosphere  = new FGAtmosphere(this);
@@ -144,13 +143,11 @@ bool FGFDMExec::Allocate(void) {
   Schedule(Output,     1);
   
   modelLoaded = false;
-  cout << "done." << endl;
   return result;
 
 }
 
 bool FGFDMExec::DeAllocate(void) {
-  cout << "FGFDMExec::DeAllocate ... ";
  
   if ( Atmosphere != 0 )  delete Atmosphere;
   if ( FCS != 0 )         delete FCS;
@@ -177,7 +174,6 @@ bool FGFDMExec::DeAllocate(void) {
 
   modelLoaded = false;
   
-  cout << "done" << endl;
 }
 
 
@@ -240,7 +236,6 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
 	bool result=false;
-  cout << "FGFDMExec::LoadModel ..." << endl;
   if(modelLoaded) {
      DeAllocate();
      Allocate();
@@ -255,7 +250,6 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
     cerr << "FGFDMExec: Failed to load aircraft and/or engine model" << endl;
   }
 
-  cout << "FGFDMExec::LoadModel complete." << endl;;
   return result;
 }
 
