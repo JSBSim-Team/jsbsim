@@ -5,7 +5,7 @@
         <AUTHOR>Tony Peden</AUTHOR>
         <FILECREATIONDATE>1999</FILECREATIONDATE>
         <DESCRIPTION>Models a 1997 Cessna 172R.</DESCRIPTION>
-        <VERSION>$Id: c172x_NEW.xml,v 1.2 2004/10/05 17:03:20 jberndt Exp $</VERSION>
+        <VERSION>$Id: c172x_NEW.xml,v 1.3 2004/10/07 00:27:57 jberndt Exp $</VERSION>
         <REFERENCE refID="None" author="n/a" title="n/a" date="n/a"/>
     </FILEHEADER>
     <METRICS>
@@ -52,14 +52,6 @@
             </LOCATION>
         </POINTMASS>
     </MASS_BALANCE>
-        <POINTMASS NAME="PILOT">
-            <WEIGHT UNIT="LBS">180.0</WEIGHT>
-            <LOCATION NAME="POINTMASS" UNIT="IN">
-                <X> 36.0 </X>
-                <Y> -14.0 </Y>
-                <Z> 24.0 </Z>
-            </LOCATION>
-        </POINTMASS>
     <GROUND_REACTIONS>
         <CONTACT TYPE="BOGEY" NAME="NOSE">
             <LOCATION UNIT="IN">
