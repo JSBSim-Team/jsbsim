@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.72 2002/03/27 02:44:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.73 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,9 +131,9 @@ bool FGPropulsion::GetSteadyState(void)
         PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
         lastThrust = currentThrust;
         currentThrust = Thrusters[i]->Calculate(PowerAvailable);
-        if(fabs(lastThrust-currentThrust) < 0.0001) {
+        if (fabs(lastThrust-currentThrust) < 0.0001) {
           steady_count++;
-          if(steady_count > 120) { steady=true; }
+          if (steady_count > 120) { steady=true; }
         } else {
           steady_count=0;
         }
@@ -548,7 +548,8 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropulsion::bind(void){
+void FGPropulsion::bind(void)
+{
   /* PropertyManager->Tie("propulsion/num-engines", this,
                        &FGPropulsion::GetNumEngines);
   PropertyManager->Tie("propulsion/num-tanks", this,
@@ -575,7 +576,8 @@ void FGPropulsion::bind(void){
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropulsion::unbind(void){
+void FGPropulsion::unbind(void)
+{
   /* PropertyManager->Untie("propulsion/num-engines");
   PropertyManager->Untie("propulsion/num-tanks"); */
   PropertyManager->Untie("propulsion/num-sel-fuel-tanks");

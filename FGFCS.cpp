@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.76 2002/04/01 11:58:43 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.77 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,12 +76,12 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   DoNormalize=true;
   
   bind();
-  for(i=0;i<=NForms;i++) {
+  for (i=0;i<=NForms;i++) {
     DePos[i] = DaLPos[i] = DaRPos[i] = DrPos[i] = 0.0;
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
   }
     
-  for(i=0;i<NNorm;i++) { ToNormalize[i]=-1;}
+  for (i=0;i<NNorm;i++) { ToNormalize[i]=-1;}
   Debug(0);
 }
 
@@ -115,7 +115,7 @@ bool FGFCS::Run(void)
     for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
     for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
     for (i=0; i<Components.size(); i++)  Components[i]->Run();
-    if(DoNormalize) Normalize();
+    if (DoNormalize) Normalize();
   } else {
   }
 
@@ -265,7 +265,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   
   Name = Name + ":" + AC_cfg->GetValue("NAME");
   if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
-  if( AC_cfg->GetValue("NORMALIZE") == "FALSE") {
+  if ( AC_cfg->GetValue("NORMALIZE") == "FALSE") {
       DoNormalize=false;
       cout << "    Automatic Control Surface Normalization Disabled" << endl;
   }    
@@ -307,13 +307,13 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   }
   //collect information for normalizing control surfaces
   string nodeName;
-  for(i=0;i<Components.size();i++) {
+  for (i=0;i<Components.size();i++) {
     
-    if( (Components[i]->GetType() == "AEROSURFACE_SCALE" 
+    if ( (Components[i]->GetType() == "AEROSURFACE_SCALE" 
           || Components[i]->GetType() == "KINEMAT")  
                     && Components[i]->GetOutputNode() ) { 
       nodeName= Components[i]->GetOutputNode()->GetName();  
-      if( nodeName == "elevator-pos-rad" ) {
+      if ( nodeName == "elevator-pos-rad" ) {
         ToNormalize[iDe]=i;
       } else if ( nodeName  == "left-aileron-pos-rad" 
                    || nodeName == "aileron-pos-rad" ) {
@@ -424,31 +424,31 @@ void FGFCS::Normalize(void) {
   //those that are have an index >=0 in the ToNormalize array
   //ToNormalize is filled in Load()
   
-  if( ToNormalize[iDe] > -1 ) {
+  if ( ToNormalize[iDe] > -1 ) {
     DePos[ofNorm] = Components[ToNormalize[iDe]]->GetOutputPct();
   }
   
-  if( ToNormalize[iDaL] > -1 ) {
+  if ( ToNormalize[iDaL] > -1 ) {
     DaLPos[ofNorm] = Components[ToNormalize[iDaL]]->GetOutputPct();
   }
   
-  if( ToNormalize[iDaR] > -1 ) {
+  if ( ToNormalize[iDaR] > -1 ) {
     DaRPos[ofNorm] = Components[ToNormalize[iDaR]]->GetOutputPct();
   }
 
-  if( ToNormalize[iDr] > -1 ) {
+  if ( ToNormalize[iDr] > -1 ) {
     DrPos[ofNorm] = Components[ToNormalize[iDr]]->GetOutputPct();
   }
        
-  if( ToNormalize[iDsb] > -1 ) { 
+  if ( ToNormalize[iDsb] > -1 ) { 
     DsbPos[ofNorm] = Components[ToNormalize[iDsb]]->GetOutputPct();
   }
   
-  if( ToNormalize[iDsp] > -1 ) {
+  if ( ToNormalize[iDsp] > -1 ) {
     DspPos[ofNorm] = Components[ToNormalize[iDsp]]->GetOutputPct();
   }
   
-  if( ToNormalize[iDf] > -1 ) {
+  if ( ToNormalize[iDf] > -1 ) {
     DfPos[ofNorm] = Components[ToNormalize[iDf]]->GetOutputPct();
   }
   
@@ -464,7 +464,8 @@ void FGFCS::Normalize(void) {
     
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::bind(void){
+void FGFCS::bind(void)
+{
   PropertyManager->Tie("fcs/aileron-cmd-norm", this,
                        &FGFCS::GetDaCmd,
                        &FGFCS::SetDaCmd,
@@ -598,11 +599,14 @@ void FGFCS::bind(void){
                        &FGFCS::SetGearPos,
                        true);
 }
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::bindModel(void){
+void FGFCS::bindModel(void)
+{
   unsigned i;
-  for(i=0;i<ThrottleCmd.size();i++) {
+
+  for (i=0; i<ThrottleCmd.size(); i++) {
     PropertyManager->Tie("fcs/throttle-cmd-norm",this,i,
                           &FGFCS::GetThrottleCmd,
                           &FGFCS::SetThrottleCmd,
@@ -611,7 +615,7 @@ void FGFCS::bindModel(void){
                           &FGFCS::GetThrottlePos,
                           &FGFCS::SetThrottlePos,
                           true );
-    if( MixtureCmd.size() > i ) {
+    if ( MixtureCmd.size() > i ) {
       PropertyManager->Tie("fcs/mixture-cmd-norm",this,i,
                             &FGFCS::GetMixtureCmd,
                             &FGFCS::SetMixtureCmd,
@@ -621,7 +625,7 @@ void FGFCS::bindModel(void){
                             &FGFCS::SetMixturePos,
                             true );
     }
-    if( PropAdvanceCmd.size() > i ) {
+    if ( PropAdvanceCmd.size() > i ) {
       PropertyManager->Tie("fcs/advance-cmd-norm",this,i,
                             &FGFCS::GetPropAdvanceCmd,
                             &FGFCS::SetPropAdvanceCmd,
@@ -636,7 +640,8 @@ void FGFCS::bindModel(void){
                           
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::unbind(void){
+void FGFCS::unbind(void)
+{
   PropertyManager->Untie("fcs/aileron-cmd-norm");
   PropertyManager->Untie("fcs/elevator-cmd-norm");
   PropertyManager->Untie("fcs/rudder-cmd-norm");
@@ -669,8 +674,6 @@ void FGFCS::unbind(void){
   PropertyManager->Untie("fcs/spoiler-pos-norm");
   PropertyManager->Untie("gear/gear-pos-norm");
 }
-
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

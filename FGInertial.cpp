@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.24 2002/03/09 11:56:08 apeden Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.25 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +126,27 @@ bool FGInertial::LoadInertial(FGConfigFile* AC_cfg)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInertial::bind(void)
+{
+  PropertyManager->Tie("forces/fbx-inertial-lbs", this,1,
+                       &FGInertial::GetForces);
+  PropertyManager->Tie("forces/fby-inertial-lbs", this,2,
+                       &FGInertial::GetForces);
+  PropertyManager->Tie("forces/fbz-inertial-lbs", this,3,
+                       &FGInertial::GetForces);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInertial::unbind(void)
+{
+  PropertyManager->Untie("forces/fbx-inertial-lbs");
+  PropertyManager->Untie("forces/fby-inertial-lbs");
+  PropertyManager->Untie("forces/fbz-inertial-lbs");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -171,17 +192,3 @@ void FGInertial::Debug(int from)
   }
 }
 
-void FGInertial::bind(void){
-  PropertyManager->Tie("forces/fbx-inertial-lbs", this,1,
-                       &FGInertial::GetForces);
-  PropertyManager->Tie("forces/fby-inertial-lbs", this,2,
-                       &FGInertial::GetForces);
-  PropertyManager->Tie("forces/fbz-inertial-lbs", this,3,
-                       &FGInertial::GetForces);
-}
-
-void FGInertial::unbind(void){
-  PropertyManager->Untie("forces/fbx-inertial-lbs");
-  PropertyManager->Untie("forces/fby-inertial-lbs");
-  PropertyManager->Untie("forces/fbz-inertial-lbs");
-}

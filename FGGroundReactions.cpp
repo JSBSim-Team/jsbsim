@@ -38,7 +38,7 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.29 2002/03/18 12:12:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.30 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +164,39 @@ string FGGroundReactions::GetGroundReactionValues(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGGroundReactions::bind(void)
+{
+  PropertyManager->Tie("gear/num-units", this,
+                       &FGGroundReactions::GetNumGearUnits);  
+  PropertyManager->Tie("moments/l-gear-lbsft", this,1,
+                       &FGGroundReactions::GetMoments);
+  PropertyManager->Tie("moments/m-gear-lbsft", this,2,
+                       &FGGroundReactions::GetMoments);
+  PropertyManager->Tie("moments/n-gear-lbsft", this,3,
+                       &FGGroundReactions::GetMoments);
+  PropertyManager->Tie("forces/fbx-gear-lbs", this,1,
+                       &FGGroundReactions::GetForces);
+  PropertyManager->Tie("forces/fby-gear-lbs", this,2,
+                       &FGGroundReactions::GetForces);
+  PropertyManager->Tie("forces/fbz-gear-lbs", this,3,
+                       &FGGroundReactions::GetForces);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGGroundReactions::unbind(void)
+{
+  PropertyManager->Untie("gear/num-units");
+  PropertyManager->Untie("moments/l-gear-lbsft");
+  PropertyManager->Untie("moments/m-gear-lbsft");
+  PropertyManager->Untie("moments/n-gear-lbsft");
+  PropertyManager->Untie("forces/fbx-gear-lbs");
+  PropertyManager->Untie("forces/fby-gear-lbs");
+  PropertyManager->Untie("forces/fbz-gear-lbs");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -209,30 +242,3 @@ void FGGroundReactions::Debug(int from)
   }
 }
 
-void FGGroundReactions::bind(void){
-
-  PropertyManager->Tie("gear/num-units", this,
-                       &FGGroundReactions::GetNumGearUnits);  
-  PropertyManager->Tie("moments/l-gear-lbsft", this,1,
-                       &FGGroundReactions::GetMoments);
-  PropertyManager->Tie("moments/m-gear-lbsft", this,2,
-                       &FGGroundReactions::GetMoments);
-  PropertyManager->Tie("moments/n-gear-lbsft", this,3,
-                       &FGGroundReactions::GetMoments);
-  PropertyManager->Tie("forces/fbx-gear-lbs", this,1,
-                       &FGGroundReactions::GetForces);
-  PropertyManager->Tie("forces/fby-gear-lbs", this,2,
-                       &FGGroundReactions::GetForces);
-  PropertyManager->Tie("forces/fbz-gear-lbs", this,3,
-                       &FGGroundReactions::GetForces);
-}
-
-void FGGroundReactions::unbind(void){
-  PropertyManager->Untie("gear/num-units");
-  PropertyManager->Untie("moments/l-gear-lbsft");
-  PropertyManager->Untie("moments/m-gear-lbsft");
-  PropertyManager->Untie("moments/n-gear-lbsft");
-  PropertyManager->Untie("forces/fbx-gear-lbs");
-  PropertyManager->Untie("forces/fby-gear-lbs");
-  PropertyManager->Untie("forces/fbz-gear-lbs");
-}

@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.44 2002/03/20 14:27:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.45 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,6 +162,88 @@ bool FGTranslation::Run(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTranslation::bind(void)
+{
+  PropertyManager->Tie("velocities/u-fps", this,1,
+                       &FGTranslation::GetUVW /*,
+                       &FGTranslation::SetUVW,
+                       true */);
+  PropertyManager->Tie("velocities/v-fps", this,2,
+                       &FGTranslation::GetUVW /*,
+                       &FGTranslation::SetUVW,
+                       true*/);
+  PropertyManager->Tie("velocities/w-fps", this,3,
+                       &FGTranslation::GetUVW /*,
+                       &FGTranslation::SetUVW,
+                       true*/);
+  PropertyManager->Tie("accelerations/udot-fps", this,1,
+                       &FGTranslation::GetUVWdot);
+  PropertyManager->Tie("accelerations/vdot-fps", this,2,
+                       &FGTranslation::GetUVWdot);
+  PropertyManager->Tie("accelerations/wdot-fps", this,3,
+                       &FGTranslation::GetUVWdot);
+  PropertyManager->Tie("velocities/u-aero-fps", this,1,
+                       &FGTranslation::GetAeroUVW);
+  PropertyManager->Tie("velocities/v-aero-fps", this,2,
+                       &FGTranslation::GetAeroUVW);
+  PropertyManager->Tie("velocities/w-aero-fps", this,3,
+                       &FGTranslation::GetAeroUVW);
+  PropertyManager->Tie("aero/alpha-rad", this,
+                       &FGTranslation::Getalpha,
+                       &FGTranslation::Setalpha,
+                       true);
+  PropertyManager->Tie("aero/beta-rad", this,
+                       &FGTranslation::Getbeta,
+                       &FGTranslation::Setbeta,
+                       true);
+  PropertyManager->Tie("aero/mag-beta-rad", this,
+                       &FGTranslation::GetMagBeta);
+  PropertyManager->Tie("aero/qbar-psf", this,
+                       &FGTranslation::Getqbar,
+                       &FGTranslation::Setqbar,
+                       true);
+  PropertyManager->Tie("velocities/vt-fps", this,
+                       &FGTranslation::GetVt,
+                       &FGTranslation::SetVt,
+                       true);
+  PropertyManager->Tie("velocities/mach-norm", this,
+                       &FGTranslation::GetMach,
+                       &FGTranslation::SetMach,
+                       true);
+  PropertyManager->Tie("aero/alphadot-rad_sec", this,
+                       &FGTranslation::Getadot,
+                       &FGTranslation::Setadot,
+                       true);
+  PropertyManager->Tie("aero/betadot-rad_sec", this,
+                       &FGTranslation::Getbdot,
+                       &FGTranslation::Setbdot,
+                       true);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTranslation::unbind(void)
+{
+  PropertyManager->Untie("velocities/u-fps");
+  PropertyManager->Untie("velocities/v-fps");
+  PropertyManager->Untie("velocities/w-fps");
+  PropertyManager->Untie("accelerations/udot-fps");
+  PropertyManager->Untie("accelerations/vdot-fps");
+  PropertyManager->Untie("accelerations/wdot-fps");
+  PropertyManager->Untie("velocities/u-aero-fps");
+  PropertyManager->Untie("velocities/v-aero-fps");
+  PropertyManager->Untie("velocities/w-aero-fps");
+  PropertyManager->Untie("aero/alpha-rad");
+  PropertyManager->Untie("aero/beta-rad");
+  PropertyManager->Untie("aero/qbar-psf");
+  PropertyManager->Untie("velocities/vt-fps");
+  PropertyManager->Untie("velocities/mach-norm");
+  PropertyManager->Untie("aero/alphadot-rad_sec");
+  PropertyManager->Untie("aero/betadot-rad_sec");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -223,82 +305,3 @@ void FGTranslation::Debug(int from)
   }
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGTranslation::bind(void){
-  PropertyManager->Tie("velocities/u-fps", this,1,
-                       &FGTranslation::GetUVW /*,
-                       &FGTranslation::SetUVW,
-                       true */);
-  PropertyManager->Tie("velocities/v-fps", this,2,
-                       &FGTranslation::GetUVW /*,
-                       &FGTranslation::SetUVW,
-                       true*/);
-  PropertyManager->Tie("velocities/w-fps", this,3,
-                       &FGTranslation::GetUVW /*,
-                       &FGTranslation::SetUVW,
-                       true*/);
-  PropertyManager->Tie("accelerations/udot-fps", this,1,
-                       &FGTranslation::GetUVWdot);
-  PropertyManager->Tie("accelerations/vdot-fps", this,2,
-                       &FGTranslation::GetUVWdot);
-  PropertyManager->Tie("accelerations/wdot-fps", this,3,
-                       &FGTranslation::GetUVWdot);
-  PropertyManager->Tie("velocities/u-aero-fps", this,1,
-                       &FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("velocities/v-aero-fps", this,2,
-                       &FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("velocities/w-aero-fps", this,3,
-                       &FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("aero/alpha-rad", this,
-                       &FGTranslation::Getalpha,
-                       &FGTranslation::Setalpha,
-                       true);
-  PropertyManager->Tie("aero/beta-rad", this,
-                       &FGTranslation::Getbeta,
-                       &FGTranslation::Setbeta,
-                       true);
-  PropertyManager->Tie("aero/mag-beta-rad", this,
-                       &FGTranslation::GetMagBeta);
-  PropertyManager->Tie("aero/qbar-psf", this,
-                       &FGTranslation::Getqbar,
-                       &FGTranslation::Setqbar,
-                       true);
-  PropertyManager->Tie("velocities/vt-fps", this,
-                       &FGTranslation::GetVt,
-                       &FGTranslation::SetVt,
-                       true);
-  PropertyManager->Tie("velocities/mach-norm", this,
-                       &FGTranslation::GetMach,
-                       &FGTranslation::SetMach,
-                       true);
-  PropertyManager->Tie("aero/alphadot-rad_sec", this,
-                       &FGTranslation::Getadot,
-                       &FGTranslation::Setadot,
-                       true);
-  PropertyManager->Tie("aero/betadot-rad_sec", this,
-                       &FGTranslation::Getbdot,
-                       &FGTranslation::Setbdot,
-                       true);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGTranslation::unbind(void){
-  PropertyManager->Untie("velocities/u-fps");
-  PropertyManager->Untie("velocities/v-fps");
-  PropertyManager->Untie("velocities/w-fps");
-  PropertyManager->Untie("accelerations/udot-fps");
-  PropertyManager->Untie("accelerations/vdot-fps");
-  PropertyManager->Untie("accelerations/wdot-fps");
-  PropertyManager->Untie("velocities/u-aero-fps");
-  PropertyManager->Untie("velocities/v-aero-fps");
-  PropertyManager->Untie("velocities/w-aero-fps");
-  PropertyManager->Untie("aero/alpha-rad");
-  PropertyManager->Untie("aero/beta-rad");
-  PropertyManager->Untie("aero/qbar-psf");
-  PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocities/mach-norm");
-  PropertyManager->Untie("aero/alphadot-rad_sec");
-  PropertyManager->Untie("aero/betadot-rad_sec");
-}

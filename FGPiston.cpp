@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.52 2002/02/13 11:52:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.53 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,7 +163,7 @@ double FGPiston::Calculate(double PowerRequired)
   //Assume lean limit at 22 AFR for now - thats a thi of 0.668
   //This might be a bit generous, but since there's currently no audiable warning of impending
   //cutout in the form of misfiring and/or rough running its probably reasonable for now.
-  if(equivalence_ratio < 0.668)
+  if (equivalence_ratio < 0.668)
     Running = false;
 
   doEnginePower();
@@ -231,7 +231,7 @@ void FGPiston::doEngineStartup(void)
 
   if ((!Running) && (spark) && (fuel)) {
   // start the engine if revs high enough
-    if(Cranking) {
+    if (Cranking) {
       if ((RPM > 450) && (crank_counter > 175)) {
         //Add a little delay to startup on the starter
         Running = true;
@@ -355,7 +355,7 @@ void FGPiston::doFuelFlow(void)
 void FGPiston::doEnginePower(void)
 {
   ManifoldPressure_inHg *= p_amb / p_amb_sea_level;
-  if(Running) {	
+  if (Running) {	
     double ManXRPM = ManifoldPressure_inHg * RPM;
         // FIXME: this needs to be generalized
     Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;

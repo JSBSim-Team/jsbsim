@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.53 2002/04/01 11:58:43 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.54 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,21 +68,31 @@ CLASS IMPLEMENTATION
 
 FGCoefficient::FGCoefficient( FGFDMExec* fdex )
 {
-
   FDMExec = fdex;
   State   = FDMExec->GetState();
   Table   = 0;
   
   PropertyManager = FDMExec->GetPropertyManager();
   
-  bias=0;
-  gain=1;
-  
+  Table = (FGTable*)0L;
   LookupR = LookupC = 0;
-  
-  totalValue = 0;
+  numInstances = 0;
+  rows = columns = 0;
 
-  if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
+  StaticValue  = 0.0;
+  totalValue   = 0.0;
+  bias = 0.0;
+  gain = 1.0;
+
+  filename.erase();
+  description.erase();
+  name.erase();
+  method.erase();
+  multparms.erase();
+  multparmsRow.erase();
+  multparmsCol.erase();
+
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +100,7 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
 FGCoefficient::~FGCoefficient()
 {
   if (Table) delete Table;
-  if (debug_lvl & 2) cout << "Destroyed:    FGCoefficient" << endl;
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,23 +294,24 @@ string FGCoefficient::GetCoefficientValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCoefficient::bind(FGPropertyManager *parent) {
+void FGCoefficient::bind(FGPropertyManager *parent)
+{
   string mult;
   unsigned i;
   
   node=parent->GetNode(name,true);
   
   node->SetString("description",description);
-  if(LookupR) node->SetString("row-parm",LookupR->getName() );
-  if(LookupC) node->SetString("column-parm",LookupC->getName() );
+  if (LookupR) node->SetString("row-parm",LookupR->getName() );
+  if (LookupC) node->SetString("column-parm",LookupC->getName() );
   
   mult="";
-  if(multipliers.size() == 0) 
+  if (multipliers.size() == 0) 
     mult="none";
     
   for (i=0; i<multipliers.size(); i++) {
       mult += multipliers[i]->getName();
-      if( i < multipliers.size()-1 ) mult += " "; 
+      if ( i < multipliers.size()-1 ) mult += " "; 
   }
   node->SetString("multipliers",mult);
   
@@ -317,12 +328,14 @@ void FGCoefficient::bind(FGPropertyManager *parent) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCoefficient::unbind(void) {
+void FGCoefficient::unbind(void)
+{
   node->Untie("SD-norm");
   node->Untie("value-lbs"); 
   node->Untie("bias");  
   node->Untie("gain");
-}  
+}
+  
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

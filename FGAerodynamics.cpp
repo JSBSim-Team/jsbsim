@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.33 2002/03/22 11:47:24 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.34 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -112,7 +112,7 @@ bool FGAerodynamics::Run(void)
     }
     //correct signs of drag and lift to wind axes convention
     //positive forward, right, down
-    if( Translation->Getqbar() > 0) {
+    if ( Translation->Getqbar() > 0) {
       clsq = vFs(eLift) / (Aircraft->GetWingArea()*Translation->Getqbar());
       clsq *= clsq;
     }
@@ -161,7 +161,7 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
       while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
-        if( token == "COEFFICIENT" ) {
+        if ( token == "COEFFICIENT" ) {
           ca.push_back( new FGCoefficient(FDMExec) );
           ca.back()->Load(AC_cfg);
         } else if ( token == "GROUP" ) {
@@ -223,8 +223,8 @@ string FGAerodynamics::GetCoefficientValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAerodynamics::bind(void){
-  
+void FGAerodynamics::bind(void)
+{
   PropertyManager->Tie("forces/fbx-aero-lbs", this,1,
                        &FGAerodynamics::GetForces);
   PropertyManager->Tie("forces/fby-aero-lbs", this,2,
@@ -251,24 +251,25 @@ void FGAerodynamics::bind(void){
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAerodynamics::bindModel(void) { 
- 
+void FGAerodynamics::bindModel(void)
+{ 
   unsigned i,j;
   FGPropertyManager* node;
   string axis_node_name;
   node = PropertyManager->GetNode("aero/buildup",true);
-  for(i=0;i<NAxes;i++) {
-     node=node->GetNode( string(AxisNames[i]),true );
+  for (i=0;i<NAxes;i++) {
+     node = node->GetNode( string(AxisNames[i]),true );
      for (j=0; j < Coeff[i].size(); j++) { 
        Coeff[i][j]->bind(node);
      } 
-     node=(FGPropertyManager*)node->getParent();                                         
+     node = (FGPropertyManager*)node->getParent();                                         
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAerodynamics::unbind(void){
+void FGAerodynamics::unbind(void)
+{
   unsigned i,j;
 
   PropertyManager->Untie("forces/fbx-aero-lbs");
@@ -283,7 +284,7 @@ void FGAerodynamics::unbind(void){
   PropertyManager->Untie("forces/lod-norm");
   PropertyManager->Untie("aero/cl-squared-norm");  
   
-  for( i=0; i<NAxes; i++ ) {
+  for ( i=0; i<NAxes; i++ ) {
      for ( j=0; j < Coeff[i].size(); j++ ) {
        Coeff[i][j]->unbind();
        

@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.56 2002/03/20 14:27:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.57 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,7 +117,7 @@ void FGOutput::SetType(string type)
     Type = otSocket;
   } else if (type == "TERMINAL") {
     Type = otTerminal;
-  } else if (type != string("NONE")){
+  } else if (type != string("NONE")) {
     Type = otUnknown;
     cerr << "Unknown type of output specified in config file" << endl;
   }

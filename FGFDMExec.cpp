@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.83 2002/03/20 14:27:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.84 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,7 +210,7 @@ bool FGFDMExec::Allocate(void)
   if (!Aircraft->InitModel())   {
     cerr << fgred << "Aircraft model init failed" << fgdef << endl;
     Error+=128;}
-  if (!Translation->InitModel()){
+  if (!Translation->InitModel()) {
     cerr << fgred << "Translation model init failed" << fgdef << endl;
     Error+=256;}
   if (!Rotation->InitModel())   {

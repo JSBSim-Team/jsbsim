@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.111 2002/04/01 14:43:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.112 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -233,8 +233,8 @@ void FGState::Initialize(double U, double V, double W,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::Initialize(FGInitialCondition *FGIC) {
-
+void FGState::Initialize(FGInitialCondition *FGIC)
+{
   double tht,psi,phi;
   double U, V, W, h;
   double latitude, longitude;
@@ -263,7 +263,8 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::InitMatrices(double phi, double tht, double psi) {
+void FGState::InitMatrices(double phi, double tht, double psi)
+{
   double thtd2, psid2, phid2;
   double Sthtd2, Spsid2, Sphid2;
   double Cthtd2, Cpsid2, Cphid2;
@@ -299,7 +300,8 @@ void FGState::InitMatrices(double phi, double tht, double psi) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::CalcMatrices(void) {
+void FGState::CalcMatrices(void)
+{
   double Q0Q0, Q1Q1, Q2Q2, Q3Q3;
   double Q0Q1, Q0Q2, Q0Q3, Q1Q2;
   double Q1Q3, Q2Q3;
@@ -331,7 +333,8 @@ void FGState::CalcMatrices(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate) {
+void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate)
+{
   vQdot(1) = -0.5*(vQtrn(2)*vPQR(eP) + vQtrn(3)*vPQR(eQ) + vQtrn(4)*vPQR(eR));
   vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
   vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
@@ -345,7 +348,8 @@ void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3& FGState::CalcEuler(void) {
+FGColumnVector3& FGState::CalcEuler(void)
+{
   if (mTl2b(3,3) == 0.0) mTl2b(3,3) = 0.0000001;
   if (mTl2b(1,1) == 0.0) mTl2b(1,1) = 0.0000001;
 
@@ -427,16 +431,18 @@ void FGState::ReportState(void)
                    FDMExec->GetMassBalance()->GetXYZcg(2),
                    FDMExec->GetMassBalance()->GetXYZcg(3));
   cout << out;             
-  if( FCS->GetDfPos() <= 0.01)
+  if ( FCS->GetDfPos() <= 0.01)
     snprintf(flap,10,"Up");
   else
     snprintf(flap,10,"%2.0f",FCS->GetDfPos());
-  if(FCS->GetGearPos() < 0.01)
+
+  if (FCS->GetGearPos() < 0.01)
     snprintf(gear,12,"Up");
-  else if(FCS->GetGearPos() > 0.99)
+  else if (FCS->GetGearPos() > 0.99)
     snprintf(gear,12,"Down");
   else
-    snprintf(gear,12,"In Transit");   
+    snprintf(gear,12,"In Transit");
+
   snprintf(out,80, "    Flaps: %3s  Gear: %12s\n",flap,gear);
   cout << out;
   snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
@@ -491,7 +497,8 @@ void FGState::ReportState(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::InitPropertyMaps(void)  {
+void FGState::InitPropertyMaps(void)
+{
   ParamNameToProp[  "FG_TIME" ]="sim-time-sec";
   ParamNameToProp[  "FG_QBAR" ]="aero/qbar-psf";
   ParamNameToProp[  "FG_WINGAREA" ]="metrics/Sw-sqft";
@@ -568,23 +575,22 @@ void FGState::InitPropertyMaps(void)  {
   ParamNameToProp[  "FG_VBARV" ]="metrics/vbarv-norm";     
   ParamNameToProp[  "FG_GEAR_CMD" ]="gear/gear-cmd-norm";
   ParamNameToProp[  "FG_GEAR_POS" ]="gear/gear-pos-norm";
-  
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::bind(void) {
+void FGState::bind(void)
+{
   PropertyManager->Tie("sim-time-sec",this,
                         &FGState::Getsim_time);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                         
-void FGState::unbind(void) {
+void FGState::unbind(void)
+{
   PropertyManager->Untie("sim-time-sec");
 }
-
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
@@ -631,5 +637,4 @@ void FGState::Debug(int from)
     }
   }
 }
-
 

@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.39 2002/03/27 02:44:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.40 2002/04/14 15:49:13 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,13 +175,13 @@ void FGAtmosphere::Calculate(double altitude)
        i = lastIndex-1;
        while (htab[i] > altitude) i--;
     }   
-  } else if (altitude > htab[lastIndex+1]){
-    if (altitude >= htab[7]){
+  } else if (altitude > htab[lastIndex+1]) {
+    if (altitude >= htab[7]) {
       i = 7;
       altitude = htab[7];
     } else {
       i = lastIndex+1;
-      while(htab[i+1] < altitude) i++;
+      while (htab[i+1] < altitude) i++;
     }  
   } 
 
