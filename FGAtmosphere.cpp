@@ -64,7 +64,9 @@ INCLUDES
 *******************************************************************************/
 
 
-FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),vWindUVW(3),vWindNED(3)
+FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
+                                                    vWindNED(3),
+                                                    vWindUVW(3)
 {
     Name = "FGAtmosphere";
     h = 0;
