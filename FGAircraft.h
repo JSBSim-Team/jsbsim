@@ -129,6 +129,11 @@ DEFINITIONS
 CLASS DECLARATION
 *******************************************************************************/
 
+/** Encapsulates an aircraft and 'owns' all the parts (other classes) which make
+    up this aircraft.
+    @author Jon S. Berndt
+    @version $Id: FGAircraft.h,v 1.29 2000/10/10 04:09:57 jsb Exp $
+  */
 class FGAircraft : public FGModel {
   enum {eL=1, eM, eN};
   enum {eX=1, eY, eZ};
@@ -136,9 +141,12 @@ class FGAircraft : public FGModel {
   enum {ePhi=1, eTht, ePsi};
 
 public:
+  /// Constructor
   FGAircraft(FGFDMExec*);
+  /// Destructor
   ~FGAircraft(void);
 
+  /// Runs the model; called by the Executive
   bool Run(void);
   bool LoadAircraft(string, string, string);
   inline string GetAircraftName(void) { return AircraftName; }
