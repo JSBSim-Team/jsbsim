@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.13 2001/07/26 23:11:04 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGMatrix.h"
@@ -90,13 +90,13 @@ public:
   }
   inline void SetNativeMoments(FGColumnVector vv) { vMn = vv; }
 
-  inline FGColumnVector GetNativeForces(void) { return vFn; }
-  inline FGColumnVector GetNativeMoments(void) { return vMn; }
+  inline FGColumnVector& GetNativeForces(void) { return vFn; }
+  inline FGColumnVector& GetNativeMoments(void) { return vMn; }
 
 
-  FGColumnVector GetBodyForces(void);
+  FGColumnVector& GetBodyForces(void);
 
-  inline FGColumnVector GetMoments(void) { return vM; }
+  inline FGColumnVector& GetMoments(void) { return vM; }
 
   //point of application, JSBsim structural coords
   //(inches, x +back, y +right, z +up)
@@ -106,7 +106,7 @@ public:
     vXYZn(3) = z;
   }
   inline void SetLocation(FGColumnVector vv) { vXYZn = vv; }
-  FGColumnVector GetLocation(void) { return vXYZn; }
+  FGColumnVector& GetLocation(void) { return vXYZn; }
 
   //these angles are relative to body axes, not earth!!!!!
   //I'm using these because pitch, roll, and yaw are easy to visualize,
@@ -121,7 +121,7 @@ public:
   inline void SetSense(float x, float y, float z) { vSense(1)=x, vSense(2)=y, vSense(3)=z; }
   inline void SetSense(FGColumnVector vv) { vSense=vv; }
 
-  inline FGColumnVector GetSense(void) { return vSense; }
+  inline FGColumnVector& GetSense(void) { return vSense; }
 
   inline void SetTransformType(TransformType ii) { ttype=ii; }
   inline TransformType GetTransformType(void) { return ttype; }

@@ -71,7 +71,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.25 2001/06/05 18:25:06 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.26 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -85,13 +85,13 @@ public:
 
   bool Run(void);
 
-  inline FGColumnVector GetPQR(void) {return vPQR;}
+  inline FGColumnVector& GetPQR(void) {return vPQR;}
   inline float GetPQR(int axis) {return vPQR(axis);}
-  inline FGColumnVector GetPQRdot(void) {return vPQRdot;}
+  inline FGColumnVector& GetPQRdot(void) {return vPQRdot;}
   inline float GetPQRdot(int idx) {return vPQRdot(idx);}
-  inline FGColumnVector GetEuler(void) {return vEuler;}
+  inline FGColumnVector& GetEuler(void) {return vEuler;}
   inline float GetEuler(int axis) {return vEuler(axis);}
-  inline FGColumnVector GetEulerRates(void) { return vEulerRates; }
+  inline FGColumnVector& GetEulerRates(void) { return vEulerRates; }
   inline float GetEulerRates(int axis) { return vEulerRates(axis); }
   inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector tt) {vEuler = tt;}

@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.54 2001/07/24 21:23:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.55 2001/07/26 23:11:04 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -62,6 +62,9 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
                                                            vMoment(3),
                                                            vWhlBodyVec(3),
+                                                           vForce(3),
+                                                           vLocalForce(3),
+                                                           vWhlVelVec(3),
                                                            Exec(fdmex)
 {
   string tmp;
@@ -181,16 +184,12 @@ FGLGear::~FGLGear()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector FGLGear::Force(void)
+FGColumnVector& FGLGear::Force(void)
 {
   float SteerGain, SteerAngle, BrakeFCoeff;
   float SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
   float RudderPedal, RollingForce, SideForce, FCoeff;
   float WheelSlip;
-
-  FGColumnVector vForce(3);
-  FGColumnVector vLocalForce(3);
-  FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
 
   vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
@@ -223,11 +222,13 @@ FGColumnVector FGLGear::Force(void)
 // the wheel in local frame is then known. Subsequently, the compression speed
 // (used for calculating damping force) is found by taking the Z-component of the
 // wheel velocity.
-
+//cout << "Gear Matrix Calculations" << endl;
     vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
+//cout << "..." << endl;
     vWhlVelVec     +=  Position->GetVel();
-
+//cout << "..." << endl;
     compressSpeed   =  vWhlVelVec(eZ);
+//cout << "Gear Matrix Calculations" << endl;
 
 // If this is the first time the wheel has made contact, remember some values
 // for later printout.

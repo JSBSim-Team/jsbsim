@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.35 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.36 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,11 +136,11 @@ public:
   void InitMatrices(float phi, float tht, float psi);
   void CalcMatrices(void);
   void IntegrateQuat(FGColumnVector vPQR, int rate);
-  FGColumnVector CalcEuler(void);
-  FGMatrix GetTs2b(float alpha, float beta);
-  FGMatrix GetTl2b(void) { return mTl2b; }
+  FGColumnVector& CalcEuler(void);
+  FGMatrix& GetTs2b(float alpha, float beta);
+  FGMatrix& GetTl2b(void) { return mTl2b; }
   float GetTl2b(int i, int j) { return mTl2b(i,j);}
-  FGMatrix GetTb2l(void) { return mTb2l; }
+  FGMatrix& GetTb2l(void) { return mTb2l; }
   float GetTb2l(int i, int j) { return mTb2l(i,j);}
   typedef map<eParam, string> ParamMap;
   ParamMap paramdef;
@@ -157,6 +157,9 @@ private:
   FGMatrix mTs2b;
   FGColumnVector vQtrn;
   FGColumnVector vlastQdot;
+  FGColumnVector vUVW;
+  FGColumnVector vLocalVelNED;
+  FGColumnVector vLocalEuler;
 
   FGAircraft* Aircraft;
   FGPosition* Position;

@@ -50,7 +50,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.64 2001/06/14 22:55:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.65 2001/07/26 23:11:04 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -79,7 +79,10 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     vlastQdot(4),
     vQdot(4),
     vTmp(4),
-    vEuler(3)
+    vEuler(3),
+    vUVW(3),
+    vLocalVelNED(3),
+    vLocalEuler(3)
 {
   FDMExec = fdex;
 
@@ -383,10 +386,8 @@ bool FGState::Reset(string path, string acname, string fname) {
 
 void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
-                         float Latitude, float Longitude, float H) {
-  FGColumnVector vUVW(3);
-  FGColumnVector vLocalVelNED(3);
-  FGColumnVector vLocalEuler(3);
+                         float Latitude, float Longitude, float H)
+{
   float alpha, beta;
   float qbar, Vt;
 
@@ -560,7 +561,7 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector FGState::CalcEuler(void) {
+FGColumnVector& FGState::CalcEuler(void) {
   if (mTl2b(3,3) == 0.0) mTl2b(3,3) = 0.0000001;
   if (mTl2b(1,1) == 0.0) mTl2b(1,1) = 0.0000001;
 
@@ -575,7 +576,8 @@ FGColumnVector FGState::CalcEuler(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix FGState::GetTs2b(float alpha, float beta) {
+FGMatrix& FGState::GetTs2b(float alpha, float beta)
+{
   float ca, cb, sa, sb;
 
   ca = cos(alpha);

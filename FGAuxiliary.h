@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.19 2001/04/25 22:47:59 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.20 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.19 2001/04/25 22:47:59 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.20 2001/07/26 23:11:04 jberndt Exp $
     @see -
 */
 
@@ -88,7 +88,7 @@ public:
   inline float GetVequivalentFPS(void) { return veas; }
   inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
   
-  inline FGColumnVector GetPilotAccel(void) { return vPilotAccel; }
+  inline FGColumnVector& GetPilotAccel(void) { return vPilotAccel; }
   inline float GetPilotAccel(int idx) { return vPilotAccel(idx); }
   inline FGColumnVector GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
   inline float GetNpilot(int idx) { return (vPilotAccel*INVGRAVITY)(idx); }

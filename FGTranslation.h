@@ -70,7 +70,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.25 2001/07/09 23:23:42 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.26 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -81,14 +81,14 @@ public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation();
 
-  inline FGColumnVector GetUVW   (void)    { return vUVW; }
-  inline float          GetUVW   (int idx) { return vUVW(idx); }
-  inline FGColumnVector GetUVWdot(void)    { return vUVWdot; }
-  inline float          GetUVWdot(int idx) { return vUVWdot(idx); }
-  inline FGColumnVector GetNcg   (void)    { return vNcg; }
-  inline float          GetNcg   (int idx) { return vNcg(idx); }
-  inline FGColumnVector GetvAero (void)    { return vAero; }
-  inline float          GetvAero (int idx) { return vAero(idx); }
+  inline FGColumnVector& GetUVW   (void)    { return vUVW; }
+  inline float           GetUVW   (int idx) { return vUVW(idx); }
+  inline FGColumnVector& GetUVWdot(void)    { return vUVWdot; }
+  inline float           GetUVWdot(int idx) { return vUVWdot(idx); }
+  inline FGColumnVector& GetNcg   (void)    { return vNcg; }
+  inline float           GetNcg   (int idx) { return vNcg(idx); }
+  inline FGColumnVector& GetvAero (void)    { return vAero; }
+  inline float           GetvAero (int idx) { return vAero(idx); }
 
   inline float Getalpha(void) { return alpha; }
   inline float Getbeta (void) { return beta; }

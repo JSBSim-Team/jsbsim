@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.37 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.36 2001/04/17 23:00:31 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.37 2001/07/26 23:11:04 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -191,15 +191,15 @@ public:
 
 
   /// The Force vector for this gear
-  FGColumnVector Force(void);
+  FGColumnVector& Force(void);
   /// The Moment vector for this gear
-  FGColumnVector Moment(void) {return vMoment;}
+  FGColumnVector& Moment(void) {return vMoment;}
 
   /// Gets the location of the gear in Body axes
-  FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
+  FGColumnVector& GetBodyLocation(void) { return vWhlBodyVec; }
   float GetBodyLocation(int idx) { return vWhlBodyVec(idx); }
 
-  FGColumnVector GetLocalGear(void) { return vLocalGear; }
+  FGColumnVector& GetLocalGear(void) { return vLocalGear; }
   float GetLocalGear(int idx) { return vLocalGear(idx); }
 
   /// Gets the name of the gear
@@ -229,6 +229,9 @@ private:
   FGColumnVector vMoment;
   FGColumnVector vWhlBodyVec;
   FGColumnVector vLocalGear;
+  FGColumnVector vForce;
+  FGColumnVector vLocalForce;
+  FGColumnVector vWhlVelVec;     // Velocity of this wheel (Local)
   float kSpring;
   float bDamp;
   float compressLength;

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.17 2001/07/22 18:49:23 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.18 2001/07/26 23:11:04 jberndt Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.17 2001/07/22 18:49:23 apeden Exp $
+    @version $Id: FGAerodynamics.h,v 1.18 2001/07/26 23:11:04 jberndt Exp $
     @see -
 */
 
@@ -117,9 +117,9 @@ public:
       @return a moment vector reference. */
   FGColumnVector& GetMoments(void) {return vMoments;}
 
-  inline FGColumnVector GetvLastFs(void) { return vLastFs; }
+  inline FGColumnVector& GetvLastFs(void) { return vLastFs; }
   inline float GetvLastFs(int axis) { return vLastFs(axis); }
-  inline FGColumnVector GetvFs(void) { return vFs; }
+  inline FGColumnVector& GetvFs(void) { return vFs; }
   inline float GetvFs(int axis) { return vFs(axis); }
   float GetLoD(void);
 

@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.60 2001/07/17 14:46:09 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.61 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.60 2001/07/17 14:46:09 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.61 2001/07/26 23:11:04 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -151,12 +151,12 @@ public:
   inline float GetWingSpan(void) { return WingSpan; }
   /// Gets the average wing chord
   inline float Getcbar(void) { return cbar; }
-  inline FGColumnVector GetMoments(void) { return vMoments; }
-  inline FGColumnVector GetForces(void) { return vForces; }
-  inline FGColumnVector GetAeroBodyForces(void) { return vAeroBodyForces; }
+  inline FGColumnVector& GetMoments(void) { return vMoments; }
+  inline FGColumnVector& GetForces(void) { return vForces; }
+  inline FGColumnVector& GetAeroBodyForces(void) { return vAeroBodyForces; }
   inline float GetAeroBodyForces(int axis) { return vAeroBodyForces(axis); }
-  inline FGColumnVector GetXYZrp(void) { return vXYZrp; }
-  inline FGColumnVector GetXYZep(void) { return vXYZep; }
+  inline FGColumnVector& GetXYZrp(void) { return vXYZrp; }
+  inline FGColumnVector& GetXYZep(void) { return vXYZep; }
   inline float GetXYZrp(int idx) { return vXYZrp(idx); }
   inline float GetXYZep(int idx) { return vXYZep(idx); }
   inline float GetAlphaCLMax(void) { return alphaclmax; }

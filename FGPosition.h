@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.37 2001/07/22 18:50:17 apeden Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.38 2001/07/26 23:11:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.37 2001/07/22 18:50:17 apeden Exp $
+    @version $Id: FGPosition.h,v 1.38 2001/07/26 23:11:04 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,8 +81,8 @@ public:
       @return false if no error */
   bool Run(void);
   
-  inline FGColumnVector GetVel(void) { return vVel; }
-  inline FGColumnVector GetVelDot(void) { return vVelDot; }
+  inline FGColumnVector& GetVel(void) { return vVel; }
+  inline FGColumnVector& GetVelDot(void) { return vVelDot; }
   inline double GetVn(void)  { return vVel(eX); }
   inline double GetVe(void)  { return vVel(eY); }
   inline double GetVd(void)  { return vVel(eZ); }
@@ -97,7 +97,7 @@ public:
   inline double GetRunwayRadius(void) { return RunwayRadius; }
   inline double GetDistanceAGL(void)  { return DistanceAGL; }
   inline double GetRadius(void) { return Radius; }
-  inline FGColumnVector GetRunwayNormal(void) { return vRunwayNormal; }
+  inline FGColumnVector& GetRunwayNormal(void) { return vRunwayNormal; }
   
   inline double GetGamma(void) { return gamma; }
   inline void SetGamma(float tt) { gamma = tt; }
