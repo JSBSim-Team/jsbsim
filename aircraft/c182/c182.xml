@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.8 2002/02/22 12:14:46 apeden Exp $
+  CVS Version: $Id: c182.xml,v 1.9 2002/05/16 13:04:57 jberndt Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -48,7 +48,6 @@
     AC_CGLOC     41.0  0.0 36.5
     AC_POINTMASS 180.0 36.0 -14.0 24.0
     AC_EYEPTLOC  37.0  0.0 48.0
-    AC_ALPHALIMITS -0.087 0.28
 
   </METRICS>
 
@@ -208,6 +207,8 @@
    </FLIGHT_CONTROL>
 
    <AERODYNAMICS>
+
+     AC_ALPHALIMITS -0.087 0.28
 
      <AXIS NAME="LIFT">
 

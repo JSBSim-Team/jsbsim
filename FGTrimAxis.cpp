@@ -46,7 +46,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.35 2002/04/30 11:24:07 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.36 2002/05/16 13:04:56 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -92,8 +92,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_convert=radtodeg;
     break;
   case tAlpha:
-    control_min=fdmex->GetAircraft()->GetAlphaCLMin();
-    control_max=fdmex->GetAircraft()->GetAlphaCLMax();
+    control_min=fdmex->GetAerodynamics()->GetAlphaCLMin();
+    control_max=fdmex->GetAerodynamics()->GetAlphaCLMax();
     if(control_max <= control_min) {
       control_max=20*degtorad;
       control_min=-5*degtorad;
@@ -370,7 +370,7 @@ void FGTrimAxis::SetPhiOnGround(double ff) {
     fgic->SetAltitudeAGLFtIC(hagl);
   }                   
   fgic->SetRollAngleRadIC(ff);
-           
+
 }      
 
 /*****************************************************************************/

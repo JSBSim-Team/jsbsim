@@ -3,7 +3,7 @@
 <!--                                                                                              --
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.5 2002/01/07 23:44:45 jberndt Exp $
+  CVS Version: $Id: f16.xml,v 1.6 2002/05/16 13:04:58 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 
@@ -96,7 +96,6 @@
     AC_AERORP       0.0   0.0    0.0  <!-- location of the center of the front of the nozzle -->
     AC_EYEPTLOC   467.7   0.0   34.27
     AC_POINTMASS     .     .      .     .
-    AC_ALPHALIMITS   .     .
 
   </METRICS>
 
@@ -300,6 +299,8 @@
 
          </AXIS>
     -->
+
+    AC_ALPHALIMITS   .     .
 
     <AXIS NAME="LIFT">
 

@@ -11,7 +11,7 @@ INSTALL="cp -uv"
 # Gather or default settings. Assumes the current directory is
 # a JSBSim working directory, with FlightGear and fgfsbase siblings
 if [ "x$FG_SRC" = "x" ]; then
-	FG_SRC=`pwd`/../FlightGear/src
+	FG_SRC=`pwd`/../src/FlightGear/src
 	echo "Defaulting FG_SRC to $FG_SRC"
 fi
 

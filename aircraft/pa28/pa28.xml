@@ -3,7 +3,7 @@
 
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
-  CVS Version: $Id: pa28.xml,v 1.2 2002/02/22 12:14:46 apeden Exp $
+  CVS Version: $Id: pa28.xml,v 1.3 2002/05/16 13:04:59 jberndt Exp $
 
   Function: Models a Piper PA28-180 Cherokee
   Notes:    Try running FlightGear using this command line,
@@ -189,6 +189,9 @@
      </COMPONENT>
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
+
+     AC_ALPHALIMITS -0.175 0.349
+
      <AXIS NAME="LIFT">
        <GROUP NAME="CLb">
          Basic_lift

@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.35 2002/04/30 11:23:38 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.36 2002/05/16 13:04:55 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -66,8 +66,11 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 
   Coeff = new CoeffArray[6];
   
-  clsq=lod=0;
-  
+  impending_stall = stall_hyst = 0.0;
+  alphaclmin = alphaclmax = 0.0;
+  alphahystmin = alphahystmax = 0.0;
+  clsq = lod = 0.0;
+  alphaw = 0.0;  
   bind();
 
   Debug(0);
@@ -96,20 +99,45 @@ FGAerodynamics::~FGAerodynamics()
 bool FGAerodynamics::Run(void)
 {
   unsigned int axis_ctr,ctr;
+  double alpha, twovel;
 
   if (!FGModel::Run()) {
 
+    twovel = 2*Translation->GetVt();
+    if (twovel > 0) {
+      bi2vel = Aircraft->GetWingSpan() / twovel;
+      ci2vel = Aircraft->Getcbar() / twovel;
+    }  
+    
+    alphaw = Translation->Getalpha() + Aircraft->GetWingIncidence();
+    
+    alpha = Translation->Getalpha();
+    
+    if (alphaclmax != 0) {
+      if (alpha > 0.85*alphaclmax) {
+        impending_stall = 10*(alpha/alphaclmax - 0.85);
+      } else {
+        impending_stall = 0;
+      }
+    }
+   
+    if (alphahystmax != 0.0 && alphahystmin != 0.0) {
+      if (alpha > alphahystmax) {
+         stall_hyst = 1;
+      } else if (alpha < alphahystmin) {
+         stall_hyst = 0;
+      }    
+    }
+ 
     vLastFs = vFs;
     vFs.InitMatrix();
 
     for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
       for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-        //Coeff[axis_ctr][ctr]->Run();
         vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->TotalValue();
-        //cout << Coeff[axis_ctr][ctr]->Getname() << "= " 
-        //     << Coeff[axis_ctr][ctr]->TotalValue() << endl;
       }
     }
+
     //correct signs of drag and lift to wind axes convention
     //positive forward, right, down
     if ( Translation->Getqbar() > 0) {
@@ -123,7 +151,7 @@ bool FGAerodynamics::Run(void)
     //correct signs of drag and lift to wind axes convention
     //positive forward, right, down
     vFs(eDrag)*=-1; vFs(eLift)*=-1;
-    //cout << "Aircraft::vFs: " << vFs << endl;
+
     vForces = State->GetTs2b()*vFs;
 
     vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
@@ -137,10 +165,10 @@ bool FGAerodynamics::Run(void)
 
     for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
       for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
-        //Coeff[axis_ctr+3][ctr]->Run();
         vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->TotalValue();
       }
     }
+
     return false;
   } else {
     return true;
@@ -151,26 +179,36 @@ bool FGAerodynamics::Run(void)
 
 bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
 {
-  string token, axis;
+  string parameter, axis, scratch;
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
-    if (token == "AXIS") {
+  while ((parameter = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
+    if (parameter == "AXIS") {
       CoeffArray ca;
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
-      while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
-        if ( token == "COEFFICIENT" ) {
+      while ((parameter = AC_cfg->GetValue()) != string("/AXIS")) {
+        if ( parameter == "COEFFICIENT" ) {
           ca.push_back( new FGCoefficient(FDMExec) );
           ca.back()->Load(AC_cfg);
-        } else if ( token == "GROUP" ) {
+        } else if ( parameter == "GROUP" ) {
           ca.push_back( new FGFactorGroup(FDMExec) );
           ca.back()->Load(AC_cfg);
         }
       }
       Coeff[AxisIdx[axis]] = ca;
       AC_cfg->GetNextConfigLine();
+    } else if (parameter == "AC_ALPHALIMITS") {
+      *AC_cfg >> scratch >> alphaclmin >> alphaclmax;
+      if (debug_lvl > 0) cout << "    Maximum Alpha: " << alphaclmax
+                              << "    Minimum Alpha: " << alphaclmin
+                              << endl;
+    } else if (parameter == "AC_HYSTLIMITS") {
+      *AC_cfg >> scratch >> alphahystmin >> alphahystmax;
+      if (debug_lvl > 0) cout << "    Hysteresis Start: " << alphahystmax
+                              << "    Hysteresis End: " << alphahystmin
+                              << endl;
     }
   }
 
@@ -249,6 +287,24 @@ void FGAerodynamics::bind(void)
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared-norm", this,
                        &FGAerodynamics::GetClSquared); 
+  PropertyManager->Tie("metrics/alpha-max-deg", this,
+                       &FGAerodynamics::GetAlphaCLMax,
+                       &FGAerodynamics::SetAlphaCLMax,
+                       true);
+  PropertyManager->Tie("metrics/alpha-min-deg", this,
+                       &FGAerodynamics::GetAlphaCLMin,
+                       &FGAerodynamics::SetAlphaCLMin,
+                       true);
+  PropertyManager->Tie("aero/bi2vel", this,
+                       &FGAerodynamics::GetBI2Vel);
+  PropertyManager->Tie("aero/ci2vel", this,
+                       &FGAerodynamics::GetCI2Vel);
+  PropertyManager->Tie("aero/alpha-wing-rad", this,
+                       &FGAerodynamics::GetAlphaW);
+  PropertyManager->Tie("systems/stall-warn-norm", this,
+                        &FGAerodynamics::GetStallWarn);
+  PropertyManager->Tie("aero/stall-hyst-norm", this,
+                        &FGAerodynamics::GetHysteresisParm);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,7 +341,13 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("forces/fwz-aero-lbs");
   PropertyManager->Untie("forces/lod-norm");
   PropertyManager->Untie("aero/cl-squared-norm");  
-  
+  PropertyManager->Untie("metrics/alpha-max-deg");
+  PropertyManager->Untie("metrics/alpha-min-deg");
+  PropertyManager->Untie("aero/bi2vel");
+  PropertyManager->Untie("aero/ci2vel");
+  PropertyManager->Untie("aero/alpha-wing-rad");
+  PropertyManager->Untie("systems/stall-warn-norm");
+
   for ( i=0; i<NAxes; i++ ) {
      for ( j=0; j < Coeff[i].size(); j++ ) {
        Coeff[i][j]->unbind();

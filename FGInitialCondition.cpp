@@ -56,7 +56,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.52 2002/03/22 11:52:41 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.53 2002/05/16 13:04:56 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -509,8 +509,8 @@ bool FGInitialCondition::getAlpha(void) {
   if(vt < 0.01) return 0;
   
   xlo=xhi=0;
-  xmin=fdmex->GetAircraft()->GetAlphaCLMin();
-  xmax=fdmex->GetAircraft()->GetAlphaCLMax();
+  xmin=fdmex->GetAerodynamics()->GetAlphaCLMin();
+  xmax=fdmex->GetAerodynamics()->GetAlphaCLMax();
   sfunc=&FGInitialCondition::GammaEqOfAlpha;
   if(findInterval(0,guess)){
     if(solve(&alpha,0)){

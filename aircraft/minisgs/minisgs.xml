@@ -61,7 +61,6 @@
     AC_CGLOC     0.0 0.0 0.0      <!-- SGS inches -->
     AC_POINTMASS 0.0 0.0 0.0 0.0  <!-- no pilot -->
     AC_EYEPTLOC  0.0  0.0 0.0     <!-- made up -->
-    AC_ALPHALIMITS -0.87 0.87
 
   </METRICS>
 
@@ -153,6 +152,9 @@
      </COMPONENT>
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
+
+     AC_ALPHALIMITS -0.87 0.87
+
      <AXIS NAME="LIFT">
        <GROUP NAME="CLb">
          Basic_lift

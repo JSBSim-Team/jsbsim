@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.99 2002/04/28 18:50:33 dmegginson Exp $
+  CVS Version: $Id: c172.xml,v 1.100 2002/05/16 13:04:57 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -50,7 +50,6 @@
 <!-- Co-pilot -->
     AC_POINTMASS 180.0 36.0  14.0 24.0
     AC_EYEPTLOC  37.0  0.0 48.0
-    AC_ALPHALIMITS -0.087 0.28
 
   </METRICS>
 
@@ -211,6 +210,9 @@
      </COMPONENT>
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
+
+     AC_ALPHALIMITS -0.087 0.28
+
      <AXIS NAME="LIFT">
        <GROUP NAME="CLb">
          Basic_lift

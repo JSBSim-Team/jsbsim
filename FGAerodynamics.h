@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.32 2002/04/30 11:23:38 apeden Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.33 2002/05/16 13:04:56 jberndt Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.32 2002/04/30 11:23:38 apeden Exp $
+    @version $Id: FGAerodynamics.h,v 1.33 2002/05/16 13:04:56 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -128,6 +128,20 @@ public:
   double GetvFs(int axis) const { return vFs(axis); }
   inline double GetLoD(void) const { return lod; }
   inline double GetClSquared(void) const { return clsq; } 
+  inline double GetAlphaCLMax(void) const { return alphaclmax; }
+  inline double GetAlphaCLMin(void) const { return alphaclmin; }
+  
+  inline double GetAlphaHystMax(void) const { return alphahystmax; }
+  inline double GetAlphaHystMin(void) const { return alphahystmin; }
+  inline double GetHysteresisParm(void) const { return stall_hyst; }
+  inline double GetStallWarn(void) const { return impending_stall; }
+  double GetAlphaW(void) const { return alphaw; }
+
+  double GetBI2Vel(void) const { return bi2vel; }
+  double GetCI2Vel(void) const { return ci2vel; }
+  
+  inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
+  inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
 
     /** Gets the strings for the current set of coefficients.
       @return a string containing the descriptive names for all coefficients */
@@ -152,6 +166,10 @@ private:
   FGColumnVector3 vMoments;
   FGColumnVector3 vLastFs;
   FGColumnVector3 vDXYZcg;
+  double alphaclmax, alphaclmin;
+  double alphahystmax, alphahystmin;
+  double impending_stall, stall_hyst;
+  double bi2vel, ci2vel,alphaw;
   double clsq,lod;
   
   typedef double (FGAerodynamics::*PMF)(int) const;
