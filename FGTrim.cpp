@@ -52,7 +52,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.10 2000/10/16 12:32:48 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.11 2000/10/29 17:06:31 jsb Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     cout << "  Ground Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta,A_Tolerance));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi,A_Tolerance));
+    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi,A_Tolerance));
     break;
   }
   //cout << "NumAxes: " << TrimAxes.size() << endl;
@@ -195,7 +195,7 @@ void FGTrim::ReportState(void) {
                     fdmex->GetRotation()->Getpsi()*RADTODEG,
                     fdmex->GetState()->GetParameter(FG_BETA)*RADTODEG );                  
   cout << out;
-  sprintf(out, "    Bank Angle: %3.0f deg\n",
+  sprintf(out, "    Bank Angle: %5.2f deg\n",
                     fdmex->GetRotation()->Getphi()*RADTODEG );
   cout << out;
   sprintf(out, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
@@ -225,6 +225,10 @@ bool FGTrim::DoTrim(void) {
   for(current_axis=0;current_axis<NumAxes;current_axis++) {
     //cout << current_axis << "  " << TrimAxes[current_axis]->GetAccelName()
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
+    if(TrimAxes[current_axis]->GetAccelType() == tQdot) {
+      if(mode == tGround) 
+    	  TrimAxes[current_axis]->initTheta();
+    }  
     xlo=TrimAxes[current_axis]->GetControlMin();
     xhi=TrimAxes[current_axis]->GetControlMax();
     TrimAxes[current_axis]->SetControl((xlo+xhi)/2);
