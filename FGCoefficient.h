@@ -137,7 +137,7 @@ protected:
 
 private:
   typedef map<string, long> CoeffMap;
-  CoeffMap coeffdef;
+  static CoeffMap coeffdef;
   int numInstances;
   string filename;
   string description;

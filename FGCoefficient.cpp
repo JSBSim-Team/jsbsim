@@ -60,30 +60,36 @@ INCLUDES
 ************************************ CODE **************************************
 *******************************************************************************/
 
+FGCoefficient::CoeffMap FGCoefficient::coeffdef;
+
 FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 {
   int r, c, start, end, n;
   float ftrashcan;
   string strashcan;
 
-  coeffdef["FG_QBAR"]      = 1;
-  coeffdef["FG_WINGAREA"]  = 2;
-  coeffdef["FG_WINGSPAN"]  = 4;
-  coeffdef["FG_CBAR"]      = 8;
-  coeffdef["FG_ALPHA"]     = 16;
-  coeffdef["FG_ALPHADOT"]  = 32;
-  coeffdef["FG_BETA"]      = 64;
-  coeffdef["FG_BETADOT"]   = 128;
-  coeffdef["FG_PITCHRATE"] = 256;
-  coeffdef["FG_ROLLRATE"]  = 512;
-  coeffdef["FG_YAWRATE"]   = 1024;
-  coeffdef["FG_ELEVATOR"]  = 2048;
-  coeffdef["FG_AILERON"]   = 4096;
-  coeffdef["FG_RUDDER"]    = 8192;
-  coeffdef["FG_MACH"]      = 16384;
-  coeffdef["FG_ALTITUDE"]  = 32768L;
-  coeffdef["FG_BI2VEL"]    = 65536L;
-  coeffdef["FG_CI2VEL"]    = 131072L;
+  static bool FirstTime = true;
+  if (FirstTime) {
+    FirstTime = false;
+    coeffdef["FG_QBAR"]      = 1;
+    coeffdef["FG_WINGAREA"]  = 2;
+    coeffdef["FG_WINGSPAN"]  = 4;
+    coeffdef["FG_CBAR"]      = 8;
+    coeffdef["FG_ALPHA"]     = 16;
+    coeffdef["FG_ALPHADOT"]  = 32;
+    coeffdef["FG_BETA"]      = 64;
+    coeffdef["FG_BETADOT"]   = 128;
+    coeffdef["FG_PITCHRATE"] = 256;
+    coeffdef["FG_ROLLRATE"]  = 512;
+    coeffdef["FG_YAWRATE"]   = 1024;
+    coeffdef["FG_ELEVATOR"]  = 2048;
+    coeffdef["FG_AILERON"]   = 4096;
+    coeffdef["FG_RUDDER"]    = 8192;
+    coeffdef["FG_MACH"]      = 16384;
+    coeffdef["FG_ALTITUDE"]  = 32768L;
+    coeffdef["FG_BI2VEL"]    = 65536L;
+    coeffdef["FG_CI2VEL"]    = 131072L;
+  }
 
   FDMExec     = fdex;
   State       = FDMExec->GetState();
