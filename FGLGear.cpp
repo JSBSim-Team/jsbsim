@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.38 2001/03/13 08:49:13 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.39 2001/03/14 14:11:46 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,26 +209,26 @@ FGColumnVector FGLGear::Force(void)
       GroundSpeed   =  Position->GetVel().Magnitude();
     }
 
-// the following needs work regarding friction coefficients and braking and steering
-
-// Note to Jon: Need to substitute the correct variables for LeftBrake and RightBrake.
-// Also, if there is already a predefined CenterBrake, then delete this computation.
-// All of the brake variables are assumed to be defined over the range 0.0 to 1.0.
-// The BrakeFCoeff formula assumes that an anti-skid system is used.  It also assumes that
-// we won't be turning and braking at the same time.  Will fix this later.
+// The following needs work regarding friction coefficients and braking and
+// steering The BrakeFCoeff formula assumes that an anti-skid system is used.
+// It also assumes that we won't be turning and braking at the same time.
+// Will fix this later.
 
     switch (eBrakeGrp) {
     case bgLeft:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) + staticFCoeff*FCS->GetBrake(bgLeft);
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                                            staticFCoeff*FCS->GetBrake(bgLeft);
       break;
     case bgRight:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) + staticFCoeff*FCS->GetBrake(bgRight);
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
+                                            staticFCoeff*FCS->GetBrake(bgRight);
       break;
     case bgCenter:
         SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) + staticFCoeff*FCS->GetBrake(bgCenter);
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                                            staticFCoeff*FCS->GetBrake(bgCenter);
       break;
     case bgNose:
         SteerGain = maxSteerAngle;
