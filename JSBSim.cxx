@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.72 2001/10/04 03:49:10 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.73 2001/10/12 12:15:35 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -249,11 +249,15 @@ bool FGJSBsim::update( int multiloop ) {
       FGEngInterface * e = get_engine(i);
       FGEngine * eng = Propulsion->GetEngine(i);
       FGThruster * thrust = Propulsion->GetThruster(i);
+      eng->SetMagnetos( globals->get_controls()->get_magnetos(i) );
+      eng->SetStarter( globals->get_controls()->get_starter(i) );
       e->set_Manifold_Pressure( eng->getManifoldPressure_inHg() );
       e->set_RPM( thrust->GetRPM() );
       e->set_EGT( eng->getExhaustGasTemp_degF() );
       e->set_CHT( eng->getCylinderHeadTemp_degF() );
       e->set_Oil_Temp( eng->getOilTemp_degF() );
+      e->set_Running_Flag( eng->GetRunning() );
+      e->set_Cranking_Flag( eng->GetCranking() );
       e->set_Throttle( globals->get_controls()->get_throttle(i) );
     }
 

@@ -56,7 +56,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.38 2001/10/03 22:21:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.39 2001/10/12 12:15:35 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,9 +78,11 @@ FGEngine::FGEngine(FGFDMExec* exec) {
   Output      = FDMExec->GetOutput();
 
   Mixture = 1.0;		// FIXME: get actual value
+
   Thrust = PctPower = 0.0;
   Starved = Flameout = false;
-  Running = true;
+  Running = false;
+  Cranking = false;
 
   if (debug_lvl & 2) cout << "Instantiated: FGEngine" << endl;
   TrimMode = false;

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.20 2001/10/05 11:00:19 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.21 2001/10/12 12:15:35 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,7 +69,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.20 2001/10/05 11:00:19 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.21 2001/10/12 12:15:35 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,9 +96,6 @@ private:
 
   // timestep
   float dt;
-
-  // engine state
-  bool cranking;
 
   void doEngineStartup(void);
   void doManifoldPressure(void);
@@ -146,6 +143,8 @@ private:
   //
   // Outputs (in addition to those in FGEngine).
   //
+  bool Magneto_Left;
+  bool Magneto_Right;
   float rho_air;
   float volumetric_efficiency;
   float m_dot_air;

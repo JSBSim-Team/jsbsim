@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.30 2001/10/05 11:00:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.31 2001/10/12 12:15:35 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,15 +56,14 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
     Displacement(360),
     MaxHP(200),
     Cycles(2),
-    IdleRPM(900),
+    IdleRPM(600),
     // Set constants
     CONVERT_CUBIC_INCHES_TO_METERS_CUBED(1.638706e-5),
     R_air(287.3),
     rho_fuel(800),                 // estimate
     calorific_value_fuel(47.3e6),
     Cp_air(1005),
-    Cp_fuel(1700),
-    cranking(false)
+    Cp_fuel(1700)
 {
   string token;
 
@@ -177,7 +176,7 @@ float FGPiston::Calculate(float PowerRequired)
   T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
 
   RPM = Propulsion->GetThruster(EngineNumber)->GetRPM();
-  if (RPM < IdleRPM) RPM = IdleRPM;  // kludge
+  //if (RPM < IdleRPM) RPM = IdleRPM;  // kludge
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
@@ -208,6 +207,87 @@ void FGPiston::doEngineStartup(void)
 {
   // TODO: check magnetos, spark, starter, etc. and decide whether
   // engine is running
+
+  // Check parameters that may alter the operating state of the engine. 
+  // (spark, fuel, starter motor etc)
+  bool spark;
+  bool fuel;
+  static int crank_counter = 0;
+
+  // Check for spark
+  Magneto_Left = false;
+  Magneto_Right = false;
+  // Magneto positions:
+  // 0 -> off
+  // 1 -> left only
+  // 2 -> right only
+  // 3 -> both
+  if (Magnetos != 0) {
+    spark = true;
+  } else {
+    spark = false;
+  }  // neglects battery voltage, master on switch, etc for now.
+  
+  if ((Magnetos == 1) || (Magnetos > 2)) Magneto_Left = true;
+  if (Magnetos > 1)  Magneto_Right = true;
+
+  // Assume we have fuel for now
+  fuel = true;
+
+  // Check if we are turning the starter motor
+  if (Cranking != Starter) {
+    // This check saves .../cranking from getting updated every loop - they
+    // only update when changed.
+    Cranking = Starter;
+    crank_counter = 0;
+  }
+
+  //Check mode of engine operation
+  // ACK - unfortunately this hack doesn't work in JSBSim since the RPM is reset
+  // each iteration by the propeller :-(
+  if (Cranking) {
+    crank_counter++;
+    if (RPM <= 480) {
+      RPM += 100;
+      if (RPM > 480)
+        RPM = 480;
+    } else {
+      // consider making a horrible noise if the starter is engaged with
+      // the engine running
+    }
+    // TODO - find a better guess at cranking speed
+  }
+  
+  // if ((!Running) && (spark) && (fuel) && (crank_counter > 120)) {
+
+  if ((!Running) && (spark) && (fuel)) {
+  // start the engine if revs high enough
+    if (RPM > 450) {
+      // For now just instantaneously start but later we should maybe crank for
+      // a bit
+      Running = true;
+      // RPM = 600;
+    }
+  }
+
+  if ( (Running) && ((!spark)||(!fuel)) ) {
+    // Cut the engine
+    // note that we only cut the power - the engine may continue to
+    // spin if the prop is in a moving airstream
+    Running = false;
+  }
+
+  // And finally a last check for stalling
+  if (Running) { 
+    //Check if we have stalled the engine
+    if (RPM == 0) {
+      Running = false;
+    } else if ((RPM <= 480) && (Cranking)) {
+      // Make sure the engine noise dosn't play if the engine won't
+	    // start due to eg mixture lever pulled out.
+      Running = false;
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,7 +378,7 @@ void FGPiston::doEnginePower(void)
   Percentage_Power =
     Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
   float Percentage_of_best_power_mixture_power =
-    Power_Mixture_Correlation->GetValue(equivalence_ratio);
+    Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
   Percentage_Power =
     Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
   if (Percentage_Power < 0.0)
@@ -306,6 +386,23 @@ void FGPiston::doEnginePower(void)
   else if (Percentage_Power > 100.0)
     Percentage_Power = 100.0;
   HP = Percentage_Power * MaxHP / 100.0;
+
+  //Hack
+  if (!Running) {
+    if (Cranking) {
+      if (RPM < 480) {
+        HP = 3.0 + ((480 - RPM) / 10.0);
+      } else {
+        HP = 3.0;
+      }
+    } else {
+      // Quick hack until we port the FMEP stuff
+      if (RPM > 0.0)
+        HP = -1.5;
+      else
+        HP = 0.0;
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -411,7 +508,7 @@ void FGPiston::doOilPressure(void)
   float Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
   float Oil_Press_RPM_Max = 1800;    // FIXME: may vary by engine
   float Design_Oil_Temp = 85;        // FIXME: may vary by engine
-				     // FIXME: WRONG!!! (85 degK???)
+             // FIXME: WRONG!!! (85 degK???)
   float Oil_Viscosity_Index = 0.25;
 
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;

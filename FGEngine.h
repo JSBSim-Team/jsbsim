@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.38 2001/10/04 03:49:10 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.39 2001/10/12 12:15:35 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.38 2001/10/04 03:49:10 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.39 2001/10/12 12:15:35 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,6 +121,7 @@ public:
   bool   GetStarved(void) { return Starved; }
   bool   GetFlameout(void) { return Flameout; }
   bool   GetRunning(void) { return Running; }
+  bool   GetCranking(void) { return Cranking; }
   int    GetType(void) { return Type; }
   string GetName(void) { return Name; }
 
@@ -146,6 +147,9 @@ public:
   void SetRunning(bool bb) { Running=bb; }
   void SetName(string name) {Name = name;}
   void AddFeedTank(int tkID);
+
+  void SetMagnetos(int m) { Magnetos = m; }
+  void SetStarter(bool s) { Starter = s;}
 
   /** Calculates the thrust of the engine, and other engine functions.
       @param PowerRequired this is the power required to run the thrusting device
@@ -195,10 +199,13 @@ protected:
   float Thrust;
   float Throttle;
   float Mixture;
+  int   Magnetos;
+  bool  Starter;
   float FuelNeed, OxidizerNeed;
   bool  Starved;
   bool  Flameout;
   bool  Running;
+  bool  Cranking;
   float PctPower;
   int   EngineNumber;
   bool  TrimMode;
