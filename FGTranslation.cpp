@@ -115,18 +115,18 @@ bool FGTranslation::Run(void) {
     mVel(3,3) =  0.0;
 
     vUVWdot = mVel*vPQR + vForces/Mass;
-
-    vNcg = vUVWdot * INVGRAVITY;
+    
+    vNcg=vUVWdot*INVGRAVITY;
 
     vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot) + vWindUVW;
-
+    
     Vt = vUVW.Magnitude();
 
     if (vUVW(eW) != 0.0)
       alpha = vUVW(eU)*vUVW(eU) > 0.0 ? atan2(vUVW(eW), vUVW(eU)) : 0.0;
     if (vUVW(eV) != 0.0)
       beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV),
-             (fabs(vUVW(eU))/vUVW(eU))*sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
+             sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
 
     qbar = 0.5*rho*Vt*Vt;
 
