@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Source:       FGForce.cpp
  Author:       Tony Peden
@@ -47,7 +47,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.3 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.4 2000/10/16 12:32:44 jsb Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 FGForce::FGForce(FGFDMExec *FDMExec) :

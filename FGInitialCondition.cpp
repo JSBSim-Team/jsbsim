@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGInitialCondition.cpp
  Author:       Tony Peden
@@ -38,9 +38,9 @@ angles, and altitude.  This class does not attempt to trim the model i.e.
 the sim will most likely start in a very dynamic state (unless, of course,
 you have chosen your IC's wisely) even after setting it up with this class.
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInitialCondition.h"
 #include "FGFDMExec.h"
@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.19 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.20 2000/10/16 12:32:45 jsb Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {

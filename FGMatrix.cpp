@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Module: FGMatrix.cpp
 Author: Originally by Tony Peden [formatted here (and broken??) by JSB]
@@ -14,18 +14,18 @@ HISTORY
 ??/??/??   TP   Created
 03/16/2000 JSB  Added exception throwing
 
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.18 2000/10/13 19:21:04 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.19 2000/10/16 12:32:45 jsb Exp $";
 static const char *IdHdr = ID_MATRIX;
 
-/*******************************************************************************
-************************************ CODE **************************************
-*******************************************************************************/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 double** FGalloc(int rows, int cols)
 {
@@ -41,7 +41,7 @@ double** FGalloc(int rows, int cols)
   return A;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void dealloc(double **A, int rows)
 {
@@ -49,7 +49,7 @@ void dealloc(double **A, int rows)
   delete[] A;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix::FGMatrix(const unsigned int r, const unsigned int c) : rows(r), cols(c)
 {
@@ -58,7 +58,7 @@ FGMatrix::FGMatrix(const unsigned int r, const unsigned int c) : rows(r), cols(c
   rowCtr = colCtr = 1;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix::FGMatrix(const FGMatrix& M)
 {
@@ -67,7 +67,7 @@ FGMatrix::FGMatrix(const FGMatrix& M)
   *this = M;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix::~FGMatrix(void)
 {
@@ -76,7 +76,7 @@ FGMatrix::~FGMatrix(void)
   rows = cols = 0;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ostream& operator<<(ostream& os, const FGMatrix& M)
 {
@@ -91,7 +91,7 @@ ostream& operator<<(ostream& os, const FGMatrix& M)
   return os;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix& FGMatrix::operator<<(const float ff)
 {
@@ -104,7 +104,7 @@ FGMatrix& FGMatrix::operator<<(const float ff)
   return *this;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 istream& operator>>(istream& is, FGMatrix& M)
 {
@@ -116,7 +116,7 @@ istream& operator>>(istream& is, FGMatrix& M)
   return is;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix& FGMatrix::operator=(const FGMatrix& M)
 {
@@ -140,21 +140,21 @@ FGMatrix& FGMatrix::operator=(const FGMatrix& M)
   return *this;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 unsigned int FGMatrix::Rows(void) const
 {
   return rows;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 unsigned int FGMatrix::Cols(void) const
 {
   return cols;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::SetOParams(char delim,int width,int prec,int origin)
 {
@@ -164,7 +164,7 @@ void FGMatrix::SetOParams(char delim,int width,int prec,int origin)
   FGMatrix::origin = origin;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::InitMatrix(double value)
 {
@@ -177,7 +177,7 @@ void FGMatrix::InitMatrix(double value)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::InitMatrix(void)
 {
@@ -206,7 +206,7 @@ FGMatrix FGMatrix::operator-(const FGMatrix& M)
   return Diff;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::operator-=(const FGMatrix &M)
 {
@@ -223,7 +223,7 @@ void FGMatrix::operator-=(const FGMatrix &M)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix FGMatrix::operator+(const FGMatrix& M)
 {
@@ -243,7 +243,7 @@ FGMatrix FGMatrix::operator+(const FGMatrix& M)
   return Sum;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::operator+=(const FGMatrix &M)
 {
@@ -260,7 +260,7 @@ void FGMatrix::operator+=(const FGMatrix &M)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix operator*(double scalar, FGMatrix &M)
 {
@@ -274,7 +274,7 @@ FGMatrix operator*(double scalar, FGMatrix &M)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::operator*=(const double scalar)
 {
@@ -285,7 +285,7 @@ void FGMatrix::operator*=(const double scalar)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix FGMatrix::operator*(const FGMatrix& M)
 {
@@ -308,7 +308,7 @@ FGMatrix FGMatrix::operator*(const FGMatrix& M)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::operator*=(const FGMatrix& M)
 {
@@ -334,7 +334,7 @@ void FGMatrix::operator*=(const FGMatrix& M)
   cols = M.cols;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix FGMatrix::operator/(const double scalar)
 {
@@ -352,7 +352,7 @@ FGMatrix FGMatrix::operator/(const double scalar)
   return Quot;  
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::operator/=(const double scalar)
 {
@@ -367,7 +367,7 @@ void FGMatrix::operator/=(const double scalar)
     cerr << "Attempt to divide by zero in method FGMatrix::operator/=(const double scalar), object " << this << endl; 
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::T(void)
 {
@@ -377,7 +377,7 @@ void FGMatrix::T(void)
     TransposeNonSquare();
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGMatrix::operator*(const FGColumnVector& Col)
 {
@@ -398,7 +398,7 @@ FGColumnVector FGMatrix::operator*(const FGColumnVector& Col)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::TransposeSquare(void)
 {
@@ -411,7 +411,7 @@ void FGMatrix::TransposeSquare(void)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMatrix::TransposeNonSquare(void)
 {
@@ -433,21 +433,21 @@ void FGMatrix::TransposeNonSquare(void)
   cols       = m;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector::FGColumnVector(void):FGMatrix(3,1) { }
 FGColumnVector::FGColumnVector(int m):FGMatrix(m,1) { }
 FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b) { }
 FGColumnVector::~FGColumnVector() { }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double& FGColumnVector::operator()(int m) const
 {
   return FGMatrix::operator()(m,1);
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector operator*(const FGMatrix& Mat, const FGColumnVector& Col)
 {
@@ -469,7 +469,7 @@ FGColumnVector operator*(const FGMatrix& Mat, const FGColumnVector& Col)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::operator+(const FGColumnVector& C)
 {
@@ -488,7 +488,7 @@ FGColumnVector FGColumnVector::operator+(const FGColumnVector& C)
   return Sum;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::operator*(const double scalar)
 {
@@ -499,7 +499,7 @@ FGColumnVector FGColumnVector::operator*(const double scalar)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
 {
@@ -518,7 +518,7 @@ FGColumnVector FGColumnVector::operator-(const FGColumnVector& V)
   return Diff;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::operator/(const double scalar)
 {
@@ -535,7 +535,7 @@ FGColumnVector FGColumnVector::operator/(const double scalar)
     
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector operator*(const double scalar, const FGColumnVector& C)
 {
@@ -548,7 +548,7 @@ FGColumnVector operator*(const double scalar, const FGColumnVector& C)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGColumnVector::Magnitude(void)
 {
@@ -565,7 +565,7 @@ float FGColumnVector::Magnitude(void)
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::Normalize(void)
 {
@@ -580,7 +580,7 @@ FGColumnVector FGColumnVector::Normalize(void)
   return *this;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
 {
@@ -599,7 +599,7 @@ FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
 {
@@ -618,4 +618,4 @@ FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
   return Product;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,4 +1,4 @@
-/* *****************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGAircraft.h
  Author:       Jon S. Berndt
@@ -27,74 +27,16 @@ HISTORY
 --------------------------------------------------------------------------------
 12/12/98   JSB   Created
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifndef FGAIRCRAFT_H
 #define FGAIRCRAFT_H
 
-/* *****************************************************************************
-COMMENTS, REFERENCES,  and NOTES
-*******************************************************************************/
-/*
-The aerodynamic coefficients used in this model typically are:
- 
-Longitudinal
-  CL0 - Reference lift at zero alpha
-  CD0 - Reference drag at zero alpha
-  CDM - Drag due to Mach
-  CLa - Lift curve slope (w.r.t. alpha)
-  CDa - Drag curve slope (w.r.t. alpha)
-  CLq - Lift due to pitch rate
-  CLM - Lift due to Mach
-  CLadt - Lift due to alpha rate
- 
-  Cmadt - Pitching Moment due to alpha rate
-  Cm0 - Reference Pitching moment at zero alpha
-  Cma - Pitching moment slope (w.r.t. alpha)
-  Cmq - Pitch damping (pitch moment due to pitch rate)
-  CmM - Pitch Moment due to Mach
- 
-Lateral
-  Cyb - Side force due to sideslip
-  Cyr - Side force due to yaw rate
- 
-  Clb - Dihedral effect (roll moment due to sideslip)
-  Clp - Roll damping (roll moment due to roll rate)
-  Clr - Roll moment due to yaw rate
-  Cnb - Weathercocking stability (yaw moment due to sideslip)
-  Cnp - Rudder adverse yaw (yaw moment due to roll rate)
-  Cnr - Yaw damping (yaw moment due to yaw rate)
- 
-Control
-  CLDe - Lift due to elevator
-  CDDe - Drag due to elevator
-  CyDr - Side force due to rudder
-  CyDa - Side force due to aileron
- 
-  CmDe - Pitch moment due to elevator
-  ClDa - Roll moment due to aileron
-  ClDr - Roll moment due to rudder
-  CnDr - Yaw moment due to rudder
-  CnDa - Yaw moment due to aileron
- 
-[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
-	 Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
-	 School, January 1994
-[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
-	 JSC 12960, July 1977
-[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-	 NASA-Ames", NASA CR-2497, January 1975
-[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-	 Wiley & Sons, 1979 ISBN 0-471-03032-5
-[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-	 1982 ISBN 0-471-08936-2
-*/
-
-/* *****************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -121,34 +63,43 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.34 2000/10/14 15:58:47 jsb Exp $"
-
-/* *****************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.35 2000/10/16 12:32:43 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates an Aircraft and its systems.
     Owns all the parts (other classes) which make
     up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
     aerodynamic and mass properties, landing gear, etc.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.34 2000/10/14 15:58:47 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.35 2000/10/16 12:32:43 jsb Exp $
     @see
-     <ul><li>[1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+     <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994</li>
-     <li>[2] D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+     <li>D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
      JSC 12960, July 1977</li>
-     <li>[3] Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+     <li>Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975</li>
-     <li>[4] Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+     <li>Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
      Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
-     <li>[5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
-     1982 ISBN 0-471-08936-2</li></ul>
+     <li>Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+     1982 ISBN 0-471-08936-2</li></ol>
 */
-/* *****************************************************************************
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGAircraft : public FGModel {
   enum {eL=1, eM, eN};
@@ -158,17 +109,15 @@ class FGAircraft : public FGModel {
 
 public:
   /** Constructor
-      @param Executive a pointer to the parent executive object
-    */
+      @param Executive a pointer to the parent executive object */
   FGAircraft(FGFDMExec *Executive);
   
   /// Destructor
   ~FGAircraft(void);
 
-  /** Runs the model; called by the Executive
+  /** Runs the Aircraft model; called by the Executive
       @see JSBSim.cpp documentation
-      @return bool returns false if no error
-    */
+      @return false if no error */
   bool Run(void);
   
   /** Loads the aircraft.
@@ -176,24 +125,37 @@ public:
       @param apath path to the aircraft files (e.g. "aircraft/X15/")
       @param epath path to engine files (e.g. "engine/")
       @param acname name of aircraft (e.g. "X15")
-      @return true if succesful
-    */
+      @return true if succesful */
   bool LoadAircraft(string apath, string epath, string acname);
   
-  /** Retrieves the aircraft name
-      @return the name of the aircraft as a string type
-    */
+  /** Gets the aircraft name
+      @return the name of the aircraft as a string type */
   inline string GetAircraftName(void) { return AircraftName; }
   
-  inline void SetGearUp(bool tt) { GearUp = tt; }
+  /** Gets the gear status
+      @return true if gear is not deployed */
   inline bool GetGearUp(void) { return GearUp; }
+  /** Gets the number of gear units defined for the aircraft
+      @return number of gear units defined */
   inline int GetNumGearUnits(void) { return lGear.size(); }
-  inline FGLGear* GetGearUnit(int ii) { return &(lGear[ii]); }
+  /** Gets a gear instance
+      @param gear index of gear instance
+      @return a pointer to the FGLGear instance of the gear unit requested */
+  inline FGLGear* GetGearUnit(int gear) { return &(lGear[gear]); }
+  /// Gets the wing area
   inline float GetWingArea(void) { return WingArea; }
+  /// Gets the wing span
   inline float GetWingSpan(void) { return WingSpan; }
+  /// Gets the average wing chord
   inline float Getcbar(void) { return cbar; }
-  inline FGEngine* GetEngine(int tt) { return Engine[tt]; }
-  inline FGTank* GetTank(int tt) { return Tank[tt]; }
+  /** Gets an engine instance.
+      @param engine index of the engine instance
+      @return a pointer to the FGEngine instance of the requested engine */
+  inline FGEngine* GetEngine(int engine) { return Engine[engine]; }
+  /** Gets a tank instance.
+      @param tank index of the tank instance
+      @return a pointer to the FGTank instance of the requested tank */
+  inline FGTank* GetTank(int tank) { return Tank[tank]; }
   inline float GetWeight(void) { return Weight; }
   inline float GetMass(void) { return Mass; }
   inline FGColumnVector GetMoments(void) { return vMoments; }
@@ -211,6 +173,7 @@ public:
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
 
+  inline void SetGearUp(bool tt) { GearUp = tt; }
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
@@ -220,17 +183,20 @@ public:
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
 
-  enum { ssSimulation      = 1,
-         ssAerosurfaces    = 2,
-         ssRates           = 4,
-         ssVelocities      = 8,
-         ssForces          = 16,
-         ssMoments         = 32,
-         ssAtmosphere      = 64,
-         ssMassProps       = 128,
-         ssCoefficients    = 256,
-         ssPosition        = 512,
-         ssGroundReactions = 1024 } subsystems;
+  /// Subsystem types for specifying which will be output in the FDM data logging
+  enum  SubSystems {
+    /** Subsystem: Simulation (= 1)          */ ssSimulation      = 1,
+    /** Subsystem: Aerosurfaces (= 2)        */ ssAerosurfaces    = 2,
+    /** Subsystem: Body rates (= 4)          */ ssRates           = 4,
+    /** Subsystem: Velocities (= 8)          */ ssVelocities      = 8,
+    /** Subsystem: Forces (= 16)             */ ssForces          = 16,
+    /** Subsystem: Moments (= 32)            */ ssMoments         = 32,
+    /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
+    /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
+    /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
+    /** Subsystem: Position (= 512)          */ ssPosition        = 512,
+    /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024
+  } subsystems;
 
 private:
   void GetState(void);
@@ -289,5 +255,5 @@ private:
   void ReadOutput(FGConfigFile*);
 };
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

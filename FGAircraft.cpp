@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Module:       FGAircraft.cpp
  Author:       Jon S. Berndt
@@ -41,9 +41,10 @@ HISTORY
                  point to config file. Added calculations for moments due to 
                  difference in cg and aero reference point
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 [1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
       Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
       School, January 1994
@@ -97,9 +98,9 @@ Control
   CnDr - Yaw moment due to rudder
   CnDa - Yaw moment due to aileron
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -128,12 +129,20 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.46 2000/10/13 19:21:01 jsb Exp $";
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GLOBAL DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.47 2000/10/16 12:32:43 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
-/*******************************************************************************
-************************************ CODE **************************************
-*******************************************************************************/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vMoments(3),
@@ -165,7 +174,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 }
 
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 FGAircraft::~FGAircraft(void) { 
@@ -187,7 +196,7 @@ FGAircraft::~FGAircraft(void) {
   delete[] Coeff;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string fname) {
   string path;
@@ -234,7 +243,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   return true;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGAircraft::Run(void) {
   if (!FGModel::Run()) {                 // if false then execute this Run()
@@ -260,7 +269,7 @@ bool FGAircraft::Run(void) {
   return false;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::MassChange() {
   static FGColumnVector vXYZtank(3);
@@ -354,7 +363,7 @@ void FGAircraft::MassChange() {
 
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMAero(void) {
   static FGColumnVector vDXYZcg(3);
@@ -393,7 +402,7 @@ void FGAircraft::FMAero(void) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMGear(void) {
 
@@ -409,7 +418,7 @@ void FGAircraft::FMGear(void) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMMass(void) {
   vForces(eX) += -GRAVITY*sin(vEuler(eTht)) * Mass;
@@ -417,7 +426,7 @@ void FGAircraft::FMMass(void) {
   vForces(eZ) +=  GRAVITY*cos(vEuler(ePhi))*cos(vEuler(eTht)) * Mass;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMProp(void) {
   for (unsigned int i=0;i<numEngines;i++) {
@@ -429,7 +438,7 @@ void FGAircraft::FMProp(void) {
   
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::GetState(void) {
   dt = State->Getdt();
@@ -439,7 +448,7 @@ void FGAircraft::GetState(void) {
   vEuler = Rotation->GetEuler();
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
   string token = "";
@@ -491,7 +500,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   string token;
@@ -525,7 +534,7 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
   string token;
@@ -533,7 +542,7 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
   FCS->LoadFCS(AC_cfg);
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
   string token, axis;
@@ -555,7 +564,7 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg) {
   string token;
@@ -567,7 +576,7 @@ void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg) {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
   string token, parameter;
@@ -635,7 +644,7 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
   Output->SetRate( (int)(0.5 + 1.0/(State->Getdt()*OutRate)) );
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
   string token = AC_cfg->GetValue();
@@ -657,7 +666,7 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
 
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::DisplayCoeffFactors(vector <eParam> multipliers) {
   cout << "   Non-Dimensionalized by: ";
@@ -668,7 +677,7 @@ void FGAircraft::DisplayCoeffFactors(vector <eParam> multipliers) {
   cout << endl;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGAircraft::GetCoefficientStrings(void) {
   string CoeffStrings = "";
@@ -688,7 +697,7 @@ string FGAircraft::GetCoefficientStrings(void) {
   return CoeffStrings;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGAircraft::GetCoefficientValues(void) {
   string SDValues = "";
@@ -711,7 +720,7 @@ string FGAircraft::GetCoefficientValues(void) {
   ;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGAircraft::GetGroundReactionStrings(void) {
   string GroundReactionStrings = "";
@@ -730,7 +739,7 @@ string FGAircraft::GetGroundReactionStrings(void) {
   return GroundReactionStrings;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGAircraft::GetGroundReactionValues(void) {
   char buff[20];

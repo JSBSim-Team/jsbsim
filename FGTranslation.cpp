@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Module:       FGTranslation.cpp
  Author:       Jon Berndt
@@ -35,9 +35,9 @@ HISTORY
  7/23/99   TP    Added data member and modified Run and PutState to calcuate 
  	  	  	       Mach number
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [1] Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
     Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
     School, January 1994
@@ -53,9 +53,9 @@ COMMENTS, REFERENCES,  and NOTES
   The order of rotations used in this class corresponds to a 3-2-1 sequence,
   or Y-P-R, or Z-Y-X, if you prefer.
  
-********************************************************************************
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -68,12 +68,12 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.13 2000/10/13 19:21:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTranslation.cpp,v 1.14 2000/10/16 12:32:48 jsb Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
-/*******************************************************************************
-************************************ CODE **************************************
-*******************************************************************************/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
 FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
@@ -94,11 +94,11 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
   rho = 0.002378;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTranslation::~FGTranslation(void) {}
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGTranslation::Run(void) {
   static FGColumnVector vlastUVWdot(3);
@@ -161,7 +161,7 @@ bool FGTranslation::Run(void) {
   return false;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTranslation::GetState(void) {
   dt = State->Getdt();

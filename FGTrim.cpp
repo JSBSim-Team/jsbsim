@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGTrim.cpp
  Author:       Tony Peden
@@ -40,9 +40,9 @@ scheme. */
 //  !!!!!!! BEWARE ALL YE WHO ENTER HERE !!!!!!!
 
 
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <stdlib.h>
 
@@ -52,10 +52,10 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.9 2000/10/13 19:21:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.10 2000/10/16 12:32:48 jsb Exp $";
 static const char *IdHdr = ID_TRIM;
 
-/*******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
 
@@ -105,7 +105,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   current_axis=0;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTrim::~FGTrim(void) {
   for(current_axis=0; current_axis<NumAxes; current_axis++) {
@@ -116,7 +116,7 @@ FGTrim::~FGTrim(void) {
   delete[] solution;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::TrimStats() {
   char out[80];
@@ -139,7 +139,7 @@ void FGTrim::TrimStats() {
   }
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::Report(void) {
   cout << "  Trim Results: " << endl;
@@ -148,7 +148,7 @@ void FGTrim::Report(void) {
 
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::ReportState(void) {
   char out[80], flap[10], gear[10];
@@ -208,7 +208,7 @@ void FGTrim::ReportState(void) {
   cout << out;                                  
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGTrim::DoTrim(void) {
   
@@ -314,7 +314,7 @@ bool FGTrim::DoTrim(void) {
   return !trim_failed;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGTrim::solve(void) {
 
@@ -373,7 +373,7 @@ bool FGTrim::solve(void) {
   return success;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
  produces an interval (xlo..xhi) on one side or the other of the current 
  control value in which a solution exists.  This domain is, hopefully, 
@@ -453,7 +453,7 @@ bool FGTrim::findInterval(void) {
   return found;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //checks to see which side of the current control value the solution is on
 //and sets solutionDomain accordingly:
 //  1 if solution is between the current and max

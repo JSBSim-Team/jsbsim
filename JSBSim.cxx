@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.37 2000/10/13 22:58:06 jsb Exp $
+// $Id: JSBSim.cxx,v 1.38 2000/10/16 12:32:49 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -55,7 +55,7 @@
 
 #include "JSBSim.hxx"
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Initialize the JSBsim flight model, dt is the time increment for
 // each subsequent iteration through the EOM
@@ -189,7 +189,7 @@ int FGJSBsim::init( double dt ) {
   return 1;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Run an iteration of the EOM (equations of motion)
 
@@ -242,7 +242,7 @@ int FGJSBsim::update( int multiloop ) {
   return 1;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Convert from the FGInterface struct to the JSBsim generic_ struct
 
@@ -278,7 +278,7 @@ int FGJSBsim::copy_to_JSBsim() {
   return 1;
 }
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Convert from the JSBsim generic_ struct to the FGInterface struct
 

@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGAtmosphere.h
  Author:       Jon Berndt
@@ -28,47 +28,74 @@ HISTORY
 --------------------------------------------------------------------------------
 11/24/98   JSB   Created
 07/23/99   TP   Added implementation of 1959 Standard Atmosphere
-           Moved calculation of Mach number to FGTranslation
- 
- 
-********************************************************************************
+                Moved calculation of Mach number to FGTranslation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifndef FGAtmosphere_H
 #define FGAtmosphere_H
 
-/*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.6 2000/10/13 19:21:02 jsb Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/*******************************************************************************
-COMMENTS, REFERENCES,  and NOTES
-********************************************************************************
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.7 2000/10/16 12:32:43 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Models the 1959 Standard Atmosphere
+    @author Tony Peden, Jon Berndt
+    @version $Id: FGAtmosphere.h,v 1.7 2000/10/16 12:32:43 jsb Exp $
+    @see <ol><li>Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
+    1989, ISBN 0-07-001641-0</li></ol>
+ */
  
-[1]    Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
-      1989, ISBN 0-07-001641-0
- 
-*******************************************************************************
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
-*******************************************************************************/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGAtmosphere : public FGModel {
 public:
 
-  FGAtmosphere(FGFDMExec*);
+  /** Constructor
+      @param Executive a pointer to the parent executive object
+   */
+  FGAtmosphere(FGFDMExec *Executive);
+  /// Destructor
   ~FGAtmosphere(void);
+
+  /** Runs the Atmosphere model; called by the Executive
+      @see JSBSim.cpp documentation
+      @return false if no error
+   */
   bool Run(void);
 
+  /** @name Atmosphere property retrieval functions */
+  //@{
+  /// Gets the temperature
   inline float GetTemperature(void) {return temperature;}
-  inline float GetDensity(void)    {return density;}     // use only after Run() has been called
+  /// Gets the density. Use only after Run() has been called.
+  inline float GetDensity(void)    {return density;}
+  /// Gets the density
   inline float GetPressure(void)   {return pressure;}
+  /// Gets the speed of sound
   inline float GetSoundSpeed(void) {return soundspeed;}
+  //@}
 
   inline float GetTemperatureSL(void) { return SLtemperature; }  //Rankine, altitude in feet
   inline float GetDensitySL(void)     { return SLdensity; }      //slugs/ft^3
@@ -113,5 +140,5 @@ private:
 
 
 
-/******************************************************************************/
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
