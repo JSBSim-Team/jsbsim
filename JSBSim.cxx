@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.157 2004/02/28 17:43:05 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.158 2004/03/05 05:16:10 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -79,11 +79,11 @@ FMAX (double a, double b)
 
 /******************************************************************************/
 
-FGJSBsim::FGJSBsim( double dt ) 
+FGJSBsim::FGJSBsim( double dt )
   : FGInterface(dt)
 {
     bool result;
-   
+
                                 // Set up the debugging level
                                 // FIXME: this will not respond to
                                 // runtime changes
@@ -110,7 +110,7 @@ FGJSBsim::FGJSBsim( double dt )
     }
 
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
-    
+
     State           = fdmex->GetState();
     Atmosphere      = fdmex->GetAtmosphere();
     FCS             = fdmex->GetFCS();
@@ -122,11 +122,11 @@ FGJSBsim::FGJSBsim( double dt )
     Position        = fdmex->GetPosition();
     Auxiliary       = fdmex->GetAuxiliary();
     Aerodynamics    = fdmex->GetAerodynamics();
-    GroundReactions = fdmex->GetGroundReactions(); 
-    
+    GroundReactions = fdmex->GetGroundReactions();
+
     fgic=fdmex->GetIC();
     needTrim=true;
-  
+
     SGPath aircraft_path( globals->get_fg_root() );
     aircraft_path.append( "Aircraft" );
 
@@ -137,7 +137,7 @@ FGJSBsim::FGJSBsim( double dt )
     result = fdmex->LoadModel( aircraft_path.str(),
                                engine_path.str(),
                                fgGetString("/sim/aero") );
-    
+
     if (result) {
       SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aero.");
     } else {
@@ -152,7 +152,7 @@ FGJSBsim::FGJSBsim( double dt )
 
     int Neng = Propulsion->GetNumEngines();
     SG_LOG( SG_FLIGHT, SG_INFO, "num engines = " << Neng );
-    
+
     if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
                 << GroundReactions->GetNumGearUnits() );
@@ -174,7 +174,7 @@ FGJSBsim::FGJSBsim( double dt )
         node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
       }
     }
-    
+
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
     fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
@@ -189,10 +189,10 @@ FGJSBsim::FGJSBsim( double dt )
     throttle_trim = fgGetNode("/fdm/trim/throttle", true );
     aileron_trim = fgGetNode("/fdm/trim/aileron", true );
     rudder_trim = fgGetNode("/fdm/trim/rudder", true );
-    
+
     stall_warning = fgGetNode("/sim/alarms/stall-warning",true);
     stall_warning->setDoubleValue(0);
-    
+
 
     flap_pos_pct=fgGetNode("/surface-positions/flap-pos-norm",true);
     elevator_pos_pct=fgGetNode("/surface-positions/elevator-pos-norm",true);
@@ -204,7 +204,7 @@ FGJSBsim::FGJSBsim( double dt )
     speedbrake_pos_pct
         =fgGetNode("/surface-positions/speedbrake-pos-norm",true);
     spoilers_pos_pct=fgGetNode("/surface-positions/spoilers-pos-norm",true);
-    
+
     elevator_pos_pct->setDoubleValue(0);
     left_aileron_pos_pct->setDoubleValue(0);
     right_aileron_pos_pct->setDoubleValue(0);
@@ -218,7 +218,7 @@ FGJSBsim::FGJSBsim( double dt )
     density = fgGetNode("/environment/density-slugft3",true);
     turbulence_gain = fgGetNode("/environment/turbulence/magnitude-norm",true);
     turbulence_rate = fgGetNode("/environment/turbulence/rate-hz",true);
-    
+
     wind_from_north= fgGetNode("/environment/wind-from-north-fps",true);
     wind_from_east = fgGetNode("/environment/wind-from-east-fps" ,true);
     wind_from_down = fgGetNode("/environment/wind-from-down-fps" ,true);
@@ -244,7 +244,7 @@ FGJSBsim::~FGJSBsim(void)
 void FGJSBsim::init()
 {
     double tmp;
-    
+
     SG_LOG( SG_FLIGHT, SG_INFO, "Starting and initializing JSBsim" );
 
     // Explicitly call the superclass's
@@ -270,7 +270,7 @@ void FGJSBsim::init()
       Atmosphere->UseInternal();
     }
 #endif
-    
+
     fgic->SetVnorthFpsIC( wind_from_north->getDoubleValue() );
     fgic->SetVeastFpsIC( wind_from_east->getDoubleValue() );
     fgic->SetVdownFpsIC( wind_from_down->getDoubleValue() );
@@ -279,7 +279,7 @@ void FGJSBsim::init()
     //Atmosphere->SetExPressure(get_Static_pressure());
     //Atmosphere->SetExDensity(get_Density());
     SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << fdmex->GetAtmosphere()->GetTemperature()
-     << ", " << fdmex->GetAtmosphere()->GetPressure() 
+     << ", " << fdmex->GetAtmosphere()->GetPressure()
      << ", " << fdmex->GetAtmosphere()->GetDensity() );
 
     common_init();
@@ -313,9 +313,9 @@ void FGJSBsim::init()
                << Auxiliary->GetVcalibratedKTS() << " knots" );
     break;
     }
-    
+
     stall_warning->setDoubleValue(0);
-    
+
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
             <<  Rotation->Getphi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
@@ -333,8 +333,8 @@ void FGJSBsim::init()
     SG_LOG( SG_FLIGHT, SG_INFO, "  set dt" );
 
     SG_LOG( SG_FLIGHT, SG_INFO, "Finished initializing JSBSim" );
-    
-    SG_LOG( SG_FLIGHT, SG_INFO, "FGControls::get_gear_down()= " << 
+
+    SG_LOG( SG_FLIGHT, SG_INFO, "FGControls::get_gear_down()= " <<
                                   globals->get_controls()->get_gear_down() );
 }
 
@@ -356,20 +356,20 @@ void FGJSBsim::update( double dt )
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
-    
+
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
         SG_LOG(SG_FLIGHT, SG_INFO,
-          "Ready to trim, terrain altitude is: " 
+          "Ready to trim, terrain altitude is: "
             << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
         fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
         do_trim();
       } else {
         fdmex->RunIC();  //apply any changes made through the set_ functions
       }
-      needTrim = false;  
-    }    
-    
+      needTrim = false;
+    }
+
     for ( i=0; i < multiloop; i++ ) {
       fdmex->Run();
     }
@@ -419,8 +419,8 @@ bool FGJSBsim::copy_to_JSBsim()
     FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
     FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
     FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
-    FCS->SetDsbCmd( globals->get_controls()->get_speedbrake() ); 
-    FCS->SetDspCmd( globals->get_controls()->get_spoilers() ); 
+    FCS->SetDsbCmd( globals->get_controls()->get_speedbrake() );
+    FCS->SetDspCmd( globals->get_controls()->get_spoilers() );
 
         // Parking brake sets minimum braking
         // level for mains.
@@ -472,7 +472,7 @@ bool FGJSBsim::copy_to_JSBsim()
 
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
-    Position->SetRunwayRadius( get_Runway_altitude() 
+    Position->SetRunwayRadius( get_Runway_altitude()
                                + get_Sea_level_radius() );
 
     Atmosphere->SetExTemperature(
@@ -511,13 +511,13 @@ bool FGJSBsim::copy_to_JSBsim()
 bool FGJSBsim::copy_from_JSBsim()
 {
     unsigned int i, j;
-
+/*
     _set_Inertias( MassBalance->GetMass(),
                    MassBalance->GetIxx(),
                    MassBalance->GetIyy(),
                    MassBalance->GetIzz(),
                    MassBalance->GetIxz() );
-
+*/
     _set_CG_Position( MassBalance->GetXYZcg(1),
                       MassBalance->GetXYZcg(2),
                       MassBalance->GetXYZcg(3) );
@@ -529,7 +529,7 @@ bool FGJSBsim::copy_from_JSBsim()
     _set_Accels_CG_Body_N ( Aircraft->GetNcg(1),
                             Aircraft->GetNcg(2),
                             Aircraft->GetNcg(3) );
-    
+
     _set_Accels_Pilot_Body( Auxiliary->GetPilotAccel(1),
                             Auxiliary->GetPilotAccel(2),
                             Auxiliary->GetPilotAccel(3) );
@@ -671,7 +671,7 @@ bool FGJSBsim::copy_from_JSBsim()
         FGPropeller* prop = (FGPropeller*)thruster;
         tnode->setDoubleValue("rpm", thruster->GetRPM());
         tnode->setDoubleValue("pitch", prop->GetPitch());
-        tnode->setDoubleValue("torque", prop->GetTorque()); 
+        tnode->setDoubleValue("torque", prop->GetTorque());
         } // end FGPropeller code block
         break;
       case FGThruster::ttRotor:
@@ -697,14 +697,14 @@ bool FGJSBsim::copy_from_JSBsim()
         double contents = Propulsion->GetTank(i)->GetContents();
         node->setDoubleValue("level-gal_us", contents/6.6);
         node->setDoubleValue("level-lb", contents);
-        // node->setDoubleValue("temperature_degC", 
+        // node->setDoubleValue("temperature_degC",
       }
     }
 
     update_gear();
-    
+
     stall_warning->setDoubleValue( Aerodynamics->GetStallWarn() );
-    
+
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
     right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
@@ -712,7 +712,7 @@ bool FGJSBsim::copy_from_JSBsim()
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
     speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
     spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
-    
+
     return true;
 }
 
@@ -744,21 +744,21 @@ void FGJSBsim::set_Latitude(double lat)
 
     // In case we're not trimming
     FGInterface::set_Latitude(lat);
-    
+
     if ( altitude->getDoubleValue() > -9990 ) {
       alt = altitude->getDoubleValue();
     } else {
       alt = 0.0;
     }
-   
+
     update_ic();
     SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Latitude: " << lat );
     SG_LOG(SG_FLIGHT,SG_INFO," cur alt (ft) =  " << alt );
 
-    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER, 
+    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER,
                       &sea_level_radius_meters, &lat_geoc );
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
-    fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );    
+    fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
     fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
     fgic->SetLatitudeRadIC( lat_geoc );
@@ -788,7 +788,7 @@ void FGJSBsim::set_Altitude(double alt)
 
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Altitude: " << alt );
     SG_LOG(SG_FLIGHT,SG_INFO, "  lat (deg) = " << latitude->getDoubleValue() );
-    
+
     // In case we're not trimming
     FGInterface::set_Altitude(alt);
 
@@ -821,7 +821,7 @@ void FGJSBsim::set_V_calibrated_kts(double vc)
 void FGJSBsim::set_Mach_number(double mach)
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Mach_number: " <<  mach );
-    
+
     // In case we're not trimming
     FGInterface::set_Mach_number(mach);
 
@@ -834,7 +834,7 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down )
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local: "
        << north << ", " <<  east << ", " << down );
-    
+
     // In case we're not trimming
     FGInterface::set_Velocities_Local(north, east, down);
 
@@ -849,7 +849,7 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w)
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Wind_Body: "
        << u << ", " <<  v << ", " <<  w );
-    
+
     // In case we're not trimming
     FGInterface::set_Velocities_Wind_Body(u, v, w);
 
@@ -865,7 +865,7 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi )
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Euler_Angles: "
        << phi << ", " << theta << ", " << psi );
-    
+
     // In case we're not trimming
     FGInterface::set_Euler_Angles(phi, theta, psi);
 
@@ -880,7 +880,7 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi )
 void FGJSBsim::set_Climb_Rate( double roc)
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Climb_Rate: " << roc );
-    
+
     // In case we're not trimming
     FGInterface::set_Climb_Rate(roc);
 
@@ -890,18 +890,18 @@ void FGJSBsim::set_Climb_Rate( double roc)
     //out the other.
     if( !(fabs(roc) > 1 && fabs(fgic->GetFlightPathAngleRadIC()) < 0.01) ) {
       fgic->SetClimbRateFpsIC(roc);
-    }  
+    }
     needTrim=true;
 }
 
 void FGJSBsim::set_Gamma_vert_rad( double gamma)
 {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Gamma_vert_rad: " << gamma );
-    
+
     update_ic();
     if( !(fabs(gamma) < 0.01 && fabs(fgic->GetClimbRateFpsIC()) > 1) ) {
       fgic->SetFlightPathAngleRadIC(gamma);
-    }  
+    }
     needTrim=true;
 }
 
@@ -921,7 +921,7 @@ void FGJSBsim::init_gear(void )
       node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", FCS->GetGearPos());
       node->setDoubleValue("tire-pressure-norm", gr->GetGearUnit(i)->GetTirePressure());
-    }  
+    }
 }
 
 void FGJSBsim::update_gear(void)
@@ -933,7 +933,7 @@ void FGJSBsim::update_gear(void)
       node->getChild("wow", 0, true)->setBoolValue(gr->GetGearUnit(i)->GetWOW());
       node->getChild("position-norm", 0, true)->setDoubleValue(FCS->GetGearPos());
       gr->GetGearUnit(i)->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
-    }  
+    }
 }
 
 void FGJSBsim::do_trim(void)
@@ -973,19 +973,19 @@ void FGJSBsim::do_trim(void)
   globals->get_controls()->set_rudder( FCS->GetDrCmd());
 
   SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
-}          
+}
 
 void FGJSBsim::update_ic(void)
 {
    if ( !needTrim ) {
-     fgic->SetLatitudeRadIC(get_Lat_geocentric() );       
-     fgic->SetLongitudeRadIC( get_Longitude() );       
-     fgic->SetAltitudeFtIC( get_Altitude() );       
-     fgic->SetVcalibratedKtsIC( get_V_calibrated_kts() );       
-     fgic->SetPitchAngleRadIC( get_Theta() );       
-     fgic->SetRollAngleRadIC( get_Phi() );       
-     fgic->SetTrueHeadingRadIC( get_Psi() );       
+     fgic->SetLatitudeRadIC(get_Lat_geocentric() );
+     fgic->SetLongitudeRadIC( get_Longitude() );
+     fgic->SetAltitudeFtIC( get_Altitude() );
+     fgic->SetVcalibratedKtsIC( get_V_calibrated_kts() );
+     fgic->SetPitchAngleRadIC( get_Theta() );
+     fgic->SetRollAngleRadIC( get_Phi() );
+     fgic->SetTrueHeadingRadIC( get_Psi() );
      fgic->SetClimbRateFpsIC( get_Climb_Rate() );
-   }  
+   }
 }
 
