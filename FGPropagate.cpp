@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.10 2004/04/25 14:02:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.11 2004/05/03 09:19:01 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPropagate";
 
-  hoverbmac = hoverbcg = 0.0;
   bind();
   Debug(0);
 }
@@ -119,7 +118,7 @@ bool FGPropagate::InitModel(void)
   SeaLevelRadius   = Inertial->RefRadius();          // For initialization ONLY
   vLocation(eRad)  = SeaLevelRadius + 4.0;
   RunwayRadius     = SeaLevelRadius;
-  b = 1;
+
   return true;
 }
 
@@ -180,15 +179,6 @@ bool FGPropagate::Run(void)
   vQtrn += dt*vQtrndot;
   vLocation += dt*vLocationDot;
 
-  // Recompute some derived values ...
-  double DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
-
-  b = Aircraft->GetWingSpan();
-  hoverbcg = DistanceAGL/b;
-
-  FGColumnVector3 vMac = vQtrn.GetTInv()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-  hoverbmac = (DistanceAGL + vMac(3)) / b;
-
   return false;
 }
 
@@ -197,7 +187,6 @@ bool FGPropagate::Run(void)
 void FGPropagate::Seth(double tt)
 {
   vLocation(eRad) = tt + SeaLevelRadius;
-  hoverbcg = (vLocation(eRad) - RunwayRadius)/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +194,6 @@ void FGPropagate::Seth(double tt)
 void FGPropagate::SetDistanceAGL(double tt)
 {
   vLocation(eRad) = RunwayRadius + tt;
-  hoverbcg = tt/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,9 +244,6 @@ void FGPropagate::bind(void)
 
   PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius, &FGPropagate::SetRunwayRadius);
 
-  PropertyManager->Tie("aero/h_b-cg-ft", this, &FGPropagate::GetHOverBCG);
-  PropertyManager->Tie("aero/h_b-mac-ft", this, &FGPropagate::GetHOverBMAC);
-
   PropertyManager->Tie("attitude/phi-rad", this, &FGPropagate::Getphi);
   PropertyManager->Tie("attitude/theta-rad", this, &FGPropagate::Gettht);
   PropertyManager->Tie("attitude/psi-rad", this, &FGPropagate::Getpsi);
@@ -296,8 +281,6 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");
-  PropertyManager->Untie("aero/h_b-cg-ft");
-  PropertyManager->Untie("aero/h_b-mac-ft");
   PropertyManager->Untie("attitude/phi-rad");
   PropertyManager->Untie("attitude/theta-rad");
   PropertyManager->Untie("attitude/psi-rad");

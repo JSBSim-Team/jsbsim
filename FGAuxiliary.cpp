@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.54 2004/04/24 17:12:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.55 2004/05/03 09:19:01 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   psigt = 0.0;
   day_of_year = 1;
   seconds_in_day = 0.0;
+  hoverbmac = hoverbcg = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
@@ -233,6 +234,12 @@ bool FGAuxiliary::Run()
     vLocationVRP(eLat) = vVRPoffset(eNorth) / vLocation(eRad) + vLocation(eLat);
     vLocationVRP(eRad) = Propagate->Geth() - vVRPoffset(eDown); // this is really a height, not a radius
 
+    // Recompute some derived values now that we know the dependent parameters values ...
+    hoverbcg = Propagate->GetDistanceAGL() / Aircraft->GetWingSpan();
+
+    FGColumnVector3 vMac = Propagate->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    hoverbmac = (Propagate->GetDistanceAGL() + vMac(3)) / Aircraft->GetWingSpan();
+
     return false;
   } else {
     return true;
@@ -369,7 +376,8 @@ void FGAuxiliary::bind(void)
                       &FGAuxiliary::GetVground);
   PropertyManager->Tie("flight-path/psi-gt-rad", this,
                       &FGAuxiliary::GetGroundTrack);
-
+  PropertyManager->Tie("aero/h_b-cg-ft", this, &FGAuxiliary::GetHOverBCG);
+  PropertyManager->Tie("aero/h_b-mac-ft", this, &FGAuxiliary::GetHOverBMAC);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,6 +423,8 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("flight-path/gamma-rad");
   PropertyManager->Untie("velocities/vg-fps");
   PropertyManager->Untie("flight-path/psi-gt-rad");
+  PropertyManager->Untie("aero/h_b-cg-ft");
+  PropertyManager->Untie("aero/h_b-mac-ft");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

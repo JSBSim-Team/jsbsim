@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.65 2004/04/30 12:06:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.66 2004/05/03 09:18:54 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,7 +304,7 @@ void FGAtmosphere::Turbulence(void)
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulence = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Propagate->GetHOverBMAC();
+    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
@@ -353,7 +353,7 @@ void FGAtmosphere::Turbulence(void)
 
                                 // Diminish z-vector within two wingspans
                                 // of the ground
-    double HOverBMAC = Propagate->GetHOverBMAC();
+    double HOverBMAC = Auxiliary->GetHOverBMAC();
     if (HOverBMAC < 2.0)
         vDirection(eZ) *= HOverBMAC / 2.0;
 

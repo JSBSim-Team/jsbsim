@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.43 2004/04/24 17:12:57 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.44 2004/05/03 09:19:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.43 2004/04/24 17:12:57 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.44 2004/05/03 09:19:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,6 +158,9 @@ public:
   double GetVground (void) const { return Vground;    }
   double GetMach    (void) const { return Mach;       }
   double GetMachU   (void) const { return MachU;      }
+
+  double GetHOverBCG(void) const { return hoverbcg; }
+  double GetHOverBMAC(void) const { return hoverbmac; }
 
   double GetGamma(void)              const { return gamma;         }
   double GetGroundTrack(void)        const { return psigt;         }
@@ -221,10 +224,11 @@ private:
   int    day_of_year;     // GMT day, 1 .. 366
 
   double earthPosAngle;
-  double seaLevelRadius; // radius of sea level, in ft.
-  double altitude;       // altitude above sea level, in ft.
-  double groundRadius;   // radius of runway, in ft.
-  double distanceAGL;    // distance above runway, in ft.
+//  double seaLevelRadius; // radius of sea level, in ft.
+//  double altitude;       // altitude above sea level, in ft.
+//  double groundRadius;   // radius of runway, in ft.
+//  double distanceAGL;    // distance above runway, in ft.
+  double hoverbcg, hoverbmac;
 
   void Debug(int from);
 };

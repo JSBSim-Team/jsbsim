@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.10 2004/04/25 14:02:01 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.11 2004/05/03 09:19:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.10 2004/04/25 14:02:01 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.11 2004/05/03 09:19:01 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,9 +133,6 @@ public:
       @return a reference to the body-to-local matrix.  */
   const FGMatrix33& GetTb2l(void) { return vQtrn.GetTInv(); }
 
-  double GetHOverBCG(void) const { return hoverbcg; }
-  double GetHOverBMAC(void) const { return hoverbmac; }
-
 // SET functions
 
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
@@ -164,7 +161,6 @@ private:
 
   double dt;
   double RunwayRadius, SeaLevelRadius;
-  double hoverbcg,hoverbmac,b;
 
   FGColumnVector3& toGlobe(FGColumnVector3&);
 
