@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.29 2003/01/22 15:53:34 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.30 2003/05/01 14:03:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,9 +75,9 @@ CLASS DOCUMENTATION
     Full Scale Propellers Having 2, 3, and 4 Blades of Clark Y and R.A.F. 6
     Airfoil Sections", NACA Report TN-640, 1938 (?)</li>
     <li>Various NACA Technical Notes and Reports</li>
-    <ul>
+    </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.29 2003/01/22 15:53:34 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.30 2003/05/01 14:03:14 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
