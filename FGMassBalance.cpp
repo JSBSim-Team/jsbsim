@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.34 2004/03/03 11:56:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.35 2004/03/03 12:33:00 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,9 +61,9 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
   baseIxx = baseIyy = baseIzz = baseIxy = baseIxz = baseIyz = 0.0;
   pmIxx = pmIyy = pmIzz = pmIxy = pmIxz = pmIyz = 0.0;
 
-  vbaseXYZcg(eX) = 0.0;
-  vbaseXYZcg(eY) = 0.0;
-  vbaseXYZcg(eZ) = 0.0;
+  vbaseXYZcg.InitMatrix(0.0);
+  mJ.InitMatrix();
+  mJinv.InitMatrix();
   bind();
 
   Debug(0);
@@ -81,6 +81,8 @@ FGMassBalance::~FGMassBalance()
 
 bool FGMassBalance::Run(void)
 {
+  double denom, k1, k2, k3, k4, k5, k6;
+
   if (!FGModel::Run()) {
 
     Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
@@ -102,6 +104,24 @@ bool FGMassBalance::Run(void)
     Ixy = baseIxy + Propulsion->GetTanksIxy() + pmIxy;
     Ixz = baseIxz + Propulsion->GetTanksIxz() + pmIxz;
     Iyz = baseIyz + Propulsion->GetTanksIyz() + pmIyz;
+
+    mJ.InitMatrix( Ixx, -Ixy, -Ixz,
+                  -Ixy,  Iyy, -Iyz,
+                  -Ixz, -Iyz,  Izz );
+
+// Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
+
+    denom = Ixx*Iyy*Izz - 2.0*Ixy*Iyz*Ixz - Ixx*Iyz*Iyz - Iyy*Ixz*Ixz - Izz*Ixy*Ixy;
+    k1 = (Iyy*Izz - Iyz*Iyz)/denom;
+    k2 = (Iyz*Ixz + Ixy*Izz)/denom;
+    k3 = (Ixy*Iyz + Ixz*Iyy)/denom;
+    k4 = (Izz*Ixx - Ixz*Ixz)/denom;
+    k5 = (Ixy*Ixz + Iyz*Ixx)/denom;
+    k6 = (Ixx*Iyy - Ixy*Ixy)/denom;
+
+    mJinv.InitMatrix( k1, k2, k3,
+                      k2, k4, k5,
+                      k3, k5, k6 );
 
     Debug(2);
 

@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.15 2003/06/03 09:53:46 ehofman Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.16 2004/03/03 12:33:00 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,7 +36,7 @@ FGMatrix33::FGMatrix33(void)
 {
   InitMatrix();
   rowCtr = colCtr = 1;
-  
+
   Debug(0);
 }
 
@@ -46,7 +46,7 @@ FGMatrix33::FGMatrix33(int r, int c)
 {
   InitMatrix();
   rowCtr = colCtr = 1;
-  
+
   Debug(0);
 }
 
@@ -155,6 +155,25 @@ void FGMatrix33::InitMatrix(double value)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGMatrix33::InitMatrix(double x1, double x2, double x3,
+                            double y1, double y2, double y3,
+                            double z1, double z2, double z3)
+{
+  if (data) {
+    data[1][1] = x1;
+    data[1][2] = x2;
+    data[1][3] = x3;
+    data[2][1] = y1;
+    data[2][2] = y2;
+    data[2][3] = y3;
+    data[3][1] = z1;
+    data[3][2] = z2;
+    data[3][3] = z3;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGMatrix33::InitMatrix(void)
 {
   this->InitMatrix(0);
@@ -235,7 +254,7 @@ void FGMatrix33::operator+=(const FGMatrix33 &M)
 FGMatrix33 FGMatrix33::operator*(const double scalar)
 {
   FGMatrix33 Product;
-  
+
   Product(1,1) = data[1][1] * scalar;
   Product(1,2) = data[1][2] * scalar;
   Product(1,3) = data[1][3] * scalar;
@@ -254,7 +273,7 @@ FGMatrix33 FGMatrix33::operator*(const double scalar)
 FGMatrix33 operator*(double scalar, FGMatrix33 &M)
 {
   FGMatrix33 Product;
-  
+
   Product(1,1) = M(1,1) * scalar;
   Product(1,2) = M(1,2) * scalar;
   Product(1,3) = M(1,3) * scalar;
@@ -288,7 +307,7 @@ void FGMatrix33::operator*=(const double scalar)
 FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
 {
   FGMatrix33 Product;
-  
+
   Product(1,1) = data[1][1]*M(1,1) + data[1][2]*M(2,1) + data[1][3]*M(3,1);
   Product(1,2) = data[1][1]*M(1,2) + data[1][2]*M(2,2) + data[1][3]*M(3,2);
   Product(1,3) = data[1][1]*M(1,3) + data[1][2]*M(2,3) + data[1][3]*M(3,3);
@@ -298,7 +317,7 @@ FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
   Product(3,1) = data[3][1]*M(1,1) + data[3][2]*M(2,1) + data[3][3]*M(3,1);
   Product(3,2) = data[3][1]*M(1,2) + data[3][2]*M(2,2) + data[3][3]*M(3,2);
   Product(3,3) = data[3][1]*M(1,3) + data[3][2]*M(2,3) + data[3][3]*M(3,3);
-  
+
   return Product;
 }
 
@@ -307,17 +326,17 @@ FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
 void FGMatrix33::operator*=(const FGMatrix33& M)
 {
   double a,b,c;
-  
+
   a = data[1][1]; b=data[1][2]; c=data[1][3];
   data[1][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
   data[1][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
   data[1][3] = a*M(1,3) + b*M(2,3) + c*M(3,3);
-  
+
   a = data[2][1]; b=data[2][2]; c=data[2][3];
   data[2][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
   data[2][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
   data[2][3] = a*M(1,3) + b*M(2,3) + c*M(3,3);
- 
+
   a = data[3][1]; b=data[3][2]; c=data[3][3];
   data[3][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
   data[3][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
@@ -329,9 +348,9 @@ void FGMatrix33::operator*=(const FGMatrix33& M)
 FGMatrix33 FGMatrix33::operator/(const double scalar)
 {
   FGMatrix33 Quot;
-  
+
   if ( scalar != 0 ) {
-	  double tmp = 1.0/scalar;
+    double tmp = 1.0/scalar;
     Quot(1,1) = data[1][1] * tmp;
     Quot(1,2) = data[1][2] * tmp;
     Quot(1,3) = data[1][3] * tmp;
@@ -346,7 +365,7 @@ FGMatrix33 FGMatrix33::operator/(const double scalar)
     mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/(const double scalar)";
     throw mE;
   }
-  return Quot;  
+  return Quot;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

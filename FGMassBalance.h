@@ -40,13 +40,14 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGColumnVector3.h"
+#include "FGMatrix33.h"
 #include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.25 2004/03/03 11:56:52 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.26 2004/03/03 12:33:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -105,6 +106,8 @@ public:
   void AddPointMass(double weight, double X, double Y, double Z);
   double GetPointMassWeight(void);
   FGColumnVector3& GetPointMassMoment(void);
+  const FGMatrix33& GetJ(void) {return mJ;}
+  const FGMatrix33& GetJinv(void) {return mJinv;}
 
   void bind(void);
   void unbind(void);
@@ -113,6 +116,8 @@ private:
   double Weight;
   double EmptyWeight;
   double Mass;
+  FGMatrix33 mJ;
+  FGMatrix33 mJinv;
   double Ixx;
   double Iyy;
   double Izz;
