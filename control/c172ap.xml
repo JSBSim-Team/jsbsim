@@ -8,7 +8,7 @@
         setup in JSBSim. The same components used in the FCS
         can also be used in the autopilot section. There are
         some new FCS input and output identifiers directly
-	      related to the autopilot:
+        related to the autopilot:
 
           AP_ELEVATOR_CMD,
           AP_AILERON_CMD,
