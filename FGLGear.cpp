@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.84 2002/07/26 04:49:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.85 2002/11/27 01:37:41 dmegginson Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -308,7 +308,7 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eSteerType) {
       case stSteer:
-        SteerAngle = SteerGain*FCS->GetDrPos();
+        SteerAngle = SteerGain*FCS->GetDrCmd();
         break;
       case stFixed:
         SteerAngle = 0.0;
