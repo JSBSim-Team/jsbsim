@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.39 2004/05/04 12:22:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.40 2004/06/18 12:05:47 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +165,6 @@ bool FGFilter::Run(void)
   } else if (Trigger != 0) {
     test = Trigger->getIntValue();
     if (test < 0) {
-      Output = PreviousOutput1 = PreviousOutput2 = 0.0;
       Input  = PreviousInput1 = PreviousInput2 = 0.0;
     } else {
       Output = PreviousOutput1 = PreviousOutput2 = 0.0;
