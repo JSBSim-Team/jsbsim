@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up the cannonball
+    to fire north to check coriolis acceleration.
+  -->
+  
+  UBODY     5000.0
+  VBODY        0.0
+  WBODY        0.0
+  LATITUDE     0.0
+  LONGITUDE   90.0
+  PHI          0.0
+  THETA       40.0
+  PSI          0.0
+  ALTITUDE     0.0    
+  WINDDIR      0.0
+  VWIND        0.0
+</initialize>
+
