@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.127 2004/03/01 13:56:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.128 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,7 @@ FGState::FGState(FGFDMExec* fdex)
   Aircraft     = FDMExec->GetAircraft();
   Translation  = FDMExec->GetTranslation();
   Rotation     = FDMExec->GetRotation();
+  Auxiliary    = FDMExec->GetAuxiliary();
   Position     = FDMExec->GetPosition();
   FCS          = FDMExec->GetFCS();
   Output       = FDMExec->GetOutput();
@@ -122,7 +123,7 @@ void FGState::Initialize(double U, double V, double W,
   Atmosphere->Run();
 
   vLocalEuler << phi << tht << psi;
-  Rotation->SetEuler(vLocalEuler);
+  Auxiliary->SetEuler(vLocalEuler);
 
   InitMatrices(phi, tht, psi);
 
@@ -379,7 +380,7 @@ void FGState::ReportState(void)
   cout << out;
   snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
                     Translation->Getalpha()*radtodeg,
-                    Rotation->Gettht()*radtodeg );
+                    Auxiliary->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
                     Position->GetGamma()*radtodeg,
@@ -390,12 +391,12 @@ void FGState::ReportState(void)
                     Rotation->GetPQR(2)*radtodeg );
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
-                    Rotation->Getpsi()*radtodeg,
+                    Auxiliary->Getpsi()*radtodeg,
                     Translation->Getbeta()*radtodeg,
                     Rotation->GetPQR(3)*radtodeg  );
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
-                    Rotation->Getphi()*radtodeg,
+                    Auxiliary->Getphi()*radtodeg,
                     Rotation->GetPQR(1)*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",

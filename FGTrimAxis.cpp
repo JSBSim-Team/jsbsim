@@ -1,33 +1,33 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGTrimAxis.cpp
  Author:       Tony Peden
  Date started: 7/3/00
- 
+
  --------- Copyright (C) 1999  Anthony K. Peden (apeden@earthlink.net) ---------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
- 
+
+
  HISTORY
 --------------------------------------------------------------------------------
 7/3/00   TP   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.41 2003/11/24 18:22:12 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.42 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -81,8 +81,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     case tHmgt: tolerance = 0.01; break;
     case  tNlf: state_target=1.0; tolerance = 1E-5; break;
     case tAll: break;
-  }  
-  
+  }
+
   solver_eps=tolerance;
   switch(control) {
   case tThrottle:
@@ -124,13 +124,13 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetRotation()->Gettht() - 5*degtorad;
-    control_max=fdmex->GetRotation()->Gettht() + 5*degtorad;
+    control_min=fdmex->GetAuxiliary()->Gettht() - 5*degtorad;
+    control_max=fdmex->GetAuxiliary()->Gettht() + 5*degtorad;
     state_convert=radtodeg;
     break;
   case tPhi:
-    control_min=fdmex->GetRotation()->Getphi() - 30*degtorad;
-    control_max=fdmex->GetRotation()->Getphi() + 30*degtorad;
+    control_min=fdmex->GetAuxiliary()->Getphi() - 30*degtorad;
+    control_max=fdmex->GetAuxiliary()->Getphi() + 30*degtorad;
     state_convert=radtodeg;
     control_convert=radtodeg;
     break;
@@ -141,13 +141,13 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_convert=radtodeg;
     break;
   case tHeading:
-    control_min=fdmex->GetRotation()->Getpsi() - 30*degtorad;
-    control_max=fdmex->GetRotation()->Getpsi() + 30*degtorad;
+    control_min=fdmex->GetAuxiliary()->Getpsi() - 30*degtorad;
+    control_max=fdmex->GetAuxiliary()->Getpsi() + 30*degtorad;
     state_convert=radtodeg;
     break;
   }
-  
-  
+
+
   Debug(0);
 }
 
@@ -190,10 +190,10 @@ void FGTrimAxis::getControl(void) {
   case tYawTrim:
   case tRudder:    control_value=fdmex->GetFCS() -> GetDrCmd(); break;
   case tAltAGL:    control_value=fdmex->GetPosition()->GetDistanceAGL();break;
-  case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
-  case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
+  case tTheta:     control_value=fdmex->GetAuxiliary()->Gettht(); break;
+  case tPhi:       control_value=fdmex->GetAuxiliary()->Getphi(); break;
   case tGamma:     control_value=fdmex->GetPosition()->GetGamma();break;
-  case tHeading:   control_value=fdmex->GetRotation()->Getpsi(); break;
+  case tHeading:   control_value=fdmex->GetAuxiliary()->Getpsi(); break;
   }
 }
 
@@ -201,10 +201,10 @@ void FGTrimAxis::getControl(void) {
 
 double FGTrimAxis::computeHmgt(void) {
   double diff;
-  
-  diff   = fdmex->GetRotation()->Getpsi() - 
+
+  diff   = fdmex->GetAuxiliary()->Getpsi() -
              fdmex->GetPosition()->GetGroundTrack();
-  
+
   if( diff < -M_PI ) {
      return (diff + 2*M_PI);
   } else if( diff > M_PI ) {
@@ -214,7 +214,7 @@ double FGTrimAxis::computeHmgt(void) {
   }
 
 }
-       
+
 /*****************************************************************************/
 
 
@@ -238,22 +238,22 @@ void FGTrimAxis::setControl(void) {
 }
 
 
-  
+
 
 
 /*****************************************************************************/
 
 // the aircraft center of rotation is no longer the cg once the gear
-// contact the ground so the altitude needs to be changed when pitch 
-// and roll angle are adjusted.  Instead of attempting to calculate the 
+// contact the ground so the altitude needs to be changed when pitch
+// and roll angle are adjusted.  Instead of attempting to calculate the
 // new center of rotation, pick a gear unit as a reference and use its
 // location vector to calculate the new height change. i.e. new altitude =
-// earth z component of that vector (which is in body axes )  
+// earth z component of that vector (which is in body axes )
 void FGTrimAxis::SetThetaOnGround(double ff) {
   int center,i,ref;
 
   // favor an off-center unit so that the same one can be used for both
-  // pitch and roll.  An on-center unit is used (for pitch)if that's all 
+  // pitch and roll.  An on-center unit is used (for pitch)if that's all
   // that's in contact with the ground.
   i=0; ref=-1; center=-1;
   while( (ref < 0) && (i < fdmex->GetGroundReactions()->GetNumGearUnits()) ) {
@@ -262,44 +262,44 @@ void FGTrimAxis::SetThetaOnGround(double ff) {
         ref=i;
       else
         center=i;
-    } 
-    i++; 
+    }
+    i++;
   }
   if((ref < 0) && (center >= 0)) {
     ref=center;
   }
   cout << "SetThetaOnGround ref gear: " << ref << endl;
   if(ref >= 0) {
-    double sp=fdmex->GetRotation()->GetSinphi();
-    double cp=fdmex->GetRotation()->GetCosphi();
-    double lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
-    double ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
-    double lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
+    double sp = sin(fdmex->GetAuxiliary()->Getphi());
+    double cp = cos(fdmex->GetAuxiliary()->Getphi());
+    double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
+    double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
+    double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
     double hagl = -1*lx*sin(ff) +
                     ly*sp*cos(ff) +
                     lz*cp*cos(ff);
-   
+
     fgic->SetAltitudeAGLFtIC(hagl);
     cout << "SetThetaOnGround new alt: " << hagl << endl;
-  }                   
-  fgic->SetPitchAngleRadIC(ff);  
-  cout << "SetThetaOnGround new theta: " << ff << endl;      
-}      
+  }
+  fgic->SetPitchAngleRadIC(ff);
+  cout << "SetThetaOnGround new theta: " << ff << endl;
+}
 
 /*****************************************************************************/
 
 bool FGTrimAxis::initTheta(void) {
   int i,N,iAft, iForward;
   double zAft,zForward,zDiff,theta;
-  bool level;  
+  bool level;
   double saveAlt;
-  
+
   saveAlt=fgic->GetAltitudeAGLFtIC();
   fgic->SetAltitudeAGLFtIC(100);
-  
-  
+
+
   N=fdmex->GetGroundReactions()->GetNumGearUnits();
-  
+
   //find the first wheel unit forward of the cg
   //the list is short so a simple linear search is fine
   for( i=0; i<N; i++ ) {
@@ -315,40 +315,40 @@ bool FGTrimAxis::initTheta(void) {
         break;
     }
   }
-  	  
+
   // now adjust theta till the wheels are the same distance from the ground
   zAft=fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear(3);
   zForward=fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear(3);
   zDiff = zForward - zAft;
   level=false;
-  theta=fgic->GetPitchAngleDegIC(); 
+  theta=fgic->GetPitchAngleDegIC();
   while(!level && (i < 100)) {
-	  theta+=2.0*zDiff;
-	  fgic->SetPitchAngleDegIC(theta);   
-	  fdmex->RunIC();
-	  zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
+    theta+=2.0*zDiff;
+    fgic->SetPitchAngleDegIC(theta);
+    fdmex->RunIC();
+    zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
     zDiff = zForward - zAft;
-	  //cout << endl << theta << "  " << zDiff << endl;
-	  //cout << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << endl;
-	  //cout << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << endl;
-	  if(fabs(zDiff ) < 0.1) 
-	      level=true;
-	  i++;   
-  }	    	    	
+    //cout << endl << theta << "  " << zDiff << endl;
+    //cout << "0: " << fdmex->GetGroundReactions()->GetGearUnit(0)->GetLocalGear() << endl;
+    //cout << "1: " << fdmex->GetGroundReactions()->GetGearUnit(1)->GetLocalGear() << endl;
+    if(fabs(zDiff ) < 0.1)
+        level=true;
+    i++;
+  }
   //cout << i << endl;
   if (debug_lvl > 0) {
-      cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
+      cout << "    Initial Theta: " << fdmex->GetAuxiliary()->Gettht()*radtodeg << endl;
       cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
   }
   control_min=(theta+5)*degtorad;
   control_max=(theta-5)*degtorad;
   fgic->SetAltitudeAGLFtIC(saveAlt);
-  if(i < 100) 
+  if(i < 100)
     return true;
   else
-    return false;  
-} 
+    return false;
+}
 
 /*****************************************************************************/
 
@@ -356,28 +356,28 @@ void FGTrimAxis::SetPhiOnGround(double ff) {
   int i,ref;
 
   i=0; ref=-1;
-  //must have an off-center unit here 
-  while( (ref < 0) && (i < fdmex->GetGroundReactions()->GetNumGearUnits()) ) {
-    if( (fdmex->GetGroundReactions()->GetGearUnit(i)->GetWOW()) && 
+  //must have an off-center unit here
+  while ( (ref < 0) && (i < fdmex->GetGroundReactions()->GetNumGearUnits()) ) {
+    if ( (fdmex->GetGroundReactions()->GetGearUnit(i)->GetWOW()) &&
       (fabs(fdmex->GetGroundReactions()->GetGearUnit(i)->GetBodyLocation(2)) > 0.01))
         ref=i;
-    i++; 
+    i++;
   }
-  if(ref >= 0) {
-    double st=fdmex->GetRotation()->GetSintht();
-    double ct=fdmex->GetRotation()->GetCostht();
-    double lx=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
-    double ly=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
-    double lz=fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
+  if (ref >= 0) {
+    double st = sin(fdmex->GetAuxiliary()->Gettht());
+    double ct = cos(fdmex->GetAuxiliary()->Gettht());
+    double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
+    double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
+    double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
     double hagl = -1*lx*st +
                     ly*sin(ff)*ct +
                     lz*cos(ff)*ct;
-   
+
     fgic->SetAltitudeAGLFtIC(hagl);
-  }                   
+  }
   fgic->SetRollAngleRadIC(ff);
 
-}      
+}
 
 /*****************************************************************************/
 
@@ -423,11 +423,11 @@ void FGTrimAxis::setThrottlesPct(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::AxisReport(void) {
-  
+
   char out[80];
   sprintf(out,"  %20s: %6.2f %5s: %9.2e Tolerance: %3.0e\n",
            GetControlName().c_str(), GetControl()*control_convert,
-           GetStateName().c_str(), GetState()+state_target, GetTolerance()); 
+           GetStateName().c_str(), GetState()+state_target, GetTolerance());
   cout << out;
 
 }

@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.44 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.45 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,8 +77,6 @@ CLASS IMPLEMENTATION
 FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGRotation";
-  cTht = cPhi = cPsi = 1.0;
-  sTht = sPhi = sPsi = 0.0;
 
   vPQRdot.InitMatrix();
   vPQRdot_prev[0].InitMatrix();
@@ -103,30 +101,14 @@ FGRotation::~FGRotation()
 
 bool FGRotation::Run(void)
 {
-  double tTheta;
-
   if (!FGModel::Run()) {
     GetState();
 
     vPQRdot = MassBalance->GetJinv()*(vMoments - vPQR*(MassBalance->GetJ()*vPQR));
     vPQR += State->Integrate(FGState::TRAPZ, dt*rate, vPQRdot, vPQRdot_prev);
 
-    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-
     State->IntegrateQuat(vPQR, rate);
     State->CalcMatrices();
-    vEuler = State->CalcEuler();
-
-    cTht = cos(vEuler(eTht));   sTht = sin(vEuler(eTht));
-    cPhi = cos(vEuler(ePhi));   sPhi = sin(vEuler(ePhi));
-    cPsi = cos(vEuler(ePsi));   sPsi = sin(vEuler(ePsi));
-
-    vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
-    if (cTht != 0.0) {
-      tTheta = sTht/cTht;       // what's cheaper: / or tan() ?
-      vEulerRates(ePhi) = vPQR(1) + (vPQR(2)*sPhi + vPQR(3)*cPhi)*tTheta;
-      vEulerRates(ePsi) = (vPQR(2)*sPhi + vPQR(3)*cPhi)/cTht;
-    }
 
     if (debug_lvl > 1) Debug(2);
 
@@ -155,36 +137,12 @@ void FGRotation::bind(void)
                        (PMF)&FGRotation::GetPQR);
   PropertyManager->Tie("velocities/r-rad_sec", this,3,
                        (PMF)&FGRotation::GetPQR);
-  PropertyManager->Tie("velocities/p-aero-rad_sec", this,1,
-                       (PMF)&FGRotation::GetAeroPQR);
-  PropertyManager->Tie("velocities/q-aero-rad_sec", this,2,
-                       (PMF)&FGRotation::GetAeroPQR);
-  PropertyManager->Tie("velocities/r-aero-rad_sec", this,3,
-                       (PMF)&FGRotation::GetAeroPQR);
   PropertyManager->Tie("accelerations/pdot-rad_sec", this,1,
                        (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("accelerations/qdot-rad_sec", this,2,
                        (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec", this,3,
                        (PMF)&FGRotation::GetPQRdot);
-  PropertyManager->Tie("attitude/roll-rad", this,1,
-                       (PMF)&FGRotation::GetEuler);
-  PropertyManager->Tie("attitude/pitch-rad", this,2,
-                       (PMF)&FGRotation::GetEuler);
-  PropertyManager->Tie("attitude/heading-true-rad", this,3,
-                       (PMF)&FGRotation::GetEuler);
-  PropertyManager->Tie("velocities/phidot-rad_sec", this,1,
-                       (PMF)&FGRotation::GetEulerRates);
-  PropertyManager->Tie("velocities/thetadot-rad_sec", this,2,
-                       (PMF)&FGRotation::GetEulerRates);
-  PropertyManager->Tie("velocities/psidot-rad_sec", this,3,
-                       (PMF)&FGRotation::GetEulerRates);
-  PropertyManager->Tie("attitude/phi-rad", this,
-                       &FGRotation::Getphi);
-  PropertyManager->Tie("attitude/theta-rad", this,
-                       &FGRotation::Gettht);
-  PropertyManager->Tie("attitude/psi-true-rad", this,
-                       &FGRotation::Getpsi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,21 +152,9 @@ void FGRotation::unbind(void)
   PropertyManager->Untie("velocities/p-rad_sec");
   PropertyManager->Untie("velocities/q-rad_sec");
   PropertyManager->Untie("velocities/r-rad_sec");
-  PropertyManager->Untie("velocities/p-aero-rad_sec");
-  PropertyManager->Untie("velocities/q-aero-rad_sec");
-  PropertyManager->Untie("velocities/r-aero-rad_sec");
   PropertyManager->Untie("accelerations/pdot-rad_sec");
   PropertyManager->Untie("accelerations/qdot-rad_sec");
   PropertyManager->Untie("accelerations/rdot-rad_sec");
-  PropertyManager->Untie("attitude/roll-rad");
-  PropertyManager->Untie("attitude/pitch-rad");
-  PropertyManager->Untie("attitude/heading-true-rad");
-  PropertyManager->Untie("velocities/phidot-rad_sec");
-  PropertyManager->Untie("velocities/thetadot-rad_sec");
-  PropertyManager->Untie("velocities/psidot-rad_sec");
-  PropertyManager->Untie("attitude/phi-rad");
-  PropertyManager->Untie("attitude/theta-rad");
-  PropertyManager->Untie("attitude/psi-true-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

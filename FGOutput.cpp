@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.73 2004/03/15 09:20:02 ehofman Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.74 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -641,4 +641,5 @@ void FGOutput::Debug(int from)
     }
   }
 }
-}
+
+} // namespace JSBSim

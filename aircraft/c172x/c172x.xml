@@ -3,11 +3,11 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.15 2004/03/05 04:52:59 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.16 2004/03/18 12:22:10 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
-            fgfs --fdm=jsb --aircraft=c172
+            fgfs -fdm=jsb -aircraft=c172
 -->
 
   <METRICS>

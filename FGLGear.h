@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.56 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.57 2004/03/18 12:22:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,6 +66,7 @@ class FGRotation;
 class FGFCS;
 class FGState;
 class FGMassBalance;
+class FGAuxiliary;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -158,11 +159,11 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.56 2004/02/26 15:03:56 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.57 2004/03/18 12:22:31 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
-	   NASA-Ames", NASA CR-2497, January 1975
+     NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
-	   Wiley & Sons, 1979 ISBN 0-471-03032-5
+     Wiley & Sons, 1979 ISBN 0-471-03032-5
     @see W. A. Ragsdale, "A Generic Landing Gear Dynamics Model for LASRS++",
      AIAA-2000-4303
 */
@@ -219,7 +220,7 @@ public:
   inline double  GetTirePressure(void) { return TirePressureNorm; }
   /// Sets the new normalized tire pressure
   inline void    SetTirePressure(double p) { TirePressureNorm = p; }
-  
+
   /// Sets the brake value in percent (0 - 100)
   inline void SetBrake(double bp) {brakePct = bp;}
 
@@ -231,10 +232,10 @@ public:
   inline bool GetReport(void)    { return ReportEnable; }
   inline double GetSteerAngle(void) { return SteerAngle;}
   inline double GetstaticFCoeff(void) { return staticFCoeff;}
-  
+
   inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
   inline int GetSteerType(void)  { return (int)eSteerType; }
-  
+
   inline bool GetRetractable(void)         { return isRetractable;   }
   inline bool GetGearUnitUp(void)          { return GearUp;          }
   inline bool GetGearUnitDown(void)        { return GearDown;        }
@@ -244,7 +245,7 @@ public:
   inline double GetBodyYForce(void)        { return vLocalForce(eY); }
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
-  
+
 private:
   FGColumnVector3 vXYZ;
   FGColumnVector3 vMoment;
@@ -288,17 +289,18 @@ private:
   string sSteerType;
   string sBrakeGroup;
   string sRetractable;
-  
+
   BrakeGroup eBrakeGrp;
   SteerType  eSteerType;
   double  maxSteerAngle;
 
-  FGFDMExec*  Exec;
-  FGState*    State;
-  FGAircraft* Aircraft;
-  FGPosition* Position;
-  FGRotation* Rotation;
-  FGFCS*      FCS;
+  FGFDMExec*     Exec;
+  FGState*       State;
+  FGAircraft*    Aircraft;
+  FGPosition*    Position;
+  FGRotation*    Rotation;
+  FGAuxiliary*   Auxiliary;
+  FGFCS*         FCS;
   FGMassBalance* MassBalance;
 
   void Report(ReportType rt);
@@ -308,11 +310,11 @@ private:
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGRotation.h"
+#include "FGAuxiliary.h"
 #include "FGFCS.h"
 #include "FGMassBalance.h"
+#include "FGState.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-#include "FGState.h"
 
 #endif

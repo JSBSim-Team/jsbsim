@@ -1,18 +1,18 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Module:       FGAuxiliary.cpp
  Author:       Tony Peden, Jon Berndt
  Date started: 01/26/99
  Purpose:      Calculates additional parameters needed by the visual system, etc.
  Called by:    FGSimExec
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.42 2004/02/26 15:03:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.43 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,11 +67,16 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vcas = veas = mach = qbar = pt = tat = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
-  
+
+  vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
-  
+  vToEyePt.InitMatrix();
+  vAeroPQR.InitMatrix();
+  vEuler.InitMatrix();
+  vEulerRates.InitMatrix();
+
   bind();
-  
+
   Debug(0);
 }
 
@@ -88,14 +93,18 @@ FGAuxiliary::~FGAuxiliary()
 bool FGAuxiliary::Run()
 {
   double A,B,D;
+  FGColumnVector3& vPQR = Rotation->GetPQR();
 
-  if (!FGModel::Run()) {
+  if (!FGModel::Run())
+  {
     GetState();
-    
+
+    vEuler = State->CalcEuler();
+
     //calculate total temperature assuming isentropic flow
-    tat=sat*(1 + 0.2*mach*mach);
-    tatc=RankineToCelsius(tat);
-    
+    tat = sat*(1 + 0.2*mach*mach);
+    tatc = RankineToCelsius(tat);
+
     if (mach < 1) {   //calculate total pressure assuming isentropic flow
       pt = p*pow((1 + 0.2*machU*machU),3.5);
     } else {
@@ -157,23 +166,35 @@ bool FGAuxiliary::Run()
     // mass, the acceleration vector is calculated. The term wdot is equivalent
     // to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
     // The radius R is calculated below in the vector vToEyePt.
-    
-    vPilotAccel.InitMatrix();   
+
+    vPilotAccel.InitMatrix();
     if ( Translation->GetVt() > 1 ) {
-       vPilotAccel =  Aerodynamics->GetForces() 
+       vPilotAccel =  Aerodynamics->GetForces()
                       +  Propulsion->GetForces()
                       +  GroundReactions->GetForces();
        vPilotAccel /= MassBalance->GetMass();
        vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
        vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
-       vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
+       vPilotAccel += vPQR * (vPQR * vToEyePt);
     } else {
        vPilotAccel = -1*( State->GetTl2b() * Inertial->GetGravity() );
-    }   
+    }
 
     vPilotAccelN = vPilotAccel/Inertial->gravity();
 
     earthPosAngle += State->Getdt()*Inertial->omega();
+
+    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
+
+    double cTht = cos(vEuler(eTht)),   sTht = sin(vEuler(eTht));
+    double cPhi = cos(vEuler(ePhi)),   sPhi = sin(vEuler(ePhi));
+
+    vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
+    if (cTht != 0.0) {
+      vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
+      vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
+    }
+
     return false;
   } else {
     return true;
@@ -184,26 +205,24 @@ bool FGAuxiliary::Run()
 
 double FGAuxiliary::GetHeadWind(void)
 {
-  double psiw,vw,psi;
+  double psiw,vw;
 
   psiw = Atmosphere->GetWindPsi();
-  psi = Rotation->Getpsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return vw*cos(psiw - psi);
+  return vw*cos(psiw - vEuler(ePsi));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGAuxiliary::GetCrossWind(void)
 {
-  double psiw,vw,psi;
+  double psiw,vw;
 
   psiw = Atmosphere->GetWindPsi();
-  psi = Rotation->Getpsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return  vw*sin(psiw - psi);
+  return  vw*sin(psiw - vEuler(ePsi));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,7 +246,13 @@ void FGAuxiliary::bind(void)
                        &FGAuxiliary::GetTAT_C);
   PropertyManager->Tie("velocities/pt-lbs_sqft", this,
                        &FGAuxiliary::GetTotalPressure);
-                     
+  PropertyManager->Tie("velocities/p-aero-rad_sec", this,1,
+                       (PMF)&FGAuxiliary::GetAeroPQR);
+  PropertyManager->Tie("velocities/q-aero-rad_sec", this,2,
+                       (PMF)&FGAuxiliary::GetAeroPQR);
+  PropertyManager->Tie("velocities/r-aero-rad_sec", this,3,
+                       (PMF)&FGAuxiliary::GetAeroPQR);
+
   PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this,1,
                        (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this,2,
@@ -242,6 +267,25 @@ void FGAuxiliary::bind(void)
                        (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("position/epa-rad", this,
                        &FGAuxiliary::GetEarthPositionAngle);
+  PropertyManager->Tie("attitude/roll-rad", this,1,
+                       (PMF)&FGAuxiliary::GetEuler);
+  PropertyManager->Tie("attitude/pitch-rad", this,2,
+                       (PMF)&FGAuxiliary::GetEuler);
+  PropertyManager->Tie("attitude/heading-true-rad", this,3,
+                       (PMF)&FGAuxiliary::GetEuler);
+  PropertyManager->Tie("velocities/phidot-rad_sec", this,1,
+                       (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("velocities/thetadot-rad_sec", this,2,
+                       (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("velocities/psidot-rad_sec", this,3,
+                       (PMF)&FGAuxiliary::GetEulerRates);
+  PropertyManager->Tie("attitude/phi-rad", this,
+                       &FGAuxiliary::Getphi);
+  PropertyManager->Tie("attitude/theta-rad", this,
+                       &FGAuxiliary::Gettht);
+  PropertyManager->Tie("attitude/psi-true-rad", this,
+                       &FGAuxiliary::Getpsi);
+
   /* PropertyManager->Tie("atmosphere/headwind-fps", this,
                        &FGAuxiliary::GetHeadWind,
                        true);
@@ -261,6 +305,9 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("velocities/machU");
   PropertyManager->Untie("velocities/tat-r");
   PropertyManager->Untie("velocities/tat-c");
+  PropertyManager->Untie("velocities/p-aero-rad_sec");
+  PropertyManager->Untie("velocities/q-aero-rad_sec");
+  PropertyManager->Untie("velocities/r-aero-rad_sec");
   PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
@@ -268,6 +315,15 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("accelerations/n-pilot-y-norm");
   PropertyManager->Untie("accelerations/n-pilot-z-norm");
   PropertyManager->Untie("position/epa-rad");
+  PropertyManager->Untie("attitude/roll-rad");
+  PropertyManager->Untie("attitude/pitch-rad");
+  PropertyManager->Untie("attitude/heading-true-rad");
+  PropertyManager->Untie("velocities/phidot-rad_sec");
+  PropertyManager->Untie("velocities/thetadot-rad_sec");
+  PropertyManager->Untie("velocities/psidot-rad_sec");
+  PropertyManager->Untie("attitude/phi-rad");
+  PropertyManager->Untie("attitude/theta-rad");
+  PropertyManager->Untie("attitude/psi-true-rad");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
 

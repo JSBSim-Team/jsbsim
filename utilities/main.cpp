@@ -25,12 +25,37 @@
 #endif
 
 #include "datafile.h"
+#include "simgear/xml/easyxml.hxx"
 #include <iostream>
 #include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <time.h>
 #include "dislin_d.h"
+
+class plotXMLVisitor : public XMLVisitor
+{
+public:
+
+  plotXMLVisitor(void) {  }
+  ~plotXMLVisitor() {  }
+
+  void startXML() { }
+  void endXML() { }
+  void startElement (const char * name, const XMLAttributes &atts)
+  {
+//    for (int i=0; i<atts.size();i++) {
+//      cout << "  " << atts.getName(i) << " = " << atts.getValue(i) << endl;
+//    }
+  }
+  void endElement (const char * name) { }
+  void data (const char * s, int length)
+  {
+//    cout << "Read data" << "  " << s << endl;
+  }
+  void pi (const char * target, const char * data) { }
+  void warning (const char * message, int line, int column) { }
+};
 
 void plotdata(DataFile& df, ifstream* datafile);
 void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs);
@@ -53,9 +78,15 @@ int main(int argc, char *argv[])
     exit(-1);
   }
 
+  ifstream inputfile(argv[1]);
+  plotXMLVisitor myVisitor;
+  readXML (inputfile, myVisitor);
+  exit(0);
+
   DataFile df(argv[1]);
 
   ifstream f;
+
   if (argc == 3) {
     f.open(argv[2]);
     if (!f) {

@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.104 2004/03/15 09:20:01 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.105 2004/03/18 12:22:31 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,10 +60,10 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 {
   string tmp;
-  
+
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
-                  >> rollingFCoeff >> sSteerType >> sBrakeGroup 
+                  >> rollingFCoeff >> sSteerType >> sBrakeGroup
                      >> maxSteerAngle >> sRetractable;
 
   if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
@@ -84,13 +84,13 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
     cerr << "Improper steering type specification in config file: "
          << sSteerType << " is undefined." << endl;
   }
-  
+
   if ( sRetractable == "RETRACT" ) {
     isRetractable = true;
   } else  {
     isRetractable = false;
-  }  
-  
+  }
+
   GearUp = false;
   GearDown = true;
   Servicable = true;
@@ -116,7 +116,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   SinkRate = GroundSpeed = 0.0;
 
   vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
-  
+
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
   compressLength  = 0.0;
@@ -228,8 +228,8 @@ FGColumnVector3& FGLGear::Force(void)
   } else {
       GearUp   = false;
       GearDown = true;
-  }         
-      
+  }
+
   if (GearDown) {
 
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
@@ -326,7 +326,7 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eSteerType) {
       case stSteer:
-        SteerAngle = -maxSteerAngle * FCS->GetDrCmd() * 0.01745; 
+        SteerAngle = -maxSteerAngle * FCS->GetDrCmd() * 0.01745;
         break;
       case stFixed:
         SteerAngle = 0.0;
@@ -382,7 +382,7 @@ FGColumnVector3& FGLGear::Force(void)
       {
         WheelSlip = 0.0;
       }
-*/    
+*/
       lastWheelSlip = WheelSlip;
 
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
@@ -394,7 +394,7 @@ FGColumnVector3& FGLGear::Force(void)
         FCoeff = staticFCoeff*WheelSlip/20.0;
       } else if (fabs(WheelSlip) <= 40.0) {
 //        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
-        FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 20.0)/20.0 + 
+        FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 20.0)/20.0 +
                   staticFCoeff*(40.0 - fabs(WheelSlip))/20.0)*fabs(WheelSlip)/WheelSlip;
       } else {
         FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
@@ -460,7 +460,7 @@ FGColumnVector3& FGLGear::Force(void)
     }
 
     if (FirstContact) LandingDistanceTraveled += Position->GetVground()*deltaT;
-  
+
     if (StartedGroundRun) {
        TakeoffDistanceTraveled50ft += Position->GetVground()*deltaT;
       if (WOW) TakeoffDistanceTraveled += Position->GetVground()*deltaT;
@@ -492,8 +492,8 @@ FGColumnVector3& FGLGear::Force(void)
       PutMessage("Crash Detected: Simulation FREEZE.");
       Exec->Freeze();
     }
-  } 
-  return vForce; 
+  }
+  return vForce;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -583,4 +583,3 @@ void FGLGear::Debug(int from)
 }
 
 } // namespace JSBSim
-

@@ -1,35 +1,35 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGState.h
  Author:       Jon S. Berndt
  Date started: 11/17/98
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 11/17/98   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -70,6 +70,7 @@ INCLUDES
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGPosition.h"
+#include "FGAuxiliary.h"
 #include "FGAerodynamics.h"
 #include "FGOutput.h"
 #include "FGAircraft.h"
@@ -80,7 +81,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.74 2004/02/18 02:45:38 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.75 2004/03/18 12:22:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +95,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.74 2004/02/18 02:45:38 jberndt Exp $
+    @version $Id: FGState.h,v 1.75 2004/03/18 12:22:31 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +162,7 @@ public:
     sim_time = cur_time;
     return sim_time;
   }
-  
+
   /** Sets the integration time step for the simulation executive.
       @param delta_t the time step in seconds.
       */
@@ -194,11 +195,11 @@ public:
       @param rate the integration rate in seconds.
       */
   void IntegrateQuat(FGColumnVector3 vPQR, int rate);
-  
+
   // ======================================= General Purpose INTEGRATOR
 
   enum iType {AB4, AB3, AB2, AM3, AM4, EULER, TRAPZ};
-  
+
   /** Multi-method integrator.
       @param type Type of intergation scheme to use. Can be one of:
              <ul>
@@ -214,13 +215,13 @@ public:
       @param vTDeriv a reference to the current value of the time derivative of
              the quantity being integrated (i.e. if vUVW is being integrated
              vTDeriv is the current value of vUVWdot)
-      @param vLastArray an array of previously calculated and saved values of 
+      @param vLastArray an array of previously calculated and saved values of
              the quantity being integrated (i.e. if vUVW is being integrated
              vLastArray[0] is the past value of vUVWdot, vLastArray[1] is the value of
              vUVWdot prior to that, etc.)
       @return the current, incremental value of the item integrated to add to the
               previous value. */
-  
+
   template <class T> T Integrate(iType type, double delta_t, T& vTDeriv, T *vLastArray)
   {
     T vResult;
@@ -288,7 +289,7 @@ public:
       @return a reference to the stability-to-body transformation matrix.
       */
   FGMatrix33& GetTs2b(void);
-  
+
   /** Calculates and returns the body-to-stability axis transformation matrix.
       @return a reference to the stability-to-body transformation matrix.
       */
@@ -317,12 +318,12 @@ public:
       @return the matrix element described by the row and column supplied.
       */
   double GetTb2l(int i, int j) { return mTb2l(i,j);}
-  
-  /** Prints a summary of simulator state (speed, altitude, 
+
+  /** Prints a summary of simulator state (speed, altitude,
       configuration, etc.)
   */
   void ReportState(void);
-  
+
   void bind();
   void unbind();
 
@@ -340,7 +341,7 @@ private:
   FGColumnVector4 vQdot;
   FGColumnVector3 vLocalVelNED;
   FGColumnVector3 vLocalEuler;
-  
+
   FGColumnVector4 vTmp;
   FGColumnVector3 vEuler;
 
@@ -354,6 +355,7 @@ private:
   FGAerodynamics* Aerodynamics;
   FGGroundReactions* GroundReactions;
   FGPropulsion* Propulsion;
+  FGAuxiliary* Auxiliary;
   FGPropertyManager* PropertyManager;
 
   void Debug(int from);
