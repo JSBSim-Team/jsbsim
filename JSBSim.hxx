@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.hxx,v 1.1 2000/10/02 20:51:46 jsb Exp $
+// $Id: JSBSim.hxx,v 1.2 2000/10/13 11:11:29 jsb Exp $
 
 
 #ifndef _JSBSIM_HXX
@@ -34,6 +34,9 @@ class FGJSBsim: public FGInterface {
 
     // The aircraft for this instance
     FGFDMExec FDMExec;
+    bool trimmed;
+    float trim_elev;
+    float trim_throttle;
 
 public:
 
