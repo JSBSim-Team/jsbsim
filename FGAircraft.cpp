@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.48 2000/11/12 12:21:42 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.49 2000/11/13 23:35:25 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,12 +381,8 @@ void FGAircraft::FMAero(void) {
   vAeroBodyForces = State->GetTs2b(alpha, beta)*vFs;
   vForces += vAeroBodyForces;
 
-  // The d*cg distances below, given in inches, are the distances FROM the c.g.
-  // TO the reference point. Since the c.g. and ref point are given in inches in
-  // the structural system (X positive rearwards) and the body coordinate system
-  // is given with X positive out the nose, the dxcg and dzcg values are
-  // *rotated* 180 degrees about the Y axis.
-
+  // see http://home.earthlink.net/~apeden/jsbsim_moments_due_to_forces.txt
+  // for details on this
   vDXYZcg(eX) = -(vXYZrp(eX) - vXYZcg(eX))/12.0;  //cg and rp values are in inches
   vDXYZcg(eY) =  (vXYZrp(eY) - vXYZcg(eY))/12.0;
   vDXYZcg(eZ) = -(vXYZrp(eZ) - vXYZcg(eZ))/12.0;
