@@ -15,12 +15,12 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
 OBJFILES = JSBSim.obj FGUtility.obj FGAircraft.obj FGAtmosphere.obj FGAuxiliary.obj \
-  FGCoefficient.obj FGColumnVector3.obj FGColumnVector4.obj FGConfigFile.obj \
+  FGCoefficient.obj FGColumnVector3.obj FGConfigFile.obj \
   FGEngine.obj FGFactorGroup.obj FGFCS.obj FGFDMExec.obj FGfdmSocket.obj \
   FGForce.obj FGGroundReactions.obj FGInertial.obj FGInitialCondition.obj \
   FGJSBBase.obj FGLGear.obj FGMassBalance.obj FGMatrix33.obj FGModel.obj \
   FGNozzle.obj FGOutput.obj FGPiston.obj FGPosition.obj FGPropeller.obj \
-  FGPropulsion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGScript.obj \
+  FGPropulsion.obj FGQuaternion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGScript.obj \
   FGState.obj FGTable.obj FGTank.obj FGThruster.obj FGTranslation.obj FGTrim.obj \
   FGTrimAxis.obj FGTurboJet.obj FGTurboProp.obj FGTurboShaft.obj \
   FGAerodynamics.obj filtersjb\FGSwitch.obj filtersjb\FGFCSComponent.obj \

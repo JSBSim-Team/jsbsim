@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.38 2004/03/23 12:32:53 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.39 2004/03/26 04:51:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.38 2004/03/23 12:32:53 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.39 2004/03/26 04:51:54 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,14 +136,8 @@ public:
   double GetNpilot(int idx) const { return vPilotAccelN(idx); }
   inline FGColumnVector3& GetAeroPQR(void) {return vAeroPQR;}
   inline double GetAeroPQR(int axis) const {return vAeroPQR(axis);}
-  inline double Getphi(void) const {return vEuler(ePhi);}
-  inline double Gettht(void) const {return vEuler(eTht);}
-  inline double Getpsi(void) const {return vEuler(ePsi);}
-  inline FGColumnVector3& GetEuler(void) {return vEuler;}
-  inline double GetEuler(int axis) const {return vEuler(axis);}
-  inline FGColumnVector3& GetEulerRates(void) { return vEulerRates; }
-  inline double GetEulerRates(int axis) const { return vEulerRates(axis); }
-  inline void SetEuler(FGColumnVector3 tt) {vEuler = tt;}
+  FGColumnVector3& GetEulerRates(void) { return vEulerRates; }
+  double GetEulerRates(int axis) const { return vEulerRates(axis); }
 
   inline FGColumnVector3& GetAeroUVW (void)    { return vAeroUVW; }
   inline double           GetAeroUVW (int idx) const { return vAeroUVW(idx); }

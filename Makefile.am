@@ -40,8 +40,6 @@ libJSBSim_a_SOURCES = \
 	FGCoefficient.h \
 	FGColumnVector3.cpp \
 	FGColumnVector3.h \
-	FGColumnVector4.cpp \
-	FGColumnVector4.h \
 	FGConfigFile.cpp \
 	FGConfigFile.h \
 	FGEngine.cpp \
@@ -86,6 +84,8 @@ libJSBSim_a_SOURCES = \
 	FGPropertyManager.h \
 	FGPropulsion.cpp \
 	FGPropulsion.h \
+	FGQuaternion.cpp \
+	FGQuaternion.h \
 	FGRocket.cpp \
 	FGRocket.h \
 	FGRotation.cpp \

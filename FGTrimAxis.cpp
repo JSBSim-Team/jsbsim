@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.43 2004/03/23 12:32:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.44 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -124,13 +124,13 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetAuxiliary()->Gettht() - 5*degtorad;
-    control_max=fdmex->GetAuxiliary()->Gettht() + 5*degtorad;
+    control_min=fdmex->GetRotation()->Gettht() - 5*degtorad;
+    control_max=fdmex->GetRotation()->Gettht() + 5*degtorad;
     state_convert=radtodeg;
     break;
   case tPhi:
-    control_min=fdmex->GetAuxiliary()->Getphi() - 30*degtorad;
-    control_max=fdmex->GetAuxiliary()->Getphi() + 30*degtorad;
+    control_min=fdmex->GetRotation()->Getphi() - 30*degtorad;
+    control_max=fdmex->GetRotation()->Getphi() + 30*degtorad;
     state_convert=radtodeg;
     control_convert=radtodeg;
     break;
@@ -141,8 +141,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_convert=radtodeg;
     break;
   case tHeading:
-    control_min=fdmex->GetAuxiliary()->Getpsi() - 30*degtorad;
-    control_max=fdmex->GetAuxiliary()->Getpsi() + 30*degtorad;
+    control_min=fdmex->GetRotation()->Getpsi() - 30*degtorad;
+    control_max=fdmex->GetRotation()->Getpsi() + 30*degtorad;
     state_convert=radtodeg;
     break;
   }
@@ -190,10 +190,10 @@ void FGTrimAxis::getControl(void) {
   case tYawTrim:
   case tRudder:    control_value=fdmex->GetFCS() -> GetDrCmd(); break;
   case tAltAGL:    control_value=fdmex->GetPosition()->GetDistanceAGL();break;
-  case tTheta:     control_value=fdmex->GetAuxiliary()->Gettht(); break;
-  case tPhi:       control_value=fdmex->GetAuxiliary()->Getphi(); break;
+  case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
+  case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
   case tGamma:     control_value=fdmex->GetPosition()->GetGamma();break;
-  case tHeading:   control_value=fdmex->GetAuxiliary()->Getpsi(); break;
+  case tHeading:   control_value=fdmex->GetRotation()->Getpsi(); break;
   }
 }
 
@@ -202,7 +202,7 @@ void FGTrimAxis::getControl(void) {
 double FGTrimAxis::computeHmgt(void) {
   double diff;
 
-  diff   = fdmex->GetAuxiliary()->Getpsi() -
+  diff   = fdmex->GetRotation()->Getpsi() -
              fdmex->GetPosition()->GetGroundTrack();
 
   if( diff < -M_PI ) {
@@ -270,8 +270,8 @@ void FGTrimAxis::SetThetaOnGround(double ff) {
   }
   cout << "SetThetaOnGround ref gear: " << ref << endl;
   if(ref >= 0) {
-    double sp = sin(fdmex->GetAuxiliary()->Getphi());
-    double cp = cos(fdmex->GetAuxiliary()->Getphi());
+    double sp = fdmex->GetRotation()->GetSinphi();
+    double cp = fdmex->GetRotation()->GetCosphi();
     double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
     double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
     double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
@@ -338,7 +338,7 @@ bool FGTrimAxis::initTheta(void) {
   }
   //cout << i << endl;
   if (debug_lvl > 0) {
-      cout << "    Initial Theta: " << fdmex->GetAuxiliary()->Gettht()*radtodeg << endl;
+      cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
       cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
   }
   control_min=(theta+5)*degtorad;
@@ -364,8 +364,8 @@ void FGTrimAxis::SetPhiOnGround(double ff) {
     i++;
   }
   if (ref >= 0) {
-    double st = sin(fdmex->GetAuxiliary()->Gettht());
-    double ct = cos(fdmex->GetAuxiliary()->Gettht());
+    double st = sin(fdmex->GetRotation()->Gettht());
+    double ct = cos(fdmex->GetRotation()->Gettht());
     double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
     double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
     double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);

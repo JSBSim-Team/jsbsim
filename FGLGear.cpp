@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.108 2004/03/23 11:36:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.109 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +118,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 
   vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
 
-  vLocalGear = State->GetTb2l() * vWhlBodyVec;
+  vLocalGear = Rotation->GetTb2l() * vWhlBodyVec;
 
   compressLength  = 0.0;
   compressSpeed   = 0.0;
@@ -238,7 +238,7 @@ FGColumnVector3& FGLGear::Force(void)
 
 // vWhlBodyVec now stores the vector from the cg to this wheel
 
-    vLocalGear = State->GetTb2l() * vWhlBodyVec;
+    vLocalGear = Rotation->GetTb2l() * vWhlBodyVec;
 
 // vLocalGear now stores the vector from the cg to the wheel in local coords.
 
@@ -264,7 +264,7 @@ FGColumnVector3& FGLGear::Force(void)
 // (used for calculating damping force) is found by taking the Z-component of the
 // wheel velocity.
 
-      vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
+      vWhlVelVec      =  Rotation->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
       vWhlVelVec     +=  Position->GetVel();
       compressSpeed   =  vWhlVelVec(eZ);
 
@@ -346,8 +346,8 @@ FGColumnVector3& FGLGear::Force(void)
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-      SinWheel      = sin(Auxiliary->Getpsi() + SteerAngle);
-      CosWheel      = cos(Auxiliary->Getpsi() + SteerAngle);
+      SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
+      CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
       RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
@@ -443,7 +443,7 @@ FGColumnVector3& FGLGear::Force(void)
 
 // Transform the forces back to the body frame and compute the moment.
 
-      vForce  = State->GetTl2b() * vLocalForce;
+      vForce  = Rotation->GetTl2b() * vLocalForce;
       vMoment = vWhlBodyVec * vForce;
 
     } else { // Gear is NOT compressed

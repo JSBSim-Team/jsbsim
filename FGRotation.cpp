@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.45 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.46 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,13 +102,14 @@ FGRotation::~FGRotation()
 bool FGRotation::Run(void)
 {
   if (!FGModel::Run()) {
-    GetState();
+    double dt = State->Getdt();
+    const FGColumnVector3& vMoments = Aircraft->GetMoments();
 
     vPQRdot = MassBalance->GetJinv()*(vMoments - vPQR*(MassBalance->GetJ()*vPQR));
     vPQR += State->Integrate(FGState::TRAPZ, dt*rate, vPQRdot, vPQRdot_prev);
 
-    State->IntegrateQuat(vPQR, rate);
-    State->CalcMatrices();
+    FGQuaternion vQdot = vQtrn.GetQDot( vPQR );
+    vQtrn += State->Integrate(FGState::TRAPZ, dt*rate, vQdot, vQdot_prev);
 
     if (debug_lvl > 1) Debug(2);
 
@@ -120,17 +121,10 @@ bool FGRotation::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGRotation::GetState(void)
-{
-  dt = State->Getdt();
-  vMoments = Aircraft->GetMoments();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 void FGRotation::bind(void)
 {
   typedef double (FGRotation::*PMF)(int) const;
+  vQtrn.bind(PropertyManager, "attitude/");
   PropertyManager->Tie("velocities/p-rad_sec", this,1,
                        (PMF)&FGRotation::GetPQR);
   PropertyManager->Tie("velocities/q-rad_sec", this,2,
@@ -143,18 +137,28 @@ void FGRotation::bind(void)
                        (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec", this,3,
                        (PMF)&FGRotation::GetPQRdot);
+  PropertyManager->Tie("attitude/roll-rad", this,1,
+                       (PMF)&FGRotation::GetEuler);
+  PropertyManager->Tie("attitude/pitch-rad", this,2,
+                       (PMF)&FGRotation::GetEuler);
+  PropertyManager->Tie("attitude/heading-true-rad", this,3,
+                       (PMF)&FGRotation::GetEuler);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGRotation::unbind(void)
 {
+  vQtrn.unbind(PropertyManager, "attitude/");
   PropertyManager->Untie("velocities/p-rad_sec");
   PropertyManager->Untie("velocities/q-rad_sec");
   PropertyManager->Untie("velocities/r-rad_sec");
   PropertyManager->Untie("accelerations/pdot-rad_sec");
   PropertyManager->Untie("accelerations/qdot-rad_sec");
   PropertyManager->Untie("accelerations/rdot-rad_sec");
+  PropertyManager->Untie("attitude/roll-rad");
+  PropertyManager->Untie("attitude/pitch-rad");
+  PropertyManager->Untie("attitude/heading-true-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

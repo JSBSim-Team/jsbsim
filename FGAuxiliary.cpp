@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.47 2004/03/24 15:18:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.48 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vPilotAccelN.InitMatrix();
   vToEyePt.InitMatrix();
   vAeroPQR.InitMatrix();
-  vEuler.InitMatrix();
   vEulerRates.InitMatrix();
 
   bind();
@@ -113,10 +112,9 @@ bool FGAuxiliary::Run()
 
 // Rotation
 
-    vEuler = State->CalcEuler();
-
-    double cTht = cos(vEuler(eTht));
-    double cPhi = cos(vEuler(ePhi)),   sPhi = sin(vEuler(ePhi));
+    double cTht = Rotation->GetCostht();
+    double cPhi = Rotation->GetCosphi();
+    double sPhi = Rotation->GetSinphi();
 
     vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
     if (cTht != 0.0) {
@@ -128,7 +126,7 @@ bool FGAuxiliary::Run()
 
 // Translation
 
-    vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
+    vAeroUVW = vUVW + Rotation->GetTl2b()*Atmosphere->GetWindNED();
 
     Vt = vAeroUVW.Magnitude();
     if ( Vt > 0.05) {
@@ -196,7 +194,7 @@ bool FGAuxiliary::Run()
        vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
        vPilotAccel += vPQR * (vPQR * vToEyePt);
     } else {
-       vPilotAccel = -1*( State->GetTl2b() * Inertial->GetGravity() );
+       vPilotAccel = -1*( Rotation->GetTl2b() * Inertial->GetGravity() );
     }
 
     vPilotAccelN = vPilotAccel/Inertial->gravity();
@@ -218,7 +216,7 @@ double FGAuxiliary::GetHeadWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return vw*cos(psiw - vEuler(ePsi));
+  return vw*cos(psiw - Rotation->Getpsi());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,7 +228,7 @@ double FGAuxiliary::GetCrossWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return  vw*sin(psiw - vEuler(ePsi));
+  return  vw*sin(psiw - Rotation->Getpsi());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,24 +273,12 @@ void FGAuxiliary::bind(void)
                        (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("position/epa-rad", this,
                        &FGAuxiliary::GetEarthPositionAngle);
-  PropertyManager->Tie("attitude/roll-rad", this,1,
-                       (PMF)&FGAuxiliary::GetEuler);
-  PropertyManager->Tie("attitude/pitch-rad", this,2,
-                       (PMF)&FGAuxiliary::GetEuler);
-  PropertyManager->Tie("attitude/heading-true-rad", this,3,
-                       (PMF)&FGAuxiliary::GetEuler);
   PropertyManager->Tie("velocities/phidot-rad_sec", this,1,
                        (PMF)&FGAuxiliary::GetEulerRates);
   PropertyManager->Tie("velocities/thetadot-rad_sec", this,2,
                        (PMF)&FGAuxiliary::GetEulerRates);
   PropertyManager->Tie("velocities/psidot-rad_sec", this,3,
                        (PMF)&FGAuxiliary::GetEulerRates);
-  PropertyManager->Tie("attitude/phi-rad", this,
-                       &FGAuxiliary::Getphi);
-  PropertyManager->Tie("attitude/theta-rad", this,
-                       &FGAuxiliary::Gettht);
-  PropertyManager->Tie("attitude/psi-true-rad", this,
-                       &FGAuxiliary::Getpsi);
 
   /* PropertyManager->Tie("atmosphere/headwind-fps", this,
                        &FGAuxiliary::GetHeadWind,
@@ -368,15 +354,9 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("accelerations/n-pilot-y-norm");
   PropertyManager->Untie("accelerations/n-pilot-z-norm");
   PropertyManager->Untie("position/epa-rad");
-  PropertyManager->Untie("attitude/roll-rad");
-  PropertyManager->Untie("attitude/pitch-rad");
-  PropertyManager->Untie("attitude/heading-true-rad");
   PropertyManager->Untie("velocities/phidot-rad_sec");
   PropertyManager->Untie("velocities/thetadot-rad_sec");
   PropertyManager->Untie("velocities/psidot-rad_sec");
-  PropertyManager->Untie("attitude/phi-rad");
-  PropertyManager->Untie("attitude/theta-rad");
-  PropertyManager->Untie("attitude/psi-true-rad");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
   PropertyManager->Untie("velocities/u-aero-fps");

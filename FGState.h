@@ -62,7 +62,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
-#include "FGColumnVector4.h"
+#include "FGQuaternion.h"
 
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
@@ -81,7 +81,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.75 2004/03/18 12:22:31 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.76 2004/03/26 04:51:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.75 2004/03/18 12:22:31 jberndt Exp $
+    @version $Id: FGState.h,v 1.76 2004/03/26 04:51:54 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,17 +175,6 @@ public:
     sim_time+=dt;
     return sim_time;
   }
-
-  /** Initializes the transformation matrices.
-      @param phi the roll angle in radians.
-      @param tht the pitch angle in radians.
-      @param psi the heading angle in radians
-      */
-  void InitMatrices(double phi, double tht, double psi);
-
-  /** Calculates the local-to-body and body-to-local conversion matrices.
-      */
-  void CalcMatrices(void);
 
   /** Integrates the quaternion.
       Given the supplied rotational rate vector and integration rate, the quaternion
@@ -280,11 +269,6 @@ public:
 
   // =======================================
 
-  /** Calculates Euler angles from the local-to-body matrix.
-      @return a reference to the vEuler column vector.
-      */
-  FGColumnVector3& CalcEuler(void);
-
   /** Calculates and returns the stability-to-body axis transformation matrix.
       @return a reference to the stability-to-body transformation matrix.
       */
@@ -294,30 +278,6 @@ public:
       @return a reference to the stability-to-body transformation matrix.
       */
   FGMatrix33& GetTb2s(void);
-
-  /** Retrieves the local-to-body transformation matrix.
-      @return a reference to the local-to-body transformation matrix.
-      */
-  FGMatrix33& GetTl2b(void) { return mTl2b; }
-
-  /** Retrieves a specific local-to-body matrix element.
-      @param r matrix row index.
-      @param c matrix column index.
-      @return the matrix element described by the row and column supplied.
-      */
-  double GetTl2b(int r, int c) { return mTl2b(r,c);}
-
-  /** Retrieves the body-to-local transformation matrix.
-      @return a reference to the body-to-local matrix.
-      */
-  FGMatrix33& GetTb2l(void) { return mTb2l; }
-
-  /** Retrieves a specific body-to-local matrix element.
-      @param r matrix row index.
-      @param c matrix column index.
-      @return the matrix element described by the row and column supplied.
-      */
-  double GetTb2l(int i, int j) { return mTb2l(i,j);}
 
   /** Prints a summary of simulator state (speed, altitude,
       configuration, etc.)
@@ -332,18 +292,8 @@ private:
   double saved_dt;
 
   FGFDMExec* FDMExec;
-  FGMatrix33 mTb2l;
-  FGMatrix33 mTl2b;
   FGMatrix33 mTs2b;
   FGMatrix33 mTb2s;
-  FGColumnVector4 vQtrn;
-  FGColumnVector4 vQdot_prev[4];
-  FGColumnVector4 vQdot;
-  FGColumnVector3 vLocalVelNED;
-  FGColumnVector3 vLocalEuler;
-
-  FGColumnVector4 vTmp;
-  FGColumnVector3 vEuler;
 
   FGAircraft* Aircraft;
   FGPosition* Position;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.161 2004/03/23 13:47:18 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.162 2004/03/26 04:51:54 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -317,11 +317,11 @@ void FGJSBsim::init()
     stall_warning->setDoubleValue(0);
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
-            <<  Auxiliary->Getphi()*RADTODEG << " deg" );
+            << Rotation->Getphi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
-            << Auxiliary->Gettht()*RADTODEG << " deg" );
+            << Rotation->Gettht()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
-            << Auxiliary->Getpsi()*RADTODEG << " deg" );
+            << Rotation->Getpsi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
             << Position->GetLatitude() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
@@ -586,9 +586,9 @@ bool FGJSBsim::copy_from_JSBsim()
 */
     _set_Altitude_AGL( Position->GetDistanceAGL() );
 
-    _set_Euler_Angles( Auxiliary->Getphi(),
-                       Auxiliary->Gettht(),
-                       Auxiliary->Getpsi() );
+    _set_Euler_Angles( Rotation->Getphi(),
+                       Rotation->Gettht(),
+                       Rotation->Getpsi() );
 
     _set_Alpha( Auxiliary->Getalpha() );
     _set_Beta( Auxiliary->Getbeta() );
@@ -600,10 +600,10 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_Climb_Rate( Position->Gethdot() );
 
-
+    const FGMatrix33& Tl2b = Rotation->GetTl2b();
     for ( i = 1; i <= 3; i++ ) {
         for ( j = 1; j <= 3; j++ ) {
-            _set_T_Local_to_Body( i, j, State->GetTl2b(i,j) );
+            _set_T_Local_to_Body( i, j, Tl2b(i,j) );
         }
     }
 

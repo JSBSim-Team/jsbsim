@@ -88,7 +88,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.71 2004/03/23 12:32:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.72 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +178,7 @@ bool FGPosition::Run(void)
 
     h = Radius - SeaLevelRadius;           // Geocentric
 
-    vVRPoffset = State->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
+    vVRPoffset = Rotation->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
 
     // vVRP  - the vector to the Visual Reference Point - now contains the
     // offset from the CG to the VRP, in units of feet, in the Local coordinate
@@ -198,7 +198,7 @@ cout << "Lat/Lon/Alt VRP: " << LatitudeVRP << " / " << LongitudeVRP << " / " << 
 
     hoverbcg = DistanceAGL/b;
 
-    vMac = State->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+    vMac = Rotation->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
     hoverbmac = (DistanceAGL + vMac(3)) / b;
 
     if (Vt > 0) {
@@ -222,8 +222,8 @@ void FGPosition::GetState(void)
   dt = State->Getdt();
 
   Vt        = Auxiliary->GetVt();
-  vVel      = State->GetTb2l() * Translation->GetUVW();
-  vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
+  vVel      = Rotation->GetTb2l() * Translation->GetUVW();
+  vVelDot   = Rotation->GetTb2l() * Translation->GetUVWdot();
 
   b = Aircraft->GetWingSpan();
 }

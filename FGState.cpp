@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.129 2004/03/23 12:32:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.130 2004/03/26 04:51:54 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,8 +85,6 @@ FGState::FGState(FGFDMExec* fdex)
   GroundReactions = FDMExec->GetGroundReactions();
   Propulsion      = FDMExec->GetPropulsion();
   PropertyManager = FDMExec->GetPropertyManager();
-
-  for(int i=0;i<4;i++) vQdot_prev[i].InitMatrix();
 
   bind();
 
@@ -122,17 +120,14 @@ void FGState::Initialize(double U, double V, double W,
 
   Atmosphere->Run();
 
-  vLocalEuler << phi << tht << psi;
-  Auxiliary->SetEuler(vLocalEuler);
-
-  InitMatrices(phi, tht, psi);
+  Rotation->SetEuler( FGColumnVector3(phi, tht, psi) );
 
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
 
   Atmosphere->SetWindNED(wnorth, weast, wdown);
 
-  vAeroUVW = vUVW + mTl2b*Atmosphere->GetWindNED();
+  vAeroUVW = vUVW + Rotation->GetTl2b()*Atmosphere->GetWindNED();
 
   if (vAeroUVW(eW) != 0.0)
     alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
@@ -153,7 +148,7 @@ void FGState::Initialize(double U, double V, double W,
   qbar = 0.5*(U*U + V*V + W*W)*Atmosphere->GetDensity();
   Auxiliary->Setqbar(qbar);
 
-  vLocalVelNED = mTb2l*vUVW;
+  FGColumnVector3 vLocalVelNED = Rotation->GetTb2l()*vUVW;
   Position->SetvVel(vLocalVelNED);
 }
 
@@ -185,106 +180,6 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 
   // need to fix the wind speed args, here.
   Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::InitMatrices(double phi, double tht, double psi)
-{
-  double thtd2, psid2, phid2;
-  double Sthtd2, Spsid2, Sphid2;
-  double Cthtd2, Cpsid2, Cphid2;
-  double Cphid2Cthtd2;
-  double Cphid2Sthtd2;
-  double Sphid2Sthtd2;
-  double Sphid2Cthtd2;
-
-  thtd2 = tht/2.0;
-  psid2 = psi/2.0;
-  phid2 = phi/2.0;
-
-  Sthtd2 = sin(thtd2);
-  Spsid2 = sin(psid2);
-  Sphid2 = sin(phid2);
-
-  Cthtd2 = cos(thtd2);
-  Cpsid2 = cos(psid2);
-  Cphid2 = cos(phid2);
-
-  Cphid2Cthtd2 = Cphid2*Cthtd2;
-  Cphid2Sthtd2 = Cphid2*Sthtd2;
-  Sphid2Sthtd2 = Sphid2*Sthtd2;
-  Sphid2Cthtd2 = Sphid2*Cthtd2;
-
-  vQtrn(1) = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-  vQtrn(2) = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-  vQtrn(3) = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-  vQtrn(4) = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
-
-  CalcMatrices();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::CalcMatrices(void)
-{
-  double Q0Q0, Q1Q1, Q2Q2, Q3Q3;
-  double Q0Q1, Q0Q2, Q0Q3, Q1Q2;
-  double Q1Q3, Q2Q3;
-
-  Q0Q0 = vQtrn(1)*vQtrn(1);
-  Q1Q1 = vQtrn(2)*vQtrn(2);
-  Q2Q2 = vQtrn(3)*vQtrn(3);
-  Q3Q3 = vQtrn(4)*vQtrn(4);
-  Q0Q1 = vQtrn(1)*vQtrn(2);
-  Q0Q2 = vQtrn(1)*vQtrn(3);
-  Q0Q3 = vQtrn(1)*vQtrn(4);
-  Q1Q2 = vQtrn(2)*vQtrn(3);
-  Q1Q3 = vQtrn(2)*vQtrn(4);
-  Q2Q3 = vQtrn(3)*vQtrn(4);
-
-  mTl2b(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
-  mTl2b(1,2) = 2*(Q1Q2 + Q0Q3);
-  mTl2b(1,3) = 2*(Q1Q3 - Q0Q2);
-  mTl2b(2,1) = 2*(Q1Q2 - Q0Q3);
-  mTl2b(2,2) = Q0Q0 - Q1Q1 + Q2Q2 - Q3Q3;
-  mTl2b(2,3) = 2*(Q2Q3 + Q0Q1);
-  mTl2b(3,1) = 2*(Q1Q3 + Q0Q2);
-  mTl2b(3,2) = 2*(Q2Q3 - Q0Q1);
-  mTl2b(3,3) = Q0Q0 - Q1Q1 - Q2Q2 + Q3Q3;
-
-  mTb2l = mTl2b;
-  mTb2l.T();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate)
-{
-  vQdot(1) = -0.5*(vQtrn(2)*vPQR(eP) + vQtrn(3)*vPQR(eQ) + vQtrn(4)*vPQR(eR));
-  vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
-  vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
-  vQdot(4) =  0.5*(vQtrn(1)*vPQR(eR) + vQtrn(2)*vPQR(eQ) - vQtrn(3)*vPQR(eP));
-
-  vQtrn += Integrate(TRAPZ, dt*rate, vQdot, vQdot_prev);
-
-  vQtrn.Normalize();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGColumnVector3& FGState::CalcEuler(void)
-{
-  if (mTl2b(3,3) == 0.0) mTl2b(3,3) = 0.0000001;
-  if (mTl2b(1,1) == 0.0) mTl2b(1,1) = 0.0000001;
-
-  vEuler(ePhi) = atan2(mTl2b(2,3), mTl2b(3,3));
-  vEuler(eTht) = asin(-mTl2b(1,3));
-  vEuler(ePsi) = atan2(mTl2b(1,2), mTl2b(1,1));
-
-  if (vEuler(ePsi) < 0.0) vEuler(ePsi) += 2*M_PI;
-
-  return vEuler;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -380,7 +275,7 @@ void FGState::ReportState(void)
   cout << out;
   snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
                     Auxiliary->Getalpha()*radtodeg,
-                    Auxiliary->Gettht()*radtodeg );
+                    Rotation->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
                     Position->GetGamma()*radtodeg,
@@ -391,12 +286,12 @@ void FGState::ReportState(void)
                     Rotation->GetPQR(2)*radtodeg );
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
-                    Auxiliary->Getpsi()*radtodeg,
+                    Rotation->Getpsi()*radtodeg,
                     Auxiliary->Getbeta()*radtodeg,
                     Rotation->GetPQR(3)*radtodeg  );
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
-                    Auxiliary->Getphi()*radtodeg,
+                    Rotation->Getphi()*radtodeg,
                     Rotation->GetPQR(1)*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",

@@ -51,12 +51,13 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGColumnVector3.h"
+#include "FGQuaternion.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.50 2004/03/24 15:18:16 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.51 2004/03/26 04:51:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,10 +101,37 @@ public:
   inline double GetPQR(int axis) const {return vPQR(axis);}
   inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
   inline double GetPQRdot(int idx) const {return vPQRdot(idx);}
+  const FGColumnVector3& GetEuler(void) const { return vQtrn.GetEuler(); }
+  inline double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
   inline void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
   inline void SetPQR(double p, double q, double r) {vPQR(eP)=p;
                                                     vPQR(eQ)=q;
                                                     vPQR(eR)=r;}
+  void SetEuler(FGColumnVector3 tt) {
+    vQtrn = FGQuaternion(tt(ePhi), tt(eTht), tt(ePsi));
+  }
+
+  double Getphi(void) const { return vQtrn.GetEulerPhi(); }
+  double Gettht(void) const { return vQtrn.GetEulerTheta(); }
+  double Getpsi(void) const { return vQtrn.GetEulerPsi(); }
+
+  double GetCosphi(void) const { return vQtrn.GetCosEulerPhi(); }
+  double GetCostht(void) const { return vQtrn.GetCosEulerTheta(); }
+  double GetCospsi(void) const { return vQtrn.GetCosEulerPsi(); }
+
+  double GetSinphi(void) const { return vQtrn.GetSinEulerPhi(); }
+  double GetSintht(void) const { return vQtrn.GetSinEulerTheta(); }
+  double GetSinpsi(void) const { return vQtrn.GetSinEulerPsi(); }
+
+  /** Retrieves the local-to-body transformation matrix.
+      @return a reference to the local-to-body transformation matrix.
+    */
+  const FGMatrix33& GetTl2b(void) { return vQtrn.GetT(); }
+  /** Retrieves the body-to-local transformation matrix.
+      @return a reference to the body-to-local matrix.
+    */
+  const FGMatrix33& GetTb2l(void) { return vQtrn.GetTInv(); }
+
   void bind(void);
   void unbind(void);
 
@@ -111,11 +139,8 @@ private:
   FGColumnVector3 vPQR;
   FGColumnVector3 vPQRdot;
   FGColumnVector3 vPQRdot_prev[4];
-  FGColumnVector3 vMoments;
-
-  double dt;
-
-  void GetState(void);
+  FGQuaternion vQtrn;
+  FGQuaternion vQdot_prev[4];
 
   void Debug(int from);
 };
