@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.41 2001/12/07 13:51:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.42 2001/12/07 13:59:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
 
   Type = ttPropeller;
   RPM = 0;
-  Torque.InitMatrix();
+  vTorque.InitMatrix();
 
   if (debug_lvl & 2) cout << "Instantiated: FGPropeller" << endl;
 }
@@ -179,7 +179,7 @@ double FGPropeller::Calculate(double PowerAvailable)
   ExcessTorque = PowerAvailable / omega;
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 
-  vMn = fdmex->GetRotation()->GetPQR()*vH + Torque*Sense;
+  vMn = fdmex->GetRotation()->GetPQR()*vH + vTorque*Sense;
 
   return Thrust; // return thrust in pounds
 }
@@ -217,7 +217,7 @@ double FGPropeller::GetPowerRequired(void)
 
   PowerRequired = cPReq*RPS*RPS*RPS*Diameter*Diameter*Diameter*Diameter
                                                        *Diameter*rho;
-  Torque(eX) = PowerRequired / ((RPM/60)*2.0*M_PI);
+  vTorque(eX) = PowerRequired / ((RPM/60)*2.0*M_PI);
 
   return PowerRequired;
 }
