@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.15 2000/05/16 10:19:18 jsb Exp $
+// $Id: JSBSim.cxx,v 1.16 2000/05/16 11:21:34 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -132,7 +132,7 @@ int FGJSBsim::init( double dt ) {
     fgtrim->ReportState();
     
     controls.set_elevator_trim(FDMExec.GetFCS()->GetDeCmd());
-    controls.set_trimmed_throttle(FGControls::ALL_ENGINES,GetThrottleCmd(0)/100);
+    controls.set_trimmed_throttle(FGControls::ALL_ENGINES,FDMExec.GetFCS()->GetThrottleCmd(0)/100);
     //the trimming routine only knows how to get 1 value for throttle
     
     //for(int i=0;i<FDMExec.GetAircraft()->GetNumEngines();i++) {
