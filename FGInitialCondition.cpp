@@ -70,12 +70,12 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   latitude=longitude=0;
   u=v=w=0;
   lastSpeedSet=setvt;
-  if(fdmex != NULL ) {
+  if(FDMExec != NULL ) {
     fdmex=FDMExec;
     fdmex->GetPosition()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
   } else {
-    cout << "FGInitialCondition: This class requires a pointer to an initialized FGFDMExec object" << endl;
+    cout << "FGInitialCondition: This class requires a pointer to an valid FGFDMExec object" << endl;
   }
 
 }
@@ -130,7 +130,7 @@ void FGInitialCondition::SetMachIC(float tt) {
 
 void FGInitialCondition::SetClimbRateFpmIC(float tt) {
 
-  if(vt != 0) {
+  if(vt > 0.1) {
     hdot=tt/60;
     gamma=asin(hdot/vt);
   }
@@ -211,7 +211,7 @@ float FGInitialCondition::calcVcas(float Mach) {
 
   A = pow(((pt-p)/psl+1),0.28571);
   vcas = sqrt(7*psl/rhosl*(A-1));
-  //cout << "calcVcas: vcas= " << vcas*FPSTOKTS << " mach= " << Mach << " pressure: " << p << endl;
+  //cout << "calcVcas: vcas= " << vcas*FPSTOKTS << " mach= " << Mach << " pressure: " << pt << endl;
   return vcas;
 }
 
@@ -263,7 +263,12 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
   float const relax =0.9;
   int i;
   bool success=false;
-
+  
+  if(vcas < 0.1) {
+    Mach=0;
+    success=true;
+    return success;
+  }  
   //initializations
   d=1;
   if(findMachInterval(&x1,&x3,vcas)) {
@@ -279,6 +284,7 @@ bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
       //cout << "getMachFromVcas x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
       d=(x3-x1)/d0;
       x2=x1-d*d0*f1/(f3-f1);
+      
       f2=calcVcas(x2)-vcas;
       if(f1*f2 <= 0.0) {
         x3=x2;
