@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.116 2002/04/11 14:40:21 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.117 2002/04/11 17:08:47 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -57,6 +57,13 @@
 #include <FDM/JSBSim/FGLGear.h>
 #include <FDM/JSBSim/FGPropertyManager.h>
 #include "JSBSim.hxx"
+
+static inline double
+FMAX (double a, double b)
+{
+  return a > b ? a : b;
+}
+
 
 /******************************************************************************/
 
@@ -332,8 +339,8 @@ bool FGJSBsim::copy_to_JSBsim() {
 				// Parking brake sets minimum braking
 				// level for mains.
     double parking_brake = globals->get_controls()->get_parking_brake();
-    FCS->SetLBrake(fmax(globals->get_controls()->get_brake(0), parking_brake));
-    FCS->SetRBrake(fmax(globals->get_controls()->get_brake(1), parking_brake));
+    FCS->SetLBrake(FMAX(globals->get_controls()->get_brake(0), parking_brake));
+    FCS->SetRBrake(FMAX(globals->get_controls()->get_brake(1), parking_brake));
     FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
 
     FCS->SetGearCmd( globals->get_controls()->get_gear_down());
