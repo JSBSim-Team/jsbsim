@@ -69,7 +69,7 @@ typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.12 2001/03/20 16:15:39 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.13 2001/03/20 16:18:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** FGTrim -- the trimming routine for JSBSim
+/** FGTrim -- the trimming routine for JSBSim.
     FGTrim finds the aircraft attitude and control settings needed to maintain
     the steady state described by the FGInitialCondition object .  It does this
     iteratively by assigning a control to each state and adjusting that control
@@ -115,7 +115,7 @@ CLASS DOCUMENTATION
     at those conditions?  Check the speed, altitude, configuration (flaps,
     gear, etc.), weight, cg, and anything else that may be relavant.
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.12 2001/03/20 16:15:39 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.13 2001/03/20 16:18:15 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
