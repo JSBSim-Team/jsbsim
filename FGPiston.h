@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.9 2001/02/02 01:17:00 jsb Exp $";
+#define ID_PISTON "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.h,v 1.10 2001/02/04 13:16:16 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

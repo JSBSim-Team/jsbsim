@@ -75,7 +75,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.13 2001/02/02 01:17:01 jsb Exp $"
+#define ID_ROTATION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotation.h,v 1.14 2001/02/04 13:16:17 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

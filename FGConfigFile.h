@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.12 2001/02/02 01:16:57 jsb Exp $
+    @version $Id: FGConfigFile.h,v 1.13 2001/02/04 13:16:13 jsb Exp $
     @see -
 */
 

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.10 2001/02/02 01:17:00 jsb Exp $"
+#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.11 2001/02/04 13:16:16 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

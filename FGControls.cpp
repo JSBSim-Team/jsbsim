@@ -18,13 +18,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.cpp,v 1.5 2001/02/02 01:16:57 jsb Exp $
+// $Id: FGControls.cpp,v 1.6 2001/02/04 13:16:13 jsb Exp $
 // (Log is kept at end of this file)
 
 
 #include "FGControls.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGControls.cpp,v 1.5 2001/02/02 01:16:57 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGControls.cpp,v 1.6 2001/02/04 13:16:13 jsb Exp $";
 static const char *IdHdr = "ID_CONTROLS";
 
 FGControls controls;
@@ -53,6 +53,9 @@ FGControls::~FGControls() {
 
 
 // $Log: FGControls.cpp,v $
+// Revision 1.6  2001/02/04 13:16:13  jsb
+// ** JSB ** Got rid of extra carriage return in code
+//
 // Revision 1.5  2001/02/02 01:16:57  jsb
 // ** JSB ** trim, prop, gear changes
 //

@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.h,v 1.9 2001/02/02 01:16:59 jsb Exp $"
+#define ID_OUTPUT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGOutput.h,v 1.10 2001/02/04 13:16:15 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

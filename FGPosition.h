@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.30 2001/02/02 01:17:00 jsb Exp $"
+#define ID_POSITION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.h,v 1.31 2001/02/04 13:16:16 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.30 2001/02/02 01:17:00 jsb Exp $
+    @version $Id: FGPosition.h,v 1.31 2001/02/04 13:16:16 jsb Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
