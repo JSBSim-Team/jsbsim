@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.53 2003/07/13 20:12:10 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.54 2003/07/13 20:18:36 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,8 +277,8 @@ void FGAtmosphere::Turbulence(void)
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
     vDirectiondAccelDt.Normalize();
+    vDirectiondAccelDt(eX) *= vDirectiondAccelDt(eX);
     vDirectiondAccelDt(eY) *= vDirectiondAccelDt(eY);
-    vDirectiondAccelDt(eZ) *= vDirectiondAccelDt(eZ);
     vDirectionAccel += vDirectiondAccelDt*rate*TurbRate*State->Getdt();
     vDirectionAccel.Normalize();
     vDirection      += vDirectionAccel*rate*State->Getdt();
