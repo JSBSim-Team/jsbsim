@@ -35,6 +35,7 @@ INCLUDES
 *******************************************************************************/
 
 #include <string>
+#include <stdlib.h>
 
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
@@ -104,19 +105,20 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=-30;
-    control_max=30;
+    control_min=-30*DEGTORAD;
+    control_max=30*DEGTORAD;
     accel_convert=RADTODEG;
     max_iterations=1;
     break;
   case tPhi:
-    control_min=-30;
-    control_max=30;
+    control_min=-30*DEGTORAD;
+    control_max=30*DEGTORAD;
     accel_convert=RADTODEG;
     break;
   case tGamma:
     control_min=-45*DEGTORAD;
     control_max=45*DEGTORAD;
+    control_convert=RADTODEG;
     break;
   }
 
@@ -205,13 +207,24 @@ void FGTrimAxis::setThrottlesPct(void) {
 }
 
 void FGTrimAxis::AxisReport(void) {
-  cout << "  " 
+  
+  char out[80];
+  sprintf(out,"  %20s: %5.2f %5s: %9.2e Tolerance: %3.0e\n",
+           GetControlName().c_str(), GetControl()*control_convert,
+           GetAccelName().c_str(), GetAccel(), GetTolerance()); 
+  cout << out;
+  /* cout << "  " << setw(20)
   << GetControlName() << ": "
+  << setw(5) << setprecision(2) 
   << GetControl()*control_convert << "  "
-  << GetAccelName() << ": "
+  << setw(5) << GetAccelName() << ": "
+  << setw(5) << setprecision(2) 
   << GetAccel() << "  "
-  << "Tolerance: " << GetTolerance()
-  << endl;
+  << "Tolerance: " 
+  << setw(5) << setprecision(2) 
+  << GetTolerance()
+  << endl; */
+
 }
 
 

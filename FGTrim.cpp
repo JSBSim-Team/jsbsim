@@ -44,15 +44,15 @@ scheme. */
 INCLUDES
 *******************************************************************************/
 
+#include <stdlib.h>
+
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 #include "FGInitialCondition.h"
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-/*******************************************************************************
-CLASS DECLARATION
-*******************************************************************************/
+/*******************************************************************************/
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
 
@@ -95,6 +95,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   //cout << "NumAxes: " << TrimAxes.size() << endl;
   NumAxes=TrimAxes.size();
   sub_iterations=new float[NumAxes];
+  successful=new float[NumAxes];
   current_axis=0;
 }
 
@@ -105,22 +106,26 @@ FGTrim::~FGTrim(void) {
     delete TrimAxes[current_axis];
   }
   delete[] sub_iterations;
+  delete[] successful;
 }
 
 /******************************************************************************/
 
 void FGTrim::TrimStats() {
+  char out[80];
   cout << endl << "  Trim Statistics: " << endl;
   cout << "    Total Iterations: " << total_its << endl;
   if(total_its > 0) {
     cout << "    Sub-iterations:" << endl;
     for(current_axis=0; current_axis<NumAxes; current_axis++) {
-      cout << "      " << TrimAxes[current_axis]->GetAccelName() << ": "
-      << sub_iterations[current_axis] << " average: "
-      << sub_iterations[current_axis]/total_its
-      << " stability: "
-      << TrimAxes[current_axis]->GetAvgStability()
-      << endl;
+      
+      sprintf(out,"   %5s: %3.0f average: %5.2f stability: %5.2f  successful: %3.0f\n",
+                  TrimAxes[current_axis]->GetAccelName().c_str(),
+                  sub_iterations[current_axis],
+                  sub_iterations[current_axis]/float(total_its),
+                  TrimAxes[current_axis]->GetAvgStability(),
+                  successful[current_axis] );
+      cout << out;
     }
   }
 }
@@ -137,8 +142,60 @@ void FGTrim::Report(void) {
 /******************************************************************************/
 
 void FGTrim::ReportState(void) {
-  cout << endl << "  JSBSim Trim Report" << endl;
-  cout << "    Weight: " << fdmex->GetAircraft()->GetWeight()
+  char out[80], flap[10], gear[10];
+  
+  cout << endl << "  JSBSim State" << endl;
+  sprintf(out,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
+                   fdmex->GetAircraft()->GetWeight(),
+                   fdmex->GetAircraft()->GetXYZcg()(1),
+                   fdmex->GetAircraft()->GetXYZcg()(2),
+                   fdmex->GetAircraft()->GetXYZcg()(3) );
+  cout << out;             
+  if( fdmex->GetFCS()->GetDfPos() <= 0.01)
+    sprintf(flap,"Up");
+  else
+    sprintf(flap,"%2.0f",fdmex->GetFCS()->GetDfPos());
+  if(fdmex->GetAircraft()->GetGearUp() == true)
+    sprintf(gear,"Up");
+  else
+    sprintf(gear,"Down");
+  sprintf(out, "    Flaps: %3s  Gear: %4s\n",flap,gear);
+  cout << out;
+  sprintf(out, "    Speed: %4.0f KCAS  Mach: %5.2f  Altitude: %7.0f ft.\n",
+                    fdmex->GetAuxiliary()->GetVcalibratedKTS(),
+                    fdmex->GetState()->GetParameter(FG_MACH),
+                    fdmex->GetPosition()->Geth() );
+  cout << out;
+  sprintf(out, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
+                    fdmex->GetState()->GetParameter(FG_ALPHA)*RADTODEG,
+                    fdmex->GetRotation()->Gettht()*RADTODEG );
+  cout << out;
+  sprintf(out, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
+                    fdmex->GetPosition()->GetGamma()*RADTODEG,
+                    fdmex->GetPosition()->Gethdot()*60 );
+  cout << out;                  
+  sprintf(out, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
+                    fdmex->GetAircraft()->GetNlf(),
+                    fdmex->GetState()->GetParameter(FG_PITCHRATE)*RADTODEG );
+  cout << out;
+  sprintf(out, "    True Heading: %3.0f deg  Sideslip: %5.2f deg\n",
+                    fdmex->GetRotation()->Getpsi()*RADTODEG,
+                    fdmex->GetState()->GetParameter(FG_BETA)*RADTODEG );                  
+  cout << out;
+  sprintf(out, "    Bank Angle: %3.0f deg\n",
+                    fdmex->GetRotation()->Getphi()*RADTODEG );
+  cout << out;
+  sprintf(out, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
+                    fdmex->GetState()->GetParameter(FG_ELEVATOR_POS)*RADTODEG,
+                    fdmex->GetState()->GetParameter(FG_AILERON_POS)*RADTODEG,
+                    fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG );
+  cout << out;                  
+  sprintf(out, "    Throttle: %5.2f\%\n",
+                    fdmex->GetFCS()->GetThrottlePos(0) );
+  cout << out;                                  
+  
+  
+  /* cout << "    Weight: " << fdmex->GetAircraft()->GetWeight()
   << " lbs.  CG x,y,z: " << fdmex->GetAircraft()->GetXYZcg()
   << " inches " << endl;
 
@@ -191,7 +248,8 @@ void FGTrim::ReportState(void) {
   << " deg  Rudder: " << fdmex->GetState()->GetParameter(FG_RUDDER_POS)*RADTODEG
   << " deg" << endl;
 
-  cout << "    Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)/100 << endl;
+  cout << "    Throttle: " << fdmex->GetFCS()->GetThrottlePos(0)/100 << endl; */
+
 }
 
 /******************************************************************************/
@@ -287,6 +345,7 @@ bool FGTrim::DoTrim(void) {
     TrimAxes[current_axis]->SetControl(0);
     TrimAxes[current_axis]->Run();
     sub_iterations[current_axis]=0;
+    successful[current_axis]=0;
   }
   do {
     axis_count=0;
@@ -307,8 +366,10 @@ bool FGTrim::DoTrim(void) {
         TrimAxes[current_axis]->AxisReport();
       }
       if(fabs(TrimAxes[current_axis]->GetAccel()) < 
-               TrimAxes[current_axis]->GetTolerance())
+               TrimAxes[current_axis]->GetTolerance()) {
         axis_count++;
+        successful[current_axis]++;
+      }  
       //else
       //  cout << TrimAxes[current_axis]->GetAccelName() << " failed" << endl;  
     }

@@ -89,6 +89,7 @@ private:
   float wdot,udot,qdot;
   float dth;
   float *sub_iterations;
+  float *successful;
   int max_sub_iterations;
   int max_iterations;
   int total_its;
