@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
 <!-- T76 turboprop engine model
-     for the SimTurbine turbine model -->
+     for the FGTurbine turbine model -->
 
-<FG_SIMTURBINE NAME="T76">
+<FG_TURBINE NAME="T76">
   <!--
      MILTHRUST     max static thrust (without afterburning) at S.L. (installed), lbf
      MAXTHRUST     max static thrust with afterburning at S.L. (installed), lbf
@@ -17,6 +17,7 @@
      AUGMENTED     = 1 if augmentation installed, else = 0
      AUGMETHOD     = 0 if using property /engine[n]/augmentation
                    = 1 if using last 1% of throttle movement
+                   = 2 if using FCS-defined throttle
      INJECTED      = 1 if water injection installed
 
      TABLE(0)      idle thrust vs. altitude and mach
@@ -69,4 +70,5 @@
   0.8    0.0200  0.0200  0.0200  0.0200  0.0200  0.0200
   1.0    0.0     0.0     0.0     0.0     0.0     0.0
  </TABLE>
-</FG_SIMTURBINE>
+
+</FG_TURBINE>
