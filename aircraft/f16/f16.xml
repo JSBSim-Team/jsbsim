@@ -1,19 +1,22 @@
 <FDM_CONFIG NAME="F-16" VERSION="1.57">
 
-  File:        F16.xml
+  File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.1 2001/12/28 19:50:39 jberndt Exp $
+  CVS Version: $Id: f16.xml,v 1.2 2002/01/01 16:57:17 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 
   Source: Richard Murray's F16 Model page, NASA TP-1538 wind tunnel data. (Dec. 1979)
               http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/
           "Observers Aircraft" by William Green, 1987 Edition (ISBN 0-7232-3458-2)
-          ACM 3.0 configuration files
-          General Dynamics F-16 Dash-1
+          ACM 3.0 configuration files (very unreliable, but it gives a head start)
+          General Dynamics F-16 Dash-1 (basic drag and weight data only)
 
-  Todo: properly locate the gear, pilot eye point, fuel tanks and engine
-  Todo: better spring and damping factors for the gear
+  Todo: 
+        Give CXq and CZq a proper place.
+        Check all TABLE coefficients to make sure the information is right.
+        It wouldn't hurt to check the VECTOR coefficients also.
+        Better spring and damping factors for the gear?
 
   History: 
   1.00	Initial revision.
@@ -33,15 +36,24 @@
 	Turned out XML doesn't allow "--" inside comments, changed that.
 	Better location of CG, Tanks, Pilot eyepoint and Gear (still not exact).
 	Updated fuel capacity to Dash-1 data.
+  1.1   Added CZ, Roll due to elevator deflection table.
+        Updated CG-X location to match Richard Murray's data.
+	Added AC_LV and AC_HTAILARM.
+	Reference point is now at the tail of the aircraft.
+	Changed CBAR which was incorrect because of a feet to meter
+        misunderstanding.
+  1.2   Changed static and dynamic friction coefficients for Main landing gear.
+        Removed unknow values for S, B, G, HE and Rtod. They ware already in place.
+        Added left and right wingtips and ventral fins, vertical tail tip and nose.
+        Moved CG-Z location to 0.0, centre of chord of main wing.
+        Updated TODO to reflect the current state.
+        Moved nozzle to new location.
  
   The following values still may not have a proper place:
-     S = 300.0 (wing area?)       B = 30.0  (wing span?)
-     G = 32.174 (gravitation?)    Rtod = 57.29578
-     HE = 0.35 (location of center of mass?)
 
-   (alpha) 10.0  -5.0   0.0   5.0   10.0  15.0  20.0  25.0  30.0  35.0  40.0  45.0
-     CXq: -0.267 -0.110 0.308 1.34  2.08  2.91  2.76  2.05  1.50  1.49  1.83  1.21
-     CZq: -8.80  -25.8  -28.9 -31.4 -31.2 -30.7 -27.7 -28.2 -29.0 -29.8 -38.3 -35.3
+   (alpha)  -10.0	-5.0	0.0	5.0	10.0	15.0	20.0	25.0	30.0	35.0	40.0	45.0
+     CXq:   -0.267	-0.110	0.308	1.34	2.08	2.91	2.76	2.05	1.50	1.49	1.83	1.21
+     CZq:   -8.80	-25.8	-28.9	-31.4	-31.2	-30.7	-27.7	-28.2	-29.0	-29.8	-38.3	-35.3
   -->
 
   <METRICS>
@@ -69,20 +81,20 @@
     -->
 
     AC_WINGAREA   300.0
-    AC_WINGSPAN    30.0   <!-- without tip missile launchers -->  
-    AC_CHORD        0.943 <!-- CBAR (in ft.) = 11.32" -->
-    AC_HTAILAREA   63.7  <!-- square feet -->
-    AC_HTAILARM      .   <!-- ft          -->
-    AC_VTAILAREA   54.75 <!-- square feet -->
-    AC_LV            .   <!-- ft          -->
+    AC_WINGSPAN    30.0  <!-- 31.0 with tip missile launchers and 32.83 with missiles also -->  
+    AC_CHORD       11.32 <!-- ft  -->
+    AC_HTAILAREA   63.7  <!-- ft2 -->
+    AC_HTAILARM   190.43 <!-- ft  -->
+    AC_VTAILAREA   54.75 <!-- ft2 -->
+    AC_LV         190.43 <!-- ft  -->
     AC_IXX       9496.0
     AC_IYY      55814.0
     AC_IZZ      63100.0
     AC_IXZ        982.0
-    AC_EMPTYWT  17400.0	<!-- w. pilot, oil, oxygen, unusable fuel and tip missile launchers -->
+    AC_EMPTYWT  17400.0	 <!-- w. pilot, oil, oxygen, unusable fuel and tip missile launchers -->
     AC_CGLOC      268.2   0.0   90.2
-    AC_AERORP     268.2   0.0   90.2
-    AC_EYEPTLOC   157.25  0.0   12.59
+    AC_AERORP       0.0   0.0    0.0  <!-- locations form tail of the aeroplane -->
+    AC_EYEPTLOC   425.45  0.0  102.79
     AC_POINTMASS     .     .      .     .
     AC_ALPHALIMITS   .     .
 
@@ -106,9 +118,15 @@
     <max steer angle>                Maximum steerable angle in degrees
     -->
 
-    AC_GEAR NOSE_NLG  -111.55   0.0 -88.5  1621   700 0.05   0.08   0.2 STEERABLE NOSE 72 RETRACT
-    AC_GEAR LEFT_MLG    44.35 -46.5 -88.5 22704 10000 0.0397 0.0397 0.2 FIXED     LEFT  0 RETRACT
-    AC_GEAR RIGHT_MLG   44.35  46.5 -88.5 22704 10000 0.0397 0.0397 0.2 FIXED     RIGHT 0 RETRACT
+    AC_GEAR NOSE_LG    379.75   0.0 -68.52  1621   700 0.05 0.08 0.2 STEERABLE NOSE  72.0 RETRACT
+    AC_GEAR LEFT_MLG   223.85 -46.5 -68.52 22704 10000 0.05 0.08 0.2 FIXED     LEFT  0    RETRACT
+    AC_GEAR RIGHT_MLG  223.85  46.5 -68.52 22704 10000 0.05 0.08 0.2 FIXED     RIGHT 0    RETRACT
+    AC_GEAR LEFT_WT    223.85 -16.4   0.0  10000  2000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
+    AC_GEAR RIGHT_WT   223.85  16.4   0.0  10000  2000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
+    AC_GEAR TOP_VT      23.75   0.0 200.5  10000  2000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
+    AC_GEAR LEFT_VF    137.7  -23.3 -46.52 10000  1000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
+    AC_GEAR RIGHT_VF   137.7   23.3 -46.52 10000  1000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
+    AC_GEAR NOSE       593.9    0.0   0.0  10000  2000 0.2  0.2  0.2 FIXED     NONE  0    FIXED
 
   </UNDERCARRIAGE>
 
@@ -138,9 +156,9 @@
     -->
 
     <AC_ENGINE FILE="F100PW220">
-      XLOC       77.04
+      XLOC      191.16
       YLOC        0.0
-      ZLOC        0.2
+      ZLOC        0.0
       PITCH       0.0
       YAW         0.0
       FEED          0
@@ -148,7 +166,7 @@
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="F100PW220_nozzle">
-      XLOC       77.04
+      XLOC       30.3
       YLOC        0.0
       ZLOC        0.2
       PITCH       0.0
@@ -156,7 +174,7 @@
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC       68.52
+      XLOC      207.2 
       YLOC       94.22
       ZLOC      -22.84
       RADIUS     78.8 <!-- FIXME -->
@@ -165,7 +183,7 @@
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="2">
-      XLOC       68.52
+      XLOC      207.2 
       YLOC      -94.22
       ZLOC      -22.84
       RADIUS     78.8 <!-- FIXME -->
@@ -329,6 +347,26 @@
         45.0    0.166   0.167   0.138   0.091   0.040
       </COEFFICIENT>
 
+      <!-- CZq? -->
+      <COEFFICIENT NAME="CLq" TYPE="VECTOR">
+         Lift_due_to_pitch_rate
+         12
+         FG_MACH
+         FG_QBAR|FG_WINGAREA|FG_AEROQ|FG_CI2VEL
+         -10.0	-8.80
+         -5.0	-25.8
+         0.0	-28.9
+         5.0	-31.4
+         10.0	-31.2
+         15.0	-30.7
+         20.0	-27.7
+         25.0	-28.2
+         30.0	-29.0
+         35.0	-29.8
+         40.0	-38.3
+         45.0	-35.3
+     </COEFFICIENT>
+
     </AXIS>
 
     <AXIS NAME="DRAG">
@@ -473,6 +511,30 @@
       </COEFFICIENT>
 
       <!--
+         - Z body axis aerodynamic force coefficient (CZ)
+         - ALPHA = Angel Of Attack in degrees (-10 <= ALPHA <= 45)
+         - BETA  = Elevator deflection in degrees (-25 <= BETA <= 25)
+        -->
+      <COEFFICIENT NAME="Cnde" TYPE="VECTOR">
+        Roll_moment_due_to_elevator_deflection
+        12
+        FG_MACH
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_ELEVATOR_POS
+        -10.0	0.770
+        -5.0	0.241
+        0.0	-0.100
+        5.0	-0.416
+        10.0	-0.731
+        15.0	-1.053
+        20.0	-1.366
+        25.0	-1.646
+        30.0	-1.917
+        35.0	-2.120
+        40.0	-2.248
+        45.0	-2.229
+      </COEFFICIENT>
+
+      <!--
          - Roling moment due to ailleron deflection (DLDA)
          - ALPHA = Angle Of Attack in degrees (-10 <= ALPHA <= 45)
          - BETA  = Sideslip angle in degrees (-30 <= BETA <= 30)
@@ -529,7 +591,7 @@
       <!--
          - Y body axis aerodynamic moment coefficient (CM)
          - ALPHA = Angel Of Attack in degrees (-10 <= ALPHA <= 45)
-         - BETA  = Elevator devlection in degrees (-25 <= BETA <= 25)
+         - BETA  = Elevator deflection in degrees (-25 <= BETA <= 25)
         -->
       <COEFFICIENT NAME="Cmde" TYPE="TABLE">
         Pitch_moment_due_to_elevator_deflection
@@ -734,6 +796,8 @@
 <!--
    General Dynamics F-16A Block 15(+) Metrics Data.
 
+    Length:      49 Ft 5.9 In.
+    Height:      16 Ft 8.5 In.
     Max speed:   Mach 2.05 at 12,000 meters
     Ceiling:     60,000 Ft.
     Climb speed: 315 meters/second
@@ -743,7 +807,7 @@
 
    * Wing
         Area:		300 Sq Ft	* Vertical Fin (Each)
-        Span:		30 Ft o In.	    Area:		8.03 Sq Ft
+        Span:		30 Ft 0 In.	    Area:		8.03 Sq Ft
         Aspect Ratio:	3.0		    Span:		23.356 In. Theo (27.5 In. Actual)
         Taper ratio:	0.2275		    Aspect Ratio:	0.472 (Theo)
         Sweep(LE)	40 degrees	    Taper Ratio:	0.760 (Theo)
