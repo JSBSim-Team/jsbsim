@@ -126,7 +126,7 @@ public:
   void SetAltitudeAGLFtIC(float tt);
 
   //"vertical" flight path, recalculate theta
-  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(gamma=tt*DEGTORAD); }
+  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(tt*DEGTORAD); }
   void SetFlightPathAngleRadIC(float tt);
   //set speed first
   void SetClimbRateFpmIC(float tt);
