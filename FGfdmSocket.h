@@ -82,7 +82,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.23 2001/12/23 21:49:01 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.24 2002/02/04 23:05:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -100,6 +100,7 @@ public:
   void Append(double);
   void Append(long);
   void Clear(void);
+  bool GetConnectStatus(void) {return connected;}
 
 private:
   int sckt;
@@ -107,6 +108,7 @@ private:
   struct sockaddr_in scktName;
   struct hostent *host;
   string buffer;
+  bool connected;
   void Debug(int from);
 };
 

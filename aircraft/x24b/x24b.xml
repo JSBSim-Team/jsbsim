@@ -3,7 +3,7 @@
 
   File:        x24b.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: x24b.xml,v 1.2 2002/02/01 14:50:55 jberndt Exp $
+  CVS Version: $Id: x24b.xml,v 1.3 2002/02/04 23:05:34 jberndt Exp $
 
   Function: Models an X-24B
   -->
@@ -572,7 +572,7 @@
     NOTE that Time is always output with the data.
   -->
 
-  <OUTPUT NAME="JSBoutX24B.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBoutX24B.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       ON
     ATMOSPHERE       OFF

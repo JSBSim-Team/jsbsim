@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.15 2002/01/30 15:16:27 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.16 2002/02/04 23:05:34 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,6 +49,7 @@ CLASS IMPLEMENTATION
 FGfdmSocket::FGfdmSocket(string address, int port)
 {
   size = 0;
+  connected = false;
 
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
@@ -80,6 +81,7 @@ FGfdmSocket::FGfdmSocket(string address, int port)
       int len = sizeof(struct sockaddr_in);
       if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
         cout << "Successfully connected to socket ..." << endl;
+        connected = true;
       } else {                // unsuccessful
         cout << "Could not connect to socket ..." << endl;
       }

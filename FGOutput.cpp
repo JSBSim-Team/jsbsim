@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.52 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.53 2002/02/04 23:05:34 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,9 +69,6 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   SubSystems = 0;
   enabled = true;
   
-#ifdef FG_WITH_JSBSIM_SOCKET
-  socket = new FGfdmSocket("localhost",1138);
-#endif
   Debug(0);
 }
 
@@ -302,8 +299,9 @@ void FGOutput::DelimitedOutput(string fname)
 void FGOutput::SocketOutput(void)
 {
   string asciiData;
-  /*
+
   if (socket == NULL) return;
+  if (!socket->GetConnectStatus()) return;
 
   socket->Clear();
   if (sFirstPass) {
@@ -343,10 +341,10 @@ void FGOutput::SocketOutput(void)
     socket->Append("L");
     socket->Append("M");
     socket->Append("N");
-    socket->Append("Throttle");
-    socket->Append("Aileron");
-    socket->Append("Elevator");
-    socket->Append("Rudder");
+    socket->Append("Throttle Position");
+    socket->Append("Aileron Position");
+    socket->Append("Elevator Position");
+    socket->Append("Rudder Position");
     sFirstPass = false;
     socket->Send();
   }
@@ -368,30 +366,30 @@ void FGOutput::SocketOutput(void)
   socket->Append(Position->GetVn());
   socket->Append(Position->GetVe());
   socket->Append(Position->GetVd());
-  socket->Append(Translation->GetUdot());
-  socket->Append(Translation->GetVdot());
-  socket->Append(Translation->GetWdot());
-  socket->Append(Rotation->GetP());
-  socket->Append(Rotation->GetQ());
-  socket->Append(Rotation->GetR());
-  socket->Append(Rotation->GetPdot());
-  socket->Append(Rotation->GetQdot());
-  socket->Append(Rotation->GetRdot());
-  socket->Append(Aircraft->GetFx());
-  socket->Append(Aircraft->GetFy());
-  socket->Append(Aircraft->GetFz());
+  socket->Append(Translation->GetUVWdot(eU));
+  socket->Append(Translation->GetUVWdot(eV));
+  socket->Append(Translation->GetUVWdot(eW));
+  socket->Append(Rotation->GetPQR(eP));
+  socket->Append(Rotation->GetPQR(eQ));
+  socket->Append(Rotation->GetPQR(eR));
+  socket->Append(Rotation->GetPQRdot(eP));
+  socket->Append(Rotation->GetPQRdot(eQ));
+  socket->Append(Rotation->GetPQRdot(eR));
+  socket->Append(Aircraft->GetForces(eX));
+  socket->Append(Aircraft->GetForces(eY));
+  socket->Append(Aircraft->GetForces(eZ));
   socket->Append(Position->GetLatitude());
   socket->Append(Position->GetLongitude());
   socket->Append(Translation->Getqbar());
   socket->Append(Translation->Getalpha());
-  socket->Append(Aircraft->GetL());
-  socket->Append(Aircraft->GetM());
-  socket->Append(Aircraft->GetN());
-  socket->Append(FCS->GetThrottle(0));
-  socket->Append(FCS->GetDa());
-  socket->Append(FCS->GetDe());
-  socket->Append(FCS->GetDr());
-  socket->Send(); */
+  socket->Append(Aircraft->GetMoments(eL));
+  socket->Append(Aircraft->GetMoments(eM));
+  socket->Append(Aircraft->GetMoments(eN));
+  socket->Append(FCS->GetThrottlePos(0));
+  socket->Append(FCS->GetDaPos());
+  socket->Append(FCS->GetDePos());
+  socket->Append(FCS->GetDrPos());
+  socket->Send();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,6 +417,13 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
   Output->SetFilename(token);
   token = AC_cfg->GetValue("TYPE");
   Output->SetType(token);
+
+#if defined( FG_WITH_JSBSIM_SOCKET ) || !defined( FGFS )
+  if (token == "SOCKET") {
+    socket = new FGfdmSocket("localhost",1138);
+  }
+#endif
+  
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != string("/OUTPUT")) {

@@ -3,7 +3,7 @@
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.8 2001/12/02 16:00:37 apeden Exp $
+  CVS Version: $Id: shuttle.xml,v 1.9 2002/02/04 23:05:34 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -588,7 +588,7 @@
     NOTE that Time is always output with the data.
   -->
 
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       5
     SIMULATION       ON
     ATMOSPHERE       ON

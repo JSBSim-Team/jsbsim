@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.6 2002/01/19 17:28:16 dmegginson Exp $
+  CVS Version: $Id: c182.xml,v 1.7 2002/02/04 23:05:34 jberndt Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -720,7 +720,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout182.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout182.csv" TYPE="NONE">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF
