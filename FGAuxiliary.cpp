@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.44 2004/03/18 12:50:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.45 2004/03/23 12:04:15 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  vcas = veas = mach = qbar = pt = tat = 0;
+  vcas = veas = Mach = qbar = pt = tat = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
 
@@ -97,75 +97,45 @@ bool FGAuxiliary::Run()
 
   if (!FGModel::Run())
   {
-    GetState();
+    qbar = Translation->Getqbar();
+    Mach = Translation->GetMach();
+    MachU= Translation->GetMachU();
+    p = Atmosphere->GetPressure();
+    rhosl = Atmosphere->GetDensitySL();
+    psl = Atmosphere->GetPressureSL();
+    sat = Atmosphere->GetTemperature();
 
+    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
     vEuler = State->CalcEuler();
 
-    //calculate total temperature assuming isentropic flow
-    tat = sat*(1 + 0.2*mach*mach);
+    double cTht = cos(vEuler(eTht));
+    double cPhi = cos(vEuler(ePhi)),   sPhi = sin(vEuler(ePhi));
+
+    vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
+    if (cTht != 0.0) {
+      vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
+      vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
+    }
+
+    tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
     tatc = RankineToCelsius(tat);
 
-    if (mach < 1) {   //calculate total pressure assuming isentropic flow
-      pt = p*pow((1 + 0.2*machU*machU),3.5);
+    if (Mach < 1) {   // Calculate total pressure assuming isentropic flow
+      pt = p*pow((1 + 0.2*MachU*MachU),3.5);
     } else {
-      // shock in front of pitot tube, we'll assume its normal and use
-      // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
-      // pressure behind the shock to the static pressure in front
-
-      B = 5.76*machU*machU/(5.6*machU*machU - 0.8);
-
-      // The denominator above is zero for Mach ~ 0.38, for which
-      // we'll never be here, so we're safe
-
-      D = (2.8*machU*machU-0.4)*0.4167;
+      // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
+      B = 5.76*MachU*MachU/(5.6*MachU*MachU - 0.8);
+      D = (2.8*MachU*MachU-0.4)*0.4167;
       pt = p*pow(B,3.5)*D;
     }
 
     A = pow(((pt-p)/psl+1),0.28571);
-    if (machU > 0.0) {
+    if (MachU > 0.0) {
       vcas = sqrt(7*psl/rhosl*(A-1));
       veas = sqrt(2*qbar/rhosl);
     } else {
       vcas = veas = 0.0;
     }
-
-    // Pilot sensed accelerations are calculated here. This is used
-    // for the coordinated turn ball instrument. Motion base platforms sometimes
-    // use the derivative of pilot sensed accelerations as the driving parameter,
-    // rather than straight accelerations.
-    //
-    // The theory behind pilot-sensed calculations is presented:
-    //
-    // For purposes of discussion and calculation, assume for a minute that the
-    // pilot is in space and motionless in inertial space. She will feel
-    // no accelerations. If the aircraft begins to accelerate along any axis or
-    // axes (without rotating), the pilot will sense those accelerations. If
-    // any rotational moment is applied, the pilot will sense an acceleration
-    // due to that motion in the amount:
-    //
-    // [wdot X R]  +  [w X (w X R)]
-    //   Term I          Term II
-    //
-    // where:
-    //
-    // wdot = omegadot, the rotational acceleration rate vector
-    // w    = omega, the rotational rate vector
-    // R    = the vector from the aircraft CG to the pilot eyepoint
-    //
-    // The sum total of these two terms plus the acceleration of the aircraft
-    // body axis gives the acceleration the pilot senses in inertial space.
-    // In the presence of a large body such as a planet, a gravity field also
-    // provides an accelerating attraction. This acceleration can be transformed
-    // from the reference frame of the planet so as to be expressed in the frame
-    // of reference of the aircraft. This gravity field accelerating attraction
-    // is felt by the pilot as a force on her tushie as she sits in her aircraft
-    // on the runway awaiting takeoff clearance.
-    //
-    // In JSBSim the acceleration of the body frame in inertial space is given
-    // by the F = ma relation. If the vForces vector is divided by the aircraft
-    // mass, the acceleration vector is calculated. The term wdot is equivalent
-    // to the JSBSim vPQRdot vector, and the w parameter is equivalent to vPQR.
-    // The radius R is calculated below in the vector vToEyePt.
 
     vPilotAccel.InitMatrix();
     if ( Translation->GetVt() > 1 ) {
@@ -183,17 +153,6 @@ bool FGAuxiliary::Run()
     vPilotAccelN = vPilotAccel/Inertial->gravity();
 
     earthPosAngle += State->Getdt()*Inertial->omega();
-
-    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-
-    double cTht = cos(vEuler(eTht));
-    double cPhi = cos(vEuler(ePhi)),   sPhi = sin(vEuler(ePhi));
-
-    vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
-    if (cTht != 0.0) {
-      vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
-      vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
-    }
 
     return false;
   } else {
@@ -328,19 +287,6 @@ void FGAuxiliary::unbind(void)
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
 
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAuxiliary::GetState(void)
-{
-  qbar = Translation->Getqbar();
-  mach = Translation->GetMach();
-  machU= Translation->GetMachU();
-  p = Atmosphere->GetPressure();
-  rhosl = Atmosphere->GetDensitySL();
-  psl = Atmosphere->GetPressureSL();
-  sat = Atmosphere->GetTemperature();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
