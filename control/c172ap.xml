@@ -10,47 +10,43 @@
         some new FCS input and output identifiers directly
         related to the autopilot:
 
-          AP_ELEVATOR_CMD,
-          AP_AILERON_CMD,
-          AP_RUDDER_CMD,
-          AP_THROTTLE_CMD,
-          AP_SET_ATTITUDE,
-          AP_SET_ALTITUDE,
-          AP_SET_HEADING,
-          AP_SET_AIRSPEED,
-          AP_ACQUIRE_ATTITUDE,
-          AP_ACQUIRE_ALTITUDE,
-          AP_ACQUIRE_HEADING,
-          AP_ACQUIRE_AIRSPEED,
-          AP_ATTITUDE_HOLD_ON,
-          AP_ALTITUDE_HOLD_ON,
-          AP_HEADING_HOLD_ON,
-          AP_AIRSPEED_HOLD_ON,
-          AP_WINGSLEVEL_HOLD_ON
+          ap/elevator_cmd,
+          ap/aileron_cmd,
+          ap/rudder_cmd,
+          ap/throttle_cmd,
+          ap/set_attitude,
+          ap/set_altitude,
+          ap/set_heading,
+          ap/set_airspeed,
+          ap/acquire_attitude,
+          ap/acquire_altitude,
+          ap/acquire_heading,
+          ap/acquire_aispeed,
+          ap/attitude_hold_on,
+          ap/altitude_hold_on,
+          ap/heading_hold_on,
+          ap/airspeed_hold_on,
+          ap/wingslevel_hold_on
 
 -->
 <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
-   ID            0
-   INPUT         FG_PHI
+   INPUT         attitude/phi-rad
    GAIN          1.0
    MIN           -0.255
    MAX            0.255
 </COMPONENT>
 <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
-   ID            1
-   INPUT         FG_PHI
+   INPUT         attitude/phi-rad
    C1            1
 </COMPONENT>
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
-   ID            2
-   INPUT         FG_ROLLRATE
-   INPUT         0
-   INPUT         1
+   INPUT         velocities/p-rad_sec
+   INPUT         fcs/roll-ap-wing-leveler
+   INPUT         fcs/roll-ap-error-integrator
    CLIPTO       -1 1
 </COMPONENT>
 <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
-   ID            3
-   INPUT         2
+   INPUT         fcs/roll-ap-error-summer
    GAIN          -1
-   OUTPUT        AP_AILERON_CMD
+   OUTPUT        ap/aileron_cmd
 </COMPONENT>
