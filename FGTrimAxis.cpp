@@ -41,7 +41,7 @@ INCLUDES
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.9 2000/10/29 17:06:12 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.10 2000/11/01 11:38:09 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -103,9 +103,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetRotation()->Gettht() - 8*DEGTORAD;
-    control_max=fdmex->GetRotation()->Gettht() + 8*DEGTORAD;
-    cout << "min: " << control_min << " max: " << control_max << endl;
+    control_min=fdmex->GetRotation()->Gettht() - 5*DEGTORAD;
+    control_max=fdmex->GetRotation()->Gettht() + 5*DEGTORAD;
     accel_convert=RADTODEG;
     break;
   case tPhi:
@@ -249,14 +248,14 @@ bool FGTrimAxis::initTheta(void) {
   //find the first wheel unit forward of the cg
   //the list is short so a simple linear search is fine
   for( i=0; i<N; i++ ) {
-    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) < 0 ) {
+    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) > 0 ) {
         iForward=i;
         break;
     }
   }
   //now find the first wheel unit aft of the cg
   for( i=0; i<N; i++ ) {
-    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) > 0 ) {
+    if(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(1) < 0 ) {
         iAft=i;
         break;
     }
