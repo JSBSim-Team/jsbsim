@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.38 2004/04/30 12:06:20 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.39 2004/04/30 12:46:46 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models Dave Luff's engine model as ported into JSBSim by David Megginson.
+/** Models Dave Luff's Turbo/Supercharged Piston engine model.
     Additional elements are required for a supercharged engine.  These can be
     left off a non-supercharged engine, ie. the changes are all backward
     compatible at present.
@@ -130,8 +130,8 @@ CLASS DOCUMENTATION
 
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
-    @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.38 2004/04/30 12:06:20 jberndt Exp $
+    @author David Megginson (initial porting and additional code)
+    @version $Id: FGPiston.h,v 1.39 2004/04/30 12:46:46 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
