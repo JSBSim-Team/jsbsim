@@ -192,7 +192,7 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
 	AircraftPath = APath;
 	EnginePath = EPath;
-  Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
+  return Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
 }
 
 

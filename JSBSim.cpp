@@ -119,6 +119,7 @@ USEUNIT("FGAerodynamics.cpp");
 int main(int argc, char** argv)
 {
   FGFDMExec* FDMExec;
+  bool result = false;
 
   if (argc != 3) {
     cout << endl
@@ -129,7 +130,13 @@ int main(int argc, char** argv)
 
   FDMExec = new FGFDMExec();
 
-  FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
+  result = FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
+  
+  if (!result) {
+  	cerr << "Aircraft file " << argv[1] << " was not found" << endl;
+	  exit(-1);
+  }
+  
   if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
     FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
 
