@@ -13,8 +13,9 @@
 
 <FG_TURBINE NAME="RB211-524">
   MAXTHRUST 60600.0
+  MILTHRUST 60600.0
   BYPASSRATIO    5.0
-  TSFC           0.8
+  TSFC           0.564
 
 <TABLE NAME="IdleThrust" TYPE="TABLE">
   Idle_power_thrust_factor
