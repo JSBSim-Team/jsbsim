@@ -3,7 +3,7 @@
 
   File:        c172.xml.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.33 2001/04/19 22:05:21 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.34 2001/07/22 18:52:46 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -173,23 +173,45 @@
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
      <AXIS NAME="LIFT">
-      <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
-         Lift_due_to_alpha
-         11
-         FG_ALPHA
-         FG_QBAR|FG_WINGAREA
-         -0.087  -0.22
-          0        0.25
-          0.14    1.02
-          0.21    1.252
-          0.24    1.354
-          0.26    1.44
-          0.28    1.466
-          0.30    1.432
-          0.32    1.381
-          0.34    1.298
-          0.36    0.97
-       </COEFFICIENT>
+       <GROUP NAME="CLb">
+         Basic_lift
+         <FACTOR NAME="kCLge" TYPE="VECTOR">
+            Change_in_lift_due_to_ground_effect
+            13
+            FG_HOVERB
+            FG_NONE
+            0.0   1.203
+            0.1   1.127
+            0.15  1.090
+            0.2   1.073
+            0.3   1.046
+            0.4   1.055
+            0.5   1.019
+            0.6   1.013
+            0.7   1.008
+            0.8   1.006
+            0.9   1.003
+            1.0   1.002
+            1.1   1.0
+         </FACTOR>   
+         <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
+            Lift_due_to_alpha
+            11
+            FG_ALPHA
+            FG_QBAR|FG_WINGAREA
+            -0.087  -0.22
+             0       0.25
+             0.14    1.02
+             0.21    1.252
+             0.24    1.354
+             0.26    1.44
+             0.28    1.466
+             0.30    1.432
+             0.32    1.381
+             0.34    1.298
+             0.36    0.97
+          </COEFFICIENT>
+       </GROUP>  
        <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
          Delta_lift_due_to_flap_deflection
          4
@@ -216,7 +238,6 @@
          3.9
        </COEFFICIENT>
     </AXIS>
-
     <AXIS NAME="DRAG">
       <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
