@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.147 2003/11/24 02:54:05 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.148 2003/11/24 05:22:46 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -61,6 +61,7 @@
 #include <FDM/JSBSim/FGLGear.h>
 #include <FDM/JSBSim/FGPropertyManager.h>
 #include <FDM/JSBSim/FGEngine.h>
+#include <FDM/JSBSim/FGRotor.h>
 #include "JSBSim.hxx"
 
 static inline double
@@ -559,7 +560,10 @@ bool FGJSBsim::copy_from_JSBsim()
     // Copy the engine values from JSBSim.
     for ( i=0; i < Propulsion->GetNumEngines(); i++ ) {
       SGPropertyNode * node = fgGetNode("engines/engine", i, true);
-      FGThruster * thrust = Propulsion->GetThruster(i);
+      char buf[30];
+      sprintf(buf, "engines/engine[%d]/thruster", i);
+      SGPropertyNode * tnode = fgGetNode(buf, true);
+      FGThruster * thruster = Propulsion->GetThruster(i);
 
       switch (Propulsion->GetEngine(i)->GetType()) {
       case FGEngine::etPiston:
@@ -570,7 +574,6 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
         node->setDoubleValue("mp-osi", eng->getManifoldPressure_inHg());
         node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
-        node->setDoubleValue("EGT_degC", eng->GetEGT());
         } // end FGPiston code block
         break;
       case FGEngine::etRocket:
@@ -601,7 +604,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
       { // FGEngine code block
       FGEngine* eng = Propulsion->GetEngine(i);
-      node->setDoubleValue("rpm", thrust->GetRPM());
+      node->setDoubleValue("rpm", thruster->GetRPM());
       node->setDoubleValue("fuel-flow-gph", eng->getFuelFlow_gph());
       node->setDoubleValue("thrust_lb", eng->GetThrust());
       node->setDoubleValue("fuel-flow_pph", eng->getFuelFlow_pph());
@@ -610,6 +613,32 @@ bool FGJSBsim::copy_from_JSBsim()
       node->setBoolValue("cranking", eng->GetCranking());
       globals->get_controls()->set_starter(i, eng->GetStarter() );
       } // end FGEngine code block
+
+      switch (thruster->GetType()) {
+      case FGThruster::ttNozzle:
+        { // FGNozzle code block
+        FGNozzle* noz = (FGNozzle*)thruster;
+        } // end FGNozzle code block
+        break;
+      case FGThruster::ttPropeller:
+        { // FGPropeller code block
+        FGPropeller* prop = (FGPropeller*)thruster;
+        tnode->setDoubleValue("rpm", prop->GetRPM());
+        tnode->setDoubleValue("pitch", prop->GetPitch());
+        tnode->setDoubleValue("torque", prop->GetTorque()); 
+        } // end FGPropeller code block
+        break;
+      case FGThruster::ttRotor:
+        { // FGRotor code block
+        FGRotor* rotor = (FGRotor*)thruster;
+        } // end FGRotor code block
+        break;
+      case FGThruster::ttDirect:
+        { // Direct code block
+        } // end Direct code block
+        break;
+      }
+
     }
 
     static const SGPropertyNode *fuel_freeze = fgGetNode("/sim/freeze/fuel");
