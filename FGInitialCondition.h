@@ -171,7 +171,8 @@ public:
   inline float GetMachIC(void) { return mach; }
 
   inline float GetAltitudeFtIC(void) { return altitude; }
-
+  inline float GetAltitudeAGLFtIC(void) { return altitude - terrain_altitude; }
+  
   inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG; }
   inline float GetFlightPathAngleRadIC(void) { return gamma; }
 
