@@ -80,6 +80,7 @@ FGFCS::~FGFCS(void) {}
 bool FGFCS::Run(void) {
   if (!FGModel::Run()) {
 
+    for (unsigned int i=0; i<Aircraft->GetNumEngines(); i++) ThrottlePos[i]=ThrottleCmd[i];
 
     for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
 
