@@ -76,7 +76,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     cout << "  Full 6-DOF Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle,Tolerance));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tElevator,A_Tolerance));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim,A_Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron,A_Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder,A_Tolerance));
@@ -85,13 +85,13 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     cout << "  Longitudinal Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle,Tolerance));
-    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tElevator,A_Tolerance));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim,A_Tolerance));
     break;
   case tGround:
     cout << "  Ground Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL,Tolerance));
-    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi,A_Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta,A_Tolerance));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi,A_Tolerance));
     break;
   }
   //cout << "NumAxes: " << TrimAxes.size() << endl;
@@ -207,6 +207,11 @@ bool FGTrim::DoTrim(void) {
   
   trim_failed=false;
 
+
+  for(int i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
+    fdmex->GetAircraft()->GetGearUnit(i)->SetReport(false);
+  }
+
   fdmex->GetOutput()->Disable();
 
   //clear the sub iterations counts & zero out the controls
@@ -233,7 +238,9 @@ bool FGTrim::DoTrim(void) {
         }  
       } else if(findInterval()) {
         solve();
-      }
+      } else {
+        solution[current_axis]=false;
+      }  
       sub_iterations[current_axis]+=Nsub;
     } 
     for(current_axis=0;current_axis<NumAxes;current_axis++) {
@@ -292,6 +299,9 @@ bool FGTrim::DoTrim(void) {
   } else {
     total_its=N;
     cout << endl << "  Trim failed" << endl;
+  }
+  for(int i=0;i < fdmex->GetAircraft()->GetNumGearUnits();i++){
+    fdmex->GetAircraft()->GetGearUnit(i)->SetReport(true);
   }
   fdmex->GetOutput()->Enable();
   return !trim_failed;
@@ -409,6 +419,7 @@ bool FGTrim::findInterval(void) {
     TrimAxes[current_axis]->SetControl(xhi);
     TrimAxes[current_axis]->Run();
     ahi=TrimAxes[current_axis]->GetAccel();
+    if(fabs(ahi-alo) <= TrimAxes[current_axis]->GetTolerance()) continue;
     if(alo*ahi <=0) {  //found interval with root
       found=true;
       if(alo*current_accel <= 0) { //narrow interval down a bit
