@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <FG_PISTON NAME="IO320">
-  BRAKEHORSEPOWER 160.0
+  MINMP             6.5
+  MAXMP            29.92
+  DISPLACEMENT    320.0
+  MAXHP           160.0
+  CYCLES            2.0
+  IDLERPM         550.0
   MAXTHROTTLE       1.0
   MINTHROTTLE       0.2
-  SLFUELFLOWMAX     8.7
-  SPEEDSLOPE        0.00144
-  SPEEDINTERCEPT    0.546
-  ALTITUDESLOPE    -1.6E-5
 </FG_PISTON>
 
