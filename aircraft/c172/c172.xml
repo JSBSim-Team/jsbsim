@@ -113,9 +113,9 @@
        INPUT        FG_FLAPS_CMD
        DETENTS      4
                     0    0
-                    10   4
-                    20   2
-                    30   2
+                    10   2
+                    20   1
+                    30   1
        OUTPUT      FG_FLAPS_POS
      </COMPONENT>
    </FLIGHT_CONTROL>
@@ -144,7 +144,7 @@
          FG_FLAPS_POS
          FG_QBAR|FG_WINGAREA
          0   0
-         10     0.20
+         10  0.20
          20  0.30
          30  0.35
        </COEFFICIENT>    
@@ -166,13 +166,11 @@
     </AXIS>
 
     <AXIS NAME="DRAG">
-
       <COEFFICIENT NAME="CDo" TYPE="VALUE">
          Drag_at_zero_lift
          FG_QBAR|FG_WINGAREA
          0.036
       </COEFFICIENT>
-
       <COEFFICIENT NAME="CDalpha" TYPE="VECTOR">
          Drag_due_to_alpha
          28
@@ -216,7 +214,42 @@
          10  0.0021
          20  0.0085
          30  0.0191
-       </COEFFICIENT>      
+       </COEFFICIENT>       
+      <COEFFICIENT NAME="CDalpha2" TYPE="TABLE">
+         Drag_due_to_alpha
+         26
+         4
+         FG_ALPHA
+         FG_FLAPS_POS 
+         FG_QBAR|FG_WINGAREA
+                    0             10             20             30
+        -0.0872664  0.00407143    3.8165e-05     0.000512444    0.00137231
+        -0.0698132  0.0013424     0.000440634    0.00248067     0.00412341
+        -0.0523599  8.96747e-05   0.00231942     0.0059252      0.00835082
+        -0.0349066  0.000313268   0.00567451     0.0108461      0.0140545
+        -0.0174533  0.00201318    0.0105059      0.0172432      0.0212346
+        0           0.0051894     0.0168137      0.0251167      0.0298909
+        0.0174533   0.00993967    0.0247521      0.0346492      0.0402205
+        0.0349066   0.0162201     0.0342207      0.0457119      0.0520802
+        0.0523599   0.0240308     0.0452195      0.0583047      0.0654701
+        0.0698132   0.0333717     0.0577485      0.0724278      0.0803902
+        0.0872664   0.0442427     0.0718077      0.088081       0.0968405
+        0.10472     0.056644      0.0873971      0.105265       0.114821
+        0.122173    0.0705754     0.104517       0.123978       0.134332
+        0.139626    0.086037      0.123166       0.144222       0.155373
+        0.15708     0.096239      0.135317       0.157346       0.168984
+        0.174533    0.106859      0.147857       0.170848       0.182966
+        0.191986    0.118034      0.160954       0.184905       0.197503
+        0.209439    0.129765      0.174606       0.199517       0.212596
+        0.226893    0.142366      0.189176       0.215072       0.228643
+        0.244346    0.156452      0.205363       0.23231        0.246406
+        0.261799    0.172732      0.223956       0.252059       0.266733
+        0.279253    0.178209      0.230187       0.258667       0.273529
+        0.296706    0.171598      0.222665       0.25069        0.265325
+        0.314159    0.161786      0.211468       0.2388         0.253089
+        0.331613    0.147493      0.19508        0.221364       0.235129
+        0.349066    0.109678      0.151171       0.174408       0.186649
+       </COEFFICIENT>
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
          FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
@@ -394,7 +427,6 @@
     POSITION         ON|OFF
     COEFFICIENTS     ON|OFF
     GROUND_REACTIONS ON|OFF
-    FCS              ON|OFF
 
     NOTE that Time is always output with the data.
 
@@ -404,15 +436,15 @@
     SIMULATION       OFF
     ATMOSPHERE       OFF
     MASSPROPS        OFF
-    AEROSURFACES     OFF
+    AEROSURFACES     ON
     RATES            ON
     VELOCITIES       ON
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     OFF
-    GROUND_REACTIONS ON
-    FCS              ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS OFF
+    FCS              OFF
   </OUTPUT>
  
 
