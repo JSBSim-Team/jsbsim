@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.8 2004/02/14 09:58:35 ehofman Exp $
+  CVS Version: $Id: A320.xml,v 1.9 2004/04/30 15:20:23 dpculp Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 
@@ -41,7 +41,7 @@
     AC_GEAR TAIL_TIP  1476.7    0.0    58.9 1500000 60000 0.2 0.2  0.02 FIXED     NONE   0   FIXED
   </UNDERCARRIAGE>
   <PROPULSION>
-    <AC_ENGINE FILE="CFM56_5_sim">
+    <AC_ENGINE FILE="CFM56_5">
       XLOC      540.0
       YLOC     -200.0
       ZLOC      -45.0
@@ -56,7 +56,7 @@
       PITCH       0.0
       YAW         0.0
     </AC_THRUSTER>
-    <AC_ENGINE FILE="CFM56_5_sim">
+    <AC_ENGINE FILE="CFM56_5">
       XLOC      540.0
       YLOC      200.0
       ZLOC      -45.0

@@ -1,14 +1,42 @@
 <?xml version="1.0"?>
+
 <!-- CFM56 turbofan engine model
-     Version 0.9, 31 Jan 2003, David Culp, davidculp2@attbi.com
-_______________________________________________________________
+     Version 1.1, 23 Nov 2003, David Culp, davidculp2@comcast.net
 -->
+
 <FG_TURBINE NAME="CFM56">
-<!-- max static thrust at S.L. (installed), lbs -->
-  MAXMILTHRUST 19000
-<!-- augmentation not installed -->
-  MAXAUGTHRUST 19000
-<!-- Idle Thrust -->
+  <!--
+     MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
+     MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
+     BYPASSRATIO   bypass ratio
+     TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
+     ATSFC         augmented TSFC (lbm/hr/lbf)
+     IDLEN1        idle percent rpm of fan spool
+     IDLEN2        idle percent rpm of inner spool
+     MAXN1         N1 at 100% throttle
+     MAXN2         N2 at 100% throttle
+     AUGMENTED     =1 if augmentation installed, else =0
+     INJECTED      =1 if water injection installed, else =0  
+
+     TABLE(0)      idle thrust vs. altitude and mach
+     TABLE(1)      maximum un-augmented thrust vs. altitude and mach
+     TABLE(2)      augmented thrust multiplier vs. altitude and mach
+     TABLE(3)      water-injection multiplier vs. altitude and mach
+  -->
+
+  MILTHRUST    19600
+  MAXTHRUST    19600
+  BYPASSRATIO  5.9
+  TSFC         0.657
+  ATSFC        0.0
+  IDLEN1       30.0
+  IDLEN2       60.0
+  MAXN1        100.0
+  MAXN2        100.0
+  AUGMENTED    0
+  INJECTED     0
+
+
   <TABLE NAME="IdleThrust" TYPE="TABLE">
     Idle_power_thrust_factor
     6
@@ -17,7 +45,7 @@ _______________________________________________________________
     position/h-sl-ft
     none
                 0   10000   20000   30000   40000  50000
-    0.0    0.0836  0.0528  0.0694  0.0899  0.1183  0.1467
+    0.0    0.0436  0.0528  0.0694  0.0899  0.1183  0.1467
     0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
     0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
     0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073

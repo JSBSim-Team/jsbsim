@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 
-<!-- CFM56 turbofan engine model
-     Version 1.1, 23 Nov 2003, David Culp, davidculp2@comcast.net
+<!-- CFM56-5 turbofan engine model
+     Version 1.0, 4 Jun 2003, David Culp, davidculp2@attbi.com
 -->
 
-<FG_SIMTURBINE NAME="CFM56">
+<FG_TURBINE NAME="CFM56_5">
   <!--
-     MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
+     MILTHRUST     max static thrust at S.L. (installed), lbf
      MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
      BYPASSRATIO   bypass ratio
      TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
@@ -24,8 +24,8 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  MILTHRUST    19600
-  MAXTHRUST    19600
+  MILTHRUST    25000
+  MAXTHRUST    25000
   BYPASSRATIO  5.9
   TSFC         0.657
   ATSFC        0.0
@@ -70,4 +70,4 @@
     1.0   0.5000   0.5000   0.4000   0.2000   0.1500   0.0900
   </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
