@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.88 2002/09/23 11:53:21 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.89 2002/09/29 13:17:10 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -96,6 +96,11 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGFCS::~FGFCS()
 {
+  unbind( PropertyManager->GetNode("fcs") );
+  unbind( PropertyManager->GetNode("ap") );
+  PropertyManager->Untie( "gear/gear-cmd-norm" );
+  PropertyManager->Untie( "gear/gear-pos-norm" );
+
   ThrottleCmd.clear();
   ThrottlePos.clear();
   MixtureCmd.clear();
@@ -103,13 +108,12 @@ FGFCS::~FGFCS()
   PropAdvanceCmd.clear();
   PropAdvance.clear();
 
-  unbind();
 
   unsigned int i;
 
   for (i=0;i<APComponents.size();i++) delete APComponents[i];
   for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
-
+  
   Debug(1);
 }
 
@@ -380,7 +384,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
     if ( (((*Components)[i])->GetType() == "AEROSURFACE_SCALE" 
           || ((*Components)[i])->GetType() == "KINEMAT")  
                     && ((*Components)[i])->GetOutputNode() ) { 
-      nodeName = ((*Components)[i])->GetOutputNode()->GetName();  
+      nodeName = ((*Components)[i])->GetOutputNode()->GetName();
       if ( nodeName == "elevator-pos-rad" ) {
         ToNormalize[iDe]=i;
       } else if ( nodeName  == "left-aileron-pos-rad" 
@@ -834,56 +838,16 @@ void FGFCS::bindModel(void)
                           
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCS::unbind(void)
+void FGFCS::unbind(FGPropertyManager *node)
 {
-  PropertyManager->Untie("fcs/aileron-cmd-norm");
-  PropertyManager->Untie("fcs/elevator-cmd-norm");
-  PropertyManager->Untie("fcs/rudder-cmd-norm");
-  PropertyManager->Untie("fcs/flap-cmd-norm");
-  PropertyManager->Untie("fcs/speedbrake-cmd-norm");
-  PropertyManager->Untie("fcs/spoiler-cmd-norm");
-  PropertyManager->Untie("fcs/pitch-trim-cmd-norm");
-  PropertyManager->Untie("fcs/roll-trim-cmd-norm");
-  PropertyManager->Untie("fcs/yaw-trim-cmd-norm");
-  PropertyManager->Untie("gear/gear-cmd-norm");
-  PropertyManager->Untie("fcs/left-aileron-pos-rad");
-  PropertyManager->Untie("fcs/mag-left-aileron-pos-rad");
-  PropertyManager->Untie("fcs/left-aileron-pos-norm");
-  PropertyManager->Untie("fcs/right-aileron-pos-rad");
-  PropertyManager->Untie("fcs/mag-right-aileron-pos-rad");
-  PropertyManager->Untie("fcs/right-aileron-pos-norm");
-  PropertyManager->Untie("fcs/elevator-pos-rad");
-  PropertyManager->Untie("fcs/mag-elevator-pos-rad");
-  PropertyManager->Untie("fcs/elevator-pos-norm");
-  PropertyManager->Untie("fcs/rudder-pos-rad");
-  PropertyManager->Untie("fcs/mag-rudder-pos-rad");
-  PropertyManager->Untie("fcs/rudder-pos-norm");
-  PropertyManager->Untie("fcs/flap-pos-deg");
-  PropertyManager->Untie("fcs/flap-pos-norm");
-  PropertyManager->Untie("fcs/speedbrake-pos-rad");
-  PropertyManager->Untie("fcs/mag-speedbrake-pos-rad");
-  PropertyManager->Untie("fcs/speedbrake-pos-norm");
-  PropertyManager->Untie("fcs/spoiler-pos-rad");
-  PropertyManager->Untie("fcs/mag-spoiler-pos-rad");
-  PropertyManager->Untie("fcs/spoiler-pos-norm");
-  PropertyManager->Untie("gear/gear-pos-norm");
-  PropertyManager->Untie("ap/elevator_cmd");
-  PropertyManager->Untie("ap/aileron_cmd");
-  PropertyManager->Untie("ap/rudder_cmd");
-  PropertyManager->Untie("ap/throttle_cmd");
-  PropertyManager->Untie("ap/attitude_setpoint");
-  PropertyManager->Untie("ap/altitude_setpoint");
-  PropertyManager->Untie("ap/heading_setpoint");
-  PropertyManager->Untie("ap/airspeed_setpoint");
-  PropertyManager->Untie("ap/acquire_attitude");
-  PropertyManager->Untie("ap/acquire_altitude");
-  PropertyManager->Untie("ap/acquire_heading");
-  PropertyManager->Untie("ap/acquire_airspeed");
-  PropertyManager->Untie("ap/attitude_hold");
-  PropertyManager->Untie("ap/altitude_hold");
-  PropertyManager->Untie("ap/heading_hold");
-  PropertyManager->Untie("ap/airspeed_hold");
-  PropertyManager->Untie("ap/wingslevel_hold");
+  int N = node->nChildren();
+  for(int i=0;i<N;i++) {
+    if(node->getChild(i)->nChildren() ) {
+      unbind( (FGPropertyManager*)node->getChild(i) );
+    } else if( node->getChild(i)->isTied() ) {
+      node->getChild(i)->untie();
+    } 
+  }        
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

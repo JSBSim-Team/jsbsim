@@ -57,7 +57,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.32 2002/09/07 21:32:00 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.33 2002/09/29 13:17:10 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAuxiliary::~FGAuxiliary()
 {
+  unbind();
   Debug(1);
 }
 

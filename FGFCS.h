@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.55 2002/09/07 21:40:12 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.56 2002/09/29 13:17:10 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.55 2002/09/07 21:40:12 apeden Exp $
+    @version $Id: FGFCS.h,v 1.56 2002/09/29 13:17:10 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -613,7 +613,7 @@ public:
   
   void bind(void);
   void bindModel(void);
-  void unbind(void);
+  void unbind(FGPropertyManager *node);
   
 private:
   double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;

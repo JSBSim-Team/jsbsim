@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.40 2002/07/10 22:16:59 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.41 2002/09/29 13:17:10 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -347,6 +347,7 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("aero/bi2vel");
   PropertyManager->Untie("aero/ci2vel");
   PropertyManager->Untie("aero/alpha-wing-rad");
+  PropertyManager->Untie("aero/stall-hyst-norm");
   PropertyManager->Untie("systems/stall-warn-norm");
 
   for ( i=0; i<NAxes; i++ ) {

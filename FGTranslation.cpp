@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.49 2002/07/31 12:59:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.50 2002/09/29 13:17:10 apeden Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,6 +258,7 @@ void FGTranslation::unbind(void)
   PropertyManager->Untie("velocities/mach-norm");
   PropertyManager->Untie("aero/alphadot-rad_sec");
   PropertyManager->Untie("aero/betadot-rad_sec");
+  PropertyManager->Untie("aero/mag-beta-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
