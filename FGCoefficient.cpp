@@ -175,8 +175,22 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
 /******************************************************************************/
 
-FGCoefficient::~FGCoefficient(void)
+FGCoefficient::~FGCoefficient(void) {
+  DeAllocate();
+  
+}
+
+/******************************************************************************/
+
+bool FGCoefficient::DeAllocate(void)
 {
+  if(Table3D != NULL ) {
+    for(int i=0; i<=rows;i++) 
+      delete[] Table3D[i];
+    delete[] Table3D;
+  } 
+  if(Table2D != NULL ) delete[] Table2D; 
+  return true;
 }
 
 /******************************************************************************/

@@ -108,12 +108,15 @@ class FGCoefficient
   FGPosition*     Position;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
+  
+  bool DeAllocate(void);
+  bool Allocate(int);
+  bool Allocate(int, int);
 
 public:
   FGCoefficient(FGFDMExec*, FGConfigFile*);
   ~FGCoefficient(void);
-  bool Allocate(int);
-  bool Allocate(int, int);
+  
   float Value(float, float);
   float Value(float);
   float Value(void);
