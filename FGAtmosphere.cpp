@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.36 2002/03/09 11:54:28 apeden Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.37 2002/03/20 11:40:20 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,9 +88,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 //  turbType = ttBerndt; // temporarily disable turbulence until fully tested
   TurbGain = 100.0;
   
-  cout << "Calling FGAtmosphere::bind()" << endl;
   bind();
-  cout << "FGAtmosphere::bind() done "<< endl;
   Debug(0);
 }
 

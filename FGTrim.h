@@ -32,10 +32,12 @@
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
  
-This class takes the given set of IC's and finds the angle of attack, elevator,
-and throttle setting required to fly steady level. This is currently for in-air
-conditions only.  It is implemented using an iterative, one-axis-at-a-time 
-scheme.  
+This class takes the given set of IC's and finds the aircraft state required to
+maintain a specified flight condition.  This flight condition can be 
+steady-level with non-zero sideslip, a steady turn, a pull-up or pushover.
+On-ground conditions can be trimmed as well, but this is currently limited to
+adjusting altitude and pitch angle only. It is implemented using an iterative,
+one-axis-at-a-time scheme.  
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -68,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.23 2001/12/22 15:09:41 apeden Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.24 2002/03/20 11:40:20 apeden Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
@@ -107,12 +109,14 @@ CLASS DOCUMENTATION
     <li> tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator</li>
     <li> tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
                 and heading minus ground track (hmgt) with beta</li>
+    <li> tPullup: tLongitudinal but adjust alpha to achieve load factor input
+         with SetTargetNlf()
+
     <li> tGround: wdot with altitude, qdot with theta, and pdot with phi</li>
+    
     The remaining modes include <b>tCustom</b>, which is completely user defined and
     <b>tNone</b>.
     </ul>
-    Currently, this class cannot trim a non-1g condition and is limited to 
-    trimming for constant true airspeed in climbs and descents.
     
     Note that trims can (and do) fail for reasons that are completely outside
     the control of the trimming routine itself. The most common problem is the 
@@ -135,7 +139,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.23 2001/12/22 15:09:41 apeden Exp $
+    @version $Id: FGTrim.h,v 1.24 2002/03/20 11:40:20 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

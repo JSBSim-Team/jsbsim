@@ -55,7 +55,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.20 2002/03/09 11:57:03 apeden Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.21 2002/03/20 11:40:20 apeden Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,6 @@ FGModel::FGModel(FGFDMExec* fdmex)
   //must be brought up now.
   PropertyManager = FDMExec->GetPropertyManager();
   
-  cout << "FGModel::PropertyManager: " << PropertyManager << endl;
   
   exe_ctr     = 1;
 
