@@ -41,7 +41,7 @@ INCLUDES
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.10 2000/11/01 11:38:09 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.11 2000/11/01 12:14:48 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -260,8 +260,6 @@ bool FGTrimAxis::initTheta(void) {
         break;
     }
   }
-  cout << "iForward: " << iForward << endl;
-  cout << "iAft: " << iAft << endl;      
   	  
   // now adjust theta till the wheels are the same distance from the ground
   zAft=fdmex->GetAircraft()->GetGearUnit(1)->GetLocalGear()(3);
@@ -285,7 +283,7 @@ bool FGTrimAxis::initTheta(void) {
 	i++;   
   }	    	    	
   //cout << i << endl;
-  cout << "Initial Theta: " << fdmex->GetRotation()->Gettht()*RADTODEG << endl;
+  cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*RADTODEG << endl;
   control_min=(theta+5)*DEGTORAD;
   control_max=(theta-5)*DEGTORAD;
   fgic->SetAltitudeAGLFtIC(saveAlt);
