@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.4 2003/12/19 02:13:47 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.5 2003/12/19 02:29:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.4 2003/12/19 02:13:47 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.5 2003/12/19 02:29:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,9 +120,10 @@ public:
 
   /// Constructor
   MSIS(void);
+
   /// Destructor
   ~MSIS();
-  bool Run(void);
+
   bool InitModel(void);
   void Calculate(int day, double sec, double alt, double lat, double lon);
 

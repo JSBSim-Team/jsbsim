@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.4 2003/12/19 02:13:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.5 2003/12/19 02:29:13 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,13 +118,6 @@ bool MSIS::InitModel(void)
   output.d[5] = 0.001225;
   output.t[1] = 288.15;
 
-  return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool MSIS::Run(void)
-{
   return true;
 }
 
