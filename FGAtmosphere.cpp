@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.64 2004/04/25 00:51:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.65 2004/04/30 12:06:20 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -250,6 +250,17 @@ void FGAtmosphere::Calculate(double altitude)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Return the pressure at an arbitrary altitude and then restore the internal state
+
+double FGAtmosphere::GetPressure(double alt) {
+  Calculate(alt);
+  double p = *pressure;
+  // Reset the internal atmospheric state
+  Run();
+  return(p);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // square a value, but preserve the original sign
 
 static inline double square_signed (double value)
@@ -388,7 +399,6 @@ void FGAtmosphere::UseInternal(void) {
   useExternal=false;
 }
 
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAtmosphere::bind(void)
@@ -398,8 +408,8 @@ void FGAtmosphere::bind(void)
                        &FGAtmosphere::GetTemperature);
   PropertyManager->Tie("atmosphere/rho-slugs_ft3", this,
                        &FGAtmosphere::GetDensity);
-  PropertyManager->Tie("atmosphere/P-psf", this,
-                       &FGAtmosphere::GetPressure);
+//  PropertyManager->Tie("atmosphere/P-psf", this,
+//                       &FGAtmosphere::GetPressure);
   PropertyManager->Tie("atmosphere/a-fps", this,
                        &FGAtmosphere::GetSoundSpeed);
   PropertyManager->Tie("atmosphere/T-sl-R", this,
@@ -434,7 +444,7 @@ void FGAtmosphere::unbind(void)
 {
   PropertyManager->Untie("atmosphere/T-R");
   PropertyManager->Untie("atmosphere/rho-slugs_ft3");
-  PropertyManager->Untie("atmosphere/P-psf");
+//  PropertyManager->Untie("atmosphere/P-psf");
   PropertyManager->Untie("atmosphere/a-fps");
   PropertyManager->Untie("atmosphere/T-sl-R");
   PropertyManager->Untie("atmosphere/rho-sl-slugs_ft3");

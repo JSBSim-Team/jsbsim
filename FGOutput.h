@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.32 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.33 2004/04/30 12:06:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,50 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Handles simulation output.
-  */
+    OUTPUT section definition
+
+    The following specifies the way that JSBSim writes out data.
+
+    NAME is the filename you want the output to go to
+
+    TYPE can be:
+      CSV       Comma separated data. If a filename is supplied then the data
+                goes to that file. If COUT or cout is specified, the data goes
+                to stdout. If the filename is a null filename the data goes to
+                stdout, as well.
+      SOCKET    Will eventually send data to a socket output, where NAME
+                would then be the IP address of the machine the data should be
+                sent to. DON'T USE THIS YET!
+      TABULAR   Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
+      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
+                off the data output without having to mess with anything else.
+
+    The arguments that can be supplied, currently, are
+
+    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
+                value may not be *exactly* what you want, due to the dependence
+                on dt, the cycle rate for the FDM.
+
+    The following parameters tell which subsystems of data to output:
+
+    SIMULATION       ON|OFF
+    ATMOSPHERE       ON|OFF
+    MASSPROPS        ON|OFF
+    AEROSURFACES     ON|OFF
+    RATES            ON|OFF
+    VELOCITIES       ON|OFF
+    FORCES           ON|OFF
+    MOMENTS          ON|OFF
+    POSITION         ON|OFF
+    COEFFICIENTS     ON|OFF
+    GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
+
+    NOTE that Time is always output with the data.
+    @version $Id: FGOutput.h,v 1.33 2004/04/30 12:06:20 jberndt Exp $
+ */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

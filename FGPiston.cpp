@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.63 2004/02/05 13:43:38 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.64 2004/04/30 12:06:20 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,9 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   MinManifoldPressure_inHg = 6.5;
   MaxManifoldPressure_inHg = 28.5;
   ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
+  minMAP = 21950;
+  maxMAP = 96250;
+  MAP = Atmosphere->GetPressure() * 47.88;  // psf to Pa
   CylinderHeadTemp_degK = 0.0;
   Displacement = 360;
   MaxHP = 200;
@@ -77,6 +80,25 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   EGT_degC = 0.0;
 
   dt = State->Getdt();
+  
+  // Supercharging
+  BoostSpeeds = 0;  // Default to no supercharging
+  BoostSpeed = 0;
+  Boosted = false;
+  BoostOverride = 0;
+  bBoostOverride = false;
+  bTakeoffBoost = false;
+  TakeoffBoost = 0.0;   // Default to no extra takeoff-boost
+  int i;
+  for(i=0; i<FG_MAX_BOOST_SPEEDS; ++i) {
+    RatedBoost[i] = 0.0;
+    RatedPower[i] = 0.0;
+    RatedAltitude[i] = 0.0;
+    BoostMul[i] = 1.0;
+    RatedMAP[i] = 100000;
+    RatedRPM[i] = 2500;
+    TakeoffMAP[i] = 100000;
+  }
 
   // Initialisation
   volumetric_efficiency = 0.8;  // Actually f(speed, load) but this will get us running
@@ -123,8 +145,78 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
     else if (token == "IDLERPM") *Eng_cfg >> IdleRPM;
     else if (token == "MAXTHROTTLE") *Eng_cfg >> MaxThrottle;
     else if (token == "MINTHROTTLE") *Eng_cfg >> MinThrottle;
+    else if (token == "NUMBOOSTSPEEDS") *Eng_cfg >> BoostSpeeds;
+    else if (token == "BOOSTOVERRIDE") *Eng_cfg >> BoostOverride;
+    else if (token == "TAKEOFFBOOST") *Eng_cfg >> TakeoffBoost;
+    else if (token == "RATEDBOOST1") *Eng_cfg >> RatedBoost[0];
+    else if (token == "RATEDBOOST2") *Eng_cfg >> RatedBoost[1];
+    else if (token == "RATEDBOOST3") *Eng_cfg >> RatedBoost[2];
+    else if (token == "RATEDPOWER1") *Eng_cfg >> RatedPower[0];
+    else if (token == "RATEDPOWER2") *Eng_cfg >> RatedPower[1];
+    else if (token == "RATEDPOWER3") *Eng_cfg >> RatedPower[2];
+    else if (token == "RATEDRPM1") *Eng_cfg >> RatedRPM[0];
+    else if (token == "RATEDRPM2") *Eng_cfg >> RatedRPM[1];
+    else if (token == "RATEDRPM3") *Eng_cfg >> RatedRPM[2];
+    else if (token == "RATEDALTITUDE1") *Eng_cfg >> RatedAltitude[0];
+    else if (token == "RATEDALTITUDE2") *Eng_cfg >> RatedAltitude[1];
+    else if (token == "RATEDALTITUDE3") *Eng_cfg >> RatedAltitude[2];
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
+  
+  minMAP = MinManifoldPressure_inHg * 3376.85;  // inHg to Pa
+  maxMAP = MaxManifoldPressure_inHg * 3376.85;
+  
+  // Set up and sanity-check the turbo/supercharging configuration based on the input values.
+  if(TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
+  for(i=0; i<BoostSpeeds; ++i) {
+    bool bad = false;
+    if(RatedBoost[i] <= 0.0) bad = true;
+    if(RatedPower[i] <= 0.0) bad = true;
+    if(RatedAltitude[i] < 0.0) bad = true;  // 0.0 is deliberately allowed - this corresponds to unregulated supercharging.
+    if(i > 0 && RatedAltitude[i] < RatedAltitude[i - 1]) bad = true;
+    if(bad) {
+      // We can't recover from the above - don't use this supercharger speed.
+      BoostSpeeds--;
+      // TODO - put out a massive error message!
+      break;
+    }
+    // Now sanity-check stuff that is recoverable.
+    if(i < BoostSpeeds - 1) {
+      if(BoostSwitchAltitude[i] < RatedAltitude[i]) {
+        // TODO - put out an error message
+        // But we can also make a reasonable estimate, as below.
+        BoostSwitchAltitude[i] = RatedAltitude[i] + 1000;
+      }
+      BoostSwitchPressure[i] = Atmosphere->GetPressure(BoostSwitchAltitude[i]) * 47.88;
+      //cout << "BoostSwitchAlt = " << BoostSwitchAltitude[i] << ", pressure = " << BoostSwitchPressure[i] << '\n';
+      // Assume there is some hysteresis on the supercharger gear switch, and guess the value for now
+      BoostSwitchHysteresis = 1000;
+    }
+    // Now work out the supercharger pressure multiplier of this speed from the rated boost and altitude.
+    RatedMAP[i] = Atmosphere->GetPressureSL() * 47.88 + RatedBoost[i] * 6895;  // psf*47.88 = Pa, psi*6895 = Pa.
+    // Sometimes a separate BCV setting for takeoff or extra power is fitted.
+    if(TakeoffBoost > RatedBoost[0]) {
+      // Assume that the effect on the BCV is the same whichever speed is in use.
+      TakeoffMAP[i] = RatedMAP[i] + ((TakeoffBoost - RatedBoost[0]) * 6895);
+      bTakeoffBoost = true;
+    } else {
+      TakeoffMAP[i] = RatedMAP[i];
+      bTakeoffBoost = false;
+    }
+    BoostMul[i] = RatedMAP[i] / (Atmosphere->GetPressure(RatedAltitude[i]) * 47.88);
+    
+    // TODO - get rid of the debugging output before sending it to Jon
+    //cout << "Speed " << i+1 << '\n';
+    //cout << "BoostMul = " << BoostMul[i] << ", RatedMAP = " << RatedMAP[i] << ", TakeoffMAP = " << TakeoffMAP[i] << '\n';
+  }
+
+  if(BoostSpeeds > 0) {  
+    Boosted = true;
+    BoostSpeed = 0;
+  }
+  bBoostOverride = (BoostOverride == 1 ? true : false);
+  
+  //cout << "Engine is " << (Boosted ? "supercharged" : "naturally aspirated") << '\n';
 
   Debug(0); // Call Debug() routine from constructor if needed
 }
@@ -149,8 +241,8 @@ double FGPiston::Calculate(double PowerRequired)
   // Input values.
   //
 
-  p_amb = Atmosphere->GetPressure() * 48;              // convert from lbs/ft2 to Pa
-  p_amb_sea_level = Atmosphere->GetPressureSL() * 48;
+  p_amb = Atmosphere->GetPressure() * 47.88;              // convert from lbs/ft2 to Pa
+  p_amb_sea_level = Atmosphere->GetPressureSL() * 47.88;
   T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
 
   RPM = Propulsion->GetThruster(EngineNumber)->GetRPM() *
@@ -158,10 +250,11 @@ double FGPiston::Calculate(double PowerRequired)
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
-    doEngineStartup();
-    doManifoldPressure();
-    doAirFlow();
-    doFuelFlow();
+  doEngineStartup();
+  if(Boosted) doBoostControl();
+  doMAP();
+  doAirFlow();
+  doFuelFlow();
 
   //Now that the fuel flow is done check if the mixture is too lean to run the engine
   //Assume lean limit at 22 AFR for now - thats a thi of 0.668
@@ -171,10 +264,10 @@ double FGPiston::Calculate(double PowerRequired)
     Running = false;
 
   doEnginePower();
-    doEGT();
-    doCHT();
-    doOilTemperature();
-    doOilPressure();
+  doEGT();
+  doCHT();
+  doOilTemperature();
+  doOilPressure();
 
   PowerAvailable = (HP * hptoftlbssec) - PowerRequired;
   return PowerAvailable;
@@ -250,42 +343,111 @@ void FGPiston::doEngineStartup(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /**
- * Calculate the nominal manifold pressure in inches hg
+ * Calculate the Current Boost Speed
  *
- * This function calculates nominal manifold pressure directly
- * from the throttle position, and does not adjust it for the
- * difference between the pressure at sea level and the pressure
- * at the current altitude (that adjustment takes place in
- * {@link #doEnginePower}).
+ * This function calculates the current turbo/supercharger boost speed
+ * based on altitude and the (automatic) boost-speed control valve configuration.
+ *
+ * Inputs: p_amb, BoostSwitchPressure, BoostSwitchHysteresis
+ *
+ * Outputs: BoostSpeed
+ */
+
+void FGPiston::doBoostControl(void)
+{
+  if(BoostSpeed < BoostSpeeds - 1) {
+    // Check if we need to change to a higher boost speed
+    if(p_amb < BoostSwitchPressure[BoostSpeed] - BoostSwitchHysteresis) {
+      BoostSpeed++;
+    }
+  } else if(BoostSpeed > 0) {
+    // Check if we need to change to a lower boost speed
+    if(p_amb > BoostSwitchPressure[BoostSpeed - 1] + BoostSwitchHysteresis) {
+      BoostSpeed--;
+    }
+  } 
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/**
+ * Calculate the manifold absolute pressure (MAP) in inches hg
+ *
+ * This function calculates manifold absolute pressure (MAP)
+ * from the throttle position, turbo/supercharger boost control
+ * system, engine speed and local ambient air density.
  *
  * TODO: changes in MP should not be instantaneous -- introduce
  * a lag between throttle changes and MP changes, to allow pressure
  * to build up or disperse.
  *
- * Inputs: MinManifoldPressure_inHg, MaxManifoldPressure_inHg, Throttle
+ * Inputs: minMAP, maxMAP, p_amb, Throttle
  *
- * Outputs: ManifoldPressure_inHg
+ * Outputs: MAP, ManifoldPressure_inHg
  */
 
-void FGPiston::doManifoldPressure(void)
+void FGPiston::doMAP(void)
 {
-  if (Running || Cranking) {
-    ManifoldPressure_inHg = MinManifoldPressure_inHg +
-            (Throttle * (MaxManifoldPressure_inHg - MinManifoldPressure_inHg));
+  if(RPM > 10) {
+    // Naturally aspirated
+    MAP = minMAP + (Throttle * (maxMAP - minMAP));
+    MAP *= p_amb / p_amb_sea_level;
+    if(Boosted) {
+      // If takeoff boost is fitted, we currently assume the following throttle map:
+      // (In throttle % - actual input is 0 -> 1)
+      // 99 / 100 - Takeoff boost
+      // 96 / 97 / 98 - Rated boost
+      // 0 - 95 - Idle to Rated boost (MinManifoldPressure to MaxManifoldPressure)
+      // In real life, most planes would be fitted with a mechanical 'gate' between
+      // the rated boost and takeoff boost positions.
+      double T = Throttle; // processed throttle value.
+      bool bTakeoffPos = false;
+      if(bTakeoffBoost) {
+        if(Throttle > 0.98) {
+          //cout << "Takeoff Boost!!!!\n";
+          bTakeoffPos = true;
+        } else if(Throttle <= 0.95) {
+          bTakeoffPos = false;
+          T *= 1.0 / 0.95;
+        } else {
+          bTakeoffPos = false;
+          //cout << "Rated Boost!!\n";
+          T = 1.0;
+        }
+      }
+      // Boost the manifold pressure.
+      MAP *= BoostMul[BoostSpeed];
+      // Now clip the manifold pressure to BCV or Wastegate setting.
+      if(bTakeoffPos) {
+        if(MAP > TakeoffMAP[BoostSpeed]) {
+          MAP = TakeoffMAP[BoostSpeed];
+        }
+      } else {
+        if(MAP > RatedMAP[BoostSpeed]) {
+          MAP = RatedMAP[BoostSpeed];
+        }
+      }
+    }
   } else {
-    ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
-  }  
+    // rpm < 10 - effectively stopped.
+    // TODO - add a better variation of MAP with engine speed
+    MAP = Atmosphere->GetPressure() * 47.88; // psf to Pa
+  }
+  
+  // And set the value in American units as well
+  ManifoldPressure_inHg = MAP / 3376.85;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /**
  * Calculate the air flow through the engine.
+ * Also calculates ambient air density 
+ * (used in CHT calculation for air-cooled engines).
  *
- * At this point, ManifoldPressure_inHg still represents the sea-level
- * MP, not adjusted for altitude.
- *
- * Inputs: p_amb, R_air, T_amb, ManifoldPressure_inHg, Displacement,
+ * Inputs: p_amb, R_air, T_amb, MAP, Displacement,
  *   RPM, volumetric_efficiency
+ *
+ * TODO: Model inlet manifold air temperature.
  *
  * Outputs: rho_air, m_dot_air
  */
@@ -293,7 +455,7 @@ void FGPiston::doManifoldPressure(void)
 void FGPiston::doAirFlow(void)
 {
   rho_air = p_amb / (R_air * T_amb);
-  double rho_air_manifold = rho_air * ManifoldPressure_inHg / 29.6;
+  double rho_air_manifold = MAP / (R_air * T_amb);
   double displacement_SI = Displacement * in3tom3;
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   double v_dot_air = swept_volume * volumetric_efficiency;
@@ -337,26 +499,44 @@ void FGPiston::doFuelFlow(void)
 
 void FGPiston::doEnginePower(void)
 {
-  ManifoldPressure_inHg *= p_amb / p_amb_sea_level;
-
   if (Running) {	
-    double ManXRPM = ManifoldPressure_inHg * RPM;
     double T_amb_degF = KelvinToFahrenheit(T_amb);
     double T_amb_sea_lev_degF = KelvinToFahrenheit(288); 
 
     // FIXME: this needs to be generalized
-    Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
-    Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
-
+    double ManXRPM;  // Convienience term for use in the calculations
+    if(Boosted) {
+      // Currently a simple linear fit.
+      // The zero crossing is moved up the speed-load range to reduce the idling power.
+      // This will change!
+      double zeroOffset = (minMAP / 2.0) * (IdleRPM / 2.0);
+      ManXRPM = MAP * (RPM > RatedRPM[BoostSpeed] ? RatedRPM[BoostSpeed] : RPM);
+      // The speed clip in the line above is deliberate.
+      Percentage_Power = ((ManXRPM - zeroOffset) / ((RatedMAP[BoostSpeed] * RatedRPM[BoostSpeed]) - zeroOffset)) * 107.0;
+      Percentage_Power -= 7.0;  // Another idle power reduction offset - see line above with 107.
+      if (Percentage_Power < 0.0) Percentage_Power = 0.0;
+      // Note that %power is allowed to go over 100 for boosted powerplants
+      // such as for the BCV-override or takeoff power settings.
+      // TODO - currently no altitude effect (temperature & exhaust back-pressure) modelled
+      // for boosted engines.
+    } else {
+      ManXRPM = ManifoldPressure_inHg * RPM; // Note that inHg must be used for the following correlation.
+      Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
+      Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+      if (Percentage_Power < 0.0) Percentage_Power = 0.0;
+      else if (Percentage_Power > 100.0) Percentage_Power = 100.0;
+    }
+    
     double Percentage_of_best_power_mixture_power =
       Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
 
     Percentage_Power *= Percentage_of_best_power_mixture_power / 100.0;
 
-    if (Percentage_Power < 0.0) Percentage_Power = 0.0;
-    else if (Percentage_Power > 100.0) Percentage_Power = 100.0;
-    
-    HP = Percentage_Power * MaxHP / 100.0;
+    if(Boosted) {
+      HP = Percentage_Power * RatedPower[BoostSpeed] / 100.0;
+    } else {
+      HP = Percentage_Power * MaxHP / 100.0;
+    }
 
   } else {
 
@@ -380,6 +560,7 @@ void FGPiston::doEnginePower(void)
         HP = 0.0;
     }
   }
+  //cout << "Power = " << HP << '\n';
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

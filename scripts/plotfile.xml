@@ -50,6 +50,14 @@
       <parameter axis="y">WAero</parameter>
    </plot>
    <plot>
+      <title>Earth Frame Vertical Velocity</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Vdown (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Vd</parameter>
+   </plot>
+   <plot>
       <title>Elevator Response</title>
       <label axis="x">Time (sec)</label>
       <label axis="y">Elevator/Pitch (rad)</label>

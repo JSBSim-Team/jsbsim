@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.44 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.45 2004/04/30 12:06:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.44 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.45 2004/04/30 12:06:20 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -92,6 +92,8 @@ public:
   inline double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
   inline double GetPressure(void)  const {return *pressure;}
+  /// Returns the pressure at an arbitrary altitude in psf
+  double GetPressure(double alt);
   /// Returns the speed of sound in ft/sec.
   inline double GetSoundSpeed(void) const {return soundspeed;}
 
