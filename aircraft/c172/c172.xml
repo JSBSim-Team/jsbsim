@@ -398,7 +398,7 @@
 
     NOTE that Time is always output with the data.
 
-  
+  </COMMENT>
   <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       OFF
@@ -413,7 +413,7 @@
     COEFFICIENTS     OFF
     GROUND_REACTIONS ON
   </OUTPUT>
- </COMMENT>
+ 
 
 </FDM_CONFIG>
 
