@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.48 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.49 2001/11/06 12:48:54 apeden Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,8 @@ bool FGPropulsion::GetSteadyState(void) {
   float PowerAvailable;
   float currentThrust = 0, lastThrust=-1;
   dt = State->Getdt();
+  int steady_count,j=0;
+  bool steady=false;
 
   Forces->InitMatrix();
   Moments->InitMatrix();
@@ -123,10 +125,18 @@ bool FGPropulsion::GetSteadyState(void) {
     for (unsigned int i=0; i<numEngines; i++) {
       Engines[i]->SetTrimMode(true);
       Thrusters[i]->SetdeltaT(dt*rate);
-      while (pow(currentThrust - lastThrust, 2.0) > currentThrust*0.00010) {
+      steady=false;
+      while (!steady && j < 6000) {
         PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
         lastThrust = currentThrust;
         currentThrust = Thrusters[i]->Calculate(PowerAvailable);
+        if(fabs(lastThrust-currentThrust) < 0.0001) {
+          steady_count++;
+          if(steady_count > 120) { steady=true; }
+        } else {
+          steady_count=0;
+        }
+        j++;    
       }
       *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
@@ -137,6 +147,33 @@ bool FGPropulsion::GetSteadyState(void) {
   } else {
     return true;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+bool FGPropulsion::ICEngineStart(void) {
+  float PowerAvailable;
+  int j;
+  dt = State->Getdt();
+
+  Forces->InitMatrix();
+  Moments->InitMatrix();
+    
+  for (unsigned int i=0; i<numEngines; i++) {
+    Engines[i]->SetTrimMode(true);
+    Thrusters[i]->SetdeltaT(dt*rate);
+    j=0;
+    while (!Engines[i]->GetRunning() && j < 2000) {
+      PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
+      Thrusters[i]->Calculate(PowerAvailable);
+      j++;    
+    }
+    *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+    *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
+    Engines[i]->SetTrimMode(false);
+  }
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

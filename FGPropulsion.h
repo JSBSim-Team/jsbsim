@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.33 2001/08/07 23:05:46 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.34 2001/11/06 12:48:54 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.33 2001/08/07 23:05:46 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.34 2001/11/06 12:48:54 apeden Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -158,8 +158,13 @@ public:
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
   inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
 
+  /** Loops the engines/thrusters until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
-
+  
+  /** starts the engines in IC mode (dt=0).  All engine-specific setup must
+      be done before calling this (i.e. magnetos, starter engage, etc.) */
+  bool ICEngineStart(void);
+  
   string GetPropulsionStrings(void);
   string GetPropulsionValues(void);
 
