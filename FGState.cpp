@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.68 2001/08/10 12:21:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.69 2001/08/10 17:04:01 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -346,45 +346,56 @@ void FGState::SetParameter(eParam val_idx, float val) {
 bool FGState::Reset(string path, string acname, string fname)
 {
   string resetDef;
+  string token="";
+
   float U, V, W;
   float phi, tht, psi;
   float latitude, longitude, h;
   float wdir, wmag;
 
+# ifndef macintosh
   resetDef = path + "/" + acname + "/" + fname + ".xml";
+# else
+  resetDef = path + ";" + acname + ";" + fname + ".xml";
+# endif
 
-#if defined ( sgi ) && !defined( __GNUC__ )
-  ifstream resetfile(resetDef.c_str(), ios::in );
-#else
-  ifstream resetfile(resetDef.c_str(), ios::in | ios::binary );
-#endif
+  FGConfigFile resetfile(resetDef);
+  if (!resetfile.IsOpen()) return false;
 
-  if (resetfile) {
-    resetfile >> U;
-    resetfile >> V;
-    resetfile >> W;
-    resetfile >> latitude;
-    resetfile >> longitude;
-    resetfile >> phi;
-    resetfile >> tht;
-    resetfile >> psi;
-    resetfile >> h;
-    resetfile >> wdir;
-    resetfile >> wmag;
-    resetfile.close();
-
-    Position->SetLatitude(latitude*DEGTORAD);
-    Position->SetLongitude(longitude*DEGTORAD);
-    Position->Seth(h);
-
-    Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
-               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag);
-
-    return true;
-  } else {
-    cerr << "Unable to load reset file " << fname << endl;
+  resetfile.GetNextConfigLine();
+  token = resetfile.GetValue();
+  if (token != "initialize") {
+    cerr << "The reset file " << resetDef
+         << " does not appear to be a reset file" << endl;
     return false;
   }
+  
+  resetfile.GetNextConfigLine();
+  resetfile >> token;
+  while (token != "/initialize" && token != "EOF") {
+    if (token == "UBODY") resetfile >> U;
+    if (token == "VBODY") resetfile >> V;
+    if (token == "WBODY") resetfile >> W;
+    if (token == "LATITUDE") resetfile >> latitude;
+    if (token == "LONGITUDE") resetfile >> longitude;
+    if (token == "PHI") resetfile >> phi;
+    if (token == "THETA") resetfile >> tht;
+    if (token == "PSI") resetfile >> psi;
+    if (token == "ALTITUDE") resetfile >> h;
+    if (token == "WINDDIR") resetfile >> wdir;
+    if (token == "VWIND") resetfile >> wmag;
+
+    resetfile >> token;
+  }
+
+  Position->SetLatitude(latitude*DEGTORAD);
+  Position->SetLongitude(longitude*DEGTORAD);
+  Position->Seth(h);
+
+  Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
+               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag);
+
+  return true;
 }
 
 //***************************************************************************
