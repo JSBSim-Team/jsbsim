@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.139 2003/07/02 14:38:39 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.140 2003/07/13 20:12:10 dmegginson Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -182,7 +182,8 @@ FGJSBsim::FGJSBsim( double dt )
     temperature = fgGetNode("/environment/temperature-degc",true);
     pressure = fgGetNode("/environment/pressure-inhg",true);
     density = fgGetNode("/environment/density-slugft3",true);
-    turbulence = fgGetNode("environment/turbulence-norm",true);
+    turbulence_gain = fgGetNode("/environment/turbulence/magnitude-norm",true);
+    turbulence_rate = fgGetNode("/environment/turbulence/rate-hz",true);
     
     wind_from_north= fgGetNode("/environment/wind-from-north-fps",true);
     wind_from_east = fgGetNode("/environment/wind-from-east-fps" ,true);
@@ -201,6 +202,8 @@ FGJSBsim::~FGJSBsim(void) {
 // each subsequent iteration through the EOM
 
 void FGJSBsim::init() {
+
+    double tmp;
     
     SG_LOG( SG_FLIGHT, SG_INFO, "Starting and initializing JSBsim" );
 
@@ -216,9 +219,13 @@ void FGJSBsim::init() {
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
       Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
       Atmosphere->SetExDensity(density->getDoubleValue());
-      Atmosphere->SetTurbGain(turbulence->getDoubleValue() *
-                              turbulence->getDoubleValue() *
-                              100.0);
+
+      tmp = turbulence_gain->getDoubleValue();
+      Atmosphere->SetTurbGain(tmp * tmp * 100.0);
+
+      tmp = turbulence_rate->getDoubleValue();
+      Atmosphere->SetTurbRate(tmp);
+
     } else {
       Atmosphere->UseInternal();
     }
@@ -364,6 +371,7 @@ FGJSBsim::update( double dt ) {
 // Convert from the FGInterface struct to the JSBsim generic_ struct
 
 bool FGJSBsim::copy_to_JSBsim() {
+    double tmp;
     unsigned int i;
 
     // copy control positions into the JSBsim structure
@@ -412,9 +420,12 @@ bool FGJSBsim::copy_to_JSBsim() {
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
     Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
     Atmosphere->SetExDensity(density->getDoubleValue());
-    Atmosphere->SetTurbGain(turbulence->getDoubleValue() *
-                            turbulence->getDoubleValue() *
-                            100.0);
+
+    tmp = turbulence_gain->getDoubleValue();
+    Atmosphere->SetTurbGain(tmp * tmp * 100.0);
+
+    tmp = turbulence_rate->getDoubleValue();
+    Atmosphere->SetTurbRate(tmp);
 
     Atmosphere->SetWindNED( wind_from_north->getDoubleValue(),
                             wind_from_east->getDoubleValue(),
@@ -796,7 +807,6 @@ void FGJSBsim::init_gear(void ) {
       node->setBoolValue("wow", gr->GetGearUnit(i)->GetWOW());
       node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", FCS->GetGearPos());
-      node->setDoubleValue("tire-pressure-norm", gr->GetGearUnit(i)->GetTirePressure());
     }  
 }
 
@@ -810,7 +820,6 @@ void FGJSBsim::update_gear(void) {
 	->setBoolValue(gr->GetGearUnit(i)->GetWOW());
       node->getChild("position-norm", 0, true)
 	->setDoubleValue(FCS->GetGearPos());
-      gr->GetGearUnit(i)->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
     }  
 }
 

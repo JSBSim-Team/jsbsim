@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.35 2003/06/03 09:53:41 ehofman Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.36 2003/07/13 20:12:10 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.35 2003/06/03 09:53:41 ehofman Exp $
+    @version $Id: FGAtmosphere.h,v 1.36 2003/07/13 20:12:10 dmegginson Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -150,6 +150,7 @@ public:
   inline double GetWindPsi(void) const { return psiw; }
   
   inline void SetTurbGain(double tt) {TurbGain = tt;}
+  inline void SetTurbRate(double tt) {TurbRate = tt;}
   
   inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
@@ -176,6 +177,7 @@ private:
   
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
+  double TurbRate;
   FGColumnVector3 vDirectiondAccelDt;
   FGColumnVector3 vDirectionAccel;
   FGColumnVector3 vDirection;

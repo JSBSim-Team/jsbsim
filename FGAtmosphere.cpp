@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.52 2003/07/01 20:52:00 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.53 2003/07/13 20:12:10 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   turbType = ttStandard;
 //   turbType = ttBerndt;
   TurbGain = 0.0;
+  TurbRate = 1.0;
   
   bind();
   Debug(0);
@@ -272,11 +273,13 @@ void FGAtmosphere::Turbulence(void)
                                 // away from the peaks
     MagnitudedAccelDt = ((MagnitudedAccelDt - Magnitude) /
                          (1 + fabs(Magnitude)));
-    MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
+    MagnitudeAccel    += MagnitudedAccelDt*rate*TurbRate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
     vDirectiondAccelDt.Normalize();
-    vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
+    vDirectiondAccelDt(eY) *= vDirectiondAccelDt(eY);
+    vDirectiondAccelDt(eZ) *= vDirectiondAccelDt(eZ);
+    vDirectionAccel += vDirectiondAccelDt*rate*TurbRate*State->Getdt();
     vDirectionAccel.Normalize();
     vDirection      += vDirectionAccel*rate*State->Getdt();
 
@@ -284,7 +287,7 @@ void FGAtmosphere::Turbulence(void)
     
                                 // Diminish turbulence within three wingspans
                                 // of the ground
-    vTurbulence = TurbGain*Magnitude * vDirection;
+    vTurbulence = TurbGain * Magnitude * vDirection;
     double HOverBMAC = Position->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
