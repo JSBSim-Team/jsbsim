@@ -24,7 +24,6 @@ this:
 
 make -fMakefile.solo
 
-If you are on an IRIX machine you can use the Makefile.irix makefile.
 Directions are also provided below for using traditional auto* utilities
 also provided with JSBSim.
 

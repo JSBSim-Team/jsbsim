@@ -15,9 +15,9 @@ JSBSim_SOURCES = \
 	JSBSim.hxx
 
 JSBSim_LDADD = \
-	$(top_srcdir)/libJSBSim.a \
-	$(top_srcdir)/filtersjb/libFCSComponents.a \
-	$(top_srcdir)/simgear/misc/libProperties.a \
+	$(top_builddir)/libJSBSim.a \
+	$(top_builddir)/filtersjb/libFCSComponents.a \
+	$(top_builddir)/simgear/misc/libProperties.a \
 	-lm
 
 lib_LIBRARIES = libJSBSim.a
