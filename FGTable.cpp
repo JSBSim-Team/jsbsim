@@ -48,13 +48,29 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.30 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.31 2004/04/10 04:22:04 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+
+FGTable::FGTable(int NRows, int NCols, int NTables)
+                                 : nRows(NTables), nCols(1), nTables(NTables)
+{
+  Type = tt3D;
+  colCounter = 1;
+  rowCounter = 1;
+
+  Data = Allocate(); // this data array will contain the keys for the associated tables
+  Tables.reserve(nTables);
+  for (int i=0; i<nTables; i++) Tables.push_back(FGTable(NRows, NCols));
+
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols)
 {
@@ -90,6 +106,31 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGTable::FGTable(const FGTable& t)
+{
+  Type = t.Type;
+  colCounter = t.colCounter;
+  rowCounter = t.rowCounter;
+  tableCounter = t.tableCounter;
+
+  nRows = t.nRows;
+  nCols = t.nCols;
+  nTables = t.nTables;
+
+  Tables = t.Tables;
+  Data = Allocate();
+  for (int r=0; r<=nRows; r++) {
+    for (int c=0; c<=nCols; c++) {
+      Data[r][c] = t.Data[r][c];
+    }
+  }
+  lastRowIndex = t.lastRowIndex;
+  lastColumnIndex = t.lastColumnIndex;
+  lastTableIndex = t.lastTableIndex;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 double** FGTable::Allocate(void)
 {
   Data = new double*[nRows+1];
@@ -106,6 +147,7 @@ double** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
+  if (nTables > 0) Tables.clear();
   for (int r=0; r<=nRows; r++) if (Data[r]) delete[] Data[r];
   if (Data) delete[] Data;
   Debug(1);
@@ -117,8 +159,8 @@ double FGTable::GetValue(double key)
 {
   double Factor, Value, Span;
   int r=lastRowIndex;
-  
-  //if the key is off the end of the table, just return the 
+
+  //if the key is off the end of the table, just return the
   //end-of-table value, do not extrapolate
   if( key <= Data[1][0] ) {
     lastRowIndex=2;
@@ -128,21 +170,21 @@ double FGTable::GetValue(double key)
     lastRowIndex=nRows;
     //cout << "Key over table: " << key << endl;
     return Data[nRows][1];
-  }    
+  }
 
   // the key is somewhere in the middle, search for the right breakpoint
   // assume the correct breakpoint has not changed since last frame or
   // has only changed very little
-  
+
   if ( r > 2 && Data[r-1][0] > key ) {
     while( Data[r-1][0] > key && r > 2) { r--; }
-  } else if ( Data[r][0] < key ) { 
-    while( Data[r][0] <= key && r <= nRows) { r++; }  
-  }  
-  
-  lastRowIndex=r;  
+  } else if ( Data[r][0] < key ) {
+    while( Data[r][0] <= key && r <= nRows) { r++; }
+  }
+
+  lastRowIndex=r;
   // make sure denominator below does not go to zero.
-  
+
   Span = Data[r][0] - Data[r-1][0];
   if (Span != 0.0) {
     Factor = (key - Data[r-1][0]) / Span;
@@ -164,25 +206,25 @@ double FGTable::GetValue(double rowKey, double colKey)
   double rFactor, cFactor, col1temp, col2temp, Value;
   int r=lastRowIndex;
   int c=lastColumnIndex;
-  
+
   if ( r > 2 && Data[r-1][0] > rowKey ) {
     while ( Data[r-1][0] > rowKey && r > 2) { r--; }
-  } else if ( Data[r][0] < rowKey ) { 
+  } else if ( Data[r][0] < rowKey ) {
 //    cout << Data[r][0] << endl;
     while ( r <= nRows && Data[r][0] <= rowKey ) { r++; }
-    if ( r > nRows ) r = nRows;  
-  }  
-  
+    if ( r > nRows ) r = nRows;
+  }
+
   if ( c > 2 && Data[0][c-1] > colKey ) {
     while( Data[0][c-1] > colKey && c > 2) { c--; }
-  } else if ( Data[0][c] < colKey ) { 
-    while( Data[0][c] <= colKey && c <= nCols) { c++; } 
-    if ( c > nCols ) c = nCols;  
-  }  
+  } else if ( Data[0][c] < colKey ) {
+    while( Data[0][c] <= colKey && c <= nCols) { c++; }
+    if ( c > nCols ) c = nCols;
+  }
 
   lastRowIndex=r;
   lastColumnIndex=c;
-  
+
   rFactor = (rowKey - Data[r-1][0]) / (Data[r][0] - Data[r-1][0]);
   cFactor = (colKey - Data[0][c-1]) / (Data[0][c] - Data[0][c-1]);
 
@@ -202,17 +244,68 @@ double FGTable::GetValue(double rowKey, double colKey)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGTable::GetValue(double rowKey, double colKey, double tableKey)
+{
+  double Factor, Value, Span;
+  int r=lastRowIndex;
+
+  //if the key is off the end  (or before the beginning) of the table,
+  // just return the boundary-table value, do not extrapolate
+
+  if( tableKey <= Data[1][1] ) {
+    lastRowIndex=2;
+    return Tables[0].GetValue(rowKey, colKey);
+  } else if ( tableKey >= Data[nRows][1] ) {
+    lastRowIndex=nRows;
+    return Tables[nRows-1].GetValue(rowKey, colKey);
+  }
+
+  // the key is somewhere in the middle, search for the right breakpoint
+  // assume the correct breakpoint has not changed since last frame or
+  // has only changed very little
+
+  if ( r > 2 && Data[r-1][1] > tableKey ) {
+    while( Data[r-1][1] > tableKey && r > 2) { r--; }
+  } else if ( Data[r][1] < tableKey ) {
+    while( Data[r][1] <= tableKey && r <= nRows) { r++; }
+  }
+
+  lastRowIndex=r;
+  // make sure denominator below does not go to zero.
+
+  Span = Data[r][1] - Data[r-1][1];
+  if (Span != 0.0) {
+    Factor = (tableKey - Data[r-1][1]) / Span;
+    if (Factor > 1.0) Factor = 1.0;
+  } else {
+    Factor = 1.0;
+  }
+
+  Value = Factor*(Tables[r-1].GetValue(rowKey, colKey) - Tables[r-2].GetValue(rowKey, colKey))
+                              + Tables[r-1].GetValue(rowKey, colKey);
+
+  return Value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTable::operator<<(FGConfigFile& infile)
 {
-  int startRow;
+  int startRow=0;
+  int startCol=0;
+  int tableCtr=0;
 
-  if (Type == tt1D) startRow = 1;
-  else startRow = 0;
+  if (Type == tt1D || Type == tt3D) startRow = 1;
+  if (Type == tt3D) startCol = 1;
 
   for (int r=startRow; r<=nRows; r++) {
-    for (int c=0; c<=nCols; c++) {
+    for (int c=startCol; c<=nCols; c++) {
       if (r != 0 || c != 0) {
         infile >> Data[r][c];
+        if (Type == tt3D) {
+          Tables[tableCtr] << infile;
+          tableCtr++;
+        }
       }
     }
   }
@@ -244,10 +337,11 @@ FGTable& FGTable::operator<<(const int n)
 
 void FGTable::Print(void)
 {
-  int startRow;
+  int startRow=0;
+  int startCol=0;
 
-  if (Type == tt1D) startRow = 1;
-  else startRow = 0;
+  if (Type == tt1D || Type == tt3D) startRow = 1;
+  if (Type == tt3D) startCol = 1;
 
 #if defined (sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
   unsigned long flags = cout.setf(ios::fixed);
@@ -256,14 +350,17 @@ void FGTable::Print(void)
 #endif
 
   cout.precision(4);
-
   for (int r=startRow; r<=nRows; r++) {
     cout << "	";
-    for (int c=0; c<=nCols; c++) {
+    for (int c=startCol; c<=nCols; c++) {
       if (r == 0 && c == 0) {
-      cout << "	";
+        cout << "	";
       } else {
-      cout << Data[r][c] << "	";
+        cout << Data[r][c] << "	";
+        if (Type == tt3D) {
+          cout << endl;
+          Tables[r-1].Print();
+        }
       }
     }
     cout << endl;

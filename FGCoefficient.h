@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.51 2003/12/02 13:28:39 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.52 2004/04/10 04:22:04 jberndt Exp $"
 
 using std::vector;
 
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.51 2003/12/02 13:28:39 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.52 2004/04/10 04:22:04 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,7 @@ public:
   
   typedef vector <FGPropertyManager*> MultVec;
 
-  enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
+  enum Type {UNKNOWN, VALUE, VECTOR, TABLE, TABLE3D, EQUATION};
 
   /** Returns the value for this coefficient.
       Each instance of FGCoefficient stores a value for the "type" of coefficient
@@ -165,18 +165,20 @@ private:
   string multparms;
   string multparmsRow;
   string multparmsCol;
+  string multparmsTable;
+  double Value(double, double, double);
   double Value(double, double);
   double Value(double);
   double Value(void);
   double StaticValue;
   double totalValue;
   double bias,gain;
-  FGPropertyManager *LookupR, *LookupC;
+  FGPropertyManager *LookupR, *LookupC, *LookupT;
   
   FGPropertyManager *node; // must be private!!
   
   MultVec multipliers;
-  int rows, columns;
+  int rows, columns, tables;
   Type type;
   double SD; // Actual stability derivative (or other coefficient) value
   FGTable *Table;

@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.64 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.65 2004/04/10 04:22:04 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,13 +75,13 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
   FDMExec = fdex;
   State   = FDMExec->GetState();
   Table   = 0;
-  
+
   PropertyManager = FDMExec->GetPropertyManager();
-  
+
   Table = (FGTable*)0L;
   LookupR = LookupC = 0;
   numInstances = 0;
-  rows = columns = 0;
+  rows = columns = tables = 0;
 
   StaticValue  = 0.0;
   totalValue   = 0.0;
@@ -122,31 +122,37 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     *AC_cfg >> description;
     if      (method == "EQUATION") type = EQUATION;
     else if (method == "TABLE")    type = TABLE;
+    else if (method == "TABLE3D")  type = TABLE3D;
     else if (method == "VECTOR")   type = VECTOR;
     else if (method == "VALUE")    type = VALUE;
     else                           type = UNKNOWN;
 
-    if (type == VECTOR || type == TABLE) {
-      *AC_cfg >> rows;
-      if (type == TABLE) {
-        *AC_cfg >> columns;
+    if (type == VECTOR || type == TABLE || type == TABLE3D) {
+
+      if (type == TABLE3D) {
+        *AC_cfg >> rows >> columns >> tables;
+        Table = new FGTable(rows, columns, tables);
+        *AC_cfg >> multparmsRow >> multparmsCol >> multparmsTable;
+        LookupR = PropertyManager->GetNode( multparmsRow );
+        LookupC = PropertyManager->GetNode( multparmsCol );
+        LookupT = PropertyManager->GetNode( multparmsTable );
+      } else if (type == TABLE) {
+        *AC_cfg >> rows >> columns;
         Table = new FGTable(rows, columns);
+        *AC_cfg >> multparmsRow >> multparmsCol;
+        LookupR = PropertyManager->GetNode( multparmsRow );
+        LookupC = PropertyManager->GetNode( multparmsCol );
       } else {
+        *AC_cfg >> rows;
         Table = new FGTable(rows);
+        *AC_cfg >> multparmsRow;
+        LookupR = PropertyManager->GetNode( multparmsRow );
       }
-
-      *AC_cfg >> multparmsRow;
-      LookupR = PropertyManager->GetNode( multparmsRow );
     }
 
-    if (type == TABLE) {
-      *AC_cfg >> multparmsCol;
-
-      LookupC = PropertyManager->GetNode( multparmsCol );
-    }
-
-    // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
-    // where each non-dimensionalizing parameter for this coefficient is
+    // Here, read in the line of the form:
+    // {property1} | {property2} | {property3}
+    // where each non-dimensionalizing property for this coefficient is
     // separated by a | character
 
     string line=AC_cfg->GetCurrentLine();
@@ -157,11 +163,11 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
         tmp[j]=line[i];
         j++;
       }
-    } 
-    tmp[j]='\0'; multparms=tmp;  
-    end  = multparms.length();
+    }
+    tmp[j]='\0'; multparms=tmp;
+    end = multparms.length();
 
-    n     = multparms.find("|");
+    n = multparms.find("|");
     start = 0;
     if (multparms != string("none")) {
       while (n < end && n >= 0) {
@@ -176,9 +182,10 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
       // End of non-dimensionalizing parameter read-in
     }
     AC_cfg->GetNextConfigLine();
+
     if (type == VALUE) {
       *AC_cfg >> StaticValue;
-    } else if (type == VECTOR || type == TABLE) {
+    } else if (type == VECTOR || type == TABLE || type == TABLE3D) {
       *Table << *AC_cfg;
     } else {
       cerr << "Unimplemented coefficient type: " << type << endl;
@@ -190,10 +197,25 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     return true;
   } else {
     return false;
-  }  
+  }
 }
 
 
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGCoefficient::Value(double rVal, double cVal, double tVal)
+{
+  double Value;
+  unsigned int midx;
+
+  SD = Value = gain*Table->GetValue(rVal, cVal, tVal) + bias;
+
+  for (midx=0; midx < multipliers.size(); midx++) {
+      Value *= multipliers[midx]->getDoubleValue();
+  }
+  return Value;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -215,12 +237,12 @@ double FGCoefficient::Value(double rVal, double cVal)
 double FGCoefficient::Value(double Val)
 {
   double Value;
-  
+
   SD = Value = gain*Table->GetValue(Val) + bias;
-  
-  for (unsigned int midx=0; midx < multipliers.size(); midx++) 
+
+  for (unsigned int midx=0; midx < multipliers.size(); midx++)
       Value *= multipliers[midx]->getDoubleValue();
-  
+
   return Value;
 }
 
@@ -228,7 +250,7 @@ double FGCoefficient::Value(double Val)
 
 double FGCoefficient::Value(void)
 {
-	double Value;
+  double Value;
 
   SD = Value = gain*StaticValue + bias;
 
@@ -258,7 +280,13 @@ double FGCoefficient::TotalValue(void)
 
   case TABLE:
     totalValue = Value( LookupR->getDoubleValue(),
-                      LookupC->getDoubleValue() );
+                        LookupC->getDoubleValue() );
+    break;
+
+  case TABLE3D:
+    totalValue = Value( LookupR->getDoubleValue(),
+                        LookupC->getDoubleValue(),
+                        LookupT->getDoubleValue() );
     break;
 
   case EQUATION:
@@ -279,7 +307,7 @@ void FGCoefficient::DisplayCoeffFactors(void)
   if (multipliers.size() == 0) {
     cout << "none" << endl;
   } else {
-    for (i=0; i<multipliers.size(); i++) 
+    for (i=0; i<multipliers.size(); i++)
       cout << multipliers[i]->getName() << "  ";
   }
   cout << endl;
@@ -303,29 +331,29 @@ void FGCoefficient::bind(FGPropertyManager *parent)
 {
   string mult;
   unsigned i;
-  
+
   node = parent->GetNode(name,true);
-  
+
   node->SetString("description",description);
   if (LookupR) node->SetString("row-parm",LookupR->getName() );
   if (LookupC) node->SetString("column-parm",LookupC->getName() );
-  
+
   mult="";
-  if (multipliers.size() == 0) 
+  if (multipliers.size() == 0)
     mult="none";
-    
+
   for (i=0; i<multipliers.size(); i++) {
       mult += multipliers[i]->getName();
-      if ( i < multipliers.size()-1 ) mult += " "; 
+      if ( i < multipliers.size()-1 ) mult += " ";
   }
   node->SetString("multipliers",mult);
-  
+
   node->Tie("SD-norm",this,&FGCoefficient::GetSD );
   node->Tie("value-lbs",this,&FGCoefficient::GetValue );
-  
+
   node->Tie("bias", this, &FGCoefficient::getBias,
                           &FGCoefficient::setBias );
-                          
+
   node->Tie("gain", this, &FGCoefficient::getGain,
                           &FGCoefficient::setGain );
 
@@ -336,8 +364,8 @@ void FGCoefficient::bind(FGPropertyManager *parent)
 void FGCoefficient::unbind(void)
 {
   node->Untie("SD-norm");
-  node->Untie("value-lbs"); 
-  node->Untie("bias");  
+  node->Untie("value-lbs");
+  node->Untie("bias");
   node->Untie("gain");
 }
 
@@ -351,8 +379,8 @@ FGPropertyManager* FGCoefficient::resolveSymbol(string name)
   if ( !tmpn ) {
     cerr << "Coefficient multipliers cannot create properties, check spelling?" << endl;
     exit(1);
-  } 
-  return tmpn; 
+  }
+  return tmpn;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -379,28 +407,23 @@ void FGCoefficient::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    
+
     if (from == 2) { // Loading
       cout << "\n   " << highint << underon << name << underoff << normint << endl;
       cout << "   " << description << endl;
       cout << "   " << method << endl;
 
-      if (type == VECTOR || type == TABLE) {
-        cout << "   Rows: " << rows << " ";
-        if (type == TABLE) {
-          cout << "Cols: " << columns;
+      if (type == VECTOR || type == TABLE || type == TABLE3D) {
+        cout << "   Rows: " << rows << " indexed by: " << LookupR->getName() << endl;
+        if (type == TABLE || type == TABLE3D) {
+          cout << "   Cols: " << columns << " indexed by: " << LookupC->getName() << endl;
+          if (type == TABLE3D) {
+            cout << "   Tables: " << tables << " indexed by: " << LookupT->getName() << endl;
+          }
         }
-        cout << endl << "   Row indexing parameter: " << LookupR->getName() << endl;
-      }
-
-      if (type == TABLE) {
-        cout << "   Column indexing parameter: " << LookupC->getName() << endl;
-      }
-
-      if (type == VALUE) {
-        cout << "      Value = " << StaticValue << endl;
-      } else if (type == VECTOR || type == TABLE) {
         Table->Print();
+      } else if (type == VALUE) {
+        cout << "      Value = " << StaticValue << endl;
       }
 
       DisplayCoeffFactors();
