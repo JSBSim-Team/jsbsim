@@ -84,5 +84,7 @@ bool FGFCSComponent::Run(void)
     break;
   }
 
+  cout << "Input index: " << InputIdx << " Input Value: " << Input << endl;
+
   return true;
 }

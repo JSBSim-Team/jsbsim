@@ -86,15 +86,16 @@ ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
 
 [HistoryLists\hlRunParameters]
-Count=2
-Item0=X15 reset00 > output.dat
-Item1=X15 reset00
+Count=3
+Item0=X15 reset00 
+Item1=X15 reset00 > output.dat
+Item2=X15 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=X15 reset00 > output.dat
+RunParams=X15 reset00 
 HostApplication=
 RemoteHost=
 RemotePath=

@@ -132,8 +132,8 @@ bool FGGain::Run(void )
 
   } else if (Type == "AEROSURFACE_SCALE") {
 
-    if (Output >= 0.0) Output = Gain * Max;
-    else Output = Gain * (-Min);
+    if (Output >= 0.0) Output = Input * Max;
+    else Output = Input * (-Min);
   }
 
   return true;
