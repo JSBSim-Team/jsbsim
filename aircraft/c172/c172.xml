@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.107 2002/08/16 13:01:14 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.108 2002/08/18 14:58:49 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -48,7 +48,7 @@
 <!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
 <!-- Co-pilot -->
-    AC_POINTMASS 180.0 36.0  14.0 24.0
+<!-- AC_POINTMASS 180.0 36.0  14.0 24.0 -->
     AC_EYEPTLOC  37.0  0.0 48.0
 
   </METRICS>
@@ -79,7 +79,7 @@
      AC_GEAR  LEFT_TIP    43.2 -214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR  RIGHT_TIP   43.2  214.8 59.4 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
 
-</UNDERCARRIAGE>
+  </UNDERCARRIAGE>
 
   <PROPULSION>
 
@@ -145,8 +145,9 @@
     </AC_TANK>
 
   </PROPULSION>
+
+  <AUTOPILOT FILE="c172ap">
 <!--
-  <AUTOPILOT NAME="c172">
     <COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
        ID            0
        INPUT         FG_PHI
@@ -172,8 +173,9 @@
        GAIN          -1
        OUTPUT        AP_AILERON_CMD
     </COMPONENT>
-  </AUTOPILOT>
 -->
+  </AUTOPILOT>
+
   <FLIGHT_CONTROL NAME="c172">
     <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
        ID            0

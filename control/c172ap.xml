@@ -1,0 +1,25 @@
+<COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
+   ID            0
+   INPUT         FG_PHI
+   GAIN          1.0
+   MIN           -0.255
+   MAX            0.255
+</COMPONENT>
+<COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
+   ID            1
+   INPUT         FG_PHI
+   C1            1
+</COMPONENT>
+<COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
+   ID            2
+   INPUT         FG_ROLLRATE
+   INPUT         0
+   INPUT         1
+   CLIPTO       -1 1
+</COMPONENT>
+<COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
+   ID            3
+   INPUT         2
+   GAIN          -1
+   OUTPUT        AP_AILERON_CMD
+</COMPONENT>

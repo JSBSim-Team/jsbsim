@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.83 2002/08/17 00:05:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.84 2002/08/18 14:58:48 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -279,29 +279,62 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 
 bool FGFCS::Load(FGConfigFile* AC_cfg)
 {
-  string token;
+  string token, delimiter;
+  string name, file, fname;
   unsigned i;
   vector <FGFCSComponent*> *Components;
+  FGConfigFile *FCS_cfg;
 
-  string delimiter = AC_cfg->GetValue();
-  
+  // Determine if the FCS/Autopilot is defined inline in the aircraft configuration
+  // file or in a separate file. Set up the config file class as appropriate.
+
+  delimiter = AC_cfg->GetValue();
+  name  = AC_cfg->GetValue("NAME");
+  fname = AC_cfg->GetValue("FILE");
+
+  if ( AC_cfg->GetValue("NORMALIZE") == "FALSE") {
+    DoNormalize = false;
+    cout << "    Automatic Control Surface Normalization Disabled" << endl;
+  }
+
+# ifndef macintosh
+  file = "control/" + fname + ".xml";
+# else
+  file = "control;" + fname + ".xml";
+# endif
+
+  if (name.empty()) {
+    name = fname;
+    if (file.empty()) {
+      cerr << "FCS/Autopilot does not appear to be defined inline nor in a file" << endl;
+    } else {
+      FCS_cfg = new FGConfigFile(file);
+      if (!FCS_cfg->IsOpen()) {
+        cerr << "Could not open " << delimiter << " file: " << file << endl;
+        return false;
+      } else {
+        AC_cfg = FCS_cfg; // set local config file object pointer to FCS config
+	                        // file object pointer
+      }
+    }
+  } else {
+    AC_cfg->GetNextConfigLine();
+  }
+
   if (delimiter == "AUTOPILOT") {
     Components = &APComponents;
     eMode = mAP;
+    Name = "Autopilot:" + name;
   } else if (delimiter == "FLIGHT_CONTROL") {
     Components = &FCSComponents;
     eMode = mFCS;
+    Name = "FCS:" + name;
   } else {
     cerr << endl << "Unknown FCS delimiter" << endl << endl;
   }
   
-  Name = Name + ":" + AC_cfg->GetValue("NAME");
   if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
-  if ( AC_cfg->GetValue("NORMALIZE") == "FALSE") {
-    DoNormalize=false;
-    cout << "    Automatic Control Surface Normalization Disabled" << endl;
-  }    
-  AC_cfg->GetNextConfigLine();
+
   while ((token = AC_cfg->GetValue()) != string("/" + delimiter)) {
     if (token == "COMPONENT") {
       token = AC_cfg->GetValue("TYPE");
@@ -334,7 +367,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
         cerr << "Unknown token [" << token << "] in FCS portion of config file" << endl;
         return false;
       }
-      AC_cfg->GetNextConfigLine();
+      if (AC_cfg->GetNextConfigLine() == "EOF") break;
     }
   }
 
