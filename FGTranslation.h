@@ -74,8 +74,6 @@ INCLUDES
 CLASS DECLARATION
 *******************************************************************************/
 
-#pragma warn -8026
-
 class FGTranslation : public FGModel {
 public:
   FGTranslation(FGFDMExec*);
@@ -120,7 +118,6 @@ private:
 
   void GetState(void);
 };
-#pragma warn .8026
 
 /******************************************************************************/
 #endif

@@ -25,11 +25,14 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
+#    include <cmath>
 #  else
 #    include <fstream.h>
+#    include <math.h>
 #  endif
 #else
 #  include <fstream>
+#  include <cmath>
 #endif
 
 #include <string>

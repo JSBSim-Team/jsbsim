@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.5 2000/05/12 22:45:35 jsb Exp $
+// $Id: FGControls.h,v 1.6 2000/06/03 13:59:52 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -36,11 +36,13 @@ class FGControls {
 
 public:
 
-    static const int ALL_ENGINES = -1;
-    static const int MAX_ENGINES = 10;
+    enum {
+      ALL_ENGINES = -1,
+      MAX_ENGINES = 10,
 
-    static const int ALL_WHEELS = -1;
-    static const int MAX_WHEELS = 3;
+      ALL_WHEELS = -1,
+      MAX_WHEELS = 3
+    };
 
 private:
 
@@ -175,6 +177,9 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.6  2000/06/03 13:59:52  jsb
+// Changes for compatibility with MSVC
+//
 // Revision 1.5  2000/05/12 22:45:35  jsb
 // Removed extraneous namespace identifiers and header files
 //

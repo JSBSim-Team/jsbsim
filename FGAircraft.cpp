@@ -234,7 +234,7 @@ void FGAircraft::MassChange() {
   static FGColumnVector vXYZtank(3);
   float Tw;
   float IXXt, IYYt, IZZt, IXZt;
-  int t;
+  unsigned int t;
   unsigned int axis_ctr;
 
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vXYZtank(axis_ctr) = 0.0;
@@ -250,7 +250,7 @@ void FGAircraft::MassChange() {
 
   float Oshortage, Fshortage;
 
-  for (int e=0; e<numEngines; e++) {
+  for (unsigned int e=0; e<numEngines; e++) {
     Fshortage = Oshortage = 0.0;
     for (t=0; t<numTanks; t++) {
       switch(Engine[e]->GetType()) {
@@ -384,7 +384,7 @@ void FGAircraft::FMMass(void) {
 /******************************************************************************/
 
 void FGAircraft::FMProp(void) {
-  for (int i=0;i<numEngines;i++) {
+  for (unsigned int i=0;i<numEngines;i++) {
     vForces(eX) += Engine[i]->CalcThrust();
   }
 }

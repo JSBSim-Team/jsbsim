@@ -67,14 +67,17 @@ INCLUDES
 #  include <cmath>
 #endif
 
+#ifndef M_PI
+#  include <simgear/constants.h>
+#  define M_PI FG_PI
+#endif
+
 #include "FGModel.h"
 #include "FGMatrix.h"
 
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
-
-#pragma warn -8026
 
 class FGRotation : public FGModel
 {
@@ -103,7 +106,6 @@ public:
   inline float Gettht(void) {return vEuler(2);}
   inline float Getpsi(void) {return vEuler(3);}
 };
-#pragma warn .8026
 
 /******************************************************************************/
 #endif

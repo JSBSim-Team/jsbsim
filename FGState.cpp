@@ -47,6 +47,11 @@ INCLUDES
 #  include <cmath>
 #endif
 
+#ifndef M_PI         // support for silly Microsoft compiler
+#  include <simgear/constants.h>
+#  define M_PI FG_PI
+#endif 
+
 #include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
@@ -456,12 +461,12 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
 FGColumnVector FGState::CalcEuler(void) {
   static FGColumnVector vEuler(3);
 
-  if (mTl2b(3,3) == 0)    vEuler(ePhi) = 0.0;
+  if (mTl2b(3,3) == 0)    vEuler(ePhi) = 0.0000001;
   else                    vEuler(ePhi) = atan2(mTl2b(2,3), mTl2b(3,3));
 
   vEuler(eTht) = asin(-mTl2b(1,3));
 
-  if (mTl2b(1,1) == 0.0)  vEuler(ePsi) = 0.0;
+  if (mTl2b(1,1) == 0.0)  vEuler(ePsi) = 0.0000001;
   else                    vEuler(ePsi) = atan2(mTl2b(1,2), mTl2b(1,1));
 
   if (vEuler(ePsi) < 0.0) vEuler(ePsi) += 2*M_PI;
