@@ -37,8 +37,10 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.cpp,v 1.5 2001/02/04 13:16:12 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.cpp,v 1.6 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -47,9 +49,17 @@ CLASS IMPLEMENTATION
 
 FGAerodynamics::FGAerodynamics(FGFDMExec* fgex) : FGModel(fgex)
 {
-
+  if (debug_lvl & 2) cout << "Instantiated: FGAerodynamics" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGAerodynamics::~FGAerodynamics()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGAerodynamics" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGAerodynamics:: Run(void) {
 
@@ -61,8 +71,17 @@ bool FGAerodynamics:: Run(void) {
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGAerodynamics::LoadAerodynamics(FGConfigFile* AC_cfg)
 {
 //
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAerodynamics::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

@@ -58,6 +58,9 @@ public:
   ~FGMassBalance();
 
   bool Run(void);
+  
+private:  
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

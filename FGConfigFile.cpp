@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.14 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.15 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 extern short debug_lvl;
@@ -47,6 +47,7 @@ FGConfigFile::FGConfigFile(string cfgFileName)
 FGConfigFile::~FGConfigFile(void)
 {
   cfgfile.close();
+  if (debug_lvl & 2) cout << "Destroyed:    FGConfigFile" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

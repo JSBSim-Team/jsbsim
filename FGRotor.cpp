@@ -37,8 +37,10 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.6 2001/02/04 13:16:17 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.7 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -47,11 +49,21 @@ CLASS IMPLEMENTATION
 
 FGRotor::FGRotor(FGFDMExec *FDMExec) : FGThruster(FDMExec)
 {
-
+  if (debug_lvl & 2) cout << "Instantiated: FGRotor" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 float FGRotor::Calculate(float PowerAvailable)
 {
   return 0.0;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGRotor::Debug(void)
+{
+    //TODO: Add your source code here
+}
+
+

@@ -92,6 +92,7 @@ FGTable::~FGTable(void)
 {
   for (int r=0; r<=nRows; r++) if (Data[r]) delete Data[r];
   if (Data) delete Data;
+  if (debug_lvl & 2) cout << "Destroyed:    FGTable" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,4 +194,12 @@ void FGTable::Print(void)
   }
   cout.setf(0, ios::floatfield); // reset
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTable::Debug(void)
+{
+    //TODO: Add your source code here
+}
+
 

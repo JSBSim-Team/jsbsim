@@ -57,8 +57,10 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGUtility.cpp,v 1.9 2001/02/04 13:16:19 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGUtility.cpp,v 1.10 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_UTILITY;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -66,10 +68,19 @@ CLASS IMPLEMENTATION
 
 FGUtility::FGUtility()
 {
+  if (debug_lvl & 2) cout << "Instantiated: FGUtility" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGUtility::~FGUtility()
 {
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGUtility::Debug(void)
+{
+}
+
 

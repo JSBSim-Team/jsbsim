@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.7 2001/02/04 13:16:12 jsb Exp $"
+#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.8 2001/03/19 23:53:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.7 2001/02/04 13:16:12 jsb Exp $
+    @version $Id: FGAerodynamics.h,v 1.8 2001/03/19 23:53:46 jberndt Exp $
     @see -
 */
 
@@ -99,6 +99,9 @@ public:
   /** Loads the Aerodynamics model
       @return true if successful */
   bool LoadAerodynamics(FGConfigFile* AC_cfg);
+  
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

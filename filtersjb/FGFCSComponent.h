@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.22 2001/03/19 14:07:19 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.23 2001/03/19 23:53:47 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -95,7 +95,7 @@ public:
   /// Constructor
   FGFCSComponent(FGFCS*);
   /// Destructor
-  virtual ~FGFCSComponent ( ) { }       //Destructor
+  virtual ~FGFCSComponent();
 
   virtual bool Run(void);
   virtual void SetOutput(void);

@@ -70,6 +70,9 @@ public:
 
   bool Run(void);
   bool LoadGroundReactions(FGConfigFile* AC_cfg);
+
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

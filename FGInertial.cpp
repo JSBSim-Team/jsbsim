@@ -37,8 +37,10 @@ INCLUDES
 
 #include "FGInertial.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.cpp,v 1.5 2001/02/04 13:16:14 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.cpp,v 1.6 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -47,9 +49,10 @@ CLASS IMPLEMENTATION
 
 FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 {
-
+  if (debug_lvl & 2) cout << "Instantiated: FGInertial" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGInertial:: Run(void) {
 
@@ -61,8 +64,17 @@ bool FGInertial:: Run(void) {
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGInertial::LoadInertial(FGConfigFile* AC_cfg)
 {
 //
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInertial::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

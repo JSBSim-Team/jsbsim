@@ -57,11 +57,10 @@ public:
   FGUtility(void);
   ~FGUtility(void);
 
-protected:
-
 private:
   FGState* State;
   FGFDMExec* FDMExec;
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

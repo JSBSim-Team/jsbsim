@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.40 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.41 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -383,5 +383,12 @@ void FGLGear::Report(void)
   cout << "  Distance traveled:     " << DistanceTraveled        << " ft,     "
                               << DistanceTraveled*0.3408  << " meters"  << endl;
   Reported = true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::Debug(void)
+{
+  // TODO: Add user code here
 }
 

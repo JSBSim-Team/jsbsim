@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.41 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.42 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = "ID_FCS";
 
 extern short debug_lvl;
@@ -83,6 +83,7 @@ FGFCS::~FGFCS(void)
   ThrottlePos.clear();
 
   for(unsigned int i=0;i<Components.size();i++) delete Components[i];
+  if (debug_lvl & 2) cout << "Destroyed:    FGFCS" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

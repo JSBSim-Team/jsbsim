@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.14 2001/03/19 14:07:19 jberndt Exp $"
+#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.15 2001/03/19 23:53:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.14 2001/03/19 14:07:19 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.15 2001/03/19 23:53:47 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,7 @@ class FGFilter  : public FGFCSComponent
 {
 public:
   FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGFilter ( ) { }       //Destructor
+  ~FGFilter();
 
   bool Run (void);
 

@@ -97,7 +97,6 @@ private:
   int solutionDomain;
   float xlo,xhi,alo,ahi;
 
-
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
 

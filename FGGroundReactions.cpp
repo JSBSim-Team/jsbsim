@@ -37,8 +37,10 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGGroundReactions.cpp,v 1.5 2001/02/04 13:16:14 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGGroundReactions.cpp,v 1.6 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -47,9 +49,10 @@ CLASS IMPLEMENTATION
 
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 {
-
+  if (debug_lvl & 2) cout << "Instantiated: FGGroundReactions" << endl;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGGroundReactions:: Run(void) {
 
@@ -61,8 +64,17 @@ bool FGGroundReactions:: Run(void) {
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 bool FGGroundReactions::LoadGroundReactions(FGConfigFile* AC_cfg)
 {
 //
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGGroundReactions::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

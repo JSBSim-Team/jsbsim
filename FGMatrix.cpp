@@ -20,8 +20,10 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.21 2001/02/04 13:16:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.22 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -56,6 +58,8 @@ FGMatrix::FGMatrix(const unsigned int r, const unsigned int c) : rows(r), cols(c
   data = FGalloc(rows,cols);
   InitMatrix();
   rowCtr = colCtr = 1;
+  
+  if (debug_lvl & 2) cout << "Instantiated: FGMatrix" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +78,8 @@ FGMatrix::~FGMatrix(void)
   dealloc(data,rows);
   rowCtr = colCtr = 1;
   rows = cols = 0;
+
+  if (debug_lvl & 2) cout << "Destroyed:    FGMatrix" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -435,10 +441,25 @@ void FGMatrix::TransposeNonSquare(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector::FGColumnVector(void):FGMatrix(3,1) { }
+void FGMatrix::Debug(void)
+{
+    //TODO: Add your source code here
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector::FGColumnVector(void):FGMatrix(3,1)
+{
+  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector" << endl;
+}
+
 FGColumnVector::FGColumnVector(int m):FGMatrix(m,1) { }
 FGColumnVector::FGColumnVector(const FGColumnVector& b):FGMatrix(b) { }
-FGColumnVector::~FGColumnVector() { }
+
+FGColumnVector::~FGColumnVector(void)
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector" << endl;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -619,3 +640,11 @@ FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector::Debug(void)
+{
+    //TODO: Add your source code here
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

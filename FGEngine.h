@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.28 2001/03/19 14:07:18 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.29 2001/03/19 23:53:46 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ CLASS DECLARATION
 class FGEngine {
 public:
   FGEngine(FGFDMExec* exec);
-  virtual ~FGEngine(void) {}
+  virtual ~FGEngine(void);
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurboProp, etTurboJet};
 

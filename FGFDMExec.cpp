@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.37 2001/03/19 18:11:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.38 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -157,6 +157,7 @@ FGFDMExec::FGFDMExec(void)
 
 FGFDMExec::~FGFDMExec(void) {
   DeAllocate();
+  if (debug_lvl & 2) cout << "Destroyed:    FGFDMExec" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -52,7 +52,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.12 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.13 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 extern short debug_lvl;
@@ -73,7 +73,10 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGAuxiliary::~FGAuxiliary() {}
+FGAuxiliary::~FGAuxiliary()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGAuxiliary" << endl;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

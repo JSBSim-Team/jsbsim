@@ -56,8 +56,10 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.18 2001/02/24 12:03:58 apeden Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.19 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
+
+extern short debug_lvl;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -107,6 +109,8 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   successful=new float[TrimAxes.size()];
   solution=new bool[TrimAxes.size()];
   current_axis=0;
+  
+  if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -618,9 +622,6 @@ bool FGTrim::checkLimits(void) {
   TrimAxes[current_axis]->Run();
   return solutionExists;
 }
-
-
-
 
 //YOU WERE WARNED, BUT YOU DID IT ANYWAY.
 

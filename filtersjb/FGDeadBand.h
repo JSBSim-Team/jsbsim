@@ -76,9 +76,10 @@ class FGDeadBand  : public FGFCSComponent
   
 public:
   FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~ FGDeadBand ( ) { }       //Destructor
+  ~FGDeadBand();
 
-  bool Run (void )  ;
+  bool Run (void);
+
 private:
   void Debug(void);
 };

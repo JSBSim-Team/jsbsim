@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.29 2001/02/02 01:16:59 jsb Exp $
+    @version $Id: FGLGear.h,v 1.30 2001/03/19 23:53:46 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -255,6 +255,7 @@ private:
   FGFCS*      FCS;
 
   void Report(void);
+  void Debug(void);
 };
 
 #include "FGAircraft.h"

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.17 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.18 2001/03/19 23:53:47 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 extern short debug_lvl;
@@ -60,6 +60,13 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
   IsOutput   = false;
 
   if (debug_lvl & 2) cout << "Instantiated: FGFCSComponent" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGFCSComponent::~FGFCSComponent()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGFCSComponent" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.10 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.11 2001/03/19 23:53:47 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 extern short debug_lvl;
@@ -47,12 +47,6 @@ extern short debug_lvl;
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-// *****************************************************************************
-//  Function:   Constructor
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGFlaps::FGFlaps(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 AC_cfg(AC_cfg) {
@@ -102,11 +96,14 @@ AC_cfg(AC_cfg) {
   if (debug_lvl & 2) cout << "Instantiated: FGFlaps" << endl;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGFlaps::~FGFlaps()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGFlaps" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFlaps::Run(void ) {
   float dt=fcs->GetState()->Getdt();

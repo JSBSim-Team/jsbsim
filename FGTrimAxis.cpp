@@ -42,8 +42,10 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.16 2001/02/04 13:16:18 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.17 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
+
+extern short debug_lvl;
 
 /*****************************************************************************/
 
@@ -136,6 +138,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     case tHmgt: tolerance = 0.01; break;
   }  
   
+  if (debug_lvl & 2) cout << "Instantiated: FGTrimAxis" << endl;
 }
 
 /*****************************************************************************/
@@ -397,9 +400,7 @@ void FGTrimAxis::setThrottlesPct(void) {
   }
 }
 
-
 /*****************************************************************************/
-
 
 void FGTrimAxis::AxisReport(void) {
   
@@ -411,7 +412,6 @@ void FGTrimAxis::AxisReport(void) {
 
 }
 
-
 /*****************************************************************************/
 
 float FGTrimAxis::GetAvgStability( void ) {
@@ -419,5 +419,11 @@ float FGTrimAxis::GetAvgStability( void ) {
     return float(total_stability_iterations)/float(total_iterations);
   }
   return 0;
+}
+
+/*****************************************************************************/
+
+void FGTrimAxis::Debug(void)
+{
 }
 

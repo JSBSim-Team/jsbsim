@@ -79,7 +79,7 @@ class FGFlaps  : public FGFCSComponent {
 
 public:
   FGFlaps(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGFlaps ( ) { }       //Destructor
+  ~FGFlaps();
   bool Run (void );
   
 private:

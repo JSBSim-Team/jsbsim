@@ -84,6 +84,7 @@ private:
   void TransposeSquare(void);
   void TransposeNonSquare(void);
   unsigned int rowCtr, colCtr;
+  void Debug(void);
 
 public:
   FGMatrix(unsigned int r, unsigned int c);
@@ -132,7 +133,7 @@ public:
   FGColumnVector(void);
   FGColumnVector(int m);
   FGColumnVector(const FGColumnVector& b);
-  ~FGColumnVector();
+  ~FGColumnVector(void);
 
   FGColumnVector operator*(const double scalar);
   FGColumnVector operator*(const FGColumnVector& V);   // Cross product operator
@@ -148,6 +149,9 @@ public:
   double& operator()(int m) const;
   
   FGColumnVector multElementWise(const FGColumnVector& V);
+
+private:
+  void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

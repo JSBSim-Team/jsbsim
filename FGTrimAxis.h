@@ -23,12 +23,9 @@
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
  
- 
  HISTORY
 --------------------------------------------------------------------------------
 7/3/00  TP   Created
- 
- 
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -66,6 +63,7 @@ const string ControlNames[14]= { "Throttle","Sideslip","Angle of Attack",
                                  "Pitch Trim", "Roll Trim", "Yaw Trim",
                                  "Heading"
                                };
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -130,7 +128,6 @@ private:
   FGFDMExec *fdmex;
   FGInitialCondition *fgic;
 
-
   State   state;
   Control control;
 
@@ -153,7 +150,6 @@ private:
   int total_stability_iterations;
   int total_iterations;
 
-
   void setThrottlesPct(void);
 
   void getState(void);
@@ -162,8 +158,7 @@ private:
   
   float computeHmgt(void);
   
-  
-
+  void Debug(void);
 };
 
 #endif

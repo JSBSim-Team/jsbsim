@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.26 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.27 2001/03/19 23:53:46 jberndt Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
@@ -165,8 +165,10 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGCoefficient::~FGCoefficient(void) {
+FGCoefficient::~FGCoefficient(void)
+{
   if (Table) delete Table;
+  if (debug_lvl & 2) cout << "Destroyed:    FGCoefficient" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
