@@ -1,3 +1,5 @@
+INCLUDES = -I$(top_srcdir)
+
 lib_LIBRARIES = libFCSComponents.a
 
 libFCSComponents_a_SOURCES = \

@@ -6,7 +6,7 @@ endif
 # follows $(UTILITIES_DIR) on the same line
 SUBDIRS = aircraft engine filtersjb scripts simgear $(UTILITIES_DIR)
 
-INCLUDES = -I.
+INCLUDES = -I$(top_srcdir)
 
 bin_PROGRAMS = JSBSim
 
