@@ -554,9 +554,11 @@ FGColumnVector FGColumnVector::Normalize(void)
 {
   double Mag = Magnitude();
 
-  for (unsigned int i=1; i<=Rows(); i++)
-    for (unsigned int j=1; j<=Cols(); j++)
-      data[i][j] = data[i][j]/Mag;
+  if(Mag != 0 {
+    for (unsigned int i=1; i<=Rows(); i++)
+      for (unsigned int j=1; j<=Cols(); j++)
+        data[i][j] = data[i][j]/Mag;
+  }      
 
   return *this;
 }
