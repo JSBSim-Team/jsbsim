@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.7 2002/02/04 23:05:34 jberndt Exp $
+  CVS Version: $Id: c182.xml,v 1.8 2002/02/22 12:14:46 apeden Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -412,7 +412,7 @@
        -->
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
-         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         FG_QBAR|FG_WINGAREA|FG_AELEVATOR_POS
           0.00
        </COEFFICIENT>
 

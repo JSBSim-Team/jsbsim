@@ -3,7 +3,7 @@
 
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
-  CVS Version: $Id: pa28.xml,v 1.1 2001/12/20 13:29:41 jberndt Exp $
+  CVS Version: $Id: pa28.xml,v 1.2 2002/02/22 12:14:46 apeden Exp $
 
   Function: Models a Piper PA28-180 Cherokee
   Notes:    Try running FlightGear using this command line,
@@ -334,7 +334,7 @@
         </COEFFICIENT>
        <COEFFICIENT NAME="CDDe" TYPE="VALUE">
          Drag_due_to_Elevator_Deflection
-         FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+         FG_QBAR|FG_WINGAREA|FG_AELEVATOR_POS
          0.06
        </COEFFICIENT>
        <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
