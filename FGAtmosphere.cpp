@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.51 2003/06/29 21:17:10 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.52 2003/07/01 20:52:00 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,7 +267,11 @@ void FGAtmosphere::Turbulence(void)
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
 
-    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX));
+    MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
+                                // Scale the magnitude so that it moves
+                                // away from the peaks
+    MagnitudedAccelDt = ((MagnitudedAccelDt - Magnitude) /
+                         (1 + fabs(Magnitude)));
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
