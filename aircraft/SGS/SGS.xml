@@ -49,38 +49,17 @@
     AC_CGLOC     0.0 0.0 0.0       <!-- SGS inches?         -->
     AC_POINTMASS 0.0 0.0 0.0 0.0   <!-- no pilot            -->
     AC_EYEPTLOC  0.0  0.0 0.0 <!-- made up this number -->
-    AC_VRP       0.0 0.0 0.0       <!-- SGS inches?         -->
-
+    AC_VRP       0.0 0.0 0.0 
   </METRICS>
 
   <UNDERCARRIAGE>
-
-    <!--
-      SGS does not have proper gear set up
-      The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-
-      AC_GEAR
-      <name>                           name of gear entry - no spaces allowed
-      <X> <Y> <Z>                      Gear location in aircraft body coords in inches
-      <spring constant>                spring constant in lbs/ft
-      <damping coefficient>            damping coefficient in lbs/ft/sec
-      <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
-      <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-      <rolling friction coefficient>   Self-explanatory: rolling friction coefficient
-      <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-      <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
-      <max steer angle>                Maximum steerable angle in degrees
-      <retraction attribute>           <RETRACT | FIXED>
-    -->
-
      AC_GEAR  NOSE        0.0 0.0 0.0 1800  600  0.5  0.8 0.02 STEERABLE NONE 10 FIXED
      AC_GEAR  LEFT_MAIN   0.0 0.0 0.0 5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0 FIXED
      AC_GEAR  RIGHT_MAIN  0.0 0.0 0.0 5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0 FIXED
      AC_GEAR  TAIL_SKID  0.0 0.0 0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR  LEFT_TIP   0.0 0.0 0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR  RIGHT_TIP  0.0 0.0 0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
-
-</UNDERCARRIAGE>
+  </UNDERCARRIAGE>
 
   <!-- PROPULSION -->
    SGS has no propulsion system!!

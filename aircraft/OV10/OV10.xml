@@ -187,20 +187,19 @@
        aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
        0.5
     </COEFFICIENT>
-<!--    
+<!-- 
     <COEFFICIENT NAME="Lde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
        aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-rad
        0.2
     </COEFFICIENT>
--->    
+--> 
     <COEFFICIENT NAME="Lde" TYPE="VALUE">
        Lift_due_to_Elevator_Deflection
        aero/qbar-psf
        0.2
     </COEFFICIENT>
-       
-    <!--
+<!--
     <COEFFICIENT NAME="Lprop0" TYPE="VALUE">
        Lift_due_to_left_engine_prop_wash
        propulsion/engine[0]/thrust 
@@ -211,7 +210,8 @@
        propulsion/engine[1]/thrust 
        0.288595
     </COEFFICIENT>
-    -->
+-->
+
   </AXIS>
   <AXIS NAME="DRAG">
     <COEFFICIENT NAME="CD0" TYPE="VECTOR">
