@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.9 2000/11/21 13:35:56 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.10 2000/11/21 23:07:57 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,13 +119,13 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         if (tag == "FG_ROCKET") {
           Engines.push_back(*(new FGRocket(&Eng_cfg)));
         } else if (tag == "FG_PISTON") {
-          Engines.push_back(*(new FGPiston(FDMExec, enginePath, engineName, numEngines)));
+          Engines.push_back(*(new FGPiston(&Eng_cfg)));
         } else if (tag == "FG_TURBOJET") {
-          Engines.push_back(*(new FGTurboJet(FDMExec, enginePath, engineName, numEngines)));
+          Engines.push_back(*(new FGTurboJet(&Eng_cfg)));
         } else if (tag == "FG_TURBOSHAFT") {
-          Engines.push_back(*(new FGTurboShaft(FDMExec, enginePath, engineName, numEngines)));
+          Engines.push_back(*(new FGTurboShaft(&Eng_cfg)));
         } else if (tag == "FG_TURBOPROP") {
-          Engines.push_back(*(new FGTurboProp(FDMExec, enginePath, engineName, numEngines)));
+          Engines.push_back(*(new FGTurboProp(&Eng_cfg)));
         }
 
         *AC_cfg >> xLoc >> yLoc >> zLoc;

@@ -78,6 +78,7 @@ class FGOutput;
 class FGEngine {
 public:
   FGEngine(FGFDMExec*, string, string, int);
+  FGEngine(void) {};
   ~FGEngine(void);
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurboProp, etTurboJet};
