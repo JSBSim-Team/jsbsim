@@ -48,7 +48,8 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.35 2001/02/02 01:16:58 jsb Exp $";
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.36 2001/02/02 12:06:46 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,6 +128,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   Position = lgear.Position;
   Rotation = lgear.Rotation;
   Exec     = lgear.Exec;
+  FCS      = lgear.FCS;
 
   vXYZ = lgear.vXYZ;
   vMoment = lgear.vMoment;
@@ -256,6 +258,7 @@ FGColumnVector FGLGear::Force(void)
       SteerAngle = 0.0;
       break;
     case stCaster:
+
     // Note to Jon: This is not correct for castering gear.  I'll fix it later.
       SteerAngle = 0.0;
       break;
