@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.92 2004/03/03 11:56:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.93 2004/03/04 00:23:22 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -523,6 +523,7 @@ void FGPropulsion::CalculateTankInertias(void)
 {
   unsigned int size;
   double contents;
+  double XX, YY, ZZ;
 
   size = Tanks.size();
   if (size == 0) return;
@@ -535,9 +536,12 @@ void FGPropulsion::CalculateTankInertias(void)
                                                    // should we be passing vector
                                                    // by reference to this?
     contents = Tanks[i]->GetContents();
-    tankIxx += vTankXYZ(eX)*vTankXYZ(eX)*contents;
-    tankIyy += vTankXYZ(eY)*vTankXYZ(eY)*contents;
-    tankIzz += vTankXYZ(eZ)*vTankXYZ(eZ)*contents;
+    XX = vTankXYZ(eX)*vTankXYZ(eX);
+    YY = vTankXYZ(eY)*vTankXYZ(eY);
+    ZZ = vTankXYZ(eZ)*vTankXYZ(eZ);
+    tankIxx += (YY + ZZ)*contents;
+    tankIyy += (XX + ZZ)*contents;
+    tankIzz += (XX + YY)*contents;
     tankIxy += vTankXYZ(eX)*vTankXYZ(eY)*contents;
     tankIxz += vTankXYZ(eX)*vTankXYZ(eZ)*contents;
     tankIyz += vTankXYZ(eY)*vTankXYZ(eZ)*contents;

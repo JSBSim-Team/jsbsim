@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.35 2004/03/03 12:33:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.36 2004/03/04 00:23:22 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,6 +168,7 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
 void FGMassBalance::CalculatePMInertia(void)
 {
   int size;
+  double XX, YY, ZZ;
 
   size = PointMassLoc.size();
   if (size == 0) return;
@@ -178,9 +179,13 @@ void FGMassBalance::CalculatePMInertia(void)
 
     vPMxyz = StructuralToBody(PointMassLoc[i]); // get vector, CG to PM
 
-    pmIxx += vPMxyz(eX)*vPMxyz(eX)*PointMassWeight[i];
-    pmIyy += vPMxyz(eY)*vPMxyz(eY)*PointMassWeight[i];
-    pmIzz += vPMxyz(eZ)*vPMxyz(eZ)*PointMassWeight[i];
+    XX = vPMxyz(eX)*vPMxyz(eX);
+    YY = vPMxyz(eY)*vPMxyz(eY);
+    ZZ = vPMxyz(eZ)*vPMxyz(eZ);
+
+    pmIxx += (YY + ZZ)*PointMassWeight[i];
+    pmIyy += (XX + ZZ)*PointMassWeight[i];
+    pmIzz += (XX + YY)*PointMassWeight[i];
     pmIxy += vPMxyz(eX)*vPMxyz(eY)*PointMassWeight[i];
     pmIxz += vPMxyz(eX)*vPMxyz(eZ)*PointMassWeight[i];
     pmIyz += vPMxyz(eY)*vPMxyz(eZ)*PointMassWeight[i];
