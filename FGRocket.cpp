@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.39 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.40 2003/11/25 03:40:38 dpculp Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +92,7 @@ double FGRocket::Calculate(double pe)
 {
   double Cf=0;
 
-  ConsumeFuel();
+  if (!Flameout && !Starved) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
 
