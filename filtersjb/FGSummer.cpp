@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.30 2002/02/14 23:41:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.31 2002/03/05 13:05:59 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   eParam tmpInputIndex;
 
   clip = false;
+  clipmin = clipmax = 0.0;
   Bias = 0.0;
   InputIndices.clear();
   InputTypes.clear();
@@ -181,7 +182,7 @@ void FGSummer::Debug(int from)
           break;
         }
       }
-      if (clipmax > clipmin) cout << "      CLIPTO: " << clipmin 
+      if (clip) cout << "      CLIPTO: " << clipmin 
                                   << ", " << clipmax << endl;
       if (IsOutput) cout << "      OUTPUT: " <<sOutputIdx <<  endl;
     }
