@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.2 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.3 2002/02/27 14:25:06 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -70,6 +70,10 @@ class FGKinemat  : public FGFCSComponent {
 public:
   FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGKinemat();
+  
+  double GetMin(void) { return Detents[0]; }
+  double GetMax(void) { return Detents[NumDetents-1]; }
+  
   bool Run (void );
   
 private:
