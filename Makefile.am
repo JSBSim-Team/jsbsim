@@ -77,6 +77,8 @@ libJSBSim_a_SOURCES = \
 	FGPosition.h \
 	FGPropeller.cpp \
 	FGPropeller.h \
+	FGPropertyManager.cpp \
+	FGPropertyManager.h \
 	FGPropulsion.cpp \
 	FGPropulsion.h \
 	FGRocket.cpp \
@@ -101,18 +103,10 @@ libJSBSim_a_SOURCES = \
 	FGTrimAxis.h \
 	FGTrim.cpp \
 	FGTrim.h \
-	FGTurboJet.cpp \
-	FGTurboJet.h \
-	FGTurboProp.cpp \
-	FGTurboProp.h \
-	FGTurboShaft.cpp \
-	FGTurboShaft.h \
+	FGTurbine.cpp \
+	FGTurbine.h \
 	FGUtility.cpp \
-	FGUtility.h \
-  FGTurbine.cpp \
-  FGTurbine.h \
-  FGPropertyManager.h \
-  FGPropertyManager.cpp
+	FGUtility.h
 
 libJSBSim_a_LIBADD = \
 	filtersjb/libFCSComponents.a \
