@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.170 2004/04/24 17:12:59 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.171 2004/04/25 13:09:24 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -643,6 +643,7 @@ bool FGJSBsim::copy_from_JSBsim()
         node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
         node->setBoolValue("reversed", eng->GetReversed());
         node->setBoolValue("cutoff", eng->GetCutoff());
+        node->setDoubleValue("epr", eng->GetEPR());
         globals->get_controls()->set_reverser(i, eng->GetReversed() );
         globals->get_controls()->set_cutoff(i, eng->GetCutoff() );
         globals->get_controls()->set_water_injection(i, eng->GetInjection() );
