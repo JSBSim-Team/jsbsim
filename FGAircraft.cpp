@@ -135,12 +135,13 @@ INCLUDES
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vMoments(3),
     vForces(3),
+    vFs(3),
     vXYZrp(3),
     vbaseXYZcg(3),
     vXYZcg(3),
     vXYZep(3),
-    vEuler(3),
-    vFs(3)
+    vEuler(3)
+    
 {
   Name = "FGAircraft";
 
@@ -214,7 +215,6 @@ bool FGAircraft::Run(void) {
     for (int i = 1; i <= 3; i++)  vForces(i) = vMoments(i) = 0.0;
 
     MassChange();
-
     FMProp();
     FMAero();
     FMGear();
@@ -326,6 +326,7 @@ void FGAircraft::MassChange() {
 
 void FGAircraft::FMAero(void) {
   static FGColumnVector vDXYZcg(3);
+  static FGColumnVector vAeroBodyForces(3);
   unsigned int axis_ctr,ctr;
 
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vFs(axis_ctr) = 0.0;
@@ -336,8 +337,8 @@ void FGAircraft::FMAero(void) {
     }
   }
 
-  vForces += State->GetTs2b(alpha, beta)*vFs;
-
+  vAeroBodyForces = State->GetTs2b(alpha, beta)*vFs;
+  vForces += vAeroBodyForces;
   // The d*cg distances below, given in inches, are the distances FROM the c.g.
   // TO the reference point. Since the c.g. and ref point are given in inches in
   // the structural system (X positive rearwards) and the body coordinate system
@@ -348,10 +349,10 @@ void FGAircraft::FMAero(void) {
   vDXYZcg(eY) =  (vXYZrp(eY) - vXYZcg(eY))/12.0;
   vDXYZcg(eZ) = -(vXYZrp(eZ) - vXYZcg(eZ))/12.0;
 
-  vMoments(eL) += vForces(eZ)*vDXYZcg(eY) - vForces(eY)*vDXYZcg(eZ); // rolling moment
-  vMoments(eM) += vForces(eX)*vDXYZcg(eZ) - vForces(eZ)*vDXYZcg(eX); // pitching moment
-  vMoments(eN) += vForces(eY)*vDXYZcg(eX) - vForces(eX)*vDXYZcg(eY); // yawing moment
-
+  vMoments(eL) += vAeroBodyForces(eZ)*vDXYZcg(eY) - vAeroBodyForces(eY)*vDXYZcg(eZ); // rolling moment
+  vMoments(eM) += vAeroBodyForces(eX)*vDXYZcg(eZ) - vAeroBodyForces(eZ)*vDXYZcg(eX); // pitching moment
+  vMoments(eN) += vAeroBodyForces(eY)*vDXYZcg(eX) - vAeroBodyForces(eX)*vDXYZcg(eY); // yawing moment
+  
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
       vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr].TotalValue();
@@ -390,6 +391,7 @@ void FGAircraft::FMProp(void) {
 
     vForces(eX) += Engine[i]->CalcThrust();
   }
+  
 }
 
 /******************************************************************************/
@@ -412,18 +414,54 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
 
   while ((token = AC_cfg->GetValue()) != "/METRICS") {
     *AC_cfg >> parameter;
-    if (parameter == "AC_WINGAREA") *AC_cfg >> WingArea;
-    else if (parameter == "AC_WINGSPAN") *AC_cfg >> WingSpan;
-    else if (parameter == "AC_CHORD") *AC_cfg >> cbar;
-    else if (parameter == "AC_IXX") *AC_cfg >> baseIxx;
-    else if (parameter == "AC_IYY") *AC_cfg >> baseIyy;
-    else if (parameter == "AC_IZZ") *AC_cfg >> baseIzz;
-    else if (parameter == "AC_IXZ") *AC_cfg >> baseIxz;
-    else if (parameter == "AC_EMPTYWT") *AC_cfg >> EmptyWeight;
-    else if (parameter == "AC_CGLOC") *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
-    else if (parameter == "AC_EYEPTLOC") *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
-    else if (parameter == "AC_AERORP") *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
-    else if (parameter == "AC_ALPHALIMITS") *AC_cfg >> alphaclmin >> alphaclmax;
+    if (parameter == "AC_WINGAREA") {
+        *AC_cfg >> WingArea;
+        cout << "    WingArea: " << WingArea  << endl; 
+    } else if (parameter == "AC_WINGSPAN") {
+        *AC_cfg >> WingSpan;
+        cout << "    WingSpan: " << WingSpan  << endl;
+    } else if (parameter == "AC_CHORD") {
+        *AC_cfg >> cbar;
+        cout << "    Chord: " << cbar << endl;
+    } else if (parameter == "AC_IXX") {
+        *AC_cfg >> baseIxx;
+        cout << "    baseIxx: " << baseIxx << endl;
+    } else if (parameter == "AC_IYY") {
+        *AC_cfg >> baseIyy;
+        cout << "    baseIyy: " << baseIyy << endl;
+    } else if (parameter == "AC_IZZ") { 
+        *AC_cfg >> baseIzz;
+        cout << "    baseIzz: " << baseIzz << endl;
+    } else if (parameter == "AC_IXZ") { 
+        *AC_cfg >> baseIxz;
+        cout << "    baseIxz: " << baseIxz  << endl;
+    } else if (parameter == "AC_EMPTYWT") {
+        *AC_cfg >> EmptyWeight;
+        cout << "    EmptyWeight: " << EmptyWeight  << endl;
+    } else if (parameter == "AC_CGLOC") {
+        *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
+        cout << "    Xcg: " << vbaseXYZcg(eX) 
+             << " Ycg: " << vbaseXYZcg(eY)
+             << " Zcg: " << vbaseXYZcg(eZ)
+             << endl;
+    } else if (parameter == "AC_EYEPTLOC") {
+        *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
+        cout << "    Xep: " << vXYZep(eX) 
+             << " Yep: " << vXYZep(eY)
+             << " Zep: " << vXYZep(eZ)
+             << endl;
+    } else if (parameter == "AC_AERORP") {
+        *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
+        cout << "    Xrp: " << vXYZrp(eX) 
+             << " Yrp: " << vXYZrp(eY)
+             << " Zrp: " << vXYZrp(eZ)
+             << endl;
+    } else if (parameter == "AC_ALPHALIMITS") {
+        *AC_cfg >> alphaclmin >> alphaclmax;
+        cout << "    Maximum Alpha: " << alphaclmax
+             << " Minimum Alpha: " << alphaclmin 
+             << endl;
+    }         
   }
 }
 

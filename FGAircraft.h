@@ -157,6 +157,7 @@ public:
   inline float GetIxz(void) { return Ixz; }
   inline unsigned int GetNumEngines(void) { return numEngines; }
   inline FGColumnVector GetXYZcg(void) { return vXYZcg; }
+  inline FGColumnVector GetXYZrp(void) { return vXYZrp; }
   inline float GetNlf(void) { return nlf; }
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
