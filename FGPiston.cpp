@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.37 2001/11/23 20:06:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.38 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,22 +50,27 @@ CLASS IMPLEMENTATION
 
 FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   : FGEngine(exec),
-    MinManifoldPressure_inHg(6.5),
-    MaxManifoldPressure_inHg(28.5),
-    Displacement(360),
-    MaxHP(200),
-    Cycles(2),
-    IdleRPM(600),
-    // Set constants
-    CONVERT_CUBIC_INCHES_TO_METERS_CUBED(1.638706e-5),
-    R_air(287.3),
-    rho_fuel(800),                 // estimate
-    calorific_value_fuel(47.3e6),
-    Cp_air(1005),
-    Cp_fuel(1700)
+  //these must be initialized this way as they are declared const
+  CONVERT_CUBIC_INCHES_TO_METERS_CUBED(1.638706e-5),
+  R_air(287.3),
+  rho_fuel(800),                 // estimate
+  calorific_value_fuel(47.3e6),
+  Cp_air(1005),
+  Cp_fuel(1700)
 {
+  
   string token;
 
+  MinManifoldPressure_inHg=6.5;
+  MaxManifoldPressure_inHg=28.5;
+  Displacement=360;
+  MaxHP=200;
+  Cycles=2;
+  IdleRPM=600;
+  // Set constants
+ 
+  
+  
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
   while (Eng_cfg->GetValue() != string("/FG_PISTON")) {
@@ -159,7 +164,6 @@ FGPiston::~FGPiston()
 
 double FGPiston::Calculate(double PowerRequired)
 {
-  double h,EngineMaxPower;
 
         // FIXME: calculate from actual fuel flow
   ConsumeFuel();

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.30 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.31 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,7 @@ FGRocket::~FGRocket()
 
 double FGRocket::Calculate(double pe)
 {
-  double Cf;
+  double Cf=0;
 
   ConsumeFuel();
 

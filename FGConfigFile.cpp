@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.31 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.32 2001/12/01 17:58:41 apeden Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ FGConfigFile::~FGConfigFile()
 
 string FGConfigFile::GetNextConfigLine(void)
 {
-  int deblank, not_found = string::npos;
+  
   int comment_starts_at;
   int comment_ends_at;
   int comment_length;

@@ -48,23 +48,24 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.24 2001/11/17 13:19:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.25 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
+    ttype(tNone),
+    fdmex(FDMExec),
     vFn(3),
     vMn(3),
-    fdmex(FDMExec),
+    vH(3),
     vFb(3),
     vM(3),
     vXYZn(3),
     vDXYZ(3),
-    mT(3,3),
-    vH(3),
     vSense(3),
-    ttype(tNone)
+    mT(3,3)
+    
 {
   mT(1,1) = 1; //identity matrix
   mT(2,2) = 1;

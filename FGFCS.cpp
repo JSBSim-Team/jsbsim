@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.60 2001/11/28 06:02:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.61 2001/12/01 17:58:41 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,7 +157,9 @@ double FGFCS::GetThrottleCmd(int engineNum)
     cerr << "Throttle " << engineNum << " does not exist! " << ThrottleCmd.size()
          << " engines exist, but throttle setting for engine " << engineNum
 	       << " is selected" << endl;
+         
   }
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -174,7 +176,9 @@ double FGFCS::GetThrottlePos(int engineNum)
     cerr << "Throttle " << engineNum << " does not exist! " << ThrottlePos.size()
          << " engines exist, but attempted throttle position setting is for engine "
          << engineNum << endl;
+        
   }
+  return 0.0; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.90 2001/11/30 12:44:58 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.91 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,18 +73,19 @@ CLASS IMPLEMENTATION
 // entry in the enum eParam definition in FGJSBBase.h. The ID is what must be used
 // in any config file entry which references that item.
 
-FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
+FGState::FGState(FGFDMExec* fdex) : 
+    mTb2l(3,3),
     mTl2b(3,3),
     mTs2b(3,3),
     mTb2s(3,3),
     vQtrn(4),
     vlastQdot(4),
     vQdot(4),
-    vTmp(4),
-    vEuler(3),
     vUVW(3),
     vLocalVelNED(3),
-    vLocalEuler(3)
+    vLocalEuler(3),
+    vTmp(4),
+    vEuler(3)
 {
   FDMExec = fdex;
 
@@ -374,7 +375,7 @@ void FGState::SetParameter(eParam val_idx, double val) {
     FCS->SetMixtureCmd(ActiveEngine,val);
     break;
   case FG_MAGNETO_CMD:
-    Propulsion->GetEngine(ActiveEngine)->SetMagnetos(val); // need to account for -1
+    Propulsion->GetEngine(ActiveEngine)->SetMagnetos((int)val); // need to account for -1
     break;
   case FG_STARTER_CMD:
     if      (val < 0.001) 

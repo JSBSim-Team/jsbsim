@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.24 2001/11/30 12:43:11 apeden Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.25 2001/12/01 17:58:41 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,9 +49,9 @@ CLASS IMPLEMENTATION
 
 
 FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec),
-    vMoments(3),
-    vForces(3),
     vFs(3),
+    vForces(3),
+    vMoments(3),
     vLastFs(3),
     vDXYZcg(3)
 {
@@ -182,7 +182,6 @@ string FGAerodynamics::GetCoefficientStrings(void)
 string FGAerodynamics::GetCoefficientValues(void)
 {
   string SDValues = "";
-  char buffer[10];
   bool firstime = true;
 
   for (unsigned int axis = 0; axis < 6; axis++) {
@@ -203,8 +202,6 @@ string FGAerodynamics::GetCoefficientValues(void)
 
 double FGAerodynamics::GetLoD(void)
 {
-  double LoD;
-
   if (vFs(1) != 0.00) return vFs(3)/vFs(1);
   else                return 0.00;
 }

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.44 2001/11/25 13:08:49 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.45 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -536,7 +536,7 @@ bool FGInitialCondition::getTheta(void) {
 //******************************************************************************
 
 double FGInitialCondition::GammaEqOfTheta(double Theta) {
-  double a,b,c,d;
+  double a,b,c;
   double sTheta,cTheta;
 
   //theta=Theta; stheta=sin(theta); ctheta=cos(theta);
@@ -551,7 +551,7 @@ double FGInitialCondition::GammaEqOfTheta(double Theta) {
 //******************************************************************************
 
 double FGInitialCondition::GammaEqOfAlpha(double Alpha) {
-  double a,b,c,d;
+  double a,b,c;
   double sAlpha,cAlpha;
 
   sAlpha=sin(Alpha); cAlpha=cos(Alpha);
@@ -654,7 +654,7 @@ bool FGInitialCondition::solve(double *y,double x)
 
   //initializations
   d=1;
-
+  x2 = 0;
   x1=xlo;x3=xhi;
   f1=(this->*sfunc)(x1)-x;
   f3=(this->*sfunc)(x3)-x;

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.8 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.9 2001/12/01 17:58:42 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.8 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGTable.h,v 1.9 2001/12/01 17:58:42 apeden Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -102,8 +102,8 @@ private:
   enum type {tt1D, tt2D} Type;
   double** Data;
   int nRows, nCols;
-  unsigned int colCounter;
-  unsigned int rowCounter;
+  int colCounter;
+  int rowCounter;
   double** Allocate(void);
   void Debug(void);
 };

@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.52 2001/11/30 13:20:13 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.53 2001/12/01 17:58:42 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.52 2001/11/30 13:20:13 apeden Exp $
+    @version $Id: FGState.h,v 1.53 2001/12/01 17:58:42 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,10 +319,11 @@ private:
   FGMatrix33 mTb2s;
   FGColumnVector4 vQtrn;
   FGColumnVector4 vlastQdot;
+  FGColumnVector4 vQdot;
   FGColumnVector3 vUVW;
   FGColumnVector3 vLocalVelNED;
   FGColumnVector3 vLocalEuler;
-  FGColumnVector4 vQdot;
+  
   FGColumnVector4 vTmp;
   FGColumnVector3 vEuler;
 

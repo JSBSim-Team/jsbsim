@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.29 2001/11/24 23:33:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.30 2001/12/01 17:58:41 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,14 +69,14 @@ CLASS IMPLEMENTATION
 
 
 FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
-                                               vWindNED(3),
                                                vDirectiondAccelDt(3),
                                                vDirectionAccel(3),
                                                vDirection(3),
                                                vTurbulence(3),
                                                vTurbulenceGrad(3),
                                                vBodyTurbGrad(3),
-                                               vTurbPQR(3)
+                                               vTurbPQR(3),
+                                               vWindNED(3)
 {
   Name = "FGAtmosphere";
   lastIndex=0;
@@ -169,7 +169,6 @@ void FGAtmosphere::Calculate(double altitude)
 {
   double slope, reftemp, refpress;
   int i = 0;
-  bool lookup = false;
 
   i = lastIndex;
   if (altitude < htab[lastIndex]) {
@@ -191,12 +190,6 @@ void FGAtmosphere::Calculate(double altitude)
   } 
 
   switch(i) {
-  case 0:     // sea level
-    slope     = -0.00356616; // R/ft.
-    reftemp   = 518.67;    // R
-    refpress  = 2116.22;    // psf
-    //refdens   = 0.00237767;  // slugs/cubic ft.
-    break;
   case 1:     // 36089 ft.
     slope     = 0;
     reftemp   = 389.97;
@@ -239,6 +232,14 @@ void FGAtmosphere::Calculate(double altitude)
     refpress  = 0.000122276;
     //refdens   = 2.19541e-10;
     break;
+  case 0:
+  default:     // sea level
+    slope     = -0.00356616; // R/ft.
+    reftemp   = 518.67;    // R
+    refpress  = 2116.22;    // psf
+    //refdens   = 0.00237767;  // slugs/cubic ft.
+    break;
+  
   }
  
   if (slope == 0) {

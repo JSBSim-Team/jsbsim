@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.67 2001/12/01 00:16:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.68 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,7 +415,7 @@ bool FGFDMExec::LoadScript(string script)
   string initialize="";
   bool result=false;
   double dt=0.0;
-  int i;
+  unsigned i;
   struct condition *newCondition;
 
   if (!Script.IsOpen()) return false;
@@ -594,14 +594,12 @@ bool FGFDMExec::LoadScript(string script)
 void FGFDMExec::RunScript(void)
 {
   vector <struct condition>::iterator iC = Conditions.begin();
-  bool truth;
-  bool WholeTruth;
-  int i;
-
-  int count=0;
+  bool truth = false;
+  bool WholeTruth = false;
+  unsigned i;
 
   double currentTime = State->Getsim_time();
-  double newSetValue;
+  double newSetValue = 0;
 
   while (iC < Conditions.end()) {
     // determine whether the set of conditional tests for this condition equate

@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.64 2001/11/17 12:58:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.65 2001/12/01 17:58:42 apeden Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,9 +185,9 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  double SteerGain;
+  double SteerGain = 0;
   double SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
-  double RudderPedal, RollingForce, SideForce, FCoeff;
+  double RollingForce, SideForce, FCoeff;
   double WheelSlip;
 
   vWhlBodyVec     = (vXYZ - MassBalance->GetXYZcg()) / 12.0;

@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.21 2001/11/30 12:46:54 apeden Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.22 2001/12/01 17:58:42 apeden Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
@@ -135,7 +135,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.21 2001/11/30 12:46:54 apeden Exp $
+    @version $Id: FGTrim.h,v 1.22 2001/12/01 17:58:42 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,7 @@ class FGTrim : public FGJSBBase
 private:
 
   vector<FGTrimAxis*> TrimAxes;
-  int current_axis;
+  unsigned int current_axis;
   int N, Nsub;
   TrimMode mode;
   int DebugLevel, Debug;
@@ -163,7 +163,7 @@ private:
   bool trimudot;
   bool gamma_fallback;
   bool trim_failed;
-  int axis_count;
+  unsigned int axis_count;
   int solutionDomain;
   double xlo,xhi,alo,ahi;
   double targetNlf;

@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.10 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.11 2001/12/01 17:58:41 apeden Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,7 @@ FGFactorGroup::FGFactorGroup( FGFDMExec* fdmex ) : FGCoefficient( fdmex)
                           
 FGFactorGroup::~FGFactorGroup()
 {
-  int i;
+  unsigned i;
   for (i=0; i<sum.size(); i++) {
     delete sum[i];
   }
@@ -115,7 +115,7 @@ bool FGFactorGroup::Load(FGConfigFile *AC_cfg) {
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 double FGFactorGroup::TotalValue(void) {
-  int i;
+  unsigned i;
   double totalsum=0;
   SDtotal=0.0;
   for(i=0;i<sum.size();i++) {
