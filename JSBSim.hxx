@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.22 2001/11/04 15:20:29 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.23 2001/11/04 15:44:32 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -215,6 +215,7 @@ public:
     bool update( int multiloop );
     bool ToggleDataLogging(bool state);
     bool ToggleDataLogging(void);
+    void do_trim(void);
 
 private:
     FGFDMExec *fdmex;
@@ -248,6 +249,7 @@ private:
     
     void init_gear(void);
     void update_gear(void);
+    
 };
 
 
