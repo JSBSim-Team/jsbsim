@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.19 2004/05/26 12:30:00 jberndt Exp $
+  CVS Version: $Id: f15.xml,v 1.20 2004/10/18 07:58:13 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -112,8 +112,8 @@
       YLOC       0.0
       ZLOC       4.5
       RADIUS    29.0
-      CAPACITY 185.0
-      CONTENTS 100.0
+      CAPACITY 6561.5
+      CONTENTS 6500.0
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
@@ -121,8 +121,8 @@
       YLOC       0.0
       ZLOC       4.5
       RADIUS    29.0
-      CAPACITY 185.0
-      CONTENTS 100.0
+      CAPACITY 6561.5
+      CONTENTS 6500.0
     </AC_TANK>
 
   </PROPULSION>
@@ -130,15 +130,16 @@
 
   <FLIGHT_CONTROL NAME="f15">
 
-    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       INPUT        fcs/elevator-cmd-norm
-       INPUT        fcs/pitch-trim-cmd-norm
-       CLIPTO       -1 1
-    </COMPONENT>
     <COMPONENT NAME="Pitch Damper Gain" TYPE="PURE_GAIN">
        INPUT        velocities/q-rad_sec
        GAIN         0.000698
      </COMPONENT>
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       INPUT        fcs/elevator-cmd-norm
+       INPUT        fcs/pitch-trim-cmd-norm
+       INPUT        fcs/pitch-damper-gain
+       CLIPTO       -1 1
+    </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/pitch-trim-sum
        MIN          -26
@@ -146,9 +147,14 @@
        OUTPUT        fcs/elevator-pos-rad
        GAIN          0.01745
      </COMPONENT>
+     <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
+      INPUT          velocities/p-rad_sec
+      GAIN          -0.013963
+     </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
        INPUT         fcs/aileron-cmd-norm
        INPUT         fcs/roll-trim-cmd-norm
+       INPUT         fcs/roll-damper-gain
        CLIPTO        -1 1
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
@@ -165,18 +171,15 @@
        GAIN          0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
-     <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
-      INPUT          velocities/p-rad_sec
-      GAIN           0.013963
-    </COMPONENT>
+     <COMPONENT NAME="Yaw Damper Gain" TYPE="PURE_GAIN">
+       INPUT        velocities/r-rad_sec
+       GAIN        -0.001745
+     </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
+       INPUT        fcs/yaw-damper-gain
        CLIPTO       -1 1
-     </COMPONENT>
-     <COMPONENT NAME="Yaw Damper Gain" TYPE="PURE_GAIN">
-       INPUT        velocities/r-rad_sec
-       GAIN         0.001745
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
        INPUT        fcs/yaw-trim-sum
