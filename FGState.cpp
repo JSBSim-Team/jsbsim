@@ -117,6 +117,7 @@ FGState::~FGState(void) {}
 //
 
 
+
 bool FGState::Reset(string path, string acname, string fname) {
   string resetDef;
   float U, V, W;
@@ -336,13 +337,13 @@ void FGState::SetParameter(int val_idx, float val) {
     FDMExec->GetFCS()->SetDrPos(val);
     break;
   case FG_SPDBRAKE_POS:
-    FDMExec->GetFCS()->SetDrPos(val);
+    FDMExec->GetFCS()->SetDsbPos(val);
     break;
   case FG_SPOILERS_POS:
-    FDMExec->GetFCS()->SetDrPos(val);
+    FDMExec->GetFCS()->SetDspPos(val);
     break;
   case FG_FLAPS_POS:
-    FDMExec->GetFCS()->SetDrPos(val);
+    FDMExec->GetFCS()->SetDfPos(val);
     break;
   }
 }
