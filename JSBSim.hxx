@@ -21,6 +21,9 @@
  along with this program; if not, write to the Free Software
  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+ Further information about the GNU General Public License can also be found on
+ the world wide web at http://www.gnu.org.
+
 HISTORY
 --------------------------------------------------------------------------------
 02/01/1999   CLO   Created
@@ -67,7 +70,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-   @version $Id: JSBSim.hxx,v 1.9 2000/10/24 23:20:57 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.10 2000/10/25 02:07:13 jsb Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -76,15 +79,6 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 class FGJSBsim: public FGInterface {
-
-    // The aircraft for this instance
-    FGFDMExec *fdmex;
-    FGInitialCondition *fgic;
-    bool needTrim;
-    
-    bool trimmed;
-    float trim_elev;
-    float trim_throttle;
 
 public:
     /// Constructor
@@ -100,40 +94,118 @@ public:
 
     /// Reset flight params to a specific position
     bool init( double dt );
-    
-    // Positions
-    void set_Latitude(double lat);  // geocentric
-    void set_Longitude(double lon);    
-    void set_Altitude(double alt);        // triggers re-calc of AGL altitude
-    //void set_AltitudeAGL(double altagl); // and vice-versa
-    
-    // Speeds -- setting any of these will trigger a re-calc of the rest
-    void set_V_calibrated_kts(double vc);
-    void set_Mach_number(double mach);
-    void set_Velocities_Local( double north, double east, double down );
-    void set_Velocities_Wind_Body( double u, double v, double w);
-    
-    // Euler angles 
-    void set_Euler_Angles( double phi, double theta, double psi );
-    
-    // Flight Path
-    void set_Climb_Rate( double roc);
-    void set_Gamma_vert_rad( double gamma);
-    
-    // Earth
-    void set_Sea_level_radius(double slr);
-    void set_Runway_altitude(double ralt);
-    
-    // Atmosphere
-    void set_Static_pressure(double p);
-    void set_Static_temperature(double T);
-    void set_Density(double rho);
-    void set_Velocities_Local_Airmass (double wnorth, 
-				       double weast, 
-				       double wdown );
 
-    // update position based on inputs, positions, velocities, etc.
+    /// Position Parameters
+    //@{
+    /** Set geocentric latitude
+        @param lat latitude in radians measured from the 0 meridian where
+	                 the westerly direction is positive and east is negative */
+    void set_Latitude(double lat);  // geocentric
+
+    /** Set longitude
+        @param lon longitude in radians measured from the equator where
+	                 the northerly direction is positive and south is negative */
+    void set_Longitude(double lon);
+
+    /** Set altitude
+        Note: this triggers a recalculation of AGL altitude
+	      @param alt altitude in feet */
+    void set_Altitude(double alt);        // triggers re-calc of AGL altitude
+    //@}
+
+    //void set_AltitudeAGL(double altagl); // and vice-versa
+
+    /// Velocity Parameters
+    //@{
+    /** Sets calibrated airspeed
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param vc Calibrated airspeed in ft/sec */
+    void set_V_calibrated_kts(double vc);
+
+    /** Sets Mach number.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param mach Mach number */
+    void set_Mach_number(double mach);
+
+    /** Sets velocity in N-E-D coordinates.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param north velocity northward in ft/sec
+	      @param east velocity eastward in ft/sec
+	      @param down velocity downward in ft/sec */
+    void set_Velocities_Local( double north, double east, double down );
+
+    /** Sets aircraft velocity in stability frame.
+        Setting this will trigger a recalc of the other velocity terms.
+	      @param u X velocity in ft/sec
+	      @param v Y velocity  in ft/sec
+	      @param w Z velocity in ft/sec */
+    void set_Velocities_Wind_Body( double u, double v, double w);
+    //@}
+
+    /** Euler angle parameters
+        @param phi roll angle in radians
+	      @param theta pitch angle in radians
+	      @param psi heading angle in radians */
+    void set_Euler_Angles( double phi, double theta, double psi );
+
+    /// Flight Path Parameters
+    //@{
+    /** Sets rate of climb
+        @param roc Rate of climb in ft/sec */
+    void set_Climb_Rate( double roc);
+
+    /** Sets the flight path angle in radians
+        @param gamma flight path angle in radians. */
+    void set_Gamma_vert_rad( double gamma);
+    //@}
+
+    /// Earth Parameters
+    //@{
+    /** Sets the sea level radius in feet.
+        @param slr Sea Level Radius in feet */
+    void set_Sea_level_radius(double slr);
+
+    /** Sets the runway altitude in feet above sea level.
+        @param ralt Runway altitude in feet above sea level. */
+    void set_Runway_altitude(double ralt);
+    //@}
+
+    /// Atmospheric Parameters
+    //@{
+    /** Sets the atmospheric static pressure
+        @param p pressure in psf */
+    void set_Static_pressure(double p);
+
+    /** Sets the atmospheric temperature
+        @param T temperature in degrees rankine */
+    void set_Static_temperature(double T);
+
+    /** Sets the atmospheric density.
+        @param rho air density slugs/cubic foot */
+    void set_Density(double rho);
+
+    /** Sets the velocity of the local airmass for wind modeling.
+        @param wnorth velocity north in fps
+        @param weast velocity east in fps
+        @param wdown velocity down in fps*/
+    void set_Velocities_Local_Airmass (double wnorth,
+				       double weast,
+				       double wdown );
+    //@}
+
+    /** Update the position based on inputs, positions, velocities, etc.
+        @param multiloop number of times to loop through the FDM
+	      @return true if successful */
     bool update( int multiloop );
+
+private:
+    FGFDMExec *fdmex;
+    FGInitialCondition *fgic;
+    bool needTrim;
+
+    bool trimmed;
+    float trim_elev;
+    float trim_throttle;
 };
 
 
