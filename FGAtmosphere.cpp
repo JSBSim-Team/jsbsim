@@ -181,7 +181,7 @@ void FGAtmosphere::Calculate(float altitude)
       density = refdens*pow(temperature/reftemp,-(GRAVITY/(slope*Reng)+1));
     }
 
-   cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
+   //cout << "Atmosphere:  h=" << altitude << " rho= " << density << endl;
 
 }
 
