@@ -23,6 +23,12 @@ INCLUDES
 #include <stdlib.h>
 #ifdef FGFS
 #  include <simgear/compiler.h>
+#  include STL_STRING
+   SG_USING_STD(string);
+   SG_USING_STD(ostream);
+   SG_USING_STD(istream);
+   SG_USING_STD(cerr);
+   SG_USING_STD(endl);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <fstream>
 #    include <cmath>
@@ -36,21 +42,20 @@ INCLUDES
 #  include <fstream>
 #  include <cmath>
 #  include <iostream>
+#  include <string>
+   using std::string;
+   using std::ostream;
+   using std::istream;
+   using std::cerr;
+   using std::endl;
 #endif
 
-#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.22 2001/03/29 00:06:11 jberndt Exp $"
-
-using std::string;
-using std::ostream;
-using std::istream;
-using std::cerr;
-using std::endl;
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.23 2001/03/29 22:26:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -164,6 +169,35 @@ class FGMatrix3x3 : public FGMatrix
 public:
   FGMatrix3x3(void) {FGMatrix(3,3);}
 //  ~FGMatrix3x3(void) {~FGMatrix();}
+
+  FGMatrix3x3& operator=(const FGMatrix3x3& A);
+  inline double& operator()(unsigned int row, unsigned int col) const {return data[row][col];}
+
+  FGColumnVector operator*(const FGColumnVector& Col);
+
+  unsigned int Rows(void) const;
+  unsigned int Cols(void) const;
+
+  void T(void);
+  void InitMatrix(void);
+  void InitMatrix(double value);
+
+  FGMatrix3x3 operator-(const FGMatrix3x3& B);
+  FGMatrix3x3 operator+(const FGMatrix3x3& B);
+  FGMatrix3x3 operator*(const FGMatrix3x3& B);
+  FGMatrix3x3 operator/(const double scalar);
+  FGMatrix3x3& operator<<(const float ff);
+
+  friend ostream& operator<<(ostream& os, const FGMatrix3x3& M);
+  friend istream& operator>>(istream& is, FGMatrix3x3& M);
+
+  void operator-=(const FGMatrix3x3 &B);
+  void operator+=(const FGMatrix3x3 &B);
+  void operator*=(const FGMatrix3x3 &B);
+  void operator*=(const double scalar);
+  void operator/=(const double scalar);
+
+  friend FGMatrix3x3 operator*(double scalar,FGMatrix3x3& A);
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

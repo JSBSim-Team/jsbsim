@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.12 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.13 2001/03/29 22:26:06 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 extern short debug_lvl;
@@ -58,7 +58,7 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   AC_cfg->GetNextConfigLine();
   string token;
 
-  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;

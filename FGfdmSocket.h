@@ -46,6 +46,9 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
+#  include STL_STRING
+   SG_USING_STD(cout);
+   SG_USING_STD(endl);
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <iostream>
 #    include <fstream>
@@ -56,9 +59,11 @@ INCLUDES
 #else
 #  include <iostream>
 #  include <fstream>
+#  include <string>
+   using std::cout;
+   using std::endl;
 #endif
 
-#include <string>
 #include <sys/types.h>
 
 #if defined(__BORLANDC__) || defined(_MSC_VER)
@@ -74,10 +79,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
-
-using std::cout;
-using std::endl;
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.13 2001/03/29 22:26:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

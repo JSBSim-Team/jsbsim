@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.12 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.13 2001/03/29 22:26:06 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 extern short debug_lvl;
@@ -61,7 +61,7 @@ AC_cfg(AC_cfg) {
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;

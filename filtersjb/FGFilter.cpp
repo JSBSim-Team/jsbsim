@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.16 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.17 2001/03/29 22:26:06 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 extern short debug_lvl;
@@ -68,7 +68,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   else if (Type == "INTEGRATOR")          FilterType = eIntegrator ;
   else                                    FilterType = eUnknown    ;
 
-  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.26 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.27 2001/03/29 22:26:06 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 extern short debug_lvl;
@@ -65,7 +65,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;

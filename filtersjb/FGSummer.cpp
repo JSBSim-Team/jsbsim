@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.18 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.19 2001/03/29 22:26:06 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 extern short debug_lvl;
@@ -63,7 +63,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
+  while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
 
     if (token == "ID") {
