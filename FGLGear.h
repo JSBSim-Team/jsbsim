@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.41 2001/11/03 17:00:29 apeden Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.42 2001/11/12 13:01:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -162,7 +162,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.41 2001/11/03 17:00:29 apeden Exp $
+    @version $Id: FGLGear.h,v 1.42 2001/11/12 13:01:20 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -255,6 +255,7 @@ private:
   double MaximumStrutForce;
   double MaximumStrutTravel;
   bool WOW;
+  bool lastWOW;
   bool FirstContact;
   bool Reported;
   bool ReportEnable;

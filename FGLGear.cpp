@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.60 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.61 2001/11/12 13:01:18 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   FCS         = Exec->GetFCS();
   MassBalance = Exec->GetMassBalance();
 
-  WOW = false;
+  WOW = lastWOW = false;
   ReportEnable = true;
   FirstContact = false;
   Reported = false;
@@ -147,6 +147,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   vLocalGear = lgear.vLocalGear;
 
   WOW                = lgear.WOW;
+  lastWOW            = lgear.lastWOW;
   ReportEnable       = lgear.ReportEnable;
   FirstContact       = lgear.FirstContact;
   DistanceTraveled   = lgear.DistanceTraveled;
@@ -396,6 +397,12 @@ FGColumnVector3& FGLGear::Force(void)
   if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
     if (debug_lvl > 0) Report();
   }
+
+  if (lastWOW != WOW) {
+    PutMessage("GEAR_CONTACT", WOW);
+  }
+
+  lastWOW = WOW;
 
   return vForce;
 }
