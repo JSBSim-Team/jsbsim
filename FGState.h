@@ -81,7 +81,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.63 2002/09/07 21:57:04 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.64 2002/09/22 18:10:05 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.63 2002/09/07 21:57:04 apeden Exp $
+    @version $Id: FGState.h,v 1.64 2002/09/22 18:10:05 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -325,8 +325,6 @@ public:
   */
   void ReportState(void);
   
-  inline string GetPropertyName(string prm) { return ParamNameToProp[prm]; }
-  
   void bind();
   void unbind();
 
@@ -362,11 +360,6 @@ private:
   FGPropulsion* Propulsion;
   FGPropertyManager* PropertyManager;
 
-  typedef map<string,string> ParamNameMap;
-  ParamNameMap ParamNameToProp;
-  
-  void InitPropertyMaps(void);
-  
   void Debug(int from);
 };
 

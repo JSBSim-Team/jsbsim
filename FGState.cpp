@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.121 2002/09/07 21:57:04 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.122 2002/09/22 18:10:05 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,8 +85,6 @@ FGState::FGState(FGFDMExec* fdex)
   PropertyManager = FDMExec->GetPropertyManager();
 
   for(int i=0;i<3;i++) vQdot_prev[i].InitMatrix();
-
-  InitPropertyMaps();
 
   bind();
   
@@ -418,108 +416,6 @@ void FGState::ReportState(void)
   cout << out;                                   
 #endif
 } 
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::InitPropertyMaps(void)
-{
-  ParamNameToProp[  "FG_TIME" ]="sim-time-sec";
-  ParamNameToProp[  "FG_QBAR" ]="aero/qbar-psf";
-  ParamNameToProp[  "FG_QBARUW" ]="aero/qbarUW-psf";
-  ParamNameToProp[  "FG_QBARUV" ]="aero/qbarUV-psf";
-  ParamNameToProp[  "FG_WINGAREA" ]="metrics/Sw-sqft";
-  ParamNameToProp[  "FG_WINGSPAN" ]="metrics/bw-ft";
-  ParamNameToProp[  "FG_CBAR" ]="metrics/cbarw-ft";
-  ParamNameToProp[  "FG_ALPHA" ]="aero/alpha-rad";
-  ParamNameToProp[  "FG_ALPHADOT" ]="aero/alphadot-rad_sec";
-  ParamNameToProp[  "FG_BETA" ]="aero/beta-rad";
-  ParamNameToProp[  "FG_ABETA" ]="aero/mag-beta-rad";
-  ParamNameToProp[  "FG_BETADOT" ]="aero/betadot-rad_sec";
-  ParamNameToProp[  "FG_PHI" ]="attitude/phi-rad";
-  ParamNameToProp[  "FG_THT" ]="attitude/theta-rad";
-  ParamNameToProp[  "FG_PSI" ]="attitude/psi-true-rad";
-  ParamNameToProp[  "FG_PITCHRATE" ]="velocities/q-rad_sec";
-  ParamNameToProp[  "FG_ROLLRATE" ]="velocities/p-rad_sec";
-  ParamNameToProp[  "FG_YAWRATE" ]="velocities/r-rad_sec";
-  ParamNameToProp[  "FG_AEROP" ]="velocities/p-aero-rad_sec";
-  ParamNameToProp[  "FG_AEROQ" ]="velocities/q-aero-rad_sec";
-  ParamNameToProp[  "FG_AEROR" ]="velocities/r-aero-rad_sec";
-  ParamNameToProp[  "FG_CL_SQRD" ]="aero/cl-squared-norm";
-  ParamNameToProp[  "FG_MACH" ]="velocities/mach-norm";
-  ParamNameToProp[  "FG_ALTITUDE" ]="position/h-sl-ft";
-  ParamNameToProp[  "FG_BI2VEL" ]="aero/bi2vel";
-  ParamNameToProp[  "FG_CI2VEL" ]="aero/ci2vel";
-  ParamNameToProp[  "FG_ELEVATOR_POS" ]="fcs/elevator-pos-rad";
-  ParamNameToProp[  "FG_AELEVATOR_POS" ]="fcs/mag-elevator-pos-rad";
-  ParamNameToProp[  "FG_NELEVATOR_POS" ]="fcs/elevator-pos-norm";
-  ParamNameToProp[  "FG_AILERON_POS" ]="fcs/left-aileron-pos-rad";
-  ParamNameToProp[  "FG_AAILERON_POS" ]="fcs/mag-aileron-pos-rad";
-  ParamNameToProp[  "FG_NAILERON_POS" ]="fcs/left-aileron-pos-norm";
-  ParamNameToProp[  "FG_LEFT_AILERON_POS" ]="fcs/left-aileron-pos-rad";
-  ParamNameToProp[  "FG_ALEFT_AILERON_POS" ]="fcs/mag-left-aileron-pos-rad";
-  ParamNameToProp[  "FG_NLEFT_AILERON_POS" ]="fcs/left-aileron-pos-norm";
-  ParamNameToProp[  "FG_RIGHT_AILERON_POS" ]="fcs/right-aileron-pos-rad";
-  ParamNameToProp[  "FG_ARIGHT_AILERON_POS" ]="fcs/mag-aileron-pos-rad";
-  ParamNameToProp[  "FG_NRIGHT_AILERON_POS" ]="fcs/right-aileron-pos-norm";
-  ParamNameToProp[  "FG_RUDDER_POS" ]="fcs/rudder-pos-rad";
-  ParamNameToProp[  "FG_ARUDDER_POS" ]="fcs/mag-rudder-pos-rad";
-  ParamNameToProp[  "FG_NRUDDER_POS" ]="fcs/rudder-pos-norm";
-  ParamNameToProp[  "FG_SPDBRAKE_POS" ]="fcs/speedbrake-pos-rad";
-  ParamNameToProp[  "FG_NSPDBRAKE_POS" ]="fcs/speedbrake-pos-norm";
-  ParamNameToProp[  "FG_SPOILERS_POS" ]="fcs/spoiler-pos-rad";
-  ParamNameToProp[  "FG_NSPOILERS_POS" ]="fcs/spoiler-pos-norm";
-  ParamNameToProp[  "FG_FLAPS_POS" ]="fcs/flap-pos-deg";
-  ParamNameToProp[  "FG_NFLAPS_POS" ]="fcs/flap-pos-norm";
-  ParamNameToProp[  "FG_ELEVATOR_CMD" ]="fcs/elevator-cmd-norm";
-  ParamNameToProp[  "FG_AILERON_CMD" ]="fcs/aileron-cmd-norm";
-  ParamNameToProp[  "FG_RUDDER_CMD" ]="fcs/rudder-cmd-norm";
-  ParamNameToProp[  "FG_SPDBRAKE_CMD" ]="fcs/speedbrake-cmd-norm";
-  ParamNameToProp[  "FG_SPOILERS_CMD" ]="fcs/spoiler-cmd-norm";
-  ParamNameToProp[  "FG_FLAPS_CMD" ]="fcs/flap-cmd-norm";
-  ParamNameToProp[  "FG_THROTTLE_CMD" ]="fcs/throttle-cmd-norm";
-  ParamNameToProp[  "FG_THROTTLE_POS" ]="fcs/throttle-pos-norm";
-  ParamNameToProp[  "FG_MIXTURE_CMD" ]="fcs/mixture-cmd-norm";
-  ParamNameToProp[  "FG_MIXTURE_POS" ]="fcs/mixture-pos-norm";
-  ParamNameToProp[  "FG_MAGNETO_CMD" ]="propulsion/magneto_cmd";
-  ParamNameToProp[  "FG_STARTER_CMD" ]="propulsion/starter_cmd";
-  ParamNameToProp[  "FG_ACTIVE_ENGINE" ]="propulsion/active_engine";
-  ParamNameToProp[  "FG_HOVERB" ]="aero/h_b-mac-ft";
-  ParamNameToProp[  "FG_PITCH_TRIM_CMD" ]="fcs/pitch-trim-cmd-norm";
-  ParamNameToProp[  "FG_YAW_TRIM_CMD" ]="fcs/yaw-trim-cmd-norm";
-  ParamNameToProp[  "FG_ROLL_TRIM_CMD" ]="fcs/roll-trim-cmd-norm";
-  ParamNameToProp[  "FG_LEFT_BRAKE_CMD" ]="fcs/left_brake";
-  ParamNameToProp[  "FG_CENTER_BRAKE_CMD" ]="fcs/center_brake";
-  ParamNameToProp[  "FG_RIGHT_BRAKE_CMD" ]="fcs/right_brake";
-  ParamNameToProp[  "FG_SET_LOGGING" ]="sim/set_logging";
-  ParamNameToProp[  "FG_ALPHAH" ]="aero/alpha-rad";
-  ParamNameToProp[  "FG_ALPHAW" ]="aero/alpha-wing-rad";
-  ParamNameToProp[  "FG_LBARH" ]="metrics/lh-norm";     
-  ParamNameToProp[  "FG_LBARV" ]="metrics/lv-norm";     
-  ParamNameToProp[  "FG_HTAILAREA" ]="metrics/Sh-sqft";
-  ParamNameToProp[  "FG_VTAILAREA" ]="metrics/Sv-sqft";
-  ParamNameToProp[  "FG_VBARH" ]="metrics/vbarh-norm";    
-  ParamNameToProp[  "FG_VBARV" ]="metrics/vbarv-norm";     
-  ParamNameToProp[  "FG_GEAR_CMD" ]="gear/gear-cmd-norm";
-  ParamNameToProp[  "FG_GEAR_POS" ]="gear/gear-pos-norm";
-  ParamNameToProp[  "FG_HYSTPARM" ]="aero/stall-hyst-norm";
-  ParamNameToProp[  "AP_ELEVATOR_CMD" ]="jsbsim/ap/elevator_cmd";
-  ParamNameToProp[  "AP_AILERON_CMD" ]="jsbsim/ap/aileron_cmd";
-  ParamNameToProp[  "AP_RUDDER_CMD" ]="jsbsim/ap/rudder_cmd";
-  ParamNameToProp[  "AP_THROTTLE_CMD" ]="jsbsim/ap/throttle_cmd";
-  ParamNameToProp[  "AP_SET_ATTITUDE" ]="jsbsim/ap/set_attitude";
-  ParamNameToProp[  "AP_SET_ALTITUDE" ]="jsbsim/ap/set_altitude";
-  ParamNameToProp[  "AP_SET_HEADING" ]="jsbsim/ap/set_heading";
-  ParamNameToProp[  "AP_SET_AIRSPEED" ]="jsbsim/ap/set_airspeed";
-  ParamNameToProp[  "AP_ACQUIRE_ATTITUDE" ]="jsbsim/ap/acquire_attitude";
-  ParamNameToProp[  "AP_ACQUIRE_ALTITUDE" ]="jsbsim/ap/acquire_altitude";
-  ParamNameToProp[  "AP_ACQUIRE_HEADING" ]="jsbsim/ap/acquire_heading";
-  ParamNameToProp[  "AP_ACQUIRE_AIRSPEED" ]="jsbsim/ap/acquire_aispeed";
-  ParamNameToProp[  "AP_ATTITUDE_HOLD_ON" ]="jsbsim/ap/attitude_hold_on";
-  ParamNameToProp[  "AP_ALTITUDE,_HOLD_ON" ]="jsbsim/ap/altitude_hold_on";
-  ParamNameToProp[  "AP_HEADING_HOLD_ON" ]="jsbsim/ap/heading_hold_on";
-  ParamNameToProp[  "AP_AIRSPEED_HOLD_ON" ]="jsbsim/ap/airspeed_hold_on";
-  ParamNameToProp[  "AP_WINGSLEVEL_HOLD_ON" ]="jsbsim/ap/wingslevel_hold_on";
-}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -61,7 +61,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.57 2002/09/07 21:34:02 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.58 2002/09/22 18:10:05 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,14 +111,15 @@ FGCoefficient::~FGCoefficient()
 bool FGCoefficient::Load(FGConfigFile *AC_cfg)
 {
   int start, end, n;
-  string mult,prop;
+  string mult;
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
+    //cout << name << endl;
     method = AC_cfg->GetValue("TYPE");
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
-
+   // cout << description << endl;
     if      (method == "EQUATION") type = EQUATION;
     else if (method == "TABLE")    type = TABLE;
     else if (method == "VECTOR")   type = VECTOR;
@@ -127,6 +128,7 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
 
     if (type == VECTOR || type == TABLE) {
       *AC_cfg >> rows;
+      //cout << rows << endl;
       if (type == TABLE) {
         *AC_cfg >> columns;
         Table = new FGTable(rows, columns);
@@ -135,42 +137,58 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
       }
 
       *AC_cfg >> multparmsRow;
-      prop = State->GetPropertyName( multparmsRow );
-      LookupR = PropertyManager->GetNode( prop );
+      //cout << multparmsRow << endl;
+      LookupR = PropertyManager->GetNode( multparmsRow );
     }
 
     if (type == TABLE) {
       *AC_cfg >> multparmsCol;
-      prop = State->GetPropertyName( multparmsCol );
 
-      LookupC = PropertyManager->GetNode( prop );
+      LookupC = PropertyManager->GetNode( multparmsCol );
     }
 
     // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
     // where each non-dimensionalizing parameter for this coefficient is
     // separated by a | character
 
-    *AC_cfg >> multparms;
+    string line=AC_cfg->GetCurrentLine();
+    //cout << "::" << line << "::" << endl;
+    unsigned j=0;
+    char tmp[255];
+    for(unsigned i=0;i<line.length(); i++ ) {
+      if( !isspace(line[i]) ) {
+        tmp[j]=line[i];
+        //cout << tmp[j];
+        j++;
+      }
+    } 
+    tmp[j]='\0'; multparms=tmp;  
+    //cout << endl; 
+    end  = multparms.length();
+    //cout <<  "multparms: " << "::" << multparms <<  "::" <<endl;
 
-    end   = multparms.length();
     n     = multparms.find("|");
     start = 0;
-
-    if (multparms != string("FG_NONE")) {
+    //cout << n << endl;
+    if (multparms != string("none")) {
       while (n < end && n >= 0) {
         n -= start;
         mult = multparms.substr(start,n);
-        prop= State->GetPropertyName( mult );
-        multipliers.push_back( PropertyManager->GetNode(prop) );
+        //cout << "::" << mult << "::" << endl;
+        multipliers.push_back( PropertyManager->GetNode(mult) );
         start += n+1;
+        //while( multparms[start] == ' ') start++;
         n = multparms.find("|",start);
+        //cout << n << endl;
       }
-      prop=State->GetPropertyName( multparms.substr(start,n) );
+      //cout << start << ", " << n << endl;
+      //cout << multparms[start] << ", " << multparms[n-1] << endl;
       mult = multparms.substr(start,n);
-      multipliers.push_back( PropertyManager->GetNode(prop) );
+      //cout << mult << endl;
+      multipliers.push_back( PropertyManager->GetNode( mult ) );
       // End of non-dimensionalizing parameter read-in
     }
-
+    AC_cfg->GetNextConfigLine();
     if (type == VALUE) {
       *AC_cfg >> StaticValue;
     } else if (type == VECTOR || type == TABLE) {

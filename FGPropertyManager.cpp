@@ -49,6 +49,27 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
+  
+  /* do this two pass to avoid problems with characters getting skipped
+     because the index changed */
+
+  for(unsigned i=0;i<name.length();i++) {
+    if( lowercase && isupper(name[i]) )
+      name[i]=tolower(name[i]);
+    else if( isspace(name[i]) ) 
+      name[i]='-';
+  }
+  for(unsigned i=0;i<name.length();i++) {
+    if( name[i] == '/' )
+      name.erase(i,1);  
+  }
+
+  return name;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGPropertyManager*  
 FGPropertyManager::GetNode (const string &path, bool create)
 {

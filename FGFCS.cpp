@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.86 2002/09/07 21:40:12 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.87 2002/09/22 18:10:05 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -324,11 +324,11 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   if (delimiter == "AUTOPILOT") {
     Components = &APComponents;
     eMode = mAP;
-    Name = "Autopilot:" + name;
+    Name = "Autopilot: " + name;
   } else if (delimiter == "FLIGHT_CONTROL") {
     Components = &FCSComponents;
     eMode = mFCS;
-    Name = "FCS:" + name;
+    Name = "FCS: " + name;
   } else {
     cerr << endl << "Unknown FCS delimiter" << endl << endl;
   }
@@ -436,7 +436,7 @@ string FGFCS::GetComponentName(int idx)
     break;
   }
   return string("");
-}
+} 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -791,6 +791,7 @@ void FGFCS::bindModel(void)
 {
   unsigned i;
   char tmp[80];
+  
   
   for (i=0; i<ThrottleCmd.size(); i++) {
     snprintf(tmp,80,"fcs/throttle-cmd-norm[%u]",i);

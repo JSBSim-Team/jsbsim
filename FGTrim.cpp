@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.37 2002/09/15 01:22:43 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.38 2002/09/22 18:10:06 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +144,7 @@ void FGTrim::ClearStates(void) {
       iAxes++;
     }
     TrimAxes.clear();
-    cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
+    //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
 }
     
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

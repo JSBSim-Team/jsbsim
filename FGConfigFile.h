@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.34 2002/06/06 09:22:53 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.35 2002/09/22 18:10:05 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.34 2002/06/06 09:22:53 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.35 2002/09/22 18:10:05 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -120,6 +120,8 @@ public:
       @return the next valid line from the config file OR "EOF" if end of file is
       reached.*/
   string GetNextConfigLine(void);
+  
+  string GetCurrentLine(void) { return CurrentLine; }
 
   /** Returns the value of the tag supplied.
       @param 
