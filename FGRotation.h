@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.49 2004/03/18 12:22:31 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.50 2004/03/24 15:18:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -104,7 +104,6 @@ public:
   inline void SetPQR(double p, double q, double r) {vPQR(eP)=p;
                                                     vPQR(eQ)=q;
                                                     vPQR(eR)=r;}
-
   void bind(void);
   void unbind(void);
 

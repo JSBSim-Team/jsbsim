@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.46 2004/03/23 12:32:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.47 2004/03/24 15:18:16 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,8 @@ bool FGAuxiliary::Run()
     psl = Atmosphere->GetPressureSL();
     sat = Atmosphere->GetTemperature();
 
+// Rotation
+
     vEuler = State->CalcEuler();
 
     double cTht = cos(vEuler(eTht));
@@ -123,7 +125,9 @@ bool FGAuxiliary::Run()
     }
 
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-//
+
+// Translation
+
     vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
     Vt = vAeroUVW.Magnitude();
@@ -159,7 +163,8 @@ bool FGAuxiliary::Run()
     vMachUVW(eV) = vAeroUVW(eV) / Atmosphere->GetSoundSpeed();
     vMachUVW(eW) = vAeroUVW(eW) / Atmosphere->GetSoundSpeed();
 
-//
+// Position
+
 
     tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
     tatc = RankineToCelsius(tat);
