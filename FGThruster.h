@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.25 2002/01/14 13:23:11 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -57,7 +57,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.24 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.25 2002/01/14 13:23:11 dmegginson Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ public:
   virtual double Calculate(double) {return 0.0;}
   void SetName(string name) {Name = name;}
   void SetThrusterNumber(int nn) {ThrusterNumber = nn;}
+  virtual void SetRPM(double rpm) {};
   virtual double GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(double dt) {deltaT = dt;}
   double GetThrust(void) {return Thrust;}

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.95 2002/01/03 16:41:37 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.96 2002/01/14 13:23:11 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -333,6 +333,7 @@ bool FGJSBsim::copy_to_JSBsim() {
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
       FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
       FCS->SetPropAdvanceCmd(i, globals->get_controls()->get_prop_advance(i));
+      Propulsion->GetThruster(i)->SetRPM(get_engine(i)->get_RPM());
     }
 
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
