@@ -57,6 +57,8 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 
+#define ID_FORCE "$Header"
+
 #include "FGFDMExec.h"
 #include "FGMatrix.h"
 

@@ -56,11 +56,14 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.28 2000/10/13 19:21:02 jsb Exp $";
+static const char *IdHdr = "ID_FCS";
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
 
-char const *Id = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.27 2000/10/12 22:51:25 jsb Exp $";
+char const *Id = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.28 2000/10/13 19:21:02 jsb Exp $";
 
 FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGFCS";

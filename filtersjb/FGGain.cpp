@@ -1,8 +1,8 @@
 /*******************************************************************************
 
  Module:       FGGain.cpp
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 4/2000
  
  ------------- Copyright (C) 2000 -------------
 
@@ -38,6 +38,9 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGGain.h"            
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.18 2000/10/13 19:21:08 jsb Exp $";
+static const char *IdHdr = ID_GAIN;
 
 /*******************************************************************************
 ************************************ CODE **************************************

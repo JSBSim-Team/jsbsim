@@ -41,6 +41,8 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 
+#define ID_FDMEXEC "$Header"
+
 #include "FGModel.h"
 #include "FGInitialCondition.h"
 

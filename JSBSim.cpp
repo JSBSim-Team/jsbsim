@@ -115,6 +115,8 @@ USEUNIT("FGAerodynamics.cpp");
 #include <ctime>
 #endif
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.30 2000/10/13 19:21:07 jsb Exp $";
+
 int main(int argc, char** argv)
 {
   FGFDMExec* FDMExec;

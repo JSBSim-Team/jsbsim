@@ -2,8 +2,8 @@
 /*******************************************************************************
 
  Module:       FGSwitch.cpp
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 4/2000
  
  ------------- Copyright (C) 2000 -------------
 
@@ -40,15 +40,12 @@ INCLUDES
 
 #include "FGSwitch.h"    				
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.5 2000/10/13 19:21:09 jsb Exp $";
+static const char *IdHdr = ID_SWITCH;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
-
-// *****************************************************************************
-//  Function:   constructor
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)

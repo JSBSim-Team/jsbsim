@@ -55,6 +55,9 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.19 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdHdr = ID_INITIALCONDITION;
+
 FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   vt=vc=ve=0;
   mach=0;

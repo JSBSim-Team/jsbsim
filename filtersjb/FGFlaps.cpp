@@ -39,6 +39,9 @@ INCLUDES
 
 #include "FGFlaps.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.6 2000/10/13 19:21:08 jsb Exp $";
+static const char *IdHdr = ID_FLAPS;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

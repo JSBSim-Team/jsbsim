@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.35 2000/10/11 10:55:13 jsb Exp $
+// $Id: JSBSim.cxx,v 1.36 2000/10/13 19:21:07 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -54,6 +54,9 @@
 #include <FDM/JSBSim/FGAtmosphere.h>
 
 #include "JSBSim.hxx"
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cxx,v 1.36 2000/10/13 19:21:07 jsb Exp $";
+static const char *IdHdr = ID_JSBSIMXX;
 
 /******************************************************************************/
 

@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 
  Module:       FGGradient.cpp
@@ -40,15 +39,12 @@ INCLUDES
 
 #include "FGGradient.h"    				
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.5 2000/10/13 19:21:08 jsb Exp $";
+static const char *IdHdr = ID_GRADIENT;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
-
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                            AC_cfg(AC_cfg)

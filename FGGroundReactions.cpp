@@ -37,6 +37,9 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGGroundReactions.cpp,v 1.2 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdHdr = ID_GROUNDREACTIONS;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

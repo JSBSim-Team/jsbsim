@@ -53,6 +53,8 @@ INCLUDES
 #include "FGAtmosphere.h"
 #include "FGMatrix.h"
 
+#define ID_INITIALCONDITION "$Header"
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

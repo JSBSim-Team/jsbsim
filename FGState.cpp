@@ -63,6 +63,9 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.cpp,v 1.35 2000/10/13 19:21:06 jsb Exp $";
+static const char *IdHdr = ID_STATE;
+
 /*******************************************************************************
 MACROS
 *******************************************************************************/

@@ -53,6 +53,8 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
+#define ID_FCSCOMPONENT "$Header"
+
 using std::string;
 
 class FGFCS;

@@ -45,6 +45,8 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.6 2000/10/13 19:21:02 jsb Exp $"
+
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
 ********************************************************************************

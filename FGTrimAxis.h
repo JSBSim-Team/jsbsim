@@ -54,6 +54,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
+#define ID_TRIMAXIS "$Header"
 
 const string AccelNames[6]=   { "udot","vdot","wdot","qdot","pdot","rdot" };
 const string ControlNames[13]= { "Throttle","Sideslip","Angle of Attack",

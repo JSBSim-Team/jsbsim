@@ -38,6 +38,8 @@ SENTRY
 #ifndef FGPROPULSION_H
 #define FGPROPULSION_H
 
+#declare ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.2 2000/10/13 19:21:05 jsb Exp $"
+
 /*******************************************************************************
 INCLUDES
 *******************************************************************************/

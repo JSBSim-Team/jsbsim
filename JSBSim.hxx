@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.hxx,v 1.2 2000/10/13 11:11:29 jsb Exp $
+// $Id: JSBSim.hxx,v 1.3 2000/10/13 19:21:07 jsb Exp $
 
 
 #ifndef _JSBSIM_HXX
@@ -29,6 +29,7 @@
 
 #include <Aircraft/aircraft.hxx>
 
+#define ID_JSBSIMXX "$Header"
 
 class FGJSBsim: public FGInterface {
 

@@ -52,6 +52,9 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.9 2000/10/13 19:21:06 jsb Exp $";
+static const char *IdHdr = ID_TRIM;
+
 /*******************************************************************************/
 
 FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {

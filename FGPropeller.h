@@ -44,6 +44,8 @@ INCLUDES
 
 #include "FGThruster.h"
 
+#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.2 2000/10/13 19:21:05 jsb Exp $"
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

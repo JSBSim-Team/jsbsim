@@ -55,6 +55,8 @@ INCLUDES
 
 #include "FGModel.h"
 
+#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.2 2000/10/13 19:21:01 jsb Exp $"
+
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/

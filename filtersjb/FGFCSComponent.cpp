@@ -1,8 +1,8 @@
 /*******************************************************************************
 
  Module:       FGFCSComponent.cpp
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 11/1999
  
  ------------- Copyright (C) 2000 -------------
 
@@ -39,15 +39,12 @@ INCLUDES
 
 #include "FGFCSComponent.h"    				
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.13 2000/10/13 19:21:08 jsb Exp $";
+static const char *IdHdr = ID_FCSCOMPONENT;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
-
-// *****************************************************************************
-//  Function:   Constructor
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 {

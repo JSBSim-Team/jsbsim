@@ -1,8 +1,8 @@
 /*******************************************************************************
 
  Module:       FGFilter.cpp
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 11/2000
  
  ------------- Copyright (C) 2000 -------------
 
@@ -39,15 +39,12 @@ INCLUDES
 
 #include "FGFilter.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.8 2000/10/13 19:21:08 jsb Exp $";
+static const char *IdHdr = ID_FILTER;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
-
-// *****************************************************************************
-//  Function:   constructor
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)

@@ -65,6 +65,7 @@ INCLUDES
 
 #include <vector.h>
 
+#define ID_TRIM "$Header"
 
 /*******************************************************************************
 CLASS DECLARATION

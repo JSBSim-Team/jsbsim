@@ -56,6 +56,8 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
+#define ID_CONFIGFILE "$Header"
+
 using std::string;
 using std::ifstream;
 

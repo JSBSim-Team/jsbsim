@@ -76,6 +76,8 @@ INCLUDES
 DEFINITIONS
 *******************************************************************************/
 
+#define ID_FDMSOCKET "$Header"
+
 using std::cout;
 using std::endl;
 

@@ -39,6 +39,9 @@ INCLUDES
 #include "FGLGear.h"
 #include <algorithm>
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.25 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdHdr = ID_LGEAR;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

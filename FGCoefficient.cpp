@@ -48,6 +48,9 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.16 2000/10/13 19:21:02 jsb Exp $";
+static const char *IdHdr = "ID_COEFFICIENT";
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

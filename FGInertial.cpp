@@ -37,6 +37,9 @@ INCLUDES
 
 #include "FGInertial.h"
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.cpp,v 1.2 2000/10/13 19:21:03 jsb Exp $";
+static const char *IdHdr = ID_INERTIAL;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

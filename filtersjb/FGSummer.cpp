@@ -1,8 +1,8 @@
 /*******************************************************************************
 
  Module:       FGSummer.cpp
- Author:       
- Date started: 
+ Author:       Jon S. Berndt
+ Date started: 4/2000
  
  ------------- Copyright (C) 2000 -------------
 
@@ -39,15 +39,12 @@ INCLUDES
 
 #include "FGSummer.h"            
 
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.12 2000/10/13 19:21:09 jsb Exp $";
+static const char *IdHdr = ID_SUMMER;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
-
-// *****************************************************************************
-//  Function:   Constructor
-//  Purpose:
-//  Parameters: void
-//  Comments:
 
 FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)

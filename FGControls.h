@@ -18,17 +18,18 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.6 2000/06/03 13:59:52 jsb Exp $
+// $Id: FGControls.h,v 1.7 2000/10/13 19:21:02 jsb Exp $
 // (Log is kept at end of this file)
 
 
 #ifndef _CONTROLS_HXX
 #define _CONTROLS_HXX
 
-
 #ifndef __cplusplus                                                          
 # error This library requires C++
 #endif                                   
+
+#define ID_CONTROLS "$Header"
 
 // Define a structure containing the control parameters
 
@@ -177,6 +178,9 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.7  2000/10/13 19:21:02  jsb
+// ** JSB ** Added version identifiers for all files
+//
 // Revision 1.6  2000/06/03 13:59:52  jsb
 // Changes for compatibility with MSVC
 //
