@@ -62,159 +62,290 @@ INCLUDES
 #include "FGDefs.h"
 
 
-FGInitialCondition::FGInitialCondition(FGFDMExec *fdmex)
+
+
+
+FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
 {
-  vt=vc=0;
-  mach=0;
-  alpha=beta=gamma=0;
-  theta=phi=psi=0;
-  altitude=hdot=0;
-  latitude=longitude=0;
-  
-  atm=fdmex->GetAtmosphere();
+    vt=vc=0;
+    mach=0;
+    alpha=beta=gamma=0;
+    theta=phi=psi=0;
+    altitude=hdot=0;
+    latitude=longitude=0;
+    fdmex=FDMExec;
+    fdmex->GetPosition()->Seth(altitude);
+    fdmex->GetAtmosphere()->Run();
+
 }
 
 
 FGInitialCondition::~FGInitialCondition(void) {};
 
 
-/* void FGInitialCondition::SetVcalibratedKtsIC(float tt)
+void FGInitialCondition::SetVcalibratedKtsIC(float tt)
 {
-  vc=tt*KTSTOFPS;
-  
- vt=sqrt(atm->GetDensity(0)/atm->GetDensity(altitude)*vc*vc);
-  
-  //mach=vt*sqrt(SHRATIO*Reng*atm->GetTemperature(altitude));
+    vc=tt*KTSTOFPS;
+    if(getMachFromVcas(&mach,vc)) {
+        vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
+    }
 }
- */
+
 
 
 void FGInitialCondition::SetVtrueKtsIC(float tt)
 {
-  vt=tt*KTSTOFPS;
-  //vc=sqrt(atm->GetDensity(altitude)/atm->GetDensity(0)*vt*vt);
-  //mach=vt*sqrt(SHRATIO*Reng*atm->GetTemperature(altitude));
+    vt=tt*KTSTOFPS;
+    mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+    vc=calcVcas(mach);
 }
 
 
-/* void FGInitialCondition::SetMachIC(float tt)
+void FGInitialCondition::SetMachIC(float tt)
 {
-  mach=tt;
-  vt=mach*sqrt(SHRATIO*Reng*atm->GetTemperature(altitude));
-  //vc=sqrt(atm->GetDensity(altitude)/atm->GetDensity(0)*vt*vt);
-} */
+    mach=tt;
+    vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
+    vc=calcVcas(mach);
+    //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
+}
 
 
 
 void FGInitialCondition::SetAltitudeFtIC(float tt)
 {
-  altitude=tt;
-  //mach=vt/sqrt(SHRATIO*Reng*atm->GetTemperature(altitude));
-  //vc=sqrt(atm->GetDensity(altitude)/atm->GetDensity(0)*vt*vt);
+    altitude=tt;
+    fdmex->GetPosition()->Seth(altitude);
+    fdmex->GetAtmosphere()->Run();
+    mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+    vc=calcVcas(mach);
 }
 
 
 void FGInitialCondition::SetFlightPathAngleDegIC(float tt)
 {
-  gamma=tt*DEGTORAD;
-  theta=alpha+gamma;
+    gamma=tt*DEGTORAD;
+    theta=alpha+gamma;
 }
 
 
 void FGInitialCondition::SetAlphaDegIC(float tt)
 {
-  alpha=tt*DEGTORAD;
-  theta=alpha+gamma;
+    alpha=tt*DEGTORAD;
+    theta=alpha+gamma;
 }
 
 
 void FGInitialCondition::SetBetaDegIC(float tt)
 {
-  beta=tt*DEGTORAD;
+    beta=tt*DEGTORAD;
 }
 
 
 void FGInitialCondition::SetRollAngleDegIC(float tt)
 {
-  phi=tt*DEGTORAD;
+    phi=tt*DEGTORAD;
 }
 
 
 void FGInitialCondition::SetPitchAngleDegIC(float tt)
 {
-  theta=tt*DEGTORAD;
-  alpha=theta-gamma;
+    theta=tt*DEGTORAD;
+    alpha=theta-gamma;
 }
 
 
 void FGInitialCondition::SetHeadingDegIC(float tt)
 {
-  psi=tt*DEGTORAD;
+    psi=tt*DEGTORAD;
 }
 
 
 void FGInitialCondition::SetLatitudeDegIC(float tt)
 {
-  latitude=tt*DEGTORAD;
+    latitude=tt*DEGTORAD;
 }
 
 
 void FGInitialCondition::SetLongitudeDegIC(float tt)
 {
-  longitude=tt*DEGTORAD;
+    longitude=tt*DEGTORAD;
 }
 
 
 float FGInitialCondition::GetUBodyFpsIC(void)
 {
-  return vt*cos(alpha)*cos(beta);
+    return vt*cos(alpha)*cos(beta);
 }
 
 
 float FGInitialCondition::GetVBodyFpsIC(void)
 {
-  return vt*sin(beta);
+    return vt*sin(beta);
 }
 
 
 float FGInitialCondition::GetWBodyFpsIC(void)
 {
-  return vt*sin(alpha)*cos(beta);
+    return vt*sin(alpha)*cos(beta);
 }
 
 
 float FGInitialCondition::GetThetaRadIC(void)
 {
-  return theta;
+    return theta;
 }
 
 
 float FGInitialCondition::GetPhiRadIC(void)
 {
-  return phi;
+    return phi;
 }
 
 
 float FGInitialCondition::GetPsiRadIC(void)
 {
-  return psi;
+    return psi;
 }
 
 
 float FGInitialCondition::GetLatitudeRadIC(void)
 {
-  return latitude;
+    return latitude;
 }
 
 
 float FGInitialCondition::GetLongitudeRadIC(void)
 {
-  return longitude;
+    return longitude;
 }
 
 
 float FGInitialCondition::GetAltitudeFtIC(void)
 {
-  return altitude;
+    return altitude;
 }
 
+float FGInitialCondition::calcVcas(float Mach) {
+
+    float p=fdmex->GetAtmosphere()->GetPressure();
+    float psl=fdmex->GetAtmosphere()->GetPressureSL();
+    float rhosl=fdmex->GetAtmosphere()->GetDensitySL();
+    float pt,A,B,D,vcas;
+
+    if(Mach < 1)    //calculate total pressure assuming isentropic flow
+        pt=p*pow((1 + 0.2*Mach*Mach),3.5);
+    else
+    {
+        // shock in front of pitot tube, we'll assume its normal and use
+        // the Rayleigh Pitot Tube Formula, i.e. the ratio of total
+        // pressure behind the shock to the static pressure in front
+
+
+        //the normal shock assumption should not be a bad one -- most supersonic
+        //aircraft place the pitot probe out front so that it is the forward
+        //most point on the aircraft.  The real shock would, of course, take
+        //on something like the shape of a rounded-off cone but, here again,
+        //the assumption should be good since the opening of the pitot probe
+        //is very small and, therefore, the effects of the shock curvature
+        //should be small as well. AFAIK, this approach is fairly well accepted
+        //within the aerospace community
+
+        B = 5.76*Mach*Mach/(5.6*Mach*Mach - 0.8);
+
+        // The denominator above is zero for Mach ~ 0.38, for which
+        // we'll never be here, so we're safe
+
+        D = (2.8*Mach*Mach-0.4)*0.4167;
+        pt = p*pow(B,3.5)*D;
+    }
+
+    A = pow(((pt-p)/psl+1),0.28571);
+    vcas = sqrt(7*psl/rhosl*(A-1));
+    //cout << "calcVcas: vcas= " << vcas*FPSTOKTS << " mach= " << Mach << " pressure: " << p << endl;
+    return vcas;
+}
+
+bool FGInitialCondition::findMachInterval(float *mlo, float *mhi, float vcas) {
+    //void find_interval(inter_params &ip,eqfunc f,float y,float constant, int &flag){
+
+    int i=0;
+    bool found=false;
+    float flo,fhi,fguess;
+    float lo,hi,guess,step;
+    step=0.1;
+    guess=1.5;
+    fguess=calcVcas(guess)-vcas;
+    lo=hi=guess;
+    do{
+        step=2*step;
+        lo-=step;
+        if(lo < 0)
+            lo=0;
+        hi+=step;
+        i++;
+        flo=calcVcas(lo)-vcas;
+        fhi=calcVcas(hi)-vcas;
+        if(flo*fhi <=0){  //found interval with root
+            found=true;
+            if(flo*fguess <= 0){  //narrow interval down a bit
+                hi=lo+step;    //to pass solver interval that is as
+                //small as possible
+            }
+            else if(fhi*fguess <= 0){
+                lo=hi-step;
+            }
+        }
+        //cout << "findMachInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
+    }
+    while((found == 0) && (i <= 100));
+    *mlo=lo;
+    *mhi=hi;
+    return found;
+}
+
+
+
+bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
+
+
+    float x1,x2,x3,f1,f2,f3,d,d0;
+    float eps=1E-3;
+    float const relax =0.9;
+    int i;
+    bool success=false;
+    //initializations
+    if(findMachInterval(&x1,&x3,vcas)) {
+
+        f1=calcVcas(x1)-vcas;
+        f3=calcVcas(x3)-vcas;
+        d0=fabs(x3-x1);
+
+        //iterations
+        i=0;
+        while ((fabs(d) > eps) && (i < 100)){
+
+            d=(x3-x1)/d0;
+            x2=x1-d*d0*f1/(f3-f1);
+            f2=calcVcas(x2)-vcas;
+            if(f1*f2 <= 0.0){
+                x3=x2;
+                f3=f2;
+                f1=relax*f1;
+            }
+            else if(f2*f3 <= 0){
+                x1=x2;
+                f1=f2;
+                f3=relax*f3;
+            }
+            //cout << i << endl;
+            i++;
+        }//end while
+        if(i < 100) {
+            success=true;
+            *Mach=x2;
+        }
+
+    }
+    //cout << "Success= " << success << " Vcas: " << vcas*FPSTOKTS << " Mach: " << *Mach << endl;
+    return success;
+}
