@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.50 2003/06/03 09:53:49 ehofman Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.51 2003/11/09 22:32:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,11 +83,24 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Propulsion management class.
-    FGPropulsion manages all aspects of propulsive force generation, including
-    containment of engines, tanks, and thruster class instances in STL vectors,
-    and the interaction and communication between them.
+    The Propulsion class is the container for the entire propulsion system, which is
+    comprised of engines, tanks, and "thrusters" (the device that transforms the
+    engine power into a force that acts on the aircraft, such as a nozzle or
+    propeller). Once the Propulsion class gets the config file, it reads in
+    information which is specific to a type of engine. Then:
+
+    -# The appropriate engine type instance is created
+    -# A thruster object is instantiated, and is linked to the engine
+    -# At least one tank object is created, and is linked to an engine.
+
+    At Run time each engines Calculate() method is called to return the excess power
+    generated during that iteration. The drag from the previous iteration is sub-
+    tracted to give the excess power available for thrust this pass. That quantity
+    is passed to the thrusters associated with a particular engine - perhaps with a
+    scaling mechanism (gearing?) to allow the engine to give its associated thrust-
+    ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.50 2003/06/03 09:53:49 ehofman Exp $
+    @version $Id: FGPropulsion.h,v 1.51 2003/11/09 22:32:51 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster

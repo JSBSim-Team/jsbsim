@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.11 2003/11/09 21:54:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.12 2003/11/09 22:32:51 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -328,31 +328,7 @@ void FGSimTurbine::SetDefaults(void)
 
 bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
 {
-  int i;
   string token;
-/*
-  Name = Eng_cfg->GetValue("NAME");
-  cout << "\n    Engine Name: "         << Name << endl;
-  Eng_cfg->GetNextConfigLine();
-  *Eng_cfg >> token >> MilThrust;
-  *Eng_cfg >> token >> MaxThrust;
-  *Eng_cfg >> token >> BypassRatio;
-  *Eng_cfg >> token >> TSFC;
-  *Eng_cfg >> token >> ATSFC;
-  *Eng_cfg >> token >> IdleN1;
-  *Eng_cfg >> token >> IdleN2;
-  *Eng_cfg >> token >> MaxN1;
-  *Eng_cfg >> token >> MaxN2;
-  *Eng_cfg >> token >> Augmented;
-  *Eng_cfg >> token >> AugMethod;
-  *Eng_cfg >> token >> Injected;
-  i=0;
-  while( Eng_cfg->GetValue() != string("/FG_SIMTURBINE") && i < 10){
-    ThrustTables.push_back( new FGCoefficient(FDMExec) );
-    ThrustTables.back()->Load(Eng_cfg);
-    i++;
-  }
-*/
 
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
