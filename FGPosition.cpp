@@ -88,7 +88,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.72 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.73 2004/03/26 11:54:44 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,7 +223,6 @@ void FGPosition::GetState(void)
 
   Vt        = Auxiliary->GetVt();
   vVel      = Rotation->GetTb2l() * Translation->GetUVW();
-  vVelDot   = Rotation->GetTb2l() * Translation->GetUVWdot();
 
   b = Aircraft->GetWingSpan();
 }

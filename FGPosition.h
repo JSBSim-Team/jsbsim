@@ -3,30 +3,30 @@
  Header:       FGPosition.h
  Author:       Jon S. Berndt
  Date started: 1/5/99
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 01/05/99   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.56 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.57 2004/03/26 11:54:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.56 2004/02/26 15:03:56 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.57 2004/03/26 11:54:44 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,9 +81,8 @@ public:
       @see JSBSim.cpp documentation
       @return false if no error */
   bool Run(void);
-  
+
   inline FGColumnVector3& GetVel(void) { return vVel; }
-  inline FGColumnVector3& GetVelDot(void) { return vVelDot; }
   inline double GetVn(void)  const { return vVel(eX); }
   inline double GetVe(void)  const { return vVel(eY); }
   inline double GetVd(void)  const { return vVel(eZ); }
@@ -102,7 +101,7 @@ public:
   inline double GetDistanceAGL(void)  const { return DistanceAGL; }
   inline double GetRadius(void) const { return Radius; }
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
-  
+
   inline double GetGamma(void) const { return gamma; }
   inline void SetGamma(double tt) { gamma = tt; }
   inline double GetHOverBCG(void) const { return hoverbcg; }
@@ -118,18 +117,17 @@ public:
       vRunwayNormal << fgx << fgy << fgz;
   }
   void SetVRP(FGColumnVector3& vrp) {vVRP = vrp;}
-  
+
   void bind(void);
   void unbind(void);
-  
-private:  
+
+private:
   FGColumnVector3 vVel;
-  FGColumnVector3 vVelDot;
   FGColumnVector3 vRunwayNormal;
   FGColumnVector3 vVRP;
   FGColumnVector3 vVRPoffset;
   FGColumnVector3 vMac;
-  
+
   double Radius, h, hVRP;
   double LatitudeDot, LongitudeDot, RadiusDot;
   double LatitudeDot_prev[4], LongitudeDot_prev[4], RadiusDot_prev[4];
