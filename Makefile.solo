@@ -99,18 +99,6 @@ FGEngine.o: FGEngine.cpp FGEngine.h FGJSBBase.h FGState.h \
  FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGEngine.o -c FGEngine.cpp
 
-FGFactorGroup.o: FGFactorGroup.cpp FGCoefficient.h FGConfigFile.h \
- FGJSBBase.h FGTable.h FGFactorGroup.h FGAerodynamics.h FGModel.h \
- FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h \
- FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGFCS.h \
- filtersjb/FGFCSComponent.h filtersjb/../FGJSBBase.h \
- filtersjb/../FGFCS.h FGLGear.h FGAircraft.h FGPropulsion.h FGRocket.h \
- FGEngine.h FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h \
- FGOutput.h FGfdmSocket.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
- FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
- FGNozzle.h FGMassBalance.h FGGroundReactions.h FGInertial.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
-
 FGFCS.o: FGFCS.cpp FGFCS.h filtersjb/FGFCSComponent.h \
  filtersjb/../FGJSBBase.h filtersjb/../FGFCS.h FGModel.h FGJSBBase.h \
  FGLGear.h FGConfigFile.h FGMatrix33.h FGColumnVector3.h \
@@ -138,8 +126,17 @@ FGFDMExec.o: FGFDMExec.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
  FGFactorGroup.h FGGroundReactions.h FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFDMExec.o -c FGFDMExec.cpp
 
-FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGfdmSocket.o -c FGfdmSocket.cpp
+FGFactorGroup.o: FGFactorGroup.cpp FGCoefficient.h FGConfigFile.h \
+ FGJSBBase.h FGTable.h FGFactorGroup.h FGAerodynamics.h FGModel.h \
+ FGState.h FGInitialCondition.h FGFDMExec.h FGAtmosphere.h \
+ FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGJSBBase.h \
+ filtersjb/../FGFCS.h FGLGear.h FGAircraft.h FGPropulsion.h FGRocket.h \
+ FGEngine.h FGTranslation.h FGRotation.h FGPosition.h FGAuxiliary.h \
+ FGOutput.h FGfdmSocket.h FGPiston.h FGTurboShaft.h FGTurboJet.h \
+ FGTurboProp.h FGTank.h FGPropeller.h FGThruster.h FGForce.h \
+ FGNozzle.h FGMassBalance.h FGGroundReactions.h FGInertial.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGFactorGroup.o -c FGFactorGroup.cpp
 
 FGForce.o: FGForce.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
  FGInitialCondition.h FGAtmosphere.h FGMatrix33.h FGColumnVector3.h \
@@ -453,6 +450,9 @@ FGUtility.o: FGUtility.cpp FGUtility.h FGJSBBase.h FGState.h \
  FGInertial.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGUtility.o -c FGUtility.cpp
 
+FGfdmSocket.o: FGfdmSocket.cpp FGfdmSocket.h FGJSBBase.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGfdmSocket.o -c FGfdmSocket.cpp
+
 JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
  FGInitialCondition.h FGAtmosphere.h FGMatrix33.h FGColumnVector3.h \
  FGColumnVector4.h FGRotation.h FGState.h FGFCS.h \
@@ -465,6 +465,12 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
  FGCoefficient.h FGFactorGroup.h FGGroundReactions.h FGInertial.h \
  FGScript.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
+
+SourcePrologue.o: SourcePrologue.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -oSourcePrologue.o -c SourcePrologue.cpp
+
+testnull.o: testnull.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -otestnull.o -c testnull.cpp
 
 
 x15trim.o:x15trim.cpp

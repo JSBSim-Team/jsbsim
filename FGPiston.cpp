@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.51 2002/02/08 12:36:11 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.52 2002/02/13 11:52:38 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,19 +154,23 @@ double FGPiston::Calculate(double PowerRequired)
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
-  if (Mixture >= 0.3) {
     doEngineStartup();
     doManifoldPressure();
     doAirFlow();
     doFuelFlow();
-    doEnginePower();
+
+  //Now that the fuel flow is done check if the mixture is too lean to run the engine
+  //Assume lean limit at 22 AFR for now - thats a thi of 0.668
+  //This might be a bit generous, but since there's currently no audiable warning of impending
+  //cutout in the form of misfiring and/or rough running its probably reasonable for now.
+  if(equivalence_ratio < 0.668)
+    Running = false;
+
+  doEnginePower();
     doEGT();
     doCHT();
     doOilTemperature();
     doOilPressure();
-  } else {
-    HP = 0;
-  }
 
   PowerAvailable = (HP * hptoftlbssec) - PowerRequired;
   return PowerAvailable;
@@ -227,11 +231,16 @@ void FGPiston::doEngineStartup(void)
 
   if ((!Running) && (spark) && (fuel)) {
   // start the engine if revs high enough
-    if ((RPM > 450) && (crank_counter > 175)) {
-      // For now just instantaneously start but later we should maybe crank for
-      // a bit
-      Running = true;
-      // RPM = 600;
+    if(Cranking) {
+      if ((RPM > 450) && (crank_counter > 175)) {
+        //Add a little delay to startup on the starter
+        Running = true;
+      }
+    } else {
+      if (RPM > 450) {
+        Running = true;
+        //This allows us to in-air start when windmilling
+      }
     }
   }
 
