@@ -74,7 +74,7 @@ SENTRY
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.2 2004/03/29 02:15:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.4 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,8 @@ static const char *IdHdr = ID_QUATERNION;
 // Initialize from q
 FGQuaternion::FGQuaternion(const FGQuaternion& q)
   : mQ0(q.mQ0), mQ1(q.mQ1), mQ2(q.mQ2), mQ3(q.mQ3),
-    mCacheValid(q.mCacheValid) {
+    mCacheValid(q.mCacheValid)
+{
   if (mCacheValid) {
     mT = q.mT;
     mTInv = q.mTInv;
@@ -211,32 +212,6 @@ void FGQuaternion::ComputeDerived(void) const {
   mEulerCosines(ePhi) = cos(mEulerAngles(ePhi));
   mEulerCosines(eTht) = cos(mEulerAngles(eTht));
   mEulerCosines(ePsi) = cos(mEulerAngles(ePsi));
-}
-
-void FGQuaternion::bind(FGPropertyManager* PropertyManager, const string& prefix) const
-{
-  PropertyManager->Tie(prefix + "phi-rad", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerPhi);
-  PropertyManager->Tie(prefix + "phi-deg", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerPhiDeg);
-  PropertyManager->Tie(prefix + "theta-rad", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerTheta);
-  PropertyManager->Tie(prefix + "theta-deg", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerThetaDeg);
-  PropertyManager->Tie(prefix + "psi-rad", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerPsi);
-  PropertyManager->Tie(prefix + "psi-deg", (FGQuaternion*)this,
-                       &FGQuaternion::GetEulerPsiDeg);
-}
-
-void FGQuaternion::unbind(FGPropertyManager* PropertyManager, const string& prefix) const
-{
-  PropertyManager->Untie(prefix + "phi-rad");
-  PropertyManager->Untie(prefix + "phi-deg");
-  PropertyManager->Untie(prefix + "theta-rad");
-  PropertyManager->Untie(prefix + "theta-deg");
-  PropertyManager->Untie(prefix + "psi-rad");
-  PropertyManager->Untie(prefix + "psi-deg");
 }
 
 } // namespace JSBSim

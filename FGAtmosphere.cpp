@@ -2,7 +2,7 @@
 
  Module:       FGAtmosphere.cpp
  Author:       Jon Berndt
-               Implementation of 1959 Standard Atmosphere added by Tony Peden 
+               Implementation of 1959 Standard Atmosphere added by Tony Peden
  Date started: 11/24/98
  Purpose:      Models the atmosphere
  Called by:    FGSimExec
@@ -35,7 +35,7 @@ HISTORY
 --------------------------------------------------------------------------------
 11/24/98   JSB   Created
 07/23/99   TP    Added implementation of 1959 Standard Atmosphere
-                 Moved calculation of Mach number to FGTranslation
+                 Moved calculation of Mach number to FGPropagate
                  Later updated to '76 model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
@@ -51,13 +51,14 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGAircraft.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGInertial.h"
 #include "FGPropertyManager.h"
+#include "FGPropagate.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.60 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.62 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +87,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 //   turbType = ttBerndt;
   TurbGain = 0.0;
   TurbRate = 1.0;
-  
+
   bind();
   Debug(0);
 }
@@ -117,9 +118,9 @@ bool FGAtmosphere::InitModel(void)
   temperature=&intTemperature;
   pressure=&intPressure;
   density=&intDensity;
-  
+
   useExternal=false;
-  
+
   return true;
 }
 
@@ -130,9 +131,9 @@ bool FGAtmosphere::Run(void)
   if (!FGModel::Run()) {                 // if false then execute this Run()
     //do temp, pressure, and density first
     if (!useExternal) {
-      h = Position->Geth();
+      h = Propagate->Geth();
       Calculate(h);
-    } 
+    }
 
     if (turbType != ttNone) {
       Turbulence();
@@ -164,13 +165,13 @@ void FGAtmosphere::Calculate(double altitude)
 
   i = lastIndex;
   if (altitude < htab[lastIndex]) {
-    if (altitude <= 0) { 
+    if (altitude <= 0) {
       i = 0;
       altitude=0;
     } else {
        i = lastIndex-1;
        while (htab[i] > altitude) i--;
-    }   
+    }
   } else if (altitude > htab[lastIndex+1]) {
     if (altitude >= htab[7]) {
       i = 7;
@@ -178,8 +179,8 @@ void FGAtmosphere::Calculate(double altitude)
     } else {
       i = lastIndex+1;
       while (htab[i+1] < altitude) i++;
-    }  
-  } 
+    }
+  }
 
   switch(i) {
   case 1:     // 36089 ft.
@@ -231,9 +232,9 @@ void FGAtmosphere::Calculate(double altitude)
     refpress  = 2116.22;    // psf
     //refdens   = 0.00237767;  // slugs/cubic ft.
     break;
-  
+
   }
- 
+
   if (slope == 0) {
     intTemperature = reftemp;
     intPressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
@@ -250,16 +251,17 @@ void FGAtmosphere::Calculate(double altitude)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 // square a value, but preserve the original sign
-static inline double 
-square_signed (double value)
+
+static inline double square_signed (double value)
 {
     if (value < 0)
         return value * value * -1;
     else
         return value * value;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAtmosphere::Turbulence(void)
 {
@@ -288,18 +290,18 @@ void FGAtmosphere::Turbulence(void)
     vDirection      += vDirectionAccel*rate*State->Getdt();
 
     vDirection.Normalize();
-    
+
                                 // Diminish turbulence within three wingspans
                                 // of the ground
     vTurbulence = TurbGain * Magnitude * vDirection;
-    double HOverBMAC = Position->GetHOverBMAC();
+    double HOverBMAC = Propagate->GetHOverBMAC();
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
-    
+    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
+
     if (Aircraft->GetWingSpan() > 0) {
       vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
     } else {
@@ -329,7 +331,7 @@ void FGAtmosphere::Turbulence(void)
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));
 
-    
+
     MagnitudedAccelDt = 1 - 2.0*(double(rand())/double(RAND_MAX)) - Magnitude;
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
@@ -341,16 +343,16 @@ void FGAtmosphere::Turbulence(void)
 
                                 // Diminish z-vector within two wingspans
                                 // of the ground
-    double HOverBMAC = Position->GetHOverBMAC();
+    double HOverBMAC = Propagate->GetHOverBMAC();
     if (HOverBMAC < 2.0)
         vDirection(eZ) *= HOverBMAC / 2.0;
 
     vDirection.Normalize();
-    
+
     vTurbulence = TurbGain*Magnitude * vDirection;
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
-    vBodyTurbGrad = Rotation->GetTl2b()*vTurbulenceGrad;
+    vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
     if (Aircraft->GetHTailArm() > 0)
       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
@@ -386,7 +388,7 @@ void FGAtmosphere::UseInternal(void) {
   density=&intDensity;
   useExternal=false;
 }
-  
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.45 2004/04/06 13:15:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.47 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -120,17 +120,17 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   case tAltAGL:
     control_min=0;
     control_max=30;
-    control_value=fdmex->GetPosition()->GetDistanceAGL();
+    control_value=fdmex->GetPropagate()->GetDistanceAGL();
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetRotation()->Gettht() - 5*degtorad;
-    control_max=fdmex->GetRotation()->Gettht() + 5*degtorad;
+    control_min=fdmex->GetPropagate()->Gettht() - 5*degtorad;
+    control_max=fdmex->GetPropagate()->Gettht() + 5*degtorad;
     state_convert=radtodeg;
     break;
   case tPhi:
-    control_min=fdmex->GetRotation()->Getphi() - 30*degtorad;
-    control_max=fdmex->GetRotation()->Getphi() + 30*degtorad;
+    control_min=fdmex->GetPropagate()->Getphi() - 30*degtorad;
+    control_max=fdmex->GetPropagate()->Getphi() + 30*degtorad;
     state_convert=radtodeg;
     control_convert=radtodeg;
     break;
@@ -141,8 +141,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_convert=radtodeg;
     break;
   case tHeading:
-    control_min=fdmex->GetRotation()->Getpsi() - 30*degtorad;
-    control_max=fdmex->GetRotation()->Getpsi() + 30*degtorad;
+    control_min=fdmex->GetPropagate()->Getpsi() - 30*degtorad;
+    control_max=fdmex->GetPropagate()->Getpsi() + 30*degtorad;
     state_convert=radtodeg;
     break;
   }
@@ -162,12 +162,12 @@ FGTrimAxis::~FGTrimAxis(void)
 
 void FGTrimAxis::getState(void) {
   switch(state) {
-  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot(1)-state_target; break;
-  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot(2)-state_target; break;
-  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot(3)-state_target; break;
-  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot(2)-state_target;break;
-  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot(1)-state_target; break;
-  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot(3)-state_target; break;
+  case tUdot: state_value=fdmex->GetPropagate()->GetUVWdot(1)-state_target; break;
+  case tVdot: state_value=fdmex->GetPropagate()->GetUVWdot(2)-state_target; break;
+  case tWdot: state_value=fdmex->GetPropagate()->GetUVWdot(3)-state_target; break;
+  case tQdot: state_value=fdmex->GetPropagate()->GetPQRdot(2)-state_target;break;
+  case tPdot: state_value=fdmex->GetPropagate()->GetPQRdot(1)-state_target; break;
+  case tRdot: state_value=fdmex->GetPropagate()->GetPQRdot(3)-state_target; break;
   case tHmgt: state_value=computeHmgt()-state_target; break;
   case tNlf:  state_value=fdmex->GetAircraft()->GetNlf()-state_target; break;
   case tAll: break;
@@ -189,11 +189,11 @@ void FGTrimAxis::getControl(void) {
   case tAileron:   control_value=fdmex->GetFCS() -> GetDaCmd(); break;
   case tYawTrim:
   case tRudder:    control_value=fdmex->GetFCS() -> GetDrCmd(); break;
-  case tAltAGL:    control_value=fdmex->GetPosition()->GetDistanceAGL();break;
-  case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
-  case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
+  case tAltAGL:    control_value=fdmex->GetPropagate()->GetDistanceAGL();break;
+  case tTheta:     control_value=fdmex->GetPropagate()->Gettht(); break;
+  case tPhi:       control_value=fdmex->GetPropagate()->Getphi(); break;
   case tGamma:     control_value=fdmex->GetAuxiliary()->GetGamma();break;
-  case tHeading:   control_value=fdmex->GetRotation()->Getpsi(); break;
+  case tHeading:   control_value=fdmex->GetPropagate()->Getpsi(); break;
   }
 }
 
@@ -202,7 +202,7 @@ void FGTrimAxis::getControl(void) {
 double FGTrimAxis::computeHmgt(void) {
   double diff;
 
-  diff   = fdmex->GetRotation()->Getpsi() -
+  diff   = fdmex->GetPropagate()->Getpsi() -
              fdmex->GetAuxiliary()->GetGroundTrack();
 
   if( diff < -M_PI ) {
@@ -270,8 +270,8 @@ void FGTrimAxis::SetThetaOnGround(double ff) {
   }
   cout << "SetThetaOnGround ref gear: " << ref << endl;
   if(ref >= 0) {
-    double sp = fdmex->GetRotation()->GetSinphi();
-    double cp = fdmex->GetRotation()->GetCosphi();
+    double sp = fdmex->GetPropagate()->GetSinphi();
+    double cp = fdmex->GetPropagate()->GetCosphi();
     double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
     double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
     double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);
@@ -338,7 +338,7 @@ bool FGTrimAxis::initTheta(void) {
   }
   //cout << i << endl;
   if (debug_lvl > 0) {
-      cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
+      cout << "    Initial Theta: " << fdmex->GetPropagate()->Gettht()*radtodeg << endl;
       cout << "    Used gear unit " << iAft << " as aft and " << iForward << " as forward" << endl;
   }
   control_min=(theta+5)*degtorad;
@@ -364,8 +364,8 @@ void FGTrimAxis::SetPhiOnGround(double ff) {
     i++;
   }
   if (ref >= 0) {
-    double st = sin(fdmex->GetRotation()->Gettht());
-    double ct = cos(fdmex->GetRotation()->Gettht());
+    double st = sin(fdmex->GetPropagate()->Gettht());
+    double ct = cos(fdmex->GetPropagate()->Gettht());
     double lx = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(1);
     double ly = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(2);
     double lz = fdmex->GetGroundReactions()->GetGearUnit(ref)->GetBodyLocation(3);

@@ -40,7 +40,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.35 2003/06/03 09:53:44 ehofman Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.37 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 #if defined (__APPLE__)
@@ -60,7 +60,7 @@ CLASS IMPLEMENTATION
 FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 {
   Name = "FGGroundReactions";
-  
+
   bind();
 
   Debug(0);
@@ -84,7 +84,7 @@ bool FGGroundReactions::Run(void)
     vMoments.InitMatrix();
 
     // Only execute gear force code below 300 feet
-    if ( Position->GetDistanceAGL() < 300.0 ) {
+    if ( Propagate->GetDistanceAGL() < 300.0 ) {
       vector <FGLGear>::iterator iGear = lGear.begin();
       // Sum forces and moments for all gear, here.
       // Some optimizations may be made here - or rather in the gear code itself.
@@ -195,10 +195,10 @@ string FGGroundReactions::GetGroundReactionValues(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGGroundReactions::bind(void)
-{ 
+{
   typedef double (FGGroundReactions::*PMF)(int) const;
   PropertyManager->Tie("gear/num-units", this,
-                       &FGGroundReactions::GetNumGearUnits);  
+                       &FGGroundReactions::GetNumGearUnits);
   PropertyManager->Tie("moments/l-gear-lbsft", this,1,
                        (PMF)&FGGroundReactions::GetMoments);
   PropertyManager->Tie("moments/m-gear-lbsft", this,2,

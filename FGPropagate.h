@@ -31,8 +31,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGPOSITION_H
-#define FGPOSITION_H
+#ifndef FGPROPAGATE_H
+#define FGPROPAGATE_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPropagate.h,v 1.2 2004/04/17 12:18:50 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.4 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,9 +58,9 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the lateral and longitudinal translational EOM.
-    @author Jon S. Berndt
-    @version $Id: FGPropagate.h,v 1.2 2004/04/17 12:18:50 jberndt Exp $
+/** Models the EOM and integration/propagation of state
+    @author Jon S. Berndt, Mathias Froehlich
+    @version $Id: FGPropagate.h,v 1.4 2004/04/17 21:16:19 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,10 +84,24 @@ public:
   bool Run(void);
 
   inline FGColumnVector3& GetVel(void) { return vVel; }
+  inline double           GetUVW   (int idx) const { return vUVW(idx); }
+  inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
+  inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
+  inline double           GetUVWdot(int idx) const { return vUVWdot(idx); }
   inline double GetVn(void)  const { return vVel(eX); }
   inline double GetVe(void)  const { return vVel(eY); }
   inline double GetVd(void)  const { return vVel(eZ); }
   inline double Geth(void)  const { return h; }
+  inline FGColumnVector3& GetPQR(void) {return vPQR;}
+  inline double GetPQR(int axis) const {return vPQR(axis);}
+  inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
+  inline double GetPQRdot(int idx) const {return vPQRdot(idx);}
+  const FGColumnVector3& GetEuler(void) const { return vQtrn.GetEuler(); }
+  inline double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
+  inline void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
+  inline void SetPQR(double p, double q, double r) {vPQR(eP)=p;
+                                                    vPQR(eQ)=q;
+                                                    vPQR(eR)=r;}
   inline double GethVRP(void)  const { return hVRP; }
   inline double Gethdot(void) const { return RadiusDot; }
   inline double GetLatitude(void) const { return Latitude; }
@@ -100,6 +114,26 @@ public:
   inline double GetDistanceAGL(void)  const { return DistanceAGL; }
   inline double GetRadius(void) const { return Radius; }
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
+
+  double Getphi(void) const { return vQtrn.GetEulerPhi(); }
+  double Gettht(void) const { return vQtrn.GetEulerTheta(); }
+  double Getpsi(void) const { return vQtrn.GetEulerPsi(); }
+
+  double GetCosphi(void) const { return vQtrn.GetCosEulerPhi(); }
+  double GetCostht(void) const { return vQtrn.GetCosEulerTheta(); }
+  double GetCospsi(void) const { return vQtrn.GetCosEulerPsi(); }
+
+  double GetSinphi(void) const { return vQtrn.GetSinEulerPhi(); }
+  double GetSintht(void) const { return vQtrn.GetSinEulerTheta(); }
+  double GetSinpsi(void) const { return vQtrn.GetSinEulerPsi(); }
+
+  /** Retrieves the local-to-body transformation matrix.
+      @return a reference to the local-to-body transformation matrix.  */
+  const FGMatrix33& GetTl2b(void) { return vQtrn.GetT(); }
+
+  /** Retrieves the body-to-local transformation matrix.
+      @return a reference to the body-to-local matrix.  */
+  const FGMatrix33& GetTb2l(void) { return vQtrn.GetTInv(); }
 
   inline double GetHOverBCG(void) const { return hoverbcg; }
   inline double GetHOverBMAC(void) const { return hoverbmac; }
@@ -114,6 +148,10 @@ public:
       vRunwayNormal << fgx << fgy << fgz;
   }
   void SetVRP(FGColumnVector3& vrp) {vVRP = vrp;}
+  void SetEuler(FGColumnVector3 tt) {
+    vQtrn = FGQuaternion(tt(ePhi), tt(eTht), tt(ePsi));
+  }
+  void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
 
   void bind(void);
   void unbind(void);

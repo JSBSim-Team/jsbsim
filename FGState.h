@@ -63,13 +63,10 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGQuaternion.h"
-
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGAerodynamics.h"
 #include "FGOutput.h"
@@ -81,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.77 2004/04/12 04:07:36 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.79 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +92,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.77 2004/04/12 04:07:36 apeden Exp $
+    @version $Id: FGState.h,v 1.79 2004/04/17 21:16:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -299,9 +296,7 @@ private:
   FGMatrix33 mTb2s;
 
   FGAircraft* Aircraft;
-  FGPosition* Position;
-  FGTranslation* Translation;
-  FGRotation* Rotation;
+  FGPropagate* Propagate;
   FGOutput* Output;
   FGAtmosphere* Atmosphere;
   FGFCS* FCS;

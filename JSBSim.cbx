@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--C++BuilderX Project-->
 <project>
-  <property category="build.config" name="active" value="0"/>
+  <property category="build.config" name="active" value="1"/>
   <property category="build.config" name="count" value="1"/>
   <property category="build.config" name="excludedefaultforzero" value="0"/>
   <property category="build.config.0" name="builddir" value="Debug"/>
@@ -60,7 +60,7 @@
   <property category="runtime.1" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.1" name="ConfigurationName" value="Copy of JSBSim Debug 2"/>
   <property category="runtime.1" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
-  <property category="runtime.1" name="native.exec.args" value="--aircraft=TableTest"/>
+  <property category="runtime.1" name="native.exec.args" value="--script=scripts/c1722.xml"/>
   <property category="runtime.1" name="native.target.override" value="0"/>
   <property category="unique" name="id" value="300"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="container.SelectedWarnings.option.winl.enabled" value="0"/>
@@ -461,18 +461,11 @@
   <file path="FGPiston.h">
     <property category="unique" name="id" value="215"/>
   </file>
-  <file path="FGPosition.cpp">
-    <property category="unique" name="id" value="283"/>
-  </file>
-  <file path="FGPosition.h">
-    <property category="unique" name="id" value="285"/>
-  </file>
   <file path="FGPropagate.cpp">
-    <property category="build.win32.Debug_Build.win32b" name="exclude" value="1"/>
+    <property category="build.win32.Debug_Build.win32b" name="alwaysrebuild" value="1"/>
     <property category="unique" name="id" value="51"/>
   </file>
   <file path="FGPropagate.h">
-    <property category="build.win32.Debug_Build.win32b" name="exclude" value="1"/>
     <property category="unique" name="id" value="217"/>
   </file>
   <file path="FGPropeller.cpp">
@@ -504,12 +497,6 @@
   </file>
   <file path="FGRocket.h">
     <property category="unique" name="id" value="225"/>
-  </file>
-  <file path="FGRotation.cpp">
-    <property category="unique" name="id" value="61"/>
-  </file>
-  <file path="FGRotation.h">
-    <property category="unique" name="id" value="227"/>
   </file>
   <file path="FGRotor.cpp">
     <property category="unique" name="id" value="63"/>
@@ -553,12 +540,6 @@
   <file path="FGThruster.h">
     <property category="unique" name="id" value="241"/>
   </file>
-  <file path="FGTranslation.cpp">
-    <property category="unique" name="id" value="77"/>
-  </file>
-  <file path="FGTranslation.h">
-    <property category="unique" name="id" value="243"/>
-  </file>
   <file path="FGTrim.cpp">
     <property category="unique" name="id" value="79"/>
   </file>
@@ -576,12 +557,6 @@
   </file>
   <file path="FGTurbine.h">
     <property category="unique" name="id" value="249"/>
-  </file>
-  <file path="FGUtility.cpp">
-    <property category="unique" name="id" value="85"/>
-  </file>
-  <file path="FGUtility.h">
-    <property category="unique" name="id" value="251"/>
   </file>
   <file path="JSBSim.cpp">
     <property category="unique" name="id" value="87"/>
@@ -602,9 +577,11 @@
   </file>
   <file path="utilities/plotXMLVisitor.cpp">
     <property category="build.win32.Debug_Build.win32b" name="exclude" value="1"/>
+    <property category="build.win32.Release_Build.win32b" name="exclude" value="1"/>
     <property category="unique" name="id" value="275"/>
   </file>
   <file path="utilities/plotXMLVisitor.h">
+    <property category="build.win32.Release_Build.win32b" name="exclude" value="1"/>
     <property category="unique" name="id" value="277"/>
   </file>
   <file path="SimEnvironment.xml">

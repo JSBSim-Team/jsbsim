@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.48 2004/03/06 13:15:59 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.50 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.48 2004/03/06 13:15:59 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.50 2004/04/17 21:16:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +147,8 @@ public:
   enum {eRoll  = 1, ePitch, eYaw  };
   /// Local frame position North, East, Down
   enum {eNorth = 1, eEast,  eDown };
+  /// Locations Radius, Latitude, Longitude
+  enum {eLat = 1, eLong, eRad     };
   //@}
   
   ///@name JSBSim console output highlighting terms.

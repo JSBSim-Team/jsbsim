@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.52 2004/04/10 04:22:04 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.54 2004/04/17 21:16:19 jberndt Exp $"
 
 using std::vector;
 
@@ -68,9 +68,7 @@ class FGState;
 class FGAtmosphere;
 class FGFCS;
 class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
+class FGPropagate;
 class FGAuxiliary;
 class FGOutput;
 
@@ -84,7 +82,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.52 2004/04/10 04:22:04 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.54 2004/04/17 21:16:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,19 +97,19 @@ public:
   FGCoefficient(FGFDMExec* exec);
   /// Destructor.
   virtual ~FGCoefficient();
-  
+
   /** Loads the stability derivative/aero coefficient data from the config file
       as directed by the FGAerodynamics instance.
       @param AC_cfg a pointer to the current config file instance. */
   virtual bool Load(FGConfigFile* AC_cfg);
-  
+
   typedef vector <FGPropertyManager*> MultVec;
 
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, TABLE3D, EQUATION};
 
   /** Returns the value for this coefficient.
       Each instance of FGCoefficient stores a value for the "type" of coefficient
-      it is, one of: VALUE, VECTOR, TABLE, or EQUATION. This TotalValue function 
+      it is, one of: VALUE, VECTOR, TABLE, or EQUATION. This TotalValue function
       is called when the value for a coefficient needs to be known. When it is called,
       depending on what type of coefficient is represented by the FGCoefficient
       instance, TotalValue() directs the appropriate Value() function to be called.
@@ -149,7 +147,7 @@ public:
   inline void setGain(double g) { gain=g; };
   inline double getBias(void) const { return bias; }
   inline double getGain(void) const { return gain; }
-  
+
   virtual void bind(FGPropertyManager *parent);
   virtual void unbind(void);
 
@@ -174,9 +172,9 @@ private:
   double totalValue;
   double bias,gain;
   FGPropertyManager *LookupR, *LookupC, *LookupT;
-  
+
   FGPropertyManager *node; // must be private!!
-  
+
   MultVec multipliers;
   int rows, columns, tables;
   Type type;
@@ -187,13 +185,11 @@ private:
   FGAtmosphere*   Atmosphere;
   FGFCS*          FCS;
   FGAircraft*     Aircraft;
-  FGTranslation*  Translation;
-  FGRotation*     Rotation;
-  FGPosition*     Position;
+  FGPropagate*    Propagate;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
   FGPropertyManager* PropertyManager;
-  
+
   FGPropertyManager* resolveSymbol(string name);
 
   virtual void Debug(int from);

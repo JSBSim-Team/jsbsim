@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.60 2004/04/08 01:01:16 dpculp Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.62 2004/04/17 21:16:19 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -81,10 +81,8 @@ class FGState;
 class FGAtmosphere;
 class FGFCS;
 class FGAircraft;
-class FGTranslation;
-class FGRotation;
+class FGPropagate;
 class FGPropulsion;
-class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 
@@ -96,7 +94,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.60 2004/04/08 01:01:16 dpculp Exp $ 
+    @version $Id: FGEngine.h,v 1.62 2004/04/17 21:16:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,7 +137,7 @@ public:
 
   /** Calculates the thrust of the engine, and other engine functions.
       @param PowerRequired this is the power required to run the thrusting device
-             such as a propeller. This resisting effect must be provided to the 
+             such as a propeller. This resisting effect must be provided to the
              engine model.
       @return Thrust in pounds */
   virtual double Calculate(double PowerRequired) {return 0.0;};
@@ -208,9 +206,7 @@ protected:
   FGFCS*          FCS;
   FGPropulsion*   Propulsion;
   FGAircraft*     Aircraft;
-  FGTranslation*  Translation;
-  FGRotation*     Rotation;
-  FGPosition*     Position;
+  FGPropagate*    Propagate;
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
 
@@ -223,10 +219,8 @@ protected:
 #include "FGAtmosphere.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
+#include "FGPropagate.h"
 #include "FGPropulsion.h"
-#include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 

@@ -40,13 +40,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFDMExec.h"
-#include "FGRotation.h"
 #include "FGAtmosphere.h"
 #include "FGState.h"
 #include "FGFCS.h"
 #include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGConfigFile.h"
@@ -71,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.78 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.80 2004/04/17 21:16:22 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -100,7 +98,7 @@ CLASS DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.78 2004/03/05 04:53:12 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.80 2004/04/17 21:16:22 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

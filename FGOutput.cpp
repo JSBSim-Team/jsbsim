@@ -47,15 +47,13 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGInertial.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.82 2004/04/06 13:26:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.84 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,7 +206,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Mass, ";
       outstream << "Xcg, Ycg, Zcg";
     }
-    if (SubSystems & ssPosition) {
+    if (SubSystems & ssPropagate) {
       outstream << ", ";
       outstream << "Altitude, ";
       outstream << "Phi, Tht, Psi, ";
@@ -262,16 +260,16 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssRates) {
     outstream << ", ";
-    outstream << Rotation->GetPQR() << ", ";
-    outstream << Rotation->GetPQRdot();
+    outstream << Propagate->GetPQR() << ", ";
+    outstream << Propagate->GetPQRdot();
   }
   if (SubSystems & ssVelocities) {
     outstream << ", ";
     outstream << Auxiliary->Getqbar() << ", ";
     outstream << Auxiliary->GetVt() << ", ";
-    outstream << Translation->GetUVW() << ", ";
+    outstream << Propagate->GetUVW() << ", ";
     outstream << Auxiliary->GetAeroUVW() << ", ";
-    outstream << Position->GetVel();
+    outstream << Propagate->GetVel();
   }
   if (SubSystems & ssForces) {
     outstream << ", ";
@@ -297,16 +295,16 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << MassBalance->GetMass() << ", ";
     outstream << MassBalance->GetXYZcg();
   }
-  if (SubSystems & ssPosition) {
+  if (SubSystems & ssPropagate) {
     outstream << ", ";
-    outstream << Position->Geth() << ", ";
-    outstream << Rotation->GetEuler() << ", ";
+    outstream << Propagate->Geth() << ", ";
+    outstream << Propagate->GetEuler() << ", ";
     outstream << Auxiliary->Getalpha() << ", ";
     outstream << Auxiliary->Getbeta() << ", ";
-    outstream << Position->GetLatitude() << ", ";
-    outstream << Position->GetLongitude() << ", ";
-    outstream << Position->GetDistanceAGL() << ", ";
-    outstream << Position->GetRunwayRadius();
+    outstream << Propagate->GetLatitude() << ", ";
+    outstream << Propagate->GetLongitude() << ", ";
+    outstream << Propagate->GetDistanceAGL() << ", ";
+    outstream << Propagate->GetRunwayRadius();
   }
   if (SubSystems & ssCoefficients) {
     scratch = Aerodynamics->GetCoefficientValues();
@@ -391,35 +389,35 @@ void FGOutput::SocketOutput(void)
 
   socket->Clear();
   socket->Append(State->Getsim_time());
-  socket->Append(Position->Geth());
-  socket->Append(Rotation->Getphi());
-  socket->Append(Rotation->Gettht());
-  socket->Append(Rotation->Getpsi());
+  socket->Append(Propagate->Geth());
+  socket->Append(Propagate->Getphi());
+  socket->Append(Propagate->Gettht());
+  socket->Append(Propagate->Getpsi());
   socket->Append(Atmosphere->GetDensity());
   socket->Append(Auxiliary->GetVt());
-  socket->Append(Translation->GetUVW(eU));
-  socket->Append(Translation->GetUVW(eV));
-  socket->Append(Translation->GetUVW(eW));
+  socket->Append(Propagate->GetUVW(eU));
+  socket->Append(Propagate->GetUVW(eV));
+  socket->Append(Propagate->GetUVW(eW));
   socket->Append(Auxiliary->GetAeroUVW(eU));
   socket->Append(Auxiliary->GetAeroUVW(eV));
   socket->Append(Auxiliary->GetAeroUVW(eW));
-  socket->Append(Position->GetVn());
-  socket->Append(Position->GetVe());
-  socket->Append(Position->GetVd());
-  socket->Append(Translation->GetUVWdot(eU));
-  socket->Append(Translation->GetUVWdot(eV));
-  socket->Append(Translation->GetUVWdot(eW));
-  socket->Append(Rotation->GetPQR(eP));
-  socket->Append(Rotation->GetPQR(eQ));
-  socket->Append(Rotation->GetPQR(eR));
-  socket->Append(Rotation->GetPQRdot(eP));
-  socket->Append(Rotation->GetPQRdot(eQ));
-  socket->Append(Rotation->GetPQRdot(eR));
+  socket->Append(Propagate->GetVn());
+  socket->Append(Propagate->GetVe());
+  socket->Append(Propagate->GetVd());
+  socket->Append(Propagate->GetUVWdot(eU));
+  socket->Append(Propagate->GetUVWdot(eV));
+  socket->Append(Propagate->GetUVWdot(eW));
+  socket->Append(Propagate->GetPQR(eP));
+  socket->Append(Propagate->GetPQR(eQ));
+  socket->Append(Propagate->GetPQR(eR));
+  socket->Append(Propagate->GetPQRdot(eP));
+  socket->Append(Propagate->GetPQRdot(eQ));
+  socket->Append(Propagate->GetPQRdot(eR));
   socket->Append(Aircraft->GetForces(eX));
   socket->Append(Aircraft->GetForces(eY));
   socket->Append(Aircraft->GetForces(eZ));
-  socket->Append(Position->GetLatitude());
-  socket->Append(Position->GetLongitude());
+  socket->Append(Propagate->GetLatitude());
+  socket->Append(Propagate->GetLongitude());
   socket->Append(Auxiliary->Getqbar());
   socket->Append(Auxiliary->Getalpha());
   socket->Append(Aircraft->GetMoments(eL));
@@ -527,7 +525,7 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
     }
     if (parameter == "POSITION") {
       *Output_cfg >> parameter;
-      if (parameter == "ON") SubSystems += ssPosition;
+      if (parameter == "ON") SubSystems += ssPropagate;
     }
     if (parameter == "COEFFICIENTS") {
       *Output_cfg >> parameter;
@@ -619,7 +617,7 @@ void FGOutput::Debug(int from)
       if (SubSystems & ssAtmosphere)      cout << "    Atmosphere parameters logged" << endl;
       if (SubSystems & ssMassProps)       cout << "    Mass parameters logged" << endl;
       if (SubSystems & ssCoefficients)    cout << "    Coefficient parameters logged" << endl;
-      if (SubSystems & ssPosition)        cout << "    Position parameters logged" << endl;
+      if (SubSystems & ssPropagate)        cout << "   Propagate parameters logged" << endl;
       if (SubSystems & ssGroundReactions) cout << "    Ground parameters logged" << endl;
       if (SubSystems & ssFCS)             cout << "    FCS parameters logged" << endl;
       if (SubSystems & ssPropulsion)      cout << "    Propulsion parameters logged" << endl;

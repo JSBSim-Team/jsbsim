@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.29 2003/12/29 10:57:39 ehofman Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.31 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ public:
     /** Subsystem: Atmosphere (= 64)         */ ssAtmosphere      = 64,
     /** Subsystem: Mass Properties (= 128)   */ ssMassProps       = 128,
     /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
-    /** Subsystem: Position (= 512)          */ ssPosition        = 512,
+    /** Subsystem: Propagate (= 512)         */ ssPropagate       = 512,
     /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
     /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
     /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096

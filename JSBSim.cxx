@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.165 2004/04/08 22:11:56 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.167 2004/04/17 21:16:22 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -49,10 +49,8 @@
 #include <FDM/JSBSim/FGFDMExec.h>
 #include <FDM/JSBSim/FGAircraft.h>
 #include <FDM/JSBSim/FGFCS.h>
-#include <FDM/JSBSim/FGPosition.h>
-#include <FDM/JSBSim/FGRotation.h>
+#include <FDM/JSBSim/FGPropagate.h>
 #include <FDM/JSBSim/FGState.h>
-#include <FDM/JSBSim/FGTranslation.h>
 #include <FDM/JSBSim/FGAuxiliary.h>
 #include <FDM/JSBSim/FGInitialCondition.h>
 #include <FDM/JSBSim/FGTrim.h>
@@ -118,9 +116,7 @@ FGJSBsim::FGJSBsim( double dt )
     MassBalance     = fdmex->GetMassBalance();
     Propulsion      = fdmex->GetPropulsion();
     Aircraft        = fdmex->GetAircraft();
-    Translation     = fdmex->GetTranslation();
-    Rotation        = fdmex->GetRotation();
-    Position        = fdmex->GetPosition();
+    Propagate        = fdmex->GetPropagate();
     Auxiliary       = fdmex->GetAuxiliary();
     Aerodynamics    = fdmex->GetAerodynamics();
     GroundReactions = fdmex->GetGroundReactions();
@@ -294,15 +290,15 @@ void FGJSBsim::init()
     switch(fgic->GetSpeedSet()) {
     case setned:
         SG_LOG(SG_FLIGHT,SG_INFO, "  Vn,Ve,Vd= "
-               << Position->GetVn() << ", "
-               << Position->GetVe() << ", "
-               << Position->GetVd() << " ft/s");
+               << Propagate->GetVn() << ", "
+               << Propagate->GetVe() << ", "
+               << Propagate->GetVd() << " ft/s");
     break;
     case setuvw:
         SG_LOG(SG_FLIGHT,SG_INFO, "  U,V,W= "
-               << Translation->GetUVW(1) << ", "
-               << Translation->GetUVW(2) << ", "
-               << Translation->GetUVW(3) << " ft/s");
+               << Propagate->GetUVW(1) << ", "
+               << Propagate->GetUVW(2) << ", "
+               << Propagate->GetUVW(3) << " ft/s");
     break;
     case setmach:
         SG_LOG(SG_FLIGHT,SG_INFO, "  Mach: "
@@ -318,17 +314,17 @@ void FGJSBsim::init()
     stall_warning->setDoubleValue(0);
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
-            << Rotation->Getphi()*RADTODEG << " deg" );
+            << Propagate->Getphi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
-            << Rotation->Gettht()*RADTODEG << " deg" );
+            << Propagate->Gettht()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
-            << Rotation->Getpsi()*RADTODEG << " deg" );
+            << Propagate->Getpsi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
-            << Position->GetLatitude() << " deg" );
+            << Propagate->GetLatitude() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
-            << Position->GetLongitude() << " deg" );
+            << Propagate->GetLongitude() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Altitude: "
-        << Position->Geth() << " feet" );
+        << Propagate->Geth() << " feet" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  loaded initial conditions" );
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  set dt" );
@@ -472,8 +468,8 @@ bool FGJSBsim::copy_to_JSBsim()
     }
 
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
-    Position->SetSeaLevelRadius( get_Sea_level_radius() );
-    Position->SetRunwayRadius( get_Runway_altitude()
+    Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
+    Propagate->SetRunwayRadius( get_Runway_altitude()
                                + get_Sea_level_radius() );
 
     Atmosphere->SetExTemperature(
@@ -539,18 +535,18 @@ bool FGJSBsim::copy_from_JSBsim()
 
     // Velocities
 
-    _set_Velocities_Local( Position->GetVn(),
-                           Position->GetVe(),
-                           Position->GetVd() );
+    _set_Velocities_Local( Propagate->GetVn(),
+                           Propagate->GetVe(),
+                           Propagate->GetVd() );
 
-    _set_Velocities_Wind_Body( Translation->GetUVW(1),
-                               Translation->GetUVW(2),
-                               Translation->GetUVW(3) );
+    _set_Velocities_Wind_Body( Propagate->GetUVW(1),
+                               Propagate->GetUVW(2),
+                               Propagate->GetUVW(3) );
 
     // Make the HUD work ...
-    _set_Velocities_Ground( Position->GetVn(),
-                            Position->GetVe(),
-                            -Position->GetVd() );
+    _set_Velocities_Ground( Propagate->GetVn(),
+                            Propagate->GetVe(),
+                            -Propagate->GetVd() );
 
     _set_V_rel_wind( Auxiliary->GetVt() );
 
@@ -560,36 +556,36 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_V_ground_speed( Auxiliary->GetVground() );
 
-    _set_Omega_Body( Rotation->GetPQR(1),
-                     Rotation->GetPQR(2),
-                     Rotation->GetPQR(3) );
+    _set_Omega_Body( Propagate->GetPQR(1),
+                     Propagate->GetPQR(2),
+                     Propagate->GetPQR(3) );
 
     _set_Euler_Rates( Auxiliary->GetEulerRates(1),
                       Auxiliary->GetEulerRates(2),
                       Auxiliary->GetEulerRates(3) );
 
-    _set_Geocentric_Rates(Position->GetLatitudeDot(),
-                          Position->GetLongitudeDot(),
-                          Position->Gethdot() );
+    _set_Geocentric_Rates(Propagate->GetLatitudeDot(),
+                          Propagate->GetLongitudeDot(),
+                          Propagate->Gethdot() );
 
     _set_Mach_number( Auxiliary->GetMach() );
 
     // Positions
-    _updateGeocentricPosition( Position->GetLatitude(),
-             Position->GetLongitude(),
-             Position->Geth() );
+    _updateGeocentricPosition( Propagate->GetLatitude(),
+             Propagate->GetLongitude(),
+             Propagate->Geth() );
 
     // Positions of Visual Reference Point
 /*
-    _updateGeocentricPosition( Position->GetLatitudeVRP(),
-             Position->GetLongitudeVRP(),
-             Position->GethVRP() );
+    _updateGeocentricPosition( Propagate->GetLatitudeVRP(),
+             Propagate->GetLongitudeVRP(),
+             Propagate->GethVRP() );
 */
-    _set_Altitude_AGL( Position->GetDistanceAGL() );
+    _set_Altitude_AGL( Propagate->GetDistanceAGL() );
 
-    _set_Euler_Angles( Rotation->Getphi(),
-                       Rotation->Gettht(),
-                       Rotation->Getpsi() );
+    _set_Euler_Angles( Propagate->Getphi(),
+                       Propagate->Gettht(),
+                       Propagate->Getpsi() );
 
     _set_Alpha( Auxiliary->Getalpha() );
     _set_Beta( Auxiliary->Getbeta() );
@@ -599,9 +595,9 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_Earth_position_angle( Auxiliary->GetEarthPositionAngle() );
 
-    _set_Climb_Rate( Position->Gethdot() );
+    _set_Climb_Rate( Propagate->Gethdot() );
 
-    const FGMatrix33& Tl2b = Rotation->GetTl2b();
+    const FGMatrix33& Tl2b = Propagate->GetTl2b();
     for ( i = 1; i <= 3; i++ ) {
         for ( j = 1; j <= 3; j++ ) {
             _set_T_Local_to_Body( i, j, Tl2b(i,j) );

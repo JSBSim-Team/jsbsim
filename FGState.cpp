@@ -48,14 +48,14 @@ INCLUDES
 #endif
 
 #ifdef _WIN32
-#define snprintf _snprintf
+//#define snprintf _snprintf
 #endif
 
 #include "FGState.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.132 2004/04/12 04:07:36 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.134 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,10 +74,8 @@ FGState::FGState(FGFDMExec* fdex)
   dt = 1.0/120.0;
 
   Aircraft     = FDMExec->GetAircraft();
-  Translation  = FDMExec->GetTranslation();
-  Rotation     = FDMExec->GetRotation();
+  Propagate    = FDMExec->GetPropagate();
   Auxiliary    = FDMExec->GetAuxiliary();
-  Position     = FDMExec->GetPosition();
   FCS          = FDMExec->GetFCS();
   Output       = FDMExec->GetOutput();
   Atmosphere   = FDMExec->GetAtmosphere();
@@ -115,21 +113,21 @@ void FGState::Initialize(double U, double V, double W,
   FGColumnVector3 vAeroUVW;
   FGColumnVector3 vUVW;
 
-  Position->SetLatitude(Latitude);
-  Position->SetLongitude(Longitude);
-  Position->Seth(H);
+  Propagate->SetLatitude(Latitude);
+  Propagate->SetLongitude(Longitude);
+  Propagate->Seth(H);
 
   Atmosphere->Run();
 
-  Rotation->SetEuler( FGColumnVector3(phi, tht, psi) );
-  Rotation->SetPQR( p, q, r );
+  Propagate->SetEuler( FGColumnVector3(phi, tht, psi) );
+  Propagate->SetPQR( p, q, r );
 
   vUVW << U << V << W;
-  Translation->SetUVW(vUVW);
+  Propagate->SetUVW(vUVW);
 
   Atmosphere->SetWindNED(wnorth, weast, wdown);
 
-  vAeroUVW = vUVW + Rotation->GetTl2b()*Atmosphere->GetWindNED();
+  vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
 
   if (vAeroUVW(eW) != 0.0)
     alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
@@ -150,8 +148,8 @@ void FGState::Initialize(double U, double V, double W,
   qbar = 0.5*(U*U + V*V + W*W)*Atmosphere->GetDensity();
   Auxiliary->Setqbar(qbar);
 
-  FGColumnVector3 vLocalVelNED = Rotation->GetTb2l()*vUVW;
-  Position->SetvVel(vLocalVelNED);
+  FGColumnVector3 vLocalVelNED = Propagate->GetTb2l()*vUVW;
+  Propagate->SetvVel(vLocalVelNED);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,8 +178,8 @@ void FGState::Initialize(FGInitialCondition *FGIC)
   weast = FGIC->GetWindEFpsIC();
   wdown = FGIC->GetWindDFpsIC();
 
-  Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
-  Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() +
+  Propagate->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
+  Propagate->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() +
                                              FGIC->GetTerrainAltitudeFtIC() );
 
   // need to fix the wind speed args, here.
@@ -247,6 +245,7 @@ FGMatrix33& FGState::GetTb2s(void)
 
 void FGState::ReportState(void)
 {
+#if 0
 #if !defined(__BORLANDCPP__)
   char out[80], flap[10], gear[12];
 
@@ -276,29 +275,29 @@ void FGState::ReportState(void)
                     Auxiliary->GetMach() );
   cout << out;
   snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
-                    Position->Geth(),
-                    Position->GetDistanceAGL() );
+                    Propagate->Geth(),
+                    Propagate->GetDistanceAGL() );
   cout << out;
   snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
                     Auxiliary->Getalpha()*radtodeg,
-                    Rotation->Gettht()*radtodeg );
+                    Propagate->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
                     Auxiliary->GetGamma()*radtodeg,
-                    Position->Gethdot()*60 );
+                    Propagate->Gethdot()*60 );
   cout << out;
   snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
                     Aircraft->GetNlf(),
-                    Rotation->GetPQR(2)*radtodeg );
+                    Propagate->GetPQR(2)*radtodeg );
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
-                    Rotation->Getpsi()*radtodeg,
+                    Propagate->Getpsi()*radtodeg,
                     Auxiliary->Getbeta()*radtodeg,
-                    Rotation->GetPQR(3)*radtodeg  );
+                    Propagate->GetPQR(3)*radtodeg  );
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
-                    Rotation->Getphi()*radtodeg,
-                    Rotation->GetPQR(1)*radtodeg );
+                    Propagate->Getphi()*radtodeg,
+                    Propagate->GetPQR(1)*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
                     FCS->GetDePos(ofRad)*radtodeg,
@@ -318,6 +317,7 @@ void FGState::ReportState(void)
                     Auxiliary->GetVground()*fpstokts,
                     Auxiliary->GetGroundTrack()*radtodeg );
   cout << out;
+#endif
 #endif
 }
 

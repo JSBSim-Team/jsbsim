@@ -66,9 +66,7 @@ class FGMassBalance;
 class FGAerodynamics;
 class FGInertial;
 class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
+class FGPropagate;
 class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
@@ -87,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.44 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.46 2004/04/17 21:16:22 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -116,17 +114,17 @@ public:
     //@{
     /** Set geocentric latitude
         @param lat latitude in radians measured from the 0 meridian where
-	                 the westerly direction is positive and east is negative */
+                   the westerly direction is positive and east is negative */
     void set_Latitude(double lat);  // geocentric
 
     /** Set longitude
         @param lon longitude in radians measured from the equator where
-	                 the northerly direction is positive and south is negative */
+                   the northerly direction is positive and south is negative */
     void set_Longitude(double lon);
 
     /** Set altitude
         Note: this triggers a recalculation of AGL altitude
-	      @param alt altitude in feet */
+        @param alt altitude in feet */
     void set_Altitude(double alt);        // triggers re-calc of AGL altitude
     //@}
 
@@ -136,33 +134,33 @@ public:
     //@{
     /** Sets calibrated airspeed
         Setting this will trigger a recalc of the other velocity terms.
-	      @param vc Calibrated airspeed in ft/sec */
+        @param vc Calibrated airspeed in ft/sec */
     void set_V_calibrated_kts(double vc);
 
     /** Sets Mach number.
         Setting this will trigger a recalc of the other velocity terms.
-	      @param mach Mach number */
+        @param mach Mach number */
     void set_Mach_number(double mach);
 
     /** Sets velocity in N-E-D coordinates.
         Setting this will trigger a recalc of the other velocity terms.
-	      @param north velocity northward in ft/sec
-	      @param east velocity eastward in ft/sec
-	      @param down velocity downward in ft/sec */
+        @param north velocity northward in ft/sec
+        @param east velocity eastward in ft/sec
+        @param down velocity downward in ft/sec */
     void set_Velocities_Local( double north, double east, double down );
 
     /** Sets aircraft velocity in stability frame.
         Setting this will trigger a recalc of the other velocity terms.
-	      @param u X velocity in ft/sec
-	      @param v Y velocity  in ft/sec
-	      @param w Z velocity in ft/sec */
+        @param u X velocity in ft/sec
+        @param v Y velocity  in ft/sec
+        @param w Z velocity in ft/sec */
     void set_Velocities_Wind_Body( double u, double v, double w);
     //@}
 
     /** Euler Angle Parameter Set
         @param phi roll angle in radians
-	      @param theta pitch angle in radians
-	      @param psi heading angle in radians */
+        @param theta pitch angle in radians
+        @param psi heading angle in radians */
     void set_Euler_Angles( double phi, double theta, double psi );
 
     /// @name Flight Path Parameter Set
@@ -218,9 +216,7 @@ private:
     FGPropulsion*   Propulsion;
     FGMassBalance*  MassBalance;
     FGAircraft*     Aircraft;
-    FGTranslation*  Translation;
-    FGRotation*     Rotation;
-    FGPosition*     Position;
+    FGPropagate*    Propagate;
     FGAuxiliary*    Auxiliary;
     FGAerodynamics* Aerodynamics;
     FGGroundReactions *GroundReactions;
@@ -228,7 +224,7 @@ private:
     int runcount;
     float trim_elev;
     float trim_throttle;
-    
+
     SGPropertyNode *startup_trim;
     SGPropertyNode *trimmed;
     SGPropertyNode *pitch_trim;
@@ -236,14 +232,14 @@ private:
     SGPropertyNode *aileron_trim;
     SGPropertyNode *rudder_trim;
     SGPropertyNode *stall_warning;
-    
+
     /* SGPropertyNode *elevator_pos_deg;
     SGPropertyNode *left_aileron_pos_deg;
     SGPropertyNode *right_aileron_pos_deg;
     SGPropertyNode *rudder_pos_deg;
     SGPropertyNode *flap_pos_deg; */
 
-    
+
     SGPropertyNode *elevator_pos_pct;
     SGPropertyNode *left_aileron_pos_pct;
     SGPropertyNode *right_aileron_pos_pct;
@@ -251,22 +247,22 @@ private:
     SGPropertyNode *flap_pos_pct;
     SGPropertyNode *speedbrake_pos_pct;
     SGPropertyNode *spoilers_pos_pct;
-    
+
     SGPropertyNode *gear_pos_pct;
-    
+
     SGPropertyNode *temperature;
     SGPropertyNode *pressure;
     SGPropertyNode *density;
     SGPropertyNode *turbulence_gain;
     SGPropertyNode *turbulence_rate;
-    
+
     SGPropertyNode *wind_from_north;
     SGPropertyNode *wind_from_east;
     SGPropertyNode *wind_from_down;
-    
+
     void init_gear(void);
     void update_gear(void);
-    
+
 };
 
 

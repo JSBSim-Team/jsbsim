@@ -36,13 +36,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGInertial.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGState.h"
 #include "FGMassBalance.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.33 2004/03/26 04:51:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.35 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ bool FGInertial::Run(void)
 {
   if (!FGModel::Run()) {
 
-    gAccel = GM / (Position->GetRadius()*Position->GetRadius());
+    gAccel = GM / (Propagate->GetRadius()*Propagate->GetRadius());
 
     vGravity(eDown) = gAccel;
 
@@ -93,26 +93,26 @@ bool FGInertial::Run(void)
     // at the current latitude, and also the component due to the aircraft
     // motion over the curved surface of the earth (second set).
 
-    vOmegaLocal(eX) = omega() * cos(Position->GetLatitude());
+    vOmegaLocal(eX) = omega() * cos(Propagate->GetLatitude());
     vOmegaLocal(eY) = 0.0;
-    vOmegaLocal(eZ) = omega() * -sin(Position->GetLatitude());
+    vOmegaLocal(eZ) = omega() * -sin(Propagate->GetLatitude());
 
-    vOmegaLocal(eX) +=  Position->GetVe() / Position->GetRadius();
-    vOmegaLocal(eY) += -Position->GetVn() / Position->GetRadius();
+    vOmegaLocal(eX) +=  Propagate->GetVe() / Propagate->GetRadius();
+    vOmegaLocal(eY) += -Propagate->GetVn() / Propagate->GetRadius();
     vOmegaLocal(eZ) +=  0.00;
 
     // Coriolis acceleration is normally written: -2w*dr/dt, but due to the axis
     // conventions used here the sign is reversed: 2w*dr/dt. The same is true for
     // Centrifugal acceleration.
 
-    vCoriolis(eEast) = 2.0*omega() * (Position->GetVd()*cos(Position->GetLatitude()) +
-                                      Position->GetVn()*sin(Position->GetLatitude()));
+    vCoriolis(eEast) = 2.0*omega() * (Propagate->GetVd()*cos(Propagate->GetLatitude()) +
+                                      Propagate->GetVn()*sin(Propagate->GetLatitude()));
 
-    vRadius(eDown) = Position->GetRadius();
+    vRadius(eDown) = Propagate->GetRadius();
     vCentrifugal(eDown) = -vOmegaLocal.Magnitude() * vOmegaLocal.Magnitude() * vRadius(eDown);
 
-//    vForces = Rotation->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
-    vForces = Rotation->GetTl2b() * MassBalance->GetMass() * vGravity;
+//    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
+    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * vGravity;
 
     return false;
   } else {

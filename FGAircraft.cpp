@@ -75,7 +75,7 @@ INCLUDES
 #include "FGAerodynamics.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.129 2004/03/09 12:32:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.131 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +229,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
     } else if (parameter == "AC_VRP") {
       *AC_cfg >> vXYZvrp(eX) >> vXYZvrp(eY) >> vXYZvrp(eZ);
       if (debug_lvl > 0) cout << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
-      Position->SetVRP(vXYZvrp);
+      Propagate->SetVRP(vXYZvrp);
     } else if (parameter == "AC_POINTMASS") {
       *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
       MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);

@@ -81,15 +81,13 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
 #include "FGInertial.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.2 2004/04/17 12:18:23 jberndt Exp $";
-static const char *IdHdr = ID_POSITION;
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.4 2004/04/17 21:16:19 jberndt Exp $";
+static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -100,6 +98,18 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGPropagate";
 
   vVRPoffset.InitMatrix();
+
+  vUVWdot.InitMatrix();
+  vUVWdot_prev[0].InitMatrix();
+  vUVWdot_prev[1].InitMatrix();
+  vUVWdot_prev[2].InitMatrix();
+  vUVWdot_prev[3].InitMatrix();
+
+  vPQRdot.InitMatrix();
+  vPQRdot_prev[0].InitMatrix();
+  vPQRdot_prev[1].InitMatrix();
+  vPQRdot_prev[2].InitMatrix();
+  vPQRdot_prev[3].InitMatrix();
 
   LongitudeVRP = LatitudeVRP = 0.0;
   hoverbmac = hoverbcg = 0.0;
@@ -133,7 +143,7 @@ bool FGPropagate::InitModel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
-Purpose: Called on a schedule to perform Propagateing algorithms
+Purpose: Called on a schedule to perform Propagating algorithms
 Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
          be the case
          [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
@@ -233,41 +243,49 @@ FGColumnVector3& FGPropagate::toGlobe(FGColumnVector3& V)
 
 void FGPropagate::bind(void)
 {
-  PropertyManager->Tie("velocities/v-north-fps", this,
-                       &FGPropagate::GetVn);
-  PropertyManager->Tie("velocities/v-east-fps", this,
-                       &FGPropagate::GetVe);
-  PropertyManager->Tie("velocities/v-down-fps", this,
-                       &FGPropagate::GetVd);
-  PropertyManager->Tie("position/h-sl-ft", this,
-                       &FGPropagate::Geth,
-                       &FGPropagate::Seth,
-                       true);
-  PropertyManager->Tie("velocities/h-dot-fps", this,
-                       &FGPropagate::Gethdot);
-  PropertyManager->Tie("position/lat-gc-rad", this,
-                       &FGPropagate::GetLatitude,
-                       &FGPropagate::SetLatitude);
-  PropertyManager->Tie("position/lat-dot-gc-rad", this,
-                       &FGPropagate::GetLatitudeDot);
-  PropertyManager->Tie("position/long-gc-rad", this,
-                       &FGPropagate::GetLongitude,
-                       &FGPropagate::SetLongitude,
-                       true);
-  PropertyManager->Tie("position/long-dot-gc-rad", this,
-                       &FGPropagate::GetLongitudeDot);
-  PropertyManager->Tie("metrics/runway-radius", this,
-                       &FGPropagate::GetRunwayRadius,
-                       &FGPropagate::SetRunwayRadius);
-  PropertyManager->Tie("position/h-agl-ft", this,
-                       &FGPropagate::GetDistanceAGL,
-                       &FGPropagate::SetDistanceAGL);
-  PropertyManager->Tie("position/radius-to-vehicle-ft", this,
-                       &FGPropagate::GetRadius);
-  PropertyManager->Tie("aero/h_b-cg-ft", this,
-                       &FGPropagate::GetHOverBCG);
-  PropertyManager->Tie("aero/h_b-mac-ft", this,
-                       &FGPropagate::GetHOverBMAC);
+  typedef double (FGPropagate::*PMF)(int) const;
+  PropertyManager->Tie("velocities/h-dot-fps", this, &FGPropagate::Gethdot);
+
+  PropertyManager->Tie("velocities/v-north-fps", this, &FGPropagate::GetVn);
+  PropertyManager->Tie("velocities/v-east-fps", this, &FGPropagate::GetVe);
+  PropertyManager->Tie("velocities/v-down-fps", this, &FGPropagate::GetVd);
+
+  PropertyManager->Tie("velocities/u-fps", this, eU, (PMF)&FGPropagate::GetUVW);
+  PropertyManager->Tie("velocities/v-fps", this, eV, (PMF)&FGPropagate::GetUVW);
+  PropertyManager->Tie("velocities/w-fps", this, eW, (PMF)&FGPropagate::GetUVW);
+
+  PropertyManager->Tie("velocities/p-rad_sec", this, eP, (PMF)&FGPropagate::GetPQR);
+  PropertyManager->Tie("velocities/q-rad_sec", this, eQ, (PMF)&FGPropagate::GetPQR);
+  PropertyManager->Tie("velocities/r-rad_sec", this, eR, (PMF)&FGPropagate::GetPQR);
+
+  PropertyManager->Tie("accelerations/pdot-rad_sec", this, eP, (PMF)&FGPropagate::GetPQRdot);
+  PropertyManager->Tie("accelerations/qdot-rad_sec", this, eQ, (PMF)&FGPropagate::GetPQRdot);
+  PropertyManager->Tie("accelerations/rdot-rad_sec", this, eR, (PMF)&FGPropagate::GetPQRdot);
+
+  PropertyManager->Tie("accelerations/udot-fps", this, eU, (PMF)&FGPropagate::GetUVWdot);
+  PropertyManager->Tie("accelerations/vdot-fps", this, eV, (PMF)&FGPropagate::GetUVWdot);
+  PropertyManager->Tie("accelerations/wdot-fps", this, eW, (PMF)&FGPropagate::GetUVWdot);
+
+  PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
+  PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
+  PropertyManager->Tie("position/lat-dot-gc-rad", this, &FGPropagate::GetLatitudeDot);
+  PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude, true);
+  PropertyManager->Tie("position/long-dot-gc-rad", this, &FGPropagate::GetLongitudeDot);
+  PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
+  PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
+
+  PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius, &FGPropagate::SetRunwayRadius);
+
+  PropertyManager->Tie("aero/h_b-cg-ft", this, &FGPropagate::GetHOverBCG);
+  PropertyManager->Tie("aero/h_b-mac-ft", this, &FGPropagate::GetHOverBMAC);
+
+  PropertyManager->Tie("attitude/phi-rad", this, &FGPropagate::Getphi);
+  PropertyManager->Tie("attitude/theta-rad", this, &FGPropagate::Gettht);
+  PropertyManager->Tie("attitude/psi-rad", this, &FGPropagate::Getpsi);
+
+  PropertyManager->Tie("attitude/roll-rad", this, ePhi, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/pitch-rad", this, eTht, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/heading-true-rad", this, ePsi, (PMF)&FGPropagate::GetEuler);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -277,17 +295,35 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("velocities/v-north-fps");
   PropertyManager->Untie("velocities/v-east-fps");
   PropertyManager->Untie("velocities/v-down-fps");
-  PropertyManager->Untie("position/h-sl-ft");
   PropertyManager->Untie("velocities/h-dot-fps");
+  PropertyManager->Untie("velocities/u-fps");
+  PropertyManager->Untie("velocities/v-fps");
+  PropertyManager->Untie("velocities/w-fps");
+  PropertyManager->Untie("velocities/p-rad_sec");
+  PropertyManager->Untie("velocities/q-rad_sec");
+  PropertyManager->Untie("velocities/r-rad_sec");
+  PropertyManager->Untie("accelerations/udot-fps");
+  PropertyManager->Untie("accelerations/vdot-fps");
+  PropertyManager->Untie("accelerations/wdot-fps");
+  PropertyManager->Untie("accelerations/pdot-rad_sec");
+  PropertyManager->Untie("accelerations/qdot-rad_sec");
+  PropertyManager->Untie("accelerations/rdot-rad_sec");
+  PropertyManager->Untie("position/h-sl-ft");
   PropertyManager->Untie("position/lat-gc-rad");
   PropertyManager->Untie("position/lat-dot-gc-rad");
   PropertyManager->Untie("position/long-gc-rad");
   PropertyManager->Untie("position/long-dot-gc-rad");
-  PropertyManager->Untie("metrics/runway-radius");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
+  PropertyManager->Untie("metrics/runway-radius");
   PropertyManager->Untie("aero/h_b-cg-ft");
   PropertyManager->Untie("aero/h_b-mac-ft");
+  PropertyManager->Untie("attitude/phi-rad");
+  PropertyManager->Untie("attitude/theta-rad");
+  PropertyManager->Untie("attitude/psi-rad");
+  PropertyManager->Untie("attitude/roll-rad");
+  PropertyManager->Untie("attitude/pitch-rad");
+  PropertyManager->Untie("attitude/heading-true-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

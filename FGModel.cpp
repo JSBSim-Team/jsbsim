@@ -27,7 +27,7 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This base class for the FGAero, FGRotational, etc. classes defines methods
+This base class for the FGAero, FGPropagateal, etc. classes defines methods
 common to all models.
 
 HISTORY
@@ -49,15 +49,13 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGGroundReactions.h"
 #include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.25 2003/06/03 09:53:46 ehofman Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.27 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,17 +80,15 @@ FGModel::FGModel(FGFDMExec* fdmex)
   Inertial        = 0;
   GroundReactions = 0;
   Aircraft        = 0;
-  Translation     = 0;
-  Rotation        = 0;
-  Position        = 0;
+  Propagate       = 0;
   Auxiliary       = 0;
   Output          = 0;
-  
+
   //in order for FGModel derived classes to self-bind (that is, call
   //their bind function in the constructor, the PropertyManager pointer
   //must be brought up now.
   PropertyManager = FDMExec->GetPropertyManager();
-  
+
   exe_ctr     = 1;
   rate        = 1;
 
@@ -119,12 +115,10 @@ bool FGModel::InitModel(void)
   Inertial        = FDMExec->GetInertial();
   GroundReactions = FDMExec->GetGroundReactions();
   Aircraft        = FDMExec->GetAircraft();
-  Translation     = FDMExec->GetTranslation();
-  Rotation        = FDMExec->GetRotation();
-  Position        = FDMExec->GetPosition();
+  Propagate       = FDMExec->GetPropagate();
   Auxiliary       = FDMExec->GetAuxiliary();
   Output          = FDMExec->GetOutput();
-  
+
   if (!State ||
       !Atmosphere ||
       !FCS ||
@@ -134,9 +128,7 @@ bool FGModel::InitModel(void)
       !Inertial ||
       !GroundReactions ||
       !Aircraft ||
-      !Translation ||
-      !Rotation ||
-      !Position ||
+      !Propagate ||
       !Auxiliary ||
       !Output) return(false);
   else return(true);

@@ -27,7 +27,7 @@ HISTORY
 11/17/98   JSB   Created
 7/31/99     TP   Added RunIC function that runs the sim so that every frame
                  begins with the IC values from the given FGInitialCondition
-	  	  	  	   object and dt=0.
+                 object and dt=0.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.65 2003/12/03 13:13:06 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.67 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,34 +72,33 @@ CLASS DOCUMENTATION
 
     When an aircraft model is loaded the config file is parsed and for each of the
     sections of the config file (propulsion, flight control, etc.) the
-    corresponding "ReadXXX()" method is called. From within this method the 
+    corresponding "ReadXXX()" method is called. From within this method the
     "Load()" method of that system is called (e.g. LoadFCS).
 
     <h4>JSBSim Debugging Directives</h4>
 
     This describes to any interested entity the debug level
     requested by setting the JSBSIM_DEBUG environment variable.
-    The bitmasked value choices are as follows:<ol>
-    <li><b>unset</b>: In this case (the default) JSBSim would only print
+    The bitmasked value choices are as follows:
+    - <b>unset</b>: In this case (the default) JSBSim would only print
        out the normally expected messages, essentially echoing
        the config files as they are read. If the environment
-       variable is not set, debug_lvl is set to 1 internally</li>
-    <li><b>0</b>: This requests JSBSim not to output any messages
-       whatsoever.</li>
-    <li><b>1</b>: This value explicity requests the normal JSBSim
-       startup messages</li>
-    <li><b>2</b>: This value asks for a message to be printed out when
-       a class is instantiated</li>
-    <li><b>4</b>: When this value is set, a message is displayed when a
-       FGModel object executes its Run() method</li>
-    <li><b>8</b>: When this value is set, various runtime state variables
-       are printed out periodically</li>
-    <li><b>16</b>: When set various parameters are sanity checked and
-       a message is printed out when they go out of bounds</li>
-    </ol>
+       variable is not set, debug_lvl is set to 1 internally
+    - <b>0</b>: This requests JSBSim not to output any messages
+       whatsoever
+    - <b>1</b>: This value explicity requests the normal JSBSim
+       startup messages
+    - <b>2</b>: This value asks for a message to be printed out when
+       a class is instantiated
+    - <b>4</b>: When this value is set, a message is displayed when a
+       FGModel object executes its Run() method
+    - <b>8</b>: When this value is set, various runtime state variables
+       are printed out periodically
+    - <b>16</b>: When set various parameters are sanity checked and
+       a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.65 2003/12/03 13:13:06 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.67 2004/04/17 21:16:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +111,7 @@ public:
 
   /// Default constructor
   FGFDMExec(FGPropertyManager* root = 0);
-  
+
   /// Default destructor
   ~FGFDMExec();
 
@@ -142,8 +141,8 @@ public:
 
   /// Resumes the sim
   void Resume(void) {frozen = false;}
-  
-  /** Loads an aircraft model.  
+
+  /** Loads an aircraft model.
       @param AircraftPath path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.
@@ -155,7 +154,7 @@ public:
       instance: "aircraft/x15/x15.xml"
       @return true if successful*/
   bool LoadModel(string AircraftPath, string EnginePath, string model);
-  
+
 
   /** Loads an aircraft model.  The paths to the aircraft and engine
       config file directories must be set prior to calling this.  See
@@ -166,7 +165,7 @@ public:
       instance: "aircraft/x15/x15.xml"
       @return true if successful*/
   bool LoadModel(string model);
-  
+
 
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
@@ -180,14 +179,14 @@ public:
       modeled aircraft such as C172/, x15/, etc.
   */
   bool SetAircraftPath(string path) { AircraftPath = path; return true; }
-  
+
   /** Sets the path to the autopilot config file directories.
       @param path path to the control directory. For instance:
       "control".
   */
   bool SetControlPath(string path) { ControlPath = path; return true; }
-  
- 
+
+
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
   /// Returns the FGState pointer.
@@ -208,12 +207,8 @@ public:
   inline FGGroundReactions* GetGroundReactions(void) {return GroundReactions;}
   /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
-  /// Returns the FGTranslation pointer.
-  inline FGTranslation* GetTranslation(void)  {return Translation;}
-  /// Returns the FGRotation pointer.
-  inline FGRotation* GetRotation(void)        {return Rotation;}
-  /// Returns the FGPosition pointer.
-  inline FGPosition* GetPosition(void)        {return Position;}
+  /// Returns the FGPropagate pointer.
+  inline FGPropagate* GetPropagate(void)        {return Propagate;}
   /// Returns the FGAuxiliary pointer.
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
   /// Returns the FGOutput pointer.
@@ -223,20 +218,20 @@ public:
   // Returns a pointer to the FGTrim object
   FGTrim* GetTrim(void);
   //@}
-  
+
   /// Retrieves the engine path.
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
   /// Retrieves the control path.
   inline string GetControlPath(void)        {return ControlPath;}
-  
+
   string GetModelName(void) { return modelName; }
-  
+
   FGPropertyManager* GetPropertyManager(void);
   vector <string> EnumerateFDMs(void);
   void SetSlave(void) {IsSlave = true;}
-  
+
 private:
   FGModel* FirstModel;
 
@@ -251,7 +246,7 @@ private:
   bool IsSlave;
   static FGPropertyManager *master;
   FGPropertyManager *instance;
-  
+
   struct slaveData {
     FGFDMExec* exec;
     string info;
@@ -274,7 +269,7 @@ private:
   string AircraftPath;
   string EnginePath;
   string ControlPath;
-  
+
   string CFGVersion;
   string Release;
 
@@ -287,12 +282,10 @@ private:
   FGInertial*        Inertial;
   FGGroundReactions* GroundReactions;
   FGAircraft*        Aircraft;
-  FGTranslation*     Translation;
-  FGRotation*        Rotation;
-  FGPosition*        Position;
+  FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
   FGOutput*          Output;
-  
+
   FGInitialCondition* IC;
   FGTrim *Trim;
 

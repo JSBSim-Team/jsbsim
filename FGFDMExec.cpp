@@ -64,9 +64,7 @@ INCLUDES
 #include "FGAerodynamics.h"
 #include "FGInertial.h"
 #include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGConfigFile.h"
@@ -75,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.102 2004/01/19 18:13:29 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.104 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,16 +98,16 @@ void checkTied ( FGPropertyManager *node )
     } else if ( node->getChild(i)->isTied() ) {
       name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
       cerr << name << " is tied" << endl;
-    } 
+    }
   }
-}        
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root)
 {
-  
+
   Frame           = 0;
   FirstModel      = 0;
   Error           = 0;
@@ -122,9 +120,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   Inertial        = 0;
   GroundReactions = 0;
   Aircraft        = 0;
-  Translation     = 0;
-  Rotation        = 0;
-  Position        = 0;
+  Propagate       = 0;
   Auxiliary       = 0;
   Output          = 0;
   IC              = 0;
@@ -150,9 +146,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
 
-  
+
   Debug(0);
-  
+
   // this is here to catch errors in binding member functions
   // to the property tree.
   try {
@@ -160,7 +156,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;
     exit(1);
-  }    
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,11 +168,11 @@ FGFDMExec::~FGFDMExec()
     checkTied( instance );
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;
-  }    
-  
+  }
+
   for (unsigned int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
   SlaveFDMList.clear();
-  
+
   Debug(1);
 }
 
@@ -194,16 +190,14 @@ bool FGFDMExec::Allocate(void)
   Inertial        = new FGInertial(this);
   GroundReactions = new FGGroundReactions(this);
   Aircraft        = new FGAircraft(this);
-  Translation     = new FGTranslation(this);
-  Rotation        = new FGRotation(this);
-  Position        = new FGPosition(this);
+  Propagate       = new FGPropagate(this);
   Auxiliary       = new FGAuxiliary(this);
   Output          = new FGOutput(this);
 
   State        = new FGState(this); // This must be done here, as the FGState
                                     // class needs valid pointers to the above
                                     // model classes
-  
+
   // Initialize models so they can communicate with each other
 
   if (!Atmosphere->InitModel()) {
@@ -230,15 +224,9 @@ bool FGFDMExec::Allocate(void)
   if (!Aircraft->InitModel())   {
     cerr << fgred << "Aircraft model init failed" << fgdef << endl;
     Error+=128;}
-  if (!Translation->InitModel()) {
-    cerr << fgred << "Translation model init failed" << fgdef << endl;
-    Error+=256;}
-  if (!Rotation->InitModel())   {
-    cerr << fgred << "Rotation model init failed" << fgdef << endl;
+  if (!Propagate->InitModel())   {
+    cerr << fgred << "Propagate model init failed" << fgdef << endl;
     Error+=512;}
-  if (!Position->InitModel())   {
-    cerr << fgred << "Position model init failed" << fgdef << endl;
-    Error+=1024;}
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
     Error+=2058;}
@@ -247,9 +235,9 @@ bool FGFDMExec::Allocate(void)
     Error+=4096;}
 
   if (Error > 0) result = false;
-  
-  IC = new FGInitialCondition(this); 
-  
+
+  IC = new FGInitialCondition(this);
+
   // Schedule a model. The second arg (the integer) is the pass number. For
   // instance, the atmosphere model gets executed every fifth pass it is called
   // by the executive. Everything else here gets executed each pass.
@@ -263,9 +251,7 @@ bool FGFDMExec::Allocate(void)
   Schedule(Inertial,        1);
   Schedule(GroundReactions, 1);
   Schedule(Aircraft,        1);
-  Schedule(Rotation,        1);
-  Schedule(Translation,     1);
-  Schedule(Position,        1);
+  Schedule(Propagate,       1);
   Schedule(Auxiliary,       1);
   Schedule(Output,          1);
 
@@ -286,16 +272,14 @@ bool FGFDMExec::DeAllocate(void)
   delete Inertial;
   delete GroundReactions;
   delete Aircraft;
-  delete Translation;
-  delete Rotation;
-  delete Position;
+  delete Propagate;
   delete Auxiliary;
   delete Output;
   delete State;
-  
+
   delete IC;
   delete Trim;
-    
+
   FirstModel  = 0L;
   Error       = 0;
 
@@ -308,9 +292,7 @@ bool FGFDMExec::DeAllocate(void)
   Inertial        = 0;
   GroundReactions = 0;
   Aircraft        = 0;
-  Translation     = 0;
-  Rotation        = 0;
-  Position        = 0;
+  Propagate       = 0;
   Auxiliary       = 0;
   Output          = 0;
 
@@ -341,7 +323,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
     model_iterator->NextModel->SetRate(rate);
 
   }
-  
+
   return 0;
 }
 
@@ -408,7 +390,7 @@ bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model)
   FGFDMExec::EnginePath = EnginePath;
 
   return LoadModel(model);
-}  
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -423,7 +405,7 @@ bool FGFDMExec::LoadModel(string model)
     cerr << "aircraft and engine paths" << endl;
     return false;
   }
-    
+
 # ifndef macintosh
   aircraftCfgFileName = AircraftPath + "/" + model + "/" + model + ".xml";
 # else
@@ -432,9 +414,9 @@ bool FGFDMExec::LoadModel(string model)
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
   if (!AC_cfg.IsOpen()) return false;
-  
+
   modelName = model;
-  
+
   if (modelLoaded) {
     DeAllocate();
     Allocate();
@@ -512,7 +494,7 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
     cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
     return false;
   }
-  
+
   if (Release == "ALPHA") {
     system("banner ALPHA");
     cout << endl << endl
@@ -557,7 +539,7 @@ bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
   string AircraftName = AC_cfg->GetValue("FILE");
 
   debug_lvl = 0;                 // turn off debug output for slave vehicle
-  
+
   SlaveFDMList.back()->exec->SetAircraftPath( AircraftPath );
   SlaveFDMList.back()->exec->SetEnginePath( EnginePath );
   SlaveFDMList.back()->exec->LoadModel(AircraftName);
@@ -655,18 +637,18 @@ bool FGFDMExec::ReadOutput(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager* FGFDMExec::GetPropertyManager(void) { 
+FGPropertyManager* FGFDMExec::GetPropertyManager(void) {
   return instance;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTrim* FGFDMExec::GetTrim(void) { 
+FGTrim* FGFDMExec::GetTrim(void) {
   delete Trim;
   Trim = new FGTrim(this,tNone);
   return Trim;
 }
-  
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

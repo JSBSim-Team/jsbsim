@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.31 2004/02/26 15:03:55 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.33 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ public:
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
   double RefRadius(void) const {return RadiusReference;}
-  
+
   void bind(void);
   void unbind(void);
 

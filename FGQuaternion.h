@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.4 2004/04/13 13:41:36 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.6 2004/04/17 21:16:19 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -96,7 +96,7 @@ public:
 
   /** Copy constructor.
       Copy constructor, initializes the quaternion.
-      @param q  a constant reference to another FGQuaternion instance  */
+      @param q a constant reference to another FGQuaternion instance  */
   FGQuaternion(const FGQuaternion& q);
 
   /** Initializer by euler angles.
@@ -356,14 +356,6 @@ public:
   }
 
   friend FGQuaternion operator*(double, const FGQuaternion&);
-
-  /** Ties into the property tree.
-      Ties the variables represented by this class into the property tree.  */
-  void bind(FGPropertyManager*, const string&) const;
-
-  /** Remove from property tree.
-      Unties the variables represented by this class into the property tree.  */
-  void unbind(FGPropertyManager*, const string&) const;
 
 private:
   /** Copying by assigning the vector valued components.  */

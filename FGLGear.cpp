@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.111 2004/04/06 13:14:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.113 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,8 +100,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 
   State       = Exec->GetState();
   Aircraft    = Exec->GetAircraft();
-  Position    = Exec->GetPosition();
-  Rotation    = Exec->GetRotation();
+  Propagate   = Exec->GetPropagate();
   Auxiliary   = Exec->GetAuxiliary();
   FCS         = Exec->GetFCS();
   MassBalance = Exec->GetMassBalance();
@@ -118,7 +117,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
 
   vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
 
-  vLocalGear = Rotation->GetTb2l() * vWhlBodyVec;
+  vLocalGear = Propagate->GetTb2l() * vWhlBodyVec;
 
   compressLength  = 0.0;
   compressSpeed   = 0.0;
@@ -143,8 +142,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
 {
   State    = lgear.State;
   Aircraft = lgear.Aircraft;
-  Position = lgear.Position;
-  Rotation = lgear.Rotation;
+  Propagate = lgear.Propagate;
   Auxiliary = lgear.Auxiliary;
   Exec     = lgear.Exec;
   FCS      = lgear.FCS;
@@ -237,11 +235,11 @@ FGColumnVector3& FGLGear::Force(void)
 
 // vWhlBodyVec now stores the vector from the cg to this wheel
 
-    vLocalGear = Rotation->GetTb2l() * vWhlBodyVec;
+    vLocalGear = Propagate->GetTb2l() * vWhlBodyVec;
 
 // vLocalGear now stores the vector from the cg to the wheel in local coords.
 
-    compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
+    compressLength = vLocalGear(eZ) - Propagate->GetDistanceAGL();
 
 // The compression length is currently measured in the Z-axis, only, at this time.
 // It should be measured along the strut axis. If the local-frame gear position
@@ -263,8 +261,8 @@ FGColumnVector3& FGLGear::Force(void)
 // (used for calculating damping force) is found by taking the Z-component of the
 // wheel velocity.
 
-      vWhlVelVec      =  Rotation->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
-      vWhlVelVec     +=  Position->GetVel();
+      vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
+      vWhlVelVec     +=  Propagate->GetVel();
       compressSpeed   =  vWhlVelVec(eZ);
 
 // If this is the first time the wheel has made contact, remember some values
@@ -273,13 +271,13 @@ FGColumnVector3& FGLGear::Force(void)
       if (!FirstContact) {
         FirstContact  = true;
         SinkRate      =  compressSpeed;
-        GroundSpeed   =  Position->GetVel().Magnitude();
+        GroundSpeed   =  Propagate->GetVel().Magnitude();
         TakeoffReported = false;
       }
 
 // If the takeoff run is starting, initialize.
 
-      if ((Position->GetVel().Magnitude() > 0.1) &&
+      if ((Propagate->GetVel().Magnitude() > 0.1) &&
           (FCS->GetBrake(bgLeft) == 0) &&
           (FCS->GetBrake(bgRight) == 0) &&
           (FCS->GetThrottlePos(0) == 1) && !StartedGroundRun)
@@ -345,8 +343,8 @@ FGColumnVector3& FGLGear::Force(void)
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-      SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
-      CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
+      SinWheel      = sin(Propagate->Getpsi() + SteerAngle);
+      CosWheel      = cos(Propagate->Getpsi() + SteerAngle);
       RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
@@ -442,14 +440,14 @@ FGColumnVector3& FGLGear::Force(void)
 
 // Transform the forces back to the body frame and compute the moment.
 
-      vForce  = Rotation->GetTl2b() * vLocalForce;
+      vForce  = Propagate->GetTl2b() * vLocalForce;
       vMoment = vWhlBodyVec * vForce;
 
     } else { // Gear is NOT compressed
 
       WOW = false;
 
-      if (Position->GetDistanceAGL() > 200.0) {
+      if (Propagate->GetDistanceAGL() > 200.0) {
         FirstContact = false;
         StartedGroundRun = false;
         LandingReported = false;
@@ -472,7 +470,7 @@ FGColumnVector3& FGLGear::Force(void)
     }
 
     if (ReportEnable && !TakeoffReported &&
-       (vLocalGear(eZ) - Position->GetDistanceAGL()) < -50.0)
+       (vLocalGear(eZ) - Propagate->GetDistanceAGL()) < -50.0)
     {
       if (debug_lvl > 0) Report(erTakeoff);
     }

@@ -42,8 +42,7 @@ INCLUDES
 
 #include "FGAuxiliary.h"
 #include "FGAerodynamics.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
+#include "FGPropagate.h"
 #include "FGAtmosphere.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
@@ -53,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.50 2004/04/06 13:14:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.52 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,10 +101,10 @@ FGAuxiliary::~FGAuxiliary()
 bool FGAuxiliary::Run()
 {
   double A,B,D, hdot_Vt;
-  FGColumnVector3& vPQR = Rotation->GetPQR();
-  FGColumnVector3& vUVW = Translation->GetUVW();
-  FGColumnVector3& vUVWdot = Translation->GetUVWdot();
-  FGColumnVector3& vVel = Position->GetVel();
+  FGColumnVector3& vPQR = Propagate->GetPQR();
+  FGColumnVector3& vUVW = Propagate->GetUVW();
+  FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
+  FGColumnVector3& vVel = Propagate->GetVel();
 
   if (!FGModel::Run())
   {
@@ -114,11 +113,11 @@ bool FGAuxiliary::Run()
     psl = Atmosphere->GetPressureSL();
     sat = Atmosphere->GetTemperature();
 
-// Rotation
+// Propagate
 
-    double cTht = Rotation->GetCostht();
-    double cPhi = Rotation->GetCosphi();
-    double sPhi = Rotation->GetSinphi();
+    double cTht = Propagate->GetCostht();
+    double cPhi = Propagate->GetCosphi();
+    double sPhi = Propagate->GetSinphi();
 
     vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
     if (cTht != 0.0) {
@@ -128,9 +127,9 @@ bool FGAuxiliary::Run()
 
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
-// Translation
+// Propagate
 
-    vAeroUVW = vUVW + Rotation->GetTl2b()*Atmosphere->GetWindNED();
+    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
 
     Vt = vAeroUVW.Magnitude();
     if ( Vt > 0.05) {
@@ -208,10 +207,10 @@ bool FGAuxiliary::Run()
                       +  GroundReactions->GetForces();
        vPilotAccel /= MassBalance->GetMass();
        vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
-       vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
+       vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
        vPilotAccel += vPQR * (vPQR * vToEyePt);
     } else {
-       vPilotAccel = -1*( Rotation->GetTl2b() * Inertial->GetGravity() );
+       vPilotAccel = -1*( Propagate->GetTl2b() * Inertial->GetGravity() );
     }
 
     vPilotAccelN = vPilotAccel/Inertial->gravity();
@@ -233,7 +232,7 @@ double FGAuxiliary::GetHeadWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return vw*cos(psiw - Rotation->Getpsi());
+  return vw*cos(psiw - Propagate->Getpsi());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,7 +244,7 @@ double FGAuxiliary::GetCrossWind(void)
   psiw = Atmosphere->GetWindPsi();
   vw = Atmosphere->GetWindNED().Magnitude();
 
-  return  vw*sin(psiw - Rotation->Getpsi());
+  return  vw*sin(psiw - Propagate->Getpsi());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -440,9 +439,9 @@ void FGAuxiliary::Debug(int from)
   }
   if (debug_lvl & 16) { // Sanity checking
     if (Mach > 100 || Mach < 0.00)
-      cout << "FGTranslation::Mach is out of bounds: " << Mach << endl;
+      cout << "FGPropagate::Mach is out of bounds: " << Mach << endl;
     if (qbar > 1e6 || qbar < 0.00)
-      cout << "FGTranslation::qbar is out of bounds: " << qbar << endl;
+      cout << "FGPropagate::qbar is out of bounds: " << qbar << endl;
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

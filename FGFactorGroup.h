@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.16 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.18 2004/04/17 21:16:19 jberndt Exp $"
 
 using std::vector;
 
@@ -69,9 +69,7 @@ class FGState;
 class FGAtmosphere;
 class FGFCS;
 class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
+class FGPropagate;
 class FGAuxiliary;
 class FGOutput;
 
@@ -93,13 +91,13 @@ class FGFactorGroup: public FGCoefficient
 public:
   FGFactorGroup(FGFDMExec* fdmex);
   ~FGFactorGroup();
-  
+
   bool Load(FGConfigFile *AC_cfg);
   double TotalValue(void);
   inline double GetValue(void) const { return totalValue; }
   inline double GetSD(void) { return SDtotal; }
   inline double GetFactorSD(void) { return FGCoefficient::GetSD(); }
-  
+
   void bind(FGPropertyManager* parent);
   void unbind(void);
 
@@ -113,5 +111,5 @@ private:
   FGPropertyManager *node;
   void Debug(int from);
 };
-}    
-#endif 
+}
+#endif

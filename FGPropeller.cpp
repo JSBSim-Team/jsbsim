@@ -36,14 +36,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropeller.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
+#include "FGPropagate.h"
 #include "FGFCS.h"
 #include "FGAtmosphere.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.61 2004/03/31 12:12:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.63 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,7 +184,7 @@ double FGPropeller::Calculate(double PowerAvailable)
   if (RPM < 5.0)
     RPM = 0;
 
-  vMn = fdmex->GetRotation()->GetPQR()*vH + vTorque*Sense;
+  vMn = fdmex->GetPropagate()->GetPQR()*vH + vTorque*Sense;
 
   return Thrust; // return thrust in pounds
 }

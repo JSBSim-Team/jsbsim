@@ -47,13 +47,13 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGAtmosphere.h"
 #include "FGAerodynamics.h"
-#include "FGPosition.h"
+#include "FGPropagate.h"
 #include "FGConfigFile.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.59 2004/04/12 04:07:36 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.61 2004/04/17 21:16:19 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -84,7 +84,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
 
   if(FDMExec != NULL ) {
     fdmex=FDMExec;
-    fdmex->GetPosition()->Seth(altitude);
+    fdmex->GetPropagate()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
     PropertyManager=fdmex->GetPropertyManager();
     bind();
@@ -395,7 +395,7 @@ void FGInitialCondition::calcWindUVW(void) {
 
 void FGInitialCondition::SetAltitudeFtIC(double tt) {
   altitude=tt;
-  fdmex->GetPosition()->Seth(altitude);
+  fdmex->GetPropagate()->Seth(altitude);
   fdmex->GetAtmosphere()->Run();
   //lets try to make sure the user gets what they intended
 
@@ -423,8 +423,8 @@ void FGInitialCondition::SetAltitudeFtIC(double tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetAltitudeAGLFtIC(double tt) {
-  fdmex->GetPosition()->SetDistanceAGL(tt);
-  altitude=fdmex->GetPosition()->Geth();
+  fdmex->GetPropagate()->SetDistanceAGL(tt);
+  altitude=fdmex->GetPropagate()->Geth();
   SetAltitudeFtIC(altitude);
 }
 
@@ -938,7 +938,7 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
-                       
+
 }
 
 //******************************************************************************
@@ -990,7 +990,7 @@ void FGInitialCondition::unbind(void){
   PropertyManager->Untie("ic/p-rad_sec");
   PropertyManager->Untie("ic/q-rad_sec");
   PropertyManager->Untie("ic/r-rad_sec");
-  
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

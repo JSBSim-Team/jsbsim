@@ -44,15 +44,15 @@ INCLUDES
 
 #include "FGJSBBase.h"
 #include "FGFDMExec.h"
-#include <string>
 #include "FGConfigFile.h"
 #include "FGColumnVector3.h"
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.57 2004/03/18 12:22:31 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.59 2004/04/17 21:16:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,8 +61,7 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 class FGAircraft;
-class FGPosition;
-class FGRotation;
+class FGPropagate;
 class FGFCS;
 class FGState;
 class FGMassBalance;
@@ -159,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.57 2004/03/18 12:22:31 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.59 2004/04/17 21:16:19 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -297,8 +296,7 @@ private:
   FGFDMExec*     Exec;
   FGState*       State;
   FGAircraft*    Aircraft;
-  FGPosition*    Position;
-  FGRotation*    Rotation;
+  FGPropagate*   Propagate;
   FGAuxiliary*   Auxiliary;
   FGFCS*         FCS;
   FGMassBalance* MassBalance;
@@ -308,8 +306,7 @@ private:
 };
 }
 #include "FGAircraft.h"
-#include "FGPosition.h"
-#include "FGRotation.h"
+#include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGFCS.h"
 #include "FGMassBalance.h"
