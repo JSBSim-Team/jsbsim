@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.89 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.90 2001/11/30 12:44:58 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,7 @@ CLASS IMPLEMENTATION
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     mTl2b(3,3),
     mTs2b(3,3),
+    mTb2s(3,3),
     vQtrn(4),
     vlastQdot(4),
     vQdot(4),
@@ -297,7 +298,7 @@ double FGState::GetParameter(eParam val_idx) {
     if (ActiveEngine < 0) return FCS->GetMixturePos(0);
     else return FCS->GetMixturePos(ActiveEngine);
   case FG_HOVERB:
-    return Position->GetHOverB();
+    return Position->GetHOverBMAC();
   case FG_PITCH_TRIM_CMD:
     return FCS->GetPitchTrimCmd();
   default:
@@ -689,19 +690,46 @@ FGMatrix33& FGState::GetTs2b(void)
   cb = cos(beta);
   sb = sin(beta);
 
-  mTs2b(1,1) = -ca*cb;
+  mTs2b(1,1) = ca*cb;
   mTs2b(1,2) = -ca*sb;
-  mTs2b(1,3) = sa;
-  mTs2b(2,1) = -sb;
+  mTs2b(1,3) = -sa;
+  mTs2b(2,1) = sb;
   mTs2b(2,2) = cb;
   mTs2b(2,3) = 0.0;
-  mTs2b(3,1) = -sa*cb;
+  mTs2b(3,1) = sa*cb;
   mTs2b(3,2) = -sa*sb;
-  mTs2b(3,3) = -ca;
+  mTs2b(3,3) = ca;
 
   return mTs2b;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGMatrix33& FGState::GetTb2s(void)
+{
+  float alpha,beta;
+  float ca, cb, sa, sb;
+  
+  alpha = Translation->Getalpha();
+  beta  = Translation->Getbeta();
+  
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTb2s(1,1) = ca*cb;
+  mTb2s(1,2) = sb;
+  mTb2s(1,3) = sa*cb;
+  mTb2s(2,1) = -ca*sb;
+  mTb2s(2,2) = cb;
+  mTb2s(2,3) = -sa*sb;
+  mTb2s(3,1) = -sa;
+  mTb2s(3,2) = 0.0;
+  mTb2s(3,3) = ca;
+
+  return mTb2s;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -742,7 +770,7 @@ void FGState::ReportState(void) {
                     Position->Gethdot()*60 );
   cout << out;                  
   snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
-                    Aerodynamics->GetNlf(),
+                    Aircraft->GetNlf(),
                     GetParameter(FG_PITCHRATE)*radtodeg );
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
