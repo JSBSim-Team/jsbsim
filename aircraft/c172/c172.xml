@@ -96,7 +96,7 @@
       FEED      0
     </AC_ENGINE>
       
-    <AC_THRUSTER FILE="prop_generic2f">
+    <AC_THRUSTER FILE="prop30FP2B">
       XLOC   48.0
       YLOC    0.0
       ZLOC   59.4
