@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.121 2002/05/17 16:52:46 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.122 2002/05/28 11:50:33 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -543,7 +543,7 @@ bool FGJSBsim::copy_from_JSBsim() {
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
     right_aileron_pos_pct->setDoubleValue( -1*FCS->GetDaLPos(ofNorm) );
-    rudder_pos_pct->setDoubleValue( FCS->GetDrPos(ofNorm) );
+    rudder_pos_pct->setDoubleValue( -1*FCS->GetDrPos(ofNorm) );
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
 
     
