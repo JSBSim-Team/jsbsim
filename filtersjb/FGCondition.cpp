@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.4 2003/01/22 15:53:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.5 2003/02/17 20:49:20 ehofman Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +92,7 @@ FGCondition::FGCondition(FGConfigFile* AC_cfg, FGPropertyManager* PropertyManage
     else if (AC_cfg->GetValue("LOGIC") == "AND") Logic = eAND;
 
     AC_cfg->GetNextConfigLine();
-    while (AC_cfg->GetValue() != "/CONDITION_GROUP") {
+    while (AC_cfg->GetValue() != string("/CONDITION_GROUP")) {
       conditions.push_back(*(new FGCondition(AC_cfg, PropertyManager)));
     }
     isGroup = true;
