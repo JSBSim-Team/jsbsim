@@ -59,6 +59,7 @@ aircraft/B747/Makefile \
 aircraft/LM/Makefile \
 aircraft/OV10/Makefile \
 aircraft/SGS/Makefile \
+aircraft/T37/Makefile \
 aircraft/T38/Makefile \
 aircraft/X15/Makefile \
 aircraft/c172p/Makefile \
