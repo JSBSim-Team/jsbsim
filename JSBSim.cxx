@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.84 2001/12/01 21:20:04 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.85 2001/12/02 15:59:29 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -322,6 +322,7 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetLBrake( globals->get_controls()->get_brake( 0 ) );
     FCS->SetRBrake( globals->get_controls()->get_brake( 1 ) );
     FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
+    FCS->SetGearCmd( globals->get_controls()->get_gear_down());
     for (int i = 0; i < get_num_engines(); i++) {
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
       FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
