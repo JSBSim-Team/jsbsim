@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.92 2003/12/03 04:42:42 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.93 2003/12/03 12:45:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,18 +83,17 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.92 2003/12/03 04:42:42 jberndt Exp $
-    @see
-     Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
+    @version $Id: FGAircraft.h,v 1.93 2003/12/03 12:45:29 jberndt Exp $
+    @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
-     D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
+    @see D. M. Henderson, "Euler Angles, Quaternions, and Transformation Matrices",
      JSC 12960, July 1977
-     Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
+    @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
-     Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
+    @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
      Wiley & Sons, 1979 ISBN 0-471-03032-5
-     Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
+    @see Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
      1982 ISBN 0-471-08936-2
 */
 
