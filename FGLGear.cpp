@@ -37,6 +37,7 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGLGear.h"
+#include <algorithm>
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -92,13 +93,13 @@ FGColumnVector FGLGear::Force(void)
     vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec + Translation->GetUVW());
     compressSpeed = vWhlVelVec(eZ);
 
-    vLocalForce(eZ) = -compressLength * kSpring - compressSpeed * bDamp;
+    vLocalForce(eZ) = min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
 
     vForce = State->GetTl2b() * vLocalForce ;
 
     // currently only aircraft body axis Z-force modeled
     vMoment(eX) = vForce(eZ) * vWhlBodyVec(eY);
-    vMoment(eY) = vForce(eZ) * vWhlBodyVec(eX);
+    vMoment(eY) = -vForce(eZ) * vWhlBodyVec(eX);
     vMoment(eZ) = 0.0;
 
   } else {
