@@ -26,9 +26,6 @@
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
  
-Based on Flightgear code, which is based on LaRCSim. This class wraps all
-global state variables (such as velocity, position, orientation, etc.).
- 
 HISTORY
 --------------------------------------------------------------------------------
 11/17/98   JSB   Created
@@ -72,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.43 2001/08/18 15:46:18 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.44 2001/08/18 22:10:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.43 2001/08/18 15:46:18 apeden Exp $
+    @version $Id: FGState.h,v 1.44 2001/08/18 22:10:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,8 +142,9 @@ public:
       @param tht the pitch angle in radians.
       @param psi the heading angle in radians measured clockwise from north.
       @param h altitude in feet.
-      @param windir direction the wind is coming from, in degrees measured clockwise from north.
-      @param winmag magnitude of the wind (the wind speed) in feet per second.
+      @param wnorth north velocity in feet per second
+      @param weast eastward velocity in feet per second
+      @param wdown downward velocity in feet per second
       */
   void Initialize(float U,
                   float V,
