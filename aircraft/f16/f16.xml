@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="F-16" VERSION="1.60" RELEASE="BETA">
+<FDM_CONFIG NAME="F-16" VERSION="1.60" RELEASE="="BETA">
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.27 2003/11/10 13:05:19 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.28 2003/12/15 17:44:40 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -43,7 +43,7 @@
     AC_POINTMASS  230.0 -384.7  0.0   0.0
   </METRICS>
   <UNDERCARRIAGE>
-    AC_GEAR NOSE_LG   -332.2    0.0 -73.0 15000  5000 0.5 0.8 0.02 STEERABLE NONE    5 RETRACT
+    AC_GEAR NOSE_LG   -332.2    0.0 -73.0 15000  5000 0.5 0.8 0.02 STEERABLE NOSE    5 RETRACT
     AC_GEAR LEFT_MLG  -171.9  -46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     LEFT    0 RETRACT
     AC_GEAR RIGHT_MLG -171.9   46.7 -73.0 22704 10000 0.5 0.8 0.02 FIXED     RIGHT   0 RETRACT
 
@@ -122,8 +122,7 @@
        INPUT         fcs/roll-trim-sum
        MIN          -21.5
        MAX           21.5
-       INVERT
-       GAIN          0.01745
+       GAIN          -0.01745
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
@@ -147,7 +146,7 @@
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       INPUT        fcs/gear-cmd-norm
+       INPUT        gear/gear-cmd-norm
        DETENTS      1
                     0    0
                     25   3
