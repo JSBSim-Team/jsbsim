@@ -186,6 +186,12 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
   }
 }
 
+void FGInitialCondition::SetAltitudeAGLFtIC(float tt) {
+  fdmex->GetPosition()->SetDistanceAGL(tt);
+  altitude=fdmex->GetPosition()->Geth();
+  SetAltitudeFtIC(altitude);
+}  
+  
 float FGInitialCondition::calcVcas(float Mach) {
 
   float p=fdmex->GetAtmosphere()->GetPressure();
