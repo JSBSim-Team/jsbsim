@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.32 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.33 2003/12/02 13:28:40 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -127,7 +127,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.32 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.33 2003/12/02 13:28:40 jberndt Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,11 +189,11 @@ private:
 public:
   /** Initializes the trimming class
       @param FDMExec pointer to a JSBSim executive object.
-      @param FGIC pointer to a FGInitialCondition object
+      @param tm trim mode
   */
-  FGTrim(FGFDMExec *FDMExec, TrimMode tt=tGround );
+  FGTrim(FGFDMExec *FDMExec, TrimMode tm=tGround );
 
-    ~FGTrim(void);
+  ~FGTrim(void);
 
   /** Execute the trim
   */
@@ -211,10 +211,10 @@ public:
   void TrimStats();
   
   /** Clear all state-control pairs and set a predefined trim mode
-      @param TrimMode the set of axes to trim. Can be:
+      @param tm the set of axes to trim. Can be:
              tLongitudinal, tFull, tGround, tCustom, or tNone
   */
-  void SetMode(TrimMode tt);
+  void SetMode(TrimMode tm);
 
   /** Clear all state-control pairs from the current configuration.
       The trimming routine must have at least one state-control pair
@@ -239,14 +239,14 @@ public:
   
   /** Change the control used to zero a state previously configured
       @param state the accel or other condition to zero 
-      @param control the control used to zero the state
+      @param new_control the control used to zero the state
   */
   bool EditState( State state, Control new_control );
 
   /** automatically switch to trimming longitudinal acceleration with
       flight path angle (gamma) once it becomes apparent that there
       is not enough/too much thrust.
-      @param gamma_fallback true to enable fallback
+      @param bb true to enable fallback
   */     
   inline void SetGammaFallback(bool bb) { gamma_fallback=bb; }
   

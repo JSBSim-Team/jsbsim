@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.50 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.51 2003/12/02 13:28:39 jberndt Exp $"
 
 using std::vector;
 
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.50 2003/11/26 13:37:36 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.51 2003/12/02 13:28:39 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,8 +137,7 @@ public:
 
   /** Outputs coefficient information.
       Non-dimensionalizing parameter descriptions are output
-      for each aero coefficient defined.
-      @param multipliers the list of multipliers for this coefficient.*/
+      for each aero coefficient defined. */
   virtual void DisplayCoeffFactors(void);
 
   /// Returns the name of the coefficient.

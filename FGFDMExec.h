@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.63 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.64 2003/12/02 13:28:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,7 +66,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.63 2003/11/26 13:37:36 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.64 2003/12/02 13:28:39 jberndt Exp $
  
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -170,20 +170,20 @@ public:
   
 
   /** Sets the path to the engine config file directories.
-      @param EnginePath path to the directory under which engine config
+      @param path path to the directory under which engine config
       files are kept, for instance "engine"
   */
   bool SetEnginePath(string path)   { EnginePath = path; return true; }
 
   /** Sets the path to the aircraft config file directories.
-      @param AircraftPath path to the aircraft directory. For instance:
+      @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.
   */
   bool SetAircraftPath(string path) { AircraftPath = path; return true; }
   
   /** Sets the path to the autopilot config file directories.
-      @param ControlPath path to the control directory. For instance:
+      @param path path to the control directory. For instance:
       "control".
   */
   bool SetControlPath(string path) { ControlPath = path; return true; }

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.52 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.53 2003/12/02 13:28:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.52 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.53 2003/12/02 13:28:39 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +72,7 @@ class FGPosition : public FGModel {
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGPosition(FGFDMExec*);
+  FGPosition(FGFDMExec* Executive);
 
   /// Destructor
   ~FGPosition();

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.32 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.33 2003/12/02 13:28:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.32 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.33 2003/12/02 13:28:39 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,7 @@ class FGAuxiliary : public FGModel {
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGAuxiliary(FGFDMExec*);
+  FGAuxiliary(FGFDMExec* Executive);
   /// Destructor
   ~FGAuxiliary();
 

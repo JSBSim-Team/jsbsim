@@ -76,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.41 2003/11/26 13:37:36 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.42 2003/12/02 13:28:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.41 2003/11/26 13:37:36 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.42 2003/12/02 13:28:39 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,9 +116,10 @@ public:
   string GetCurrentLine(void) { return CurrentLine; }
 
   /** Returns the value of the tag supplied.
-      @param 
-      @return */
-  string GetValue(string);
+      @param tag the tag for the value that is desired.
+      @return tthe value of the tag supplied.*/
+  string GetValue(string tag);
+
   string GetValue(void);
   string GetCommentString(void) {return CommentString;}
   string GetLineComment(void) {return LineComment;}
