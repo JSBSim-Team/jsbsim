@@ -153,12 +153,15 @@ public:
   inline float GetMass(void) {return Mass;}
   inline FGColumnVector GetMoments(void) {return vMoments;}
   inline FGColumnVector GetForces(void) {return vForces;}
+  inline FGColumnVector GetvFs(void) {return vFs;}
   inline float GetIxx(void) {return Ixx;}
   inline float GetIyy(void) {return Iyy;}
   inline float GetIzz(void) {return Izz;}
   inline float GetIxz(void) {return Ixz;}
   inline int   GetNumEngines(void) {return numEngines;}
   inline FGColumnVector GetXYZcg(void) {return vXYZcg;}
+  string GetCoefficientStrings(void);
+  string GetCoefficientValues(void);
 
   enum { ssSimulation   = 1,
          ssAerosurfaces = 2,
@@ -168,7 +171,8 @@ public:
          ssMoments      = 32,
          ssAtmosphere   = 64,
          ssMassProps    = 128,
-         ssPosition     = 256 } subsystems;
+         ssCoefficients = 256,
+         ssPosition     = 512 } subsystems;
          
 private:
   void GetState(void);
@@ -179,6 +183,7 @@ private:
   void MassChange(void);
   FGColumnVector vMoments;
   FGColumnVector vForces;
+  FGColumnVector vFs;
   FGColumnVector vXYZrp;
   FGColumnVector vbaseXYZcg;
   FGColumnVector vXYZcg;
@@ -213,14 +218,6 @@ private:
 
   bool GearUp;
 
-  enum Param {LiftCoeff,
-              DragCoeff,
-              SideCoeff,
-              RollCoeff,
-              PitchCoeff,
-              YawCoeff,
-              numCoeffs};
-
   string Axis[6];
   vector <FGLGear*> lGear;
   string AircraftPath;
@@ -232,9 +229,6 @@ private:
   void ReadUndercarriage(FGConfigFile*);
   void ReadPrologue(FGConfigFile*);
   void ReadOutput(FGConfigFile*);
-
-protected:
-
 };
 
 /******************************************************************************/

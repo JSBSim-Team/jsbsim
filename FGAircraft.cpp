@@ -139,13 +139,14 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
                                            vbaseXYZcg(3),
                                            vXYZcg(3),
                                            vXYZep(3),
-                                           vEuler(3)
+                                           vEuler(3),
+                                           vFs(3)
 {
   Name = "FGAircraft";
 
-  AxisIdx["LIFT"]  = 0;
+  AxisIdx["DRAG"]  = 0;
   AxisIdx["SIDE"]  = 1;
-  AxisIdx["DRAG"]  = 2;
+  AxisIdx["LIFT"]  = 2;
   AxisIdx["ROLL"]  = 3;
   AxisIdx["PITCH"] = 4;
   AxisIdx["YAW"]   = 5;
@@ -324,7 +325,6 @@ void FGAircraft::MassChange()
 
 void FGAircraft::FMAero(void)
 {
-  static FGColumnVector vFs(3);
   static FGColumnVector vDXYZcg(3);
   unsigned int axis_ctr,ctr;
 
@@ -564,6 +564,10 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
       *AC_cfg >> parameter;
       if (parameter == "ON") subsystems += ssPosition;
     }
+    if (parameter == "COEFFICIENTS") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssCoefficients;
+    }
   }
 
   Output->SetSubsystems(subsystems);
@@ -633,5 +637,45 @@ void FGAircraft::DisplayCoeffFactors(int multipliers)
 }
 
 /******************************************************************************/
+
+string FGAircraft::GetCoefficientStrings(void)
+{
+  string CoeffStrings = "";
+  bool firstime = true;
+
+  for (unsigned int axis = 0; axis < 6; axis++) {
+    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+      if (firstime) {
+        firstime = false;
+      } else {
+        CoeffStrings += ", ";
+      }
+      CoeffStrings += Coeff[axis][sd].Getname();
+    }
+  }
+
+  return CoeffStrings;
+}
+
+/******************************************************************************/
+
+string FGAircraft::GetCoefficientValues(void)
+{
+  string SDValues = "";
+  bool firstime = true;
+
+  for (unsigned int axis = 0; axis < 6; axis++) {
+    for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
+      if (firstime) {
+        firstime = false;
+      } else {
+        SDValues += ", ";
+      }
+      SDValues += Coeff[axis][sd].GetSD();
+    }
+  }
+
+  return SDValues;;
+}
 
 

@@ -125,8 +125,10 @@ public:
   float Value(float);
   float Value(void);
   float TotalValue(void);
-  inline float GetSDValue(void) {return SD;}
-  inline void SetSDValue(float tt) {SD = tt;}
+  inline string Getname(void) {return name;}
+  inline float GetSD(void) {return SD;}
+//  inline float GetSDValue(void) {return SD;}
+//  inline void SetSDValue(float tt) {SD = tt;}
   inline long int Getmultipliers(void) {return multipliers;}
   void DumpSD(void);
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};

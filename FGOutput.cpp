@@ -127,6 +127,7 @@ void FGOutput::DelimitedOutput(void)
   if (dFirstPass) {
     cout << "Time";
     if (SubSystems & FGAircraft::ssSimulation) {
+      // Nothing here, yet
     }
     if (SubSystems & FGAircraft::ssAerosurfaces) {
       cout << ", ";
@@ -151,6 +152,7 @@ void FGOutput::DelimitedOutput(void)
     }
     if (SubSystems & FGAircraft::ssForces) {
       cout << ", ";
+      cout << "XsForce, YsForce, ZsForce, ";
       cout << "Xforce, Yforce, Zforce";
     }
     if (SubSystems & FGAircraft::ssMoments) {
@@ -178,6 +180,11 @@ void FGOutput::DelimitedOutput(void)
       cout << "Latitude, ";
       cout << "Longitude";
     }
+    if (SubSystems & FGAircraft::ssCoefficients) {
+      cout << ", ";
+      cout << Aircraft->GetCoefficientStrings();
+    }
+
     cout << endl;
     dFirstPass = false;
   }
@@ -208,6 +215,7 @@ void FGOutput::DelimitedOutput(void)
   }
   if (SubSystems & FGAircraft::ssForces) {
     cout << ", ";
+    cout << Aircraft->GetvFs() << ", ";
     cout << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {
@@ -235,6 +243,10 @@ void FGOutput::DelimitedOutput(void)
     cout << Position->GetLatitude() << ", ";
     cout << Position->GetLongitude();
   }
+  if (SubSystems & FGAircraft::ssCoefficients) {
+    cout << ", ";
+    cout << Aircraft->GetCoefficientValues();
+  }
   cout << endl;
 }
 
@@ -246,6 +258,7 @@ void FGOutput::DelimitedOutput(string fname)
     datafile.open(fname.c_str());
     datafile << "Time";
     if (SubSystems & FGAircraft::ssSimulation) {
+      // Nothing here, yet
     }
     if (SubSystems & FGAircraft::ssAerosurfaces) {
       datafile << ", ";
@@ -270,6 +283,7 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & FGAircraft::ssForces) {
       datafile << ", ";
+      datafile << "XsForce, YsForce, ZsForce, ";
       datafile << "Xforce, Yforce, Zforce";
     }
     if (SubSystems & FGAircraft::ssMoments) {
@@ -296,6 +310,10 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << "Alpha, ";
       datafile << "Latitude, ";
       datafile << "Longitude";
+    }
+    if (SubSystems & FGAircraft::ssCoefficients) {
+      datafile << ", ";
+      datafile << Aircraft->GetCoefficientStrings();
     }
     datafile << endl;
     sFirstPass = false;
@@ -327,6 +345,7 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & FGAircraft::ssForces) {
     datafile << ", ";
+    datafile << Aircraft->GetvFs() << ", ";
     datafile << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {
@@ -354,6 +373,10 @@ void FGOutput::DelimitedOutput(string fname)
     datafile << Position->GetLatitude() << ", ";
     datafile << Position->GetLongitude();
   }
+  if (SubSystems & FGAircraft::ssCoefficients) {
+    datafile << ", ";
+    datafile << Aircraft->GetCoefficientValues();
+  }
   datafile << endl;
   datafile.flush();
 }
@@ -368,24 +391,6 @@ void FGOutput::SocketOutput(void)
 
   socket->Clear();
   if (sFirstPass) {
-    if (SubSystems & FGAircraft::ssSimulation) {
-    }
-    if (SubSystems & FGAircraft::ssAerosurfaces) {
-    }
-    if (SubSystems & FGAircraft::ssRates) {
-    }
-    if (SubSystems & FGAircraft::ssVelocities) {
-    }
-    if (SubSystems & FGAircraft::ssForces) {
-    }
-    if (SubSystems & FGAircraft::ssMoments) {
-    }
-    if (SubSystems & FGAircraft::ssAtmosphere) {
-    }
-    if (SubSystems & FGAircraft::ssMassProps) {
-    }
-    if (SubSystems & FGAircraft::ssPosition) {
-    }
     socket->Append("<LABELS>");
     socket->Append("Time");
     socket->Append("Altitude");
@@ -427,24 +432,6 @@ void FGOutput::SocketOutput(void)
     socket->Send();
   }
 
-  if (SubSystems & FGAircraft::ssSimulation) {
-  }
-  if (SubSystems & FGAircraft::ssAerosurfaces) {
-  }
-  if (SubSystems & FGAircraft::ssRates) {
-  }
-  if (SubSystems & FGAircraft::ssVelocities) {
-  }
-  if (SubSystems & FGAircraft::ssForces) {
-  }
-  if (SubSystems & FGAircraft::ssMoments) {
-  }
-  if (SubSystems & FGAircraft::ssAtmosphere) {
-  }
-  if (SubSystems & FGAircraft::ssMassProps) {
-  }
-  if (SubSystems & FGAircraft::ssPosition) {
-  }
   socket->Clear();
   socket->Append(State->Getsim_time());
   socket->Append(Position->Geth());
