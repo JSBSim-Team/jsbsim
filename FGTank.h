@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.30 2004/06/02 17:30:24 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.31 2004/06/02 18:50:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -144,7 +144,7 @@ public:
   double GetPctFull(void) {return PctFull;}
   double GetContents(void) {return Contents;}
   double GetTemperature_degC(void) {return Temperature;}
-  double GetTemperature(void) {return (Temperature*1.8)+32.0;}
+  double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 
@@ -162,7 +162,7 @@ private:
   double PctFull;
   double Contents;
   double Area;
-  double Temperature;
+  double Temperature;      
   bool  Selected;
   FGAuxiliary* Auxiliary;
   void Debug(int from);

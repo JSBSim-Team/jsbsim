@@ -79,7 +79,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.59 2004/05/31 10:00:18 frohlich Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.60 2004/06/02 18:50:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.59 2004/05/31 10:00:18 frohlich Exp $
+    @version $Id: FGJSBBase.h,v 1.60 2004/06/02 18:50:55 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,15 @@ public:
   static double RankineToCelsius (double rankine) {
     return (rankine - 491.67)/1.8;
   }
+
+  static double FahrenheitToCelsius (double fahrenheit) {
+    return (fahrenheit - 32.0)/1.8;
+  }
+
+  static double CelsiusToFahrenheit (double celsius) {
+    return celsius * 1.8 + 32.0;
+  }
+
 
   /** Finite precision comparison.
       @param a first value to compare
