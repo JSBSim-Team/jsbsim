@@ -128,25 +128,15 @@ FGFDMExec::FGFDMExec(void)
 
 FGFDMExec::~FGFDMExec(void){
   
-  cout << "~FGFDMExec" << endl;
   if ( Atmosphere != NULL )  delete Atmosphere;
-  cout << "Atmosphere" << endl;
   if ( FCS != NULL )         delete FCS;
-  cout << "FCS" << endl;
   if ( Aircraft != NULL )    delete Aircraft;
-  cout << "Aircraft" << endl;
   if ( Translation != NULL ) delete Translation;
-  cout << "Translation" << endl;
   if ( Rotation != NULL )    delete Rotation;
-  cout << "Rotation" << endl;
   if ( Position != NULL )    delete Position;
-  cout << "Position" << endl;
   if ( Auxiliary != NULL )   delete Auxiliary;
-  cout << "Auxiliary" << endl;
   if ( Output != NULL )      delete Output;
-  cout << "Output" << endl;
   if ( State != NULL )       delete State;
-  cout << "State" << endl;
 
 }
 
