@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.17 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.18 2004/03/06 14:16:46 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,7 +204,7 @@ void FGMatrix33::InitMatrix(void)
 // binary operators ************************************************************
 // *****************************************************************************
 
-FGMatrix33 FGMatrix33::operator-(const FGMatrix33& M)
+FGMatrix33 FGMatrix33::operator-(const FGMatrix33& M) const
 {
   FGMatrix33 Diff;
 
@@ -238,7 +238,7 @@ void FGMatrix33::operator-=(const FGMatrix33 &M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGMatrix33::operator+(const FGMatrix33& M)
+FGMatrix33 FGMatrix33::operator+(const FGMatrix33& M) const
 {
   FGMatrix33 Sum;
 
@@ -272,7 +272,7 @@ void FGMatrix33::operator+=(const FGMatrix33 &M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGMatrix33::operator*(const double scalar)
+FGMatrix33 FGMatrix33::operator*(const double scalar) const
 {
   FGMatrix33 Product;
 
@@ -325,7 +325,7 @@ void FGMatrix33::operator*=(const double scalar)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
+FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M) const
 {
   FGMatrix33 Product;
 
@@ -366,7 +366,7 @@ void FGMatrix33::operator*=(const FGMatrix33& M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33 FGMatrix33::operator/(const double scalar)
+FGMatrix33 FGMatrix33::operator/(const double scalar) const
 {
   FGMatrix33 Quot;
 
@@ -426,7 +426,7 @@ void FGMatrix33::T(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGMatrix33::operator*(const FGColumnVector3& Col)
+FGColumnVector3 FGMatrix33::operator*(const FGColumnVector3& Col) const
 {
   return ( FGColumnVector3(
     data[1][1]*Col(1) + data[1][2]*Col(2) + data[1][3]*Col(3),

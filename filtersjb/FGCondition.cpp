@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.8 2004/03/06 13:48:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.9 2004/03/06 14:16:39 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +175,6 @@ void FGCondition::PrintCondition(void )
 {
   vector <FGCondition>::iterator iConditions;
   string scratch;
-  bool first = false;
 
   if (isGroup) {
     switch(Logic) {

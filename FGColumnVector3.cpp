@@ -22,7 +22,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.16 2003/06/03 09:53:43 ehofman Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.17 2004/03/06 14:16:46 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ FGColumnVector3 FGColumnVector3::operator=(const FGColumnVector3& b)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::operator+(const FGColumnVector3& C)
+FGColumnVector3 FGColumnVector3::operator+(const FGColumnVector3& C) const
 {
   FGColumnVector3 Sum; 
   Sum(1) = C(1) + data[1];
@@ -102,7 +102,7 @@ void FGColumnVector3::operator+=(const FGColumnVector3& C)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::operator*(const double scalar)
+FGColumnVector3 FGColumnVector3::operator*(const double scalar) const
 {
   FGColumnVector3 Product;
 
@@ -124,7 +124,7 @@ void FGColumnVector3::operator*=(const double scalar)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::operator-(const FGColumnVector3& V)
+FGColumnVector3 FGColumnVector3::operator-(const FGColumnVector3& V) const
 {
   
   FGColumnVector3 Diff; 
@@ -147,7 +147,7 @@ void FGColumnVector3::operator-=(const FGColumnVector3& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::operator/(const double scalar)
+FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
 {
   FGColumnVector3 Quotient;
 
@@ -193,7 +193,7 @@ FGColumnVector3 operator*(const double scalar, const FGColumnVector3& C)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGColumnVector3::Magnitude(void)
+double FGColumnVector3::Magnitude(void) const
 {
   double num;
 
@@ -217,7 +217,7 @@ FGColumnVector3 FGColumnVector3::Normalize(void)
   double Mag = Magnitude();
 
   if (Mag != 0) {
-	  Mag = 1.0/Mag;
+     Mag = 1.0/Mag;
      data[1] *= Mag;
      data[2] *= Mag;
      data[3] *= Mag;
@@ -228,7 +228,7 @@ FGColumnVector3 FGColumnVector3::Normalize(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::operator*(const FGColumnVector3& V)
+FGColumnVector3 FGColumnVector3::operator*(const FGColumnVector3& V) const
 {
   FGColumnVector3 Product;
   
@@ -254,7 +254,7 @@ void FGColumnVector3::operator*=(const FGColumnVector3& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGColumnVector3::multElementWise(const FGColumnVector3& V)
+FGColumnVector3 FGColumnVector3::multElementWise(const FGColumnVector3& V) const
 {
   FGColumnVector3 Product;
 

@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.20 2004/03/03 11:56:52 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.21 2004/03/06 14:16:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.20 2004/03/03 11:56:52 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.21 2004/03/06 14:16:46 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,11 +93,11 @@ public:
 
   FGColumnVector3 operator=(const FGColumnVector3& b);
 
-  FGColumnVector3 operator*(const double scalar);
-  FGColumnVector3 operator*(const FGColumnVector3& V);   // Cross product operator
-  FGColumnVector3 operator/(const double scalar);
-  FGColumnVector3 operator+(const FGColumnVector3& B); // must not return reference
-  FGColumnVector3 operator-(const FGColumnVector3& B);
+  FGColumnVector3 operator*(const double scalar) const;
+  FGColumnVector3 operator*(const FGColumnVector3& V) const;   // Cross product operator
+  FGColumnVector3 operator/(const double scalar) const;
+  FGColumnVector3 operator+(const FGColumnVector3& B) const; // must not return reference
+  FGColumnVector3 operator-(const FGColumnVector3& B) const;
 
   void operator-=(const FGColumnVector3 &B);
   void operator+=(const FGColumnVector3 &B);
@@ -111,7 +111,7 @@ public:
   inline void InitMatrix(double ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
   inline void InitMatrix(double a, double b, double c) { data[1]=a; data[2]=b; data[3]=c; }
 
-  double Magnitude(void);
+  double Magnitude(void) const;
   FGColumnVector3 Normalize(void);
 
   friend FGColumnVector3 operator*(const double scalar, const FGColumnVector3& A);
@@ -121,7 +121,7 @@ public:
   inline double operator()(int m) const { return data[m]; }
   inline double& operator()(int m) { return data[m]; }
 
-  FGColumnVector3 multElementWise(const FGColumnVector3& V);
+  FGColumnVector3 multElementWise(const FGColumnVector3& V) const;
 
 private:
   double data[4];

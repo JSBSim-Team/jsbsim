@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.70 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.71 2004/03/06 14:16:46 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 FGOutput::~FGOutput()
 {
   if (socket) delete socket;
-  for (int i=0; i<OutputProperties.size(); i++) delete OutputProperties[i];
+  for (unsigned int i=0; i<OutputProperties.size(); i++) delete OutputProperties[i];
 
   Debug(1);
 }
@@ -236,7 +236,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << Propulsion->GetPropulsionStrings();
     }
     if (OutputProperties.size() > 0) {
-      for (int i=0;i<OutputProperties.size();i++) {
+      for (unsigned int i=0;i<OutputProperties.size();i++) {
         outstream << ", " << OutputProperties[i]->GetName();
       }
     }
@@ -325,7 +325,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Propulsion->GetPropulsionValues();
   }
 
-  for (int i=0;i<OutputProperties.size();i++) {
+  for (unsigned int i=0;i<OutputProperties.size();i++) {
     outstream << ", " << OutputProperties[i]->getDoubleValue();
   }
 

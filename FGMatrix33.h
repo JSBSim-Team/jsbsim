@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.17 2004/03/05 04:53:12 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.18 2004/03/06 14:16:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -117,7 +117,7 @@ public:
   inline double operator()(unsigned int row, unsigned int col) const {return data[row][col];}
   inline double& operator()(unsigned int row, unsigned int col) {return data[row][col];}
 
-  FGColumnVector3 operator*(const FGColumnVector3& Col);
+  FGColumnVector3 operator*(const FGColumnVector3& Col) const;
 
   inline unsigned int Rows(void) const { return 3; }
   inline unsigned int Cols(void) const { return 3; }
@@ -131,11 +131,11 @@ public:
 
   //friend FGMatrix33 operator*(double scalar,FGMatrix33& A);
 
-  FGMatrix33 operator-(const FGMatrix33& B);
-  FGMatrix33 operator+(const FGMatrix33& B);
-  FGMatrix33 operator*(const FGMatrix33& B);
-  FGMatrix33 operator*(const double scalar);
-  FGMatrix33 operator/(const double scalar);
+  FGMatrix33 operator-(const FGMatrix33& B) const;
+  FGMatrix33 operator+(const FGMatrix33& B) const;
+  FGMatrix33 operator*(const FGMatrix33& B) const;
+  FGMatrix33 operator*(const double scalar) const;
+  FGMatrix33 operator/(const double scalar) const;
   FGMatrix33& operator<<(const double ff);
 
   friend ostream& operator<<(ostream& os, const FGMatrix33& M);
