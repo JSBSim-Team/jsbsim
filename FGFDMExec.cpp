@@ -84,9 +84,12 @@ FGFDMExec::FGFDMExec(void)
   Auxiliary   = 0;
   Output      = 0;
 
-  allocated = false;
   terminate = false;
   frozen = false;
+  modelLoaded = false;
+  
+  Allocate();
+  
 }
 
 FGFDMExec::~FGFDMExec(void){
@@ -97,6 +100,7 @@ FGFDMExec::~FGFDMExec(void){
 
 bool FGFDMExec::Allocate(void) {
   
+  cout << "FGFDMExec::Allocate ... ";
   bool result=true;
   
   Atmosphere  = new FGAtmosphere(this);
@@ -136,40 +140,41 @@ bool FGFDMExec::Allocate(void) {
   Schedule(Auxiliary,   1);
   Schedule(Output,     1);
   
-  allocated = true;
-  
+  modelLoaded = false;
+  cout << "done." << endl;
   return result;
 
 }
 
 bool FGFDMExec::DeAllocate(void) {
-  if(allocated) {
-    if ( Atmosphere != 0 )  delete Atmosphere;
-    if ( FCS != 0 )         delete FCS;
-    if ( Aircraft != 0 )    delete Aircraft;
-    if ( Translation != 0 ) delete Translation;
-    if ( Rotation != 0 )    delete Rotation;
-    if ( Position != 0 )    delete Position;
-    if ( Auxiliary != 0 )   delete Auxiliary;
-    if ( Output != 0 )      delete Output;
-    if ( State != 0 )       delete State;
+  cout << "FGFDMExec::DeAllocate ... ";
+ 
+  if ( Atmosphere != 0 )  delete Atmosphere;
+  if ( FCS != 0 )         delete FCS;
+  if ( Aircraft != 0 )    delete Aircraft;
+  if ( Translation != 0 ) delete Translation;
+  if ( Rotation != 0 )    delete Rotation;
+  if ( Position != 0 )    delete Position;
+  if ( Auxiliary != 0 )   delete Auxiliary;
+  if ( Output != 0 )      delete Output;
+  if ( State != 0 )       delete State;
 
-    FirstModel  = 0L;
-    Error       = 0;
+  FirstModel  = 0L;
+  Error       = 0;
 
-    State       = 0;
-    Atmosphere  = 0;
-    FCS         = 0;
-    Aircraft    = 0;
-    Translation = 0;
-    Rotation    = 0;
-    Position    = 0;
-    Auxiliary   = 0;
-    Output      = 0;
-    
-    allocated = false;
+  State       = 0;
+  Atmosphere  = 0;
+  FCS         = 0;
+  Aircraft    = 0;
+  Translation = 0;
+  Rotation    = 0;
+  Position    = 0;
+  Auxiliary   = 0;
+  Output      = 0;
+
+  modelLoaded = false;
   
-  }
+  cout << "done" << endl;
 }
 
 
@@ -231,11 +236,22 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
-	DeAllocate();
-  Allocate();
+	bool result=false;
+  cout << "FGFDMExec::LoadModel ..." << endl;
+  if(modelLoaded) {
+     DeAllocate();
+     Allocate();
+  }   
   AircraftPath = APath;
 	EnginePath = EPath;
-  return Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
+  result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);
+  if(result) {
+    modelLoaded=true;
+  } else {
+    cerr << "FGFDMExec: Failed to load aircraft and/or engine model" << endl;
+  }  
+  cout << "FGFDMExec::LoadModel complete." << endl;;
+  return result;
 }
 
 

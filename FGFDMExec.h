@@ -96,8 +96,8 @@ public:
 private:
   bool frozen;
   bool terminate;
-  bool allocated;
   int Error;
+  bool modelLoaded;
 
   string AircraftPath;
   string EnginePath;
