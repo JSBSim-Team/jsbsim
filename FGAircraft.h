@@ -43,16 +43,13 @@ INCLUDES
 #  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
 #    include <iterator>
-#    include <map>
 #  else
 #    include <vector.h>
 #    include <iterator.h>
-#    include <map.h>
 #  endif
 #else
 #  include <vector>
 #  include <iterator>
-#  include <map>
 #endif
 
 #include "FGModel.h"
@@ -65,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.58 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.59 2001/06/27 23:22:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +87,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.58 2001/06/26 00:21:31 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.59 2001/06/27 23:22:57 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
