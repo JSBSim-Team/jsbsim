@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.51 2003/11/09 22:32:51 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.52 2003/11/11 13:49:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.51 2003/11/09 22:32:51 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.52 2003/11/11 13:49:12 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -205,9 +205,13 @@ public:
   double GetTanksIzz(const FGColumnVector3& vXYZcg);
   double GetTanksIxz(const FGColumnVector3& vXYZcg);
   double GetTanksIxy(const FGColumnVector3& vXYZcg);
-  
+
+  double GetN1(void);
+  double GetN2(void);
+
   void SetMagnetos(int setting);
   void SetStarter(int setting);
+  void SetCutoff(int setting=0);
   void SetActiveEngine(int engine);
   
   void bind();

@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.85 2003/11/11 06:38:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.86 2003/11/11 13:49:12 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -381,6 +381,8 @@ string FGPropulsion::GetPropulsionStrings(void)
     case FGEngine::etTurbine:
       break;
     case FGEngine::etSimTurbine:
+      PropulsionStrings += (Engines[i]->GetName() + "_N1[" + buffer + "], ");
+      PropulsionStrings += (Engines[i]->GetName() + "_N2[" + buffer + "]");
       break;
     default:
       PropulsionStrings += "INVALID ENGINE TYPE";
@@ -407,6 +409,7 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += (Thrusters[i]->GetName() + "_RPM[" + buffer + "]");
       break;
     case FGThruster::ttDirect:
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "]");
       break;
     default:
       PropulsionStrings += "INVALID THRUSTER TYPE";
@@ -439,6 +442,8 @@ string FGPropulsion::GetPropulsionValues(void)
     case FGEngine::etTurbine:
       break;
     case FGEngine::etSimTurbine:
+      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN1(), 10, buff))) + ", ";
+      PropulsionValues += (string(gcvt(((FGSimTurbine*)Engines[i])->GetN2(), 10, buff)));
       break;
     }
 
@@ -451,6 +456,7 @@ string FGPropulsion::GetPropulsionValues(void)
     case FGThruster::ttRotor:
       break;
     case FGThruster::ttDirect:
+      PropulsionValues += (string(gcvt(((FGThruster*)Thrusters[i])->GetThrust(), 10, buff)));
       break;
     case FGThruster::ttPropeller:
       FGPropeller* Propeller = (FGPropeller*)Thrusters[i];
@@ -568,7 +574,7 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 void FGPropulsion::SetMagnetos(int setting)
 {
-  if (ActiveEngine == -1) {
+  if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
       Engines[i]->SetMagnetos(setting);
     }
@@ -581,9 +587,12 @@ void FGPropulsion::SetMagnetos(int setting)
 
 void FGPropulsion::SetStarter(int setting)
 {
-  if (ActiveEngine == -1) {
+  if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
-      Engines[i]->SetStarter(setting);
+      if (setting == 0)
+        Engines[i]->SetStarter(false);
+      else
+        Engines[i]->SetStarter(true);
     }
   } else {
     if (setting == 0)
@@ -595,12 +604,51 @@ void FGPropulsion::SetStarter(int setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropulsion::SetCutoff(int setting)
+{
+  if (ActiveEngine < 0) {
+    for (unsigned i=0; i<Engines.size(); i++) {
+      if (setting == 0)
+        Engines[i]->SetCutoff(false);
+      else
+        Engines[i]->SetCutoff(true);
+    }
+  } else {
+    if (setting == 0)
+      Engines[ActiveEngine]->SetCutoff(false);
+    else
+      Engines[ActiveEngine]->SetCutoff(true);
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropulsion::SetActiveEngine(int engine)
 {
   if ( unsigned(engine) > Engines.size())
     ActiveEngine = -1;
   else
     ActiveEngine = engine;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropulsion::GetN1(void)
+{
+  if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
+    return Engines[0]->GetN1();
+  else
+    return Engines[ActiveEngine]->GetN1();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropulsion::GetN2(void)
+{
+  if (ActiveEngine < 0 || ActiveEngine >= Engines.size())
+    return Engines[0]->GetN2();
+  else
+    return Engines[ActiveEngine]->GetN2();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -621,6 +669,10 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/starter_cmd", this,
                        (iPMF)0,
                        &FGPropulsion::SetStarter,
+                       true);
+  PropertyManager->Tie("propulsion/cutoff_cmd", this,
+                       (iPMF)0,
+                       &FGPropulsion::SetCutoff,
                        true);
   PropertyManager->Tie("propulsion/active_engine", this,
                        (iPMF)0,
@@ -643,6 +695,12 @@ void FGPropulsion::bind(void)
                        (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/n-prop-lbsft", this,3,
                        (PMF)&FGPropulsion::GetMoments);
+
+  PropertyManager->Tie("propulsion/n1", this,3,
+                       (PMF)&FGPropulsion::GetN1);
+  PropertyManager->Tie("propulsion/n2", this,3,
+                       (PMF)&FGPropulsion::GetN2);
+  
   //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
   //                     &FGPropulsion::GetTanksWeight);
 }
@@ -657,6 +715,7 @@ void FGPropulsion::unbind(void)
   PropertyManager->Untie("propulsion/num-sel-ox-tanks");
   PropertyManager->Untie("propulsion/magneto_cmd");
   PropertyManager->Untie("propulsion/starter_cmd");
+  PropertyManager->Untie("propulsion/cutoff_cmd");
   PropertyManager->Untie("propulsion/active_engine");
   PropertyManager->Untie("forces/fbx-prop-lbs");
   PropertyManager->Untie("forces/fby-prop-lbs");
@@ -664,6 +723,8 @@ void FGPropulsion::unbind(void)
   PropertyManager->Untie("moments/l-prop-lbsft");
   PropertyManager->Untie("moments/m-prop-lbsft");
   PropertyManager->Untie("moments/n-prop-lbsft");
+  PropertyManager->Untie("propulsion/n1");
+  PropertyManager->Untie("propulsion/n2");
   //PropertyManager->Untie("propulsion/tanks-weight-lbs");
 }
 

@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.22 2003/06/03 09:53:50 ehofman Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.23 2003/11/11 13:49:12 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +50,7 @@ CLASS IMPLEMENTATION
 FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
                                              ThrusterNumber(0)
 {
+  Type = ttDirect;
   SetTransformType(FGForce::tCustom);
 
   Debug(0);
@@ -57,12 +58,14 @@ FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGThruster::FGThruster(FGFDMExec *FDMExec, 
-                       FGConfigFile *Eng_cfg ): FGForce(FDMExec) {
-   ThrusterNumber=0;                   
-   SetTransformType(FGForce::tCustom);
-   Name=Eng_cfg->GetValue();
-   Debug(0);
+FGThruster::FGThruster(FGFDMExec *FDMExec,
+                       FGConfigFile *Eng_cfg ): FGForce(FDMExec)
+{
+  ThrusterNumber = 0;
+  Type = ttDirect;
+  SetTransformType(FGForce::tCustom);
+  Name = Eng_cfg->GetValue();
+  Debug(0);
 }   
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
