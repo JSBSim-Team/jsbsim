@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.91 2002/09/07 21:43:50 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.92 2002/09/07 21:45:00 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +134,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
   instance->SetDouble("zero",0);  
   
-  disableHighLighting();
   Debug(0);
   
   // this is here to catch errors in binding member functions
