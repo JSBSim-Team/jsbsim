@@ -1,0 +1,27 @@
+<?xml version="1.0"?> 
+<runscript name="X-15-01A"> 
+
+  <!--
+  This run is for testing X-15 high altitude, 
+  high speed pitch pulses in the simulator. 
+  --> 
+
+  <use aircraft="x15"> 
+
+  <use initialize="reset00"> 
+
+  <run start="0.0" end="10.0"> 
+    <when> 
+      <parameter name="FG_QBAR" value="100.5" prec="0.3"> 
+      <set name="FG_AILERON" delta="0.1" action="ramp"> 
+      <once> 
+    </when> 
+    <when> 
+      <parameter name="FG_MACH" value="0.8" prec="0.1"> 
+      <set name="FG_CANOPY" value="OPEN"> 
+    </when> 
+  </run> 
+
+</runscript> 
+
+
