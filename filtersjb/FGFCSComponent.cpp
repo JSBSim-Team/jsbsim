@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.29 2002/09/24 11:33:48 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.30 2002/09/25 11:02:51 apeden Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,18 +77,6 @@ void FGFCSComponent::SetOutput(void)
 
 bool FGFCSComponent::Run(void)
 {
-  
-  // switch(InputType) {
-//   case itAP:
-//   case itPilotAC:
-//     Input = InputNode->getDoubleValue();
-//     break;
-//   case itFCS:
-//     Input = fcs->GetComponentOutput(InputIdx);  
-//   case itBias:
-//     break;  
-//   }
-
   return true;
 }
 
@@ -128,8 +116,10 @@ void FGFCSComponent::bind(FGPropertyManager *node) {
 void FGFCSComponent::unbind(void) { 
   string name = "fcs";
   FGPropertyManager *node=PropertyManager->GetNode(name);
-  node->Untie( PropertyManager->mkPropertyName(Name, true) );
-  name += "/components" 
+  name += "/" + PropertyManager->mkPropertyName(Name, true);
+  PropertyManager->Untie( name );
+  
+  name = "fcs/components/" 
                  + PropertyManager->mkPropertyName(Name, true); 
   node= PropertyManager->GetNode(name);
   node->Untie("output-value");

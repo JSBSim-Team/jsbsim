@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.13 2002/09/22 18:15:11 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.14 2002/09/25 11:02:51 apeden Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,7 +109,7 @@ bool FGKinemat::Run(void ) {
   double dt=fcs->GetState()->Getdt();
   double output_transit_rate=0;
 
-  FGFCSComponent::Run(); // call the base class for initialization of Input
+  Input = InputNodes[0]->getDoubleValue();
   InputCmd = Input*Detents[NumDetents-1];
   OutputPos = OutputNode->getDoubleValue();
   
@@ -155,7 +155,7 @@ bool FGKinemat::Run(void ) {
         if (fabs(OutputPos - InputCmd) > fabs(dt*output_transit_rate) ) {
           OutputPos+=output_transit_rate*dt;
           //cout << "FGKinemat::Run, OutputPos: " << OutputPos 
-          //     << " dt: " << dt << endl;
+           //    << " dt: " << dt << endl;
         } else {
           InTransit=0;
           OutputPos=InputCmd;
