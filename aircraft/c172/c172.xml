@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.103 2002/08/03 02:20:06 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.104 2002/08/03 02:21:49 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -161,42 +161,23 @@
        OUTPUT        FG_ELEVATOR_POS
        GAIN          0.01745
      </COMPONENT>
-     <COMPONENT NAME="Roll Autopilot Wing Leveler" TYPE="PURE_GAIN">
-       ID            2
-       INPUT         FG_PHI
-       GAIN          1.0
-       MIN           -0.255
-       MAX            0.255
-     </COMPONENT>
-     <COMPONENT NAME="Roll Autopilot Error summer" TYPE="SUMMER">
-       ID            3
-       INPUT         FG_ROLLRATE
-       INPUT         2
-       CLIPTO       -1 1
-     </COMPONENT>
-     <COMPONENT NAME="Roll Autopilot Aileron Command Normalizer" TYPE="PURE_GAIN">
-       ID            4
-       INPUT         3
-       GAIN          -1
-     </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
-       ID            5
+       ID            2
        INPUT         FG_AILERON_CMD
        INPUT         FG_ROLL_TRIM_CMD
-       INPUT         4
        CLIPTO        -1 1
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID            6
-       INPUT         5
+       ID            3
+       INPUT         2
        MIN          -20
        MAX           15
        GAIN          0.01745
        OUTPUT        FG_LEFT_AILERON_POS
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-       ID            7
-       INPUT         5
+       ID            4
+       INPUT         2
        MIN          -20
        MAX           15
        INVERT
@@ -204,13 +185,13 @@
        OUTPUT        FG_RIGHT_AILERON_POS
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
-       ID            8
+       ID            5
        INPUT        FG_RUDDER_CMD
        INPUT        FG_YAW_TRIM_CMD
        CLIPTO       -1 1
      </COMPONENT>
      <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
-       ID            9
+       ID            6
        INPUT        FG_RUDDER_CMD
        MIN         -16
        MAX          16
@@ -218,7 +199,7 @@
        OUTPUT       FG_RUDDER_POS
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
-       ID           10
+       ID           7
        INPUT        FG_FLAPS_CMD
        DETENTS      4
                     0    0
@@ -558,7 +539,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
