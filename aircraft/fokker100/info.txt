@@ -1,0 +1,51 @@
+Advanced Topics in Aerodynamics, Aerodynamic Database (AD)
+http://aerodyn.org/HighLift/tables.html
+---
+CLmax			3.45	(in ground effect)
+
+
+
+Butterworth-Heinemann
+http://www.bh.com/companions/034074152X/appendices/data-a/table-8/table.htm
+---
+CLmax (t/o)		2.17	(Df = 15 degrees)
+CLmax (l/d@MLM)		2.59	(Df = 42 degrees)
+
+
+
+
+Lissys
+http://www.lissys.demon.co.uk/f7tx2.html
+(Note: Simulated Fokker 70 data)
+---
+CLmax (t/o)		1.91	(Df =  0 degrees)
+L/D (2nd sgement)	12.54	(incl. windmill. & asymm).
+
+CLmax (l/d)		2.43	(Df = 42 degrees)
+L/D (approach)		4.91	(gear down)
+
+
+CD0	0.01922
+CDi	0.00867
+CDM	0.00115
+CDtrim	0.00013
+
+L/D	15.08
+TSFC	0.6908
+
+
+
+http://www.aoe.vt.edu/~mason/Mason_f/CAtxtChap5.pdf
+(Data for the DC-9)
+(Note that the design limmit of the Fokker 100 is set at M0.88)
+---
+CDm
+
+MACH	CDmach
+0	0
+0.6	0
+0.78	0.018
+0.79	0.020
+0.81	0.039
+
+
