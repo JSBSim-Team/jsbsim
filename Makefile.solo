@@ -3,7 +3,7 @@ INCLUDES = -I.
 LINKDIR= -Lfiltersjb/
 JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\
 FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\
-FGUtility.o FGEngine.o FGTank.o FGAuxiliary.o FGfdmSocket.o\
+FGUtility.o FGEngine.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\
 FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix.o
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
@@ -12,68 +12,81 @@ JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
 libFCSComponents.a :
 	cd filtersjb; make -fMakefile.solo; cd ..
 
-FGAircraft.o : FGAircraft.cpp
+FGAircraft.o : FGAircraft.cpp FGAircraft.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAircraft.cpp
 
-FGAtmosphere.o : FGAtmosphere.cpp
+FGAtmosphere.o : FGAtmosphere.cpp FGAtmosphere.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAtmosphere.cpp
 
-FGAuxiliary.o : FGAuxiliary.cpp
+FGAuxiliary.o : FGAuxiliary.cpp FGAuxiliary.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGAuxiliary.cpp
 
-FGCoefficient.o : FGCoefficient.cpp
+FGCoefficient.o : FGCoefficient.cpp FGCoefficient.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGCoefficient.cpp
 
-FGFCS.o : FGFCS.cpp
+FGFCS.o : FGFCS.cpp FGFCS.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGFCS.cpp
 
-FGFDMExec.o : FGFDMExec.cpp
+FGFDMExec.o : FGFDMExec.cpp FGFDMExec.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGFDMExec.cpp
 
-FGModel.o : FGModel.cpp
+FGModel.o : FGModel.cpp FGModel.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGModel.cpp
 
-FGOutput.o : FGOutput.cpp
+FGOutput.o : FGOutput.cpp FGOutput.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGOutput.cpp
 
-FGPosition.o : FGPosition.cpp
+FGPosition.o : FGPosition.cpp FGPosition.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGPosition.cpp
 
-FGRotation.o : FGRotation.cpp
+FGRotation.o : FGRotation.cpp FGRotation.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGRotation.cpp
 
-FGState.o : FGState.cpp
+FGState.o : FGState.cpp FGState.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGState.cpp
 
-FGTranslation.o : FGTranslation.cpp
+FGTranslation.o : FGTranslation.cpp FGTranslation.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGTranslation.cpp
 
-FGUtility.o : FGUtility.cpp
+FGUtility.o : FGUtility.cpp FGUtility.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGUtility.cpp
 
-FGEngine.o : FGEngine.cpp
+FGEngine.o : FGEngine.cpp FGEngine.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGEngine.cpp
 
-FGTank.o : FGTank.cpp
+FGTank.o : FGTank.cpp FGTank.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGTank.cpp
 
-FGInitialCondition.o : FGInitialCondition.cpp
+FGInitialCondition.o : FGInitialCondition.cpp FGInitialCondition.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGInitialCondition.cpp
 
-FGfdmSocket.o : FGfdmSocket.cpp
+FGfdmSocket.o : FGfdmSocket.cpp FGfdmSocket.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGfdmSocket.cpp
 
-FGConfigFile.o : FGConfigFile.cpp
+FGConfigFile.o : FGConfigFile.cpp FGConfigFile.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
 
-FGLGear.o : FGLGear.cpp
+FGLGear.o : FGLGear.cpp FGLGear.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGLGear.cpp
 
-FGMatrix.o : FGMatrix.cpp
+FGMatrix.o : FGMatrix.cpp FGMatrix.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGMatrix.cpp
+  
+FGTrim.o : FGTrim.cpp FGTrim.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrim.cpp
+  
+FGTrimAxis.o : FGTrimAxis.cpp FGTrimAxis.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGTrimAxis.cpp
+
+x15trim.o : x15trim.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
 
 JSBSim.o : JSBSim.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
+
+x15trim : $(JSBSim_objects) x15trim.o libFCSComponents.a
+	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) x15trim.o -ox15trim -lm -lFCSComponents
+  
 
 clean:
 	-mv *.*~ backup
