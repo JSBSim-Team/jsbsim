@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.133 2003/03/16 13:01:11 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.134 2003/03/24 10:08:02 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -371,8 +371,9 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
     FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
     FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
-    FCS->SetDsbCmd( 0.0 ); //speedbrakes
-    FCS->SetDspCmd( 0.0 ); //spoilers
+    FCS->SetDsbCmd( globals->get_controls()->get_speed_brake() );
+    FCS->SetDspCmd( globals->get_controls()->get_spoilers() );
+
 
 				// Parking brake sets minimum braking
 				// level for mains.
