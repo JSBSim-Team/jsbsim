@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.8 2002/03/22 11:54:43 apeden Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.9 2002/04/01 11:59:05 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,6 +113,13 @@ class FGPropertyManager:public SGPropertyNode {
       return (GetNode(path, false) != 0);
     }
 
+    /**
+     * Get the name of a node
+     */
+    inline string
+    GetName( void ) {
+      return string( getName() );
+    }  
 
     /**
      * Get a bool value for a property.
