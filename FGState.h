@@ -79,7 +79,7 @@ public:
    FGState(FGFDMExec*);
   ~FGState(void);
 
-  bool Reset(string, string);
+  bool Reset(string, string, string);
   void Initialize(float, float, float, float, float, float, float, float, float);
   void Initialize(FGInitialCondition *FGIC);
   bool StoreData(string);

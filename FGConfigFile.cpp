@@ -36,6 +36,7 @@ FGConfigFile::FGConfigFile(string cfgFileName)
 
 FGConfigFile::~FGConfigFile(void)
 {
+  cfgfile.close();
 }
 
 

@@ -88,13 +88,13 @@ FGState::~FGState(void)
 // Reset: Assume all angles READ FROM FILE IN DEGREES !!
 //
 
-bool FGState::Reset(string path, string fname)
+bool FGState::Reset(string path, string acname, string fname)
 {
   string resetDef;
   float U, V, W;
   float phi, tht, psi;
 
-  resetDef = path + "/" + FDMExec->GetAircraft()->GetAircraftName() + "/" + fname;
+  resetDef = path + "/" + acname + "/" + fname;
 
   ifstream resetfile(resetDef.c_str());
 
