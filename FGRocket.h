@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.27 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.28 2003/12/17 12:27:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,9 +66,9 @@ CLASS DOCUMENTATION
         <li>Variance (in percent, from 0 to 1.0, nominally 0.05)</li>
     </ul>
     Additionally, the following control inputs, operating characteristics, and
-    location are required, as with all other engine types:</font>
+    location are required, as with all other engine types:
     <ul>
-        <li>Throttle setting (in percent, from 0 to 1.0)</font></li>
+        <li>Throttle setting (in percent, from 0 to 1.0)</li>
         <li>Maximum allowable throttle setting</li>
         <li>Minimum working throttle setting</li>
         <li>Sea level fuel flow at maximum thrust</li>
@@ -85,13 +85,13 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.27 2003/12/02 05:42:12 jberndt Exp $
-    @see FGNozzle
-    @see FGThruster
-    @see FGForce
-    @see FGEngine
-    @see FGPropulsion
-    @see FGTank
+    $Id: FGRocket.h,v 1.28 2003/12/17 12:27:07 jberndt Exp $
+    @see FGNozzle,
+    FGThruster,
+    FGForce,
+    FGEngine,
+    FGPropulsion,
+    FGTank
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,7 @@ public:
   FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg);
 
   /** Destructor */
-  ~FGRocket();
+  ~FGRocket(void);
 
   /** Determines the thrust coefficient.
       This routine takes the nozzle exit pressure and calculates the thrust

@@ -358,6 +358,7 @@ WARN_LOGFILE           =
 INPUT                  = . \
                          filtersjb \
                          JSBSim.cpp \
+			 JSBSim.hxx \
                          simgear/props
 
 # If the value of the INPUT tag contains directories, you can use the 
