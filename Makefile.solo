@@ -56,8 +56,8 @@ FGCoefficient.o: FGCoefficient.cpp FGCoefficient.h FGConfigFile.h \
 FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGDefs.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
 
-FGControls.o: FGControls.cpp FGControls.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGControls.cpp
+FGControls.bak.o: FGControls.bak.cpp FGControls.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGControls.bak.cpp
 
 FGEngine.o: FGEngine.cpp FGEngine.h FGState.h FGDefs.h \
  FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h \
@@ -322,9 +322,6 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h \
 
 x15trim.o:x15trim.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
-
-JSBSim.o:JSBSim.cpp
-	$(CC) $(INCLUDES) $(CCOPTS) -c JSBSim.cpp
 
 x15trim:$(JSBSim_objects) x15trim.o libFCSComponents.a
 	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) x15trim.o -ox15trim -lm -lFCSComponents

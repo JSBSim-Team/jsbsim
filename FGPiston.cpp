@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.14 2001/01/24 14:02:53 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.15 2001/01/29 02:00:19 jsb Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,27 +89,19 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
 
 float FGPiston::Calculate(float PowerRequired)
 {
-  float v,h,pa;
+  float h,EngineMaxPower;
 
   ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
-  Throttle /= 100;
 
-  v = Translation->GetVt();
   h = Position->Geth();
 
-  if (v < 10)
-    v = 10;
-  if (h < 0)
-    h = 0;
+  if (h < 0) h = 0;
 
-  pa = (1 +AltitudeSlope*h)*BrakeHorsePower;
-  PowerAvailable = Throttle*pa*HPTOFTLBSSEC - PowerRequired;
-cout << "Velocity: " << v << endl;  
-cout << "Throttle: " << FCS->GetThrottlePos(EngineNumber) << endl;
-cout << "PA:       " << pa << endl;
-cout << "Power Available: " << PowerAvailable << " ft-lb/s (" << Throttle*pa << " HP)" << endl;
+  EngineMaxPower = (1 + AltitudeSlope*h)*BrakeHorsePower;
+  PowerAvailable = Throttle*EngineMaxPower*HPTOFTLBSSEC - PowerRequired;
+  
   return PowerAvailable;
 }
 

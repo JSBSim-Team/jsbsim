@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.27 2001/01/24 14:02:54 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.28 2001/01/29 02:00:19 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,8 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;
+  Forces  = new FGColumnVector(3);
+  Moments = new FGColumnVector(3);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,29 +81,29 @@ FGPropulsion::~FGPropulsion(void)
 {
   for (unsigned int i=0; i<Engines.size(); i++) delete Engines[i];
   Engines.clear();
+  if (Forces) delete Forces;
+  if (Moments) delete Moments;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGPropulsion::Run(void) {
-  float tot_thrust;
-  float tot_moment;
   float PowerAvailable;
-  static float tim;
 
   dt = State->Getdt();
 
-  tot_thrust = tot_moment = 0.0;
+  Forces->InitMatrix();
+  Moments->InitMatrix();
+
   if (!FGModel::Run()) {
     for (unsigned int i=0; i<numEngines; i++) {
-      Thrusters[i]->SetdeltaT(dt);
-tim += dt;
-cout << "--------------------------- Time: " << tim << endl;
+      Thrusters[i]->SetdeltaT(dt*rate);
       PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
       Thrusters[i]->Calculate(PowerAvailable);
-//      tot_thrust += Thrusters[i]->GetForce();  // sum body frame forces
-//      tot_moment += Thrusters[i]->GetMoment(); // sum body frame moments
+      *Forces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
+      *Moments += Thrusters[i]->GetMoments();     // sum body frame moments
     }
+
     return false;
   } else {
     return true;

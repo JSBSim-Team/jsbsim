@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.17 2001/01/22 23:34:32 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.18 2001/01/29 02:00:20 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.17 2001/01/22 23:34:32 jsb Exp $
+    @version $Id: FGPropulsion.h,v 1.18 2001/01/29 02:00:20 jsb Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -114,14 +114,17 @@ public:
 
       [Note: Should we be checking the Starved flag here?] */
   bool Run(void);
+
   /** Loads the propulsion system (engine[s], tank[s], thruster[s]).
       Characteristics of the propulsion system are read in from the config file.
       @param AC_cfg pointer to the config file instance that describes the
              aircraft being modeled.
       @return true if successfully loaded, otherwise false */
   bool LoadPropulsion(FGConfigFile* AC_cfg);
+
   /// Retrieves the number of engines defined for the aircraft.
   inline unsigned int GetNumEngines(void) {return Engines.size();}
+
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
       @return the address of the specific engine, or zero if no such engine is
@@ -129,6 +132,7 @@ public:
   inline FGEngine* GetEngine(unsigned int index) {
                       if (index <= Engines.size()-1) return Engines[index];
                       else                           return 0L;      }
+
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container
       @return the address of the specific tank, or zero if no such tank is
@@ -136,6 +140,7 @@ public:
   inline FGTank* GetTank(unsigned int index) {
                       if (index <= Tanks.size()-1) return Tanks[index];
                       else                         return 0L;        }
+
   /** Retrieves a thruster object pointer from the list of thrusters.
       @param index the thruster index within the vector container
       @return the address of the specific thruster, or zero if no such thruster is
@@ -146,8 +151,12 @@ public:
 
   /** Returns the number of fuel tanks currently actively supplying fuel */
   inline int GetnumSelectedFuelTanks(void) {return numSelectedFuelTanks;}
+
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
   inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
+
+  inline FGColumnVector& GetForces(void)  {return *Forces; }
+  inline FGColumnVector& GetMoments(void) {return *Moments;}
 
 private:
   vector <FGEngine*>   Engines;
@@ -161,6 +170,8 @@ private:
   unsigned int numTanks;
   unsigned int numThrusters;
   float dt;
+  FGColumnVector *Forces;
+  FGColumnVector *Moments;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.11 2001/01/24 14:02:53 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.12 2001/01/29 02:00:19 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,18 +133,16 @@ float FGPropeller::Calculate(float PowerAvailable)
   } else {                    // Variable pitch prop
     C_Thrust = cThrust->GetValue(J, Pitch);
   }
-cout << "Thrust Coeff: " << C_Thrust << endl;
 
   Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
-cout << "Thrust: " << Thrust << endl;
+  vFn(1) = Thrust;
   omega = RPS*2.0*M_PI;
 
   if (omega <= 500) omega = 1.0;
 
   Torque = PowerAvailable / omega;
-cout << "Torque: " << Torque << endl;
   RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
-cout << "RPM: " << RPM << endl;
+
   return Thrust; // return thrust in pounds
 }
 
@@ -154,22 +152,19 @@ float FGPropeller::GetPowerRequired(void)
 {
   if (RPM <= 0.10) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
 
-  float J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPM / 60.0);
-  float rho = fdmex->GetAtmosphere()->GetDensity();
-  float cPReq, RPS;
+  float cPReq, RPS = RPM / 60.0;
 
-  RPS = RPM / 60.0;
+  float J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPS);
+  float rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
     cPReq = cPower->GetValue(J);
   } else {                    // Variable pitch prop
     cPReq = cPower->GetValue(J, Pitch);
   }
-cout << "Power Coeff: " << cPReq << endl;
 
   PowerRequired = cPReq*RPS*RPS*RPS*Diameter*Diameter*Diameter*Diameter
                                                        *Diameter*rho;
-cout << "PowerRequired: " << PowerRequired << endl;
   return PowerRequired;
 }
 

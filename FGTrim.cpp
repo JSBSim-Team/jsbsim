@@ -52,7 +52,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.13 2001/01/28 13:57:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.14 2001/01/29 02:00:20 jsb Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,8 +173,7 @@ void FGTrim::ReportState(void) {
   cout << out;
   sprintf(out, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
                     fdmex->GetAuxiliary()->GetVcalibratedKTS(),
-                    fdmex->GetState()->GetParameter(FG_MACH),
-                    fdmex->GetPosition()->Geth() );
+                    fdmex->GetState()->GetParameter(FG_MACH));
   cout << out;
   sprintf(out, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
                     fdmex->GetPosition()->Geth(),

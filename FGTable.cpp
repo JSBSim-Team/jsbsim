@@ -101,8 +101,8 @@ float FGTable::GetValue(float key)
   r = r < 2 ? 2 : (r > nRows ? nRows : r);
 
   // make sure denominator below does not go to zero.
-  Span = Data[r][0] - Data[r-1][0];
 
+  Span = Data[r][0] - Data[r-1][0];
   if (Span != 0.0) {
     Factor = (key - Data[r-1][0]) / Span;
     if (Factor > 1.0) Factor = 1.0;
@@ -110,7 +110,7 @@ float FGTable::GetValue(float key)
     Factor = 1.0;
   }
 
-  Value = Factor*Span + Data[r-1][1];
+  Value = Factor*(Data[r][1] - Data[r-1][1]) + Data[r-1][1];
 
   return Value;
 }
@@ -175,7 +175,6 @@ void FGTable::Print(void)
 
   cout.setf(ios::fixed); // set up output stream
   cout.precision(4);
-//  cout.width(9);
 
   for (int r=startRow; r<=nRows; r++) {
     cout << "	";

@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.56 2001/01/22 23:34:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.57 2001/01/29 02:00:19 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -439,10 +439,8 @@ void FGAircraft::FMMass(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMProp(void) {
-//  for (unsigned int i=0;i<numEngines;i++) {
-    // Changes required here for new engine placement parameters (i.e. location and direction)
-//    vForces(eX) += Engine[i]->Calculate();
-//  }
+    vForces += Propulsion->GetForces();
+    vMoments += Propulsion->GetMoments();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

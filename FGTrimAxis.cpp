@@ -40,8 +40,9 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
+#include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.13 2001/01/28 13:58:23 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.14 2001/01/29 02:00:20 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -363,9 +364,9 @@ void FGTrimAxis::Run(void) {
 
 void FGTrimAxis::setThrottlesPct(void) {
   float tMin,tMax;
-  for(unsigned i=0;i<fdmex->GetAircraft()->GetNumEngines();i++) {
-      tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
-      tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
+  for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++) {
+      tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
+      tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
       //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
       fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
   }

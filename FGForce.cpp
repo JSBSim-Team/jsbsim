@@ -47,19 +47,19 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.5 2000/11/22 23:49:01 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.6 2001/01/29 02:00:19 jsb Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 FGForce::FGForce(FGFDMExec *FDMExec) :
     vFn(3),
     vMn(3),
+    fdmex(FDMExec),
     vFb(3),
     vM(3),
     vXYZn(3),
     vDXYZ(3),
     mT(3,3),
     vSense(3),
-    fdmex(FDMExec),
     ttype(tNone)
 {
   mT(1,1)=1; //identity matrix
