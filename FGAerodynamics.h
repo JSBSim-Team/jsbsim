@@ -64,18 +64,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.36 2003/06/03 09:53:40 ehofman Exp $"
-
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.37 2003/10/13 11:55:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -86,11 +81,8 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.36 2003/06/03 09:53:40 ehofman Exp $
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
+    @author Tony Peden
+    @version $Id: FGAerodynamics.h,v 1.37 2003/10/13 11:55:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +94,7 @@ class FGAerodynamics : public FGModel {
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGAerodynamics(FGFDMExec*);
+  FGAerodynamics(FGFDMExec* Executive);
   /// Destructor
   ~FGAerodynamics();
 
@@ -110,18 +102,31 @@ public:
       @return false if no error */
   bool Run(void);
 
-  /** Loads the Aerodynamics model
+  /** Loads the Aerodynamics model.
+      The Load function for this class expects the configuration file to
+      have found the AERODYNAMICS keyword in the configution file and to
+      have set that line to the current line.
+      @param AC_cfg pointer to the current configuration file.
       @return true if successful */
   bool Load(FGConfigFile* AC_cfg);
 
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
   FGColumnVector3& GetForces(void) {return vForces;}
+
+  /** Gets the aerodynamic force for an axis.
+      @param n Axis index. This could be 0, 1, or 2, or one of the 
+               axis enums: eX, eY, eZ.
+      @return the force acting on an axis */
   double GetForces(int n) const {return vForces(n);}
 
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
   FGColumnVector3& GetMoments(void) {return vMoments;}
+
+  /** Gets the aerodynamic moment for an axis.
+      @return the moment about a single axis (as described also in the
+              similar call to GetForces(int n).*/
   double GetMoments(int n) const {return vMoments(n);}
 
   FGColumnVector3& GetvLastFs(void) { return vLastFs; }
@@ -145,7 +150,7 @@ public:
   inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
 
-    /** Gets the strings for the current set of coefficients.
+  /** Gets the strings for the current set of coefficients.
       @return a string containing the descriptive names for all coefficients */
   string GetCoefficientStrings(void);
 
