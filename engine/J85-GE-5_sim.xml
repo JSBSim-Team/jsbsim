@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 
-<!--
-  J85-GE-5 afterburning turbojet engine
-  for the JSBSim SimTurbine model
--->
+<!-- J85-GE-5 afterburning turbojet engine model
+     for the SimTurbine turbine model -->
 
 <FG_SIMTURBINE NAME="J85">
   <!--
@@ -15,8 +13,10 @@
      IDLEN2        idle percent rpm of inner spool
      MAXN1         N1 at 100% throttle
      MAXN2         N2 at 100% throttle
-     AUGMENTED     =1 if augmentation installed
-     INJECTED      =1 if water injection installed  
+     AUGMENTED     = 1 if augmentation installed, else = 0
+     AUGMETHOD     = 0 if using property /propulsion/augmentation_cmd
+                   = 1 if using last 1% of throttle movement
+     INJECTED      = 1 if water injection installed
 
      TABLE(0)      idle thrust vs. altitude and mach
      TABLE(1)      maximum un-augmented thrust vs. altitude and mach
@@ -26,13 +26,14 @@
 
   MAXMILTHRUST 2050
   BYPASSRATIO  0
-  TSFC         1.1219
-  ATSFC        2.5172
+  TSFC         0.85
+  ATSFC        1.70
   IDLEN1       0.0
-  IDLEN2       49.2
-  MAXN1        0.0
+  IDLEN2       53.0
+  MAXN1        100.0
   MAXN2        100.0
   AUGMENTED    1
+  AUGMETHOD    0
   INJECTED     0
 
   <TABLE NAME="IdleThrust" TYPE="TABLE">
