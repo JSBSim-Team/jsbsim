@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.105 2002/02/19 00:27:48 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.106 2002/02/23 12:25:21 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -244,9 +244,15 @@ FGJSBsim::update( int multiloop ) {
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
+    
 
+    
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
+        SG_LOG(SG_FLIGHT, SG_INFO,
+          "Ready to trim, terrain altitude is: " 
+            << scenery.get_cur_elev() * SG_METER_TO_FEET );
+        fgic->SetTerrainAltitudeFtIC( scenery.get_cur_elev() * SG_METER_TO_FEET );
         do_trim();
       } else {
         fdmex->RunIC(fgic);  //apply any changes made through the set_ functions
@@ -552,6 +558,8 @@ void FGJSBsim::set_Altitude(double alt) {
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
     _set_Runway_altitude( scenery.get_cur_elev() * SG_METER_TO_FEET  );
     fgic->SetTerrainAltitudeFtIC( scenery.get_cur_elev() * SG_METER_TO_FEET  );
+    SG_LOG(SG_FLIGHT, SG_INFO,
+          "Terrain altitude: " << scenery.get_cur_elev() * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
     fgic->SetAltitudeFtIC(alt);
     needTrim=true;
@@ -660,8 +668,8 @@ void FGJSBsim::set_Density(double rho) {
 void FGJSBsim::set_Velocities_Local_Airmass (double wnorth, 
                          double weast, 
                          double wdown ) {
-    SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local_Airmass: " 
-       << wnorth << ", " << weast << ", " << wdown );
+    //SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local_Airmass: " 
+    //   << wnorth << ", " << weast << ", " << wdown );
     
     _set_Velocities_Local_Airmass( wnorth, weast, wdown );
     fgic->SetWindNEDFpsIC( wnorth, weast, wdown );
