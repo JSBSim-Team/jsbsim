@@ -402,7 +402,6 @@ void FGAircraft::FMProp(void) {
 
     vForces(eX) += Engine[i]->CalcThrust();
   }
-  
 }
 
 /******************************************************************************/

@@ -90,8 +90,7 @@ class FGCoefficient
   string name;
   string method;
   float StaticValue;
-  float *Table2D;
-  float **Table3D;
+  float **Table;
   eParam LookupR, LookupC;
   MultVec multipliers;
   int rows, columns;
@@ -110,7 +109,6 @@ class FGCoefficient
   FGOutput*       Output;
   
   bool DeAllocate(void);
-  bool Allocate(int);
   bool Allocate(int, int);
 
 public:
