@@ -1,22 +1,22 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGPropertyManager.cpp
  Author:       Tony Peden
                Based on work originally by David Megginson
  Date:         2/2002
- 
+
  ------------- Copyright (C) 2002 -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
@@ -28,7 +28,6 @@
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include <simgear/props/props.hxx>
 #include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,19 +51,19 @@ namespace JSBSim {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
-  
+
   /* do this two pass to avoid problems with characters getting skipped
      because the index changed */
   unsigned i;
   for(i=0;i<name.length();i++) {
     if( lowercase && isupper(name[i]) )
       name[i]=tolower(name[i]);
-    else if( isspace(name[i]) ) 
+    else if( isspace(name[i]) )
       name[i]='-';
   }
   for(i=0;i<name.length();i++) {
     if( name[i] == '/' )
-      name.erase(i,1);  
+      name.erase(i,1);
   }
 
   return name;
@@ -72,23 +71,23 @@ string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager*  
+FGPropertyManager*
 FGPropertyManager::GetNode (const string &path, bool create)
 {
   SGPropertyNode* node=this->getNode(path.c_str(), create);
-  if(node == 0) 
-    cout << "FGPropertyManager::GetNode() No node found for " 
+  if(node == 0)
+    cout << "FGPropertyManager::GetNode() No node found for "
          << path << endl;
   return (FGPropertyManager*)node;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager* 
+FGPropertyManager*
 FGPropertyManager::GetNode (const string &relpath, int index, bool create)
 {
     return (FGPropertyManager*)getNode(relpath.c_str(),index,create);
-}    
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -102,7 +101,7 @@ bool FGPropertyManager::HasNode (const string &path)
 
 string FGPropertyManager::GetName( void ) {
   return string( getName() );
-}  
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -113,23 +112,23 @@ string FGPropertyManager::GetFullyQualifiedName(void) {
     bool atroot=false;
     while( !atroot ) {
      stack.push_back( tmpn->getDisplayName(true) );
-     if( !tmpn->getParent() ) 
+     if( !tmpn->getParent() )
       atroot=true;
-     else 
+     else
       tmpn=tmpn->getParent();
     }
-    
+
     string fqname="";
     for(unsigned i=stack.size()-1;i>0;i--) {
       fqname+= stack[i];
       fqname+= "/";
     }
     fqname+= stack[0];
-    return fqname;  
+    return fqname;
 
-}    
-    
-    
+}
+
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGPropertyManager::GetBool (const string &name, bool defaultValue)
@@ -221,8 +220,8 @@ void FGPropertyManager::SetArchivable (const string &name, bool state )
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
     cout <<
-	   "Attempt to set archive flag for non-existant property "
-	   << name << endl;
+           "Attempt to set archive flag for non-existant property "
+           << name << endl;
   else
     node->setAttribute(SGPropertyNode::ARCHIVE, state);
 }
@@ -234,8 +233,8 @@ void FGPropertyManager::SetReadable (const string &name, bool state )
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
     cout <<
-	   "Attempt to set read flag for non-existant property "
-	   << name << endl;
+           "Attempt to set read flag for non-existant property "
+           << name << endl;
   else
     node->setAttribute(SGPropertyNode::READ, state);
 }
@@ -247,8 +246,8 @@ void FGPropertyManager::SetWritable (const string &name, bool state )
   SGPropertyNode * node = getNode(name.c_str());
   if (node == 0)
     cout <<
-	   "Attempt to set write flag for non-existant property "
-	   << name << endl;
+           "Attempt to set write flag for non-existant property "
+           << name << endl;
   else
     node->setAttribute(SGPropertyNode::WRITE, state);
 }
@@ -266,53 +265,53 @@ void FGPropertyManager::Untie (const string &name)
 void FGPropertyManager::Tie (const string &name, bool *pointer, bool useDefault)
 {
   if (!tie(name.c_str(), SGRawValuePointer<bool>(pointer),
-				 useDefault))
+                                 useDefault))
     cout <<
-	   "Failed to tie property " << name << " to a pointer" << endl;
+           "Failed to tie property " << name << " to a pointer" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyManager::Tie (const string &name, int *pointer, 
+void FGPropertyManager::Tie (const string &name, int *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<int>(pointer),
-				 useDefault))
+                                 useDefault))
     cout <<
-	   "Failed to tie property " << name << " to a pointer" << endl;
+           "Failed to tie property " << name << " to a pointer" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyManager::Tie (const string &name, long *pointer, 
+void FGPropertyManager::Tie (const string &name, long *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<long>(pointer),
-				 useDefault))
+                                 useDefault))
     cout <<
-	   "Failed to tie property " << name << " to a pointer" << endl;
+           "Failed to tie property " << name << " to a pointer" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyManager::Tie (const string &name, float *pointer, 
+void FGPropertyManager::Tie (const string &name, float *pointer,
                                           bool useDefault )
 {
   if (!tie(name.c_str(), SGRawValuePointer<float>(pointer),
-				 useDefault))
+                                 useDefault))
     cout <<
-	   "Failed to tie property " << name << " to a pointer" << endl;
+           "Failed to tie property " << name << " to a pointer" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropertyManager::Tie (const string &name, double *pointer, 
+void FGPropertyManager::Tie (const string &name, double *pointer,
                                            bool useDefault)
 {
   if (!tie(name.c_str(), SGRawValuePointer<double>(pointer),
-				 useDefault))
+                                 useDefault))
     cout <<
-	   "Failed to tie property " << name << " to a pointer" << endl;
+           "Failed to tie property " << name << " to a pointer" << endl;
 }
 
 } // namespace JSBSim
