@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.61 2004/05/26 12:29:54 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.62 2004/05/30 11:46:57 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.61 2004/05/26 12:29:54 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.62 2004/05/30 11:46:57 frohlich Exp $
     @see
     FGEngine
     FGTank
@@ -188,7 +188,6 @@ private:
   unsigned int numEngines;
   unsigned int numTanks;
   int ActiveEngine;
-  double dt;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   FGColumnVector3 vTankXYZ;

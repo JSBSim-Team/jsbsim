@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.105 2004/05/27 11:52:47 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.106 2004/05/30 11:46:56 frohlich Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -70,7 +70,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines;
   numOxiTanks = numFuelTanks = 0;
-  dt = 0.0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
 
@@ -111,9 +110,7 @@ bool FGPropulsion::Run(void)
 
 bool FGPropulsion::GetSteadyState(void)
 {
-  double PowerAvailable;
   double currentThrust = 0, lastThrust=-1;
-  dt = State->Getdt();
   int steady_count,j=0;
   bool steady=false;
 
@@ -152,9 +149,7 @@ bool FGPropulsion::GetSteadyState(void)
 
 bool FGPropulsion::ICEngineStart(void)
 {
-  double PowerAvailable;
   int j;
-  dt = State->Getdt();
 
   vForces.InitMatrix();
   vMoments.InitMatrix();
@@ -183,7 +178,6 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
   string enginePath = FDMExec->GetEnginePath();
   string aircraftPath = FDMExec->GetAircraftPath();
   double xLoc, yLoc, zLoc, Pitch, Yaw;
-  double P_Factor = 0, Sense = 0.0;
   int Feed;
   bool ThrottleAdded = false;
   FGConfigFile* Cfg_ptr = 0;
@@ -319,7 +313,6 @@ string FGPropulsion::GetPropulsionStrings(void)
 {
   string PropulsionStrings = "";
   bool firstime = true;
-  char buffer[5];
 
   for (unsigned int i=0;i<Engines.size();i++) {
     if (firstime)  firstime = false;
