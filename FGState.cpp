@@ -459,7 +459,7 @@ FGColumnVector FGState::CalcEuler(void) {
   if (mTl2b(3,3) == 0)    vEuler(ePhi) = 0.0;
   else                    vEuler(ePhi) = atan2(mTl2b(2,3), mTl2b(3,3));
 
-  vEuler(eTht) = asin(-mTb2l(1,3));
+  vEuler(eTht) = asin(-mTl2b(1,3));
 
   if (mTl2b(1,1) == 0.0)  vEuler(ePsi) = 0.0;
   else                    vEuler(ePsi) = atan2(mTl2b(1,2), mTl2b(1,1));
