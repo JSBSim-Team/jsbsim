@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.12 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.13 2004/05/21 16:01:09 frohlich Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,9 @@ bool FGPropagate::Run(void)
   // The 'stepsize'
   double dt = State->Getdt()*rate;
 
+  // Get earth rotation angular velocity
+  const FGColumnVector3 omega( 0.0, 0.0, Inertial->omega() );
+
   // Get current forces and moments.
   const FGColumnVector3& vForces = Aircraft->GetForces();
   const FGColumnVector3& vMoments = Aircraft->GetMoments();
@@ -184,30 +187,48 @@ bool FGPropagate::Run(void)
   // From the body frame to the local horizontal
   const FGMatrix33& Tb2l = GetTb2l();
   // From the earth centered frame to the local horizontal frame
-//   const FGMatrix33& Tec2l = vLocation.GetTec2l();
+  const FGMatrix33& Tec2l = vLocation.GetTec2l();
   // From the local horizontal frame to the earth centered frame
   const FGMatrix33& Tl2ec = vLocation.GetTl2ec();
 
-  // First compute the time derivatives of the vehicles' state values.
-
-  // Compute the body rotational accelerations based on the current body moments
-  vPQRdot = Jinv*(vMoments - vPQR*(J*vPQR));
-
-  // Compute the body frame accelerations based on the current body forces
-  vUVWdot = vUVW*vPQR + vForces/mass;
-
-
+  // Inertial angular velocity measured in the body frame.
+  const FGColumnVector3 pqri = vPQR + Tl2b*(Tec2l*omega);
 
   // Compute the velocity of the vehicle with respect to the earth centered
   // frame expressed in the horizontal local frame.
   vVel = Tb2l * vUVW;
+
+
+
+  // First compute the time derivatives of the vehicles' state values.
+
+  // Compute the body rotational accelerations based on the current body moments
+  vPQRdot = Jinv*(vMoments - pqri*(J*pqri));
+
+  // Compute the body frame accelerations based on the current body forces
+  vUVWdot = vUVW*vPQR + vForces/mass;
+
+  // Centrifugal acceleration.
+  FGColumnVector3 ecVel = Tl2ec*vVel;
+  FGColumnVector3 ace = 2.0*omega*ecVel;
+  vUVWdot -= Tl2b*(Tec2l*ace);
+  
+  // Coriolis acceleration.
+  FGColumnVector3 aeec = omega*(omega*vLocation);
+  vUVWdot -= Tl2b*(Tec2l*aeec);
+
+  // Gravitation accel
+  double r = GetRadius();
+  FGColumnVector3 gAccel( 0.0, 0.0, Inertial->GetGAccel(r) );
+  vUVWdot += Tl2b*gAccel;
+
+ 
 
   // Compute the velocity of the vehicle with respect to the earth centered
   // frame expressed in the earth centered frame.
   FGColumnVector3 vLocationDot = Tl2ec * vVel;
 
   // Compute the angular rate of the local horizontal frame.
-  double r = GetRadius();
   if (r == 0.0) {
     PutMessage( "Fatal error in FGTimestep: "
                 "You traversed exactly the middle of the earth, "
@@ -222,6 +243,8 @@ bool FGPropagate::Run(void)
   // Compute the quaternion orientation derivative on the current
   // body rotational rates
   FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR - Tl2b*omegaLocal );
+
+
 
   // Now do propagation.
   // This is for now done with a simple explicit euler scheme.

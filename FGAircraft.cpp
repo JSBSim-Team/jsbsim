@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.134 2004/05/21 12:52:53 frohlich Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.135 2004/05/21 16:01:09 frohlich Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,6 @@ bool FGAircraft::Run(void)
   if (!FGModel::Run()) {                 // if false then execute this Run()
     vForces.InitMatrix();
     vForces += Aerodynamics->GetForces();
-    vForces += Inertial->GetForces();
     vForces += Propulsion->GetForces();
     vForces += GroundReactions->GetForces();
 
