@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.23 2001/02/02 01:16:56 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.24 2001/02/04 12:30:50 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];
@@ -171,12 +171,13 @@ FGCoefficient::~FGCoefficient(void) {
 float FGCoefficient::Value(float rVal, float cVal)
 {
   float Value;
+  unsigned int midx;
 
-  SD = Table->GetValue(rVal, cVal);
+  SD = Value = Table->GetValue(rVal, cVal);
 
-  for (unsigned int midx=0; midx < multipliers.size(); midx++)
+  for (midx=0; midx < multipliers.size(); midx++) {
       Value *= State->GetParameter(multipliers[midx]);
-
+  }
   return Value;
 }
 
@@ -186,11 +187,11 @@ float FGCoefficient::Value(float Val)
 {
   float Value;
 
-  SD = Table->GetValue(Val);
-
-  for (unsigned int midx=0; midx < multipliers.size(); midx++)
+  SD = Value = Table->GetValue(Val);
+  
+  for (unsigned int midx=0; midx < multipliers.size(); midx++) 
       Value *= State->GetParameter(multipliers[midx]);
-
+  
   return Value;
 }
 
@@ -212,6 +213,7 @@ float FGCoefficient::Value(void)
 
 float FGCoefficient::TotalValue()
 {
+  
   switch(type) {
   case 0:
     return -1;
