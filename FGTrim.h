@@ -68,9 +68,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.20 2001/11/24 14:12:38 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.21 2001/11/30 12:46:54 apeden Exp $"
 
-typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
+typedef enum { tLongitudinal, tFull, tGround, tPullup, 
+               tCustom, tNone, tTurn 
+             } TrimMode;
 
 #ifdef _MSC_VER
 #define snprintf _snprintf
@@ -133,7 +135,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.20 2001/11/24 14:12:38 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.21 2001/11/30 12:46:54 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +150,7 @@ private:
   int current_axis;
   int N, Nsub;
   TrimMode mode;
-  int Debug;
+  int DebugLevel, Debug;
   double Tolerance, A_Tolerance;
   double wdot,udot,qdot;
   double dth;
@@ -164,6 +166,8 @@ private:
   int axis_count;
   int solutionDomain;
   double xlo,xhi,alo,ahi;
+  double targetNlf;
+  int debug_axis;
 
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
@@ -180,6 +184,11 @@ private:
   bool findInterval(void);
 
   bool checkLimits(void);
+  
+  void setupPullup(void);
+  void setupTurn(void);
+  
+  void setDebug(void);
 
 public:
   /** Initializes the trimming class
@@ -270,10 +279,21 @@ public:
     A_Tolerance = tt / 10;
   }
   
-  //Debug level 1 shows results of each top-level iteration
-  //Debug level 2 shows level 1 & results of each per-axis iteration
-  inline void SetDebug(int level) { Debug = level; }
-  inline void ClearDebug(void) { Debug = 0; }
+  /** 
+    Debug level 1 shows results of each top-level iteration
+    Debug level 2 shows level 1 & results of each per-axis iteration
+  */  
+  inline void SetDebug(int level) { DebugLevel = level; }
+  inline void ClearDebug(void) { DebugLevel = 0; }
+  
+  /**
+    Output debug data for one of the axes
+    The State enum is defined in FGTrimAxis.h
+  */  
+  inline void DebugState(State state) { debug_axis=state; }
+  
+  inline void SetTargetNlf(float nlf) { targetNlf=nlf; }
+  inline double GetTargetNlf(void) { return targetNlf; }
 
 };
 

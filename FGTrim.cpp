@@ -53,11 +53,12 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
 #include "FGAerodynamics.h"
+#include "FGColumnVector3.h"
 #if _MSC_VER
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.29 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.30 2001/11/30 12:46:54 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +71,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   Tolerance=1E-3;
   A_Tolerance = Tolerance / 10;
   
-  Debug=0;
+  Debug=0;DebugLevel=0;
   fdmex=FDMExec;
   fgic=FGIC;
   total_its=0;
@@ -79,6 +80,8 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   axis_count=0;
   mode=tt;
   xlo=xhi=alo=ahi;
+  targetNlf=1.0;
+  debug_axis=tAll;
   switch(mode) {
   case tFull:
     cout << "  Full Trim" << endl;
@@ -102,6 +105,24 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta ));
     //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi ));
     break;
+  case tPullup:
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+    break;
+  case tTurn:
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tNlf,tAlpha ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+    break;
+  
   }
   //cout << "TrimAxes.size(): " << TrimAxes.size() << endl;
   sub_iterations=new double[TrimAxes.size()];
@@ -281,9 +302,24 @@ bool FGTrim::DoTrim(void) {
     successful[current_axis]=0;
     solution[current_axis]=false;
   }
+  
+  
+  if(mode == tPullup ) {
+    cout << "Setting pitch rate and nlf... " << endl;
+    setupPullup();
+    cout << "pitch rate done ... " << endl;
+    TrimAxes[0]->SetStateTarget(targetNlf);
+    cout << "nlf done" << endl;
+  } else if (mode == tTurn) {
+    setupTurn();
+    TrimAxes[0]->SetStateTarget(targetNlf);
+  }  
+  
   do {
     axis_count=0;
     for(current_axis=0;current_axis<TrimAxes.size();current_axis++) {
+      setDebug();
+      
       Nsub=0;
       if(!solution[current_axis]) {
         if(checkLimits()) { 
@@ -550,5 +586,50 @@ bool FGTrim::checkLimits(void) {
   return solutionExists;
 }
 
+void FGTrim::setupPullup() {
+  float g,q,cgamma;
+  FGColumnVector3 vPQR;
+  g=fdmex->GetInertial()->gravity();
+  cgamma=cos(fgic->GetFlightPathAngleRadIC());
+  cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
+       << fgic->GetVtrueFpsIC() << endl;
+  q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
+  cout << targetNlf << ", " << q << endl;
+  vPQR.InitMatrix();
+  vPQR(2)=q;
+  cout << vPQR << endl;
+  fdmex->GetRotation()->SetPQR(vPQR);
+  cout << "setPitchRateInPullup() complete" << endl;
+  
+}  
+  
+void FGTrim::setupTurn(void){
+  FGColumnVector3 vPQR;
+  float g,q,r,phi, psidot;
+  phi = fgic->GetRollAngleRadIC();
+  if( fabs(phi) > 0.01 && fabs(phi) < 1.56 ) {
+    targetNlf = 1 / cos(phi);
+    g = fdmex->GetInertial()->gravity(); 
+    psidot = g*tan(phi) / fgic->GetVtrueFpsIC();
+    q = psidot*sin(phi);
+    r = psidot*cos(phi);
+    vPQR(1)=0;vPQR(2)=q;vPQR(3)=r;
+    fdmex->GetRotation()->SetPQR(vPQR);
+    cout << targetNlf << ", " << vPQR*57.29577 << endl;
+  }  
+}  
+
+
+void FGTrim::setDebug(void) {
+  if(debug_axis == tAll ||
+      TrimAxes[current_axis]->GetStateType() == debug_axis ) {
+    Debug=DebugLevel; 
+    return;
+  } else {
+    Debug=0;
+    return;
+  }
+}      
+    
 //YOU WERE WARNED, BUT YOU DID IT ANYWAY.
 
