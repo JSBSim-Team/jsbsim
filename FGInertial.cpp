@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.37 2004/04/24 17:12:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.38 2004/05/06 03:33:45 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   RadiusReference = 20925650.00;
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
-  vRadius.InitMatrix();
   vCoriolis.InitMatrix();
   vCentrifugal.InitMatrix();
   vGravity.InitMatrix();
@@ -84,35 +83,25 @@ bool FGInertial::Run(void)
 {
   if (!FGModel::Run()) {
 
+    double Vn = Propagate->GetVn();
+    double Ve = Propagate->GetVe();
+    double Vd = Propagate->GetVd();
+    double lat = Propagate->GetLocation(eLat);
+    double R = Propagate->GetLocation(eRad);
+
     gAccel = GM / (Propagate->GetRadius()*Propagate->GetRadius());
 
     vGravity(eDown) = gAccel;
 
-    // The following equation for vOmegaLocal terms shows the angular velocity
-    // calculation _for_the_local_frame_ given the earth's rotation (first set)
-    // at the current latitude, and also the component due to the aircraft
-    // motion over the curved surface of the earth (second set).
+    vCoriolis(eNorth) = (Vn*Vd - Ve*Ve*tan(lat)) / R;
+    vCoriolis(eEast)  = (Ve*Vd + Vn*Ve*tan(lat)) / R;
+    vCoriolis(eDown)  = 0.00;
 
-    vOmegaLocal(eX) = omega() * cos(Propagate->GetLocation(eLat));
-    vOmegaLocal(eY) = 0.0;
-    vOmegaLocal(eZ) = omega() * -sin(Propagate->GetLocation(eLat));
+    vCentrifugal(eNorth) = 0.0;
+    vCentrifugal(eEast) = 0.0;
+    vCentrifugal(eDown) = -(Vn*Vn + Ve*Ve) / R;
 
-    vOmegaLocal(eX) +=  Propagate->GetVe() / Propagate->GetRadius();
-    vOmegaLocal(eY) += -Propagate->GetVn() / Propagate->GetRadius();
-    vOmegaLocal(eZ) +=  0.00;
-
-    // Coriolis acceleration is normally written: -2w*dr/dt, but due to the axis
-    // conventions used here the sign is reversed: 2w*dr/dt. The same is true for
-    // Centrifugal acceleration.
-
-    vCoriolis(eEast) = 2.0*omega() * (Propagate->GetVd()*cos(Propagate->GetLocation(eLat)) +
-                                      Propagate->GetVn()*sin(Propagate->GetLocation(eLat)));
-
-    vRadius(eDown) = Propagate->GetLocation(eRad);
-    vCentrifugal(eDown) = -vOmegaLocal.Magnitude() * vOmegaLocal.Magnitude() * vRadius(eDown);
-
-//    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
-    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * vGravity;
+    vForces = Propagate->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
 
     return false;
   } else {

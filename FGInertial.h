@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.34 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.35 2004/05/06 03:33:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,9 +98,7 @@ public:
   void unbind(void);
 
 private:
-  FGColumnVector3 vOmegaLocal;
   FGColumnVector3 vForces;
-  FGColumnVector3 vRadius;
   FGColumnVector3 vGravity;
   FGColumnVector3 vCoriolis;
   FGColumnVector3 vCentrifugal;
@@ -114,4 +112,3 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

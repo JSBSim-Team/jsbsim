@@ -3,6 +3,7 @@
   <METRICS>
 
     AC_WINGAREA 1.0
+    AC_WINGSPAN 1.0
     AC_IXX      10.0
     AC_IYY      10.0
     AC_IZZ      10.0
@@ -23,26 +24,26 @@
       <COEFFICIENT NAME="CD" TYPE="VALUE">
          Drag
          aero/qbar-psf | metrics/Sw-sqft
-         1.0
+         0.01
       </COEFFICIENT>
     </AXIS>
   </AERODYNAMICS>
 
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
-    RATE_IN_HZ       20
+  <OUTPUT NAME="JSBoutBall.csv" TYPE="CSV">
+    RATE_IN_HZ       4
     SIMULATION       ON
     ATMOSPHERE       OFF
     MASSPROPS        OFF
-    AEROSURFACES     ON
+    AEROSURFACES     OFF
     RATES            ON
     VELOCITIES       ON
     FORCES           ON
-    MOMENTS          ON
+    MOMENTS          OFF
     POSITION         ON
     COEFFICIENTS     OFF
-    GROUND_REACTIONS ON
-    FCS              ON
-    PROPULSION       ON
+    GROUND_REACTIONS OFF
+    FCS              OFF
+    PROPULSION       OFF
   </OUTPUT>
 
 </FDM_CONFIG>
