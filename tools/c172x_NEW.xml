@@ -5,7 +5,7 @@
         <AUTHOR>Tony Peden</AUTHOR>
         <FILECREATIONDATE>1999</FILECREATIONDATE>
         <DESCRIPTION>Models a 1997 Cessna 172R.</DESCRIPTION>
-        <VERSION>$Id: c172x_NEW.xml,v 1.1 2004/09/27 12:10:01 jberndt Exp $</VERSION>
+        <VERSION>$Id: c172x_NEW.xml,v 1.2 2004/10/05 17:03:20 jberndt Exp $</VERSION>
         <REFERENCE refID="None" author="n/a" title="n/a" date="n/a"/>
     </FILEHEADER>
     <METRICS>
@@ -16,11 +16,6 @@
         <HTAILARM UNIT="FT"> 15.7 </HTAILARM>
         <VTAILAREA UNIT="FT2"> 16.5 </VTAILAREA>
         <VTAILARM UNIT="FT"> 15.7 </VTAILARM>
-        <IXX UNIT="SLUG*FT2"> 948.0 </IXX>
-        <IYY UNIT="SLUG*FT2"> 1346.0 </IYY>
-        <IZZ UNIT="SLUG*FT2"> 1967.0 </IZZ>
-        <IXZ UNIT="SLUG*FT2"> 0.0 </IXZ>
-        <EMPTYWT UNIT="LBS"> 1500.0 </EMPTYWT>
         <LOCATION NAME="AERORP" UNIT="IN">
             <X> 43.2 </X>
             <Y> 0.0 </Y>
@@ -31,14 +26,6 @@
             <Y> 0.0 </Y>
             <Z> 36.5 </Z>
         </LOCATION>
-        <POINTMASS NAME="PILOT">
-            <WEIGHT UNIT="LBS">180.0</WEIGHT>
-            <LOCATION NAME="POINTMASS" UNIT="IN">
-                <X> 36.0 </X>
-                <Y> -14.0 </Y>
-                <Z> 24.0 </Z>
-            </LOCATION>
-        </POINTMASS>
         <LOCATION NAME="EYEPOINT" UNIT="IN">
             <X> 37.0 </X>
             <Y> 0.0 </Y>
@@ -50,6 +37,29 @@
             <Z> 38.5 </Z>
         </LOCATION>
     </METRICS>
+    <MASS_BALANCE>
+        <IXX UNIT="SLUG*FT2"> 948.0 </IXX>
+        <IYY UNIT="SLUG*FT2"> 1346.0 </IYY>
+        <IZZ UNIT="SLUG*FT2"> 1967.0 </IZZ>
+        <IXZ UNIT="SLUG*FT2"> 0.0 </IXZ>
+        <EMPTYWT UNIT="LBS"> 1500.0 </EMPTYWT>
+        <POINTMASS NAME="PILOT">
+            <WEIGHT UNIT="LBS">180.0</WEIGHT>
+            <LOCATION NAME="POINTMASS" UNIT="IN">
+                <X> 36.0 </X>
+                <Y> -14.0 </Y>
+                <Z> 24.0 </Z>
+            </LOCATION>
+        </POINTMASS>
+    </MASS_BALANCE>
+        <POINTMASS NAME="PILOT">
+            <WEIGHT UNIT="LBS">180.0</WEIGHT>
+            <LOCATION NAME="POINTMASS" UNIT="IN">
+                <X> 36.0 </X>
+                <Y> -14.0 </Y>
+                <Z> 24.0 </Z>
+            </LOCATION>
+        </POINTMASS>
     <GROUND_REACTIONS>
         <CONTACT TYPE="BOGEY" NAME="NOSE">
             <LOCATION UNIT="IN">
