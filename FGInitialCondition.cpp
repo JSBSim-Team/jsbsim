@@ -163,13 +163,13 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
 
   switch(lastSpeedSet) {
   case setvt:
-    SetVtrueKtsIC(vt);
+    SetVtrueKtsIC(vt*FPSTOKTS);
     break;
   case setvc:
-    SetVcalibratedKtsIC(vc);
+    SetVcalibratedKtsIC(vc*FPSTOKTS);
     break;
   case setve:
-    SetVequivalentKtsIC(ve);
+    SetVequivalentKtsIC(ve*FPSTOKTS);
     break;
   case setmach:
     SetMachIC(mach);
