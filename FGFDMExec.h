@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.26 2001/03/02 17:16:02 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.27 2001/03/02 17:19:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -112,7 +112,7 @@ CLASS DOCUMENTATION
     class on the simulator side.
 
     <h4>Scripting support provided in the Executive</h4>
-
+
     <p>There is simple scripting support provided in the FGFDMExec
     class. Commands are specified using the <u>Simple Scripting
     Directives for JSBSim</u> (SSDJ). The script file is in XML
@@ -129,45 +129,45 @@ CLASS DOCUMENTATION
     approach is specified via the time constant. Here is the format
     of the script file:</p>
 
-    <pre><strong>&amp;lt ?xml version=&quot;1.0&quot;?&gt;
-    < runscript name=&quot;C172-01A&quot;&gt;
+    <pre><strong>&lt;?xml version=&quot;1.0&quot;?&gt;
+    &lt;runscript name=&quot;C172-01A&quot;&gt;
 
-    <!--
+    &lt;!--
     This run is for testing C172 runs
     --&gt;
 
-    <use aircraft=&quot;c172&quot;&gt;
-    <use initialize=&quot;reset00&quot;&gt;
+    &lt;use aircraft=&quot;c172&quot;&gt;
+    &lt;use initialize=&quot;reset00&quot;&gt;
 
-    <run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
-      <when&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
-        <set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot; action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
-      </when&gt;
-      <when&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
-        <set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      </when&gt;
-      <when&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
-        <parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
-        <set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      </when&gt;
-    </run&gt;
+    &lt;run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
+      &lt;when&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
+        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot; action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
+      &lt;/when&gt;
+      &lt;when&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
+        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
+      &lt;/when&gt;
+      &lt;when&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
+        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
+        &lt;set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
+      &lt;/when&gt;
+    &lt;/run&gt;
 
-    </runscript&gt;</strong></pre>
+    &lt;/runscript&gt;</strong></pre>
 
     <p>The first line must always be present. The second line
     identifies this file as a script file, and gives a descriptive
     name to the script file. Comments are next, delineated by the
-    <!-- and --&gt; symbols. The aircraft and initialization
-    files to be used are specified in the &quot;use&quot; lines.
-    Next, comes the &quot;run&quot; section, where the conditions are
+    &lt;!-- and --&gt; symbols. The aircraft and initialization files
+    to be used are specified in the &quot;use&quot; lines. Next,
+    comes the &quot;run&quot; section, where the conditions are
     described in &quot;when&quot; clauses.</p>
-    @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.26 2001/03/02 17:16:02 jberndt Exp $
+    @author Jon S. Berndt
+    @version $Id: FGFDMExec.h,v 1.27 2001/03/02 17:19:23 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
