@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.40 2004/09/11 12:43:42 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.41 2004/09/12 17:11:28 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
