@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.33 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.34 2001/11/16 23:24:03 jberndt Exp $"
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 typedef enum { setwned, setwmd, setwhc } windset; 
@@ -125,7 +125,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.33 2001/11/14 23:53:27 jberndt Exp $
+   @version $Id: FGInitialCondition.h,v 1.34 2001/11/16 23:24:03 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,7 +248,7 @@ public:
   inline speedset GetSpeedSet(void) { return lastSpeedSet; }
   inline windset GetWindSet(void) { return lastWindSet; }
   
-  bool Load(string path, string acname, string fname);
+  bool Load(string acpath, string acname, string rstname);
 
 private:
   double vt,vc,ve,vg;

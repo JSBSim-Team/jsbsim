@@ -77,7 +77,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.59 2001/11/12 05:06:28 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.60 2001/11/16 23:24:03 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,7 +93,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.59 2001/11/12 05:06:28 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.60 2001/11/16 23:24:03 jberndt Exp $
     @see -
 */
 
@@ -133,25 +133,23 @@ int main(int argc, char** argv)
 
   FDMExec = new FGFDMExec();
 
-  if (scripted) {
+  if (scripted) { // form jsbsim <scriptfile>
     result = FDMExec->LoadScript(argv[1]);
     if (!result) {
       cerr << "Script file " << argv[1] << " was not successfully loaded" << endl;
       exit(-1);
     }
-  } else {
-    // result = FDMExec->LoadModel("aircraft", "engine", string(argv[1]));
-    FGInitialCondition IC(FDMExec);
-    result = IC.Load("aircraft","engine",string(argv[1]));
-
-    if (!result) {
-    	cerr << "Aircraft file " << argv[1] << " was not found" << endl;
-	    exit(-1);
-    }
-    if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2]))) {
+  } else {        // form jsbsim <acname> <resetfile>
+    if ( ! FDMExec->LoadModel("aircraft", "engine", string(argv[1]))) {
     	cerr << "JSBSim could not be started" << endl;
-	    exit(-1);
+      exit(-1);
     }                   
+
+    FGInitialCondition IC(FDMExec);
+    if ( ! IC.Load("aircraft",string(argv[1]),string(argv[2]))) {
+    	cerr << "Initialization unsuccessful" << endl;
+      exit(-1);
+    }
   }
 
   struct FGJSBBase::Message* msg;

@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.59 2001/11/12 19:30:33 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.60 2001/11/16 23:24:03 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -31,13 +31,13 @@
     AC_AERORP   43.2  0.0    59.4
     -->
 
-    AC_WINGAREA  174
-    AC_WINGSPAN  35.8
-    AC_CHORD     4.9
-    AC_HTAILAREA 21.9
-    AC_HTAILARM  15.7
-    AC_VTAILAREA 16.5
-    AC_LV        15.7
+    AC_WINGAREA  174   <!-- square feet -->
+    AC_WINGSPAN  35.8  <!-- ft          -->
+    AC_CHORD     4.9   <!-- ft          -->
+    AC_HTAILAREA 21.9  <!-- square feet -->
+    AC_HTAILARM  15.7  <!-- ft          -->
+    AC_VTAILAREA 16.5  <!-- square feet -->
+    AC_LV        15.7  <!-- ft          -->
     AC_IXX    948
     AC_IYY    1346
     AC_IZZ    1967

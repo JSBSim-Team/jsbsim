@@ -16,7 +16,7 @@
       <set name="FG_STARTER_CMD" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="1.00"> -->
     </when>
 
-    <when>
+    <when> <!-- Set the Elevator to takeoff -->
       <parameter name="FG_QBAR" comparison="ge" value="17.0">
       <parameter name="FG_ALTITUDE" comparison="le" value="2000">
       <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.005" action="FG_EXP" persistent="false" tc ="2.0">

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.41 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.42 2001/11/16 23:24:03 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -706,7 +706,7 @@ double FGInitialCondition::GetWindDirDegIC(void) {
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(string path, string acname, string fname)
+bool FGInitialCondition::Load(string acpath, string acname, string rstfile)
 {
   string resetDef;
   string token="";
@@ -714,12 +714,11 @@ bool FGInitialCondition::Load(string path, string acname, string fname)
   double temp;
 
 # ifndef macintosh
-  resetDef = path + "/" + acname + "/" + fname + ".xml";
+  resetDef = acpath + "/" + acname + "/" + rstfile + ".xml";
 # else
-  resetDef = path + ";" + acname + ";" + fname + ".xml";
+  resetDef = acpath + ";" + acname + ";" + rstfile + ".xml";
 # endif
 
-  cout << resetDef << endl;
   FGConfigFile resetfile(resetDef);
   if (!resetfile.IsOpen()) return false;
 

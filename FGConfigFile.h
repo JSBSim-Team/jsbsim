@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.29 2001/11/14 23:53:25 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.30 2001/11/16 23:24:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.29 2001/11/14 23:53:25 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.30 2001/11/16 23:24:03 jberndt Exp $
     @see -
 */
 
@@ -116,7 +116,8 @@ public:
   string GetNextConfigLine(void);
   string GetValue(string);
   string GetValue(void);
-  string GetCommentString(void);
+  string GetCommentString(void) {return CommentString;}
+  string GetLineComment(void) {return LineComment;}
   bool IsOpen(void) {return Opened;}
 //  FGConfigFile& operator>>(double&);
   FGConfigFile& operator>>(double&);
@@ -129,6 +130,7 @@ private:
   ifstream cfgfile;
   string   CurrentLine;
   string   CommentString;
+  string   LineComment;
   bool     CommentsOn;
   bool     Opened;
   unsigned int      CurrentIndex;
