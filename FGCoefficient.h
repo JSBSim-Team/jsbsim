@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.37 2002/03/18 12:12:46 apeden Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.38 2002/03/22 11:48:38 apeden Exp $"
 
 using std::vector;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.37 2002/03/18 12:12:46 apeden Exp $
+    @version $Id: FGCoefficient.h,v 1.38 2002/03/22 11:48:38 apeden Exp $
     @see -
 */
 
@@ -125,8 +125,8 @@ public:
   inline double getBias(void) const { return bias; }
   inline double getGain(void) const { return gain; }
   
-  void bind(FGPropertyManager *node);
-  void unbind(void);
+  virtual void bind(FGPropertyManager *parent);
+  virtual void unbind(void);
 
 private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};

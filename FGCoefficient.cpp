@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.51 2002/03/18 12:12:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.52 2002/03/22 11:48:38 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,20 +285,23 @@ string FGCoefficient::GetCoefficientValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCoefficient::bind(FGPropertyManager *node) {
+void FGCoefficient::bind(FGPropertyManager *parent) {
   string mult;
   unsigned i;
   
-  FGCoefficient::node=node;
+  node=parent->GetNode(name,true);
   
   node->SetString("description",description);
   if(LookupR) node->SetString("row-parm",LookupR->getName() );
   if(LookupC) node->SetString("column-parm",LookupC->getName() );
   
   mult="";
+  if(multipliers.size() == 0) 
+    mult="none";
+    
   for (i=0; i<multipliers.size(); i++) {
       mult += multipliers[i]->getName();
-      if( i < multipliers.size()-1 ) mult += "|"; 
+      if( i < multipliers.size()-1 ) mult += " "; 
   }
   node->SetString("multipliers",mult);
   
