@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.27 2003/12/02 12:56:06 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.28 2004/01/12 00:48:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,7 @@ CLASS DOCUMENTATION
     \</COMPONENT\>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.27 2003/12/02 12:56:06 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.28 2004/01/12 00:48:06 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +114,7 @@ private:
   double PreviousOutput1;
   double PreviousOutput2;
   FGConfigFile* AC_cfg;
+  FGPropertyManager* Trigger;
   void Debug(int from);
 };
 }

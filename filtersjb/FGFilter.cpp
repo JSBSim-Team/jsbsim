@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.36 2003/06/03 09:53:53 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.37 2004/01/12 00:48:06 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,6 +59,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   Name = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
   dt = fcs->GetState()->Getdt();
+  Trigger = 0;
 
   C1 = C2 = C3 = C4 = C5 = C6 = 0.0;
 
@@ -71,12 +72,18 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   while ((token = AC_cfg->GetValue()) != string("/COMPONENT")) {
     *AC_cfg >> token;
-    if (token == "C1")          *AC_cfg >> C1;
-    else if (token == "C2")     *AC_cfg >> C2;
-    else if (token == "C3")     *AC_cfg >> C3;
-    else if (token == "C4")     *AC_cfg >> C4;
-    else if (token == "C5")     *AC_cfg >> C5;
-    else if (token == "C6")     *AC_cfg >> C6;
+    if (token == "C1")           *AC_cfg >> C1;
+    else if (token == "C2")      *AC_cfg >> C2;
+    else if (token == "C3")      *AC_cfg >> C3;
+    else if (token == "C4")      *AC_cfg >> C4;
+    else if (token == "C5")      *AC_cfg >> C5;
+    else if (token == "C6")      *AC_cfg >> C6;
+    else if (token == "TRIGGER")
+    {
+      token = AC_cfg->GetValue("TRIGGER");
+      *AC_cfg >> token;
+      Trigger =  resolveSymbol(token);
+    }
     else if (token == "INPUT")
     {
       token = AC_cfg->GetValue("INPUT");
@@ -146,12 +153,23 @@ FGFilter::~FGFilter()
 
 bool FGFilter::Run(void)
 {
+  int test = 0;
+
   FGFCSComponent::Run(); // call the base class for initialization of Input
 
   if (Initialize) {
 
     PreviousOutput1 = PreviousInput1 = Output = Input;
     Initialize = false;
+
+  } else if (Trigger != 0) {
+    test = Trigger->getIntValue();
+    if (test < 0) {
+      Output = PreviousOutput1 = PreviousOutput2 = 0.0;
+      Input  = PreviousInput1 = PreviousInput2 = 0.0;
+    } else {
+      Output = PreviousOutput1 = PreviousOutput2 = 0.0;
+    }
 
   } else {
     Input = InputNodes[0]->getDoubleValue();
