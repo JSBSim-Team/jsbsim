@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.13 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.14 2001/04/03 22:42:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -79,6 +79,7 @@ public:
   void SetSubsystems(int tt) {SubSystems = tt;}
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }
+  inline bool Toggle(void) {enabled = !enabled; return enabled;}
 
 protected:
 
