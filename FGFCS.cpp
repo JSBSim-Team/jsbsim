@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.35 2000/11/22 23:49:01 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.36 2000/11/27 07:34:03 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,6 +151,9 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
         Components.push_back(new FGSwitch(this, AC_cfg));
       } else if (token == "FLAPS") {
         Components.push_back(new FGFlaps(this, AC_cfg));
+      } else {
+        cerr << "Unknown token [" << token << "] in FCS portion of config file" << endl;
+        return false;
       }
       AC_cfg->GetNextConfigLine();
     }

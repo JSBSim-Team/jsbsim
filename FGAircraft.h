@@ -58,8 +58,8 @@ INCLUDES
 #include "FGModel.h"
 #include "FGCoefficient.h"
 #include "FGPropulsion.h"
-#include "FGEngine.h"
-#include "FGTank.h"
+//#include "FGEngine.h"
+//#include "FGTank.h"
 #include "FGLGear.h"
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.39 2000/11/22 23:49:00 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.40 2000/11/27 07:34:03 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.39 2000/11/22 23:49:00 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.40 2000/11/27 07:34:03 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate

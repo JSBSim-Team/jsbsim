@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.52 2000/11/22 23:49:00 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.53 2000/11/27 07:34:03 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -495,60 +495,19 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-/*
-void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
-  string token;
-  string engine_name;
-  string parameter;
-  float xLoc, yLoc, zLoc, engPitch, engYaw;
-
-  AC_cfg->GetNextConfigLine();
-
-  while ((token = AC_cfg->GetValue()) != "/PROPULSION") {
-    *AC_cfg >> parameter;
-
-    if (parameter == "AC_ENGINE") {
-
-      *AC_cfg >> engine_name;
-      Engine[numEngines] = new FGEngine(FDMExec, EnginePath, engine_name, numEngines);
-
-      *AC_cfg >> xLoc >> yLoc >> zLoc;
-      *AC_cfg >> engPitch >> engYaw;
-
-      Engine[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
-
-      numEngines++;
-
-    } else if (parameter == "AC_TANK") {
-
-      Tank[numTanks] = new FGTank(AC_cfg);
-      switch(Tank[numTanks]->GetType()) {
-      case FGTank::ttFUEL:
-        numSelectedFuelTanks++;
-        break;
-      case FGTank::ttOXIDIZER:
-        numSelectedOxiTanks++;
-        break;
-      }
-      numTanks++;
-    }
-  }
-}
-*/
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   if (!Propulsion->LoadPropulsion(AC_cfg)) {
-    cerr << "Propulsion not successfully loaded\n";
+    cerr << "Propulsion not successfully loaded" << endl;
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
-  string token;
-
-  FCS->LoadFCS(AC_cfg);
+  if (!FCS->LoadFCS(AC_cfg)) {
+    cerr << "Flight Controls not successfully loaded" << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

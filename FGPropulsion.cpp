@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.12 2000/11/23 04:56:22 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.13 2000/11/27 07:34:03 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,20 +68,86 @@ CLASS IMPLEMENTATION
 
 FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
+  numSelectedFuelTanks = numSelectedOxiTanks = 0;
+  numTanks = numEngines = 0;
+  numOxiTanks = numFuelTanks = 0;
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGPropulsion::~FGPropulsion(void)
+{
+  Engines.clear();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGPropulsion:: Run(void) {
+  float tot_thrust;
+  iEngine = Engines.begin();
 
   if (!FGModel::Run()) {
+    while (iEngine != Engines.end()) {
+      tot_thrust = tot_thrust + iEngine->Calculate();
+      iEngine++;
+    }
 
     return false;
   } else {
     return true;
   }
 }
+
+/*
+  // UPDATE TANK CONTENTS
+  //
+  // For each engine, cycle through the tanks and draw an equal amount of
+  // fuel (or oxidizer) from each active tank. The needed amount of fuel is
+  // determined by the engine in the FGEngine class. If more fuel is needed
+  // than is available in the tank, then that amount is considered a shortage,
+  // and will be drawn from the next tank. If the engine cannot be fed what it
+  // needs, it will be considered to be starved, and will shut down.
+
+  float Oshortage, Fshortage;
+
+  for (unsigned int e=0; e<numEngines; e++) {
+    Fshortage = Oshortage = 0.0;
+    for (t=0; t<numTanks; t++) {
+      switch(Engine[e]->GetType()) {
+      case FGEngine::etRocket:
+
+        switch(Tank[t]->GetType()) {
+        case FGTank::ttFUEL:
+          if (Tank[t]->GetSelected()) {
+            Fshortage = Tank[t]->Reduce((Engine[e]->CalcFuelNeed()/
+                                         numSelectedFuelTanks)*(dt*rate) + Fshortage);
+          }
+          break;
+        case FGTank::ttOXIDIZER:
+          if (Tank[t]->GetSelected()) {
+            Oshortage = Tank[t]->Reduce((Engine[e]->CalcOxidizerNeed()/
+                                         numSelectedOxiTanks)*(dt*rate) + Oshortage);
+          }
+          break;
+        }
+        break;
+
+      case FGEngine::etPiston:
+      case FGEngine::etTurboJet:
+      case FGEngine::etTurboProp:
+
+        if (Tank[t]->GetSelected()) {
+          Fshortage = Tank[t]->Reduce((Engine[e]->CalcFuelNeed()/
+                                       numSelectedFuelTanks)*(dt*rate) + Fshortage);
+        }
+        break;
+      }
+    }
+    if ((Fshortage <= 0.0) || (Oshortage <= 0.0)) Engine[e]->SetStarved();
+    else Engine[e]->SetStarved(false);
+  }
+*/
+*/
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -91,7 +157,6 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
   string engineName, fullpath;
   string parameter;
   string enginePath = FDMExec->GetEnginePath();
-  int numEngines=0, numTanks=0;
   float xLoc, yLoc, zLoc, engPitch, engYaw;
 
   AC_cfg->GetNextConfigLine();
@@ -136,6 +201,7 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         
         numEngines++;
       } else {
+        cerr << "Could not read engine config file: " << fullpath << endl;
         return false;
       }
 
@@ -144,10 +210,12 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
       Tanks.push_back(*(new FGTank(AC_cfg)));
       switch(Tanks[numTanks].GetType()) {
       case FGTank::ttFUEL:
-//        numSelectedFuelTanks++;
+        numSelectedFuelTanks++;
+        numFuelTanks++;
         break;
       case FGTank::ttOXIDIZER:
-//        numSelectedOxiTanks++;
+        numSelectedOxiTanks++;
+        numOxiTanks++;
         break;
       }
       numTanks++;

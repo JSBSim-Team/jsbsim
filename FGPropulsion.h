@@ -38,7 +38,7 @@ SENTRY
 #ifndef FGPROPULSION_H
 #define FGPROPULSION_H
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.7 2000/11/23 05:39:47 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.8 2000/11/27 07:34:03 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -48,11 +48,14 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
+#    include <iterator>
 #  else
 #    include <vector.h>
+#    include <iterator.h>
 #  endif
 #else
 #  include <vector>
+#  include <iterator>
 #endif
 
 #include "FGModel.h"
@@ -73,7 +76,7 @@ CLASS DECLARATION
 class FGPropulsion : public FGModel {
 public:
   FGPropulsion(FGFDMExec*);
-  ~FGPropulsion(void) {};
+  ~FGPropulsion(void);
   
   bool Run(void);
   bool LoadPropulsion(FGConfigFile* AC_cfg);
@@ -86,6 +89,19 @@ private:
   vector <FGEngine>   Engines;
   vector <FGTank>     Tanks;
   vector <FGThruster> Thrusters;
+  vector <FGEngine>::iterator iEngine;
+  /** The number of fuel tanks currently actively supplying fuel */
+  int numSelectedFuelTanks;
+  /** The number of oxidizer tanks currently actively supplying oxidizer */
+  int numSelectedOxiTanks;
+  /** Number of fuel tanks */
+  int numFuelTanks;
+  /** Number of oxidizer tanks */
+  int numOxiTanks;
+  /** Number of engines */
+  int numEngines;
+  /** Number of all types of tanks */
+  int numTanks;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
