@@ -61,6 +61,34 @@ bool FGPropulsion:: Run(void) {
 
 bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 {
-//
+  string token;
+  string engine_name;
+  string parameter;
+
+  AC_cfg->GetNextConfigLine();
+
+  while ((token = AC_cfg->GetValue()) != "/PROPULSION") {
+    *AC_cfg >> parameter;
+
+    if (parameter == "AC_ENGINE") {
+
+      *AC_cfg >> engine_name;
+      Engine[numEngines] = new FGEngine(FDMExec, EnginePath, engine_name, numEngines);
+      numEngines++;
+
+    } else if (parameter == "AC_TANK") {
+
+      Tank[numTanks] = new FGTank(AC_cfg);
+      switch(Tank[numTanks]->GetType()) {
+      case FGTank::ttFUEL:
+        numSelectedFuelTanks++;
+        break;
+      case FGTank::ttOXIDIZER:
+        numSelectedOxiTanks++;
+        break;
+      }
+      numTanks++;
+    }
+  }
 }
 
