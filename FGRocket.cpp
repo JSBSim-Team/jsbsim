@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.9 2000/12/04 13:26:24 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.10 2001/01/02 20:14:36 jsb Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,6 +48,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec) {
+  cout << "\n    Instantiated rocket engine ...\n";
   *Eng_cfg >> SLThrustMax;
   *Eng_cfg >> VacThrustMax;
   *Eng_cfg >> MaxThrottle;
@@ -82,9 +83,8 @@ float FGRocket::Calculate(void) {
   }
 
 
-  if(State->Getdt() > 0.0) {
+  if(State->Getdt() > 0.0)
     Thrust -= 0.8*(Thrust - lastThrust); // actual thrust
-  }
 
   return Thrust;
 }

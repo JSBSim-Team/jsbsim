@@ -42,14 +42,11 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <vector>
-#    include <iterator>
 #  else
 #    include <vector.h>
-#    include <iterator.h>
 #  endif
 #else
 #  include <vector>
-#  include <iterator>
 #endif
 
 #include "FGModel.h"
@@ -67,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.11 2000/12/05 13:08:07 jsb Exp $"
+#define ID_PROPULSION "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.h,v 1.12 2001/01/02 20:14:36 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +83,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.11 2000/12/05 13:08:07 jsb Exp $
+    @version $Id: FGPropulsion.h,v 1.12 2001/01/02 20:14:36 jsb Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -115,21 +112,21 @@ public:
       @return the address of the specific engine, or zero if no such engine is
               available */
   inline FGEngine* GetEngine(int index) {
-                      if (index <= Engines.size()-1) return &Engines[index];
+                      if (index <= Engines.size()-1) return Engines[index];
                       else                           return 0L;      }
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container
       @return the address of the specific tank, or zero if no such tank is
               available */
   inline FGTank* GetTank(int index) {
-                      if (index <= Tanks.size()-1) return &Tanks[index];
+                      if (index <= Tanks.size()-1) return Tanks[index];
                       else                         return 0L;        }
   /** Retrieves a thruster object pointer from the list of thrusters.
       @param index the thruster index within the vector container
       @return the address of the specific thruster, or zero if no such thruster is
               available */
   inline FGThruster* GetThruster(int index) {
-                      if (index <= Thrusters.size()-1) return &Thrusters[index];
+                      if (index <= Thrusters.size()-1) return Thrusters[index];
                       else                             return 0L;    }
 
   /** Returns the number of fuel tanks currently actively supplying fuel */
@@ -138,10 +135,9 @@ public:
   inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
 
 private:
-  vector <FGEngine>   Engines;
-  vector <FGTank>     Tanks;
-  vector <FGThruster> Thrusters;
-  vector <FGEngine>::iterator iEngine;
+  vector <FGEngine*>   Engines;
+  vector <FGTank*>     Tanks;
+  vector <FGThruster*> Thrusters;
   int numSelectedFuelTanks;
   int numSelectedOxiTanks;
   int numFuelTanks;

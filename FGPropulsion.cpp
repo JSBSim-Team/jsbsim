@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.15 2000/12/05 13:08:07 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.16 2001/01/02 20:14:36 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 
 FGPropulsion::~FGPropulsion(void)
 {
+  for (int i=0; i<Engines.size(); i++) delete Engines[i];
   Engines.clear();
 }
 
@@ -84,14 +85,10 @@ FGPropulsion::~FGPropulsion(void)
 
 bool FGPropulsion:: Run(void) {
   float tot_thrust;
-  iEngine = Engines.begin();
 
   if (!FGModel::Run()) {
-    while (iEngine != Engines.end()) {
-      tot_thrust = tot_thrust + iEngine->Calculate();
-      iEngine++;
-    }
-
+    for (int i=0; i<numEngines; i++)
+      tot_thrust = tot_thrust + Engines[i]->Calculate();
     return false;
   } else {
     return true;
@@ -131,22 +128,22 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         Eng_cfg >> tag;
 
         if (tag == "FG_ROCKET") {
-          Engines.push_back(*(new FGRocket(FDMExec, &Eng_cfg)));
+          Engines.push_back(new FGRocket(FDMExec, &Eng_cfg));
         } else if (tag == "FG_PISTON") {
-          Engines.push_back(*(new FGPiston(FDMExec, &Eng_cfg)));
+          Engines.push_back(new FGPiston(FDMExec, &Eng_cfg));
         } else if (tag == "FG_TURBOJET") {
-          Engines.push_back(*(new FGTurboJet(FDMExec, &Eng_cfg)));
+          Engines.push_back(new FGTurboJet(FDMExec, &Eng_cfg));
         } else if (tag == "FG_TURBOSHAFT") {
-          Engines.push_back(*(new FGTurboShaft(FDMExec, &Eng_cfg)));
+          Engines.push_back(new FGTurboShaft(FDMExec, &Eng_cfg));
         } else if (tag == "FG_TURBOPROP") {
-          Engines.push_back(*(new FGTurboProp(FDMExec, &Eng_cfg)));
+          Engines.push_back(new FGTurboProp(FDMExec, &Eng_cfg));
         }
 
         *AC_cfg >> xLoc >> yLoc >> zLoc;
         *AC_cfg >> engPitch >> engYaw;
 
-        Engines[numEngines].SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
-        Engines[numEngines].SetName(engineName);
+        Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
+        Engines[numEngines]->SetName(engineName);
         
         numEngines++;
       } else {
@@ -156,8 +153,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
     } else if (parameter == "AC_TANK") {
 
-      Tanks.push_back(*(new FGTank(AC_cfg)));
-      switch(Tanks[numTanks].GetType()) {
+      Tanks.push_back(new FGTank(AC_cfg));
+      switch(Tanks[numTanks]->GetType()) {
       case FGTank::ttFUEL:
         numSelectedFuelTanks++;
         numFuelTanks++;
