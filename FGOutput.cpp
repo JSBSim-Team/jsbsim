@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.65 2003/05/31 14:34:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.66 2003/05/31 21:46:11 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,7 +485,6 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
 
   while ((token = Output_cfg->GetValue()) != string("/OUTPUT")) {
     *Output_cfg >> parameter;
-cout << "Parameter: " << parameter << endl;
     if (parameter == "RATE_IN_HZ") {
       *Output_cfg >> OutRate;
     }
