@@ -3,7 +3,7 @@
 
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.6 2003/03/26 20:34:11 ehofman Exp $
+  CVS Version: $Id: f104.xml,v 1.7 2003/03/27 18:57:11 ehofman Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -107,6 +107,10 @@
      INPUT      fcs/pitch-trim-cmd-norm
      CLIPTO    -1 1
    </COMPONENT>
+   <COMPONENT NAME="Pitch Damper Gain" TYPE="PURE_GAIN">
+     INPUT      velocities/q-rad_sec
+     GAIN       0.000698
+   </COMPONENT>
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
      INPUT      fcs/pitch-trim-sum
      MIN      -17.0
@@ -118,6 +122,10 @@
      INPUT      fcs/aileron-cmd-norm
      INPUT      fcs/roll-trim-cmd-norm
      CLIPTO    -1 1
+    </COMPONENT>
+    <COMPONENT NAME="Roll Damper Gain" TYPE="PURE_GAIN">
+     INPUT      velocities/p-rad_sec
+     GAIN       0.013963
     </COMPONENT>
     <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
      INPUT      fcs/roll-trim-sum
@@ -139,6 +147,10 @@
      INPUT      fcs/yaw-trim-cmd-norm
      CLIPTO    -1 1
     </COMPONENT>
+    <COMPONENT NAME="Yaw Damper Gain" TYPE="PURE_GAIN">
+     INPUT      velocities/r-rad_sec
+     GAIN       0.001745
+    </COMPONENT>
     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
      INPUT      fcs/yaw-trim-sum
      MIN       -20
@@ -150,7 +162,7 @@
      INPUT        fcs/flap-cmd-norm
      DETENTS      2
                   0    0
-                  10   1
+                  10   4
      OUTPUT      fcs/flap-pos-deg
     </COMPONENT>
     <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
@@ -265,6 +277,7 @@
     <COEFFICIENT NAME="CLq" TYPE="VECTOR">
       Lift_due_to_pitch_rate
       2
+      velocities/mach-norm
       aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
       0.257  2.3
       1.800  1.9
@@ -434,7 +447,7 @@
     <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
       Pitch_moment_due_to_alpha
       2
-      aero/alpha-rad
+      velocities/mach-norm
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
       0.257 -0.644
       1.800 -1.308
@@ -461,6 +474,7 @@
     <COEFFICIENT NAME="Cmadot" TYPE="VECTOR">
       Pitch_moment_due_to_alpha_rate
       2
+      velocities/mach-norm
       aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
       0.257 -1.64
       1.800 -2.05
