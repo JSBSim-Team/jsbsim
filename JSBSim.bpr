@@ -14,22 +14,22 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
-OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \  FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
+OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficient.obj \
+  FGConfigFile.obj FGControls.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
   FGfdmSocket.obj FGInitialCondition.obj FGLGear.obj FGMatrix.obj FGModel.obj \
   FGOutput.obj FGPosition.obj FGRotation.obj FGState.obj FGTank.obj \
-  FGTranslation.obj FGAircraft.obj filtersjb\FGfcsComponent.obj \
-  filtersjb\FGSwitch.obj filtersjb\FGFilter.obj filtersjb\FGGain.obj \
-  filtersjb\FGGradient.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj \
-  FGTrimLong.obj filtersjb\FGFlaps.obj
+  FGTranslation.obj FGAircraft.obj FGfcsComponent.obj FGSwitch.obj FGFilter.obj \
+  FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGTrimLong.obj FGFlaps.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = VCL40.lib
-SPARELIBS = VCL40.lib
-PACKAGES = VCL40.bpi VCLX40.bpi QRPT40.bpi VCLDB40.bpi bcbsmp40.bpi TEEUI40.bpi \
-  TEEDB40.bpi TEE40.bpi VCLDBX40.bpi y32cb4.bpi Icsbcb30.bpi WinshoesPkgCB4.bpi
+LIBRARIES = Vcl40.lib
+SPARELIBS = Vcl40.lib
+PACKAGES = Vcl40.bpi Vclx40.bpi Vcldb40.bpi vcldbx40.bpi bcbsmp40.bpi Qrpt40.bpi \
+  WinshoesPkgCB4.bpi nmfast40.bpi ibsmp40.bpi y32cb4.bpi Rxctl.bpi Rxdb.bpi \
+  TeeUI40.bpi teedb40.bpi tee40.bpi Auxiliary.bpi
 DEFFILE =
 # ---------------------------------------------------------------------------
 PATHCPP = .;filtersjb
@@ -41,13 +41,13 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a8 -5 -k -y -v -vi- -c -tWM \
+CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a1 -5 -k -y -v -vi- -c -tWM \
   -tWC -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W -$O- \
-  -v -JPHN -M
+PFLAGS = -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb;$(BCB)\include -N2. -N0. \
+  -$YD -$W -$O- -v -JPHN -M
 RFLAGS = -ifiltersjb;$(BCB)\include
-AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd /la /z /x /n /c
+AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd
 LFLAGS = -Lfiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj $(OBJFILES)
@@ -55,13 +55,14 @@ ALLRES = $(RESFILES)
 ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 # ---------------------------------------------------------------------------
 !ifdef IDEOPTIONS
+
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=1
+AutoIncBuild=0
 MajorVer=0
 MinorVer=7
 Release=2
-Build=20
+Build=23
 Debug=0
 PreRelease=0
 Special=0
@@ -73,7 +74,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.20
+FileVersion=0.7.2.23
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -83,16 +84,8 @@ ProductVersion=0.7.2
 Comments=Standalone version of JSBSim
 
 [Excluded Packages]
-$(BCB)\Bin\dclocx40.bpl=Borland Sample Imported ActiveX Controls
-C:\WINDOWS\SYSTEM\\nmfast40.bpl=NetMasters Fastnet Tools
-$(BCB)\Bin\Dclrxdb.bpl=RX Library Database Components
-$(BCB)\BIN\DCLRXCTL.BPL=RX Library Controls and Tools
-$(BCB)\Projects\Bpl\calwdgA.bpl=Sheridan Calendar Widgets 3-pack
-$(BCB)\Projects\Bpl\calwdgB.bpl=Sheridan Calendar Widgets Day control
-$(BCB)\Projects\Bpl\CalCtrls.bpl=f:\program files\borland\cbuilder4\Projects\Bpl\CalCtrls
-$(BCB)\Projects\Bpl\GraphWin.bpl=f:\program files\borland\cbuilder4\Projects\Bpl\GraphWin
-C:\WINDOWS\SYSTEM\\ibsmp40.bpl=Borland C++ InterBase Alerter Component
-$(BCB)\bin\Auxiliary.bpl=Auxiliary Controls
+C:\WINNT\Rxctl.bpl=RX Library Controls and Tools Package
+C:\WINNT\Rxdb.bpl=RX Library DB Components Package
 
 [HistoryLists\hlIncludePath]
 Count=1
@@ -102,20 +95,23 @@ Item0=filtersjb;$(BCB)\include
 Count=1
 Item0=filtersjb;$(BCB)\lib
 
+[HistoryLists\hlIntOutputDir]
+Count=1
+Item0=.
+
 [HistoryLists\hlRunParameters]
-Count=6
-Item0=c172 reset00
-Item1=c172 reset01
-Item2=x15 reset01
-Item3=X15 reset00 
-Item4=X15 reset00 > output.dat
-Item5=X15 reset00
+Count=1
+Item0=X15 reset00
+
+[HistoryLists\hlFinalOutputDir]
+Count=1
+Item0=.
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=c172 reset00
+RunParams=X15 reset00
 HostApplication=
 RemoteHost=
 RemotePath=

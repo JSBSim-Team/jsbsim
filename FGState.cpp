@@ -67,8 +67,8 @@ INCLUDES
 MACROS
 *******************************************************************************/
 
-#define RegisterVariable(FGX, DESCRIPTION) \
-                              coeffdef["FGX"] = FGX; paramdef[FGX] = DESCRIPTION
+#define RegisterVariable(X, Y) \
+                              coeffdef["X"] = X; paramdef[X] = Y
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -87,7 +87,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   sim_time = 0.0;
   dt = 1.0/120.0;
 
-/*
+
   coeffdef["FG_QBAR"]           = FG_QBAR           ;
   coeffdef["FG_WINGAREA"]       = FG_WINGAREA       ;
   coeffdef["FG_WINGSPAN"]       = FG_WINGSPAN       ;
@@ -151,8 +151,8 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   paramdef[FG_THROTTLE_POS]   = " throttle pos "   ;
   paramdef[FG_HOVERB]         = " height / span "  ;
   paramdef[FG_PITCH_TRIM_CMD] = " pitch trim cmd " ;
-*/
 
+/*
   RegisterVariable(FG_QBAR,           " qbar "           );
   RegisterVariable(FG_WINGAREA,       " wing area "      );
   RegisterVariable(FG_WINGSPAN,       " wingspan "       );
@@ -183,7 +183,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_THROTTLE_POS,   " throttle pos "   );
   RegisterVariable(FG_HOVERB,         " height / span "  );
   RegisterVariable(FG_PITCH_TRIM_CMD, " pitch trim cmd " );
-
+*/
 }
 
 /******************************************************************************/
