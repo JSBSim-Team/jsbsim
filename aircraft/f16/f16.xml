@@ -3,7 +3,7 @@
 <!--                                                                                             -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.9 2002/09/10 01:55:16 apeden Exp $
+  CVS Version: $Id: f16.xml,v 1.10 2002/09/11 01:57:01 apeden Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
 -->
@@ -192,8 +192,58 @@
   pounds.
   -->
 
-  <FLIGHT_CONTROL NAME="F-16 SAS">
-
+  <FLIGHT_CONTROL NAME="F-16 Direct">
+    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       ID            0
+       INPUT        FG_ELEVATOR_CMD
+       INPUT        FG_PITCH_TRIM_CMD
+       CLIPTO       -1 1
+    </COMPONENT>
+    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
+       ID            1
+       INPUT         0
+       MIN          -25
+       MAX           25
+       OUTPUT        FG_ELEVATOR_POS
+       GAIN          0.01745
+     </COMPONENT>
+     <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
+       ID            2
+       INPUT         FG_AILERON_CMD
+       INPUT         FG_ROLL_TRIM_CMD
+       CLIPTO        -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            3
+       INPUT         2
+       MIN          -21.5
+       MAX           21.5
+       GAIN          0.01745
+       OUTPUT        FG_LEFT_AILERON_POS
+     </COMPONENT>
+      <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
+       ID            4
+       INPUT         2
+       MIN          -21.5
+       MAX           21.5
+       INVERT
+       GAIN          0.01745
+       OUTPUT        FG_RIGHT_AILERON_POS
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+       ID            5
+       INPUT        FG_RUDDER_CMD
+       INPUT        FG_YAW_TRIM_CMD
+       CLIPTO       -1 1
+     </COMPONENT>
+     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+       ID            6
+       INPUT        5
+       MIN         -30
+       MAX          30
+       GAIN         0.01745
+       OUTPUT       FG_RUDDER_POS
+     </COMPONENT>
   </FLIGHT_CONTROL>
 
   <AERODYNAMICS>
@@ -252,7 +302,7 @@
          </AXIS>
     -->
 
-    AC_ALPHALIMITS -0.3491 1.5708
+    AC_ALPHALIMITS -0.3491 0.6109
 
     <AXIS NAME="LIFT">
 
@@ -287,7 +337,7 @@
         Lift_due_to_Elevator_Deflection
         20 5
         FG_ALPHA FG_ELEVATOR_POS
-        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+        FG_QBAR|FG_WINGAREA
                 -25.0   -10.0   0.0     10.0    25.0
         -0.3491 -0.128  -0.079  0.000   0.072   0.398   
         -0.2618 -0.156  -0.079  0.000   0.107   0.475   
@@ -402,7 +452,7 @@
         Drag_due_to_elevator_Deflection
         20 5
         FG_ALPHA FG_ELEVATOR_POS
-        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
+        FG_QBAR|FG_WINGAREA
                 -25.0   -10.0   0.0     10.0    25.0
         -0.3491 0.142   0.060   0.000   -0.031  -0.125
         -0.2618 0.132   0.043   0.000   -0.025  -0.085
@@ -430,7 +480,7 @@
         Drag_due_to_aileron_Deflection
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_AILERON_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_AILERON_POS
         -0.3491 1.0246
         -0.2618 0.7612
         -0.1745 0.5239
@@ -457,7 +507,7 @@
         Drag_due_to_rudder_Deflection
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS|FG_ABETA
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
         -0.3491 -1.3488
         -0.2618 -0.9293
         -0.1745 -0.5327
@@ -484,7 +534,7 @@
         Drag_due_to_sideslip
         20 2
         FG_ALPHA FG_ABETA
-        FG_QBAR|FG_WINGAREA|FG_ABETA
+        FG_QBAR|FG_WINGAREA
                 0.0     30.0
         -0.3491 -0.376  0.362
         -0.2618 -0.245  0.362
@@ -542,8 +592,8 @@
       <COEFFICIENT NAME="CYDa" TYPE="TABLE">
         Side_force_due_to_aileron
         20 3
-        FG_ALPHA F_BETA
-        FG_QBAR|FG_WINGAREA|FG_AILERON_POS|FG_BETA
+        FG_ALPHA FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_AILERON_POS
                 -30.0   0.0     30.0
         -0.3491 -3.430  -0.054  -3.883
         -0.2618 -3.787  -0.045  -3.672
@@ -571,7 +621,7 @@
         Side_force_due_to_rudder
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
         -0.3491 -0.056
         -0.2618 -0.035
         -0.1745 -0.038
@@ -656,7 +706,7 @@
         Roll_moment_due_to_roll_rate_(roll_damping)
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_ROLLRATE
         -0.3491 -0.366
         -0.2618 -0.366
         -0.1745 -0.366
@@ -683,7 +733,7 @@
         Roll_moment_due_to_yaw_rate
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_YAWRATE
         -0.3491 -0.155
         -0.2618 -0.155
         -0.1745 -0.155
@@ -732,39 +782,11 @@
         1.3963  -0.128
         1.5708  -0.129
       </COEFFICIENT>
-
-      <COEFFICIENT NAME="ClDe" TYPE="VECTOR">
-        Roll_moment_due_to_Elevator_Deflection
-        20
-        FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS|FG_BETA
-        -0.3491 -0.007
-        -0.2618 0.005
-        -0.1745 -0.010
-        -0.0873 0.224
-        0.0000  0.060
-        0.0873  -0.007
-        0.1745  -0.012
-        0.2618  -0.009
-        0.3491  -0.012
-        0.4363  0.190
-        0.5236  -0.010
-        0.6109  -0.022
-        0.6981  -0.004
-        0.7854  0.008
-        0.8727  -0.007
-        0.9599  -0.009
-        1.0472  0.727
-        1.2217  0.002
-        1.3963  -0.008
-        1.5708  0.003
-      </COEFFICIENT>
-
       <COEFFICIENT NAME="ClDa" TYPE="VECTOR">
         Roll_moment_due_to_aileron
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
         -0.3491 -0.056
         -0.2618 -0.037
         -0.1745 -0.003
@@ -791,7 +813,7 @@
         Roll_moment_due_to_rudder
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
         -0.3491 0.034
         -0.2618 0.046
         -0.1745 0.034
@@ -877,7 +899,7 @@
         Pitch_moment_due_to_pitch_rate
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_CBAR|FG_CI2VEL|FG_PITCHRATE
+        FG_QBAR|FG_WINGAREA|FG_CI2VEL|FG_PITCHRATE
         -0.3491 -6.840
         -0.2618 -6.840
         -0.1745 -6.840
@@ -908,7 +930,7 @@
         Yaw_moment_due_to_yaw_rate
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_YAWRATE
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_YAWRATE
         -0.3491 -0.517
         -0.2618 -0.517
         -0.1745 -0.517
@@ -930,12 +952,11 @@
         1.3963  -0.150
         1.5708  -0.150
       </COEFFICIENT>
-
       <COEFFICIENT NAME="Cnp" TYPE="VECTOR">
         Yaw_moment_due_to_roll_rate
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_ROLLRATE
+        FG_QBAR|FG_WINGAREA|FG_BI2VEL|FG_ROLLRATE
         -0.3491 -0.001
         -0.2618 -0.001
         -0.1745 -0.001
@@ -957,7 +978,6 @@
         1.3963  0.000
         1.5708  0.000
       </COEFFICIENT>
-
       <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
         Yaw_moment_due_to_beta
         20
@@ -984,40 +1004,11 @@
         1.3963  -0.045
         1.5708  -0.042
       </COEFFICIENT>
-
-      <COEFFICIENT NAME="CnDe" TYPE="TABLE">
-        Yaw_moment_due_to_elevator
-        20 3
-        FG_ALPHA FG_ELEVATOR_POS
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_ELEVATOR_POS|FG_BETA
-                -0.436  0.0     0.436
-        -0.3491 -0.040  0.000   -0.011
-        -0.2618 -0.032  0.000   -0.027
-        -0.1745 -0.020  0.000   -0.042
-        -0.0873 0.022   0.000   -0.063
-        0.0000  0.018   0.000   -0.059
-        0.0873  0.007   0.000   -0.088
-        0.1745  -0.005  0.000   -0.075
-        0.2618  -0.051  0.000   -0.065
-        0.3491  0.012   0.000   -0.119
-        0.4363  0.022   0.000   -0.096
-        0.5236  0.033   0.000   -0.068
-        0.6109  0.043   0.000   -0.052
-        0.6981  0.024   0.000   -0.039
-        0.7854  0.012   0.000   -0.009
-        0.8727  -0.009  0.000   -0.031
-        0.9599  -0.012  0.000   0.038
-        1.0472  0.039   0.000   0.006
-        1.2217  -0.019  0.000   0.057
-        1.3963  -0.010  0.000   0.068
-        1.5708  0.035   0.000   0.054
-      </COEFFICIENT>
-
       <COEFFICIENT NAME="CnDa" TYPE="VECTOR">
         Yaw_moment_due_to_aileron
         20
         FG_ALPHA
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
         -0.3491 0.006
         -0.2618 0.021
         -0.1745 0.053
@@ -1044,7 +1035,7 @@
         Yaw_moment_due_to_rudder
         20 3
         FG_ALPHA FG_RUDDER_POS
-        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS|FG_BETA
+        FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_RUDDER_POS
                 -0.436  0.0     0.436
         -0.3491 -0.463  -0.267  -0.228
         -0.2618 -0.480  -0.111  -0.228
