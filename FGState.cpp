@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.85 2001/11/21 23:47:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.86 2001/11/22 14:56:36 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,9 +115,9 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_PITCHRATE,      " pitch_rate "     );
   RegisterVariable(FG_ROLLRATE,       " roll_rate "      );
   RegisterVariable(FG_YAWRATE,        " yaw_rate "       );
-  RegisterVariable(FG_AEROQDOT,       " aero_pitch_rate ");
-  RegisterVariable(FG_AEROPDOT,       " aero_roll_rate " );
-  RegisterVariable(FG_AERORDOT,       " aero_yaw_rate "  );
+  RegisterVariable(FG_AEROQ,          " aero_pitch_rate ");
+  RegisterVariable(FG_AEROP,          " aero_roll_rate " );
+  RegisterVariable(FG_AEROR,          " aero_yaw_rate "  );
   RegisterVariable(FG_CL_SQRD,        " Clift_sqrd "     );
   RegisterVariable(FG_MACH,           " mach "           );
   RegisterVariable(FG_ALTITUDE,       " altitude "       );
@@ -219,12 +219,12 @@ double FGState::GetParameter(eParam val_idx) {
     return Rotation->GetPQR(eP);
   case FG_YAWRATE:
     return Rotation->GetPQR(eR);
-  case FG_AEROQDOT:
-    return Rotation->GetPQR(eQ); // add aero turbulence effects
-  case FG_AEROPDOT:
-    return Rotation->GetPQR(eP); // add aero turbulence effects
-  case FG_AERORDOT:
-    return Rotation->GetPQR(eR); // add aero turbulence effects
+  case FG_AEROQ:
+    return Rotation->GetPQR(eQ) + Atmosphere->GetTurbPQR(eQ); // add aero turbulence effects
+  case FG_AEROP:
+    return Rotation->GetPQR(eP) + Atmosphere->GetTurbPQR(eP); // add aero turbulence effects
+  case FG_AEROR:
+    return Rotation->GetPQR(eR) + Atmosphere->GetTurbPQR(eR); // add aero turbulence effects
   case FG_CL_SQRD:
     if (Translation->Getqbar() > 0.00)
       scratch = Aerodynamics->GetvLastFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());

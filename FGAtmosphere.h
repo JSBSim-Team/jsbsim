@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.24 2001/11/21 23:47:29 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.25 2001/11/22 14:56:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.24 2001/11/21 23:47:29 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.25 2001/11/22 14:56:36 jberndt Exp $
 */
 
 /******************************************************************************
@@ -144,6 +144,8 @@ public:
   
   inline void SetTurbGain(double tt) {TurbGain = tt;}
   
+  inline double GetTurbPQR(int idx) {return vTurbPQR(idx);}
+  
 private:
   double rho;
 
@@ -165,6 +167,8 @@ private:
   FGColumnVector3 vDirection;
   FGColumnVector3 vTurbulence;
   FGColumnVector3 vTurbulenceGrad;
+  FGColumnVector3 vBodyTurbGrad;
+  FGColumnVector3 vTurbPQR;
 
   FGColumnVector3 vWindNED;
   double psiw;
