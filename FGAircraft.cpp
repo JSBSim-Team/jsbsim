@@ -367,7 +367,7 @@ void FGAircraft::FMGear(void)
     // crash routine
   } else {
     for (unsigned int i=0;i<lGear.size();i++) {
-      //      lGear[i].
+      vForces += lGear[i]->Force();
     }
   }
 }

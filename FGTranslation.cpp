@@ -125,7 +125,8 @@ bool FGTranslation::Run(void)
         if (vUVW(eW) != 0.0)
             alpha = vUVW(eU)*vUVW(eU) > 0.0 ? atan2(vUVW(eW), vUVW(eU)) : 0.0;
         if (vUVW(eV) != 0.0)
-            beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV), (fabs(vUVW(eU))/vUVW(eU))*sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
+            beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV),
+               (fabs(vUVW(eU))/vUVW(eU))*sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
 
         qbar = 0.5*rho*Vt*Vt;
 

@@ -44,20 +44,28 @@ INCLUDES
 *******************************************************************************/
 
 
-FGLGear::FGLGear(FGConfigFile* AC_cfg)
+FGLGear::FGLGear(FGConfigFile* AC_cfg) : vXYZ(3)
 {
   string tmp;
-  *AC_cfg >> tmp >> name >> X >> Y >> Z >> kSpring >> bDamp >> statFCoeff >> brakeCoeff;
+  *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3) >> kSpring >> bDamp
+                                                    >> statFCoeff >> brakeCoeff;
 }
 
+
+/******************************************************************************/
 
 FGLGear::~FGLGear(void)
 {
 }
 
-float FGLGear::Force(void)
+/******************************************************************************/
+
+FGColumnVector FGLGear::Force(void)
 {
-  return 0.0;
+  static FGColumnVector vForce(3);
+
+  return vForce;
 }
 
+/******************************************************************************/
 

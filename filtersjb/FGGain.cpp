@@ -86,6 +86,10 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> Max;
     } else if (token == "SCHEDULED_BY") {
       *AC_cfg >> ScheduledBy;
+    } else if (token == "OUTPUT") {
+      IsOutput = true;
+      *AC_cfg >> sOutputIdx;
+      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     } else {
       AC_cfg->ResetLineIndexToZero();
       lookup = new float[2];
@@ -138,6 +142,8 @@ bool FGGain::Run(void )
     if (Output >= 0.0) Output = Input * Max;
     else Output = Input * (-Min);
   }
+
+  if (IsOutput) SetOutput();
 
   return true;
 }

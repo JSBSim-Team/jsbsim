@@ -63,6 +63,7 @@ INCLUDES
 #endif
 
 #include "FGConfigFile.h"
+#include "FGMatrix.h"
 
 /*******************************************************************************
 DEFINITIONS
@@ -80,9 +81,10 @@ public:
   FGLGear(FGConfigFile*);
   ~FGLGear(void);
 
-  float Force(void);
+  FGColumnVector Force(void);
+
 private:
-  float X, Y, Z;
+  FGColumnVector vXYZ;
   float kSpring, bDamp, compressLength;
   float statFCoeff, rollFCoeff, skidFCoeff;
   float frictionForce, compForce;
