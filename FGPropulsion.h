@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.30 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.31 2001/07/28 15:33:39 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.30 2001/06/26 00:21:31 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.31 2001/07/28 15:33:39 apeden Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -163,17 +163,17 @@ public:
   string GetPropulsionStrings(void);
   string GetPropulsionValues(void);
 
-  inline FGColumnVector& GetForces(void)  {return *Forces; }
-  inline FGColumnVector& GetMoments(void) {return *Moments;}
+  inline FGColumnVector3& GetForces(void)  {return *Forces; }
+  inline FGColumnVector3& GetMoments(void) {return *Moments;}
   
-  FGColumnVector& GetTanksCG(void);
+  FGColumnVector3& GetTanksCG(void);
   float GetTanksWeight(void);
 
-  float GetTanksIxx(const FGColumnVector& vXYZcg);
-  float GetTanksIyy(const FGColumnVector& vXYZcg);
-  float GetTanksIzz(const FGColumnVector& vXYZcg);
-  float GetTanksIxz(const FGColumnVector& vXYZcg);
-  float GetTanksIxy(const FGColumnVector& vXYZcg);
+  float GetTanksIxx(const FGColumnVector3& vXYZcg);
+  float GetTanksIyy(const FGColumnVector3& vXYZcg);
+  float GetTanksIzz(const FGColumnVector3& vXYZcg);
+  float GetTanksIxz(const FGColumnVector3& vXYZcg);
+  float GetTanksIxy(const FGColumnVector3& vXYZcg);
 
 private:
   vector <FGEngine*>   Engines;
@@ -188,9 +188,9 @@ private:
   unsigned int numTanks;
   unsigned int numThrusters;
   float dt;
-  FGColumnVector *Forces;
-  FGColumnVector *Moments;
-  FGColumnVector vXYZtank;
+  FGColumnVector3 *Forces;
+  FGColumnVector3 *Moments;
+  FGColumnVector3 vXYZtank;
   void Debug(void);
 };
 

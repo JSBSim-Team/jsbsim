@@ -21,7 +21,7 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.1 2001/07/23 12:46:03 apeden Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.2 2001/07/28 15:32:52 apeden Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -74,10 +74,36 @@ FGMatrix33::FGMatrix33(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGMatrix33::FGMatrix33(int r, int c)
+{
+  data=FGalloc();
+  InitMatrix();
+  rowCtr = colCtr = 1;
+  
+  if (debug_lvl & 2) cout << "Instantiated: FGMatrix33" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGMatrix33::FGMatrix33(const FGMatrix33& M)
 {
   rowCtr = colCtr = 1;
-  *this = M;
+  width  = M.width;
+  prec   = M.prec;
+  delim  = M.delim;
+  origin = M.origin;
+
+  data=FGalloc();
+
+  data[1][1] = M.data[1][1];
+  data[1][2] = M.data[1][2];
+  data[1][3] = M.data[1][3];
+  data[2][1] = M.data[2][1];
+  data[2][2] = M.data[2][2];
+  data[2][3] = M.data[2][3];
+  data[3][1] = M.data[3][1];
+  data[3][2] = M.data[3][2];
+  data[3][3] = M.data[3][3];
 
   if (debug_lvl & 2) cout << "Instantiated: FGMatrix33" << endl;
 }
@@ -269,6 +295,25 @@ void FGMatrix33::operator+=(const FGMatrix33 &M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGMatrix33 FGMatrix33::operator*(const double scalar)
+{
+  FGMatrix33 Product;
+  
+  Product(1,1) = data[1][1] * scalar;
+  Product(1,2) = data[1][2] * scalar;
+  Product(1,3) = data[1][3] * scalar;
+  Product(2,1) = data[2][1] * scalar;
+  Product(2,2) = data[2][2] * scalar;
+  Product(2,3) = data[2][3] * scalar;
+  Product(3,1) = data[3][1] * scalar;
+  Product(3,2) = data[3][2] * scalar;
+  Product(3,3) = data[3][3] * scalar;
+
+  return Product;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGMatrix33 operator*(double scalar, FGMatrix33 &M)
 {
   FGMatrix33 Product;
@@ -326,16 +371,22 @@ FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M)
 
 void FGMatrix33::operator*=(const FGMatrix33& M)
 {
-
-  data[1][1] = data[1][1]*M(1,1) + data[1][2]*M(2,1) + data[1][3]*M(3,1);
-  data[1][2] = data[1][1]*M(1,2) + data[1][2]*M(2,2) + data[1][3]*M(3,2);
-  data[1][3] = data[1][1]*M(1,3) + data[1][2]*M(2,3) + data[1][3]*M(3,3);
-  data[2][1] = data[2][1]*M(1,1) + data[2][2]*M(2,1) + data[2][3]*M(3,1);
-  data[2][2] = data[2][1]*M(1,2) + data[2][2]*M(2,2) + data[2][3]*M(3,2);
-  data[2][3] = data[2][1]*M(1,3) + data[2][2]*M(2,3) + data[2][3]*M(3,3);
-  data[3][1] = data[3][1]*M(1,1) + data[3][2]*M(2,1) + data[3][3]*M(3,1);
-  data[3][2] = data[3][1]*M(1,2) + data[3][2]*M(2,2) + data[3][3]*M(3,2);
-  data[3][3] = data[3][1]*M(1,3) + data[3][2]*M(2,3) + data[3][3]*M(3,3);
+  float a,b,c;
+  
+  a = data[1][1]; b=data[1][2]; c=data[1][3];
+  data[1][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
+  data[1][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
+  data[1][3] = a*M(1,3) + b*M(2,3) + c*M(3,3);
+  
+  a = data[2][1]; b=data[2][2]; c=data[2][3];
+  data[2][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
+  data[2][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
+  data[2][3] = a*M(1,3) + b*M(2,3) + c*M(3,3);
+ 
+  a = data[3][1]; b=data[3][2]; c=data[3][3];
+  data[3][1] = a*M(1,1) + b*M(2,1) + c*M(3,1);
+  data[3][2] = a*M(1,2) + b*M(2,2) + c*M(3,2);
+  data[3][3] = a*M(1,3) + b*M(2,3) + c*M(3,3);
 
 }
 

@@ -50,7 +50,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.65 2001/07/26 23:11:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.66 2001/07/28 15:34:31 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -446,11 +446,13 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   phi = FGIC->GetPhiRadIC();
   psi = FGIC->GetPsiRadIC();
 
-  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h);
   
   Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
   Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() + 
                                              FGIC->GetTerrainAltitudeFtIC() );
+  
+  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h);
+                                           
 
 }
 
@@ -547,7 +549,7 @@ void FGState::CalcMatrices(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
+void FGState::IntegrateQuat(FGColumnVector3 vPQR, int rate) {
   vQdot(1) = -0.5*(vQtrn(2)*vPQR(eP) + vQtrn(3)*vPQR(eQ) + vQtrn(4)*vPQR(eR));
   vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
   vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
@@ -561,7 +563,7 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector& FGState::CalcEuler(void) {
+FGColumnVector3& FGState::CalcEuler(void) {
   if (mTl2b(3,3) == 0.0) mTl2b(3,3) = 0.0000001;
   if (mTl2b(1,1) == 0.0) mTl2b(1,1) = 0.0000001;
 
@@ -576,7 +578,7 @@ FGColumnVector& FGState::CalcEuler(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix& FGState::GetTs2b(float alpha, float beta)
+FGMatrix33& FGState::GetTs2b(float alpha, float beta)
 {
   float ca, cb, sa, sb;
 

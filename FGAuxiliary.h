@@ -40,13 +40,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.20 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.21 2001/07/28 15:29:13 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.20 2001/07/26 23:11:04 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.21 2001/07/28 15:29:13 apeden Exp $
     @see -
 */
 
@@ -88,9 +90,9 @@ public:
   inline float GetVequivalentFPS(void) { return veas; }
   inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
   
-  inline FGColumnVector& GetPilotAccel(void) { return vPilotAccel; }
+  inline FGColumnVector3& GetPilotAccel(void) { return vPilotAccel; }
   inline float GetPilotAccel(int idx) { return vPilotAccel(idx); }
-  inline FGColumnVector GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
+  inline FGColumnVector3 GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
   inline float GetNpilot(int idx) { return (vPilotAccel*INVGRAVITY)(idx); }
 
   inline float GetEarthPositionAngle(void) { return earthPosAngle; }
@@ -111,8 +113,8 @@ private:
   // (apeden@earthlink.net) or you can add it your self using the
   // isentropic flow equations
 
-  FGColumnVector vPilotAccel;
-  FGColumnVector vToEyePt;
+  FGColumnVector3 vPilotAccel;
+  FGColumnVector3 vToEyePt;
   
   float earthPosAngle;
 

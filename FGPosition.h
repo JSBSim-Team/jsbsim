@@ -39,13 +39,15 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGModel.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.38 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.39 2001/07/28 15:33:18 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.38 2001/07/26 23:11:04 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.39 2001/07/28 15:33:18 apeden Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,8 +83,8 @@ public:
       @return false if no error */
   bool Run(void);
   
-  inline FGColumnVector& GetVel(void) { return vVel; }
-  inline FGColumnVector& GetVelDot(void) { return vVelDot; }
+  inline FGColumnVector3& GetVel(void) { return vVel; }
+  inline FGColumnVector3& GetVelDot(void) { return vVelDot; }
   inline double GetVn(void)  { return vVel(eX); }
   inline double GetVe(void)  { return vVel(eY); }
   inline double GetVd(void)  { return vVel(eZ); }
@@ -97,12 +99,12 @@ public:
   inline double GetRunwayRadius(void) { return RunwayRadius; }
   inline double GetDistanceAGL(void)  { return DistanceAGL; }
   inline double GetRadius(void) { return Radius; }
-  inline FGColumnVector& GetRunwayNormal(void) { return vRunwayNormal; }
+  inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
   
   inline double GetGamma(void) { return gamma; }
   inline void SetGamma(float tt) { gamma = tt; }
   inline double GetHOverB(void) { return hoverb; }
-  void SetvVel(const FGColumnVector& v) { vVel = v; }
+  void SetvVel(const FGColumnVector3& v) { vVel = v; }
   void SetLatitude(float tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
   void Seth(double tt);
@@ -114,9 +116,9 @@ public:
   }
   
 private:  
-  FGColumnVector vVel;
-  FGColumnVector vVelDot;
-  FGColumnVector vRunwayNormal;
+  FGColumnVector3 vVel;
+  FGColumnVector3 vVelDot;
+  FGColumnVector3 vRunwayNormal;
   
   double Vee, invMass, invRadius;
   double Radius, h;

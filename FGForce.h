@@ -57,10 +57,12 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.13 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.14 2001/07/28 15:29:53 apeden Exp $"
 
 #include "FGFDMExec.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -81,22 +83,22 @@ public:
     vFn(2)=Fny;
     vFn(3)=Fnz;
   }
-  inline void SetNativeForces(FGColumnVector vv) { vFn = vv; };
+  inline void SetNativeForces(FGColumnVector3 vv) { vFn = vv; };
 
   inline void SetNativeMoments(float Ln,float Mn, float Nn) {
     vMn(1)=Ln;
     vMn(2)=Mn;
     vMn(3)=Nn;
   }
-  inline void SetNativeMoments(FGColumnVector vv) { vMn = vv; }
+  inline void SetNativeMoments(FGColumnVector3 vv) { vMn = vv; }
 
-  inline FGColumnVector& GetNativeForces(void) { return vFn; }
-  inline FGColumnVector& GetNativeMoments(void) { return vMn; }
+  inline FGColumnVector3& GetNativeForces(void) { return vFn; }
+  inline FGColumnVector3& GetNativeMoments(void) { return vMn; }
 
 
-  FGColumnVector& GetBodyForces(void);
+  FGColumnVector3& GetBodyForces(void);
 
-  inline FGColumnVector& GetMoments(void) { return vM; }
+  inline FGColumnVector3& GetMoments(void) { return vM; }
 
   //point of application, JSBsim structural coords
   //(inches, x +back, y +right, z +up)
@@ -105,8 +107,8 @@ public:
     vXYZn(2) = y;
     vXYZn(3) = z;
   }
-  inline void SetLocation(FGColumnVector vv) { vXYZn = vv; }
-  FGColumnVector& GetLocation(void) { return vXYZn; }
+  inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; }
+  FGColumnVector3& GetLocation(void) { return vXYZn; }
 
   //these angles are relative to body axes, not earth!!!!!
   //I'm using these because pitch, roll, and yaw are easy to visualize,
@@ -116,32 +118,32 @@ public:
   //They are in radians.
 
   void SetAnglesToBody(float broll, float bpitch, float byaw);
-  inline void  SetAnglesToBody(FGColumnVector vv) { SetAnglesToBody(vv(1), vv(2), vv(3));}
+  inline void  SetAnglesToBody(FGColumnVector3 vv) { SetAnglesToBody(vv(1), vv(2), vv(3));}
 
   inline void SetSense(float x, float y, float z) { vSense(1)=x, vSense(2)=y, vSense(3)=z; }
-  inline void SetSense(FGColumnVector vv) { vSense=vv; }
+  inline void SetSense(FGColumnVector3 vv) { vSense=vv; }
 
-  inline FGColumnVector& GetSense(void) { return vSense; }
+  inline FGColumnVector3& GetSense(void) { return vSense; }
 
   inline void SetTransformType(TransformType ii) { ttype=ii; }
   inline TransformType GetTransformType(void) { return ttype; }
 
-  FGMatrix Transform(void);
+  FGMatrix33 Transform(void);
 
 protected:
-  FGColumnVector vFn;
-  FGColumnVector vMn;
+  FGColumnVector3 vFn;
+  FGColumnVector3 vMn;
   FGFDMExec *fdmex;
   void Debug(void);
 
 private:
-  FGColumnVector vFb;
-  FGColumnVector vM;
-  FGColumnVector vXYZn;
-  FGColumnVector vDXYZ;
-  FGColumnVector vSense;
+  FGColumnVector3 vFb;
+  FGColumnVector3 vM;
+  FGColumnVector3 vXYZn;
+  FGColumnVector3 vDXYZ;
+  FGColumnVector3 vSense;
 
-  FGMatrix mT;
+  FGMatrix33 mT;
 };
 
 #endif

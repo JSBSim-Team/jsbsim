@@ -1,9 +1,9 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Module: FGMatrix.cpp
+Module: FGMatrix33.cpp
 Author: Originally by Tony Peden [formatted here (and broken??) by JSB]
 Date started: 1998
-Purpose: FGMatrix class
+Purpose: FGMatrix33 class
 Called by: Various
 
 FUNCTIONAL DESCRIPTION
@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.3 2001/07/24 11:55:49 apeden Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.4 2001/07/28 15:29:36 apeden Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 extern short debug_lvl;
@@ -35,8 +35,20 @@ CLASS IMPLEMENTATION
 FGColumnVector3::FGColumnVector3(void)
 {
   data = new double[4];
+  rowCtr = 1;
   //cout << "Allocated: " <<  data << endl;
-  if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+  //if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3::FGColumnVector3(int m)
+{
+  data = new double[4];
+  rowCtr = 1;
+  data[1]=0;data[2]=0;data[3]=0;
+  //cout << "Allocated: " <<  data << endl;
+  //if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,6 +61,7 @@ FGColumnVector3::~FGColumnVector3(void)
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector3" << endl;
 }
 
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector3::FGColumnVector3(const FGColumnVector3& b) 
@@ -57,6 +70,7 @@ FGColumnVector3::FGColumnVector3(const FGColumnVector3& b)
   data[1] = b.data[1];
   data[2] = b.data[2];
   data[3] = b.data[3];
+  rowCtr = 1;
 
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
 }
@@ -69,23 +83,25 @@ FGColumnVector3 FGColumnVector3::operator=(const FGColumnVector3& b)
   data[1] = b.data[1];
   data[2] = b.data[2];
   data[3] = b.data[3];
-  
+  rowCtr = 1;
+
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector3" << endl;
   
   return *this;
 }
 
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/* //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double& FGColumnVector3::operator()(int m) const
 {
   return data[m];
 }
+ */
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 operator*(const FGMatrix33& Mat, const FGColumnVector3& Col)
+/* FGColumnVector3 operator*(const FGMatrix33& Mat, FGColumnVector3& Col)
 {
   FGColumnVector3 Product;
 
@@ -95,6 +111,7 @@ FGColumnVector3 operator*(const FGMatrix33& Mat, const FGColumnVector3& Col)
 
   return Product;
 }
+ */
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -292,3 +309,13 @@ ostream& operator<<(ostream& os, const FGColumnVector3& col) {
   cout << "[ " << col(1) << " , " << col(2) << " , " << col(3) << " ]";
   return os;
 }  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGColumnVector3::operator<<(const float ff)
+{
+  data[rowCtr] = ff;
+  if (++rowCtr > 3 )
+      rowCtr = 1;
+  return *this;
+}

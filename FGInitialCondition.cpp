@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.30 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.31 2001/07/28 15:30:56 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 extern short debug_lvl;
@@ -336,9 +336,11 @@ void FGInitialCondition::calcWindUVW(void) {
 
 void FGInitialCondition::SetAltitudeFtIC(float tt) {
   altitude=tt;
+  cout << "setting alt for atmosphere" << endl;
   fdmex->GetPosition()->Seth(altitude);
+  cout << "done" << endl;
   fdmex->GetAtmosphere()->Run();
-
+  cout << "atmosphere set" << endl;
   //lets try to make sure the user gets what they intended
 
   switch(lastSpeedSet) {
@@ -380,8 +382,8 @@ void FGInitialCondition::SetSeaLevelRadiusFtIC(double tt) {
 
 void FGInitialCondition::SetTerrainAltitudeFtIC(double tt) {
   terrain_altitude=tt;
-  fdmex->GetPosition()->SetDistanceAGL(altitude-terrain_altitude);
-  fdmex->GetPosition()->SetRunwayRadius(sea_level_radius + terrain_altitude);
+ // fdmex->GetPosition()->SetDistanceAGL(altitude-terrain_altitude);
+  //fdmex->GetPosition()->SetRunwayRadius(sea_level_radius + terrain_altitude);
 }
 
 //******************************************************************************

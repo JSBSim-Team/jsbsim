@@ -51,9 +51,11 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.26 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.27 2001/07/28 15:30:56 apeden Exp $"
 
 /*******************************************************************************
 CLASS DECLARATION

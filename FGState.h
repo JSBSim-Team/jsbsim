@@ -59,13 +59,15 @@ INCLUDES
 #include <map>
 #include "FGDefs.h"
 #include "FGInitialCondition.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.36 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.37 2001/07/28 15:34:31 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -135,12 +137,12 @@ public:
   }
   void InitMatrices(float phi, float tht, float psi);
   void CalcMatrices(void);
-  void IntegrateQuat(FGColumnVector vPQR, int rate);
-  FGColumnVector& CalcEuler(void);
-  FGMatrix& GetTs2b(float alpha, float beta);
-  FGMatrix& GetTl2b(void) { return mTl2b; }
+  void IntegrateQuat(FGColumnVector3 vPQR, int rate);
+  FGColumnVector3& CalcEuler(void);
+  FGMatrix33& GetTs2b(float alpha, float beta);
+  FGMatrix33& GetTl2b(void) { return mTl2b; }
   float GetTl2b(int i, int j) { return mTl2b(i,j);}
-  FGMatrix& GetTb2l(void) { return mTb2l; }
+  FGMatrix33& GetTb2l(void) { return mTb2l; }
   float GetTb2l(int i, int j) { return mTb2l(i,j);}
   typedef map<eParam, string> ParamMap;
   ParamMap paramdef;
@@ -152,14 +154,14 @@ private:
   float saved_dt;
 
   FGFDMExec* FDMExec;
-  FGMatrix mTb2l;
-  FGMatrix mTl2b;
-  FGMatrix mTs2b;
-  FGColumnVector vQtrn;
-  FGColumnVector vlastQdot;
-  FGColumnVector vUVW;
-  FGColumnVector vLocalVelNED;
-  FGColumnVector vLocalEuler;
+  FGMatrix33 mTb2l;
+  FGMatrix33 mTl2b;
+  FGMatrix33 mTs2b;
+  FGColumnVector4 vQtrn;
+  FGColumnVector4 vlastQdot;
+  FGColumnVector3 vUVW;
+  FGColumnVector3 vLocalVelNED;
+  FGColumnVector3 vLocalEuler;
 
   FGAircraft* Aircraft;
   FGPosition* Position;
@@ -175,9 +177,9 @@ private:
   void Debug(void);
   int ActiveEngine;
 
-  FGColumnVector vQdot;
-  FGColumnVector vTmp;
-  FGColumnVector vEuler;
+  FGColumnVector4 vQdot;
+  FGColumnVector4 vTmp;
+  FGColumnVector3 vEuler;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,6 +1,6 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Header: FGMatrix.h
+Header: FGMatrix33.h
 Author: Originally by Tony Peden [formatted and adapted here by Jon Berndt]
 Date started: Unknown
 
@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.3 2001/07/24 11:55:49 apeden Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.4 2001/07/28 15:29:36 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,21 +88,26 @@ public:
   void operator*=(const double scalar);
   void operator/=(const double scalar);
 
-  
+  FGColumnVector3& operator<<(const float ff);
+
+  inline void InitMatrix(void) { data[1]=0; data[2]=0; data[3]=0; }
+  inline void InitMatrix(float ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
+
   float Magnitude(void);
   FGColumnVector3 Normalize(void);
 
   friend FGColumnVector3 operator*(const double scalar, const FGColumnVector3& A);
-  friend FGColumnVector3 operator*(const FGMatrix33& M, const FGColumnVector3& V);
+  //friend FGColumnVector3 operator*(const FGMatrix33& M, FGColumnVector3& V);
 
   friend ostream& operator<<(ostream& os, const FGColumnVector3& col);
 
-  double& operator()(int m) const;
+  inline double& operator()(int m) const { return data[m]; }
 
   FGColumnVector3 multElementWise(const FGColumnVector3& V);
 
 private:
   double *data;
+  int rowCtr;
   void Debug(void);
 };
 

@@ -68,9 +68,11 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.26 2001/07/26 23:11:04 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.27 2001/07/28 15:34:56 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -81,13 +83,13 @@ public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation();
 
-  inline FGColumnVector& GetUVW   (void)    { return vUVW; }
+  inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
   inline float           GetUVW   (int idx) { return vUVW(idx); }
-  inline FGColumnVector& GetUVWdot(void)    { return vUVWdot; }
+  inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
   inline float           GetUVWdot(int idx) { return vUVWdot(idx); }
-  inline FGColumnVector& GetNcg   (void)    { return vNcg; }
+  inline FGColumnVector3& GetNcg   (void)    { return vNcg; }
   inline float           GetNcg   (int idx) { return vNcg(idx); }
-  inline FGColumnVector& GetvAero (void)    { return vAero; }
+  inline FGColumnVector3& GetvAero (void)    { return vAero; }
   inline float           GetvAero (int idx) { return vAero(idx); }
 
   inline float Getalpha(void) { return alpha; }
@@ -98,7 +100,7 @@ public:
   inline float Getadot (void) { return adot; }
   inline float Getbdot (void) { return bdot; }
 
-  void SetUVW(FGColumnVector tt) { vUVW = tt; }
+  void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
 
   inline void Setalpha(float tt) { alpha = tt; }
   inline void Setbeta (float tt) { beta  = tt; }
@@ -115,15 +117,15 @@ public:
 protected:
 
 private:
-  FGColumnVector vUVW;
-  FGColumnVector vUVWdot;
-  FGColumnVector vNcg;
-  FGColumnVector vPQR;
-  FGColumnVector vForces;
-  FGColumnVector vEuler;
-  FGColumnVector vlastUVWdot;
-  FGMatrix       mVel;
-  FGColumnVector vAero;
+  FGColumnVector3 vUVW;
+  FGColumnVector3 vUVWdot;
+  FGColumnVector3 vNcg;
+  FGColumnVector3 vPQR;
+  FGColumnVector3 vForces;
+  FGColumnVector3 vEuler;
+  FGColumnVector3 vlastUVWdot;
+  FGMatrix33       mVel;
+  FGColumnVector3 vAero;
 
   float Vt, qbar, Mach;
   float Mass, dt;

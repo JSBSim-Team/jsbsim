@@ -55,23 +55,23 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix33.h,v 1.1 2001/07/23 12:46:03 apeden Exp $"
+#define ID_MATRIX "$Id: FGMatrix33.h,v 1.2 2001/07/28 15:32:52 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGColumnVector33;
+class FGColumnVector3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DECLARATION: MatrixException
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// class MatrixException /* :  public exception */
-// {
-// public:
-//   string Message;
-// };
+ class MatrixException /* :  public exception */
+{
+public:
+  string Message;
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DECLARATION: FGMatrix33
@@ -81,6 +81,7 @@ class FGMatrix33
 {
 public:
   FGMatrix33(void);
+  FGMatrix33(int r, int c);
   FGMatrix33(const FGMatrix33& A);
   ~FGMatrix33(void);
 
@@ -95,10 +96,13 @@ public:
   void T(void);
   void InitMatrix(void);
   void InitMatrix(double value);
+  
+  //friend FGMatrix33 operator*(double scalar,FGMatrix33& A);
 
   FGMatrix33 operator-(const FGMatrix33& B);
   FGMatrix33 operator+(const FGMatrix33& B);
   FGMatrix33 operator*(const FGMatrix33& B);
+  FGMatrix33 operator*(const double scalar);
   FGMatrix33 operator/(const double scalar);
   FGMatrix33& operator<<(const float ff);
 
@@ -111,7 +115,6 @@ public:
   void operator*=(const double scalar);
   void operator/=(const double scalar);
 
-  friend FGMatrix33 operator*(double scalar,FGMatrix33& A);
 
   void SetOParams(char delim,int width,int prec, int origin=0);
 

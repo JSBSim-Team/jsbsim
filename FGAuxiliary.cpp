@@ -50,9 +50,11 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGOutput.h"
-#include "FGMatrix.h"
+#include "FGMatrix33.h"
+#include "FGColumnVector3.h"
+#include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.15 2001/04/25 22:47:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.16 2001/07/28 15:29:13 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 extern short debug_lvl;
