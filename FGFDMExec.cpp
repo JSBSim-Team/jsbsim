@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.36 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.37 2001/03/19 18:11:14 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -144,7 +144,7 @@ FGFDMExec::FGFDMExec(void)
     char* num = getenv("JSBSIM_DEBUG");
     if (!num) debug_lvl = 1;
     else debug_lvl = atoi(num); // set debug level
-  } catch (...) {               // if error set to -1
+  } catch (...) {               // if error set to 1
     debug_lvl = 1;
   }
 
