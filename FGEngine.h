@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.49 2002/01/19 03:01:58 dmegginson Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.50 2002/01/19 03:04:30 dmegginson Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.49 2002/01/19 03:01:58 dmegginson Exp $ 
+    @version $Id: FGEngine.h,v 1.50 2002/01/19 03:04:30 dmegginson Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,6 +219,7 @@ protected:
   int   EngineNumber;
   bool  TrimMode;
 
+  double FuelFlow_gph;
   double ManifoldPressure_inHg;
   double ExhaustGasTemp_degK;
   double CylinderHeadTemp_degK;
