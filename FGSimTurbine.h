@@ -46,9 +46,8 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
-#include "FGPropertyManager.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.2 2003/03/16 17:55:03 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.3 2003/03/19 08:50:32 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -64,12 +63,6 @@ public:
 
   double Calculate(double);
   double CalcFuelNeed(void);
-
-  inline double GetTAT(void) const { return TAT; }
-
-  void bind(void);
-  void unbind(void);
-  
   
 private:
 
@@ -89,18 +82,17 @@ private:
   double dt;               // Simulator time slice
   double N1_factor;        // factor to tie N1 and throttle
   double N2_factor;        // factor to tie N2 and throttle
-  double TAT;              // Total air temperature, (degrees C)
   double ThrottleCmd;      // FCS-supplied throttle position
   double throttle;         // virtual throttle position
-  string EngNode;          // this engine's property name
   int Augmented;           // = 1 if augmentation installed
   int Injected;            // = 1 if water injection installed
+  int AugMethod;           // = 0 if using property /engine[n]/augmentation
+                           // = 1 if using last 1% of throttle movement
 
   void SetDefaults(void);
   bool Load(FGConfigFile *ENG_cfg);
   void Debug(int from);
 
-  FGPropertyManager* PropertyManager;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

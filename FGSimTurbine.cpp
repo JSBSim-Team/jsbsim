@@ -39,15 +39,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <vector>
-
-#include <simgear/misc/props.hxx>
-
-#include "FGPropertyManager.h"
 #include "FGSimTurbine.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.2 2003/03/16 17:55:03 ehofman Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.3 2003/03/19 08:50:33 ehofman Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,8 +56,6 @@ FGSimTurbine::FGSimTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
   SetDefaults();
   FGEngine::Type=etSimTurbine;
   Load(cfg);
-  PropertyManager = exec->GetPropertyManager();
-//  bind();
   Debug(0);
 }
 
@@ -69,7 +63,6 @@ FGSimTurbine::FGSimTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 
 FGSimTurbine::~FGSimTurbine()
 {
-//  unbind();
   Debug(1);
 }
 
@@ -78,27 +71,26 @@ FGSimTurbine::~FGSimTurbine()
 double FGSimTurbine::Calculate(double dummy)
 {
   double idlethrust, milthrust, thrust;
-  string buf;
-
-  // calculate total air temperature
-  double OAT = (Atmosphere->GetTemperature() - 492.0) * 0.5555556; // Rankin to Celsius
-  TAT = OAT + 46.8 * Translation->GetMach() * Translation->GetMach();
-    
-  dt = State->Getdt(); // * Propulsion->GetRate();
+  double TAT = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556;
+  dt = State->Getdt() * Propulsion->GetRate();
 
   // calculate virtual throttle position (actual +/- lag) based on
-  // FCS Throttle value
- 
-  ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
-  if ( ThrottleCmd > throttle ) {
-    throttle += (dt * delay);
-    if (throttle > ThrottleCmd ) throttle = ThrottleCmd;
+  // FCS Throttle value (except when trimming)
+  if (dt > 0.0) {
+    ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
+    if ( ThrottleCmd > throttle ) {
+      throttle += (dt * delay);
+      if (throttle > ThrottleCmd ) throttle = ThrottleCmd;
+      }
+    else {
+      throttle -= (dt * delay * 3.0);
+      if (throttle < ThrottleCmd ) throttle = ThrottleCmd;
+      }
     }
   else {
-    throttle -= (dt * delay * 3.0);
-    if (throttle < ThrottleCmd ) throttle = ThrottleCmd;
+    throttle = ThrottleCmd = FCS->GetThrottleCmd(EngineNumber);
     }
-
+    
   idlethrust = MaxMilThrust * ThrustTables[0]->TotalValue();
   milthrust = MaxMilThrust * ThrustTables[1]->TotalValue();
 
@@ -116,6 +108,8 @@ double FGSimTurbine::Calculate(double dummy)
     OilTemp_degK += dt * 1.2;
     if (OilTemp_degK > 366.0) OilTemp_degK = 366.0;
     EPR = 1.0 + thrust/MaxMilThrust;
+    NozzlePosition = 1.0 - throttle;
+    if (Reversed) thrust = thrust * -0.2;
     }
   else {
     thrust = 0.0;
@@ -132,18 +126,23 @@ double FGSimTurbine::Calculate(double dummy)
     EPR = 1.0;
     }
 
-  if (Augmented && (throttle > 0.99)) { Augmentation = true; }
-    else { Augmentation = false; }
-  if (Augmentation) {
-    thrust = thrust * ThrustTables[2]->TotalValue();
-    FuelFlow_pph = thrust * ATSFC;
+  if (AugMethod == 1) {
+    if (throttle > 0.99) {Augmentation = true;} 
+      else {Augmentation = false;}
     }
 
-  if (Injected && Injection) thrust = thrust * ThrustTables[3]->TotalValue();  
+  if ((Augmented == 1) && Augmentation) {
+    thrust = thrust * ThrustTables[2]->TotalValue();
+    FuelFlow_pph = thrust * ATSFC;
+    NozzlePosition = 1.0;
+    }
+
+  if ((Injected == 1) && Injection)
+    thrust = thrust * ThrustTables[3]->TotalValue();  
   
   ConsumeFuel();
   
-  return Thrust=thrust;
+  return Thrust = thrust;
   
 }
         
@@ -159,30 +158,25 @@ double FGSimTurbine::CalcFuelNeed(void)
 
 void FGSimTurbine::SetDefaults(void)
 {
-  Name = "CFM56-3C1";
-  MaxMilThrust = 20000.0;
-  BypassRatio = 5.9;
-  TSFC = 0.65;
-  ATSFC = 1.3;
-  IdleN1 = 30.4;
-  IdleN2 = 61.1;
-  IdleFF = 500.0;
-  MaxN1 = 101.1;
-  MaxN2 = 103.2;
-  Starved = false;
+  Name = "None_Defined";
+  MaxMilThrust = 10000.0;
+  BypassRatio = 0.0;
+  TSFC = 0.8;
+  ATSFC = 1.7;
+  IdleN1 = 30.0;
+  IdleN2 = 60.0;
+  MaxN1 = 100.0;
+  MaxN2 = 100.0;
+  Augmented = 0;
+  AugMethod = 0;
+  Injected = 0;
   BleedDemand = 0.0;
   throttle = 0.0;
   InletPosition = 1.0;
   NozzlePosition = 1.0;
-  EPR = 1.0;
   Augmentation = false;
   Injection = false;
-  char buffer[10];
-  sprintf(buffer, "%d", EngineNumber);
-  EngNode = "/engines/engine[";
-  EngNode = EngNode + buffer;
-  EngNode = EngNode + "]";
-  cout << "Engine Node: " << EngNode << endl;
+  Reversed = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,6 +197,7 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
   *Eng_cfg >> token >> MaxN1;
   *Eng_cfg >> token >> MaxN2;
   *Eng_cfg >> token >> Augmented;
+  *Eng_cfg >> token >> AugMethod;
   *Eng_cfg >> token >> Injected;
   i=0;
   while( Eng_cfg->GetValue() != string("/FG_SIMTURBINE") && i < 10){
@@ -215,27 +210,12 @@ bool FGSimTurbine::Load(FGConfigFile *Eng_cfg)
   delay= 1.0 / (BypassRatio + 3.0);
   N1_factor = MaxN1 - IdleN1;
   N2_factor = MaxN2 - IdleN2;
-  OilTemp_degK = ((Atmosphere->GetTemperature()- 492.0) * 0.5555556) + 273.0;
-  IdleFF = pow(MaxMilThrust, 0.2) * 10.6;
-  AddFeedTank(EngineNumber);
+  OilTemp_degK = (Auxiliary->GetTotalTemperature() - 491.69) * 0.5555556 + 273.0;
+  IdleFF = pow(MaxMilThrust, 0.2) * 107.0;  // just an estimate
+  AddFeedTank(EngineNumber);   // engine[n] feeds from tank[n]
   return true;
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGSimTurbine::bind(void)
-{
-  PropertyManager->Tie("atmosphere/total-air-temp_degC", &TAT);
-}
-
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGSimTurbine::unbind(void)
-{
-  PropertyManager->Untie("atmosphere/total-air-temp_degC");
-}
-                                                                     
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
