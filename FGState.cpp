@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.79 2001/11/06 12:49:31 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.80 2001/11/11 22:25:49 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,6 +107,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_ALPHA,          " alpha "          );
   RegisterVariable(FG_ALPHADOT,       " alphadot "       );
   RegisterVariable(FG_BETA,           " beta "           );
+  RegisterVariable(FG_ABETA,          " |beta| "         );
   RegisterVariable(FG_BETADOT,        " betadot "        );
   RegisterVariable(FG_PHI,            " roll_angle "     );
   RegisterVariable(FG_THT,            " pitch_angle "    );
@@ -199,6 +200,8 @@ float FGState::GetParameter(eParam val_idx) {
     return Translation->Getadot();
   case FG_BETA:
     return Translation->Getbeta();
+  case FG_ABETA:
+    return fabs(Translation->Getbeta());   
   case FG_BETADOT:
     return Translation->Getbdot();
   case FG_PHI:
