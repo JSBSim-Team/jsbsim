@@ -344,24 +344,22 @@ FGMatrix FGMatrix::operator/(const double scalar)
       }
     }
     
-  } else
-    cerr << "Attempt to divide by zero in method FGMatrix::operator/(const double scalar), object at " << this << endl; 
-  return Quot;  
+  }
+  return Quot;
 }
 
 /******************************************************************************/
 
 void FGMatrix::operator/=(const double scalar)
 {
-  
+
   if(scalar != 0) {
     for (unsigned int i=1; i<=Rows(); i++)  {
       for (unsigned int j=1; j<=Cols(); j++) {
         data[i][j]/=scalar;
       }
     }
-  } else 
-    cerr << "Attempt to divide by zero in method FGMatrix::operator/=(const double scalar), object " << this << endl; 
+  }
 }
 
 /******************************************************************************/
@@ -521,15 +519,9 @@ FGColumnVector FGColumnVector::operator/(const double scalar)
 {
   FGColumnVector Quotient(Rows());
   if(scalar != 0) {
-    
-
     for (unsigned int i=1; i<=Rows(); i++) Quotient(i) = data[i][1] / scalar;
-
-  } else 
-    cerr << "Attempt to divide by zero in method FGColumnVector::operator/(const double scalar), object " << this << endl; 
+  }
   return Quotient;
-  
-    
 }
 
 /******************************************************************************/

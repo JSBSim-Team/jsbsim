@@ -61,7 +61,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=7
 Release=2
-Build=18
+Build=19
 Debug=0
 PreRelease=0
 Special=0
@@ -73,7 +73,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=FlightGear.org
 FileDescription=Executable (Console)
-FileVersion=0.7.2.18
+FileVersion=0.7.2.19
 InternalName=JSBSim Standalone
 LegalCopyright=©2000 by Jon S. Berndt
 LegalTrademarks=JSBSim is a trademark of Jon S. Berndt
@@ -103,17 +103,18 @@ Count=1
 Item0=filtersjb;$(BCB)\lib
 
 [HistoryLists\hlRunParameters]
-Count=4
-Item0=X15 reset01
-Item1=X15 reset00 
-Item2=X15 reset00 > output.dat
-Item3=X15 reset00
+Count=5
+Item0=c172 reset01
+Item1=X15 reset01
+Item2=X15 reset00 
+Item3=X15 reset00 > output.dat
+Item4=X15 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=X15 reset01
+RunParams=c172 reset01
 HostApplication=
 RemoteHost=
 RemotePath=

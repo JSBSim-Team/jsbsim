@@ -120,7 +120,7 @@ int main(int argc, char** argv)
 
   float cmd = 0.0;
 
-  while (FDMExec->GetState()->Getsim_time() <= 145.0)
+  while (FDMExec->GetState()->Getsim_time() <= 10.0)
   {
     // Fake an elevator ramp here after 1 second, hold for one second, ramp down
     /*
