@@ -41,11 +41,17 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include <math.h>
+#  include <stack.h>
+#  include <string.h>
 #else
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
+#    include <stack.h>
+#    include <string.h>
 #  else
 #    include <cmath>
+#    include <stack>
+#    include <string>
 #  endif
 #endif
 
@@ -58,11 +64,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.5 2001/09/28 02:33:44 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.6 2001/11/09 23:39:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+struct Message;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -74,7 +82,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.5 2001/09/28 02:33:44 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.6 2001/11/09 23:39:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,10 +119,25 @@ public:
   static char fgdef[6];
 
 protected:
+  struct Message* PutMessage(struct Message*) {}
+  struct Message* ReadMessage(void) {}
+  struct Message* ProcessMessage(void) {}
+  
+  static stack <struct Message*> Messages;
+
   virtual void Debug(void) {};
 
   static short debug_lvl;
   static int frame;
+};
+
+struct Message {
+  string msg;
+  string subsystem;
+  enum mType {eText, eInteger, eDouble, eBool} type;
+  bool bVal;
+  int  iVal;
+  double dVal;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
