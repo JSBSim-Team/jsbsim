@@ -94,7 +94,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
-  gamma = Vt = 0.0;
+  gamma = Vt = Vground = 0.0;
   h = 3.0;                                 // Est. height of aircraft cg off runway
   SeaLevelRadius = EARTHRAD;               // For initialization ONLY
   Radius         = SeaLevelRadius + h;
@@ -121,6 +121,8 @@ bool FGPosition:: Run(void) {
   if (!FGModel::Run()) {
     GetState();
 
+    Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
+    
     invMass   = 1.0 / Aircraft->GetMass();
     Radius    = h + SeaLevelRadius;
     invRadius = 1.0 / Radius;

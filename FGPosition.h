@@ -63,7 +63,7 @@ class FGPosition : public FGModel {
   double DistanceAGL;
   double SeaLevelRadius;
   double gamma;
-  double Vt;
+  double Vt, Vground;
   double hoverb,b;
 
   void GetState(void);
@@ -77,6 +77,7 @@ public:
   inline double GetVn(void)  { return vVel(eX); }
   inline double GetVe(void)  { return vVel(eY); }
   inline double GetVd(void)  { return vVel(eZ); }
+  inline double GetVground(void) { return Vground; }
   inline double Geth(void)  { return h; }
   inline double Gethdot(void) { return RadiusDot; }
   inline double GetLatitude(void) { return Latitude; }
