@@ -4,13 +4,15 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.3 2003/12/29 10:57:39 ehofman Exp $
+// $Id: props.cxx,v 1.4 2004/02/26 02:45:16 jberndt Exp $
 
 #include "props.hxx"
 
 #include <algorithm>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 #if PROPS_STANDALONE
 
