@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.10 2000/11/20 23:59:45 jsb Exp $"
+#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.11 2000/12/06 23:57:08 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,15 +66,17 @@ CLASS DOCUMENTATION
     <li>Washout</li>
     <li>Integrator</li></ol>
     The filter is specified in the config file like this:
+    <pre>
+    
     &ltCOMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
       ID           16
       INPUT        15
       C1           600
       OUTPUT       FG_ELEVATOR_POS
     &lt/COMPONENT>
-    
+    </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.10 2000/11/20 23:59:45 jsb Exp $
+    @version $Id: FGFilter.h,v 1.11 2000/12/06 23:57:08 jsb Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
