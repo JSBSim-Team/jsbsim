@@ -17,7 +17,7 @@ print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGIne
 print "FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\\\n";
 print "FGJSBBase.o FGPropertyManager.o FGSimTurbine.o FGElectric.o FGPropagate.o\n\n";
 #
-print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx\\\n";
+print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\\\n";
 print "Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\n\n";
 #
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a\n";

@@ -10,7 +10,7 @@ FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o
 FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\
 FGJSBBase.o FGPropertyManager.o FGSimTurbine.o FGElectric.o FGPropagate.o
 
-JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx\
+JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\
 Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a
@@ -362,9 +362,6 @@ FGTurbine.o: FGTurbine.cpp FGTurbine.h FGEngine.h FGJSBBase.h \
   FGCoefficient.h FGTable.h FGOutput.h FGfdmSocket.h FGGroundReactions.h \
   FGPropulsion.h FGTank.h FGThruster.h FGForce.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTurbine.o -c FGTurbine.cpp
-
-File1.o: File1.cpp
-	$(CC) $(INCLUDES) $(CCOPTS) -oFile1.o -c File1.cpp
 
 JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
   FGPropertyManager.h simgear/props/props.hxx FGTrim.h FGTrimAxis.h \
