@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.64 2004/11/02 05:19:43 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.65 2004/12/06 03:59:52 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.64 2004/11/02 05:19:43 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.65 2004/12/06 03:59:52 dpculp Exp $
     @see
     FGEngine
     FGTank
@@ -172,11 +172,13 @@ public:
   }
 
   inline int GetActiveEngine(void);
+  inline bool GetFuelFreeze(void) {return fuel_freeze;}
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);
   void SetCutoff(int setting=0);
   void SetActiveEngine(int engine);
+  void SetFuelFreeze(bool f);  
   FGMatrix33& CalculateTankInertias(void);
 
   void bind();
@@ -199,6 +201,7 @@ private:
   FGColumnVector3 vXYZtank_arm;
   FGMatrix33 tankJ;
   bool refuel;
+  bool fuel_freeze;
 
   void Debug(int from);
 };

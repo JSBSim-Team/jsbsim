@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.74 2004/12/05 04:06:56 dpculp Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.75 2004/12/06 03:59:52 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,6 +87,7 @@ FGEngine::FGEngine(FGFDMExec* exec, int engine_number) : EngineNumber(engine_num
   TrimMode = false;
   FuelFlow_gph = 0.0;
   FuelFlow_pph = 0.0;
+  FuelFreeze = false;
 
   FDMExec = exec;
   State = FDMExec->GetState();
@@ -128,6 +129,7 @@ FGEngine::~FGEngine()
 
 void FGEngine::ConsumeFuel(void)
 {
+  if (FuelFreeze) return;
   unsigned int i;
   double Fshortage, Oshortage, TanksWithFuel;
   FGTank* Tank;

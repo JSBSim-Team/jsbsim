@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.68 2004/11/02 05:19:41 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.69 2004/12/06 03:59:52 dpculp Exp $"
 
 using std::string;
 using std::vector;
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.68 2004/11/02 05:19:41 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.69 2004/12/06 03:59:52 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,7 @@ public:
   virtual void SetRunning(bool bb) { Running=bb; }
   virtual void SetName(string name) { Name = name; }
   virtual void AddFeedTank(int tkID);
+  virtual void SetFuelFreeze(bool f) { FuelFreeze = f; }
 
   virtual void SetStarter(bool s) { Starter = s; }
 
@@ -202,6 +203,7 @@ protected:
   bool  Running;
   bool  Cranking;
   bool  TrimMode;
+  bool  FuelFreeze;
 
   double FuelFlow_gph;
   double FuelFlow_pph;

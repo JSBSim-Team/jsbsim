@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.115 2004/11/17 12:40:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.116 2004/12/06 03:59:52 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -74,6 +74,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
   refuel = false;
+  fuel_freeze = false;
 
   bind();
 
@@ -114,7 +115,7 @@ bool FGPropulsion::Run(void)
   }
 
   if (refuel) DoRefuel( dt * rate );
-
+  
   return false;
 }
 
@@ -513,6 +514,16 @@ void FGPropulsion::DoRefuel(double time_slice)
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropulsion::SetFuelFreeze(bool f) 
+{
+  fuel_freeze = f;
+  for (unsigned int i=0; i<numEngines; i++) {
+    Engines[i]->SetFuelFreeze(f);
+  }
+}  
+ 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropulsion::bind(void)
