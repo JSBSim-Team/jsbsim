@@ -60,14 +60,14 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.28 2002/09/07 21:59:14 apeden Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.29 2002/11/20 04:27:58 jberndt Exp $"
 
 typedef enum { tLongitudinal, tFull, tGround, tPullup, 
                tCustom, tNone, tTurn 
              } TrimMode;
 
-#ifdef _WIN32
-#define snprintf _snprintf
+#if defined(_WIN32) && !defined(__CYGWIN__)
+  #define snprintf _snprintf
 #endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,7 @@ CLASS DOCUMENTATION
     }
     fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.28 2002/09/07 21:59:14 apeden Exp $
+    @version $Id: FGTrim.h,v 1.29 2002/11/20 04:27:58 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTrim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
