@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.120 2002/08/16 12:42:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.121 2002/09/07 21:57:04 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,71 +99,6 @@ FGState::~FGState()
 {
   unbind();
   Debug(1);
-}
-
-//***************************************************************************
-//
-// Reset: Assume all angles READ FROM FILE IN DEGREES !!
-//
-
-bool FGState::Reset(string path, string acname, string fname)
-{
-  string resetDef;
-  string token="";
-
-  double U, V, W;
-  double phi, tht, psi;
-  double latitude, longitude, h;
-  double wdir, wmag, wnorth, weast;
-
-# ifndef macintosh
-  resetDef = path + "/" + acname + "/" + fname + ".xml";
-# else
-  resetDef = path + ";" + acname + ";" + fname + ".xml";
-# endif
-
-  FGConfigFile resetfile(resetDef);
-  if (!resetfile.IsOpen()) return false;
-
-  resetfile.GetNextConfigLine();
-  token = resetfile.GetValue();
-  if (token != string("initialize")) {
-    cerr << "The reset file " << resetDef
-         << " does not appear to be a reset file" << endl;
-    return false;
-  } else {
-    resetfile.GetNextConfigLine();
-    resetfile >> token;
-    cout << "Resetting using: " << token << endl << endl;
-  }
-  
-  while (token != string("/initialize") && token != string("EOF")) {
-    if (token == "UBODY") resetfile >> U;
-    if (token == "VBODY") resetfile >> V;
-    if (token == "WBODY") resetfile >> W;
-    if (token == "LATITUDE") resetfile >> latitude;
-    if (token == "LONGITUDE") resetfile >> longitude;
-    if (token == "PHI") resetfile >> phi;
-    if (token == "THETA") resetfile >> tht;
-    if (token == "PSI") resetfile >> psi;
-    if (token == "ALTITUDE") resetfile >> h;
-    if (token == "WINDDIR") resetfile >> wdir;
-    if (token == "VWIND") resetfile >> wmag;
-
-    resetfile >> token;
-  }
-  
-  Position->SetLatitude(latitude*degtorad);
-  Position->SetLongitude(longitude*degtorad);
-  Position->Seth(h);
-
-  wnorth = wmag*ktstofps*cos(wdir*degtorad);
-  weast = wmag*ktstofps*sin(wdir*degtorad);
-  
-  Initialize(U, V, W, phi*degtorad, tht*degtorad, psi*degtorad,
-               latitude*degtorad, longitude*degtorad, h, wnorth, weast, 0.0);
-
-  return true;
 }
 
 //***************************************************************************

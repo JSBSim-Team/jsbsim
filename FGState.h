@@ -64,25 +64,28 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
+#include "FGFDMExec.h"
+#include "FGAtmosphere.h"
+#include "FGFCS.h"
+#include "FGTranslation.h"
+#include "FGRotation.h"
+#include "FGPosition.h"
+#include "FGAerodynamics.h"
+#include "FGOutput.h"
+#include "FGAircraft.h"
+#include "FGGroundReactions.h"
+#include "FGPropulsion.h"
+
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.62 2002/07/31 12:59:00 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.63 2002/09/07 21:57:04 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGAtmosphere;
-class FGOutput;
-class FGPosition;
-class FGFDMExec;
-class FGGroundReactions;
-class FGPropulsion;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -94,7 +97,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.62 2002/07/31 12:59:00 jberndt Exp $
+    @version $Id: FGState.h,v 1.63 2002/09/07 21:57:04 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGState.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -114,30 +117,7 @@ public:
   /// Destructor
   ~FGState();
 
-  /** Specifies the Reset file to use.
-      The reset file normally resides in the same directory as an aircraft config file.
-      it includes the following information:
-      <ul>
-      <li>U, the body X-Axis velocity</li>
-      <li>V, the body Y-Axis velocity</li>
-      <li>W, the body Z-Axis velocity</li>
-      <li>Latitude measured in radians from the equator, negative values are south.</li>
-      <li>Longitude, measured in radians from the Greenwich meridian, negative values are west.</li>
-      <li>Phi, the roll angle in radians.</li>
-      <li>Theta, the pitch attitude in radians.</li>
-      <li>Psi, the heading angle in radians.</li>
-      <li>H, the altitude in feet</li>
-      <li>Wind Direction, the direction the wind is coming <u>from</u>.</li>
-      <li>Wind magnitude, the wind speed in fps.</li>
-      </ul>
-      @param path the path string leading to the specific aircraft file, i.e. "aircraft".
-      @param aircraft the name of the aircraft, i.e. "c172".
-      @param filename the name of the reset file without an extension, i.e. "reset00".
-      @return true if successful, false if the file could not be opened.
-      */
-  bool Reset(string path, string aircraft, string filename);
-
-  /** Initializes the simulation state based on the passed-in parameters.
+ /** Initializes the simulation state based on the passed-in parameters.
       @param U the body X-Axis velocity in fps.
       @param V the body Y-Axis velocity in fps.
       @param W the body Z-Axis velocity in fps.
@@ -392,17 +372,6 @@ private:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
-#include "FGAerodynamics.h"
-#include "FGOutput.h"
-#include "FGAircraft.h"
-#include "FGGroundReactions.h"
-#include "FGPropulsion.h"
 
 #endif
 
