@@ -84,17 +84,20 @@ public:
 
   FGColumnVector Force(void);
   FGColumnVector Moment(void) {return vMoment;}
+  FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
 
   inline string GetName(void)      {return name;          }
   inline bool   GetWOW(void)       {return WOW;           }
   inline float  GetCompLen(void)   {return compressLength;}
   inline float  GetCompVel(void)   {return compressSpeed; }
   inline float  GetCompForce(void) {return Force()(3);    }
+  
 
 private:
   enum {eX=1, eY, eZ};
   FGColumnVector vXYZ;
   FGColumnVector vMoment;
+  FGColumnVector vWhlBodyVec;
   float kSpring, bDamp, compressLength, compressSpeed;
   float statFCoeff, rollFCoeff, skidFCoeff;
   float frictionForce, compForce;

@@ -46,6 +46,7 @@ INCLUDES
 
 FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
                                                            vMoment(3),
+                                                           vWhlBodyVec(3),
                                                            Exec(fdmex)
 {
   string tmp;
@@ -77,7 +78,6 @@ FGColumnVector FGLGear::Force(void)
   static FGColumnVector vForce(3);
   static FGColumnVector vLocalForce(3);
   static FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
-  static FGColumnVector vWhlBodyVec(3);    // Vector: CG to this wheel (Body)
   static FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
 
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
