@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.60 2001/04/24 22:14:42 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.61 2001/04/25 00:56:24 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -53,7 +53,7 @@
 #include <FDM/JSBSim/FGInitialCondition.h>
 #include <FDM/JSBSim/FGTrim.h>
 #include <FDM/JSBSim/FGAtmosphere.h>
-
+#include <FDM/JSBSim/FGAerodynamics.h>
 #include "JSBSim.hxx"
 
 /******************************************************************************/
@@ -65,16 +65,17 @@ FGJSBsim::FGJSBsim( double dt )
    
     fdmex=new FGFDMExec;
     
-    State       = fdmex->GetState();
-    Atmosphere  = fdmex->GetAtmosphere();
-    FCS         = fdmex->GetFCS();
-    MassBalance = fdmex->GetMassBalance();
-    Propulsion  = fdmex->GetPropulsion();
-    Aircraft    = fdmex->GetAircraft();
-    Translation = fdmex->GetTranslation();
-    Rotation    = fdmex->GetRotation();
-    Position    = fdmex->GetPosition();
-    Auxiliary   = fdmex->GetAuxiliary();
+    State        = fdmex->GetState();
+    Atmosphere   = fdmex->GetAtmosphere();
+    FCS          = fdmex->GetFCS();
+    MassBalance  = fdmex->GetMassBalance();
+    Propulsion   = fdmex->GetPropulsion();
+    Aircraft     = fdmex->GetAircraft();
+    Translation  = fdmex->GetTranslation();
+    Rotation     = fdmex->GetRotation();
+    Position     = fdmex->GetPosition();
+    Auxiliary    = fdmex->GetAuxiliary();
+    Aerodynamics = fdmex->GetAerodynamics();
 
     fgic=new FGInitialCondition(fdmex);
     needTrim=true;
