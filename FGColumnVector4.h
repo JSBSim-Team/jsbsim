@@ -26,13 +26,11 @@ INCLUDES
 #  include STL_FSTREAM
 #  include STL_IOSTREAM
    SG_USING_STD(string);
-#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
-     SG_USING_STD(ostream);
-     SG_USING_STD(istream);
-     SG_USING_STD(cerr);
-     SG_USING_STD(cout);
-     SG_USING_STD(endl);
-#  endif
+   SG_USING_STD(ostream);
+   SG_USING_STD(istream);
+   SG_USING_STD(cerr);
+   SG_USING_STD(cout);
+   SG_USING_STD(endl);
 #else
 #  include <string>
 #  if defined (sgi) && !defined(__GNUC__)
@@ -58,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.10 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.11 2002/12/31 18:01:59 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

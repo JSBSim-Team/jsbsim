@@ -44,15 +44,13 @@ INCLUDES
 #  include STL_FSTREAM
 #  include STL_IOSTREAM
    SG_USING_STD(string);
-#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
-     SG_USING_STD(ostream);
-     SG_USING_STD(istream);
-     SG_USING_STD(ifstream);
-     SG_USING_STD(cerr);
-     SG_USING_STD(endl);
-     SG_USING_STD(ios);
-     SG_USING_STD(cout);
-#  endif
+   SG_USING_STD(ostream);
+   SG_USING_STD(istream);
+   SG_USING_STD(ifstream);
+   SG_USING_STD(cerr);
+   SG_USING_STD(endl);
+   SG_USING_STD(ios);
+   SG_USING_STD(cout);
 #else
 #  include <string>
 #  if defined(sgi) && !defined(__GNUC__)
@@ -78,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.36 2002/09/23 11:52:50 apeden Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.37 2002/12/31 18:01:59 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +93,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.36 2002/09/23 11:52:50 apeden Exp $
+    @version $Id: FGConfigFile.h,v 1.37 2002/12/31 18:01:59 dmegginson Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGConfigFile.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">

@@ -49,10 +49,8 @@ INCLUDES
 #  include STL_STRING
 #  include STL_IOSTREAM
 #  include STL_FSTREAM
-#  if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
-     SG_USING_STD(cout);
-     SG_USING_STD(endl);
-#  endif
+   SG_USING_STD(cout);
+   SG_USING_STD(endl);
 #else
 #  include <string>
 #  if defined(sgi) && !defined(__GNUC__)
@@ -82,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.24 2002/02/04 23:05:34 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.25 2002/12/31 18:01:59 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
