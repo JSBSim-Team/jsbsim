@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.82 2002/04/10 00:42:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.83 2002/04/10 22:14:33 dmegginson Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,7 +281,7 @@ FGColumnVector3& FGLGear::Force(void)
                                              staticFCoeff*FCS->GetBrake(bgCenter);
         break;
       case bgNose:
-        SteerGain = 0.50;
+        SteerGain = -0.50;
         BrakeFCoeff = rollingFCoeff;
         break;
       case bgTail:
