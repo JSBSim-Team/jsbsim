@@ -43,8 +43,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGEngine.h"
+#include "FGConfigFile.h"
 
-#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.4 2000/10/16 12:32:47 jsb Exp $"
+#define ID_ROCKET "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.h,v 1.5 2000/11/21 13:35:56 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -54,9 +55,16 @@ class FGRocket : public FGEngine
 {
 
 public:
+  /** Constructor */
+  FGRocket(FGConfigFile* Eng_cfg);
   FGRocket(FGFDMExec*, string, string, int);
   ~FGRocket();
-
+private: // Private attributes
+  /** Vacuum Maximum Thrust */
+  float VacThrustMax;
+private: // Private attributes
+  /** Maximum Sea Level Thrust */
+  float SLThrustMax;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
