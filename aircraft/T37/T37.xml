@@ -65,7 +65,7 @@
    AC_IZZ       11183		<!-- Roskam -->
    AC_IXZ       0		<!-- Roskam -->
    AC_EMPTYWT   6360		<!-- Roskam -->
-   AC_CGLOC     211.2  0.0 -8.8
+   AC_CGLOC     200.2  0.0 -8.8
    AC_AERORP    211.2  0.0  0.0
    AC_EYEPTLOC  70.4  0.0 38.0
  </METRICS>
@@ -121,14 +121,6 @@
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>
-  <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 211.1976 
-    YLOC 0 
-    ZLOC -8.7999 
-    RADIUS 1 
-    CAPACITY   700.0
-    CONTENTS   350.0
-  </AC_TANK>
  </PROPULSION>
  <FLIGHT_CONTROL NAME="T37">
    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
@@ -162,37 +154,6 @@
    <COMPONENT NAME="Rudder Command Sum" TYPE="SUMMER">
       INPUT   fcs/rudder-cmd-norm
       INPUT   fcs/yaw-trim-cmd-norm
-      CLIPTO  -1 1
-   </COMPONENT>
-   <COMPONENT NAME="Yaw Damper Rate" TYPE="SCHEDULED_GAIN">
-      INPUT        velocities/r-aero-rad_sec
-      SCHEDULED_BY aero/qbar-psf
-      ROWS         2
-       3.00        0.00
-      11.00        2.00
-   </COMPONENT>
-   <COMPONENT NAME="Yaw Damper Beta" TYPE="SCHEDULED_GAIN">
-      INPUT        aero/beta-rad
-      SCHEDULED_BY aero/qbar-psf
-      ROWS         2
-       3.00        0.00
-      11.00        0.00
-   </COMPONENT>
-   <COMPONENT NAME="Yaw Damper Sum" TYPE="SUMMER">
-      INPUT        fcs/yaw-damper-beta
-      INPUT        fcs/yaw-damper-rate
-      CLIPTO      -0.2 0.2
-   </COMPONENT>
-   <COMPONENT NAME="Yaw Damper Final" TYPE="SCHEDULED_GAIN">
-      INPUT        fcs/yaw-damper-sum
-      SCHEDULED_BY aero/qbar-psf
-      ROWS         2
-      2.99         0.0
-      3.00         1.0
-   </COMPONENT>
-   <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
-      INPUT   fcs/rudder-command-sum
-      INPUT   fcs/yaw-damper-final
       CLIPTO  -1 1
    </COMPONENT>
    <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
@@ -309,15 +270,16 @@
          1.0   1.00
          1.1   1.00
       </FACTOR>
+      <!-- Based on Roskam -->
       <COEFFICIENT NAME="CD0" TYPE="VECTOR">
          Drag_at_zero_lift
          5
          aero/alpha-rad
          aero/qbar-psf|metrics/Sw-sqft
          -1.57       1.500
-         -0.26       0.048
-          0.00       0.024
-          0.26       0.048
+         -0.26       0.096
+          0.00       0.048
+          0.26       0.096
           1.57       1.500
       </COEFFICIENT>
       <!-- Roslam -->
@@ -494,7 +456,7 @@
     <COEFFICIENT NAME="Cnda" TYPE="VALUE">
        Adverse_yaw
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-       0.0254
+       -0.0254
     </COEFFICIENT>
   </AXIS>
  </AERODYNAMICS>
