@@ -85,7 +85,12 @@ class FGRotation : public FGModel
   FGColumnVector vPQRdot;
   FGColumnVector vMoments;
   FGColumnVector vEuler;
-
+  FGColumnVector vEulerRates;
+  
+  float cTht,sTht;
+  float cPhi,sPhi;
+  float cPsi,sPsi;
+  
   float Ixx, Iyy, Izz, Ixz;
   float dt;
 
@@ -100,11 +105,24 @@ public:
   inline FGColumnVector GetPQR(void) {return vPQR;}
   inline FGColumnVector GetPQRdot(void) {return vPQRdot;}
   inline FGColumnVector GetEuler(void) {return vEuler;}
+  inline FGColumnVector GetEulerRates(void) { return vEulerRates; }
   inline void SetPQR(FGColumnVector tt) {vPQR = tt;}
   inline void SetEuler(FGColumnVector tt) {vEuler = tt;}
+  
   inline float Getphi(void) {return vEuler(1);}
   inline float Gettht(void) {return vEuler(2);}
   inline float Getpsi(void) {return vEuler(3);}
+  
+  inline float GetCosphi(void) {return cPhi;}
+  inline float GetCostht(void) {return cTht;}
+  inline float GetCospsi(void) {return cPsi;}
+
+  inline float GetSinphi(void) {return sPhi;}
+  inline float GetSintht(void) {return sTht;}
+  inline float GetSinpsi(void) {return sPsi;}
+
+
+
 };
 
 /******************************************************************************/
