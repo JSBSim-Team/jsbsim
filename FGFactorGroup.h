@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.11 2002/04/14 15:49:13 jberndt Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.12 2002/04/20 14:05:17 apeden Exp $"
 
 using std::vector;
 
@@ -117,6 +117,9 @@ private:
   CoeffArray sum;
   double SDtotal;
   double totalValue;
+  string description;
+  string name;
+  FGPropertyManager *node;
   void Debug(int from);
 };
     
