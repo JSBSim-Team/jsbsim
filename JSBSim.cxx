@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.32 2000/10/05 21:42:15 jsb Exp $
+// $Id: JSBSim.cxx,v 1.33 2000/10/09 22:16:25 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -80,7 +80,7 @@ int FGJSBsim::init( double dt ) {
                                        current_options.get_aircraft() );
 
   if (result) {
-    FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft" << current_options.get_aircraft() );
+    FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft " << current_options.get_aircraft() );
   } else {
     FG_LOG( FG_FLIGHT, FG_INFO, "  aircraft" << current_options.get_aircraft()
                                 << " does not exist");
@@ -103,7 +103,7 @@ int FGJSBsim::init( double dt ) {
   FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
   
   FGInitialCondition *fgic = new FGInitialCondition(&FDMExec);
-  fgic->SetAltitudeAGLFtIC(get_Altitude());
+  fgic->SetAltitudeFtIC(get_Altitude());
   if((current_options.get_mach() < 0) && (current_options.get_vc() < 0 )) {
     fgic->SetUBodyFpsIC(current_options.get_uBody());
     fgic->SetVBodyFpsIC(current_options.get_vBody());
@@ -241,9 +241,9 @@ int FGJSBsim::copy_to_JSBsim() {
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
                                     controls.get_throttle( 0 ) * 100.0 );
 
-  FCS->SetLBrake( controls.get_brake( 0 ) );
-  FCS->SetRBrake( controls.get_brake( 1 ) );
-  FCS->SetCBrake( controls.get_brake( 2 ) );
+  FDMExec.GetFCS()->SetLBrake( controls.get_brake( 0 ) );
+  FDMExec.GetFCS()->SetRBrake( controls.get_brake( 1 ) );
+  FDMExec.GetFCS()->SetCBrake( controls.get_brake( 2 ) );
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
   //  FDMExec.GetPosition()->SetRunwayElevation(get_Runway_altitude()); // seems to work
