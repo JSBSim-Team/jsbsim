@@ -1,4 +1,4 @@
-SUBDIRS = aircraft engine filtersjb scripts simgear
+SUBDIRS = aircraft engine filtersjb scripts simgear utilities
 
 INCLUDES = -I. \
 	-Wall
