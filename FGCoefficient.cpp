@@ -59,7 +59,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.55 2002/06/05 05:12:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.56 2002/07/10 22:17:00 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,7 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
   totalValue   = 0.0;
   bias = 0.0;
   gain = 1.0;
+  SD = 0.0;
 
   filename.erase();
   description.erase();

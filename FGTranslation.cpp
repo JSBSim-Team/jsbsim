@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.47 2002/05/17 10:40:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.48 2002/07/10 22:17:00 apeden Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,8 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGTranslation";
   qbar = 0;
+  qbarUW = 0.0;
+  qbarUV = 0.0;
   Vt = 0.0;
   Mach = 0.0;
   alpha = beta = 0.0;

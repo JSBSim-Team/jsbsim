@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.39 2002/06/05 05:12:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.40 2002/07/10 22:16:59 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -71,6 +71,7 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   alphahystmin = alphahystmax = 0.0;
   clsq = lod = 0.0;
   alphaw = 0.0;  
+  bi2vel = ci2vel = 0.0;
   bind();
 
   Debug(0);

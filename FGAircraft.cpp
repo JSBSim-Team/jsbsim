@@ -92,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.117 2002/05/16 13:04:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.118 2002/07/10 22:16:59 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,6 +106,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
   HTailArm  = VTailArm  = 0.0;
   lbarh = lbarv = 0.0;
   vbarh = vbarv = 0.0;
+  WingIncidence = 0.0;
 
   bind();
 

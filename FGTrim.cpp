@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.34 2002/04/30 11:24:07 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.35 2002/07/10 22:17:00 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   gamma_fallback=true;
   axis_count=0;
   mode=tt;
-  xlo=xhi=alo=ahi;
+  xlo=xhi=alo=ahi=0.0;
   targetNlf=1.0;
   debug_axis=tAll;
   switch(mode) {

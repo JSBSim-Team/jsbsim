@@ -41,7 +41,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.27 2002/06/05 03:47:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.28 2002/07/10 22:17:00 apeden Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,6 +52,12 @@ CLASS IMPLEMENTATION
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGMassBalance";
+  Weight = EmptyWeight = Mass = 0.0;
+  Ixx = Iyy = Izz = Ixy = Ixz = 0.0;
+  baseIxx = baseIyy = baseIzz = baseIxy = baseIxz = 0.0;
+  vbaseXYZcg(eX) = 0.0;
+  vbaseXYZcg(eY) = 0.0;
+  vbaseXYZcg(eZ) = 0.0;
   bind();
 
   Debug(0);
