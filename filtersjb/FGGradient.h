@@ -48,7 +48,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GRADIENT "$Header"
+#define ID_GRADIENT "$Id: FGGradient.h,v 1.10 2001/03/22 17:58:19 jberndt Exp $"
 
 class FGFCS;
 

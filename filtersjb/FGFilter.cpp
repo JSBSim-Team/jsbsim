@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.cpp,v 1.15 2001/03/19 23:53:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.16 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 extern short debug_lvl;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFlaps.cpp,v 1.11 2001/03/19 23:53:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFlaps.cpp,v 1.12 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 extern short debug_lvl;

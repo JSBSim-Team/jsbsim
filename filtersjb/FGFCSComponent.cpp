@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.18 2001/03/19 23:53:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.19 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 extern short debug_lvl;

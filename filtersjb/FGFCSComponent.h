@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Header"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.24 2001/03/22 17:58:19 jberndt Exp $"
 
 using std::string;
 
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.23 2001/03/19 23:53:47 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.24 2001/03/22 17:58:19 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */

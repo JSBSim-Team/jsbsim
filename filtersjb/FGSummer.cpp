@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.17 2001/03/20 14:02:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.18 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 extern short debug_lvl;

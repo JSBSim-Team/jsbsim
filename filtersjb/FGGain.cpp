@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.25 2001/03/20 14:02:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.26 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 extern short debug_lvl;

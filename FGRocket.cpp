@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.19 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.20 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 extern short debug_lvl;
@@ -58,12 +58,15 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
   Eng_cfg->GetNextConfigLine();
   while (Eng_cfg->GetValue() != "/FG_ROCKET") {
     *Eng_cfg >> token;
-    if (token == "SLTHRUSTMAX") {
-      *Eng_cfg >> SLThrustMax;
-      cout << "      SLThrustMax = " << SLThrustMax << endl;
-    } else if (token == "VACTHRUSTMAX") {
-      *Eng_cfg >> VacThrustMax;
-      cout << "      VacThrustMax = " << VacThrustMax << endl;
+    if (token == "SHR") {
+      *Eng_cfg >> SHR;
+      cout << "      Specific Heat Ratio = " << SHR << endl;
+    } else if (token == "MAX_PC") {
+      *Eng_cfg >> maxPC;
+      cout << "      Maximum Chamber Pressure = " << maxPC << endl;
+    } else if (token == "PROP_EFF") {
+      *Eng_cfg >> propEff;
+      cout << "      Propulsive Efficiency = " << propEff << endl;
     } else if (token == "MAXTHROTTLE") {
       *Eng_cfg >> MaxThrottle;
       cout << "      MaxThrottle = " << MaxThrottle << endl;
@@ -72,10 +75,10 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
       cout << "      MinThrottle = " << MinThrottle << endl;
     } else if (token == "SLFUELFLOWMAX") {
       *Eng_cfg >> SLFuelFlowMax;
-      cout << "      SLFuelFlowMax = " << SLFuelFlowMax << endl;
+      cout << "      FuelFlowMax = " << SLFuelFlowMax << endl;
     } else if (token == "SLOXIFLOWMAX") {
       *Eng_cfg >> SLOxiFlowMax;
-      cout << "      SLOxiFlowMax = " << SLOxiFlowMax << endl;
+      cout << "      OxiFlowMax = " << SLOxiFlowMax << endl;
     } else {
       cout << "Unhandled token in Engine config file: " << token << endl;
     }
@@ -108,8 +111,8 @@ float FGRocket::Calculate(float) {
     Flameout = true;
   } else {
     PctPower = Throttle / MaxThrottle;
-    Thrust = PctPower*((1.0 - Atmosphere->GetPressureRatio())*(VacThrustMax - SLThrustMax) +
-                       SLThrustMax); // desired thrust
+//    Thrust = PctPower*((1.0 - Atmosphere->GetPressureRatio())*(VacThrustMax - SLThrustMax) +
+//                       SLThrustMax); // desired thrust
     Flameout = false;
   }
 

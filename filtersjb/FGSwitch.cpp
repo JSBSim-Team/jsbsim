@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.10 2001/03/20 14:02:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.11 2001/03/22 17:58:19 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 extern short debug_lvl;

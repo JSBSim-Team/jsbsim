@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Header"
+#define ID_GAIN "$Id: FGGain.h,v 1.14 2001/03/22 17:58:19 jberndt Exp $"
 
 class FGFCS;
 
