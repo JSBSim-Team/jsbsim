@@ -48,7 +48,9 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.17 2000/10/16 12:32:43 jsb Exp $";
+#include <iomanip.h>
+
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.18 2000/11/12 14:12:20 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +62,11 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
   int r, c, start, end, n;
   float ftrashcan;
   string multparms;
-
+  char nullstring[13] = "            ";
+  
+  bias =0.0;
+  gain = 1.0;
+  
   FDMExec     = fdex;
   State       = FDMExec->GetState();
   Table = 0;
@@ -150,19 +156,39 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       Allocate(rows, columns);
 
       Table[0][0] = 0.0;
-      for (c=1;c<=columns;c++) {
+      //read the table in -- it should be in matrix format with the row
+      //independents as the first column and the column independents in 
+      //the first row.  The implication of this layout is that there should
+      //be no value in the upper left corner of the matrix e.g:
+      //     0  10  20 30 ...
+      //-5   1  2   3  4  ...
+      // ...
+      for( r=0;r<=rows;r++ ) {
+        for( c=0;c<=columns;c++ ) {
+          if( !((r == 0) && (c == 0)) ) {
+            *AC_cfg >> Table[r][c];
+          }
+         }
+      }   
+      
+      /* for (c=1;c<=columns;c++) {
         *AC_cfg >> Table[0][c];
         for (r=1;r<=rows;r++) {
           if ( c==1 ) *AC_cfg >> Table[r][0];
           else *AC_cfg >> ftrashcan;
           *AC_cfg >> Table[r][c];
         }
-      }
-
+      } */
+      
       for (r=0;r<=rows;r++) {
         cout << "	";
         for (c=0;c<=columns;c++) {
-          cout << Table[r][c] << "	";
+          if( ((r == 0) && (c == 0)) ) {
+             cout << nullstring;
+          } else {
+             cout.flags(ios::left);
+             cout << setw(12) << Table[r][c];
+          }
         }
         cout << endl;
       }
@@ -219,7 +245,8 @@ float FGCoefficient::Value(float rVal, float cVal)
 
   for (r=1;r<=rows;r++) if (Table[r][0] >= rVal) break;
   for (c=1;c<=columns;c++) if (Table[0][c] >= cVal) break;
-
+  //cout << "Value(): rVal: " << rVal << " cVal: " << cVal << endl;
+  //cout << "Value(): r: " << r << " c: " << c << endl;
   c = c < 2 ? 2 : (c > columns ? columns : c);
   r = r < 2 ? 2 : (r > rows    ? rows    : r);
 
@@ -229,8 +256,10 @@ float FGCoefficient::Value(float rVal, float cVal)
   col1temp = rFactor*(Table[r][c-1] - Table[r-1][c-1]) + Table[r-1][c-1];
   col2temp = rFactor*(Table[r][c] - Table[r-1][c]) + Table[r-1][c];
 
-  SD = Value = col1temp + cFactor*(col2temp - col1temp);
-
+  Value = col1temp + cFactor*(col2temp - col1temp);
+  Value = (Value + bias)*gain;
+  SD = Value;
+  
   for (midx=0; midx < multipliers.size(); midx++) {
     Value *= State->GetParameter(multipliers[midx]);
   }
@@ -260,7 +289,10 @@ float FGCoefficient::Value(float Val)
     Factor = 1.0;
   }
 
-  SD = Value = Factor*(Table[r][1] - Table[r-1][1]) + Table[r-1][1];
+  Value = Factor*(Table[r][1] - Table[r-1][1]) + Table[r-1][1];
+  Value = (Value + bias)*gain;
+  SD = Value;
+
   for (midx=0; midx < multipliers.size(); midx++) {
     Value *= State->GetParameter(multipliers[midx]);
 
@@ -276,7 +308,9 @@ float FGCoefficient::Value(void)
 	float Value;
 	unsigned midx;
 
-	SD = Value = StaticValue;
+	Value = StaticValue;
+  Value = (Value + bias)*gain;
+  SD = Value;
 
   for (midx=0; midx < multipliers.size(); midx++) {
     Value *= State->GetParameter(multipliers[midx]);
