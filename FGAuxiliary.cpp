@@ -41,6 +41,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGAuxiliary.h"
+#include "FGAerodynamics.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGAtmosphere.h"
@@ -56,7 +57,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.31 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.32 2002/09/07 21:32:00 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,6 +73,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   earthPosAngle = 0.0;
   
   vPilotAccelN.InitMatrix();
+  
+  bind();
   
   Debug(0);
 }
