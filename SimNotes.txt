@@ -1,0 +1,20 @@
+JSBSim Notes
+
+Format:
+
+==========================================================================
+Number : Author Initials : Date : Subsystem <aero|fcs|eom|gear|propulsion|general>
+
+<note>
+
+BEGIN NOTES
+
+=========================================================================|
+1 : JSB : 4/11/00 : fcs
+
+In FGState there is now the utility function GetValue(int). This was
+formerly in FGCoefficient, but I thought it would be useful for other
+classes to have access to it, particularly the FCS. In this way, various
+feedback values can be retrieved for the FCS.
+
+=========================================================================|

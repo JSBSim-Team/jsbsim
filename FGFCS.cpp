@@ -48,6 +48,10 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
+// test
+#include "filtersjb/FGfcsComponent.h"
+// end test
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
@@ -67,7 +71,9 @@ FGFCS::~FGFCS(void)
 bool FGFCS::Run(void)
 {
   if (!FGModel::Run()) {
-    
+
+//    for (int i=0;i<Components.size();i++) Components[i].Run();
+
   } else {
   }
   return false;
@@ -87,20 +93,54 @@ void FGFCS::SetThrottle(int engineNum, float setting)
 FGFCS::LoadFCS(FGConfigFile* AC_cfg)
 {
   string token;
-  
+
   FCSName = AC_cfg->GetValue("NAME");
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
+
       // FCS COMPONENT CREATION LOGIC HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       //
-      // Example reference implementation:
+      // ** Example ** reference implementation:
       //
-      // if ((token = GetValue("TYPE") == LAG_FILTER) {
-      //   Components.push_back(new FGLagFilter(AC_cfg));
+      // Supports the following filters:
+      //
+      // LAG_FILTER
+      // RECT_LAG_FILTER
+      // LEAD_LAG_FILTER
+      // SECOND_ORDER_FILTER
+      // WASHOUT_FILTER
+      // INTEGRATOR
+      // PURE_GAIN
+      // SCHEDULED_GAIN
+      // AEROSURFACE_SCALE
+      // SUMMER
+      // DEADBAND
+      // GRADIENT
+      // SWITCH
+      //
+      // if ((token = GetValue("TYPE") == "LAG_FILTER") ||
+      //     (token = GetValue("TYPE") == "RECT_LAG_FILTER") ||
+      //     (token = GetValue("TYPE") == "LEAD_LAG_FILTER") ||
+      //     (token = GetValue("TYPE") == "SECOND_ORDER_FILTER") ||
+      //     (token = GetValue("TYPE") == "WASHOUT_FILTER") ||
+      //     (token = GetValue("TYPE") == "INTEGRATOR") )
+      // {
+      //   Components.push_back(new FGFilter(this, AC_cfg));
+      // } else if ((token == "PURE_GAIN") ||
+      //            (token == "SCHEDULED_GAIN") ||
+      //            (token == "AEROSURFACE_SCALE") )
+      // {
+      //   Components.push_back(new FGGain(this, AC_cfg));
+      // } else if (token == "SUMMER") {
+      //   Components.push_back(new FGSummer(this, AC_cfg));
+      // } else if (token == "DEADBAND") {
+      //   Components.push_back(new FGDeadBand(this, AC_cfg));
       // } else if (token == "GRADIENT") {
-      //   Components.push_back(new FGGradient(AC_cfg));
-      // } else if ...
+      //   Components.push_back(new FGGradient(this, AC_cfg));
+      // } else if (token == "SWITCH") {
+      //   Components.push_back(new FGSwitch(this, AC_cfg));
+      // }
       //
       // remove lines below after component creation logic added ********* START
 
@@ -109,6 +149,7 @@ FGFCS::LoadFCS(FGConfigFile* AC_cfg)
       }
 
       // remove above                                            *********** END
+      // FCS COMPONENT CREATION LOGIC END  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
       AC_cfg->GetNextConfigLine();
     }
