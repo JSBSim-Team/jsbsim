@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.146 2003/11/17 12:50:56 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.147 2003/11/24 02:54:05 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -583,6 +583,7 @@ bool FGJSBsim::copy_from_JSBsim()
         FGSimTurbine* eng = (FGSimTurbine*)Propulsion->GetEngine(i);
         node->setDoubleValue("N1", eng->GetN1());
         node->setDoubleValue("N2", eng->GetN2());
+        node->setDoubleValue("EGT_degC", eng->GetEGT());
         node->setBoolValue("augmentation", eng->GetAugmentation());
         node->setBoolValue("water-injection", eng->GetInjection());
         node->setBoolValue("ignition", eng->GetIgnition());
