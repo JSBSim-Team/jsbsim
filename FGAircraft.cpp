@@ -94,7 +94,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.122 2004/01/11 19:46:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.123 2004/01/21 11:22:58 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +182,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
     } else if (parameter == "AC_WINGINCIDENCE") {
       *AC_cfg >> WingIncidence;
-      if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
+      if (debug_lvl > 0) cout << "    Incidence: " << WingIncidence << endl;
     } else if (parameter == "AC_CHORD") {
       *AC_cfg >> cbar;
       if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
