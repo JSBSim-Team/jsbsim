@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.44 2002/06/06 09:22:53 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.45 2002/09/24 11:33:28 apeden Exp $"
 
 using std::vector;
 
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the FGAerodynamics model
     is called and the coefficient values are calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.44 2002/06/06 09:22:53 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.45 2002/09/24 11:33:28 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -202,6 +202,8 @@ private:
   FGAuxiliary*    Auxiliary;
   FGOutput*       Output;
   FGPropertyManager* PropertyManager;
+  
+  FGPropertyManager* resolveSymbol(string name);
 
   virtual void Debug(int from);
 };

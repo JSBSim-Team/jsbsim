@@ -61,7 +61,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.58 2002/09/22 18:10:05 apeden Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.59 2002/09/24 11:33:27 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,11 +115,9 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
-    //cout << name << endl;
     method = AC_cfg->GetValue("TYPE");
     AC_cfg->GetNextConfigLine();
     *AC_cfg >> description;
-   // cout << description << endl;
     if      (method == "EQUATION") type = EQUATION;
     else if (method == "TABLE")    type = TABLE;
     else if (method == "VECTOR")   type = VECTOR;
@@ -128,7 +126,6 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
 
     if (type == VECTOR || type == TABLE) {
       *AC_cfg >> rows;
-      //cout << rows << endl;
       if (type == TABLE) {
         *AC_cfg >> columns;
         Table = new FGTable(rows, columns);
@@ -137,7 +134,6 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
       }
 
       *AC_cfg >> multparmsRow;
-      //cout << multparmsRow << endl;
       LookupR = PropertyManager->GetNode( multparmsRow );
     }
 
@@ -152,40 +148,29 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     // separated by a | character
 
     string line=AC_cfg->GetCurrentLine();
-    //cout << "::" << line << "::" << endl;
     unsigned j=0;
     char tmp[255];
     for(unsigned i=0;i<line.length(); i++ ) {
       if( !isspace(line[i]) ) {
         tmp[j]=line[i];
-        //cout << tmp[j];
         j++;
       }
     } 
     tmp[j]='\0'; multparms=tmp;  
-    //cout << endl; 
     end  = multparms.length();
-    //cout <<  "multparms: " << "::" << multparms <<  "::" <<endl;
 
     n     = multparms.find("|");
     start = 0;
-    //cout << n << endl;
     if (multparms != string("none")) {
       while (n < end && n >= 0) {
         n -= start;
         mult = multparms.substr(start,n);
-        //cout << "::" << mult << "::" << endl;
-        multipliers.push_back( PropertyManager->GetNode(mult) );
+        multipliers.push_back( resolveSymbol( mult ) );
         start += n+1;
-        //while( multparms[start] == ' ') start++;
         n = multparms.find("|",start);
-        //cout << n << endl;
       }
-      //cout << start << ", " << n << endl;
-      //cout << multparms[start] << ", " << multparms[n-1] << endl;
       mult = multparms.substr(start,n);
-      //cout << mult << endl;
-      multipliers.push_back( PropertyManager->GetNode( mult ) );
+      multipliers.push_back( resolveSymbol( mult ) );
       // End of non-dimensionalizing parameter read-in
     }
     AC_cfg->GetNextConfigLine();
@@ -353,7 +338,19 @@ void FGCoefficient::unbind(void)
   node->Untie("bias");  
   node->Untie("gain");
 }
-  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGPropertyManager* FGCoefficient::resolveSymbol(string name){
+        FGPropertyManager* tmpn;
+        tmpn = PropertyManager->GetNode(name,false);
+        if( !tmpn ) {
+          cerr << "Coefficient multipliers cannot create properties, check spelling?" << endl;
+          exit(1);
+        } 
+        return tmpn; 
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
