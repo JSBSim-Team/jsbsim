@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.57 2004/02/18 02:45:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.58 2004/02/26 02:54:29 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,13 +306,18 @@ void FGAtmosphere::Turbulence(void)
     vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
     vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
-    vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
+    
+    if (Aircraft->GetWingSpan() > 0) {
+      vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
+    } else {
+      vTurbPQR(eP) = vBodyTurbGrad(eY)/30.0;
+    }
 //     if (Aircraft->GetHTailArm() != 0.0)
 //       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
 //     else
 //       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
 
-    if (Aircraft->GetVTailArm())
+    if (Aircraft->GetVTailArm() > 0)
       vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
     else
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
@@ -354,12 +359,12 @@ void FGAtmosphere::Turbulence(void)
 
     vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
-    if (Aircraft->GetHTailArm() != 0.0)
+    if (Aircraft->GetHTailArm() > 0)
       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/Aircraft->GetHTailArm();
     else
       vTurbPQR(eQ) = vBodyTurbGrad(eZ)/10.0;
 
-    if (Aircraft->GetVTailArm())
+    if (Aircraft->GetVTailArm() > 0)
       vTurbPQR(eR) = vBodyTurbGrad(eX)/Aircraft->GetVTailArm();
     else
       vTurbPQR(eR) = vBodyTurbGrad(eX)/10.0;
