@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.29 2004/06/02 13:06:43 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.30 2004/06/02 17:30:24 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,7 +123,7 @@ Definition of the tank configuration file parameters:
 <b>RADIUS</b> - Equivalent radius of tank, inches, for modeling slosh.
 <b>CAPACITY</b> - Capacity in pounds.
 <b>CONTENTS</b> - Initial contents in pounds.
-<b>TEMPERATURE</b> - Initial temperature in degrees Celcius.
+<b>TEMPERATURE</b> - Initial temperature in degrees Fahrenheit.
 </pre>
   */
 
@@ -143,7 +143,8 @@ public:
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
   double GetContents(void) {return Contents;}
-  double GetTemperature(void) {return Temperature;}
+  double GetTemperature_degC(void) {return Temperature;}
+  double GetTemperature(void) {return (Temperature*1.8)+32.0;}
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 

@@ -93,7 +93,7 @@
     RADIUS       1.0 
     CAPACITY 10200.0
     CONTENTS 10000.0
-    TEMPERATURE 15.0
+    TEMPERATURE 59.0
   </AC_TANK>
 
   <AC_TANK TYPE="FUEL" NUMBER="1"> <!-- right wing -->
