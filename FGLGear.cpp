@@ -47,7 +47,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.29 2000/10/25 12:18:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.30 2000/10/29 17:05:24 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,6 +99,12 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Reported = false;
   DistanceTraveled = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
+  
+  vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
+  vWhlBodyVec(eX) = -vWhlBodyVec(eX);
+  vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
+
+  vLocalGear = State->GetTb2l() * vWhlBodyVec;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,6 +120,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   vXYZ = lgear.vXYZ;
   vMoment = lgear.vMoment;
   vWhlBodyVec = lgear.vWhlBodyVec;
+  vLocalGear = lgear.vLocalGear;
 
   WOW                = lgear.WOW;
   ReportEnable       = lgear.ReportEnable;
@@ -142,10 +149,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLGear::~FGLGear(void)
-{
-  cout << "Destructing Landing Gear ..." << endl;
-}
+FGLGear::~FGLGear(void) {}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -153,7 +157,7 @@ FGColumnVector FGLGear::Force(void)
 {
   FGColumnVector vForce(3);
   FGColumnVector vLocalForce(3);
-  FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
+  //FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
   FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
   
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;

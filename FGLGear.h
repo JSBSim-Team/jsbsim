@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.25 2000/10/27 13:55:43 jsb Exp $
+    @version $Id: FGLGear.h,v 1.26 2000/10/29 17:05:24 jsb Exp $
     @see -
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
@@ -107,6 +107,8 @@ public:
   FGColumnVector Moment(void) {return vMoment;}
   /// Gets the location of the gear in Body axes
   FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
+  
+  FGColumnVector GetLocalGear(void) { return vLocalGear; }
 
   /// Gets the name of the gear
   inline string GetName(void)      {return name;          }
@@ -134,6 +136,7 @@ private:
   FGColumnVector vXYZ;
   FGColumnVector vMoment;
   FGColumnVector vWhlBodyVec;
+  FGColumnVector vLocalGear;
   float kSpring;
   float bDamp;
   float compressLength;
