@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.22 2001/11/14 23:53:25 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.23 2001/11/30 12:43:11 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.22 2001/11/14 23:53:25 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.23 2001/11/30 12:43:11 apeden Exp $
     @see -
 */
 
@@ -134,8 +134,6 @@ public:
       coefficients */
   string GetCoefficientValues(void);
 
-  /// Gets the Normal Load Factor
-  double GetNlf(void);
 
 private:
   typedef map<string,int> AxisIndex;

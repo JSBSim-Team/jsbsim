@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.23 2001/11/17 13:19:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.24 2001/11/30 12:43:11 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +100,10 @@ bool FGAerodynamics::Run(void)
         vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->TotalValue();
       }
     }
-
+    //correct signs of drag and lift to wind axes convention
+    //positive forward, right, down
+    vFs(1)*=-1; vFs(3)*=-1;
+    //cout << "Aircraft::vFs: " << vFs << endl;
     vForces = State->GetTs2b()*vFs;
 
     vDXYZcg(eX) = -(Aircraft->GetXYZrp(eX) 
@@ -194,17 +197,6 @@ string FGAerodynamics::GetCoefficientValues(void)
   }
 
   return SDValues;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGAerodynamics::GetNlf(void)
-{
-  if (fabs(Position->GetGamma()) < 1.57) {
-    return (vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma())));
-  } else {
-    return 0.0;
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
