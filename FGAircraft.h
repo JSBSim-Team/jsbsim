@@ -138,66 +138,31 @@ public:
 
   bool Run(void);
   bool LoadAircraft(string, string, string);
-  inline string GetAircraftName(void) {
-    return AircraftName;
-  }
-  inline void SetGearUp(bool tt) {
-    GearUp = tt;
-  }
-  inline bool GetGearUp(void) {
-    return GearUp;
-  }
-  inline float GetWingArea(void) {
-    return WingArea;
-  }
-  inline float GetWingSpan(void) {
-    return WingSpan;
-  }
-  inline float Getcbar(void) {
-    return cbar;
-  }
-  inline FGEngine* GetEngine(int tt) {
-    return Engine[tt];
-  }
-  inline FGTank* GetTank(int tt) {
-    return Tank[tt];
-  }
-  inline float GetWeight(void) {
-    return Weight;
-  }
-  inline float GetMass(void) {
-    return Mass;
-  }
-  inline FGColumnVector GetMoments(void) {
-    return vMoments;
-  }
-  inline FGColumnVector GetForces(void) {
-    return vForces;
-  }
-  inline FGColumnVector GetvFs(void) {
-    return vFs;
-  }
-  inline float GetIxx(void) {
-    return Ixx;
-  }
-  inline float GetIyy(void) {
-    return Iyy;
-  }
-  inline float GetIzz(void) {
-    return Izz;
-  }
-  inline float GetIxz(void) {
-    return Ixz;
-  }
-  inline int   GetNumEngines(void) {
-    return numEngines;
-  }
-  inline FGColumnVector GetXYZcg(void) {
-    return vXYZcg;
-  }
-  inline float GetNlf(void) {
-    return nlf;
-  }
+  inline string GetAircraftName(void) { return AircraftName; }
+  inline void SetGearUp(bool tt) { GearUp = tt; }
+  inline bool GetGearUp(void) { return GearUp; }
+  inline float GetWingArea(void) { return WingArea; }
+  inline float GetWingSpan(void) { return WingSpan; }
+  inline float Getcbar(void) { return cbar; }
+  inline FGEngine* GetEngine(int tt) { return Engine[tt]; }
+  inline FGTank* GetTank(int tt) { return Tank[tt]; }
+  inline float GetWeight(void) { return Weight; }
+  inline float GetMass(void) { return Mass; }
+  inline FGColumnVector GetMoments(void) { return vMoments; }
+  inline FGColumnVector GetForces(void) { return vForces; }
+  inline FGColumnVector GetvFs(void) { return vFs; }
+  inline float GetIxx(void) { return Ixx; }
+  inline float GetIyy(void) { return Iyy; }
+  inline float GetIzz(void) { return Izz; }
+  inline float GetIxz(void) { return Ixz; }
+  inline int   GetNumEngines(void) { return numEngines; }
+  inline FGColumnVector GetXYZcg(void) { return vXYZcg; }
+  inline float GetNlf(void) { return nlf; }
+  inline float GetAlphaCLMax(void) { return alphaclmax; }
+  inline float GetAlphaCLMin(void) { return alphaclmin; }
+  inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
+  inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
+
   string GetCoefficientStrings(void);
   string GetCoefficientValues(void);
 
@@ -233,7 +198,7 @@ private:
   float alpha, beta;
   float WingArea, WingSpan, cbar;
   float Weight, EmptyWeight;
-  float nlf;
+  float nlf,alphaclmax,alphaclmin;
   float dt;
   string CFGVersion;
   string AircraftName;

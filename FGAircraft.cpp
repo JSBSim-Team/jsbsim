@@ -220,6 +220,7 @@ bool FGAircraft::Run(void) {
   } else {                               // skip Run() execution this time
   }
 
+
   return false;
 }
 
@@ -414,6 +415,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
     else if (parameter == "AC_CGLOC") *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
     else if (parameter == "AC_EYEPTLOC") *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
     else if (parameter == "AC_AERORP") *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
+    else if (parameter == "AC_ALPHALIMITS") *AC_cfg >> alphaclmin >> alphaclmax;
   }
 }
 
@@ -580,6 +582,7 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg) {
     cout << "         You have version: " << CFGVersion << endl << endl;
     //exit(-1);
   }
+
 
 }
 
