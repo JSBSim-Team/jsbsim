@@ -3,7 +3,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.18 2003/02/23 17:55:43 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.19 2003/02/28 11:04:51 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -46,7 +46,7 @@
        -    WT   Wing Tip           VFT   Ventral Fin Tip
        -    VS   Vertical Stabilizer
       -->
-    AC_GEAR NOSE_LG   332.2    0.0 -73.0  9000  4500 0.5 0.8 0.2 STEERABLE NOSE 72.0 RETRACT
+    AC_GEAR NOSE_LG   332.2    0.0 -73.0 15000  4500 0.5 0.8 0.2 STEERABLE NOSE 72.0 RETRACT
     AC_GEAR LEFT_MLG  171.9  -46.7 -73.0 22704 10000 0.5 0.8 0.2 FIXED     LEFT    0 RETRACT
     AC_GEAR RIGHT_MLG 171.9   46.7 -73.0 22704 10000 0.5 0.8 0.2 FIXED     RIGHT   0 RETRACT
 <!--
@@ -186,18 +186,18 @@
          12
          aero/alpha-rad
          aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel
-         -0.175   1.269
-         -0.087   2.132
-          0.000   0.308
-          0.087  -1.393
-          0.175  -3.384
-          0.262  -5.141
-          0.349  -6.879
-          0.436 -10.051
-          0.524 -13.211
-          0.611 -15.875
-          0.698 -23.213
-          0.785 -24.095
+         -0.175  8.7127
+         -0.087 25.7114
+          0.000 28.9000
+          0.087 31.3973
+          0.175 31.0872
+          0.262 30.4071
+          0.349 26.9735
+          0.436 26.4242
+          0.524 25.8647
+          0.611 25.2654
+          0.698 30.5158
+          0.785 25.8165
      </COEFFICIENT>
 
     </AXIS>
@@ -230,18 +230,18 @@
          12
          aero/alpha-rad
          aero/qbar-psf|metrics/Sw-sqft|velocities/q-aero-rad_sec|aero/ci2vel
-         -0.175   8.712
-         -0.087  25.712
-          0.000  28.900
-          0.087  31.398
-          0.175  31.086
-          0.262  30.406
-          0.349  26.974
-          0.436  26.428
-          0.524  25.859
-          0.611  25.263
-          0.698  30.519
-          0.785  25.826
+         -0.175 -1.265
+         -0.087 -2.139
+          0.000 -0.308
+          0.087  1.402
+          0.175  3.369
+          0.262  5.135
+          0.349  6.880
+          0.436 10.060
+          0.524 13.201
+          0.611 15.872
+          0.698 23.217
+          0.785 24.105
       </COEFFICIENT>
 
     </AXIS>
@@ -251,13 +251,13 @@
       <COEFFICIENT NAME="CYb" TYPE="VALUE">
         Side_force_due_to_beta
         aero/qbar-psf|metrics/Sw-sqft|aero/beta-rad
-        -0.02
+        -1.146
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="CYda" TYPE="VALUE">
+      <COEFFICIENT NAME="CYDa" TYPE="VALUE">
         Side_force_due_to_aileron
         aero/qbar-psf|metrics/Sw-sqft|fcs/left-aileron-pos-rad
-        -0.021
+        -2.2575e-2
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
