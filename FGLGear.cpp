@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.41 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.42 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -168,7 +168,10 @@ FGLGear::FGLGear(const FGLGear& lgear)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGLGear::~FGLGear(void) {}
+FGLGear::~FGLGear(void)
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGLGear" << endl;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

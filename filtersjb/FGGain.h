@@ -70,6 +70,13 @@ CLASS DECLARATION
 
 class FGGain  : public FGFCSComponent
 {
+public:
+  FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
+  ~FGGain();
+
+  bool Run (void);
+
+private:
   FGConfigFile* AC_cfg;
   float Gain;
   float* lookup;
@@ -77,12 +84,6 @@ class FGGain  : public FGFCSComponent
   float Min, Max;
   eParam ScheduledBy;
 
-public:
-  FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGGain ( ) { }       //Destructor
-
-  bool Run (void);
-private:
   void Debug(void);
 };
 

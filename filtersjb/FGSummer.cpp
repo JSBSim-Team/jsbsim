@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.16 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSummer.cpp,v 1.17 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 extern short debug_lvl;
@@ -47,6 +47,7 @@ extern short debug_lvl;
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 
 FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
@@ -105,11 +106,14 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   if (debug_lvl & 2) cout << "Instantiated: FGSummer" << endl;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGSummer::~FGSummer()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGSummer" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGSummer::Run(void )
 {
@@ -141,6 +145,7 @@ bool FGSummer::Run(void )
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGSummer::Debug(void)
 {

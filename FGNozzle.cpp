@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.8 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.9 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 extern short debug_lvl;
@@ -54,6 +54,12 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* AC_cfg) : FGThruster(FDMExe
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGNozzle::~FGNozzle()
+{
+  if (debug_lvl & 2) cout << "Instantiated: FGNozzle" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 float FGNozzle::Calculate(float PowerRequired)
 {
   return 0.0;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.9 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGSwitch.cpp,v 1.10 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 extern short debug_lvl;
@@ -47,6 +47,7 @@ extern short debug_lvl;
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 
 FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                        AC_cfg(AC_cfg)
@@ -57,11 +58,14 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   if (debug_lvl & 2) cout << "Instantiated: FGSwitch" << endl;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:    
-//  Parameters: void 
-//  Comments:   
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGSwitch::~FGSwitch()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGSwitch" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGSwitch::Run(void )
 {
@@ -70,6 +74,7 @@ bool FGSwitch::Run(void )
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGSwitch::Debug(void)
 {

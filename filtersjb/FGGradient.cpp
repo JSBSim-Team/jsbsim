@@ -37,9 +37,9 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGGradient.h"    				
+#include "FGGradient.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.9 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.10 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 extern short debug_lvl;
@@ -48,20 +48,24 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+
 FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                            AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
-  
+
   if (debug_lvl & 2) cout << "Instantiated: FGGradient" << endl;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGGradient::~FGGradient()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGGradient" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGGradient::Run(void )
 {
@@ -70,6 +74,7 @@ bool FGGradient::Run(void )
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGGradient::Debug(void)
 {

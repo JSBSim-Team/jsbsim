@@ -60,9 +60,9 @@ class FGGradient  : public FGFCSComponent
 {
 public:
   FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg);
- ~ FGGradient ( ) { }       //Destructor
+  ~FGGradient();
 
-  bool Run (void )  ;
+  bool Run (void);
 
 private:
   FGConfigFile* AC_cfg;

@@ -1,5 +1,4 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
  Header:       FGFDMExec.h
  Author:       Jon Berndt
  Date started: 11/17/98
@@ -27,8 +26,8 @@ HISTORY
 --------------------------------------------------------------------------------
 11/17/98   JSB   Created
 7/31/99     TP   Added RunIC function that runs the sim so that every frame
-                 begins with the IC values from the given FGInitialCondition 
-	  	  	  	   object and dt=0. 
+                 begins with the IC values from the given FGInitialCondition
+	  	  	  	   object and dt=0.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -59,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.32 2001/03/19 18:11:14 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.33 2001/03/20 14:02:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,7 +106,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.32 2001/03/19 18:11:14 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.33 2001/03/20 14:02:15 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -224,17 +223,17 @@ public:
       scripts which are loaded.
       @return true if successful, false if sim should be ended  */
   bool Run(void);
-  
+
   /** Initializes the sim with a set of initial conditions.
-      @param fgic A pointer to a filled out initial conditions class which 
+      @param fgic A pointer to a filled out initial conditions class which
       describes the desired initial conditions.
       @return true if successful
        */
   bool RunIC(FGInitialCondition *fgic);
-  
+
   /// Freezes the sim
   void Freeze(void) {frozen = true;}
-  
+
   /// Resumes the sim
   void Resume(void) {frozen = false;}
 
@@ -248,15 +247,15 @@ public:
       be looked for in the directory specified in the AircraftPath variable,
       and in turn under the directory with the same name as the model. For
       instance: "aircraft/x15/x15.xml"
-      @return true if successful*/ 
+      @return true if successful*/
   bool LoadModel(string AircraftPath, string EnginePath, string model);
-  
+
   /** Loads a script to drive JSBSim (usually in standalone mode).
-      The language is the Simple Script Directives for JSBSim (SSDJ). 
+      The language is the Simple Script Directives for JSBSim (SSDJ).
       @param script the filename (including path name, if any) for the script.
       @return true if successful */
   bool LoadScript(string script);
-  
+
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled. */
   void RunScript(void);

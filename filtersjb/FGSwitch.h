@@ -1,4 +1,3 @@
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGSwitch.h
@@ -57,16 +56,16 @@ CLASS DECLARATION
 
 class FGSwitch  : public FGFCSComponent
 {
-  FGFCS* fcs;
-  FGConfigFile* AC_cfg;
-
 public:
   FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg);
- ~ FGSwitch ( ) { }       //Destructor
+  ~FGSwitch();
 
-  bool Run (void )  ;
+  bool Run(void);
+
 private:
   void Debug(void);
+  FGFCS* fcs;
+  FGConfigFile* AC_cfg;
 };
 
 #endif

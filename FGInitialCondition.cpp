@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.27 2001/03/19 14:07:18 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.28 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 extern short debug_lvl;
@@ -94,7 +94,10 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
 
 //******************************************************************************
 
-FGInitialCondition::~FGInitialCondition(void) {}
+FGInitialCondition::~FGInitialCondition(void)
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGInitialCondition" << endl;
+}
 
 //******************************************************************************
 

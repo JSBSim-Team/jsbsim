@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGain.h"            
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.24 2001/03/19 14:07:19 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGain.cpp,v 1.25 2001/03/20 14:02:15 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 extern short debug_lvl;
@@ -48,11 +48,6 @@ extern short debug_lvl;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// *****************************************************************************
-//  Function:   Constructor
-//  Purpose:    Builds a Gain-type of FCS component.
-//  Parameters: void
-//  Comments:   Types are PURE_GAIN, SCHEDULED_GAIN, and AEROSURFACE_SCALE
 
 FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                                                    AC_cfg(AC_cfg)
@@ -122,13 +117,16 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   if (debug_lvl & 2) cout << "Instantiated: FGGain" << endl;
 }
 
-// *****************************************************************************
-//  Function:   Run
-//  Purpose:
-//  Parameters: void
-//  Comments:
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGGain::Run(void ) 
+FGGain::~FGGain()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGGain" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGGain::Run(void )
 {
   float SchedGain = 1.0;
 
@@ -173,6 +171,7 @@ bool FGGain::Run(void )
   return true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGGain::Debug(void)
 {

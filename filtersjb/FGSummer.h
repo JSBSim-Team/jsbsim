@@ -68,19 +68,18 @@ CLASS DECLARATION
 
 class FGSummer  : public FGFCSComponent
 {
+public:
+  FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg);
+  ~FGSummer();
+
+  bool Run(void);
+
+private:
   FGConfigFile* AC_cfg;
   vector <eParam> InputIndices;
   vector <int> InputTypes;
   bool clip;
   float clipmin,clipmax;
-  
-
-public:
-  FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg);
-  ~FGSummer ( ) { }       //Destructor
-
-  bool Run (void );
-private:
   void Debug(void);
 };
 
