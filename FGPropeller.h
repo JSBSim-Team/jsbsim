@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.13 2001/03/31 15:43:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.13 2001/03/31 15:43:13 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -124,9 +124,6 @@ public:
   /// Retrieves the propeller moment of inertia
   float GetIxx(void)           { return Ixx;           }
   
-  /// Retrieves the Thrust in pounds
-  float GetThrust(void)        { return Thrust;        }
-  
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   float GetTorque(void)        { return Torque;        }
   
@@ -147,7 +144,6 @@ public:
   float Calculate(float PowerAvailable);
 
 private:
-  string PropName;
   int   numBlades;
   float RPM;
   float Ixx;
@@ -155,7 +151,6 @@ private:
   float MaxPitch;
   float MinPitch;
   float Pitch;
-  float Thrust;
   float Torque;
   FGTable *Efficiency;
   FGTable *cThrust;

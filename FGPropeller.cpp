@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.20 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.21 2001/03/31 15:43:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 extern short debug_lvl;
@@ -52,8 +52,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
   string token;
   int rows, cols;
 
-  PropName = Prop_cfg->GetValue("NAME");
-  cout << "\n    Propeller Name: " << PropName << endl;
+  Name = Prop_cfg->GetValue("NAME");
+  cout << "\n    Propeller Name: " << Name << endl;
   Prop_cfg->GetNextConfigLine();
   while (Prop_cfg->GetValue() != "/FG_PROPELLER") {
     *Prop_cfg >> token;

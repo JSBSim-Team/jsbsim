@@ -6,7 +6,7 @@
   high speed pitch pulses in the simulator. 
   --> 
 
-  <use aircraft="x15"> 
+  <use aircraft="X15"> 
 
   <use initialize="reset00"> 
 
