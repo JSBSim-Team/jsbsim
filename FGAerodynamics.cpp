@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.36 2002/05/16 13:04:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.37 2002/05/16 13:07:16 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -287,11 +287,11 @@ void FGAerodynamics::bind(void)
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared-norm", this,
                        &FGAerodynamics::GetClSquared); 
-  PropertyManager->Tie("metrics/alpha-max-deg", this,
+  PropertyManager->Tie("aero/alpha-max-deg", this,
                        &FGAerodynamics::GetAlphaCLMax,
                        &FGAerodynamics::SetAlphaCLMax,
                        true);
-  PropertyManager->Tie("metrics/alpha-min-deg", this,
+  PropertyManager->Tie("aero/alpha-min-deg", this,
                        &FGAerodynamics::GetAlphaCLMin,
                        &FGAerodynamics::SetAlphaCLMin,
                        true);
