@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.96 2004/03/03 11:56:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.97 2004/05/24 12:42:41 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -297,9 +297,11 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
   }
 
 # ifndef macintosh
-  file = "control/" + fname + ".xml";
+//  file = "control/" + fname + ".xml";
+  file = FDMExec->GetAircraftPath() + "/" + FDMExec->GetModelName() + "/" + fname + ".xml";
 # else
-  file = "control;" + fname + ".xml";
+//  file = "control;" + fname + ".xml";
+  file = FDMExec->GetAircraftPath() + ";" + FDMExec->GetModelName() + ";" + fname + ".xml";
 # endif
 
   if (name.empty()) {
@@ -484,7 +486,7 @@ string FGFCS::GetComponentValues(void)
 {
   unsigned int comp;
   string CompValues = "";
-  char buffer[10];
+  char buffer[12];
   bool firstime = true;
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
