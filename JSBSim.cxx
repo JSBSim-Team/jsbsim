@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.3 2000/04/28 18:41:15 jsb Exp $
+// $Id: JSBSim.cxx,v 1.4 2000/05/01 12:33:10 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -82,6 +82,10 @@ int FGJSBsim::init( double dt ) {
     FG_LOG( FG_FLIGHT, FG_INFO, "  lat: " <<  get_Latitude() );
     FG_LOG( FG_FLIGHT, FG_INFO, "  lon: " <<  get_Longitude() );
     FG_LOG( FG_FLIGHT, FG_INFO, "  alt: " <<  get_Altitude() );
+
+    cout << "JSBSim Phi (Pre-init): " << get_Phi() << endl;
+    cout << "JSBSim Tht (Pre-init): " << get_Theta() << endl;
+    cout << "JSBSim Psi (Pre-init): " << get_Psi() << endl;
 
     FDMExec.GetState()->Initialize(
       current_options.get_uBody(),

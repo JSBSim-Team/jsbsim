@@ -171,8 +171,8 @@ void FGState::Initialize(float U, float V, float W,
   float alpha, beta, gamma;
   float qbar, Vt;
 
-  FDMExec->GetPosition()->SetLatitude(Latitude*DEGTORAD);
-  FDMExec->GetPosition()->SetLongitude(Longitude*DEGTORAD);
+  FDMExec->GetPosition()->SetLatitude(Latitude);
+  FDMExec->GetPosition()->SetLongitude(Longitude);
   FDMExec->GetPosition()->Seth(H);
 
   FDMExec->GetAtmosphere()->Run();

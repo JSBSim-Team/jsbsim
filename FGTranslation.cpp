@@ -142,16 +142,16 @@ bool FGTranslation::Run(void)
 
 void FGTranslation::GetState(void)
 {
-    dt = State->Getdt();
+  dt = State->Getdt();
 
-    vPQR = Rotation->GetPQR();
-    vForces = Aircraft->GetForces();
+  vPQR = Rotation->GetPQR();
+  vForces = Aircraft->GetForces();
 
-    Mass = Aircraft->GetMass();
-    rho = Atmosphere->GetDensity();
+  Mass = Aircraft->GetMass();
+  rho = Atmosphere->GetDensity();
 
-    vEuler = Rotation->GetEuler();
+  vEuler = Rotation->GetEuler();
 
-    vWindUVW = Atmosphere->GetWindUVW();
+//  vWindUVW = Atmosphere->GetWindUVW();
 }
 
