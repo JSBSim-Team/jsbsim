@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.13 2001/12/08 03:14:35 dmegginson Exp $
+  CVS Version: $Id: c310.xml,v 1.14 2001/12/13 11:11:43 dmegginson Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -244,24 +244,30 @@
             1.0   1.002
             1.1   1.0
          </FACTOR>
-         <COEFFICIENT NAME="CLwbh" TYPE="VECTOR">
+	 <COEFFICIENT NAME="CLo" TYPE="VALUE">
+	    Lift_at_zero_alpha
+	    FG_QBAR|FG_WINGAREA
+	    0.288
+	 </COEFFICIENT>
+         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
             Lift_due_to_alpha
-            13
+            14
             FG_ALPHA
             FG_QBAR|FG_WINGAREA
-           -0.300 -0.722
-           -0.282 -0.884
-           -0.247 -0.799
-           -0.212 -0.660
-           -0.178 -0.522
-            0.104  0.764
-            0.139  0.904
-            0.174  1.042
-            0.209  1.145
-            0.244  1.235
-            0.279  1.187
-            0.300  1.094
-            0.314  0.857
+           -0.300 -1.010
+           -0.282 -1.172
+           -0.247 -1.087
+           -0.212 -0.948
+           -0.178 -0.810
+            0.000  0.000
+            0.104  0.476
+            0.139  0.616
+            0.174  0.754
+            0.209  0.857
+            0.244  0.947
+            0.279  0.899
+            0.300  0.806
+            0.314  0.569
           </COEFFICIENT>
           <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
             Delta_lift_due_to_flap_deflection
