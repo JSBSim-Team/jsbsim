@@ -5,7 +5,12 @@
       <title>Ground Track</title>
       <label axis="x">Longitude (rad)</label>
       <label axis="y">Latitude (rad)</label>
-      <scale>auto</scale>
+      <scale>
+         <min axis="x">2.0</min>
+         <min axis="y">0.0</min>
+         <max axis="x">3.0</max>
+         <max axis="y">1.0</max>
+      </scale>
       <parameter axis="x">Longitude</parameter>
       <parameter axis="y">Latitude</parameter>
    </plot>

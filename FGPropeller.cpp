@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.60 2004/03/23 12:32:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.61 2004/03/31 12:12:31 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,12 +163,6 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
   omega = RPS*2.0*M_PI;
-
-  // Check for windmilling.
-  double radius = Diameter * 0.375; // 75% of radius
-  double windmill_cutoff = tan(Pitch * 1.745329E-2) * omega * radius;
-  if (Vel > windmill_cutoff)
-    Thrust = -Thrust;
 
   vFn(1) = Thrust;
 
