@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.2 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.3 2004/08/21 17:34:01 frohlich Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,15 +82,20 @@ FGLocation::FGLocation(double lon, double lat, double radius)
 
 void FGLocation::SetLongitude(double longitude)
 {
-  double rtmp = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
+  double rtmp = mECLoc.Magnitude(eX, eY);
+  // Check if we have zero radius.
+  // If so set it to 1, so that we can set a position
+  if (0.0 == mECLoc.Magnitude())
+    rtmp = 1.0;
+
   // Fast return if we are on the north or south pole ...
   if (rtmp == 0.0)
     return;
 
   mCacheValid = false;
 
-  mECLoc(eX) = rtmp*sin(longitude);
-  mECLoc(eY) = rtmp*cos(longitude);
+  mECLoc(eX) = rtmp*cos(longitude);
+  mECLoc(eY) = rtmp*sin(longitude);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +110,7 @@ void FGLocation::SetLatitude(double latitude)
     r = 1.0;
   }
 
-  double rtmp = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
+  double rtmp = mECLoc.Magnitude(eX, eY);
   if (rtmp != 0.0) {
     double fac = r/rtmp*cos(latitude);
     mECLoc(eX) *= fac;

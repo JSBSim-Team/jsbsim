@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.26 2004/05/25 11:46:45 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.27 2004/08/21 17:34:02 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.26 2004/05/25 11:46:45 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.27 2004/08/21 17:34:02 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,6 +298,15 @@ public:
       Compute and return the euclidean norm of this vector.
    */
   double Magnitude(void) const;
+
+  /** Length of the vector in a coordinate axis plane.
+
+      Compute and return the euclidean norm of this vector projected into
+      the coordinate axis plane idx1-idx2.
+   */
+  double Magnitude(int idx1, int idx2) const {
+    return sqrt( Entry(idx1)*Entry(idx1) +  Entry(idx2)*Entry(idx2) );
+  }
 
   /** Normalize.
 
