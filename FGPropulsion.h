@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.44 2002/07/30 12:18:37 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.45 2002/08/07 04:29:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.44 2002/07/30 12:18:37 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.45 2002/08/07 04:29:33 jberndt Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster

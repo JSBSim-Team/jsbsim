@@ -1,8 +1,5 @@
 lib_LIBRARIES = libFCSComponents.a
 
-INCLUDES = \
-	-Wall
-
 libFCSComponents_a_SOURCES = \
 	FGDeadBand.cpp \
 	FGDeadBand.h \

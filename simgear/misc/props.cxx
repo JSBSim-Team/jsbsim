@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.4 2002/06/23 11:27:59 apeden Exp $
+// $Id: props.cxx,v 1.5 2002/08/07 04:29:34 jberndt Exp $
 
 #include "props.hxx"
 
@@ -14,9 +14,13 @@
 
 #if PROPS_STANDALONE
 
+#if !defined(sgi) || defined (__GNUC__)
 #include <iostream>
 using std::cerr;
 using std::endl;
+#else
+#include <iostream.h>
+#endif
 using std::find;
 using std::sort;
 

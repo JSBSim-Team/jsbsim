@@ -7,6 +7,12 @@ test -z "$srcdir" && srcdir=.
 PKG_NAME="JSBSim"
 ACLOCAL_FLAGS="-I . $ACLOCAL_FLAGS"
 
+OSTYPE=`uname -s`
+
+if test "$OSTYPE" = "IRIX" -o "$OSTYPE" = "IRIX64"; then
+   am_opt="--include-deps";
+fi
+
 (test -f $srcdir/JSBSim.cpp \
   && test -f $srcdir/filtersjb/FGDeadBand.cpp) || {
     echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
@@ -103,11 +109,20 @@ do
 	echo "Running autoheader..."
 	autoheader || { echo "**Error**: autoheader failed."; exit 1; }
       fi
-      echo "Running automake --gnu $am_opt ..."
-      automake --add-missing --gnu $am_opt ||
+      echo "Running automake --add-missing $am_opt ..."
+      automake --add-missing $am_opt ||
 	{ echo "**Error**: automake failed."; exit 1; }
       echo "Running autoconf ..."
       autoconf || { echo "**Error**: autoconf failed."; exit 1; }
+
+      if test "$OSTYPE" = "IRIX" -o "$OSTYPE" = "IRIX64"; then
+        echo "Fixing Makefiles for Irix ..."
+        for n in `find . -name Makefile.in`; do \
+          mv -f $n $n.ar-new; \
+          sed 's/$(AR) cru /$(AR) -o /g' $n.ar-new > $n; \
+          rm -f $n.ar-new; \
+        done;
+      fi
     ) || exit 1
   fi
 done

@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.77 2002/07/30 12:18:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.78 2002/08/07 04:29:33 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;

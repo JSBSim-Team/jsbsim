@@ -6,8 +6,7 @@ endif
 # follows $(UTILITIES_DIR) on the same line
 SUBDIRS = aircraft engine filtersjb scripts simgear $(UTILITIES_DIR)
 
-INCLUDES = -I. \
-	-Wall
+INCLUDES = -I.
 
 bin_PROGRAMS = JSBSim
 
@@ -18,7 +17,8 @@ JSBSim_SOURCES = \
 JSBSim_LDADD = \
 	$(top_srcdir)/libJSBSim.a \
 	$(top_srcdir)/filtersjb/libFCSComponents.a \
-  $(top_srcdir)/simgear/misc/libProperties.a
+	$(top_srcdir)/simgear/misc/libProperties.a \
+	-lm
 
 lib_LIBRARIES = libJSBSim.a
 
@@ -113,7 +113,7 @@ libJSBSim_a_SOURCES = \
 
 libJSBSim_a_LIBADD = \
 	filtersjb/libFCSComponents.a \
-  simgear/misc/libProperties.a
+	simgear/misc/libProperties.a
 
 EXTRA_DIST = \
 	autogen.sh

@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.4 2002/06/23 11:27:59 apeden Exp $
+ * $Id: props.hxx,v 1.5 2002/08/07 04:29:34 jberndt Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -23,12 +23,22 @@
 #if PROPS_STANDALONE
 
 #include <string>
+
+#if !defined(sgi) || defined (__GNUC__)
+
 #include <iostream>
+
+using std::istream;
+using std::ostream;
+
+#else
+
+#include <iostream.h>
+
+#endif
 
 using std::string;
 using std::vector;
-using std::istream;
-using std::ostream;
 
 #else
 

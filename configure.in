@@ -21,6 +21,24 @@ AC_SUBST(LDFLAGS)
 AC_CHECK_HEADER(dislin.h)
 AM_CONDITIONAL(ENABLE_SIMPLOT, test "x$ac_cv_header_dislin_h" = "xyes")  
 
+AC_CANONICAL_HOST
+
+WFLAG="-Wall"
+AR="ar"
+
+case "$host" in
+mips-sgi-irix*)
+    if test "x$CXX" = "xCC"; then
+        WFLAG="-fullwarn";
+        AR="CC -ar"
+        AC_SUBST(AR)
+    fi
+    ;;
+esac
+
+CFLAGS="$CFLAGS $WFLAG"
+CXXFLAGS="$CXXFLAGS $WFLAG"
+
 
 AC_OUTPUT([
 Makefile

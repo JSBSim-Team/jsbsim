@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.27 2002/08/03 02:20:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.28 2002/08/07 04:29:33 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,14 +51,13 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 {
   Name = "FGInertial";
 
-  vRadius.InitMatrix();
-  
   // Defaults
   RotationRate    = 0.00007272205217;
   GM              = 14.06252720E15;
   RadiusReference = 20925650.00;
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
+  vRadius.InitMatrix();
   vCoriolis.InitMatrix();
   vCentrifugal.InitMatrix();
   vGravity.InitMatrix();
