@@ -54,8 +54,9 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGDefs.h"
+#include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.35 2001/08/18 12:05:24 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.36 2001/08/18 14:23:30 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -303,20 +304,20 @@ void FGInitialCondition::SetWindNEDFpsIC(float wN, float wE, float wD ) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetWindKtsIC(float mag, float dir) { 
-    wmag=mag*KTSTOFPS; wdir=dir*DEGTORAD; 
-    lastWindSet=setwmd; 
+// positive from left
+void FGInitialCondition::SetHeadWindKtsIC(float head){ 
+    whead=head*KTSTOFPS;
+    lastWindSet=setwhc; 
     calcWindUVW();
-    
     if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
-}
+
+} 
 
 //******************************************************************************
 
-// positive from left
-void FGInitialCondition::SetWindHCKtsIC(float head, float cross){ 
-    whead=head*KTSTOFPS; wcross=cross*KTSTOFPS; 
+void FGInitialCondition::SetCrossWindKtsIC(float cross){ 
+    wcross=cross*KTSTOFPS; 
     lastWindSet=setwhc; 
     calcWindUVW();
     if(lastSpeedSet == setvg)
@@ -332,6 +333,27 @@ void FGInitialCondition::SetWindDownKtsIC(float wD) {
     if(lastSpeedSet == setvg)
       SetVgroundFpsIC(vg);
 } 
+
+//******************************************************************************
+
+void FGInitialCondition::SetWindMagKtsIC(float mag) {
+  wmag=mag*KTSTOFPS;
+  lastWindSet=setwmd;
+  calcWindUVW();    
+  if(lastSpeedSet == setvg)
+      SetVgroundFpsIC(vg);
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetWindDirDegIC(float dir) {
+  wdir=dir*DEGTORAD;
+  lastWindSet=setwmd;
+  calcWindUVW();    
+  if(lastSpeedSet == setvg)
+      SetVgroundFpsIC(vg);
+}
+
 
 //******************************************************************************
 
@@ -682,3 +704,62 @@ float FGInitialCondition::GetWindDirDegIC(void) {
   else
     return 180.0;
 }        
+
+//******************************************************************************
+
+bool FGInitialCondition::Load(string path, string acname, string fname){  
+  
+  string resetDef;
+  string token="";
+
+  float temp;
+  
+
+# ifndef macintosh
+  resetDef = path + "/" + acname + "/" + fname + ".xml";
+# else
+  resetDef = path + ";" + acname + ";" + fname + ".xml";
+# endif
+
+  cout << resetDef << endl;
+  FGConfigFile resetfile(resetDef);
+  if (!resetfile.IsOpen()) return false;
+
+  resetfile.GetNextConfigLine();
+  token = resetfile.GetValue();
+  if (token != "initialize") {
+    cerr << "The reset file " << resetDef
+         << " does not appear to be a reset file" << endl;
+    return false;
+  }
+  
+  resetfile.GetNextConfigLine();
+  resetfile >> token;
+  while (token != "/initialize" && token != "EOF") {
+    if (token == "UBODY" ) { resetfile >> temp; SetUBodyFpsIC(temp); } 
+    if (token == "VBODY" ) { resetfile >> temp; SetVBodyFpsIC(temp); } 
+    if (token == "WBODY" ) { resetfile >> temp; SetWBodyFpsIC(temp); }  
+    if (token == "LATITUDE" ) { resetfile >> temp; SetLatitudeDegIC(temp); }
+    if (token == "LONGITUDE" ) { resetfile >> temp; SetLongitudeDegIC(temp); }
+    if (token == "PHI" ) { resetfile >> temp; SetRollAngleDegIC(temp); }
+    if (token == "THETA" ) { resetfile >> temp; SetPitchAngleDegIC(temp); }
+    if (token == "PSI" ) { resetfile >> temp; SetTrueHeadingDegIC(temp); }
+    if (token == "ALPHA" ) { resetfile >> temp; SetAlphaDegIC(temp); }
+    if (token == "BETA" ) { resetfile >> temp; SetBetaDegIC(temp); }
+    if (token == "GAMMA" ) { resetfile >> temp; SetFlightPathAngleDegIC(temp); }
+    if (token == "ROC" ) { resetfile >> temp; SetClimbRateFpmIC(temp); }
+    if (token == "ALTITUDE" ) { resetfile >> temp; SetAltitudeFtIC(temp); }
+    if (token == "WINDDIR" ) { resetfile >> temp; SetWindDirDegIC(temp); }
+    if (token == "VWIND" ) { resetfile >> temp; SetWindMagKtsIC(temp); }
+    if (token == "HWIND" ) { resetfile >> temp; SetHeadWindKtsIC(temp); }
+    if (token == "XWIND" ) { resetfile >> temp; SetCrossWindKtsIC(temp); }
+    if (token == "VC" ) { resetfile >> temp; SetVcalibratedKtsIC(temp); }
+    if (token == "MACH" ) { resetfile >> temp; SetMachIC(temp); }
+    if (token == "VGROUND" ) { resetfile >> temp; SetVgroundKtsIC(temp); }
+    resetfile >> token;
+  }
+
+  fdmex->RunIC(this);
+  
+  return true;
+}  

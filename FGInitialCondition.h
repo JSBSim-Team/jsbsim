@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.29 2001/08/18 12:05:24 apeden Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.30 2001/08/18 14:23:30 apeden Exp $"
 #define jsbFPSTOKTS 0.5924838
 #define jsbKTSTOFPS 1.6878099
 
@@ -127,7 +127,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.29 2001/08/18 12:05:24 apeden Exp $
+   @version $Id: FGInitialCondition.h,v 1.30 2001/08/18 14:23:30 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,8 +203,13 @@ public:
   void SetVdownFpsIC(float tt);
   
   void SetWindNEDFpsIC(float wN, float wE, float wD);
-  void SetWindKtsIC(float mag, float dir); 
-  void SetWindHCKtsIC(float head, float cross);// positive from left
+ 
+  void SetWindMagKtsIC(float mag);
+  void SetWindDirDegIC(float dir);
+ 
+  void SetHeadWindKtsIC(float head);
+  void SetCrossWindKtsIC(float cross);// positive from left
+ 
   void SetWindDownKtsIC(float wD);                                          
   
   void SetClimbRateFpsIC(float tt);
@@ -244,6 +249,8 @@ public:
 
   inline speedset GetSpeedSet(void) { return lastSpeedSet; }
   inline windset GetWindSet(void) { return lastWindSet; }
+  
+  bool Load(string path, string acname, string fname);
 
 private:
   float vt,vc,ve,vg;
