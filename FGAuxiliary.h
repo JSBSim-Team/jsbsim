@@ -39,6 +39,7 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 #include "FGModel.h"
+#include "FGMatrix.h"
 
 /*******************************************************************************
 DEFINES
@@ -60,9 +61,11 @@ public:
   inline float GetVcalibratedKTS(void) { return vcas*FPSTOKTS; }
   inline float GetVequivalentFPS(void) { return veas; }
   inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
-
-
-
+  
+  inline FGColumnVector GetPilotAccel(void) { return vPilotAccel; }
+  inline FGColumnVector GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
+  
+ 
 protected:
 
 private:
@@ -76,6 +79,10 @@ private:
   //if a general freestream total is needed, e-mail Tony Peden
   // (apeden@earthlink.net) or you can add it your self using the
   // isentropic flow equations
+  
+ 
+  
+  FGColumnVector vPilotAccel;
 
   void GetState(void);
 };

@@ -50,6 +50,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGOutput.h"
+#include "FGMatrix.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -90,6 +91,8 @@ bool FGAuxiliary::Run() {
     A = pow(((pt-p)/psl+1),0.28571);
     vcas = sqrt(7*psl/rhosl*(A-1));
     veas = sqrt(2*qbar/rhosl);
+    
+    vPilotAccel = Translation->GetUVWdot() + Aircraft->GetXYZep() * Rotation->GetPQRdot();
 
 
 
