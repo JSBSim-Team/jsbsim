@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.136 2003/04/01 17:16:42 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.137 2003/04/04 22:44:13 dmegginson Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -626,6 +626,9 @@ void FGJSBsim::set_Latitude(double lat) {
     static const SGPropertyNode *altitude = fgGetNode("/position/altitude-ft");
     double alt;
     double sea_level_radius_meters, lat_geoc;
+
+                                // In case we're not trimming
+    FGInterface::set_Latitude(lat);
     
     if ( altitude->getDoubleValue() > -9990 ) {
       alt = altitude->getDoubleValue();
@@ -650,6 +653,10 @@ void FGJSBsim::set_Latitude(double lat) {
 void FGJSBsim::set_Longitude(double lon) {
 
     SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Longitude: " << lon );
+
+                                // In case we're not trimming
+    FGInterface::set_Longitude(lon);
+
     update_ic();
     fgic->SetLongitudeRadIC( lon );
     _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
@@ -665,6 +672,9 @@ void FGJSBsim::set_Altitude(double alt) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Altitude: " << alt );
     SG_LOG(SG_FLIGHT,SG_INFO, "  lat (deg) = " << latitude->getDoubleValue() );
     
+                                // In case we're not trimming
+    FGInterface::set_Altitude(alt);
+
     update_ic();
     sgGeodToGeoc( latitude->getDoubleValue() * SGD_DEGREES_TO_RADIANS, alt,
                   &sea_level_radius_meters, &lat_geoc);
@@ -681,7 +691,10 @@ void FGJSBsim::set_Altitude(double alt) {
 
 void FGJSBsim::set_V_calibrated_kts(double vc) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_V_calibrated_kts: " <<  vc );
-    
+
+                                // In case we're not trimming
+    FGInterface::set_V_calibrated_kts(vc);
+
     update_ic();
     fgic->SetVcalibratedKtsIC(vc);
     needTrim=true;
@@ -690,6 +703,9 @@ void FGJSBsim::set_V_calibrated_kts(double vc) {
 void FGJSBsim::set_Mach_number(double mach) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Mach_number: " <<  mach );
     
+                                // In case we're not trimming
+    FGInterface::set_Mach_number(mach);
+
     update_ic();
     fgic->SetMachIC(mach);
     needTrim=true;
@@ -699,6 +715,9 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down ){
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local: "
        << north << ", " <<  east << ", " << down );
     
+                                // In case we're not trimming
+    FGInterface::set_Velocities_Local(north, east, down);
+
     update_ic();
     fgic->SetVnorthFpsIC(north);
     fgic->SetVeastFpsIC(east);
@@ -710,6 +729,9 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w){
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Wind_Body: "
        << u << ", " <<  v << ", " <<  w );
     
+                                // In case we're not trimming
+    FGInterface::set_Velocities_Wind_Body(u, v, w);
+
     update_ic();
     fgic->SetUBodyFpsIC(u);
     fgic->SetVBodyFpsIC(v);
@@ -722,6 +744,9 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi ) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Euler_Angles: "
        << phi << ", " << theta << ", " << psi );
     
+                                // In case we're not trimming
+    FGInterface::set_Euler_Angles(phi, theta, psi);
+
     update_ic();
     fgic->SetPitchAngleRadIC(theta);
     fgic->SetRollAngleRadIC(phi);
@@ -733,6 +758,9 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi ) {
 void FGJSBsim::set_Climb_Rate( double roc) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Climb_Rate: " << roc );
     
+                                // In case we're not trimming
+    FGInterface::set_Climb_Rate(roc);
+
     update_ic();
     //since both climb rate and flight path angle are set in the FG
     //startup sequence, something is needed to keep one from cancelling
