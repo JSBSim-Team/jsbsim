@@ -92,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.115 2002/04/30 11:23:38 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.116 2002/05/04 15:26:02 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,8 +103,9 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAircraft";
   WingIncidence   = 0.0;
-  impending_stall = 0.0;
+  impending_stall = stall_hyst = 0.0;
   alphaclmin = alphaclmax = 0.0;
+  alphahystmin = alphahystmax = 0.0;
   HTailArea = VTailArea = 0.0;
   HTailArm  = VTailArm  = 0.0;
   lbarh = lbarv = 0.0;
@@ -130,6 +131,7 @@ FGAircraft::~FGAircraft()
 bool FGAircraft::Run(void)
 {
   double twovel;
+  double alpha;
   
   if (!FGModel::Run()) {                 // if false then execute this Run()
     vForces.InitMatrix();
@@ -158,13 +160,25 @@ bool FGAircraft::Run(void)
     
     alphaw = Translation->Getalpha() + WingIncidence;
     
+    alpha=Translation->Getalpha();
+    
     if (alphaclmax != 0) {
-      if (Translation->Getalpha() > 0.85*alphaclmax) {
-        impending_stall = 10*(Translation->Getalpha()/alphaclmax - 0.85);
+      if (alpha > 0.85*alphaclmax) {
+        impending_stall = 10*(alpha/alphaclmax - 0.85);
       } else {
         impending_stall = 0;
       }
-    }      
+          
+    }   
+    if(alphahystmax != 0.0 && alphahystmin != 0.0) {
+          if( alpha > alphahystmax ) {
+            stall_hyst = 1;
+          } else if(alpha < alphahystmin) {
+            stall_hyst = 0;
+          }    
+    }
+
+     
     
     return false;
   } else {                               // skip Run() execution this time
@@ -256,6 +270,11 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
       if (debug_lvl > 0) cout << "    Maximum Alpha: " << alphaclmax
              << "    Minimum Alpha: " << alphaclmin
              << endl;
+    } else if (parameter == "AC_HYSTLIMITS") {
+      *AC_cfg >> alphahystmin >> alphahystmax;
+      if (debug_lvl > 0) cout << "    Hysteresis Start: " << alphahystmax
+             << "    Hysteresis End: " << alphahystmin
+             << endl;
     } else if (parameter == "AC_POINTMASS") {
       *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
       MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);
@@ -346,6 +365,9 @@ void FGAircraft::bind(void)
                        &FGAircraft::GetAlphaW);
   PropertyManager->Tie("systems/stall-warn-norm", this,
                         &FGAircraft::GetStallWarn);
+  PropertyManager->Tie("aero/stall-hyst-norm", this,
+                        &FGAircraft::GetHysteresisParm);
+                        
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

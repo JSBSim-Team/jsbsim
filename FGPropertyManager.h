@@ -41,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.11 2002/04/25 11:44:12 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.12 2002/05/04 15:26:02 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -713,7 +713,6 @@ class FGPropertyManager:public SGPropertyNode {
     }
 
 };        
-
 
 #endif // FGPROPERTYMANAGER_H
 

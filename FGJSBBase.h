@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.25 2002/02/27 14:35:09 apeden Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.26 2002/05/04 15:26:02 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -164,7 +164,8 @@ enum eParam {
   FG_VBARH,    //horizontal tail volume 
   FG_VBARV,     //vertical tail volume 
   FG_GEAR_CMD,
-  FG_GEAR_POS
+  FG_GEAR_POS,
+  FG_HYSTPARM
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,7 +178,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.25 2002/02/27 14:35:09 apeden Exp $
+    @version $Id: FGJSBBase.h,v 1.26 2002/05/04 15:26:02 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.84 2002/04/02 05:34:25 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.85 2002/05/04 15:26:02 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.84 2002/04/02 05:34:25 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.85 2002/05/04 15:26:02 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -160,6 +160,11 @@ public:
   inline double GetXYZep(int idx) const { return vXYZep(idx); }
   inline double GetAlphaCLMax(void) const { return alphaclmax; }
   inline double GetAlphaCLMin(void) const { return alphaclmin; }
+  
+  inline double GetAlphaHystMax(void) const { return alphahystmax; }
+  inline double GetAlphaHystMin(void) const { return alphahystmin; }
+  inline double GetHysteresisParm(void) const { return stall_hyst; }
+  
 
   inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
@@ -193,7 +198,8 @@ private:
   double HTailArea, VTailArea, HTailArm, VTailArm;
   double lbarh,lbarv,vbarh,vbarv;
   double alphaclmax,alphaclmin;
-  double impending_stall;
+  double alphahystmax, alphahystmin;
+  double impending_stall, stall_hyst;
   double bi2vel, ci2vel,alphaw;
   string AircraftName;
 

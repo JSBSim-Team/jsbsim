@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.112 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.113 2002/05/04 15:26:02 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -575,6 +575,7 @@ void FGState::InitPropertyMaps(void)
   ParamNameToProp[  "FG_VBARV" ]="metrics/vbarv-norm";     
   ParamNameToProp[  "FG_GEAR_CMD" ]="gear/gear-cmd-norm";
   ParamNameToProp[  "FG_GEAR_POS" ]="gear/gear-pos-norm";
+  ParamNameToProp[  "FG_HYSTPARM" ]="aero/stall-hyst-norm";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
