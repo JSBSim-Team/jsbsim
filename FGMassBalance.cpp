@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.37 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.38 2004/03/06 12:36:07 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ bool FGMassBalance::Run(void)
     Ixz = mJ(1,2);
     Iyz = mJ(2,3);
 
-	  mJ(1,2) = mJ(2,1) *= -1;
+    mJ(1,2) = mJ(2,1) *= -1;
     mJ(1,3) = mJ(3,1) *= -1;
     mJ(2,3) = mJ(3,2) *= -1;
 
@@ -136,7 +136,7 @@ bool FGMassBalance::Run(void)
 
 void FGMassBalance::AddPointMass(double weight, double X, double Y, double Z)
 {
-  PointMassLoc.push_back(*(new FGColumnVector3(X, Y, Z)));
+  PointMassLoc.push_back(FGColumnVector3(X, Y, Z));
   PointMassWeight.push_back(weight);
 }
 
@@ -305,8 +305,8 @@ void FGMassBalance::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGPiston" << endl;
-    if (from == 1) cout << "Destroyed:    FGPiston" << endl;
+    if (from == 0) cout << "Instantiated: FGMassBalance" << endl;
+    if (from == 1) cout << "Destroyed:    FGMassBalance" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
