@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.88 2001/11/27 18:59:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.89 2001/11/28 00:20:18 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,12 +223,12 @@ double FGState::GetParameter(eParam val_idx) {
     return Rotation->GetPQR(eP);
   case FG_YAWRATE:
     return Rotation->GetPQR(eR);
-  case FG_AEROQ:
-    return Rotation->GetPQR(eQ) + Atmosphere->GetTurbPQR(eQ); // add aero turbulence effects
   case FG_AEROP:
-    return Rotation->GetPQR(eP) + Atmosphere->GetTurbPQR(eP); // add aero turbulence effects
+    return Rotation->GetAeroPQR(eP);
+  case FG_AEROQ:
+    return Rotation->GetAeroPQR(eQ);
   case FG_AEROR:
-    return Rotation->GetPQR(eR) + Atmosphere->GetTurbPQR(eR); // add aero turbulence effects
+    return Rotation->GetAeroPQR(eR);
   case FG_CL_SQRD:
     if (Translation->Getqbar() > 0.00)
       scratch = Aerodynamics->GetvLastFs(eLift)/(Aircraft->GetWingArea()*Translation->Getqbar());
@@ -482,7 +482,7 @@ void FGState::Initialize(double U, double V, double W,
 {
   double alpha, beta;
   double qbar, Vt;
-  FGColumnVector3 vAero;
+  FGColumnVector3 vAeroUVW;
 
   Position->SetLatitude(Latitude);
   Position->SetLongitude(Longitude);
@@ -500,14 +500,14 @@ void FGState::Initialize(double U, double V, double W,
   
   Atmosphere->SetWindNED(wnorth, weast, wdown);
   
-  vAero = vUVW + mTl2b*Atmosphere->GetWindNED();
+  vAeroUVW = vUVW + mTl2b*Atmosphere->GetWindNED();
   
-  if (vAero(eW) != 0.0)
-    alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
+  if (vAeroUVW(eW) != 0.0)
+    alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
   else
     alpha = 0.0;
-  if (vAero(eV) != 0.0)
-    beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV), (fabs(vAero(eU))/vAero(eU))*sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
+  if (vAeroUVW(eV) != 0.0)
+    beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV), (fabs(vAeroUVW(eU))/vAeroUVW(eU))*sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
   else
     beta = 0.0;
 

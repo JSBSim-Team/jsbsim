@@ -72,7 +72,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.31 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.32 2001/11/28 00:20:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -88,6 +88,8 @@ public:
 
   inline FGColumnVector3& GetPQR(void) {return vPQR;}
   inline double GetPQR(int axis) {return vPQR(axis);}
+  inline FGColumnVector3& GetAeroPQR(void) {return vAeroPQR;}
+  inline double GetAeroPQR(int axis) {return vAeroPQR(axis);}
   inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
   inline double GetPQRdot(int idx) {return vPQRdot(idx);}
   inline FGColumnVector3& GetEuler(void) {return vEuler;}
@@ -111,6 +113,7 @@ public:
 
 private:
   FGColumnVector3 vPQR;
+  FGColumnVector3 vAeroPQR;
   FGColumnVector3 vPQRdot;
   FGColumnVector3 vMoments;
   FGColumnVector3 vEuler;

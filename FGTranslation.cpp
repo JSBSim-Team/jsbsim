@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.33 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.34 2001/11/28 00:20:18 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
     vUVWdot(3),
     vlastUVWdot(3),
     mVel(3,3),
-    vAero(3)
+    vAeroUVW(3)
 {
   Name = "FGTranslation";
   qbar = 0;
@@ -122,29 +122,29 @@ bool FGTranslation::Run(void)
     vUVWdot = mVel*Rotation->GetPQR() + Aircraft->GetBodyAccel();
 
     vUVW += Tc * (vlastUVWdot + vUVWdot);
-    vAero = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
+    vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
-    Vt = vAero.Magnitude();
+    Vt = vAeroUVW.Magnitude();
     if ( Vt > 1) {
-      if (vAero(eW) != 0.0)
-        alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
-      if (vAero(eV) != 0.0)
-        beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV),
-               sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
+      if (vAeroUVW(eW) != 0.0)
+        alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
+      if (vAeroUVW(eV) != 0.0)
+        beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
+               sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
 
       // stolen, quite shamelessly, from LaRCsim
-      double mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
+      double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
       double signU=1;
-      if (vAero(eU) != 0.0)
-        signU = vAero(eU)/fabs(vAero(eU));
+      if (vAeroUVW(eU) != 0.0)
+        signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
 
       if ( (mUW == 0.0) || (Vt == 0.0) ) {
         adot = 0.0;
         bdot = 0.0;
       } else {
-        adot = (vAero(eU)*vAero(eW) - vAero(eW)*vUVWdot(eU))/mUW;
-        bdot = (signU*mUW*vUVWdot(eV) - vAero(eV)*(vAero(eU)*vUVWdot(eU)
-                + vAero(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+        adot = (vAeroUVW(eU)*vAeroUVW(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
+        bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
+                + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
       }
     } else {
       alpha = beta = adot = bdot = 0;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.33 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.34 2001/11/28 00:20:18 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +138,7 @@ FGPropeller::~FGPropeller()
 double FGPropeller::Calculate(double PowerAvailable)
 {
   double J, C_Thrust, omega;
-  double Vel = (fdmex->GetTranslation()->GetvAero())(1);
+  double Vel = fdmex->GetTranslation()->GetvAeroUVW(eU);
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
   double alpha, beta;
@@ -194,7 +194,7 @@ double FGPropeller::GetPowerRequired(void)
 
   double cPReq, RPS = RPM / 60.0;
 
-  double J = (fdmex->GetTranslation()->GetvAero())(1) / (Diameter * RPS);
+  double J = fdmex->GetTranslation()->GetvAeroUVW(eU) / (Diameter * RPS);
   double rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop

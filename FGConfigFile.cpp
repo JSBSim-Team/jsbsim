@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.30 2001/11/17 12:58:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.31 2001/11/28 00:20:18 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

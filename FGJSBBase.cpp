@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.8 2001/11/27 18:59:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.9 2001/11/28 00:20:18 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
