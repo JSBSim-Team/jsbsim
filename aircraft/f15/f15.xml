@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.6 2003/02/19 10:18:22 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.7 2003/02/21 10:52:25 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   First production
@@ -299,17 +299,14 @@
             1.0   1.00
             1.1   1.00
          </FACTOR>
-         <!--
-              CDmin is calculated from flight test date as described in H-1990
-              as a function of Fex, FNP, W, y, v, S and rho
-           -->
-         <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
+
+         <<COEFFICIENT NAME="CDmin" TYPE="VECTOR">
            Drag_minimum
            2
            velocities/mach-norm
            aero/qbar-psf | metrics/Sw-sqft
-           0.5	0.01468
-           1.4	0.00308
+           0.5  0.01468
+           1.4  0.00737
          </COEFFICIENT>
 
          <COEFFICIENT NAME="CDi" TYPE="VECTOR">
