@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.47 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.48 2002/01/14 19:43:23 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,7 +156,7 @@ double FGPiston::Calculate(double PowerRequired)
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
-  if (Mixture >= 0.5) {
+  if (Mixture >= 0.3) {
     doEngineStartup();
     doManifoldPressure();
     doAirFlow();
@@ -299,6 +299,9 @@ void FGPiston::doManifoldPressure(void)
 /**
  * Calculate the air flow through the engine.
  *
+ * At this point, ManifoldPressure_inHg still represents the sea-level
+ * MP, not adjusted for altitude.
+ *
  * Inputs: p_amb, R_air, T_amb, ManifoldPressure_inHg, Displacement,
  *   RPM, volumetric_efficiency
  *
@@ -348,8 +351,8 @@ void FGPiston::doFuelFlow(void)
 
 void FGPiston::doEnginePower(void)
 {
-  double True_ManifoldPressure_inHg = ManifoldPressure_inHg * p_amb / p_amb_sea_level;
-  double ManXRPM = True_ManifoldPressure_inHg * RPM;
+  ManifoldPressure_inHg *= p_amb / p_amb_sea_level;
+  double ManXRPM = ManifoldPressure_inHg * RPM;
         // FIXME: this needs to be generalized
   Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
   double T_amb_degF = (T_amb * 1.8) - 459.67;
