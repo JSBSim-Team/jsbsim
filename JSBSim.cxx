@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.87 2001/12/03 00:40:39 apeden Exp $
+// $Id: JSBSim.cxx,v 1.88 2001/12/04 13:08:17 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -212,7 +212,7 @@ void FGJSBsim::init() {
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
             << Position->GetLongitude() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Altitude: "
-	    << Position->Geth() << " feet" );
+        << Position->Geth() << " feet" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  loaded initial conditions" );
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  set dt" );
@@ -330,7 +330,7 @@ bool FGJSBsim::copy_to_JSBsim() {
     for (int i = 0; i < get_num_engines(); i++) {
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
       FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
-      FCS->SetPropPitchCmd(i, globals->get_controls()->get_prop_advance(i));
+      FCS->SetPropAdvanceCmd(i, globals->get_controls()->get_prop_advance(i));
     }
 
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
@@ -473,13 +473,12 @@ bool FGJSBsim::ToggleDataLogging(bool state) {
 
 //Positions
 void FGJSBsim::set_Latitude(double lat) {
-    static const SGPropertyNode *altitude
-	= fgGetNode("/position/altitude-ft");
+    static const SGPropertyNode *altitude = fgGetNode("/position/altitude-ft");
     double alt;
     if ( altitude->getDoubleValue() > -9990 ) {
-	alt = altitude->getDoubleValue();
+      alt = altitude->getDoubleValue();
     } else {
-	alt = 0.0;
+      alt = 0.0;
     }
 
     double sea_level_radius_meters, lat_geoc;
@@ -487,8 +486,7 @@ void FGJSBsim::set_Latitude(double lat) {
     SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Latitude: " << lat );
     SG_LOG(SG_FLIGHT,SG_INFO," cur alt (ft) =  " << alt );
 
-    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER,
-		  &sea_level_radius_meters, &lat_geoc );
+    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER, &sea_level_radius_meters, &lat_geoc );
     
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );
@@ -505,8 +503,7 @@ void FGJSBsim::set_Longitude(double lon) {
 }
 
 void FGJSBsim::set_Altitude(double alt) {
-    static const SGPropertyNode *latitude
-	= fgGetNode("/position/latitude-deg");
+    static const SGPropertyNode *latitude = fgGetNode("/position/latitude-deg");
 
     double sea_level_radius_meters,lat_geoc;
 
@@ -514,7 +511,7 @@ void FGJSBsim::set_Altitude(double alt) {
     SG_LOG(SG_FLIGHT,SG_INFO, "  lat (deg) = " << latitude->getDoubleValue() );
 
     sgGeodToGeoc( latitude->getDoubleValue() * SGD_DEGREES_TO_RADIANS, alt,
-		  &sea_level_radius_meters, &lat_geoc);
+      &sea_level_radius_meters, &lat_geoc);
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );

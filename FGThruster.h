@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.22 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.23 2001/12/04 13:08:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -57,7 +57,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.22 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.23 2001/12/04 13:08:17 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,16 +76,19 @@ public:
 
   virtual double Calculate(double) {return 0.0;}
   void SetName(string name) {Name = name;}
+  void SetThrusterNumber(int nn) {ThrusterNumber = nn;}
   virtual double GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(double dt) {deltaT = dt;}
   double GetThrust(void) {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
+  int GetThrusterNumber(void) {return ThrusterNumber;}
   virtual double GetRPM(void) { return 0.0; };
 
 protected:
   eType Type;
   string Name;
+  int ThrusterNumber;
   double Thrust;
   double PowerRequired;
   double deltaT;

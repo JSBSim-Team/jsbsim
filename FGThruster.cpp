@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.13 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.14 2001/12/04 13:08:17 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -45,7 +45,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
+FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec),
+                                             ThrusterNumber(0)
 {
   SetTransformType(FGForce::tCustom);
 

@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.7 2001/12/02 16:00:36 apeden Exp $
+  CVS Version: $Id: c310.xml,v 1.8 2001/12/04 13:08:17 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -86,6 +86,10 @@
      AC_GEAR	LEFT_MAIN   50.7 -70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0 RETRACT
      AC_GEAR	RIGHT_MAIN  50.7  70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0 RETRACT
      AC_GEAR	TAIL_SKID  221.8   0.0   0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	NOSE        96.3   0.0  10.3 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	CABIN_LEFT   0.0 -25.0   0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	CABIN_RIGHT  0.0  25.0   0.0 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	ROOF        41.3   0.0  53.3 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR	LEFT_TIP    48.1 -222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
      AC_GEAR	RIGHT_TIP   48.1  222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
 
@@ -134,7 +138,7 @@
       FEED      0
     </AC_ENGINE>
 
-    <AC_THRUSTER FILE="prop_generic2f">
+    <AC_THRUSTER FILE="prop_generic2v">
       XLOC   48.0
       YLOC   -70.0
       ZLOC   59.4
@@ -144,7 +148,7 @@
       SENSE   1.0
     </AC_THRUSTER>
 
-    <AC_THRUSTER FILE="prop_generic2f">
+    <AC_THRUSTER FILE="prop_generic2v">
       XLOC   48.0
       YLOC   70.0
       ZLOC   59.4

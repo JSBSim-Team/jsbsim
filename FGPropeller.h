@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.20 2001/12/04 13:08:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.20 2001/12/04 13:08:17 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -145,7 +145,7 @@ public:
       @param PowerAvailable this is the excess power provided by the engine to
       accelerate the prop. It could be negative, dictating that the propeller
       would be slowed.
-		  @return the thrust in pounds */
+      @return the thrust in pounds */
   double Calculate(double PowerAvailable);
 
 private:
@@ -155,6 +155,8 @@ private:
   double Diameter;
   double MaxPitch;
   double MinPitch;
+  double MinRPM;
+  double MaxRPM;
   double P_Factor;
   double Sense;
   double Pitch;
