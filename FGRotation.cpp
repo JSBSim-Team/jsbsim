@@ -78,11 +78,12 @@ INCLUDES
 
 
 FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex),
-                                           vPQR(3),
-                                           vEuler(3),
-                                           vMoments(3)
+        vPQR(3),
+        vPQRdot(3),
+        vEuler(3),
+        vMoments(3)
 {
-  Name = "FGRotation";
+    Name = "FGRotation";
 }
 
 /******************************************************************************/
@@ -95,45 +96,44 @@ FGRotation::~FGRotation(void)
 
 bool FGRotation::Run(void)
 {
-  float L2, N1;
-  static FGColumnVector vlastPQRdot(3);
-  static FGColumnVector vPQRdot(3);
+    float L2, N1;
+    static FGColumnVector vlastPQRdot(3);
 
-  if (!FGModel::Run()) {
-    GetState();
+    if (!FGModel::Run()) {
+        GetState();
 
-    L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
-    N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
+        L2 = vMoments(eL) + Ixz*vPQR(eP)*vPQR(eQ) - (Izz-Iyy)*vPQR(eR)*vPQR(eQ);
+        N1 = vMoments(eN) - (Iyy-Ixx)*vPQR(eP)*vPQR(eQ) - Ixz*vPQR(eR)*vPQR(eQ);
 
-    vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
-    vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
-    vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
+        vPQRdot(eP) = (L2*Izz - N1*Ixz) / (Ixx*Izz - Ixz*Ixz);
+        vPQRdot(eQ) = (vMoments(eM) - (Ixx-Izz)*vPQR(eP)*vPQR(eR) - Ixz*(vPQR(eP)*vPQR(eP) - vPQR(eR)*vPQR(eR)))/Iyy;
+        vPQRdot(eR) = (N1*Ixx + L2*Ixz) / (Ixx*Izz - Ixz*Ixz);
 
-    vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
+        vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
 
-    State->IntegrateQuat(vPQR, rate);
-    State->CalcMatrices();
-    vEuler = State->CalcEuler();
+        State->IntegrateQuat(vPQR, rate);
+        State->CalcMatrices();
+        vEuler = State->CalcEuler();
 
-    vlastPQRdot = vPQRdot;
+        vlastPQRdot = vPQRdot;
 
-  } else {
-  }
-  return false;
+    } else {
+    }
+    return false;
 }
 
 /******************************************************************************/
 
 void FGRotation::GetState(void)
 {
-  dt = State->Getdt();
+    dt = State->Getdt();
 
-  vMoments = Aircraft->GetMoments();
+    vMoments = Aircraft->GetMoments();
 
-  Ixx = Aircraft->GetIxx();
-  Iyy = Aircraft->GetIyy();
-  Izz = Aircraft->GetIzz();
-  Ixz = Aircraft->GetIxz();
+    Ixx = Aircraft->GetIxx();
+    Iyy = Aircraft->GetIyy();
+    Izz = Aircraft->GetIzz();
+    Ixz = Aircraft->GetIxz();
 }
 
 /******************************************************************************/
