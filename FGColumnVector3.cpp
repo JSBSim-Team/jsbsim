@@ -22,7 +22,7 @@ INCLUDES
 #include "FGMatrix33.h"
 
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.10 2001/11/24 14:12:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.11 2001/12/06 14:14:17 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,29 +80,6 @@ FGColumnVector3 FGColumnVector3::operator=(const FGColumnVector3& b)
   
   return *this;
 }
-
-
-/* //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double& FGColumnVector3::operator()(int m) const
-{
-  return data[m];
-}
- */
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-/* FGColumnVector3 operator*(const FGMatrix33& Mat, FGColumnVector3& Col)
-{
-  FGColumnVector3 Product;
-
-  Product(1) = Col(1)*Mat(1,1) + Col(2)*Mat(1,2) + Col(3)*Mat(1,3);
-  Product(2) = Col(1)*Mat(2,1) + Col(2)*Mat(2,2) + Col(3)*Mat(2,3);
-  Product(3) = Col(1)*Mat(3,1) + Col(2)*Mat(3,2) + Col(3)*Mat(3,3);
-
-  return Product;
-}
- */
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -292,13 +269,6 @@ FGColumnVector3 FGColumnVector3::multElementWise(const FGColumnVector3& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGColumnVector3::Debug(void)
-{
-    //TODO: Add your source code here
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 ostream& operator<<(ostream& os, const FGColumnVector3& col)
 {
   os << col(1) << " , " << col(2) << " , " << col(3);
@@ -314,3 +284,11 @@ FGColumnVector3& FGColumnVector3::operator<<(const double ff)
       rowCtr = 1;
   return *this;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector3::Debug(void)
+{
+    //TODO: Add your source code here
+}
+

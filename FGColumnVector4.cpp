@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.6 2001/11/14 23:53:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector4.cpp,v 1.7 2001/12/06 14:14:17 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR4;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -30,7 +30,7 @@ CLASS IMPLEMENTATION
 FGColumnVector4::FGColumnVector4(void)
 {
   rowCtr = 1;
-  //cout << "Allocated: " <<  data << endl;
+  data[1]=0;data[2]=0;data[3]=0;data[4]=0;
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector4" << endl;
 }
 
@@ -40,7 +40,6 @@ FGColumnVector4::FGColumnVector4(int m)
 {
   rowCtr = 1;
   data[1]=0;data[2]=0;data[3]=0;data[4]=0;
-  //cout << "Allocated: " <<  data << endl;
   if (debug_lvl & 2) cout << "Instantiated: FGColumnVector4" << endl;
 }
 
@@ -48,7 +47,6 @@ FGColumnVector4::FGColumnVector4(int m)
 
 FGColumnVector4::~FGColumnVector4(void)
 {
-  //cout << "Freed: " << data << endl;
   if (debug_lvl & 2) cout << "Destroyed:    FGColumnVector4" << endl;
 }
 
@@ -240,34 +238,6 @@ FGColumnVector4 FGColumnVector4::Normalize(void)
   return *this;
 }
 
-/* //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGColumnVector4 FGColumnVector4::operator*(const FGColumnVector4& V)
-{
-  FGColumnVector4 Product;
-  
-  Product(1) = data[2] * V(3) - data[3] * V(2);
-  Product(2) = data[3] * V(1) - data[1] * V(3);
-  Product(3) = data[1] * V(2) - data[2] * V(1);
-
-  return Product;
-} */
-
-
-/* //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGColumnVector4::operator*=(const FGColumnVector4& V)
-{
-  double a,b,c;
-  a = data[1]; b=data[2]; c=data[3];
-  
-  data[1] = b * V(3) - c * V(2);
-  data[2] = c * V(1) - a * V(3);
-  data[3] = a * V(2) - b * V(1);
-
-}
- */
-
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGColumnVector4 FGColumnVector4::multElementWise(const FGColumnVector4& V)
@@ -280,13 +250,6 @@ FGColumnVector4 FGColumnVector4::multElementWise(const FGColumnVector4& V)
   Product(4) = data[4] * V(4);
 
   return Product;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGColumnVector4::Debug(void)
-{
-    //TODO: Add your source code here
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -305,5 +268,12 @@ FGColumnVector4& FGColumnVector4::operator<<(const double ff)
   if (++rowCtr > 4 )
       rowCtr = 1;
   return *this;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGColumnVector4::Debug(void)
+{
+    //TODO: Add your source code here
 }
 

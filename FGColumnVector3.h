@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.9 2001/11/14 23:53:25 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.10 2001/12/06 14:14:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -104,7 +104,6 @@ public:
   FGColumnVector3 Normalize(void);
 
   friend FGColumnVector3 operator*(const double scalar, const FGColumnVector3& A);
-  //friend FGColumnVector3 operator*(const FGMatrix33& M, FGColumnVector3& V);
 
   friend ostream& operator<<(ostream& os, const FGColumnVector3& col);
 

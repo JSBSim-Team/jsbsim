@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.44 2001/11/29 22:12:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.45 2001/12/06 14:14:17 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,6 +195,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Altitude, ";
       outstream << "Phi, Tht, Psi, ";
       outstream << "Alpha, ";
+      outstream << "Beta, ";
       outstream << "Latitude, ";
       outstream << "Longitude, ";
       outstream << "Distance AGL, ";
@@ -269,6 +270,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Position->Geth() << ", ";
     outstream << Rotation->GetEuler() << ", ";
     outstream << Translation->Getalpha() << ", ";
+    outstream << Translation->Getbeta() << ", ";
     outstream << Position->GetLatitude() << ", ";
     outstream << Position->GetLongitude() << ", ";
     outstream << Position->GetDistanceAGL() << ", ";

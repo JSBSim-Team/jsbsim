@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.7 2001/11/14 23:53:25 jberndt Exp $"
+#define ID_COLUMNVECTOR4 "$Id: FGColumnVector4.h,v 1.8 2001/12/06 14:14:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,14 +81,12 @@ public:
   FGColumnVector4 operator=(const FGColumnVector4& b);
   
   FGColumnVector4 operator*(const double scalar);
-  //FGColumnVector4 operator*(const FGColumnVector4& V);   // Cross product operator
   FGColumnVector4 operator/(const double scalar);
   FGColumnVector4 operator+(const FGColumnVector4& B); // must not return reference
   FGColumnVector4 operator-(const FGColumnVector4& B);
   
   void operator-=(const FGColumnVector4 &B);
   void operator+=(const FGColumnVector4 &B);
-  //void operator*=(const FGColumnVector4 &B);
   void operator*=(const double scalar);
   void operator/=(const double scalar);
   
@@ -97,8 +95,8 @@ public:
   
   FGColumnVector4& operator<<(const double ff);
 
-  inline void InitMatrix(void) { data[1]=0; data[2]=0; data[3]=0; }
-  inline void InitMatrix(double ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
+  inline void InitMatrix(void) { data[1]=0; data[2]=0; data[3]=0; data[4]=0; }
+  inline void InitMatrix(double ff) { data[1]=ff; data[2]=ff; data[3]=ff; data[4]=ff;}
 
   double Magnitude(void);
   FGColumnVector4 Normalize(void);
