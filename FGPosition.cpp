@@ -121,8 +121,8 @@ bool FGPosition:: Run(void) {
     GetState();
 
     invMass   = 1.0 / Aircraft->GetMass();
-    invRadius = 1.0 / (h + SeaLevelRadius);
     Radius    = h + SeaLevelRadius;
+    invRadius = 1.0 / Radius;
 
     cosLat = cos(Latitude);
     if (cosLat != 0) LongitudeDot = vVel(eEast) / (Radius * cosLat);
