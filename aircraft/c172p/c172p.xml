@@ -2,7 +2,7 @@
 <!--
   File:        c172p.xml
   Author:      David Megginson (based on c172r.xml by Tony Peden)
-  CVS Version: $Id: c172p.xml,v 1.8 2002/12/22 20:08:21 dmegginson Exp $
+  CVS Version: $Id: c172p.xml,v 1.9 2003/11/04 16:02:49 dpculp Exp $
 
   Function: Models a 1981 Cessna 172P.
 
@@ -86,7 +86,7 @@
     <retraction attribute>           <RETRACT | FIXED>
     -->
 
-     AC_GEAR  NOSE        -6.8   0.0 -20.0  1800  600  0.5  0.8 0.02 STEERABLE NOSE 20 FIXED
+     AC_GEAR  NOSE        -6.8   0.0 -20.0  1800  600  0.5  0.8 0.02 STEERABLE NONE 10 FIXED
      AC_GEAR  LEFT_MAIN   58.2 -43.0 -17.9  5400 1600  0.5  0.8 0.02 FIXED  LEFT  0 FIXED
      AC_GEAR  RIGHT_MAIN  58.2  43.0 -17.9  5400 1600  0.5  0.8 0.02 FIXED  RIGHT 0 FIXED
      AC_GEAR  TAIL_SKID  188.0  0.0    8.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED

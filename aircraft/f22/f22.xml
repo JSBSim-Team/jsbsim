@@ -3,7 +3,7 @@
 
   File:        f22.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f22.xml,v 1.7 2003/07/26 09:11:28 ehofman Exp $
+  CVS Version: $Id: f22.xml,v 1.8 2003/11/04 16:02:53 dpculp Exp $
 
   Function: models a Lockheed-Martin F-22 Raptor
 
@@ -59,7 +59,7 @@
   </METRICS>
 
   <UNDERCARRIAGE>
-   AC_GEAR NOSE_LG   96.8    0    -89.4 18000 3000 0.5 0.8 0.02 STEERABLE NONE  80 RETRACT
+   AC_GEAR NOSE_LG   96.8    0    -89.4 18000 3000 0.5 0.8 0.02 STEERABLE NONE   5 RETRACT
    AC_GEAR LEFT_MLG  487.2 -48.06 -89.4 30000 6000 0.5 0.8 0.02 FIXED     LEFT   0 RETRACT
    AC_GEAR RIGHT_MLG 487.2  48.06 -89.4 30000 6000 0.5 0.8 0.02 FIXED     RIGHT  0 RETRACT
   </UNDERCARRIAGE>
