@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.49 2001/04/05 16:46:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.50 2001/04/09 05:28:31 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -327,9 +327,14 @@ FGColumnVector FGLGear::Force(void)
       FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
     }
 
-// Compute the vertical force on the wheel.
+// Compute the vertical force on the wheel using square-law damping (per comment
+// in paper AIAA-2000-4303 - see header prologue comments). We might consider
+// allowing for both square and linear damping force calculation. Also need to
+// possibly give a "rebound damping factor" that differs from the compression
+// case.
 
-    vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
+    vLocalForce(eZ) =  min(-compressLength * kSpring
+                           - compressSpeed * compressSpeed * bDamp, (float)0.0);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
     MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
@@ -347,14 +352,17 @@ FGColumnVector FGLGear::Force(void)
     vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
     vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
 
-// Note to Jon: At this point the forces will be too big when the airplane is stopped or
-// rolling to a stop.  We need to make sure that the gear forces just balance out the non-gear forces
-// when the airplane is stopped.  That way the airplane won't start to accelerate until the non-gear
-// forces are larger than the gear forces.  I think that the proper fix should go into FGAircraft::FMGear.
-// This routine would only compute the local strut forces and return them to FMGear.  All of the gear
-// forces would get adjusted in FMGear using the total non-gear forces.  Then the gear moments would be
-// calculated.  If strange things start happening to the airplane during testing as it rolls to a stop,
-// then we need to implement this change.  I ran out of time to do it now but have the equations.
+// Note to Jon: At this point the forces will be too big when the airplane is
+// stopped or rolling to a stop.  We need to make sure that the gear forces just
+// balance out the non-gear forces when the airplane is stopped.  That way the
+// airplane won't start to accelerate until the non-gear/ forces are larger than
+// the gear forces.  I think that the proper fix should go into FGAircraft::FMGear.
+// This routine would only compute the local strut forces and return them to
+// FMGear. All of the gear forces would get adjusted in FMGear using the total
+// non-gear forces. Then the gear moments would be calculated. If strange things
+// start happening to the airplane during testing as it rolls to a stop, then we
+// need to implement this change.  I ran out of time to do it now but have the
+// equations.
 
 // Transform the forces back to the body frame and compute the moment.
 

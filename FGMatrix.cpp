@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.25 2001/03/29 00:06:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.26 2001/04/09 05:28:31 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;
@@ -603,9 +603,9 @@ FGColumnVector FGColumnVector::Normalize(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector& FGColumnVector::operator*(const FGColumnVector& V)
+FGColumnVector FGColumnVector::operator*(const FGColumnVector& V)
 {
-  static FGColumnVector Product(3);
+  FGColumnVector Product(3);
 
   if (Rows() != 3 || V.Rows() != 3) {
     MatrixException mE;
@@ -622,9 +622,9 @@ FGColumnVector& FGColumnVector::operator*(const FGColumnVector& V)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector& FGColumnVector::multElementWise(const FGColumnVector& V)
+FGColumnVector FGColumnVector::multElementWise(const FGColumnVector& V)
 {
-  static FGColumnVector Product(3);
+  FGColumnVector Product(3);
 
   if (Rows() != 3 || V.Rows() != 3) {
     MatrixException mE;

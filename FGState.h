@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.29 2001/03/29 00:06:11 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.30 2001/04/09 05:28:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -137,7 +137,14 @@ private:
   void Debug(void);
   int ActiveEngine;
 
-protected:
+  FGColumnVector vQdot;
+  FGColumnVector vTmp;
+  FGColumnVector vDXYZcg;
+  FGColumnVector vAeroBodyForces;
+  FGColumnVector vEuler;
+
+
+  protected:
   enum {ePhi=1, eTht, ePsi};
   enum {eP=1, eQ, eR};
 };

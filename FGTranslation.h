@@ -70,7 +70,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.22 2001/04/07 13:44:43 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.23 2001/04/09 05:28:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -119,6 +119,8 @@ private:
   FGColumnVector vPQR;
   FGColumnVector vForces;
   FGColumnVector vEuler;
+  FGColumnVector vlastUVWdot;
+  FGMatrix       mVel;
 
   float Vt, qbar, Mach;
   float Mass, dt;

@@ -1,5 +1,15 @@
 <FDM_CONFIG NAME="X-15" VERSION="1.38">
 
+<!--
+
+  File:        X15.xml
+  Author:      Jon S. Berndt
+  CVS Version: $Id: X15.xml,v 1.23 2001/04/09 05:28:31 jberndt Exp $
+
+  Function: Models an X-15
+
+-->
+
   <METRICS>
 
     <COMMENT>

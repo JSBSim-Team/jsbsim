@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.66 2001/04/05 23:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.67 2001/04/09 05:28:31 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -166,8 +166,10 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
     vbaseXYZcg(3),
     vXYZcg(3),
     vXYZep(3),
-    vEuler(3)
-
+    vEuler(3),
+    vXYZtank(3),
+    vDXYZcg(3),
+    vAeroBodyForces(3)
 {
   Name = "FGAircraft";
 
@@ -280,7 +282,6 @@ bool FGAircraft::Run(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::MassChange() {
-  static FGColumnVector vXYZtank(3);
   float Tw;
   float IXXt, IYYt, IZZt, IXZt;
 //  unsigned int t;
@@ -374,8 +375,6 @@ void FGAircraft::MassChange() {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAircraft::FMAero(void) {
-  static FGColumnVector vDXYZcg(3);
-  static FGColumnVector vAeroBodyForces(3);
   unsigned int axis_ctr,ctr;
 
   for (axis_ctr=1; axis_ctr<=3; axis_ctr++) vFs(axis_ctr) = 0.0;

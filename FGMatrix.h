@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.24 2001/03/30 14:06:57 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.25 2001/04/09 05:28:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -142,7 +142,7 @@ public:
   ~FGColumnVector(void);
 
   FGColumnVector operator*(const double scalar);
-  FGColumnVector& operator*(const FGColumnVector& V);   // Cross product operator
+  FGColumnVector operator*(const FGColumnVector& V);   // Cross product operator
   FGColumnVector operator/(const double scalar);
   FGColumnVector operator+(const FGColumnVector& B); // must not return reference
   FGColumnVector operator-(const FGColumnVector& B);
@@ -154,7 +154,7 @@ public:
 
   double& operator()(int m) const;
 
-  FGColumnVector& multElementWise(const FGColumnVector& V);
+  FGColumnVector multElementWise(const FGColumnVector& V);
 
 private:
   void Debug(void);

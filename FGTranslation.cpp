@@ -68,7 +68,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.21 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.22 2001/04/09 05:28:31 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 extern short debug_lvl;
@@ -84,7 +84,9 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
     vNcg(3),
     vPQR(3),
     vForces(3),
-    vEuler(3)
+    vEuler(3),
+    vlastUVWdot(3),
+    mVel(3,3)
 {
   Name = "FGTranslation";
   qbar = 0;
@@ -107,8 +109,6 @@ FGTranslation::~FGTranslation()
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGTranslation::Run(void) {
-  static FGColumnVector vlastUVWdot(3);
-  static FGMatrix       mVel(3,3);
 
   if (!FGModel::Run()) {
 
