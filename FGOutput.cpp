@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.43 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.44 2001/11/29 22:12:02 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,8 +148,6 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssAerosurfaces) {
       outstream << ", ";
-      outstream << "Throttle, ";
-      outstream << "Mixture, ";
       outstream << "Aileron Cmd, ";
       outstream << "Elevator Cmd, ";
       outstream << "Rudder Cmd, ";
@@ -224,8 +222,6 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssAerosurfaces) {
     outstream << ", ";
-    outstream << FCS->GetThrottlePos(0) << ", ";
-    outstream << FCS->GetMixturePos(0) << ", ";
     outstream << FCS->GetDaCmd() << ", ";
     outstream << FCS->GetDeCmd() << ", ";
     outstream << FCS->GetDrCmd() << ", ";

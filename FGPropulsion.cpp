@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.56 2001/11/29 14:02:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.57 2001/11/29 22:12:02 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -407,7 +407,7 @@ string FGPropulsion::GetPropulsionValues(void)
 
     switch(Engines[i]->GetType()) {
     case FGEngine::etPiston:
-      PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetPowerAvailable(), 10, buff)));
+      PropulsionValues += (string(gcvt(((FGPiston*)Engines[i])->GetPowerAvailable(), 10, buff)));
       break;
     case FGEngine::etRocket:
       PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
