@@ -1,4 +1,5 @@
 #!/bin/sh
+#
 
 if [ x$1 = x ]; then
    echo "Usage: $0 [FlightGear source path (where is AUTHORS)]"
@@ -10,7 +11,7 @@ REMOVED_FILES=
 CUR_DIR=`pwd`
 CP="cp -p"
 
-for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h`; do
+for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h'`; do
 
    if [ -f $1/src/FDM/JSBSim/$n ]; then
 
@@ -39,7 +40,7 @@ if [ "x$NEW_FILES" != "x" ]; then
 fi;
 
 cd $1/src/FDM/JSBSim;
-for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h`; do
+for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h'`; do
 
     if [ ! -f $CUR_DIR/$n ]; then
         REMOVED_FILES="$REMOVED_FILES $n";
@@ -55,3 +56,5 @@ if [ "x$REMOVED_FILES" != "x" ]; then
     echo $REMOVED_FILES
     echo
 fi;
+
+exit 0
