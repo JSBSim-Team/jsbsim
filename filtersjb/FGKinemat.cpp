@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.23 2004/05/27 11:58:02 frohlich Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.24 2004/05/30 11:46:25 frohlich Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +121,7 @@ bool FGKinemat::Run(void )
 
   Input = InputNodes[0]->getDoubleValue();
 
-  if (DoScale)  Input *= Detents[NumDetents-1];
+  if (DoScale) Input *= Detents[NumDetents-1];
 
   Output = OutputNode->getDoubleValue();
 
@@ -132,11 +132,11 @@ bool FGKinemat::Run(void )
 
   // Process all detent intervals the movement traverses until either the
   // final value is reached or the time interval has finished.
-  while (0.0 < dt && Input != Output) {
+  while ( 0.0 < dt && !EqualToRoundoff(Input, Output) ) {
 
     // Find the area where Output is in
     int ind;
-    for (ind = 1; (Input < Output) ? Detents[ind] <= Output : Detents[ind] < Output ; ++ind)
+    for (ind = 1; (Input < Output) ? Detents[ind] < Output : Detents[ind] <= Output ; ++ind)
       if (NumDetents <= ind)
         break;
 
@@ -154,6 +154,7 @@ bool FGKinemat::Run(void )
       if (Detents[ind] < ThisInput)     ThisInput = Detents[ind];
       // Compute the time to reach the value in ThisInput
       double ThisDt = fabs((ThisInput-Output)/Rate);
+
       // and clip to the timestep size
       if (dt < ThisDt) {
         ThisDt = dt;

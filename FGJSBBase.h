@@ -38,6 +38,8 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <limits>
+
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include <math.h>
@@ -77,7 +79,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.57 2004/05/29 17:27:44 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.58 2004/05/30 11:46:25 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +93,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.57 2004/05/29 17:27:44 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.58 2004/05/30 11:46:25 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,12 +183,46 @@ public:
   void disableHighLighting(void);
 
   static short debug_lvl;
-  double KelvinToFahrenheit (double kelvin) {
+  static double KelvinToFahrenheit (double kelvin) {
     return 1.8*kelvin - 459.4;
   }
 
-  double RankineToCelsius (double rankine) {
+  static double RankineToCelsius (double rankine) {
     return (rankine - 491.67)/1.8;
+  }
+
+  /** Finite precision comparison.
+      @param a first value to compare
+      @param b second value to compare
+      @return if the two values can be considered equal up to roundoff */
+  static bool EqualToRoundoff(double a, double b) {
+    double eps = 2.0*std::numeric_limits<double>::epsilon();
+    return fabs(a - b) < eps*max(fabs(a), fabs(b));
+  }
+
+  /** Finite precision comparison.
+      @param a first value to compare
+      @param b second value to compare
+      @return if the two values can be considered equal up to roundoff */
+  static bool EqualToRoundoff(float a, float b) {
+    float eps = 2.0*std::numeric_limits<float>::epsilon();
+    return fabs(a - b) < eps*max(fabs(a), fabs(b));
+  }
+
+  /** Finite precision comparison.
+      @param a first value to compare
+      @param b second value to compare
+      @return if the two values can be considered equal up to roundoff */
+  static bool EqualToRoundoff(float a, double b) {
+    return EqualToRoundoff(a, (float)b);
+  }
+
+  /** Finite precision comparison.
+      @param a first value to compare
+      @param b second value to compare
+      @return if the two values can be considered equal up to roundoff */
+  static bool EqualToRoundoff(double a, float b) {
+    return EqualToRoundoff((float)a, b);
   }
 
 protected:
