@@ -11,7 +11,8 @@ print "FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\
 print "FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
 print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix.o FGPropulsion.o FGRocket.o\\\n";
 print "FGTurboShaft.o FGTurboJet.o FGTurboProp.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
-print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\n\n";
+print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
+print "FGFactorGroup.o\n\n";
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a\n";
 print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents\n\n";
 print "libFCSComponents.a:\n";

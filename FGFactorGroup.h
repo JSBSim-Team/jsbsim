@@ -4,7 +4,7 @@
  Author:       Tony Peden
  Date started: 7/14/01
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2001  Tony Peden (apeden@earthlink.net ------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGFactorGroup.h,v 1.1 2001/07/22 18:46:35 apeden Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.2 2001/07/22 21:51:17 jberndt Exp $"
 
 using std::vector;
 
