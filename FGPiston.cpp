@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.34 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.35 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
 
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
-  while (Eng_cfg->GetValue() != "/FG_PISTON") {
+  while (Eng_cfg->GetValue() != string("/FG_PISTON")) {
     *Eng_cfg >> token;
     if      (token == "MINMP") *Eng_cfg >> MinManifoldPressure_inHg;
     else if (token == "MAXMP") *Eng_cfg >> MaxManifoldPressure_inHg;

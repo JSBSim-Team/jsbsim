@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.28 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.29 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,7 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
 
-  while (Eng_cfg->GetValue() != "/FG_ROCKET") {
+  while (Eng_cfg->GetValue() != string("/FG_ROCKET")) {
     *Eng_cfg >> token;
     if      (token == "SHR")           *Eng_cfg >> SHR;
     else if (token == "MAX_PC")        *Eng_cfg >> maxPC;

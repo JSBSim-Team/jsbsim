@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.62 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.63 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,13 +424,13 @@ bool FGFDMExec::LoadScript(string script)
   Scripted = true;
   if (debug_lvl > 0) cout << "Reading Script File " << ScriptName << endl;
 
-  while (Script.GetNextConfigLine() != "EOF" && Script.GetValue() != "/runscript") {
+  while (Script.GetNextConfigLine() != string("EOF") && Script.GetValue() != string("/runscript")) {
     token = Script.GetValue();
     if (token == "use") {
-      if ((token = Script.GetValue("aircraft")) != "") {
+      if ((token = Script.GetValue("aircraft")) != string("")) {
         aircraft = token;
         if (debug_lvl > 0) cout << "  Use aircraft: " << token << endl;
-      } else if ((token = Script.GetValue("initialize")) != "") {
+      } else if ((token = Script.GetValue("initialize")) != string("")) {
         initialize = token;
         if (debug_lvl > 0) cout << "  Use reset file: " << token << endl;
       } else {
@@ -444,13 +444,13 @@ bool FGFDMExec::LoadScript(string script)
       State->Setdt(dt);
       Script.GetNextConfigLine();
       token = Script.GetValue();
-      while (token != "/run") {
+      while (token != string("/run")) {
 
         if (token == "when") {
           Script.GetNextConfigLine();
           token = Script.GetValue();
           newCondition = new struct condition();
-          while (token != "/when") {
+          while (token != string("/when")) {
             if (token == "parameter") {
               newCondition->TestParam.push_back(State->GetParameterIndex(Script.GetValue("name")));
               newCondition->TestValue.push_back(strtod(Script.GetValue("value").c_str(), NULL));

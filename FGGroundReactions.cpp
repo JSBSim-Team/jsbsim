@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.15 2001/09/07 11:56:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.16 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -147,7 +147,7 @@ bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
+  while ((token = AC_cfg->GetValue()) != string("/UNDERCARRIAGE")) {
     lGear.push_back(FGLGear(AC_cfg, FDMExec));
   }
 

@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.8 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.9 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,7 @@ bool FGFactorGroup::Load(FGConfigFile *AC_cfg) {
       //if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());
     } 
     token = AC_cfg->GetValue();  
-    while ( token != "/GROUP" ) {
+    while ( token != string("/GROUP") ) {
           sum.push_back( new FGCoefficient(FDMExec) );
           sum.back()->Load(AC_cfg);
           //if (debug_lvl > 0) DisplayCoeffFactors(ca.back()->Getmultipliers());

@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.18 2001/11/12 05:06:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.19 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
   else                         Type = ttUNKNOWN;
   
   AC_cfg->GetNextConfigLine();
-  while ((token = AC_cfg->GetValue()) != "/AC_TANK") {
+  while ((token = AC_cfg->GetValue()) != string("/AC_TANK")) {
     if (token == "XLOC") *AC_cfg >> X;
     else if (token == "YLOC") *AC_cfg >> Y;
     else if (token == "ZLOC") *AC_cfg >> Z;

@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.20 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.21 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,12 +135,12 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/AERODYNAMICS") {
+  while ((token = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
     if (token == "AXIS") {
       CoeffArray ca;
       axis = AC_cfg->GetValue("NAME");
       AC_cfg->GetNextConfigLine();
-      while ((token = AC_cfg->GetValue()) != "/AXIS") {
+      while ((token = AC_cfg->GetValue()) != string("/AXIS")) {
         if( token == "COEFFICIENT" ) {
           ca.push_back( new FGCoefficient(FDMExec) );
           ca.back()->Load(AC_cfg);

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.51 2001/11/11 23:06:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.52 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +198,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/PROPULSION") {
+  while ((token = AC_cfg->GetValue()) != string("/PROPULSION")) {
 
     if (token == "AC_ENGINE") {                   // ============ READING ENGINES
 
@@ -230,7 +230,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         }
 
         AC_cfg->GetNextConfigLine();
-        while ((token = AC_cfg->GetValue()) != "/AC_ENGINE") {
+        while ((token = AC_cfg->GetValue()) != string("/AC_ENGINE")) {
           *AC_cfg >> token;
           if      (token == "XLOC")  { *AC_cfg >> xLoc; }
           else if (token == "YLOC")  { *AC_cfg >> yLoc; }
@@ -299,7 +299,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
         }
 
         AC_cfg->GetNextConfigLine();
-        while ((token = AC_cfg->GetValue()) != "/AC_THRUSTER") {
+        while ((token = AC_cfg->GetValue()) != string("/AC_THRUSTER")) {
           *AC_cfg >> token;
           if (token == "XLOC") *AC_cfg >> xLoc;
           else if (token == "YLOC") *AC_cfg >> yLoc;

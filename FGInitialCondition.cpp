@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.39 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.40 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -725,7 +725,7 @@ bool FGInitialCondition::Load(string path, string acname, string fname)
 
   resetfile.GetNextConfigLine();
   token = resetfile.GetValue();
-  if (token != "initialize") {
+  if (token != string("initialize")) {
     cerr << "The reset file " << resetDef
          << " does not appear to be a reset file" << endl;
     return false;
@@ -733,7 +733,7 @@ bool FGInitialCondition::Load(string path, string acname, string fname)
   
   resetfile.GetNextConfigLine();
   resetfile >> token;
-  while (token != "/initialize" && token != "EOF") {
+  while (token != string("/initialize") && token != string("EOF")) {
     if (token == "UBODY" ) { resetfile >> temp; SetUBodyFpsIC(temp); } 
     if (token == "VBODY" ) { resetfile >> temp; SetVBodyFpsIC(temp); } 
     if (token == "WBODY" ) { resetfile >> temp; SetWBodyFpsIC(temp); }  

@@ -43,17 +43,22 @@ INCLUDES
 #  include <math.h>
 #  include <queue>
 #  include STL_STRING
-  SG_USING_STD(queue);
+
+SG_USING_STD(string);
+SG_USING_STD(queue);
+
 #else
+
+#  include <queue>
+#  include <string>
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
-#    include <queue.h>
-#    include <string.h>
 #  else
 #    include <cmath>
-#    include <queue>
-#    include <string>
 #  endif
+
+using std::string;
+using std::queue;
 #endif
 
 #ifndef M_PI 
@@ -65,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.12 2001/11/12 09:56:12 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.13 2001/11/13 16:36:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +146,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.12 2001/11/12 09:56:12 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.13 2001/11/13 16:36:09 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

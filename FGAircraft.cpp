@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.97 2001/11/12 05:06:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.98 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,8 +134,8 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 
   ReadPrologue(AC_cfg);
 
-  while ((AC_cfg->GetNextConfigLine() != "EOF") &&
-         (token = AC_cfg->GetValue()) != "/FDM_CONFIG") {
+  while ((AC_cfg->GetNextConfigLine() != string("EOF")) &&
+         (token = AC_cfg->GetValue()) != string("/FDM_CONFIG")) {
     if (token == "METRICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
       ReadMetrics(AC_cfg);
@@ -205,7 +205,7 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/METRICS") {
+  while ((token = AC_cfg->GetValue()) != string("/METRICS")) {
     *AC_cfg >> parameter;
     if (parameter == "AC_WINGAREA") {
       *AC_cfg >> WingArea;
@@ -335,7 +335,7 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg)
   Output->SetType(token);
   AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != "/OUTPUT") {
+  while ((token = AC_cfg->GetValue()) != string("/OUTPUT")) {
     *AC_cfg >> parameter;
     if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
     if (parameter == "SIMULATION") {

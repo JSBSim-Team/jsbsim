@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.21 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.22 2001/11/13 16:36:09 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,7 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
 
   Name = Nzl_cfg->GetValue("NAME");
   Nzl_cfg->GetNextConfigLine();
-  while (Nzl_cfg->GetValue() != "/FG_NOZZLE") {
+  while (Nzl_cfg->GetValue() != string("/FG_NOZZLE")) {
     *Nzl_cfg >> token;
     if      (token == "PE")      *Nzl_cfg >> PE;
     else if (token == "EXPR")    *Nzl_cfg >> ExpR;
