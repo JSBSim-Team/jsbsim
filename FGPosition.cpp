@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.43 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.44 2001/11/30 12:46:00 apeden Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +144,7 @@ Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
 bool FGPosition::Run(void) {
   double cosLat;
   double hdot_Vt;
+  FGColumnVector3 vMac;
 
   if (!FGModel::Run()) {
     GetState();
@@ -171,7 +172,14 @@ bool FGPosition::Run(void) {
 
     DistanceAGL = Radius - RunwayRadius;   // Geocentric
     
-    hoverb = DistanceAGL/b;
+    
+    hoverbcg = DistanceAGL/b;
+    
+    vMac=State->GetTb2l()*Aircraft->GetXYZrp();
+    
+    cout << "vMac: " << vMac*inchtoft << endl;
+    vMac *= inchtoft;
+    hoverbmac = (DistanceAGL + vMac(3))/b;
 
     if (Vt > 0) {
       hdot_Vt = RadiusDot/Vt;
@@ -209,7 +217,7 @@ void FGPosition::Seth(double tt) {
  h = tt;
  Radius    = h + SeaLevelRadius;
  DistanceAGL = Radius - RunwayRadius;   // Geocentric
- hoverb = DistanceAGL/b;
+ hoverbcg = DistanceAGL/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -218,7 +226,7 @@ void FGPosition::SetDistanceAGL(double tt) {
   DistanceAGL=tt;
   Radius = RunwayRadius + DistanceAGL;
   h = Radius - SeaLevelRadius;
-  hoverb = DistanceAGL/b;
+  hoverbcg = DistanceAGL/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

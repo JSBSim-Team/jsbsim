@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.41 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.42 2001/11/30 12:46:00 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.41 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.42 2001/11/30 12:46:00 apeden Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +105,8 @@ public:
   
   inline double GetGamma(void) { return gamma; }
   inline void SetGamma(double tt) { gamma = tt; }
-  inline double GetHOverB(void) { return hoverb; }
+  inline double GetHOverBCG(void) { return hoverbcg; }
+  inline double GetHOverBMAC(void){ return hoverbmac; }
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
   void SetLatitude(double tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
@@ -133,7 +134,7 @@ private:
   double SeaLevelRadius;
   double gamma;
   double Vt, Vground;
-  double hoverb,b;
+  double hoverbcg,hoverbmac,b;
 
   double psigt;
 
