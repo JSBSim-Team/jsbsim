@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.133 2004/04/24 17:12:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.134 2004/05/21 12:52:53 frohlich Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +229,6 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
     } else if (parameter == "AC_VRP") {
       *AC_cfg >> vXYZvrp(eX) >> vXYZvrp(eY) >> vXYZvrp(eZ);
       if (debug_lvl > 0) cout << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
-      Auxiliary->SetVRP(vXYZvrp);
     } else if (parameter == "AC_POINTMASS") {
       *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
       MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);

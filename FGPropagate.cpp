@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.11 2004/05/03 09:19:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.12 2004/05/21 12:52:54 frohlich Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,11 +115,43 @@ bool FGPropagate::InitModel(void)
 {
   FGModel::InitModel();
 
-  SeaLevelRadius   = Inertial->RefRadius();          // For initialization ONLY
-  vLocation(eRad)  = SeaLevelRadius + 4.0;
-  RunwayRadius     = SeaLevelRadius;
+  SeaLevelRadius = Inertial->RefRadius();          // For initialization ONLY
+  RunwayRadius   = SeaLevelRadius;
+
+  vLocation.SetRadius( SeaLevelRadius + 4.0 );
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
+{
+  SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
+  RunwayRadius = FGIC->GetSeaLevelRadiusFtIC() + FGIC->GetTerrainAltitudeFtIC();
+
+  // Set the position lat/lon/radius
+  vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
+                          FGIC->GetLatitudeRadIC(),
+                          FGIC->GetAltitudeFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
+
+  // Set the Orientation from the euler angles
+  vQtrn = FGQuaternion( FGIC->GetPhiRadIC(),
+                        FGIC->GetThetaRadIC(),
+                        FGIC->GetPsiRadIC() );
+
+  // Set the velocities in the instantaneus body frame
+  vUVW = FGColumnVector3( FGIC->GetUBodyFpsIC(),
+                          FGIC->GetVBodyFpsIC(),
+                          FGIC->GetWBodyFpsIC() );
+
+  // Set the angular velocities in the instantaneus body frame.
+  vPQR = FGColumnVector3( FGIC->GetPRadpsIC(),
+                          FGIC->GetQRadpsIC(),
+                          FGIC->GetRRadpsIC() );
+
+  // Compute some derived values.
+  vVel = vQtrn.GetTInv()*vUVW;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,6 +178,16 @@ bool FGPropagate::Run(void)
   const FGMatrix33& J = MassBalance->GetJ();
   const FGMatrix33& Jinv = MassBalance->GetJinv();
 
+  // The rotation matrices:
+  // From the local horizontal frame to the body frame
+  const FGMatrix33& Tl2b = GetTl2b();
+  // From the body frame to the local horizontal
+  const FGMatrix33& Tb2l = GetTb2l();
+  // From the earth centered frame to the local horizontal frame
+//   const FGMatrix33& Tec2l = vLocation.GetTec2l();
+  // From the local horizontal frame to the earth centered frame
+  const FGMatrix33& Tl2ec = vLocation.GetTl2ec();
+
   // First compute the time derivatives of the vehicles' state values.
 
   // Compute the body rotational accelerations based on the current body moments
@@ -154,16 +196,32 @@ bool FGPropagate::Run(void)
   // Compute the body frame accelerations based on the current body forces
   vUVWdot = vUVW*vPQR + vForces/mass;
 
+
+
+  // Compute the velocity of the vehicle with respect to the earth centered
+  // frame expressed in the horizontal local frame.
+  vVel = Tb2l * vUVW;
+
+  // Compute the velocity of the vehicle with respect to the earth centered
+  // frame expressed in the earth centered frame.
+  FGColumnVector3 vLocationDot = Tl2ec * vVel;
+
+  // Compute the angular rate of the local horizontal frame.
+  double r = GetRadius();
+  if (r == 0.0) {
+    PutMessage( "Fatal error in FGTimestep: "
+                "You traversed exactly the middle of the earth, "
+                "we tried our best, but this will most likely fail!" );
+    r = 1e-16;
+  }
+  double rInv = 1.0/r;
+  FGColumnVector3 omegaLocal( rInv*vVel(eEast),
+                              -rInv*vVel(eNorth),
+                              -rInv*vVel(eEast)*vLocation.GetTanLatitude() );
+
   // Compute the quaternion orientation derivative on the current
   // body rotational rates
-  FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR );
-
-  // Convert local frame velocity vector based on body frame velocity
-  vVel = vQtrn.GetTInv() * vUVW;
-
-  // Convert to globe ("map") location derivative based on current
-  // local frame velocity
-  vLocationDot = toGlobe(vVel);
+  FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR - Tl2b*omegaLocal );
 
   // Now do propagation.
   // This is for now done with a simple explicit euler scheme.
@@ -186,25 +244,14 @@ bool FGPropagate::Run(void)
 
 void FGPropagate::Seth(double tt)
 {
-  vLocation(eRad) = tt + SeaLevelRadius;
+  vLocation.SetRadius( tt + SeaLevelRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  vLocation(eRad) = RunwayRadius + tt;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGColumnVector3& FGPropagate::toGlobe(FGColumnVector3& V)
-{
-  if (cos(vLocation(eLat)) != 0) vLocationDot(eLong) = V(eEast) / (vLocation(eRad) * cos(vLocation(eLat)));
-  vLocationDot(eLat) = V(eNorth) / vLocation(eRad);
-  vLocationDot(eRad) = -V(eDown);
-
-  return vLocationDot;
+  vLocation.SetRadius( tt + RunwayRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,9 +261,9 @@ void FGPropagate::bind(void)
   typedef double (FGPropagate::*PMF)(int) const;
   PropertyManager->Tie("velocities/h-dot-fps", this, &FGPropagate::Gethdot);
 
-  PropertyManager->Tie("velocities/v-north-fps", this, &FGPropagate::GetVn);
-  PropertyManager->Tie("velocities/v-east-fps", this, &FGPropagate::GetVe);
-  PropertyManager->Tie("velocities/v-down-fps", this, &FGPropagate::GetVd);
+  PropertyManager->Tie("velocities/v-north-fps", this, eNorth, (PMF)&FGPropagate::GetVel);
+  PropertyManager->Tie("velocities/v-east-fps", this, eEast, &FGPropagate::GetVel);
+  PropertyManager->Tie("velocities/v-down-fps", this, eDown, &FGPropagate::GetVel);
 
   PropertyManager->Tie("velocities/u-fps", this, eU, (PMF)&FGPropagate::GetUVW);
   PropertyManager->Tie("velocities/v-fps", this, eV, (PMF)&FGPropagate::GetUVW);
@@ -235,10 +282,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("accelerations/wdot-fps", this, eW, (PMF)&FGPropagate::GetUVWdot);
 
   PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
-  PropertyManager->Tie("position/lat-gc-rad", this, eLat, (PMF)&FGPropagate::GetLocation, &FGPropagate::SetLocation);
-  PropertyManager->Tie("position/lat-dot-gc-rad", this, eLat, (PMF)&FGPropagate::GetLocationDot);
-  PropertyManager->Tie("position/long-gc-rad", this, eLong, (PMF)&FGPropagate::GetLocation, &FGPropagate::SetLocation, true);
-  PropertyManager->Tie("position/long-dot-gc-rad", this, eLong, (PMF)&FGPropagate::GetLocationDot);
+  PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
+  PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
 
@@ -248,9 +293,9 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/theta-rad", this, &FGPropagate::Gettht);
   PropertyManager->Tie("attitude/psi-rad", this, &FGPropagate::Getpsi);
 
-  PropertyManager->Tie("attitude/roll-rad", this, ePhi, (PMF)&FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/pitch-rad", this, eTht, (PMF)&FGPropagate::GetEuler);
-  PropertyManager->Tie("attitude/heading-true-rad", this, ePsi, (PMF)&FGPropagate::GetEuler);
+  PropertyManager->Tie("attitude/roll-rad", this, &FGPropagate::Getphi);
+  PropertyManager->Tie("attitude/pitch-rad", this, &FGPropagate::Gettht);
+  PropertyManager->Tie("attitude/heading-true-rad", this, &FGPropagate::Getpsi);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,9 +320,7 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("accelerations/rdot-rad_sec");
   PropertyManager->Untie("position/h-sl-ft");
   PropertyManager->Untie("position/lat-gc-rad");
-  PropertyManager->Untie("position/lat-dot-gc-rad");
   PropertyManager->Untie("position/long-gc-rad");
-  PropertyManager->Untie("position/long-dot-gc-rad");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");

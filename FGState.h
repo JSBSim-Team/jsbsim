@@ -78,7 +78,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.81 2004/04/25 14:02:01 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.82 2004/05/21 12:52:54 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.81 2004/04/25 14:02:01 jberndt Exp $
+    @version $Id: FGState.h,v 1.82 2004/05/21 12:52:54 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,36 +107,6 @@ public:
   FGState(FGFDMExec*);
   /// Destructor
   ~FGState();
-
- /** Initializes the simulation state based on the passed-in parameters.
-      @param U the body X-Axis velocity in fps.
-      @param V the body Y-Axis velocity in fps.
-      @param W the body Z-Axis velocity in fps.
-      @param lat latitude measured in radians from the equator, negative values are south.
-      @param lon longitude, measured in radians from the Greenwich meridian, negative values are west.
-      @param phi the roll angle in radians.
-      @param tht the pitch angle in radians.
-      @param psi the heading angle in radians measured clockwise from north.
-      @param h altitude in feet.
-      @param wnorth north velocity in feet per second
-      @param weast eastward velocity in feet per second
-      @param wdown downward velocity in feet per second
-      */
-  void Initialize(double U,
-                  double V,
-                  double W,
-                  double P,
-                  double Q,
-                  double R,
-                  double lat,
-                  double lon,
-                  double phi,
-                  double tht,
-                  double psi,
-                  double h,
-                  double wnorth,
-                  double weast,
-                  double wdown);
 
   /** Initializes the simulation state based on parameters from an Initial Conditions object.
       @param FGIC pointer to an initial conditions object.

@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.86 2004/04/24 17:12:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.87 2004/05/21 12:52:54 frohlich Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -301,8 +301,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Propagate->GetEuler() << ", ";
     outstream << Auxiliary->Getalpha() << ", ";
     outstream << Auxiliary->Getbeta() << ", ";
-    outstream << Propagate->GetLocation(eLat)*radtodeg << ", ";
-    outstream << Propagate->GetLocation(eLong)*radtodeg << ", ";
+    outstream << Propagate->GetLocation().GetLatitudeDeg() << ", ";
+    outstream << Propagate->GetLocation().GetLongitudeDeg() << ", ";
     outstream << Propagate->GetDistanceAGL() << ", ";
     outstream << Propagate->GetRunwayRadius();
   }
@@ -401,9 +401,9 @@ void FGOutput::SocketOutput(void)
   socket->Append(Auxiliary->GetAeroUVW(eU));
   socket->Append(Auxiliary->GetAeroUVW(eV));
   socket->Append(Auxiliary->GetAeroUVW(eW));
-  socket->Append(Propagate->GetVn());
-  socket->Append(Propagate->GetVe());
-  socket->Append(Propagate->GetVd());
+  socket->Append(Propagate->GetVel(eNorth));
+  socket->Append(Propagate->GetVel(eEast));
+  socket->Append(Propagate->GetVel(eDown));
   socket->Append(Propagate->GetUVWdot(eU));
   socket->Append(Propagate->GetUVWdot(eV));
   socket->Append(Propagate->GetUVWdot(eW));
@@ -416,8 +416,8 @@ void FGOutput::SocketOutput(void)
   socket->Append(Aircraft->GetForces(eX));
   socket->Append(Aircraft->GetForces(eY));
   socket->Append(Aircraft->GetForces(eZ));
-  socket->Append(Propagate->GetLocation(eLat)*radtodeg);
-  socket->Append(Propagate->GetLocation(eLong)*radtodeg);
+  socket->Append(Propagate->GetLocation().GetLatitudeDeg());
+  socket->Append(Propagate->GetLocation().GetLongitudeDeg());
   socket->Append(Auxiliary->Getqbar());
   socket->Append(Auxiliary->Getalpha());
   socket->Append(Aircraft->GetMoments(eL));

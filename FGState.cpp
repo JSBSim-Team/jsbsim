@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.136 2004/04/24 17:12:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.137 2004/05/21 12:52:54 frohlich Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,38 +97,23 @@ FGState::~FGState()
   Debug(1);
 }
 
-//***************************************************************************
-//
-// Initialize: Assume all angles GIVEN IN RADIANS !!
-//
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGState::Initialize(double U, double V, double W,
-                         double p, double q, double r,
-                         double phi, double tht, double psi,
-                         double Latitude, double Longitude, double H,
-                         double wnorth, double weast, double wdown)
+void FGState::Initialize(FGInitialCondition *FGIC)
 {
-  double alpha, beta;
-  double qbar, Vt;
-  FGColumnVector3 vAeroUVW;
-  FGColumnVector3 vUVW;
+  sim_time = 0.0;
 
-  Propagate->SetLocation(eLat, Latitude);
-  Propagate->SetLocation(eLong, Longitude);
-  Propagate->Seth(H); // Set altitude above Sea Level
+  Propagate->SetInitialState( FGIC );
 
   Atmosphere->Run();
+  Atmosphere->SetWindNED( FGIC->GetWindNFpsIC(),
+                          FGIC->GetWindEFpsIC(),
+                          FGIC->GetWindDFpsIC() );
 
-  Propagate->SetEuler( FGColumnVector3(phi, tht, psi) );
-  Propagate->SetPQR( p, q, r );
+  FGColumnVector3 vAeroUVW;
+  vAeroUVW = Propagate->GetUVW() + Propagate->GetTl2b()*Atmosphere->GetWindNED();
 
-  vUVW << U << V << W;
-  Propagate->SetUVW(vUVW);
-
-  Atmosphere->SetWindNED(wnorth, weast, wdown);
-
-  vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
-
+  double alpha, beta;
   if (vAeroUVW(eW) != 0.0)
     alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
   else
@@ -140,50 +125,13 @@ void FGState::Initialize(double U, double V, double W,
 
   Auxiliary->SetAB(alpha, beta);
 
-  Vt = sqrt(U*U + V*V + W*W);
+  double Vt = vAeroUVW.Magnitude();
   Auxiliary->SetVt(Vt);
 
   Auxiliary->SetMach(Vt/Atmosphere->GetSoundSpeed());
 
-  qbar = 0.5*(U*U + V*V + W*W)*Atmosphere->GetDensity();
+  double qbar = 0.5*Vt*Vt*Atmosphere->GetDensity();
   Auxiliary->Setqbar(qbar);
-
-  FGColumnVector3 vLocalVelNED = Propagate->GetTb2l()*vUVW;
-  Propagate->SetvVel(vLocalVelNED);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::Initialize(FGInitialCondition *FGIC)
-{
-  double tht,psi,phi;
-  double U, V, W, h;
-  double p, q, r;
-  double latitude, longitude;
-  double wnorth,weast, wdown;
-
-  latitude = FGIC->GetLatitudeRadIC();
-  longitude = FGIC->GetLongitudeRadIC();
-  h = FGIC->GetAltitudeFtIC();
-  U = FGIC->GetUBodyFpsIC();
-  V = FGIC->GetVBodyFpsIC();
-  W = FGIC->GetWBodyFpsIC();
-  tht = FGIC->GetThetaRadIC();
-  phi = FGIC->GetPhiRadIC();
-  psi = FGIC->GetPsiRadIC();
-  p = FGIC->GetPRadpsIC();
-  q = FGIC->GetQRadpsIC();
-  r = FGIC->GetRRadpsIC();
-  wnorth = FGIC->GetWindNFpsIC();
-  weast = FGIC->GetWindEFpsIC();
-  wdown = FGIC->GetWindDFpsIC();
-
-  Propagate->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
-  Propagate->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() +
-                                             FGIC->GetTerrainAltitudeFtIC() );
-
-  // need to fix the wind speed args, here.
-  Initialize(U, V, W, p, q, r, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

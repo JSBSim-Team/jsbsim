@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.56 2004/05/14 10:40:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.57 2004/05/21 12:52:54 frohlich Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vToEyePt.InitMatrix();
   vAeroPQR.InitMatrix();
   vEulerRates.InitMatrix();
-  LongitudeVRP = LatitudeVRP = 0.0;
-  vVRPoffset.InitMatrix();
 
   bind();
 
@@ -220,19 +218,12 @@ bool FGAuxiliary::Run()
 
     earthPosAngle += State->Getdt()*Inertial->omega();
 
-    const FGColumnVector3& vLocation = Propagate->GetLocation();
-    vVRPoffset = Propagate->GetTb2l() * MassBalance->StructuralToBody(Aircraft->GetXYZvrp());
-
-    // vVRP  - the vector to the Visual Reference Point - now contains the
-    // offset from the CG to the VRP, in units of feet, in the Local coordinate
-    // frame, where X points north, Y points East, and Z points down. This needs
-    // to be converted to Lat/Lon/Alt, now.
-
-    if (cos(vLocation(eLat)) != 0)
-      vLocationVRP(eLong) = vVRPoffset(eEast) / (vLocation(eRad) * cos(vLocation(eLat))) + vLocation(eLong);
-
-    vLocationVRP(eLat) = vVRPoffset(eNorth) / vLocation(eRad) + vLocation(eLat);
-    vLocationVRP(eRad) = Propagate->Geth() - vVRPoffset(eDown); // this is really a height, not a radius
+    // VRP computation
+    const FGLocation& vLocation = Propagate->GetLocation();
+    FGColumnVector3 vrpStructural = Aircraft->GetXYZvrp();
+    FGColumnVector3 vrpBody = MassBalance->StructuralToBody( vrpStructural );
+    FGColumnVector3 vrpLocal = Propagate->GetTb2l() * vrpBody;
+    vLocationVRP = vLocation.LocalToLocation( vrpLocal );
 
     // Recompute some derived values now that we know the dependent parameters values ...
     hoverbcg = Propagate->GetDistanceAGL() / Aircraft->GetWingSpan();

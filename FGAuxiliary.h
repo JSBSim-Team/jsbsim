@@ -41,12 +41,14 @@ INCLUDES
 
 #include "FGModel.h"
 #include "FGColumnVector3.h"
+#include "FGLocation.h"
+#include "FGPropagate.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.45 2004/05/04 12:22:45 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.46 2004/05/21 12:52:54 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.45 2004/05/04 12:22:45 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.46 2004/05/21 12:52:54 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,15 +138,15 @@ public:
   double GetNpilot(int idx)      const { return vPilotAccelN(idx); }
   double GetAeroPQR(int axis)    const { return vAeroPQR(axis);    }
   double GetEulerRates(int axis) const { return vEulerRates(axis); }
-  double GetLocationVRP(int i)   const { return vLocationVRP(i);   }
 
-  const FGColumnVector3& GetPilotAccel (void) const { return vPilotAccel;      }
-  const FGColumnVector3& GetNpilot     (void) const { return vPilotAccelN;     }
-  const FGColumnVector3& GetAeroPQR    (void) const { return vAeroPQR;         }
-  const FGColumnVector3& GetEulerRates (void) const { return vEulerRates;      }
-  const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;         }
-  const FGColumnVector3& GetLocationVRP(void) const { return vLocationVRP;     }
+  const FGColumnVector3& GetPilotAccel (void) const { return vPilotAccel;  }
+  const FGColumnVector3& GetNpilot     (void) const { return vPilotAccelN; }
+  const FGColumnVector3& GetAeroPQR    (void) const { return vAeroPQR;     }
+  const FGColumnVector3& GetEulerRates (void) const { return vEulerRates;  }
+  const FGColumnVector3& GetAeroUVW    (void) const { return vAeroUVW;     }
+  const FGLocation&      GetLocationVRP(void) const { return vLocationVRP; }
 
+  double GethVRP(void) const { return vLocationVRP.GetRadius() - Propagate->GetSeaLevelRadius(); }
   double GetAeroUVW (int idx) const { return vAeroUVW(idx); }
   double Getalpha   (void) const { return alpha;      }
   double Getbeta    (void) const { return beta;       }
@@ -183,7 +185,6 @@ public:
   void Setadot   (double tt) { adot = tt;   }
   void Setbdot   (double tt) { bdot = tt;   }
 
-  void SetVRP   (FGColumnVector3& vrp) { vVRP = vrp;        }
   void SetAB    (double t1, double t2) { alpha=t1; beta=t2; }
   void SetGamma (double tt)            { gamma = tt;        }
 
@@ -210,11 +211,8 @@ private:
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
   FGColumnVector3 vMachUVW;
-  FGColumnVector3 vVRP;
-  FGColumnVector3 vVRPoffset;
-  FGColumnVector3 vLocationVRP;
+  FGLocation vLocationVRP;
 
-  double hVRP, LongitudeVRP, LatitudeVRP;
   double Vt, Vground, Mach, MachU;
   double qbar, qbarUW, qbarUV;
   double alpha, beta;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.173 2004/05/03 10:55:07 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.174 2004/05/21 12:52:54 frohlich Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -290,9 +290,9 @@ void FGJSBsim::init()
     switch(fgic->GetSpeedSet()) {
     case setned:
         SG_LOG(SG_FLIGHT,SG_INFO, "  Vn,Ve,Vd= "
-               << Propagate->GetVn() << ", "
-               << Propagate->GetVe() << ", "
-               << Propagate->GetVd() << " ft/s");
+               << Propagate->GetVel(eNorth) << ", "
+               << Propagate->GetVel(eEast) << ", "
+               << Propagate->GetVel(eDown) << " ft/s");
     break;
     case setuvw:
         SG_LOG(SG_FLIGHT,SG_INFO, "  U,V,W= "
@@ -320,9 +320,9 @@ void FGJSBsim::init()
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
             << Propagate->Getpsi()*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
-            << Propagate->GetLocation(eLat)*RADTODEG << " deg" );
+            << Propagate->GetLocation().GetLatitudeDeg() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
-            << Propagate->GetLocation(eLong)*RADTODEG << " deg" );
+            << Propagate->GetLocation().GetLongitudeDeg() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Altitude: "
             << Propagate->Geth() << " feet" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  loaded initial conditions" );
@@ -535,18 +535,18 @@ bool FGJSBsim::copy_from_JSBsim()
 
     // Velocities
 
-    _set_Velocities_Local( Propagate->GetVn(),
-                           Propagate->GetVe(),
-                           Propagate->GetVd() );
+    _set_Velocities_Local( Propagate->GetVel(eNorth),
+                           Propagate->GetVel(eEast),
+                           Propagate->GetVel(eDown) );
 
     _set_Velocities_Wind_Body( Propagate->GetUVW(1),
                                Propagate->GetUVW(2),
                                Propagate->GetUVW(3) );
 
     // Make the HUD work ...
-    _set_Velocities_Ground( Propagate->GetVn(),
-                            Propagate->GetVe(),
-                            -Propagate->GetVd() );
+    _set_Velocities_Ground( Propagate->GetVel(eNorth),
+                            Propagate->GetVel(eEast),
+                            -Propagate->GetVel(eDown) );
 
     _set_V_rel_wind( Auxiliary->GetVt() );
 
@@ -564,22 +564,12 @@ bool FGJSBsim::copy_from_JSBsim()
                       Auxiliary->GetEulerRates(eTht),
                       Auxiliary->GetEulerRates(ePsi) );
 
-    _set_Geocentric_Rates(Propagate->GetLocationDot(eLat),
-                          Propagate->GetLocationDot(eLong),
-                          Propagate->GetLocationDot(eRad) );
-
     _set_Mach_number( Auxiliary->GetMach() );
 
-    // Positions
-/*
-    _updateGeocentricPosition( Propagate->GetLatitude(),
-             Propagate->GetLongitude(),
-             Propagate->Geth() );
-*/
     // Positions of Visual Reference Point
-    _updateGeocentricPosition( Auxiliary->GetLocationVRP(eLat),
-                               Auxiliary->GetLocationVRP(eLong),
-                               Auxiliary->GetLocationVRP(eRad) );
+    _updateGeocentricPosition( Auxiliary->GetLocationVRP().GetLatitude(),
+                               Auxiliary->GetLocationVRP().GetLongitude(),
+                               Auxiliary->GethVRP() );
 
     _set_Altitude_AGL( Propagate->GetDistanceAGL() );
 

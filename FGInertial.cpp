@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.38 2004/05/06 03:33:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.39 2004/05/21 12:52:54 frohlich Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,13 +83,13 @@ bool FGInertial::Run(void)
 {
   if (!FGModel::Run()) {
 
-    double Vn = Propagate->GetVn();
-    double Ve = Propagate->GetVe();
-    double Vd = Propagate->GetVd();
-    double lat = Propagate->GetLocation(eLat);
-    double R = Propagate->GetLocation(eRad);
+    double Vn = Propagate->GetVel(eNorth);
+    double Ve = Propagate->GetVel(eEast);
+    double Vd = Propagate->GetVel(eDown);
+    double lat = Propagate->GetLocation().GetLatitude();
+    double R = Propagate->GetRadius();
 
-    gAccel = GM / (Propagate->GetRadius()*Propagate->GetRadius());
+    gAccel = GM / (R*R);
 
     vGravity(eDown) = gAccel;
 

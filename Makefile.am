@@ -32,6 +32,7 @@ libJSBSim_a_SOURCES = \
 	FGInitialCondition.cpp \
 	FGJSBBase.cpp \
 	FGLGear.cpp \
+	FGLocation.cpp \
 	FGMassBalance.cpp \
 	FGMatrix33.cpp \
 	FGModel.cpp \
@@ -74,6 +75,7 @@ noinst_HEADERS = \
 	FGInitialCondition.h \
 	FGJSBBase.h \
 	FGLGear.h \
+	FGLocation.h \
 	FGMassBalance.h \
 	FGMatrix33.h \
 	FGModel.h \
