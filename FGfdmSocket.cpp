@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.14 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.15 2002/01/30 15:16:27 dmegginson Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +140,7 @@ void FGfdmSocket::Append(long item)
 {
   char s[25];
 
-  sprintf(s,"%12d",item);
+  sprintf(s,"%12ld",item);
 
   if (size == 0) buffer += string(s);
   else buffer += string(",") + string(s);
