@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.171 2004/04/25 13:09:24 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.172 2004/04/29 23:46:58 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -62,6 +62,7 @@
 #include <FDM/JSBSim/FGEngine.h>
 #include <FDM/JSBSim/FGPiston.h>
 #include <FDM/JSBSim/FGSimTurbine.h>
+#include <FDM/JSBSim/FGTurbine.h>
 #include <FDM/JSBSim/FGRocket.h>
 #include <FDM/JSBSim/FGElectric.h>
 #include <FDM/JSBSim/FGNozzle.h>
@@ -153,7 +154,8 @@ FGJSBsim::FGJSBsim( double dt )
     if ( GroundReactions->GetNumGearUnits() <= 0 ) {
         SG_LOG( SG_FLIGHT, SG_ALERT, "num gear units = "
                 << GroundReactions->GetNumGearUnits() );
-        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground trimming");
+        SG_LOG( SG_FLIGHT, SG_ALERT, "This is a very bad thing because with 0 gear units, the ground
+trimming");
         SG_LOG( SG_FLIGHT, SG_ALERT, "routine (coming up later in the code) will core dump.");
         SG_LOG( SG_FLIGHT, SG_ALERT, "Halting the sim now, and hoping a solution will present itself soon!");
         exit(-1);
@@ -452,6 +454,16 @@ bool FGJSBsim::copy_to_JSBsim()
         eng->SetIgnition( globals->get_controls()->get_ignition(i) );
         break;
         } // end FGSimTurbine code block
+      case FGEngine::etTurbine:
+        { // FGTurbine code block
+        FGTurbine* eng = (FGTurbine*)Propulsion->GetEngine(i);
+        eng->SetAugmentation( globals->get_controls()->get_augmentation(i) );
+        eng->SetReverse( globals->get_controls()->get_reverser(i) );
+        eng->SetInjection( globals->get_controls()->get_water_injection(i) );
+        eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
+        eng->SetIgnition( globals->get_controls()->get_ignition(i) );
+        break;
+        } // end FGTurbine code block
       case FGEngine::etRocket:
         { // FGRocket code block
         FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
@@ -649,6 +661,27 @@ bool FGJSBsim::copy_from_JSBsim()
         globals->get_controls()->set_water_injection(i, eng->GetInjection() );
         globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
         } // end FGSimTurbine code block
+        break;
+      case FGEngine::etTurbine:
+        { // FGTurbine code block
+        FGTurbine* eng = (FGTurbine*)Propulsion->GetEngine(i);
+        node->setDoubleValue("n1", eng->GetN1());
+        node->setDoubleValue("n2", eng->GetN2());
+        node->setDoubleValue("egt_degf", 32 + eng->GetEGT()*9/5);
+        node->setBoolValue("augmentation", eng->GetAugmentation());
+        node->setBoolValue("water-injection", eng->GetInjection());
+        node->setBoolValue("ignition", eng->GetIgnition());
+        node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
+        node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
+        node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
+        node->setBoolValue("reversed", eng->GetReversed());
+        node->setBoolValue("cutoff", eng->GetCutoff());
+        node->setDoubleValue("epr", eng->GetEPR());
+        globals->get_controls()->set_reverser(i, eng->GetReversed() );
+        globals->get_controls()->set_cutoff(i, eng->GetCutoff() );
+        globals->get_controls()->set_water_injection(i, eng->GetInjection() );
+        globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
+        } // end FGTurbine code block
         break;
       case FGEngine::etElectric:
         { // FGElectric code block

@@ -50,6 +50,7 @@ libJSBSim_a_SOURCES = \
 	FGThruster.cpp \
 	FGTrim.cpp \
 	FGTrimAxis.cpp \
+        FGTurbine.cpp \
 	FGEngine.cpp \
 	FGTank.cpp \
 	FGfdmSocket.cpp \
@@ -92,6 +93,7 @@ noinst_HEADERS = \
 	FGThruster.h \
 	FGTrim.h \
 	FGTrimAxis.h \
+        FGTurbine.h \
 	FGEngine.h \
 	FGTank.h \
 	FGfdmSocket.h \
