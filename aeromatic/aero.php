@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.7;
+$version = 0.71;
 
 //****************************************************
 //                                                   *
@@ -14,6 +14,7 @@ $version = 0.7;
 // Updated:  5 Sep 2003, DPC - added prop transport
 // Updated: 16 Oct 2003, DPC - added better FCS
 // Updated:  9 Nov 2003, JSB - removed INVERT keyword and inserted "-"
+// Updated: 21 Feb 2004, DPC - added VRP, increased version to 1.61
 
 header("Content-type: text/plain");
 
@@ -265,7 +266,7 @@ switch($ac_type) {
 
 // set main gear longitudinal location relative to CG
 switch($ac_geartype) {
-  case 0: $ac_gearlocx_main = $ac_cglocx * 1.05; break;
+  case 0: $ac_gearlocx_main = $ac_cglocx * 1.04; break;
   case 1: $ac_gearlocx_main = $ac_cglocx * 0.91; break;
   }
 
@@ -341,7 +342,7 @@ if ($ac_enginelayout == 1) {
   for( $i=0; $i<$ac_numengines; $i++) {   
       $ac_englocx[$i] = $ac_cglocx;
       $ac_englocy[$i] = $leftmost + ($i * 40);
-      $ac_englocz[$i] = -20.0; 
+      $ac_englocz[$i] = -12.0; 
      }
 } 
 
@@ -748,7 +749,7 @@ switch($ac_type) {                   // adverse yaw
 //*                                              *
 //************************************************
 
-print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.60\" RELEASE=\"ALPHA\">\n");
+print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.61\" RELEASE=\"ALPHA\">\n");
 print("<!--\n  File:     $ac_name.xml\n");
 print("  Author:   Aero-Matic v $version\n\n");
 print("  Inputs:\n");
@@ -826,6 +827,7 @@ printf("   AC_EMPTYWT   %1.0f\n", $ac_emptyweight);
 printf("   AC_CGLOC     %2.1f %2.1f %2.1f\n", $ac_cglocx, $ac_cglocy, $ac_cglocz);
 printf("   AC_AERORP    %2.1f %2.1f %2.1f\n", $ac_aerorpx, $ac_aerorpy, $ac_aerorpz);
 printf("   AC_EYEPTLOC  %2.1f %2.1f %2.1f\n", $ac_eyeptlocx, $ac_eyeptlocy, $ac_eyeptlocz);
+print( "   AC_VRP       0 0 0\n");
 print(" </METRICS>\n");
 
 //***** LANDING GEAR ******************************
