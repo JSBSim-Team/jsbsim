@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.4 2002/02/28 12:15:35 apeden Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.5 2002/09/29 13:22:16 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -71,7 +71,7 @@ public:
   FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGKinemat();
   
-  double GetOutputPct() { return OutputPct; }
+  double GetOutputPct() const { return OutputPct; }
     
   bool Run (void );
   

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.30 2002/09/25 11:02:51 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.31 2002/09/29 13:22:16 apeden Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,9 +52,10 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
   ID         = 0;
   Input      = 0.0;
   Output     = 0.0;
-  OutputNode  = 0;
+  OutputNode = 0;
   IsOutput   = false;
   PropertyManager=fcs->GetPropertyManager();
+  treenode   = 0;
   Debug(0);
 }
 
@@ -62,7 +63,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 
 FGFCSComponent::~FGFCSComponent()
 {
-  unbind();
   Debug(1);
 }
 
@@ -97,34 +97,21 @@ FGPropertyManager* FGFCSComponent::resolveSymbol(string token) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFCSComponent::bind(FGPropertyManager *node) {
-  string tmp = "fcs/" + node->mkPropertyName(Name, true);
+void FGFCSComponent::bind(void) {
+  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
   FGPropertyManager *tmpn;
   PropertyManager->Tie( tmp,this, &FGFCSComponent::GetOutput);
-  node = node->GetNode( node->mkPropertyName(Name, true), true );
+  tmp = "fcs/components/" + PropertyManager->mkPropertyName(Name, true);
+  treenode = PropertyManager->GetNode( tmp, true );
   for(unsigned i=0;i<InputNodes.size();i++) {
-    tmpn=node->GetNode( "input-property",(int)i,true );
+    tmpn=treenode->GetNode( "input-property",(int)i,true );
     tmpn->setStringValue( InputNodes[i]->GetName().c_str() );
   }  
-  if(OutputNode) node->SetString("output-property",OutputNode->GetName());
-  node->Tie("output-value",this,&FGFCSComponent::GetOutput);
-  node->SetString("type",Type);
+  if(OutputNode) treenode->SetString("output-property",OutputNode->GetName());
+  treenode->Tie("output-value",this,&FGFCSComponent::GetOutput);
+  treenode->SetString("type",Type);
 }  
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCSComponent::unbind(void) { 
-  string name = "fcs";
-  FGPropertyManager *node=PropertyManager->GetNode(name);
-  name += "/" + PropertyManager->mkPropertyName(Name, true);
-  PropertyManager->Untie( name );
-  
-  name = "fcs/components/" 
-                 + PropertyManager->mkPropertyName(Name, true); 
-  node= PropertyManager->GetNode(name);
-  node->Untie("output-value");
-}
-                
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

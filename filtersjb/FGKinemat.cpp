@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.14 2002/09/25 11:02:51 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.15 2002/09/29 13:22:16 apeden Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,7 +91,8 @@ FGKinemat::FGKinemat(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       OutputNode = PropertyManager->GetNode(sOutputIdx);
     }
   }
-  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components") );
+  FGFCSComponent::bind();
+  treenode->Tie("output-norm", this, &FGKinemat::GetOutputPct );
 
   Debug(0);
 }

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.36 2002/09/22 18:15:11 apeden Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.37 2002/09/29 13:22:16 apeden Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +81,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     }
   }
  
-  FGFCSComponent::bind( PropertyManager->GetNode("fcs/components",true) );
+  FGFCSComponent::bind();
 
   Debug(0);
 }

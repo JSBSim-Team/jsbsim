@@ -58,7 +58,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.20 2002/04/01 12:00:56 apeden Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.21 2002/09/29 13:22:16 apeden Exp $"
 
 class FGFCS;
 
@@ -72,7 +72,7 @@ public:
   FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGGain();
   
-  double GetOutputPct() { return OutputPct; }
+  double GetOutputPct() const { return OutputPct; }
   
   bool Run (void);
 
