@@ -63,7 +63,7 @@ INCLUDES
 CLASS DECLARATION
 *******************************************************************************/
 
-typedef enum { none,setvt, setvc, setve, setmach } speedset;
+typedef enum { setvt, setvc, setve, setmach } speedset;
 
 /* USAGE NOTES
    With a valid object of FGFDMExec and an aircraft model loaded
@@ -140,7 +140,8 @@ public:
   inline void SetPitchAngleRadIC(float tt) { theta=tt; alpha=theta-gamma; }
 
   inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; }
-
+  inline void SetBetaRadIC(float tt)       { beta=tt; }
+  
   inline void SetRollAngleDegIC(float tt) { phi=tt*DEGTORAD; }
   inline void SetRollAngleRadIC(float tt) { phi=tt; }
 
