@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.25 2002/01/14 13:23:11 dmegginson Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.26 2002/09/10 01:53:12 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -57,7 +57,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.25 2002/01/14 13:23:11 dmegginson Exp $
+    @version $Id: FGThruster.h,v 1.26 2002/09/10 01:53:12 apeden Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,12 +69,13 @@ class FGThruster : public FGForce {
 public:
   /// Constructor
   FGThruster(FGFDMExec *FDMExec);
+  FGThruster(FGFDMExec *FDMExec, FGConfigFile *Eng_cfg );
   /// Destructor
   virtual ~FGThruster();
 
   enum eType {ttNozzle, ttRotor, ttPropeller};
 
-  virtual double Calculate(double) {return 0.0;}
+  virtual double Calculate(double Thrust) { vFn(1)=Thrust; return 0.0; }
   void SetName(string name) {Name = name;}
   void SetThrusterNumber(int nn) {ThrusterNumber = nn;}
   virtual void SetRPM(double rpm) {};

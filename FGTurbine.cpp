@@ -38,9 +38,11 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <vector>
 #include "FGTurbine.h"
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.2 2002/08/31 05:17:31 jberndt Exp $";
+
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.3 2002/09/10 01:53:12 apeden Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,6 +52,8 @@ CLASS IMPLEMENTATION
 
 FGTurbine::FGTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
+  Load(cfg);
+  PowerCommand=0;
   Debug(0);
 }
 
@@ -64,10 +68,80 @@ FGTurbine::~FGTurbine()
 
 double FGTurbine::Calculate(double dummy)
 {
+  double idle,mil,aug;
+  double throttle=FCS->GetThrottlePos(EngineNumber);
+  double dt=State->Getdt();
+  if( dt > 0 ) {
+    PowerCommand+=dt*PowerLag( PowerCommand, 
+                         ThrottleToPowerCommand(throttle) );
+    if(PowerCommand > 100 )
+      PowerCommand=100;
+    else if(PowerCommand < 0 )
+      PowerCommand=0;
+                    
+  } else {
+    PowerCommand=ThrottleToPowerCommand(throttle);
+  }                         
+  
+  mil=MaxMilThrust*ThrustTables[1]->TotalValue();
+  
+  if( PowerCommand <= 50 ) {
+    idle=MaxMilThrust*ThrustTables[0]->TotalValue();
+    Thrust = idle + (mil-idle)*PowerCommand*0.02;
+  } else {
+    aug=MaxAugThrust*ThrustTables[2]->TotalValue();
+    Thrust = mil + (aug-mil)*(PowerCommand-50)*0.02;
+  }    
+  
   ConsumeFuel();
-  return 0.0;
+  
+  return Thrust;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTurbine::ThrottleToPowerCommand(double throttle) {
+  if( throttle <= 0.77 ) 
+    return 64.94*throttle;
+  else
+    return 217.38*throttle - 117.38;
+}      
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTurbine::PowerLag(double actual_power, double power_command) {
+  double t, p2;
+  if( power_command >= 50 ) {
+    if( actual_power >= 50 ) {
+      t=5;
+      p2=power_command;
+    } else {
+      p2=60;
+      t=rtau(p2-actual_power);
+    }
+  } else {
+    if( actual_power >= 50 ) {
+      t=5;
+      p2=40;
+    } else {
+      p2=power_command;
+      t=rtau(p2-actual_power);
+    }
+  }
+  return t*(p2-actual_power);
+}    
+ 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTurbine::rtau(double delta_power) {
+  if( delta_power <= 25 ) 
+    return 1.0;
+  else if ( delta_power >= 50)
+    return 0.1;
+  else
+    return 1.9-0.036*delta_power;
+}
+        
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTurbine::doInlet(void)
@@ -113,8 +187,22 @@ void FGTurbine::doTransition(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-bool FGTurbine::Load(FGConfigFile *AC_cfg)
+bool FGTurbine::Load(FGConfigFile *Eng_cfg)
 {
+  int i;
+  string token;
+  Name = Eng_cfg->GetValue("NAME");
+  cout << Name << endl;
+  Eng_cfg->GetNextConfigLine();
+  *Eng_cfg >> token >> MaxMilThrust;
+  *Eng_cfg >> token >> MaxAugThrust;
+  i=0;
+  while( Eng_cfg->GetValue() != "/FG_TURBINE" && i < 10){
+    ThrustTables.push_back( new FGCoefficient(FDMExec) );
+    ThrustTables.back()->Load(Eng_cfg);
+    i++;
+  }
+
   return true;
 }
 
