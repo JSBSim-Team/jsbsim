@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.77 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.78 2002/04/19 10:14:33 dmegginson Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +326,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
         ToNormalize[iDsb]=i;
       } else if ( nodeName == "spoiler-pos-rad" ) {
         ToNormalize[iDsp]=i;
-      } else if ( nodeName == "flaps-pos-deg" ) {
+      } else if ( nodeName == "flap-pos-deg" ) {
         ToNormalize[iDf]=i;
       }
     }
