@@ -68,8 +68,10 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     *AC_cfg >> token;
     if (token == "ID") {
       *AC_cfg >> ID;
+	  cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
+	  cout << "      INPUT: " << token << endl;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
         InputIdx = fcs->GetState()->GetParameterIndex(token);
@@ -80,16 +82,20 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       }
     } else if (token == "GAIN") {
       *AC_cfg >> Gain;
+      cout << "      GAIN: " << Gain << endl;
     } else if (token == "MIN") {
       *AC_cfg >> Min;
+	  cout << "      MIN: " << Min << endl;
     } else if (token == "MAX") {
       *AC_cfg >> Max;
+	  cout << "      MAX: " << Max << endl;
     } else if (token == "SCHEDULED_BY") {
       *AC_cfg >> ScheduledBy;
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
+      cout << "      OUTPUT: " << sOutputIdx << endl;
     } else {
       AC_cfg->ResetLineIndexToZero();
       lookup = new float[2];
