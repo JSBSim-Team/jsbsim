@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.22 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.23 2002/03/01 17:14:36 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ double FGMassBalance::GetPMIxx(void)
 {
   double I = 0.0;
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    I += PointMassLoc[i](eX)*PointMassLoc[i](eX)*PointMassWeight[i];
+    I += (PointMassLoc[i](eX)-vXYZcg(eX))*(PointMassLoc[i](eX)-vXYZcg(eX))*PointMassWeight[i];
   }
   I /= (144.0*Inertial->gravity());
   return I;
@@ -143,7 +143,7 @@ double FGMassBalance::GetPMIyy(void)
 {
   double I = 0.0;
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    I += PointMassLoc[i](eY)*PointMassLoc[i](eY)*PointMassWeight[i];
+    I += (PointMassLoc[i](eY)-vXYZcg(eY))*(PointMassLoc[i](eY)-vXYZcg(eY))*PointMassWeight[i];
   }
   I /= (144.0*Inertial->gravity());
   return I;
@@ -155,7 +155,7 @@ double FGMassBalance::GetPMIzz(void)
 {
   double I = 0.0;
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    I += PointMassLoc[i](eZ)*PointMassLoc[i](eZ)*PointMassWeight[i];
+    I += (PointMassLoc[i](eZ)-vXYZcg(eZ))*(PointMassLoc[i](eZ)-vXYZcg(eZ))*PointMassWeight[i];
   }
   I /= (144.0*Inertial->gravity());
   return I;
@@ -167,7 +167,7 @@ double FGMassBalance::GetPMIxy(void)
 {
   double I = 0.0;
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    I += PointMassLoc[i](eX)*PointMassLoc[i](eY)*PointMassWeight[i];
+    I += (PointMassLoc[i](eX)-vXYZcg(eX))*(PointMassLoc[i](eY)-vXYZcg(eY))*PointMassWeight[i];
   }
   I /= (144.0*Inertial->gravity());
   return I;
@@ -179,7 +179,7 @@ double FGMassBalance::GetPMIxz(void)
 {
   double I = 0.0;
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
-    I += PointMassLoc[i](eX)*PointMassLoc[i](eZ)*PointMassWeight[i];
+    I += (PointMassLoc[i](eX)-vXYZcg(eX))*(PointMassLoc[i](eZ)-vXYZcg(eZ))*PointMassWeight[i];
   }
   I /= (144.0*Inertial->gravity());
   return I;

@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.109 2002/02/23 13:08:33 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.110 2002/03/01 17:14:36 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,6 +240,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
              << endl;
     } else if (parameter == "AC_POINTMASS") {
       *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
+      MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);
       if (debug_lvl > 0) cout << "    Point Mass Object: " << pmWt << " lbs. at "
                          << "X, Y, Z (in.): " << pmX << "  " << pmY << "  " << pmZ
                          << endl;
