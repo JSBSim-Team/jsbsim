@@ -69,7 +69,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.47 2001/10/29 17:47:34 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.48 2001/10/30 00:23:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,6 +83,7 @@ class FGOutput;
 class FGPosition;
 class FGFDMExec;
 class FGGroundReactions;
+class FGPropulsion;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -94,7 +95,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.47 2001/10/29 17:47:34 jberndt Exp $
+    @version $Id: FGState.h,v 1.48 2001/10/30 00:23:55 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -331,6 +332,7 @@ private:
   FGFCS* FCS;
   FGAerodynamics* Aerodynamics;
   FGGroundReactions* GroundReactions;
+  FGPropulsion* Propulsion;
 
   typedef map<string, eParam> CoeffMap;
   CoeffMap coeffdef;
@@ -350,6 +352,7 @@ private:
 #include "FGOutput.h"
 #include "FGAircraft.h"
 #include "FGGroundReactions.h"
+#include "FGPropulsion.h"
 
 #endif
 

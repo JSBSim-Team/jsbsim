@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.39 2001/10/12 12:15:35 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.40 2001/10/30 00:23:55 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.39 2001/10/12 12:15:35 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.40 2001/10/30 00:23:55 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,6 +117,8 @@ public:
   virtual float  GetThrottleMax(void) { return MaxThrottle; }
   float  GetThrottle(void) { return Throttle; }
   float  GetMixture(void) { return Mixture; }
+  int    GetMagnetos(void) { return Magnetos; }
+  bool    GetStarter(void) { return Starter; }
   float  GetThrust(void) { return Thrust; }
   bool   GetStarved(void) { return Starved; }
   bool   GetFlameout(void) { return Flameout; }

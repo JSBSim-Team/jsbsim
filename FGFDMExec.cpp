@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.59 2001/09/28 02:33:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.60 2001/10/30 00:23:55 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -520,10 +520,10 @@ bool FGFDMExec::LoadScript(string script)
                     << iterConditions->Comparison[i] << " "
                     << iterConditions->TestValue[i] << ")";
       }
-      cout << ") then {" << endl;
+      cout << ") then {";
 
       for (i=0; i<iterConditions->SetValue.size(); i++) {
-        cout << "      set" << State->paramdef[iterConditions->SetParam[i]]
+        cout << endl << "      set" << State->paramdef[iterConditions->SetParam[i]]
              << "to " << iterConditions->SetValue[i];
 
         switch (iterConditions->Type[i]) {

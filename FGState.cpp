@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.77 2001/10/29 17:47:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.78 2001/10/30 00:23:55 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,6 +97,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   Atmosphere   = FDMExec->GetAtmosphere();
   Aerodynamics = FDMExec->GetAerodynamics();
   GroundReactions = FDMExec->GetGroundReactions();
+  Propulsion      = FDMExec->GetPropulsion();
 
   RegisterVariable(FG_TIME,           " time "           );
   RegisterVariable(FG_QBAR,           " qbar "           );
@@ -132,6 +133,10 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   RegisterVariable(FG_FLAPS_CMD,      " flaps_cmd "      );
   RegisterVariable(FG_THROTTLE_CMD,   " throttle_cmd "   );
   RegisterVariable(FG_THROTTLE_POS,   " throttle_pos "   );
+  RegisterVariable(FG_MIXTURE_CMD,    " mixture_cmd "   );
+  RegisterVariable(FG_MIXTURE_POS,    " mixture_pos "   );
+  RegisterVariable(FG_MAGNETO_CMD,    " magneto_cmd "   );
+  RegisterVariable(FG_STARTER_CMD,    " starter_cmd "   );
   RegisterVariable(FG_ACTIVE_ENGINE,  " active_engine "  );
   RegisterVariable(FG_HOVERB,         " height/span "    );
   RegisterVariable(FG_PITCH_TRIM_CMD, " pitch_trim_cmd " );
@@ -258,12 +263,29 @@ float FGState::GetParameter(eParam val_idx) {
   case FG_THROTTLE_POS:
     if (ActiveEngine < 0) return FCS->GetThrottlePos(0);
     else return FCS->GetThrottlePos(ActiveEngine);
+  case FG_MAGNETO_CMD:
+    if (ActiveEngine < 0) return Propulsion->GetEngine(0)->GetMagnetos();
+    else return Propulsion->GetEngine(ActiveEngine)->GetMagnetos();
+  case FG_STARTER_CMD:
+    if (ActiveEngine < 0) {
+      if (Propulsion->GetEngine(0)->GetStarter()) return 1.0;
+      else return 0.0;
+    } else {
+      if (Propulsion->GetEngine(ActiveEngine)->GetStarter()) return 1.0;
+      else return 0.0;
+    }
+  case FG_MIXTURE_CMD:
+    if (ActiveEngine < 0) return FCS->GetMixtureCmd(0);
+    else return FCS->GetMixtureCmd(ActiveEngine);
+  case FG_MIXTURE_POS:
+    if (ActiveEngine < 0) return FCS->GetMixturePos(0);
+    else return FCS->GetMixturePos(ActiveEngine);
   case FG_HOVERB:
     return Position->GetHOverB();
   case FG_PITCH_TRIM_CMD:
     return FCS->GetPitchTrimCmd();
   default:
-    cerr << "FGState::GetParameter() - No handler for parameter " << val_idx << endl;
+    cerr << "FGState::GetParameter() - No handler for parameter " << paramdef[val_idx] << endl;
     return 0.0;
   }
   return 0;
@@ -306,6 +328,9 @@ void FGState::SetParameter(eParam val_idx, float val) {
   case FG_THROTTLE_POS:
     FCS->SetThrottlePos(ActiveEngine,val);
     break;
+  case FG_MIXTURE_POS:
+    FCS->SetMixturePos(ActiveEngine,val);
+    break;
 
   case FG_ELEVATOR_CMD:
     FCS->SetDeCmd(val);
@@ -328,7 +353,18 @@ void FGState::SetParameter(eParam val_idx, float val) {
   case FG_THROTTLE_CMD:
     FCS->SetThrottleCmd(ActiveEngine,val);
     break;
-
+  case FG_MIXTURE_CMD:
+    FCS->SetMixtureCmd(ActiveEngine,val);
+    break;
+  case FG_MAGNETO_CMD:
+    Propulsion->GetEngine(ActiveEngine)->SetMagnetos(val); // need to account for -1
+    break;
+  case FG_STARTER_CMD:
+    if      (val < 0.001) 
+      Propulsion->GetEngine(ActiveEngine)->SetStarter(false); // need to account for -1
+    else if (val >=  0.001)
+      Propulsion->GetEngine(ActiveEngine)->SetStarter(true); // need to account for -1
+    break;
   case FG_ACTIVE_ENGINE:
     ActiveEngine = (int)val;
     break;
