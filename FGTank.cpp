@@ -46,7 +46,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.29 2003/06/07 09:19:33 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.30 2003/06/08 11:17:59 ehofman Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,7 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTank::FGTank(FGConfigFile* AC_cfg)
-    : Contents(0.0)
+    : Contents(-1.0)
 {
   string token;
   
@@ -72,7 +72,7 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     else if (token == "RADIUS") *AC_cfg >> Radius;
     else if (token == "CAPACITY") *AC_cfg >> Capacity;
     else if (token == "CONTENTS") {
-        if (Contents == 0.0) *AC_cfg >> Contents;
+        if (Contents == -1.0) *AC_cfg >> Contents;
     } else cerr << "Unknown identifier: " << token << " in tank definition." << endl;
   }
   
