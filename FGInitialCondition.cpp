@@ -62,14 +62,15 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   theta=phi=psi=0;
   altitude=hdot=0;
   latitude=longitude=0;
-  u=v=w=0;
+  u=v=w=0;  
+  vnorth=veast=vdown=0;
   lastSpeedSet=setvt;
   if(FDMExec != NULL ) {
     fdmex=FDMExec;
     fdmex->GetPosition()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
   } else {
-    cout << "FGInitialCondition: This class requires a pointer to an valid FGFDMExec object" << endl;
+    cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
 
 }
@@ -119,12 +120,14 @@ void FGInitialCondition::SetMachIC(float tt) {
   //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
 }
 
-
-
 void FGInitialCondition::SetClimbRateFpmIC(float tt) {
+  SetClimbRateFpsIC(tt/60.0);
+}
+
+void FGInitialCondition::SetClimbRateFpsIC(float tt) {
 
   if(vt > 0.1) {
-    hdot=tt/60;
+    hdot=tt;
     gamma=asin(hdot/vt);
   }
 }
@@ -143,7 +146,6 @@ void FGInitialCondition::SetUBodyFpsIC(float tt) {
 }
 
   
-
 void FGInitialCondition::SetVBodyFpsIC(float tt) {
   v=tt;
   vt=sqrt(u*u+v*v+w*w);
@@ -184,7 +186,41 @@ void FGInitialCondition::SetAltitudeAGLFtIC(float tt) {
   fdmex->GetPosition()->SetDistanceAGL(tt);
   altitude=fdmex->GetPosition()->Geth();
   SetAltitudeFtIC(altitude);
-}  
+} 
+
+void FGInitialCondition::calcUVWfromNED(void) {
+  u=vnorth*cos(theta)*cos(psi) + 
+     veast*cos(theta)*sin(psi) - 
+     vdown*sin(theta);
+  v=vnorth*(sin(phi)*sin(theta)*cos(psi) - cos(phi)*sin(psi)) +
+     veast*(sin(phi)*sin(theta)*sin(psi) + cos(phi)*cos(psi)) +
+     vdown*sin(phi)*cos(theta);
+  w=vnorth*(cos(phi)*sin(theta)*cos(psi) + sin(phi)*sin(psi)) +
+     veast*(cos(phi)*sin(theta)*sin(psi) - sin(phi)*cos(psi)) +
+     vdown*cos(phi)*cos(theta);
+}     
+ 
+void FGInitialCondition::SetVnorthFpsIC(float tt) {
+  vnorth=tt;
+  calcUVWfromNED();
+  vt=sqrt(u*u + v*v + w*w);
+  lastSpeedSet=setvt;
+}        
+  
+void FGInitialCondition::SetVeastFpsIC(float tt) {
+  veast=tt;
+  calcUVWfromNED();
+  vt=sqrt(u*u + v*v + w*w);
+  lastSpeedSet=setvt;
+} 
+
+void FGInitialCondition::SetVdownFpsIC(float tt) {
+  vdown=tt;
+  calcUVWfromNED();
+  vt=sqrt(u*u + v*v + w*w);
+  SetClimbRateFpsIC(-1*vdown);
+  lastSpeedSet=setvt;
+} 
 
 bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
  

@@ -89,12 +89,10 @@ typedef enum { setvt, setvc, setve, setmach } speedset;
    
    Alpha,Gamma, and Theta:
      This class assumes that it will be used to set up the sim for a
-	 steady, zero pitch rate condition. This entails the assumption
-	 that alpha=theta-gamma. Since any two of those angles specifies 
-	 the third (again, for zero pitch rate) gamma (flight path angle) 
-	 is favored when setting alpha and theta and alpha is favored when 
-	 setting gamma. i.e.
-    	  set alpha : recalculate theta using gamma as currently set
+	 steady, zero pitch rate condition. Since any two of those angles 
+   specifies the third gamma (flight path angle) is favored when setting
+   alpha and theta and alpha is favored when setting gamma. i.e.
+    	set alpha : recalculate theta using gamma as currently set
 		  set theta : recalculate alpha using gamma as currently set
 		  set gamma : recalculate theta using alpha as currently set
  
@@ -119,7 +117,11 @@ public:
   void SetUBodyFpsIC(float tt);
   void SetVBodyFpsIC(float tt);
   void SetWBodyFpsIC(float tt);
-
+  
+  void SetVnorthFpsIC(float tt);
+  void SetVeastFpsIC(float tt);
+  void SetVdownFpsIC(float tt);
+  
   void SetAltitudeFtIC(float tt);
   void SetAltitudeAGLFtIC(float tt);
 
@@ -128,6 +130,7 @@ public:
   void SetFlightPathAngleRadIC(float tt);
   //set speed first
   void SetClimbRateFpmIC(float tt);
+  void SetClimbRateFpsIC(float tt);
   //use currently stored gamma, recalcualte theta
   inline void SetAlphaDegIC(float tt)      { alpha=tt*DEGTORAD; getTheta(); }
   inline void SetAlphaRadIC(float tt)      { alpha=tt; getTheta(); }
@@ -203,6 +206,7 @@ private:
   float altitude,hdot;
   float latitude,longitude;
   float u,v,w;
+  float vnorth,veast,vdown;
   
   float xlo, xhi,xmin,xmax;
   
@@ -221,6 +225,7 @@ private:
   float GammaEqOfTheta(float Theta);
   float GammaEqOfAlpha(float Alpha);
   float calcVcas(float Mach);
+  void calcUVWfromNED(void);
   
   bool findInterval(float x,float guess);
   bool solve(float *y, float x);
