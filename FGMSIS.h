@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.6 2003/12/22 14:53:40 dpculp Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.7 2003/12/23 04:51:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.6 2003/12/22 14:53:40 dpculp Exp $
+    @version $Id: FGMSIS.h,v 1.7 2003/12/23 04:51:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,21 +91,21 @@ struct ap_array {
 };
 
 struct nrlmsise_input {
-  int year;      /* year, currently ignored */
-  int doy;       /* day of year */
-  double sec;    /* seconds in day (UT) */
-  double alt;    /* altitude in kilometers */
-  double g_lat;  /* geodetic latitude */
-  double g_long; /* geodetic longitude */
+  int year;      /* year, currently ignored                           */
+  int doy;       /* day of year                                       */
+  double sec;    /* seconds in day (UT)                               */
+  double alt;    /* altitude in kilometers                            */
+  double g_lat;  /* geodetic latitude                                 */
+  double g_long; /* geodetic longitude                                */
   double lst;    /* local apparent solar time (hours), see note below */
-  double f107A;  /* 81 day average of F10.7 flux (centered on doy) */
-  double f107;   /* daily F10.7 flux for previous day */
-  double ap;     /* magnetic index(daily) */
+  double f107A;  /* 81 day average of F10.7 flux (centered on DOY)    */
+  double f107;   /* daily F10.7 flux for previous day                 */
+  double ap;     /* magnetic index(daily)                             */
   struct ap_array *ap_a; /* see above */
 };
 
 struct nrlmsise_output {
-  double d[9];   /* densities */
+  double d[9];   /* densities    */
   double t[2];   /* temperatures */
 };
 
@@ -136,10 +136,10 @@ public:
   inline double GetTemperature_K(void) const {return temperature;}
 
   /// Returns the temperature in degrees Celcius.
-  inline double GetTemperature_C(void) const {return temperature - 273.15;}
+  inline double GetTemperature_C(void) const {return KelvinToCelsius(output.t[1]);}
 
   /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature_R(void) const {return temperature * 1.8;}
+  inline double GetTemperature_R(void) const {return KelvinToRankine(output.t[1]);}
 
   /// Returns the density in grams/cm^3.
   inline double GetDensity_SI(void)  const {return density;}

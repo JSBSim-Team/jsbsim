@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.42 2003/12/17 12:27:07 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.43 2003/12/23 04:51:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version "$Id: FGJSBBase.h,v 1.42 2003/12/17 12:27:07 jberndt Exp $"
+    @version "$Id: FGJSBBase.h,v 1.43 2003/12/23 04:51:01 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,9 +212,10 @@ public:
   void disableHighLighting(void);
 
   static short debug_lvl;
-  double KelvinToFahrenheit (double kelvin) {
-    return 1.8*kelvin - 459.4;
-  }
+
+  double KelvinToFahrenheit (double kelvin) { return 1.8*kelvin - 459.4; }
+  double KelvinToCelsius    (double kelvin) { return kelvin - 273.15;    }
+  double KelvinToRankine    (double kelvin) { return kelvin * 1.8;       }
 
 protected:
   static Message localMsg;
