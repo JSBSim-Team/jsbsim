@@ -30,7 +30,9 @@ FGConfigFile::FGConfigFile(string cfgFileName)
   cfgfile.open(cfgFileName.c_str());
   CommentsOn = false;
   CurrentIndex = 0;
-  GetNextConfigLine();
+  Opened = true;
+  if (cfgfile.is_open()) GetNextConfigLine();
+  else Opened = false;
 }
 
 

@@ -75,6 +75,7 @@ public:
   string GetValue(string);
   string GetValue(void);
   bool IsCommentLine(void);
+  bool IsOpen(void) {return Opened;}
   FGConfigFile& operator>>(double&);
   FGConfigFile& operator>>(float&);
   FGConfigFile& operator>>(int&);
@@ -87,6 +88,7 @@ private:
   ifstream cfgfile;
   string   CurrentLine;
   bool     CommentsOn;
+  bool     Opened;
   unsigned int      CurrentIndex;
 };
 

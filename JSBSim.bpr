@@ -55,7 +55,6 @@ ALLRES = $(RESFILES)
 ALLLIB = $(LIBFILES)  import32.lib cw32mt.lib
 # ---------------------------------------------------------------------------
 !ifdef IDEOPTIONS
-
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
@@ -104,16 +103,17 @@ Count=1
 Item0=filtersjb;$(BCB)\lib
 
 [HistoryLists\hlRunParameters]
-Count=3
-Item0=X15 reset00 
-Item1=X15 reset00 > output.dat
-Item2=X15 reset00
+Count=4
+Item0=X15 reset01
+Item1=X15 reset00 
+Item2=X15 reset00 > output.dat
+Item3=X15 reset00
 
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=X15 reset00 
+RunParams=X15 reset01
 HostApplication=
 RemoteHost=
 RemotePath=

@@ -176,6 +176,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
   aircraftCfgFileName = AircraftPath + "/" + fname + "/" + fname + ".cfg";
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
+  if (!AC_cfg.IsOpen()) return false;
 
   ReadPrologue(&AC_cfg);
 

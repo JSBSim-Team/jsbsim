@@ -74,9 +74,9 @@ public:
 
   inline FGColumnVector GetVel(void) { return vVel; }
   inline FGColumnVector GetUVW(void) { return vUVW; }
-  inline double GetVn(void)  { return vVel(1); }
-  inline double GetVe(void)  { return vVel(2); }
-  inline double GetVd(void)  { return vVel(3); }
+  inline double GetVn(void)  { return vVel(eX); }
+  inline double GetVe(void)  { return vVel(eY); }
+  inline double GetVd(void)  { return vVel(eZ); }
   inline double Geth(void)  { return h; }
   inline double Gethdot(void) { return RadiusDot; }
   inline double GetLatitude(void) { return Latitude; }
