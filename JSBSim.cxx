@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.14 2000/05/15 12:37:00 jsb Exp $
+// $Id: JSBSim.cxx,v 1.15 2000/05/16 10:19:18 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -94,7 +94,7 @@ int FGJSBsim::init( double dt ) {
     fgic->SetUBodyFpsIC(current_options.get_uBody());
     fgic->SetVBodyFpsIC(current_options.get_vBody());
     fgic->SetWBodyFpsIC(current_options.get_wBody());
-    FG_LOG(FG_FLIGHT,FG_INFO, "  U,V,W= " << current_options.get_uBody()
+    FG_LOG(FG_FLIGHT,FG_INFO, "  u,v,w= " << current_options.get_uBody()
            << ", " << current_options.get_vBody()
            << ", " << current_options.get_wBody());
   } else if (current_options.get_vc() < 0) {
@@ -130,10 +130,14 @@ int FGJSBsim::init( double dt ) {
     fgtrim->Report();
     fgtrim->TrimStats();
     fgtrim->ReportState();
-    controls.set_elevator(FDMExec.GetFCS()->GetDeCmd());
-    for(int i=0;i<FDMExec.GetAircraft()->GetNumEngines();i++) {
-      controls.set_throttle(i,FDMExec.GetFCS()->GetThrottleCmd(i)/100);
-    }
+    
+    controls.set_elevator_trim(FDMExec.GetFCS()->GetDeCmd());
+    controls.set_trimmed_throttle(FGControls::ALL_ENGINES,GetThrottleCmd(0)/100);
+    //the trimming routine only knows how to get 1 value for throttle
+    
+    //for(int i=0;i<FDMExec.GetAircraft()->GetNumEngines();i++) {
+    //  controls.set_throttle(i,FDMExec.GetFCS()->GetThrottleCmd(i)/100);
+    //}
     delete fgtrim;
     FG_LOG( FG_FLIGHT, FG_INFO, "  Trim complete." );
   } else {
@@ -173,18 +177,15 @@ int FGJSBsim::update( int multiloop ) {
   // copy control positions into the JSBsim structure
 
   FDMExec.GetFCS()->SetDaCmd( controls.get_aileron());
-  FDMExec.GetFCS()->SetDeCmd( controls.get_elevator()
-                              + controls.get_elevator_trim() );
+  FDMExec.GetFCS()->SetDeCmd( controls.get_elevator());
+  FDMExec.GetFCS()->SetPitchTrimCmd(controls.get_elevator_trim());
   FDMExec.GetFCS()->SetDrCmd( controls.get_rudder());
-  FDMExec.GetFCS()->SetDfCmd( 0.0 );
+  FDMExec.GetFCS()->SetDfCmd( controls.get_flaps() );
   FDMExec.GetFCS()->SetDsbCmd( 0.0 );
   FDMExec.GetFCS()->SetDspCmd( 0.0 );
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
                                     controls.get_throttle( 0 ) * 100.0 );
-  FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
-                                    controls.get_throttle( 0 ) * 100.0 );
-  //FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
-  //                                  controls.get_throttle( 0 ) * 100.0 );
+
   // FCS->SetBrake( controls.get_brake( 0 ) );
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
@@ -294,10 +295,8 @@ int FGJSBsim::copy_from_JSBsim() {
   set_Gamma_vert_rad( FDMExec.GetPosition()->GetGamma() );
   // set_Gamma_horiz_rad( Gamma_horiz_rad );
 
-  /* **FIXME*** */
-  set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
-  /* **FIXME*** */
-  set_Earth_position_angle( 0.0 );
+  /* **FIXME*** */ set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
+  /* **FIXME*** */ set_Earth_position_angle( 0.0 );
 
   // /* ***FIXME*** */ set_Runway_altitude( 0.0 );
 
