@@ -316,9 +316,15 @@ float FGState::GetParameter(int val_idx) {
   case FG_ALTITUDE:
     return FDMExec->GetPosition()->Geth();
   case FG_BI2VEL:
-    return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * FDMExec->GetTranslation()->GetVt());
+    if(FDMExec->GetTranslation()->GetVt() > 0) 
+        return FDMExec->GetAircraft()->GetWingSpan()/(2.0 * FDMExec->GetTranslation()->GetVt());
+    else 
+        return 0;
   case FG_CI2VEL:
-    return FDMExec->GetAircraft()->Getcbar()/(2.0 * FDMExec->GetTranslation()->GetVt());
+    if(FDMExec->GetTranslation()->GetVt() > 0) 
+        return FDMExec->GetAircraft()->Getcbar()/(2.0 * FDMExec->GetTranslation()->GetVt());
+    else 
+        return 0;   
   case FG_THROTTLE_CMD:
     return FDMExec->GetFCS()->GetThrottleCmd(0);
   case FG_THROTTLE_POS:
