@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.98 2002/04/17 17:34:16 dmegginson Exp $
+  CVS Version: $Id: c172.xml,v 1.99 2002/04/28 18:50:33 dmegginson Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -392,16 +392,19 @@
          -0.47
        </COEFFICIENT>
 
-       <COEFFICIENT NAME="Clr" TYPE="VALUE">
+       <COEFFICIENT NAME="Clr" TYPE="VECTOR">
          Roll_moment_due_to_yaw_rate
+         2
+         FG_ALPHA
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_BI2VEL|FG_AEROR
-         0.18
+         0.000 0.08
+         0.094 0.19
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Clda" TYPE="VALUE">
          Roll_moment_due_to_aileron
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN|FG_AILERON_POS
-         0.09
+         0.23
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cldr" TYPE="VALUE">
