@@ -28,10 +28,15 @@
 #include <fstream.h>
 #include <cstdio>
 #include <cstdlib>
+#include <time.h>
 #include "dislin.h"
 #include "datafile.h"
 
-void plotdata(ifstream* datafile);
+void plotdata(DataFile& df, ifstream* datafile);
+void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs);
+bool autoscale;
+double xmin, ymin, xmax, ymax;
+ofstream outfile;
 
 int main(int argc, char *argv[])
 {
@@ -58,7 +63,7 @@ int main(int argc, char *argv[])
     } else {
       f.setf(ios::skipws);
     }
-    plotdata(&f);
+    plotdata(df, &f);
     exit(0);
   }
 
@@ -310,18 +315,43 @@ savepng:
   }    
 }
 
+/* ****************************************** */
 
-void plotdata(ifstream* datafile)
+int GetID(DataFile& df, string param)
+{
+  for (unsigned int i=0; i<df.names.size(); i++) {
+    if (df.names[i] == param) {
+      cout << df.names[i] << endl;
+      return i;
+    }
+  }
+  return -1;
+}
+
+/* ****************************************** */
+
+void plotdata(DataFile& df, ifstream* datafile)
 {
   string data_str;
   string Title, Y_Axis_Caption, X_Axis_Caption;
   string Y_Variables;
   string X_Variable;
   string Ranges;
-  double xmin, ymin, xmax, ymax;
-  int delim;
+  int delim, id;
   vector <int> IDs;
+  int XID;
   
+  outfile.open("JSBSimPlots.html");
+  if (!outfile) {
+    cerr << "Could not open output file " << "JSBSimPlots.html" << endl;
+  }
+  time_t tm = time(NULL);
+  outfile << "<html>" << endl;
+  outfile << "<head>" << endl;
+  outfile << "<H1>JSBSim Auto-generated Plotting</H1>" << endl;
+  outfile << "<H2>" << ctime(&tm) << "</H2>" << endl;
+  outfile << "</HEAD>" << endl;
+ 
   while (!datafile->eof()) {
     getline(*datafile, Title);
     getline(*datafile, X_Axis_Caption);
@@ -329,32 +359,191 @@ void plotdata(ifstream* datafile)
     getline(*datafile, Ranges);
     getline(*datafile, X_Variable);
     getline(*datafile, Y_Variables);
-    
+
     if (datafile->eof()) break;
     
     if (Ranges.find("auto") != string::npos) { // autoscaling
       xmin = xmax = ymin = ymax = 0.00;
+      autoscale = true;
       cout << "Autoscaling ..." << endl;
     } else {
+      autoscale = false;
       delim = Ranges.find_first_of("|");
-      xmin = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      xmin = strtod(Ranges.substr(0, delim).c_str(), NULL);
       cout << "Range: xmin=" << xmin;
       Ranges = Ranges.substr(delim+1);
       delim = Ranges.find_first_of("|");
-      ymin = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      ymin = strtod(Ranges.substr(0, delim).c_str(), NULL);
       cout << " ymin=" << ymin;
       Ranges = Ranges.substr(delim+1);
       delim = Ranges.find_first_of("|");
-      xmax = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      xmax = strtod(Ranges.substr(0, delim).c_str(), NULL);
       cout << " xmax=" << xmax;
       Ranges = Ranges.substr(delim+1);
       delim = Ranges.find_first_of("|");
-      ymax = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      ymax = strtod(Ranges.substr(0, delim).c_str(), NULL);
       cout << " ymax=" << ymax;
     }
+
+    XID = GetID(df, X_Variable);
+    if (XID < 0) {
+      cout << "ID not found for X axis parameter " << X_Variable << endl;
+    }
+
+    delim = Y_Variables.find_first_of("|");
+    IDs.clear();
+    if (delim != string::npos) {
+      while (delim != string::npos) {
+        delim = Y_Variables.find_first_of("|");
+        id = GetID(df, Y_Variables.substr(0, delim));
+        if (id >= 0) {
+          IDs.push_back(id);
+        } else {
+          cerr << "ID not found for " << Y_Variables.substr(0, delim) << endl;
+        }
+        Y_Variables = Y_Variables.substr(delim+1);
+      }
+    } else {
+      id = GetID(df, Y_Variables.substr(0, delim));
+      if (id >= 0) {
+        IDs.push_back(id);
+      } else {
+        cerr << "ID not found for " << Y_Variables.substr(0, delim) << endl;
+      }
+    }
     
-    
-    
+    plot(df, Title, X_Axis_Caption, Y_Axis_Caption, XID, IDs);
   }
+  outfile << "</HTML>" << endl;
+  outfile.close();
+}
+
+/* ****************************************** */
+
+void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs)
+{
+  df.SetStartIdx(0);
+  df.SetEndIdx(df.GetNumRecords()-1);
+
+  metafl("PNG");
+  setpag("da4l");
+
+  disini(); // Initialization
+
+  pagera(); // Set Plot Parameters
+//  hwfont();
+  helve();
+  shdcha();
+  chncrv("color");
+
+  axspos(450,1800); // Set plot axis system
+  axslen(2200,1200);
+
+  int thisplot; // Set plot titles
+  int numtraces = IDs.size();
+
+  name((char*)xTitle.c_str(),"x");
+  name((char*)yTitle.c_str(),"y");
+  labdig(3,"xy");
+  ticks(10,"xy");
+  titlin((char*)Title.c_str(),1);
+
+  string subtitle = "";
+  for (thisplot=0; thisplot < numtraces; thisplot++) {
+    if (thisplot == 0) subtitle = df.names[IDs[thisplot]];
+    else               subtitle = subtitle + ", " + df.names[IDs[thisplot]];
+  }
+
+  subtitle = subtitle + string(" vs. ") + xTitle;
+  titlin((char*)(subtitle.c_str()),3);
+
+// Plot data
+
+  float *timarray = new float[df.GetEndIdx()-df.GetStartIdx()+1];
+
+  for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
+    timarray[pti] = df.Data[pt][0];
+  }
+
+  float axismax = df.GetAutoAxisMax(IDs[XID]);
+  float axismin = df.GetAutoAxisMin(IDs[XID]);
+
+  for (thisplot=1; thisplot < numtraces; thisplot++) {
+    axismax = axismax > df.GetAutoAxisMax(IDs[thisplot]) ? axismax : df.GetAutoAxisMax(IDs[thisplot]);
+    axismin = axismin < df.GetAutoAxisMin(IDs[thisplot]) ? axismin : df.GetAutoAxisMin(IDs[thisplot]);
+  }
+  
+  float spread = axismax - axismin;
+
+  if      (spread < 1.0)   labdig(3,"y");
+  else if (spread < 10.0)  labdig(2,"y");
+  else if (spread < 100.0) labdig(1,"y");
+  else                      labdig(0,"y");
+
+  if (spread > 1000.0) {
+    labdig(2,"y");
+    labels("fexp","y");
+  } else {
+    labels("float","y");
+  }
+
+  if (autoscale) {
+    xmin = df.Data[df.GetStartIdx()][0];
+    xmax = df.Data[df.GetEndIdx()][0];
+    ymin = axismin;
+    ymax = axismax;
+  }
+
+  spread = xmax - xmin;
+
+  if      (spread < 1.0)   labdig(3,"x");
+  else if (spread < 10.0)  labdig(2,"x");
+  else if (spread < 100.0) labdig(1,"x");
+  else                      labdig(0,"x");
+
+  float fac = ((int)(spread + 0.5))/10.00;
+  
+  if (spread > 1000.0) labels("fexp","x");
+  else                 labels("float","x");
+
+  graf( xmin, xmax, xmin, fac, ymin, ymax, ymin, (ymax - ymin)/10.0);
+
+  title();
+  color("blue");
+  grid(1,1);
+
+  for (thisplot=0; thisplot < numtraces; thisplot++) {
+    float *datarray = new float[df.GetEndIdx()-df.GetStartIdx()+1];
+    for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
+      datarray[pti] = df.Data[pt][IDs[thisplot]];
+    }
+    color("red");
+    curve(timarray,datarray,df.GetEndIdx()-df.GetStartIdx()+1);
+    delete[] datarray;
+  }
+
+  size_t namelen = 0;
+  for (unsigned int i=0; i<df.names.size();i++) {
+    namelen = namelen > df.names[i].size() ? namelen : df.names[i].size();
+  }
+  
+  char legendtext[numtraces*(namelen)];
+  color("blue");
+  legini(legendtext, numtraces, namelen);
+  legtit("Legend");
+  for (thisplot=0; thisplot < numtraces; thisplot++) {
+    leglin(legendtext, (char*)df.names[IDs[thisplot]].c_str(), thisplot+1);
+  }
+  legend(legendtext, 3);
+
+  outfile << "<A HREF=" << getfil() << ">" << endl;
+  outfile << "<H3><B>" << Title << "</B></A><BR>" << endl;
+  outfile << "<BLOCKQUOTE>" << endl;
+  outfile << "<H4>" << yTitle << " vs. " << xTitle << "<BR>" << endl;
+  outfile << "X Axis Min: " << xmin << " Max: " << xmax << "<BR>" << endl;
+  outfile << "Y Axis Min: " << ymin << " Max: " << ymax << "</H4>" << endl;
+  outfile << "</BLOCKQUOTE>" << endl;
+
+  disfin();
 }
 
