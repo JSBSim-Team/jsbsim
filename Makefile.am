@@ -4,7 +4,8 @@ SUBDIRS = \
 	filtersjb \
 	scripts \
 	tools \
-	utilities
+	simgear \
+  utilities
 
 INCLUDES = \
 	-Wall
@@ -17,7 +18,8 @@ JSBSim_SOURCES = \
 
 JSBSim_LDADD = \
 	$(top_srcdir)/libJSBSim.a \
-	$(top_srcdir)/filtersjb/libFCSComponents.a
+	$(top_srcdir)/filtersjb/libFCSComponents.a \
+  $(top_srcdir)/simgear/libProperties.a
 
 lib_LIBRARIES = libJSBSim.a
 
@@ -107,10 +109,12 @@ libJSBSim_a_SOURCES = \
 	FGTurboShaft.cpp \
 	FGTurboShaft.h \
 	FGUtility.cpp \
-	FGUtility.h
+	FGUtility.h \
+  FGPropertyManager.h
 
 libJSBSim_a_LIBADD = \
-	filtersjb/libFCSComponents.a
+	filtersjb/libFCSComponents.a \
+  simgear/libProperties.a
 
 EXTRA_DIST = \
 	autogen.sh

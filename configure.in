@@ -34,4 +34,5 @@ filtersjb/Makefile
 scripts/Makefile
 tools/Makefile
 utilities/Makefile
+simgear/Makefile
 ])
