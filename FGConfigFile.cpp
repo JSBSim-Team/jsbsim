@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.24 2001/11/10 18:36:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.25 2001/11/10 18:44:20 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ string FGConfigFile::GetNextConfigLine(void)
 
     if (CommentsOn) CommentString += CurrentLine + "\r\n";
 
-  } while (IsCommentLine());
+  } while (CommentsOn);
 
   if (CurrentLine.length() == 0) GetNextConfigLine();
   CurrentIndex = 0;
@@ -176,16 +176,6 @@ string FGConfigFile::GetValue(string val)
 string FGConfigFile::GetValue(void)
 {
   return GetValue("");
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGConfigFile::IsCommentLine(void)
-{
-  if (CurrentLine[0] == '/' && CurrentLine[1] == '/') return true;
-  if (CommentsOn) return true;
-
-  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
