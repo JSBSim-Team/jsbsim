@@ -71,7 +71,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.38 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.39 2001/08/10 12:21:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,6 +83,7 @@ class FGRotation;
 class FGAtmosphere;
 class FGOutput;
 class FGPosition;
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -92,36 +93,114 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+/** Encapsulates the calculation of aircraft state.
+    @author Jon S. Berndt
+    @version $Id: FGState.h,v 1.39 2001/08/10 12:21:07 jberndt Exp $
+*/
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFDMExec;
-
 class FGState {
 public:
-  FGState(FGFDMExec*);
-  ~FGState();
-
   enum {ePhi=1, eTht, ePsi};
   enum {eP=1, eQ, eR};
   enum {eU=1, eV, eW};
   enum {eDrag=1, eSide, eLift};
 
-  bool Reset(string, string, string);
-  void Initialize(float, float, float, float, float, float, float, float, float);
-  void Initialize(FGInitialCondition *FGIC);
-  bool StoreData(string);
+  /** Constructor
+      @param Executive a pointer to the parent executive object */
+  FGState(FGFDMExec*);
+  /// Destructor
+  ~FGState();
 
+  /** Specifies the Reset file to use.
+      The reset file normally resides in the same directory as an aircraft config file.
+      it includes the following information:
+      <ul>
+      <li>U, the body X-Axis velocity</li>
+      <li>V, the body Y-Axis velocity</li>
+      <li>W, the body Z-Axis velocity</li>
+      <li>Latitude measured in radians from the equator, negative values are south.</li>
+      <li>Longitude, measured in radians from the Greenwich meridian, negative values are west.</li>
+      <li>Phi, the roll angle in radians.</li>
+      <li>Theta, the pitch attitude in radians.</li>
+      <li>Psi, the heading angle in radians.</li>
+      <li>H, the altitude in feet</li>
+      <li>Wind Direction, the direction the wind is coming <u>from</u>.</li>
+      <li>Wind magnitude, the wind speed in fps.</li>
+      </ul>
+      @param path the path string leading to the specific aircraft file, i.e. "aircraft".
+      @param aircraft the name of the aircraft, i.e. "c172".
+      @param filename the name of the reset file without an extension, i.e. "reset00".
+      @return true if successful, false if the file could not be opened.
+      */
+  bool Reset(string path, string aircraft, string filename);
+
+  /** Initializes the simulation state based on the passed-in parameters.
+      @param U the body X-Axis velocity in fps.
+      @param V the body Y-Axis velocity in fps.
+      @param W the body Z-Axis velocity in fps.
+      @param lat latitude measured in radians from the equator, negative values are south.
+      @param lon longitude, measured in radians from the Greenwich meridian, negative values are west.
+      @param phi the roll angle in radians.
+      @param tht the pitch angle in radians.
+      @param psi the heading angle in radians measured clockwise from north.
+      @param h altitude in feet.
+      @param windir direction the wind is coming from, in degrees measured clockwise from north.
+      @param winmag magnitude of the wind (the wind speed) in feet per second.
+      */
+  void Initialize(float U,
+                  float V,
+                  float W,
+                  float lat,
+                  float lon,
+                  float phi,
+                  float tht,
+                  float psi,
+                  float h,
+                  float windir,
+                  float winmag);
+
+  /** Initializes the simulation state based on parameters from an Initial Conditions object.
+      @param FGIC pointer to an initial conditions object.
+      @see FGInitialConditions.
+      */
+  void Initialize(FGInitialCondition *FGIC);
+
+  /** Stores state data in the supplied file name.
+      @param filename the file to store the data in.
+      @return true if successful.
+      */
+  bool StoreData(string filename);
+
+  /// returns the speed of sound in feet per second.
   inline float Geta(void) { return a; }
 
+  /// Returns the simulation time in seconds.
   inline float Getsim_time(void) { return sim_time; }
+  /// Returns the simulation delta T.
   inline float Getdt(void) { return dt; }
 
+  /// Suspends the simulation and sets the delta T to zero.
   inline void Suspend(void) {saved_dt = dt; dt = 0.0;}
+  /// Resumes the simulation by resetting delta T to the correct value.
   inline void Resume(void)  {dt = saved_dt;}
 
+  /** Retrieves a parameter.
+      The parameters that can be retrieved are enumerated in FGDefs.h.
+      @param val_idx one of the enumerated JSBSim parameters.
+      @return the value of the parameter.
+      */
   float GetParameter(eParam val_idx);
+
+  /** Retrieves a parameter.
+      The parameters that can be retrieved are enumerated in FGDefs.h.
+      @param val_string a string representing one of the enumerated JSBSim parameters,
+             i.e. "FG_QBAR".
+      @return the value of the parameter.
+      */
   float GetParameter(string val_string);
   eParam GetParameterIndex(string val_string);
 

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.67 2001/07/29 22:15:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.68 2001/08/10 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -343,11 +343,13 @@ void FGState::SetParameter(eParam val_idx, float val) {
 // Reset: Assume all angles READ FROM FILE IN DEGREES !!
 //
 
-bool FGState::Reset(string path, string acname, string fname) {
+bool FGState::Reset(string path, string acname, string fname)
+{
   string resetDef;
   float U, V, W;
   float phi, tht, psi;
   float latitude, longitude, h;
+  float wdir, wmag;
 
   resetDef = path + "/" + acname + "/" + fname + ".xml";
 
@@ -367,6 +369,8 @@ bool FGState::Reset(string path, string acname, string fname) {
     resetfile >> tht;
     resetfile >> psi;
     resetfile >> h;
+    resetfile >> wdir;
+    resetfile >> wmag;
     resetfile.close();
 
     Position->SetLatitude(latitude*DEGTORAD);
@@ -374,7 +378,7 @@ bool FGState::Reset(string path, string acname, string fname) {
     Position->Seth(h);
 
     Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
-               latitude*DEGTORAD, longitude*DEGTORAD, h);
+               latitude*DEGTORAD, longitude*DEGTORAD, h, wdir, wmag);
 
     return true;
   } else {
@@ -390,7 +394,8 @@ bool FGState::Reset(string path, string acname, string fname) {
 
 void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
-                         float Latitude, float Longitude, float H)
+                         float Latitude, float Longitude, float H,
+                         float wdir, float wmag)
 {
   float alpha, beta;
   float qbar, Vt;
@@ -454,10 +459,9 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   Position->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
   Position->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() + 
                                              FGIC->GetTerrainAltitudeFtIC() );
-  
-  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h);
-                                           
 
+  // need to fix the wind speed args, here.  
+  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, 0, 0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.55 2001/08/07 13:00:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.56 2001/08/10 12:21:07 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -590,7 +590,7 @@ bool FGFDMExec::LoadScript(string script)
 	  exit(-1);
   }
   if ( ! State->Reset("aircraft", aircraft, initialize))
-                 State->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
+                 State->Initialize(2000,0,0,0,0,0,0.5,0.5,40000,0,0);
 
   return true;
 }
