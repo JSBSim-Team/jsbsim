@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.16 2001/03/20 16:10:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.17 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 extern short debug_lvl;

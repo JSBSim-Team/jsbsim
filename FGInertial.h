@@ -56,13 +56,12 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
-#define ID_INERTIAL "$Header"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.9 2001/03/22 14:10:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-const char *Id_Inertial = "JSBSim $Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.h,v 1.8 2001/03/20 16:10:48 jberndt Exp $";
 
 class FGInertial : public FGModel {
 

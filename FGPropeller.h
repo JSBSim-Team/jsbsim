@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.11 2001/03/20 16:11:06 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable

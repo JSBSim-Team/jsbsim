@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboJet.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboJet.cpp,v 1.14 2001/03/20 16:11:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboJet.cpp,v 1.15 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_TURBOJET;
 
 extern short debug_lvl;

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.20 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.21 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 extern short debug_lvl;

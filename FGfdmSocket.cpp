@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGfdmSocket.cpp,v 1.9 2001/03/20 16:11:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.10 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 extern short debug_lvl;

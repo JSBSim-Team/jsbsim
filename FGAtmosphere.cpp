@@ -59,7 +59,7 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.cpp,v 1.15 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.16 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 extern short debug_lvl;

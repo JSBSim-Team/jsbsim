@@ -39,7 +39,7 @@ INCLUDES
 #include "FGTable.h"
 #include <iomanip>
 
-static const char *IdSrc = "$Id";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.9 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 extern short debug_lvl;

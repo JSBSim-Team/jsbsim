@@ -47,7 +47,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.11 2001/03/20 16:10:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.12 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 extern short debug_lvl;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.cpp,v 1.8 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.9 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 extern short debug_lvl;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.9 2001/02/04 13:16:13 jsb Exp $
+// $Id: FGControls.h,v 1.10 2001/03/22 14:10:24 jberndt Exp $
 // (Log is kept at end of this file)
 
 
@@ -29,7 +29,7 @@
 # error This library requires C++
 #endif                                   
 
-#define ID_CONTROLS "$Header"
+#define ID_CONTROLS "$Id"
 
 // Define a structure containing the control parameters
 
@@ -178,6 +178,9 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.10  2001/03/22 14:10:24  jberndt
+// Fixed ID comment
+//
 // Revision 1.9  2001/02/04 13:16:13  jsb
 // ** JSB ** Got rid of extra carriage return in code
 //

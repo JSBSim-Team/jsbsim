@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMassBalance.cpp,v 1.8 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.9 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 extern short debug_lvl;

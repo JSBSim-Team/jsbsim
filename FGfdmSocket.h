@@ -74,7 +74,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id:"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
 
 using std::cout;
 using std::endl;

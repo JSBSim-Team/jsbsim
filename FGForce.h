@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Header"
+#define ID_FORCE "$Id: FGForce.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGMatrix.h"

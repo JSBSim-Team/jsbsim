@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRocket.cpp,v 1.18 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.19 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 extern short debug_lvl;

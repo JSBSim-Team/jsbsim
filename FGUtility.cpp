@@ -57,7 +57,7 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGUtility.cpp,v 1.11 2001/03/20 16:11:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGUtility.cpp,v 1.12 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_UTILITY;
 
 extern short debug_lvl;

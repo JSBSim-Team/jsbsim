@@ -18,13 +18,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.cpp,v 1.6 2001/02/04 13:16:13 jsb Exp $
+// $Id: FGControls.cpp,v 1.7 2001/03/22 14:10:24 jberndt Exp $
 // (Log is kept at end of this file)
 
 
 #include "FGControls.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGControls.cpp,v 1.6 2001/02/04 13:16:13 jsb Exp $";
+static const char *IdSrc = "$Id: FGControls.cpp,v 1.7 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = "ID_CONTROLS";
 
 FGControls controls;
@@ -53,6 +53,9 @@ FGControls::~FGControls() {
 
 
 // $Log: FGControls.cpp,v $
+// Revision 1.7  2001/03/22 14:10:24  jberndt
+// Fixed ID comment
+//
 // Revision 1.6  2001/02/04 13:16:13  jsb
 // ** JSB ** Got rid of extra carriage return in code
 //

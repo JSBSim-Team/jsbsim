@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGMatrix.cpp,v 1.23 2001/03/20 16:10:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix.cpp,v 1.24 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX;
 
 extern short debug_lvl;

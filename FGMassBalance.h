@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGModel.h"
 
-#define ID_MASSBALANCE "$Header"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.9 2001/03/22 14:10:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

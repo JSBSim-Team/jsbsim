@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Header"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.16 2001/03/22 14:10:24 jberndt Exp $"
 
 using std::string;
 using std::ifstream;
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.15 2001/03/20 16:10:48 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.16 2001/03/22 14:10:24 jberndt Exp $
     @see -
 */
 

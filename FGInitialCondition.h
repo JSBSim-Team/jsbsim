@@ -53,7 +53,7 @@ INCLUDES
 #include "FGAtmosphere.h"
 #include "FGMatrix.h"
 
-#define ID_INITIALCONDITION "$Header"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.26 2001/03/22 14:10:24 jberndt Exp $"
 
 /*******************************************************************************
 CLASS DECLARATION

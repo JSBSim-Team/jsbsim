@@ -52,7 +52,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.31 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.32 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 extern short debug_lvl;

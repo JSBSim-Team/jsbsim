@@ -78,7 +78,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPosition.cpp,v 1.33 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.34 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 extern short debug_lvl;

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Header"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.21 2001/03/22 14:10:24 jberndt Exp $"
 
 using std::string;
 using std::ostream;

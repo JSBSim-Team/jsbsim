@@ -51,7 +51,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-#define ID_TRIMAXIS "$Header"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.12 2001/03/22 14:10:24 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 

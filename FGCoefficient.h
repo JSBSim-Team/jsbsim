@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Header"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.25 2001/03/22 14:10:24 jberndt Exp $"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.24 2001/03/20 16:10:48 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.25 2001/03/22 14:10:24 jberndt Exp $
     @see -
 */
 

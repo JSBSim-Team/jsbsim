@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.cpp,v 1.6 2001/03/19 23:53:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.7 2001/03/22 14:10:24 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
