@@ -1,10 +1,3 @@
-// FGPropertyManager.h
-// Class wrapper for property handling.
-// based on FlightGear source src/Main/fg_props.hxx 
-// Originally written by David Megginson, started 2000.
-//
-// This file is in the Public Domain, and comes with no warranty.
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  
  Header:       FGPropertyManager.h
@@ -48,7 +41,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGPropertyManager.h,v 1.6 2002/03/21 13:25:49 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGPropertyManager.h,v 1.7 2002/03/21 13:29:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
