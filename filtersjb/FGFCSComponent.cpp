@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.28 2002/09/22 18:15:10 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.29 2002/09/24 11:33:48 apeden Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +62,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 
 FGFCSComponent::~FGFCSComponent()
 {
+  unbind();
   Debug(1);
 }
 
@@ -121,7 +122,19 @@ void FGFCSComponent::bind(FGPropertyManager *node) {
   node->Tie("output-value",this,&FGFCSComponent::GetOutput);
   node->SetString("type",Type);
 }  
-  
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCSComponent::unbind(void) { 
+  string name = "fcs";
+  FGPropertyManager *node=PropertyManager->GetNode(name);
+  node->Untie( PropertyManager->mkPropertyName(Name, true) );
+  name += "/components" 
+                 + PropertyManager->mkPropertyName(Name, true); 
+  node= PropertyManager->GetNode(name);
+  node->Untie("output-value");
+}
+                
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.33 2002/09/22 18:15:11 apeden Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.34 2002/09/24 11:33:48 apeden Exp $"
 
 using std::string;
 
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.33 2002/09/22 18:15:11 apeden Exp $
+    @version $Id: FGFCSComponent.h,v 1.34 2002/09/24 11:33:48 apeden Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -109,7 +109,7 @@ public:
   virtual double GetOutputPct(void) const { return 0; }
   
   virtual void bind(FGPropertyManager *node);
-  
+  virtual void unbind( void );
   FGPropertyManager* resolveSymbol(string token);
   
 protected:
