@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.117 2002/04/11 17:08:47 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.118 2002/05/03 11:57:21 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -57,12 +57,6 @@
 #include <FDM/JSBSim/FGLGear.h>
 #include <FDM/JSBSim/FGPropertyManager.h>
 #include "JSBSim.hxx"
-
-static inline double
-FMAX (double a, double b)
-{
-  return a > b ? a : b;
-}
 
 
 /******************************************************************************/
@@ -132,12 +126,12 @@ FGJSBsim::FGJSBsim( double dt )
     
     init_gear();
 
-				// Set initial fuel levels if provided.
+                // Set initial fuel levels if provided.
     for (unsigned int i = 0; i < Propulsion->GetNumTanks(); i++) {
       SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
       if (node->getChild("level-gal_us", 0, false) != 0)
-	Propulsion->GetTank(i)
-	  ->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
+    Propulsion->GetTank(i)
+      ->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
     }
     
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
@@ -198,9 +192,34 @@ void FGJSBsim::init() {
     // Explicitly call the superclass's
     // init method first.
     common_init();
+    
+    int i;
+    ntanks = Propulsion->GetNumTanks();
+    tanks = new PROP_NODE_PTR [ntanks];
+    for (i = 0; i < ntanks; i++) {
+        tanks[i] = fgGetNode("/consumables/fuel/tank", i, true);
+    }
+    
+    nengines = Propulsion->GetNumEngines();
+    engines = new engine_props [nengines];
+
+    for (i = 0; i < nengines; i++) {
+        SGPropertyNode *eng = fgGetNode("engines/engine", i);
+        engines[i].mp_osi = eng->getNode("mp-osi");
+        engines[i].egt_degf = eng->getNode("egt-degf");
+        engines[i].fuel_flow_gph = eng->getNode("fuel-flow-gph");
+        engines[i].cht_degf = eng->getNode("cht-degf");
+        engines[i].oil_temperature_degf = eng->getNode("oil-temperature-degf");
+        engines[i].oil_pressure_psi = eng->getNode("oil-pressure-psi");
+        engines[i].running = eng->getNode("running");
+        engines[i].cranking = eng->getNode("cranking");
+        engines[i].rpm = eng->getNode("rpm");
+    }
+    
     copy_to_JSBsim();
 
     fdmex->RunIC(fgic); //loop JSBSim once w/o integrating
+    
     copy_from_JSBsim(); //update the bus
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Initialized JSBSim with:" );
@@ -265,13 +284,9 @@ FGJSBsim::update( int multiloop ) {
 
     int i;
 
-    // double save_alt = 0.0;
-
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
-    
-
     
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
@@ -323,36 +338,31 @@ FGJSBsim::update( int multiloop ) {
 
 bool FGJSBsim::copy_to_JSBsim() {
     unsigned int i;
-
+    
     // copy control positions into the JSBsim structure
 
-    FCS->SetDaCmd( globals->get_controls()->get_aileron());
-    FCS->SetRollTrimCmd( globals->get_controls()->get_aileron_trim() );
-    FCS->SetDeCmd( globals->get_controls()->get_elevator());
-    FCS->SetPitchTrimCmd( globals->get_controls()->get_elevator_trim() );
-    FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
-    FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
-    FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
+    FGControls *controls = globals->get_controls();
+    FCS->SetDaCmd( controls->get_aileron());
+    FCS->SetRollTrimCmd( controls->get_aileron_trim() );
+    FCS->SetDeCmd( controls->get_elevator());
+    FCS->SetPitchTrimCmd( controls->get_elevator_trim() );
+    FCS->SetDrCmd( -controls->get_rudder() );
+    FCS->SetYawTrimCmd( -controls->get_rudder_trim() );
+    FCS->SetDfCmd(  controls->get_flaps() );
     FCS->SetDsbCmd( 0.0 ); //speedbrakes
     FCS->SetDspCmd( 0.0 ); //spoilers
-
-				// Parking brake sets minimum braking
-				// level for mains.
-    double parking_brake = globals->get_controls()->get_parking_brake();
-    FCS->SetLBrake(FMAX(globals->get_controls()->get_brake(0), parking_brake));
-    FCS->SetRBrake(FMAX(globals->get_controls()->get_brake(1), parking_brake));
-    FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
-
-    FCS->SetGearCmd( globals->get_controls()->get_gear_down());
-    for (i = 0; i < Propulsion->GetNumEngines(); i++) {
+    FCS->SetLBrake( controls->get_brake( 0 ) );
+    FCS->SetRBrake( controls->get_brake( 1 ) );
+    FCS->SetCBrake( controls->get_brake( 2 ) );
+    FCS->SetGearCmd( controls->get_gear_down());
+    for (i = 0; i < nengines; i++) {
       FGEngine * eng = Propulsion->GetEngine(i);
-      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
-      FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
-      FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
-      FCS->SetPropAdvanceCmd(i, globals->get_controls()->get_prop_advance(i));
-      Propulsion->GetThruster(i)->SetRPM(node->getDoubleValue("rpm"));
-      eng->SetMagnetos( globals->get_controls()->get_magnetos(i) );
-      eng->SetStarter( globals->get_controls()->get_starter(i) );
+      FCS->SetThrottleCmd(i, controls->get_throttle(i));
+      FCS->SetMixtureCmd(i, controls->get_mixture(i));
+      FCS->SetPropAdvanceCmd(i, controls->get_prop_advance(i));
+      Propulsion->GetThruster(i)->SetRPM(engines[i].rpm->getDoubleValue());
+      eng->SetMagnetos( controls->get_magnetos(i) );
+      eng->SetStarter( controls->get_starter(i) );
     }
 
     _set_Runway_altitude( scenery.get_cur_elev() * SG_METER_TO_FEET );
@@ -366,16 +376,9 @@ bool FGJSBsim::copy_to_JSBsim() {
     Atmosphere->SetWindNED(get_V_north_airmass(),
                            get_V_east_airmass(),
                            get_V_down_airmass());
-//    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
-//                  << get_V_north_airmass() << ", "
-//                  << get_V_east_airmass()  << ", "
-//                  << get_V_down_airmass() );
 
-    for (i = 0; i < Propulsion->GetNumTanks(); i++) {
-      SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
-      FGTank * tank = Propulsion->GetTank(i);
-      tank->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
-//       tank->SetContents(node->getDoubleValue("level-lb"));
+    for (i = 0; i < ntanks; i++) {
+        Propulsion->GetTank(i)->SetContents(tanks[i]->getDoubleValue("level-gal_us") * 6.6);
     }
 
     return true;
@@ -456,8 +459,8 @@ bool FGJSBsim::copy_from_JSBsim() {
 
     // Positions
     _updateGeocentricPosition( Position->GetLatitude(),
-			       Position->GetLongitude(),
-			       Position->Geth() );
+                   Position->GetLongitude(),
+                   Position->Geth() );
 
     _set_Altitude_AGL( Position->GetDistanceAGL() );
 
@@ -483,48 +486,44 @@ bool FGJSBsim::copy_from_JSBsim() {
         }
     }
 
-				// Copy the engine values from JSBSim.
-    for( i=0; i < Propulsion->GetNumEngines(); i++ ) {
-      SGPropertyNode * node = fgGetNode("engines/engine", i, true);
+                // Copy the engine values from JSBSim.
+    for( i=0; i < nengines; i++ ) {
       FGEngine * eng = Propulsion->GetEngine(i);
-      FGThruster * thrust = Propulsion->GetThruster(i);
-
-      node->setDoubleValue("mp-osi", eng->getManifoldPressure_inHg());
-      node->setDoubleValue("rpm", thrust->GetRPM());
-      node->setDoubleValue("egt-degf", eng->getExhaustGasTemp_degF());
-      node->setDoubleValue("fuel-flow-gph", eng->getFuelFlow_gph());
-      node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
-      node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
-      node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
-      node->setBoolValue("running", eng->GetRunning());
-      node->setBoolValue("cranking", eng->GetCranking());
+      if(engines[i].mp_osi)
+          engines[i].mp_osi->setDoubleValue( eng->getManifoldPressure_inHg());
+      if(engines[i].egt_degf)
+          engines[i].egt_degf->setDoubleValue( eng->getExhaustGasTemp_degF());
+      if(engines[i].fuel_flow_gph)
+          engines[i].fuel_flow_gph->setDoubleValue( eng->getFuelFlow_gph());
+      if(engines[i].cht_degf)
+          engines[i].cht_degf->setDoubleValue( eng->getCylinderHeadTemp_degF());
+      if(engines[i].oil_temperature_degf)
+          engines[i].oil_temperature_degf->setDoubleValue( eng->getOilTemp_degF());
+      if(engines[i].oil_pressure_psi)
+          engines[i].oil_pressure_psi->setDoubleValue( eng->getOilPressure_psi());
+      if(engines[i].running)
+          engines[i].running->setBoolValue( eng->GetRunning());
+      if(engines[i].cranking)
+          engines[i].cranking->setBoolValue( eng->GetCranking());
+      if(engines[i].rpm)
+          engines[i].rpm->setDoubleValue( Propulsion->GetThruster(i)->GetRPM());
     }
 
-    static const SGPropertyNode *fuel_freeze
-	= fgGetNode("/sim/freeze/fuel");
+    static const SGPropertyNode
+	*fuel_freeze = fgGetNode("/sim/freeze/fuel");
 
-				// Copy the fuel levels from JSBSim if fuel
-				// freeze not enabled.
+                // Copy the fuel levels from JSBSim if fuel
+                // freeze not enabled.
     if ( ! fuel_freeze->getBoolValue() ) {
-	for (i = 0; i < Propulsion->GetNumTanks(); i++) {
-	    SGPropertyNode * node
-		= fgGetNode("/consumables/fuel/tank", i, true);
-	    double contents = Propulsion->GetTank(i)->GetContents();
-	    node->setDoubleValue("level-gal_us", contents/6.6);
-	    // node->setDoubleValue("level-lb", contents);
-	}
+		for (i = 0; i < ntanks; i++) {
+			double contents = Propulsion->GetTank(i)->GetContents();
+			tanks[i]->setDoubleValue("level-gal_us", contents/6.6);
+		}
     }
 
     update_gear();
     
     stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
-    
-    /* elevator_pos_deg->setDoubleValue( FCS->GetDePos()*SG_RADIANS_TO_DEGREES );
-    left_aileron_pos_deg->setDoubleValue( FCS->GetDaLPos()*SG_RADIANS_TO_DEGREES );
-    right_aileron_pos_deg->setDoubleValue( FCS->GetDaRPos()*SG_RADIANS_TO_DEGREES );
-    rudder_pos_deg->setDoubleValue( -1*FCS->GetDrPos()*SG_RADIANS_TO_DEGREES );
-    flap_pos_deg->setDoubleValue( FCS->GetDfPos() ); */
-
     
     elevator_pos_pct->setDoubleValue( FCS->GetDePos(ofNorm) );
     left_aileron_pos_pct->setDoubleValue( FCS->GetDaLPos(ofNorm) );
@@ -729,11 +728,11 @@ void FGJSBsim::init_gear(void ) {
     for (int i=0;i<Ngear;i++) {
       SGPropertyNode * node = fgGetNode("gear/gear", i, true);
       node->setDoubleValue("xoffset-in",
-			   gr->GetGearUnit(i)->GetBodyLocation()(1));
+               gr->GetGearUnit(i)->GetBodyLocation()(1));
       node->setDoubleValue("yoffset-in",
-			   gr->GetGearUnit(i)->GetBodyLocation()(2));
+               gr->GetGearUnit(i)->GetBodyLocation()(2));
       node->setDoubleValue("zoffset-in",
-			   gr->GetGearUnit(i)->GetBodyLocation()(3));
+               gr->GetGearUnit(i)->GetBodyLocation()(3));
       node->setBoolValue("wow", gr->GetGearUnit(i)->GetWOW());
       node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", FCS->GetGearPos());
@@ -741,15 +740,24 @@ void FGJSBsim::init_gear(void ) {
 }
 
 void FGJSBsim::update_gear(void) {
-    
+
+    static myNode *nodes;
+    static int been_here = 0;
     FGGroundReactions* gr=fdmex->GetGroundReactions();
     int Ngear=GroundReactions->GetNumGearUnits();
-    for (int i=0;i<Ngear;i++) {
-      SGPropertyNode * node = fgGetNode("gear/gear", i, true);
-      node->getChild("wow", 0, true)
-	->setBoolValue(gr->GetGearUnit(i)->GetWOW());
-      node->getChild("position-norm", 0, true)
-	->setDoubleValue(FCS->GetGearPos());
+    int i;
+    if( !been_here ) {
+        nodes = new myNode[Ngear];
+        for (i=0;i<Ngear;i++) {
+            SGPropertyNode * node = fgGetNode("gear/gear", i, true);
+            nodes[i][0] = node -> getChild("wow", 0, true);
+            nodes[i][1] = node -> getChild("position-norm", 0, true);
+        }
+        been_here = ~been_here;
+    }
+    for (i=0;i<Ngear;i++) {
+        nodes[i][0] -> setBoolValue(gr->GetGearUnit(i)->GetWOW());
+        nodes[i][1] -> setDoubleValue(FCS->GetGearPos());
     }  
 }
 
@@ -775,13 +783,14 @@ void FGJSBsim::do_trim(void) {
         aileron_trim->setDoubleValue( FCS->GetDaCmd() );
         rudder_trim->setDoubleValue( FCS->GetDrCmd() );
 
-        globals->get_controls()->set_elevator_trim(FCS->GetPitchTrimCmd());
-        globals->get_controls()->set_elevator(FCS->GetDeCmd());
-        globals->get_controls()->set_throttle(FGControls::ALL_ENGINES,
-                                              FCS->GetThrottleCmd(0));
+        FGControls *controls = globals->get_controls();
+        controls->set_elevator_trim(FCS->GetPitchTrimCmd());
+        controls->set_elevator(FCS->GetDeCmd());
+        controls->set_throttle(FGControls::ALL_ENGINES,
+                               FCS->GetThrottleCmd(0));
 
-        globals->get_controls()->set_aileron(FCS->GetDaCmd());
-        globals->get_controls()->set_rudder( FCS->GetDrCmd());
+        controls->set_aileron(FCS->GetDaCmd());
+        controls->set_rudder( FCS->GetDrCmd());
     
         SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
 }          
