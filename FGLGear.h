@@ -105,6 +105,7 @@ private:
   float statFCoeff, rollFCoeff, skidFCoeff;
   float frictionForce, compForce;
   float brakePct, brakeForce, brakeCoeff;
+  float maxCompLen;
   double SinkRate;
   double GroundSpeed;
   double DistanceTraveled;
