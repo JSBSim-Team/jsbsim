@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.40 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.41 2001/12/17 00:27:56 dmegginson Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.40 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.41 2001/12/17 00:27:56 dmegginson Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -211,6 +211,14 @@ public:
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
   inline double GetPitchTrimCmd(void) { return PTrimCmd; }
+  
+  /** Gets the rudder trim command.
+      @return rudder trim command in radians */
+  inline double GetYawTrimCmd(void) { return YTrimCmd; }
+  
+  /** Gets the aileron trim command.
+      @return aileron trim command in radians */
+  inline double GetRollTrimCmd(void) { return RTrimCmd; }
   
   /** Get the gear extend/retract command. 0 commands gear up, 1 down.
       defaults to down.
@@ -315,6 +323,14 @@ public:
       @param cmd pitch trim command in radians*/
   inline void SetPitchTrimCmd(double cmd) { PTrimCmd = cmd; }
 
+  /** Sets the rudder trim command
+      @param cmd rudder trim command in radians*/
+  inline void SetYawTrimCmd(double cmd) { YTrimCmd = cmd; }
+
+  /** Sets the aileron trim command
+      @param cmd aileron trim command in radians*/
+  inline void SetRollTrimCmd(double cmd) { RTrimCmd = cmd; }
+
   /** Sets the throttle command for the specified engine
       @param engine engine ID number
       @param cmd throttle command in percent (0 - 100)*/
@@ -415,7 +431,7 @@ public:
 private:
   double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
   double DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
-  double PTrimCmd;
+  double PTrimCmd, YTrimCmd, RTrimCmd;
   vector <double> ThrottleCmd;
   vector <double> ThrottlePos;
   vector <double> MixtureCmd;

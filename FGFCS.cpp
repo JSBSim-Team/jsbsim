@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.68 2001/12/12 18:31:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.69 2001/12/17 00:27:56 dmegginson Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,8 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGFCS";
 
-  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = PTrimCmd = 0.0;
+  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
+  PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
