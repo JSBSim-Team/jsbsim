@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.85 2002/04/30 11:23:48 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.86 2002/05/04 02:48:03 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -356,16 +356,6 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
   Run();
   State->Resume();
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFDMExec::TransferState(int idxFDM)
-{
-  SlaveFDMList[idxFDM]->exec->GetRotation()->SetEuler(Rotation->GetEuler());
-  SlaveFDMList[idxFDM]->exec->GetRotation()->SetAeroPQR(Rotation->GetAeroPQR());
-  SlaveFDMList[idxFDM]->exec->GetTranslation()->SetAeroUVW(Translation->GetAeroUVW());
-  SlaveFDMList[idxFDM]->exec->GetRotation()->SetEuler(Rotation->GetEuler());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

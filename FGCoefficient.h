@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.41 2002/04/20 14:06:51 apeden Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.42 2002/05/04 02:48:03 jberndt Exp $"
 
 using std::vector;
 
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.41 2002/04/20 14:06:51 apeden Exp $
+    @version $Id: FGCoefficient.h,v 1.42 2002/05/04 02:48:03 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGCoefficient.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -133,7 +133,6 @@ public:
 
 protected:
   FGFDMExec* FDMExec;
-  
 
 private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
