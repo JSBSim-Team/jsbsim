@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+  MINMP:         minimum manifold pressure in inches Hg
+  MAXMP:         maximum manifold pressure in inches Hg
+  DISPLACEMENT:  total cylinder space (??) in cubic inches
+  MAXHP:         maximum horsepower produced (=BRAKEHORSEPOWER in the old
+                 config)
+  CYCLES:        cycles/power stroke
+  IDLERPM:       minimum RPM when the engine is running
+  MAXTHROTTLE:   maximum throttle setting (as before)
+  MINTHROTTLE:   minimum throttle setting (as before)
+  SLFUELFLOWMAX: maximum fuel flow (as before; units unknown)
+-->
+<FG_PISTON NAME="IO470D">
+  MINMP             6.5
+  MAXMP            28.5
+  DISPLACEMENT    470.0
+  MAXHP           260.0
+  CYCLES            2.0
+  IDLERPM         900.0
+  MAXTHROTTLE       1.0
+  MINTHROTTLE       0.2
+  SLFUELFLOWMAX     8.7
+</FG_PISTON>
+
