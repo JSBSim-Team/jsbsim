@@ -102,9 +102,7 @@ public:
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt;}
   void SetDistanceAGL(double tt);
   inline void SetRunwayNormal(double fgx, double fgy, double fgz ) {
-    vRunwayNormal(1)=fgx;
-    vRunwayNormal(2)=fgy;
-    vRunwayNormal(3)=fgz;
+      vRunwayNormal << fgx << fgy << fgz;
   }
   
   bool Run(void);

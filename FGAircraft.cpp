@@ -154,7 +154,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex),
 
   GearUp = false;
   
-  alphaclmin=alphaclmax=0;
+  alphaclmin = alphaclmax = 0;
 
   numTanks = numEngines = numSelectedFuelTanks = numSelectedOxiTanks = 0;
 }
@@ -222,7 +222,7 @@ bool FGAircraft::Run(void) {
     FMGear();
     FMMass();
 
-    nlf=vFs(eZ)/Weight;
+    nlf = vFs(eZ)/Weight;
   } else {                               // skip Run() execution this time
   }
 
@@ -341,6 +341,7 @@ void FGAircraft::FMAero(void) {
 
   vAeroBodyForces = State->GetTs2b(alpha, beta)*vFs;
   vForces += vAeroBodyForces;
+
   // The d*cg distances below, given in inches, are the distances FROM the c.g.
   // TO the reference point. Since the c.g. and ref point are given in inches in
   // the structural system (X positive rearwards) and the body coordinate system
@@ -365,10 +366,10 @@ void FGAircraft::FMAero(void) {
 /******************************************************************************/
 
 void FGAircraft::FMGear(void) {
+
   if (GearUp) {
     // crash routine
-  }
-  else {
+  } else {
     for (unsigned int i=0;i<lGear.size();i++) {
       vForces  += lGear[i]->Force();
       vMoments += lGear[i]->Moment();
@@ -442,26 +443,17 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg) {
         cout << "    EmptyWeight: " << EmptyWeight  << endl;
     } else if (parameter == "AC_CGLOC") {
         *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
-        cout << "    Xcg: " << vbaseXYZcg(eX) 
-             << " Ycg: " << vbaseXYZcg(eY)
-             << " Zcg: " << vbaseXYZcg(eZ)
-             << endl;
+        cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
     } else if (parameter == "AC_EYEPTLOC") {
         *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
-        cout << "    Xep: " << vXYZep(eX) 
-             << " Yep: " << vXYZep(eY)
-             << " Zep: " << vXYZep(eZ)
-             << endl;
+        cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
     } else if (parameter == "AC_AERORP") {
         *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
-        cout << "    Xrp: " << vXYZrp(eX) 
-             << " Yrp: " << vXYZrp(eY)
-             << " Zrp: " << vXYZrp(eZ)
-             << endl;
+        cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
     } else if (parameter == "AC_ALPHALIMITS") {
         *AC_cfg >> alphaclmin >> alphaclmax;
         cout << "    Maximum Alpha: " << alphaclmax
-             << " Minimum Alpha: " << alphaclmin 
+             << "    Minimum Alpha: " << alphaclmin 
              << endl;
     }         
   }

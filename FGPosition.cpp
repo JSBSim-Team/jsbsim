@@ -89,7 +89,8 @@ extern double globalSeaLevelRadius;
 FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
     vUVW(3),
     vVel(3),
-    vVelDot(3)
+    vVelDot(3),
+    vRunwayNormal(3)
 {
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
@@ -101,6 +102,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   Radius         = SeaLevelRadius + h;
   RunwayRadius   = SeaLevelRadius;
   DistanceAGL    = Radius - RunwayRadius;  // Geocentric
+  vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
 }
 
 /******************************************************************************/
