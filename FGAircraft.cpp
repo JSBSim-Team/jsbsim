@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.136 2004/10/03 13:48:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.137 2004/10/04 05:35:20 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,9 +159,11 @@ bool FGAircraft::Load(Element* el)
 {
   string token = "";
   string parameter;
+  string element_name;
   double EW, bixx, biyy, bizz, bixy, bixz, biyz;
   double pmWt, pmX, pmY, pmZ;
   FGColumnVector3 vbaseXYZcg;
+  Element* element;
 
   bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
 
@@ -173,44 +175,44 @@ bool FGAircraft::Load(Element* el)
   HTailArm = el->FindElementValueAsNumberConvertTo("HTAILARM", "FT");
   VTailArea = el->FindElementValueAsNumberConvertTo("VTAILAREA", "FT2");
   VTailArm = el->FindElementValueAsNumberConvertTo("VTAILARM", "FT");
+
   bixx = el->FindElementValueAsNumberConvertTo("IXX", "SLUG*FT2");
   biyy = el->FindElementValueAsNumberConvertTo("IYY", "SLUG*FT2");
   bizz = el->FindElementValueAsNumberConvertTo("IZZ", "SLUG*FT2");
   bixy = el->FindElementValueAsNumberConvertTo("IXY", "SLUG*FT2");
   bixz = el->FindElementValueAsNumberConvertTo("IXZ", "SLUG*FT2");
   biyz = el->FindElementValueAsNumberConvertTo("IYZ", "SLUG*FT2");
-  EW   = el->FindElementValueAsNumberConvertTo("EMPTYWT", "LBS");
-
-  // Find all LOCATION elements that descend from this METRICS branch of the
-  // config file. This would be CG location, eyepoint, etc.
-  Element* location_element = el->FindElement("LOCATION");
-  while (location_element) {
-    string location_name = location_element->GetAttributeValue("NAME");
-
-    if (location_name == "CG") vbaseXYZcg.InitMatrix(location_element, "IN");
-    else if (location_name == "AERORP") vXYZrp.InitMatrix(location_element, "IN");
-    else if (location_name == "EYEPOINT") vXYZep.InitMatrix(location_element, "IN");
-    else if (location_name == "VRP") vXYZvrp.InitMatrix(location_element, "IN");
-
-    location_element = el->FindNextElement("LOCATION");
-  }
-
-  MassBalance->SetBaseCG(vbaseXYZcg);
-
-/*
-  while ((token = AC_cfg->GetValue()) != string("/METRICS")) {
-    } else if (parameter == "AC_POINTMASS") {
-      *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
-      MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);
-      if (debug_lvl > 0) cout << "    Point Mass Object: " << pmWt << " lbs. at "
-                         << "X, Y, Z (in.): " << pmX << "  " << pmY << "  " << pmZ
-                         << endl;
-    }
-  }
-
   MassBalance->SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  -bixz,
                                                     -bixy,  biyy,  -biyz,
                                                     -bixz,  -biyz,  bizz ));
+
+  EW   = el->FindElementValueAsNumberConvertTo("EMPTYWT", "LBS");
+  MassBalance->SetEmptyWeight(EW);
+
+  // Find all LOCATION elements that descend from this METRICS branch of the
+  // config file. This would be CG location, eyepoint, etc.
+
+  element = el->FindElement("LOCATION");
+  while (element) {
+    element_name = element->GetAttributeValue("NAME");
+
+    if (element_name == "CG") vbaseXYZcg.InitMatrix(element, "IN");
+    else if (element_name == "AERORP") vXYZrp.InitMatrix(element, "IN");
+    else if (element_name == "EYEPOINT") vXYZep.InitMatrix(element, "IN");
+    else if (element_name == "VRP") vXYZvrp.InitMatrix(element, "IN");
+
+    element = el->FindNextElement("LOCATION");
+  }
+  MassBalance->SetBaseCG(vbaseXYZcg);
+
+// Find all POINTMASS elements that descend from this METRICS branch of the
+// config file.
+
+  element = el->FindElement("POINTMASS");
+  while (element) {
+    MassBalance->AddPointMass(element);
+    element = el->FindNextElement("POINTMASS");
+  }
 
   // calculate some derived parameters
   if (cbar != 0.0) {
@@ -221,7 +223,7 @@ bool FGAircraft::Load(Element* el)
       vbarv = VTailArm*VTailArea / (cbar*WingArea);
     }
   }
-*/
+
   return true;
 }
 
