@@ -116,7 +116,7 @@ bool FGTranslation::Run(void) {
 
     vUVWdot = mVel*vPQR + vForces/Mass;
 
-    vNcg=vUVWdot*INVGRAVITY;
+    vNcg = vUVWdot * INVGRAVITY;
 
     vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot) + vWindUVW;
 
@@ -131,7 +131,6 @@ bool FGTranslation::Run(void) {
     qbar = 0.5*rho*Vt*Vt;
 
     Mach = Vt / State->Geta();
-
 
     vlastUVWdot = vUVWdot;
 
@@ -151,10 +150,8 @@ void FGTranslation::GetState(void) {
   Mass = Aircraft->GetMass();
   rho = Atmosphere->GetDensity();
 
-
   vEuler = Rotation->GetEuler();
 
   vWindUVW = Atmosphere->GetWindUVW();
-
 }
 

@@ -55,7 +55,6 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
-  Translation = Exec->GetTranslation();
   
   WOW = false;
 }
@@ -90,8 +89,8 @@ FGColumnVector FGLGear::Force(void)
 
     WOW = true;
 
-    vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec + Translation->GetUVW());
-    compressSpeed = vWhlVelVec(eZ);
+    vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
+    compressSpeed = vWhlVelVec(eZ) + Position->GetVd();
 
     vLocalForce(eZ) = min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
 

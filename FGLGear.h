@@ -75,7 +75,6 @@ CLASS DECLARATION
 class FGAircraft;
 class FGPosition;
 class FGRotation;
-class FGTranslation;
 
 class FGLGear
 {
@@ -108,13 +107,11 @@ private:
   FGAircraft*    Aircraft;
   FGPosition*    Position;
   FGRotation*    Rotation;
-  FGTranslation* Translation;
 };
 
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGRotation.h"
-#include "FGTranslation.h"
 
 /******************************************************************************/
 #endif
