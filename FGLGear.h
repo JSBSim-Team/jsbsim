@@ -78,14 +78,14 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 [5] Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
 	   1982 ISBN 0-471-08936-2
 
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.19 2000/10/21 04:51:07 jsb Exp $
+    @version $Id: FGLGear.h,v 1.20 2000/10/21 15:18:02 jsb Exp $
     @see -
 */
 
