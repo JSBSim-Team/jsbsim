@@ -74,9 +74,9 @@ INCLUDES
 FGRotation::FGRotation(FGFDMExec* fdmex) : FGModel(fdmex),
         vPQR(3),
         vPQRdot(3),
+        vMoments(3),
         vEuler(3),
-        vEulerRates(3),
-        vMoments(3)
+        vEulerRates(3)
 {
     Name = "FGRotation";
     cTht=cPhi=cPsi=1.0;
