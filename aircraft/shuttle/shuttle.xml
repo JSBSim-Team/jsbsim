@@ -1,10 +1,9 @@
-<FDM_CONFIG NAME="Space Shuttle" VERSION="1.40">
+<FDM_CONFIG NAME="Space Shuttle" VERSION="1.50">
 
   <!--
-
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.4 2001/07/12 23:47:58 jberndt Exp $
+  CVS Version: $Id: shuttle.xml,v 1.5 2001/10/23 10:58:42 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -20,9 +19,6 @@
 
     Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
     X, Y, Z, in inches
-    
-    The 
-    
     -->
 
     AC_WINGAREA 2690
