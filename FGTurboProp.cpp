@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboProp.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboProp.cpp,v 1.2 2000/11/22 23:49:02 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboProp.cpp,v 1.3 2000/12/04 13:26:24 jsb Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,3 +52,9 @@ FGTurboProp::FGTurboProp(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
   //
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGTurboProp::Calculate(void) {
+  FGEngine::Calculate();
+
+}

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.5 2000/11/22 23:49:02 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTurboShaft.cpp,v 1.6 2000/12/04 13:26:25 jsb Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,3 +52,9 @@ FGTurboShaft::FGTurboShaft(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
   //
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGTurboShaft::Calculate(void) {
+  FGEngine::Calculate();
+
+}

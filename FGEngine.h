@@ -98,7 +98,14 @@ public:
   void SetRunning(bool bb) { Running=bb; }
   void SetName(string name) {Name = name;}
 
-  virtual float Calculate(void) { return 0;}
+  /** Calculates the thrust of the engine, and other engine functions.
+      This base class Calculate() function should be called from within the
+      derived class' Calculate() function before any other calculations are
+      done. This base class method removes fuel from the fuel tanks as
+      appropriate, and sets the starved flag if necessary.
+      @param None
+      @return   */
+  virtual float Calculate(void);
   float CalcFuelNeed(void);
   float CalcOxidizerNeed(void);
   /// Sets engine placement information
@@ -123,6 +130,8 @@ protected:
   bool  Running;
   float PctPower;
   int   EngineNumber;
+
+  vector <int> SourceTanks;
 
   FGFDMExec*      FDMExec;
   FGState*        State;

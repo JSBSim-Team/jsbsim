@@ -51,7 +51,7 @@ INCLUDES
 
 #include "FGEngine.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.18 2000/11/23 04:56:22 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.19 2000/12/04 13:26:24 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,15 +77,41 @@ FGEngine::FGEngine(FGFDMExec* exec) {
   Running = true;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This base class Calculate() function should be called from within the
+// derived class' Calculate() function before any other calculations are done.
+// This base class method removes fuel from the fuel tanks as appropriate,
+// and sets the starved flag if necessary.
+
+float FGEngine::Calculate(void) {
+  int i, numactivetanks=0;
+
+  for (i=0; i<SourceTanks.size(); i++)
+    if (SourceTanks[i]) numactivetanks++;
+
+  for (i=0; i<SourceTanks.size(); i++) {
+    // must differentiate between oxidizer tanks and fuel !!
+    exec->Propulsion->GetTank(i).Reduce(
+  }
+
+  return 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 float FGEngine::CalcFuelNeed(void) {
   FuelNeed = SLFuelFlowMax*PctPower;
   return FuelNeed;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 float FGEngine::CalcOxidizerNeed(void) {
   OxidizerNeed = SLOxiFlowMax*PctPower;
   return OxidizerNeed;
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
   X = x;
