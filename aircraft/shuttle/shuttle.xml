@@ -3,7 +3,7 @@
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.12 2002/09/22 18:06:03 apeden Exp $
+  CVS Version: $Id: shuttle.xml,v 1.13 2003/03/14 15:53:24 jberndt Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -29,8 +29,8 @@
     AC_IZZ      7747582
     AC_IXZ      -140307
     AC_EMPTYWT  231300
-    AC_CGLOC    1074  0    373
-    AC_EYEPTLOC 500  -24   460
+    AC_CGLOC    1080  0    373
+    AC_EYEPTLOC 498  -22   469
     AC_AERORP   1074  0    373
 
   </METRICS>
@@ -53,9 +53,9 @@
     <max steer angle>                Maximum steerable angle in degrees
     -->
 
-    AC_GEAR     NOSE         380    0 -48 150000  10000  0.02  0.5 0.02 STEERABLE NOSE 15 FIXED
-    AC_GEAR     LEFT_WHEEL  1152 -140 160 150000  10000  0.02  0.5 0.02 FIXED LEFT 0 FIXED
-    AC_GEAR     RIGHT_WHEEL 1152  140 210 150000  10000  0.02  0.5 0.02 FIXED RIGHT 0 FIXED
+    AC_GEAR     NOSE         375    0 225 150000  10000  0.02  0.5 0.02 STEERABLE NOSE 15 FIXED
+    AC_GEAR     LEFT_WHEEL  1172 -136 171 150000  10000  0.02  0.5 0.02 FIXED LEFT 0 FIXED
+    AC_GEAR     RIGHT_WHEEL 1172  136 171 150000  10000  0.02  0.5 0.02 FIXED RIGHT 0 FIXED
 
   </UNDERCARRIAGE>
 
