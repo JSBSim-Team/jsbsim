@@ -45,6 +45,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGJSBBase.h"
 #include "FGPropertyManager.h"
+#include "FGXMLParse.h"
 
 #include <vector>
 
@@ -52,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.71 2004/06/27 08:35:32 ehofman Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.72 2004/10/03 13:48:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +99,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.71 2004/06/27 08:35:32 ehofman Exp $
+    @version $Id: FGFDMExec.h,v 1.72 2004/10/03 13:48:48 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -296,14 +297,9 @@ private:
 
   vector <slaveData*> SlaveFDMList;
 
-  bool ReadMetrics(FGConfigFile*);
-  bool ReadSlave(FGConfigFile*);
-  bool ReadPropulsion(FGConfigFile*);
-  bool ReadFlightControls(FGConfigFile*);
-  bool ReadAerodynamics(FGConfigFile*);
-  bool ReadUndercarriage(FGConfigFile*);
-  bool ReadPrologue(FGConfigFile*);
-  bool ReadOutput(FGConfigFile*);
+  bool ReadFileHeader(Element*);
+  bool ReadSlave(Element*);
+  bool ReadPrologue(Element*);
 
   bool Allocate(void);
   bool DeAllocate(void);

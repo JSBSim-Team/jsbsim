@@ -53,14 +53,14 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGConfigFile.h"
+#include "FGXMLElement.h"
 #include "FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.96 2004/02/26 15:03:55 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.97 2004/10/03 13:48:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.96 2004/02/26 15:03:55 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.97 2004/10/03 13:48:48 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -113,9 +113,9 @@ public:
   
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
-      @param AC_cfg a pointer to the config file instance
+      @param el a pointer to the element tree
       @return true if successful */
-  bool Load(FGConfigFile* AC_cfg);
+  bool Load(Element* el);
   
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */

@@ -59,12 +59,13 @@ INCLUDES
 #endif
 
 #include "FGJSBBase.h"
+#include "FGXMLElement.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.27 2004/08/21 17:34:02 frohlich Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.28 2004/10/03 13:48:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +79,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.27 2004/08/21 17:34:02 frohlich Exp $
+    @version $Id: FGColumnVector3.h,v 1.28 2004/10/03 13:48:48 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +90,6 @@ class FGColumnVector3 : public FGJSBBase
 {
 public:
   /** Default initializer.
-
       Create a zero vector.
    */
   FGColumnVector3(void);
@@ -286,6 +286,9 @@ public:
   /** Scale by a 1/scalar.
    */
   FGColumnVector3& operator/=(const double scalar);
+
+  /// Initializes a vector from an XML element.
+  void InitMatrix(Element* el, string native_units = "");
 
   void InitMatrix(void) { data[0] = data[1] = data[2] = 0.0; }
   void InitMatrix(double a) { data[0] = data[1] = data[2] = a; }
