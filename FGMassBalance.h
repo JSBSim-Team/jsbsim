@@ -46,7 +46,7 @@ INCLUDES
 #include "FGPropulsion.h"
 #include <vector>
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.14 2001/12/06 20:56:54 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.15 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -108,7 +108,7 @@ private:
   vector <FGColumnVector3> PointMassLoc;
   vector <double> PointMassWeight;
   FGColumnVector3 PointMassCG;
-  void Debug(void);
+  void Debug(int from);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

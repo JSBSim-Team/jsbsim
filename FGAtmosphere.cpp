@@ -60,7 +60,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.31 2001/12/06 20:56:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.32 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +145,7 @@ bool FGAtmosphere::Run(void)
 
     State->Seta(soundspeed);
 
-    if (debug_lvl > 1) Debug();
+    if (debug_lvl > 1) Debug(1);
 
   } else {                               // skip Run() execution this time
   }
@@ -292,7 +292,7 @@ void FGAtmosphere::Turbulence(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAtmosphere::Debug(void)
+void FGAtmosphere::Debug(int from)
 {
   if (frame == 0) {
     cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "

@@ -55,7 +55,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.23 2001/12/06 20:56:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.24 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,7 +213,7 @@ void FGAuxiliary::GetState(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAuxiliary::Debug(void)
+void FGAuxiliary::Debug(int from)
 {
     //TODO: Add your source code here
 }

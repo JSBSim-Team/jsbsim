@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.14 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.15 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ bool FGDeadBand::Run(void )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGDeadBand::Debug(void)
+void FGDeadBand::Debug(int from)
 {
     //TODO: Add your source code here
 }

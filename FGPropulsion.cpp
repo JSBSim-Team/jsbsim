@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.63 2001/12/08 22:54:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.64 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -545,7 +545,7 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGPropulsion::Debug(void)
+void FGPropulsion::Debug(int from)
 {
     //TODO: Add your source code here
 }

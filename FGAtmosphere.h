@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.26 2001/11/28 00:20:18 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.26 2001/11/28 00:20:18 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $
 */
 
 /******************************************************************************
@@ -176,7 +176,7 @@ private:
 
   void Calculate(double altitude);
   void Turbulence(void);
-  void Debug(void);
+  void Debug(int from);
 };
 
 /******************************************************************************/

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.11 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.12 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@ double FGRotor::Calculate(double PowerAvailable)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGRotor::Debug(void)
+void FGRotor::Debug(int from)
 {
     //TODO: Add your source code here
 }

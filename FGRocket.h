@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.20 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.20 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGRocket.h,v 1.21 2001/12/10 23:34:58 jberndt Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce
@@ -129,7 +129,7 @@ private:
   double kFactor;
   double Variance;
   double PC;
-  void Debug(void);
+  void Debug(int from);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

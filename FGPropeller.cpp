@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.45 2001/12/10 13:25:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.46 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,7 +257,7 @@ FGColumnVector3 FGPropeller::GetPFactor()
 //    16: When set various parameters are sanity checked and
 //       a message is printed out when they go out of bounds
 
-void FGPropeller::Debug(void)
+void FGPropeller::Debug(int from)
 {
   if (debug_lvl & 16) { // Sanity checking
   }

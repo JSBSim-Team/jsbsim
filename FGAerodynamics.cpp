@@ -40,7 +40,7 @@ INCLUDES
 #include "FGFactorGroup.h"
 #include "FGCoefficient.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.26 2001/12/06 20:56:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.27 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,7 +203,7 @@ double FGAerodynamics::GetLoD(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAerodynamics::Debug(void)
+void FGAerodynamics::Debug(int from)
 {
     //TODO: Add your source code here
 }

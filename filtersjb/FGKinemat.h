@@ -60,7 +60,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.1 2001/12/02 16:02:09 apeden Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.2 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -82,7 +82,7 @@ private:
   double OutputPos;
   bool  InTransit;
 
-  void Debug(void);
+  void Debug(int from);
 };
 
 #endif

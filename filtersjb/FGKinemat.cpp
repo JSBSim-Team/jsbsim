@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.2 2001/12/09 15:26:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.3 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,7 +177,7 @@ bool FGKinemat::Run(void ) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGKinemat::Debug(void)
+void FGKinemat::Debug(int from)
 {
     //TODO: Add your source code here
 }

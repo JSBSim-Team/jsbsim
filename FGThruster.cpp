@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.14 2001/12/04 13:08:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.15 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,7 @@ FGThruster::~FGThruster()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGThruster::Debug(void)
+void FGThruster::Debug(int from)
 {
     //TODO: Add your source code here
 }

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.46 2001/11/30 16:32:15 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.47 2001/12/10 23:34:58 jberndt Exp $"
 
 using std::string;
 
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.46 2001/11/30 16:32:15 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.47 2001/12/10 23:34:58 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,7 +234,7 @@ protected:
   FGOutput*       Output;
 
   vector <int> SourceTanks;
-  void Debug(void);
+  void Debug(int from);
 };
 
 #include "FGState.h"

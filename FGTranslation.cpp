@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.35 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.36 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,7 +150,7 @@ bool FGTranslation::Run(void)
 
     vlastUVWdot = vUVWdot;
 
-    if (debug_lvl > 1) Debug();
+    if (debug_lvl > 1) Debug(1);
 
     return false;
   } else {
@@ -160,7 +160,7 @@ bool FGTranslation::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTranslation::Debug(void)
+void FGTranslation::Debug(int from)
 {
   if (debug_lvl & 16) { // Sanity check variables
     if (fabs(vUVW(eU)) > 1e6)

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSwitch.h"
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.12 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.13 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@ bool FGSwitch::Run(void )
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGSwitch::Debug(void)
+void FGSwitch::Debug(int from)
 {
     //TODO: Add your source code here
 }

@@ -48,7 +48,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GRADIENT "$Id: FGGradient.h,v 1.10 2001/03/22 17:58:19 jberndt Exp $"
+#define ID_GRADIENT "$Id: FGGradient.h,v 1.11 2001/12/10 23:34:58 jberndt Exp $"
 
 class FGFCS;
 
@@ -66,7 +66,7 @@ public:
 
 private:
   FGConfigFile* AC_cfg;
-  void Debug(void);
+  void Debug(int from);
 };
 
 #endif

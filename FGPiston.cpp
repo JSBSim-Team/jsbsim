@@ -41,16 +41,14 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.39 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.40 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
-  : FGEngine(exec),
-  //these must be initialized this way as they are declared const
+FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   CONVERT_CUBIC_INCHES_TO_METERS_CUBED(1.638706e-5),
   R_air(287.3),
   rho_fuel(800),                 // estimate
@@ -58,16 +56,14 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   Cp_air(1005),
   Cp_fuel(1700)
 {
-  
   string token;
 
-  MinManifoldPressure_inHg=6.5;
-  MaxManifoldPressure_inHg=28.5;
-  Displacement=360;
-  MaxHP=200;
-  Cycles=2;
-  IdleRPM=600;
-  // Set constants
+  MinManifoldPressure_inHg = 6.5;
+  MaxManifoldPressure_inHg = 28.5;
+  Displacement = 360;
+  MaxHP = 200;
+  Cycles = 2;
+  IdleRPM = 600;
 
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
@@ -85,23 +81,10 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
     else cerr << "Unhandled token in Engine config file: " << token << endl;
   }
 
-  if (debug_lvl > 0) {
-    cout << "\n    Engine Name: " << Name << endl;
-    cout << "      MinManifoldPressure: " << MinManifoldPressure_inHg << endl;
-    cout << "      MaxManifoldPressure: " << MaxManifoldPressure_inHg << endl;
-    cout << "      Displacement: " << Displacement << endl;
-    cout << "      MaxHP: " << MaxHP << endl;
-    cout << "      Cycles: " << Cycles << endl;
-    cout << "      IdleRPM: " << IdleRPM << endl;
-    cout << "      MaxThrottle: " << MaxThrottle << endl;
-    cout << "      MinThrottle: " << MinThrottle << endl;
-    cout << "      SLFuelFlowMax: " << SLFuelFlowMax << endl;
-  }
-
   Type = etPiston;
   crank_counter = 0;
-  EngineNumber = 0;    // FIXME: this should be the actual number
-  OilTemp_degK = 298;  // FIXME: should be initialized in FGEngine
+  EngineNumber = 0;
+  OilTemp_degK = 298;
 
   dt = State->Getdt();
 
@@ -123,11 +106,6 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   *Lookup_Combustion_Efficiency << 1.60 << 0.525;
   *Lookup_Combustion_Efficiency << 2.00 << 0.345;
 
-  cout << endl;
-  cout << "      Combustion Efficiency table:" << endl;
-  Lookup_Combustion_Efficiency->Print();
-  cout << endl;
-
   Power_Mixture_Correlation = new FGTable(13);
   *Power_Mixture_Correlation << (14.7/1.6) << 78.0;
   *Power_Mixture_Correlation << 10 <<  86.0;
@@ -143,27 +121,21 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
   *Power_Mixture_Correlation << 20 <<  74.0;
   *Power_Mixture_Correlation << (14.7/0.6) << 58;
 
-  cout << endl;
-  cout << "      Power Mixture Correlation table:" << endl;
-  Power_Mixture_Correlation->Print();
-  cout << endl;
-
-  if (debug_lvl & 2) cout << "Instantiated: FGPiston" << endl;
+  if (debug_lvl > 0) Debug(0); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGPiston::~FGPiston()
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGPiston" << endl;
+  if (debug_lvl > 0) Debug(1); // Call Debug() routine from constructor if needed
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGPiston::Calculate(double PowerRequired)
 {
-
-        // FIXME: calculate from actual fuel flow
+  // FIXME: calculate from actual fuel flow
   ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
@@ -357,10 +329,10 @@ void FGPiston::doFuelFlow(void)
 /**
  * Calculate the power produced by the engine.
  *
- * <p>Currently, the JSBSim propellor model does not allow the
+ * Currently, the JSBSim propellor model does not allow the
  * engine to produce enough RPMs to get up to a high horsepower.
  * When tested with sufficient RPM, it has no trouble reaching
- * 200HP.</p>
+ * 200HP.
  *
  * Inputs: ManifoldPressure_inHg, p_amb, p_amb_sea_level, RPM, T_amb, 
  *   equivalence_ratio, Cycles, MaxHP
@@ -522,9 +494,62 @@ void FGPiston::doOilPressure(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
 
-void FGPiston::Debug(void)
+void FGPiston::Debug(int from)
 {
-  //TODO: Add your source code here
+  if (debug_lvl & 1 ) { // Standard console startup message output
+    if (from == 0) { // Constructor
+
+      cout << "\n    Engine Name: "         << Name << endl;
+      cout << "      MinManifoldPressure: " << MinManifoldPressure_inHg << endl;
+      cout << "      MaxManifoldPressure: " << MaxManifoldPressure_inHg << endl;
+      cout << "      Displacement: "        << Displacement             << endl;
+      cout << "      MaxHP: "               << MaxHP                    << endl;
+      cout << "      Cycles: "              << Cycles                   << endl;
+      cout << "      IdleRPM: "             << IdleRPM                  << endl;
+      cout << "      MaxThrottle: "         << MaxThrottle              << endl;
+      cout << "      MinThrottle: "         << MinThrottle              << endl;
+      cout << "      SLFuelFlowMax: "       << SLFuelFlowMax            << endl;
+
+      cout << endl;
+      cout << "      Combustion Efficiency table:" << endl;
+      Lookup_Combustion_Efficiency->Print();
+      cout << endl;
+
+      cout << endl;
+      cout << "      Power Mixture Correlation table:" << endl;
+      Power_Mixture_Correlation->Print();
+      cout << endl;
+
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGPiston" << endl;
+    if (from == 1) cout << "Destroyed:    FGPiston" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
 }
 

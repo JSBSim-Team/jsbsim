@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.11 2001/12/01 17:58:41 apeden Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.12 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,13 +124,13 @@ double FGFactorGroup::TotalValue(void) {
   }
   totalsum *= FGCoefficient::TotalValue();
   SDtotal *= FGCoefficient::GetSD();
-  if (debug_lvl & 8) Debug();
+  if (debug_lvl & 8) Debug(1);
   return totalsum;
 }        
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void FGFactorGroup::Debug(void)
+void FGFactorGroup::Debug(int from)
 {
   cout << "FGCoefficient::GetSD(): " << FGCoefficient::GetSD() << endl;
   cout << "FGFactorGroup::SDtotal: " << SDtotal << endl;

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.20 2001/12/07 21:50:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.21 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +195,7 @@ string FGGroundReactions::GetGroundReactionValues(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGGroundReactions::Debug(void)
+void FGGroundReactions::Debug(int from)
 {
     //TODO: Add your source code here
 }

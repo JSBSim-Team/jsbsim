@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.34 2001/12/04 04:49:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.35 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -318,7 +318,7 @@ void FGConfigFile::ResetLineIndexToZero(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGConfigFile::Debug(void)
+void FGConfigFile::Debug(int from)
 {
     //TODO: Add your source code here
 }

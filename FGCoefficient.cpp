@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.43 2001/11/20 21:25:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.44 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,7 +249,7 @@ void FGCoefficient::DumpSD(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGCoefficient::Debug(void)
+void FGCoefficient::Debug(int from)
 {
     //TODO: Add your source code here
 }

@@ -20,7 +20,7 @@ INCLUDES
 
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.12 2001/12/06 20:56:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.13 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,7 +285,7 @@ FGColumnVector3& FGColumnVector3::operator<<(const double ff)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGColumnVector3::Debug(void)
+void FGColumnVector3::Debug(int from)
 {
     //TODO: Add your source code here
 }

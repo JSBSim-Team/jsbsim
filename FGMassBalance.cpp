@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.17 2001/12/07 00:45:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.18 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,7 @@ bool FGMassBalance::Run(void)
     Ixy = baseIxy + Propulsion->GetTanksIxy(vXYZcg) + GetPMIxy();
     Ixz = baseIxz + Propulsion->GetTanksIxz(vXYZcg) + GetPMIxz();
 
-    if (debug_lvl > 1) Debug();
+    if (debug_lvl > 1) Debug(1);
 
     return false;
   } else {
@@ -187,7 +187,7 @@ double FGMassBalance::GetPMIxz(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMassBalance::Debug(void)
+void FGMassBalance::Debug(int from)
 {
   if (debug_lvl & 16) { // Sanity check variables
     if (EmptyWeight <= 0.0 || EmptyWeight > 1e9)

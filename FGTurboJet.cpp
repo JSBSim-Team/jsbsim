@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboJet.h"
 
-static const char *IdSrc = "$Id: FGTurboJet.cpp,v 1.17 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboJet.cpp,v 1.18 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_TURBOJET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ double FGTurboJet::Calculate(double dummy)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTurboJet::Debug(void)
+void FGTurboJet::Debug(int from)
 {
     //TODO: Add your source code here
 }

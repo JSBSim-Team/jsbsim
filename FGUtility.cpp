@@ -61,7 +61,7 @@ INCLUDES
 #include "FGState.h"
 #include "FGFDMExec.h"
 
-static const char *IdSrc = "$Id: FGUtility.cpp,v 1.16 2001/09/28 02:33:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGUtility.cpp,v 1.17 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_UTILITY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ FGUtility::~FGUtility()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGUtility::Debug(void)
+void FGUtility::Debug(int from)
 {
 }
 

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.8 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.9 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,7 +128,7 @@ protected:
 private:
   void TransposeSquare(void);
   unsigned int rowCtr, colCtr;
-  void Debug(void);
+  void Debug(int from);
 };
 
 #endif

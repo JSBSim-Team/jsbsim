@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.39 2001/12/04 13:08:17 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.40 2001/12/10 23:34:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.39 2001/12/04 13:08:17 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.40 2001/12/10 23:34:58 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -426,7 +426,7 @@ private:
   double GearCmd,GearPos;
 
   vector <FGFCSComponent*> Components;
-  void Debug(void);
+  void Debug(int from);
 };
 
 #include "FGState.h"

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGTurboShaft.h"
 
-static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.16 2001/11/14 23:53:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboShaft.cpp,v 1.17 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_TURBOSHAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ double FGTurboShaft::Calculate(double dummy) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTurboShaft::Debug(void)
+void FGTurboShaft::Debug(int from)
 {
     //TODO: Add your source code here
 }

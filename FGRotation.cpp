@@ -67,7 +67,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.25 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.26 2001/12/10 23:34:58 jberndt Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ bool FGRotation::Run(void)
 
     vlastPQRdot = vPQRdot;
 
-    if (debug_lvl > 1) Debug();
+    if (debug_lvl > 1) Debug(1);
 
     return false;
   } else {
@@ -151,7 +151,7 @@ void FGRotation::GetState(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGRotation::Debug(void)
+void FGRotation::Debug(int from)
 {
   if (debug_lvl & 16) { // Sanity check variables
     if (fabs(vPQR(eP)) > 100)

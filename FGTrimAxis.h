@@ -52,7 +52,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.15 2001/11/30 12:47:39 apeden Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.16 2001/12/10 23:34:58 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -167,7 +167,7 @@ private:
   
   double computeHmgt(void);
   
-  void Debug(void);
+  void Debug(int from);
 };
 
 #endif
