@@ -389,16 +389,15 @@ void plotdata(DataFile& df, plotXMLVisitor* plotVisitor)
       if (id < 0) {
         cerr << "Item[" << i << "]: " << plotVisitor->vPlots[j].Y_Variables[i] <<
                 " not found in data file" << endl;
-        exit(-1);
       } else {
         IDs.push_back(id);
+        plot(df, plotVisitor->vPlots[j].Title,
+                 plotVisitor->vPlots[j].Axis_Caption[eX],
+                 plotVisitor->vPlots[j].Axis_Caption[eY],
+                 XID, IDs);
       }
     }
 
-    plot(df, plotVisitor->vPlots[j].Title,
-             plotVisitor->vPlots[j].Axis_Caption[eX],
-             plotVisitor->vPlots[j].Axis_Caption[eY],
-             XID, IDs);
   }
   outfile << "  </TABLE></P>" << endl;
   outfile << " </BODY>" << endl;
