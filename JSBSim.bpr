@@ -15,18 +15,18 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = JSBSim.exe
 OBJFILES = JSBSim.obj FGUtility.obj FGAircraft.obj FGAtmosphere.obj FGAuxiliary.obj \
-  FGCoefficient.obj FGConfigFile.obj FGEngine.obj FGFCS.obj FGFDMExec.obj \
-  FGfdmSocket.obj FGForce.obj FGGroundReactions.obj FGInertial.obj \
-  FGInitialCondition.obj FGLGear.obj FGMassBalance.obj FGMatrix.obj FGModel.obj \
-  FGNozzle.obj FGOutput.obj FGPiston.obj FGPosition.obj FGJSBBase.obj \
-  FGPropulsion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGState.obj \
-  FGTable.obj FGTank.obj FGThruster.obj FGTranslation.obj FGTrim.obj \
+  FGCoefficient.obj FGColumnVector3.obj FGColumnVector4.obj FGConfigFile.obj \
+  FGEngine.obj FGFactorGroup.obj FGFCS.obj FGFDMExec.obj FGfdmSocket.obj \
+  FGForce.obj FGGroundReactions.obj FGInertial.obj FGInitialCondition.obj \
+  FGJSBBase.obj FGLGear.obj FGMassBalance.obj FGMatrix33.obj FGModel.obj \
+  FGNozzle.obj FGOutput.obj FGPiston.obj FGPosition.obj FGPropeller.obj \
+  FGPropulsion.obj FGRocket.obj FGRotation.obj FGRotor.obj FGScript.obj \
+  FGState.obj FGTable.obj FGTank.obj FGThruster.obj FGTranslation.obj FGTrim.obj \
   FGTrimAxis.obj FGTurboJet.obj FGTurboProp.obj FGTurboShaft.obj \
   FGAerodynamics.obj filtersjb\FGSwitch.obj filtersjb\FGFCSComponent.obj \
-  filtersjb\FGFilter.obj filtersjb\FGFlaps.obj filtersjb\FGGain.obj \
-  filtersjb\FGGradient.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj \
-  FGPropeller.obj
-RESFILES =
+  filtersjb\FGFilter.obj filtersjb\FGGain.obj filtersjb\FGGradient.obj \
+  filtersjb\FGKinemat.obj filtersjb\FGSummer.obj filtersjb\FGDeadBand.obj
+RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
@@ -48,14 +48,14 @@ RELEASELIBPATH = $(BCB)\lib\release
 SYSDEFINES = _NO_VCL
 USERDEFINES =
 # ---------------------------------------------------------------------------
-CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a1 -5 -k -y -v -vi- -c -tWM \
-  -tWC -D$(SYSDEFINES);$(USERDEFINES)
+CFLAG1 = -Ifiltersjb;$(BCB)\include -Od -w -Tkh30000 -r- -a1 -k -y -v -vi -c -tWM -tWC \
+  -D$(SYSDEFINES);$(USERDEFINES)
 IDLCFLAGS = -src_suffixcpp
-PFLAGS = -Ufiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W \
-  -$O- -v -JPHN -M
+PFLAGS = -Ufiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W -$O- \
+  -v -JPHN -M
 RFLAGS = -ifiltersjb;$(BCB)\include
-AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zi
-LFLAGS = -Lfiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -ap -Tpe -x -Gn -v
+AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd
+LFLAGS = -Lfiltersjb;$(BCB)\lib;$(DEBUGLIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj $(OBJFILES)
 ALLRES = $(RESFILES)
@@ -69,7 +69,7 @@ AutoIncBuild=1
 MajorVer=0
 MinorVer=8
 Release=0
-Build=5
+Build=4
 Debug=0
 PreRelease=0
 Special=0
@@ -81,7 +81,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=Executable (Console)
-FileVersion=0.8.0.5
+FileVersion=0.8.0.4
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -90,37 +90,19 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 
-[HistoryLists\hlIncludePath]
-Count=1
-Item0=filtersjb;$(BCB)\include
-
-[HistoryLists\hlLibraryPath]
-Count=1
-Item0=filtersjb;$(BCB)\lib
-
-[HistoryLists\hlHostApplication]
-Count=1
-Item0=J:\JSBSim\JSBSim.exe
-
-[HistoryLists\hlRunParameters]
-Count=3
-Item0=scripts/c1721.xml
-Item1=scripts/c172.xml
-Item2=c172 reset00
-
 [Debugging]
 DebugSourceDirs=
 
 [Parameters]
-RunParams=scripts/c1721.xml
-HostApplication=J:\JSBSim\JSBSim.exe
+RunParams=
+HostApplication=
 RemoteHost=
 RemotePath=
 RemoteDebug=0
 
 [Compiler]
 InMemoryExe=0
-ShowInfoMsgs=0
+ShowInfoMsgs=1
 
 !endif
 

@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.23 2002/01/19 16:27:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.24 2002/01/31 21:17:11 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,7 +211,12 @@ void FGTable::Print(void)
   if (Type == tt1D) startRow = 1;
   else startRow = 0;
 
+#if defined (sgi) && !defined(__GNUC__)
   unsigned long flags = cout.setf(ios::fixed);
+#else
+  ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream
+#endif
+
   cout.precision(4);
 
   for (int r=startRow; r<=nRows; r++) {
