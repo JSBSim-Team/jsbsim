@@ -3,30 +3,30 @@
  Header:       FGGFCS.h
  Author:       Jon S. Berndt
  Date started: 12/12/98
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 12/12/98   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.60 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.61 2004/04/06 03:54:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,63 +81,60 @@ CLASS DOCUMENTATION
     or command and ends at an effector, e.g. an aerosurface. The FCS components
     which comprise the control laws for an axis are defined sequentially in
     the configuration file. For instance, for the X-15:
-    
+
     <pre>
-    &lt FLIGHT_CONTROL NAME="X-15 SAS"&gt
+    \<FLIGHT_CONTROL NAME="X-15 SAS">
 
-    &lt COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER"&gt
-      ID            0
-      INPUT        FG_ELEVATOR_CMD
-      INPUT        FG_PITCH_TRIM_CMD
-      CLIPTO       -1 1
-    &lt/COMPONENT&gt
+    \<COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
+       INPUT        fcs/elevator-cmd-norm
+       INPUT        fcs/pitch-trim-cmd-norm
+       CLIPTO       -1 1
+    \</COMPONENT>
 
-    &lt COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE"&gt
-      ID           1
-      INPUT        0
+    \<COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+      INPUT        fcs/pitch-trim-sum
       MIN         -50
       MAX          50
-    &lt/COMPONENT&gt
+    \</COMPONENT>
 
-    &lt COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN"&gt
-      ID           2
-      INPUT        1
+    \<COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
+      INPUT        fcs/pitch-command-scale
       GAIN         -0.36
-    &lt/COMPONENT&gt
-
-    &lt COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN"&gt
-      ID           3
-      INPUT        2
-      GAIN         0.017
-      SCHEDULED_BY FG_ELEVATOR_POS
-      -0.35  -6.0
-      -0.17  -3.0
-       0.00  -2.0
-       0.09  -3.0
-       0.17  -5.0
-       0.60 -12.0
-    &lt/COMPONENT&gt
+    \</COMPONENT>
 
     ... etc.
     </pre>
-    
+
     In the above case we can see the first few components of the pitch channel
     defined. The input to the first component, as can be seen in the "Pitch trim
     sum" component, is really the sum of two parameters: elevator command (from
     the stick - a pilot input), and pitch trim. The type of this component is
-    "Summer". Its ID is 0 - the ID is used by other components to reference it.
+    "Summer".
     The next component created is an aerosurface scale component - a type of
     gain (see the LoadFCS() method for insight on how the various types of
-    components map into the actual component classes). You can see the input of
-    the "Pitch Command Scale" component takes "0" as input. When a number is
-    specified as an input, it refers to the ID of another FCS component. In this
-    case, ID 0 refers to the previously defined and discussed "Pitch Trim Sum"
-    component. This continues until the final component for an axis when the
+    components map into the actual component classes).  This continues until the
+    final component for an axis when the
     OUTPUT keyword specifies where the output is supposed to go. See the
     individual components for more information on how they are mechanized.
-    
+
+    Another option for the flight controls portion of the config file is that in
+    addition to using the "NAME" attribute in,
+
+    \<pre>
+    \<FLIGHT_CONTROL NAME="X-15 SAS">
+    \</pre>
+
+    one can also supply a filename:
+
+    \<pre>
+    \<FLIGHT_CONTROL NAME="X-15 SAS" FILE="X15.xml">
+    \</FLIGHT_CONTROL>
+    \</pre>
+
+    In this case, the FCS would be read in from another file.
+
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.60 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.61 2004/04/06 03:54:03 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -170,7 +167,7 @@ public:
   /** Gets the aileron command.
       @return aileron command in percent */
   inline double GetDaCmd(void) const { return DaCmd; }
-  
+
   /** Gets the elevator command.
       @return elevator command in percent */
   inline double GetDeCmd(void) const { return DeCmd; }
@@ -209,19 +206,19 @@ public:
   /** Gets the pitch trim command.
       @return pitch trim command in percent */
   inline double GetPitchTrimCmd(void) const { return PTrimCmd; }
-  
+
   /** Gets the rudder trim command.
       @return rudder trim command in percent */
   inline double GetYawTrimCmd(void) const { return YTrimCmd; }
-  
+
   /** Gets the aileron trim command.
       @return aileron trim command in percent */
   inline double GetRollTrimCmd(void) const { return RTrimCmd; }
-  
+
   /** Get the gear extend/retract command. 0 commands gear up, 1 down.
       defaults to down.
       @return the current value of the gear extend/retract command*/
-  inline double GetGearCmd(void) const { return GearCmd; }    
+  inline double GetGearCmd(void) const { return GearCmd; }
   //@}
 
   /// @name AUTOPilot -> FCS effectors command retrieval
@@ -229,7 +226,7 @@ public:
   /** Gets the AUTOPilot aileron command.
       @return aileron command in radians */
   inline double GetAPDaCmd(void) const { return AP_DaCmd; }
-  
+
   /** Gets the AUTOPilot elevator command.
       @return elevator command in radians */
   inline double GetAPDeCmd(void) const { return AP_DeCmd; }
@@ -237,7 +234,7 @@ public:
   /** Gets the AUTOPilot rudder command.
       @return rudder command in radians */
   inline double GetAPDrCmd(void) const { return AP_DrCmd; }
-  
+
   /** Gets the AUTOPilot throttle (all engines) command.
       @return throttle command in percent */
   inline double GetAPThrottleCmd(void) const { return AP_ThrottleCmd; }
@@ -283,19 +280,19 @@ public:
   /** Turns on/off the attitude-seeking autopilot.
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPAcquireAttitude(bool set) {APAcquireAttitude = set;}
-  
+
   /** Turns on/off the altitude-seeking autopilot.
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPAcquireAltitude(bool set) {APAcquireAltitude = set;}
-  
+
   /** Turns on/off the heading-seeking autopilot.
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPAcquireHeading(bool set) {APAcquireHeading = set;}
-  
+
   /** Turns on/off the airspeed-seeking autopilot.
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPAcquireAirspeed(bool set) {APAcquireAirspeed = set;}
-  
+
   /** Turns on/off the attitude-holding autopilot.
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPAttitudeHold(bool set) {APAttitudeHold = set;}
@@ -316,7 +313,7 @@ public:
       @param set true turns the mode on, false turns it off  **/
   inline void SetAPWingsLevelHold(bool set) {APWingsLevelHold = set;}
   //@}
-  
+
   /// @name AUTOPilot mode retrieval
   //@{
   /** Retrieves the on/off mode of the autopilot AcquireAttitude mode
@@ -360,41 +357,41 @@ public:
   //@{
   /** Gets the left aileron position.
       @return aileron position in radians */
-  inline double GetDaLPos( int form = ofRad ) 
+  inline double GetDaLPos( int form = ofRad )
                          const { return DaLPos[form]; }
 
   /// @name Aerosurface position retrieval
   //@{
   /** Gets the right aileron position.
       @return aileron position in radians */
-  inline double GetDaRPos( int form = ofRad ) 
+  inline double GetDaRPos( int form = ofRad )
                          const { return DaRPos[form]; }
 
   /** Gets the elevator position.
       @return elevator position in radians */
-  inline double GetDePos( int form = ofRad ) 
+  inline double GetDePos( int form = ofRad )
                          const { return DePos[form]; }
- 
+
   /** Gets the rudder position.
       @return rudder position in radians */
-  inline double GetDrPos( int form = ofRad ) 
+  inline double GetDrPos( int form = ofRad )
                          const { return DrPos[form]; }
 
   /** Gets the speedbrake position.
       @return speedbrake position in radians */
-  inline double GetDsbPos( int form = ofRad ) 
+  inline double GetDsbPos( int form = ofRad )
                          const { return DsbPos[form]; }
 
   /** Gets the spoiler position.
       @return spoiler position in radians */
-  inline double GetDspPos( int form = ofRad ) 
+  inline double GetDspPos( int form = ofRad )
                          const { return DspPos[form]; }
-  
+
   /** Gets the flaps position.
       @return flaps position in radians */
-  inline double GetDfPos( int form = ofRad ) 
+  inline double GetDfPos( int form = ofRad )
                          const { return DfPos[form]; }
-                         
+
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
@@ -404,10 +401,10 @@ public:
       @param engine engine ID number
       @return mixture position for the given engine in percent ( 0 - 100)*/
   inline double GetMixturePos(int engine) const { return MixturePos[engine]; }
-  
+
   /** Gets the gear position (0 up, 1 down), defaults to down
       @return gear position (0 up, 1 down) */
-  inline double GetGearPos(void) const { return GearPos; }    
+  inline double GetGearPos(void) const { return GearPos; }
 
   /** Gets the prop pitch position.
       @param engine engine ID number
@@ -483,10 +480,10 @@ public:
       @param engine engine ID number
       @param cmd mixture command in percent (0 - 100)*/
   void SetMixtureCmd(int engine, double cmd);
-  
+
   /** Set the gear extend/retract command, defaults to down
       @param gear command 0 for up, 1 for down */
-   void SetGearCmd(double gearcmd) { GearCmd = gearcmd; }   
+   void SetGearCmd(double gearcmd) { GearCmd = gearcmd; }
 
   /** Sets the propeller pitch command for the specified engine
       @param engine engine ID number
@@ -517,39 +514,39 @@ public:
   //@{
   /** Sets the left aileron position
       @param cmd left aileron position in radians*/
-  inline void SetDaLPos( int form , double pos ) 
+  inline void SetDaLPos( int form , double pos )
                                       { DaLPos[form] = pos; }
 
   /** Sets the right aileron position
       @param cmd right aileron position in radians*/
-  inline void SetDaRPos( int form , double pos ) 
+  inline void SetDaRPos( int form , double pos )
                                       { DaRPos[form] = pos; }
 
   /** Sets the elevator position
       @param cmd elevator position in radians*/
-  inline void SetDePos( int form , double pos ) 
+  inline void SetDePos( int form , double pos )
                                       { DePos[form] = pos; }
 
   /** Sets the rudder position
       @param cmd rudder position in radians*/
-  inline void SetDrPos( int form , double pos ) 
+  inline void SetDrPos( int form , double pos )
                                       { DrPos[form] = pos; }
- 
+
    /** Sets the flaps position
       @param cmd flaps position in radians*/
-  inline void SetDfPos( int form , double pos ) 
+  inline void SetDfPos( int form , double pos )
                                       { DfPos[form] = pos; }
-  
+
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
-  inline void SetDsbPos( int form , double pos ) 
+  inline void SetDsbPos( int form , double pos )
                                       { DsbPos[form] = pos; }
 
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
-  inline void SetDspPos( int form , double pos ) 
+  inline void SetDspPos( int form , double pos )
                                       { DspPos[form] = pos; }
- 
+
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
       @param cmd throttle setting in percent (0 - 100)*/
@@ -559,10 +556,10 @@ public:
       @param engine engine ID number
       @param cmd mixture setting in percent (0 - 100)*/
   void SetMixturePos(int engine, double cmd);
-  
+
   /** Set the gear extend/retract position, defaults to down
       @param gear position 0 up, 1 down       */
-   void SetGearPos(double gearpos) { GearPos = gearpos; }   
+   void SetGearPos(double gearpos) { GearPos = gearpos; }
 
 
   /** Sets the actual prop pitch setting for the specified engine
@@ -600,17 +597,17 @@ public:
   bool Load(FGConfigFile* AC_cfg);
 
   void AddThrottle(void);
-  
+
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
-  
+
   void bind(void);
   void bindModel(void);
   void unbind(FGPropertyManager *node);
-  
+
 private:
   double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
   double AP_DaCmd, AP_DeCmd, AP_DrCmd, AP_ThrottleCmd;
-  double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];  
+  double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];
   double DfPos[NForms], DsbPos[NForms], DspPos[NForms];
   double PTrimCmd, YTrimCmd, RTrimCmd;
   vector <double> ThrottleCmd;
