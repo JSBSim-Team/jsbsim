@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.54 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.55 2001/04/24 11:50:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.54 2001/04/17 23:00:31 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.55 2001/04/24 11:50:04 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -177,9 +177,6 @@ public:
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
-  inline FGCoefficient* GetCoeff(int axis, int idx) { return Coeff[axis][idx]; }
-  string GetCoefficientStrings(void);
-  string GetCoefficientValues(void);
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
 
@@ -224,18 +221,8 @@ private:
   string CFGVersion;
   string AircraftName;
 
-  typedef map<string,int> AxisIndex;
-  AxisIndex AxisIdx;
-
-  typedef vector<FGCoefficient*> CoeffArray;
-
-  CoeffArray* Coeff;
-
-  void DisplayCoeffFactors(vector <eParam> multipliers);
-
   bool GearUp;
 
-  string Axis[6];
   vector <FGLGear> lGear;
 
   string AircraftPath;
