@@ -51,6 +51,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGJSBBase.h"
 #include "FGTrim.h"
+#include "FGLGear.h"
 
 #if !defined(__GNUC__)
 #  include <time>
@@ -62,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.88 2004/12/31 19:19:55 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.89 2005/01/04 12:40:51 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -80,6 +81,8 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 void options(int, char**);
+void convert(JSBSim::FGFDMExec* FDMExec);
+bool bConvert;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -197,6 +200,7 @@ int main(int argc, char* argv[])
   LogDirectiveName = "";
   bool result = false;
   bool Scripted = false;
+  bConvert = false;
   JSBSim::FGScript* Script;
 
   options(argc, argv);
@@ -239,6 +243,13 @@ int main(int argc, char* argv[])
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);
+  }
+
+// if this is a conversion run, convert files, then exit.
+
+  if (bConvert) {
+    convert(FDMExec);
+    exit(0);
   }
 
 //
@@ -294,6 +305,7 @@ void options(int count, char **arg)
     cout << "  options:" << endl;
       cout << "    --help  returns this message" << endl;
       cout << "    --version  returns the version number" << endl;
+      cout << "    --convert  converts files to the new v2.0 format from the original format" << endl;
       cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
       cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
@@ -312,6 +324,7 @@ void options(int count, char **arg)
       cout << "  options:" << endl;
       cout << "    --help  returns this message" << endl;
       cout << "    --version  returns the version number" << endl;
+      cout << "    --convert  converts files to the new v2.0 format from the original format" << endl;
       cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
       cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
@@ -339,6 +352,8 @@ void options(int count, char **arg)
         cerr << "  Log directives file not valid or not understood." << endl << endl;
         exit(1);
       }
+    } else if (argument.find("--convert") != string::npos) {
+      bConvert = true;
     } else if (argument.find("--aircraft") != string::npos) {
       n = argument.find("=")+1;
       if (n > 0) {
@@ -367,4 +382,101 @@ void options(int count, char **arg)
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
     }
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void convert(JSBSim::FGFDMExec* FDMExec)
+{
+  cout << "<?xml version=\"1.0\"?>" << endl;
+  cout << "<?xml-stylesheet href=\"JSBSim.xsl\" type=\"application/xml\"?>" << endl;
+  cout << "<FDM_CONFIG NAME=\"" << FDMExec->GetAircraft()->GetAircraftName() << "\" VERSION=\"2.0\" RELEASE=\"BETA\">" << endl << endl;
+  cout << "    <FILEHEADER>" << endl;
+  cout << "        <AUTHOR>Author Name</AUTHOR>" << endl;
+  cout << "        <FILECREATIONDATE>Creation Date</FILECREATIONDATE>" << endl;
+  cout << "        <DESCRIPTION>Description</DESCRIPTION>" << endl;
+  cout << "        <VERSION>$Id: JSBSim.cpp,v 1.89 2005/01/04 12:40:51 jberndt Exp $</VERSION>" << endl;
+  cout << "        <REFERENCE refID=\"None\" author=\"n/a\" title=\"n/a\" date=\"n/a\"/>" << endl;
+  cout << "    </FILEHEADER>" << endl << endl;
+  cout << "    <METRICS>" << endl;
+  cout << "        <WINGAREA UNIT=\"FT2\"> " << FDMExec->GetAircraft()->GetWingArea() << " </WINGAREA>" << endl;
+  cout << "        <WINGSPAN UNIT=\"FT\"> " << FDMExec->GetAircraft()->GetWingSpan() << " </WINGSPAN>" << endl;
+  cout << "        <CHORD UNIT=\"FT\"> " << FDMExec->GetAircraft()->Getcbar() << " </CHORD>" << endl;
+  cout << "        <HTAILAREA UNIT=\"FT2\"> " << FDMExec->GetAircraft()->GetHTailArea() << " </HTAILAREA>" << endl;
+  cout << "        <HTAILARM UNIT=\"FT\"> " << FDMExec->GetAircraft()->GetHTailArm() << " </HTAILARM>" << endl;
+  cout << "        <VTAILAREA UNIT=\"FT2\"> " << FDMExec->GetAircraft()->GetVTailArea() << " </VTAILAREA>" << endl;
+  cout << "        <VTAILARM UNIT=\"FT\"> " << FDMExec->GetAircraft()->GetVTailArm() << " </VTAILARM>" << endl;
+  cout << "        <LOCATION NAME=\"AERORP\" UNIT=\"IN\">" << endl;
+  cout << "            <X> " << FDMExec->GetAircraft()->GetXYZrp(1) << " </X>" << endl;
+  cout << "            <Y> " << FDMExec->GetAircraft()->GetXYZrp(2) << " </Y>" << endl;
+  cout << "            <Z> " << FDMExec->GetAircraft()->GetXYZrp(3) << " </Z>" << endl;
+  cout << "        </LOCATION>" << endl;
+  cout << "        <LOCATION NAME=\"EYEPOINT\" UNIT=\"IN\">" << endl;
+  cout << "            <X> " << FDMExec->GetAircraft()->GetXYZep(1) << " </X>" << endl;
+  cout << "            <Y> " << FDMExec->GetAircraft()->GetXYZep(2) << " </Y>" << endl;
+  cout << "            <Z> " << FDMExec->GetAircraft()->GetXYZep(3) << " </Z>" << endl;
+  cout << "        </LOCATION>" << endl;
+  cout << "        <LOCATION NAME=\"VRP\" UNIT=\"IN\">" << endl;
+  cout << "            <X> " << FDMExec->GetAircraft()->GetXYZvrp(1) << " </X>" << endl;
+  cout << "            <Y> " << FDMExec->GetAircraft()->GetXYZvrp(2) << " </Y>" << endl;
+  cout << "            <Z> " << FDMExec->GetAircraft()->GetXYZvrp(3) << " </Z>" << endl;
+  cout << "        </LOCATION>" << endl;
+  cout << "    </METRICS>" << endl << endl;
+  cout << "    <MASS_BALANCE>" << endl;
+  cout << "        <IXX UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(1,1) << " </IXX>" << endl;
+  cout << "        <IYY UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(2,2) << " </IYY>" << endl;
+  cout << "        <IZZ UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(3,3) << " </IZZ>" << endl;
+  cout << "        <IXZ UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(1,3) << " </IXZ>" << endl;
+  cout << "        <IYZ UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(2,3) << " </IYZ>" << endl;
+  cout << "        <IXY UNIT=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(1,2) << " </IXY>" << endl;
+  cout << "        <EMPTYWT UNIT=\"LBS\"> " << FDMExec->GetMassBalance()->GetEmptyWeight() << " </EMPTYWT>" << endl;
+  cout << "        <LOCATION NAME=\"CG\" UNIT=\"IN\">" << endl;
+  cout << "            <X> " << FDMExec->GetMassBalance()->GetbaseXYZcg(1) << " </X>" << endl;
+  cout << "            <Y> " << FDMExec->GetMassBalance()->GetbaseXYZcg(2) << " </Y>" << endl;
+  cout << "            <Z> " << FDMExec->GetMassBalance()->GetbaseXYZcg(3) << " </Z>" << endl;
+  cout << "        </LOCATION>" << endl;
+
+  for (int i=0; i<FDMExec->GetMassBalance()->GetNumPointMasses(); i++) {
+    cout << "        <POINTMASS NAME=\"name\">" << endl;
+    cout << "            <WEIGHT UNIT=\"LBS\"> " << FDMExec->GetMassBalance()->GetPointMassWeight(i) << " </WEIGHT>" << endl;
+    cout << "            <LOCATION NAME=\"POINTMASS\" UNIT=\"IN\">" << endl;
+    cout << "                <X> " << FDMExec->GetMassBalance()->GetPointMassLoc(i)(1) << " </X>" << endl;
+    cout << "                <Y> " << FDMExec->GetMassBalance()->GetPointMassLoc(i)(2) << " </Y>" << endl;
+    cout << "                <Z> " << FDMExec->GetMassBalance()->GetPointMassLoc(i)(3) << " </Z>" << endl;
+    cout << "            </LOCATION>" << endl;
+    cout << "        </POINTMASS>" << endl;
+  }
+  cout << "    </MASS_BALANCE>" << endl << endl;
+
+  cout << "    <GROUND_REACTIONS>" << endl;
+  for (int i=0; i<FDMExec->GetGroundReactions()->GetNumGearUnits(); i++) {
+    JSBSim::FGLGear* gear = FDMExec->GetGroundReactions()->GetGearUnit(i);
+    cout << "        <CONTACT TYPE=\"BOGEY\" NAME=\"" << gear->GetName() << "\">" << endl;
+    cout << "            <LOCATION UNIT=\"IN\">" << endl;
+    cout << "                <X> " << gear->GetXYZ(1) << " </X>" << endl;
+    cout << "                <Y> " << gear->GetXYZ(2) << " </Y>" << endl;
+    cout << "                <Z> " << gear->GetXYZ(3) << " </Z>" << endl;
+    cout << "            </LOCATION>" << endl;
+    cout << "            <STATIC_FRICTION> " << gear->GetstaticFCoeff() << " </STATIC_FRICTION>" << endl;
+    cout << "            <DYNAMIC_FRICTION> " << gear->GetdynamicFCoeff() << " </DYNAMIC_FRICTION>" << endl;
+    cout << "            <ROLLING_FRICTION> " << gear->GetrollingFCoeff() << " </ROLLING_FRICTION>" << endl;
+    cout << "            <SPRING_COEFF UNIT=\"LBS/FT\"> " << gear->GetkSpring() << " </SPRING_COEFF>" << endl;
+    cout << "            <DAMPING_COEFF UNIT=\"LBS/FT/SEC\"> " << gear->GetbDamp() << " </DAMPING_COEFF>" << endl;
+    if (gear->GetsSteerType() == "CASTERED" ) {
+      cout << "            <MAX_STEER UNIT=\"DEG\"> 360.0 </MAX_STEER>" << endl;
+    } else if (gear->GetsSteerType() == "FIXED" ) {
+      cout << "            <MAX_STEER UNIT=\"DEG\"> 0.0 </MAX_STEER>" << endl;
+    } else {
+      cout << "            <MAX_STEER UNIT=\"DEG\"> " << gear->GetmaxSteerAngle() << " </MAX_STEER>" << endl;
+    }
+    cout << "            <BRAKE_GROUP> " << gear->GetsBrakeGroup() << " </BRAKE_GROUP>" << endl;
+    if (gear->GetsRetractable() == "RETRACT")
+      cout << "            <RETRACTABLE>1</RETRACTABLE>" << endl;
+    else
+      cout << "            <RETRACTABLE>0</RETRACTABLE>" << endl;
+
+    cout << "        </CONTACT>" << endl;
+  }
+  cout << "    </GROUND_REACTIONS>" << endl;
+
 }

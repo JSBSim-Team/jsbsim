@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.30 2004/10/05 17:09:14 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.31 2005/01/04 12:40:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -77,8 +77,10 @@ public:
 
   inline double GetMass(void) const {return Mass;}
   inline double GetWeight(void) const {return Weight;}
+  inline double GetEmptyWeight(void) const {return EmptyWeight;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
   inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
+  inline double GetbaseXYZcg(int axis) const  {return vbaseXYZcg(axis);}
 
   /** Computes the inertia contribution of a pointmass.
       Computes and returns the inertia matrix of a pointmass of mass
@@ -123,7 +125,11 @@ public:
   FGMatrix33& GetJ(void) {return mJ;}
   FGMatrix33& GetJinv(void) {return mJinv;}
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
-
+  FGMatrix33& GetAircraftBaseInertias(void) {return baseJ;}
+  int GetNumPointMasses(void) {return PointMassLoc.size();}
+  FGColumnVector3& GetPointMassLoc(int i) {return PointMassLoc[i];}
+  double GetPointMassWeight(int i) {return PointMassWeight[i];}
+  
   void bind(void);
   void unbind(void);
 
