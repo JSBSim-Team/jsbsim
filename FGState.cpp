@@ -199,6 +199,8 @@ void FGState::Initialize(float U, float V, float W,
 
   Vt = sqrt(U*U + V*V + W*W);
   FDMExec->GetTranslation()->SetVt(Vt);
+  
+  FDMExec->GetTranslation()->SetMach(Vt/FDMExec->GetAtmosphere()->GetSoundSpeed());
 
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
   FDMExec->GetTranslation()->Setqbar(qbar);
