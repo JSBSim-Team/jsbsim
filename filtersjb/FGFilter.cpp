@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.17 2001/03/29 22:26:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.18 2001/03/30 23:53:24 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 extern short debug_lvl;
@@ -161,7 +161,8 @@ bool FGFilter::Run(void)
 
     switch (FilterType) {
       case eLag:
-        Output = Input * ca + PreviousOutput1 * cb;
+        Output = Input * ca + PreviousInput1 * ca + PreviousOutput1 * cb;
+//        Output = Input * ca + PreviousOutput1 * cb;
         break;
       case eLeadLag:
         Output = Input * ca + PreviousInput1 * cb + PreviousOutput1 * cc;
