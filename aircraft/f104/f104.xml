@@ -3,7 +3,7 @@
 <!--                                                                                   - -
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.12 2004/02/14 09:58:44 ehofman Exp $
+  CVS Version: $Id: f104.xml,v 1.13 2004/04/30 15:47:36 dpculp Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -57,7 +57,7 @@
    AC_GEAR RADOME     -610.4    0.0  -5.7 10000 1000 0.2 0.2 0.2  FIXED     NONE  0 FIXED
   </UNDERCARRIAGE>
   <PROPULSION>
-   <AC_ENGINE FILE="low_bypass_turbofan">
+   <AC_ENGINE FILE="J79-GE-11A">
     XLOC      0.0
     YLOC      0.0
     ZLOC      0.0
