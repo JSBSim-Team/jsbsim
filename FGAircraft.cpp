@@ -144,7 +144,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.87 2001/08/30 11:02:58 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.88 2001/08/30 21:42:45 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -312,11 +312,11 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
     }
   }
   
-  //calculate some derived parameters
-  if(cbar != 0.0) {
+  // calculate some derived parameters
+  if (cbar != 0.0) {
     lbarh = HTailArm/cbar;
     lbarv = VTailArm/cbar;
-    if(WingArea != 0.0) {
+    if (WingArea != 0.0) {
       vbarh = HTailArm*HTailArea / (cbar*WingArea);
       vbarv = VTailArm*VTailArea / (cbar*WingArea);
     }

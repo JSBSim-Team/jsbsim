@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.30 2001/08/30 11:24:19 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.31 2001/08/30 21:42:45 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,13 +127,8 @@ bool FGTranslation::Run(void)
     vUVW += Tc * (vlastUVWdot + vUVWdot);
     vAero = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
 
-/*     cout << "vUVW: " << vUVW << endl;
-    cout << "vwUVW: " << State->GetTl2b()*Atmosphere->GetWindNED() << endl;
-    cout << "vaUVW: " << vAero << endl;
- */
-
     Vt = vAero.Magnitude();
-    if( Vt > 1) {
+    if ( Vt > 1) {
       if (vAero(eW) != 0.0)
         alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
       if (vAero(eV) != 0.0)
