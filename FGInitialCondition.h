@@ -135,11 +135,11 @@ public:
   inline void SetPitchAngleDegIC(float tt) { theta=tt*DEGTORAD; getAlpha(); }
   inline void SetPitchAngleRadIC(float tt) { theta=tt; getAlpha(); }
 
-  inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; }
-  inline void SetBetaRadIC(float tt)       { beta=tt; }
+  inline void SetBetaDegIC(float tt)       { beta=tt*DEGTORAD; getTheta();}
+  inline void SetBetaRadIC(float tt)       { beta=tt; getTheta(); }
   
-  inline void SetRollAngleDegIC(float tt) { phi=tt*DEGTORAD; }
-  inline void SetRollAngleRadIC(float tt) { phi=tt; }
+  inline void SetRollAngleDegIC(float tt) { phi=tt*DEGTORAD; getTheta(); }
+  inline void SetRollAngleRadIC(float tt) { phi=tt; getTheta(); }
 
   inline void SetHeadingDegIC(float tt)   { psi=tt*DEGTORAD; }
   inline void SetHeadingRadIC(float tt)   { psi=tt; }

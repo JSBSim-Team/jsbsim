@@ -318,7 +318,7 @@ bool FGInitialCondition::findInterval(float x,float guess) {
         lo=hi-step;
       }
     }
-    cout << "findInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
+    //cout << "findInterval: i=" << i << " Lo= " << lo << " Hi= " << hi << endl;
   }
   while((found == 0) && (i <= 100));
   xlo=lo;
@@ -351,8 +351,8 @@ bool FGInitialCondition::solve(float *y,float x) {
       x2=x1-d*d0*f1/(f3-f1);
       
       f2=(this->*sfunc)(x2)-x;
-      cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
-      cout << "                " << f1 << "," << f2 << "," << f3 << endl;
+      //cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
+      //cout << "                " << f1 << "," << f2 << "," << f3 << endl;
 
       if(fabs(f2) <= 0.001) {
         x1=x3=x2;
