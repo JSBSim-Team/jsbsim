@@ -14,6 +14,12 @@ interface with flightgear
 apeden@earthlink.net
 CVS access as developer (r/w)
 
+David Megginson
+ported Dave Luff's piston engine model initially to JSBSim
+creation of multi-engine C-310 model and testing/debugging
+general C++ suggestions, debugging, and support
+david@megginson.com
+CVS access as developer (r/w)
 
 Additional support (programming, bug fixes, aircraft models)
 by the FlightGear team and others as listed:
@@ -35,12 +41,6 @@ mail@ChristianMayer.de
 Erik Hofman
 JSBSim compatibility with IRIX
 erik@ehofman.com
-
-David Megginson
-ported Dave Luff's piston engine model initially to JSBSim
-creation of multi-engine C-310 model and testing/debugging
-general C++ suggestions, debugging, and support
-david@megginson.com
 
 Ross Golder
 improvements to the build process and auto* files
