@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.137 2004/10/04 05:35:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.138 2004/10/04 19:19:15 ehofman Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,64 +155,91 @@ float FGAircraft::GetNlf(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAircraft::Load(Element* el)
+bool FGAircraft::Load(FGConfigFile* AC_cfg)
 {
   string token = "";
   string parameter;
-  string element_name;
   double EW, bixx, biyy, bizz, bixy, bixz, biyz;
   double pmWt, pmX, pmY, pmZ;
   FGColumnVector3 vbaseXYZcg;
-  Element* element;
 
   bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
 
-  WingArea = el->FindElementValueAsNumberConvertTo("WINGAREA", "FT2");
-  WingSpan = el->FindElementValueAsNumberConvertTo("WINGSPAN", "FT");
-  cbar     = el->FindElementValueAsNumberConvertTo("CHORD", "FT");
-  WingIncidence = el->FindElementValueAsNumberConvertTo("WING_INCIDENCE", "DEG");
-  HTailArea = el->FindElementValueAsNumberConvertTo("HTAILAREA", "FT2");
-  HTailArm = el->FindElementValueAsNumberConvertTo("HTAILARM", "FT");
-  VTailArea = el->FindElementValueAsNumberConvertTo("VTAILAREA", "FT2");
-  VTailArm = el->FindElementValueAsNumberConvertTo("VTAILARM", "FT");
+  AC_cfg->GetNextConfigLine();
 
-  bixx = el->FindElementValueAsNumberConvertTo("IXX", "SLUG*FT2");
-  biyy = el->FindElementValueAsNumberConvertTo("IYY", "SLUG*FT2");
-  bizz = el->FindElementValueAsNumberConvertTo("IZZ", "SLUG*FT2");
-  bixy = el->FindElementValueAsNumberConvertTo("IXY", "SLUG*FT2");
-  bixz = el->FindElementValueAsNumberConvertTo("IXZ", "SLUG*FT2");
-  biyz = el->FindElementValueAsNumberConvertTo("IYZ", "SLUG*FT2");
+  while ((token = AC_cfg->GetValue()) != string("/METRICS")) {
+    *AC_cfg >> parameter;
+    if (parameter == "AC_WINGAREA") {
+      *AC_cfg >> WingArea;
+      if (debug_lvl > 0) cout << "    WingArea: " << WingArea  << endl;
+    } else if (parameter == "AC_WINGSPAN") {
+      *AC_cfg >> WingSpan;
+      if (debug_lvl > 0) cout << "    WingSpan: " << WingSpan  << endl;
+    } else if (parameter == "AC_WINGINCIDENCE") {
+      *AC_cfg >> WingIncidence;
+      if (debug_lvl > 0) cout << "    Incidence: " << WingIncidence << endl;
+    } else if (parameter == "AC_CHORD") {
+      *AC_cfg >> cbar;
+      if (debug_lvl > 0) cout << "    Chord: " << cbar << endl;
+    } else if (parameter == "AC_HTAILAREA") {
+      *AC_cfg >> HTailArea;
+      if (debug_lvl > 0) cout << "    H. Tail Area: " << HTailArea << endl;
+    } else if (parameter == "AC_HTAILARM") {
+      *AC_cfg >> HTailArm;
+      if (debug_lvl > 0) cout << "    H. Tail Arm: " << HTailArm << endl;
+    } else if (parameter == "AC_VTAILAREA") {
+      *AC_cfg >> VTailArea;
+      if (debug_lvl > 0) cout << "    V. Tail Area: " << VTailArea << endl;
+    } else if (parameter == "AC_VTAILARM") {
+      *AC_cfg >> VTailArm;
+      if (debug_lvl > 0) cout << "    V. Tail Arm: " << VTailArm << endl;
+    } else if (parameter == "AC_IXX") {
+      *AC_cfg >> bixx;
+      if (debug_lvl > 0) cout << "    baseIxx: " << bixx << " slug-ft2" << endl;
+    } else if (parameter == "AC_IYY") {
+      *AC_cfg >> biyy;
+      if (debug_lvl > 0) cout << "    baseIyy: " << biyy << " slug-ft2" << endl;
+    } else if (parameter == "AC_IZZ") {
+      *AC_cfg >> bizz;
+      if (debug_lvl > 0) cout << "    baseIzz: " << bizz << " slug-ft2" << endl;
+    } else if (parameter == "AC_IXY") {
+      *AC_cfg >> bixy;
+      if (debug_lvl > 0) cout << "    baseIxy: " << bixy << " slug-ft2" << endl;
+    } else if (parameter == "AC_IXZ") {
+      *AC_cfg >> bixz;
+      if (debug_lvl > 0) cout << "    baseIxz: " << bixz << " slug-ft2" << endl;
+    } else if (parameter == "AC_IYZ") {
+      *AC_cfg >> biyz;
+      if (debug_lvl > 0) cout << "    baseIyz: " << biyz << " slug-ft2" << endl;
+    } else if (parameter == "AC_EMPTYWT") {
+      *AC_cfg >> EW;
+      MassBalance->SetEmptyWeight(EW);
+      if (debug_lvl > 0) cout << "    EmptyWeight: " << EW << " lbm" << endl;
+    } else if (parameter == "AC_CGLOC") {
+      *AC_cfg >> vbaseXYZcg(eX) >> vbaseXYZcg(eY) >> vbaseXYZcg(eZ);
+      MassBalance->SetBaseCG(vbaseXYZcg);
+      if (debug_lvl > 0) cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
+    } else if (parameter == "AC_EYEPTLOC") {
+      *AC_cfg >> vXYZep(eX) >> vXYZep(eY) >> vXYZep(eZ);
+      if (debug_lvl > 0) cout << "    Eyepoint (x, y, z): " << vXYZep << endl;
+    } else if (parameter == "AC_AERORP") {
+      *AC_cfg >> vXYZrp(eX) >> vXYZrp(eY) >> vXYZrp(eZ);
+      if (debug_lvl > 0) cout << "    Ref Pt (x, y, z): " << vXYZrp << endl;
+    } else if (parameter == "AC_VRP") {
+      *AC_cfg >> vXYZvrp(eX) >> vXYZvrp(eY) >> vXYZvrp(eZ);
+      if (debug_lvl > 0) cout << "    Visual Ref Pt (x, y, z): " << vXYZvrp << endl;
+    } else if (parameter == "AC_POINTMASS") {
+      *AC_cfg >> pmWt >> pmX >> pmY >> pmZ;
+      MassBalance->AddPointMass(pmWt, pmX, pmY, pmZ);
+      if (debug_lvl > 0) cout << "    Point Mass Object: " << pmWt << " lbs. at "
+                         << "X, Y, Z (in.): " << pmX << "  " << pmY << "  " << pmZ
+                         << endl;
+    }
+  }
+
   MassBalance->SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  -bixz,
                                                     -bixy,  biyy,  -biyz,
                                                     -bixz,  -biyz,  bizz ));
-
-  EW   = el->FindElementValueAsNumberConvertTo("EMPTYWT", "LBS");
-  MassBalance->SetEmptyWeight(EW);
-
-  // Find all LOCATION elements that descend from this METRICS branch of the
-  // config file. This would be CG location, eyepoint, etc.
-
-  element = el->FindElement("LOCATION");
-  while (element) {
-    element_name = element->GetAttributeValue("NAME");
-
-    if (element_name == "CG") vbaseXYZcg.InitMatrix(element, "IN");
-    else if (element_name == "AERORP") vXYZrp.InitMatrix(element, "IN");
-    else if (element_name == "EYEPOINT") vXYZep.InitMatrix(element, "IN");
-    else if (element_name == "VRP") vXYZvrp.InitMatrix(element, "IN");
-
-    element = el->FindNextElement("LOCATION");
-  }
-  MassBalance->SetBaseCG(vbaseXYZcg);
-
-// Find all POINTMASS elements that descend from this METRICS branch of the
-// config file.
-
-  element = el->FindElement("POINTMASS");
-  while (element) {
-    MassBalance->AddPointMass(element);
-    element = el->FindNextElement("POINTMASS");
-  }
 
   // calculate some derived parameters
   if (cbar != 0.0) {
@@ -223,7 +250,6 @@ bool FGAircraft::Load(Element* el)
       vbarv = VTailArm*VTailArea / (cbar*WingArea);
     }
   }
-
   return true;
 }
 

@@ -67,12 +67,13 @@ INCLUDES
 #include "FGPropagate.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGConfigFile.h"
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.111 2004/10/03 13:48:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.112 2004/10/04 19:19:16 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,9 +146,11 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
 
+
   Debug(0);
 
-  // this is to catch errors in binding member functions to the property tree.
+  // this is here to catch errors in binding member functions
+  // to the property tree.
   try {
     Allocate();
   } catch ( string msg ) {
@@ -393,16 +396,13 @@ bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model,
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 {
+  
   bool result = true;
   string token;
   string aircraftCfgFileName;
-# ifndef macintosh
-    string separator = "/";
-# else
-    string separator = ";";
-# endif
 
   if( AircraftPath.empty() || EnginePath.empty() ) {
     cerr << "Error: attempted to load aircraft with undefined ";
@@ -411,16 +411,16 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   }
 
   aircraftCfgFileName = AircraftPath;
-  if (addModelToPath) aircraftCfgFileName += separator + model;
-  aircraftCfgFileName += separator + model + ".xml";
+# ifndef macintosh
+  if (addModelToPath) aircraftCfgFileName += "/" + model;
+  aircraftCfgFileName += "/" + model + ".xml";
+# else
+  if (addModelToPath) aircraftCfgFileName += ";"  + model;
+  aircraftCfgFileName += ";"  + model + ".xml";
+# endif
 
-  FGXMLParse *XMLParse = new FGXMLParse();
-  Element* element = 0L;
-  Element* document;
-
-  ifstream input_file(aircraftCfgFileName.c_str());
-  readXML(input_file, *XMLParse);
-  document = XMLParse->GetDocument();
+  FGConfigFile AC_cfg(aircraftCfgFileName);
+  if (!AC_cfg.IsOpen()) return false;
 
   modelName = model;
 
@@ -429,26 +429,36 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     Allocate();
   }
 
-  ReadPrologue(document);
-  element = document->GetElement();
+  if (!ReadPrologue(&AC_cfg)) return false;
 
-  while (element) {
-    string element_name = element->GetName();
-    if (element_name == "FILEHEADER" )           result = ReadFileHeader(element);
-    else if (element_name == "SLAVE")            result = ReadSlave(element);
-    else if (element_name == "METRICS")          result = Aircraft->Load(element);
-/*    else if (element_name == "GROUND_REACTIONS") result = GroundReactions->Load(element);
-    else if (element_name == "PROPULSION")       result = Propulsion->Load(element);
-    else if (element_name == "AUTOPILOT")        result = FCS->Load(element);
-    else if (element_name == "FLIGHT_CONTROL")   result = FCS->Load(element);
-    else if (element_name == "AERODYNAMICS")     result = Aerodynamics->Load(element);
-    else if (element_name == "OUTPUT")           result = Output->Load(element); */
-    else {
-      cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
-      result = false;
-      break;
+  while ((AC_cfg.GetNextConfigLine() != string("EOF")) &&
+         (token = AC_cfg.GetValue()) != string("/FDM_CONFIG")) {
+    if (token == "METRICS") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
+      if (!ReadMetrics(&AC_cfg)) result = false;
+    } else if (token == "SLAVE") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Slave flight vehicle: " << fgdef
+                                        << AC_cfg.GetValue("NAME") << endl;
+      if (!ReadSlave(&AC_cfg)) result = false;
+    } else if (token == "AERODYNAMICS") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
+      if (!ReadAerodynamics(&AC_cfg)) result = false;
+    } else if (token == "UNDERCARRIAGE") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Landing Gear" << fgdef << endl;
+      if (!ReadUndercarriage(&AC_cfg)) result = false;
+    } else if (token == "PROPULSION") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Propulsion" << fgdef << endl;
+      if (!ReadPropulsion(&AC_cfg)) result = false;
+    } else if (token == "FLIGHT_CONTROL") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
+      if (!ReadFlightControls(&AC_cfg)) result = false;
+    } else if (token == "AUTOPILOT") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Autopilot" << fgdef << endl;
+      if (!ReadFlightControls(&AC_cfg)) result = false;
+    } else if (token == "OUTPUT") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;
+      if (!ReadOutput(&AC_cfg)) result = false;
     }
-    element = document->GetNextElement();
   }
 
   if (result) {
@@ -465,34 +475,21 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::ReadFileHeader(Element* el)
+bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
 {
-  bool result = true; // true for success
+  string token = AC_cfg->GetValue();
+  string scratch;
+  string AircraftName;
 
-  cout << "  Model Author:  " << el->FindElement("AUTHOR")->GetDataLine() << endl;
-  cout << "  Creation Date: " << el->FindElement("FILECREATIONDATE")->GetDataLine() << endl;
-  cout << "  Version:       " << el->FindElement("VERSION")->GetDataLine() << endl;
-  cout << "  Description:   " << el->FindElement("DESCRIPTION")->GetDataLine() << endl;
-
-  return result;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document element
-{
-  bool result = true; // true for success
-
-  if (!el) return false;
-
-  string AircraftName = el->GetAttributeValue("NAME");
+  AircraftName = AC_cfg->GetValue("NAME");
   Aircraft->SetAircraftName(AircraftName);
 
   if (debug_lvl > 0) cout << underon << "Reading Aircraft Configuration File"
             << underoff << ": " << highint << AircraftName << normint << endl;
+  scratch = AC_cfg->GetValue("VERSION").c_str();
 
-  CFGVersion = el->GetAttributeValue("VERSION");
-  Release    = el->GetAttributeValue("RELEASE");
+  CFGVersion = AC_cfg->GetValue("VERSION");
+  Release    = AC_cfg->GetValue("RELEASE");
 
   if (debug_lvl > 0)
     cout << "                            Version: " << highint << CFGVersion
@@ -506,6 +503,9 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
   }
 
   if (Release == "ALPHA") {
+#ifndef _MSC_VER
+    system("banner ALPHA");
+#endif
     cout << endl << endl
          << highint << "This aircraft model is an " << fgred << Release
          << reset << highint << " release!!!" << endl << endl << reset
@@ -514,32 +514,23 @@ bool FGFDMExec::ReadPrologue(Element* el) // el for ReadPrologue is the document
          << fgred << highint << "Use this model for development purposes ONLY!!!"
          << normint << reset << endl << endl;
   } else if (Release == "BETA") {
+#ifndef _MSC_VER
+    system("banner BETA");
+#endif
     cout << endl << endl
          << highint << "This aircraft model is a " << fgred << Release
          << reset << highint << " release!!!" << endl << endl << reset
          << "This aircraft model probably will not fly as expected." << endl << endl
          << fgblue << highint << "Use this model for development purposes ONLY!!!"
          << normint << reset << endl << endl;
-  } else if (Release == "PRODUCTION") {
-    cout << endl << endl
-         << highint << "This aircraft model is a " << fgblue << Release
-         << reset << highint << " release." << endl << endl << reset;
-  } else {
-    cout << endl << endl
-         << highint << "This aircraft model is an " << fgred << Release
-         << reset << highint << " release!!!" << endl << endl << reset
-         << "This aircraft model may not even properly load, and probably"
-         << " will not fly as expected." << endl << endl
-         << fgred << highint << "Use this model for development purposes ONLY!!!"
-         << normint << reset << endl << endl;
   }
 
-  return result;
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::ReadSlave(Element* el)
+bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
 {
   // Add a new slaveData object to the slave FDM list
   // Populate that slaveData element with a new FDMExec object
@@ -555,7 +546,7 @@ bool FGFDMExec::ReadSlave(Element* el)
   SlaveFDMList.push_back(new slaveData);
   SlaveFDMList.back()->exec = new FGFDMExec();
   SlaveFDMList.back()->exec->SetSlave();
-/*
+
   string AircraftName = AC_cfg->GetValue("FILE");
 
   debug_lvl = 0;                 // turn off debug output for slave vehicle
@@ -576,7 +567,7 @@ bool FGFDMExec::ReadSlave(Element* el)
     else if (token == "ROLL")  { *AC_cfg >> SlaveFDMList.back()->roll;  }
     else cerr << "Unknown identifier: " << token << " in slave vehicle definition" << endl;
   }
-*/
+
   if (debug_lvl > 0)  {
     cout << "      X = " << SlaveFDMList.back()->x << endl;
     cout << "      Y = " << SlaveFDMList.back()->y << endl;
@@ -586,6 +577,72 @@ bool FGFDMExec::ReadSlave(Element* el)
     cout << "      Roll = " << SlaveFDMList.back()->roll << endl;
   }
 
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadPropulsion(FGConfigFile* AC_cfg)
+{
+  if (!Propulsion->Load(AC_cfg)) {
+    cerr << "  Propulsion not successfully loaded" << endl;
+    return false;
+  }
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadFlightControls(FGConfigFile* AC_cfg)
+{
+  if (!FCS->Load(AC_cfg)) {
+    cerr << "  Flight Controls not successfully loaded" << endl;
+    return false;
+  }
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadAerodynamics(FGConfigFile* AC_cfg)
+{
+  if (!Aerodynamics->Load(AC_cfg)) {
+    cerr << "  Aerodynamics not successfully loaded" << endl;
+    return false;
+  }
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadUndercarriage(FGConfigFile* AC_cfg)
+{
+  if (!GroundReactions->Load(AC_cfg)) {
+    cerr << "  Ground Reactions not successfully loaded" << endl;
+    return false;
+  }
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadMetrics(FGConfigFile* AC_cfg)
+{
+  if (!Aircraft->Load(AC_cfg)) {
+    cerr << "  Aircraft metrics not successfully loaded" << endl;
+    return false;
+  }
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadOutput(FGConfigFile* AC_cfg)
+{
+  if (!Output->Load(AC_cfg)) {
+    cerr << "  Output not successfully loaded" << endl;
+    return false;
+  }
   return true;
 }
 
@@ -658,5 +715,4 @@ void FGFDMExec::Debug(int from)
   }
 }
 }
-
 

@@ -22,7 +22,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.22 2004/10/03 13:48:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.23 2004/10/04 19:19:16 ehofman Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,16 +37,6 @@ FGColumnVector3::FGColumnVector3(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGColumnVector3::InitMatrix(Element *el, string native_units)
-{
-  string supplied_units = el->GetAttributeValue("UNITS");
-  data[0] = el->FindElementValueAsNumberConvertFromTo("X", supplied_units, native_units);
-  data[1] = el->FindElementValueAsNumberConvertFromTo("Y", supplied_units, native_units);
-  data[2] = el->FindElementValueAsNumberConvertFromTo("Z", supplied_units, native_units);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
 {
   if (scalar != 0.0)
@@ -54,7 +44,7 @@ FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
 
   cerr << "Attempt to divide by zero in method "
     "FGColumnVector3::operator/(const double scalar), "
-    "object " << this << endl;
+    "object " << this << endl; 
   return FGColumnVector3();
 }
 
@@ -107,7 +97,7 @@ ostream& operator<<(ostream& os, const FGColumnVector3& col)
 {
   os << col(1) << " , " << col(2) << " , " << col(3);
   return os;
-}
+}  
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 //    The bitmasked value choices are as follows:
