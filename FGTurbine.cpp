@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.9 2004/05/03 03:31:27 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.10 2004/05/03 16:22:40 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,17 +157,17 @@ double FGTurbine::Run(void)
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, delay, delay * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
   thrust = idlethrust + (milthrust * N2norm * N2norm);
-  thrust = thrust * (1.0 - BleedDemand);
   EGT_degC = TAT + 363.1 + ThrottlePos * 357.1;
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
-  EPR = 1.0 + thrust/MilThrust;
 
   if (!Augmentation) {
     double correctedTSFC = TSFC + TSFC - (N2norm * TSFC); 
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 100000);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
+    thrust = thrust * (1.0 - BleedDemand);
+    EPR = 1.0 + thrust/MilThrust;
   }
 
   if (AugMethod == 1) {
@@ -280,7 +280,7 @@ double FGTurbine::Trim(void)
     double idlethrust, milthrust, thrust, tdiff;
     idlethrust = MilThrust * ThrustTables[0]->TotalValue();
     milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
-    thrust = idlethrust + (milthrust * ThrottlePos * ThrottlePos);
+    thrust = (idlethrust + (milthrust * ThrottlePos * ThrottlePos)) * (1.0 - BleedDemand);
     if (AugmentCmd > 0.0) {
       tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
       thrust += (tdiff * AugmentCmd);
@@ -372,6 +372,7 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
     if      (token == "MILTHRUST") *Eng_cfg >> MilThrust;
     else if (token == "MAXTHRUST") *Eng_cfg >> MaxThrust;
     else if (token == "BYPASSRATIO") *Eng_cfg >> BypassRatio;
+    else if (token == "BLEED") *Eng_cfg >> BleedDemand; 
     else if (token == "TSFC") *Eng_cfg >> TSFC;
     else if (token == "ATSFC") *Eng_cfg >> ATSFC;
     else if (token == "IDLEN1") *Eng_cfg >> IdleN1;

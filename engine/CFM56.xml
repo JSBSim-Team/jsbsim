@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 
 <!-- CFM56 turbofan engine model
-     Version 1.1, 23 Nov 2003, David Culp, davidculp2@comcast.net
+     Version 1.0, 14 Mar 2003, David Culp, davidculp2@comcast.net
+     Updated 20 Oct 2003, DPC, new MAXTHRUST item
 -->
 
 <FG_TURBINE NAME="CFM56">
@@ -11,6 +12,7 @@
      BYPASSRATIO   bypass ratio
      TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
      ATSFC         augmented TSFC (lbm/hr/lbf)
+     BLEED         bleed loss (four percent is typical)
      IDLEN1        idle percent rpm of fan spool
      IDLEN2        idle percent rpm of inner spool
      MAXN1         N1 at 100% throttle
@@ -24,11 +26,12 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  MILTHRUST    19600
-  MAXTHRUST    19600
+  MILTHRUST    20000
+  MAXTHRUST    20000
   BYPASSRATIO  5.9
   TSFC         0.657
   ATSFC        0.0
+  BLEED        0.04 
   IDLEN1       30.0
   IDLEN2       60.0
   MAXN1        100.0
@@ -45,7 +48,7 @@
     position/h-sl-ft
     none
                 0   10000   20000   30000   40000  50000
-    0.0    0.0436  0.0528  0.0694  0.0899  0.1183  0.1467
+    0.0    0.0317  0.0528  0.0694  0.0899  0.1183  0.1467
     0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
     0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
     0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073
