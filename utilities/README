@@ -1,0 +1,32 @@
+SimPlot can be built using these files. It is also required,
+however, that you have DISLIN installed. You can get DISLIN
+at the web site: http://www.linmpi.mpg.de/dislin. Follow the
+directions for installation for the platform you have. Once
+DISLIN is properly installed there is one additional action
+that must be taken on the developer's part. The SimPlot code
+makes use of the Standard Template Library (STL). The vector
+object defined in the STL conflicts with an object by the
+same name in DISLIN. Howecer, the DISLIN vector is not used
+by SimPlot. So, you must go into the dislin.h file and
+comment out the vector declaration.
+
+SimPlot can be built under Linux with this command line:
+
+g++ *.cpp -I /usr/local/dislin/ -ldislin -o simplot
+
+Under CygWin, (Unix on Windows: http://sources.redhat.com/cygwin)
+use the following line:
+
+g++ -o simplot datafile.cpp main.cpp -I/usr/local/dislin
+              -L/usr/local/dislin -ldisgcc -lgdi32 -lcomdlg32
+
+this should give you the simplot program.
+
+To run SimPlot, enter the data filename as the only argument:
+
+./simplot JSBout.csv
+
+Then, follow the directions as displayed.
+
+If you have any questions, please email me at jsb@hal-pc.org.
+
