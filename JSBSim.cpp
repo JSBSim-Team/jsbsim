@@ -50,6 +50,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGScript.h"
 #include "FGJSBBase.h"
+#include "FGTrim.h"
 
 #ifdef FGFS
 #include <simgear/compiler.h>
@@ -69,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.84 2004/10/05 14:17:43 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.85 2004/10/22 23:53:22 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -231,11 +232,18 @@ int main(int argc, char* argv[])
       exit(-1);
     }
 
-    JSBSim::FGInitialCondition *IC=FDMExec->GetIC();
+    JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
       cerr << "Initialization unsuccessful" << endl;
       exit(-1);
     }
+
+    JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
+    if ( !fgt.DoTrim() ) {
+      cout << "Trim Failed" << endl;
+    }
+    fgt.Report();
+
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);

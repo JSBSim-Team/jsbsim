@@ -56,10 +56,11 @@ INCLUDES
 
 #include "FGScript.h"
 #include "FGConfigFile.h"
+#include "FGTrim.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.14 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.15 2004/10/22 23:53:22 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,7 +106,7 @@ bool FGScript::LoadScript( string script )
   if (Script.GetValue("runscript").length() <= 0) {
     cerr << "File: " << script << " is not a script file" << endl;
     delete FDMExec;
-    return false; 
+    return false;
   }
   ScriptName = Script.GetValue("name");
   Scripted = true;
@@ -168,14 +169,14 @@ bool FGScript::LoadScript( string script )
               else if (tempCompare == "FG_STEP") newCondition->Action.push_back(FG_STEP);
               else if (tempCompare == "FG_EXP")  newCondition->Action.push_back(FG_EXP);
               else                               newCondition->Action.push_back((eAction)0);
-              
+
               if (Script.GetValue("persistent") == "true")
                 newCondition->Persistent.push_back(true);
               else
                 newCondition->Persistent.push_back(false);
-		
+
               newCondition->TC.push_back(strtod(Script.GetValue("tc").c_str(), NULL));
-	      
+
             } else {
               cerr << "Unrecognized keyword in script file: \" [when] " << token << "\"" << endl;
             }
@@ -211,6 +212,12 @@ bool FGScript::LoadScript( string script )
     cerr << "Initialization unsuccessful" << endl;
     exit(-1);
   }
+
+  FGTrim fgt(FDMExec, tFull);
+  if ( !fgt.DoTrim() ) {
+    cout << "Trim Failed" << endl;
+  }
+  fgt.Report();
 
   return true;
 }
