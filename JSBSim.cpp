@@ -110,7 +110,7 @@ int main(int argc, char** argv)
   
   FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
 
-  while (FDMExec->GetState()->Getsim_time() <= 5.0)
+  while (FDMExec->GetState()->Getsim_time() <= 25.0)
   {
     //
     // Fake an elevator kick here after 5 seconds
