@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.35 2001/12/22 15:16:15 apeden Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.36 2002/03/09 11:58:13 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -86,21 +86,21 @@ class FGTranslation : public FGModel {
 public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation();
-
+  
+  inline double           GetUVW   (int idx) const { return vUVW(idx); }
   inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
-  inline double           GetUVW   (int idx) { return vUVW(idx); }
   inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
-  inline double           GetUVWdot(int idx) { return vUVWdot(idx); }
+  inline double           GetUVWdot(int idx) const { return vUVWdot(idx); }
   inline FGColumnVector3& GetvAeroUVW (void)    { return vAeroUVW; }
-  inline double           GetvAeroUVW (int idx) { return vAeroUVW(idx); }
+  inline double           GetvAeroUVW (int idx) const { return vAeroUVW(idx); }
 
-  inline double Getalpha(void) { return alpha; }
-  inline double Getbeta (void) { return beta; }
-  inline double Getqbar (void) { return qbar; }
-  inline double GetVt   (void) { return Vt; }
-  inline double GetMach (void) { return Mach; }
-  inline double Getadot (void) { return adot; }
-  inline double Getbdot (void) { return bdot; }
+  inline double Getalpha(void) const { return alpha; }
+  inline double Getbeta (void) const { return beta; }
+  inline double Getqbar (void) const { return qbar; }
+  inline double GetVt   (void) const { return Vt; }
+  inline double GetMach (void) const { return Mach; }
+  inline double Getadot (void) const { return adot; }
+  inline double Getbdot (void) const { return bdot; }
 
   void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
 
@@ -115,6 +115,9 @@ public:
   inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
   
   bool Run(void);
+
+  void bind(void);
+  void unbind(void);
 
 private:
   FGColumnVector3 vUVW;

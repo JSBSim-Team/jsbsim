@@ -46,7 +46,7 @@ INCLUDES
 #include "FGPropulsion.h"
 #include <vector>
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.15 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.16 2002/03/09 11:56:42 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -61,15 +61,15 @@ public:
 
   bool Run(void);
 
-  inline double GetMass(void) {return Mass;}
-  inline double GetWeight(void) {return Weight;}
-  inline double GetIxx(void) {return Ixx;}
-  inline double GetIyy(void) {return Iyy;}
-  inline double GetIzz(void) {return Izz;}
-  inline double GetIxy(void) {return Ixy;}
-  inline double GetIxz(void) {return Ixz;}
+  inline double GetMass(void) const {return Mass;}
+  inline double GetWeight(void) const {return Weight;}
+  inline double GetIxx(void) const {return Ixx;}
+  inline double GetIyy(void) const {return Iyy;}
+  inline double GetIzz(void) const {return Izz;}
+  inline double GetIxy(void) const {return Ixy;}
+  inline double GetIxz(void) const {return Ixz;}
   inline FGColumnVector3& GetXYZcg(void) {return vXYZcg;}
-  inline double GetXYZcg(int axis) {return vXYZcg(axis);}
+  inline double GetXYZcg(int axis) const  {return vXYZcg(axis);}
 
   inline void SetEmptyWeight(double EW) { EmptyWeight = EW;}
   inline void SetBaseIxx(double bixx)   { baseIxx = bixx;}
@@ -87,6 +87,9 @@ public:
   double GetPMIzz(void);
   double GetPMIxy(void);
   double GetPMIxz(void);
+  
+  void bind(void);
+  void unbind(void);
 
 private:
   double Weight;

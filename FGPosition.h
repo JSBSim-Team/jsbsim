@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.44 2001/12/14 00:16:28 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.45 2002/03/09 11:57:24 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.44 2001/12/14 00:16:28 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.45 2002/03/09 11:57:24 apeden Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,26 +87,26 @@ public:
   
   inline FGColumnVector3& GetVel(void) { return vVel; }
   inline FGColumnVector3& GetVelDot(void) { return vVelDot; }
-  inline double GetVn(void)  { return vVel(eX); }
-  inline double GetVe(void)  { return vVel(eY); }
-  inline double GetVd(void)  { return vVel(eZ); }
-  inline double GetVground(void) { return Vground; }
-  inline double GetGroundTrack(void) { return psigt; }
-  inline double Geth(void)  { return h; }
-  inline double Gethdot(void) { return RadiusDot; }
-  inline double GetLatitude(void) { return Latitude; }
-  inline double GetLatitudeDot(void) { return LatitudeDot; }
-  inline double GetLongitude(void) { return Longitude; }
-  inline double GetLongitudeDot(void) { return LongitudeDot; }
-  inline double GetRunwayRadius(void) { return RunwayRadius; }
-  inline double GetDistanceAGL(void)  { return DistanceAGL; }
-  inline double GetRadius(void) { return Radius; }
+  inline double GetVn(void)  const { return vVel(eX); }
+  inline double GetVe(void)  const { return vVel(eY); }
+  inline double GetVd(void)  const { return vVel(eZ); }
+  inline double GetVground(void) const { return Vground; }
+  inline double GetGroundTrack(void) const { return psigt; }
+  inline double Geth(void)  const { return h; }
+  inline double Gethdot(void) const { return RadiusDot; }
+  inline double GetLatitude(void) const { return Latitude; }
+  inline double GetLatitudeDot(void) const { return LatitudeDot; }
+  inline double GetLongitude(void) const { return Longitude; }
+  inline double GetLongitudeDot(void) const { return LongitudeDot; }
+  inline double GetRunwayRadius(void) const { return RunwayRadius; }
+  inline double GetDistanceAGL(void)  const { return DistanceAGL; }
+  inline double GetRadius(void) const { return Radius; }
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
   
-  inline double GetGamma(void) { return gamma; }
+  inline double GetGamma(void) const { return gamma; }
   inline void SetGamma(double tt) { gamma = tt; }
-  inline double GetHOverBCG(void) { return hoverbcg; }
-  inline double GetHOverBMAC(void){ return hoverbmac; }
+  inline double GetHOverBCG(void) const { return hoverbcg; }
+  inline double GetHOverBMAC(void) const { return hoverbmac; }
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
   void SetLatitude(double tt) { Latitude = tt; }
   void SetLongitude(double tt) { Longitude = tt; }
@@ -117,6 +117,9 @@ public:
   inline void SetRunwayNormal(double fgx, double fgy, double fgz ) {
       vRunwayNormal << fgx << fgy << fgz;
   }
+  
+  void bind(void);
+  void unbind(void);
   
 private:  
   FGColumnVector3 vVel;

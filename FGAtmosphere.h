@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.28 2002/03/09 11:54:28 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.27 2001/12/10 23:34:58 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.28 2002/03/09 11:54:28 apeden Exp $
 */
 
 /******************************************************************************
@@ -91,32 +91,32 @@ public:
   bool InitModel(void);
 
   /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature(void) {return temperature;}
+  inline double GetTemperature(void) const {return temperature;}
   /** Returns the density in slugs/ft^3.
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
-  inline double GetDensity(void)    {return density;}
+  inline double GetDensity(void)  const {return density;}
   /// Returns the pressure in psf.
-  inline double GetPressure(void)   {return pressure;}
+  inline double GetPressure(void)  const {return pressure;}
   /// Returns the speed of sound in ft/sec.
-  inline double GetSoundSpeed(void) {return soundspeed;}
+  inline double GetSoundSpeed(void) const {return soundspeed;}
 
   /// Returns the sea level temperature in degrees Rankine.
-  inline double GetTemperatureSL(void) { return SLtemperature; }
+  inline double GetTemperatureSL(void) const { return SLtemperature; }
   /// Returns the sea level density in slugs/ft^3
-  inline double GetDensitySL(void)     { return SLdensity; }
+  inline double GetDensitySL(void)  const { return SLdensity; }
   /// Returns the sea level pressure in psf.
-  inline double GetPressureSL(void)    { return SLpressure; }
+  inline double GetPressureSL(void) const { return SLpressure; }
   /// Returns the sea level speed of sound in ft/sec.
-  inline double GetSoundSpeedSL(void)  { return SLsoundspeed; }
+  inline double GetSoundSpeedSL(void) const { return SLsoundspeed; }
 
   /// Returns the ratio of at-altitude temperature over the sea level value.
-  inline double GetTemperatureRatio(void)  { return temperature*rSLtemperature; }
+  inline double GetTemperatureRatio(void) const { return temperature*rSLtemperature; }
   /// Returns the ratio of at-altitude density over the sea level value.
-  inline double GetDensityRatio(void) 	  { return density*rSLdensity; }
+  inline double GetDensityRatio(void) const { return density*rSLdensity; }
   /// Returns the ratio of at-altitude pressure over the sea level value.
-  inline double GetPressureRatio(void)     { return pressure*rSLpressure; }
+  inline double GetPressureRatio(void) const { return pressure*rSLpressure; }
   /// Returns the ratio of at-altitude sound speed over the sea level value.
-  inline double GetSoundSpeedRatio(void)   { return soundspeed*rSLsoundspeed; }
+  inline double GetSoundSpeedRatio(void) const { return soundspeed*rSLsoundspeed; }
 
   /// Tells the simulator to use an externally calculated atmosphere model.
   inline void UseExternal(void)          { useExternal=true;  }
@@ -140,12 +140,16 @@ public:
   
   /** Retrieves the wind direction. The direction is defined as north=0 and
       increases counterclockwise. The wind heading is returned in radians.*/
-  inline double GetWindPsi(void) { return psiw; }
+  inline double GetWindPsi(void) const { return psiw; }
   
   inline void SetTurbGain(double tt) {TurbGain = tt;}
   
-  inline double GetTurbPQR(int idx) {return vTurbPQR(idx);}
+  inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
+  
+  void bind(void);
+  void unbind(void);
+
   
 private:
   double rho;

@@ -59,7 +59,7 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.18 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.19 2002/03/09 11:55:51 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -74,11 +74,13 @@ public:
   bool Run(void);
   bool Load(FGConfigFile* AC_cfg);
   FGColumnVector3& GetForces(void) {return vForces;}
+  double GetForces(int idx) const {return vForces(idx);}
   FGColumnVector3& GetMoments(void) {return vMoments;}
+  double GetMoments(int idx) const {return vMoments(idx);}
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
   
-  inline int GetNumGearUnits(void) { return lGear.size(); }
+  inline int GetNumGearUnits(void) const { return lGear.size(); }
   /** Gets a gear instance
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
@@ -86,6 +88,9 @@ public:
   
   inline FGLGear* GetGearUnit(int gear) { return &(lGear[gear]); }
   
+  void bind(void);
+  void unbind(void);
+
 private:
   vector <FGLGear> lGear;
   FGColumnVector3 vForces;

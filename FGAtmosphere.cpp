@@ -59,8 +59,9 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.35 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.36 2002/03/09 11:54:28 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +87,10 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   turbType = ttNone;
 //  turbType = ttBerndt; // temporarily disable turbulence until fully tested
   TurbGain = 100.0;
-
+  
+  cout << "Calling FGAtmosphere::bind()" << endl;
+  bind();
+  cout << "FGAtmosphere::bind() done "<< endl;
   Debug(0);
 }
 
@@ -94,6 +98,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAtmosphere::~FGAtmosphere()
 {
+  unbind();
   Debug(1);
 }
 
@@ -346,3 +351,56 @@ void FGAtmosphere::Debug(int from)
   }
 }
 
+void FGAtmosphere::bind(void){
+  PropertyManager->Tie("atmosphere/T-R", this,
+                       &FGAtmosphere::GetTemperature);
+  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this,
+                       &FGAtmosphere::GetDensity);
+  PropertyManager->Tie("atmosphere/P-psf", this,
+                       &FGAtmosphere::GetPressure);
+  PropertyManager->Tie("atmosphere/a-fps", this,
+                       &FGAtmosphere::GetSoundSpeed);
+  PropertyManager->Tie("atmosphere/T-sl-R", this,
+                       &FGAtmosphere::GetTemperatureSL);
+  PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this,
+                       &FGAtmosphere::GetDensitySL);
+  PropertyManager->Tie("atmosphere/P-sl-psf", this,
+                       &FGAtmosphere::GetPressureSL);
+  PropertyManager->Tie("atmosphere/a-sl-fps", this,
+                       &FGAtmosphere::GetSoundSpeedSL);
+  PropertyManager->Tie("atmosphere/theta-norm", this,
+                       &FGAtmosphere::GetTemperatureRatio);
+  PropertyManager->Tie("atmosphere/sigma-norm", this,
+                       &FGAtmosphere::GetDensityRatio);
+  PropertyManager->Tie("atmosphere/delta-norm", this,
+                       &FGAtmosphere::GetPressureRatio);
+  PropertyManager->Tie("atmosphere/a-norm", this,
+                       &FGAtmosphere::GetSoundSpeedRatio);
+  PropertyManager->Tie("atmosphere/psiw-rad", this,
+                       &FGAtmosphere::GetWindPsi);
+  PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1,
+                       &FGAtmosphere::GetTurbPQR);
+  PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2,
+                       &FGAtmosphere::GetTurbPQR);
+  PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3,
+                       &FGAtmosphere::GetTurbPQR);
+}
+
+void FGAtmosphere::unbind(void){
+  PropertyManager->Untie("atmosphere/T-R");
+  PropertyManager->Untie("atmosphere/rho-slugs_ft3");
+  PropertyManager->Untie("atmosphere/P-psf");
+  PropertyManager->Untie("atmosphere/a-fps");
+  PropertyManager->Untie("atmosphere/T-sl-R");
+  PropertyManager->Untie("atmosphere/rho-sl-slugs_ft3");
+  PropertyManager->Untie("atmosphere/P-sl-psf");
+  PropertyManager->Untie("atmosphere/a-sl-fps");
+  PropertyManager->Untie("atmosphere/theta-norm");
+  PropertyManager->Untie("atmosphere/sigma-norm");
+  PropertyManager->Untie("atmosphere/delta-norm");
+  PropertyManager->Untie("atmosphere/a-norm");
+  PropertyManager->Untie("atmosphere/psiw-rad");
+  PropertyManager->Untie("atmosphere/p-turb-rad_sec");
+  PropertyManager->Untie("atmosphere/q-turb-rad_sec");
+  PropertyManager->Untie("atmosphere/r-turb-rad_sec");
+}

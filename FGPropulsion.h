@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.39 2002/01/19 03:01:59 dmegginson Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.40 2002/03/09 11:57:42 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.39 2002/01/19 03:01:59 dmegginson Exp $
+    @version $Id: FGPropulsion.h,v 1.40 2002/03/09 11:57:42 apeden Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster
@@ -126,7 +126,7 @@ public:
   bool Load(FGConfigFile* AC_cfg);
 
   /// Retrieves the number of engines defined for the aircraft.
-  inline unsigned int GetNumEngines(void) {return Engines.size();}
+  inline unsigned int GetNumEngines(void) const {return Engines.size();}
 
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
@@ -137,7 +137,7 @@ public:
                       else                           return 0L;      }
 
   // Retrieves the number of tanks defined for the aircraft.
-  inline unsigned int GetNumTanks(void) {return Tanks.size();}
+  inline unsigned int GetNumTanks(void) const {return Tanks.size();}
 
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container
@@ -156,10 +156,10 @@ public:
                       else                             return 0L;    }
 
   /** Returns the number of fuel tanks currently actively supplying fuel */
-  inline int GetnumSelectedFuelTanks(void) {return numSelectedFuelTanks;}
+  inline int GetnumSelectedFuelTanks(void) const {return numSelectedFuelTanks;}
 
   /** Returns the number of oxidizer tanks currently actively supplying oxidizer */
-  inline int GetnumSelectedOxiTanks(void)  {return numSelectedOxiTanks;}
+  inline int GetnumSelectedOxiTanks(void) const {return numSelectedOxiTanks;}
 
   /** Loops the engines/thrusters until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
@@ -172,9 +172,9 @@ public:
   string GetPropulsionValues(void);
 
   inline FGColumnVector3& GetForces(void)  {return vForces; }
-  inline double GetForces(int n) { return vForces(n);}
+  inline double GetForces(int n) const { return vForces(n);}
   inline FGColumnVector3& GetMoments(void) {return vMoments;}
-  inline double GetMoments(int n) {return vMoments(n);}
+  inline double GetMoments(int n) const {return vMoments(n);}
   
   FGColumnVector3& GetTanksCG(void);
   double GetTanksWeight(void);
@@ -184,7 +184,10 @@ public:
   double GetTanksIzz(const FGColumnVector3& vXYZcg);
   double GetTanksIxz(const FGColumnVector3& vXYZcg);
   double GetTanksIxy(const FGColumnVector3& vXYZcg);
-
+  
+  void bind();
+  void unbind();
+   
 private:
   vector <FGEngine*>   Engines;
   vector <FGTank*>     Tanks;

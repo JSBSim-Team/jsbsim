@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.35 2001/12/23 21:49:01 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.36 2002/03/09 11:56:26 apeden Exp $"
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 typedef enum { setwned, setwmd, setwhc } windset; 
@@ -125,7 +125,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.35 2001/12/23 21:49:01 jberndt Exp $
+   @version $Id: FGInitialCondition.h,v 1.36 2002/03/09 11:56:26 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,30 +166,30 @@ public:
   inline void SetLongitudeDegIC(double tt) { longitude=tt*degtorad; }
 
   
-  inline double GetVcalibratedKtsIC(void) { return vc*fpstokts; }
-  inline double GetVequivalentKtsIC(void) { return ve*fpstokts; }
-  inline double GetVgroundKtsIC(void) { return vg*fpstokts; }
-  inline double GetVtrueKtsIC(void) { return vt*fpstokts; }
-  inline double GetMachIC(void) { return mach; }
+  inline double GetVcalibratedKtsIC(void) const { return vc*fpstokts; }
+  inline double GetVequivalentKtsIC(void) const { return ve*fpstokts; }
+  inline double GetVgroundKtsIC(void) const { return vg*fpstokts; }
+  inline double GetVtrueKtsIC(void) const { return vt*fpstokts; }
+  inline double GetMachIC(void) const { return mach; }
   
-  inline double GetClimbRateFpmIC(void) { return hdot*60; }
-  inline double GetFlightPathAngleDegIC(void) { return gamma*radtodeg; }
+  inline double GetClimbRateFpmIC(void) const { return hdot*60; }
+  inline double GetFlightPathAngleDegIC(void)const  { return gamma*radtodeg; }
   
-  inline double GetAlphaDegIC(void)      { return alpha*radtodeg; }
-  inline double GetBetaDegIC(void)       { return beta*radtodeg; }
+  inline double GetAlphaDegIC(void) const { return alpha*radtodeg; }
+  inline double GetBetaDegIC(void) const  { return beta*radtodeg; }
   
-  inline double GetPitchAngleDegIC(void) { return theta*radtodeg; }
-  inline double GetRollAngleDegIC(void) { return phi*radtodeg; }
-  inline double GetHeadingDegIC(void)   { return psi*radtodeg; }
+  inline double GetPitchAngleDegIC(void) const { return theta*radtodeg; }
+  inline double GetRollAngleDegIC(void) const { return phi*radtodeg; }
+  inline double GetHeadingDegIC(void) const { return psi*radtodeg; }
 
-  inline double GetLatitudeDegIC(void)  { return latitude*radtodeg; }
-  inline double GetLongitudeDegIC(void) { return longitude*radtodeg; }
+  inline double GetLatitudeDegIC(void) const { return latitude*radtodeg; }
+  inline double GetLongitudeDegIC(void) const { return longitude*radtodeg; }
   
-  inline double GetAltitudeFtIC(void) { return altitude; }
-  inline double GetAltitudeAGLFtIC(void) { return altitude - terrain_altitude; }
+  inline double GetAltitudeFtIC(void) const { return altitude; }
+  inline double GetAltitudeAGLFtIC(void) const { return altitude - terrain_altitude; }
   
-  inline double GetSeaLevelRadiusFtIC(void)  { return sea_level_radius; }
-  inline double GetTerrainAltitudeFtIC(void) { return terrain_altitude; }
+  inline double GetSeaLevelRadiusFtIC(void) const { return sea_level_radius; }
+  inline double GetTerrainAltitudeFtIC(void) const { return terrain_altitude; }
 
   void SetVgroundFpsIC(double tt);
   void SetVtrueFpsIC(double tt);
@@ -211,17 +211,17 @@ public:
   void SetWindDownKtsIC(double wD);                                          
   
   void SetClimbRateFpsIC(double tt);
-  inline double GetVgroundFpsIC(void) { return vg; }
-  inline double GetVtrueFpsIC(void) { return vt; }
-  inline double GetWindUFpsIC(void) { return uw; }
-  inline double GetWindVFpsIC(void) { return vw; }
-  inline double GetWindWFpsIC(void) { return ww; }
-  inline double GetWindNFpsIC(void) { return wnorth; }
-  inline double GetWindEFpsIC(void) { return weast; }
-  inline double GetWindDFpsIC(void) { return wdown; }
-  inline double GetWindFpsIC(void)  { return sqrt(wnorth*wnorth + weast*weast); }
+  inline double GetVgroundFpsIC(void) const  { return vg; }
+  inline double GetVtrueFpsIC(void) const { return vt; }
+  inline double GetWindUFpsIC(void) const { return uw; }
+  inline double GetWindVFpsIC(void) const { return vw; }
+  inline double GetWindWFpsIC(void) const { return ww; }
+  inline double GetWindNFpsIC(void) const { return wnorth; }
+  inline double GetWindEFpsIC(void) const { return weast; }
+  inline double GetWindDFpsIC(void) const { return wdown; }
+  inline double GetWindFpsIC(void)  const { return sqrt(wnorth*wnorth + weast*weast); }
   double GetWindDirDegIC(void); 
-  inline double GetClimbRateFpsIC(void) { return hdot; }
+  inline double GetClimbRateFpsIC(void) const { return hdot; }
   double GetUBodyFpsIC(void);
   double GetVBodyFpsIC(void);
   double GetWBodyFpsIC(void);
@@ -231,25 +231,29 @@ public:
   void SetBetaRadIC(double tt);
   void SetRollAngleRadIC(double tt);
   void SetTrueHeadingRadIC(double tt);
-  inline void SetLatitudeRadIC(double tt)  { latitude=tt; }
+  inline void SetLatitudeRadIC(double tt) { latitude=tt; }
   inline void SetLongitudeRadIC(double tt) { longitude=tt; }
-  inline double GetFlightPathAngleRadIC(void) { return gamma; }
-  inline double GetAlphaRadIC(void)      { return alpha; }
-  inline double GetPitchAngleRadIC(void) { return theta; }
-  inline double GetBetaRadIC(void)       { return beta; }
-  inline double GetRollAngleRadIC(void) { return phi; }
-  inline double GetHeadingRadIC(void)   { return psi; }
-  inline double GetLatitudeRadIC(void) { return latitude; }
-  inline double GetLongitudeRadIC(void) { return longitude; }
-  inline double GetThetaRadIC(void) { return theta; }
-  inline double GetPhiRadIC(void)   { return phi; }
-  inline double GetPsiRadIC(void)   { return psi; }
+  inline double GetFlightPathAngleRadIC(void) const { return gamma; }
+  inline double GetAlphaRadIC(void) const      { return alpha; }
+  inline double GetPitchAngleRadIC(void) const { return theta; }
+  inline double GetBetaRadIC(void) const       { return beta; }
+  inline double GetRollAngleRadIC(void) const  { return phi; }
+  inline double GetHeadingRadIC(void) const   { return psi; }
+  inline double GetLatitudeRadIC(void) const { return latitude; }
+  inline double GetLongitudeRadIC(void) const { return longitude; }
+  inline double GetThetaRadIC(void) const { return theta; }
+  inline double GetPhiRadIC(void)  const  { return phi; }
+  inline double GetPsiRadIC(void) const   { return psi; }
 
   inline speedset GetSpeedSet(void) { return lastSpeedSet; }
   inline windset GetWindSet(void) { return lastWindSet; }
   
   bool Load(string acpath, string acname, string rstname);
+  
+  void bind(void);
+  void unbind(void);
 
+  
 private:
   double vt,vc,ve,vg;
   double mach;
@@ -277,6 +281,7 @@ private:
   windset lastWindSet;
 
   FGFDMExec *fdmex;
+  FGPropertyManager *PropertyManager;
 
   bool getAlpha(void);
   bool getTheta(void);

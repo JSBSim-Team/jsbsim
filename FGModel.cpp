@@ -55,7 +55,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.19 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.20 2002/03/09 11:57:03 apeden Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -85,7 +85,14 @@ FGModel::FGModel(FGFDMExec* fdmex)
   Position        = 0;
   Auxiliary       = 0;
   Output          = 0;
-
+  
+  //in order for FGModel derived classes to self-bind (that is, call
+  //their bind function in the constructor, the PropertyManager pointer
+  //must be brought up now.
+  PropertyManager = FDMExec->GetPropertyManager();
+  
+  cout << "FGModel::PropertyManager: " << PropertyManager << endl;
+  
   exe_ctr     = 1;
 
   if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
@@ -116,7 +123,7 @@ bool FGModel::InitModel(void)
   Position        = FDMExec->GetPosition();
   Auxiliary       = FDMExec->GetAuxiliary();
   Output          = FDMExec->GetOutput();
-
+  
   if (!State ||
       !Atmosphere ||
       !FCS ||

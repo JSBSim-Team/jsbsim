@@ -54,8 +54,9 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGConfigFile.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.50 2002/02/03 14:34:55 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.51 2002/03/09 11:56:26 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -87,10 +88,12 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
     fdmex=FDMExec;
     fdmex->GetPosition()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
+    PropertyManager=fdmex->GetPropertyManager();
+    bind();
   } else {
     cout << "FGInitialCondition: This class requires a pointer to a valid FGFDMExec object" << endl;
   }
-
+  
   Debug(0);
 }
 
@@ -98,6 +101,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
 
 FGInitialCondition::~FGInitialCondition()
 {
+  unbind();
   Debug(1);
 }
 
@@ -814,3 +818,195 @@ void FGInitialCondition::Debug(int from)
   }
 }
 
+void FGInitialCondition::bind(void){
+  PropertyManager->Tie("ic/vc-kts", this,
+                       &FGInitialCondition::GetVcalibratedKtsIC,
+                       &FGInitialCondition::SetVcalibratedKtsIC,
+                       true);
+  PropertyManager->Tie("ic/ve-kts", this,
+                       &FGInitialCondition::GetVequivalentKtsIC,
+                       &FGInitialCondition::SetVequivalentKtsIC,
+                       true);
+  PropertyManager->Tie("ic/vg-kts", this,
+                       &FGInitialCondition::GetVgroundKtsIC,
+                       &FGInitialCondition::SetVgroundKtsIC,
+                       true);
+  PropertyManager->Tie("ic/vt-kts", this,
+                       &FGInitialCondition::GetVtrueKtsIC,
+                       &FGInitialCondition::SetVtrueKtsIC,
+                       true);
+  PropertyManager->Tie("ic/mach-norm", this,
+                       &FGInitialCondition::GetMachIC,
+                       &FGInitialCondition::SetMachIC,
+                       true);
+  PropertyManager->Tie("ic/roc-fpm", this,
+                       &FGInitialCondition::GetClimbRateFpmIC,
+                       &FGInitialCondition::SetClimbRateFpmIC,
+                       true);
+  PropertyManager->Tie("ic/gamma-deg", this,
+                       &FGInitialCondition::GetFlightPathAngleDegIC,
+                       &FGInitialCondition::SetFlightPathAngleDegIC,
+                       true);
+  PropertyManager->Tie("ic/alpha-deg", this,
+                       &FGInitialCondition::GetAlphaDegIC,
+                       &FGInitialCondition::SetAlphaDegIC,
+                       true);
+  PropertyManager->Tie("ic/beta-deg", this,
+                       &FGInitialCondition::GetBetaDegIC,
+                       &FGInitialCondition::SetBetaDegIC,
+                       true);
+  PropertyManager->Tie("ic/theta-deg", this,
+                       &FGInitialCondition::GetPitchAngleDegIC,
+                       &FGInitialCondition::SetPitchAngleDegIC,
+                       true);
+  PropertyManager->Tie("ic/phi-deg", this,
+                       &FGInitialCondition::GetRollAngleDegIC,
+                       &FGInitialCondition::SetRollAngleDegIC,
+                       true);
+  PropertyManager->Tie("ic/psi-true-deg", this,
+                       &FGInitialCondition::GetHeadingDegIC );
+  PropertyManager->Tie("ic/lat-gc-deg", this,
+                       &FGInitialCondition::GetLatitudeDegIC,
+                       &FGInitialCondition::SetLatitudeDegIC,
+                       true);
+  PropertyManager->Tie("ic/long-gc-deg", this,
+                       &FGInitialCondition::GetLongitudeDegIC,
+                       &FGInitialCondition::SetLongitudeDegIC,
+                       true);
+  PropertyManager->Tie("ic/h-sl-ft", this,
+                       &FGInitialCondition::GetAltitudeFtIC,
+                       &FGInitialCondition::SetAltitudeFtIC,
+                       true);
+  PropertyManager->Tie("ic/h-agl-ft", this,
+                       &FGInitialCondition::GetAltitudeAGLFtIC,
+                       &FGInitialCondition::SetAltitudeAGLFtIC,
+                       true);
+  PropertyManager->Tie("ic/sea-level-radius-ft", this,
+                       &FGInitialCondition::GetSeaLevelRadiusFtIC,
+                       &FGInitialCondition::SetSeaLevelRadiusFtIC,
+                       true);
+  PropertyManager->Tie("ic/terrain-altitude-ft", this,
+                       &FGInitialCondition::GetTerrainAltitudeFtIC,
+                       &FGInitialCondition::SetTerrainAltitudeFtIC,
+                       true);
+  PropertyManager->Tie("ic/vg-fps", this,
+                       &FGInitialCondition::GetVgroundFpsIC,
+                       &FGInitialCondition::SetVgroundFpsIC,
+                       true);
+  PropertyManager->Tie("ic/vt-fps", this,
+                       &FGInitialCondition::GetVtrueFpsIC,
+                       &FGInitialCondition::SetVtrueFpsIC,
+                       true);
+  PropertyManager->Tie("ic/vw-bx-fps", this,
+                       &FGInitialCondition::GetWindUFpsIC);
+  PropertyManager->Tie("ic/vw-by-fps", this,
+                       &FGInitialCondition::GetWindVFpsIC);
+  PropertyManager->Tie("ic/vw-bz-fps", this,
+                       &FGInitialCondition::GetWindWFpsIC);
+  PropertyManager->Tie("ic/vw-north-fps", this,
+                       &FGInitialCondition::GetWindNFpsIC);
+  PropertyManager->Tie("ic/vw-east-fps", this,
+                       &FGInitialCondition::GetWindEFpsIC);
+  PropertyManager->Tie("ic/vw-down-fps", this,
+                       &FGInitialCondition::GetWindDFpsIC);
+  PropertyManager->Tie("ic/vw-mag-fps", this,
+                       &FGInitialCondition::GetWindFpsIC);
+ /*  PropertyManager->Tie("ic/vw-dir-deg", this,
+                       &FGInitialCondition::GetWindDirDegIC,
+                       &FGInitialCondition::SetWindDirDegIC,
+                       true); */
+
+  PropertyManager->Tie("ic/roc-fps", this,
+                       &FGInitialCondition::GetClimbRateFpsIC,
+                       &FGInitialCondition::SetClimbRateFpsIC,
+                       true);
+  /* PropertyManager->Tie("ic/u-fps", this,
+                       &FGInitialCondition::GetUBodyFpsIC,
+                       &FGInitialCondition::SetUBodyFpsIC,
+                       true);
+  PropertyManager->Tie("ic/v-fps", this,
+                       &FGInitialCondition::GetVBodyFpsIC,
+                       &FGInitialCondition::SetVBodyFpsIC,
+                       true);
+  PropertyManager->Tie("ic/w-fps", this,
+                       &FGInitialCondition::GetWBodyFpsIC,
+                       &FGInitialCondition::SetWBodyFpsIC,
+                       true); */
+
+  PropertyManager->Tie("ic/gamma-rad", this,
+                       &FGInitialCondition::GetFlightPathAngleRadIC,
+                       &FGInitialCondition::SetFlightPathAngleRadIC,
+                       true);
+  PropertyManager->Tie("ic/alpha-rad", this,
+                       &FGInitialCondition::GetAlphaRadIC,
+                       &FGInitialCondition::SetAlphaRadIC,
+                       true);
+  PropertyManager->Tie("ic/theta-rad", this,
+                       &FGInitialCondition::GetPitchAngleRadIC,
+                       &FGInitialCondition::SetPitchAngleRadIC,
+                       true);
+  PropertyManager->Tie("ic/beta-rad", this,
+                       &FGInitialCondition::GetBetaRadIC,
+                       &FGInitialCondition::SetBetaRadIC,
+                       true);
+  PropertyManager->Tie("ic/phi-rad", this,
+                       &FGInitialCondition::GetRollAngleRadIC,
+                       &FGInitialCondition::SetRollAngleRadIC,
+                       true);
+  PropertyManager->Tie("ic/psi-true-rad", this,
+                       &FGInitialCondition::GetHeadingRadIC);
+  PropertyManager->Tie("ic/lat-gc-rad", this,
+                       &FGInitialCondition::GetLatitudeRadIC,
+                       &FGInitialCondition::SetLatitudeRadIC,
+                       true);
+  PropertyManager->Tie("ic/long-gc-rad", this,
+                       &FGInitialCondition::GetLongitudeRadIC,
+                       &FGInitialCondition::SetLongitudeRadIC,
+                       true);
+}
+
+void FGInitialCondition::unbind(void){
+  PropertyManager->Untie("ic/vc-kts");
+  PropertyManager->Untie("ic/ve-kts");
+  PropertyManager->Untie("ic/vg-kts");
+  PropertyManager->Untie("ic/vt-kts");
+  PropertyManager->Untie("ic/mach-norm");
+  PropertyManager->Untie("ic/roc-fpm");
+  PropertyManager->Untie("ic/gamma-deg");
+  PropertyManager->Untie("ic/alpha-deg");
+  PropertyManager->Untie("ic/beta-deg");
+  PropertyManager->Untie("ic/theta-deg");
+  PropertyManager->Untie("ic/phi-deg");
+  PropertyManager->Untie("ic/psi-true-deg");
+  PropertyManager->Untie("ic/lat-gc-deg");
+  PropertyManager->Untie("ic/long-gc-deg");
+  PropertyManager->Untie("ic/h-sl-ft");
+  PropertyManager->Untie("ic/h-agl-ft");
+  PropertyManager->Untie("ic/sea-level-radius-ft");
+  PropertyManager->Untie("ic/terrain-altitude-ft");
+  PropertyManager->Untie("ic/vg-fps");
+  PropertyManager->Untie("ic/vt-fps");
+  PropertyManager->Untie("ic/vw-bx-fps");
+  PropertyManager->Untie("ic/vw-by-fps");
+  PropertyManager->Untie("ic/vw-bz-fps");
+  PropertyManager->Untie("ic/vw-north-fps");
+  PropertyManager->Untie("ic/vw-east-fps");
+  PropertyManager->Untie("ic/vw-down-fps");
+  PropertyManager->Untie("ic/vw-mag-fps");
+  /* PropertyManager->Untie("ic/vw-dir-deg"); */
+
+  PropertyManager->Untie("ic/roc-fps");
+  
+  /*  PropertyManager->Untie("ic/u-fps");
+  PropertyManager->Untie("ic/v-fps");
+  PropertyManager->Untie("ic/w-fps"); */
+
+  PropertyManager->Untie("ic/gamma-rad");
+  PropertyManager->Untie("ic/alpha-rad");
+  PropertyManager->Untie("ic/theta-rad");
+  PropertyManager->Untie("ic/beta-rad");
+  PropertyManager->Untie("ic/phi-rad");
+  PropertyManager->Untie("ic/psi-true-rad");
+  PropertyManager->Untie("ic/lat-gc-rad");
+  PropertyManager->Untie("ic/long-gc-rad");
+}

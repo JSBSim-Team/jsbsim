@@ -39,8 +39,9 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGMassBalance.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.23 2002/03/01 17:14:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.24 2002/03/09 11:56:42 apeden Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,6 +52,7 @@ CLASS IMPLEMENTATION
 FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGMassBalance";
+  bind();
 
   Debug(0);
 }
@@ -59,6 +61,7 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance()
 {
+  unbind();
   Debug(1);
 }
 
@@ -239,3 +242,38 @@ void FGMassBalance::Debug(int from)
   }
 }
 
+void FGMassBalance::bind(void){
+  PropertyManager->Tie("inertia/mass-slugs", this,
+                       &FGMassBalance::GetMass);
+  PropertyManager->Tie("inertia/weight-lbs", this,
+                       &FGMassBalance::GetWeight);
+  PropertyManager->Tie("inertia/ixx-lbsft2", this,
+                       &FGMassBalance::GetIxx);
+  PropertyManager->Tie("inertia/iyy-lbsft2", this,
+                       &FGMassBalance::GetIyy);
+  PropertyManager->Tie("inertia/izz-lbsft2", this,
+                       &FGMassBalance::GetIzz);
+  PropertyManager->Tie("inertia/ixy-lbsft2", this,
+                       &FGMassBalance::GetIxy);
+  PropertyManager->Tie("inertia/ixz-lbsft2", this,
+                       &FGMassBalance::GetIxz);
+  PropertyManager->Tie("inertia/cg-x-ft", this,1,
+                       &FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/cg-y-ft", this,2,
+                       &FGMassBalance::GetXYZcg);
+  PropertyManager->Tie("inertia/cg-z-ft", this,3,
+                       &FGMassBalance::GetXYZcg);
+}
+
+void FGMassBalance::unbind(void){
+  PropertyManager->Untie("inertia/mass-slugs");
+  PropertyManager->Untie("inertia/weight-lbs");
+  PropertyManager->Untie("inertia/ixx-lbsft2");
+  PropertyManager->Untie("inertia/iyy-lbsft2");
+  PropertyManager->Untie("inertia/izz-lbsft2");
+  PropertyManager->Untie("inertia/ixy-lbsft2");
+  PropertyManager->Untie("inertia/ixz-lbsft2");
+  PropertyManager->Untie("inertia/cg-x-ft");
+  PropertyManager->Untie("inertia/cg-y-ft");
+  PropertyManager->Untie("inertia/cg-z-ft");
+}

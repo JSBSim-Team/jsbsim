@@ -39,6 +39,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGJSBBase.h"
+#include "FGPropertyManager.h"
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -57,7 +58,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.29 2001/12/23 21:49:01 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.30 2002/03/09 11:57:03 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -126,6 +127,8 @@ public:
   virtual bool InitModel(void);
   virtual void SetRate(int tt) {rate = tt;}
   virtual int  GetRate(void)   {return rate;}
+  
+  void SetPropertyManager(FGPropertyManager *fgpm) { PropertyManager=fgpm;}
 
 protected:
   int exe_ctr;
@@ -148,6 +151,7 @@ protected:
   FGPosition*        Position;
   FGAuxiliary*       Auxiliary;
   FGOutput*          Output;
+  FGPropertyManager* PropertyManager;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

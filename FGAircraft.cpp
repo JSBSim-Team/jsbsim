@@ -82,6 +82,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -91,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.110 2002/03/01 17:14:36 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.111 2002/03/09 11:54:08 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,13 +101,20 @@ CLASS IMPLEMENTATION
 
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 {
+  
   Name = "FGAircraft";
   alphaclmin = alphaclmax = 0;
   HTailArea = VTailArea = HTailArm = VTailArm = 0.0;
   lbarh = lbarv = vbarh = vbarv = 0.0;
   WingIncidence=0;
   impending_stall = 0;
-
+  
+  cout << "Calling FGAircraft::bind()" << endl;
+  cout << "PropertyManager= ";
+  cout << PropertyManager;
+  cout << endl;
+  bind();
+  cout << "bind() complete." << endl;
   Debug(0);
 }
 
@@ -114,6 +122,7 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAircraft::~FGAircraft()
 {
+  unbind();
   Debug(1);
 }
 
@@ -304,3 +313,97 @@ void FGAircraft::Debug(int from)
   }
 }
 
+void FGAircraft::bind(void){
+  PropertyManager->Tie("metrics/Sw-sqft", this,
+                       &FGAircraft::GetWingArea);
+  PropertyManager->Tie("metrics/bw-ft", this,
+                       &FGAircraft::GetWingSpan);
+  PropertyManager->Tie("metrics/cbarw-ft", this,
+                       &FGAircraft::Getcbar);
+  PropertyManager->Tie("metrics/iw-deg", this,
+                       &FGAircraft::GetWingIncidence);
+  PropertyManager->Tie("metrics/Sh-sqft", this,
+                       &FGAircraft::GetHTailArea);
+  PropertyManager->Tie("metrics/lh-ft", this,
+                       &FGAircraft::GetHTailArm);
+  PropertyManager->Tie("metrics/Sv-sqft", this,
+                       &FGAircraft::GetVTailArea);
+  PropertyManager->Tie("metrics/lv-ft", this,
+                       &FGAircraft::GetVTailArm);
+  PropertyManager->Tie("metrics/lh-norm", this,
+                       &FGAircraft::Getlbarh);
+  PropertyManager->Tie("metrics/lv-norm", this,
+                       &FGAircraft::Getlbarv);
+  PropertyManager->Tie("metrics/vbarh-norm", this,
+                       &FGAircraft::Getvbarh);
+  PropertyManager->Tie("metrics/vbarv-norm", this,
+                       &FGAircraft::Getvbarv);
+  PropertyManager->Tie("moments/l-total-lbsft", this,1,
+                       &FGAircraft::GetMoments);
+  PropertyManager->Tie("moments/m-total-lbsft", this,2,
+                       &FGAircraft::GetMoments);
+  PropertyManager->Tie("moments/n-total-lbsft", this,3,
+                       &FGAircraft::GetMoments);
+  PropertyManager->Tie("forces/fbx-total-lbs", this,1,
+                       &FGAircraft::GetForces);
+  PropertyManager->Tie("forces/fby-total-lbs", this,2,
+                       &FGAircraft::GetForces);
+  PropertyManager->Tie("forces/fbz-total-lbs", this,3,
+                       &FGAircraft::GetForces);
+  PropertyManager->Tie("metrics/aero-rp-x-ft", this,1,
+                       &FGAircraft::GetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-y-ft", this,2,
+                       &FGAircraft::GetXYZrp);
+  PropertyManager->Tie("metrics/aero-rp-z-ft", this,3,
+                       &FGAircraft::GetXYZrp);
+  PropertyManager->Tie("metrics/eyepoint-x-ft", this,1,
+                       &FGAircraft::GetXYZep);
+  PropertyManager->Tie("metrics/eyepoint-y-ft", this,2,
+                       &FGAircraft::GetXYZep);
+  PropertyManager->Tie("metrics/eyepoint-z-ft", this,3,
+                       &FGAircraft::GetXYZep);
+                         
+  PropertyManager->Tie("metrics/alpha-max-deg", this,
+                       &FGAircraft::GetAlphaCLMax,
+                       &FGAircraft::SetAlphaCLMax,
+                       true);
+                     
+  PropertyManager->Tie("metrics/alpha-min-deg", this,
+                       &FGAircraft::GetAlphaCLMin,
+                       &FGAircraft::SetAlphaCLMin,
+                       true);
+ 
+  //PropertyManager->Tie("systems/stall-warn-norm ", this,
+  //                      &FGAircraft::GetStallWarn);
+                     
+}
+
+void FGAircraft::unbind(void){
+  PropertyManager->Untie("metrics/Sw-sqft");
+  PropertyManager->Untie("metrics/bw-ft");
+  PropertyManager->Untie("metrics/cbarw-ft");
+  PropertyManager->Untie("metrics/iw-deg");
+  PropertyManager->Untie("metrics/Sh-sqft");
+  PropertyManager->Untie("metrics/lh-ft");
+  PropertyManager->Untie("metrics/Sv-sqft");
+  PropertyManager->Untie("metrics/lv-ft");
+  PropertyManager->Untie("metrics/lh-norm");
+  PropertyManager->Untie("metrics/lv-norm");
+  PropertyManager->Untie("metrics/vbarh-norm");
+  PropertyManager->Untie("metrics/vbarv-norm");
+  PropertyManager->Untie("moments/l-total-lbsft");
+  PropertyManager->Untie("moments/m-total-lbsft");
+  PropertyManager->Untie("moments/n-total-lbsft");
+  PropertyManager->Untie("forces/fbx-total-lbs");
+  PropertyManager->Untie("forces/fby-total-lbs");
+  PropertyManager->Untie("forces/fbz-total-lbs");
+  PropertyManager->Untie("metrics/aero-rp-x-ft");
+  PropertyManager->Untie("metrics/aero-rp-y-ft");
+  PropertyManager->Untie("metrics/aero-rp-z-ft");
+  PropertyManager->Untie("metrics/eyepoint-x-ft");
+  PropertyManager->Untie("metrics/eyepoint-y-ft");
+  PropertyManager->Untie("metrics/eyepoint-z-ft");
+  PropertyManager->Untie("metrics/alpha-max-deg");
+  PropertyManager->Untie("metrics/alpha-min-deg");
+  //PropertyManager->Untie("systems/stall-warn-norm ");
+}

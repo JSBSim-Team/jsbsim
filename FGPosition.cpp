@@ -83,8 +83,10 @@ INCLUDES
 #include "FGRotation.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.52 2001/12/23 21:49:01 jberndt Exp $";
+
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.53 2002/03/09 11:57:24 apeden Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +106,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
   gamma = Vt = Vground = 0.0;
   hoverbmac = hoverbcg = 0.0;
   psigt = 0.0;
-
+  bind();
   Debug(0);
 }
 
@@ -112,6 +114,7 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGPosition::~FGPosition(void)
 {
+  unbind();
   Debug(1);
 }
 
@@ -271,3 +274,67 @@ void FGPosition::Debug(int from)
   }
 }
 
+void FGPosition::bind(void){
+  PropertyManager->Tie("velocities/v-north-fps", this,
+                       &FGPosition::GetVn);
+  PropertyManager->Tie("velocities/v-east-fps", this,
+                       &FGPosition::GetVe);
+  PropertyManager->Tie("velocities/v-down-fps", this,
+                       &FGPosition::GetVd);
+  PropertyManager->Tie("velocities/vg-fps", this,
+                       &FGPosition::GetVground);
+  PropertyManager->Tie("flight-path/psi-gt-rad", this,
+                       &FGPosition::GetGroundTrack);
+  PropertyManager->Tie("position/h-sl-ft", this,
+                       &FGPosition::Geth,
+                       &FGPosition::Seth,
+                       true);
+  PropertyManager->Tie("postition/h-dot-fps", this,
+                       &FGPosition::Gethdot);
+  PropertyManager->Tie("postition/lat-gc-rad", this,
+                       &FGPosition::GetLatitude,
+                       &FGPosition::SetLatitude);
+  PropertyManager->Tie("postition/lat-dot-gc-rad", this,
+                       &FGPosition::GetLatitudeDot);
+  PropertyManager->Tie("postition/long-gc-rad", this,
+                       &FGPosition::GetLongitude,
+                       &FGPosition::SetLongitude,
+                       true);
+  PropertyManager->Tie("postition/long-dot-gc-rad", this,
+                       &FGPosition::GetLongitudeDot);
+  PropertyManager->Tie("metrics/runway-radius", this,
+                       &FGPosition::GetRunwayRadius,
+                       &FGPosition::SetRunwayRadius);
+  PropertyManager->Tie("position/h-agl-ft", this,
+                       &FGPosition::GetDistanceAGL,
+                       &FGPosition::SetDistanceAGL);
+  PropertyManager->Tie("position/radius-to-vehicle-ft", this,
+                       &FGPosition::GetRadius);
+  PropertyManager->Tie("flight-path/gamma-rad", this,
+                       &FGPosition::GetGamma,
+                       &FGPosition::SetGamma);
+  PropertyManager->Tie("position/h_b-cg-ft", this,
+                       &FGPosition::GetHOverBCG);
+  PropertyManager->Tie("position/h_b-mac-ft", this,
+                       &FGPosition::GetHOverBMAC);
+}
+
+void FGPosition::unbind(void){
+  PropertyManager->Untie("velocities/v-north-fps");
+  PropertyManager->Untie("velocities/v-east-fps");
+  PropertyManager->Untie("velocities/v-down-fps");
+  PropertyManager->Untie("velocities/vg-fps");
+  PropertyManager->Untie("flight-path/psi-gt-rad");
+  PropertyManager->Untie("position/h-sl-ft");
+  PropertyManager->Untie("postition/h-dot-fps");
+  PropertyManager->Untie("postition/lat-gc-rad");
+  PropertyManager->Untie("postition/lat-dot-gc-rad");
+  PropertyManager->Untie("postition/long-gc-rad");
+  PropertyManager->Untie("postition/long-dot-gc-rad");
+  PropertyManager->Untie("metrics/runway-radius");
+  PropertyManager->Untie("position/h-agl-ft");
+  PropertyManager->Untie("position/radius-to-vehicle-ft");
+  PropertyManager->Untie("flight-path/gamma-rad");
+  PropertyManager->Untie("position/h_b-cg-ft");
+  PropertyManager->Untie("position/h_b-mac-ft");
+}

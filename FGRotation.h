@@ -72,7 +72,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.35 2001/12/22 15:39:42 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.36 2002/03/09 11:57:55 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -87,32 +87,36 @@ public:
   bool Run(void);
 
   inline FGColumnVector3& GetPQR(void) {return vPQR;}
-  inline double GetPQR(int axis) {return vPQR(axis);}
+  inline double GetPQR(int axis) const {return vPQR(axis);}
   inline FGColumnVector3& GetAeroPQR(void) {return vAeroPQR;}
-  inline double GetAeroPQR(int axis) {return vAeroPQR(axis);}
+  inline double GetAeroPQR(int axis) const {return vAeroPQR(axis);}
   inline FGColumnVector3& GetPQRdot(void) {return vPQRdot;}
-  inline double GetPQRdot(int idx) {return vPQRdot(idx);}
+  inline double GetPQRdot(int idx) const {return vPQRdot(idx);}
   inline FGColumnVector3& GetEuler(void) {return vEuler;}
-  inline double GetEuler(int axis) {return vEuler(axis);}
+  inline double GetEuler(int axis) const {return vEuler(axis);}
   inline FGColumnVector3& GetEulerRates(void) { return vEulerRates; }
-  inline double GetEulerRates(int axis) { return vEulerRates(axis); }
+  inline double GetEulerRates(int axis) const { return vEulerRates(axis); }
   inline void SetPQR(FGColumnVector3 tt) {vPQR = tt;}
   inline void SetPQR(double p, double q, double r) {vPQR(eP)=p;
                                                     vPQR(eQ)=q;
                                                     vPQR(eR)=r;}
   inline void SetEuler(FGColumnVector3 tt) {vEuler = tt;}
   
-  inline double Getphi(void) {return vEuler(1);}
-  inline double Gettht(void) {return vEuler(2);}
-  inline double Getpsi(void) {return vEuler(3);}
+  inline double Getphi(void) const {return vEuler(1);}
+  inline double Gettht(void) const {return vEuler(2);}
+  inline double Getpsi(void) const {return vEuler(3);}
   
-  inline double GetCosphi(void) {return cPhi;}
-  inline double GetCostht(void) {return cTht;}
-  inline double GetCospsi(void) {return cPsi;}
+  inline double GetCosphi(void) const {return cPhi;}
+  inline double GetCostht(void) const {return cTht;}
+  inline double GetCospsi(void) const {return cPsi;}
 
-  inline double GetSinphi(void) {return sPhi;}
-  inline double GetSintht(void) {return sTht;}
-  inline double GetSinpsi(void) {return sPsi;}
+  inline double GetSinphi(void) const {return sPhi;}
+  inline double GetSintht(void) const {return sTht;}
+  inline double GetSinpsi(void) const {return sPsi;}
+  
+  void bind(void);
+  void unbind(void);
+
 
 private:
   FGColumnVector3 vPQR;

@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.80 2002/02/04 23:05:33 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.81 2002/03/09 11:54:08 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.80 2002/02/04 23:05:33 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.81 2002/03/09 11:54:08 apeden Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -130,42 +130,45 @@ public:
   inline string GetAircraftName(void) { return AircraftName; }
   
   /// Gets the wing area
-  inline double GetWingArea(void) { return WingArea; }
+  inline double GetWingArea(void) const { return WingArea; }
   /// Gets the wing span
-  inline double GetWingSpan(void) { return WingSpan; }
+  inline double GetWingSpan(void) const { return WingSpan; }
   /// Gets the average wing chord
-  inline double Getcbar(void) { return cbar; }
-  inline double GetWingIncidence(void) { return WingIncidence; }
-  inline double GetHTailArea(void) { return HTailArea; }
-  inline double GetHTailArm(void)  { return HTailArm; }
-  inline double GetVTailArea(void) { return VTailArea; }
-  inline double GetVTailArm(void)  { return VTailArm; }
-  inline double Getlbarh(void) { return lbarh; } // HTailArm / cbar
-  inline double Getlbarv(void) { return lbarv; } // VTailArm / cbar
-  inline double Getvbarh(void) { return vbarh; } // H. Tail Volume
-  inline double Getvbarv(void) { return vbarv; } // V. Tail Volume
+  inline double Getcbar(void) const { return cbar; }
+  inline double GetWingIncidence(void) const { return WingIncidence; }
+  inline double GetHTailArea(void) const { return HTailArea; }
+  inline double GetHTailArm(void)  const { return HTailArm; }
+  inline double GetVTailArea(void) const { return VTailArea; }
+  inline double GetVTailArm(void)  const { return VTailArm; }
+  inline double Getlbarh(void) const { return lbarh; } // HTailArm / cbar
+  inline double Getlbarv(void) const { return lbarv; } // VTailArm / cbar
+  inline double Getvbarh(void) const { return vbarh; } // H. Tail Volume
+  inline double Getvbarv(void) const { return vbarv; } // V. Tail Volume
   inline FGColumnVector3& GetMoments(void) { return vMoments; }
-  inline double GetMoments(int idx) { return vMoments(idx); }
+  inline double GetMoments(int idx) const { return vMoments(idx); }
   inline FGColumnVector3& GetForces(void) { return vForces; }
-  inline double GetForces(int idx) { return vForces(idx); }
+  inline double GetForces(int idx) const { return vForces(idx); }
   inline FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
-  inline FGColumnVector3& GetNcg   (void)    { return vNcg; }
+  inline FGColumnVector3& GetNcg   (void)  { return vNcg; }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
-  inline double GetXYZrp(int idx) { return vXYZrp(idx); }
-  inline double GetXYZep(int idx) { return vXYZep(idx); }
-  inline double GetAlphaCLMax(void) { return alphaclmax; }
-  inline double GetAlphaCLMin(void) { return alphaclmin; }
+  inline double GetXYZrp(int idx) const { return vXYZrp(idx); }
+  inline double GetXYZep(int idx) const { return vXYZep(idx); }
+  inline double GetAlphaCLMax(void) const { return alphaclmax; }
+  inline double GetAlphaCLMin(void) const { return alphaclmin; }
 
   inline void SetAlphaCLMax(double tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
   inline void SetAircraftName(string name) {AircraftName = name;}
   
-  inline double GetStallWarn(void) { return impending_stall; }
+  inline double GetStallWarn(void) const { return impending_stall; }
   
   float GetNlf(void);
   
   inline FGColumnVector3& GetNwcg(void) { return vNwcg; }
+  
+  void bind(void);
+  void unbind(void);
 
 private:
   FGColumnVector3 vMoments;

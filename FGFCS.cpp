@@ -47,6 +47,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGPropertyManager.h"
 
 #include "filtersjb/FGFilter.h"
 #include "filtersjb/FGDeadBand.h"
@@ -56,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.73 2002/02/28 12:16:45 apeden Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.74 2002/03/09 11:55:10 apeden Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +76,8 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   LeftBrake = RightBrake = CenterBrake = 0.0;
   DoNormalize=true;
   
+  bind();
+
   for(i=0;i<6;i++) { ToNormalize[i]=-1;}
   Debug(0);
 }
@@ -91,6 +94,8 @@ FGFCS::~FGFCS()
   PropAdvance.clear();
 
   unsigned int i;
+  
+  unbind();
 
   for (i=0;i<Components.size();i++) delete Components[i];
   Debug(1);
@@ -476,3 +481,133 @@ void FGFCS::Debug(int from)
   }
 }
 
+void FGFCS::bind(void){
+  PropertyManager->Tie("fcs/aileron-cmd-norm", this,
+                       &FGFCS::GetDaCmd,
+                       &FGFCS::SetDaCmd,
+                       true);
+  PropertyManager->Tie("fcs/elevator-cmd-norm", this,
+                       &FGFCS::GetDeCmd,
+                       &FGFCS::SetDeCmd,
+                       true);
+  PropertyManager->Tie("fcs/rudder-cmd-norm", this,
+                       &FGFCS::GetDrCmd,
+                       &FGFCS::SetDrCmd,
+                       true);
+  PropertyManager->Tie("fcs/flap-cmd-norm", this,
+                       &FGFCS::GetDfCmd,
+                       &FGFCS::SetDfCmd,
+                       true);
+  PropertyManager->Tie("fcs/speedbrake-cmd-norm", this,
+                       &FGFCS::GetDsbCmd,
+                       &FGFCS::SetDsbCmd,
+                       true);
+  PropertyManager->Tie("fcs/spoiler-cmd-norm", this,
+                       &FGFCS::GetDspCmd,
+                       &FGFCS::SetDspCmd,
+                       true);
+  PropertyManager->Tie("fcs/pitch-trim-cmd-norm", this,
+                       &FGFCS::GetPitchTrimCmd,
+                       &FGFCS::SetPitchTrimCmd,
+                       true);
+  PropertyManager->Tie("fcs/roll-trim-cmd-norm", this,
+                       &FGFCS::GetYawTrimCmd,
+                       &FGFCS::SetYawTrimCmd,
+                       true);
+  PropertyManager->Tie("fcs/yaw-trim-cmd-norm", this,
+                       &FGFCS::GetRollTrimCmd,
+                       &FGFCS::SetRollTrimCmd,
+                       true);
+  PropertyManager->Tie("gear/gear-cmd-norm", this,
+                       &FGFCS::GetGearCmd,
+                       &FGFCS::SetGearCmd,
+                       true);
+  PropertyManager->Tie("fcs/left-aileron-pos-rad", this,
+                       &FGFCS::GetDaLPos,
+                       &FGFCS::SetDaLPos,
+                       true);
+  PropertyManager->Tie("fcs/left-aileron-pos-norm", this,
+                       &FGFCS::GetDaLPosN,
+                       &FGFCS::SetDaLPosN,
+                       true);
+  PropertyManager->Tie("fcs/right-aileron-pos-rad", this,
+                       &FGFCS::GetDaRPos,
+                       &FGFCS::SetDaRPos,
+                       true);
+  PropertyManager->Tie("fcs/right-aileron-pos-norm", this,
+                       &FGFCS::GetDaRPosN,
+                       &FGFCS::SetDaRPosN,
+                       true);
+  PropertyManager->Tie("fcs/elevator-pos-rad", this,
+                       &FGFCS::GetDePos,
+                       &FGFCS::SetDePos,
+                       true);
+  PropertyManager->Tie("fcs/elevator-pos-norm", this,
+                       &FGFCS::GetDePosN,
+                       &FGFCS::SetDePosN,
+                       true);
+  PropertyManager->Tie("fcs/rudder-pos-rad", this,
+                       &FGFCS::GetDrPos,
+                       &FGFCS::SetDrPos,
+                       true);
+  PropertyManager->Tie("fcs/rudder-pos-norm", this,
+                       &FGFCS::GetDrPosN,
+                       &FGFCS::SetDrPosN,
+                       true);
+  PropertyManager->Tie("fcs/flap-pos-deg", this,
+                       &FGFCS::GetDfPos,
+                       &FGFCS::SetDfPos,
+                       true);
+  PropertyManager->Tie("fcs/flap-pos-norm", this,
+                       &FGFCS::GetDfPosN,
+                       &FGFCS::SetDfPosN,
+                       true);
+  PropertyManager->Tie("fcs/speedbrake-pos-rad", this,
+                       &FGFCS::GetDsbPos,
+                       &FGFCS::SetDsbPos,
+                       true);
+  PropertyManager->Tie("fcs/speedbrake-pos-norm", this,
+                       &FGFCS::GetDsbPosN,
+                       &FGFCS::SetDsbPosN,
+                       true);
+  PropertyManager->Tie("fcs/spoiler-pos-rad", this,
+                       &FGFCS::GetDspPos,
+                       &FGFCS::SetDspPos,
+                       true);
+  PropertyManager->Tie("fcs/spoiler-pos-norm", this,
+                       &FGFCS::GetDspPosN,
+                       &FGFCS::SetDspPosN,
+                       true);
+  PropertyManager->Tie("gear/gear-pos-norm", this,
+                       &FGFCS::GetGearPos,
+                       &FGFCS::SetGearPos,
+                       true);
+}
+
+void FGFCS::unbind(void){
+  PropertyManager->Untie("fcs/aileron-cmd-norm");
+  PropertyManager->Untie("fcs/elevator-cmd-norm");
+  PropertyManager->Untie("fcs/rudder-cmd-norm");
+  PropertyManager->Untie("fcs/flap-cmd-norm");
+  PropertyManager->Untie("fcs/speedbrake-cmd-norm");
+  PropertyManager->Untie("fcs/spoiler-cmd-norm");
+  PropertyManager->Untie("fcs/pitch-trim-cmd-norm");
+  PropertyManager->Untie("fcs/roll-trim-cmd-norm");
+  PropertyManager->Untie("fcs/yaw-trim-cmd-norm");
+  PropertyManager->Untie("gear/gear-cmd-norm");
+  PropertyManager->Untie("fcs/left-aileron-pos-rad");
+  PropertyManager->Untie("fcs/left-aileron-pos-norm");
+  PropertyManager->Untie("fcs/right-aileron-pos-rad");
+  PropertyManager->Untie("fcs/right-aileron-pos-norm");
+  PropertyManager->Untie("fcs/elevator-pos-rad");
+  PropertyManager->Untie("fcs/elevator-pos-norm");
+  PropertyManager->Untie("fcs/rudder-pos-rad");
+  PropertyManager->Untie("fcs/rudder-pos-norm");
+  PropertyManager->Untie("fcs/flap-pos-deg");
+  PropertyManager->Untie("fcs/flap-pos-norm");
+  PropertyManager->Untie("fcs/speedbrake-pos-rad");
+  PropertyManager->Untie("fcs/speedbrake-pos-norm");
+  PropertyManager->Untie("fcs/spoiler-pos-rad");
+  PropertyManager->Untie("fcs/spoiler-pos-norm");
+  PropertyManager->Untie("gear/gear-pos-norm");
+}
