@@ -51,7 +51,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.32 2001/04/24 22:14:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.33 2001/07/09 23:23:42 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -158,7 +158,8 @@ void FGOutput::DelimitedOutput(void)
       cout << ", ";
       cout << "QBar, ";
       cout << "Vtotal, ";
-      cout << "U, V, W, ";
+      cout << "UBody, VBody, WBody, ";
+      cout << "UAero, VAero, WAero, ";
       cout << "Vn, Ve, Vd";
     }
     if (SubSystems & FGAircraft::ssForces) {
@@ -233,6 +234,7 @@ void FGOutput::DelimitedOutput(void)
     cout << Translation->Getqbar() << ", ";
     cout << Translation->GetVt() << ", ";
     cout << Translation->GetUVW() << ", ";
+    cout << Translation->GetvAero() << ", ";
     cout << Position->GetVel();
   }
   if (SubSystems & FGAircraft::ssForces) {
@@ -312,7 +314,8 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << ", ";
       datafile << "QBar, ";
       datafile << "Vtotal, ";
-      datafile << "U, V, W, ";
+      datafile << "UBody, VBody, WBody, ";
+      datafile << "UAero, VAero, WAero, ";
       datafile << "Vn, Ve, Vd";
     }
     if (SubSystems & FGAircraft::ssForces) {
@@ -390,6 +393,7 @@ void FGOutput::DelimitedOutput(string fname)
     datafile << Translation->Getqbar() << ", ";
     datafile << Translation->GetVt() << ", ";
     datafile << Translation->GetUVW() << ", ";
+    datafile << Translation->GetvAero() << ", ";
     datafile << Position->GetVel();
   }
   if (SubSystems & FGAircraft::ssForces) {
@@ -463,9 +467,12 @@ void FGOutput::SocketOutput(void)
     socket->Append("Psi");
     socket->Append("Rho");
     socket->Append("Vtotal");
-    socket->Append("U");
-    socket->Append("V");
-    socket->Append("W");
+    socket->Append("UBody");
+    socket->Append("VBody");
+    socket->Append("WBody");
+    socket->Append("UAero");
+    socket->Append("VAero");
+    socket->Append("WAero");
     socket->Append("Vn");
     socket->Append("Ve");
     socket->Append("Vd");
@@ -504,9 +511,12 @@ void FGOutput::SocketOutput(void)
   socket->Append(Rotation->Getpsi());
   socket->Append(Atmosphere->GetDensity());
   socket->Append(Translation->GetVt());
-  socket->Append(Translation->GetU());
-  socket->Append(Translation->GetV());
-  socket->Append(Translation->GetW());
+  socket->Append(Translation->GetUVW(eU));
+  socket->Append(Translation->GetUVW(eV));
+  socket->Append(Translation->GetUVW(eW));
+  socket->Append(Translation->GetvAero(eU));
+  socket->Append(Translation->GetvAero(eV));
+  socket->Append(Translation->GetvAero(eW));
   socket->Append(Position->GetVn());
   socket->Append(Position->GetVe());
   socket->Append(Position->GetVd());

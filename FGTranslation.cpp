@@ -69,7 +69,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.24 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.25 2001/07/09 23:23:42 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 extern short debug_lvl;
@@ -87,7 +87,8 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
     vForces(3),
     vEuler(3),
     vlastUVWdot(3),
-    mVel(3,3)
+    mVel(3,3),
+    vAero(3)
 {
   Name = "FGTranslation";
   qbar = 0;
@@ -130,28 +131,29 @@ bool FGTranslation::Run(void) {
     vNcg = vUVWdot*INVGRAVITY;
 
     vUVW += 0.5*dt*rate*(vlastUVWdot + vUVWdot);
+    vAero = vUVW + Atmosphere->GetWindNED();
 
-    Vt = vUVW.Magnitude();
+    Vt = vAero.Magnitude();
 
-    if (vUVW(eW) != 0.0)
-      alpha = vUVW(eU)*vUVW(eU) > 0.0 ? atan2(vUVW(eW), vUVW(eU)) : 0.0;
-    if (vUVW(eV) != 0.0)
-      beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV),
-             sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
+    if (vAero(eW) != 0.0)
+      alpha = vAero(eU)*vAero(eU) > 0.0 ? atan2(vAero(eW), vAero(eU)) : 0.0;
+    if (vAero(eV) != 0.0)
+      beta = vAero(eU)*vAero(eU)+vAero(eW)*vAero(eW) > 0.0 ? atan2(vAero(eV),
+             sqrt(vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW))) : 0.0;
 
     // stolen, quite shamelessly, from LaRCsim
-    float mUW = (vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW));
+    float mUW = (vAero(eU)*vAero(eU) + vAero(eW)*vAero(eW));
     float signU=1;
-    if (vUVW(eU) != 0.0)
-      signU = vUVW(eU)/fabs(vUVW(eU));
+    if (vAero(eU) != 0.0)
+      signU = vAero(eU)/fabs(vAero(eU));
 
     if ( (mUW == 0.0) || (Vt == 0.0) ) {
       adot = 0.0;
       bdot = 0.0;
     } else {
-      adot = (vUVW(eU)*vUVWdot(eW) - vUVW(eW)*vUVWdot(eU))/mUW;
-      bdot = (signU*mUW*vUVWdot(eV) - vUVW(eV)*(vUVW(eU)*vUVWdot(eU)
-              + vUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+      adot = (vAero(eU)*vAero(eW) - vAero(eW)*vUVWdot(eU))/mUW;
+      bdot = (signU*mUW*vUVWdot(eV) - vAero(eV)*(vAero(eU)*vUVWdot(eU)
+              + vAero(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
     }
 
     qbar = 0.5*rho*Vt*Vt;

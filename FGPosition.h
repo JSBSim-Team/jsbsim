@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.35 2001/04/26 23:46:46 jberndt Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.36 2001/07/09 23:23:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.35 2001/04/26 23:46:46 jberndt Exp $
+    @version $Id: FGPosition.h,v 1.36 2001/07/09 23:23:42 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,6 @@ public:
   
   inline FGColumnVector GetVel(void) { return vVel; }
   inline FGColumnVector GetVelDot(void) { return vVelDot; }
-  inline FGColumnVector GetUVW(void) { return vUVW; }
   inline double GetVn(void)  { return vVel(eX); }
   inline double GetVe(void)  { return vVel(eY); }
   inline double GetVd(void)  { return vVel(eZ); }
@@ -115,7 +114,6 @@ public:
   }
   
 private:  
-  FGColumnVector vUVW;
   FGColumnVector vVel;
   FGColumnVector vVelDot;
   FGColumnVector vRunwayNormal;

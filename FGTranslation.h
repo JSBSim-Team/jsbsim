@@ -70,7 +70,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.24 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.25 2001/07/09 23:23:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -87,6 +87,8 @@ public:
   inline float          GetUVWdot(int idx) { return vUVWdot(idx); }
   inline FGColumnVector GetNcg   (void)    { return vNcg; }
   inline float          GetNcg   (int idx) { return vNcg(idx); }
+  inline FGColumnVector GetvAero (void)    { return vAero; }
+  inline float          GetvAero (int idx) { return vAero(idx); }
 
   inline float Getalpha(void) { return alpha; }
   inline float Getbeta (void) { return beta; }
@@ -121,6 +123,7 @@ private:
   FGColumnVector vEuler;
   FGColumnVector vlastUVWdot;
   FGMatrix       mVel;
+  FGColumnVector vAero;
 
   float Vt, qbar, Mach;
   float Mass, dt;
