@@ -81,54 +81,25 @@ public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation(void);
 
-  inline FGColumnVector GetUVW(void) {
-    return vUVW;
-  }
-  inline FGColumnVector GetUVWdot(void) {
-    return vUVWdot;
-  }
-  inline FGColumnVector GetNcg(void) {
-    return vNcg;
-  }
+  inline FGColumnVector GetUVW(void) { return vUVW; }
+  inline FGColumnVector GetUVWdot(void) { return vUVWdot; }
+  inline FGColumnVector GetNcg(void) { return vNcg; }
 
-  inline float Getalpha(void) {
-    return alpha;
-  }
-  inline float Getbeta (void) {
-    return beta;
-  }
-  inline float Getqbar (void) {
-    return qbar;
-  }
-  inline float GetVt   (void) {
-    return Vt;
-  }
-  inline float GetMach (void) {
-    return Mach;
-  }
+  inline float Getalpha(void) { return alpha; }
+  inline float Getbeta (void) { return beta; }
+  inline float Getqbar (void) { return qbar; }
+  inline float GetVt   (void) { return Vt; }
+  inline float GetMach (void) { return Mach; }
 
 
-  void SetUVW(FGColumnVector tt) {
-    vUVW = tt;
-  }
+  void SetUVW(FGColumnVector tt) { vUVW = tt; }
 
-  inline void Setalpha(float tt) {
-    alpha = tt;
-  }
-  inline void Setbeta (float tt) {
-    beta  = tt;
-  }
-  inline void Setqbar (float tt) {
-    qbar = tt;
-  }
-  inline void SetVt   (float tt) {
-    Vt = tt;
-  }
+  inline void Setalpha(float tt) { alpha = tt; }
+  inline void Setbeta (float tt) { beta  = tt; }
+  inline void Setqbar (float tt) { qbar = tt; }
+  inline void SetVt   (float tt) { Vt = tt; }
 
-  inline void SetAB(float t1, float t2) {
-    alpha=t1;
-    beta=t2;
-  }
+  inline void SetAB(float t1, float t2) { alpha=t1; beta=t2; }
 
   bool Run(void);
 
