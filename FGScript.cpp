@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.3 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.4 2002/01/19 16:27:56 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.2 2001/12/22 15:22:19 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.3 2002/01/19 16:27:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim scripting capability.
     @author Jon S. Berndt
-    @version $Id: FGScript.h,v 1.2 2001/12/22 15:22:19 jberndt Exp $
+    @version $Id: FGScript.h,v 1.3 2002/01/19 16:27:56 jberndt Exp $
 
     <h4>Scripting support provided via FGScript.</h4>
 
