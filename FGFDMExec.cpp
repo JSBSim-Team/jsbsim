@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.106 2004/06/14 11:44:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.107 2004/06/19 09:38:46 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -386,16 +386,19 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model)
 {
+
   FGFDMExec::AircraftPath = AircraftPath;
   FGFDMExec::EnginePath = EnginePath;
 
-  return LoadModel(model);
+  return LoadModel(model, false);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string model)
+
+bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 {
+  
   bool result = true;
   string token;
   string aircraftCfgFileName;
@@ -406,10 +409,13 @@ bool FGFDMExec::LoadModel(string model)
     return false;
   }
 
+  aircraftCfgFileName = AircraftPath;
 # ifndef macintosh
-  aircraftCfgFileName = AircraftPath + "/"  + model + ".xml";
+  if (addModelToPath) aircraftCfgFileName += "/" + model;
+  aircraftCfgFileName += "/" + model + ".xml";
 # else
-  aircraftCfgFileName = AircraftPath + ";"  + model + ".xml";
+  if (addModelToPath) aircraftCfgFileName += ";"  + model;
+  aircraftCfgFileName += ";"  + model + ".xml";
 # endif
 
   FGConfigFile AC_cfg(aircraftCfgFileName);
