@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.1 2001/12/22 00:12:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.2 2001/12/22 15:22:19 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,6 +72,7 @@ CLASS IMPLEMENTATION
 
 FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
 {
+  State = FDMExec->GetState();
   Debug(0);
 }
 
@@ -98,8 +99,14 @@ bool FGScript::LoadScript(string script)
   if (!Script.IsOpen()) return false;
 
   Script.GetNextConfigLine();
+  if (Script.GetValue("runscript").length() <= 0) {
+    cerr << "File: " << script << " is not a script file" << endl;
+    delete FDMExec;
+    return false; 
+  }
   ScriptName = Script.GetValue("name");
   Scripted = true;
+
   if (debug_lvl > 0) cout << "Reading Script File " << ScriptName << endl;
 
   while (Script.GetNextConfigLine() != string("EOF") && Script.GetValue() != string("/runscript")) {
@@ -205,7 +212,7 @@ bool FGScript::LoadScript(string script)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGScript::RunScript(void)
+bool FGScript::RunScript(void)
 {
   vector <struct condition>::iterator iC = Conditions.begin();
   bool truth = false;
@@ -214,6 +221,8 @@ void FGScript::RunScript(void)
 
   double currentTime = State->Getsim_time();
   double newSetValue = 0;
+
+  if (currentTime > EndTime) return false;
 
   while (iC < Conditions.end()) {
     // determine whether the set of conditional tests for this condition equate
@@ -286,6 +295,7 @@ void FGScript::RunScript(void)
     }
     iC++;
   }
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

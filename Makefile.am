@@ -78,6 +78,8 @@ libJSBSim_a_SOURCES = \
 	FGRotation.h \
 	FGRotor.cpp \
 	FGRotor.h \
+        FGScript.cpp \
+        FGScript.h \
 	FGState.cpp \
 	FGState.h \
 	FGTable.cpp \

@@ -7,7 +7,7 @@ FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\
 FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRocket.o\
 FGTurboShaft.o FGTurboJet.o FGTurboProp.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\
 FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\
-FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o\
+FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o FGScript.o\
 FGJSBBase.o
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a
@@ -330,6 +330,19 @@ FGRotor.o: FGRotor.cpp FGRotor.h FGThruster.h FGForce.h FGFDMExec.h \
  FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGConfigFile.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGRotor.o -c FGRotor.cpp
 
+FGScript.o: FGScript.cpp FGScript.h FGJSBBase.h FGState.h \
+ FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h \
+ FGMatrix33.h FGColumnVector3.h FGColumnVector4.h FGFCS.h \
+ filtersjb/FGFCSComponent.h filtersjb/../FGJSBBase.h \
+ filtersjb/../FGFCS.h FGLGear.h FGConfigFile.h FGAircraft.h \
+ FGPropulsion.h FGRocket.h FGEngine.h FGTranslation.h FGRotation.h \
+ FGPosition.h FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h \
+ FGTable.h FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h \
+ FGPropeller.h FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h \
+ FGAerodynamics.h FGCoefficient.h FGFactorGroup.h FGGroundReactions.h \
+ FGInertial.h
+	$(CC) $(INCLUDES) $(CCOPTS) -oFGScript.o -c FGScript.cpp
+
 FGState.o: FGState.cpp FGState.h FGJSBBase.h FGInitialCondition.h \
  FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix33.h FGColumnVector3.h \
  FGColumnVector4.h FGFCS.h filtersjb/FGFCSComponent.h \
@@ -449,7 +462,8 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGJSBBase.h \
  FGAuxiliary.h FGOutput.h FGfdmSocket.h FGPiston.h FGTable.h \
  FGTurboShaft.h FGTurboJet.h FGTurboProp.h FGTank.h FGPropeller.h \
  FGThruster.h FGForce.h FGNozzle.h FGMassBalance.h FGAerodynamics.h \
- FGCoefficient.h FGFactorGroup.h FGGroundReactions.h FGInertial.h
+ FGCoefficient.h FGFactorGroup.h FGGroundReactions.h FGInertial.h \
+ FGScript.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oJSBSim.o -c JSBSim.cpp
 
 

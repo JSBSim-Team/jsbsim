@@ -50,6 +50,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 #include "FGConfigFile.h"
+#include "FGScript.h"
 
 #ifdef FGFS
 #include <simgear/compiler.h>
@@ -70,7 +71,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.66 2001/12/22 00:28:00 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.67 2001/12/22 15:22:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -86,7 +87,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.66 2001/12/22 00:28:00 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.67 2001/12/22 15:22:19 jberndt Exp $
     @see -
 */
 
@@ -99,45 +100,34 @@ int main(int argc, char** argv)
   FGFDMExec* FDMExec;
   float cmd = 0.0;
   bool result = false;
-  bool scripted = false;
+  bool Scripted = false;
+  FGScript* Script;
 
-  if (argc == 2) {
-
-    FGConfigFile testFile(argv[1]);
-
-    if (!testFile.IsOpen()) {
-      cout << "Script file not opened" << endl;
-      exit(-1);
-    }
-
-    testFile.GetNextConfigLine();
-
-    if (testFile.GetValue("runscript").length() <= 0) {
-      cout << "File: " << argv[1] << " is not a script file" << endl;
-      exit(-1); 
-    }
-    scripted = true;
-
-  } else if (argc != 3) {
-
-    cout << endl
+  if (argc != 3 && argc != 2) {
+    cerr << endl
          << "  You must enter the name of a registered aircraft and reset point:"
          << endl << endl << "  FDM <aircraft name> <reset file>" << endl;
-    cout << endl << "  Alternatively, you may specify only the name of a script file:"
+    cerr << endl << "  Alternatively, you may specify only the name of a script file:"
          << endl << endl << "  FDM <script file>" << endl << endl;
     exit(0);
   }
 
-
   FDMExec = new FGFDMExec();
 
-  if (scripted) { // form jsbsim <scriptfile>
-    result = FDMExec->LoadScript(argv[1]);
+  if (argc == 2) { // SCRIPTED CASE
+
+    Script = new FGScript(FDMExec);
+    result = Script->LoadScript(argv[1]);
+
     if (!result) {
       cerr << "Script file " << argv[1] << " was not successfully loaded" << endl;
       exit(-1);
     }
+
+    Scripted = true;
+
   } else {        // form jsbsim <acname> <resetfile>
+
     if ( ! FDMExec->LoadModel("aircraft", "engine", string(argv[1]))) {
     	cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
@@ -155,7 +145,8 @@ int main(int argc, char** argv)
 //
 
   FGJSBBase::Message* msg;
-  while (FDMExec->Run()) {
+  result = FDMExec->Run();
+  while (result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
@@ -176,6 +167,12 @@ int main(int argc, char** argv)
 	      break;
       }
     }
+
+    if (Scripted) {
+      if (!Script->RunScript()) break;
+    }
+
+    result = FDMExec->Run();
   }
 
   delete FDMExec;
