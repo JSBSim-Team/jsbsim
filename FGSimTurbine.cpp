@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.14 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.15 2003/11/24 03:25:12 dpculp Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,7 +83,7 @@ double FGSimTurbine::Calculate(double dummy)
       phase = tpRun;
       N2 = IdleN2;
       N1 = IdleN1;
-      OilTemp_degK = TAT + 10;  
+      OilTemp_degK = 366.0;  
       Cutoff = false;
       }
     else {
