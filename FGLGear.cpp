@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.44 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.45 2001/03/30 14:06:57 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -186,7 +186,7 @@ FGColumnVector FGLGear::Force(void)
   FGColumnVector vLocalForce(3);
   //FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
   FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
-  
+
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.23 2001/03/29 22:26:06 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.24 2001/03/30 14:06:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -153,73 +153,11 @@ public:
   friend FGColumnVector operator*(const FGMatrix& M, const FGColumnVector& V);
 
   double& operator()(int m) const;
-  
+
   FGColumnVector& multElementWise(const FGColumnVector& V);
 
 private:
   void Debug(void);
-};
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DECLARATION: FGMatrix3x3
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGMatrix3x3 : public FGMatrix
-{
-public:
-  FGMatrix3x3(void) {FGMatrix(3,3);}
-//  ~FGMatrix3x3(void) {~FGMatrix();}
-
-  FGMatrix3x3& operator=(const FGMatrix3x3& A);
-  inline double& operator()(unsigned int row, unsigned int col) const {return data[row][col];}
-
-  FGColumnVector operator*(const FGColumnVector& Col);
-
-  unsigned int Rows(void) const;
-  unsigned int Cols(void) const;
-
-  void T(void);
-  void InitMatrix(void);
-  void InitMatrix(double value);
-
-  FGMatrix3x3 operator-(const FGMatrix3x3& B);
-  FGMatrix3x3 operator+(const FGMatrix3x3& B);
-  FGMatrix3x3 operator*(const FGMatrix3x3& B);
-  FGMatrix3x3 operator/(const double scalar);
-  FGMatrix3x3& operator<<(const float ff);
-
-  friend ostream& operator<<(ostream& os, const FGMatrix3x3& M);
-  friend istream& operator>>(istream& is, FGMatrix3x3& M);
-
-  void operator-=(const FGMatrix3x3 &B);
-  void operator+=(const FGMatrix3x3 &B);
-  void operator*=(const FGMatrix3x3 &B);
-  void operator*=(const double scalar);
-  void operator/=(const double scalar);
-
-  friend FGMatrix3x3 operator*(double scalar,FGMatrix3x3& A);
-};
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DECLARATION: FGColumnVector4
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGColumnVector4 : public FGColumnVector
-{
-public:
-  FGColumnVector4(void) {FGColumnVector(4);}
-//  ~FGColumnVector4(void) {~FGColumnVector();}
-};
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DECLARATION: FGColumnVector3
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-class FGColumnVector3 : public FGColumnVector
-{
-public:
-  FGColumnVector3(void) {FGColumnVector(3);}
-//  ~FGColumnVector3(void) {~FGColumnVector();}
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
