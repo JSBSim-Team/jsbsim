@@ -3,7 +3,7 @@
 
   File:        c172.xml.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.34 2001/07/22 18:52:46 apeden Exp $
+  CVS Version: $Id: c172.xml,v 1.35 2001/07/22 19:03:47 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -211,17 +211,17 @@
              0.34    1.298
              0.36    0.97
           </COEFFICIENT>
+          <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
+            Delta_lift_due_to_flap_deflection
+            4
+            FG_FLAPS_POS
+            FG_QBAR|FG_WINGAREA
+            0   0
+            10  0.20
+            20  0.30
+            30  0.35
+          </COEFFICIENT>    
        </GROUP>  
-       <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
-         Delta_lift_due_to_flap_deflection
-         4
-         FG_FLAPS_POS
-         FG_QBAR|FG_WINGAREA
-         0   0
-         10  0.20
-         20  0.30
-         30  0.35
-       </COEFFICIENT>    
        <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_Elevator_Deflection
          FG_QBAR|FG_WINGAREA|FG_ELEVATOR_POS
