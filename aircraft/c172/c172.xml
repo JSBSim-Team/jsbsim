@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.87 2002/01/28 23:16:46 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.88 2002/02/03 13:58:35 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -119,7 +119,7 @@
       YLOC    0.0
       ZLOC   26.6
       PITCH   0.0
-      YAW     -0.092
+      YAW     0
       P_FACTOR 10.0
       SENSE   1.0
     </AC_THRUSTER>
@@ -335,9 +335,9 @@
          3
          FG_BETA
          FG_QBAR|FG_WINGAREA
-          0.349  -0.108
+         -0.349   0.108 
           0       0
-         -0.349   0.108
+          0.349  -0.108
        </COEFFICIENT>
 
        <COEFFICIENT NAME="CYda" TYPE="VALUE">
