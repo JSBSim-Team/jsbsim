@@ -16,4 +16,6 @@ libFCSComponents_a_SOURCES = \
 	FGSummer.cpp \
 	FGSummer.h \
 	FGSwitch.cpp \
-	FGSwitch.h
+	FGSwitch.h \
+	FGCondition.cpp \
+	FGCondition.h
