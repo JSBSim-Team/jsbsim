@@ -66,7 +66,8 @@ INCLUDES
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     mTl2b(3,3),
     mTs2b(3,3),
-vQtrn(4) {
+    vQtrn(4)
+{
   FDMExec = fdex;
 
   adot = bdot = 0.0;
