@@ -59,7 +59,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.24 2002/03/09 11:56:08 apeden Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.25 2002/08/03 02:20:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -75,6 +75,8 @@ public:
   bool Run(void);
   FGColumnVector3& GetForces(void) {return vForces;}
   FGColumnVector3& GetGravity(void) {return vGravity;}
+  FGColumnVector3& GetCoriolis(void) {return vCoriolis;}
+  FGColumnVector3& GetCentrifugal(void) {return vCentrifugal;}
   double GetForces(int n) const {return vForces(n);}
   bool LoadInertial(FGConfigFile* AC_cfg);
   double SLgravity(void) const {return gAccelReference;}
@@ -91,6 +93,8 @@ private:
   FGColumnVector3 vForces;
   FGColumnVector3 vRadius;
   FGColumnVector3 vGravity;
+  FGColumnVector3 vCoriolis;
+  FGColumnVector3 vCentrifugal;
   double gAccel;
   double gAccelReference;
   double RadiusReference;

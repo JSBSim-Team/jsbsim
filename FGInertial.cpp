@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.26 2002/04/30 11:23:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.27 2002/08/03 02:20:06 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,7 +59,10 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   RadiusReference = 20925650.00;
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
-  
+  vCoriolis.InitMatrix();
+  vCentrifugal.InitMatrix();
+  vGravity.InitMatrix();
+    
   bind();
 
   Debug(0);
@@ -77,21 +80,12 @@ FGInertial::~FGInertial(void)
 
 bool FGInertial::Run(void)
 {
-  double stht, ctht, sphi, cphi;
-
   if (!FGModel::Run()) {
 
     gAccel = GM / (Position->GetRadius()*Position->GetRadius());
 
-    stht = sin(Rotation->GetEuler(eTht));
-    ctht = cos(Rotation->GetEuler(eTht));
-    sphi = sin(Rotation->GetEuler(ePhi));
-    cphi = cos(Rotation->GetEuler(ePhi));
+    vGravity(eDown) = gAccel;
 
-    vGravity(eX) = vForces(eX) = -gravity()*stht;
-    vGravity(eY) = vForces(eY) =  gravity()*sphi*ctht;
-    vGravity(eZ) = vForces(eZ) =  gravity()*cphi*ctht;
-    
     // The following equation for vOmegaLocal terms shows the angular velocity
     // calculation _for_the_local_frame_ given the earth's rotation (first set)
     // at the current latitude, and also the component due to the aircraft
@@ -105,12 +99,17 @@ bool FGInertial::Run(void)
     vOmegaLocal(eY) += -Position->GetVn() / Position->GetRadius();
     vOmegaLocal(eZ) +=  0.00;
 
-//    vForces = State->GetTl2b()*(-2.0*vOmegaLocal * Position->GetVel());
+    // Coriolis acceleration is normally written: -2w*dr/dt, but due to the axis
+    // conventions used here the sign is reversed: 2w*dr/dt. The same is true for
+    // Centrifugal acceleration.
 
-    vRadius(3) = Position->GetRadius();
-    vForces += State->GetTl2b()*(vOmegaLocal * (vOmegaLocal * vRadius));
+    vCoriolis(eEast) = 2.0*omega() * (Position->GetVd()*cos(Position->GetLatitude()) +
+                                      Position->GetVn()*sin(Position->GetLatitude()));
 
-    vForces *= MassBalance->GetMass(); // IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    vRadius(eDown) = Position->GetRadius();
+    vCentrifugal(eDown) = -vOmegaLocal.Magnitude() * vOmegaLocal.Magnitude() * vRadius(eDown);
+
+    vForces = State->GetTl2b() * MassBalance->GetMass() * (vCoriolis + vCentrifugal + vGravity);
     
     return false;
   } else {
