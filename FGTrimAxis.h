@@ -75,7 +75,7 @@ public:
              Control ctrl, float tolerance);
   ~FGTrimAxis();
 
-  float Run(void);
+  void Run(void);
 
   float GetAccel(void) { getAccel(); return accel_value; }
   //Accels are not settable
@@ -104,14 +104,15 @@ public:
   inline void SetIterationLimit(int ii) { max_iterations=ii; }
 
   inline int GetStability(void) { return its_to_stable_value; }
+  inline int GetRunCount(void) { return total_stability_iterations; }
   float GetAvgStability( void );
-  bool checkLimits(void);
-  inline int GetSolutionDomain(void) { return solutionDomain; }
   
-  void SetThetaOnGround(void);
-  void SetPhiOnGround(void);
+  void SetThetaOnGround(float ff);
+  void SetPhiOnGround(float ff);
 
   void AxisReport(void);
+  
+  bool InTolerance(void) { getAccel(); return (fabs(accel_value) <= tolerance); }
 
 private:
   FGFDMExec *fdmex;
@@ -140,12 +141,11 @@ private:
   int total_stability_iterations;
   int total_iterations;
 
-  int solutionDomain;
 
   void setThrottlesPct(void);
 
-  float getAccel(void);
-  float getControl(void);
+  void getAccel(void);
+  void getControl(void);
   void setControl(void);
 
 };

@@ -69,8 +69,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     control_value=0.5;
     break;
   case tBeta:
-    control_min=-30;
-    control_max=30;
+    control_min=-30*DEGTORAD;
+    control_max=30*DEGTORAD;
     control_convert=RADTODEG;
     break;
   case tAlpha:
@@ -118,6 +118,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     accel_convert=RADTODEG;
     break;
   case tGamma:
+    solver_eps=tolerance/100;
     control_min=-80*DEGTORAD;
     control_max=80*DEGTORAD;
     control_convert=RADTODEG;
@@ -132,7 +133,7 @@ FGTrimAxis::~FGTrimAxis() {}
 
 /*****************************************************************************/
 
-float FGTrimAxis::getAccel(void) {
+void FGTrimAxis::getAccel(void) {
   switch(accel) {
   case tUdot: accel_value=fdmex -> GetTranslation()->GetUVWdot()(1); break;
   case tVdot: accel_value=fdmex -> GetTranslation()->GetUVWdot()(2); break;
@@ -147,7 +148,7 @@ float FGTrimAxis::getAccel(void) {
 
 //Accels are not settable
 
-float FGTrimAxis::getControl(void) {
+void FGTrimAxis::getControl(void) {
   switch(control) {
   case tThrottle: control_value=fdmex->GetFCS()->GetThrottleCmd(0); break;
   case tBeta:     control_value=fdmex->GetTranslation()->Getalpha(); break;
@@ -174,8 +175,8 @@ void FGTrimAxis::setControl(void) {
   case tAileron:  fdmex-> GetFCS() -> SetDaCmd(control_value); break;
   case tRudder:   fdmex-> GetFCS() -> SetDrCmd(control_value); break;
   case tAltAGL:   fgic->SetAltitudeFtIC(control_value); break;
-  case tTheta:    fgic->SetPitchAngleRadIC(control_value); break;
-  case tPhi:      fgic->SetRollAngleRadIC(control_value); break;
+  case tTheta:    SetThetaOnGround(control_value); break;
+  case tPhi:      SetPhiOnGround(control_value); break;
   case tGamma:    fgic->SetFlightPathAngleRadIC(control_value); break;
   }
 }
@@ -188,7 +189,7 @@ void FGTrimAxis::setControl(void) {
 // new center of rotation, pick a gear unit as a reference and use its
 // location vector to calculate the new height change. i.e. new altitude =
 // earth z component of that vector (which is in body axes )  
-void FGTrimAxis::SetThetaOnGround(void) {
+void FGTrimAxis::SetThetaOnGround(float ff) {
   int center,i,ref;
 
   // favor an off-center unit so that the same one can be used for both
@@ -207,24 +208,27 @@ void FGTrimAxis::SetThetaOnGround(void) {
   if((ref < 0) && (center >= 0)) {
     ref=center;
   }
+  cout << "SetThetaOnGround ref gear: " << ref << endl;
   if(ref >= 0) {
     float sp=fdmex->GetRotation()->GetSinphi();
     float cp=fdmex->GetRotation()->GetCosphi();
     float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(1);
     float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
     float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
-    float hagl = -1*lx*sin(control_value) +
-                    ly*sp*cos(control_value) +
-                    lz*cp*cos(control_value);
+    float hagl = -1*lx*sin(ff) +
+                    ly*sp*cos(ff) +
+                    lz*cp*cos(ff);
    
     fgic->SetAltitudeAGLFtIC(hagl);
+    cout << "SetThetaOnGround new alt: " << hagl << endl;
   }                   
-  fgic->SetPitchAngleRadIC(control_value);         
+  fgic->SetPitchAngleRadIC(ff);  
+  cout << "SetThetaOnGround new theta: " << ff << endl;      
 }      
 
 /*****************************************************************************/
 
-void FGTrimAxis::SetPhiOnGround(void) {
+void FGTrimAxis::SetPhiOnGround(float ff) {
   int i,ref;
 
   i=0; ref=-1;
@@ -242,17 +246,18 @@ void FGTrimAxis::SetPhiOnGround(void) {
     float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
     float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
     float hagl = -1*lx*st +
-                    ly*sin(control_value)*ct +
-                    lz*cos(control_value)*ct;
+                    ly*sin(ff)*ct +
+                    lz*cos(ff)*ct;
    
     fgic->SetAltitudeAGLFtIC(hagl);
   }                   
-  fgic->SetRollAngleRadIC(control_value);         
+  fgic->SetRollAngleRadIC(ff);
+           
 }      
 
 /*****************************************************************************/
 
-float FGTrimAxis::Run(void) {
+void FGTrimAxis::Run(void) {
 
   float last_accel_value;
   int i;
@@ -274,7 +279,6 @@ float FGTrimAxis::Run(void) {
   its_to_stable_value=i;
   total_stability_iterations+=its_to_stable_value;
   total_iterations++;
-  return accel_value;
 }
 
 /*****************************************************************************/
@@ -306,55 +310,10 @@ void FGTrimAxis::AxisReport(void) {
 
 /*****************************************************************************/
 
-bool FGTrimAxis::checkLimits(void) {
-  float lo,hi;
-  bool change=false;
-  float current_control=control_value;
-  //cout << "Min: " << min << " Max: " << max << endl;
-
-  control_value=control_min;
-  lo=Run();
-  control_value=control_max;
-  hi=Run();
-
-
-  if(fabs(hi-lo) > tolerance) {
-    change=true;
-    if(lo*hi >= 0) {
-      solutionDomain=0;
-      //cout << "Lo: " << lo << " Hi: " << hi << endl;
-      /* if(Debug >1)
-        cout << "FGTrimAxis::checkLimits() No sign change between " 
-               << control_min << " and "
-                 << control_max << endl; 
-      */
-    } else {
-      control_value=0;
-      lo=Run();
-      if(lo*hi >= 0) {
-        solutionDomain=-1;
-        /* if(Debug >1)
-          cout << "FGTrimAxis::checkLimits() Sign change between " << control_min << " and  zero" << endl;
-        */
-      } else {
-        solutionDomain=1;
-        /*  if(Debug >1)
-           cout << "FGTrimAxis::checkLimits() Sign change between zero and " << control_max << endl;
-        */
-      }
-    }
-  }
-  control_value=current_control;
-  setControl();
-  Run();
-  return change;
-}
-
-/*****************************************************************************/
-
 float FGTrimAxis::GetAvgStability( void ) {
   if(total_iterations > 0) {
     return float(total_stability_iterations)/float(total_iterations);
   }
+  return 0;
 }
 
