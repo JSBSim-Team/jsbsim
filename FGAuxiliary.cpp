@@ -60,6 +60,7 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGAuxiliary";
   vcas = veas = mach = qbar = pt = 0;
   psl = rhosl = 1;
+  earthPosAngle = 0.0;
 }
 
 
@@ -93,8 +94,10 @@ bool FGAuxiliary::Run() {
     veas = sqrt(2*qbar/rhosl);
     
     vPilotAccel = Translation->GetUVWdot() + Aircraft->GetXYZep() * Rotation->GetPQRdot();
-
-
+    
+    
+    
+    earthPosAngle += State->Getdt()*OMEGA_EARTH;
 
   } else {
   }

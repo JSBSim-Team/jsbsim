@@ -65,6 +65,8 @@ public:
   inline FGColumnVector GetPilotAccel(void) { return vPilotAccel; }
   inline FGColumnVector GetNpilot(void) { return vPilotAccel*INVGRAVITY; }
   
+  inline float GetEarthPositionAngle(void) { return earthPosAngle; }
+  
  
 protected:
 
@@ -83,6 +85,8 @@ private:
  
   
   FGColumnVector vPilotAccel;
+  
+  float earthPosAngle;
 
   void GetState(void);
 };
