@@ -312,7 +312,7 @@ float FGTrimLong::wdot_func(float x) {
 }
 
 float FGTrimLong::qdot_func(float x) {
-  fdmex->GetFCS()->SetDeCmd(x);
+  fdmex->GetFCS()->SetPitchTrimCmd(x);
   fdmex->RunIC(fgic);
   return fdmex->GetRotation()->GetPQRdot()(2);
 }
@@ -326,6 +326,7 @@ bool FGTrimLong::DoTrim(void) {
 
   fgic -> SetAlphaDegIC((alphaMin+alphaMax)/2);
   fdmex -> GetFCS() -> SetDeCmd(0);
+  fdmex -> GetFCS() -> SetPitchTrimCmd(0);
   setThrottlesPct(0.5);
   fdmex -> RunIC(fgic);
 
@@ -347,7 +348,7 @@ bool FGTrimLong::DoTrim(void) {
       << " udot: " << fdmex->GetTranslation()->GetUVWdot()(1)
       << endl;
     }
-    solve(qdotf,fdmex->GetFCS()->GetDeCmd(),0,&qdot,A_Tolerance,-1,1,Naxis,&its);
+    solve(qdotf,fdmex->GetFCS()->GetPitchTrimCmd(),0,&qdot,A_Tolerance,-1,1,Naxis,&its);
     qdot_subits+=its;
     if(Debug > 0) {
       cout << "Elevator: " << fdmex->GetFCS()->GetDePos()*RADTODEG
@@ -374,29 +375,34 @@ bool FGTrimLong::DoTrim(void) {
       //Oh, well: two out of three ain't bad
       if(wdot > Tolerance) {
         if(checkLimits(wdotf,fgic->GetAlphaDegIC(),alphaMin,alphaMax) == false) {
-          cout << "Sorry, wdot doesn't appear to be trimmable" << endl;
+          cout << "    Sorry, wdot doesn't appear to be trimmable" << endl;
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
+
 
 
       }
       if( udot > Tolerance ) {
         if(checkLimits(udotf,dth,0,1) == false) {
-          cout << "Sorry, udot doesn't appear to be trimmable" << endl;
+          cout << "    Sorry, udot doesn't appear to be trimmable" << endl;
+          cout << "    Resetting throttles to zero" << endl;
+          fdmex->GetFCS()->SetThrottleCmd(-1,0);
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
+
 
 
       }
       if(qdot > A_Tolerance) {
 
-        if(checkLimits(qdotf,fdmex->GetFCS()->GetDeCmd(),-1,1) == false) {
-          cout << "Sorry, qdot doesn't appear to be trimmable" << endl;
+        if(checkLimits(qdotf,fdmex->GetFCS()->GetPitchTrimCmd(),-1,1) == false) {
+          cout << "    Sorry, qdot doesn't appear to be trimmable" << endl;
           total_its=k;
           k=Ncycles; //force the trim to fail
         }
+
 
 
       }
