@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.45 2004/03/23 12:04:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.46 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,9 +64,16 @@ CLASS IMPLEMENTATION
 FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGAuxiliary";
-  vcas = veas = Mach = qbar = pt = tat = 0;
+  vcas = veas = pt = tat = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
+  qbar = 0;
+  qbarUW = 0.0;
+  qbarUV = 0.0;
+  Vt = 0.0;
+  Mach = 0.0;
+  alpha = beta = 0.0;
+  adot = bdot = 0.0;
 
   vPilotAccel.InitMatrix();
   vPilotAccelN.InitMatrix();
@@ -94,18 +101,16 @@ bool FGAuxiliary::Run()
 {
   double A,B,D;
   FGColumnVector3& vPQR = Rotation->GetPQR();
+  FGColumnVector3& vUVW = Translation->GetUVW();
+  FGColumnVector3& vUVWdot = Translation->GetUVWdot();
 
   if (!FGModel::Run())
   {
-    qbar = Translation->Getqbar();
-    Mach = Translation->GetMach();
-    MachU= Translation->GetMachU();
     p = Atmosphere->GetPressure();
     rhosl = Atmosphere->GetDensitySL();
     psl = Atmosphere->GetPressureSL();
     sat = Atmosphere->GetTemperature();
 
-    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
     vEuler = State->CalcEuler();
 
     double cTht = cos(vEuler(eTht));
@@ -116,6 +121,45 @@ bool FGAuxiliary::Run()
       vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
       vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
     }
+
+    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
+//
+    vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
+
+    Vt = vAeroUVW.Magnitude();
+    if ( Vt > 0.05) {
+      if (vAeroUVW(eW) != 0.0)
+        alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
+      if (vAeroUVW(eV) != 0.0)
+        beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
+               sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
+
+      double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+      double signU=1;
+      if (vAeroUVW(eU) != 0.0)
+        signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
+
+      if ( (mUW == 0.0) || (Vt == 0.0) ) {
+        adot = 0.0;
+        bdot = 0.0;
+      } else {
+        adot = (vAeroUVW(eU)*vAeroUVW(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
+        bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
+                + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+      }
+    } else {
+      alpha = beta = adot = bdot = 0;
+    }
+
+    qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
+    qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+    qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
+    Mach = Vt / Atmosphere->GetSoundSpeed();
+    MachU = vMachUVW(eU) = vAeroUVW(eU) / Atmosphere->GetSoundSpeed();
+    vMachUVW(eV) = vAeroUVW(eV) / Atmosphere->GetSoundSpeed();
+    vMachUVW(eW) = vAeroUVW(eW) / Atmosphere->GetSoundSpeed();
+
+//
 
     tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
     tatc = RankineToCelsius(tat);
@@ -138,7 +182,7 @@ bool FGAuxiliary::Run()
     }
 
     vPilotAccel.InitMatrix();
-    if ( Translation->GetVt() > 1 ) {
+    if ( Vt > 1.0 ) {
        vPilotAccel =  Aerodynamics->GetForces()
                       +  Propulsion->GetForces()
                       +  GroundReactions->GetForces();
@@ -251,6 +295,50 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("atmosphere/crosswind-fps", this,
                        &FGAuxiliary::GetCrossWind,
                        true); */
+  PropertyManager->Tie("velocities/u-aero-fps", this,1,
+                      (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("velocities/v-aero-fps", this,2,
+                      (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("velocities/w-aero-fps", this,3,
+                      (PMF)&FGAuxiliary::GetAeroUVW);
+  PropertyManager->Tie("aero/alpha-rad", this,
+                      &FGAuxiliary::Getalpha,
+                      &FGAuxiliary::Setalpha,
+                      true);
+  PropertyManager->Tie("aero/beta-rad", this,
+                      &FGAuxiliary::Getbeta,
+                      &FGAuxiliary::Setbeta,
+                      true);
+  PropertyManager->Tie("aero/mag-beta-rad", this,
+                      &FGAuxiliary::GetMagBeta);
+  PropertyManager->Tie("aero/qbar-psf", this,
+                      &FGAuxiliary::Getqbar,
+                      &FGAuxiliary::Setqbar,
+                      true);
+  PropertyManager->Tie("aero/qbarUW-psf", this,
+                      &FGAuxiliary::GetqbarUW,
+                      &FGAuxiliary::SetqbarUW,
+                      true);
+  PropertyManager->Tie("aero/qbarUV-psf", this,
+                      &FGAuxiliary::GetqbarUV,
+                      &FGAuxiliary::SetqbarUV,
+                      true);
+  PropertyManager->Tie("velocities/vt-fps", this,
+                      &FGAuxiliary::GetVt,
+                      &FGAuxiliary::SetVt,
+                      true);
+  PropertyManager->Tie("velocities/mach-norm", this,
+                      &FGAuxiliary::GetMach,
+                      &FGAuxiliary::SetMach,
+                      true);
+  PropertyManager->Tie("aero/alphadot-rad_sec", this,
+                      &FGAuxiliary::Getadot,
+                      &FGAuxiliary::Setadot,
+                      true);
+  PropertyManager->Tie("aero/betadot-rad_sec", this,
+                      &FGAuxiliary::Getbdot,
+                      &FGAuxiliary::Setbdot,
+                      true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,6 +374,19 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("attitude/psi-true-rad");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
+  PropertyManager->Untie("velocities/u-aero-fps");
+  PropertyManager->Untie("velocities/v-aero-fps");
+  PropertyManager->Untie("velocities/w-aero-fps");
+  PropertyManager->Untie("aero/alpha-rad");
+  PropertyManager->Untie("aero/beta-rad");
+  PropertyManager->Untie("aero/qbar-psf");
+  PropertyManager->Untie("aero/qbarUW-psf");
+  PropertyManager->Untie("aero/qbarUV-psf");
+  PropertyManager->Untie("velocities/vt-fps");
+  PropertyManager->Untie("velocities/mach-norm");
+  PropertyManager->Untie("aero/alphadot-rad_sec");
+  PropertyManager->Untie("aero/betadot-rad_sec");
+  PropertyManager->Untie("aero/mag-beta-rad");
 
 }
 
@@ -326,6 +427,10 @@ void FGAuxiliary::Debug(int from)
   if (debug_lvl & 8 ) { // Runtime state variables
   }
   if (debug_lvl & 16) { // Sanity checking
+    if (Mach > 100 || Mach < 0.00)
+      cout << "FGTranslation::Mach is out of bounds: " << Mach << endl;
+    if (qbar > 1e6 || qbar < 0.00)
+      cout << "FGTranslation::qbar is out of bounds: " << qbar << endl;
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

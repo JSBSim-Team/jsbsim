@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.159 2004/03/08 04:02:16 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.160 2004/03/23 12:32:53 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -305,7 +305,7 @@ void FGJSBsim::init()
     break;
     case setmach:
         SG_LOG(SG_FLIGHT,SG_INFO, "  Mach: "
-               << Translation->GetMach() );
+               << Auxiliary->GetMach() );
     break;
     case setvc:
     default:
@@ -551,7 +551,7 @@ bool FGJSBsim::copy_from_JSBsim()
                             Position->GetVe(),
                             -Position->GetVd() );
 
-    _set_V_rel_wind( Translation->GetVt() );
+    _set_V_rel_wind( Auxiliary->GetVt() );
 
     _set_V_equiv_kts( Auxiliary->GetVequivalentKTS() );
 
@@ -571,7 +571,7 @@ bool FGJSBsim::copy_from_JSBsim()
                           Position->GetLongitudeDot(),
                           Position->Gethdot() );
 
-    _set_Mach_number( Translation->GetMach() );
+    _set_Mach_number( Auxiliary->GetMach() );
 
     // Positions
     _updateGeocentricPosition( Position->GetLatitude(),
@@ -590,8 +590,8 @@ bool FGJSBsim::copy_from_JSBsim()
                        Rotation->Gettht(),
                        Rotation->Getpsi() );
 
-    _set_Alpha( Translation->Getalpha() );
-    _set_Beta( Translation->Getbeta() );
+    _set_Alpha( Auxiliary->Getalpha() );
+    _set_Beta( Auxiliary->Getbeta() );
 
 
     _set_Gamma_vert_rad( Position->GetGamma() );

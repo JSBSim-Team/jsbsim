@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.76 2004/03/18 12:50:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.77 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -267,10 +267,10 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssVelocities) {
     outstream << ", ";
-    outstream << Translation->Getqbar() << ", ";
-    outstream << Translation->GetVt() << ", ";
+    outstream << Auxiliary->Getqbar() << ", ";
+    outstream << Auxiliary->GetVt() << ", ";
     outstream << Translation->GetUVW() << ", ";
-    outstream << Translation->GetAeroUVW() << ", ";
+    outstream << Auxiliary->GetAeroUVW() << ", ";
     outstream << Position->GetVel();
   }
   if (SubSystems & ssForces) {
@@ -301,8 +301,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << ", ";
     outstream << Position->Geth() << ", ";
     outstream << Auxiliary->GetEuler() << ", ";
-    outstream << Translation->Getalpha() << ", ";
-    outstream << Translation->Getbeta() << ", ";
+    outstream << Auxiliary->Getalpha() << ", ";
+    outstream << Auxiliary->Getbeta() << ", ";
     outstream << Position->GetLatitude() << ", ";
     outstream << Position->GetLongitude() << ", ";
     outstream << Position->GetDistanceAGL() << ", ";
@@ -396,13 +396,13 @@ void FGOutput::SocketOutput(void)
   socket->Append(Auxiliary->Gettht());
   socket->Append(Auxiliary->Getpsi());
   socket->Append(Atmosphere->GetDensity());
-  socket->Append(Translation->GetVt());
+  socket->Append(Auxiliary->GetVt());
   socket->Append(Translation->GetUVW(eU));
   socket->Append(Translation->GetUVW(eV));
   socket->Append(Translation->GetUVW(eW));
-  socket->Append(Translation->GetAeroUVW(eU));
-  socket->Append(Translation->GetAeroUVW(eV));
-  socket->Append(Translation->GetAeroUVW(eW));
+  socket->Append(Auxiliary->GetAeroUVW(eU));
+  socket->Append(Auxiliary->GetAeroUVW(eV));
+  socket->Append(Auxiliary->GetAeroUVW(eW));
   socket->Append(Position->GetVn());
   socket->Append(Position->GetVe());
   socket->Append(Position->GetVd());
@@ -420,8 +420,8 @@ void FGOutput::SocketOutput(void)
   socket->Append(Aircraft->GetForces(eZ));
   socket->Append(Position->GetLatitude());
   socket->Append(Position->GetLongitude());
-  socket->Append(Translation->Getqbar());
-  socket->Append(Translation->Getalpha());
+  socket->Append(Auxiliary->Getqbar());
+  socket->Append(Auxiliary->Getalpha());
   socket->Append(Aircraft->GetMoments(eL));
   socket->Append(Aircraft->GetMoments(eM));
   socket->Append(Aircraft->GetMoments(eN));

@@ -43,16 +43,16 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.59 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.60 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-// This class currently makes certain assumptions when calculating torque and 
+// This class currently makes certain assumptions when calculating torque and
 // p-factor. That is, that the axis of rotation is the X axis of the aircraft -
-// not just the X-axis of the engine/propeller. This may or may not work for a 
+// not just the X-axis of the engine/propeller. This may or may not work for a
 // helicopter.
 
 FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(exec)
@@ -135,7 +135,7 @@ FGPropeller::~FGPropeller()
 double FGPropeller::Calculate(double PowerAvailable)
 {
   double J, C_Thrust, omega;
-  double Vel = fdmex->GetTranslation()->GetAeroUVW(eU);
+  double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
   double alpha, beta;
@@ -153,8 +153,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   }
 
   if (P_Factor > 0.0001) {
-    alpha = fdmex->GetTranslation()->Getalpha();
-    beta  = fdmex->GetTranslation()->Getbeta();
+    alpha = fdmex->GetAuxiliary()->Getalpha();
+    beta  = fdmex->GetAuxiliary()->Getbeta();
     SetActingLocationY( GetLocationY() + P_Factor*alpha*Sense);
     SetActingLocationZ( GetLocationZ() + P_Factor*beta*Sense);
   } else if (P_Factor < 0.000) {
@@ -185,9 +185,9 @@ double FGPropeller::Calculate(double PowerAvailable)
   ExcessTorque = PowerAvailable / omega * GearRatio;
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 
-				// The friction from the engine should
-				// stop it somewhere; I chose an
-				// arbitrary point.
+        // The friction from the engine should
+        // stop it somewhere; I chose an
+        // arbitrary point.
   if (RPM < 5.0)
     RPM = 0;
 
@@ -204,7 +204,7 @@ double FGPropeller::GetPowerRequired(void)
 
   double cPReq, RPS = RPM / 60.0;
 
-  double J = fdmex->GetTranslation()->GetAeroUVW(eU) / (Diameter * RPS);
+  double J = fdmex->GetAuxiliary()->GetAeroUVW(eU) / (Diameter * RPS);
   double rho = fdmex->GetAtmosphere()->GetDensity();
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop

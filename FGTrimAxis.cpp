@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.42 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.43 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -181,8 +181,8 @@ void FGTrimAxis::getState(void) {
 void FGTrimAxis::getControl(void) {
   switch(control) {
   case tThrottle:  control_value=fdmex->GetFCS()->GetThrottleCmd(0); break;
-  case tBeta:      control_value=fdmex->GetTranslation()->Getalpha(); break;
-  case tAlpha:     control_value=fdmex->GetTranslation()->Getbeta();  break;
+  case tBeta:      control_value=fdmex->GetAuxiliary()->Getalpha(); break;
+  case tAlpha:     control_value=fdmex->GetAuxiliary()->Getbeta();  break;
   case tPitchTrim: control_value=fdmex->GetFCS() -> GetPitchTrimCmd(); break;
   case tElevator:  control_value=fdmex->GetFCS() -> GetDeCmd(); break;
   case tRollTrim:

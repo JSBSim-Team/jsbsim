@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.128 2004/03/18 12:22:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.129 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,15 +143,15 @@ void FGState::Initialize(double U, double V, double W,
   else
     beta = 0.0;
 
-  Translation->SetAB(alpha, beta);
+  Auxiliary->SetAB(alpha, beta);
 
   Vt = sqrt(U*U + V*V + W*W);
-  Translation->SetVt(Vt);
+  Auxiliary->SetVt(Vt);
 
-  Translation->SetMach(Vt/Atmosphere->GetSoundSpeed());
+  Auxiliary->SetMach(Vt/Atmosphere->GetSoundSpeed());
 
   qbar = 0.5*(U*U + V*V + W*W)*Atmosphere->GetDensity();
-  Translation->Setqbar(qbar);
+  Auxiliary->Setqbar(qbar);
 
   vLocalVelNED = mTb2l*vUVW;
   Position->SetvVel(vLocalVelNED);
@@ -293,8 +293,8 @@ FGMatrix33& FGState::GetTs2b(void)
 {
   double ca, cb, sa, sb;
 
-  double alpha = Translation->Getalpha();
-  double beta  = Translation->Getbeta();
+  double alpha = Auxiliary->Getalpha();
+  double beta  = Auxiliary->Getbeta();
 
   ca = cos(alpha);
   sa = sin(alpha);
@@ -321,8 +321,8 @@ FGMatrix33& FGState::GetTb2s(void)
   float alpha,beta;
   float ca, cb, sa, sb;
 
-  alpha = Translation->Getalpha();
-  beta  = Translation->Getbeta();
+  alpha = Auxiliary->Getalpha();
+  beta  = Auxiliary->Getbeta();
 
   ca = cos(alpha);
   sa = sin(alpha);
@@ -372,14 +372,14 @@ void FGState::ReportState(void)
   cout << out;
   snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
                     FDMExec->GetAuxiliary()->GetVcalibratedKTS(),
-                    Translation->GetMach() );
+                    Auxiliary->GetMach() );
   cout << out;
   snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
                     Position->Geth(),
                     Position->GetDistanceAGL() );
   cout << out;
   snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
-                    Translation->Getalpha()*radtodeg,
+                    Auxiliary->Getalpha()*radtodeg,
                     Auxiliary->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
@@ -392,7 +392,7 @@ void FGState::ReportState(void)
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
                     Auxiliary->Getpsi()*radtodeg,
-                    Translation->Getbeta()*radtodeg,
+                    Auxiliary->Getbeta()*radtodeg,
                     Rotation->GetPQR(3)*radtodeg  );
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",

@@ -33,7 +33,7 @@ on parameters given in the engine config file for this class
 HISTORY
 --------------------------------------------------------------------------------
 03/11/2003  DPC  Created
-09/08/2003  DPC  Changed Calculate() and added engine phases 
+09/08/2003  DPC  Changed Calculate() and added engine phases
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.17 2004/02/17 02:05:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.18 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,7 @@ FGSimTurbine::~FGSimTurbine()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // The main purpose of Calculate() is to determine what phase the engine should
-// be in, then call the corresponding function. 
+// be in, then call the corresponding function.
 
 double FGSimTurbine::Calculate(double dummy)
 {
@@ -83,16 +83,16 @@ double FGSimTurbine::Calculate(double dummy)
       phase = tpRun;
       N2 = IdleN2;
       N1 = IdleN1;
-      OilTemp_degK = 366.0;  
+      OilTemp_degK = 366.0;
       Cutoff = false;
       }
     else {
       phase = tpOff;
       Cutoff = true;
-      EGT_degC = TAT; 
+      EGT_degC = TAT;
       }
     }
-  
+
   if (!Running && Cutoff && Starter) {
      if (phase == tpOff) phase = tpSpinUp;
      }
@@ -102,7 +102,7 @@ double FGSimTurbine::Calculate(double dummy)
   if (Starved) phase = tpOff;
   if (Stalled) phase = tpStall;
   if (Seized) phase = tpSeize;
-  
+
   switch (phase) {
     case tpOff:    Thrust = Off(); break;
     case tpRun:    Thrust = Run(); break;
@@ -112,27 +112,27 @@ double FGSimTurbine::Calculate(double dummy)
     case tpSeize:  Thrust = Seize(); break;
     case tpTrim:   Thrust = Trim(); break;
     default: Thrust = Off();
-  }   
+  }
 
-  return Thrust;  
+  return Thrust;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Off(void)
 {
-  double qbar = Translation->Getqbar();
+  double qbar = Auxiliary->Getqbar();
   Running = false;
   FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
   N1 = Seek(&N1, qbar/10.0, N1/2.0, N1/2.0);
   N2 = Seek(&N2, qbar/15.0, N2/2.0, N2/2.0);
   EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
-  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);  
+  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
   OilPressure_psi = N2 * 0.62;
   NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   EPR = Seek(&EPR, 1.0, 0.2, 0.2);
   Augmentation = false;
-  return 0.0; 
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,11 +146,11 @@ double FGSimTurbine::Run(void)
 
   Running = true;
   Starter = false;
- 
+
   N2 = Seek(&N2, IdleN2 + ThrottleCmd * N2_factor, delay, delay * 3.0);
   N1 = Seek(&N1, IdleN1 + ThrottleCmd * N1_factor, delay, delay * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
-  thrust = idlethrust + (milthrust * N2norm * N2norm); 
+  thrust = idlethrust + (milthrust * N2norm * N2norm);
   thrust = thrust * (1.0 - BleedDemand);
   EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
   OilPressure_psi = N2 * 0.62;
@@ -164,7 +164,7 @@ double FGSimTurbine::Run(void)
   }
 
   if (AugMethod == 1) {
-    if ((ThrottleCmd > 0.99) && (N2 > 97.0)) {Augmentation = true;} 
+    if ((ThrottleCmd > 0.99) && (N2 > 97.0)) {Augmentation = true;}
     else {Augmentation = false;}
   }
 
@@ -175,7 +175,7 @@ double FGSimTurbine::Run(void)
   }
 
   if ((Injected == 1) && Injection)
-    thrust = thrust * ThrustTables[3]->TotalValue(); 
+    thrust = thrust * ThrustTables[3]->TotalValue();
 
   ConsumeFuel();
   if (Cutoff) phase = tpOff;
@@ -183,7 +183,7 @@ double FGSimTurbine::Run(void)
 
   return thrust;
 }
-        
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::SpinUp(void)
@@ -219,42 +219,42 @@ double FGSimTurbine::Start(void)
       Running = true;
       Starter = false;
       Cranking = false;
-      } 
+      }
     }
   else {                 // no start if N2 < 15%
     phase = tpOff;
     Starter = false;
     }
 
-  return 0.0; 
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Stall(void)
 {
-  double qbar = Translation->Getqbar();
+  double qbar = Auxiliary->Getqbar();
   EGT_degC = TAT + 903.14;
   FuelFlow_pph = IdleFF;
-  N1 = Seek(&N1, qbar/10.0, 0, N1/10.0); 
+  N1 = Seek(&N1, qbar/10.0, 0, N1/10.0);
   N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
   if (ThrottleCmd == 0) phase = tpRun;        // clear the stall with throttle
 
-  return 0.0; 
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Seize(void)
 {
-    double qbar = Translation->Getqbar();
+    double qbar = Auxiliary->Getqbar();
     N2 = 0.0;
     N1 = Seek(&N1, qbar/20.0, 0, N1/15.0);
     FuelFlow_pph = IdleFF;
     OilPressure_psi = 0.0;
     OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0, 0.2);
     Running = false;
-    return 0.0; 
+    return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,7 +265,7 @@ double FGSimTurbine::Trim(void)
     idlethrust = MilThrust * ThrustTables[0]->TotalValue();
     milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
     thrust = idlethrust + (milthrust * ThrottleCmd * ThrottleCmd);
-    return thrust; 
+    return thrust;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

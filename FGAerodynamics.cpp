@@ -46,12 +46,12 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.46 2004/02/26 15:03:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.47 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
-const unsigned NAxes=6;                           
+const unsigned NAxes=6;
 const char* AxisNames[] = { "drag", "side-force", "lift", "rolling-moment",
-                            "pitching-moment","yawing-moment" }; 
+                            "pitching-moment","yawing-moment" };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -70,12 +70,12 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   AxisIdx["YAW"]   = 5;
 
   Coeff = new CoeffArray[6];
-  
+
   impending_stall = stall_hyst = 0.0;
   alphaclmin = alphaclmax = 0.0;
   alphahystmin = alphahystmax = 0.0;
   clsq = lod = 0.0;
-  alphaw = 0.0;  
+  alphaw = 0.0;
   bi2vel = ci2vel = 0.0;
   bind();
 
@@ -87,16 +87,16 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 FGAerodynamics::~FGAerodynamics()
 {
   unsigned int i,j;
-  
+
   unbind();
-  
+
   for (i=0; i<6; i++) {
     for (j=0; j<Coeff[i].size(); j++) {
       delete Coeff[i][j];
     }
   }
   delete[] Coeff;
-  
+
   Debug(1);
 }
 
@@ -109,16 +109,16 @@ bool FGAerodynamics::Run(void)
 
   if (!FGModel::Run()) {
 
-    twovel = 2*Translation->GetVt();
+    twovel = 2*Auxiliary->GetVt();
     if (twovel != 0) {
       bi2vel = Aircraft->GetWingSpan() / twovel;
       ci2vel = Aircraft->Getcbar() / twovel;
-    }  
-    
-    alphaw = Translation->Getalpha() + Aircraft->GetWingIncidence();
-    
-    alpha = Translation->Getalpha();
-    
+    }
+
+    alphaw = Auxiliary->Getalpha() + Aircraft->GetWingIncidence();
+
+    alpha = Auxiliary->Getalpha();
+
     if (alphaclmax != 0) {
       if (alpha > 0.85*alphaclmax) {
         impending_stall = 10*(alpha/alphaclmax - 0.85);
@@ -126,15 +126,15 @@ bool FGAerodynamics::Run(void)
         impending_stall = 0;
       }
     }
-   
+
     if (alphahystmax != 0.0 && alphahystmin != 0.0) {
       if (alpha > alphahystmax) {
          stall_hyst = 1;
       } else if (alpha < alphahystmin) {
          stall_hyst = 0;
-      }    
+      }
     }
- 
+
     vLastFs = vFs;
     vFs.InitMatrix();
 
@@ -146,14 +146,14 @@ bool FGAerodynamics::Run(void)
 
     //correct signs of drag and lift to wind axes convention
     //positive forward, right, down
-    if ( Translation->Getqbar() > 0) {
-      clsq = vFs(eLift) / (Aircraft->GetWingArea()*Translation->Getqbar());
+    if ( Auxiliary->Getqbar() > 0) {
+      clsq = vFs(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
       clsq *= clsq;
     }
     if ( vFs(eDrag)  > 0) {
       lod = vFs(eLift) / vFs(eDrag);
-    }  
-        
+    }
+
     //correct signs of drag and lift to wind axes convention
     //positive forward, right, down
     vFs(eDrag)*=-1; vFs(eLift)*=-1;
@@ -214,7 +214,7 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
   }
 
   bindModel();
-  
+
   return true;
 }
 
@@ -287,7 +287,7 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("forces/lod-norm", this,
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared-norm", this,
-                       &FGAerodynamics::GetClSquared); 
+                       &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/alpha-max-deg", this,
                        &FGAerodynamics::GetAlphaCLMax,
                        &FGAerodynamics::SetAlphaCLMax,
@@ -311,7 +311,7 @@ void FGAerodynamics::bind(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGAerodynamics::bindModel(void)
-{ 
+{
   unsigned i,j;
   FGPropertyManager* node;
   string axis_node_name;
@@ -320,8 +320,8 @@ void FGAerodynamics::bindModel(void)
      node = node->GetNode( string(AxisNames[i]),true );
      for (j=0; j < Coeff[i].size(); j++) {
        Coeff[i][j]->bind(node);
-     } 
-     node = (FGPropertyManager*)node->getParent();                                         
+     }
+     node = (FGPropertyManager*)node->getParent();
   }
 }
 
@@ -341,7 +341,7 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("forces/fwy-aero-lbs");
   PropertyManager->Untie("forces/fwz-aero-lbs");
   PropertyManager->Untie("forces/lod-norm");
-  PropertyManager->Untie("aero/cl-squared-norm");  
+  PropertyManager->Untie("aero/cl-squared-norm");
   PropertyManager->Untie("aero/alpha-max-deg");
   PropertyManager->Untie("aero/alpha-min-deg");
   PropertyManager->Untie("aero/bi2vel");
@@ -353,7 +353,7 @@ void FGAerodynamics::unbind(void)
   for ( i=0; i<NAxes; i++ ) {
      for ( j=0; j < Coeff[i].size(); j++ ) {
        Coeff[i][j]->unbind();
-       
+
      }
   }
 }

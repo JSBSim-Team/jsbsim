@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.59 2004/03/23 12:04:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.60 2004/03/23 12:32:53 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,13 +83,6 @@ CLASS IMPLEMENTATION
 FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGTranslation";
-  qbar = 0;
-  qbarUW = 0.0;
-  qbarUV = 0.0;
-  Vt = 0.0;
-  Mach = 0.0;
-  alpha = beta = 0.0;
-  adot = bdot = 0.0;
 
   vUVWdot.InitMatrix();
   vUVWdot_prev[0].InitMatrix();
@@ -117,41 +110,6 @@ bool FGTranslation::Run(void)
 
     vUVWdot = vUVW*Rotation->GetPQR() + Aircraft->GetBodyAccel();
     vUVW += State->Integrate(FGState::TRAPZ, State->Getdt()*rate, vUVWdot, vUVWdot_prev);
-
-    vAeroUVW = vUVW + State->GetTl2b()*Atmosphere->GetWindNED();
-
-    Vt = vAeroUVW.Magnitude();
-    if ( Vt > 0.05) {
-      if (vAeroUVW(eW) != 0.0)
-        alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
-      if (vAeroUVW(eV) != 0.0)
-        beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
-               sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
-
-      double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
-      double signU=1;
-      if (vAeroUVW(eU) != 0.0)
-        signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
-
-      if ( (mUW == 0.0) || (Vt == 0.0) ) {
-        adot = 0.0;
-        bdot = 0.0;
-      } else {
-        adot = (vAeroUVW(eU)*vAeroUVW(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
-        bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
-                + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
-      }
-    } else {
-      alpha = beta = adot = bdot = 0;
-    }
-
-    qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
-    qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
-    qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
-    Mach = Vt / Atmosphere->GetSoundSpeed();
-    vMachUVW(eU) = vAeroUVW(eU) / Atmosphere->GetSoundSpeed();
-    vMachUVW(eV) = vAeroUVW(eV) / Atmosphere->GetSoundSpeed();
-    vMachUVW(eW) = vAeroUVW(eW) / Atmosphere->GetSoundSpeed();
 
     if (debug_lvl > 1) Debug(1);
 
@@ -184,50 +142,6 @@ void FGTranslation::bind(void)
                        (PMF)&FGTranslation::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-fps", this,3,
                        (PMF)&FGTranslation::GetUVWdot);
-  PropertyManager->Tie("velocities/u-aero-fps", this,1,
-                       (PMF)&FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("velocities/v-aero-fps", this,2,
-                       (PMF)&FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("velocities/w-aero-fps", this,3,
-                       (PMF)&FGTranslation::GetAeroUVW);
-  PropertyManager->Tie("aero/alpha-rad", this,
-                       &FGTranslation::Getalpha,
-                       &FGTranslation::Setalpha,
-                       true);
-  PropertyManager->Tie("aero/beta-rad", this,
-                       &FGTranslation::Getbeta,
-                       &FGTranslation::Setbeta,
-                       true);
-  PropertyManager->Tie("aero/mag-beta-rad", this,
-                       &FGTranslation::GetMagBeta);
-  PropertyManager->Tie("aero/qbar-psf", this,
-                       &FGTranslation::Getqbar,
-                       &FGTranslation::Setqbar,
-                       true);
-  PropertyManager->Tie("aero/qbarUW-psf", this,
-                       &FGTranslation::GetqbarUW,
-                       &FGTranslation::SetqbarUW,
-                       true);
-  PropertyManager->Tie("aero/qbarUV-psf", this,
-                       &FGTranslation::GetqbarUV,
-                       &FGTranslation::SetqbarUV,
-                       true);
-  PropertyManager->Tie("velocities/vt-fps", this,
-                       &FGTranslation::GetVt,
-                       &FGTranslation::SetVt,
-                       true);
-  PropertyManager->Tie("velocities/mach-norm", this,
-                       &FGTranslation::GetMach,
-                       &FGTranslation::SetMach,
-                       true);
-  PropertyManager->Tie("aero/alphadot-rad_sec", this,
-                       &FGTranslation::Getadot,
-                       &FGTranslation::Setadot,
-                       true);
-  PropertyManager->Tie("aero/betadot-rad_sec", this,
-                       &FGTranslation::Getbdot,
-                       &FGTranslation::Setbdot,
-                       true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,19 +154,6 @@ void FGTranslation::unbind(void)
   PropertyManager->Untie("accelerations/udot-fps");
   PropertyManager->Untie("accelerations/vdot-fps");
   PropertyManager->Untie("accelerations/wdot-fps");
-  PropertyManager->Untie("velocities/u-aero-fps");
-  PropertyManager->Untie("velocities/v-aero-fps");
-  PropertyManager->Untie("velocities/w-aero-fps");
-  PropertyManager->Untie("aero/alpha-rad");
-  PropertyManager->Untie("aero/beta-rad");
-  PropertyManager->Untie("aero/qbar-psf");
-  PropertyManager->Untie("aero/qbarUW-psf");
-  PropertyManager->Untie("aero/qbarUV-psf");
-  PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocities/mach-norm");
-  PropertyManager->Untie("aero/alphadot-rad_sec");
-  PropertyManager->Untie("aero/betadot-rad_sec");
-  PropertyManager->Untie("aero/mag-beta-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,10 +205,6 @@ void FGTranslation::Debug(int from)
       cout << "FGTranslation::V acceleration out of bounds: " << vUVWdot(eV) << endl;
     if (fabs(vUVWdot(eW)) > 1e4)
       cout << "FGTranslation::W acceleration out of bounds: " << vUVWdot(eW) << endl;
-    if (Mach > 100 || Mach < 0.00)
-      cout << "FGTranslation::Mach is out of bounds: " << Mach << endl;
-    if (qbar > 1e6 || qbar < 0.00)
-      cout << "FGTranslation::qbar is out of bounds: " << qbar << endl;
   }
   if (debug_lvl & 64) {
     if (from == 0) { // Constructor

@@ -1,32 +1,32 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGTranslation.h
  Author:       Jon Berndt
  Date started: 12/02/98
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 12/02/98   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.49 2004/02/18 02:45:38 jberndt Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.50 2004/03/23 12:32:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATION
@@ -96,41 +96,14 @@ class FGTranslation : public FGModel {
 public:
   FGTranslation(FGFDMExec*);
   ~FGTranslation();
-  
+
   inline double           GetUVW   (int idx) const { return vUVW(idx); }
   inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
   inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
   inline double           GetUVWdot(int idx) const { return vUVWdot(idx); }
-  inline FGColumnVector3& GetAeroUVW (void)    { return vAeroUVW; }
-  inline double           GetAeroUVW (int idx) const { return vAeroUVW(idx); }
-
-  double Getalpha(void) const { return alpha; }
-  double Getbeta (void) const { return beta; }
-  inline double GetMagBeta(void) const { return fabs(beta); }
-  double Getqbar (void) const { return qbar; }
-  double GetqbarUW (void) const { return qbarUW; }
-  double GetqbarUV (void) const { return qbarUV; }
-  inline double GetVt   (void) const { return Vt; }
-  double GetMach (void) const { return Mach; }
-  double GetMachU(void) const { return vMachUVW(eU); }
-  double Getadot (void) const { return adot; }
-  double Getbdot (void) const { return bdot; }
 
   void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
-  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
 
-  inline void Setalpha(double tt) { alpha = tt; }
-  inline void Setbeta (double tt) { beta  = tt; }
-  inline void Setqbar (double tt) { qbar = tt; }
-  inline void SetqbarUW (double tt) { qbarUW = tt; }
-  inline void SetqbarUV (double tt) { qbarUV = tt; }
-  inline void SetVt   (double tt) { Vt = tt; }
-  inline void SetMach (double tt) { Mach=tt; }
-  inline void Setadot (double tt) { adot = tt; }
-  inline void Setbdot (double tt) { bdot = tt; }
-
-  inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
-  
   bool Run(void);
 
   void bind(void);
@@ -140,13 +113,7 @@ private:
   FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
   FGColumnVector3 vUVWdot_prev[4];
-  FGColumnVector3 vAeroUVW;
-  FGColumnVector3 vMachUVW;
 
-  double Vt, Mach;
-  double qbar, qbarUW, qbarUV;
-  double alpha, beta;
-  double adot,bdot;
   void Debug(int from);
 };
 }

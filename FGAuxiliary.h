@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.37 2004/03/23 12:04:15 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.38 2004/03/23 12:32:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.37 2004/03/23 12:04:15 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.38 2004/03/23 12:32:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,6 @@ public:
   inline double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
   inline double GetVequivalentFPS(void) const { return veas; }
   inline double GetVequivalentKTS(void) const { return veas*fpstokts; }
-  inline double GetMachU(void) const { return MachU; }
 
   inline double GetTotalTemperature(void) const { return tat; }
   inline double GetTAT_C(void) const { return tatc; }
@@ -146,6 +145,34 @@ public:
   inline double GetEulerRates(int axis) const { return vEulerRates(axis); }
   inline void SetEuler(FGColumnVector3 tt) {vEuler = tt;}
 
+  inline FGColumnVector3& GetAeroUVW (void)    { return vAeroUVW; }
+  inline double           GetAeroUVW (int idx) const { return vAeroUVW(idx); }
+
+  double Getalpha(void) const { return alpha; }
+  double Getbeta (void) const { return beta; }
+  inline double GetMagBeta(void) const { return fabs(beta); }
+  double Getqbar (void) const { return qbar; }
+  double GetqbarUW (void) const { return qbarUW; }
+  double GetqbarUV (void) const { return qbarUV; }
+  inline double GetVt   (void) const { return Vt; }
+  double GetMach (void) const { return Mach; }
+  inline double GetMachU(void) const { return MachU; }
+  double Getadot (void) const { return adot; }
+  double Getbdot (void) const { return bdot; }
+
+  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
+
+  inline void Setalpha(double tt) { alpha = tt; }
+  inline void Setbeta (double tt) { beta  = tt; }
+  inline void Setqbar (double tt) { qbar = tt; }
+  inline void SetqbarUW (double tt) { qbarUW = tt; }
+  inline void SetqbarUV (double tt) { qbarUV = tt; }
+  inline void SetVt   (double tt) { Vt = tt; }
+  inline void SetMach (double tt) { Mach=tt; }
+  inline void Setadot (double tt) { adot = tt; }
+  inline void Setbdot (double tt) { bdot = tt; }
+
+  inline void SetAB(double t1, double t2) { alpha=t1; beta=t2; }
   inline double GetEarthPositionAngle(void) const { return earthPosAngle; }
 
   double GetHeadWind(void);
@@ -155,11 +182,8 @@ public:
   void unbind(void);
 
 private:
-  double vcas;
-  double veas;
-  double Mach;
-  double MachU;
-  double qbar,rhosl,rho,p,psl,pt,tat,sat,tatc;
+  double vcas, veas;
+  double rhosl, rho, p, psl, pt, tat, sat, tatc;
 
   // Don't add a getter for pt!
 
@@ -167,8 +191,15 @@ private:
   FGColumnVector3 vPilotAccelN;
   FGColumnVector3 vToEyePt;
   FGColumnVector3 vAeroPQR;
+  FGColumnVector3 vAeroUVW;
   FGColumnVector3 vEuler;
   FGColumnVector3 vEulerRates;
+  FGColumnVector3 vMachUVW;
+
+  double Vt, Mach, MachU;
+  double qbar, qbarUW, qbarUV;
+  double alpha, beta;
+  double adot,bdot;
 
   double earthPosAngle;
 
