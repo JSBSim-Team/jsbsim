@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.53 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.54 2002/06/28 16:37:32 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -459,7 +459,7 @@ void FGPiston::doCHT(void)
     
   double HeatCapacityCylinderHead = CpCylinderHead * MassCylinderHead;
     
-  CylinderHeadTemp_degK = dqdt_cylinder_head / HeatCapacityCylinderHead;
+  CylinderHeadTemp_degK += dqdt_cylinder_head / HeatCapacityCylinderHead;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -507,8 +507,7 @@ void FGPiston::doOilPressure(void)
 {
   double Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
   double Oil_Press_RPM_Max = 1800;    // FIXME: may vary by engine
-  double Design_Oil_Temp = 85;        // FIXME: may vary by engine
-             // FIXME: WRONG!!! (85 degK???)
+  double Design_Oil_Temp = 358;	      // degK; FIXME: may vary by engine
   double Oil_Viscosity_Index = 0.25;
 
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;
