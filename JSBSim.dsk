@@ -39,8 +39,8 @@ File_5=SourceModule,'D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSB
 
 [Modules]
 Module0=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
-Module1=D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp
-Module2=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg
+Module1=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg
+Module2=D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp
 Module3=D:\CBuilder4\Projects\FDM\JSBSim\FGModel.cpp
 Module4=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
 Module5=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\src\FDM\JSBsim.cxx
@@ -60,12 +60,12 @@ ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp]
+[D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGOutput.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
@@ -275,9 +275,9 @@ LeftCol=1
 
 [View8]
 Module=D:\CBuilder4\Projects\FDM\JSBSim\FGAircraft.cpp
-CursorX=1
-CursorY=521
-TopLine=480
+CursorX=55
+CursorY=528
+TopLine=507
 LeftCol=1
 
 [View9]
@@ -325,8 +325,8 @@ LeftCol=1
 [View15]
 Module=D:\CBuilder4\Projects\FDM\FlightGear\FlightGear\Aircraft\x15\x15.cfg
 CursorX=1
-CursorY=515
-TopLine=494
+CursorY=558
+TopLine=510
 LeftCol=1
 
 [View16]
