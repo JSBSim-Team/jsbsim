@@ -63,8 +63,9 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
+#include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.24 2001/02/04 13:16:13 jsb Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.25 2001/02/22 13:29:06 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -298,6 +299,14 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 
 bool FGFDMExec::RunScript(string script)
 {
-    return true;
+  FGConfigFile Script(script);
+  if (!Script.IsOpen()) return false;
+
+  string token = Script->GetValue();
+  string scratch;
+  ScriptName = Script->GetValue("NAME");
+
+
+  return true;
 }
 
