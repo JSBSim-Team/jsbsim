@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.73 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.74 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -550,6 +550,7 @@ double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
 
 void FGPropulsion::bind(void)
 {
+  typedef double (FGPropulsion::*PMF)(int) const;
   /* PropertyManager->Tie("propulsion/num-engines", this,
                        &FGPropulsion::GetNumEngines);
   PropertyManager->Tie("propulsion/num-tanks", this,
@@ -559,17 +560,17 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/num-sel-ox-tanks", this,
                        &FGPropulsion::GetnumSelectedOxiTanks);
   PropertyManager->Tie("forces/fbx-prop-lbs", this,1,
-                       &FGPropulsion::GetForces);
+                       (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fby-prop-lbs", this,2,
-                       &FGPropulsion::GetForces);
+                       (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fbz-prop-lbs", this,3,
-                       &FGPropulsion::GetForces);
+                       (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("moments/l-prop-lbsft", this,1,
-                       &FGPropulsion::GetMoments);
+                       (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/m-prop-lbsft", this,2,
-                       &FGPropulsion::GetMoments);
+                       (PMF)&FGPropulsion::GetMoments);
   PropertyManager->Tie("moments/n-prop-lbsft", this,3,
-                       &FGPropulsion::GetMoments);
+                       (PMF)&FGPropulsion::GetMoments);
   //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
   //                     &FGPropulsion::GetTanksWeight);
 }

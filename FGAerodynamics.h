@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.31 2002/04/02 05:34:25 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.32 2002/04/30 11:23:38 apeden Exp $"
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.31 2002/04/02 05:34:25 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.32 2002/04/30 11:23:38 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAerodynamics.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -115,17 +115,17 @@ public:
   /** Gets the total aerodynamic force vector.
       @return a force vector reference. */
   FGColumnVector3& GetForces(void) {return vForces;}
-  inline double GetForces(int n) const {return vForces(n);}
+  double GetForces(int n) const {return vForces(n);}
 
   /** Gets the total aerodynamic moment vector.
       @return a moment vector reference. */
   FGColumnVector3& GetMoments(void) {return vMoments;}
-  inline double GetMoments(int n) const {return vMoments(n);}
+  double GetMoments(int n) const {return vMoments(n);}
 
-  inline FGColumnVector3& GetvLastFs(void) { return vLastFs; }
-  inline double GetvLastFs(int axis) const { return vLastFs(axis); }
-  inline FGColumnVector3& GetvFs(void) { return vFs; }
-  inline double GetvFs(int axis) const { return vFs(axis); }
+  FGColumnVector3& GetvLastFs(void) { return vLastFs; }
+  double GetvLastFs(int axis) const { return vLastFs(axis); }
+  FGColumnVector3& GetvFs(void) { return vFs; }
+  double GetvFs(int axis) const { return vFs(axis); }
   inline double GetLoD(void) const { return lod; }
   inline double GetClSquared(void) const { return clsq; } 
 
@@ -153,6 +153,8 @@ private:
   FGColumnVector3 vLastFs;
   FGColumnVector3 vDXYZcg;
   double clsq,lod;
+  
+  typedef double (FGAerodynamics::*PMF)(int) const;
 
   void Debug(int from);
 };

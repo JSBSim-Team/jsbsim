@@ -69,7 +69,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGRotation.cpp,v 1.33 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotation.cpp,v 1.34 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_ROTATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,36 +158,37 @@ void FGRotation::GetState(void)
 
 void FGRotation::bind(void)
 {
+  typedef double (FGRotation::*PMF)(int) const;
   PropertyManager->Tie("velocities/p-rad_sec", this,1,
-                       &FGRotation::GetPQR);
+                       (PMF)&FGRotation::GetPQR);
   PropertyManager->Tie("velocities/q-rad_sec", this,2,
-                       &FGRotation::GetPQR);
+                       (PMF)&FGRotation::GetPQR);
   PropertyManager->Tie("velocities/r-rad_sec", this,3,
-                       &FGRotation::GetPQR);
+                       (PMF)&FGRotation::GetPQR);
   PropertyManager->Tie("velocities/p-aero-rad_sec", this,1,
-                       &FGRotation::GetAeroPQR);
+                       (PMF)&FGRotation::GetAeroPQR);
   PropertyManager->Tie("velocities/q-aero-rad_sec", this,2,
-                       &FGRotation::GetAeroPQR);
+                       (PMF)&FGRotation::GetAeroPQR);
   PropertyManager->Tie("velocities/r-aero-rad_sec", this,3,
-                       &FGRotation::GetAeroPQR);
+                       (PMF)&FGRotation::GetAeroPQR);
   PropertyManager->Tie("accelerations/pdot-rad_sec", this,1,
-                       &FGRotation::GetPQRdot);
+                       (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("accelerations/qdot-rad_sec", this,2,
-                       &FGRotation::GetPQRdot);
+                       (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec", this,3,
-                       &FGRotation::GetPQRdot);
+                       (PMF)&FGRotation::GetPQRdot);
   PropertyManager->Tie("attitude/roll-rad", this,1,
-                       &FGRotation::GetEuler);
+                       (PMF)&FGRotation::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this,2,
-                       &FGRotation::GetEuler);
+                       (PMF)&FGRotation::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this,3,
-                       &FGRotation::GetEuler);
+                       (PMF)&FGRotation::GetEuler);
   PropertyManager->Tie("velocities/phidot-rad_sec", this,1,
-                       &FGRotation::GetEulerRates);
+                       (PMF)&FGRotation::GetEulerRates);
   PropertyManager->Tie("velocities/thetadot-rad_sec", this,2,
-                       &FGRotation::GetEulerRates);
+                       (PMF)&FGRotation::GetEulerRates);
   PropertyManager->Tie("velocities/psidot-rad_sec", this,3,
-                       &FGRotation::GetEulerRates);
+                       (PMF)&FGRotation::GetEulerRates);
   PropertyManager->Tie("attitude/phi-rad", this,
                        &FGRotation::Getphi);
   PropertyManager->Tie("attitude/theta-rad", this,

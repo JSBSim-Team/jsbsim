@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.25 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.26 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,12 +129,13 @@ bool FGInertial::LoadInertial(FGConfigFile* AC_cfg)
 
 void FGInertial::bind(void)
 {
+  typedef double (FGInertial::*PMF)(int) const;
   PropertyManager->Tie("forces/fbx-inertial-lbs", this,1,
-                       &FGInertial::GetForces);
+                       (PMF)&FGInertial::GetForces);
   PropertyManager->Tie("forces/fby-inertial-lbs", this,2,
-                       &FGInertial::GetForces);
+                       (PMF)&FGInertial::GetForces);
   PropertyManager->Tie("forces/fbz-inertial-lbs", this,3,
-                       &FGInertial::GetForces);
+                       (PMF)&FGInertial::GetForces);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

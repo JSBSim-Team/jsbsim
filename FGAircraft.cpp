@@ -92,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.114 2002/03/27 02:44:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.115 2002/04/30 11:23:38 apeden Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,6 +281,7 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 
 void FGAircraft::bind(void)
 {
+  typedef double (FGAircraft::*PMF)(int) const;
   PropertyManager->Tie("metrics/Sw-sqft", this,
                        &FGAircraft::GetWingArea);
   PropertyManager->Tie("metrics/bw-ft", this,
@@ -306,29 +307,29 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/vbarv-norm", this,
                        &FGAircraft::Getvbarv);
   PropertyManager->Tie("moments/l-total-lbsft", this,1,
-                       &FGAircraft::GetMoments);
+                       (PMF)&FGAircraft::GetMoments);
   PropertyManager->Tie("moments/m-total-lbsft", this,2,
-                       &FGAircraft::GetMoments);
+                       (PMF)&FGAircraft::GetMoments);
   PropertyManager->Tie("moments/n-total-lbsft", this,3,
-                       &FGAircraft::GetMoments);
+                       (PMF)&FGAircraft::GetMoments);
   PropertyManager->Tie("forces/fbx-total-lbs", this,1,
-                       &FGAircraft::GetForces);
+                       (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("forces/fby-total-lbs", this,2,
-                       &FGAircraft::GetForces);
+                       (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("forces/fbz-total-lbs", this,3,
-                       &FGAircraft::GetForces);
+                       (PMF)&FGAircraft::GetForces);
   PropertyManager->Tie("metrics/aero-rp-x-ft", this,1,
-                       &FGAircraft::GetXYZrp);
+                       (PMF)&FGAircraft::GetXYZrp);
   PropertyManager->Tie("metrics/aero-rp-y-ft", this,2,
-                       &FGAircraft::GetXYZrp);
+                       (PMF)&FGAircraft::GetXYZrp);
   PropertyManager->Tie("metrics/aero-rp-z-ft", this,3,
-                       &FGAircraft::GetXYZrp);
+                       (PMF)&FGAircraft::GetXYZrp);
   PropertyManager->Tie("metrics/eyepoint-x-ft", this,1,
-                       &FGAircraft::GetXYZep);
+                       (PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/eyepoint-y-ft", this,2,
-                       &FGAircraft::GetXYZep);
+                       (PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/eyepoint-z-ft", this,3,
-                       &FGAircraft::GetXYZep);
+                       (PMF)&FGAircraft::GetXYZep);
   PropertyManager->Tie("metrics/alpha-max-deg", this,
                        &FGAircraft::GetAlphaCLMax,
                        &FGAircraft::SetAlphaCLMax,

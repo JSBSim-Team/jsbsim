@@ -41,7 +41,7 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.34 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.35 2002/04/30 11:23:38 apeden Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -225,24 +225,26 @@ string FGAerodynamics::GetCoefficientValues(void)
 
 void FGAerodynamics::bind(void)
 {
+  typedef double (FGAerodynamics::*PMF)(int) const;
+
   PropertyManager->Tie("forces/fbx-aero-lbs", this,1,
-                       &FGAerodynamics::GetForces);
+                       (PMF)&FGAerodynamics::GetForces);
   PropertyManager->Tie("forces/fby-aero-lbs", this,2,
-                       &FGAerodynamics::GetForces);
+                       (PMF)&FGAerodynamics::GetForces);
   PropertyManager->Tie("forces/fbz-aero-lbs", this,3,
-                       &FGAerodynamics::GetForces);
+                       (PMF)&FGAerodynamics::GetForces);
   PropertyManager->Tie("moments/l-aero-lbsft", this,1,
-                       &FGAerodynamics::GetMoments);
+                       (PMF)&FGAerodynamics::GetMoments);
   PropertyManager->Tie("moments/m-aero-lbsft", this,2,
-                       &FGAerodynamics::GetMoments);
+                       (PMF)&FGAerodynamics::GetMoments);
   PropertyManager->Tie("moments/n-aero-lbsft", this,3,
-                       &FGAerodynamics::GetMoments);
+                       (PMF)&FGAerodynamics::GetMoments);
   PropertyManager->Tie("forces/fwx-aero-lbs", this,1,
-                       &FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFs);
   PropertyManager->Tie("forces/fwy-aero-lbs", this,2,
-                       &FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFs);
   PropertyManager->Tie("forces/fwz-aero-lbs", this,3,
-                       &FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFs);
   PropertyManager->Tie("forces/lod-norm", this,
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared-norm", this,
@@ -259,7 +261,7 @@ void FGAerodynamics::bindModel(void)
   node = PropertyManager->GetNode("aero/buildup",true);
   for (i=0;i<NAxes;i++) {
      node = node->GetNode( string(AxisNames[i]),true );
-     for (j=0; j < Coeff[i].size(); j++) { 
+     for (j=0; j < Coeff[i].size(); j++) {
        Coeff[i][j]->bind(node);
      } 
      node = (FGPropertyManager*)node->getParent();                                         

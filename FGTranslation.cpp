@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.45 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.46 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,30 +165,31 @@ bool FGTranslation::Run(void)
 
 void FGTranslation::bind(void)
 {
+  typedef double (FGTranslation::*PMF)(int) const;
   PropertyManager->Tie("velocities/u-fps", this,1,
-                       &FGTranslation::GetUVW /*,
+                       (PMF)&FGTranslation::GetUVW /*,
                        &FGTranslation::SetUVW,
                        true */);
   PropertyManager->Tie("velocities/v-fps", this,2,
-                       &FGTranslation::GetUVW /*,
+                       (PMF)&FGTranslation::GetUVW /*,
                        &FGTranslation::SetUVW,
                        true*/);
   PropertyManager->Tie("velocities/w-fps", this,3,
-                       &FGTranslation::GetUVW /*,
+                       (PMF)&FGTranslation::GetUVW /*,
                        &FGTranslation::SetUVW,
                        true*/);
   PropertyManager->Tie("accelerations/udot-fps", this,1,
-                       &FGTranslation::GetUVWdot);
+                       (PMF)&FGTranslation::GetUVWdot);
   PropertyManager->Tie("accelerations/vdot-fps", this,2,
-                       &FGTranslation::GetUVWdot);
+                       (PMF)&FGTranslation::GetUVWdot);
   PropertyManager->Tie("accelerations/wdot-fps", this,3,
-                       &FGTranslation::GetUVWdot);
+                       (PMF)&FGTranslation::GetUVWdot);
   PropertyManager->Tie("velocities/u-aero-fps", this,1,
-                       &FGTranslation::GetAeroUVW);
+                       (PMF)&FGTranslation::GetAeroUVW);
   PropertyManager->Tie("velocities/v-aero-fps", this,2,
-                       &FGTranslation::GetAeroUVW);
+                       (PMF)&FGTranslation::GetAeroUVW);
   PropertyManager->Tie("velocities/w-aero-fps", this,3,
-                       &FGTranslation::GetAeroUVW);
+                       (PMF)&FGTranslation::GetAeroUVW);
   PropertyManager->Tie("aero/alpha-rad", this,
                        &FGTranslation::Getalpha,
                        &FGTranslation::Setalpha,

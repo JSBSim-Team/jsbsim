@@ -56,7 +56,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.30 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.31 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,6 +199,7 @@ double FGAuxiliary::GetCrossWind(void)
 
 void FGAuxiliary::bind(void)
 {
+  typedef double (FGAuxiliary::*PMF)(int) const;
   PropertyManager->Tie("velocities/vc-fps", this,
                        &FGAuxiliary::GetVcalibratedFPS);
   PropertyManager->Tie("velocities/vc-kts", this,
@@ -208,17 +209,17 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("velocities/ve-kts", this,
                        &FGAuxiliary::GetVequivalentKTS);
   PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this,1,
-                       &FGAuxiliary::GetPilotAccel);
+                       (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this,2,
-                       &FGAuxiliary::GetPilotAccel);
+                       (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/a-pilot-z-ft_sec2", this,3,
-                       &FGAuxiliary::GetPilotAccel);
+                       (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/n-pilot-x-norm", this,1,
-                       &FGAuxiliary::GetNpilot);
+                       (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this,2,
-                       &FGAuxiliary::GetNpilot);
+                       (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this,3,
-                       &FGAuxiliary::GetNpilot);
+                       (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("position/epa-rad", this,
                        &FGAuxiliary::GetEarthPositionAngle);
   /* PropertyManager->Tie("atmosphere/headwind-fps", this,

@@ -36,6 +36,7 @@ HISTORY
 11/24/98   JSB   Created
 07/23/99   TP    Added implementation of 1959 Standard Atmosphere
                  Moved calculation of Mach number to FGTranslation
+                 Later updated to '76 model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +62,7 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.40 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.41 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,6 +299,7 @@ void FGAtmosphere::Turbulence(void)
 
 void FGAtmosphere::bind(void)
 {
+  typedef double (FGAtmosphere::*PMF)(int) const;
   PropertyManager->Tie("atmosphere/T-R", this,
                        &FGAtmosphere::GetTemperature);
   PropertyManager->Tie("atmosphere/rho-slugs_ft3", this,
@@ -325,11 +327,11 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/psiw-rad", this,
                        &FGAtmosphere::GetWindPsi);
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1,
-                       &FGAtmosphere::GetTurbPQR);
+                       (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2,
-                       &FGAtmosphere::GetTurbPQR);
+                       (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3,
-                       &FGAtmosphere::GetTurbPQR);
+                       (PMF)&FGAtmosphere::GetTurbPQR);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,7 +41,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.25 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.26 2002/04/30 11:23:39 apeden Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +191,8 @@ double FGMassBalance::GetPMIxz(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGMassBalance::bind(void)
-{
+{ 
+  typedef double (FGMassBalance::*PMF)(int) const;
   PropertyManager->Tie("inertia/mass-slugs", this,
                        &FGMassBalance::GetMass);
   PropertyManager->Tie("inertia/weight-lbs", this,
@@ -207,11 +208,11 @@ void FGMassBalance::bind(void)
   PropertyManager->Tie("inertia/ixz-lbsft2", this,
                        &FGMassBalance::GetIxz);
   PropertyManager->Tie("inertia/cg-x-ft", this,1,
-                       &FGMassBalance::GetXYZcg);
+                       (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-y-ft", this,2,
-                       &FGMassBalance::GetXYZcg);
+                       (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-z-ft", this,3,
-                       &FGMassBalance::GetXYZcg);
+                       (PMF)&FGMassBalance::GetXYZcg);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
