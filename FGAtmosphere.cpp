@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.67 2004/07/11 21:39:36 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.68 2004/07/11 21:44:52 dpculp Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -469,6 +469,9 @@ void FGAtmosphere::unbind(void)
   PropertyManager->Untie("atmosphere/rho-sl-slugs_ft3");
   PropertyManager->Untie("atmosphere/P-sl-psf");
   PropertyManager->Untie("atmosphere/a-sl-fps");
+  PropertyManager->Untie("atmosphere/delta-T");
+  PropertyManager->Untie("atmosphere/T-sl-dev-F");
+  PropertyManager->Untie("atmosphere/density-altitude");
   PropertyManager->Untie("atmosphere/theta-norm");
   PropertyManager->Untie("atmosphere/sigma-norm");
   PropertyManager->Untie("atmosphere/delta-norm");
