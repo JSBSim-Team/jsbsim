@@ -99,15 +99,15 @@ INCLUDES
 #ifdef FGFS
 #  include <Include/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
-#    include <fstream>
 #    include <vector>
+#    include <map>
 #  else
-#    include <fstream.h>
 #    include <vector.h>
+#    include <map.h>
 #  endif
 #else
-#  include <fstream>
 #  include <vector>
+#include <map>
 #endif
 
 #include "FGModel.h"
@@ -191,8 +191,12 @@ private:
   FGTank* Tank[MAX_TANKS];
   FGEngine *Engine[MAX_ENGINES];
 
-  FGCoefficient *Coeff[6][10];
-  int coeff_ctr[6];
+//  FGCoefficient *Coeff[6][10];
+  typedef map<string,int> AxisIndex;
+  AxisIndex AxisIdx;
+  typedef vector<FGCoefficient*> CoeffArray;
+  CoeffArray *Coeff;
+//  int coeff_ctr[6];
 
   bool GearUp;
 

@@ -40,18 +40,13 @@ INCLUDES
 #ifdef FGFS
 #  include <Include/compiler.h>
 #  include STL_STRING
-#  ifdef FG_HAVE_STD_INCLUDES
-#    include <fstream>
-#  else
-#    include <fstream.h>
-#  endif
    FG_USING_STD(string);
 #else
 #  include <string>
-#  include <fstream>
 #endif
 
 #include <map>
+#include "FGConfigFile.h"
 
 /*******************************************************************************
 DEFINES
@@ -125,7 +120,7 @@ CLASS DECLARATION
 class FGCoefficient
 {
 public:
-  FGCoefficient(FGFDMExec*, ifstream&);
+  FGCoefficient(FGFDMExec*, FGConfigFile*);
   ~FGCoefficient(void);
   bool Allocate(int);
   bool Allocate(int, int);

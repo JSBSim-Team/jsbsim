@@ -57,16 +57,12 @@ INCLUDES
 #ifdef FGFS
 #  include <Include/compiler.h>
 #  include STL_STRING
-#  ifdef FG_HAVE_STD_INCLUDES
-#    include <fstream>
-#  else
-#    include <fstream.h>
-#  endif
    FG_USING_STD(string);
 #else
-#  include <fstream>
 #  include <string>
 #endif
+
+#include "FGConfigFile.h"
 
 /*******************************************************************************
 DEFINITIONS
@@ -81,7 +77,7 @@ CLASS DECLARATION
 class FGLGear
 {
 public:
-  FGLGear(ifstream&);
+  FGLGear(FGConfigFile*);
   ~FGLGear(void);
 
   float Force(void);

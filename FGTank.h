@@ -47,15 +47,9 @@ INCLUDES
 #ifdef FGFS
 #  include <Include/compiler.h>
 #  include STL_STRING
-#  ifdef FG_HAVE_STD_INCLUDES
-#    include <fstream>
-#  else
-#    include <fstream.h>
-#  endif
    FG_USING_STD(string);
 #else
 #  include <string>
-#  include <fstream>
 #endif
 
 #include "FGConfigFile.h"

@@ -151,6 +151,10 @@ FGConfigFile& FGConfigFile::operator>>(double& val)
   string str = CurrentLine.substr(pos, end - pos);
   val = strtod(str.c_str(),NULL);
   CurrentIndex = end+1;
+  // EXPERIMENTAL
+  if (CurrentIndex >= CurrentLine.length())
+    GetNextConfigLine();
+  // END EXPERIMENTAL
   return *this;
 }
 
@@ -165,6 +169,10 @@ FGConfigFile& FGConfigFile::operator>>(float& val)
   string str = CurrentLine.substr(pos, end - pos);
   val = strtod(str.c_str(),NULL);
   CurrentIndex = end+1;
+  // EXPERIMENTAL
+  if (CurrentIndex >= CurrentLine.length())
+    GetNextConfigLine();
+  // END EXPERIMENTAL
   return *this;
 }
 
@@ -179,6 +187,10 @@ FGConfigFile& FGConfigFile::operator>>(int& val)
   string str = CurrentLine.substr(pos, end - pos);
   val = atoi(str.c_str());
   CurrentIndex = end+1;
+  // EXPERIMENTAL
+  if (CurrentIndex >= CurrentLine.length())
+    GetNextConfigLine();
+  // END EXPERIMENTAL
   return *this;
 }
 
@@ -192,6 +204,10 @@ FGConfigFile& FGConfigFile::operator>>(string& str)
   if (end == CurrentLine.npos) end = CurrentLine.length();
   str = CurrentLine.substr(pos, end - pos);
   CurrentIndex = end+1;
+  // EXPERIMENTAL
+  if (CurrentIndex >= CurrentLine.length())
+    GetNextConfigLine();
+  // END EXPERIMENTAL
   return *this;
 }
 

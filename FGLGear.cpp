@@ -44,9 +44,10 @@ INCLUDES
 *******************************************************************************/
 
 
-FGLGear::FGLGear(ifstream& acfile)
+FGLGear::FGLGear(FGConfigFile* AC_cfg)
 {
-  acfile >> name >> X >> Y >> Z >> kSpring >> bDamp >> statFCoeff >> brakeCoeff;
+  string tmp;
+  *AC_cfg >> tmp >> name >> X >> Y >> Z >> kSpring >> bDamp >> statFCoeff >> brakeCoeff;
 }
 
 

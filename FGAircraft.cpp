@@ -138,7 +138,16 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 
   Name = "FGAircraft";
 
-  for (i=0;i<6;i++) coeff_ctr[i] = 0;
+//  for (i=0;i<6;i++) coeff_ctr[i] = 0;
+
+  AxisIdx["LIFT"]  = 0;
+  AxisIdx["SIDE"]  = 1;
+  AxisIdx["DRAG"]  = 2;
+  AxisIdx["ROLL"]  = 3;
+  AxisIdx["PITCH"] = 4;
+  AxisIdx["YAW"]   = 5;
+
+  Coeff = new[CoeffArray] CoeffArray;
 }
 
 
@@ -253,7 +262,7 @@ bool FGAircraft::LoadAircraft(string aircraft_path, string engine_path, string f
 
       } else if (holding_string == "AC_GEAR") {
 
-        lGear.push_back(new FGLGear(aircraftfile));
+//        lGear.push_back(new FGLGear(aircraftfile));
 
       } else if (holding_string == "AC_ENGINE") {
 
@@ -635,17 +644,22 @@ void FGAircraft::ReadMetrics(FGConfigFile* AC_cfg)
 void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
 {
   string token;
+  string engine_name;
   string parameter;
 
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/PROPULSION") {
     *AC_cfg >> parameter;
+
     if (parameter == "AC_ENGINE") {
-      *AC_cfg >> parameter;
-      Engine[numEngines] = new FGEngine(FDMExec, EnginePath, parameter, numEngines);
-        numEngines++;
+
+      *AC_cfg >> engine_name;
+      Engine[numEngines] = new FGEngine(FDMExec, EnginePath, engine_name, numEngines);
+      numEngines++;
+
     } else if (parameter == "AC_TANK") {
+
       Tank[numTanks] = new FGTank(AC_cfg);
       switch(Tank[numTanks]->GetType()) {
       case FGTank::ttFUEL:
@@ -657,6 +671,7 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg)
       }
       numTanks++;
     }
+    
     AC_cfg->GetNextConfigLine();
   }
 }
@@ -679,25 +694,32 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg)
 
 void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
 {
-  string token;
+  string token, axis;
 
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/AERODYNAMICS") {
-
+    if (token == "AXIS") {
+      axis = AC_cfg->GetValue("NAME");
+      while ((token = AC_cfg->GetValue()) != "/AXIS") {
+        Coeff[AxisIdx[axis]].push_back(new FGCoefficient(FDMExec, AC_cfg));
+        AC_cfg->GetNextConfigLine();
+      }
+    }
     AC_cfg->GetNextConfigLine();
   }
 }
 
 /******************************************************************************/
 
-void FGAircraft::ReadUndercarriage(FGConfigFile*AC_cfg)
+void FGAircraft::ReadUndercarriage(FGConfigFile* AC_cfg)
 {
   string token;
 
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != "/UNDERCARRIAGE") {
+    lGear.push_back(new FGLGear(AC_cfg));
 
     AC_cfg->GetNextConfigLine();
   }

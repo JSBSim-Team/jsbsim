@@ -60,7 +60,7 @@ INCLUDES
 ************************************ CODE **************************************
 *******************************************************************************/
 
-FGCoefficient::FGCoefficient(FGFDMExec* fdex, ifstream& coeffDefFile)
+FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 {
   int r, c, start, end, n;
   float ftrashcan;
@@ -96,214 +96,213 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, ifstream& coeffDefFile)
   Auxiliary   = FDMExec->GetAuxiliary();
   Output      = FDMExec->GetOutput();
 
-  if (coeffDefFile) {
-    if (!coeffDefFile.fail()) {
-      coeffDefFile >> name;
-      cout << "   " << name << endl;
-      coeffDefFile >> strashcan;
-      coeffDefFile >> description;
-      cout << "   " << description << endl;
-      coeffDefFile >> method;
-      cout << "   " << method << endl;
+  if (AC_cfg) {
+    AC_cfg->GetNextConfigLine();
+    name = AC_cfg->GetValue("NAME");
+    method = AC_cfg->GetValue("TYPE");
 
-      if      (method == "EQUATION") type = EQUATION;
-      else if (method == "TABLE")    type = TABLE;
-      else if (method == "VECTOR")   type = VECTOR;
-      else if (method == "VALUE")    type = VALUE;
-      else                           type = UNKNOWN;
+    AC_cfg->GetNextConfigLine();
+    *AC_cfg >> description;
 
-      if (type == VECTOR || type == TABLE) {
-        coeffDefFile >> rows;
-        cout << "   Rows: " << rows << " ";
-        if (type == TABLE) {
-          coeffDefFile >> columns;
-          cout << "Cols: " << columns;
-        }
+    cout << "   " << name << endl;
+    cout << "   " << description << endl;
+    cout << "   " << method << endl;
 
-        cout << endl;
+    if      (method == "EQUATION") type = EQUATION;
+    else if (method == "TABLE")    type = TABLE;
+    else if (method == "VECTOR")   type = VECTOR;
+    else if (method == "VALUE")    type = VALUE;
+    else                           type = UNKNOWN;
 
-        coeffDefFile >> strashcan;
-        if (strashcan.substr(0,1) == "F") {
-          LookupR = coeffdef[strashcan.c_str()];
-          cout << "   Row indexing parameter: " << strashcan << endl;
-        } else {
-          LookupR = atoi(strashcan.c_str());
-          cout << "   Row indexing parameter: " << LookupR << endl;
-        }
-
-      }
-
+    if (type == VECTOR || type == TABLE) {
+      *AC_cfg >> rows;
+      cout << "   Rows: " << rows << " ";
       if (type == TABLE) {
-        coeffDefFile >> strashcan;
-        if (strashcan.substr(0,1) == "F") {
-          LookupC = coeffdef[strashcan.c_str()];
-          cout << "   Column indexing parameter: " << strashcan << endl;
-        } else {
-          LookupC = atoi(strashcan.c_str());
-          cout << "   Column indexing parameter: " << LookupC << endl;
-        }
+        *AC_cfg >> columns;
+        cout << "Cols: " << columns;
       }
 
-      coeffDefFile >> strashcan;
+      cout << endl;
 
-      end   = strashcan.length();
-      n     = strashcan.find("|");
-      start = 0;
-      multipliers = 0;
+      *AC_cfg >> strashcan;
       if (strashcan.substr(0,1) == "F") {
-        while(n < end && n >= 0) {
-          n -= start;
-          multipliers += coeffdef[strashcan.substr(start,n).c_str()];
-          start += n+1;
-          n = strashcan.find("|",start);
-        }
-        multipliers += coeffdef[strashcan.substr(start,end).c_str()];
+        LookupR = coeffdef[strashcan.c_str()];
+        cout << "   Row indexing parameter: " << strashcan << endl;
       } else {
-        multipliers = atoi(strashcan.c_str());
+        LookupR = atoi(strashcan.c_str());
+        cout << "   Row indexing parameter: " << LookupR << endl;
       }
 
-      cout << "   Non-Dimensionalized by: ";
+    }
 
-      mult_count = 0;
-      if (multipliers & FG_QBAR) {
-        mult_idx[mult_count] = FG_QBAR;
-        mult_count++;
-        cout << "qbar ";
+    if (type == TABLE) {
+      *AC_cfg >> strashcan;
+      if (strashcan.substr(0,1) == "F") {
+        LookupC = coeffdef[strashcan.c_str()];
+        cout << "   Column indexing parameter: " << strashcan << endl;
+      } else {
+        LookupC = atoi(strashcan.c_str());
+        cout << "   Column indexing parameter: " << LookupC << endl;
       }
-      if (multipliers & FG_WINGAREA) {
-        mult_idx[mult_count] = FG_WINGAREA;
-        mult_count++;
-        cout << "S ";
-      }
-      if (multipliers & FG_WINGSPAN) {
-        mult_idx[mult_count] = FG_WINGSPAN;
-        mult_count++;
-        cout << "b ";
-      }
-      if (multipliers & FG_CBAR) {
-        mult_idx[mult_count] = FG_CBAR;
-        mult_count++;
-        cout << "c ";
-      }
-      if (multipliers & FG_ALPHA) {
-        mult_idx[mult_count] = FG_ALPHA;
-        mult_count++;
-        cout << "alpha ";
-      }
-      if (multipliers & FG_ALPHADOT) {
-        mult_idx[mult_count] = FG_ALPHADOT;
-        mult_count++;
-        cout << "alphadot ";
-      }
-      if (multipliers & FG_BETA) {
-        mult_idx[mult_count] = FG_BETA;
-        mult_count++;
-        cout << "beta ";
-      }
-      if (multipliers & FG_BETADOT) {
-        mult_idx[mult_count] = FG_BETADOT;
-        mult_count++;
-        cout << "betadot ";
-      }
-      if (multipliers & FG_PITCHRATE) {
-        mult_idx[mult_count] = FG_PITCHRATE;
-        mult_count++;
-        cout << "q ";
-      }
-      if (multipliers & FG_ROLLRATE) {
-        mult_idx[mult_count] = FG_ROLLRATE;
-        mult_count++;
-        cout << "p ";
-      }
-      if (multipliers & FG_YAWRATE) {
-        mult_idx[mult_count] = FG_YAWRATE;
-        mult_count++;
-        cout << "r ";
-      }
-      if (multipliers & FG_ELEVATOR) {
-        mult_idx[mult_count] = FG_ELEVATOR;
-        mult_count++;
-        cout << "De ";
-      }
-      if (multipliers & FG_AILERON) {
-        mult_idx[mult_count] = FG_AILERON;
-        mult_count++;
-        cout << "Da ";
-      }
-      if (multipliers & FG_RUDDER) {
-        mult_idx[mult_count] = FG_RUDDER;
-        mult_count++;
-        cout << "Dr ";
-      }
-      if (multipliers & FG_MACH) {
-        mult_idx[mult_count] = FG_MACH;
-        mult_count++;
-        cout << "Mach ";
-      }
-      if (multipliers & FG_ALTITUDE) {
-        mult_idx[mult_count] = FG_ALTITUDE;
-        mult_count++;
-        cout << "h ";
-      }
-      if (multipliers & FG_BI2VEL) {
-        mult_idx[mult_count] = FG_BI2VEL;
-        mult_count++;
-        cout << "b /(2*Vt) ";
-      }
-      if (multipliers & FG_CI2VEL) {
-        mult_idx[mult_count] = FG_CI2VEL;
-        mult_count++;
-        cout << "c /(2*Vt) ";
-      }
-			cout << endl;
+    }
 
-      switch(type) {
-      case VALUE:
-        coeffDefFile >> StaticValue;
-        cout << "      Value = " << StaticValue << endl;
-        break;
-      case VECTOR:
-        Allocate(rows,2);
+    *AC_cfg >> strashcan;
 
-        for (r=1;r<=rows;r++) {
-          coeffDefFile >> Table3D[r][0];
-          coeffDefFile >> Table3D[r][1];
-        }
-
-        for (r=0;r<=rows;r++) {
-        	cout << "	";
-        	for (c=0;c<=columns;c++) {
-        		cout << Table3D[r][c] << "	";
-        	}
-        	cout << endl;
-        }
-
-        break;
-      case TABLE:
-        Allocate(rows, columns);
-
-        Table3D[0][0] = 0.0;
-        for (c=1;c<=columns;c++) {
-          coeffDefFile >> Table3D[0][c];
-          for (r=1;r<=rows;r++) {
-            if ( c==1 ) coeffDefFile >> Table3D[r][0];
-            else coeffDefFile >> ftrashcan;
-            coeffDefFile >> Table3D[r][c];
-          }
-        }
-
-        for (r=0;r<=rows;r++) {
-        	cout << "	";
-        	for (c=0;c<=columns;c++) {
-        		cout << Table3D[r][c] << "	";
-        	}
-        	cout << endl;
-        }
-
-        break;
+    end   = strashcan.length();
+    n     = strashcan.find("|");
+    start = 0;
+    multipliers = 0;
+    if (strashcan.substr(0,1) == "F") {
+      while(n < end && n >= 0) {
+        n -= start;
+        multipliers += coeffdef[strashcan.substr(start,n).c_str()];
+        start += n+1;
+        n = strashcan.find("|",start);
       }
+      multipliers += coeffdef[strashcan.substr(start,end).c_str()];
     } else {
-      cerr << "Empty file" << endl;
+      multipliers = atoi(strashcan.c_str());
+    }
+
+    cout << "   Non-Dimensionalized by: ";
+
+    mult_count = 0;
+    if (multipliers & FG_QBAR) {
+      mult_idx[mult_count] = FG_QBAR;
+      mult_count++;
+      cout << "qbar ";
+    }
+    if (multipliers & FG_WINGAREA) {
+      mult_idx[mult_count] = FG_WINGAREA;
+      mult_count++;
+      cout << "S ";
+    }
+    if (multipliers & FG_WINGSPAN) {
+      mult_idx[mult_count] = FG_WINGSPAN;
+      mult_count++;
+      cout << "b ";
+    }
+    if (multipliers & FG_CBAR) {
+      mult_idx[mult_count] = FG_CBAR;
+      mult_count++;
+      cout << "c ";
+    }
+    if (multipliers & FG_ALPHA) {
+      mult_idx[mult_count] = FG_ALPHA;
+      mult_count++;
+      cout << "alpha ";
+    }
+    if (multipliers & FG_ALPHADOT) {
+      mult_idx[mult_count] = FG_ALPHADOT;
+      mult_count++;
+      cout << "alphadot ";
+    }
+    if (multipliers & FG_BETA) {
+      mult_idx[mult_count] = FG_BETA;
+      mult_count++;
+      cout << "beta ";
+    }
+    if (multipliers & FG_BETADOT) {
+      mult_idx[mult_count] = FG_BETADOT;
+      mult_count++;
+      cout << "betadot ";
+    }
+    if (multipliers & FG_PITCHRATE) {
+      mult_idx[mult_count] = FG_PITCHRATE;
+      mult_count++;
+      cout << "q ";
+    }
+    if (multipliers & FG_ROLLRATE) {
+      mult_idx[mult_count] = FG_ROLLRATE;
+      mult_count++;
+      cout << "p ";
+    }
+    if (multipliers & FG_YAWRATE) {
+      mult_idx[mult_count] = FG_YAWRATE;
+      mult_count++;
+      cout << "r ";
+    }
+    if (multipliers & FG_ELEVATOR) {
+      mult_idx[mult_count] = FG_ELEVATOR;
+      mult_count++;
+      cout << "De ";
+    }
+    if (multipliers & FG_AILERON) {
+      mult_idx[mult_count] = FG_AILERON;
+      mult_count++;
+      cout << "Da ";
+    }
+    if (multipliers & FG_RUDDER) {
+      mult_idx[mult_count] = FG_RUDDER;
+      mult_count++;
+      cout << "Dr ";
+    }
+    if (multipliers & FG_MACH) {
+      mult_idx[mult_count] = FG_MACH;
+      mult_count++;
+      cout << "Mach ";
+    }
+    if (multipliers & FG_ALTITUDE) {
+      mult_idx[mult_count] = FG_ALTITUDE;
+      mult_count++;
+      cout << "h ";
+    }
+    if (multipliers & FG_BI2VEL) {
+      mult_idx[mult_count] = FG_BI2VEL;
+      mult_count++;
+      cout << "b /(2*Vt) ";
+    }
+    if (multipliers & FG_CI2VEL) {
+      mult_idx[mult_count] = FG_CI2VEL;
+      mult_count++;
+      cout << "c /(2*Vt) ";
+    }
+    cout << endl;
+
+    switch(type) {
+    case VALUE:
+      *AC_cfg >> StaticValue;
+      cout << "      Value = " << StaticValue << endl;
+      break;
+    case VECTOR:
+      Allocate(rows,2);
+
+      for (r=1;r<=rows;r++) {
+        *AC_cfg >> Table3D[r][0];
+        *AC_cfg >> Table3D[r][1];
+      }
+
+      for (r=0;r<=rows;r++) {
+        cout << "	";
+        for (c=0;c<=columns;c++) {
+          cout << Table3D[r][c] << "	";
+        }
+        cout << endl;
+      }
+
+      break;
+    case TABLE:
+      Allocate(rows, columns);
+
+      Table3D[0][0] = 0.0;
+      for (c=1;c<=columns;c++) {
+        *AC_cfg >> Table3D[0][c];
+        for (r=1;r<=rows;r++) {
+          if ( c==1 ) *AC_cfg >> Table3D[r][0];
+          else *AC_cfg >> ftrashcan;
+          *AC_cfg >> Table3D[r][c];
+        }
+      }
+
+      for (r=0;r<=rows;r++) {
+        cout << "	";
+        for (c=0;c<=columns;c++) {
+          cout << Table3D[r][c] << "	";
+        }
+        cout << endl;
+      }
+
+      break;
     }
   }
 }
