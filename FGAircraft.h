@@ -160,6 +160,7 @@ public:
   inline float GetIxz(void) {return Ixz;}
   inline int   GetNumEngines(void) {return numEngines;}
   inline FGColumnVector GetXYZcg(void) {return vXYZcg;}
+  inline float GetNlf(void) { return nlf; }
   string GetCoefficientStrings(void);
   string GetCoefficientValues(void);
 
@@ -195,6 +196,7 @@ private:
   float alpha, beta;
   float WingArea, WingSpan, cbar;
   float Weight, EmptyWeight;
+  float nlf;
   float dt;
   double CFGVersion;
   string AircraftName;
