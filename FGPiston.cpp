@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.45 2001/12/14 20:01:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.46 2001/12/14 23:30:17 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -396,21 +396,24 @@ void FGPiston::doEnginePower(void)
 
 void FGPiston::doEGT(void)
 {
-  double delta_T_exhaust = 0.0;
-  double heat_capacity_exhaust;
+  double delta_T_exhaust;
   double enthalpy_exhaust;
+  double heat_capacity_exhaust;
+  double dEGTdt;
 
-  combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
-  enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * combustion_efficiency * 0.33;
-  heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
-
-  if (heat_capacity_exhaust >= 0.0000001)
+  if ((Running) && (m_dot_air > 0.0)) {  // do the energy balance
+    combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
+    enthalpy_exhaust = m_dot_fuel * calorific_value_fuel * 
+                              combustion_efficiency * 0.33;
+    heat_capacity_exhaust = (Cp_air * m_dot_air) + (Cp_fuel * m_dot_fuel);
     delta_T_exhaust = enthalpy_exhaust / heat_capacity_exhaust;
-  else
-    delta_T_exhaust = 0.0;
-
-  ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
-  ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * Percentage_Power / 100.0);
+    ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
+    ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * Percentage_Power / 100.0);
+  } else {  // Drop towards ambient - guess an appropriate time constant for now
+    dEGTdt = (298.0 - ExhaustGasTemp_degK) / 100.0;
+    delta_T_exhaust = dEGTdt * dt;
+    ExhaustGasTemp_degK += delta_T_exhaust;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
