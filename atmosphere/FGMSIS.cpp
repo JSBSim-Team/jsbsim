@@ -67,7 +67,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.2 2004/01/12 21:08:28 dpculp Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.3 2004/02/01 05:34:56 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,7 @@ CLASS IMPLEMENTATION
 MSIS::MSIS(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 {
   Name = "MSIS";
+  bind();
   Debug(0);
 }
 
@@ -103,6 +104,7 @@ MSIS::MSIS(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 
 MSIS::~MSIS()
 {
+  unbind();
   Debug(1);
 }
 
@@ -124,29 +126,18 @@ bool MSIS::InitModel(void)
   input.f107 = 150.0;
   input.ap = 4.0;
 
-  output.d[5] = 0.001225;
-  output.t[1] = 288.15;
-
-  // get sea-level atmosphere
-  Calculate(100, 43200.0, 0.0,
-            Position->GetLatitude(), Position->GetLongitude());
-  SLtemperature = output.t[1];  // Kelvins
-  SLdensity     = output.d[5];  // grams/cm^3
-  SLpressure    = 2.870368 * SLdensity * SLtemperature;  // Pascals
-  SLsoundspeed  = 20.05 * sqrt(SLtemperature);  // meters/sec
-
-  // start with local atmosphere equal to sea-level atmosphere
-  temperature = SLtemperature;
-  pressure    = SLpressure;
-  density     = SLdensity;
-  soundspeed  = SLsoundspeed; 
-
-  // calculate reciprocals of sea-level values
-  rSLtemperature = 1.0/SLtemperature;
-  rSLpressure    = 1.0/SLpressure;
-  rSLdensity     = 1.0/SLdensity;
+  SLtemperature = intTemperature = 518.0;
+  SLpressure    = intPressure = 2116.7;
+  SLdensity     = intDensity = 0.002378;
+  SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
+  rSLtemperature = 1.0/intTemperature;
+  rSLpressure    = 1.0/intPressure;
+  rSLdensity     = 1.0/intDensity;
   rSLsoundspeed  = 1.0/SLsoundspeed;
-  
+  temperature = &intTemperature;
+  pressure = &intPressure;
+  density = &intDensity;
+
   useExternal=false;
 
   return true;
@@ -164,12 +155,12 @@ bool MSIS::Run(void)
       Calculate(100,
                 43200.0, 
                 0.0, 
-                Position->GetLatitude(),
-                Position->GetLongitude());
-      SLtemperature = output.t[1];  // Kelvins
-      SLdensity     = output.d[5];  // grams/cm^3
-      SLpressure    = 2.870368 * SLdensity * SLtemperature;  // Pascals
-      SLsoundspeed  = 20.05 * sqrt(SLtemperature);  // meters/sec
+                Position->GetLatitude() * radtodeg,
+                Position->GetLongitude() * radtodeg);
+      SLtemperature = output.t[1] * 1.8;  
+      SLdensity     = output.d[5] * 1.940321; 
+      SLpressure    = 1716.488 * SLdensity * SLtemperature; 
+      SLsoundspeed  = sqrt(2403.0832 * SLtemperature);  
       rSLtemperature = 1.0/SLtemperature;
       rSLpressure    = 1.0/SLpressure;
       rSLdensity     = 1.0/SLdensity;
@@ -179,12 +170,14 @@ bool MSIS::Run(void)
       Calculate(100,
                 43200.0, 
                 Position->Geth(), 
-                Position->GetLatitude(),
-                Position->GetLongitude());
-      temperature = output.t[1];  // Kelvins
-      density     = output.d[5];  // grams/cm^3
-      pressure    = 2.870368 * density * temperature;  // Pascals
-      soundspeed  = 20.05 * sqrt(temperature);  // meters/sec 
+                Position->GetLatitude() * radtodeg,
+                Position->GetLongitude() * radtodeg);
+      intTemperature = output.t[1] * 1.8;  
+      intDensity     = output.d[5] * 1.940321;  
+      intPressure    = 1716.488 * intDensity * intTemperature; 
+      soundspeed     = sqrt(2403.0832 * intTemperature);  
+      //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
+      //cout << intPressure << " a=" << soundspeed << endl; 
     } 
 
     if (turbType != ttNone) {
@@ -196,7 +189,7 @@ bool MSIS::Run(void)
 
     if (psiw < 0) psiw += 2*M_PI;
 
-    State->Seta(soundspeed * 3.281);
+    State->Seta(soundspeed);
 
     Debug(2);
 
@@ -225,6 +218,15 @@ void MSIS::Calculate(int day, double sec, double alt, double lat, double lon)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+void MSIS::UseExternal(void){
+  // do nothing, external control not allowed
+}
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 void MSIS::tselec(struct nrlmsise_flags *flags)
 {
@@ -1663,6 +1665,8 @@ void MSIS::Debug(int from)
     }
   }
 }
+
+
 
 } // namespace JSBSim
 
