@@ -53,7 +53,6 @@ void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
 
 void plotXMLVisitor::endElement (const char * name)
 {
-  cout << "End Element: " << name << endl;
   if (string(name) == string("title")) {
     vPlots.back().Title = data_string;
   } else if (string(name) == string("label")) {

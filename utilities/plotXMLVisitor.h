@@ -12,6 +12,8 @@ struct Plots {
 
   Plots(void) {
     Autoscale = false;
+    Min[0] = Min[1] = 0.0;
+    Max[0] = Max[1] = 0.0;
   }
 };
 

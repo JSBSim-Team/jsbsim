@@ -337,9 +337,6 @@ int GetID(DataFile& df, string param)
 
 void plotdata(DataFile& df, plotXMLVisitor* plotVisitor)
 {
-  string Title, Y_Axis_Caption, X_Axis_Caption;
-  string Y_Variables;
-  string X_Variable;
   vector <int> IDs;
   int XID;
 
@@ -375,13 +372,9 @@ void plotdata(DataFile& df, plotXMLVisitor* plotVisitor)
     } else {
       autoscale = false;
       xmin = plotVisitor->vPlots[j].Min[eX];
-      cout << " xmin=" << xmin;
       ymin = plotVisitor->vPlots[j].Min[eY];
-      cout << " ymin=" << ymin;
       xmax = plotVisitor->vPlots[j].Max[eX];
-      cout << " xmax=" << xmax;
       ymax = plotVisitor->vPlots[j].Max[eY];
-      cout << " ymax=" << ymax;
     }
 
     XID = GetID(df, plotVisitor->vPlots[j].X_Variable);
@@ -402,7 +395,10 @@ void plotdata(DataFile& df, plotXMLVisitor* plotVisitor)
       }
     }
 
-    plot(df, Title, X_Axis_Caption, Y_Axis_Caption, XID, IDs);
+    plot(df, plotVisitor->vPlots[j].Title,
+             plotVisitor->vPlots[j].Axis_Caption[eX],
+             plotVisitor->vPlots[j].Axis_Caption[eY],
+             XID, IDs);
   }
   outfile << "  </TABLE></P>" << endl;
   outfile << " </BODY>" << endl;
@@ -454,11 +450,11 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   double *timarray = new double[df.GetEndIdx()-df.GetStartIdx()+1];
 
   for (int pt=df.GetStartIdx(), pti=0; pt<=df.GetEndIdx(); pt++, pti++) {
-    timarray[pti] = df.Data[pt][0];
+    timarray[pti] = df.Data[pt][XID];
   }
 
-  float axismax = df.GetAutoAxisMax(IDs[XID]);
-  float axismin = df.GetAutoAxisMin(IDs[XID]);
+  float axismax = df.GetAutoAxisMax(IDs[0]);
+  float axismin = df.GetAutoAxisMin(IDs[0]);
 
   for (thisplot=1; thisplot < numtraces; thisplot++) {
     axismax = axismax > df.GetAutoAxisMax(IDs[thisplot]) ? axismax : df.GetAutoAxisMax(IDs[thisplot]);
@@ -480,8 +476,8 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   }
 
   if (autoscale) {
-    xmin = df.Data[df.GetStartIdx()][0];
-    xmax = df.Data[df.GetEndIdx()][0];
+    xmin = df.Data[df.GetStartIdx()][XID];
+    xmax = df.Data[df.GetEndIdx()][XID];
     ymin = axismin;
     ymax = axismax;
   }
