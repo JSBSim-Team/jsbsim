@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.77 2002/03/27 02:44:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.78 2002/04/01 14:43:48 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,7 +418,7 @@ FGColumnVector3& FGLGear::Force(void)
         vMoment.Magnitude() > 5000000000.0 ||
         SinkRate > 1.4666*30)
     {
-      PutMessage("Crash Detected");
+      PutMessage("Crash Detected: Simulation FREEZE.");
       Exec->Freeze();
     }
   } 

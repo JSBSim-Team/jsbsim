@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.58 2002/04/01 12:00:07 apeden Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.59 2002/04/01 14:43:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.58 2002/04/01 12:00:07 apeden Exp $
+    @version $Id: FGState.h,v 1.59 2002/04/01 14:43:48 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,12 +165,6 @@ public:
       @see FGInitialConditions.
       */
   void Initialize(FGInitialCondition *FGIC);
-
-  /** Stores state data in the supplied file name.
-      @param filename the file to store the data in.
-      @return true if successful.
-      */
-  bool StoreData(string filename);
 
   /// returns the speed of sound in feet per second.
   inline double Geta(void) { return a; }

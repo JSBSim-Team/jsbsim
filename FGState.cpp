@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.110 2002/04/01 12:00:07 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.111 2002/04/01 14:43:48 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,29 +259,6 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
 
   // need to fix the wind speed args, here.  
   Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-bool FGState::StoreData(string fname) {
-  ofstream datafile(fname.c_str());
-
-  if (datafile) {
-    datafile << Translation->GetUVW(eU);
-    datafile << Translation->GetUVW(eV);
-    datafile << Translation->GetUVW(eW);
-    datafile << Position->GetLatitude();
-    datafile << Position->GetLongitude();
-    datafile << Rotation->GetEuler(ePhi);
-    datafile << Rotation->GetEuler(eTht);
-    datafile << Rotation->GetEuler(ePsi);
-    datafile << Position->Geth();
-    datafile.close();
-    return true;
-  } else {
-    cerr << "Could not open dump file " << fname << endl;
-    return false;
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
