@@ -130,7 +130,8 @@ public:
   void SetParameter(int, float);
 
   inline float IncrTime(void) {sim_time+=dt;return sim_time;}
-  void CalcMatrices(float phi, float tht, float psi);
+  void InitMatrices(float phi, float tht, float psi);
+  void CalcMatrices(void);
   void IntegrateQuat(FGColumnVector vPQR, int rate);
   FGColumnVector CalcEuler(void);
   FGMatrix GetTs2b(float alpha, float beta);
@@ -159,7 +160,8 @@ private:
   CoeffMap coeffdef;
 
 protected:
-
+  enum {ePhi=1, eTht, ePsi};
+  enum {eP=1, eQ, eR};
 };
 
 /******************************************************************************/

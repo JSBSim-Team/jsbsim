@@ -5,28 +5,60 @@ State=2
 Left=5
 Top=6
 Width=1267
-Height=114
+Height=105
 MaxLeft=-1
 MaxTop=-1
 MaxWidth=1288
-MaxHeight=114
+MaxHeight=105
 ClientWidth=1280
-ClientHeight=87
+ClientHeight=78
 
 [ProjectManager]
 Create=1
 Visible=1
 State=0
 Left=0
-Top=455
-Width=317
-Height=388
+Top=433
+Width=242
+Height=370
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=317
-ClientHeight=388
+ClientWidth=242
+ClientHeight=370
 TBDockHeight=370
-LRDockWidth=317
+LRDockWidth=242
+Dockable=1
+
+[WatchWindow]
+Create=1
+Visible=1
+State=0
+Left=9
+Top=139
+Width=333
+Height=825
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=325
+ClientHeight=801
+TBDockHeight=825
+LRDockWidth=333
+Dockable=1
+
+[fmResults]
+Create=1
+Visible=1
+State=0
+Left=400
+Top=108
+Width=660
+Height=591
+MaxLeft=-1
+MaxTop=-1
+ClientWidth=652
+ClientHeight=567
+TBDockHeight=591
+LRDockWidth=660
 Dockable=1
 
 [Closed Files]
@@ -42,38 +74,34 @@ File_8=SourceModule,'F:\PROGRA~1\BORLAND\CBUILD~2\INCLUDE\rw\string_r.h',0,1,254
 File_9=SourceModule,'F:\PROGRA~1\BORLAND\CBUILD~2\INCLUDE\rw\iosbase.h',0,1,342,56,346,0,0
 
 [Modules]
-Module0=J:\JSBSim\filtersjb\FGFilter.cpp
-Module1=J:\JSBSim\filtersjb\FGGain.cpp
-Module2=J:\JSBSim\filtersjb\FGfcsComponent.cpp
-Module3=J:\JSBSim\aircraft\X15\X15.cfg
+Module0=D:\CBuilder4\Projects\FDM\JSBSim\FGRotation.cpp
+Module1=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.bpr
+Module2=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
+Module3=D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp
 Count=4
 EditWindowCount=1
 
-[J:\JSBSim\filtersjb\FGFilter.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGRotation.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\filtersjb\FGGain.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.bpr]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\filtersjb\FGfcsComponent.cpp]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[J:\JSBSim\aircraft\X15\X15.cfg]
+[D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp]
 ModuleType=SourceModule
 FormState=0
 FormOnTop=0
 
-[F:\Program Files\Borland\CBuilder4\Bin\ProjectGroup1.bpg]
-FormState=0
-FormOnTop=0
-
-[J:\JSBSim\JSBSim.bpr]
+[D:\CBuilder4\Bin\ProjectGroup1.bpg]
 FormState=0
 FormOnTop=0
 
@@ -84,23 +112,23 @@ ClassHierarchy=ClassHierarchy@EditWindow0
 Create=1
 Visible=1
 State=0
-Left=29
-Top=128
-Width=1234
-Height=891
+Left=189
+Top=109
+Width=1079
+Height=903
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1226
-ClientHeight=864
-LeftPanelSize=317
+ClientWidth=1071
+ClientHeight=876
+LeftPanelSize=242
 LeftPanelClients=CodeExplorer@EditWindow0,ProjectManager
-LeftPanelData=00000400000000004B03000000000000013D010000000000000100000000BC0100000C000000436F64654578706C6F72657201000000004B0300001200000050726F6A6563744D616E61676572466F726DFFFFFFFF
+LeftPanelData=0000040000000000230300000000000001F2000000000000000100000000A60100000C000000436F64654578706C6F7265720100000000230300001200000050726F6A6563744D616E61676572466F726DFFFFFFFF
 RightPanelSize=0
-BottomPanelSize=0
+BottomPanelSize=52
 BottomPanelClients=MessageView@EditWindow0
-BottomPanelData=00000400010000000B0000004D657373616765566965770000000000000000000000000000000000FFFFFFFF
+BottomPanelData=000004000000000000000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
 ViewCount=5
-CurrentView=0
+CurrentView=1
 View0=0
 View1=1
 View2=2
@@ -108,8 +136,8 @@ View3=3
 View4=4
 
 [ClassHierarchy@EditWindow0]
-TreeWidth=228
-FieldListHeigth=149
+TreeWidth=185
+FieldListHeigth=121
 
 [CodeExplorer@EditWindow0]
 Create=1
@@ -117,74 +145,115 @@ Visible=1
 State=0
 Left=0
 Top=11
-Width=317
-Height=429
+Width=242
+Height=407
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=317
-ClientHeight=429
+ClientWidth=242
+ClientHeight=407
 TBDockHeight=388
-LRDockWidth=317
+LRDockWidth=242
 Dockable=1
 ClassViewDisplayMode=0
 
 [MessageView@EditWindow0]
 Create=1
-Visible=0
+Visible=1
 State=0
 Left=11
 Top=0
-Width=1215
+Width=1060
 Height=52
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1215
+ClientWidth=1060
 ClientHeight=52
 TBDockHeight=52
 LRDockWidth=443
 Dockable=1
 
 [View0]
-Module=J:\JSBSim\filtersjb\FGFilter.cpp
-CursorX=40
-CursorY=109
-TopLine=99
+Module=D:\CBuilder4\Projects\FDM\JSBSim\JSBSim.cpp
+CursorX=14
+CursorY=136
+TopLine=94
 LeftCol=1
 
 [View1]
-Module=J:\JSBSim\filtersjb\FGfcsComponent.cpp
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGRotation.cpp
 CursorX=1
-CursorY=1
-TopLine=37
+CursorY=118
+TopLine=85
 LeftCol=1
 
 [View2]
-Module=J:\JSBSim\filtersjb\FGFilter.h
-CursorX=22
-CursorY=60
-TopLine=39
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGFDMExec.cpp
+CursorX=1
+CursorY=168
+TopLine=148
 LeftCol=1
 
 [View3]
-Module=J:\JSBSim\aircraft\X15\X15.cfg
-CursorX=25
-CursorY=68
-TopLine=67
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.cpp
+CursorX=1
+CursorY=377
+TopLine=348
 LeftCol=1
 
 [View4]
-Module=J:\JSBSim\filtersjb\FGGain.cpp
-CursorX=1
-CursorY=55
-TopLine=43
+Module=D:\CBuilder4\Projects\FDM\JSBSim\FGState.h
+CursorX=64
+CursorY=117
+TopLine=97
 LeftCol=1
 
 [DockHosts]
 DockHostCount=0
 
 [Watches]
-Count=1
-Watch0='((FGFCSComponent*)this)->fcs->Components[idx].Output',256,0,18,1
+Count=42
+Watch0='vFs(1)',1024,1,8,1
+Watch1='vFs(2)',1024,0,8,1
+Watch2='vFs(3)',1024,0,8,1
+Watch3='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch4='vForces(1)',1024,0,8,1
+Watch5='vForces(2)',1024,0,8,1
+Watch6='vForces(3)',1024,0,8,1
+Watch7='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch8='(State->GetTs2b(alpha, beta))(1,1)',1024,0,8,1
+Watch9='(State->GetTs2b(alpha, beta))(1,2)',1024,0,8,1
+Watch10='(State->GetTs2b(alpha, beta))(1,3)',1024,0,8,1
+Watch11='(State->GetTs2b(alpha, beta))(2,1)',1024,0,8,1
+Watch12='(State->GetTs2b(alpha, beta))(2,2)',1024,0,8,1
+Watch13='(State->GetTs2b(alpha, beta))(2,3)',1024,0,8,1
+Watch14='(State->GetTs2b(alpha, beta))(3,1)',1024,0,8,1
+Watch15='(State->GetTs2b(alpha, beta))(3,2)',1024,0,8,1
+Watch16='(State->GetTs2b(alpha, beta))(3,3)',1024,0,8,1
+Watch17='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch18='vMoments(1)',1024,0,8,1
+Watch19='vMoments(2)',1024,0,8,1
+Watch20='vMoments(3)',1024,0,8,1
+Watch21='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch22='Translation->Getalpha()/0.017 // degrees',1024,0,8,1
+Watch23='Translation->Getbeta()/0.017 // degrees',1024,0,8,1
+Watch24='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch25='vDXYZcg(1)',1024,0,8,1
+Watch26='vDXYZcg(2)',1024,0,8,1
+Watch27='vDXYZcg(3)',1024,0,8,1
+Watch28='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch29='Position->Latitude*3990.0 // miles',1024,0,8,1
+Watch30='Position->Longitude*3990.0 // miles',1024,0,8,1
+Watch31='State->h // feet',1024,0,8,1
+Watch32='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch33='State->sim_time //seconds',1024,0,8,1
+Watch34='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch35='Rotation->vEuler(1)/0.017 // Phi: Degrees',1024,0,8,1
+Watch36='Rotation->vEuler(2)/0.017 // Tht: Degrees',1024,0,8,1
+Watch37='Rotation->vEuler(3)/0.017 // Psi: Degrees',1024,0,8,1
+Watch38='-----------------------------------------------------------------------------------------',32,0,18,0
+Watch39='Translation->vUVW(1) // U fps',1024,0,8,1
+Watch40='Translation->vUVW(2) // V fps',1024,0,8,1
+Watch41='Translation->vUVW(3) // W fps',1024,0,8,1
 
 [Breakpoints]
 Count=0

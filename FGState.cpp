@@ -192,7 +192,7 @@ void FGState::Initialize(float U, float V, float W,
   Vt = sqrt(U*U + V*V + W*W);
   qbar = 0.5*(U*U + V*V + W*W)*FDMExec->GetAtmosphere()->GetDensity();
 
-  CalcMatrices(phi, tht, psi);
+  InitMatrices(phi, tht, psi);
 }
 
 /******************************************************************************/
@@ -347,9 +347,8 @@ void FGState::SetParameter(int val_idx, float val)
 
 /******************************************************************************/
 
-void FGState::CalcMatrices(float phi, float tht, float psi)
+void FGState::InitMatrices(float phi, float tht, float psi)
 {
-  float Q0, Q1, Q2, Q3;
   float thtd2, psid2, phid2;
   float Sthtd2, Spsid2, Sphid2;
   float Cthtd2, Cpsid2, Cphid2;
@@ -357,9 +356,6 @@ void FGState::CalcMatrices(float phi, float tht, float psi)
   float Cphid2Sthtd2;
   float Sphid2Sthtd2;
   float Sphid2Cthtd2;
-  float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
-  float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
-  float Q1Q3, Q2Q3;
 
   thtd2 = tht/2.0;
   psid2 = psi/2.0;
@@ -378,26 +374,32 @@ void FGState::CalcMatrices(float phi, float tht, float psi)
   Sphid2Sthtd2 = Sphid2*Sthtd2;
   Sphid2Cthtd2 = Sphid2*Cthtd2;
 
-  Q0 =  Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
-  Q1 =  Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
-  Q2 =  Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
-  Q3 =  Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
+  vQtrn(1) = Cphid2Cthtd2*Cpsid2 + Sphid2Sthtd2*Spsid2;
+  vQtrn(2) = Sphid2Cthtd2*Cpsid2 - Cphid2Sthtd2*Spsid2;
+  vQtrn(3) = Cphid2Sthtd2*Cpsid2 + Sphid2Cthtd2*Spsid2;
+  vQtrn(4) = Cphid2Cthtd2*Spsid2 - Sphid2Sthtd2*Cpsid2;
 
-  vQtrn(1) = Q0;
-  vQtrn(2) = Q1;
-  vQtrn(3) = Q2;
-  vQtrn(4) = Q3;
+  CalcMatrices();
+}
 
-  Q0Q0 = Q0*Q0;
-  Q1Q1 = Q1*Q1;
-  Q2Q2 = Q2*Q2;
-  Q3Q3 = Q3*Q3;
-  Q0Q1 = Q0*Q1;
-  Q0Q2 = Q0*Q2;
-  Q0Q3 = Q0*Q3;
-  Q1Q2 = Q1*Q2;
-  Q1Q3 = Q1*Q3;
-  Q2Q3 = Q2*Q3;
+/******************************************************************************/
+
+void FGState::CalcMatrices(void)
+{
+  float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
+  float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
+  float Q1Q3, Q2Q3;
+
+  Q0Q0 = vQtrn(1)*vQtrn(1);
+  Q1Q1 = vQtrn(2)*vQtrn(2);
+  Q2Q2 = vQtrn(3)*vQtrn(3);
+  Q3Q3 = vQtrn(4)*vQtrn(4);
+  Q0Q1 = vQtrn(1)*vQtrn(2);
+  Q0Q2 = vQtrn(1)*vQtrn(3);
+  Q0Q3 = vQtrn(1)*vQtrn(4);
+  Q1Q2 = vQtrn(2)*vQtrn(3);
+  Q1Q3 = vQtrn(2)*vQtrn(4);
+  Q2Q3 = vQtrn(3)*vQtrn(4);
 
   mTb2l(1,1) = Q0Q0 + Q1Q1 - Q2Q2 - Q3Q3;
   mTb2l(1,2) = 2*(Q1Q2 + Q0Q3);
@@ -420,10 +422,10 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate)
   static FGColumnVector vlastQdot(4);
   static FGColumnVector vQdot(4);
 
-  vQdot(1) = -0.5*(vQtrn(2)*vPQR(1) + vQtrn(3)*vPQR(2) + vQtrn(4)*vPQR(3));
-  vQdot(2) =  0.5*(vQtrn(1)*vPQR(1) + vQtrn(3)*vPQR(3) - vQtrn(4)*vPQR(2));
-  vQdot(3) =  0.5*(vQtrn(1)*vPQR(2) + vQtrn(4)*vPQR(1) - vQtrn(2)*vPQR(3));
-  vQdot(4) =  0.5*(vQtrn(1)*vPQR(3) + vQtrn(2)*vPQR(2) - vQtrn(3)*vPQR(1));
+  vQdot(1) = -0.5*(vQtrn(2)*vPQR(eP) + vQtrn(3)*vPQR(eQ) + vQtrn(4)*vPQR(eR));
+  vQdot(2) =  0.5*(vQtrn(1)*vPQR(eP) + vQtrn(3)*vPQR(eR) - vQtrn(4)*vPQR(eQ));
+  vQdot(3) =  0.5*(vQtrn(1)*vPQR(eQ) + vQtrn(4)*vPQR(eP) - vQtrn(2)*vPQR(eR));
+  vQdot(4) =  0.5*(vQtrn(1)*vPQR(eR) + vQtrn(2)*vPQR(eQ) - vQtrn(3)*vPQR(eP));
 
   vQtrn += 0.5*dt*rate*(vlastQdot + vQdot);
 
@@ -438,19 +440,15 @@ FGColumnVector FGState::CalcEuler(void)
 {
   static FGColumnVector vEuler(3);
 
-  if (mTb2l(3,3) == 0)
-    vEuler(1) = 0.0;
-  else
-    vEuler(1) = atan2(mTb2l(2,3), mTb2l(3,3));
+  if (mTb2l(3,3) == 0)    vEuler(ePhi) = 0.0;
+  else                    vEuler(ePhi) = atan2(mTb2l(2,3), mTb2l(3,3));
 
-  vEuler(2) = asin(-mTb2l(1,3));
+  vEuler(eTht) = asin(-mTb2l(1,3));
 
-  if (mTb2l(1,1) == 0.0)
-    vEuler(3) = 0.0;
-  else
-    vEuler(3) = atan2(mTb2l(1,2), mTb2l(1,1));
+  if (mTb2l(1,1) == 0.0)  vEuler(ePsi) = 0.0;
+  else                    vEuler(ePsi) = atan2(mTb2l(1,2), mTb2l(1,1));
 
-  if (vEuler(3) < 0.0) vEuler(3) += 2*M_PI;
+  if (vEuler(ePsi) < 0.0) vEuler(ePsi) += 2*M_PI;
 
   return vEuler;
 }

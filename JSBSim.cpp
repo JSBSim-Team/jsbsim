@@ -116,17 +116,28 @@ int main(int argc, char** argv)
   if ( ! FDMExec->GetState()->Reset("aircraft", string(argv[1]), string(argv[2])))
     FDMExec->GetState()->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
 
+  float cmd = 0.0;
+
   while (FDMExec->GetState()->Getsim_time() <= 5.0)
   {
     // Fake an elevator kick here after 5 seconds
 
-    if (FDMExec->GetState()->Getsim_time() > 1.0 &&
+    if (FDMExec->GetState()->Getsim_time() >= 1.00 &&
         FDMExec->GetState()->Getsim_time() < 2.0)
     {
-      FDMExec->GetFCS()->SetDeCmd(0.2);    // input between -1 and 1
+      cmd = FDMExec->GetState()->Getsim_time() - 1.00;
+    } else if (FDMExec->GetState()->Getsim_time() >= 2.00 &&
+        FDMExec->GetState()->Getsim_time() < 3.0)
+    {
+      cmd = 1.00;
+    } else if (FDMExec->GetState()->Getsim_time() >= 3.00 &&
+        FDMExec->GetState()->Getsim_time() < 4.0)
+    {
+      cmd = 4.0 - FDMExec->GetState()->Getsim_time();
     } else {
-      FDMExec->GetFCS()->SetDeCmd(0.0);
+      cmd = 0.00;
     }
+    FDMExec->GetFCS()->SetDeCmd(cmd);    // input between -1 and 1
 
     FDMExec->Run();
   }

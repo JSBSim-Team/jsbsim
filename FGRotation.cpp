@@ -112,7 +112,7 @@ bool FGRotation::Run(void)
     vPQR += dt*rate*(vlastPQRdot + vPQRdot)/2.0;
 
     State->IntegrateQuat(vPQR, rate);
-
+    State->CalcMatrices();
     vEuler = State->CalcEuler();
 
     vlastPQRdot = vPQRdot;
