@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.cpp,v 1.36 2000/10/16 12:32:48 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.cpp,v 1.37 2000/10/27 10:18:24 jsb Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,6 +360,11 @@ void FGState::Initialize(FGInitialCondition *FGIC) {
   psi = FGIC->GetPsiRadIC();
 
   Initialize(U, V, W, phi, tht, psi, latitude, longitude, h);
+  
+  FDMExec->GetPosition()->SetSeaLevelRadius( FGIC->GetSeaLevelRadiusFtIC() );
+  FDMExec->GetPosition()->SetRunwayRadius( FGIC->GetSeaLevelRadiusFtIC() + 
+                                             FGIC->GetTerrainAltitudeFtIC() );
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
