@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.101 2002/02/13 20:09:24 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.102 2002/02/17 14:30:47 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -174,9 +174,7 @@ void FGJSBsim::init() {
     common_init();
     copy_to_JSBsim();
 
-    fdmex->GetState()->Initialize(fgic);
     fdmex->RunIC(fgic); //loop JSBSim once w/o integrating
-    // fdmex->Run();       //loop JSBSim once
     copy_from_JSBsim(); //update the bus
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Initialized JSBSim with:" );
@@ -320,8 +318,9 @@ bool FGJSBsim::copy_to_JSBsim() {
       eng->SetStarter( globals->get_controls()->get_starter(i) );
     }
 
+    _set_Runway_altitude( scenery.get_cur_elev() * SG_METER_TO_FEET );
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
-    Position->SetRunwayRadius( scenery.get_cur_elev()*SG_METER_TO_FEET
+    Position->SetRunwayRadius( get_Runway_altitude() 
                                + get_Sea_level_radius() );
 
     Atmosphere->SetExTemperature(get_Static_temperature());
@@ -506,21 +505,24 @@ bool FGJSBsim::ToggleDataLogging(bool state) {
 void FGJSBsim::set_Latitude(double lat) {
     static const SGPropertyNode *altitude = fgGetNode("/position/altitude-ft");
     double alt;
+    double sea_level_radius_meters, lat_geoc;
+    
     if ( altitude->getDoubleValue() > -9990 ) {
       alt = altitude->getDoubleValue();
     } else {
       alt = 0.0;
     }
-
-    double sea_level_radius_meters, lat_geoc;
-
+   
+    update_ic();
     SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Latitude: " << lat );
     SG_LOG(SG_FLIGHT,SG_INFO," cur alt (ft) =  " << alt );
 
-    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER, &sea_level_radius_meters, &lat_geoc );
-    
+    sgGeodToGeoc( lat, alt * SG_FEET_TO_METER, 
+                      &sea_level_radius_meters, &lat_geoc );
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
-    fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );
+    fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );    
+    _set_Runway_altitude(  scenery.get_cur_elev() * SG_METER_TO_FEET  );
+    fgic->SetTerrainAltitudeFtIC( scenery.get_cur_elev() * SG_METER_TO_FEET  );
     fgic->SetLatitudeRadIC( lat_geoc );
     needTrim=true;
 }
@@ -528,8 +530,10 @@ void FGJSBsim::set_Latitude(double lat) {
 void FGJSBsim::set_Longitude(double lon) {
 
     SG_LOG(SG_FLIGHT,SG_INFO,"FGJSBsim::set_Longitude: " << lon );
-
+    update_ic();
     fgic->SetLongitudeRadIC( lon );
+    _set_Runway_altitude( scenery.get_cur_elev() * SG_METER_TO_FEET  );
+    fgic->SetTerrainAltitudeFtIC( scenery.get_cur_elev() * SG_METER_TO_FEET  );
     needTrim=true;
 }
 
@@ -540,11 +544,14 @@ void FGJSBsim::set_Altitude(double alt) {
 
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Altitude: " << alt );
     SG_LOG(SG_FLIGHT,SG_INFO, "  lat (deg) = " << latitude->getDoubleValue() );
-
+    
+    update_ic();
     sgGeodToGeoc( latitude->getDoubleValue() * SGD_DEGREES_TO_RADIANS, alt,
-      &sea_level_radius_meters, &lat_geoc);
+                  &sea_level_radius_meters, &lat_geoc);
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
+    _set_Runway_altitude( scenery.get_cur_elev() * SG_METER_TO_FEET  );
+    fgic->SetTerrainAltitudeFtIC( scenery.get_cur_elev() * SG_METER_TO_FEET  );
     fgic->SetLatitudeRadIC( lat_geoc );
     fgic->SetAltitudeFtIC(alt);
     needTrim=true;
@@ -552,14 +559,16 @@ void FGJSBsim::set_Altitude(double alt) {
 
 void FGJSBsim::set_V_calibrated_kts(double vc) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_V_calibrated_kts: " <<  vc );
-
+    
+    update_ic();
     fgic->SetVcalibratedKtsIC(vc);
     needTrim=true;
 }
 
 void FGJSBsim::set_Mach_number(double mach) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Mach_number: " <<  mach );
-
+    
+    update_ic();
     fgic->SetMachIC(mach);
     needTrim=true;
 }
@@ -567,7 +576,8 @@ void FGJSBsim::set_Mach_number(double mach) {
 void FGJSBsim::set_Velocities_Local( double north, double east, double down ){
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local: "
        << north << ", " <<  east << ", " << down );
-
+    
+    update_ic();
     fgic->SetVnorthFpsIC(north);
     fgic->SetVeastFpsIC(east);
     fgic->SetVdownFpsIC(down);
@@ -577,7 +587,8 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down ){
 void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w){
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Wind_Body: "
        << u << ", " <<  v << ", " <<  w );
-
+    
+    update_ic();
     fgic->SetUBodyFpsIC(u);
     fgic->SetVBodyFpsIC(v);
     fgic->SetWBodyFpsIC(w);
@@ -588,7 +599,8 @@ void FGJSBsim::set_Velocities_Wind_Body( double u, double v, double w){
 void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi ) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Euler_Angles: "
        << phi << ", " << theta << ", " << psi );
-
+    
+    update_ic();
     fgic->SetPitchAngleRadIC(theta);
     fgic->SetRollAngleRadIC(phi);
     fgic->SetTrueHeadingRadIC(psi);
@@ -598,40 +610,27 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi ) {
 //Flight Path
 void FGJSBsim::set_Climb_Rate( double roc) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Climb_Rate: " << roc );
-
+    
+    update_ic();
     fgic->SetClimbRateFpsIC(roc);
     needTrim=true;
 }
 
 void FGJSBsim::set_Gamma_vert_rad( double gamma) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Gamma_vert_rad: " << gamma );
-
+    
+    update_ic();
     fgic->SetFlightPathAngleRadIC(gamma);
-    needTrim=true;
-}
-
-//Earth
-void FGJSBsim::set_Sea_level_radius(double slr) {
-    SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Sea_level_radius: " << slr );
-
-    fgic->SetSeaLevelRadiusFtIC(slr);
-    needTrim=true;
-}
-
-void FGJSBsim::set_Runway_altitude(double ralt) {
-    SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Runway_altitude: " << ralt );
-
-    _set_Runway_altitude( ralt );
-    fgic->SetTerrainAltitudeFtIC( ralt );
     needTrim=true;
 }
 
 void FGJSBsim::set_Static_pressure(double p) {
     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Static_pressure: " << p );
-
+    
+    update_ic();
     Atmosphere->SetExPressure(p);
     if(Atmosphere->External() == true)
-    needTrim=true;
+      needTrim=true;
 }
 
 void FGJSBsim::set_Static_temperature(double T) {
@@ -639,7 +638,7 @@ void FGJSBsim::set_Static_temperature(double T) {
     
     Atmosphere->SetExTemperature(T);
     if(Atmosphere->External() == true)
-    needTrim=true;
+      needTrim=true;
 }
  
 
@@ -648,7 +647,7 @@ void FGJSBsim::set_Density(double rho) {
     
     Atmosphere->SetExDensity(rho);
     if(Atmosphere->External() == true)
-    needTrim=true;
+      needTrim=true;
 }
   
 void FGJSBsim::set_Velocities_Local_Airmass (double wnorth, 
@@ -726,3 +725,16 @@ void FGJSBsim::do_trim(void) {
     
         SG_LOG( SG_FLIGHT, SG_INFO, "  Trim complete" );
 }          
+
+void FGJSBsim::update_ic(void) {       
+   if( !needTrim ) {
+     fgic->SetLatitudeRadIC(get_Lat_geocentric() );       
+     fgic->SetLongitudeRadIC( get_Longitude() );       
+     fgic->SetAltitudeFtIC( get_Altitude() );       
+     fgic->SetVcalibratedKtsIC( get_V_calibrated_kts() );       
+     fgic->SetPitchAngleRadIC( get_Theta() );       
+     fgic->SetRollAngleRadIC( get_Phi() );       
+     fgic->SetTrueHeadingRadIC( get_Psi() );       
+     fgic->SetClimbRateFpsIC( get_Climb_Rate() );
+   }  
+}

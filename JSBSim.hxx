@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.28 2002/02/15 21:04:47 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.29 2002/02/17 14:30:48 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -176,16 +176,6 @@ public:
     void set_Gamma_vert_rad( double gamma);
     //@}
 
-    /// @name Earth Parameter Set
-    //@{
-    /** Sets the sea level radius in feet.
-        @param slr Sea Level Radius in feet */
-    void set_Sea_level_radius(double slr);
-
-    /** Sets the runway altitude in feet above sea level.
-        @param ralt Runway altitude in feet above sea level. */
-    void set_Runway_altitude(double ralt);
-    //@}
 
     /// @name Atmospheric Parameter Set
     //@{
@@ -219,6 +209,7 @@ public:
     bool ToggleDataLogging(bool state);
     bool ToggleDataLogging(void);
     void do_trim(void);
+    void update_ic(void);
 
 private:
     FGFDMExec *fdmex;
