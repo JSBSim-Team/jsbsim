@@ -65,7 +65,11 @@ INCLUDES
 #else
 #  if defined(sgi) && !defined(__GNUC__)
 #    include <math.h>
-#    include <iomanip.h>
+#    if (_COMPILER_VERSION < 740)
+#      include <iomanip.h>
+#    else
+#      include <iomanip>
+#    endif
 #  else
 #    include <cmath>
 #    include <iomanip>
@@ -88,7 +92,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.59 2003/06/03 09:53:48 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.60 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 #ifndef FGFS
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <iomanip.h>
 #  else
 #    include <iomanip>
@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.63 2003/10/24 12:44:29 ehofman Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.64 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

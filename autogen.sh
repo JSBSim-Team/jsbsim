@@ -8,6 +8,12 @@ PKG_NAME="JSBSim"
 ACLOCAL_FLAGS="-I . $ACLOCAL_FLAGS"
 
 OSTYPE=`uname -s`
+NOCONFIGURE=
+
+if test "$1" = "--no-configure"; then
+   echo "Omit the configuration step"
+   NOCONFIGURE="true"
+fi
 
 if test "$OSTYPE" = "IRIX" -o "$OSTYPE" = "IRIX64"; then
    am_opt="--include-deps";
@@ -64,7 +70,7 @@ if test "$DIE" -eq 1; then
   exit 1
 fi
 
-if test -z "$*"; then
+if test "x$NOCONFIGURE" = "x" -a -z "$*"; then
   echo "**Warning**: I am going to run \`configure' with no arguments."
   echo "If you wish to pass any to it, please specify them on the"
   echo \`$0\'" command line."

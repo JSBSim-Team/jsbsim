@@ -51,7 +51,7 @@ INCLUDES
 #include "FGFDMExec.h"
 
 #ifndef FGFS
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <iomanip.h>
 #  else
 #    include <iomanip>
@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.22 2003/06/03 09:53:44 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.23 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

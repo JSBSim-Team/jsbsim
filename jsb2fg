@@ -5,6 +5,8 @@ if [ x$1 = x ]; then
    exit;
 fi
 
+NEW_FILES=
+
 for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.h`; do
 
    if [ -f $1/src/FDM/JSBSim/$n ]; then
@@ -17,6 +19,17 @@ for n in `find . -type f -name 'JSBSim.[ch]xx' -o -name 'FG*.cpp' -o -name 'FG*.
          cp -p $n $1/src/FDM/JSBSim/$n
       fi;
 
+   else
+
+      NEW_FILES="$NEW_FILES $n";
+
    fi;
 
 done
+
+if [ "x$NEW_FILES" != "x" ]; then
+   echo "The following files where not found in the FlightGear source"
+   echo "directory:"
+   echo $NEW_FILES
+   echo
+fi;

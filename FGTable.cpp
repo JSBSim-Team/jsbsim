@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTable.h"
 
-#if defined ( sgi ) && !defined( __GNUC__ )
+#if defined ( sgi ) && !defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
 #include <iomanip.h>
 #else
 #include <iomanip>
@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.29 2003/06/03 09:53:50 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.30 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,7 +249,7 @@ void FGTable::Print(void)
   if (Type == tt1D) startRow = 1;
   else startRow = 0;
 
-#if defined (sgi) && !defined(__GNUC__)
+#if defined (sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
   unsigned long flags = cout.setf(ios::fixed);
 #else
   ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream

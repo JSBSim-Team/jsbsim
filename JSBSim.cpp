@@ -57,7 +57,7 @@ INCLUDES
 #include <simgear/compiler.h>
 #include STL_IOSTREAM
 #else
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <iostream.h>
 #  else
 #    include <iostream>
@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.76 2003/12/02 05:42:12 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.77 2003/12/29 10:57:39 ehofman Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.76 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.77 2003/12/29 10:57:39 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

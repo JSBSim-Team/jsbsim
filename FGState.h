@@ -49,7 +49,7 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <fstream.h>
 #  else
 #    include <fstream>
@@ -80,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.69 2003/12/04 05:12:53 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.70 2003/12/29 10:57:39 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.69 2003/12/04 05:12:53 jberndt Exp $
+    @version $Id: FGState.h,v 1.70 2003/12/29 10:57:39 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.2 2003/09/23 03:54:42 jberndt Exp $
+ * $Id: props.hxx,v 1.3 2003/12/29 10:57:39 ehofman Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -24,7 +24,7 @@
 
 #include <string>
 
-#if defined(sgi) && !defined(__GNUC__)
+#if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #include <iostream.h>
 
 #else

@@ -46,7 +46,7 @@ INCLUDES
 #  include STL_IOSTREAM
 #  include STL_ITERATOR
 #else
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <iostream.h>
 #  else
 #    include <iostream>
@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.13 2003/06/03 09:53:49 ehofman Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.14 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

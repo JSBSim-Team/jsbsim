@@ -57,7 +57,7 @@ INCLUDES
 #else
 # include <string>
   using std::string;
-# if !defined(sgi) || defined(__GNUC__)
+# if !defined(sgi) || defined(__GNUC__) || (_COMPILER_VERSION >= 740)
    using std::cerr;
    using std::endl;
    using std::cout;
@@ -68,7 +68,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.26 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.27 2003/12/29 10:57:39 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

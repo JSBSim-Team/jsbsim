@@ -46,7 +46,7 @@ INCLUDES
 #    include <fstream.h>
 #  endif
 #else
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <fstream.h>
 #  else
 #    include <fstream>
@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.56 2003/11/17 12:50:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.57 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -35,13 +35,18 @@ INCLUDES
    SG_USING_STD(endl);
 #else
 #  include <string>
-#  if defined(sgi) && !defined(__GNUC__)
-#    include <fstream.h>
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
+     include <fstream.h>
+     include <iostream.h>
 #    include <math.h>
-#    include <iostream.h>
 #  else
 #    include <fstream>
-#    include <cmath>
+#    include <iostream>
+#    if defined(sgi) && !defined(__GNUC__)
+#      include <math.h>
+#    else
+#      include <cmath>
+#    endif
 #    include <iostream>
      using std::ostream;
      using std::istream;
@@ -59,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.13 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.14 2003/12/29 10:57:39 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

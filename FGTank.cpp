@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-#if !defined ( sgi ) || defined( __GNUC__ )
+#if !defined ( sgi ) || defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
 using std::cerr;
 using std::endl;
 using std::cout;
@@ -46,7 +46,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.31 2003/06/08 12:23:03 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.32 2003/12/29 10:57:39 ehofman Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

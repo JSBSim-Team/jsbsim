@@ -53,7 +53,7 @@ INCLUDES
    SG_USING_STD(cout);
 #else
 #  include <string>
-#  if defined(sgi) && !defined(__GNUC__)
+#  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
 #    include <fstream.h>
 #    include <iostream.h>
 #  else
@@ -61,11 +61,11 @@ INCLUDES
 #    include <iostream>
      using std::ostream;
      using std::istream;
-     using std::ifstream;
      using std::ios;
      using std::cerr;
-     using std::endl;
      using std::cout;
+     using std::ifstream;
+     using std::endl;
 #  endif
     using std::string;
 #endif
@@ -76,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.42 2003/12/02 13:28:39 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.43 2003/12/29 10:57:39 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.42 2003/12/02 13:28:39 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.43 2003/12/29 10:57:39 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
