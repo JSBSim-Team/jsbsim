@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.48 2001/04/05 12:12:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.49 2001/04/05 16:46:45 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -242,30 +242,31 @@ FGColumnVector FGLGear::Force(void)
 
     switch (eBrakeGrp) {
     case bgLeft:
-        SteerGain = -maxSteerAngle;
-//        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-//                                            staticFCoeff*FCS->GetBrake(bgLeft);
-        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgLeft) + rollingFCoeff;
+      SteerGain = -maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                                            staticFCoeff*FCS->GetBrake(bgLeft);
       break;
     case bgRight:
-        SteerGain = -maxSteerAngle;
-        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgRight) + rollingFCoeff;
+      SteerGain = -maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
+                                           staticFCoeff*FCS->GetBrake(bgRight);
       break;
     case bgCenter:
-        SteerGain = -maxSteerAngle;
-        BrakeFCoeff = staticFCoeff*FCS->GetBrake(bgCenter) + rollingFCoeff;
+      SteerGain = -maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                                           staticFCoeff*FCS->GetBrake(bgCenter);
       break;
     case bgNose:
-        SteerGain = maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff;
+      SteerGain = maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff;
       break;
     case bgTail:
-        SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff;
+      SteerGain = -maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff;
       break;
     case bgNone:
-        SteerGain = -maxSteerAngle;
-        BrakeFCoeff = rollingFCoeff;
+      SteerGain = -maxSteerAngle;
+      BrakeFCoeff = rollingFCoeff;
       break;
     default:
       cerr << "Improper brake group membership detected for this gear." << endl;
