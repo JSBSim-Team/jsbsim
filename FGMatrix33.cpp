@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.19 2004/03/06 17:05:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMatrix33.cpp,v 1.20 2004/03/06 23:47:16 jberndt Exp $";
 static const char *IdHdr = ID_MATRIX33;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -34,69 +34,10 @@ CLASS IMPLEMENTATION
 
 FGMatrix33::FGMatrix33(void)
 {
-  InitMatrix();
-  rowCtr = colCtr = 1;
+  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] =
+    data[6] = data[7] = data[8] = 0.0;
 
   Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33::FGMatrix33(int r, int c)
-{
-  InitMatrix();
-  rowCtr = colCtr = 1;
-
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33::FGMatrix33(const FGMatrix33& M)
-{
-  rowCtr = colCtr = 1;
-
-  Entry(1,1) = M.Entry(1,1);
-  Entry(1,2) = M.Entry(1,2);
-  Entry(1,3) = M.Entry(1,3);
-  Entry(2,1) = M.Entry(2,1);
-  Entry(2,2) = M.Entry(2,2);
-  Entry(2,3) = M.Entry(2,3);
-  Entry(3,1) = M.Entry(3,1);
-  Entry(3,2) = M.Entry(3,2);
-  Entry(3,3) = M.Entry(3,3);
-
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33::FGMatrix33(double x1, double x2, double x3,
-                       double y1, double y2, double y3,
-                       double z1, double z2, double z3)
-{
-  rowCtr = colCtr = 1;
-
-  Entry(1,1) = x1;
-  Entry(1,2) = x2;
-  Entry(1,3) = x3;
-  Entry(2,1) = y1;
-  Entry(2,2) = y2;
-  Entry(2,3) = y3;
-  Entry(3,1) = z1;
-  Entry(3,2) = z2;
-  Entry(3,3) = z3;
-
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33::~FGMatrix33(void)
-{
-  rowCtr = colCtr = 1;
-
-  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,19 +57,6 @@ ostream& operator<<(ostream& os, const FGMatrix33& M)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGMatrix33::operator<<(const double ff)
-{
-  Entry(rowCtr,colCtr) = ff;
-  if (++colCtr > Cols()) {
-    colCtr = 1;
-    if (++rowCtr > Rows())
-      rowCtr = 1;
-  }
-  return *this;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 istream& operator>>(istream& is, FGMatrix33& M)
 {
   for (unsigned int i=1; i<=M.Rows(); i++) {
@@ -137,56 +65,6 @@ istream& operator>>(istream& is, FGMatrix33& M)
     }
   }
   return is;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGMatrix33& FGMatrix33::operator=(const FGMatrix33& M)
-{
-  if (&M != this) {
-    Entry(1,1) = M.Entry(1,1);
-    Entry(1,2) = M.Entry(1,2);
-    Entry(1,3) = M.Entry(1,3);
-    Entry(2,1) = M.Entry(2,1);
-    Entry(2,2) = M.Entry(2,2);
-    Entry(2,3) = M.Entry(2,3);
-    Entry(3,1) = M.Entry(3,1);
-    Entry(3,2) = M.Entry(3,2);
-    Entry(3,3) = M.Entry(3,3);
-  }
-  return *this;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGMatrix33::InitMatrix(double value)
-{
-  Entry(1,1) = value;
-  Entry(1,2) = value;
-  Entry(1,3) = value;
-  Entry(2,1) = value;
-  Entry(2,2) = value;
-  Entry(2,3) = value;
-  Entry(3,1) = value;
-  Entry(3,2) = value;
-  Entry(3,3) = value;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGMatrix33::InitMatrix(double x1, double x2, double x3,
-                            double y1, double y2, double y3,
-                            double z1, double z2, double z3)
-{
-  Entry(1,1) = x1;
-  Entry(1,2) = x2;
-  Entry(1,3) = x3;
-  Entry(2,1) = y1;
-  Entry(2,2) = y2;
-  Entry(2,3) = y3;
-  Entry(3,1) = z1;
-  Entry(3,2) = z2;
-  Entry(3,3) = z3;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,7 +102,8 @@ FGMatrix33 FGMatrix33::Inverse(void) const {
 
 void FGMatrix33::InitMatrix(void)
 {
-  this->InitMatrix(0);
+  data[0] = data[1] = data[2] = data[3] = data[4] = data[5] =
+    data[6] = data[7] = data[8] = 0.0;
 }
 
 // *****************************************************************************
@@ -233,58 +112,52 @@ void FGMatrix33::InitMatrix(void)
 
 FGMatrix33 FGMatrix33::operator-(const FGMatrix33& M) const
 {
-  FGMatrix33 Diff;
-
-  Diff(1,1) = Entry(1,1) - M(1,1);
-  Diff(1,2) = Entry(1,2) - M(1,2);
-  Diff(1,3) = Entry(1,3) - M(1,3);
-  Diff(2,1) = Entry(2,1) - M(2,1);
-  Diff(2,2) = Entry(2,2) - M(2,2);
-  Diff(2,3) = Entry(2,3) - M(2,3);
-  Diff(3,1) = Entry(3,1) - M(3,1);
-  Diff(3,2) = Entry(3,2) - M(3,2);
-  Diff(3,3) = Entry(3,3) - M(3,3);
-
-  return Diff;
+  return FGMatrix33( Entry(1,1) - M(1,1),
+                     Entry(1,2) - M(1,2),
+                     Entry(1,3) - M(1,3),
+                     Entry(2,1) - M(2,1),
+                     Entry(2,2) - M(2,2),
+                     Entry(2,3) - M(2,3),
+                     Entry(3,1) - M(3,1),
+                     Entry(3,2) - M(3,2),
+                     Entry(3,3) - M(3,3) );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMatrix33::operator-=(const FGMatrix33 &M)
+FGMatrix33& FGMatrix33::operator-=(const FGMatrix33 &M)
 {
-  Entry(1,1) -= M(1,1);
-  Entry(1,2) -= M(1,2);
-  Entry(1,3) -= M(1,3);
-  Entry(2,1) -= M(2,1);
-  Entry(2,2) -= M(2,2);
-  Entry(2,3) -= M(2,3);
-  Entry(3,1) -= M(3,1);
-  Entry(3,2) -= M(3,2);
-  Entry(3,3) -= M(3,3);
+  data[0] -= M.data[0];
+  data[1] -= M.data[1];
+  data[2] -= M.data[2];
+  data[3] -= M.data[3];
+  data[4] -= M.data[4];
+  data[5] -= M.data[5];
+  data[6] -= M.data[6];
+  data[7] -= M.data[7];
+  data[8] -= M.data[8];
+
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33 FGMatrix33::operator+(const FGMatrix33& M) const
 {
-  FGMatrix33 Sum;
-
-  Sum(1,1) = Entry(1,1) + M(1,1);
-  Sum(1,2) = Entry(1,2) + M(1,2);
-  Sum(1,3) = Entry(1,3) + M(1,3);
-  Sum(2,1) = Entry(2,1) + M(2,1);
-  Sum(2,2) = Entry(2,2) + M(2,2);
-  Sum(2,3) = Entry(2,3) + M(2,3);
-  Sum(3,1) = Entry(3,1) + M(3,1);
-  Sum(3,2) = Entry(3,2) + M(3,2);
-  Sum(3,3) = Entry(3,3) + M(3,3);
-
-  return Sum;
+  return FGMatrix33( Entry(1,1) + M(1,1),
+                     Entry(1,2) + M(1,2),
+                     Entry(1,3) + M(1,3),
+                     Entry(2,1) + M(2,1),
+                     Entry(2,2) + M(2,2),
+                     Entry(2,3) + M(2,3),
+                     Entry(3,1) + M(3,1),
+                     Entry(3,2) + M(3,2),
+                     Entry(3,3) + M(3,3) );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMatrix33::operator+=(const FGMatrix33 &M)
+FGMatrix33& FGMatrix33::operator+=(const FGMatrix33 &M)
 {
   Entry(1,1) += M(1,1);
   Entry(1,2) += M(1,2);
@@ -295,49 +168,43 @@ void FGMatrix33::operator+=(const FGMatrix33 &M)
   Entry(3,1) += M(3,1);
   Entry(3,2) += M(3,2);
   Entry(3,3) += M(3,3);
+
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33 FGMatrix33::operator*(const double scalar) const
 {
-  FGMatrix33 Product;
-
-  Product(1,1) = Entry(1,1) * scalar;
-  Product(1,2) = Entry(1,2) * scalar;
-  Product(1,3) = Entry(1,3) * scalar;
-  Product(2,1) = Entry(2,1) * scalar;
-  Product(2,2) = Entry(2,2) * scalar;
-  Product(2,3) = Entry(2,3) * scalar;
-  Product(3,1) = Entry(3,1) * scalar;
-  Product(3,2) = Entry(3,2) * scalar;
-  Product(3,3) = Entry(3,3) * scalar;
-
-  return Product;
+  return FGMatrix33( scalar * Entry(1,1),
+                     scalar * Entry(1,2),
+                     scalar * Entry(1,3),
+                     scalar * Entry(2,1),
+                     scalar * Entry(2,2),
+                     scalar * Entry(2,3),
+                     scalar * Entry(3,1),
+                     scalar * Entry(3,2),
+                     scalar * Entry(3,3) );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33 operator*(double scalar, FGMatrix33 &M)
 {
-  FGMatrix33 Product;
-
-  Product(1,1) = M(1,1) * scalar;
-  Product(1,2) = M(1,2) * scalar;
-  Product(1,3) = M(1,3) * scalar;
-  Product(2,1) = M(2,1) * scalar;
-  Product(2,2) = M(2,2) * scalar;
-  Product(2,3) = M(2,3) * scalar;
-  Product(3,1) = M(3,1) * scalar;
-  Product(3,2) = M(3,2) * scalar;
-  Product(3,3) = M(3,3) * scalar;
-
-  return Product;
+  return FGMatrix33( scalar * M(1,1),
+                     scalar * M(1,2),
+                     scalar * M(1,3),
+                     scalar * M(2,1),
+                     scalar * M(2,2),
+                     scalar * M(2,3),
+                     scalar * M(3,1),
+                     scalar * M(3,2),
+                     scalar * M(3,3) );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMatrix33::operator*=(const double scalar)
+FGMatrix33& FGMatrix33::operator*=(const double scalar)
 {
   Entry(1,1) *= scalar;
   Entry(1,2) *= scalar;
@@ -348,12 +215,15 @@ void FGMatrix33::operator*=(const double scalar)
   Entry(3,1) *= scalar;
   Entry(3,2) *= scalar;
   Entry(3,3) *= scalar;
+
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M) const
 {
+  // FIXME: Make compiler friendlier
   FGMatrix33 Product;
 
   Product(1,1) = Entry(1,1)*M(1,1) + Entry(1,2)*M(2,1) + Entry(1,3)*M(3,1);
@@ -371,8 +241,9 @@ FGMatrix33 FGMatrix33::operator*(const FGMatrix33& M) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMatrix33::operator*=(const FGMatrix33& M)
+FGMatrix33& FGMatrix33::operator*=(const FGMatrix33& M)
 {
+  // FIXME: Make compiler friendlier
   double a,b,c;
 
   a = Entry(1,1); b=Entry(1,2); c=Entry(1,3);
@@ -389,6 +260,8 @@ void FGMatrix33::operator*=(const FGMatrix33& M)
   Entry(3,1) = a*M(1,1) + b*M(2,1) + c*M(3,1);
   Entry(3,2) = a*M(1,2) + b*M(2,2) + c*M(3,2);
   Entry(3,3) = a*M(1,3) + b*M(2,3) + c*M(3,3);
+
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,7 +291,7 @@ FGMatrix33 FGMatrix33::operator/(const double scalar) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGMatrix33::operator/=(const double scalar)
+FGMatrix33& FGMatrix33::operator/=(const double scalar)
 {
   if ( scalar != 0 ) {
     double tmp = 1.0/scalar;
@@ -436,6 +309,7 @@ void FGMatrix33::operator/=(const double scalar)
     mE.Message = "Attempt to divide by zero in method FGMatrix33::operator/=(const double scalar)";
     throw mE;
   }
+  return *this;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -453,13 +327,20 @@ void FGMatrix33::T(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGColumnVector3 FGMatrix33::operator*(const FGColumnVector3& Col) const
-{
-  return ( FGColumnVector3(
-    Entry(1,1)*Col(1) + Entry(1,2)*Col(2) + Entry(1,3)*Col(3),
-    Entry(2,1)*Col(1) + Entry(2,2)*Col(2) + Entry(2,3)*Col(3),
-    Entry(3,1)*Col(1) + Entry(3,2)*Col(2) + Entry(3,3)*Col(3))
-  );
+FGColumnVector3 FGMatrix33::operator*(const FGColumnVector3& v) const {
+  double tmp1 = v(1)*Entry(1,1);
+  double tmp2 = v(1)*Entry(2,1);
+  double tmp3 = v(1)*Entry(3,1);
+
+  tmp1 += v(2)*Entry(1,2);
+  tmp2 += v(2)*Entry(2,2);
+  tmp3 += v(2)*Entry(3,2);
+
+  tmp1 += v(3)*Entry(1,3);
+  tmp2 += v(3)*Entry(2,3);
+  tmp3 += v(3)*Entry(3,3);
+
+  return FGColumnVector3( tmp1, tmp2, tmp3 );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

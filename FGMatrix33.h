@@ -1,13 +1,14 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Header: FGMatrix33.h
-Author: Originally by Tony Peden [formatted and adapted here by Jon Berndt]
+Author: Tony Peden, Jon Berndt, Mathias Frolich
 Date started: Unknown
 
 HISTORY
 --------------------------------------------------------------------------------
 ??/??/??   TP   Created
 03/16/2000 JSB  Added exception throwing
+03/06/2004 MF   Rework of the code to make it a bit compiler friendlier
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -63,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.21 2004/03/06 18:49:01 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.22 2004/03/06 23:47:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,11 +120,23 @@ public:
 
   /** Copy constructor.
    *
-   * \param A Matrix which is used for initialization.
+   * \param M Matrix which is used for initialization.
    *
-   * Creat copy of the matrix given in the argument.
+   * Create copy of the matrix given in the argument.
    */
-  FGMatrix33(const FGMatrix33& A);
+  FGMatrix33(const FGMatrix33& M) {
+    Entry(1,1) = M.Entry(1,1);
+    Entry(2,1) = M.Entry(2,1);
+    Entry(3,1) = M.Entry(3,1);
+    Entry(1,2) = M.Entry(1,2);
+    Entry(2,2) = M.Entry(2,2);
+    Entry(3,2) = M.Entry(3,2);
+    Entry(1,3) = M.Entry(1,3);
+    Entry(2,3) = M.Entry(2,3);
+    Entry(3,3) = M.Entry(3,3);
+
+    Debug(0);
+  }
 
   /** Initialization by given values.
    *
@@ -137,19 +150,27 @@ public:
    * \param m32 value of the 3,2 Matrix element.
    * \param m33 value of the 3,3 Matrix element.
    *
-   * Creat a matrix from the doubles given in the arguments.
+   * Create a matrix from the doubles given in the arguments.
    */
   FGMatrix33(double m11, double m12, double m13,
              double m21, double m22, double m23,
-             double m31, double m32, double m33);
+             double m31, double m32, double m33) {
+    Entry(1,1) = m11;
+    Entry(2,1) = m21;
+    Entry(3,1) = m31;
+    Entry(1,2) = m12;
+    Entry(2,2) = m22;
+    Entry(3,2) = m32;
+    Entry(1,3) = m13;
+    Entry(2,3) = m23;
+    Entry(3,3) = m33;
+
+    Debug(0);
+  }
 
   /** Destructor.
    */
-  ~FGMatrix33(void);
-
-  // ???
-  FGMatrix33(int r, int c);
-
+  ~FGMatrix33(void) { Debug(1); }
 
   /** Read access the entries of the matrix.
    \param row Row index.
@@ -221,12 +242,32 @@ public:
     */
    unsigned int Cols(void) const { return eColumns; }
 
+  /** Transposed matrix.
+   *
+   * Return the transposed matrix.
+   */
+  FGMatrix33 Transposed(void) const {
+    return FGMatrix33( Entry(1,1), Entry(2,1), Entry(3,1),
+                       Entry(1,2), Entry(2,2), Entry(3,2),
+                       Entry(1,3), Entry(2,3), Entry(3,3) );
+  }
+
+  // Not shure of these. Provided for compatibility for now.
   void T(void);
   void InitMatrix(void);
-  void InitMatrix(double value);
-  void InitMatrix(double x1, double x2, double x3,
-                  double y1, double y2, double y3,
-                  double z1, double z2, double z3);
+  void InitMatrix(double m11, double m12, double m13,
+                  double m21, double m22, double m23,
+                  double m31, double m32, double m33) {
+    Entry(1,1) = m11;
+    Entry(2,1) = m21;
+    Entry(3,1) = m31;
+    Entry(1,2) = m12;
+    Entry(2,2) = m22;
+    Entry(3,2) = m32;
+    Entry(1,3) = m13;
+    Entry(2,3) = m23;
+    Entry(3,3) = m33;
+  }
 
   /** Determinant of the matrix.
    *
@@ -252,28 +293,49 @@ public:
    */
   FGMatrix33 Inverse(void) const;
 
-  FGMatrix33& operator=(const FGMatrix33& A);
+  /** Assignment operator.
+   *
+   * \param A source matrix.
+   *
+   * Copy the content of the matrix given in the argument into *this.
+   */
+  FGMatrix33& operator=(const FGMatrix33& A) {
+    data[0] = A.data[0];
+    data[1] = A.data[1];
+    data[2] = A.data[2];
+    data[3] = A.data[3];
+    data[4] = A.data[4];
+    data[5] = A.data[5];
+    data[6] = A.data[6];
+    data[7] = A.data[7];
+    data[8] = A.data[8];
+    return *this;
+  }
 
-  FGColumnVector3 operator*(const FGColumnVector3& Col) const;
+  /** Matrix vector multiplication.
+   *
+   * \param v vector to multiply with.
+   *
+   * Compute and return the matrix vector ptoduct (*this)*v.
+   */
+  FGColumnVector3 operator*(const FGColumnVector3& v) const;
 
+  // FIXME: write documentation.
   FGMatrix33 operator-(const FGMatrix33& B) const;
   FGMatrix33 operator+(const FGMatrix33& B) const;
   FGMatrix33 operator*(const FGMatrix33& B) const;
   FGMatrix33 operator*(const double scalar) const;
   FGMatrix33 operator/(const double scalar) const;
-  FGMatrix33& operator<<(const double ff);
 
-  void operator-=(const FGMatrix33 &B);
-  void operator+=(const FGMatrix33 &B);
-  void operator*=(const FGMatrix33 &B);
-  void operator*=(const double scalar);
-  void operator/=(const double scalar);
-
-protected:
-  double data[eRows*eColumns];
+  FGMatrix33& operator-=(const FGMatrix33 &B);
+  FGMatrix33& operator+=(const FGMatrix33 &B);
+  FGMatrix33& operator*=(const FGMatrix33 &B);
+  FGMatrix33& operator*=(const double scalar);
+  FGMatrix33& operator/=(const double scalar);
 
 private:
-  unsigned int rowCtr, colCtr;
+  double data[eRows*eColumns];
+
   void Debug(int from);
 };
 

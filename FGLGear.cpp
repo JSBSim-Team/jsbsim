@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.101 2004/02/26 15:03:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.102 2004/03/06 23:47:16 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,6 +112,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   TakeoffReported = LandingReported = false;
   LandingDistanceTraveled = TakeoffDistanceTraveled = TakeoffDistanceTraveled50ft = 0.0;
   MaximumStrutForce = MaximumStrutTravel = 0.0;
+  SideForce = RollingForce = 0.0;
   SinkRate = GroundSpeed = 0.0;
 
   vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
@@ -162,6 +163,8 @@ FGLGear::FGLGear(const FGLGear& lgear)
   TakeoffDistanceTraveled50ft   = lgear.TakeoffDistanceTraveled50ft;
   MaximumStrutForce  = lgear.MaximumStrutForce;
   MaximumStrutTravel = lgear.MaximumStrutTravel;
+  SideForce          = lgear.SideForce;
+  RollingForce       = lgear.RollingForce;
 
   kSpring         = lgear.kSpring;
   bDamp           = lgear.bDamp;

@@ -88,7 +88,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.127 2004/03/06 13:48:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.128 2004/03/06 23:47:16 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,6 +163,8 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
   double EW, bixx, biyy, bizz, bixy, bixz, biyz;
   double pmWt, pmX, pmY, pmZ;
   FGColumnVector3 vbaseXYZcg;
+
+  bixx = biyy = bizz = bixy = bixz = biyz = 0.0;
 
   AC_cfg->GetNextConfigLine();
 
