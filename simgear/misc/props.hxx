@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.5 2002/08/07 04:29:34 jberndt Exp $
+ * $Id: props.hxx,v 1.6 2002/09/22 18:12:27 apeden Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -23,22 +23,12 @@
 #if PROPS_STANDALONE
 
 #include <string>
-
-#if !defined(sgi) || defined (__GNUC__)
-
 #include <iostream>
-
-using std::istream;
-using std::ostream;
-
-#else
-
-#include <iostream.h>
-
-#endif
 
 using std::string;
 using std::vector;
+using std::istream;
+using std::ostream;
 
 #else
 
@@ -646,6 +636,12 @@ public:
 
 
   /**
+   * Get the node's pretty display name, with subscript when needed.
+   */
+  const char * getDisplayName (bool simplify = false) const;
+
+
+  /**
    * Get the node's integer index.
    */
   int getIndex () const { return _index; }
@@ -684,6 +680,15 @@ public:
    * Get a const child node by position (*NOT* index).
    */
   const SGPropertyNode * getChild (int position) const;
+
+
+  /**
+   * Test whether a named child exists.
+   */
+  bool hasChild (const char * name, int index = 0) const
+  {
+    return (getChild(name, index) != 0);
+  }
 
 
   /**
@@ -1244,10 +1249,12 @@ private:
   class hash_table;
 
   char * _name;
+  mutable char * _display_name;
   int _index;
   SGPropertyNode * _parent;
   vector<SGPropertyNode_ptr> _children;
   vector<SGPropertyNode_ptr> _removedChildren;
+  mutable char * _path;
   hash_table * _path_cache;
   Type _type;
   bool _tied;

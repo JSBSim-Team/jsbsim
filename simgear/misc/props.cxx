@@ -4,7 +4,7 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.5 2002/08/07 04:29:34 jberndt Exp $
+// $Id: props.cxx,v 1.6 2002/09/22 18:12:27 apeden Exp $
 
 #include "props.hxx"
 
@@ -14,15 +14,12 @@
 
 #if PROPS_STANDALONE
 
-#if !defined(sgi) || defined (__GNUC__)
 #include <iostream>
 using std::cerr;
 using std::endl;
-#else
-#include <iostream.h>
-#endif
 using std::find;
 using std::sort;
+using std::vector;
 
 #else
 
@@ -30,6 +27,15 @@ using std::sort;
 #include <simgear/debug/logstream.hxx>
 
 SG_USING_STD(sort);
+SG_USING_STD(find);
+SG_USING_STD(vector);
+
+#ifdef _MSC_VER
+// MSVC is buggy, and needs something strange here
+SG_USING_STD(vector<SGPropertyNode_ptr>);
+SG_USING_STD(vector<SGPropertyChangeListener *>);
+SG_USING_STD(vector<SGPropertyNode *>);
+#endif
 
 #endif
 
@@ -627,8 +633,10 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = TRACE_WRITE;
  */
 SGPropertyNode::SGPropertyNode ()
   : _name(copy_string("")),
+    _display_name(0),
     _index(0),
     _parent(0),
+    _path(0),
     _path_cache(0),
     _type(NONE),
     _tied(false),
@@ -644,8 +652,10 @@ SGPropertyNode::SGPropertyNode ()
  * Copy constructor.
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
-  : _index(node._index),
+  : _display_name(0),
+    _index(node._index),
     _parent(0),			// don't copy the parent
+    _path(0),
     _path_cache(0),
     _type(node._type),
     _tied(node._tied),
@@ -727,8 +737,10 @@ SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
 SGPropertyNode::SGPropertyNode (const char * name,
 				int index,
 				SGPropertyNode * parent)
-  : _index(index),
+  : _display_name(0),
+    _index(index),
     _parent(parent),
+    _path(0),
     _path_cache(0),
     _type(NONE),
     _tied(false),
@@ -747,6 +759,8 @@ SGPropertyNode::SGPropertyNode (const char * name,
 SGPropertyNode::~SGPropertyNode ()
 {
   delete [] _name;
+  delete [] _display_name;
+  delete [] _path;
   delete _path_cache;
   clear_value();
   delete _listeners;
@@ -848,7 +862,7 @@ SGPropertyNode::getChild (const char * name, int index, bool create)
     SGPropertyNode_ptr node;
     pos = find_child(name, index, _removedChildren);
     if (pos >= 0) {
-      std::vector<SGPropertyNode_ptr>::iterator it = _removedChildren.begin();
+      vector<SGPropertyNode_ptr>::iterator it = _removedChildren.begin();
       it += pos;
       node = _removedChildren[pos];
       _removedChildren.erase(it);
@@ -906,7 +920,7 @@ SGPropertyNode::removeChild (const char * name, int index, bool keep)
   SGPropertyNode_ptr ret;
   int pos = find_child(name, index, _children);
   if (pos >= 0) {
-    std::vector<SGPropertyNode_ptr>::iterator it = _children.begin();
+    vector<SGPropertyNode_ptr>::iterator it = _children.begin();
     it += pos;
     SGPropertyNode_ptr node = _children[pos];
     _children.erase(it);
@@ -922,20 +936,36 @@ SGPropertyNode::removeChild (const char * name, int index, bool keep)
 
 
 const char *
+SGPropertyNode::getDisplayName (bool simplify) const
+{
+  string display = _name;
+  if (_index != 0 || !simplify) {
+    char buffer[64];
+    sprintf(buffer, "[%d]", _index);
+    display += buffer;
+  }
+  _display_name = copy_string(display.c_str());
+  return _display_name;
+}
+
+
+const char *
 SGPropertyNode::getPath (bool simplify) const
 {
-  if (_parent == 0)
-    return "";
-
-  string path = _parent->getPath(simplify);
-  path += '/';
-  path += _name;
-  if (_index != 0 || !simplify) {
-    char buffer[128];
-    sprintf(buffer, "[%d]", _index);
-    path += buffer;
+				// Calculate the complete path only once.
+  if (_path == 0) {
+    string path;
+    if (_parent == 0) {
+      path = "";
+    } else {
+      path = _parent->getPath(simplify);
+      path += '/';
+      path += getDisplayName(simplify);
+    }
+    _path = copy_string(path.c_str());
   }
-  return path.c_str();
+
+  return _path;
 }
 
 SGPropertyNode::Type
@@ -2033,7 +2063,7 @@ void
 SGPropertyNode::fireValueChanged (SGPropertyNode * node)
 {
   if (_listeners != 0) {
-    for (unsigned i = 0; i < _listeners->size(); i++) {
+    for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->valueChanged(node);
     }
   }
@@ -2046,7 +2076,7 @@ SGPropertyNode::fireChildAdded (SGPropertyNode * parent,
 				SGPropertyNode * child)
 {
   if (_listeners != 0) {
-    for (unsigned i = 0; i < _listeners->size(); i++) {
+    for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->childAdded(parent, child);
     }
   }
@@ -2059,7 +2089,7 @@ SGPropertyNode::fireChildRemoved (SGPropertyNode * parent,
 				  SGPropertyNode * child)
 {
   if (_listeners != 0) {
-    for (unsigned i = 0; i < _listeners->size(); i++) {
+    for (unsigned int i = 0; i < _listeners->size(); i++) {
       (*_listeners)[i]->childRemoved(parent, child);
     }
   }
