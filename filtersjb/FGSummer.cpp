@@ -1,4 +1,3 @@
-
 /*******************************************************************************
 
  Module:       FGSummer.cpp
@@ -38,7 +37,7 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 *******************************************************************************/
 
-#include "FGSummer.h"    				
+#include "FGSummer.h"            
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -66,12 +65,16 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 
   while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
     *AC_cfg >> token;
+
     if (token == "ID") {
+
       *AC_cfg >> ID;
-	  cout << "      ID: " << ID << endl;
+      cout << "      ID: " << ID << endl;
+
     } else if (token == "INPUT") {
+
       token = AC_cfg->GetValue("INPUT");
-	  cout << "      INPUT: " << token << endl;
+      cout << "      INPUT: " << token << endl;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
         tmpInputIndex = fcs->GetState()->GetParameterIndex(token);
@@ -82,17 +85,20 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
         InputIndices.push_back(tmpInputIndex);
         InputTypes.push_back(itFCS);
       }
-	} else if (token == "CLIPTO") {
-		*AC_cfg >> clipmin >> clipmax;
-		if(clipmax > clipmin) {
-			clip=true;
-            cout << "      CLIPTO: " << clipmin << ", " << clipmax << endl;
-        }     
+
+    } else if (token == "CLIPTO") {
+
+      *AC_cfg >> clipmin >> clipmax;
+      if (clipmax > clipmin) {
+        clip = true;
+        cout << "      CLIPTO: " << clipmin << ", " << clipmax << endl;
+      }
+
     } else if (token == "OUTPUT") {
-	  
+
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-	  cout << "      OUTPUT: " <<sOutputIdx <<  endl;
+      cout << "      OUTPUT: " <<sOutputIdx <<  endl;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     }
   }
@@ -109,9 +115,10 @@ bool FGSummer::Run(void )
   unsigned int idx;
 
   // The Summer takes several inputs, so do not call the base class Run()
-  // FGFCSComponent::Run(); 
+  // FGFCSComponent::Run();
 
   Output = 0.0;
+
   for (idx=0; idx<InputIndices.size(); idx++) {
     switch (InputTypes[idx]) {
     case itPilotAC:
@@ -119,18 +126,17 @@ bool FGSummer::Run(void )
       break;
     case itFCS:
       Output += fcs->GetComponentOutput(InputIndices[idx]);
+      break;
     }
-	
   }
-  if(clip) {
-	if(Output > clipmax) 
-		Output=clipmax;
-	else if(Output < clipmin)
-		Output=clipmin;
-  }		 	
-  
-  if (IsOutput) { SetOutput();  }
-  //cout << "Out FGSummer::Run" << endl;
+
+  if (clip) {
+    if (Output > clipmax)      Output = clipmax;
+    else if (Output < clipmin) Output = clipmin;
+  }
+
+  if (IsOutput) SetOutput();
+
   return true;
 }
 

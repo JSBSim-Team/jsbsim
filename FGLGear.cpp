@@ -70,7 +70,7 @@ FGColumnVector FGLGear::Force(void)
 
   vTmpRot = vXYZ - Aircraft->GetXYZcg();
   vTmpRot(1) = -vTmpRot(1);
-  vTmpRot(3) = -vTmpRot(1);
+  vTmpRot(3) = -vTmpRot(3);
   vTmpRot = vTmpRot/12.0;
 
   vLocalGear = State->GetTb2l() * vTmpRot;
