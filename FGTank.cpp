@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTank.cpp,v 1.13 2001/03/20 16:11:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.14 2001/03/22 12:49:19 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 extern short debug_lvl;
