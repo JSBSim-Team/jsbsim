@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.58 2001/12/01 00:16:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.59 2001/12/01 13:32:34 apeden Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,6 +125,7 @@ bool FGPropulsion::GetSteadyState(void)
       Engines[i]->SetTrimMode(true);
       Thrusters[i]->SetdeltaT(dt*rate);
       steady=false;
+      steady_count=0;
       while (!steady && j < 6000) {
         PowerAvailable = Engines[i]->Calculate(Thrusters[i]->GetPowerRequired());
         lastThrust = currentThrust;
