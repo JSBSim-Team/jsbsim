@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.21 2001/03/31 15:43:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.22 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 extern short debug_lvl;
@@ -95,6 +95,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
       cout << "Unhandled token in Propeller config file: " << token << endl;
     }
   }
+
+  Type = ttPropeller;
 
   if (debug_lvl & 2) cout << "Instantiated: FGPropeller" << endl;
 }

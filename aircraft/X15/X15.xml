@@ -636,7 +636,7 @@
     COEFFICIENTS     ON
     GROUND_REACTIONS ON
     FCS              ON
-    PROPULSION       OFF
+    PROPULSION       ON
   </OUTPUT>
 
 </FDM_CONFIG>

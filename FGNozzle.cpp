@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.14 2001/03/31 15:43:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.15 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 extern short debug_lvl;
@@ -74,6 +74,7 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
   }
 
   Thrust = 0;
+  Type = ttNozzle;
 
   if (debug_lvl & 2) cout << "Instantiated: FGNozzle" << endl;
 }

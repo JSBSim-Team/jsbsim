@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.41 2001/03/31 15:43:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.42 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -295,29 +295,40 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += ", ";
       firstime = false;
     }
-/*
-    switch(Engines[i].GetType()) {
-    case etPiston:
-      PropulsionStrings += (Engines[i].GetName() + "_PwrAvail, ");
+
+    switch(Engines[i]->GetType()) {
+    case FGEngine::etPiston:
+      PropulsionStrings += (Engines[i]->GetName() + "_PwrAvail");
       break;
-    case etRocket:
+    case FGEngine::etRocket:
+      PropulsionStrings += (Engines[i]->GetName() + "_ChamberPress");
       break;
-    case etTurboJet:
-    case etTurboProp:
-    case etTurboShaft:
+    case FGEngine::etTurboJet:
+    case FGEngine::etTurboProp:
+    case FGEngine::etTurboShaft:
+      break;
+    default:
+      PropulsionStrings += "INVALID ENGINE TYPE";
       break;
     }
 
-    switch(Thrusters[i].GetType()) {
-    case ttNozzle:
-      PropulsionStrings += (Thrusters[i].GetName() + "_Thrust, ");
+    PropulsionStrings += ", ";
+
+    switch(Thrusters[i]->GetType()) {
+    case FGThruster::ttNozzle:
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust");
       break;
-    case ttRotor:
+    case FGThruster::ttRotor:
       break;
-    case ttPropeller:
+    case FGThruster::ttPropeller:
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Torque, ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust, ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_RPM");
       break;
-    }
-*/    
+    default:
+      PropulsionStrings += "INVALID THRUSTER TYPE";
+      break;
+    }    
   }
 
   return PropulsionStrings;
@@ -336,29 +347,34 @@ string FGPropulsion::GetPropulsionValues(void)
       PropulsionValues += ", ";
       firstime = false;
     }
-/*
-    switch(Engines[i].GetType()) {
-    case etPiston:
-      PropulsionValues += (string(gcvt(Thrusters[i].GetPowerAvailable(), 10, buff)) + ", ");
+
+    switch(Engines[i]->GetType()) {
+    case FGEngine::etPiston:
+      PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetPowerAvailable(), 10, buff)));
       break;
-    case etRocket:
+    case FGEngine::etRocket:
+      PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
       break;
-    case etTurboJet:
-    case etTurboProp:
-    case etTurboShaft:
+    case FGEngine::etTurboJet:
+    case FGEngine::etTurboProp:
+    case FGEngine::etTurboShaft:
       break;
     }
 
-    switch(Thrusters[i].GetType()) {
-    case ttNozzle:
-      PropulsionValues += (string(gcvt(Thrusters[i].GetThrust(), 10, buff)) + ", ");
+    PropulsionValues += ", ";
+
+    switch(Thrusters[i]->GetType()) {
+    case FGThruster::ttNozzle:
+      PropulsionValues += (string(gcvt(((FGNozzle*)Thrusters[i])->GetThrust(), 10, buff)));
       break;
-    case ttRotor:
+    case FGThruster::ttRotor:
       break;
-    case ttPropeller:
+    case FGThruster::ttPropeller:
+      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetTorque(), 10, buff)) + ", ");
+      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetThrust(), 10, buff)) + ", ");
+      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetRPM(), 10, buff)));
       break;
     }
-*/
   }
 
   return PropulsionValues;

@@ -49,7 +49,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.26 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.27 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 extern short debug_lvl;
@@ -199,6 +199,10 @@ void FGOutput::DelimitedOutput(void)
       cout << ", ";
       cout << Aircraft->GetGroundReactionStrings();
     }
+    if (SubSystems & FGAircraft::ssPropulsion) {
+      cout << ", ";
+      cout << Propulsion->GetPropulsionStrings();
+    }
 
     cout << endl;
     dFirstPass = false;
@@ -268,6 +272,11 @@ void FGOutput::DelimitedOutput(void)
     cout << ", ";
     cout << Aircraft->GetGroundReactionValues();
   }
+  if (SubSystems & FGAircraft::ssPropulsion) {
+    cout << ", ";
+    cout << Propulsion->GetPropulsionValues();
+  }
+
   cout << endl;
 }
 
@@ -346,6 +355,10 @@ void FGOutput::DelimitedOutput(string fname)
       datafile << ", ";
       datafile << FCS->GetComponentStrings();
     }
+    if (SubSystems & FGAircraft::ssPropulsion) {
+      datafile << ", ";
+      datafile << Propulsion->GetPropulsionStrings();
+    }
     datafile << endl;
     sFirstPass = false;
   }
@@ -417,6 +430,10 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & FGAircraft::ssFCS) {
     datafile << ", ";
     datafile << FCS->GetComponentValues();
+  }
+  if (SubSystems & FGAircraft::ssPropulsion) {
+    datafile << ", ";
+    datafile << Propulsion->GetPropulsionValues();
   }
   datafile << endl;
   datafile.flush();

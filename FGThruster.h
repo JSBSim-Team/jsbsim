@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.17 2001/03/31 15:43:13 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.18 2001/04/05 23:05:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -57,15 +57,18 @@ public:
   FGThruster(FGFDMExec *FDMExec);
   virtual ~FGThruster();
 
-  enum Type {ttNozzle, ttRotor, ttPropeller};
+  enum eType {ttNozzle, ttRotor, ttPropeller};
 
   virtual float Calculate(float) {return 0.0;}
   void SetName(string name) {Name = name;}
   virtual float GetPowerRequired(void) {return 0.0;}
   virtual void SetdeltaT(float dt) {deltaT = dt;}
   float GetThrust(void) {return Thrust;}
+  eType GetType(void) {return Type;}
+  string GetName(void) {return Name;}
 
 protected:
+  eType Type;
   string Name;
   float Thrust;
   float PowerRequired;

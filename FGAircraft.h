@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.46 2001/03/22 14:10:24 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.47 2001/04/05 23:05:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.46 2001/03/22 14:10:24 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.47 2001/04/05 23:05:30 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -196,7 +196,8 @@ public:
     /** Subsystem: Coefficients (= 256)      */ ssCoefficients    = 256,
     /** Subsystem: Position (= 512)          */ ssPosition        = 512,
     /** Subsystem: Ground Reactions (= 1024) */ ssGroundReactions = 1024,
-    /** Subsystem: Ground Reactions (= 2048) */ ssFCS             = 2048
+    /** Subsystem: FCS (= 2048)              */ ssFCS             = 2048,
+    /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
   } subsystems;
 
 private:

@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.65 2001/03/29 22:26:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.66 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -612,6 +612,10 @@ void FGAircraft::ReadOutput(FGConfigFile* AC_cfg) {
     if (parameter == "FCS") {
       *AC_cfg >> parameter;
       if (parameter == "ON") subsystems += ssFCS;
+    }
+    if (parameter == "PROPULSION") {
+      *AC_cfg >> parameter;
+      if (parameter == "ON") subsystems += ssPropulsion;
     }
   }
 

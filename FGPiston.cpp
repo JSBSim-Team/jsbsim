@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.21 2001/03/22 14:10:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.22 2001/04/05 23:05:30 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 extern short debug_lvl;
@@ -84,6 +84,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
     }
   }
 
+  Type = etPiston;
   EngineNumber = 0;
 
   if (debug_lvl & 2) cout << "Instantiated: FGPiston" << endl;

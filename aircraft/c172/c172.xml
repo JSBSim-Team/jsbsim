@@ -431,11 +431,13 @@
     POSITION         ON|OFF
     COEFFICIENTS     ON|OFF
     GROUND_REACTIONS ON|OFF
+    FCS              ON|OFF
+    PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
   -->
   </COMMENT>
-  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       OFF
@@ -449,5 +451,6 @@
     COEFFICIENTS     ON
     GROUND_REACTIONS OFF
     FCS              OFF
+    PROPULSION       ON
   </OUTPUT>
 </FDM_CONFIG>
