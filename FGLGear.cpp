@@ -76,10 +76,9 @@ FGColumnVector FGLGear::Force(void)
   static FGColumnVector vWhlBodyVec(3);
   static FGColumnVector vWhlVelVec(3);
 
-  vWhlBodyVec     = vXYZ - Aircraft->GetXYZcg();
+  vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
-  vWhlBodyVec     = vWhlBodyVec/12.0;
 
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
@@ -88,18 +87,21 @@ FGColumnVector FGLGear::Force(void)
   if (compressLength > 0.00) {
 
     WOW = true;
-
+    // do a cross product here for velocities
     vWhlVelVec = State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
     compressSpeed = vWhlVelVec(eZ) + Position->GetVd();
 
     vLocalForce(eZ) = min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
+    vLocalForce(eX) = vLocalForce(eZ) * statFCoeff;
 
     vForce = State->GetTl2b() * vLocalForce ;
 
     // currently only aircraft body axis Z-force modeled
-    vMoment(eX) = vForce(eZ) * vWhlBodyVec(eY);
-    vMoment(eY) = -vForce(eZ) * vWhlBodyVec(eX);
-    vMoment(eZ) = 0.0;
+//    vMoment(eX) = vForce(eZ) * vWhlBodyVec(eY) - vForce(eY) * vWhlBodyVec(eZ);
+//    vMoment(eY) = vForce(eX) * vWhlBodyVec(eZ) - vForce(eZ) * vWhlBodyVec(eX);
+//    vMoment(eZ) = vForce(eY) * vWhlBodyVec(eX) - vForce(eX) * vWhlBodyVec(eY);
+
+    vMoment = vWhlBodyVec * vForce;
 
   } else {
 
