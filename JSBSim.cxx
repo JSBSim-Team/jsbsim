@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.12 2000/05/12 11:43:13 jsb Exp $
+// $Id: JSBSim.cxx,v 1.13 2000/05/14 12:13:17 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -183,8 +183,8 @@ int FGJSBsim::update( int multiloop ) {
   FDMExec.GetFCS()->SetDspCmd( 0.0 );
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
                                     controls.get_throttle( 0 ) * 100.0 );
-  FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
-                                    controls.get_throttle( 0 ) * 100.0 );
+  //FDMExec.GetFCS()->SetThrottlePos( FGControls::ALL_ENGINES,
+  //                                  controls.get_throttle( 0 ) * 100.0 );
   // FCS->SetBrake( controls.get_brake( 0 ) );
 
   // Inform JSBsim of the local terrain altitude; uncommented 5/3/00
