@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.68 2001/07/23 20:39:47 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.69 2001/07/24 21:23:46 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -37,6 +37,7 @@
 #include <Scenery/scenery.hxx>
 
 #include <Aircraft/aircraft.hxx>
+#include <Controls/controls.hxx>
 #include <Main/globals.hxx>
 #include <Main/fg_props.hxx>
 
@@ -98,7 +99,8 @@ FGJSBsim::FGJSBsim( double dt )
     if (result) {
       SG_LOG( SG_FLIGHT, SG_INFO, "  loaded aircraft.");
     } else {
-      SG_LOG( SG_FLIGHT, SG_INFO, "  aircraft does not exist (you may have mis-typed the name).");
+      SG_LOG( SG_FLIGHT, SG_INFO,
+              "  aircraft does not exist (you may have mis-typed the name).");
       throw(-1);
     }
 
@@ -235,7 +237,7 @@ bool FGJSBsim::update( int multiloop ) {
         globals->get_controls()->set_elevator_trim(FCS->GetPitchTrimCmd());
         globals->get_controls()->set_elevator(FCS->GetDeCmd());
         globals->get_controls()->set_throttle(FGControls::ALL_ENGINES,
-                              FCS->GetThrottleCmd(0));
+                                              FCS->GetThrottleCmd(0));
 
         globals->get_controls()->set_aileron(FCS->GetDaCmd());
         globals->get_controls()->set_rudder( FCS->GetDrCmd());
@@ -279,8 +281,9 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetLBrake( globals->get_controls()->get_brake( 0 ) );
     FCS->SetRBrake( globals->get_controls()->get_brake( 1 ) );
     FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
-    for (int i = 0; i < get_num_engines(); i++)
+    for (int i = 0; i < get_num_engines(); i++) {
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
+    }
 
     Position->SetSeaLevelRadius( get_Sea_level_radius() );
     Position->SetRunwayRadius( scenery.cur_elev*SG_METER_TO_FEET

@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.53 2001/04/19 22:05:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.54 2001/07/24 21:23:46 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -247,30 +247,30 @@ FGColumnVector FGLGear::Force(void)
 
     switch (eBrakeGrp) {
     case bgLeft:
-      SteerGain = -maxSteerAngle;
+      SteerGain = -0.10;
       BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
                                             staticFCoeff*FCS->GetBrake(bgLeft);
       break;
     case bgRight:
-      SteerGain = -maxSteerAngle;
+      SteerGain = -0.10;
       BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
                                            staticFCoeff*FCS->GetBrake(bgRight);
       break;
     case bgCenter:
-      SteerGain = -maxSteerAngle;
+      SteerGain = -0.10;
       BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
                                            staticFCoeff*FCS->GetBrake(bgCenter);
       break;
     case bgNose:
-      SteerGain = maxSteerAngle;
+      SteerGain = 0.10;
       BrakeFCoeff = rollingFCoeff;
       break;
     case bgTail:
-      SteerGain = -maxSteerAngle;
+      SteerGain = -0.10;
       BrakeFCoeff = rollingFCoeff;
       break;
     case bgNone:
-      SteerGain = -maxSteerAngle;
+      SteerGain = -0.10;
       BrakeFCoeff = rollingFCoeff;
       break;
     default:
@@ -280,7 +280,7 @@ FGColumnVector FGLGear::Force(void)
 
     switch (eSteerType) {
     case stSteer:
-      SteerAngle = SteerGain*FCS->GetDrCmd();
+      SteerAngle = SteerGain*FCS->GetDrPos();
       break;
     case stFixed:
       SteerAngle = 0.0;
@@ -298,8 +298,8 @@ FGColumnVector FGLGear::Force(void)
 // For now, steering angle is assumed to happen in the Local Z axis,
 // not the strut axis as it should be.  Will fix this later.
 
-    SinWheel      = sin(Rotation->Getpsi() + SteerAngle*DEGTORAD);
-    CosWheel      = cos(Rotation->Getpsi() + SteerAngle*DEGTORAD);
+    SinWheel      = sin(Rotation->Getpsi() + SteerAngle);
+    CosWheel      = cos(Rotation->Getpsi() + SteerAngle);
     RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
     SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
