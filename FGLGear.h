@@ -92,6 +92,9 @@ public:
   inline float  GetCompVel(void)   {return compressSpeed; }
   inline float  GetCompForce(void) {return Force()(3);    }
   
+  inline void SetReport(bool bb) { ReportEnable=bb; }
+  inline bool GetReport(void)    { return ReportEnable; }
+  
 
 private:
   enum {eX=1, eY, eZ};
@@ -110,6 +113,7 @@ private:
   bool WOW;
   bool FirstContact;
   bool Reported;
+  bool ReportEnable;
   string name;
 
   FGFDMExec*     Exec;

@@ -56,8 +56,10 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
-
+  
+  
   WOW = false;
+  ReportEnable=true;
   FirstContact = false;
   Reported = false;
   DistanceTraveled = 0.0;
@@ -79,7 +81,7 @@ FGColumnVector FGLGear::Force(void)
   static FGColumnVector vLocalForce(3);
   static FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
   static FGColumnVector vWhlVelVec(3);     // Velocity of this wheel (Local)
-
+  
   vWhlBodyVec     = (vXYZ - Aircraft->GetXYZcg()) / 12.0;
   vWhlBodyVec(eX) = -vWhlBodyVec(eX);
   vWhlBodyVec(eZ) = -vWhlBodyVec(eZ);
@@ -87,9 +89,10 @@ FGColumnVector FGLGear::Force(void)
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
 
   compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
-
+  
+  
   if (compressLength > 0.00) {
-
+    
     WOW = true;
     vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
     vWhlVelVec     +=  Position->GetVel();
@@ -134,10 +137,9 @@ FGColumnVector FGLGear::Force(void)
     DistanceTraveled += Position->GetVel().Magnitude()*State->Getdt()*Aircraft->GetRate();
   }
 
-  if (Position->GetVel().Magnitude() <= 0.05 && !Reported) {
+  if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
     Report();
   }
-
   return vForce;
 }
 
