@@ -1,4 +1,4 @@
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*******************************************************************************
  
  Header:       FGInitialCondition.cpp
  Author:       Tony Peden
@@ -38,9 +38,9 @@ angles, and altitude.  This class does not attempt to trim the model i.e.
 the sim will most likely start in a very dynamic state (unless, of course,
 you have chosen your IC's wisely) even after setting it up with this class.
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+********************************************************************************
 INCLUDES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+*******************************************************************************/
 
 #include "FGInitialCondition.h"
 #include "FGFDMExec.h"
@@ -55,8 +55,9 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.20 2000/10/16 12:32:45 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.21 2000/10/22 14:01:06 jsb Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
+
 
 FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   vt=vc=ve=0;
@@ -68,6 +69,9 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) {
   u=v=w=0;  
   vnorth=veast=vdown=0;
   lastSpeedSet=setvt;
+  sea_level_radius = EARTHRAD;
+  radius_to_vehicle = EARTHRAD;
+  terrain_altitude = 0;
   if(FDMExec != NULL ) {
     fdmex=FDMExec;
     fdmex->GetPosition()->Seth(altitude);
@@ -84,13 +88,13 @@ FGInitialCondition::~FGInitialCondition(void) {}
 
 void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
 
-  if(getMachFromVcas(&mach,tt*KTSTOFPS)) {
+  if(getMachFromVcas(&mach,tt*jsbKTSTOFPS)) {
     //cout << "Mach: " << mach << endl;
     lastSpeedSet=setvc;
-    vc=tt*KTSTOFPS;
+    vc=tt*jsbKTSTOFPS;
     vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
     ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-    //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
+    //cout << "Vt: " << vt*jsbFPSTOKTS << " Vc: " << vc*jsbFPSTOKTS << endl;
   }
   else {
     cout << "Failed to get Mach number for given Vc and altitude, Vc unchanged." << endl;
@@ -99,7 +103,7 @@ void FGInitialCondition::SetVcalibratedKtsIC(float tt) {
 }
 
 void FGInitialCondition::SetVequivalentKtsIC(float tt) {
-  ve=tt*KTSTOFPS;
+  ve=tt*jsbKTSTOFPS;
   lastSpeedSet=setve;
   vt=ve*1/sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
@@ -107,7 +111,7 @@ void FGInitialCondition::SetVequivalentKtsIC(float tt) {
 }
 
 void FGInitialCondition::SetVtrueKtsIC(float tt) {
-  vt=tt*KTSTOFPS;
+  vt=tt*jsbKTSTOFPS;
   lastSpeedSet=setvt;
   mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
@@ -120,7 +124,7 @@ void FGInitialCondition::SetMachIC(float tt) {
   vt=mach*fdmex->GetAtmosphere()->GetSoundSpeed();
   vc=calcVcas(mach);
   ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
-  //cout << "Vt: " << vt*FPSTOKTS << " Vc: " << vc*FPSTOKTS << endl;
+  //cout << "Vt: " << vt*jsbFPSTOKTS << " Vc: " << vc*jsbFPSTOKTS << endl;
 }
 
 void FGInitialCondition::SetClimbRateFpmIC(float tt) {
@@ -145,20 +149,20 @@ void FGInitialCondition::SetFlightPathAngleRadIC(float tt) {
 void FGInitialCondition::SetUBodyFpsIC(float tt) {
   u=tt;
   vt=sqrt(u*u+v*v+w*w);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setuvw;
 }
 
   
 void FGInitialCondition::SetVBodyFpsIC(float tt) {
   v=tt;
   vt=sqrt(u*u+v*v+w*w);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setuvw;
 }
 
 void FGInitialCondition::SetWBodyFpsIC(float tt) {
   w=tt;
   vt=sqrt(u*u+v*v+w*w);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setuvw;
 }
 
 
@@ -170,14 +174,16 @@ void FGInitialCondition::SetAltitudeFtIC(float tt) {
   //lets try to make sure the user gets what they intended
 
   switch(lastSpeedSet) {
+  case setned:
+  case setuvw:
   case setvt:
-    SetVtrueKtsIC(vt*FPSTOKTS);
+    SetVtrueKtsIC(vt*jsbFPSTOKTS);
     break;
   case setvc:
-    SetVcalibratedKtsIC(vc*FPSTOKTS);
+    SetVcalibratedKtsIC(vc*jsbFPSTOKTS);
     break;
   case setve:
-    SetVequivalentKtsIC(ve*FPSTOKTS);
+    SetVequivalentKtsIC(ve*jsbFPSTOKTS);
     break;
   case setmach:
     SetMachIC(mach);
@@ -190,6 +196,15 @@ void FGInitialCondition::SetAltitudeAGLFtIC(float tt) {
   altitude=fdmex->GetPosition()->Geth();
   SetAltitudeFtIC(altitude);
 } 
+void FGInitialCondition::SetSeaLevelRadiusFtIC(double tt) {
+  sea_level_radius = tt;
+}
+   
+void FGInitialCondition::SetTerrainAltitudeFtIC(double tt) {
+  terrain_altitude=tt;
+  fdmex->GetPosition()->SetDistanceAGL(altitude-terrain_altitude);
+  fdmex->GetPosition()->SetRunwayRadius(sea_level_radius + terrain_altitude);
+}  
 
 void FGInitialCondition::calcUVWfromNED(void) {
   u=vnorth*cos(theta)*cos(psi) + 
@@ -207,14 +222,14 @@ void FGInitialCondition::SetVnorthFpsIC(float tt) {
   vnorth=tt;
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setned;
 }        
   
 void FGInitialCondition::SetVeastFpsIC(float tt) {
   veast=tt;
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setned;
 } 
 
 void FGInitialCondition::SetVdownFpsIC(float tt) {
@@ -222,7 +237,7 @@ void FGInitialCondition::SetVdownFpsIC(float tt) {
   calcUVWfromNED();
   vt=sqrt(u*u + v*v + w*w);
   SetClimbRateFpsIC(-1*vdown);
-  lastSpeedSet=setvt;
+  lastSpeedSet=setned;
 } 
 
 bool FGInitialCondition::getMachFromVcas(float *Mach,float vcas) {
@@ -324,7 +339,7 @@ float FGInitialCondition::calcVcas(float Mach) {
 
   A = pow(((pt-p)/psl+1),0.28571);
   vcas = sqrt(7*psl/rhosl*(A-1));
-  //cout << "calcVcas: vcas= " << vcas*FPSTOKTS << " mach= " << Mach << " pressure: " << pt << endl;
+  //cout << "calcVcas: vcas= " << vcas*jsbFPSTOKTS << " mach= " << Mach << " pressure: " << pt << endl;
   return vcas;
 }
 
@@ -412,6 +427,6 @@ bool FGInitialCondition::solve(float *y,float x) {
       *y=x2;
     }
 
-  //cout << "Success= " << success << " Vcas: " << vcas*FPSTOKTS << " Mach: " << x2 << endl;
+  //cout << "Success= " << success << " Vcas: " << vcas*jsbFPSTOKTS << " Mach: " << x2 << endl;
   return success;
 }
