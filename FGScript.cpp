@@ -57,7 +57,7 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.9 2002/08/30 11:37:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.10 2002/09/07 21:54:46 apeden Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ FGScript::~FGScript()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGScript::LoadScript(string script)
+bool FGScript::LoadScript( string script )
 {
   FGConfigFile Script(script);
   string token="";
@@ -115,7 +115,7 @@ bool FGScript::LoadScript(string script)
     if (token == "use") {
       if ((token = Script.GetValue("aircraft")) != string("")) {
         aircraft = token;
-        result = FDMExec->LoadModel("aircraft", "engine", aircraft);
+        result = FDMExec->LoadModel(aircraft);
         if (!result) {
           cerr << "Aircraft file " << aircraft << " was not found" << endl;
           exit(-1);
@@ -204,8 +204,8 @@ bool FGScript::LoadScript(string script)
   Debug(4);
 
 
-  FGInitialCondition IC(FDMExec);
-  if ( ! IC.Load("aircraft", aircraft, initialize)) {
+  FGInitialCondition *IC=FDMExec->GetIC();
+  if ( ! IC->Load( initialize )) {
     cerr << "Initialization unsuccessful" << endl;
     exit(-1);
   }

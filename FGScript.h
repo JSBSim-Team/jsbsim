@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.5 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.6 2002/09/07 21:54:46 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim scripting capability.
     @author Jon S. Berndt
-    @version $Id: FGScript.h,v 1.5 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGScript.h,v 1.6 2002/09/07 21:54:46 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGScript.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGScript.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -146,7 +146,7 @@ public:
       The language is the Simple Script Directives for JSBSim (SSDJ).
       @param script the filename (including path name, if any) for the script.
       @return true if successful */
-  bool LoadScript(string script);
+  bool LoadScript( string script );
 
   /** This function is called each pass through the executive Run() method IF
       scripting is enabled. 
