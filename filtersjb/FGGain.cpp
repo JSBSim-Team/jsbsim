@@ -91,8 +91,15 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> Max;
       cout << "      MAX: " << Max << endl;
     } else if (token == "SCHEDULED_BY") {
-      *AC_cfg >> strScheduledBy;
-      ScheduledBy = fcs->GetState()->GetParameterIndex(strScheduledBy);
+      token = AC_cfg->GetValue("SCHEDULED_BY");
+      if (token.find("FG_") != token.npos) {
+        *AC_cfg >> strScheduledBy;
+        ScheduledBy = fcs->GetState()->GetParameterIndex(strScheduledBy);
+        cout << "      Scheduled by parameter: " << token << endl;
+      } else {
+        *AC_cfg >> ScheduledBy;
+        cout << "      Scheduled by FCS output: " << ScheduledBy << endl;
+      }
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
