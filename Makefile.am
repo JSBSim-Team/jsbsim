@@ -29,22 +29,19 @@ libJSBSim_a_SOURCES = \
 	FGNozzle.cpp FGNozzle.h \
 	FGOutput.cpp FGOutput.h \
         FGPiston.cpp FGPiston.h \
+        FGPropagate.cpp FGPropagate.h \
         FGPropeller.cpp FGPropeller.h \
         FGPropulsion.cpp FGPropulsion.h \
-	FGPosition.cpp FGPosition.h \
         FGQuaternion.cpp FGQuaternion.h \
-	FGRotation.cpp FGRotation.h \
  	FGRotor.cpp FGRotor.h \
 	FGRocket.cpp FGRocket.h \
 	FGScript.cpp FGScript.h \
 	FGState.cpp FGState.h \
 	FGTable.cpp FGTable.h \
 	FGThruster.cpp FGThruster.h \
-	FGTranslation.cpp FGTranslation.h \
 	FGTrim.cpp FGTrim.h \
 	FGTrimAxis.cpp FGTrimAxis.h \
 	FGTurbine.cpp FGTurbine.h \
-	FGUtility.cpp FGUtility.h \
 	FGEngine.cpp FGEngine.h \
 	FGTank.cpp FGTank.h \
 	FGfdmSocket.cpp FGfdmSocket.h \
