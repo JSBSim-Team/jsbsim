@@ -36,7 +36,7 @@
   MAXN1        100.0
   MAXN2        100.0
   AUGMENTED    1
-  AUGMETHOD    1
+  AUGMETHOD    2
   INJECTED     0
 
   <TABLE NAME="IdleThrust" TYPE="TABLE">
