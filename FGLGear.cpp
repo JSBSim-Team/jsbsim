@@ -49,7 +49,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.46 2001/03/31 16:17:13 apeden Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.47 2001/03/31 16:19:23 apeden Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -322,6 +322,7 @@ FGColumnVector FGLGear::Force(void)
 
 // Compute the forces in the wheel ground plane.
 
+    RollingForce = 0;
     if(fabs(RollingWhlVel) > 1E-3) { 
       RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
     }
