@@ -3,6 +3,8 @@
   IXX       5
   DIAMETER  76
   NUMBLADES  2
+  MINPITCH 20
+  MAXPITCH 20
   C_THRUST 17 1
   0.0   0.117
   0.1   0.117
