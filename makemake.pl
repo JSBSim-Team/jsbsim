@@ -5,8 +5,8 @@ if (length($ENV{CC}) gt 0) {
   print "CC = g++\n";
 }
 #print "CCOPTS = -pg -O2\n";
-print "INCLUDES = -I.\n";
-print "LINKDIR= -Lfiltersjb/\n";
+print "INCLUDES = -I. -Isimgear\n";
+print "LINKDIR= -Lfiltersjb/ -Lsimgear\n";
 print "JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\\\n";
 print "FGModel.o FGOutput.o FGPosition.o FGRotation.o FGState.o FGTranslation.o\\\n";
 print "FGUtility.o FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
@@ -15,13 +15,15 @@ print "FGTurboShaft.o FGTurboJet.o FGTurboProp.o FGPiston.o FGForce.o FGThruster
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
 print "FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o FGScript.o\\\n";
 print "FGJSBBase.o\n\n";
-print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a\n";
-print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents\n\n";
+print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a\n";
+print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties\n\n";
 print "libFCSComponents.a:\n";
 print "	cd filtersjb; make -fMakefile.solo; cd ..\n\n";
+print "libProperties.a:\n";
+print "	cd simgear; make; cd ..\n\n";
 @files =  glob("*.cpp");
 foreach $file (@files) {
-  system "g++ -MM $file";
+  system "g++ -I. -MM $file";
   print "	\$(CC) \$(INCLUDES) \$(CCOPTS) -o";
   print substr($file,0,length($file)-4);
   print ".o -c $file\n\n";
@@ -37,9 +39,12 @@ print "	-rm *.o\n\n";
 print "all:\n";
 print "	touch *.cpp\n";
 print "	cd filtersjb; make all -fMakefile.solo; cd ..\n";
+print "	cd simgear; make all -fMakefile.solo; cd ..\n";
 print "	make JSBSim -fMakefile.solo\n\n";
 print "debug:\n";
 print "	touch *.cpp\n";
 print "	touch filtersjb/*.cpp\n";
+print "	touch simgear/*.cxx\n";
 print "	cd filtersjb; make debug CCOPTS=-g -fMakefile.solo; cd ..\n";
+print "	cd simgear; make debug CCOPTS=-g -fMakefile.solo; cd ..\n";
 print "	make JSBSim CCOPTS=-g -fMakefile.solo\n";

@@ -13,7 +13,7 @@ print "	ar cru libFCSComponents.a \$\(libFCSComponents_OBJECTS)\n";
 print "	ranlib libFCSComponents.a\n\n";
 @files =  glob("*.cpp");
 foreach $file (@files) {
-  system "g++ -MM $file";
+  system "g++ -I../ -MM $file";
   print "	\$(CC) \$(INCLUDES) \$(CCOPTS) -o";
   print substr($file,0,length($file)-4);
   print ".o -c $file\n\n";
