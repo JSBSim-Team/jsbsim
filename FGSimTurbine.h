@@ -47,7 +47,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.3 2003/03/19 08:50:32 ehofman Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.4 2003/03/19 12:43:15 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -84,6 +84,7 @@ private:
   double N2_factor;        // factor to tie N2 and throttle
   double ThrottleCmd;      // FCS-supplied throttle position
   double throttle;         // virtual throttle position
+  int Reversed;            // = 1 if thrust reverion is activated
   int Augmented;           // = 1 if augmentation installed
   int Injected;            // = 1 if water injection installed
   int AugMethod;           // = 0 if using property /engine[n]/augmentation
