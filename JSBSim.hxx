@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.27 2001/12/22 16:58:05 dmegginson Exp $
+    @version $Id: JSBSim.hxx,v 1.28 2002/02/15 21:04:47 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -99,9 +99,9 @@ class FGJSBsim: public FGInterface {
 
 public:
     /// Constructor
-    FGJSBsim::FGJSBsim( double dt );
+    FGJSBsim( double dt );
     /// Destructor
-    FGJSBsim::~FGJSBsim();
+    ~FGJSBsim();
 
     /// copy FDM state to LaRCsim structures
     bool copy_to_JSBsim();
