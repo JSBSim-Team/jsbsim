@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.54 2003/07/13 20:18:36 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.55 2003/07/14 20:48:08 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +260,16 @@ void FGAtmosphere::Calculate(double altitude)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+// square a value, but preserve the original sign
+static inline double 
+square_signed (double value)
+{
+    if (value < 0)
+        return value * value * -1;
+    else
+        return value * value;
+}
+
 void FGAtmosphere::Turbulence(void)
 {
   switch (turbType) {
@@ -277,8 +287,11 @@ void FGAtmosphere::Turbulence(void)
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
     vDirectiondAccelDt.Normalize();
-    vDirectiondAccelDt(eX) *= vDirectiondAccelDt(eX);
-    vDirectiondAccelDt(eY) *= vDirectiondAccelDt(eY);
+
+                                // deemphasise non-vertical forces
+    vDirectiondAccelDt(eX) = square_signed(vDirectiondAccelDt(eX));
+    vDirectiondAccelDt(eY) = square_signed(vDirectiondAccelDt(eY));
+
     vDirectionAccel += vDirectiondAccelDt*rate*TurbRate*State->Getdt();
     vDirectionAccel.Normalize();
     vDirection      += vDirectionAccel*rate*State->Getdt();
