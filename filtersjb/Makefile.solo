@@ -10,25 +10,25 @@ libFCSComponents.a : $(libFCSComponents_OBJECTS)
 	ranlib libFCSComponents.a
 
 FGDeadBand.o : FGDeadBand.cpp FGDeadBand.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGDeadBand.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGDeadBand.cpp
 
 FGFilter.o : FGFilter.cpp FGFilter.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGFilter.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGFilter.cpp
 
 FGGradient.o : FGGradient.cpp FGGradient.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGGradient.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGGradient.cpp
 
 FGSwitch.o : FGSwitch.cpp FGSwitch.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGSwitch.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGSwitch.cpp
 
 FGFCSComponent.o : FGFCSComponent.cpp FGFCSComponent.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGFCSComponent.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGFCSComponent.cpp
 
 FGGain.o : FGGain.cpp FGGain.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGGain.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGGain.cpp
 
 FGSummer.o : FGSummer.cpp FGSummer.h
-        $(CC) $(INCLUDES) $(CCOPTS) -c FGSummer.cpp
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGSummer.cpp
 
 clean:
 	rm -f *.o
