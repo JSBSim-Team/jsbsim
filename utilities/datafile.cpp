@@ -103,15 +103,15 @@ DataFile::DataFile(string fname) {
   EndIdx = GetNumRecords()-1;
 
   cout << endl << "Done Reading data ..." << endl;
-  
+
 }
 
 
 float DataFile::GetAutoAxisMax(int item) {
-  float Mx, order, magnitude;
+  double Mx, order, magnitude;
   float max = Max[item];
   float min = Min[item];
-  
+
   if (max == 0.0 && min == 0.0) return(1.0);
 
   if (StartIdx != 0 || EndIdx != (GetNumRecords()-1)) {
@@ -120,13 +120,13 @@ float DataFile::GetAutoAxisMax(int item) {
       if (Data[rec][item] > Mx) Mx = Data[rec][item];
     }
   }
-  
+
   order = (int)(log10(fabs(max)));
-  magnitude = pow(10.0, order);
+  magnitude = pow((double)10.0, (double)order);
 
   if (max > 0.0) Mx = ((int)(max / magnitude) + 1) * magnitude;
   else           Mx = ((int)(max / magnitude)) * magnitude;
-  
+
   return Mx;
 }
 
@@ -137,16 +137,16 @@ float DataFile::GetAutoAxisMin(int item) {
   float max = Max[item];
 
   if (max == 0.0 && min == 0.0) return(0.0);
-  
+
   if (StartIdx != 0 || (EndIdx != GetNumRecords()-1)) {
     min = Data[StartIdx][item];
     for (int rec=StartIdx+1; rec<=EndIdx; rec++) {
       if (Data[rec][item] < min) min = Data[rec][item];
     }
   }
-  
+
   order = (int)(log10(fabs(min)));
-  magnitude = pow(10.0, order);
+  magnitude = pow((double)10.0, (double)order);
 
   if (min > 0.0) Mn = ((int)(min / magnitude)) * magnitude;
   else           Mn = ((int)(min / magnitude) - 1) * magnitude;

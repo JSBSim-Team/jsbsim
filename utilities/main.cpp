@@ -4,11 +4,11 @@
     begin                : Sat Nov  4 21:16:33 CST 2000
     copyright            : (C) 2000 by Jon S. Berndt
     email                : jsb@hal-pc.org
-    
+
     compile this under windows like this:
-    
+
     g++ -o simplot datafile.cpp main.cpp -I/usr/local/dislin -L/usr/local/dislin -ldisgcc -lgdi32 -lcomdlg32
-    
+
  ***************************************************************************/
 
 /***************************************************************************
@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#include <iostream.h>
-#include <fstream.h>
+#include "datafile.h"
+#include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <cstdlib>
 #include <time.h>
 #include "dislin.h"
-#include "datafile.h"
 
 void plotdata(DataFile& df, ifstream* datafile);
 void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vector <int> IDs);
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   }
 
   DataFile df(argv[1]);
-  
+
   ifstream f;
   if (argc == 3) {
     f.open(argv[2]);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 
   cout << endl << endl << "Here are the available parameters which may be plotted: " << endl;
   cout << endl;
-  
+
   namelen = 0;
   for (unsigned int i=0; i<df.names.size();i++) {
     namelen = namelen > df.names[i].size() ? namelen : df.names[i].size();
@@ -115,7 +115,7 @@ entertime:
 
   if (time_str[0] != '-') {
     sscanf(time_str.c_str(),"%f %c %f",&sf, &scratch, &ef);
-    
+
     bool redo = true;
     if (ef <= sf) {
       cout << "The end time must be greater than the start time" << endl;
@@ -148,7 +148,7 @@ entertime:
   cin >> commands_str;
 
   if (commands_str[0] == 'q') exit(0);
-  
+
   while (1) {
     start = commands_str.find_first_of(digits,start);
     if (start >= string::npos) break;
@@ -158,7 +158,7 @@ entertime:
   }
 
   cout << "Initializing plot page ..." << endl;
-  
+
 savepng:
 
 // Set page format
@@ -188,7 +188,7 @@ savepng:
   int numtraces = commands_vec.size();
 
   name("Time (in seconds)","x");
-  
+
   string longaxistext;
   for (thisplot=0; thisplot < numtraces; thisplot++) {
     longaxistext = longaxistext + " " + df.names[commands_vec[thisplot]];
@@ -223,7 +223,7 @@ savepng:
     axismax = axismax > df.GetAutoAxisMax(commands_vec[thisplot]) ? axismax : df.GetAutoAxisMax(commands_vec[thisplot]);
     axismin = axismin < df.GetAutoAxisMin(commands_vec[thisplot]) ? axismin : df.GetAutoAxisMin(commands_vec[thisplot]);
   }
-  
+
   float spread = axismax - axismin;
 
   if      (spread < 1.0)   labdig(3,"y");
@@ -239,14 +239,14 @@ savepng:
   }
 
   spread = df.Data[df.GetEndIdx()][0] - df.Data[df.GetStartIdx()][0];
-  
+
   if      (spread < 1.0)   labdig(3,"x");
   else if (spread < 10.0)  labdig(2,"x");
   else if (spread < 100.0) labdig(1,"x");
   else                      labdig(0,"x");
 
   float fac = ((int)(spread + 0.5))/10.00;
-  
+
   if (spread > 1000.0) labels("fexp","x");
   else                 labels("float","x");
 
@@ -274,7 +274,7 @@ savepng:
   }
 
   char legendtext[numtraces*(namelen)];
-  
+
   color("blue");
   legini(legendtext, numtraces, (namelen));
   legtit("Legend");
@@ -307,12 +307,12 @@ savepng:
 
   cout << endl << "Create another plot? [Y|n]: ";
   cin >> next;
-  
+
   if (next[0] == 'n') {
     return EXIT_SUCCESS;
   } else {
     goto nextplot;
-  }    
+  }
 }
 
 /* ****************************************** */
@@ -340,18 +340,29 @@ void plotdata(DataFile& df, ifstream* datafile)
   int delim, id;
   vector <int> IDs;
   int XID;
-  
+
   outfile.open("JSBSimPlots.html");
   if (!outfile) {
     cerr << "Could not open output file " << "JSBSimPlots.html" << endl;
   }
   time_t tm = time(NULL);
-  outfile << "<html>" << endl;
-  outfile << "<head>" << endl;
-  outfile << "<H1>JSBSim Auto-generated Plotting</H1>" << endl;
-  outfile << "<H2>" << ctime(&tm) << "</H2>" << endl;
+
+  outfile << "<HTML>" << endl;
+  outfile << "<HEAD>" << endl;
+  outfile << "<TITLE>JSBSim Test Run Results</TITLE>" << endl;
   outfile << "</HEAD>" << endl;
- 
+  outfile << "<BODY bgColor=gainsboro>" << endl;
+  outfile << "<P><FONT size=4>" << endl;
+  outfile << "JSBSim Test Results<BR></FONT>" << endl;
+  outfile << "<FONT size=2 face=Arial>" << endl;
+//  outfile << "Test: <EM>New code for aerosurfaces</EM><BR>" << endl;
+  outfile << "Date: <EM>" << ctime(&tm) << "</EM>" << endl;
+  outfile << "</FONT><FONT face=Arial>" << endl;
+  outfile << "<HR style=""LEFT: 10px; WIDTH: 100%; TOP: 52px; HEIGHT: 4px"" SIZE=4 width=""100%"">" << endl;
+  outfile << "</FONT>" << endl;
+  outfile << "<P>" << endl;
+  outfile << "<TABLE cellSpacing=2 cellPadding=3 width=""95%"" align=center border=0>" << endl;
+
   while (!datafile->eof()) {
     getline(*datafile, Title);
     getline(*datafile, X_Axis_Caption);
@@ -361,7 +372,7 @@ void plotdata(DataFile& df, ifstream* datafile)
     getline(*datafile, Y_Variables);
 
     if (datafile->eof()) break;
-    
+
     if (Ranges.find("auto") != string::npos) { // autoscaling
       xmin = xmax = ymin = ymax = 0.00;
       autoscale = true;
@@ -411,10 +422,12 @@ void plotdata(DataFile& df, ifstream* datafile)
         cerr << "ID not found for " << Y_Variables.substr(0, delim) << endl;
       }
     }
-    
+
     plot(df, Title, X_Axis_Caption, Y_Axis_Caption, XID, IDs);
   }
-  outfile << "</HTML>" << endl;
+  outfile << "  </TABLE></P>" << endl;
+  outfile << " </BODY>" << endl;
+  outfile << " </HTML>" << endl;
   outfile.close();
 }
 
@@ -472,7 +485,7 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
     axismax = axismax > df.GetAutoAxisMax(IDs[thisplot]) ? axismax : df.GetAutoAxisMax(IDs[thisplot]);
     axismin = axismin < df.GetAutoAxisMin(IDs[thisplot]) ? axismin : df.GetAutoAxisMin(IDs[thisplot]);
   }
-  
+
   float spread = axismax - axismin;
 
   if      (spread < 1.0)   labdig(3,"y");
@@ -502,7 +515,7 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   else                      labdig(0,"x");
 
   float fac = ((int)(spread + 0.5))/10.00;
-  
+
   if (spread > 1000.0) labels("fexp","x");
   else                 labels("float","x");
 
@@ -526,7 +539,7 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   for (unsigned int i=0; i<df.names.size();i++) {
     namelen = namelen > df.names[i].size() ? namelen : df.names[i].size();
   }
-  
+
   char legendtext[numtraces*(namelen)];
   color("blue");
   legini(legendtext, numtraces, namelen);
@@ -536,13 +549,21 @@ void plot(DataFile& df, string Title, string xTitle, string yTitle, int XID, vec
   }
   legend(legendtext, 3);
 
-  outfile << "<A HREF=" << getfil() << ">" << endl;
-  outfile << "<H3><B>" << Title << "</B></A><BR>" << endl;
-  outfile << "<BLOCKQUOTE>" << endl;
-  outfile << "<H4>" << yTitle << " vs. " << xTitle << "<BR>" << endl;
-  outfile << "X Axis Min: " << xmin << " Max: " << xmax << "<BR>" << endl;
-  outfile << "Y Axis Min: " << ymin << " Max: " << ymax << "</H4>" << endl;
-  outfile << "</BLOCKQUOTE>" << endl;
+  outfile << "<TR>" << endl;
+  outfile << "  <TD style=\"WIDTH: 90px\" vAlign=top align=middle height=90>" << endl;
+  outfile << "  <A href=" << getfil() << "><FONT face=Arial>" << endl;
+  outfile << "    <IMG id=IMG1 style=\"LEFT: 2px; WIDTH: 85px; TOP: 14px; HEIGHT: 60px\" height=60 src=" << getfil() << " width=85 > </FONT>" << endl;
+  outfile << "  </A>" << endl;
+  outfile << "  </TD>" << endl;
+  outfile << "  <TD vAlign=top align=left>" << endl;
+  outfile << "    <FONT face=Arial size=2>" << endl;
+  outfile << "      " << Title << endl;
+  outfile << "      " <<  yTitle << " vs. " << xTitle << "<BR>" << endl;
+  outfile << "      X Axis Min: " << xmin << " Max: " << xmax << "<BR>" << endl;
+  outfile << "      Y Axis Min: " << ymin << " Max: " << ymax << "</H4>" << endl;
+  outfile << "    </FONT>" << endl;
+  outfile << "  </TD>" << endl;
+  outfile << "</TR>" << endl;
 
   disfin();
 }

@@ -23,13 +23,16 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 /**This class handles reading a data file and placing user-requested data into arrays for plotting.
   *@author Jon S. Berndt
   */
 
 class DataFile {
-public: 
+public:
   DataFile();
   ~DataFile();
   DataFile(string fname);
@@ -39,7 +42,7 @@ public:
   typedef std::vector <float> Row;
   typedef std::vector <Row> DataType;
   DataType Data;
-  
+
   int GetNumFields(void) {if (Data.size() > 0) return(Data[0].size()); else return(0);}
   int GetNumRecords(void) {return(Data.size());}
   float GetStartTime(void) {if (Data.size() >= 2) return(Data[0][0]); else return(0);}
