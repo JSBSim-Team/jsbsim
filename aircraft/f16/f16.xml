@@ -2,7 +2,7 @@
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.41 2004/09/12 17:11:28 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.42 2004/12/19 02:24:33 jberndt Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta
@@ -538,7 +538,7 @@
         Side_force_due_to_roll_rate
         12
         aero/alpha-rad
-        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/r-aero-rad_sec
+        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/p-aero-rad_sec
         -0.175 -0.108
         -0.087 -0.108
          0.0   -0.188
