@@ -53,7 +53,7 @@ IDLCFLAGS = -src_suffixcpp
 PFLAGS = -Ufiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -Ifiltersjb;$(BCB)\include -$YD -$W \
   -$O- -v -JPHN -M
 RFLAGS = -ifiltersjb;$(BCB)\include
-AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zd
+AFLAGS = /ifiltersjb /i$(BCB)\include /mx /w2 /zi
 LFLAGS = -Lfiltersjb;$(BCB)\lib;$(RELEASELIBPATH) -ap -Tpe -x -Gn -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0x32.obj $(OBJFILES)
