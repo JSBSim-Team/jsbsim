@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="f15" VERSION="1.60">
+<FDM_CONFIG NAME="f15" VERSION="1.61">
 
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.16 2004/02/14 09:25:37 ehofman Exp $
+  CVS Version: $Id: f15.xml,v 1.17 2004/02/14 09:58:45 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production

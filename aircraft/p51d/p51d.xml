@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="p51d" VERSION="0">
+<FDM_CONFIG NAME="p51d" VERSION="1.61" RELEASE="ALPHA">
 <!--
 
   File:        p51d
   Author:      Jon Berndt
-  CVS Version: $Id: p51d.xml,v 1.4 2004/02/14 09:25:39 ehofman Exp $
+  CVS Version: $Id: p51d.xml,v 1.5 2004/02/14 09:58:46 ehofman Exp $
 
   Function: Models a North American Aviation P-51D
   Notes:    See NACA TN 1044, NACA Report 829, NASA SP-468

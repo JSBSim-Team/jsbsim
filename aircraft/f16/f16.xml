@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="F-16" VERSION="1.60" RELEASE="BETA">
+<FDM_CONFIG NAME="F-16" VERSION="1.61" RELEASE="BETA">
 <!--                                                                                        -
   File:        f16.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f16.xml,v 1.34 2004/02/14 09:25:37 ehofman Exp $
+  CVS Version: $Id: f16.xml,v 1.35 2004/02/14 09:58:45 ehofman Exp $
 
   Function: Models an F-16A Block-32 (Basic US configuration)
   Status:   Beta

@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="A320-200" VERSION="1.60">
+<FDM_CONFIG NAME="A320-200" VERSION="1.61">
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.7 2004/02/14 09:25:19 ehofman Exp $
+  CVS Version: $Id: A320.xml,v 1.8 2004/02/14 09:58:35 ehofman Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 

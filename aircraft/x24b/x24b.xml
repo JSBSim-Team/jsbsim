@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="X-24B" VERSION="1.60">
+<FDM_CONFIG NAME="X-24B" VERSION="1.61">
   <!--
 
   File:        x24b.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: x24b.xml,v 1.5 2002/09/22 18:06:03 apeden Exp $
+  CVS Version: $Id: x24b.xml,v 1.6 2004/02/14 09:58:47 ehofman Exp $
 
   Function: Models an X-24B
   -->

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="PA28-180" VERSION="1.60">
+<FDM_CONFIG NAME="PA28-180" VERSION="1.61">
 <!--
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
   Function:    Models a Piper Cherokee 180 (PA28-180)
-  CVS Version: $Id: pa28.xml,v 1.9 2004/02/14 09:25:40 ehofman Exp $
+  CVS Version: $Id: pa28.xml,v 1.10 2004/02/14 09:58:46 ehofman Exp $
 -->
 
   <METRICS>

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="Lunar Module" VERSION="1.60">
+<FDM_CONFIG NAME="Lunar Module" VERSION="1.61">
   <!--
 
   File:        LM.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: LM.xml,v 1.4 2004/02/14 09:25:35 ehofman Exp $
+  CVS Version: $Id: LM.xml,v 1.5 2004/02/14 09:58:35 ehofman Exp $
 
   Function: Models a Grumman Aerospace Lunar Module
   -->

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c182" VERSION="1.60">
+<FDM_CONFIG NAME="c182" VERSION="1.61">
 <!--
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.13 2004/02/14 09:25:36 ehofman Exp $
+  CVS Version: $Id: c182.xml,v 1.14 2004/02/14 09:58:44 ehofman Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight

@@ -1,8 +1,8 @@
-<FDM_CONFIG NAME="T62" VERSION="1.60">
+<FDM_CONFIG NAME="T62" VERSION="1.61">
 <!--                                                                                             -
   File:        t6texan2.xml
   Author:      David Culp
-  CVS Version: $Id: t6texan2.xml,v 1.4 2004/02/02 21:02:38 jberndt Exp $
+  CVS Version: $Id: t6texan2.xml,v 1.5 2004/02/14 09:58:47 ehofman Exp $
 
   Function: Models a Raytheon T-6A Texan II trainer
 -->

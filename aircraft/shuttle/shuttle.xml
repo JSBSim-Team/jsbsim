@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="Space Shuttle" VERSION="1.60">
+<FDM_CONFIG NAME="Space Shuttle" VERSION="1.61">
 
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.15 2003/11/04 16:07:53 dpculp Exp $
+  CVS Version: $Id: shuttle.xml,v 1.16 2004/02/14 09:58:47 ehofman Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
