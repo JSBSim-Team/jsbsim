@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up the mk82 to start off
+    from altitude.
+  -->
+  UBODY      400.0
+  VBODY        0.0
+  WBODY        0.0
+  LATITUDE    47.0
+  LONGITUDE -110.0
+  PHI          0.0
+  THETA       40.0
+  PSI          0.0
+  ALTITUDE   100.0    
+  WINDDIR      0.0
+  VWIND        0.0
+</initialize>
+
