@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.55 2002/07/03 02:13:15 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.56 2002/08/25 13:57:11 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,6 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
-  CONVERT_CUBIC_INCHES_TO_METERS_CUBED(1.638706e-5),
   R_air(287.3),
   rho_fuel(800),                 // estimate
   calorific_value_fuel(47.3e6),
@@ -85,7 +84,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   crank_counter = 0;
   EngineNumber = 0;
   OilTemp_degK = 298;
-  ManifoldPressure_inHg = Atmosphere->GetPressure() * 0.014138; // psf to in Hg
+  ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
 
   dt = State->Getdt();
 
@@ -150,7 +149,6 @@ double FGPiston::Calculate(double PowerRequired)
   T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
 
   RPM = Propulsion->GetThruster(EngineNumber)->GetRPM();
-  //if (RPM < IdleRPM) RPM = IdleRPM;  // kludge
     
   IAS = Auxiliary->GetVcalibratedKTS();
 
@@ -216,49 +214,28 @@ void FGPiston::doEngineStartup(void)
     crank_counter = 0;
   }
 
-  //Check mode of engine operation
-  if (Cranking) {
-    crank_counter++;
-    if (RPM <= 480) {
-      // Do nothing !! - cranking power output is now handled in the doPower section
-    } else {
-      // consider making a horrible noise if the starter is engaged with
-      // the engine running
-    }
-  }
+  if (Cranking) crank_counter++;  //Check mode of engine operation
   
-  // if ((!Running) && (spark) && (fuel) && (crank_counter > 120)) {
-
-  if ((!Running) && (spark) && (fuel)) {
-  // start the engine if revs high enough
+  if (!Running && spark && fuel) {  // start the engine if revs high enough
     if (Cranking) {
-      if ((RPM > 450) && (crank_counter > 175)) {
-        //Add a little delay to startup on the starter
-        Running = true;
-      }
+      if ((RPM > 450) && (crank_counter > 175)) // Add a little delay to startup
+        Running = true;                         // on the starter
     } else {
-      if (RPM > 450) {
-        Running = true;
-        //This allows us to in-air start when windmilling
-      }
+      if (RPM > 450)                            // This allows us to in-air start
+        Running = true;                         // when windmilling
     }
   }
 
-  if ( (Running) && ((!spark)||(!fuel)) ) {
-    // Cut the engine
-    // note that we only cut the power - the engine may continue to
-    // spin if the prop is in a moving airstream
-    Running = false;
-  }
+  // Cut the engine *power* - Note: the engine may continue to
+  // spin if the prop is in a moving airstream
 
-  // And finally a last check for stalling
+  if ( Running && (!spark || !fuel) ) Running = false;
+
+  // Check for stalling (RPM = 0).
   if (Running) { 
-    //Check if we have stalled the engine
     if (RPM == 0) {
       Running = false;
     } else if ((RPM <= 480) && (Cranking)) {
-      // Make sure the engine noise dosn't play if the engine won't
-	    // start due to eg mixture lever pulled out.
       Running = false;
     }
   }
@@ -290,7 +267,7 @@ void FGPiston::doManifoldPressure(void)
     ManifoldPressure_inHg = MinManifoldPressure_inHg +
             (Throttle * (MaxManifoldPressure_inHg - MinManifoldPressure_inHg));
   } else {
-    ManifoldPressure_inHg = Atmosphere->GetPressure() * 0.014138; // psf to in Hg
+    ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
   }  
 }
 
@@ -311,7 +288,7 @@ void FGPiston::doAirFlow(void)
 {
   rho_air = p_amb / (R_air * T_amb);
   double rho_air_manifold = rho_air * ManifoldPressure_inHg / 29.6;
-  double displacement_SI = Displacement * CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
+  double displacement_SI = Displacement * in3tom3;
   double swept_volume = (displacement_SI * (RPM/60)) / 2;
   double v_dot_air = swept_volume * volumetric_efficiency;
   m_dot_air = v_dot_air * rho_air_manifold;

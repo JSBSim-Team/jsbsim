@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.13 2002/08/18 15:36:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.14 2002/08/25 13:57:11 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,9 +59,11 @@ char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 const double FGJSBBase::radtodeg = 57.29578;
 const double FGJSBBase::degtorad = 1.745329E-2;
 const double FGJSBBase::hptoftlbssec = 550.0;
+const double FGJSBBase::psftoinhg = 0.014138;
 const double FGJSBBase::fpstokts = 0.592484;
 const double FGJSBBase::ktstofps = 1.68781;
 const double FGJSBBase::inchtoft = 0.08333333;
+const double FGJSBBase::in3tom3 = 1.638706E-5;
 const double FGJSBBase::Reng = 1716.0;
 const double FGJSBBase::SHRatio = 1.40;
 const string FGJSBBase::needed_cfg_version = "1.58";

@@ -56,7 +56,7 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.78 2002/08/07 04:29:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.79 2002/08/25 13:57:11 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -233,12 +233,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGRocket(FDMExec, &Eng_cfg));
         } else if (engType == "FG_PISTON") {
           Engines.push_back(new FGPiston(FDMExec, &Eng_cfg));
-        } else if (engType == "FG_TURBOJET") {
-          Engines.push_back(new FGTurboJet(FDMExec, &Eng_cfg));
-        } else if (engType == "FG_TURBOSHAFT") {
-          Engines.push_back(new FGTurboShaft(FDMExec, &Eng_cfg));
-        } else if (engType == "FG_TURBOPROP") {
-          Engines.push_back(new FGTurboProp(FDMExec, &Eng_cfg));
+        } else if (engType == "FG_TURBINE") {
+          Engines.push_back(new FGTurbine(FDMExec, &Eng_cfg));
         } else {
           cerr << fgred << "    Unrecognized engine type: " << underon << engType
                     << underoff << " found in config file." << fgdef << endl;
@@ -377,9 +373,7 @@ string FGPropulsion::GetPropulsionStrings(void)
     case FGEngine::etRocket:
       PropulsionStrings += (Engines[i]->GetName() + "_ChamberPress[" + buffer + "]");
       break;
-    case FGEngine::etTurboJet:
-    case FGEngine::etTurboProp:
-    case FGEngine::etTurboShaft:
+    case FGEngine::etTurbine:
       break;
     default:
       PropulsionStrings += "INVALID ENGINE TYPE";
@@ -433,9 +427,7 @@ string FGPropulsion::GetPropulsionValues(void)
     case FGEngine::etRocket:
       PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
       break;
-    case FGEngine::etTurboJet:
-    case FGEngine::etTurboProp:
-    case FGEngine::etTurboShaft:
+    case FGEngine::etTurbine:
       break;
     }
 

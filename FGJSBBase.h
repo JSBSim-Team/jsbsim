@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.27 2002/08/16 12:42:30 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.28 2002/08/25 13:57:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -195,7 +195,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.27 2002/08/16 12:42:30 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.28 2002/08/25 13:57:11 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,9 +316,11 @@ protected:
   static const double radtodeg;
   static const double degtorad;
   static const double hptoftlbssec;
+  static const double psftoinhg;
   static const double fpstokts;
   static const double ktstofps;
   static const double inchtoft;
+  static const double in3tom3;
   static const double Reng;         // Specific Gas Constant,ft^2/(sec^2*R)
   static const double SHRatio;
   static const string needed_cfg_version;
