@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        t6texan2.xml
   Author:      David Culp
-  CVS Version: $Id: t6texan2.xml,v 1.1 2003/05/22 03:22:26 jberndt Exp $
+  CVS Version: $Id: t6texan2.xml,v 1.2 2003/06/07 08:48:30 ehofman Exp $
 
   Function: Models a Raytheon T-6A Texan II trainer
 -->
@@ -10,13 +10,13 @@
     AC_WINGAREA   176.0  <!-- ft2 -->
     AC_WINGSPAN    33.4  <!-- ft  -->
     AC_CHORD        5.27 <!-- MAC, in ft  -->
-    AC_HTAILAREA   40.0  <!-- ft2 -->
-    AC_HTAILARM    18.0  <!-- ft  -->
+    AC_HTAILAREA   50.0  <!-- ft2 -->
+    AC_HTAILARM    16.0  <!-- ft  -->
     AC_VTAILAREA   50.0  <!-- ft2 -->
     AC_LV          16.0  <!-- ft  -->
-    AC_IXX       4816.3  <!-- slug-ft2 -->
-    AC_IYY       8608.0  <!-- slug-ft2 -->
-    AC_IZZ      11355.0  <!-- slug-ft2 -->
+    AC_IXX       4216.3  <!-- slug-ft2 -->
+    AC_IYY       7608.0  <!-- slug-ft2 -->
+    AC_IZZ      10355.0  <!-- slug-ft2 -->
     AC_IXZ       1000.0  <!-- slug-ft2 -->
     AC_EMPTYWT   5000.0	 <!-- Aircraft Operating Weight  -->
     <!-- origin at nose, not including probe, x,y,z in inches -->
@@ -64,19 +64,19 @@
     </AC_THRUSTER>
     <AC_TANK TYPE="FUEL" NUMBER="0">  <!-- wing-left -->
       XLOC       190.0
-      YLOC         0.0
+      YLOC       -50.0
       ZLOC       -12.0
       RADIUS       1.0
       CAPACITY   500.0
-      CONTENTS     0.0
+      CONTENTS   500.0
     </AC_TANK>
     <AC_TANK TYPE="FUEL" NUMBER="1">  <!-- wing-right -->
       XLOC       190.0
-      YLOC         0.0
+      YLOC        50.0
       ZLOC       -12.0
       RADIUS       1.0
       CAPACITY   500.0
-      CONTENTS     0.0
+      CONTENTS   500.0
     </AC_TANK>
   </PROPULSION>
 
@@ -113,14 +113,16 @@
        GAIN          0.017
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
-     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+     <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
-     <COMPONENT NAME="Rudder Control" TYPE="SUMMER">
-       INPUT        fcs/yaw-trim-sum
-       GAIN         0.017
+     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+       INPUT        fcs/rudder-sum
+       MIN          -25
+       MAX          25 
+       GAIN         0.01745
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
@@ -283,7 +285,7 @@
       <COEFFICIENT NAME="Clda" TYPE="VALUE">
         Roll_moment_due_to_aileron
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-        0.24
+        0.29
       </COEFFICIENT>
       <COEFFICIENT NAME="Cldr" TYPE="VALUE">
         Roll_moment_due_to_rudder
@@ -309,12 +311,12 @@
       <COEFFICIENT NAME="CmDe" TYPE="VALUE">
         Pitch_moment_due_to_elevator_Deflection
         aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-        -1.10
+        -1.20
       </COEFFICIENT>
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
         Pitch_moment_due_to_pitch_rate
         aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-        -14.0
+        -12.0
       </COEFFICIENT>
       <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
         Pitch_moment_due_to_alpha_rate

@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        OV10.xml
   Author:      David Culp
-  CVS Version: $Id: OV10.xml,v 1.2 2003/06/03 09:53:52 ehofman Exp $
+  CVS Version: $Id: OV10.xml,v 1.3 2003/06/07 08:48:30 ehofman Exp $
 
   Function: Models a North American OV-10A Bronco
 -->
@@ -68,7 +68,7 @@
       ZLOC        7.0
       PITCH       0.0
       YAW         0.0
-      FEED          0
+      FEED          1
     </AC_ENGINE>
     <AC_THRUSTER FILE="direct">
       XLOC      165.0
@@ -83,7 +83,7 @@
       ZLOC        25.6
       RADIUS       1.0
       CAPACITY   777.0
-      CONTENTS     0.0
+      CONTENTS   777.0
     </AC_TANK>
     <AC_TANK TYPE="FUEL" NUMBER="1">  <!-- wing-right -->
       XLOC       190.0
@@ -91,7 +91,7 @@
       ZLOC        25.6
       RADIUS       1.0
       CAPACITY   777.0
-      CONTENTS     0.0
+      CONTENTS   777.0
     </AC_TANK>
     <AC_TANK TYPE="FUEL" NUMBER="2">  <!-- external 230 gallon -->
       XLOC       190.0
@@ -99,7 +99,7 @@
       ZLOC       -40.0
       RADIUS       1.0
       CAPACITY  1450.0
-      CONTENTS     0.0
+      CONTENTS  1450.0
     </AC_TANK>	
   </PROPULSION>
 
@@ -136,14 +136,16 @@
        GAIN          0.017
        OUTPUT        fcs/right-aileron-pos-rad
      </COMPONENT>
-     <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
+     <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
-     <COMPONENT NAME="Rudder Control" TYPE="SUMMER">
-       INPUT        fcs/yaw-trim-sum
-       GAIN         0.017
+     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+       INPUT        fcs/rudder-sum
+       MIN          -25
+       MAX          25
+       GAIN         0.01745
        OUTPUT       fcs/rudder-pos-rad
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
@@ -350,7 +352,7 @@
       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
         Yaw_moment_due_to_yaw_rate
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
-        -0.15
+        -0.18
       </COEFFICIENT>
       <COEFFICIENT NAME="Cnb" TYPE="VALUE">
         Yaw_moment_due_to_beta
@@ -360,7 +362,7 @@
       <COEFFICIENT NAME="Cndr" TYPE="VALUE">
         Yaw_moment_due_to_rudder
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
-        -0.04
+        -0.065
       </COEFFICIENT>
     </AXIS>
 
