@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.91 2003/04/24 04:52:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.92 2003/05/28 17:57:07 ehofman Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -603,12 +603,12 @@ void FGFCS::bind(void)
                        &FGFCS::SetPitchTrimCmd,
                        true);
   PropertyManager->Tie("fcs/roll-trim-cmd-norm", this,
-                       &FGFCS::GetYawTrimCmd,
-                       &FGFCS::SetYawTrimCmd,
-                       true);
-  PropertyManager->Tie("fcs/yaw-trim-cmd-norm", this,
                        &FGFCS::GetRollTrimCmd,
                        &FGFCS::SetRollTrimCmd,
+                       true);
+  PropertyManager->Tie("fcs/yaw-trim-cmd-norm", this,
+                       &FGFCS::GetYawTrimCmd,
+                       &FGFCS::SetYawTrimCmd,
                        true);
   PropertyManager->Tie("gear/gear-cmd-norm", this,
                        &FGFCS::GetGearCmd,
