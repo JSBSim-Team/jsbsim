@@ -3,11 +3,11 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.24 2004/05/29 12:20:42 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.25 2004/10/05 07:54:04 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
-            fgfs --aircraft=c172r
+            fgfs -aircraft=c172r
 -->
 
   <METRICS>
@@ -568,7 +568,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+  <OUTPUT NAME="C172out.csv" TYPE="CSV">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF
