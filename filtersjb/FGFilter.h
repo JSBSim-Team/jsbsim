@@ -59,34 +59,24 @@ class FGFilter  : public FGFCSComponent
   float cb;
   float cc;
   float cd;
+  float C1;
+  float C2;
+  float C3;
+  float C4;
+  float C5;
+  float C6;
   float PreviousInput1;
   float PreviousInput2;
   float PreviousOutput1;
   float PreviousOutput2;
   FGConfigFile* AC_cfg;
 
+protected:
+  enum {eLag, eRectLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType; 
+
 public:
   FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGFilter ( ) { }       //Destructor
-
-  float getdt() const {return dt;}
-  float getca() const {return ca;}
-  float getcb() const {return cb;}
-  float getcc() const {return cc;}
-  float getcd() const {return cd;}
-  float getPreviousInput1() const {return PreviousInput1;}
-  float getPreviousInput2() const {return PreviousInput2;}
-  float getPreviousOutput1() const {return PreviousOutput1;}
-  float getPreviousOutput2() const {return PreviousOutput2;}
-  void setdt (float adt) {dt = adt;}
-  void setca (float aca) {ca = aca;}
-  void setcb (float acb) {cb = acb;}
-  void setcc (float acc) {cc = acc;}
-  void setcd (float acd) {cd = acd;}
-  void setPreviousInput1 (float aPreviousInput1) {PreviousInput1 = aPreviousInput1;}
-  void setPreviousInput2 (float aPreviousInput2) {PreviousInput2 = aPreviousInput2;}
-  void setPreviousOutput1 (float aPreviousOutput1) {PreviousOutput1 = aPreviousOutput1;}
-  void setPreviousOutput2 (float aPreviousOutput2) {PreviousOutput2 = aPreviousOutput2;}
 
   bool Run (void);
 };
