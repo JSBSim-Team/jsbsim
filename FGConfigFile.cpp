@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.33 2001/12/04 04:24:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.34 2001/12/04 04:49:02 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +200,7 @@ string FGConfigFile::GetLine(void)
   string scratch = "";
   int test;
 
-   while ((test = cfgfile.get()) != EOF) {
+  while ((test = cfgfile.get()) != EOF) {
     if (test >= 0x20 || test == 0x09) {
       if (test == 0x09) {
         scratch += (char)0x20;
