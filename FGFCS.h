@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.61 2004/04/06 03:54:03 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.62 2004/04/06 03:58:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -120,21 +120,21 @@ CLASS DOCUMENTATION
     Another option for the flight controls portion of the config file is that in
     addition to using the "NAME" attribute in,
 
-    \<pre>
+    <pre>
     \<FLIGHT_CONTROL NAME="X-15 SAS">
-    \</pre>
+    </pre>
 
     one can also supply a filename:
 
-    \<pre>
+    <pre>
     \<FLIGHT_CONTROL NAME="X-15 SAS" FILE="X15.xml">
     \</FLIGHT_CONTROL>
-    \</pre>
+    </pre>
 
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.61 2004/04/06 03:54:03 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.62 2004/04/06 03:58:12 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
