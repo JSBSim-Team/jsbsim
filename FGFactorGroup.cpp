@@ -60,7 +60,9 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.20 2002/04/30 11:23:57 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.21 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,3 +202,4 @@ void FGFactorGroup::Debug(int from)
   }
 }
 
+}

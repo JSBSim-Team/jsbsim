@@ -60,11 +60,13 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.5 2002/09/29 13:22:16 apeden Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.6 2003/01/22 15:53:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGKinemat  : public FGFCSComponent {
 public:
@@ -88,5 +90,5 @@ private:
 
   void Debug(int from);
 };
-
+}
 #endif

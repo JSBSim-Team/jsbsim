@@ -38,7 +38,9 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.54 2002/04/12 15:23:59 dmegginson Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.55 2003/01/22 15:53:34 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,4 +295,4 @@ void FGPropeller::Debug(int from)
     }
   }
 }
-
+}

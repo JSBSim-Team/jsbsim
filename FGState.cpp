@@ -53,7 +53,9 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.122 2002/09/22 18:10:05 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGState.cpp,v 1.123 2003/01/22 15:53:35 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,4 +479,4 @@ void FGState::Debug(int from)
     }
   }
 }
-
+}

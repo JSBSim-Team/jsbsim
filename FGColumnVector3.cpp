@@ -20,7 +20,9 @@ INCLUDES
 
 #include "FGColumnVector3.h"
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.14 2001/12/23 21:49:01 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.15 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,3 +326,4 @@ void FGColumnVector3::Debug(int from)
   }
 }
 
+} // namespace JSBSim

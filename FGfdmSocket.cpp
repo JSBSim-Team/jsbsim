@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.17 2002/05/10 21:34:24 dmegginson Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.18 2003/01/22 15:53:37 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,4 +206,4 @@ void FGfdmSocket::Debug(int from)
     }
   }
 }
-
+}

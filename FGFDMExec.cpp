@@ -73,7 +73,9 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.95 2002/12/27 13:04:50 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.96 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -695,5 +697,6 @@ void FGFDMExec::Debug(int from)
       cout << IdHdr << endl;
     }
   }
+}
 }
 

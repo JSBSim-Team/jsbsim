@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.22 2002/09/22 18:15:11 apeden Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.23 2003/01/22 15:53:38 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,7 +74,7 @@ CLASS DOCUMENTATION
     The Summer component sums multiple inputs. These can be pilot control inputs,
     state variables, or even floating point numbers (e.g. for a bias).
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.22 2002/09/22 18:15:11 apeden Exp $
+    @version $Id: FGSummer.h,v 1.23 2003/01/22 15:53:38 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGSummer.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -84,6 +84,8 @@ CLASS DOCUMENTATION
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGSummer  : public FGFCSComponent
 {
@@ -105,5 +107,5 @@ private:
   double Bias;
   void Debug(int from);
 };
-
+}
 #endif

@@ -62,7 +62,9 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.43 2002/07/26 04:49:06 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.44 2003/01/22 15:53:31 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,3 +433,4 @@ void FGAtmosphere::Debug(int from)
   }
 }
 
+} // namespace JSBSim

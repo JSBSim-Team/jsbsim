@@ -39,7 +39,9 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.28 2002/08/07 04:29:33 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.29 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,4 +192,4 @@ void FGInertial::Debug(int from)
     }
   }
 }
-
+}

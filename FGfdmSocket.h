@@ -80,13 +80,15 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.25 2002/12/31 18:01:59 dmegginson Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.26 2003/01/22 15:53:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 using std::string;
+
+namespace JSBSim {
 
 class FGfdmSocket : public FGJSBBase
 {
@@ -109,5 +111,5 @@ private:
   bool connected;
   void Debug(int from);
 };
-
+}
 #endif

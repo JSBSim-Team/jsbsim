@@ -64,9 +64,12 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.51 2002/08/25 13:57:11 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.52 2003/01/22 15:53:32 jberndt Exp $"
 
 using std::string;
+using std::vector;
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,8 +87,6 @@ class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 
-using std::vector;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -98,7 +99,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.51 2002/08/25 13:57:11 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.52 2003/01/22 15:53:32 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,7 +242,7 @@ protected:
   vector <int> SourceTanks;
   virtual void Debug(int from);
 };
-
+}
 #include "FGState.h"
 #include "FGFDMExec.h"
 #include "FGAtmosphere.h"

@@ -54,11 +54,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.51 2003/01/20 13:16:32 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.52 2003/01/22 15:53:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGAircraft;
 class FGPosition;
@@ -162,7 +164,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.51 2003/01/20 13:16:32 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.52 2003/01/22 15:53:33 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -305,7 +307,7 @@ private:
   void Report(ReportType rt);
   void Debug(int from);
 };
-
+}
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGRotation.h"

@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGGain.h" 
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.46 2003/01/12 11:50:31 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.47 2003/01/22 15:53:38 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,4 +206,4 @@ void FGGain::Debug(int from)
     }
   }
 }
-
+}

@@ -44,9 +44,11 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGInitialCondition.h"
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.17 2002/09/07 21:59:48 apeden Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.18 2003/01/22 15:53:36 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
+
+namespace JSBSim {
 
 const string StateNames[10]=   { "all","udot","vdot","wdot","qdot","pdot","rdot",
                                 "hmgt","nlf" 
@@ -165,5 +167,5 @@ private:
   
   void Debug(int from);
 };
-
+}
 #endif

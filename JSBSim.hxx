@@ -72,6 +72,8 @@ class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
 
+using namespace JSBSim;
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -87,7 +89,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.37 2002/06/08 00:15:17 apeden Exp $
+    @version $Id: JSBSim.hxx,v 1.38 2003/01/22 15:53:37 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.hxx?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>

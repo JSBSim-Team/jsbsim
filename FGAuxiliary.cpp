@@ -57,7 +57,9 @@ INCLUDES
 #include "FGColumnVector4.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.34 2002/09/29 14:12:50 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.35 2003/01/22 15:53:31 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,3 +317,4 @@ void FGAuxiliary::Debug(int from)
   }
 }
 
+} // namespace JSBSim

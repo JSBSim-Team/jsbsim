@@ -61,7 +61,9 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.59 2002/09/24 11:33:27 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.60 2003/01/22 15:53:31 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -420,3 +422,4 @@ void FGCoefficient::Debug(int from)
   }
 }
 
+} // namespace JSBSim

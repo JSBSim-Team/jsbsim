@@ -59,11 +59,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.10 2002/12/31 18:01:59 dmegginson Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.11 2003/01/22 15:53:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGColumnVector3;
 
@@ -128,5 +130,5 @@ private:
   unsigned int rowCtr, colCtr;
   void Debug(int from);
 };
-
+}
 #endif

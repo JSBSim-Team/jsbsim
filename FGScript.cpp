@@ -57,7 +57,9 @@ INCLUDES
 #include "FGScript.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.11 2002/09/22 18:10:05 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.12 2003/01/22 15:53:35 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,4 +417,4 @@ void FGScript::Debug(int from)
     }
   }
 }
-
+}

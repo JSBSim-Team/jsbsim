@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.34 2002/12/17 14:42:16 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.35 2003/01/22 15:53:38 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,4 +240,4 @@ void FGFilter::Debug(int from)
     }
   }
 }
-
+}

@@ -59,11 +59,13 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.56 2002/09/29 13:17:10 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.57 2003/01/22 15:53:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf, NNorm } FcIdx;
 typedef enum { ofRad=0, ofNorm, ofMag , NForms} OutputForm;
@@ -141,7 +143,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.56 2002/09/29 13:17:10 apeden Exp $
+    @version $Id: FGFCS.h,v 1.57 2003/01/22 15:53:32 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -644,7 +646,7 @@ private:
   int ToNormalize[NNorm];
   void Debug(int from);
 };
-
+}
 
 #endif
 

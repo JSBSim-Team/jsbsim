@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.24 2003/01/20 13:16:32 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.25 2003/01/22 15:53:37 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,4 +171,4 @@ void FGDeadBand::Debug(int from)
     }
   }
 }
-
+}

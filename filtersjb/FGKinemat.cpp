@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.16 2002/12/17 14:42:18 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.17 2003/01/22 15:53:38 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,4 +226,4 @@ void FGKinemat::Debug(int from)
     }
   }
 }
-
+}

@@ -86,7 +86,9 @@ INCLUDES
 #include "FGPropertyManager.h"
 
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.57 2002/07/31 13:41:53 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.58 2003/01/22 15:53:34 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -348,4 +350,4 @@ void FGPosition::Debug(int from)
     }
   }
 }
-
+}

@@ -37,7 +37,9 @@ INCLUDES
 
 #include "FGThruster.h"
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.20 2002/09/10 01:53:12 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.21 2003/01/22 15:53:36 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,4 +117,4 @@ void FGThruster::Debug(int from)
     }
   }
 }
-
+}

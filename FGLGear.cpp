@@ -41,6 +41,8 @@ INCLUDES
 #include "FGLGear.h"
 #include <algorithm>
 
+namespace JSBSim {
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -49,8 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.88 2003/01/22 05:19:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.89 2003/01/22 15:53:33 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -564,4 +565,6 @@ void FGLGear::Debug(int from)
     }
   }
 }
+
+} // namespace JSBSim
 

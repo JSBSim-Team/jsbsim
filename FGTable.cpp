@@ -44,14 +44,17 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.27 2002/05/26 16:02:12 jberndt Exp $";
+using namespace std;
+
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.28 2003/01/22 15:53:36 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-using namespace std;
 
 FGTable::FGTable(int NRows, int NCols) : nRows(NRows), nCols(NCols)
 {
@@ -313,6 +316,4 @@ void FGTable::Debug(int from)
     }
   }
 }
-
-
-
+}

@@ -132,14 +132,14 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.73 2002/09/07 22:41:44 apeden Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.74 2003/01/22 15:53:37 jberndt Exp $";
 
 string ScriptName;
 string AircraftName;
 string ResetName;
 string LogOutputName;
 string LogDirectiveName;
-FGFDMExec* FDMExec;
+JSBSim::FGFDMExec* FDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -161,7 +161,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.73 2002/09/07 22:41:44 apeden Exp $
+    @version $Id: JSBSim.cpp,v 1.74 2003/01/22 15:53:37 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Source File </a>
 */
@@ -179,17 +179,17 @@ int main(int argc, char* argv[])
   LogDirectiveName = "";
   bool result = false;
   bool Scripted = false;
-  FGScript* Script;
+  JSBSim::FGScript* Script;
 
   options(argc, argv);
 
-  FDMExec = new FGFDMExec();
+  FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetAircraftPath("aircraft");
   FDMExec->SetEnginePath("engine");
   
   if (!ScriptName.empty()) { // SCRIPTED CASE
 
-    Script = new FGScript(FDMExec);
+    Script = new JSBSim::FGScript(FDMExec);
     result = Script->LoadScript(ScriptName);
 
     if (!result) {
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
       exit(-1);
     }
     
-    FGInitialCondition *IC=FDMExec->GetIC();
+    JSBSim::FGInitialCondition *IC=FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
     	cerr << "Initialization unsuccessful" << endl;
       exit(-1);
@@ -220,22 +220,22 @@ int main(int argc, char* argv[])
 // RUN loop. MESSAGES are read inside the Run() loop and output as necessary.
 //
 
-  FGJSBBase::Message* msg;
+  JSBSim::FGJSBBase::Message* msg;
   result = FDMExec->Run();
   while (result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
-      case FGJSBBase::Message::eText:
+      case JSBSim::FGJSBBase::Message::eText:
         cout << msg->messageId << ": " << msg->text << endl;
         break;
-      case FGJSBBase::Message::eBool:
+      case JSBSim::FGJSBBase::Message::eBool:
         cout << msg->messageId << ": " << msg->text << " " << msg->bVal << endl;
         break;
-      case FGJSBBase::Message::eInteger:
+      case JSBSim::FGJSBBase::Message::eInteger:
         cout << msg->messageId << ": " << msg->text << " " << msg->iVal << endl;
         break;
-      case FGJSBBase::Message::eDouble:
+      case JSBSim::FGJSBBase::Message::eDouble:
         cout << msg->messageId << ": " << msg->text << " " << msg->dVal << endl;
         break;
       default:

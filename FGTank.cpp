@@ -38,18 +38,20 @@ INCLUDES
 
 #include "FGTank.h"
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.26 2002/01/19 17:25:39 dmegginson Exp $";
-static const char *IdHdr = ID_TANK;
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CLASS IMPLEMENTATION
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 #if !defined ( sgi ) || defined( __GNUC__ )
 using std::cerr;
 using std::endl;
 using std::cout;
 #endif
+
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.27 2003/01/22 15:53:36 jberndt Exp $";
+static const char *IdHdr = ID_TANK;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 FGTank::FGTank(FGConfigFile* AC_cfg)
 {
@@ -156,4 +158,4 @@ void FGTank::Debug(int from)
     }
   }
 }
-
+}

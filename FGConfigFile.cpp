@@ -21,7 +21,9 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.42 2002/09/23 11:52:50 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.43 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,4 +341,4 @@ void FGConfigFile::Debug(int from)
     }
   }
 }
-
+}

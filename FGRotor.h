@@ -44,11 +44,13 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.11 2001/12/10 23:34:58 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.12 2003/01/22 15:53:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGRotor : public FGThruster {
 
@@ -61,6 +63,6 @@ public:
 private:
   void Debug(int from);
 };
-
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

@@ -41,7 +41,9 @@ INCLUDES
 #include "FGCoefficient.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.41 2002/09/29 13:17:10 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.42 2003/01/22 15:53:31 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;                           
@@ -404,3 +406,4 @@ void FGAerodynamics::Debug(int from)
   }
 }
 
+} // namespace JSBSim

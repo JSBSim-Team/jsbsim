@@ -42,7 +42,9 @@ INCLUDES
 #include "FGTurbine.h"
 
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.4 2002/10/01 12:04:07 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.5 2003/01/22 15:53:36 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,4 +253,4 @@ void FGTurbine::Debug(int from)
     }
   }
 }
-
+}

@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.31 2002/06/08 00:11:09 apeden Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.32 2003/01/22 15:53:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.31 2002/06/08 00:11:09 apeden Exp $
+    @version $Id: FGAtmosphere.h,v 1.32 2003/01/22 15:53:31 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -81,6 +81,8 @@ CLASS DOCUMENTATION
 /******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
+
+namespace JSBSim {
 
 class FGAtmosphere : public FGModel {
 public:
@@ -189,6 +191,8 @@ private:
   void Turbulence(void);
   void Debug(int from);
 };
+
+} // namespace JSBSim
 
 /******************************************************************************/
 #endif

@@ -58,7 +58,9 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.38 2002/09/07 21:49:25 apeden Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.39 2003/01/22 15:53:33 jberndt Exp $"
+
+namespace JSBSim {
 
 typedef enum { setvt, setvc, setve, setmach, setuvw, setned, setvg } speedset;
 typedef enum { setwned, setwmd, setwhc } windset; 
@@ -125,7 +127,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.38 2002/09/07 21:49:25 apeden Exp $
+   @version $Id: FGInitialCondition.h,v 1.39 2003/01/22 15:53:33 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGInitialCondition.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -301,6 +303,6 @@ private:
   bool solve(double *y, double x);
   void Debug(int from);
 };
-
+}
 #endif
 

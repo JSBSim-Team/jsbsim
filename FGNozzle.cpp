@@ -44,7 +44,9 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.28 2001/12/23 21:49:01 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.29 2003/01/22 15:53:34 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,4 +151,4 @@ void FGNozzle::Debug(int from)
     }
   }
 }
-
+}

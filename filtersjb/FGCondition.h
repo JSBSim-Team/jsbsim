@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.3 2003/01/21 11:44:42 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.4 2003/01/22 15:53:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -93,8 +93,6 @@ private:
 
   void Debug(int from);
 };
-
-}; // namespace JSBSim
-
+}
 #endif
 

@@ -58,7 +58,9 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.21 2002/09/29 13:22:16 apeden Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.22 2003/01/22 15:53:38 jberndt Exp $"
+
+namespace JSBSim {
 
 class FGFCS;
 
@@ -89,5 +91,5 @@ private:
 
   void Debug(int from);
 };
-
+}
 #endif

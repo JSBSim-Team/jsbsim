@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.13 2002/05/08 11:28:39 apeden Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.14 2003/01/22 15:53:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 /** Lookup table class.
     Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.13 2002/05/08 11:28:39 apeden Exp $
+    @version $Id: FGTable.h,v 1.14 2003/01/22 15:53:36 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGTable.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -75,6 +75,8 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+
+namespace JSBSim {
 
 class FGTable : public FGJSBBase
 {
@@ -111,7 +113,7 @@ private:
   double** Allocate(void);
   void Debug(int from);
 };
-
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 #endif

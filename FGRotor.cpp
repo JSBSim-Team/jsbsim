@@ -37,7 +37,9 @@ INCLUDES
 
 #include "FGRotor.h"
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.16 2001/12/23 21:49:01 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.17 2003/01/22 15:53:35 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,4 +111,4 @@ void FGRotor::Debug(int from)
     }
   }
 }
-
+}

@@ -38,7 +38,9 @@ INCLUDES
 #include "FGGroundReactions.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.33 2002/07/26 04:49:06 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.34 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 #if defined (__APPLE__)
@@ -269,4 +271,4 @@ void FGGroundReactions::Debug(int from)
     }
   }
 }
-
+}

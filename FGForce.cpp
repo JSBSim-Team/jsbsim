@@ -48,7 +48,9 @@ and the cg.
 #include "FGColumnVector4.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.31 2001/12/23 21:49:01 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.32 2003/01/22 15:53:32 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,4 +181,4 @@ void FGForce::Debug(int from)
     }
   }
 }
-
+}

@@ -57,7 +57,9 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.54 2002/09/07 21:49:25 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.55 2003/01/22 15:53:33 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -1021,4 +1023,4 @@ void FGInitialCondition::Debug(int from)
     }
   }
 }
-
+}

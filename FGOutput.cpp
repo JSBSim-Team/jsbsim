@@ -52,7 +52,9 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.60 2002/08/16 12:42:30 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.61 2003/01/22 15:53:34 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -557,4 +559,4 @@ void FGOutput::Debug(int from)
     }
   }
 }
-
+}

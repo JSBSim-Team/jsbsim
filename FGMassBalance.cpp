@@ -41,7 +41,9 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.28 2002/07/10 22:17:00 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.29 2003/01/22 15:53:33 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,4 +292,4 @@ void FGMassBalance::Debug(int from)
     }
   }
 }
-
+}

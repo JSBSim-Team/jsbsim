@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGFCSComponent.h"
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.33 2003/01/12 11:50:31 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.34 2003/01/22 15:53:37 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,4 +156,4 @@ void FGFCSComponent::Debug(int from)
     }
   }
 }
-
+}

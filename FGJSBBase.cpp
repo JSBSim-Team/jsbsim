@@ -37,7 +37,9 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.17 2003/01/21 11:44:41 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.18 2003/01/22 15:53:33 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,4 +185,5 @@ void FGJSBBase::disableHighLighting(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+} // namespace JSBSim
 

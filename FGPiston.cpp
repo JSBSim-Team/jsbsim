@@ -42,7 +42,9 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.57 2002/12/30 22:15:57 dmegginson Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.58 2003/01/22 15:53:34 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -569,3 +571,5 @@ FGPiston::CalcFuelNeed(void)
 {
   return FuelFlow_gph / 3600 * 6 * State->Getdt() * Propulsion->GetRate();
 }
+
+} // namespace JSBSim

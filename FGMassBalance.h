@@ -46,11 +46,13 @@ INCLUDES
 #include "FGPropulsion.h"
 #include <vector>
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.17 2002/06/05 03:47:48 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.18 2003/01/22 15:53:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGMassBalance : public FGModel
 {
@@ -113,6 +115,6 @@ private:
   FGColumnVector3 PointMassCG;
   void Debug(int from);
 };
-
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

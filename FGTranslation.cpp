@@ -70,7 +70,9 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.50 2002/09/29 13:17:10 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.51 2003/01/22 15:53:36 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -322,4 +324,4 @@ void FGTranslation::Debug(int from)
     }
   }
 }
-
+}

@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.38 2002/12/17 14:42:21 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.39 2003/01/22 15:53:38 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,4 +169,4 @@ void FGSummer::Debug(int from)
     }
   }
 }
-
+}

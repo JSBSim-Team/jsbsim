@@ -39,7 +39,9 @@ INCLUDES
 
 #include "FGGradient.h"
 
-static const char *IdSrc = "$Id: FGGradient.cpp,v 1.19 2002/09/29 13:22:16 apeden Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGGradient.cpp,v 1.20 2003/01/22 15:53:38 jberndt Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,4 +121,4 @@ void FGGradient::Debug(int from)
     }
   }
 }
-
+}

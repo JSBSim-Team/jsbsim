@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.25 2001/12/11 05:33:09 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.26 2003/01/22 15:53:32 jberndt Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,12 +210,14 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.25 2001/12/11 05:33:09 jberndt Exp $
+    @version $Id: FGForce.h,v 1.26 2003/01/22 15:53:32 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+namespace JSBSim {
 
 class FGForce : public FGJSBBase
 {
@@ -328,6 +330,6 @@ private:
 
   virtual void Debug(int from);
 };
-
+}
 #endif
 

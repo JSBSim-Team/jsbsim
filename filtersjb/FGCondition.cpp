@@ -36,16 +36,17 @@ INCLUDES
 
 #include "FGCondition.h"
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.3 2003/01/21 11:44:41 jberndt Exp $";
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.4 2003/01/22 15:53:37 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-namespace JSBSim {
-
 string FGCondition::indent = "        ";
+
 
 FGCondition::FGCondition(FGConfigFile* AC_cfg, FGPropertyManager* PropertyManager) :
   PropertyManager(PropertyManager)
@@ -252,6 +253,4 @@ void FGCondition::Debug(int from)
     }
   }
 }
-
-}; // namespace JSBSim
-
+}

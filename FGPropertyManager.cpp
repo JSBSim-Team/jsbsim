@@ -47,6 +47,8 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
 
+namespace JSBSim {
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGPropertyManager::mkPropertyName(string name, bool lowercase) {
@@ -312,3 +314,5 @@ void FGPropertyManager::Tie (const string &name, double *pointer,
     cout <<
 	   "Failed to tie property " << name << " to a pointer" << endl;
 }
+
+} // namespace JSBSim

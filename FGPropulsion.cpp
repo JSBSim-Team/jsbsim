@@ -55,12 +55,6 @@ INCLUDES
 #include "FGPropulsion.h"
 #include "FGPropertyManager.h"
 
-
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.80 2002/09/10 01:53:12 apeden Exp $";
-static const char *IdHdr = ID_PROPULSION;
-
-extern short debug_lvl;
-
 #if defined (__APPLE__)
 /* Not all systems have the gcvt function */
 inline char* gcvt (double value, int ndigits, char *buf) {
@@ -69,6 +63,13 @@ inline char* gcvt (double value, int ndigits, char *buf) {
     return buf;
 }
 #endif
+
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.81 2003/01/22 15:53:35 jberndt Exp $";
+static const char *IdHdr = ID_PROPULSION;
+
+extern short debug_lvl;
 
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -702,4 +703,4 @@ void FGPropulsion::Debug(int from)
     }
   }
 }
-
+}
