@@ -68,10 +68,13 @@ aircraft/f15/Makefile \
 aircraft/f16/Makefile \
 aircraft/f22/Makefile \
 aircraft/f104/Makefile \
+aircraft/fokker100/Makefile \
 aircraft/minisgs/Makefile \
 aircraft/mk82/Makefile \
 aircraft/p51d/Makefile \
 aircraft/pa28/Makefile \
+aircraft/paraglider/Makefile \
+aircraft/sgs126/Makefile \
 aircraft/shuttle/Makefile \
 aircraft/t6texan2/Makefile \
 aircraft/x24b/Makefile \
