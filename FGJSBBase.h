@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.11 2001/11/12 05:06:27 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.12 2001/11/12 09:56:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.11 2001/11/12 05:06:27 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.12 2001/11/12 09:56:12 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,6 +156,7 @@ public:
   /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
 
+  /// JSBSim Message structure
   struct Message {
     unsigned int fdmId;
     unsigned int messageId;
@@ -169,21 +170,21 @@ public:
 
   ///@name JSBSim Enums.
   //@{
-  /// Moments
+  /// Moments L, M, N
   enum {eL     = 1, eM,     eN    };
-  /// Rates
+  /// Rates P, Q, R
   enum {eP     = 1, eQ,     eR    };
-  /// Velocities
+  /// Velocities U, V, W
   enum {eU     = 1, eV,     eW    };
-  /// Positions
+  /// Positions X, Y, Z
   enum {eX     = 1, eY,     eZ    };
-  /// Euler angles
+  /// Euler angles Phi, Theta, Psi
   enum {ePhi   = 1, eTht,   ePsi  };
-  /// Stability axis forces
+  /// Stability axis forces, Drag, Side force, Lift
   enum {eDrag  = 1, eSide,  eLift };
-  /// Local frame orientation
+  /// Local frame orientation Roll, Pitch, Yaw
   enum {eRoll  = 1, ePitch, eYaw  };
-  /// Local frame position
+  /// Local frame position North, East, Down
   enum {eNorth = 1, eEast,  eDown };
   //@}
   
