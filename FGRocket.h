@@ -45,7 +45,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.15 2001/03/22 17:58:19 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.16 2001/03/23 00:53:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -64,6 +64,7 @@ private:
   float SHR;
   float maxPC;
   float propEff;
+  float kFactor;
   void Debug(void);
 };
 

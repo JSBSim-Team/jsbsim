@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.39 2001/03/22 17:58:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.40 2001/03/23 00:53:33 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -195,10 +195,10 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
         while ((token = AC_cfg->GetValue()) != "/AC_ENGINE") {
           *AC_cfg >> token;
           if (token == "XLOC") { *AC_cfg >> xLoc; cout << "      X = " << xLoc << endl;}
-          else if (token == "YLOC") *AC_cfg >> yLoc;
-          else if (token == "ZLOC") *AC_cfg >> zLoc;
-          else if (token == "PITCH") *AC_cfg >> Pitch;
-          else if (token == "YAW") *AC_cfg >> Yaw;
+          else if (token == "YLOC") { *AC_cfg >> yLoc; cout << "      Y = " << yLoc << endl;}
+          else if (token == "ZLOC") { *AC_cfg >> zLoc; cout << "      Z = " << zLoc << endl;}
+          else if (token == "PITCH") { *AC_cfg >> Pitch; cout << "      Pitch = " << Pitch << endl;}
+          else if (token == "YAW") { *AC_cfg >> Yaw; cout << "      Yaw = " << Yaw << endl;}
           else if (token == "FEED") {
             *AC_cfg >> Feed;
             Engines[numEngines]->AddFeedTank(Feed);

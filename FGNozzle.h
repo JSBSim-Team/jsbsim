@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.13 2001/03/22 17:58:19 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.14 2001/03/23 00:53:32 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -56,7 +56,8 @@ public:
   FGNozzle(FGFDMExec* exec, FGConfigFile* AC_cfg);
   ~FGNozzle();
 
-  float Calculate(float PowerRequired);
+  float Calculate(float CfPc);
+  float GetPowerRequired(void);
   
 private:
   float PE;
