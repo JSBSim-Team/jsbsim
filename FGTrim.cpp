@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.31 2001/12/22 13:32:54 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.32 2002/02/23 13:08:33 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,9 +118,9 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
-    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
-    //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tBeta ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));
     break;
   case tCustom:
   case tNone:
@@ -605,19 +605,22 @@ void FGTrim::setupPullup() {
 void FGTrim::setupTurn(void){
   double g,phi;
   phi = fgic->GetRollAngleRadIC();
-  if( fabs(phi) > 0.01 && fabs(phi) < 1.56 ) {
+  if( fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
     targetNlf = 1 / cos(phi);
     g = fdmex->GetInertial()->gravity(); 
-    psidot = g*tan(phi) / fgic->GetVtrueFpsIC();
+    psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
     cout << targetNlf << ", " << psidot << endl;
   }  
 }  
 
 void FGTrim::updateRates(void){
-  if(mode == tTurn) {
+  double phi = fgic->GetRollAngleRadIC();
+  double g = fdmex->GetInertial()->gravity(); 
+  if(fabs(phi) > 0.001 && fabs(phi) < 1.56 ) {
     double p,q,r,theta,phi;
     theta=fgic->GetPitchAngleRadIC();
     phi=fgic->GetRollAngleRadIC();
+    psidot = g*tan(phi) / fgic->GetUBodyFpsIC();
     p=-psidot*sin(theta);
     q=psidot*cos(theta)*sin(phi);
     r=psidot*cos(theta)*cos(phi);
