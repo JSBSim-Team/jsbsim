@@ -128,6 +128,9 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
+const char *IdSrc = "JSBSim: $Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.43 2000/10/13 12:44:19 jsb Exp $";
+const char *IdHdr = ID_AIRCRAFT;
+
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/

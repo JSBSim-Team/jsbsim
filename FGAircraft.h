@@ -121,6 +121,8 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGMatrix.h"
 
+#define ID_AIRCRAFT JSBSim $Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.31 2000/10/13 12:44:19 jsb Exp $
+
 /*******************************************************************************
 DEFINITIONS
 *******************************************************************************/
@@ -130,7 +132,7 @@ DEFINITIONS
     up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
     aerodynamic and mass properties, landing gear, etc.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.30 2000/10/10 12:53:59 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.31 2000/10/13 12:44:19 jsb Exp $
   */
 
 /*******************************************************************************
