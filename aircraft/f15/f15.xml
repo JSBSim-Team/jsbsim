@@ -3,12 +3,31 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.1 2002/11/16 03:20:31 jberndt Exp $
+  CVS Version: $Id: f15.xml,v 1.2 2002/11/20 01:44:08 jberndt Exp $
 
-  Function: Models an F-15 Eagle
-  Refferences:	Dryden Technical Reports Server documents: H-823 and H-905
+  Function: Models an F-15 "Eagle"
+  Status:   Beta
 
-  Status: Alpha
+  Sources:
+    Dryden Technical Reports Server documents:
+        H-823:  Initial results from flight test a large remotely piloted
+                airplane model.
+        H-905:  Subsonic stability and control deratives for an unpowered,
+                remotely piloted 3/8-scale F-15 airplane model obtained
+                from flight test.
+	H-1990:	Evaluating the dynamic response of in-flight thrust calculation
+                techniques during trhorrle transients.
+        H-1999:	Dynamic ground effects flight test of and F-15 aircraft.
+
+  
+  Maximum lift:		1.2
+  AOA for zero lift:	-2 degrees
+  Maximum AOA:		31.3 degrees
+
+  Pitch rate damper:	0.4 deg/deg/sec
+  Roll damper gain:	0.8 deg/deg/sec
+  Yaw damper gain:	1.0 deg/deg/sec
+  Yaw rate washout:	1.86 seconds
 -->
 
   <METRICS>
@@ -23,10 +42,10 @@
     AC_IXX      22000
     AC_IYY     182000
     AC_IZZ     200000
-    AC_IXZ      -1230
+    AC_IXZ       1230
     AC_EMPTYWT  30035
-    AC_AERORP    233.45   0.0    0.0
-    AC_CGLOC     213.45   0.0    4.1
+    AC_AERORP    223.45   0.0   14.4
+    AC_CGLOC     223.45   0.0    0.0
     AC_EYEPTLOC  447.0    0.0   45.0
     AC_POINTMASS 230.0  447.0    0.0   36.0
 
@@ -34,7 +53,7 @@
 
   <UNDERCARRIAGE>
 
-     AC_GEAR  NOSE      407.5    0.0 -77.7  2500  800 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
+     AC_GEAR  NOSE      408.4    0.0 -77.7  2500  800 0.5 0.8 0.02 STEERABLE NOSE 20 RETRACT
      AC_GEAR  MLG_LEFT  195.0  -54.0 -77.5  5400 1600 0.5 0.8 0.02 FIXED     LEFT  0 RETRACT
      AC_GEAR  MLG_RIGHT 195.0   54.0 -77.5  5400 1600 0.5 0.8 0.02 FIXED     RIGHT 0 RETRACT
 
@@ -161,66 +180,131 @@
 
      <AXIS NAME="LIFT">
 
-       <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
-         Lift_due_to_alpha
-         16
-         aero/alpha-rad
-         aero/qbar-psf | metrics/Sw-sqft
-         -0.349	-0.93
-         -0.262	-0.86
-         -0.175 -0.58
-         -0.087	-0.26
-         0.000	0.06
-         0.070	0.30
-         0.140	0.58
-         0.209	0.78
-         0.279	0.88
-         0.349	1.01
-         0.419	1.08
-         0.489	1.16
-         0.559	1.19
-         0.698	1.01
-         0.785  0.93
-         0.873	0.81
-       </COEFFICIENT>
+       <GROUP NAME="CLb">
+         Basic_lift
+         <FACTOR NAME="kCLge" TYPE="VECTOR">
+            Change_in_lift_due_to_ground_effect
+            13
+            aero/h_b-mac-ft
+            none
+            0.0   1.061
+            0.1   1.033
+            0.15  1.031
+            0.2   1.033
+            0.3   1.028
+            0.4   1.011
+            0.5   1.009
+            0.6   1.005
+            0.7   1.002
+            0.8   1.000
+            0.9   1.000
+            1.0   1.000
+            1.1   1.000
+         </FACTOR>
+         <!--
+              CL is accurate for alpha of 0 ... 0.558, the rest is an estimate
+              based on the fact that CL=0 for alpha=-0.0349 and CLmax = 1.2
+           -->
+         <COEFFICIENT NAME="CLalpha" TYPE="VECTOR">
+           Lift_due_to_alpha
+           16
+           aero/alpha-rad
+           aero/qbar-psf | metrics/Sw-sqft
+           -0.349	-0.93
+           -0.262	-0.86
+           -0.175	-0.58
+           -0.087	-0.26
+           0.000	0.06
+           0.070	0.30
+           0.140	0.58
+           0.209	0.78
+           0.279	0.88
+           0.349	1.01
+           0.419	1.08
+           0.489	1.16
+           0.559	1.19
+           0.698	1.01
+           0.785	0.93
+           0.873	0.81
+         </COEFFICIENT>
+       </GROUP>
 
        <COEFFICIENT NAME="CLDe" TYPE="VALUE">
          Lift_due_to_Elevator_Deflection
-         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad
-         0.573
+         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad | aero/beta-rad
+         0.0
        </COEFFICIENT>
 
     </AXIS>
 
     <AXIS NAME="DRAG">
 
-       <COEFFICIENT NAME="CDalpha" TYPE="VECTOR">
-         Drag_due_to_alpha
-         16
-         aero/alpha-rad
-         aero/qbar-psf | metrics/Sw-sqft
-         -0.349	0.8050
-         -0.262	0.8781
-         -0.175	0.6229
-         -0.087	0.3210
-         0.000	0.0692
-         0.070	0.2217
-         0.140	0.4942
-         0.209	0.6876
-         0.279	0.7823
-         0.349	0.9036
-         0.419	0.9630
-         0.489	1.0245
-         0.559	1.0562
-         0.698	0.8069
-         0.785	0.7003
-         0.873	0.6100
-      </COEFFICIENT>
+       <GROUP NAME="CDb">
+         Basic_drag
+         <FACTOR NAME="kCDge" TYPE="VECTOR">
+            Change_in_drag_due_to_ground_effect
+            13
+            aero/h_b-mac-ft
+            none
+            0.0   0.81
+            0.1   0.99
+            0.15  0.95
+            0.2   0.98
+            0.3   0.99
+            0.4   1.00
+            0.5   1.04
+            0.6   1.01
+            0.7   0.99
+            0.8   1.01
+            0.9   1.00
+            1.0   1.00
+            1.1   1.00
+         </FACTOR>
+         <!--
+              CDmin is calculated from flight test date as described in H-1990
+              as a function of Fex, FNP, W, y, v, S and rho
+           -->
+         <COEFFICIENT NAME="CDmin" TYPE="VALUE">
+           Drag_minimum
+           aero/qbar-psf | metrics/Sw-sqft
+           0.0474
+         </COEFFICIENT>
+         <!--
+              CDalpha is calculated based on CL and CNb and therefore is accurate
+              for alpha of 0 ... 0.558
+           -->
+         <COEFFICIENT NAME="CDalpha" TYPE="VECTOR">
+           Drag_due_to_alpha
+           16
+           aero/alpha-rad
+           aero/qbar-psf | metrics/Sw-sqft | aero/mag-beta-rad
+           -0.349	2.5954
+           -0.262	3.2686
+           -0.175	3.3563
+           -0.087	3.0533
+           0.000	3.8228
+           0.070	4.3450
+           0.140	4.1909
+           0.209	3.7331
+           0.279	3.1268
+           0.349	2.8246
+           0.419	2.4657
+           0.489	2.2127
+           0.559	1.9317
+           0.698	1.2283
+           0.785	0.9522
+           0.873	0.7015
+        </COEFFICIENT>
+      </GROUP>
 
-      <COEFFICIENT NAME="CDDe" TYPE="VALUE">
+      <COEFFICIENT NAME="CDDe" TYPE="VECTOR">
         Drag_due_to_Elevator_Deflection
+        3
+        aero/alpha-rad
         aero/qbar-psf | metrics/Sw-sqft | fcs/mag-elevator-pos-rad
-        0.0
+        -0.349	3.085
+         0.000	3.283
+         0.873	2.110
       </COEFFICIENT>
 
     </AXIS>
@@ -304,20 +388,42 @@
 
     <AXIS NAME="PITCH">
 
-      <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
-        Pitch_moment_due_to_alpha
-        8
-        aero/alpha-rad
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
-        -0.349	-1.1459
-        -0.262	-0.5730
-        -0.131	-0.0573
-        0.000	-0.2292
-        0.279	-0.5157
-        0.419	-0.8594
-        0.559	-0.4584
-        0.873	-0.5157
-      </COEFFICIENT>
+      <GROUP NAME="Cmb">
+        Basic_pitch
+        <FACTOR NAME="kCmge" TYPE="VECTOR">
+           Change_in_pitch_due_to_ground_effect
+           13
+           aero/h_b-mac-ft
+           none
+           0.0   0.992
+           0.1   0.996
+           0.15  0.999
+           0.2   0.997
+           0.3   1.000
+           0.4   1.000
+           0.5   1.002
+           0.6   1.001
+           0.7   0.998
+           0.8   0.999
+           0.9   1.000
+           1.0   1.000
+           1.1   1.000
+        </FACTOR>
+        <COEFFICIENT NAME="Cmalpha" TYPE="VECTOR">
+          Pitch_moment_due_to_alpha
+          8
+          aero/alpha-rad
+          aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
+          -0.349	-1.1459
+          -0.262	-0.5730
+          -0.131	-0.0573
+          0.000		-0.2292
+          0.279		-0.5157
+          0.419		-0.8594
+          0.559		-0.4584
+          0.873		-0.5157
+        </COEFFICIENT>
+      </GROUP>
 
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
          Pitch_moment_due_to_pitch_rate
@@ -349,20 +455,21 @@
 
        <COEFFICIENT NAME="Cnp" TYPE="VECTOR">
          Yaw_moment_due_to_roll_rate
-         5
+         6
          aero/alpha-rad
          aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
          -0.349	0.11
          -0.087	-0.14
-         0.279	0.00
-         0.419	0.17
-         0.873	0.17
+         0.000	-0.10
+         0.279	0.01
+         0.419	-0.13
+         0.873	-0.18
         </COEFFICIENT>
 
        <COEFFICIENT NAME="Cnr" TYPE="VALUE">
          Yaw_moment_due_to_yaw_rate
          aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-         -0.07
+         -0.3
        </COEFFICIENT>
 
        <COEFFICIENT NAME="Cnda" TYPE="VALUE">
