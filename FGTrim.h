@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.33 2003/12/02 13:28:40 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.34 2003/12/04 05:12:53 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -93,30 +93,25 @@ CLASS DOCUMENTATION
     last three are used for on-ground trimming. The state-control pairs used in
     a given trim are completely user configurable and several pre-defined modes
     are provided as well. They are:
-    <ul>
-    <li> tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator</li>
-    <li> tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
-                and heading minus ground track (hmgt) with beta</li>
-    <li> tPullup: tLongitudinal but adjust alpha to achieve load factor input
-         with SetTargetNlf()
-
-    <li> tGround: wdot with altitude, qdot with theta, and pdot with phi</li>
+    - tLongitudinal: Trim wdot with alpha, udot with thrust, qdot with elevator
+    - tFull: tLongitudinal + vdot with phi, pdot with aileron, rdot with rudder
+             and heading minus ground track (hmgt) with beta
+    - tPullup: tLongitudinal but adjust alpha to achieve load factor input
+               with SetTargetNlf()
+    - tGround: wdot with altitude, qdot with theta, and pdot with phi
     
     The remaining modes include <b>tCustom</b>, which is completely user defined and
     <b>tNone</b>.
-    </ul>
-    
+
     Note that trims can (and do) fail for reasons that are completely outside
     the control of the trimming routine itself. The most common problem is the 
     initial conditions: is the model capable of steady state flight
     at those conditions?  Check the speed, altitude, configuration (flaps,
     gear, etc.), weight, cg, and anything else that may be relevant.
     
-    Example usage:
+    Example usage:<pre>
     FGFDMExec* FDMExec = new FGFDMExec();
-    .
-    .
-    .
+
     FGInitialCondition* fgic = new FGInitialCondition(FDMExec);
     FGTrim *fgt(FDMExec,fgic,tFull);
     fgic->SetVcaibratedKtsIC(100);
@@ -125,9 +120,9 @@ CLASS DOCUMENTATION
     if( !fgt->DoTrim() ) {
       cout << "Trim Failed" << endl;
     }
-    fgt->ReportState();  
+    fgt->ReportState(); </pre>  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.33 2003/12/02 13:28:40 jberndt Exp $
+    @version "$Id: FGTrim.h,v 1.34 2003/12/04 05:12:53 jberndt Exp $"
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

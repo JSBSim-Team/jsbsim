@@ -44,7 +44,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.16 2003/12/03 13:14:10 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.17 2003/12/04 05:12:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,21 +83,21 @@ CLASS DOCUMENTATION
 
 Configuration File Format
 <pre>
-<FG_SIMTURBINE NAME="<name>">
-  MILTHRUST   <thrust>
-  MAXTHRUST   <thrust>
-  BYPASSRATIO <bypass ratio>
-  TSFC        <thrust specific fuel consumption>
-  ATSFC       <afterburning thrust specific fuel consumption>
-  IDLEN1      <idle N1>
-  IDLEN2      <idle N2>
-  MAXN1       <max N1>
-  MAXN2       <max N2>
-  AUGMENTED   <0|1>
-  AUGMETHOD   <0|1>
-  INJECTED    <0|1>
+\<FG_SIMTURBINE NAME="<name>">
+  MILTHRUST   \<thrust>
+  MAXTHRUST   \<thrust>
+  BYPASSRATIO \<bypass ratio>
+  TSFC        \<thrust specific fuel consumption>
+  ATSFC       \<afterburning thrust specific fuel consumption>
+  IDLEN1      \<idle N1>
+  IDLEN2      \<idle N2>
+  MAXN1       \<max N1>
+  MAXN2       \<max N2>
+  AUGMENTED   \<0|1>
+  AUGMETHOD   \<0|1>
+  INJECTED    \<0|1>
   ...
-</FG_SIMTURBINE>
+\</FG_SIMTURBINE>
 </pre>
 Definition of the turbine engine configuration file parameters:
 <pre>
@@ -125,7 +125,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version $Id: FGSimTurbine.h,v 1.16 2003/12/03 13:14:10 jberndt Exp $
+    @version "$Id: FGSimTurbine.h,v 1.17 2003/12/04 05:12:53 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,15 +136,15 @@ class FGSimTurbine : public FGEngine
 {
 public:
   /** Constructor
-      @param exec pointer to executive structure
-      @param Eng_Cfg pointer to engine config file instance */
-  FGSimTurbine(FGFDMExec* exec, FGConfigFile* Eng_cfg);
+      @param Executive pointer to executive structure
+      @param Eng_cfg pointer to engine config file instance */
+  FGSimTurbine(FGFDMExec* Executive, FGConfigFile* Eng_cfg);
   /// Destructor
   ~FGSimTurbine();
 
   enum phaseType { tpOff, tpRun, tpSpinUp, tpStart, tpStall, tpSeize, tpTrim };
 
-  double Calculate(double);
+  double Calculate(double PowerRequired);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
   double Seek(double* var, double target, double accel, double decel);

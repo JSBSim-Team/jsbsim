@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.11 2003/12/02 12:56:04 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.12 2003/12/04 05:12:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,8 +62,8 @@ CLASS DOCUMENTATION
     <h4>Scripting support provided via FGScript.</h4>
 
     <p>There is simple scripting support provided in the FGScript
-    class. Commands are specified using the <u>Simple Scripting
-    Directives for JSBSim</u> (SSDJ). The script file is in XML
+    class. Commands are specified using the <em>Simple Scripting
+    Directives for JSBSim</em> (SSDJ). The script file is in XML
     format. A test condition (or conditions) can be set up in the
     script and when the condition evaluates to true, the specified
     action[s] is/are taken. A test condition can be <em>persistent</em>,
@@ -118,7 +118,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;when&quot; clauses.</p>
     @author Jon S. Berndt
-    @version $Id: FGScript.h,v 1.11 2003/12/02 12:56:04 jberndt Exp $
+    @version "$Id: FGScript.h,v 1.12 2003/12/04 05:12:53 jberndt Exp $"
 
 */
 

@@ -80,7 +80,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.68 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.69 2003/12/04 05:12:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.68 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGState.h,v 1.69 2003/12/04 05:12:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,7 @@ class FGState : public FGJSBBase
 public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
-  FGState(FGFDMExec*);
+  FGState(FGFDMExec* Executive);
   /// Destructor
   ~FGState();
 
@@ -311,7 +311,7 @@ public:
       @param c matrix column index.
       @return the matrix element described by the row and column supplied.
       */
-  double GetTb2l(int i, int j) { return mTb2l(i,j);}
+  double GetTb2l(int r, int c) { return mTb2l(r,c);}
   
   /** Prints a summary of simulator state (speed, altitude, 
       configuration, etc.)
