@@ -1,0 +1,152 @@
+<FDM_CONFIG NAME="{name}" VERSION="{version}">
+<!--
+
+  File:        {file}
+  Author:      {author}
+  CVS Version: $Id: aircraft_template.xml,v 1.1 2003/01/03 04:13:57 jberndt Exp $
+
+  Function: {function}
+  Notes:    {notes}
+
+-->
+
+  <METRICS>
+    <!--
+    Data source: {source}
+    -->
+    AC_WINGAREA  {area}   <!-- square feet -->
+    AC_WINGSPAN  {span}   <!-- ft          -->
+    AC_CHORD     {chord}  <!-- ft          -->
+    AC_HTAILAREA {area}   <!-- square feet -->
+    AC_HTAILARM  {arm}    <!-- ft          -->
+    AC_VTAILAREA {area}   <!-- square feet -->
+    AC_LV        {arm}    <!-- ft          -->
+    AC_IXX    {inertia}   <!-- slug-ft^2   -->
+    AC_IYY    {inertia}   <!-- slug-ft^2   -->
+    AC_IZZ    {inertia}   <!-- slug-ft^2   -->
+    AC_IXZ    {inertia}   <!-- slug-ft^2   -->
+    AC_EMPTYWT   {weight} <!-- pounds      -->
+    AC_AERORP    {X Y Z}  <!-- inches      -->
+    AC_CGLOC     {X Y Z}  <!-- inches      -->
+    AC_EYEPTLOC  {X Y Z}  <!-- inches      -->
+    <!-- Pilot -->
+    AC_POINTMASS {weight X Y Z} <!-- pounds, inches -->
+  </METRICS>
+
+  <UNDERCARRIAGE>
+    <!--
+      Data source: {source}
+    -->
+     AC_GEAR NOSE  {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+     AC_GEAR LMAIN {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+     AC_GEAR RMAIN {X Y Z} {K B D S R} {steer} {brake} {max steer} {retract}
+  </UNDERCARRIAGE>
+
+  <PROPULSION>
+    <!--
+      Data source: {source}
+    -->
+    <AC_ENGINE FILE="{name}">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      FEED  0
+      FEED  1
+    </AC_ENGINE>
+    <AC_THRUSTER FILE="{name}">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      PITCH 0   <!-- degrees -->
+      YAW   0   <!-- degrees -->
+      P_FACTOR {factor}
+      SENSE   {sense}
+    </AC_THRUSTER>
+    <AC_TANK TYPE="FUEL" NUMBER="0">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC  {X} <!-- inches -->
+      YLOC  {Y} <!-- inches -->
+      ZLOC  {Z} <!-- inches -->
+      RADIUS {radius} <!-- inches -->
+      CAPACITY {capacity} <!-- pounds -->
+      CONTENTS {contents} <!-- pounds -->
+    </AC_TANK>
+  </PROPULSION>
+
+  <FLIGHT_CONTROL NAME="{name}">
+    <!--
+      Data source: {source}
+    -->
+    <COMPONENT NAME="{name}" TYPE="{type}">
+    </COMPONENT>
+  </FLIGHT_CONTROL>
+
+  <AERODYNAMICS>
+    <!--
+      Data sources: {sources}
+    -->
+    <AXIS NAME="LIFT">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="DRAG">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="SIDE">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="ROLL">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="PITCH">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+    <AXIS NAME="YAW">
+      <COEFFICIENT NAME="{name}" TYPE="{type}">
+        {description}
+        {definition}
+      </COEFFICIENT>
+    </AXIS>
+  </AERODYNAMICS>
+
+  <OUTPUT NAME="{name}" TYPE="{type}">
+    RATE_IN_HZ       {rate}
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+  </OUTPUT>
+</FDM_CONFIG>
+
