@@ -1,8 +1,8 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGGain.h
- Author:       
- Date started: 
+ Author:
+ Date started:
 
  ------------- Copyright (C)  -------------
 
@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.25 2004/01/17 19:32:21 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,6 +94,7 @@ CLASS DOCUMENTATION
       ROWS \<number_of_rows>
       \<lookup_value  gain_value>
       ?
+      [CLIPTO \<min> \<max> 1]
       [OUTPUT \<property>]
     \</COMPONENT>
     </pre>
@@ -158,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.25 2004/01/17 19:32:21 jberndt Exp $
+    @version $Id: FGGain.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,9 +171,9 @@ class FGGain  : public FGFCSComponent
 public:
   FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGGain();
-  
+
   double GetOutputPct() const { return OutputPct; }
-  
+
   bool Run (void);
 
 private:
@@ -181,8 +182,9 @@ private:
   FGState* State;
   double Gain;
   double Min, Max;
+  double clipmin, clipmax;
   double OutputPct;
-  bool invert;
+  bool invert, clip;
   int Rows;
   FGPropertyManager* ScheduledBy;
 

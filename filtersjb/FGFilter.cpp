@@ -3,7 +3,7 @@
  Module:       FGFilter.cpp
  Author:       Jon S. Berndt
  Date started: 11/2000
- 
+
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.38 2004/02/05 02:24:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.39 2004/05/04 12:22:45 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,7 +92,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       } else  {
         *AC_cfg >> token;
         InputNodes.push_back( resolveSymbol(token) );
-      }  
+      }
     }
     else if (token == "OUTPUT")
     {
@@ -115,7 +115,7 @@ FGFilter::FGFilter(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       denom = 2.00*C3 + dt*C4;
       ca = (2.00*C1 + dt*C2) / denom;
       cb = (dt*C2 - 2.00*C1) / denom;
-      cc = (2.00*C3 - dt*C2) / denom;
+      cc = (2.00*C3 - dt*C4) / denom;
       break;
     case eOrder2:
       denom = 4.0*C4 + 2.0*C5*dt + C6*dt*dt;
@@ -182,7 +182,7 @@ bool FGFilter::Run(void)
         break;
       case eOrder2:
         Output = Input * ca + PreviousInput1 * cb + PreviousInput2 * cc
-	                          - PreviousOutput1 * cd - PreviousOutput2 * ce;
+                            - PreviousOutput1 * cd - PreviousOutput2 * ce;
         break;
       case eWashout:
         Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;

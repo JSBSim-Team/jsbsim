@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.30 2004/03/18 12:50:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.31 2004/05/04 12:22:45 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
 {
   string token, value;
   struct test *current_test;
+  string sOutputIdx;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -123,6 +124,10 @@ FGSwitch::FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       while (AC_cfg->GetValue() != string("/TEST")) {
         current_test->conditions.push_back(FGCondition(AC_cfg, PropertyManager));
       }
+    } else if (token == "OUTPUT") {
+      IsOutput = true;
+      *AC_cfg >> sOutputIdx;
+      OutputNode = PropertyManager->GetNode( sOutputIdx, true );
     }
     AC_cfg->GetNextConfigLine();
   }
@@ -176,6 +181,8 @@ bool FGSwitch::Run(void )
     }
     *iTests++;
   }
+
+  if (IsOutput) SetOutput();
 
   return true;
 }

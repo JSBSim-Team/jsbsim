@@ -22,12 +22,18 @@
           ap/acquire_altitude,
           ap/acquire_heading,
           ap/acquire_aispeed,
-          ap/attitude_hold_on,
-          ap/altitude_hold_on,
-          ap/heading_hold_on,
-          ap/airspeed_hold_on,
-          ap/wingslevel_hold_on
+          ap/attitude_hold,
+          ap/altitude_hold,
+          ap/heading_hold,
+          ap/airspeed_hold,
+          ap/wingslevel_hold
 
+-->
+
+<!--
+=====================================================
+ROLL CHANNEL
+=====================================================
 -->
 
 <!-- Wing leveler -->
@@ -38,16 +44,19 @@
    MIN           -0.255
    MAX            0.255
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
    INPUT         attitude/phi-rad
    C1            0.125
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
    INPUT         velocities/p-rad_sec
    INPUT         fcs/roll-ap-wing-leveler
    INPUT         fcs/roll-ap-error-integrator
-   CLIPTO       -1 1
+   CLIPTO       -1.0 1.0
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
   <TEST LOGIC="DEFAULT" VALUE="0.0">
   </TEST>
@@ -55,12 +64,114 @@
     ap/attitude_hold == 1
   </TEST>
 </COMPONENT>
+
 <COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
    INPUT         fcs/roll-ap-autoswitch
    GAIN          -1
-   OUTPUT        ap/aileron_cmd
 </COMPONENT>
 
+
+<!-- Heading hold -->
+
+<COMPONENT NAME="Heading True Degrees" TYPE="PURE_GAIN">
+  INPUT         attitude/heading-true-rad
+  GAIN          57.3 <!-- convert to degrees -->
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error" TYPE="SUMMER">
+  INPUT         -fcs/heading-true-degrees
+  INPUT          ap/heading_setpoint
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error Low" TYPE="SUMMER">
+  INPUT          fcs/heading-error
+  BIAS           360
+  CLIPTO         -30 30
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error Mid" TYPE="SUMMER">
+  INPUT          fcs/heading-error
+  CLIPTO        -30 30
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error High" TYPE="SUMMER">
+  INPUT          fcs/heading-error
+  BIAS          -360
+  CLIPTO        -30 30
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error Switch" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="fcs/heading-error-mid">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/heading-error-low">
+    fcs/heading-error <= -180
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/heading-error-high">
+    fcs/heading-error >= 180
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="Heading Command" TYPE="PURE_GAIN">
+  INPUT          fcs/heading-error-switch
+  GAIN           0.01745
+</COMPONENT>
+
+<COMPONENT NAME="Heading Roll Error Lag" TYPE="LAG_FILTER">
+  INPUT          fcs/heading-command
+  C1             0.50
+</COMPONENT>
+
+<COMPONENT NAME="Heading Roll Error" TYPE="SUMMER">
+  INPUT          fcs/heading-roll-error-lag
+  INPUT         -attitude/phi-rad
+</COMPONENT>
+
+<COMPONENT NAME="Heading Roll Error Switch" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="0.0">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/heading-roll-error">
+    ap/heading_hold == 1
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="Heading Proportional" TYPE="PURE_GAIN">
+  INPUT          fcs/heading-roll-error-switch
+  GAIN           1.0
+</COMPONENT>
+
+<COMPONENT NAME="Heading Integral" TYPE="INTEGRATOR">
+  INPUT          fcs/heading-roll-error-switch
+  C1             0.10
+</COMPONENT>
+
+<COMPONENT NAME="Heading Error Summer" TYPE="SUMMER">
+  INPUT          fcs/heading-integral
+  INPUT          fcs/heading-proportional
+  CLIPTO         -1.0 1.0
+</COMPONENT>
+
+<COMPONENT NAME="Roll Command Selector" TYPE="SWITCH">
+  <TEST LOGIC="DEFAULT" VALUE="0.0">
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/heading-error-summer">
+    ap/heading_hold == 1
+  </TEST>
+  <TEST LOGIC="AND" VALUE="fcs/roll-ap-aileron-command-normalizer">
+    ap/attitude_hold == 1
+  </TEST>
+</COMPONENT>
+
+<COMPONENT NAME="AP Roll Command Output" TYPE="PURE_GAIN">
+  INPUT          fcs/roll-command-selector
+  OUTPUT         ap/aileron_cmd
+</COMPONENT>
+
+
+<!--
+=====================================================
+PITCH CHANNEL
+=====================================================
+-->
 
 <!-- Altitude hold -->
 
@@ -73,7 +184,7 @@
 <COMPONENT NAME="Altitude Error" TYPE="SUMMER">
   INPUT         -position/h-sl-ft
   INPUT          ap/altitude_setpoint
-  CLIPTO        -100 100
+  CLIPTO        -100.0 100.0
 </COMPONENT>
 
 <COMPONENT NAME="Alt Error Lag" TYPE="LAG_FILTER">
@@ -120,3 +231,5 @@
   GAIN          -1.0
   OUTPUT         ap/elevator_cmd
 </COMPONENT>
+
+

@@ -3,7 +3,7 @@
  Module:       FGGain.cpp
  Author:       Jon S. Berndt
  Date started: 4/2000
- 
+
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -37,11 +37,11 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGGain.h" 
+#include "FGGain.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.51 2004/04/17 21:17:46 dpculp Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.52 2004/05/04 12:22:45 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +64,8 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
   OutputPct = 0;
   invert = false;
   ScheduledBy = 0;
+  clip = false;
+  clipmin = clipmax = 0.0;
 
   Type = AC_cfg->GetValue("TYPE");
   Name = AC_cfg->GetValue("NAME");
@@ -91,23 +93,27 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       *AC_cfg >> Min;
     } else if (token == "MAX") {
       *AC_cfg >> Max;
+    } else if (token == "CLIPTO") {
+      *AC_cfg >> clipmin >> clipmax;
+      if (clipmax > clipmin) {
+        clip = true;
+      }
     } else if (token == "INVERT") {
       invert = true;
       cerr << endl << "The INVERT keyword is being deprecated and will not be "
                       "supported in the future. Please use a minus sign in front "
-		                  "of an input property in the future." << endl << endl;
+                      "of an input property in the future." << endl << endl;
     } else if (token == "ROWS") {
       *AC_cfg >> Rows;
       Table = new FGTable(Rows);
     } else if (token == "SCHEDULED_BY") {
       token = AC_cfg->GetValue("SCHEDULED_BY");
       *AC_cfg >> strScheduledBy;
-      ScheduledBy = PropertyManager->GetNode( strScheduledBy ); 
+      ScheduledBy = PropertyManager->GetNode( strScheduledBy );
     } else if (token == "OUTPUT") {
       IsOutput = true;
-      *AC_cfg >> sOutputIdx;      
+      *AC_cfg >> sOutputIdx;
       OutputNode = PropertyManager->GetNode( sOutputIdx, true );
-
     } else {
       AC_cfg->ResetLineIndexToZero();
       *Table << *AC_cfg;
@@ -157,6 +163,11 @@ bool FGGain::Run(void )
     else Output = Input * -Min;
     Output *= Gain;
 
+  }
+
+  if (clip) {
+    if (Output > clipmax)      Output = clipmax;
+    else if (Output < clipmin) Output = clipmin;
   }
 
   if (IsOutput) SetOutput();

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.44 2004/05/03 09:19:01 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.45 2004/05/04 12:22:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.44 2004/05/03 09:19:01 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.45 2004/05/04 12:22:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,10 +224,6 @@ private:
   int    day_of_year;     // GMT day, 1 .. 366
 
   double earthPosAngle;
-//  double seaLevelRadius; // radius of sea level, in ft.
-//  double altitude;       // altitude above sea level, in ft.
-//  double groundRadius;   // radius of runway, in ft.
-//  double distanceAGL;    // distance above runway, in ft.
   double hoverbcg, hoverbmac;
 
   void Debug(int from);

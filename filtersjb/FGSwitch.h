@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.25 2004/02/22 21:41:51 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,7 +86,7 @@ additional conditions, as well as possibly additional CONDITION_GROUPs.
 
 <pre>
 \<COMPONENT NAME="switch1" TYPE="SWITCH"\>
-  \<TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}"\>
+  \<TEST LOGIC="{AND|OR|DEFAULT}" VALUE="{property|value}"\>
     {property} {conditional} {property|value}
     \<CONDITION_GROUP LOGIC="{AND|OR}"\>
       {property} {conditional} {property|value}
@@ -94,11 +94,12 @@ additional conditions, as well as possibly additional CONDITION_GROUPs.
     \</CONDITION_GROUP\>
     ...
   \</TEST>
-  \<TEST LOGIC="{AND|OR}" OUTPUT="{property|value}"\>
+  \<TEST LOGIC="{AND|OR}" VALUE="{property|value}"\>
     {property} {conditional} {property|value}
     ...
   \</TEST\>
   ...
+  [OUTPUT \<property>]
 \</COMPONENT\>
 </pre>
 
@@ -118,7 +119,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.25 2004/02/22 21:41:51 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
