@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.21 2000/10/22 18:42:39 jsb Exp $
+    @version $Id: FGLGear.h,v 1.22 2000/10/23 12:56:37 jsb Exp $
     @see -
 */
 
@@ -103,19 +103,32 @@ public:
   /// Destructor
   ~FGLGear(void);
 
+  /// The Force vector for this gear
   FGColumnVector Force(void);
+  /// The Moment vector for this gear
   FGColumnVector Moment(void) {return vMoment;}
+  /// Gets the location of the gear in Body axes
   FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
 
+  /// Gets the name of the gear
   inline string GetName(void)      {return name;          }
+  /// Gets the Weight On Wheels flag value
   inline bool   GetWOW(void)       {return WOW;           }
+  /// Gets the current compressed length of the gear in feet
   inline float  GetCompLen(void)   {return compressLength;}
+  /// Gets the current gear compression velocity in ft/sec
   inline float  GetCompVel(void)   {return compressSpeed; }
+  /// Gets the gear compression force in pounds
   inline float  GetCompForce(void) {return Force()(3);    }
   
+  /// Sets the brake value in percent (0 - 100)
   inline void SetBrake(double bp) {brakePct = bp;}
-  
-  inline void SetReport(bool bb) { ReportEnable=bb; }
+
+  /** Set the console touchdown reporting feature
+      @param flag true turns on touchdown reporting, false turns it off */
+  inline void SetReport(bool flag) { ReportEnable = flag; }
+  /** Get the console touchdown reporting feature
+      @return flag true turns on touchdown reporting, false turns it off */
   inline bool GetReport(void)    { return ReportEnable; }
 
 private:

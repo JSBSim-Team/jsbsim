@@ -62,12 +62,12 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** FGFS / JSBSim interface (a.k.a. "The Bus")
+/** FGFS / JSBSim interface (aka "The Bus")
     This class provides for an interface between FlightGear and its data
     structures and JSBSim and its data structures.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.5 2000/10/22 18:42:39 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.6 2000/10/23 12:56:37 jsb Exp $
     @see -
 */
 
