@@ -141,6 +141,8 @@ public:
   inline string GetAircraftName(void) { return AircraftName; }
   inline void SetGearUp(bool tt) { GearUp = tt; }
   inline bool GetGearUp(void) { return GearUp; }
+  inline int GetNumGearUnits(void) { return lGear.size(); }
+  inline FGLGear* GetGearUnit(int ii) { return lGear[ii]; }
   inline float GetWingArea(void) { return WingArea; }
   inline float GetWingSpan(void) { return WingSpan; }
   inline float Getcbar(void) { return cbar; }
@@ -166,7 +168,7 @@ public:
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
-
+  inline FGCoefficient GetCoeff(int axis, int idx) { return Coeff[axis][idx]; }
   string GetCoefficientStrings(void);
   string GetCoefficientValues(void);
   string GetGroundReactionStrings(void);
