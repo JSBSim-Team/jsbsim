@@ -3,7 +3,7 @@
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.10 2001/12/06 21:31:34 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.11 2001/12/07 15:37:26 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -543,7 +543,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout310.csv" TYPE="NONE">
     RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF
