@@ -57,7 +57,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.20 2001/12/01 13:29:58 apeden Exp $"
 
 #include "FGFDMExec.h"
 #include "FGJSBBase.h"
@@ -210,7 +210,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.19 2001/11/14 23:53:27 jberndt Exp $
+    @version $Id: FGForce.h,v 1.20 2001/12/01 13:29:58 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,6 +260,10 @@ public:
   inline void SetLocationY(double y) {vXYZn(2) = y;}
   inline void SetLocationZ(double z) {vXYZn(3) = z;}
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; }
+  
+  inline double GetLocationX( void ) { return vXYZn(1);}
+  inline double GetLocationY( void ) { return vXYZn(2);}
+  inline double GetLocationZ( void ) { return vXYZn(3);}
   FGColumnVector3& GetLocation(void) { return vXYZn; }
 
   //these angles are relative to body axes, not earth!!!!!
