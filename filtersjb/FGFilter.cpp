@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFilter.h"
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.26 2001/12/12 18:31:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.27 2001/12/22 13:31:38 apeden Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -170,6 +170,8 @@ bool FGFilter::Run(void)
         break;
       case eIntegrator:
         Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
+        break;
+      case eUnknown:
         break;
     }
 
