@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.40 2003/06/03 09:53:50 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.41 2003/07/14 11:46:38 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,8 +245,9 @@ bool FGTrim::DoTrim(void) {
     //cout << current_axis << "  " << TrimAxes[current_axis]->GetStateName()
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
     if(TrimAxes[current_axis]->GetStateType() == tQdot) {
-      if(mode == tGround) 
+      if(mode == tGround) {
     	  TrimAxes[current_axis]->initTheta();
+      }  
     }  
     xlo=TrimAxes[current_axis]->GetControlMin();
     xhi=TrimAxes[current_axis]->GetControlMax();
@@ -616,6 +617,7 @@ void FGTrim::setDebug(void) {
 
 void FGTrim::SetMode(TrimMode tt) {
     ClearStates();
+    mode=tt;
     switch(tt) {
       case tFull:
         cout << "  Full Trim" << endl;
