@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.16 2004/11/02 05:19:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.17 2005/01/16 14:53:37 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,13 +212,13 @@ bool FGScript::LoadScript( string script )
     cerr << "Initialization unsuccessful" << endl;
     exit(-1);
   }
-
+/* comment this out for conversion capability
   FGTrim fgt(FDMExec, tFull);
   if ( !fgt.DoTrim() ) {
     cout << "Trim Failed" << endl;
   }
   fgt.Report();
-
+*/
   return true;
 }
 

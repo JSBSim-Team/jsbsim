@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.69 2004/12/06 03:59:52 dpculp Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.70 2005/01/16 14:53:37 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.69 2004/12/06 03:59:52 dpculp Exp $
+    @version $Id: FGEngine.h,v 1.70 2005/01/16 14:53:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +164,11 @@ public:
 
   /// Sets engine placement information
   virtual void SetPlacement(double x, double y, double z, double pitch, double yaw);
+  double GetPlacementX(void) const {return X;}
+  double GetPlacementY(void) const {return Y;}
+  double GetPlacementZ(void) const {return Z;}
+  double GetPitch(void) const {return EnginePitch;}
+  double GetYaw(void) const {return EngineYaw;}
 
   virtual double GetPowerAvailable(void) {return 0.0;};
 
@@ -178,6 +183,8 @@ public:
 
   virtual string GetEngineLabels(string delimeter) = 0;
   virtual string GetEngineValues(string delimeter) = 0;
+  int GetNumSourceTanks(void) {return SourceTanks.size();}
+  int GetSourceTank(int t) {return SourceTanks[t];}
 
 protected:
   FGPropertyManager* PropertyManager;
