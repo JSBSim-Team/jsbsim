@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ x$1 = x ]; then
+   echo "Usage: $0 [FlightGear source path]"
+   exit;
+fi
+
+for n in `find . -type f -name '*.h' -o -name '*.c??'`; do
+
+   if [ -f $1/src/FDM/JSBSim/$n ]; then
+
+      NUM=`diff $n $1/src/FDM/JSBSim/$n | grep ">" | wc -l`;
+      ID=`diff $n $1/src/FDM/JSBSim/$n | grep ">" | grep "\$Id:" | wc -l`;
+
+      if [ ! $NUM -eq $ID ]; then
+         echo "cp $n $1/src/FDM/JSBSim/$n";
+         cp $n $1/src/FDM/JSBSim/$n
+      fi;
+
+   fi;
+
+done
