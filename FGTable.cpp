@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.11 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.12 2001/08/15 15:18:26 apeden Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,8 +94,8 @@ float** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
-  for (int r=0; r<=nRows; r++) if (Data[r]) delete Data[r];
-  if (Data) delete Data;
+  for (int r=0; r<=nRows; r++) if (Data[r]) delete[] Data[r];
+  if (Data) delete[] Data;
   if (debug_lvl & 2) cout << "Destroyed:    FGTable" << endl;
 }
 
