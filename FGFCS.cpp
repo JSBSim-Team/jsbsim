@@ -83,7 +83,9 @@ bool FGFCS::Run(void)
 {
   if (!FGModel::Run()) {
 
-    for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
+    for (int ctr=0;ctr<=Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+	
+	for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
 
   } else {
   }
@@ -96,6 +98,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
 {
   if (engineNum < 0) {
     for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottleCmd[ctr] = setting;
+		
   } else {
     ThrottleCmd[engineNum] = setting;
   }
@@ -106,7 +109,7 @@ void FGFCS::SetThrottleCmd(int engineNum, float setting)
 void FGFCS::SetThrottlePos(int engineNum, float setting)
 {
   if (engineNum < 0) {
-    for (int ctr=0;ctr<Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
+    for (int ctr=0;ctr<=Aircraft->GetNumEngines();ctr++) ThrottlePos[ctr] = ThrottleCmd[ctr];
   } else {
     ThrottlePos[engineNum] = setting;
   }
@@ -121,11 +124,13 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
   string token;
 
   FCSName = AC_cfg->GetValue("NAME");
+  cout << "    Control System Name: " << FCSName << endl;
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != "/FLIGHT_CONTROL") {
     if (token == "COMPONENT") {
-
-      if (((token = AC_cfg->GetValue("TYPE")) == "LAG_FILTER") ||
+      token = AC_cfg->GetValue("TYPE");
+	  cout << "    Loading Component \"" << AC_cfg->GetValue("NAME") << "\" of type: " << token << endl;
+      if ((token == "LAG_FILTER") ||
           (token == "RECT_LAG_FILTER") ||
           (token == "LEAD_LAG_FILTER") ||
           (token == "SECOND_ORDER_FILTER") ||
@@ -137,7 +142,9 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
                 (token == "SCHEDULED_GAIN") ||
                 (token == "AEROSURFACE_SCALE") )
       {
-       Components.push_back(new FGGain(this, AC_cfg));
+       
+	   Components.push_back(new FGGain(this, AC_cfg));
+	   
       } else if (token == "SUMMER") {
        Components.push_back(new FGSummer(this, AC_cfg));
       } else if (token == "DEADBAND") {
@@ -147,6 +154,7 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg)
       } else if (token == "SWITCH") {
        Components.push_back(new FGSwitch(this, AC_cfg));
       }
+	  cout << "    Load complete" << endl;
       AC_cfg->GetNextConfigLine();
     }
   }
