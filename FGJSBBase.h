@@ -70,7 +70,7 @@ using std::queue;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.17 2001/11/23 20:06:17 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.18 2001/11/27 18:59:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -149,7 +149,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.17 2001/11/23 20:06:17 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.18 2001/11/27 18:59:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +165,7 @@ public:
   virtual ~FGJSBBase() {};
 
   /// JSBSim Message structure
-  struct Message {
+  typedef struct Msg {
     unsigned int fdmId;
     unsigned int messageId;
     string text;
@@ -174,7 +174,7 @@ public:
     bool bVal;
     int  iVal;
     double dVal;
-  };
+  } Message;
 
   ///@name JSBSim Enums.
   //@{
@@ -227,38 +227,38 @@ public:
   /** Places a Message structure on the Message queue.
       @param msg pointer to a Message structure
       @return pointer to a Message structure */
-  struct Message* PutMessage(struct Message* msg);
+  Message* PutMessage(Message* msg);
   /** Creates a message with the given text and places it on the queue.
       @param text message text
       @return pointer to a Message structure */
-  struct Message* PutMessage(string text);
+  Message* PutMessage(string text);
   /** Creates a message with the given text and boolean value and places it on the queue.
       @param text message text
       @param bVal boolean value associated with the message
       @return pointer to a Message structure */
-  struct Message* PutMessage(string text, bool bVal);
+  Message* PutMessage(string text, bool bVal);
   /** Creates a message with the given text and integer value and places it on the queue.
       @param text message text
       @param iVal integer value associated with the message
       @return pointer to a Message structure */
-  struct Message* PutMessage(string text, int iVal);
+  Message* PutMessage(string text, int iVal);
   /** Creates a message with the given text and double value and places it on the queue.
       @param text message text
       @param dVal double value associated with the message
       @return pointer to a Message structure */
-  struct Message* PutMessage(string text, double dVal);
+  Message* PutMessage(string text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return pointer to a Message structure (or NULL if no mesage) */
-  struct Message* ReadMessage(void);
+  Message* ReadMessage(void);
   /** Reads the message on the queue and removes it from the queue.
       @return pointer to a Message structure (or NULL if no mesage) */
-  struct Message* ProcessMessage(void);
+  Message* ProcessMessage(void);
   //@}
 
 protected:
-  static struct Message localMsg;
+  static Message localMsg;
   
-  static queue <struct Message*> Messages;
+  static queue <Message*> Messages;
 
   virtual void Debug(void) {};
 
