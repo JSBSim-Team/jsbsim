@@ -56,7 +56,7 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.36 2001/08/18 14:23:30 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.37 2001/08/20 12:14:05 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -646,49 +646,50 @@ bool FGInitialCondition::findInterval(float x,float guess) {
 
 //******************************************************************************
 
-bool FGInitialCondition::solve(float *y,float x) {
+bool FGInitialCondition::solve(float *y,float x)
+{
   float x1,x2,x3,f1,f2,f3,d,d0;
   float eps=1E-5;
   float const relax =0.9;
   int i;
   bool success=false;
 
-   //initializations
+  //initializations
   d=1;
 
-    x1=xlo;x3=xhi;
-    f1=(this->*sfunc)(x1)-x;
-    f3=(this->*sfunc)(x3)-x;
-    d0=fabs(x3-x1);
+  x1=xlo;x3=xhi;
+  f1=(this->*sfunc)(x1)-x;
+  f3=(this->*sfunc)(x3)-x;
+  d0=fabs(x3-x1);
 
-    //iterations
-    i=0;
-    while ((fabs(d) > eps) && (i < 100)) {
-      d=(x3-x1)/d0;
-      x2=x1-d*d0*f1/(f3-f1);
+  //iterations
+  i=0;
+  while ((fabs(d) > eps) && (i < 100)) {
+    d=(x3-x1)/d0;
+    x2=x1-d*d0*f1/(f3-f1);
 
-      f2=(this->*sfunc)(x2)-x;
-      //cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
-      //cout << "                " << f1 << "," << f2 << "," << f3 << endl;
+    f2=(this->*sfunc)(x2)-x;
+    //cout << "solve x1,x2,x3: " << x1 << "," << x2 << "," << x3 << endl;
+    //cout << "                " << f1 << "," << f2 << "," << f3 << endl;
 
-      if(fabs(f2) <= 0.001) {
-        x1=x3=x2;
-      } else if(f1*f2 <= 0.0) {
-        x3=x2;
-        f3=f2;
-        f1=relax*f1;
-      } else if(f2*f3 <= 0) {
-        x1=x2;
-        f1=f2;
-        f3=relax*f3;
-      }
-      //cout << i << endl;
-      i++;
-    }//end while
-    if(i < 100) {
-      success=true;
-      *y=x2;
+    if(fabs(f2) <= 0.001) {
+      x1=x3=x2;
+    } else if(f1*f2 <= 0.0) {
+      x3=x2;
+      f3=f2;
+      f1=relax*f1;
+    } else if(f2*f3 <= 0) {
+      x1=x2;
+      f1=f2;
+      f3=relax*f3;
     }
+    //cout << i << endl;
+    i++;
+  }//end while
+  if(i < 100) {
+    success=true;
+    *y=x2;
+  }
 
   //cout << "Success= " << success << " Vcas: " << vcas*jsbFPSTOKTS << " Mach: " << x2 << endl;
   return success;
@@ -707,13 +708,12 @@ float FGInitialCondition::GetWindDirDegIC(void) {
 
 //******************************************************************************
 
-bool FGInitialCondition::Load(string path, string acname, string fname){  
-  
+bool FGInitialCondition::Load(string path, string acname, string fname)
+{
   string resetDef;
   string token="";
 
   float temp;
-  
 
 # ifndef macintosh
   resetDef = path + "/" + acname + "/" + fname + ".xml";
