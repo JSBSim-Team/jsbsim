@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.35 2001/12/11 12:37:21 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.36 2001/12/17 01:40:02 apeden Exp $"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.35 2001/12/11 12:37:21 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.36 2001/12/17 01:40:02 apeden Exp $
     @see -
 */
 
@@ -117,6 +117,11 @@ public:
   virtual void DisplayCoeffFactors(void);
   virtual inline string GetCoefficientStrings(void) { return name; }
   virtual string GetCoefficientValues(void);
+  
+  inline void setBias(double b) { bias=b; }
+  inline void setGain(double g) { gain=g; };
+  inline double getBias(void) { return bias; }
+  inline double getGain(void) { return gain; }
 
 private:
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
@@ -133,6 +138,7 @@ private:
   double Value(double);
   double Value(void);
   double StaticValue;
+  double bias,gain;
   eParam LookupR, LookupC;
   MultVec multipliers;
   int rows, columns;

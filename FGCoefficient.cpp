@@ -58,7 +58,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.47 2001/12/12 18:31:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.48 2001/12/17 01:40:02 apeden Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,9 @@ FGCoefficient::FGCoefficient( FGFDMExec* fdex )
   FDMExec = fdex;
   State   = FDMExec->GetState();
   Table   = 0;
+  
+  bias=0;
+  gain=1;
 
   if (debug_lvl & 2) cout << "Instantiated: FGCoefficient" << endl;
 }
@@ -151,7 +154,7 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     }
 
     AC_cfg->GetNextConfigLine();
-    Debug(2);
+    FGCoefficient::Debug(2);
 
     return true;
   } else {
@@ -168,7 +171,8 @@ double FGCoefficient::Value(double rVal, double cVal)
   double Value;
   unsigned int midx;
 
-  SD = Value = Table->GetValue(rVal, cVal);
+  SD = Value = gain*Table->GetValue(rVal, cVal) + bias;
+  
 
   for (midx=0; midx < multipliers.size(); midx++) {
       Value *= State->GetParameter(multipliers[midx]);
@@ -182,7 +186,7 @@ double FGCoefficient::Value(double Val)
 {
   double Value;
 
-  SD = Value = Table->GetValue(Val);
+  SD = Value = gain*Table->GetValue(Val) + bias;
   
   for (unsigned int midx=0; midx < multipliers.size(); midx++) 
       Value *= State->GetParameter(multipliers[midx]);
@@ -196,7 +200,7 @@ double FGCoefficient::Value(void)
 {
 	double Value;
 
-  SD = Value = StaticValue;
+  SD = Value = gain*StaticValue + bias;
 
   for (unsigned int midx=0; midx < multipliers.size(); midx++)
     Value *= State->GetParameter(multipliers[midx]);
@@ -283,6 +287,7 @@ void FGCoefficient::Debug(int from)
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
+    
     if (from == 2) { // Loading
       cout << "\n   " << highint << underon << name << underoff << normint << endl;
       cout << "   " << description << endl;
