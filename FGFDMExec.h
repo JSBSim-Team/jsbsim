@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.64 2003/12/02 13:28:39 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.65 2003/12/03 13:13:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,10 +65,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates the JSBSim simulation executive.
-    @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.64 2003/12/02 13:28:39 jberndt Exp $
- 
-    @doc This class is the interface class through which all other simulation classes
+    This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
     other flight simulator) this class is typically instantiated by an interface
     class on the simulator side.
@@ -101,6 +98,8 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds</li>
     </ol>
 
+    @author Jon S. Berndt
+    @version $Id: FGFDMExec.h,v 1.65 2003/12/03 13:13:06 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.41 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.42 2003/12/03 13:13:06 jberndt Exp $"
 
 using std::string;
 
@@ -70,17 +70,17 @@ CLASS DOCUMENTATION
     The Flight Control System (FCS) for JSBSim consists of the FCS container
     class (see \URL[FGFCS]{FGFCS.html}), the FGFCSComponent base class, and the
     component classes from which can be constructed a string, or channel. See:
-    <ul>
-    <li>\URL[Switch Component]{FGSwitch.html}</li>
-    <li>\URL[Gain Component]{FGGain.html}</li>
-    <li>\URL[Flaps Component]{FGFlaps.html}</li>
-    <li>\URL[Filter Component]{FGFilter.html}</li>
-    <li>\URL[Deadband Component]{FGDeadBand.html}</li>
-    <li>\URL[Summer Component]{FGSummer.html}</li>
-    <li>\URL[Gradient Component]{FGGradient.html}</li>
-    </ul>
+
+    - FGSwitch
+    - FGGain
+    - FGKinemat
+    - FGFilter
+    - FGDeadBand
+    - FGSummer
+    - FGGradient
+    
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.41 2003/12/02 05:42:12 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.42 2003/12/03 13:13:06 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
