@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.53 2003/06/03 09:53:46 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.54 2003/07/02 14:38:39 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -164,7 +164,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.53 2003/06/03 09:53:46 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.54 2003/07/02 14:38:39 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -224,6 +224,11 @@ public:
   /// Gets the gear compression force in pounds
   inline double  GetCompForce(void) {return Force()(3);    }
   inline double  GetBrakeFCoeff(void) {return BrakeFCoeff;}
+
+  /// Gets the current normalized tire pressure
+  inline double  GetTirePressure(void) { return TirePressureNorm; }
+  /// Sets the new normalized tire pressure
+  inline void    SetTirePressure(double p) { TirePressureNorm = p; }
   
   /// Sets the brake value in percent (0 - 100)
   inline void SetBrake(double bp) {brakePct = bp;}
@@ -278,6 +283,7 @@ private:
   double RollingForce, SideForce, FCoeff;
   double WheelSlip;
   double lastWheelSlip;
+  double TirePressureNorm;
   bool WOW;
   bool lastWOW;
   bool FirstContact;
@@ -287,6 +293,7 @@ private:
   bool ReportEnable;
   bool isRetractable;
   bool GearUp, GearDown;
+  bool Servicable;
   string name;
   string sSteerType;
   string sBrakeGroup;

@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.91 2003/06/03 09:53:45 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.92 2003/07/02 14:38:38 ehofman Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +94,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   
   GearUp = false;
   GearDown = true;
+  Servicable = true;
 
 // Add some AI here to determine if gear is located properly according to its
 // brake group type ??
@@ -131,6 +132,8 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : Exec(fdmex)
   compressSpeed   = 0.0;
   brakePct        = 0.0;
   maxCompLen      = 0.0;
+
+  TirePressureNorm = 1.0;
 
   Debug(0);
 }
@@ -188,6 +191,8 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GearDown        = lgear.GearDown;
   WheelSlip       = lgear.WheelSlip;
   lastWheelSlip   = lgear.lastWheelSlip;
+  TirePressureNorm = lgear.TirePressureNorm;
+  Servicable      = lgear.Servicable;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -296,30 +301,30 @@ FGColumnVector3& FGLGear::Force(void)
       switch (eBrakeGrp) {
       case bgLeft:
         SteerGain = 0.10;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                                              staticFCoeff*FCS->GetBrake(bgLeft);
+        BrakeFCoeff = ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                        staticFCoeff*FCS->GetBrake(bgLeft) );
         break;
       case bgRight:
         SteerGain = 0.10;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
-                                             staticFCoeff*FCS->GetBrake(bgRight);
+        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
+                         staticFCoeff*FCS->GetBrake(bgRight) );
         break;
       case bgCenter:
         SteerGain = 0.10;
-        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                                             staticFCoeff*FCS->GetBrake(bgCenter);
+        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                         staticFCoeff*FCS->GetBrake(bgCenter) );
         break;
       case bgNose:
         SteerGain = -0.50;
-        BrakeFCoeff = rollingFCoeff;
+        BrakeFCoeff =  rollingFCoeff;
         break;
       case bgTail:
         SteerGain = -0.10;
-        BrakeFCoeff = rollingFCoeff;
+        BrakeFCoeff =  rollingFCoeff;
         break;
       case bgNone:
         SteerGain = 0.0;
-        BrakeFCoeff = rollingFCoeff;
+        BrakeFCoeff =  rollingFCoeff;
         break;
       default:
         cerr << "Improper brake group membership detected for this gear." << endl;
@@ -400,7 +405,9 @@ FGColumnVector3& FGLGear::Force(void)
 
       RollingForce = 0;
       if (fabs(RollingWhlVel) > 1E-3) {
-        RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
+        RollingForce = (1.0 - TirePressureNorm) * 30
+                       * vLocalForce(eZ) * BrakeFCoeff
+                       * fabs(RollingWhlVel)/RollingWhlVel;
       }
       SideForce    = vLocalForce(eZ) * FCoeff;
 
