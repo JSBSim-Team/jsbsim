@@ -47,6 +47,7 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGConfigFile.h"
 #include "FGColumnVector3.h"
+#include "FGAuxiliary.h"
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -69,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.28 2004/03/03 11:56:52 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.29 2004/06/02 13:06:43 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,6 +83,48 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models a fuel tank.
+    @author Jon Berndt
+    @see Akbar, Raza et al. "A Simple Analysis of Fuel Addition to the CWT of
+    747", California Institute of Technology, 1998
+<P>
+    Fuel temperature is calculated using the following assumptions:
+<P>
+    Fuel temperature will only be calculated for tanks which have an initial fuel
+    temperature specified in the configuration file.
+<P>
+    The surface area of the tank is estimated from the capacity in pounds.  It
+    is assumed that the tank is a wing tank with dimensions h by 4h by 10h. The
+    volume of the tank is then 40(h)(h)(h). The area of the upper or lower 
+    surface is then 40(h)(h).  The volume is also equal to the capacity divided
+    by 49.368 lbs/cu-ft, for jet fuel.  The surface area of one side can then be
+    derived from the tank's capacity.  
+<P>
+    The heat capacity of jet fuel is assumed to be 900 Joules/lbm/K, and the 
+    heat transfer factor of the tank is 1.115 Watts/sq-ft/K.
+<P>
+Configuration File Format
+<pre>
+\<AC_TANK TYPE="\<FUEL | OXIDIZER>" NUMBER="\<n>">
+  XLOC        \<x location>
+  YLOC        \<y location>
+  ZLOC        \<z location>
+  RADIUS      \<radius>
+  CAPACITY    \<capacity>
+  CONTENTS    \<contents>
+  TEMPERATURE \<fuel temperature>
+\</AC_TANK>
+</pre>
+Definition of the tank configuration file parameters:
+<pre>
+<b>TYPE</b> - One of FUEL or OXIDIZER.
+<b>XLOC</b> - Location of tank on aircraft's x-axis, inches.
+<b>YLOC</b> - Location of tank on aircraft's y-axis, inches.
+<b>ZLOC</b> - Location of tank on aircraft's z-axis, inches.
+<b>RADIUS</b> - Equivalent radius of tank, inches, for modeling slosh.
+<b>CAPACITY</b> - Capacity in pounds.
+<b>CONTENTS</b> - Initial contents in pounds.
+<b>TEMPERATURE</b> - Initial temperature in degrees Celcius.
+</pre>
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -91,18 +134,21 @@ CLASS DECLARATION
 class FGTank : public FGJSBBase
 {
 public:
-  FGTank(FGConfigFile*);
+  FGTank(FGConfigFile*, FGFDMExec*);
   ~FGTank();
 
   double Reduce(double);
+  double Calculate(double dt);
   int GetType(void) {return Type;}
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
   double GetContents(void) {return Contents;}
+  double GetTemperature(void) {return Temperature;}
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 
   void SetContents(double contents) { Contents = contents; }
+  void SetTemperature(double temp) { Temperature = temp; }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
 
@@ -114,7 +160,10 @@ private:
   double Radius;
   double PctFull;
   double Contents;
+  double Area;
+  double Temperature;
   bool  Selected;
+  FGAuxiliary* Auxiliary;
   void Debug(int from);
 };
 }

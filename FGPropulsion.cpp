@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.106 2004/05/30 11:46:56 frohlich Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.107 2004/06/02 13:06:42 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -94,6 +94,8 @@ bool FGPropulsion::Run(void)
 {
   if (FGModel::Run()) return true;
 
+  double dt = State->Getdt();
+
   vForces.InitMatrix();
   vMoments.InitMatrix();
 
@@ -102,6 +104,10 @@ bool FGPropulsion::Run(void)
     vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
     vMoments += Engines[i]->GetMoments();     // sum body frame moments
   }
+
+  for (unsigned int i=0; i<numTanks; i++) {
+    Tanks[i]->Calculate( dt * rate );
+  }     
 
   return false;
 }
@@ -284,7 +290,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
     } else if (token == "AC_TANK") {              // ============== READING TANKS
 
       if (debug_lvl > 0) cout << "\n    Reading tank definition" << endl;
-      Tanks.push_back(new FGTank(AC_cfg));
+      Tanks.push_back(new FGTank(AC_cfg, FDMExec));
       switch(Tanks[numTanks]->GetType()) {
       case FGTank::ttFUEL:
         numSelectedFuelTanks++;

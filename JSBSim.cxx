@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.175 2004/05/26 12:29:54 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.176 2004/06/02 13:06:43 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -67,6 +67,7 @@
 #include <FDM/JSBSim/FGNozzle.h>
 #include <FDM/JSBSim/FGPropeller.h>
 #include <FDM/JSBSim/FGRotor.h>
+#include <FDM/JSBSim/FGTank.h>
 #include "JSBSim.hxx"
 
 static inline double
@@ -693,10 +694,12 @@ bool FGJSBsim::copy_from_JSBsim()
     if ( ! fuel_freeze->getBoolValue() ) {
       for (i = 0; i < Propulsion->GetNumTanks(); i++) {
         SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
-        double contents = Propulsion->GetTank(i)->GetContents();
+        FGTank* tank = Propulsion->GetTank(i);
+        double contents = tank->GetContents();
+        double temp = tank->GetTemperature();
         node->setDoubleValue("level-gal_us", contents/6.6);
         node->setDoubleValue("level-lb", contents);
-        // node->setDoubleValue("temperature_degC",
+        if (temp != -9999.0) node->setDoubleValue("temperature_degC", temp);
       }
     }
 

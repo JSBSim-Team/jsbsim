@@ -46,17 +46,20 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.33 2004/03/03 11:56:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.34 2004/06/02 13:06:43 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGTank::FGTank(FGConfigFile* AC_cfg)
+FGTank::FGTank(FGConfigFile* AC_cfg, FGFDMExec* exec)
 {
   string token;
   double X, Y, Z;
+  Area = 1.0;
+  Temperature = -9999.0;
+  Auxiliary = exec->GetAuxiliary();
 
   type = AC_cfg->GetValue("TYPE");
 
@@ -72,6 +75,7 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     else if (token == "RADIUS") *AC_cfg >> Radius;
     else if (token == "CAPACITY") *AC_cfg >> Capacity;
     else if (token == "CONTENTS") *AC_cfg >> Contents;
+    else if (token == "TEMPERATURE") *AC_cfg >> Temperature; 
     else cerr << "Unknown identifier: " << token << " in tank definition." << endl;
   }
 
@@ -85,6 +89,8 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     Contents = 0;
     PctFull  = 0;
   }
+
+  Area = 40.0 * pow(Capacity/1975, 0.666666667);
 
   Debug(0);
 }
@@ -111,6 +117,22 @@ double FGTank::Reduce(double used)
     Selected = false;
   }
   return shortage;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGTank::Calculate(double dt)
+{
+  if (Temperature == -9999.0) return 0.0;
+  double HeatCapacity = 900.0;        // Joules/lbm/C
+  double TempFlowFactor = 1.115;      // Watts/sqft/C
+  double TAT = Auxiliary->GetTAT_C();
+  double Tdiff = TAT - Temperature;
+  double dT = 0.0;                    // Temp change due to one surface
+  if (fabs(Tdiff) > 0.1) {
+    dT = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
+  }
+  return Temperature += (dT + dT);    // For now, assume upper/lower the same
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -49,7 +49,9 @@
   AC_GEAR LEFT_MLG  648.0 -100.0  -84.0  120000.0 10000.0  0.5  0.8  0.02 FIXED     LEFT  0 RETRACT
   AC_GEAR RIGHT_MLG 648.0  100.0  -84.0  120000.0 10000.0  0.5  0.8  0.02 FIXED     RIGHT 0 RETRACT
  </UNDERCARRIAGE>
+
  <PROPULSION>
+
   <AC_ENGINE FILE="CFM56">
     XLOC  540.0
     YLOC -193.0
@@ -57,6 +59,7 @@
     PITCH 0.0
     YAW   0.0
     FEED  0
+    FEED  2
     <AC_THRUSTER FILE="direct">
       XLOC  540.0
       YLOC -193.0
@@ -65,6 +68,7 @@
       YAW   0.0
     </AC_THRUSTER>
   </AC_ENGINE>
+
   <AC_ENGINE FILE="CFM56">
     XLOC  540.0
     YLOC  193.0
@@ -72,6 +76,7 @@
     PITCH 0.0
     YAW   0.0
     FEED  1
+    FEED  2
     <AC_THRUSTER FILE="direct">
       XLOC 540.0
       YLOC 193.0
@@ -80,31 +85,37 @@
       YAW   0.0
     </AC_THRUSTER>
   </AC_ENGINE>
+
   <AC_TANK TYPE="FUEL" NUMBER="0"> <!-- left wing -->
-    XLOC       520.0
-    YLOC       -80.0
-    ZLOC       -18.0
-    RADIUS       1.0
+    XLOC       520.0 
+    YLOC       -80.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
     CAPACITY 10200.0
     CONTENTS 10000.0
+    TEMPERATURE 15.0
   </AC_TANK>
+
   <AC_TANK TYPE="FUEL" NUMBER="1"> <!-- right wing -->
-    XLOC       520.0
-    YLOC        80.0
-    ZLOC       -18.0
-    RADIUS       1.0
+    XLOC       520.0 
+    YLOC        80.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
     CAPACITY 10200.0
     CONTENTS 10000.0
   </AC_TANK>
+
   <AC_TANK TYPE="FUEL" NUMBER="2"> <!-- center -->
-    XLOC       480.0
-    YLOC         0.0
-    ZLOC       -18.0
-    RADIUS       1.0
+    XLOC       480.0 
+    YLOC         0.0 
+    ZLOC       -18.0 
+    RADIUS       1.0 
     CAPACITY 15000.0
-    CONTENTS     0.0
+    CONTENTS  4000.0
   </AC_TANK>
+
  </PROPULSION>
+
  <FLIGHT_CONTROL NAME="737">
    <!-- Pitch ********************************************* -->
    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
@@ -184,7 +195,7 @@
              0.625   2
              0.750   2
              0.875   2
-             1.000   2
+             1.000   2  
      OUTPUT  fcs/flap-pos-deg
    </COMPONENT>
 
