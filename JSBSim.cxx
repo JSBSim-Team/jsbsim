@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.126 2002/09/10 01:53:12 apeden Exp $
+// $Id: JSBSim.cxx,v 1.127 2002/09/29 13:21:02 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -184,10 +184,7 @@ FGJSBsim::FGJSBsim( double dt )
 }
 /******************************************************************************/
 FGJSBsim::~FGJSBsim(void) {
-    if (fdmex != NULL) {
-        delete fdmex; fdmex=NULL;
-        delete fgic; fgic=NULL;
-    }  
+        delete fdmex;
 }
 
 /******************************************************************************/
