@@ -32,7 +32,7 @@ if [ ! -d "$FG_ROOT/Engine" ]; then
 	exit;
 fi
 
-for i in c172 X15 shuttle c310 c182 x24b; do
+for i in c172r c172p B747 T38 X15 shuttle c310 c182 x24b; do
     if [ ! -d "$FG_ROOT/Aircraft/$i" ]; then
 	echo "No $FG_ROOT/Aircraft/$i";
 	exit;
@@ -53,7 +53,8 @@ done
 $INSTALL filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
 $INSTALL filtersjb/*.h $FG_SRC/FDM/JSBSim/filtersjb/
 $INSTALL engine/*.xml $FG_ROOT/Engine/
-$INSTALL aircraft/c172/c172.xml $FG_ROOT/Aircraft/c172/
+$INSTALL aircraft/c172r/c172r.xml $FG_ROOT/Aircraft/c172/
+$INSTALL aircraft/c172p/c172p.xml $FG_ROOT/Aircraft/c172/
 $INSTALL aircraft/X15/X15.xml $FG_ROOT/Aircraft/X15/
 $INSTALL aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
 $INSTALL aircraft/c310/c310.xml $FG_ROOT/Aircraft/c310/

@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.55 2003/09/23 04:44:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.56 2003/11/17 12:50:56 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,45 +67,40 @@ CLASS IMPLEMENTATION
 
 
 FGEngine::FGEngine(FGFDMExec* exec)
-  : Name(""),
-    Type(etUnknown),
-    X(0), Y(0), Z(0),
-    EnginePitch(0), EngineYaw(0),
-    SLFuelFlowMax(0), SLOxiFlowMax(0),
-    MaxThrottle(1.0), MinThrottle(0.0),
-    Thrust(0.0),
-    Throttle(0.0),
-    Mixture(1.0),
-    Magnetos(0),
-    Starter(false),
-    FuelNeed(0.0), OxidizerNeed(0.0),
-    Starved(false), Flameout(false), Running(false), Cranking(false),
-    Augmentation(false), Injection(false), Ignition(false),
-    Reversed(false), Cutoff(true), Nitrous(false),
-    PctPower(0.0),
-    EngineNumber(-1),
-    TrimMode(false),
-    FuelFlow_gph(0.0),
-    ManifoldPressure_inHg(0.0),
-    ExhaustGasTemp_degK(0.0),
-    CylinderHeadTemp_degK(0.0),
-    OilPressure_psi(0.0),
-    OilTemp_degK(0.0),
-    FuelFlow_pph(0.0),
-    N1(0.0), N2(0.0), EGT_degC(0.0),
-    InletPosition(0.0), NozzlePosition(0.0),
-    FDMExec(exec),
-    State(FDMExec->GetState()),
-    Atmosphere(FDMExec->GetAtmosphere()),
-    FCS(FDMExec->GetFCS()),
-    Propulsion(FDMExec->GetPropulsion()),
-    Aircraft(FDMExec->GetAircraft()),
-    Translation(FDMExec->GetTranslation()),
-    Rotation(FDMExec->GetRotation()),
-    Position(FDMExec->GetPosition()),
-    Auxiliary(FDMExec->GetAuxiliary()),
-    Output(FDMExec->GetOutput())
 {
+  Name.clear();
+  Type = etUnknown;
+  X = Y = Z = 0.0;
+  EnginePitch = EngineYaw = 0.0;
+  SLFuelFlowMax = SLOxiFlowMax = 0.0;
+  MaxThrottle = 1.0;
+  MinThrottle = 0.0;
+  Thrust = 0.0;
+  Throttle = 0.0;
+  Mixture = 1.0;
+  Starter = false;
+  FuelNeed = OxidizerNeed = 0.0;
+  Starved = Running = Cranking = false;
+  PctPower = 0.0;
+  EngineNumber = -1;
+  TrimMode = false;
+  FuelFlow_gph = 0.0;
+  FuelFlow_pph = 0.0;
+
+  FDMExec = exec;
+  State = FDMExec->GetState();
+  Atmosphere = FDMExec->GetAtmosphere();
+  FCS = FDMExec->GetFCS();
+  Propulsion = FDMExec->GetPropulsion();
+  Aircraft = FDMExec->GetAircraft();
+  Translation = FDMExec->GetTranslation();
+  Rotation = FDMExec->GetRotation();
+  Position = FDMExec->GetPosition();
+  Auxiliary = FDMExec->GetAuxiliary();
+  Output = FDMExec->GetOutput();
+  
+  PropertyManager = FDMExec->GetPropertyManager();
+
   Debug(0);
 }
 
@@ -144,21 +139,24 @@ void FGEngine::ConsumeFuel(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGEngine::CalcFuelNeed(void) {
+double FGEngine::CalcFuelNeed(void)
+{
   FuelNeed = SLFuelFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return FuelNeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGEngine::CalcOxidizerNeed(void) {
+double FGEngine::CalcOxidizerNeed(void)
+{
   OxidizerNeed = SLOxiFlowMax*PctPower*State->Getdt()*Propulsion->GetRate();
   return OxidizerNeed;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGEngine::SetPlacement(double x, double y, double z, double pitch, double yaw) {
+void FGEngine::SetPlacement(double x, double y, double z, double pitch, double yaw)
+{
   X = x;
   Y = y;
   Z = z;

@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.30 2003/06/03 09:53:46 ehofman Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.31 2003/11/17 12:50:56 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,6 +70,7 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, FGConfigFile* Nzl_cfg) : FGThruster(FDMEx
   }
 
   Thrust = 0;
+  ReverserAngle = 0.0;
   Type = ttNozzle;
   Area2 = (Diameter*Diameter/4.0)*M_PI;
   AreaT = Area2/ExpR;
@@ -90,7 +91,7 @@ double FGNozzle::Calculate(double CfPc)
 {
   double pAtm = fdmex->GetAtmosphere()->GetPressure();
   Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
-  vFn(1) = Thrust;
+  vFn(1) = Thrust * cos(ReverserAngle);
 
   return Thrust;
 }

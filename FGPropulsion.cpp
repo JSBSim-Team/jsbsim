@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.87 2003/11/12 03:25:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.88 2003/11/17 12:50:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -79,12 +79,15 @@ CLASS IMPLEMENTATION
 FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
 {
   Name = "FGPropulsion";
+
   numSelectedFuelTanks = numSelectedOxiTanks = 0;
   numTanks = numEngines = numThrusters = 0;
   numOxiTanks = numFuelTanks = 0;
   dt = 0.0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
+
   bind();
+
   Debug(0);
 }
 
@@ -576,10 +579,10 @@ void FGPropulsion::SetMagnetos(int setting)
 {
   if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
-      Engines[i]->SetMagnetos(setting);
+      ((FGPiston*)Engines[i])->SetMagnetos(setting);
     }
   } else {
-    Engines[ActiveEngine]->SetMagnetos(setting);
+    ((FGPiston*)Engines[ActiveEngine])->SetMagnetos(setting);
   }
 }
 
@@ -609,15 +612,15 @@ void FGPropulsion::SetCutoff(int setting)
   if (ActiveEngine < 0) {
     for (unsigned i=0; i<Engines.size(); i++) {
       if (setting == 0)
-        Engines[i]->SetCutoff(false);
+        ((FGSimTurbine*)Engines[i])->SetCutoff(false);
       else
-        Engines[i]->SetCutoff(true);
+        ((FGSimTurbine*)Engines[i])->SetCutoff(true);
     }
   } else {
     if (setting == 0)
-      Engines[ActiveEngine]->SetCutoff(false);
+      ((FGSimTurbine*)Engines[ActiveEngine])->SetCutoff(false);
     else
-      Engines[ActiveEngine]->SetCutoff(true);
+      ((FGSimTurbine*)Engines[ActiveEngine])->SetCutoff(true);
   }
 }
 
@@ -637,10 +640,6 @@ void FGPropulsion::bind(void)
 {
   typedef double (FGPropulsion::*PMF)(int) const;
   typedef int (FGPropulsion::*iPMF)(void) const;
-  /* PropertyManager->Tie("propulsion/num-engines", this,
-                       &FGPropulsion::GetNumEngines);
-  PropertyManager->Tie("propulsion/num-tanks", this,
-                       &FGPropulsion::GetNumTanks); */
 
   PropertyManager->Tie("propulsion/magneto_cmd", this,
                        (iPMF)0, &FGPropulsion::SetMagnetos, true);
@@ -649,10 +648,6 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/cutoff_cmd", this,
                        (iPMF)0, &FGPropulsion::SetCutoff,   true);
 
-  PropertyManager->Tie("propulsion/num-sel-fuel-tanks", this,
-                       &FGPropulsion::GetnumSelectedFuelTanks);
-  PropertyManager->Tie("propulsion/num-sel-ox-tanks", this,
-                       &FGPropulsion::GetnumSelectedOxiTanks);
   PropertyManager->Tie("forces/fbx-prop-lbs", this,1,
                        (PMF)&FGPropulsion::GetForces);
   PropertyManager->Tie("forces/fby-prop-lbs", this,2,
@@ -666,24 +661,14 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("moments/n-prop-lbsft", this,3,
                        (PMF)&FGPropulsion::GetMoments);
 
-  PropertyManager->Tie("propulsion/n1", this, &FGPropulsion::GetN1);
-  PropertyManager->Tie("propulsion/n2", this, &FGPropulsion::GetN2);
-
   PropertyManager->Tie("propulsion/active_engine", this,
            &FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
-
-  //PropertyManager->Tie("propulsion/tanks-weight-lbs", this,
-  //                     &FGPropulsion::GetTanksWeight);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropulsion::unbind(void)
 {
-  /* PropertyManager->Untie("propulsion/num-engines");
-  PropertyManager->Untie("propulsion/num-tanks"); */
-  PropertyManager->Untie("propulsion/num-sel-fuel-tanks");
-  PropertyManager->Untie("propulsion/num-sel-ox-tanks");
   PropertyManager->Untie("propulsion/magneto_cmd");
   PropertyManager->Untie("propulsion/starter_cmd");
   PropertyManager->Untie("propulsion/cutoff_cmd");
@@ -694,9 +679,6 @@ void FGPropulsion::unbind(void)
   PropertyManager->Untie("moments/l-prop-lbsft");
   PropertyManager->Untie("moments/m-prop-lbsft");
   PropertyManager->Untie("moments/n-prop-lbsft");
-  PropertyManager->Untie("propulsion/n1");
-  PropertyManager->Untie("propulsion/n2");
-  //PropertyManager->Untie("propulsion/tanks-weight-lbs");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

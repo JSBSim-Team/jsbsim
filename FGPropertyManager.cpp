@@ -126,7 +126,7 @@ string FGPropertyManager::GetFullyQualifiedName(void) {
     }
     fqname+= stack[0];
     return fqname;  
-       
+
 }    
     
     

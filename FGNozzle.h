@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.24 2003/06/03 09:53:46 ehofman Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.25 2003/11/17 12:50:56 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,6 +83,7 @@ public:
   double GetPowerRequired(void);
   
 private:
+  double ReverserAngle;
   double PE;
   double ExpR;
   double nzlEff;

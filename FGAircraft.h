@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.89 2003/06/03 09:53:40 ehofman Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.90 2003/11/17 12:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     for retrieving their force and moment contributions falls to FGAircraft.<br>
     
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.89 2003/06/03 09:53:40 ehofman Exp $
+    @version $Id: FGAircraft.h,v 1.90 2003/11/17 12:50:56 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -155,7 +155,9 @@ public:
   inline FGColumnVector3& GetForces(void) { return vForces; }
   inline double GetForces(int idx) const { return vForces(idx); }
   inline FGColumnVector3& GetBodyAccel(void) { return vBodyAccel; }
+  inline double GetBodyAccel(int idx) { return vBodyAccel(idx); }
   inline FGColumnVector3& GetNcg   (void)  { return vNcg; }
+  inline double GetNcg(int idx)  { return vNcg(idx); }
   inline FGColumnVector3& GetXYZrp(void) { return vXYZrp; }
   inline FGColumnVector3& GetXYZep(void) { return vXYZep; }
   inline double GetXYZrp(int idx) const { return vXYZrp(idx); }

@@ -59,12 +59,13 @@ INCLUDES
 #endif
 
 #include "FGJSBBase.h"
+#include "FGPropertyManager.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.57 2003/06/03 09:53:44 ehofman Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.58 2003/11/17 12:50:56 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -99,7 +100,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.57 2003/06/03 09:53:44 ehofman Exp $ 
+    @version $Id: FGEngine.h,v 1.58 2003/11/17 12:50:56 jberndt Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,55 +115,22 @@ public:
 
   enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etSimTurbine};
 
+  EngineType      GetType(void) { return Type; }
+  virtual string  GetName(void) { return Name; }
+
+  // Engine controls
   virtual double  GetThrottleMin(void) { return MinThrottle; }
   virtual double  GetThrottleMax(void) { return MaxThrottle; }
   virtual double  GetThrottle(void) { return Throttle; }
   virtual double  GetMixture(void) { return Mixture; }
-  virtual int     GetMagnetos(void) { return Magnetos; }
   virtual bool    GetStarter(void) { return Starter; }
-  virtual double  GetThrust(void) { return Thrust; }
-  virtual bool    GetStarved(void) { return Starved; }
-  virtual bool    GetFlameout(void) { return Flameout; }
-  virtual bool    GetRunning(void) { return Running; }
-  virtual bool    GetCranking(void) { return Cranking; }
-  virtual int     GetType(void) { return Type; }
-  virtual string  GetName(void) { return Name; }
-  virtual double  GetN1(void) { return N1; }
-  virtual double  GetN2(void) { return N2; }
-  virtual double  GetEGT(void) { return EGT_degC; }
-  virtual double  GetEPR(void) { return EPR; }
-  virtual double  GetInlet(void) { return InletPosition; }
-  virtual double  GetNozzle(void) { return NozzlePosition; } 
-  virtual bool    GetAugmentation(void) { return Augmentation; } 
-  virtual bool    GetInjection(void) { return Injection; }
-  virtual int     GetIgnition(void) { return Ignition; }
-  virtual bool    GetReversed(void) { return Reversed; }
-  virtual bool    GetCutoff(void) { return Cutoff; }
-  virtual bool    GetNitrous(void) { return Nitrous; }
 
-  virtual double getFuelFlow_gph () const {
-    return FuelFlow_gph;
-  }
-
-  virtual double getManifoldPressure_inHg () const {
-    return ManifoldPressure_inHg;
-  }
-  virtual double getExhaustGasTemp_degF () const {
-    return (ExhaustGasTemp_degK - 273) * (9.0 / 5.0) + 32.0;
-  }
-  virtual double getCylinderHeadTemp_degF () const {
-    return (CylinderHeadTemp_degK - 273) * (9.0 / 5.0) + 32.0;
-  }
-  virtual double getOilPressure_psi () const {
-    return OilPressure_psi;
-  }
-  virtual double getOilTemp_degF () const {
-    return (OilTemp_degK - 273.0) * (9.0 / 5.0) + 32.0;
-  }
-
-  virtual double getFuelFlow_pph () const {
-    return FuelFlow_pph;
-  }
+  virtual double getFuelFlow_gph () const {return FuelFlow_gph;}
+  virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
+  virtual double GetThrust(void) { return Thrust; }
+  virtual bool   GetStarved(void) { return Starved; }
+  virtual bool   GetRunning(void) { return Running; }
+  virtual bool   GetCranking(void) { return Cranking; }
 
   virtual void SetStarved(bool tt) { Starved = tt; }
   virtual void SetStarved(void)    { Starved = true; }
@@ -171,14 +139,7 @@ public:
   virtual void SetName(string name) { Name = name; }
   virtual void AddFeedTank(int tkID);
 
-  virtual void SetMagnetos(int m) { Magnetos = m; }
   virtual void SetStarter(bool s) { Starter = s; }
-  virtual void SetAugmentation(bool a) { Augmentation = a; }
-  virtual void SetInjection(bool i) { Injection = i; }
-  virtual void SetIgnition(int ig) { Ignition = ig; }
-  virtual void SetReverse(bool r) { Reversed = r; }
-  virtual void SetCutoff(bool c) { Cutoff = c; }
-  virtual void SetNitrous(bool n) { Nitrous = n; }
 
   /** Calculates the thrust of the engine, and other engine functions.
       @param PowerRequired this is the power required to run the thrusting device
@@ -218,6 +179,7 @@ public:
   virtual void SetTrimMode(bool state) {TrimMode = state;}
 
 protected:
+  FGPropertyManager* PropertyManager;
   string Name;
   EngineType Type;
   double X, Y, Z;
@@ -231,38 +193,18 @@ protected:
   double Thrust;
   double Throttle;
   double Mixture;
-  int   Magnetos;
-  bool  Starter;
-  double FuelNeed, OxidizerNeed;
-  bool  Starved;
-  bool  Flameout;
-  bool  Running;
-  bool  Cranking;
+  double FuelNeed;
+  double OxidizerNeed;
   double PctPower;
   int   EngineNumber;
+  bool  Starter;
+  bool  Starved;
+  bool  Running;
+  bool  Cranking;
   bool  TrimMode;
 
   double FuelFlow_gph;
-  double ManifoldPressure_inHg;
-  double ExhaustGasTemp_degK;
-  double CylinderHeadTemp_degK;
-  double OilPressure_psi;
-  double OilTemp_degK;
-
   double FuelFlow_pph;
-  double N1;
-  double N2;
-  double EGT_degC;
-  double EPR;
-  double BleedDemand;
-  double InletPosition;
-  double NozzlePosition;
-  bool Augmentation;
-  bool Injection;
-  int Ignition;
-  bool Reversed;
-  bool Cutoff;
-  bool Nitrous;
 
   FGFDMExec*      FDMExec;
   FGState*        State;
@@ -277,7 +219,7 @@ protected:
   FGOutput*       Output;
 
   vector <int> SourceTanks;
-  virtual void Debug(int from);
+  void Debug(int from);
 };
 }
 #include "FGState.h"

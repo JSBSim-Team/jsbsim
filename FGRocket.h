@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.25 2003/06/03 09:53:49 ehofman Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.26 2003/11/17 12:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.25 2003/06/03 09:53:49 ehofman Exp $
+    @version $Id: FGRocket.h,v 1.26 2003/11/17 12:50:56 jberndt Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce
@@ -128,6 +128,12 @@ public:
       @return chamber pressure in psf. */
   double GetChamberPressure(void) {return PC;}
 
+  /** Gets the flame-out status.
+      The engine will "flame out" if the throttle is set below the minimum 
+      sustainable setting.
+      @return true if engine has flamed out. */
+  bool GetFlameout(void) {return Flameout;}
+
 private:
   double SHR;
   double maxPC;
@@ -135,6 +141,8 @@ private:
   double kFactor;
   double Variance;
   double PC;
+  bool Flameout;
+
   void Debug(int from);
 };
 }

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.13 2003/11/11 06:38:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSimTurbine.cpp,v 1.14 2003/11/17 12:50:56 jberndt Exp $";
 static const char *IdHdr = ID_SIMTURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ CLASS IMPLEMENTATION
 FGSimTurbine::FGSimTurbine(FGFDMExec* exec, FGConfigFile* cfg) : FGEngine(exec)
 {
   SetDefaults();
-  Type = etSimTurbine;
+
   Load(cfg);
   Debug(0);
 }
@@ -121,121 +121,125 @@ double FGSimTurbine::Calculate(double dummy)
 
 double FGSimTurbine::Off(void)
 {
-    double qbar = Translation->Getqbar();
-    Running = false;
-    FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
-    N1 = Seek(&N1, qbar/10.0, N1/2.0, N1/2.0);
-    N2 = Seek(&N2, qbar/15.0, N2/2.0, N2/2.0);
-    EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
-    OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);  
-    OilPressure_psi = N2 * 0.62;
-    NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
-    EPR = Seek(&EPR, 1.0, 0.2, 0.2);
-    return 0.0; 
+  double qbar = Translation->Getqbar();
+  Running = false;
+  FuelFlow_pph = Seek(&FuelFlow_pph, 0, 1000.0, 10000.0);
+  N1 = Seek(&N1, qbar/10.0, N1/2.0, N1/2.0);
+  N2 = Seek(&N2, qbar/15.0, N2/2.0, N2/2.0);
+  EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
+  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);  
+  OilPressure_psi = N2 * 0.62;
+  NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
+  EPR = Seek(&EPR, 1.0, 0.2, 0.2);
+  return 0.0; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Run(void)
 {
-    double idlethrust, milthrust, thrust;
-    double N2norm;   // 0.0 = idle N2, 1.0 = maximum N2
-    idlethrust = MilThrust * ThrustTables[0]->TotalValue();
-    milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
+  double idlethrust, milthrust, thrust;
+  double N2norm;   // 0.0 = idle N2, 1.0 = maximum N2
+  idlethrust = MilThrust * ThrustTables[0]->TotalValue();
+  milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
+
+  Running = true;
+  Starter = false;
  
-    Running = true;
-    Starter = false;
-   
-    N2 = Seek(&N2, IdleN2 + ThrottleCmd * N2_factor, delay, delay * 3.0);
-    N1 = Seek(&N1, IdleN1 + ThrottleCmd * N1_factor, delay, delay * 2.4);
-    N2norm = (N2 - IdleN2) / N2_factor;
-    thrust = idlethrust + (milthrust * N2norm * N2norm); 
-    thrust = thrust * (1.0 - BleedDemand);
-    EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
-    OilPressure_psi = N2 * 0.62;
-    OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
-    EPR = 1.0 + thrust/MilThrust;
-    if (!Augmentation) {
-      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * TSFC, 1000.0, 100000);
-      if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
-      NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
-    }
-    if (Reversed) thrust = thrust * -0.2;
+  N2 = Seek(&N2, IdleN2 + ThrottleCmd * N2_factor, delay, delay * 3.0);
+  N1 = Seek(&N1, IdleN1 + ThrottleCmd * N1_factor, delay, delay * 2.4);
+  N2norm = (N2 - IdleN2) / N2_factor;
+  thrust = idlethrust + (milthrust * N2norm * N2norm); 
+  thrust = thrust * (1.0 - BleedDemand);
+  EGT_degC = TAT + 363.1 + ThrottleCmd * 357.1;
+  OilPressure_psi = N2 * 0.62;
+  OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
+  EPR = 1.0 + thrust/MilThrust;
 
-    if (AugMethod == 1) {
-      if ((ThrottleCmd > 0.99) && (N2 > 97.0)) {Augmentation = true;} 
-        else {Augmentation = false;}
-      }
+  if (!Augmentation) {
+    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * TSFC, 1000.0, 100000);
+    if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
+    NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
+  }
 
-    if ((Augmented == 1) && Augmentation) {
-      thrust = MaxThrust * ThrustTables[2]->TotalValue();
-      FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
-      NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
-      }
+  if (AugMethod == 1) {
+    if ((ThrottleCmd > 0.99) && (N2 > 97.0)) {Augmentation = true;} 
+    else {Augmentation = false;}
+  }
 
-    if ((Injected == 1) && Injection)
-      thrust = thrust * ThrustTables[3]->TotalValue(); 
+  if ((Augmented == 1) && Augmentation) {
+    thrust = MaxThrust * ThrustTables[2]->TotalValue();
+    FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
+    NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
+  }
 
-    ConsumeFuel();
-    if (Cutoff) phase = tpOff;
-    if (Starved) phase = tpOff;
-    return thrust;
+  if ((Injected == 1) && Injection)
+    thrust = thrust * ThrustTables[3]->TotalValue(); 
+
+  ConsumeFuel();
+  if (Cutoff) phase = tpOff;
+  if (Starved) phase = tpOff;
+
+  return thrust;
 }
         
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::SpinUp(void)
 {
-    Running = false;
-    FuelFlow_pph = 0.0;
-    N2 = Seek(&N2, 25.18, 3.0, N2/2.0);
-    N1 = Seek(&N1, 5.21, 1.0, N1/2.0);
-    EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
-    OilPressure_psi = N2 * 0.62;
-    OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
-    EPR = 1.0;
-    NozzlePosition = 1.0;
-    return 0.0;
+  Running = false;
+  FuelFlow_pph = 0.0;
+  N2 = Seek(&N2, 25.18, 3.0, N2/2.0);
+  N1 = Seek(&N1, 5.21, 1.0, N1/2.0);
+  EGT_degC = Seek(&EGT_degC, TAT, 11.7, 7.3);
+  OilPressure_psi = N2 * 0.62;
+  OilTemp_degK = Seek(&OilTemp_degK, TAT + 273.0, 0.2, 0.2);
+  EPR = 1.0;
+  NozzlePosition = 1.0;
+
+  return 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Start(void)
 {
-    if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
-      Cranking = true;                   // provided for sound effects signal
-      if (N2 < IdleN2) {
-        N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
-        N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
-        EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
-        FuelFlow_pph = Seek(&FuelFlow_pph, IdleFF, 103.7, 103.7);
-        OilPressure_psi = N2 * 0.62;
-        }
-      else {
-        phase = tpRun;
-        Running = true;
-        Starter = false;
-        Cranking = false;
-        } 
+  if ((N2 > 15.0) && !Starved) {       // minimum 15% N2 needed for start
+    Cranking = true;                   // provided for sound effects signal
+    if (N2 < IdleN2) {
+      N2 = Seek(&N2, IdleN2, 2.0, N2/2.0);
+      N1 = Seek(&N1, IdleN1, 1.4, N1/2.0);
+      EGT_degC = Seek(&EGT_degC, TAT + 363.1, 21.3, 7.3);
+      FuelFlow_pph = Seek(&FuelFlow_pph, IdleFF, 103.7, 103.7);
+      OilPressure_psi = N2 * 0.62;
       }
-    else {                 // no start if N2 < 15%
-      phase = tpOff;
+    else {
+      phase = tpRun;
+      Running = true;
       Starter = false;
-      }
-    return 0.0; 
+      Cranking = false;
+      } 
+    }
+  else {                 // no start if N2 < 15%
+    phase = tpOff;
+    Starter = false;
+    }
+
+  return 0.0; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGSimTurbine::Stall(void)
 {
-    double qbar = Translation->Getqbar();
-    EGT_degC = TAT + 903.14;
-    FuelFlow_pph = IdleFF;
-    N1 = Seek(&N1, qbar/10.0, 0, N1/10.0); 
-    N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
-    if (ThrottleCmd == 0) phase = tpRun;        // clear the stall with throttle
-    return 0.0; 
+  double qbar = Translation->Getqbar();
+  EGT_degC = TAT + 903.14;
+  FuelFlow_pph = IdleFF;
+  N1 = Seek(&N1, qbar/10.0, 0, N1/10.0); 
+  N2 = Seek(&N2, qbar/15.0, 0, N2/10.0);
+  if (ThrottleCmd == 0) phase = tpRun;        // clear the stall with throttle
+
+  return 0.0; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -297,7 +301,8 @@ double FGSimTurbine::Seek(double *var, double target, double accel, double decel
 
 void FGSimTurbine::SetDefaults(void)
 {
-  Name = "None_Defined";
+  Name = "Not defined";
+  Type = etSimTurbine;
   MilThrust = 10000.0;
   MaxThrust = 10000.0;
   BypassRatio = 0.0;
@@ -317,11 +322,13 @@ void FGSimTurbine::SetDefaults(void)
   Augmentation = false;
   Injection = false;
   Reversed = false;
+  Cutoff = true;
   phase = tpOff;
   Stalled = false;
   Seized = false;
   Overtemp = false;
   Fire = false;
+  EGT_degC = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

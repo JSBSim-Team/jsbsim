@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.38 2003/10/13 11:55:18 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.39 2003/11/17 12:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,7 +106,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.38 2003/10/13 11:55:18 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.39 2003/11/17 12:50:56 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,6 +214,10 @@ public:
   string GetVersion(void) {return JSBSim_version;}
   
   void disableHighLighting(void);
+
+  double KelvinToFahrenheit (double kelvin) {
+    return 1.8*kelvin - 459.4;
+  }
 
 protected:
   static Message localMsg;

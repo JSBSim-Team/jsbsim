@@ -42,7 +42,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.17 2003/06/03 09:53:48 ehofman Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.18 2003/11/17 12:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -382,7 +382,7 @@ class FGPropertyManager : public SGPropertyNode {
     void Untie (const string &name);
 
 
-				    // Templates cause ambiguity here
+        // Templates cause ambiguity here
 
     /**
      * Tie a property to an external bool variable.
@@ -508,9 +508,11 @@ class FGPropertyManager : public SGPropertyNode {
                                               bool useDefault = true)
     {
       if (!tie(name.c_str(), SGRawValueFunctions<V>(getter, setter),
-				     useDefault))
+         useDefault))
+      {
         cout <<
-	       "Failed to tie property " << name << " to functions" << endl;
+         "Failed to tie property " << name << " to functions" << endl;
+      }
     }
 
 
@@ -537,12 +539,11 @@ class FGPropertyManager : public SGPropertyNode {
            void (*setter)(int, V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(),
-				     SGRawValueFunctionsIndexed<V>(index,
-							           getter,
-							           setter),
-				     useDefault))
+           SGRawValueFunctionsIndexed<V>(index, getter, setter), useDefault))
+      {
         cout <<
-	       "Failed to tie property " << name << " to indexed functions" << endl;
+         "Failed to tie property " << name << " to indexed functions" << endl;
+      }
     }
 
 
@@ -570,10 +571,11 @@ class FGPropertyManager : public SGPropertyNode {
            void (T::*setter)(V) = 0, bool useDefault = true)
     {
       if (!tie(name.c_str(),
-    				 SGRawValueMethods<T,V>(*obj, getter, setter),
-    				 useDefault))
+             SGRawValueMethods<T,V>(*obj, getter, setter), useDefault))
+      {
         cout <<
-    	   "Failed to tie property " << name << " to object methods" << endl;
+         "Failed to tie property " << name << " to object methods" << endl;
+      }
     }
     
     /**
@@ -601,13 +603,11 @@ class FGPropertyManager : public SGPropertyNode {
                                               bool useDefault = true)
     {
       if (!tie(name.c_str(),
-    				 SGRawValueMethodsIndexed<T,V>(*obj,
-    							       index,
-    							       getter,
-    							       setter),
-    				 useDefault))
+          SGRawValueMethodsIndexed<T,V>(*obj, index, getter, setter), useDefault))
+      {
         cout <<
-    	   "Failed to tie property " << name << " to indexed object methods" << endl;
+         "Failed to tie property " << name << " to indexed object methods" << endl;
+      }
    }
 };                                                                                       
 }

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.60 2003/06/11 05:39:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.61 2003/11/17 12:50:56 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,13 +59,6 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   Cp_fuel(1700)
 {
   string token;
-
-  MinManifoldPressure_inHg = 6.5;
-  MaxManifoldPressure_inHg = 28.5;
-  Displacement = 360;
-  MaxHP = 200;
-  Cycles = 2;
-  IdleRPM = 600;
 
   Name = Eng_cfg->GetValue("NAME");
   Eng_cfg->GetNextConfigLine();
@@ -86,7 +79,17 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec),
   crank_counter = 0;
   EngineNumber = 0;
   OilTemp_degK = 298;
+  MinManifoldPressure_inHg = 6.5;
+  MaxManifoldPressure_inHg = 28.5;
   ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
+  CylinderHeadTemp_degK = 0.0;
+  Displacement = 360;
+  MaxHP = 200;
+  Cycles = 2;
+  IdleRPM = 600;
+  Magnetos = 0;
+  ExhaustGasTemp_degK = 0.0;
+  EGT_degC = 0.0;
 
   dt = State->Getdt();
 
@@ -334,29 +337,34 @@ void FGPiston::doFuelFlow(void)
 void FGPiston::doEnginePower(void)
 {
   ManifoldPressure_inHg *= p_amb / p_amb_sea_level;
+
   if (Running) {	
     double ManXRPM = ManifoldPressure_inHg * RPM;
-        // FIXME: this needs to be generalized
+    double T_amb_degF = KelvinToFahrenheit(T_amb);
+    double T_amb_sea_lev_degF = KelvinToFahrenheit(288); 
+
+    // FIXME: this needs to be generalized
     Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
-    double T_amb_degF = (T_amb * 1.8) - 459.67;
-    double T_amb_sea_lev_degF = (288 * 1.8) - 459.67; 
-    Percentage_Power =
-      Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+    Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+
     double Percentage_of_best_power_mixture_power =
       Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
-    Percentage_Power =
-      Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
-    if (Percentage_Power < 0.0)
-      Percentage_Power = 0.0;
-    else if (Percentage_Power > 100.0)
-      Percentage_Power = 100.0;
+
+    Percentage_Power *= Percentage_of_best_power_mixture_power / 100.0;
+
+    if (Percentage_Power < 0.0) Percentage_Power = 0.0;
+    else if (Percentage_Power > 100.0) Percentage_Power = 100.0;
+    
     HP = Percentage_Power * MaxHP / 100.0;
-  } else {  
+
+  } else {
+
     // Power output when the engine is not running
     if (Cranking) {
       if (RPM < 10) {
-        HP = 3.0;	// This is a hack to prevent overshooting the idle rpm in the first time step
-                    // It may possibly need to be changed if the prop model is changed.
+        HP = 3.0;   // This is a hack to prevent overshooting the idle rpm in
+                    // the first time step. It may possibly need to be changed
+                    // if the prop model is changed.
       } else if (RPM < 480) {
         HP = 3.0 + ((480 - RPM) / 10.0);  
         // This is a guess - would be nice to find a proper starter moter torque curve

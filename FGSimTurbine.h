@@ -48,7 +48,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.12 2003/11/09 05:32:57 jberndt Exp $"
+#define ID_SIMTURBINE "$Id: FGSimTurbine.h,v 1.13 2003/11/17 12:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -129,7 +129,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version $Id: FGSimTurbine.h,v 1.12 2003/11/09 05:32:57 jberndt Exp $
+    @version $Id: FGSimTurbine.h,v 1.13 2003/11/17 12:50:56 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,12 +153,35 @@ public:
   double GetPowerAvailable(void);
   double Seek(double* var, double target, double accel, double decel);
 
-  virtual phaseType GetPhase(void) { return phase; }
-  virtual void SetPhase( phaseType p ) { phase = p; } 
+  phaseType GetPhase(void) { return phase; }
 
-  virtual bool GetOvertemp(void) { return Overtemp; }
-  virtual bool GetFire(void) { return Fire; }
-  
+  bool GetOvertemp(void)  {return Overtemp; }
+  bool GetInjection(void) {return Injection;}
+  bool GetFire(void) { return Fire; }
+  bool GetAugmentation(void) {return Augmentation;}
+  bool GetReversed(void) { return Reversed; }
+  bool GetCutoff(void) { return Cutoff; }
+  int GetIgnition(void) {return Ignition;}
+
+  double GetInlet(void) { return InletPosition; }
+  double GetNozzle(void) { return NozzlePosition; } 
+  double GetBleedDemand(void) {return BleedDemand;}
+  double GetN1(void) {return N1;}
+  double GetN2(void) {return N2;}
+  double GetEPR(void) {return EPR;}
+
+  double getOilPressure_psi () const {return OilPressure_psi;}
+  double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
+
+  void SetInjection(bool injection) {Injection = injection;}
+  void SetIgnition(int ignition) {Ignition = ignition;}
+  void SetAugmentation(bool augmentation) {Augmentation = augmentation;}
+  void SetPhase( phaseType p ) { phase = p; }
+  void SetEPR(double epr) {EPR = epr;}
+  void SetBleedDemand(double bleedDemand) {BleedDemand = bleedDemand;}
+  void SetReverse(bool reversed) { Reversed = reversed; }
+  void SetCutoff(bool cutoff) { Cutoff = cutoff; }
+
 private:
 
   typedef vector<FGCoefficient*> CoeffArray;
@@ -172,6 +195,8 @@ private:
   double ATSFC;            ///< Augmented TSFC (lbm/hr/lbf)
   double IdleN1;           ///< Idle N1
   double IdleN2;           ///< Idle N2
+  double N1;               ///< N1
+  double N2;               ///< N2
   double MaxN1;            ///< N1 at 100% throttle
   double MaxN2;            ///< N2 at 100% throttle
   double IdleFF;           ///< Idle Fuel Flow (lbm/hr)
@@ -185,10 +210,22 @@ private:
   bool Seized;             ///< true if inner spool is seized
   bool Overtemp;           ///< true if EGT exceeds limits
   bool Fire;               ///< true if engine fire detected
-  int Augmented;           ///< = 1 if augmentation installed
+  bool Injection;
+  bool Augmentation;
+  bool Reversed;
+  bool Cutoff;
   int Injected;            ///< = 1 if water injection installed
+  int Ignition;
+  int Augmented;           ///< = 1 if augmentation installed
   int AugMethod;           ///< = 0 if using property /engine[n]/augmentation
                            ///< = 1 if using last 1% of throttle movement
+  double EGT_degC;
+  double EPR;
+  double OilPressure_psi;
+  double OilTemp_degK;
+  double BleedDemand;
+  double InletPosition;
+  double NozzlePosition;
 
   double Off(void);
   double Run(void);

@@ -550,7 +550,7 @@ Aerodynamics:
     </COEFFICIENT>
   </AXIS>
  </AERODYNAMICS>
-  <OUTPUT NAME="JSBoutB747.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBoutB747.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
@@ -566,8 +566,5 @@ Aerodynamics:
     FCS              ON
     PROPULSION       ON
     PROPERTY         propulsion/active_engine
-    PROPERTY         aero/qbar-psf
-    PROPERTY         fcs/elevator-cmd-norm
-    PROPERTY         fcs/elevator-pos-rad
   </OUTPUT>
 </FDM_CONFIG>

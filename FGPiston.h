@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.31 2003/06/03 09:53:47 ehofman Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.32 2003/11/17 12:50:56 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,7 +71,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.31 2003/06/03 09:53:47 ehofman Exp $
+    @version $Id: FGPiston.h,v 1.32 2003/11/17 12:50:56 jberndt Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGPiston.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
@@ -93,6 +93,17 @@ public:
   double Calculate(double PowerRequired);
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
+
+  void SetMagnetos(int magnetos) {Magnetos = magnetos;}
+
+  double  GetEGT(void) { return EGT_degC; }
+  int     GetMagnetos(void) {return Magnetos;}
+
+  double getExhaustGasTemp_degF(void) {return KelvinToFahrenheit(ExhaustGasTemp_degK);}
+  double getManifoldPressure_inHg(void) const {return ManifoldPressure_inHg;}
+  double getCylinderHeadTemp_degF(void) {return KelvinToFahrenheit(CylinderHeadTemp_degK);}
+  double getOilPressure_psi(void) const {return OilPressure_psi;}
+  double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
 
 private:
   int crank_counter;
@@ -147,12 +158,13 @@ private:
   double T_amb;              // degrees Kelvin
   double RPM;                // revolutions per minute
   double IAS;                // knots
+  bool Magneto_Left;
+  bool Magneto_Right;
+  bool Magnetos;
 
   //
   // Outputs (in addition to those in FGEngine).
   //
-  bool Magneto_Left;
-  bool Magneto_Right;
   double rho_air;
   double volumetric_efficiency;
   double m_dot_air;
@@ -161,6 +173,12 @@ private:
   double Percentage_Power;
   double HP;
   double combustion_efficiency;
+  double ExhaustGasTemp_degK;
+  double EGT_degC;
+  double ManifoldPressure_inHg;
+  double CylinderHeadTemp_degK;
+  double OilPressure_psi;
+  double OilTemp_degK;
 
   void Debug(int from);
 };
