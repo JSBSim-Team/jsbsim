@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.122 2002/05/28 11:50:33 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.123 2002/06/08 00:15:17 apeden Exp $
 
 
 #include <simgear/compiler.h>
@@ -85,20 +85,7 @@ FGJSBsim::FGJSBsim( double dt )
     Position        = fdmex->GetPosition();
     Auxiliary       = fdmex->GetAuxiliary();
     Aerodynamics    = fdmex->GetAerodynamics();
-    GroundReactions = fdmex->GetGroundReactions();  
-  
-#ifdef FG_WEATHERCM
-    Atmosphere->UseInternal();
-#else
-    if (fgGetBool("/environment/params/control-fdm-atmosphere")) {
-      Atmosphere->UseExternal();
-      Atmosphere->SetExTemperature(get_Static_temperature());
-      Atmosphere->SetExPressure(get_Static_pressure());
-      Atmosphere->SetExDensity(get_Density());
-    } else {
-      Atmosphere->UseInternal();
-    }
-#endif
+    GroundReactions = fdmex->GetGroundReactions(); 
     
     fgic=new FGInitialCondition(fdmex);
     needTrim=true;
@@ -185,6 +172,14 @@ FGJSBsim::FGJSBsim( double dt )
     rudder_pos_pct->setDoubleValue(0);
     flap_pos_pct->setDoubleValue(0);
 
+    temperature = fgGetNode("/environment/temperature-degc",true);
+    pressure = fgGetNode("/environment/pressure-inhg",true);
+    density = fgGetNode("/environment/density-slugft3",true);
+    
+    wind_from_north= fgGetNode("/environment/wind-from-north-fps",true);
+    wind_from_east = fgGetNode("/environment/wind-from-east-fps" ,true);
+    wind_from_down = fgGetNode("/environment/wind-from-down-fps" ,true);
+     
 
 }
 /******************************************************************************/
@@ -203,11 +198,38 @@ FGJSBsim::~FGJSBsim(void) {
 void FGJSBsim::init() {
     
     SG_LOG( SG_FLIGHT, SG_INFO, "Starting and initializing JSBsim" );
-   
+
     // Explicitly call the superclass's
     // init method first.
+
+#ifdef FG_WEATHERCM
+    Atmosphere->UseInternal();
+#else
+    if (fgGetBool("/environment/params/control-fdm-atmosphere")) {
+      Atmosphere->UseExternal();
+      Atmosphere->SetExTemperature(
+                  9.0/5.0*(temperature->getDoubleValue()+273.15) );
+      Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
+      Atmosphere->SetExDensity(density->getDoubleValue());
+    } else {
+      Atmosphere->UseInternal();
+    }
+#endif
+    
+    fgic->SetVnorthFpsIC( wind_from_north->getDoubleValue() );
+    fgic->SetVeastFpsIC( wind_from_east->getDoubleValue() );
+    fgic->SetVdownFpsIC( wind_from_down->getDoubleValue() );
+
+    //Atmosphere->SetExTemperature(get_Static_temperature());
+    //Atmosphere->SetExPressure(get_Static_pressure());
+    //Atmosphere->SetExDensity(get_Density());
+    SG_LOG(SG_FLIGHT,SG_INFO,"T,p,rho: " << fdmex->GetAtmosphere()->GetTemperature()
+     << ", " << fdmex->GetAtmosphere()->GetPressure() 
+     << ", " << fdmex->GetAtmosphere()->GetDensity() );
+
     common_init();
     copy_to_JSBsim();
+    
 
     fdmex->RunIC(fgic); //loop JSBSim once w/o integrating
     copy_from_JSBsim(); //update the bus
@@ -284,8 +306,6 @@ FGJSBsim::update( double dt ) {
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
-    
-
     
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
@@ -374,12 +394,14 @@ bool FGJSBsim::copy_to_JSBsim() {
     Position->SetRunwayRadius( get_Runway_altitude() 
                                + get_Sea_level_radius() );
 
-    Atmosphere->SetExTemperature(get_Static_temperature());
-    Atmosphere->SetExPressure(get_Static_pressure());
-    Atmosphere->SetExDensity(get_Density());
-    Atmosphere->SetWindNED(get_V_north_airmass(),
-                           get_V_east_airmass(),
-                           get_V_down_airmass());
+    Atmosphere->SetExTemperature(
+                  9.0/5.0*(temperature->getDoubleValue()+273.15) );
+    Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
+    Atmosphere->SetExDensity(density->getDoubleValue());
+
+    Atmosphere->SetWindNED( wind_from_north->getDoubleValue(),
+                            wind_from_east->getDoubleValue(),
+                            wind_from_down->getDoubleValue() );
 //    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
 //                  << get_V_north_airmass() << ", "
 //                  << get_V_east_airmass()  << ", "
@@ -531,7 +553,7 @@ bool FGJSBsim::copy_from_JSBsim() {
 
     update_gear();
     
-    stall_warning->setDoubleValue( Aerodynamics->GetStallWarn() );
+    stall_warning->setDoubleValue( Aircraft->GetStallWarn() );
     
     /* elevator_pos_deg->setDoubleValue( FCS->GetDePos()*SG_RADIANS_TO_DEGREES );
     left_aileron_pos_deg->setDoubleValue( FCS->GetDaLPos()*SG_RADIANS_TO_DEGREES );
@@ -698,44 +720,6 @@ void FGJSBsim::set_Gamma_vert_rad( double gamma) {
     needTrim=true;
 }
 
-// void FGJSBsim::set_Static_pressure(double p) {
-//     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Static_pressure: " << p );
-    
-//     update_ic();
-//     Atmosphere->SetExPressure(p);
-//     if(Atmosphere->External() == true)
-//       needTrim=true;
-// }
-
-// void FGJSBsim::set_Static_temperature(double T) {
-//     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Static_temperature: " << T );
-    
-//     Atmosphere->SetExTemperature(T);
-//     if(Atmosphere->External() == true)
-//       needTrim=true;
-// }
- 
-
-// void FGJSBsim::set_Density(double rho) {
-//     SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Density: " << rho );
-    
-//     Atmosphere->SetExDensity(rho);
-//     if(Atmosphere->External() == true)
-//       needTrim=true;
-// }
-  
-void FGJSBsim::set_Velocities_Local_Airmass (double wnorth, 
-                         double weast, 
-                         double wdown ) {
-    //SG_LOG(SG_FLIGHT,SG_INFO, "FGJSBsim::set_Velocities_Local_Airmass: " 
-    //   << wnorth << ", " << weast << ", " << wdown );
-    
-    _set_Velocities_Local_Airmass( wnorth, weast, wdown );
-    fgic->SetWindNEDFpsIC( wnorth, weast, wdown );
-    if(Atmosphere->External() == true)
-        needTrim=true;
-}     
-
 void FGJSBsim::init_gear(void ) {
     
     FGGroundReactions* gr=fdmex->GetGroundReactions();
@@ -770,7 +754,7 @@ void FGJSBsim::update_gear(void) {
 void FGJSBsim::do_trim(void) {
 
         FGTrim *fgtrim;
-        if(fgic->GetVcalibratedKtsIC() < 10 ) {
+        if( fgGetBool("/sim/startup/onground") ) {
             fgic->SetVcalibratedKtsIC(0.0);
             fgtrim=new FGTrim(fdmex,fgic,tGround);
         } else {

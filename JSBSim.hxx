@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.36 2002/05/15 10:10:07 dmegginson Exp $
+    @version $Id: JSBSim.hxx,v 1.37 2002/06/08 00:15:17 apeden Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.hxx?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Header File </a>
@@ -199,9 +199,6 @@ public:
         @param wnorth velocity north in fps
         @param weast velocity east in fps
         @param wdown velocity down in fps*/
-    void set_Velocities_Local_Airmass (double wnorth,
-				       double weast,
-				       double wdown );
     /// @name Position Parameter Update
     //@{
 
@@ -258,6 +255,14 @@ private:
     SGPropertyNode *flap_pos_pct;
     
     SGPropertyNode *gear_pos_pct;
+    
+    SGPropertyNode *temperature;
+    SGPropertyNode *pressure;
+    SGPropertyNode *density;
+    
+    SGPropertyNode *wind_from_north;
+    SGPropertyNode *wind_from_east;
+    SGPropertyNode *wind_from_down;
     
     void init_gear(void);
     void update_gear(void);
