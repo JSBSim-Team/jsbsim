@@ -68,6 +68,7 @@ aircraft/f15/Makefile \
 aircraft/f16/Makefile \
 aircraft/f22/Makefile \
 aircraft/f104/Makefile \
+aircraft/fokker50/Makefile \
 aircraft/fokker100/Makefile \
 aircraft/minisgs/Makefile \
 aircraft/mk82/Makefile \

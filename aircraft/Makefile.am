@@ -15,6 +15,7 @@ SUBDIRS =		\
 	f16		\
 	f22		\
 	f104		\
+	fokker50	\
 	fokker100	\
 	minisgs		\
 	mk82		\
