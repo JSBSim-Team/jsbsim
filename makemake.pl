@@ -14,7 +14,7 @@ print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o
 print "FGTurbine.o FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
 print "FGFactorGroup.o FGColumnVector3.o FGColumnVector4.o FGGroundReactions.o FGScript.o\\\n";
-print "FGJSBBase.o FGPropertyManager.o\n\n";
+print "FGJSBBase.o FGPropertyManager.o FGSimTurbine.o\n\n";
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a\n";
 print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties\n\n";
 print "libFCSComponents.a:\n";
