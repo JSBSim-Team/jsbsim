@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.11 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.12 2001/08/30 10:45:35 apeden Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ FGfdmSocket::FGfdmSocket(string address, int port)
 {
   size = 0;
 
-  #if defined(__BORLANDC__) || defined(_MSC_VER)
+#if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
     WSADATA wsaData;
     int PASCAL FAR wsaReturnCode;
     wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
