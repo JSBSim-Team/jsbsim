@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.5 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.6 2004/04/18 02:08:28 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,12 +131,12 @@ bool FGPropagate::InitModel(void)
 {
   FGModel::InitModel();
 
-  h = 3.0;                                 // Est. height of aircraft cg off runway
-  SeaLevelRadius = Inertial->RefRadius();  // For initialization ONLY
-  Radius         = SeaLevelRadius + h;
-  RunwayRadius   = SeaLevelRadius;
-  DistanceAGL    = Radius - RunwayRadius;  // Geocentric
-  vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
+  h = 3.0;                                           // Est. height of aircraft cg off runway
+  SeaLevelRadius   = Inertial->RefRadius();          // For initialization ONLY
+  vLocation(eRad)  = SeaLevelRadius + h;
+  RunwayRadius     = SeaLevelRadius;
+  DistanceAGL      = vLocation(eRad) - RunwayRadius; // Geocentric
+  vRunwayNormal(3) = -1.0;                           // Initialized for standalone mode
   b = 1;
   return true;
 }
@@ -210,10 +210,10 @@ bool FGPropagate::Run(void)
 
 void FGPropagate::Seth(double tt)
 {
- h = tt;
- Radius    = h + SeaLevelRadius;
- DistanceAGL = Radius - RunwayRadius;   // Geocentric
- hoverbcg = DistanceAGL/b;
+  h = tt;
+  vLocation(eRad) = h + SeaLevelRadius;
+  DistanceAGL = vLocation(eRad) - RunwayRadius;   // Geocentric
+  hoverbcg = DistanceAGL/b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -221,8 +221,8 @@ void FGPropagate::Seth(double tt)
 void FGPropagate::SetDistanceAGL(double tt)
 {
   DistanceAGL=tt;
-  Radius = RunwayRadius + DistanceAGL;
-  h = Radius - SeaLevelRadius;
+  vLocation(eRad) = RunwayRadius + DistanceAGL;
+  h = vLocation(eRad) - SeaLevelRadius;
   hoverbcg = DistanceAGL/b;
 }
 
@@ -232,7 +232,7 @@ FGColumnVector3& FGPropagate::toGlobe(FGColumnVector3& V)
 {
   vLocation(eRad) = h + SeaLevelRadius;
 
-  if (cos(vLocation(eLat)) != 0) vLocationDot(eLong) = V(eEast) / (Radius * cos(vLocation(eLat)));
+  if (cos(vLocation(eLat)) != 0) vLocationDot(eLong) = V(eEast) / (vLocation(eRad) * cos(vLocation(eLat)));
   vLocationDot(eLat) = V(eNorth) / vLocation(eRad);
   vLocationDot(eRad) = -V(eDown);
 

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.5 2004/04/17 21:21:26 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.6 2004/04/18 02:08:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,7 +60,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.5 2004/04/17 21:21:26 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.6 2004/04/18 02:08:29 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,6 @@ public:
   bool InitModel(void);
 
   /** Runs the Propagate model; called by the Executive
-      @see JSBSim.cpp documentation
       @return false if no error */
   bool Run(void);
 
@@ -103,16 +102,16 @@ public:
                                                     vPQR(eQ)=q;
                                                     vPQR(eR)=r;}
   inline double GethVRP(void)  const { return hVRP; }
-  inline double Gethdot(void) const { return RadiusDot; }
-  inline double GetLatitude(void) const { return Latitude; }
+  inline double Gethdot(void) const { return vLocationDot(eRad); }
+  inline double GetLatitude(void) const { return vLocation(eLat); }
   inline double GetLatitudeVRP(void) const { return LatitudeVRP; }
-  inline double GetLatitudeDot(void) const { return LatitudeDot; }
-  inline double GetLongitude(void) const { return Longitude; }
+  inline double GetLatitudeDot(void) const { return vLocationDot(eLat); }
+  inline double GetLongitude(void) const { return vLocation(eLong); }
   inline double GetLongitudeVRP(void) const { return LongitudeVRP; }
-  inline double GetLongitudeDot(void) const { return LongitudeDot; }
+  inline double GetLongitudeDot(void) const { return vLocationDot(eLong); }
   inline double GetRunwayRadius(void) const { return RunwayRadius; }
   inline double GetDistanceAGL(void)  const { return DistanceAGL; }
-  inline double GetRadius(void) const { return Radius; }
+  inline double GetRadius(void) const { return vLocation(eRad); }
   inline FGColumnVector3& GetRunwayNormal(void) { return vRunwayNormal; }
 
   double Getphi(void) const { return vQtrn.GetEulerPhi(); }
@@ -138,8 +137,8 @@ public:
   inline double GetHOverBCG(void) const { return hoverbcg; }
   inline double GetHOverBMAC(void) const { return hoverbmac; }
   void SetvVel(const FGColumnVector3& v) { vVel = v; }
-  void SetLatitude(double tt) { Latitude = tt; }
-  void SetLongitude(double tt) { Longitude = tt; }
+  void SetLatitude(double tt) { vLocation(eLat) = tt; }
+  void SetLongitude(double tt) { vLocation(eLong) = tt; }
   void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt;}
@@ -174,10 +173,7 @@ private:
   FGQuaternion vQtrn;
   FGQuaternion vQtrndot_prev[4];
 
-  double Radius, h, hVRP;
-  double LatitudeDot, LongitudeDot, RadiusDot;
-  double LatitudeDot_prev[4], LongitudeDot_prev[4], RadiusDot_prev[4];
-  double Longitude, Latitude;
+  double h, hVRP;
   double LongitudeVRP, LatitudeVRP;
   double dt;
   double RunwayRadius;
