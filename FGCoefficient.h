@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.26 2001/06/26 00:21:31 jberndt Exp $"
+#define ID_COEFFICIENT "$Id: FGCoefficient.h,v 1.27 2001/07/05 12:20:44 jberndt Exp $"
 
 using std::vector;
 
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     Each FDM execution frame the Run() method of the [currently] FGAircraft model
     is called and the coefficient value is calculated.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.26 2001/06/26 00:21:31 jberndt Exp $
+    @version $Id: FGCoefficient.h,v 1.27 2001/07/05 12:20:44 jberndt Exp $
     @see -
 */
 
@@ -102,9 +102,6 @@ public:
   ~FGCoefficient();
 
   typedef vector <eParam> MultVec;
-  float Value(float, float);
-  float Value(float);
-  float Value(void);
   float TotalValue(void);
   inline string Getname(void) {return name;}
   inline float GetSD(void) {return SD;}
@@ -119,6 +116,9 @@ private:
   string description;
   string name;
   string method;
+  float Value(float, float);
+  float Value(float);
+  float Value(void);
   float StaticValue;
   eParam LookupR, LookupC;
   MultVec multipliers;
