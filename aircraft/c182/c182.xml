@@ -3,7 +3,7 @@
 
   File:        c182.xml
   Author:      David Megginson, based on c172.xml by Tony Peden.
-  CVS Version: $Id: c182.xml,v 1.5 2002/01/15 02:56:39 dmegginson Exp $
+  CVS Version: $Id: c182.xml,v 1.6 2002/01/19 17:28:16 dmegginson Exp $
 
   Function: Models a Cessna 182
   Sources: 1. Jan Roskam, Airplane Flight Dynamics and Automatic Flight
@@ -111,6 +111,7 @@
       PITCH   0.0
       YAW     0.0
       FEED      0
+      FEED      1
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="prop_81in2v">
@@ -124,12 +125,21 @@
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
-      XLOC   48.0
-      YLOC    0.0
+      XLOC   56.0
+      YLOC -112.0
       ZLOC   59.4
       RADIUS 29.4
-      CAPACITY 336.0
-      CONTENTS 336.0
+      CAPACITY 300.0
+      CONTENTS 200.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC   56.0
+      YLOC  112.0
+      ZLOC   59.4
+      RADIUS 29.4
+      CAPACITY 300.0
+      CONTENTS 200.0
     </AC_TANK>
 
   </PROPULSION>

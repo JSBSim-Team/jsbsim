@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.83 2002/01/05 20:16:33 dmegginson Exp $
+  CVS Version: $Id: c172.xml,v 1.84 2002/01/19 17:28:15 dmegginson Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -111,6 +111,7 @@
       PITCH   0.0
       YAW     0.0
       FEED      0
+      FEED      1
     </AC_ENGINE>
 
     <AC_THRUSTER FILE="prop_75in2f">
@@ -124,12 +125,21 @@
     </AC_THRUSTER>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
-      XLOC   48.0
-      YLOC    0.0
+      XLOC   56.0
+      YLOC -112.0
       ZLOC   59.4
       RADIUS 29.4
-      CAPACITY 336.0
-      CONTENTS 336.0
+      CAPACITY 185.0
+      CONTENTS 100.0
+    </AC_TANK>
+
+    <AC_TANK TYPE="FUEL" NUMBER="1">
+      XLOC   56.0
+      YLOC  112.0
+      ZLOC   59.4
+      RADIUS 29.4
+      CAPACITY 185.0
+      CONTENTS 100.0
     </AC_TANK>
 
   </PROPULSION>
@@ -320,11 +330,13 @@
     </AXIS>
 
     <AXIS NAME="SIDE">
+<!--
        <COEFFICIENT NAME="CYo" TYPE="VALUE">
          Side_force_due_to_vertical_tail_incidence
          FG_QBAR|FG_WINGAREA
          -0.001284
        </COEFFICIENT>
+-->
        <COEFFICIENT NAME="CYb" TYPE="VECTOR">
          Side_force_due_to_beta
          3
@@ -442,11 +454,13 @@
     </AXIS>
 
     <AXIS NAME="YAW">
+<!--
        <COEFFICIENT NAME="Cno" TYPE="VALUE">
          Yaw_moment_due_to_vertical_tail_incidence
          FG_QBAR|FG_WINGAREA|FG_WINGSPAN
          0.000563
        </COEFFICIENT>
+-->
 
        <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
          Yaw_moment_due_to_beta
