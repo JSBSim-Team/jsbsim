@@ -104,6 +104,8 @@ public:
   float CalcThrust(void);
   float CalcFuelNeed(void);
   float CalcOxidizerNeed(void);
+  /// Sets engine placement information
+  void SetPlacement(float x, float y, float z, float pitch, float yaw);
 
 private:
   string Name;

@@ -62,7 +62,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.14 2000/10/16 12:32:44 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.15 2000/11/19 22:15:49 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,14 +224,21 @@ float FGEngine::CalcThrust(void) {
   }
 }
 
-float FGEngine::CalcFuelNeed() {
+float FGEngine::CalcFuelNeed(void) {
   FuelNeed = SLFuelFlowMax*PctPower;
   return FuelNeed;
 }
 
 
-float FGEngine::CalcOxidizerNeed() {
+float FGEngine::CalcOxidizerNeed(void) {
   OxidizerNeed = SLOxiFlowMax*PctPower;
   return OxidizerNeed;
 }
 
+void FGEngine::SetPlacement(float x, float y, float z, float pitch, float yaw) {
+  X = x;
+  Y = y;
+  Z = z;
+  EnginePitch = pitch;
+  EngineYaw = yaw;
+}

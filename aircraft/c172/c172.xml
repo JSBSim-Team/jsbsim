@@ -69,11 +69,20 @@
       capacity in pounds
       Current contents, in pounds
 
+      ENGINE[S] SECTION
+
+      Engine[s] is|are specified by giving engine name (which corresponds to an engine
+      definition file in the "engines" directory) followed by x, y, z placement and
+      pitch and yaw orientation. Coordinates are given in inches in the structural
+      coordinate frame. Angles for pitch and yaw are specified in radians.
+
+      AC_ENGINE name x y z pitch yaw
+
     </COMMENT>
 
     AC_TANK FUEL      48.0 0.0 59.4  29.4  336.0 336.0
 
-    AC_ENGINE c172
+    AC_ENGINE c172   -19.7 0.0 26.6 0.0 0.0
 
   </PROPULSION>
   

@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.49 2000/11/13 23:35:25 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.50 2000/11/19 22:15:49 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -502,6 +502,7 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
   string token;
   string engine_name;
   string parameter;
+  float xLoc, yLoc, zLoc, engPitch, engYaw;
 
   AC_cfg->GetNextConfigLine();
 
@@ -512,6 +513,12 @@ void FGAircraft::ReadPropulsion(FGConfigFile* AC_cfg) {
 
       *AC_cfg >> engine_name;
       Engine[numEngines] = new FGEngine(FDMExec, EnginePath, engine_name, numEngines);
+
+      *AC_cfg >> xLoc >> yLoc >> zLoc;
+      *AC_cfg >> engPitch >> engYaw;
+
+      Engine[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
+
       numEngines++;
 
     } else if (parameter == "AC_TANK") {
