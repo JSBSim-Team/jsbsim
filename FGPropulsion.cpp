@@ -66,7 +66,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.81 2003/01/22 15:53:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.82 2003/03/16 13:01:08 ehofman Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -237,6 +237,8 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
           Engines.push_back(new FGPiston(FDMExec, &Eng_cfg));
         } else if (engType == "FG_TURBINE") {
           Engines.push_back(new FGTurbine(FDMExec, &Eng_cfg));
+        } else if (engType == "FG_SIMTURBINE") {
+          Engines.push_back(new FGSimTurbine(FDMExec, &Eng_cfg));
         } else {
           cerr << fgred << "    Unrecognized engine type: " << underon << engType
                     << underoff << " found in config file." << fgdef << endl;
@@ -379,6 +381,8 @@ string FGPropulsion::GetPropulsionStrings(void)
       break;
     case FGEngine::etTurbine:
       break;
+    case FGEngine::etSimTurbine:
+      break;
     default:
       PropulsionStrings += "INVALID ENGINE TYPE";
       break;
@@ -432,6 +436,8 @@ string FGPropulsion::GetPropulsionValues(void)
       PropulsionValues += (string(gcvt(((FGRocket*)Engines[i])->GetChamberPressure(), 10, buff)));
       break;
     case FGEngine::etTurbine:
+      break;
+    case FGEngine::etSimTurbine:
       break;
     }
 

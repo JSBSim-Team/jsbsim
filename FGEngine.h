@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.52 2003/01/22 15:53:32 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.53 2003/03/16 13:01:07 ehofman Exp $"
 
 using std::string;
 using std::vector;
@@ -99,7 +99,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.52 2003/01/22 15:53:32 jberndt Exp $ 
+    @version $Id: FGEngine.h,v 1.53 2003/03/16 13:01:07 ehofman Exp $ 
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,7 @@ public:
   FGEngine(FGFDMExec* exec);
   virtual ~FGEngine();
 
-  enum EngineType {etUnknown, etRocket, etPiston, etTurbine};
+  enum EngineType {etUnknown, etRocket, etPiston, etTurbine, etSimTurbine};
 
   virtual double  GetThrottleMin(void) { return MinThrottle; }
   virtual double  GetThrottleMax(void) { return MaxThrottle; }
@@ -127,6 +127,15 @@ public:
   virtual bool    GetCranking(void) { return Cranking; }
   virtual int     GetType(void) { return Type; }
   virtual string  GetName(void) { return Name; }
+  virtual double  GetN1(void) { return N1; }
+  virtual double  GetN2(void) { return N2; }
+  virtual double  GetEGT(void) { return EGT_degC; }
+  virtual double  GetEPR(void) { return EPR; }
+  virtual double  GetInlet(void) { return InletPosition; }
+  virtual double  GetNozzle(void) { return NozzlePosition; } 
+  virtual bool    GetAugmentation(void) { return Augmentation; } 
+  virtual bool    GetInjection(void) { return Injection; }
+  virtual bool    GetIgnition(void) { return Ignition; }
 
   virtual double getFuelFlow_gph () const {
     return FuelFlow_gph;
@@ -146,6 +155,10 @@ public:
   }
   virtual double getOilTemp_degF () const {
     return (OilTemp_degK - 273.0) * (9.0 / 5.0) + 32.0;
+  }
+
+  virtual double getFuelFlow_pph () const {
+    return FuelFlow_pph;
   }
 
   virtual void SetStarved(bool tt) {Starved = tt;}
@@ -226,6 +239,18 @@ protected:
   double CylinderHeadTemp_degK;
   double OilPressure_psi;
   double OilTemp_degK;
+
+  double FuelFlow_pph;
+  double N1;
+  double N2;
+  double EGT_degC;
+  double EPR;
+  double BleedDemand;
+  double InletPosition;
+  double NozzlePosition;
+  bool Augmentation;
+  bool Injection;
+  bool Ignition;
 
   FGFDMExec*      FDMExec;
   FGState*        State;

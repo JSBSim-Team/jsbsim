@@ -105,6 +105,8 @@ libJSBSim_a_SOURCES = \
 	FGTrim.h \
 	FGTurbine.cpp \
 	FGTurbine.h \
+        FGSimTurbine.cpp \
+        FGSimTurbine.h
 	FGUtility.cpp \
 	FGUtility.h
 

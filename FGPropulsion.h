@@ -57,6 +57,7 @@ INCLUDES
 #include "FGRocket.h"
 #include "FGPiston.h"
 #include "FGTurbine.h"
+#include "FGSimTurbine.h"
 #include "FGTank.h"
 #include "FGPropeller.h"
 #include "FGNozzle.h"
@@ -65,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.47 2003/01/22 15:53:35 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.48 2003/03/16 13:01:09 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,7 +85,7 @@ CLASS DOCUMENTATION
     containment of engines, tanks, and thruster class instances in STL vectors,
     and the interaction and communication between them.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.47 2003/01/22 15:53:35 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.48 2003/03/16 13:01:09 ehofman Exp $
     @see FGEngine
     @see FGTank
     @see FGThruster

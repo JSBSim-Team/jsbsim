@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.132 2003/02/12 18:34:00 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.133 2003/03/16 13:01:11 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -539,8 +539,18 @@ bool FGJSBsim::copy_from_JSBsim() {
       node->setDoubleValue("cht-degf", eng->getCylinderHeadTemp_degF());
       node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
       node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
+      node->setDoubleValue("thrust_lb", eng->GetThrust());
+      node->setDoubleValue("N1", eng->GetN1());
+      node->setDoubleValue("N2", eng->GetN2());
+      node->setDoubleValue("EGT_degC", eng->GetEGT());
+      node->setDoubleValue("fuel-flow_pph", eng->getFuelFlow_pph());
+      node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
+      node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
       node->setBoolValue("running", eng->GetRunning());
       node->setBoolValue("cranking", eng->GetCranking());
+      node->setBoolValue("ignition", eng->GetIgnition());
+      node->setBoolValue("augmentation", eng->GetAugmentation());
+      node->setBoolValue("water-injection", eng->GetInjection());
     }
 
     static const SGPropertyNode *fuel_freeze
@@ -554,7 +564,8 @@ bool FGJSBsim::copy_from_JSBsim() {
 		= fgGetNode("/consumables/fuel/tank", i, true);
 	    double contents = Propulsion->GetTank(i)->GetContents();
 	    node->setDoubleValue("level-gal_us", contents/6.6);
-	    // node->setDoubleValue("level-lb", contents);
+	    node->setDoubleValue("level-lb", contents);
+            // node->setDoubleValue("temperature_degC", 
 	}
     }
 
