@@ -60,12 +60,10 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Short description
-    Long Description
-    ...
-    @author Jon Q. Public
-    @version $Id: FGAuxiliary.h,v 1.10 2000/10/16 12:32:43 jsb Exp $
-    @see Other references; may include HTML descriptors
+/** Encapsulates various uncategorized scheduled functions.
+    @author Tony Peden, Jon Berndt
+    @version $Id: FGAuxiliary.h,v 1.11 2000/10/18 12:19:06 jsb Exp $
+    @see -
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,12 +72,17 @@ CLASS DECLARATION
 
 class FGAuxiliary : public FGModel {
 public:
+  /** Constructor
+      @param Executive a pointer to the parent executive object */
   FGAuxiliary(FGFDMExec*);
+  /// Destructor
   ~FGAuxiliary(void);
 
+  /** Runs the Auxiliary routines; called by the Executive
+      @return false if no error */
   bool Run(void);
 
-  //use FGInitialCondition to set these speeds
+  // Use FGInitialCondition to set these speeds
   inline float GetVcalibratedFPS(void) { return vcas; }
   inline float GetVcalibratedKTS(void) { return vcas*FPSTOKTS; }
   inline float GetVequivalentFPS(void) { return veas; }
@@ -98,15 +101,14 @@ private:
   float veas;
   float mach;
   float qbar,rhosl,rho,p,psl,pt;
-  //Don't add a getter for pt!
-  //pt above is freestream total pressure for subsonic only
-  //for supersonic it is the 1D total pressure behind a normal shock
-  //if a general freestream total is needed, e-mail Tony Peden
+
+  // Don't add a getter for pt!
+  // pt above is freestream total pressure for subsonic only
+  // for supersonic it is the 1D total pressure behind a normal shock
+  // if a general freestream total is needed, e-mail Tony Peden
   // (apeden@earthlink.net) or you can add it your self using the
   // isentropic flow equations
-  
- 
-  
+
   FGColumnVector vPilotAccel;
   
   float earthPosAngle;

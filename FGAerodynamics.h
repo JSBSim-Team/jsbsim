@@ -28,10 +28,6 @@ HISTORY
 09/13/00   JSB   Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -56,7 +52,32 @@ INCLUDES
 #include "FGModel.h"
 #include "FGConfigFile.h"
 
-#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.4 2000/10/16 12:32:43 jsb Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_AERODYNAMICS "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAerodynamics.h,v 1.5 2000/10/18 12:19:05 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+/** Encapsulates the aerodynamic calculations.
+    This class owns and contains the list of coefficients that define the
+    aerodynamic properties of this aircraft. Here also, such unique phenomena
+    as ground effect and maximum lift curve tailoff are handled.
+    @author Jon S. Berndt
+    @version $Id: FGAerodynamics.h,v 1.5 2000/10/18 12:19:05 jsb Exp $
+    @see -
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -65,10 +86,18 @@ CLASS DECLARATION
 class FGAerodynamics : public FGModel {
 
 public:
+  /** Constructor
+      @param Executive a pointer to the parent executive object */
   FGAerodynamics(FGFDMExec*);
+  /// Destructor
   ~FGAerodynamics(void);
 
+  /** Runs the Aerodynamics model; called by the Executive
+      @return false if no error */
   bool Run(void);
+
+  /** Loads the Aerodynamics model
+      @return true if successful */
   bool LoadAerodynamics(FGConfigFile* AC_cfg);
 };
 

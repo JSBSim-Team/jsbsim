@@ -67,7 +67,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.35 2000/10/16 12:32:43 jsb Exp $"
+#define ID_AIRCRAFT "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.h,v 1.36 2000/10/18 12:19:05 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -82,7 +86,7 @@ CLASS DOCUMENTATION
     up this aircraft. This includes the Engines, Tanks, Propellers, Nozzles,
     aerodynamic and mass properties, landing gear, etc.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.35 2000/10/16 12:32:43 jsb Exp $
+    @version $Id: FGAircraft.h,v 1.36 2000/10/18 12:19:05 jsb Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate

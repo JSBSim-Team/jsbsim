@@ -48,7 +48,11 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.7 2000/10/16 12:32:43 jsb Exp $"
+#define ID_ATMOSPHERE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAtmosphere.h,v 1.8 2000/10/18 12:19:06 jsb Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -60,7 +64,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1959 Standard Atmosphere
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.7 2000/10/16 12:32:43 jsb Exp $
+    @version $Id: FGAtmosphere.h,v 1.8 2000/10/18 12:19:06 jsb Exp $
     @see <ol><li>Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
     1989, ISBN 0-07-001641-0</li></ol>
  */
@@ -87,20 +91,29 @@ public:
 
   /** @name Atmosphere property retrieval functions */
   //@{
-  /// Gets the temperature
+  /// Gets the temperature.
   inline float GetTemperature(void) {return temperature;}
-  /// Gets the density. Use only after Run() has been called.
+  /** Gets the density.
+      Use only after Run() has been called. */
   inline float GetDensity(void)    {return density;}
-  /// Gets the density
+  /// Gets the pressure.
   inline float GetPressure(void)   {return pressure;}
-  /// Gets the speed of sound
+  /// Gets the speed of sound.
   inline float GetSoundSpeed(void) {return soundspeed;}
-  //@}
 
-  inline float GetTemperatureSL(void) { return SLtemperature; }  //Rankine, altitude in feet
-  inline float GetDensitySL(void)     { return SLdensity; }      //slugs/ft^3
-  inline float GetPressureSL(void)    { return SLpressure; }     //lbs/ft^2
-  inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }   //ft/s
+  /** Gets the Sea Level temperature.
+      Units: degrees Rankine.*/
+  inline float GetTemperatureSL(void) { return SLtemperature; }
+  /** Gets the Sea Level density.
+      Units: slug/ft^3 */
+  inline float GetDensitySL(void)     { return SLdensity; }
+  /** Gets the Sea Level pressure
+      Units: lb/ft^2 */
+  inline float GetPressureSL(void)    { return SLpressure; }
+  /** Gets the Sea Level speed of sound
+      Units: ft/sec */
+  inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }
+  //@}
 
   inline float GetTemperatureRatio(void)  { return temperature/SLtemperature; }
   inline float GetDensityRatio(void) 	  { return density/SLdensity; }
