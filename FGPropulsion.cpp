@@ -73,7 +73,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.91 2004/03/01 13:56:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.92 2004/03/03 11:56:52 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -126,6 +126,7 @@ bool FGPropulsion::Run(void)
       vForces  += Thrusters[i]->GetBodyForces();  // sum body frame forces
       vMoments += Thrusters[i]->GetMoments();     // sum body frame moments
     }
+    CalculateTankInertias();
     return false;
   } else {
     return true;
@@ -362,6 +363,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
     AC_cfg->GetNextConfigLine();
   }
 
+  CalculateTankInertias();
   if (!ThrottleAdded) FCS->AddThrottle(); // need to have at least one throttle
 
   return true;
@@ -491,14 +493,14 @@ string FGPropulsion::GetPropulsionValues(void)
 FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 {
   iTank = Tanks.begin();
-  vXYZtank.InitMatrix();
+  vXYZtank_arm.InitMatrix();
   while (iTank < Tanks.end()) {
-    vXYZtank(eX) += (*iTank)->GetX()*(*iTank)->GetContents();
-    vXYZtank(eY) += (*iTank)->GetY()*(*iTank)->GetContents();
-    vXYZtank(eZ) += (*iTank)->GetZ()*(*iTank)->GetContents();
+    vXYZtank_arm(eX) += (*iTank)->GetXYZ(eX)*(*iTank)->GetContents();
+    vXYZtank_arm(eY) += (*iTank)->GetXYZ(eY)*(*iTank)->GetContents();
+    vXYZtank_arm(eZ) += (*iTank)->GetXYZ(eZ)*(*iTank)->GetContents();
     iTank++;
   }
-  return vXYZtank;
+  return vXYZtank_arm;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -517,80 +519,36 @@ double FGPropulsion::GetTanksWeight(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGPropulsion::GetTanksIxx(const FGColumnVector3& vXYZcg)
+void FGPropulsion::CalculateTankInertias(void)
 {
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetX() - vXYZcg(eX)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
+  unsigned int size;
+  double contents;
+
+  size = Tanks.size();
+  if (size == 0) return;
+
+  tankIxx = tankIyy = tankIzz = tankIxy = tankIxz = tankIyz = 0.0;
+
+  for (unsigned int i=0; i<size; i++) {
+
+    vTankXYZ = MassBalance->StructuralToBody(Tanks[i]->GetXYZ()); // get vector, CG to Tank
+                                                   // should we be passing vector
+                                                   // by reference to this?
+    contents = Tanks[i]->GetContents();
+    tankIxx += vTankXYZ(eX)*vTankXYZ(eX)*contents;
+    tankIyy += vTankXYZ(eY)*vTankXYZ(eY)*contents;
+    tankIzz += vTankXYZ(eZ)*vTankXYZ(eZ)*contents;
+    tankIxy += vTankXYZ(eX)*vTankXYZ(eY)*contents;
+    tankIxz += vTankXYZ(eX)*vTankXYZ(eZ)*contents;
+    tankIyz += vTankXYZ(eY)*vTankXYZ(eZ)*contents;
   }
-  return I;
-}
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetTanksIyy(const FGColumnVector3& vXYZcg)
-{
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    I += ((*iTank)->GetY() - vXYZcg(eY))*((*iTank)->GetY() - vXYZcg(eY)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
-  }
-  return I;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetTanksIzz(const FGColumnVector3& vXYZcg)
-{
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    I += ((*iTank)->GetZ() - vXYZcg(eZ))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
-  }
-  return I;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetTanksIxz(const FGColumnVector3& vXYZcg)
-{
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
-  }
-  return I;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetTanksIyz(const FGColumnVector3& vXYZcg)
-{
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    I += ((*iTank)->GetY() - vXYZcg(eY))*((*iTank)->GetZ() - vXYZcg(eZ)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
-  }
-  return I;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGPropulsion::GetTanksIxy(const FGColumnVector3& vXYZcg)
-{
-  double I = 0.0;
-  iTank = Tanks.begin();
-  while (iTank != Tanks.end()) {
-    I += ((*iTank)->GetX() - vXYZcg(eX))*((*iTank)->GetY() - vXYZcg(eY)) * (*iTank)->GetContents()/(144.0*Inertial->gravity());
-    iTank++;
-  }
-  return I;
+  tankIxx /= Inertial->SLgravity();
+  tankIyy /= Inertial->SLgravity();
+  tankIzz /= Inertial->SLgravity();
+  tankIxy /= Inertial->SLgravity();
+  tankIxz /= Inertial->SLgravity();
+  tankIyz /= Inertial->SLgravity();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

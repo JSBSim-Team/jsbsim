@@ -329,7 +329,8 @@ FGState.o: FGState.cpp FGState.h FGJSBBase.h FGInitialCondition.h \
 FGTable.o: FGTable.cpp FGTable.h FGConfigFile.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTable.o -c FGTable.cpp
 
-FGTank.o: FGTank.cpp FGTank.h FGConfigFile.h FGJSBBase.h
+FGTank.o: FGTank.cpp FGTank.h FGJSBBase.h FGConfigFile.h \
+  FGColumnVector3.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGTank.o -c FGTank.cpp
 
 FGThruster.o: FGThruster.cpp FGThruster.h FGForce.h FGFDMExec.h FGModel.h \

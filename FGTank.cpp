@@ -46,7 +46,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.32 2003/12/29 10:57:39 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.33 2004/03/03 11:56:52 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,13 +56,14 @@ CLASS IMPLEMENTATION
 FGTank::FGTank(FGConfigFile* AC_cfg)
 {
   string token;
-  
+  double X, Y, Z;
+
   type = AC_cfg->GetValue("TYPE");
 
   if      (type == "FUEL")     Type = ttFUEL;
   else if (type == "OXIDIZER") Type = ttOXIDIZER;
   else                         Type = ttUNKNOWN;
-  
+
   AC_cfg->GetNextConfigLine();
   while ((token = AC_cfg->GetValue()) != string("/AC_TANK")) {
     if (token == "XLOC") *AC_cfg >> X;
@@ -73,7 +74,9 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
     else if (token == "CONTENTS") *AC_cfg >> Contents;
     else cerr << "Unknown identifier: " << token << " in tank definition." << endl;
   }
-  
+
+  vXYZ << X << Y << Z;
+
   Selected = true;
 
   if (Capacity != 0) {
@@ -81,7 +84,7 @@ FGTank::FGTank(FGConfigFile* AC_cfg)
   } else {
     Contents = 0;
     PctFull  = 0;
-  }     
+  }
 
   Debug(0);
 }
@@ -137,7 +140,7 @@ void FGTank::Debug(int from)
     if (from == 0) { // Constructor
       cout << "      " << type << " tank holds " << Capacity << " lbs. " << type << endl;
       cout << "      currently at " << PctFull << "% of maximum capacity" << endl;
-      cout << "      Tank location (X, Y, Z): " << X << ", " << Y << ", " << Z << endl;
+      cout << "      Tank location (X, Y, Z): " << vXYZ(eX) << ", " << vXYZ(eY) << ", " << vXYZ(eZ) << endl;
       cout << "      Effective radius: " << Radius << " inches" << endl;
     }
   }

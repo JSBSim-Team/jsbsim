@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.58 2004/03/01 13:56:39 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.59 2004/03/03 11:56:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
     scaling mechanism (gearing?) to allow the engine to give its associated thrust-
     ers specific distributed portions of the excess power.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.58 2004/03/01 13:56:39 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.59 2004/03/03 11:56:52 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -188,12 +188,12 @@ public:
   FGColumnVector3& GetTanksMoment(void);
   double GetTanksWeight(void);
 
-  double GetTanksIxx(const FGColumnVector3& vXYZcg);
-  double GetTanksIyy(const FGColumnVector3& vXYZcg);
-  double GetTanksIzz(const FGColumnVector3& vXYZcg);
-  double GetTanksIxz(const FGColumnVector3& vXYZcg);
-  double GetTanksIxy(const FGColumnVector3& vXYZcg);
-  double GetTanksIyz(const FGColumnVector3& vXYZcg);
+  double GetTanksIxx(void) {return tankIxx;}
+  double GetTanksIyy(void) {return tankIyy;}
+  double GetTanksIzz(void) {return tankIzz;}
+  double GetTanksIxz(void) {return tankIxz;}
+  double GetTanksIxy(void) {return tankIxy;}
+  double GetTanksIyz(void) {return tankIyz;}
 
   inline int GetActiveEngine(void) const
   {
@@ -222,11 +222,14 @@ private:
   unsigned int numEngines;
   unsigned int numTanks;
   unsigned int numThrusters;
+  double tankIxx, tankIyy, tankIzz, tankIxy, tankIxz, tankIyz;
   int ActiveEngine;
   double dt;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
-  FGColumnVector3 vXYZtank;
+  FGColumnVector3 vTankXYZ;
+  FGColumnVector3 vXYZtank_arm;
+  void CalculateTankInertias(void);
   void Debug(int from);
 };
 }

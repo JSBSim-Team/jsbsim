@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.19 2004/02/22 21:42:59 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.20 2004/03/03 11:56:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.19 2004/02/22 21:42:59 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.20 2004/03/03 11:56:52 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +109,7 @@ public:
 
   inline void InitMatrix(void) { data[1]=0; data[2]=0; data[3]=0; }
   inline void InitMatrix(double ff) { data[1]=ff; data[2]=ff; data[3]=ff; }
+  inline void InitMatrix(double a, double b, double c) { data[1]=a; data[2]=b; data[3]=c; }
 
   double Magnitude(void);
   FGColumnVector3 Normalize(void);

@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.24 2004/03/01 13:56:39 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.25 2004/03/03 11:56:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -100,17 +100,11 @@ public:
   inline void SetBaseIxy(double bixy)   { baseIxy = bixy;}
   inline void SetBaseIxz(double bixz)   { baseIxz = bixz;}
   inline void SetBaseIyz(double biyz)   { baseIyz = biyz;}
-  inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = CG;}
+  inline void SetBaseCG(const FGColumnVector3& CG) {vbaseXYZcg = vXYZcg = CG;}
 
   void AddPointMass(double weight, double X, double Y, double Z);
   double GetPointMassWeight(void);
   FGColumnVector3& GetPointMassMoment(void);
-  double GetPMIxx(void);
-  double GetPMIyy(void);
-  double GetPMIzz(void);
-  double GetPMIxy(void);
-  double GetPMIxz(void);
-  double GetPMIyz(void);
 
   void bind(void);
   void unbind(void);
@@ -125,6 +119,12 @@ private:
   double Ixy;
   double Ixz;
   double Iyz;
+  double pmIxx;
+  double pmIyy;
+  double pmIzz;
+  double pmIxy;
+  double pmIxz;
+  double pmIyz;
   double baseIxx;
   double baseIyy;
   double baseIzz;
@@ -134,9 +134,12 @@ private:
   FGColumnVector3 vXYZcg;
   FGColumnVector3 vXYZtank;
   FGColumnVector3 vbaseXYZcg;
+  FGColumnVector3 vPMxyz;
   vector <FGColumnVector3> PointMassLoc;
   vector <double> PointMassWeight;
   FGColumnVector3 PointMassCG;
+  void CalculatePMInertia(void);
+
   void Debug(int from);
 };
 }
