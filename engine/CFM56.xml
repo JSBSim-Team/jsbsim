@@ -1,9 +1,14 @@
 <?xml version="1.0"?>
-<!-- CFM56 turbofan engine model -->
+<!-- CFM56 turbofan engine model
+     Version 0.9, 31 Jan 2003, David Culp, davidculp2@attbi.com
+_______________________________________________________________
+-->
 <FG_TURBINE NAME="CFM56">
-  <!-- max static thrust at S.L. (installed), lbs -->
+<!-- max static thrust at S.L. (installed), lbs -->
   MAXMILTHRUST 19000
-  <!-- Idle Thrust -->
+<!-- augmentation not installed -->
+  MAXAUGTHRUST 19000
+<!-- Idle Thrust -->
   <TABLE NAME="IdleThrust" TYPE="TABLE">
     Idle_power_thrust_factor
     6
@@ -21,8 +26,8 @@
   </TABLE>
 
   <TABLE NAME="MilThrust" TYPE="TABLE">
-    Military_power_thrust_factor
-    6
+    Effects_of_altitude_and_mach_on_thrust
+    7
     6
     velocities/mach-norm
     position/h-sl-ft
@@ -33,7 +38,8 @@
     0.4   0.9945   0.7344   0.5213   0.3383   0.2050   0.1230
     0.6   0.9968   0.7759   0.5591   0.3675   0.2240   0.1309
     0.8   0.9771   0.8025   0.6112   0.4196   0.2563   0.1522
-    1.0   0.9211   0.7767   0.6349   0.4811   0.2997   0.1822
+    0.9   0.9300   0.7900   0.6000   0.3900   0.2300   0.1300
+    1.0   0.5000   0.5000   0.4000   0.2000   0.1500   0.0900
   </TABLE>
 
 </FG_TURBINE>

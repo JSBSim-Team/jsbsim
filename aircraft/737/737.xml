@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        737.xml
   Author:      David Culp
-  CVS Version: $Id: 737.xml,v 1.1 2003/01/31 12:49:08 jberndt Exp $
+  CVS Version: $Id: 737.xml,v 1.2 2003/02/12 14:06:26 jberndt Exp $
 
   Function: Models a Boeing 737-300 with CFM56 engines
 -->
@@ -14,19 +14,20 @@
     AC_HTAILARM    48.04 <!-- ft  -->
     AC_VTAILAREA  297.00 <!-- ft2 -->
     AC_LV          44.50 <!-- ft  -->
-    AC_IXX     900000.0
-    AC_IYY    2500000.0
-    AC_IZZ    4000000.0
-    AC_IXZ       8000.0
+    AC_IXX     900000.0  <!-- slug-ft2 -->
+    AC_IYY    2500000.0  <!-- slug-ft2 -->
+    AC_IZZ    4000000.0  <!-- slug-ft2 -->
+    AC_IXZ       8000.0  <!-- slug-ft2 -->
     AC_EMPTYWT  83000.0	 <!-- light cargo and passenger load  -->
-    AC_CGLOC      550.0   0.0 -20.0
-    AC_AERORP     540.0   0.0   0.0 
-    AC_EYEPTLOC    72.0 -30.0  40.0
+    <!-- origin is nose, x,y,z in inches -->
+    AC_CGLOC      550.0   0.0 -40.0
+    AC_AERORP     540.0   0.0  24.0 
+    AC_EYEPTLOC    80.0 -30.0  70.0
   </METRICS>
   <UNDERCARRIAGE>
-    AC_GEAR NOSE_LG    158.0    0.0  -84.0   9000  2000 0.02 0.08 0.02 STEERABLE NONE   80  RETRACT
-    AC_GEAR LEFT_MLG   648.0 -100.0  -84.0  12000 10000 0.02 0.08 0.02 FIXED     LEFT   0   RETRACT
-    AC_GEAR RIGHT_MLG  648.0  100.0  -84.0  12000 10000 0.02 0.08 0.02 FIXED     RIGHT  0   RETRACT
+    AC_GEAR NOSE_LG    158.0    0.0  -84.0   90000  4000 0.8 0.08 0.02 STEERABLE NONE   80  RETRACT
+    AC_GEAR LEFT_MLG   648.0 -100.0  -84.0  120000 10000 0.8 0.08 0.02 FIXED     LEFT   0   RETRACT
+    AC_GEAR RIGHT_MLG  648.0  100.0  -84.0  120000 10000 0.8 0.08 0.02 FIXED     RIGHT  0   RETRACT
   </UNDERCARRIAGE>
   <PROPULSION>
     <AC_ENGINE FILE="CFM56">
@@ -38,7 +39,7 @@
       FEED          3
       FEED          1
     </AC_ENGINE>
-    <AC_THRUSTER FILE="CFM56_nozzle">
+    <AC_THRUSTER FILE="direct">
       XLOC      610.0
       YLOC     -193.0
       ZLOC      -40.0
@@ -54,7 +55,7 @@
       FEED          3
       FEED          2
     </AC_ENGINE>
-    <AC_THRUSTER FILE="CFM56_nozzle">
+    <AC_THRUSTER FILE="direct">
       XLOC      610.0
       YLOC      193.0
       ZLOC      -40.0
@@ -94,10 +95,10 @@
     </COMPONENT>
     <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
        INPUT         fcs/pitch-trim-sum
-       MIN          -28
-       MAX           23
+       MIN          -35
+       MAX           35
        OUTPUT        fcs/elevator-pos-rad
-       GAIN          0.01745
+       GAIN          0.018
      </COMPONENT>
      <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
        INPUT         fcs/aileron-cmd-norm
@@ -108,7 +109,7 @@
        INPUT         fcs/roll-trim-sum
        MIN          -20
        MAX           15
-       GAIN          0.01
+       GAIN          0.02
        OUTPUT        fcs/left-aileron-pos-rad
      </COMPONENT>
       <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
@@ -116,40 +117,57 @@
        MIN          -20
        MAX           15
        INVERT
-       GAIN          0.01
+       GAIN          0.02
        OUTPUT        fcs/right-aileron-pos-rad
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Damper Rate" TYPE="PURE_GAIN">
+       INPUT        velocities/r-rad_sec
+       GAIN         2.00
+     </COMPONENT>
+     <COMPONENT NAME="Yaw Damper Beta" TYPE="PURE_GAIN">
+       INPUT        aero/beta-rad
+       GAIN         -5.00
      </COMPONENT>
      <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
        INPUT        fcs/rudder-cmd-norm
        INPUT        fcs/yaw-trim-cmd-norm
        CLIPTO       -1 1
      </COMPONENT>
-     <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+     <COMPONENT NAME="Rudder Control" TYPE="SUMMER">
        INPUT        fcs/yaw-trim-sum
-       MIN         -16
-       MAX          16
-       GAIN         0.01745
+       INPUT        fcs/yaw-damper-rate
+       INPUT        fcs/yaw-damper-beta
        OUTPUT       fcs/rudder-pos-rad
+       CLIPTO       -0.2  0.2
      </COMPONENT>
      <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
        INPUT        fcs/flap-cmd-norm
        DETENTS      9
-                    0    0
-                    1    1
-                    2    2
-                    5    5
-                    10   10
-                    15   15
-                    25   25
-                    30   30
-                    40   40
+                    0        0
+                    1        4
+                    2        4
+                    5        3
+                    10       3
+                    15       3
+                    25       3
+                    30       2
+                    40       2
        OUTPUT      fcs/flap-pos-deg
+     </COMPONENT>
+     <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
+       INPUT        gear/gear-cmd-norm
+       DETENTS      2
+                    0    0
+                    1    5
+       OUTPUT       gear/gear-pos-norm
      </COMPONENT>
   </FLIGHT_CONTROL>
   <AERODYNAMICS>
     AC_ALPHALIMITS -0.08 0.40
     AC_HYSTLIMITS   0.09 0.36
   <AXIS NAME="LIFT">
+<!-- In the 737 flaps 1 gives you partial LE devices,
+     flaps 10 gives you full LE devices.  -->
     <COEFFICIENT NAME="CLalpha" TYPE="TABLE">
       Lift_due_to_alpha
       17
@@ -233,6 +251,16 @@
         aero/qbar-psf|metrics/Sw-sqft|aero/mag-beta-rad
         0.20
       </COEFFICIENT>
+      <COEFFICIENT NAME="CDgear" TYPE="VALUE">
+        Drag_due_to_landing_gear
+        aero/qbar-psf|metrics/Sw-sqft|gear/gear-pos-norm
+        0.04
+      </COEFFICIENT>
+      <COEFFICIENT NAME="CDspeedbrake" TYPE="VALUE">
+        Drag_due_to_speedbrake
+        aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
+        0.04
+      </COEFFICIENT>
     </AXIS>
     <AXIS NAME="SIDE">
       <COEFFICIENT NAME="CYb" TYPE="VECTOR">
@@ -244,26 +272,6 @@
          0      0
          0.35  -0.5
       </COEFFICIENT>
-      <COEFFICIENT NAME="CYDa" TYPE="VALUE">
-        Side_force_due_to_aileron
-        aero/qbar-psf|metrics/Sw-sqft|fcs/left-aileron-pos-rad
-        0
-      </COEFFICIENT>
-      <COEFFICIENT NAME="CYDr" TYPE="VALUE">
-        Side_force_due_to_rudder
-        aero/qbar-psf|metrics/Sw-sqft|fcs/rudder-pos-rad
-        0.10
-      </COEFFICIENT>
-      <COEFFICIENT NAME="CYp" TYPE="VALUE">
-        Side_force_due_to_roll_rate
-        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/p-aero-rad_sec
-        -0.01
-      </COEFFICIENT>
-      <COEFFICIENT NAME="CYr" TYPE="VALUE">
-        Side_force_due_to_yaw_rate
-        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/r-aero-rad_sec
-        0.01
-      </COEFFICIENT>
     </AXIS>
     <AXIS NAME="ROLL">
       <COEFFICIENT NAME="Clb" TYPE="VECTOR">
@@ -271,27 +279,24 @@
         3
         aero/beta-rad
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft
-        -0.35     0.1
+        -0.35     0.01
          0        0
-         0.35    -0.1
+         0.35    -0.01
       </COEFFICIENT>
       <COEFFICIENT NAME="Clp" TYPE="VALUE">
         Roll_moment_due_to_roll_rate_(roll_damping)
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
         -0.5
       </COEFFICIENT>
-      <COEFFICIENT NAME="Clr" TYPE="VECTOR">
+      <COEFFICIENT NAME="Clr" TYPE="VALUE">
         Roll_moment_due_to_yaw_rate
-        2
-        aero/alpha-rad
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
-        0.0000  0.08
-        0.1000  0.20
+        0.005
       </COEFFICIENT>
       <COEFFICIENT NAME="Clda" TYPE="VALUE">
         Roll_moment_due_to_aileron
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-        0.25
+        0.20
       </COEFFICIENT>
       <COEFFICIENT NAME="Cldr" TYPE="VALUE">
         Roll_moment_due_to_rudder
@@ -316,36 +321,35 @@
       <COEFFICIENT NAME="CmDe" TYPE="VALUE">
         Pitch_moment_due_to_elevator_Deflection
         aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-        -0.6
+        -1.5
       </COEFFICIENT>
       <COEFFICIENT NAME="Cmq" TYPE="VALUE">
         Pitch_moment_due_to_pitch_rate
         aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
         -10.0
       </COEFFICIENT>
+      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
+        Pitch_moment_due_to_alpha_rate
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
+         -12.0
+      </COEFFICIENT>
     </AXIS>
     <AXIS NAME="YAW">
-      <COEFFICIENT NAME="Cnr" TYPE="VALUE">
+     <COEFFICIENT NAME="Cnr" TYPE="VALUE">
         Yaw_moment_due_to_yaw_rate
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
-        -0.10
+        -0.04
       </COEFFICIENT>
-      <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
+      <COEFFICIENT NAME="Cnb" TYPE="VALUE">
         Yaw_moment_due_to_beta
-        3
-        aero/beta-rad
-        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft
-        -0.35  -0.02
-         0      0
-         0.35   0.02
+        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
+        0.2
       </COEFFICIENT>
       <COEFFICIENT NAME="Cndr" TYPE="VALUE">
         Yaw_moment_due_to_rudder
         aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
-        -0.05
+        -0.5
       </COEFFICIENT>
     </AXIS>
   </AERODYNAMICS>
-  <OUTPUT>
-  </OUTPUT>
 </FDM_CONFIG>

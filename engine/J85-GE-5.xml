@@ -2,9 +2,9 @@
 <!-- J85-GE-5 afterburning turbojet engine model -->
 <FG_TURBINE NAME="J85">
   <!-- max static thrust at S.L. (installed), lbs -->
-  MAXMILTHRUST 2600
+  MAXMILTHRUST 2050
   <!-- max augmented thrust at S.L. (installed), lbs -->
-  MAXAUGTHRUST 3800
+  MAXAUGTHRUST 2900
   <!-- Idle Thrust -->
   <TABLE NAME="IdleThrust" TYPE="TABLE">
     Idle_power_thrust_factor
