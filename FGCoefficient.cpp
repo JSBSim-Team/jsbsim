@@ -45,75 +45,21 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGCoefficient.h"
-#include "FGAtmosphere.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
-#include "FGFCS.h"
-#include "FGAircraft.h"
-#include "FGTranslation.h"
-#include "FGRotation.h"
-#include "FGPosition.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
 *******************************************************************************/
 
-FGCoefficient::CoeffMap FGCoefficient::coeffdef;
-
 FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 {
   int r, c, start, end, n;
   float ftrashcan;
-  string strashcan;
-
-  static bool FirstTime = true;
-  if (FirstTime) {
-    FirstTime = false;
-    coeffdef["FG_QBAR"]          = 1           ;
-    coeffdef["FG_WINGAREA"]      = 2           ;
-    coeffdef["FG_WINGSPAN"]      = 4           ;
-    coeffdef["FG_CBAR"]          = 8           ;
-    coeffdef["FG_ALPHA"]         = 16          ;
-    coeffdef["FG_ALPHADOT"]      = 32          ;
-    coeffdef["FG_BETA"]          = 64          ;
-    coeffdef["FG_BETADOT"]       = 128         ;
-    coeffdef["FG_PITCHRATE"]     = 256         ;
-    coeffdef["FG_ROLLRATE"]      = 512         ;
-    coeffdef["FG_YAWRATE"]       = 1024        ;
-    coeffdef["FG_MACH"]          = 2048        ;
-    coeffdef["FG_ALTITUDE"]      = 4096        ;
-    coeffdef["FG_BI2VEL"]        = 8192        ;
-    coeffdef["FG_CI2VEL"]        = 16384       ;
-    coeffdef["FG_ELEVATOR_POS"]  = 32768L      ;
-    coeffdef["FG_AILERON_POS"]   = 65536L      ;
-    coeffdef["FG_RUDDER_POS"]    = 131072L     ;
-    coeffdef["FG_SPDBRAKE_POS"]  = 262144L     ;
-    coeffdef["FG_FLAPS_POS"]     = 524288L     ;
-    coeffdef["FG_ELEVATOR_CMD"]  = 1048576L    ;
-    coeffdef["FG_AILERON_CMD"]   = 2097152L    ;
-    coeffdef["FG_RUDDER_CMD"]    = 4194304L    ;
-    coeffdef["FG_SPDBRAKE_CMD"]  = 8388608L    ;
-    coeffdef["FG_FLAPS_CMD"]     = 16777216L   ;
-    coeffdef["FG_SPARE1"]        = 33554432L   ;
-    coeffdef["FG_SPARE2"]        = 67108864L   ;
-    coeffdef["FG_SPARE3"]        = 134217728L  ;
-    coeffdef["FG_SPARE4"]        = 268435456L  ;
-    coeffdef["FG_SPARE5"]        = 536870912L  ;
-    coeffdef["FG_SPARE6"]        = 1073741824L ;
-  }
+  string multparms;
 
   FDMExec     = fdex;
   State       = FDMExec->GetState();
-  Atmosphere  = FDMExec->GetAtmosphere();
-  FCS         = FDMExec->GetFCS();
-  Aircraft    = FDMExec->GetAircraft();
-  Translation = FDMExec->GetTranslation();
-  Rotation    = FDMExec->GetRotation();
-  Position    = FDMExec->GetPosition();
-  Auxiliary   = FDMExec->GetAuxiliary();
-  Output      = FDMExec->GetOutput();
 
   if (AC_cfg) {
     name = AC_cfg->GetValue("NAME");
@@ -142,140 +88,48 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
 
       cout << endl;
 
-      *AC_cfg >> strashcan;
-      if (strashcan.substr(0,1) == "F") {
-        LookupR = coeffdef[strashcan.c_str()];
-        cout << "   Row indexing parameter: " << strashcan << endl;
+      *AC_cfg >> multparms;
+      if (multparms.substr(0,1) == "F") {
+        LookupR = State->GetParameterIndex(multparms);
+        cout << "   Row indexing parameter: " << multparms << endl;
       } else {
-        LookupR = atoi(strashcan.c_str());
+        LookupR = atoi(multparms.c_str());
         cout << "   Row indexing parameter: " << LookupR << endl;
       }
 
     }
 
     if (type == TABLE) {
-      *AC_cfg >> strashcan;
-      if (strashcan.substr(0,1) == "F") {
-        LookupC = coeffdef[strashcan.c_str()];
-        cout << "   Column indexing parameter: " << strashcan << endl;
+      *AC_cfg >> multparms;
+      if (multparms.substr(0,1) == "F") {
+        LookupR = State->GetParameterIndex(multparms);
+        cout << "   Column indexing parameter: " << multparms << endl;
       } else {
-        LookupC = atoi(strashcan.c_str());
+        LookupC = atoi(multparms.c_str());
         cout << "   Column indexing parameter: " << LookupC << endl;
       }
     }
 
-    *AC_cfg >> strashcan;
+    *AC_cfg >> multparms;
 
-    end   = strashcan.length();
-    n     = strashcan.find("|");
+    end   = multparms.length();
+    n     = multparms.find("|");
     start = 0;
     multipliers = 0;
-    if (strashcan.substr(0,1) == "F") {
+    mult_count = 0;
+    if (multparms.substr(0,1) == "F") {
       while(n < end && n >= 0) {
         n -= start;
-        multipliers += coeffdef[strashcan.substr(start,n).c_str()];
+        multipliers += State->GetParameterIndex(multparms.substr(start,n));
+        mult_count++;
         start += n+1;
-        n = strashcan.find("|",start);
+        n = multparms.find("|",start);
       }
-      multipliers += coeffdef[strashcan.substr(start,end).c_str()];
+      multipliers += State->GetParameterIndex(multparms.substr(start,end));
     } else {
-      multipliers = atoi(strashcan.c_str());
+      multipliers = atoi(multparms.c_str());
+      mult_count = 1;
     }
-
-    cout << "   Non-Dimensionalized by: ";
-
-    mult_count = 0;
-    if (multipliers & FG_QBAR) {
-      mult_idx[mult_count] = FG_QBAR;
-      mult_count++;
-      cout << "qbar ";
-    }
-    if (multipliers & FG_WINGAREA) {
-      mult_idx[mult_count] = FG_WINGAREA;
-      mult_count++;
-      cout << "S ";
-    }
-    if (multipliers & FG_WINGSPAN) {
-      mult_idx[mult_count] = FG_WINGSPAN;
-      mult_count++;
-      cout << "b ";
-    }
-    if (multipliers & FG_CBAR) {
-      mult_idx[mult_count] = FG_CBAR;
-      mult_count++;
-      cout << "c ";
-    }
-    if (multipliers & FG_ALPHA) {
-      mult_idx[mult_count] = FG_ALPHA;
-      mult_count++;
-      cout << "alpha ";
-    }
-    if (multipliers & FG_ALPHADOT) {
-      mult_idx[mult_count] = FG_ALPHADOT;
-      mult_count++;
-      cout << "alphadot ";
-    }
-    if (multipliers & FG_BETA) {
-      mult_idx[mult_count] = FG_BETA;
-      mult_count++;
-      cout << "beta ";
-    }
-    if (multipliers & FG_BETADOT) {
-      mult_idx[mult_count] = FG_BETADOT;
-      mult_count++;
-      cout << "betadot ";
-    }
-    if (multipliers & FG_PITCHRATE) {
-      mult_idx[mult_count] = FG_PITCHRATE;
-      mult_count++;
-      cout << "q ";
-    }
-    if (multipliers & FG_ROLLRATE) {
-      mult_idx[mult_count] = FG_ROLLRATE;
-      mult_count++;
-      cout << "p ";
-    }
-    if (multipliers & FG_YAWRATE) {
-      mult_idx[mult_count] = FG_YAWRATE;
-      mult_count++;
-      cout << "r ";
-    }
-    if (multipliers & FG_ELEVATOR) {
-      mult_idx[mult_count] = FG_ELEVATOR;
-      mult_count++;
-      cout << "De ";
-    }
-    if (multipliers & FG_AILERON) {
-      mult_idx[mult_count] = FG_AILERON;
-      mult_count++;
-      cout << "Da ";
-    }
-    if (multipliers & FG_RUDDER) {
-      mult_idx[mult_count] = FG_RUDDER;
-      mult_count++;
-      cout << "Dr ";
-    }
-    if (multipliers & FG_MACH) {
-      mult_idx[mult_count] = FG_MACH;
-      mult_count++;
-      cout << "Mach ";
-    }
-    if (multipliers & FG_ALTITUDE) {
-      mult_idx[mult_count] = FG_ALTITUDE;
-      mult_count++;
-      cout << "h ";
-    }
-    if (multipliers & FG_BI2VEL) {
-      mult_idx[mult_count] = FG_BI2VEL;
-      mult_count++;
-      cout << "b /(2*Vt) ";
-    }
-    if (multipliers & FG_CI2VEL) {
-      mult_idx[mult_count] = FG_CI2VEL;
-      mult_count++;
-      cout << "c /(2*Vt) ";
-    }
-    cout << endl;
 
     switch(type) {
     case VALUE:
@@ -326,11 +180,13 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
   }
 }
 
+/******************************************************************************/
 
 FGCoefficient::~FGCoefficient(void)
 {
 }
 
+/******************************************************************************/
 
 bool FGCoefficient::Allocate(int r, int c)
 {
@@ -341,6 +197,7 @@ bool FGCoefficient::Allocate(int r, int c)
   return true;
 }
 
+/******************************************************************************/
 
 bool FGCoefficient::Allocate(int n)
 {
@@ -350,6 +207,7 @@ bool FGCoefficient::Allocate(int n)
   return true;
 }
 
+/******************************************************************************/
 
 float FGCoefficient::Value(float rVal, float cVal)
 {
@@ -379,6 +237,7 @@ float FGCoefficient::Value(float rVal, float cVal)
   return Value;
 }
 
+/******************************************************************************/
 
 float FGCoefficient::Value(float Val)
 {
@@ -406,12 +265,13 @@ float FGCoefficient::Value(float Val)
   return Value;
 }
 
+/******************************************************************************/
 
 float FGCoefficient::Value(void)
 {
 	float Value;
 	int midx;
-	
+
 	SD = Value = StaticValue;
 
   for (midx=0;midx<mult_count;midx++) {
@@ -420,6 +280,8 @@ float FGCoefficient::Value(void)
 
   return Value;
 }
+
+/******************************************************************************/
 
 float FGCoefficient::TotalValue()
 {
@@ -438,7 +300,12 @@ float FGCoefficient::TotalValue()
   return 0;
 }
 
+/******************************************************************************/
+
 void FGCoefficient::DumpSD(void)
 {
   cout << "   " << name << ": " << SD << endl;
 }
+
+/******************************************************************************/
+

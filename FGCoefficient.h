@@ -127,14 +127,13 @@ public:
   float TotalValue(void);
   inline float GetSDValue(void) {return SD;}
   inline void SetSDValue(float tt) {SD = tt;}
+  inline long int Getmultipliers(void) {return multipliers;}
   void DumpSD(void);
   enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
 
 protected:
 
 private:
-  typedef map<string, long> CoeffMap;
-  static CoeffMap coeffdef;
   int numInstances;
   string filename;
   string description;
@@ -147,7 +146,7 @@ private:
   long int mult_idx[10];
   int rows, columns;
   Type type;
-  int multipliers;
+  long int multipliers;
   int mult_count;
   float SD; // Actual stability derivative (or other coefficient) value
 

@@ -148,7 +148,7 @@ float FGEngine::CalcRocketThrust(void)
 {
   float lastThrust;
 
-  Throttle = FCS->GetThrottle(EngineNumber);
+  Throttle = FCS->GetThrottlePos(EngineNumber);
   lastThrust = Thrust;                 // last actual thrust
 
   if (Throttle < MinThrottle || Starved) {
@@ -171,7 +171,7 @@ float FGEngine::CalcPistonThrust(void)
 {
   float v,h,pa;
 
-  Throttle = FCS->GetThrottle(EngineNumber);
+  Throttle = FCS->GetThrottlePos(EngineNumber);
   Throttle /= 100;
  
   v=State->GetVt();

@@ -488,6 +488,7 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
       AC_cfg->GetNextConfigLine();
       while ((token = AC_cfg->GetValue()) != "/AXIS") {
         Coeff[AxisIdx[axis]].push_back(*(new FGCoefficient(FDMExec, AC_cfg)));
+        DisplayCoeffFactors(Coeff[AxisIdx[axis]].back().Getmultipliers());
       }
       AC_cfg->GetNextConfigLine();
     }
@@ -525,6 +526,46 @@ void FGAircraft::ReadPrologue(FGConfigFile* AC_cfg)
     cout << "         You have version: " << CFGVersion << endl << endl;
     exit(-1);
   }
+}
+
+/******************************************************************************/
+
+void FGAircraft::DisplayCoeffFactors(int multipliers)
+{
+  cout << "   Non-Dimensionalized by: ";
+
+  if (multipliers & FG_QBAR)      cout << "qbar ";
+  if (multipliers & FG_WINGAREA)  cout << "S ";
+  if (multipliers & FG_WINGSPAN)  cout << "b ";
+  if (multipliers & FG_CBAR)      cout << "c ";
+  if (multipliers & FG_ALPHA)     cout << "alpha ";
+  if (multipliers & FG_ALPHADOT)  cout << "alphadot ";
+  if (multipliers & FG_BETA)      cout << "beta ";
+  if (multipliers & FG_BETADOT)   cout << "betadot ";
+  if (multipliers & FG_PITCHRATE) cout << "q ";
+  if (multipliers & FG_ROLLRATE)  cout << "p ";
+  if (multipliers & FG_YAWRATE)   cout << "r ";
+
+  if (multipliers & FG_ELEVATOR_CMD)  cout << "De cmd ";
+  if (multipliers & FG_AILERON_CMD)   cout << "Da cmd ";
+  if (multipliers & FG_RUDDER_CMD)    cout << "Dr cmd ";
+  if (multipliers & FG_FLAPS_CMD)     cout << "Df cmd ";
+  if (multipliers & FG_SPOILERS_CMD)  cout << "Dsp cmd ";
+  if (multipliers & FG_SPDBRAKE_CMD)   cout << "Dsb cmd ";
+
+  if (multipliers & FG_ELEVATOR_POS)  cout << "De ";
+  if (multipliers & FG_AILERON_POS)   cout << "Da ";
+  if (multipliers & FG_RUDDER_POS)    cout << "Dr ";
+  if (multipliers & FG_FLAPS_POS)     cout << "Df ";
+  if (multipliers & FG_SPOILERS_POS)  cout << "Dsp ";
+  if (multipliers & FG_SPDBRAKE_POS)  cout << "Dsb ";
+
+  if (multipliers & FG_MACH)      cout << "Mach ";
+  if (multipliers & FG_ALTITUDE)  cout << "h ";
+  if (multipliers & FG_BI2VEL)    cout << "b /(2*Vt) ";
+  if (multipliers & FG_CI2VEL)    cout << "c /(2*Vt) ";
+
+  cout << endl;
 }
 
 /******************************************************************************/

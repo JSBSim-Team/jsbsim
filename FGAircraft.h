@@ -198,6 +198,8 @@ private:
 
   CoeffVector Coeff;
 
+  void DisplayCoeffFactors(int multipliers);
+
   bool GearUp;
 
   enum Param {LiftCoeff,

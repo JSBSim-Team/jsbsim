@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.2 2000/04/15 00:14:23 jsb Exp $
+// $Id: FGControls.h,v 1.3 2000/04/15 13:16:54 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -68,104 +68,104 @@ public:
 
     // Update functions
     inline void set_aileron( double pos ) {
-  aileron = pos;
-  if ( aileron < -1.0 ) aileron = -1.0;
-  if ( aileron >  1.0 ) aileron =  1.0;
+	aileron = pos;
+	if ( aileron < -1.0 ) aileron = -1.0;
+	if ( aileron >  1.0 ) aileron =  1.0;
     }
     inline void move_aileron( double amt ) {
-  aileron += amt;
-  if ( aileron < -1.0 ) aileron = -1.0;
-  if ( aileron >  1.0 ) aileron =  1.0;
+	aileron += amt;
+	if ( aileron < -1.0 ) aileron = -1.0;
+	if ( aileron >  1.0 ) aileron =  1.0;
     }
     inline void set_elevator( double pos ) {
-  elevator = pos;
-  if ( elevator < -1.0 ) elevator = -1.0;
-  if ( elevator >  1.0 ) elevator =  1.0;
+	elevator = pos;
+	if ( elevator < -1.0 ) elevator = -1.0;
+	if ( elevator >  1.0 ) elevator =  1.0;
     }
     inline void move_elevator( double amt ) {
-  elevator += amt;
-  if ( elevator < -1.0 ) elevator = -1.0;
-  if ( elevator >  1.0 ) elevator =  1.0;
+	elevator += amt;
+	if ( elevator < -1.0 ) elevator = -1.0;
+	if ( elevator >  1.0 ) elevator =  1.0;
     }
     inline void set_elevator_trim( double pos ) {
-  elevator_trim = pos;
-  if ( elevator_trim < -1.0 ) elevator_trim = -1.0;
-  if ( elevator_trim >  1.0 ) elevator_trim =  1.0;
+	elevator_trim = pos;
+	if ( elevator_trim < -1.0 ) elevator_trim = -1.0;
+	if ( elevator_trim >  1.0 ) elevator_trim =  1.0;
     }
     inline void move_elevator_trim( double amt ) {
-  elevator_trim += amt;
-  if ( elevator_trim < -1.0 ) elevator_trim = -1.0;
-  if ( elevator_trim >  1.0 ) elevator_trim =  1.0;
+	elevator_trim += amt;
+	if ( elevator_trim < -1.0 ) elevator_trim = -1.0;
+	if ( elevator_trim >  1.0 ) elevator_trim =  1.0;
     }
     inline void set_rudder( double pos ) {
-  rudder = pos;
-  if ( rudder < -1.0 ) rudder = -1.0;
-  if ( rudder >  1.0 ) rudder =  1.0;
+	rudder = pos;
+	if ( rudder < -1.0 ) rudder = -1.0;
+	if ( rudder >  1.0 ) rudder =  1.0;
     }
     inline void move_rudder( double amt ) {
-  rudder += amt;
-  if ( rudder < -1.0 ) rudder = -1.0;
-  if ( rudder >  1.0 ) rudder =  1.0;
+	rudder += amt;
+	if ( rudder < -1.0 ) rudder = -1.0;
+	if ( rudder >  1.0 ) rudder =  1.0;
     }
     inline void set_throttle( int engine, double pos ) {
-  if ( engine == ALL_ENGINES ) {
-      for ( int i = 0; i < MAX_ENGINES; i++ ) {
-    throttle[i] = pos;
-    if ( throttle[i] < 0.0 ) throttle[i] = 0.0;
-    if ( throttle[i] >  1.0 ) throttle[i] =  1.0;
-      }
-  } else {
-      if ( (engine >= 0) && (engine < MAX_ENGINES) ) {
-    throttle[engine] = pos;
-    if ( throttle[engine] < 0.0 ) throttle[engine] = 0.0;
-    if ( throttle[engine] >  1.0 ) throttle[engine] =  1.0;
-      }
-  }
+	if ( engine == ALL_ENGINES ) {
+	    for ( int i = 0; i < MAX_ENGINES; i++ ) {
+		throttle[i] = pos;
+		if ( throttle[i] < 0.0 ) throttle[i] = 0.0;
+		if ( throttle[i] >  1.0 ) throttle[i] =  1.0;
+	    }
+	} else {
+	    if ( (engine >= 0) && (engine < MAX_ENGINES) ) {
+		throttle[engine] = pos;
+		if ( throttle[engine] < 0.0 ) throttle[engine] = 0.0;
+		if ( throttle[engine] >  1.0 ) throttle[engine] =  1.0;
+	    }
+	}
     }
     inline void move_throttle( int engine, double amt ) {
-  if ( engine == ALL_ENGINES ) {
-      for ( int i = 0; i < MAX_ENGINES; i++ ) {
-    throttle[i] += amt;
-    if ( throttle[i] < 0.0 ) throttle[i] = 0.0;
-    if ( throttle[i] >  1.0 ) throttle[i] =  1.0;
-      }
-  } else {
-      if ( (engine >= 0) && (engine < MAX_ENGINES) ) {
-    throttle[engine] += amt;
-    if ( throttle[engine] < 0.0 ) throttle[engine] = 0.0;
-    if ( throttle[engine] >  1.0 ) throttle[engine] =  1.0;
-      }
-  }
+	if ( engine == ALL_ENGINES ) {
+	    for ( int i = 0; i < MAX_ENGINES; i++ ) {
+		throttle[i] += amt;
+		if ( throttle[i] < 0.0 ) throttle[i] = 0.0;
+		if ( throttle[i] >  1.0 ) throttle[i] =  1.0;
+	    }
+	} else {
+	    if ( (engine >= 0) && (engine < MAX_ENGINES) ) {
+		throttle[engine] += amt;
+		if ( throttle[engine] < 0.0 ) throttle[engine] = 0.0;
+		if ( throttle[engine] >  1.0 ) throttle[engine] =  1.0;
+	    }
+	}
     }
     inline void set_brake( int wheel, double pos ) {
-  if ( wheel == ALL_WHEELS ) {
-      for ( int i = 0; i < MAX_WHEELS; i++ ) {
-    brake[i] = pos;
-    if ( brake[i] < 0.0 ) brake[i] = 0.0;
-    if ( brake[i] >  1.0 ) brake[i] =  1.0;
-      }
-  } else {
-      if ( (wheel >= 0) && (wheel < MAX_WHEELS) ) {
-    brake[wheel] = pos;
-    if ( brake[wheel] < 0.0 ) brake[wheel] = 0.0;
-    if ( brake[wheel] >  1.0 ) brake[wheel] =  1.0;
-      }
-  }
+	if ( wheel == ALL_WHEELS ) {
+	    for ( int i = 0; i < MAX_WHEELS; i++ ) {
+		brake[i] = pos;
+		if ( brake[i] < 0.0 ) brake[i] = 0.0;
+		if ( brake[i] >  1.0 ) brake[i] =  1.0;
+	    }
+	} else {
+	    if ( (wheel >= 0) && (wheel < MAX_WHEELS) ) {
+		brake[wheel] = pos;
+		if ( brake[wheel] < 0.0 ) brake[wheel] = 0.0;
+		if ( brake[wheel] >  1.0 ) brake[wheel] =  1.0;
+	    }
+	}
     }
     inline void move_brake( int wheel, double amt ) {
-  if ( wheel == ALL_WHEELS ) {
-      for ( int i = 0; i < MAX_WHEELS; i++ ) {
-    brake[i] += amt;
-    if ( brake[i] < 0.0 ) brake[i] = 0.0;
-    if ( brake[i] >  1.0 ) brake[i] =  1.0;
-      }
-  } else {
-      if ( (wheel >= 0) && (wheel < MAX_WHEELS) ) {
-    brake[wheel] += amt;
-    if ( brake[wheel] < 0.0 ) brake[wheel] = 0.0;
-    if ( brake[wheel] >  1.0 ) brake[wheel] =  1.0;
-      }
-  }
+	if ( wheel == ALL_WHEELS ) {
+	    for ( int i = 0; i < MAX_WHEELS; i++ ) {
+		brake[i] += amt;
+		if ( brake[i] < 0.0 ) brake[i] = 0.0;
+		if ( brake[i] >  1.0 ) brake[i] =  1.0;
+	    }
+	} else {
+	    if ( (wheel >= 0) && (wheel < MAX_WHEELS) ) {
+		brake[wheel] += amt;
+		if ( brake[wheel] < 0.0 ) brake[wheel] = 0.0;
+		if ( brake[wheel] >  1.0 ) brake[wheel] =  1.0;
+	    }
+	}
     }
 };
 
@@ -177,14 +177,8 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
-// Revision 1.2  2000/04/15 00:14:23  jsb
-// WARNING Files in intermediate state - should be rectified later this evening. Changes in FCS and Coefficients and config file
-//
-// Revision 1.1.1.1  2000/04/03 15:51:01  jsb
-// Re-imported sources; new base
-//
-// Revision 1.2  2000/03/30 15:40:04  jsb
-// Further mods to FGConfigFile
+// Revision 1.3  2000/04/15 13:16:54  jsb
+// In good shape, now, changes to Coefficient and aircraft, mostly, with new commands added and inputs and outputs separated.
 //
 // Revision 1.6  1999/09/07 21:15:45  curt
 // Updates to get engine working.

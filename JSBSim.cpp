@@ -123,9 +123,9 @@ int main(int argc, char** argv)
     if (FDMExec->GetState()->Getsim_time() > 5.0 &&
         FDMExec->GetState()->Getsim_time() < 6.0)
     {
-      FDMExec->GetFCS()->SetDe(0.05);
+      FDMExec->GetFCS()->SetDeCmd(10);
     } else {
-      FDMExec->GetFCS()->SetDe(0.00);
+      FDMExec->GetFCS()->SetDeCmd(0.0);
     }
 
     FDMExec->Run();

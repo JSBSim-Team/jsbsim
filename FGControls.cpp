@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.cpp,v 1.1 2000/04/03 15:51:00 jsb Exp $
+// $Id: FGControls.cpp,v 1.2 2000/04/15 13:16:54 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -51,11 +51,8 @@ FGControls::~FGControls() {
 
 
 // $Log: FGControls.cpp,v $
-// Revision 1.1  2000/04/03 15:51:00  jsb
-// Initial revision
-//
-// Revision 1.2  2000/03/30 15:40:04  jsb
-// Further mods to FGConfigFile
+// Revision 1.2  2000/04/15 13:16:54  jsb
+// In good shape, now, changes to Coefficient and aircraft, mostly, with new commands added and inputs and outputs separated.
 //
 // Revision 1.7  1999/12/30 17:01:59  curt
 // Here is a wrap-up of the latest changes to JSBSim. It still is flaky, but
