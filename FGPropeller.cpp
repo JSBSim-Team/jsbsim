@@ -40,7 +40,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.56 2003/06/03 09:53:48 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.57 2003/11/24 18:44:34 dpculp Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,7 +217,7 @@ double FGPropeller::GetPowerRequired(void)
       else if (Pitch > MaxPitch)  Pitch = MaxPitch;
 
     } else {
-      Pitch = MaxPitch - (MaxPitch - MinPitch) * advance;
+      Pitch = MinPitch + (MaxPitch - MinPitch) * advance;
     }
     cPReq = cPower->GetValue(J, Pitch);
   }
