@@ -69,7 +69,7 @@ typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.13 2001/03/20 16:18:15 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.14 2001/03/21 00:46:42 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -113,9 +113,24 @@ CLASS DOCUMENTATION
     the control of the trimming routine itself. The most common problem is the 
     initial conditions: is the model capable of steady state flight
     at those conditions?  Check the speed, altitude, configuration (flaps,
-    gear, etc.), weight, cg, and anything else that may be relavant.
+    gear, etc.), weight, cg, and anything else that may be relevant.
+    
+    Example usage:
+    FGFDMExec* FDMExec = new FGFDMExec();
+    .
+    .
+    .
+    FGInitialCondition* fgic = new FGInitialCondition(FDMExec);
+    FGTrim *fgt(FDMExec,fgic,tFull);
+    fgic->SetVcaibratedKtsIC(100);
+    fgic->SetAltitudeFtIC(1000);
+    fgic->SetClimbRate(500);
+    if( !fgt->DoTrim() ) {
+      cout << "Trim Failed" << endl;
+    }
+    fgt->ReportState();  
     @author Tony Peden
-    @version $Id: FGTrim.h,v 1.13 2001/03/20 16:18:15 jberndt Exp $
+    @version $Id: FGTrim.h,v 1.14 2001/03/21 00:46:42 apeden Exp $
 */       
   
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +163,9 @@ private:
 
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
-
+   
+   bool solve(void);
+  
   /** @return false if there is no change in the current axis accel
       between accel(control_min) and accel(control_max). If there is a
       change, sets solutionDomain to:
@@ -156,8 +173,8 @@ private:
      -1 if sign change between accel(control_min) and accel(0)
       1 if sign between accel(0) and accel(control_max)
   */
-  bool solve(void);
   bool findInterval(void);
+
   bool checkLimits(void);
 
 public:
