@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.5 2003/12/19 02:29:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.6 2003/12/22 14:53:40 dpculp Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,7 @@ bool MSIS::InitModel(void)
 
   for (i=0;i<7;i++) aph.a[i] = 100.0;
 
+  // set some common magnetic flux values
   input.f107A = 150.0;
   input.f107 = 150.0;
   input.ap = 4.0;
@@ -128,14 +129,19 @@ void MSIS::Calculate(int day, double sec, double alt, double lat, double lon)
   input.year = 2000;
   input.doy = day;
   input.sec = sec;
-  input.alt = alt;
+  input.alt = alt / 3281;  //feet to kilometers
   input.g_lat = lat;
   input.g_long = lon;
 
   input.lst = (sec/3600) + (lon/15);
   if (input.lst > 24.0) input.lst -= 24.0;
+  if (input.lst < 0.0) input.lst = 24 - input.lst;
 
   gtd7d(&input, &flags, &output);
+
+  temperature = output.t[1];
+  density = output.d[5];
+  pressure = density * 1000 * 287.05 * temperature; 
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.5 2003/12/19 02:29:13 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.6 2003/12/22 14:53:40 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.5 2003/12/19 02:29:13 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.6 2003/12/22 14:53:40 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,7 @@ struct nrlmsise_input {
   int year;      /* year, currently ignored */
   int doy;       /* day of year */
   double sec;    /* seconds in day (UT) */
-  double alt;    /* altitude in kilometes */
+  double alt;    /* altitude in kilometers */
   double g_lat;  /* geodetic latitude */
   double g_long; /* geodetic longitude */
   double lst;    /* local apparent solar time (hours), see note below */
@@ -125,27 +125,40 @@ public:
   ~MSIS();
 
   bool InitModel(void);
-  void Calculate(int day, double sec, double alt, double lat, double lon);
+  void Calculate(int day,      // day of year (1 to 366) 
+                 double sec,   // seconds in day (0.0 to 86400.0)
+                 double alt,   // altitude, feet
+                 double lat,   // geodetic latitude, degrees
+                 double lon    // geodetic longitude, degrees
+                );
 
   /// Returns the temperature in Kelvins.
-  inline double GetTemperature_K(void) const {return output.t[1];}
+  inline double GetTemperature_K(void) const {return temperature;}
 
   /// Returns the temperature in degrees Celcius.
-  inline double GetTemperature_C(void) const {return output.t[1] - 273.15;}
+  inline double GetTemperature_C(void) const {return temperature - 273.15;}
 
   /// Returns the temperature in degrees Rankine.
-  inline double GetTemperature_R(void) const {return output.t[1] * 1.8;}
+  inline double GetTemperature_R(void) const {return temperature * 1.8;}
 
   /// Returns the density in grams/cm^3.
-  inline double GetDensity_SI(void)  const {return output.d[5];}
+  inline double GetDensity_SI(void)  const {return density;}
 
   /// Returns the density in slugs/ft^3.
-  inline double GetDensity_en(void)  const {return output.d[5] * 1.940321;}
+  inline double GetDensity_en(void)  const {return density * 1.940321;}
   
+  /// Returns the pressure in Pascals.
+  inline double GetPressure_Pa(void) const {return pressure;}
+
+  /// Returns the pressure in lb/ft^2.
+  inline double GetPressure_en(void) const {return pressure * 0.0208855;}
+
 private:
 
   double temperature;
   double density;
+  double pressure;
+
   nrlmsise_flags flags;
   nrlmsise_input input;
   nrlmsise_output output;
