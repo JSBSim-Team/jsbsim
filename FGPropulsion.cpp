@@ -53,7 +53,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGPropulsion.h"
-#include "FGInertial.h"
 #include "FGRocket.h"
 #include "FGSimTurbine.h"
 #include "FGTurbine.h"
@@ -73,7 +72,7 @@ inline char* gcvt (double value, int ndigits, char *buf) {
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.94 2004/03/05 04:53:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.95 2004/03/06 13:15:59 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -549,19 +548,12 @@ FGMatrix33& FGPropulsion::CalculateTankInertias(void)
     tankIyz += vTankXYZ(eY)*vTankXYZ(eZ)*contents;
   }
 
-  tankIxx /= Inertial->SLgravity();
-  tankIyy /= Inertial->SLgravity();
-  tankIzz /= Inertial->SLgravity();
-  tankIxy /= Inertial->SLgravity();
-  tankIxz /= Inertial->SLgravity();
-  tankIyz /= Inertial->SLgravity();
-
-  tankJ(1,1) = tankIxx;
-  tankJ(2,2) = tankIyy;
-  tankJ(3,3) = tankIzz;
-  tankJ(1,2) = tankJ(2,1) = tankIxy;
-  tankJ(1,3) = tankJ(3,1) = tankIxz;
-  tankJ(2,3) = tankJ(3,2) = tankIyz;
+  tankJ(1,1) = lbtoslug * tankIxx;
+  tankJ(2,2) = lbtoslug * tankIyy;
+  tankJ(3,3) = lbtoslug * tankIzz;
+  tankJ(1,2) = tankJ(2,1) = lbtoslug * tankIxy;
+  tankJ(1,3) = tankJ(3,1) = lbtoslug * tankIxz;
+  tankJ(2,3) = tankJ(3,2) = lbtoslug * tankIyz;
 
   return (tankJ);
 }

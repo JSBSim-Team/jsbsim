@@ -41,11 +41,10 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGPropulsion.h"
 #include "FGPropertyManager.h"
-#include "FGInertial.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.38 2004/03/06 12:36:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.39 2004/03/06 13:15:59 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +87,7 @@ bool FGMassBalance::Run(void)
 
     Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
 
-    Mass = Weight / Inertial->SLgravity();
+    Mass = lbtoslug*Weight;
 
 // Calculate new CG
 
@@ -193,12 +192,12 @@ FGMatrix33& FGMassBalance::CalculatePMInertias(void)
     pmIyz += vPMxyz(eY)*vPMxyz(eZ)*PointMassWeight[i];
   }
 
-  pmJ(1,1) = pmIxx / Inertial->SLgravity();
-  pmJ(2,2) = pmIyy / Inertial->SLgravity();
-  pmJ(3,3) = pmIzz / Inertial->SLgravity();
-  pmJ(1,2) = pmJ(2,1) = pmIxy / Inertial->SLgravity();
-  pmJ(1,3) = pmJ(3,1) = pmIxz / Inertial->SLgravity();
-  pmJ(2,3) = pmJ(3,2) = pmIyz / Inertial->SLgravity();
+  pmJ(1,1) = lbtoslug * pmIxx;
+  pmJ(2,2) = lbtoslug * pmIyy;
+  pmJ(3,3) = lbtoslug * pmIzz;
+  pmJ(1,2) = pmJ(2,1) = lbtoslug * pmIxy;
+  pmJ(1,3) = pmJ(3,1) = lbtoslug * pmIxz;
+  pmJ(2,3) = pmJ(3,2) = lbtoslug * pmIyz;
 
   return (pmJ);
 }

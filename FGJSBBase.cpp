@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.24 2004/02/14 09:58:34 ehofman Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.25 2004/03/06 13:15:59 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,12 +68,22 @@ const double FGJSBBase::inchtoft = 0.08333333;
 const double FGJSBBase::in3tom3 = 1.638706E-5;
 double FGJSBBase::Reng = 1716.0;
 const double FGJSBBase::SHRatio = 1.40;
+
+// Note that definition of lbtoslug by the inverse of slugtolb and not
+// to a different constant you can also get from some tables will make
+// lbtoslug*slugtolb == 1 up to the magnitude of roundoff. So converting from
+// slug to lb and back will yield to the original value you started with up
+// to the magnitude of roundoff.
+// Taken from units gnu commandline tool
+const double FGJSBBase::slugtolb = 32.174049;
+const double FGJSBBase::lbtoslug = 1.0/slugtolb;
+
 const string FGJSBBase::needed_cfg_version = "1.61";
 const string FGJSBBase::JSBSim_version = "0.9.5";
 
 std::queue <FGJSBBase::Message*> FGJSBBase::Messages;
 FGJSBBase::Message FGJSBBase::localMsg;
-unsigned int FGJSBBase::messageId = 0; 
+unsigned int FGJSBBase::messageId = 0;
 unsigned int FGJSBBase::frame = 0;
 
 short FGJSBBase::debug_lvl  = 1;
@@ -161,7 +171,7 @@ FGJSBBase::Message* FGJSBBase::ProcessMessage(void)
 {
   if (!Messages.empty())
     localMsg = *(Messages.front());
-  else 
+  else
     return NULL;
   Messages.pop();
   return &localMsg;

@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.47 2004/01/19 18:41:52 ehofman Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.48 2004/03/06 13:15:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.47 2004/01/19 18:41:52 ehofman Exp $
+    @version $Id: FGJSBBase.h,v 1.48 2004/03/06 13:15:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -240,6 +240,8 @@ protected:
   static const double in3tom3;
   static double Reng;         // Specific Gas Constant,ft^2/(sec^2*R)
   static const double SHRatio;
+  static const double lbtoslug;
+  static const double slugtolb;
   static const string needed_cfg_version;
   static const string JSBSim_version;
 };
