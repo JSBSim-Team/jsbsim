@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.36 2001/08/31 21:40:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.37 2001/08/31 22:56:41 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,11 +93,7 @@ bool FGOutput::Run(void)
       if (Type == otSocket) {
         SocketOutput();
       } else if (Type == otCSV) {
-        if (Filename != "COUT" && Filename != "cout" && Filename.size() > 0) {
-          DelimitedOutput(Filename);
-        } else {
-          DelimitedOutput();
-        }
+        DelimitedOutput(Filename);
       } else if (Type == otTerminal) {
         // Not done yet
       } else if (Type == otNone) {
@@ -132,324 +128,171 @@ void FGOutput::SetType(string type)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGOutput::DelimitedOutput(void)
+void FGOutput::DelimitedOutput(string fname)
 {
-// --
-// datafile.open("JSBTestOut.csv");
-// cout = datafile;
-// --
+# if defined(sgi) && !defined(_GNUC_)
+  ostream_withassign outstream;
+# else
+  _IO_ostream_withassign outstream;
+# endif
+
+  if (fname == "COUT" || fname == "cout") {
+    outstream = cout;
+  } else {
+    datafile.open(fname.c_str());
+    outstream = datafile;
+  }
+
   if (dFirstPass) {
-    cout << "Time";
+    outstream << "Time";
     if (SubSystems & FGAircraft::ssSimulation) {
       // Nothing here, yet
     }
     if (SubSystems & FGAircraft::ssAerosurfaces) {
-      cout << ", ";
-      cout << "Throttle, ";
-      cout << "Aileron Cmd, ";
-      cout << "Elevator Cmd, ";
-      cout << "Rudder Cmd, ";
-      cout << "Aileron Pos, ";
-      cout << "Elevator Pos, ";
-      cout << "Rudder Pos";
+      outstream << ", ";
+      outstream << "Throttle, ";
+      outstream << "Aileron Cmd, ";
+      outstream << "Elevator Cmd, ";
+      outstream << "Rudder Cmd, ";
+      outstream << "Aileron Pos, ";
+      outstream << "Elevator Pos, ";
+      outstream << "Rudder Pos";
     }
     if (SubSystems & FGAircraft::ssRates) {
-      cout << ", ";
-      cout << "P, Q, R";
+      outstream << ", ";
+      outstream << "P, Q, R";
     }
     if (SubSystems & FGAircraft::ssVelocities) {
-      cout << ", ";
-      cout << "QBar, ";
-      cout << "Vtotal, ";
-      cout << "UBody, VBody, WBody, ";
-      cout << "UAero, VAero, WAero, ";
-      cout << "Vn, Ve, Vd";
+      outstream << ", ";
+      outstream << "QBar, ";
+      outstream << "Vtotal, ";
+      outstream << "UBody, VBody, WBody, ";
+      outstream << "UAero, VAero, WAero, ";
+      outstream << "Vn, Ve, Vd";
     }
     if (SubSystems & FGAircraft::ssForces) {
-      cout << ", ";
-      cout << "Drag, Side, Lift, ";
-      cout << "L/D, ";
-      cout << "Xforce, Yforce, Zforce";
+      outstream << ", ";
+      outstream << "Drag, Side, Lift, ";
+      outstream << "L/D, ";
+      outstream << "Xforce, Yforce, Zforce";
     }
     if (SubSystems & FGAircraft::ssMoments) {
-      cout << ", ";
-      cout << "L, M, N";
+      outstream << ", ";
+      outstream << "L, M, N";
     }
     if (SubSystems & FGAircraft::ssAtmosphere) {
-      cout << ", ";
-      cout << "Rho";
+      outstream << ", ";
+      outstream << "Rho";
     }
     if (SubSystems & FGAircraft::ssMassProps) {
-      cout << ", ";
-      cout << "Ixx, ";
-      cout << "Iyy, ";
-      cout << "Izz, ";
-      cout << "Ixz, ";
-      cout << "Mass, ";
-      cout << "Xcg, Ycg, Zcg";
+      outstream << ", ";
+      outstream << "Ixx, ";
+      outstream << "Iyy, ";
+      outstream << "Izz, ";
+      outstream << "Ixz, ";
+      outstream << "Mass, ";
+      outstream << "Xcg, Ycg, Zcg";
     }
     if (SubSystems & FGAircraft::ssPosition) {
-      cout << ", ";
-      cout << "Altitude, ";
-      cout << "Phi, Tht, Psi, ";
-      cout << "Alpha, ";
-      cout << "Latitude, ";
-      cout << "Longitude, ";
-      cout << "Distance AGL, ";
-      cout << "Runway Radius";
+      outstream << ", ";
+      outstream << "Altitude, ";
+      outstream << "Phi, Tht, Psi, ";
+      outstream << "Alpha, ";
+      outstream << "Latitude, ";
+      outstream << "Longitude, ";
+      outstream << "Distance AGL, ";
+      outstream << "Runway Radius";
     }
     if (SubSystems & FGAircraft::ssCoefficients) {
-      cout << ", ";
-      cout << Aerodynamics->GetCoefficientStrings();
+      outstream << ", ";
+      outstream << Aerodynamics->GetCoefficientStrings();
     }
     if (SubSystems & FGAircraft::ssGroundReactions) {
-      cout << ", ";
-      cout << GroundReactions->GetGroundReactionStrings();
+      outstream << ", ";
+      outstream << GroundReactions->GetGroundReactionStrings();
     }
     if (SubSystems & FGAircraft::ssPropulsion) {
-      cout << ", ";
-      cout << Propulsion->GetPropulsionStrings();
+      outstream << ", ";
+      outstream << Propulsion->GetPropulsionStrings();
     }
 
-    cout << endl;
+    outstream << endl;
     dFirstPass = false;
   }
 
-  cout << State->Getsim_time();
+  outstream << State->Getsim_time();
   if (SubSystems & FGAircraft::ssSimulation) {
   }
   if (SubSystems & FGAircraft::ssAerosurfaces) {
-    cout << ", ";
-    cout << FCS->GetThrottlePos(0) << ", ";
-    cout << FCS->GetDaCmd() << ", ";
-    cout << FCS->GetDeCmd() << ", ";
-    cout << FCS->GetDrCmd() << ", ";
-    cout << FCS->GetDaPos() << ", ";
-    cout << FCS->GetDePos() << ", ";
-    cout << FCS->GetDrPos();
+    outstream << ", ";
+    outstream << FCS->GetThrottlePos(0) << ", ";
+    outstream << FCS->GetDaCmd() << ", ";
+    outstream << FCS->GetDeCmd() << ", ";
+    outstream << FCS->GetDrCmd() << ", ";
+    outstream << FCS->GetDaPos() << ", ";
+    outstream << FCS->GetDePos() << ", ";
+    outstream << FCS->GetDrPos();
   }
   if (SubSystems & FGAircraft::ssRates) {
-    cout << ", ";
-    cout << Rotation->GetPQR();
+    outstream << ", ";
+    outstream << Rotation->GetPQR();
   }
   if (SubSystems & FGAircraft::ssVelocities) {
-    cout << ", ";
-    cout << Translation->Getqbar() << ", ";
-    cout << Translation->GetVt() << ", ";
-    cout << Translation->GetUVW() << ", ";
-    cout << Translation->GetvAero() << ", ";
-    cout << Position->GetVel();
+    outstream << ", ";
+    outstream << Translation->Getqbar() << ", ";
+    outstream << Translation->GetVt() << ", ";
+    outstream << Translation->GetUVW() << ", ";
+    outstream << Translation->GetvAero() << ", ";
+    outstream << Position->GetVel();
   }
   if (SubSystems & FGAircraft::ssForces) {
-    cout << ", ";
-    cout << Aerodynamics->GetvFs() << ", ";
-    cout << Aerodynamics->GetLoD() << ", ";
-    cout << Aircraft->GetForces();
+    outstream << ", ";
+    outstream << Aerodynamics->GetvFs() << ", ";
+    outstream << Aerodynamics->GetLoD() << ", ";
+    outstream << Aircraft->GetForces();
   }
   if (SubSystems & FGAircraft::ssMoments) {
-    cout << ", ";
-    cout << Aircraft->GetMoments();
+    outstream << ", ";
+    outstream << Aircraft->GetMoments();
   }
   if (SubSystems & FGAircraft::ssAtmosphere) {
-    cout << ", ";
-    cout << Atmosphere->GetDensity();
+    outstream << ", ";
+    outstream << Atmosphere->GetDensity();
   }
   if (SubSystems & FGAircraft::ssMassProps) {
-    cout << ", ";
-    cout << MassBalance->GetIxx() << ", ";
-    cout << MassBalance->GetIyy() << ", ";
-    cout << MassBalance->GetIzz() << ", ";
-    cout << MassBalance->GetIxz() << ", ";
-    cout << MassBalance->GetMass() << ", ";
-    cout << MassBalance->GetXYZcg();
+    outstream << ", ";
+    outstream << MassBalance->GetIxx() << ", ";
+    outstream << MassBalance->GetIyy() << ", ";
+    outstream << MassBalance->GetIzz() << ", ";
+    outstream << MassBalance->GetIxz() << ", ";
+    outstream << MassBalance->GetMass() << ", ";
+    outstream << MassBalance->GetXYZcg();
   }
   if (SubSystems & FGAircraft::ssPosition) {
-    cout << ", ";
-    cout << Position->Geth() << ", ";
-    cout << Rotation->GetEuler() << ", ";
-    cout << Translation->Getalpha() << ", ";
-    cout << Position->GetLatitude() << ", ";
-    cout << Position->GetLongitude() << ", ";
-    cout << Position->GetDistanceAGL() << ", ";
-    cout << Position->GetRunwayRadius();
+    outstream << ", ";
+    outstream << Position->Geth() << ", ";
+    outstream << Rotation->GetEuler() << ", ";
+    outstream << Translation->Getalpha() << ", ";
+    outstream << Position->GetLatitude() << ", ";
+    outstream << Position->GetLongitude() << ", ";
+    outstream << Position->GetDistanceAGL() << ", ";
+    outstream << Position->GetRunwayRadius();
   }
   if (SubSystems & FGAircraft::ssCoefficients) {
-    cout << ", ";
-    cout << Aerodynamics->GetCoefficientValues();
+    outstream << ", ";
+    outstream << Aerodynamics->GetCoefficientValues();
   }
   if (SubSystems & FGAircraft::ssGroundReactions) {
-    cout << ", ";
-    cout << GroundReactions->GetGroundReactionValues();
+    outstream << ", ";
+    outstream << GroundReactions->GetGroundReactionValues();
   }
   if (SubSystems & FGAircraft::ssPropulsion) {
-    cout << ", ";
-    cout << Propulsion->GetPropulsionValues();
+    outstream << ", ";
+    outstream << Propulsion->GetPropulsionValues();
   }
 
-  cout << endl;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGOutput::DelimitedOutput(string fname)
-{
-  if (sFirstPass) {
-    datafile.open(fname.c_str());
-    datafile << "Time";
-    if (SubSystems & FGAircraft::ssSimulation) {
-      // Nothing here, yet
-    }
-    if (SubSystems & FGAircraft::ssAerosurfaces) {
-      datafile << ", ";
-      datafile << "Throttle, ";
-      datafile << "Aileron Cmd, ";
-      datafile << "Elevator Cmd, ";
-      datafile << "Rudder Cmd, ";
-      datafile << "Aileron Pos, ";
-      datafile << "Elevator Pos, ";
-      datafile << "Rudder Pos";
-    }
-    if (SubSystems & FGAircraft::ssRates) {
-      datafile << ", ";
-      datafile << "P, Q, R";
-    }
-    if (SubSystems & FGAircraft::ssVelocities) {
-      datafile << ", ";
-      datafile << "QBar, ";
-      datafile << "Vtotal, ";
-      datafile << "UBody, VBody, WBody, ";
-      datafile << "UAero, VAero, WAero, ";
-      datafile << "Vn, Ve, Vd";
-    }
-    if (SubSystems & FGAircraft::ssForces) {
-      datafile << ", ";
-      datafile << "Drag, Side, Lift, ";
-      datafile << "L/D, ";
-      datafile << "Xforce, Yforce, Zforce";
-    }
-    if (SubSystems & FGAircraft::ssMoments) {
-      datafile << ", ";
-      datafile << "L, M, N";
-    }
-    if (SubSystems & FGAircraft::ssAtmosphere) {
-      datafile << ", ";
-      datafile << "Rho";
-    }
-    if (SubSystems & FGAircraft::ssMassProps) {
-      datafile << ", ";
-      datafile << "Ixx, ";
-      datafile << "Iyy, ";
-      datafile << "Izz, ";
-      datafile << "Ixz, ";
-      datafile << "Mass, ";
-      datafile << "Xcg, Ycg, Zcg";
-    }
-    if (SubSystems & FGAircraft::ssPosition) {
-      datafile << ", ";
-      datafile << "Altitude, ";
-      datafile << "Phi, Tht, Psi, ";
-      datafile << "Alpha, ";
-      datafile << "Latitude, ";
-      datafile << "Longitude, ";
-      datafile << "Distance AGL, ";
-      datafile << "Runway Radius";
-    }
-    if (SubSystems & FGAircraft::ssCoefficients) {
-      datafile << ", ";
-      datafile << Aerodynamics->GetCoefficientStrings();
-    }
-    if (SubSystems & FGAircraft::ssGroundReactions) {
-      datafile << ", ";
-      datafile << GroundReactions->GetGroundReactionStrings();
-    }
-    if (SubSystems & FGAircraft::ssFCS) {
-      datafile << ", ";
-      datafile << FCS->GetComponentStrings();
-    }
-    if (SubSystems & FGAircraft::ssPropulsion) {
-      datafile << ", ";
-      datafile << Propulsion->GetPropulsionStrings();
-    }
-    datafile << endl;
-    sFirstPass = false;
-  }
-
-  datafile << State->Getsim_time();
-  if (SubSystems & FGAircraft::ssSimulation) {
-  }
-  if (SubSystems & FGAircraft::ssAerosurfaces) {
-    datafile << ", ";
-    datafile << FCS->GetThrottlePos(0) << ", ";
-    datafile << FCS->GetDaCmd() << ", ";
-    datafile << FCS->GetDeCmd() << ", ";
-    datafile << FCS->GetDrCmd() << ", ";
-    datafile << FCS->GetDaPos() << ", ";
-    datafile << FCS->GetDePos() << ", ";
-    datafile << FCS->GetDrPos();
-  }
-  if (SubSystems & FGAircraft::ssRates) {
-    datafile << ", ";
-    datafile << Rotation->GetPQR();
-  }
-  if (SubSystems & FGAircraft::ssVelocities) {
-    datafile << ", ";
-    datafile << Translation->Getqbar() << ", ";
-    datafile << Translation->GetVt() << ", ";
-    datafile << Translation->GetUVW() << ", ";
-    datafile << Translation->GetvAero() << ", ";
-    datafile << Position->GetVel();
-  }
-  if (SubSystems & FGAircraft::ssForces) {
-    datafile << ", ";
-    datafile << Aerodynamics->GetvFs() << ", ";
-    datafile << Aerodynamics->GetLoD() << ", ";
-    datafile << Aircraft->GetForces();
-  }
-  if (SubSystems & FGAircraft::ssMoments) {
-    datafile << ", ";
-    datafile << Aircraft->GetMoments();
-  }
-  if (SubSystems & FGAircraft::ssAtmosphere) {
-    datafile << ", ";
-    datafile << Atmosphere->GetDensity();
-  }
-  if (SubSystems & FGAircraft::ssMassProps) {
-    datafile << ", ";
-    datafile << MassBalance->GetIxx() << ", ";
-    datafile << MassBalance->GetIyy() << ", ";
-    datafile << MassBalance->GetIzz() << ", ";
-    datafile << MassBalance->GetIxz() << ", ";
-    datafile << MassBalance->GetMass() << ", ";
-    datafile << MassBalance->GetXYZcg();
-  }
-  if (SubSystems & FGAircraft::ssPosition) {
-    datafile << ", ";
-    datafile << Position->Geth() << ", ";
-    datafile << Rotation->GetEuler() << ", ";
-    datafile << Translation->Getalpha() << ", ";
-    datafile << Position->GetLatitude() << ", ";
-    datafile << Position->GetLongitude() << ", ";
-    datafile << Position->GetDistanceAGL() << ", ";
-    datafile << Position->GetRunwayRadius();
-  }
-  if (SubSystems & FGAircraft::ssCoefficients) {
-    datafile << ", ";
-    datafile << Aerodynamics->GetCoefficientValues();
-  }
-  if (SubSystems & FGAircraft::ssGroundReactions) {
-    datafile << ", ";
-    datafile << GroundReactions->GetGroundReactionValues();
-  }
-  if (SubSystems & FGAircraft::ssFCS) {
-    datafile << ", ";
-    datafile << FCS->GetComponentValues();
-  }
-  if (SubSystems & FGAircraft::ssPropulsion) {
-    datafile << ", ";
-    datafile << Propulsion->GetPropulsionValues();
-  }
-  datafile << endl;
-  datafile.flush();
+  outstream << endl;
+  outstream.flush();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.17 2001/07/29 22:15:18 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.18 2001/08/31 22:56:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -70,7 +70,6 @@ public:
 
   bool Run(void);
 
-  void DelimitedOutput(void);
   void DelimitedOutput(string);
   void SocketOutput(void);
   void SocketStatusOutput(string);
@@ -80,8 +79,6 @@ public:
   inline void Enable(void) { enabled = true; }
   inline void Disable(void) { enabled = false; }
   inline bool Toggle(void) {enabled = !enabled; return enabled;}
-
-protected:
 
 private:
   bool sFirstPass, dFirstPass, enabled;
