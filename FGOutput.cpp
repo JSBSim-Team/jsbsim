@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.61 2003/01/22 15:53:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.62 2003/01/25 16:10:50 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,9 +67,10 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   sFirstPass = dFirstPass = true;
   socket = 0;
   Type = otNone;
-  Filename = "JSBSim.out";
+  Filename = "";
   SubSystems = 0;
   enabled = true;
+  outputInFileName = "";
   
   Debug(0);
 }
@@ -435,11 +436,19 @@ void FGOutput::SocketStatusOutput(string out_str)
 
 bool FGOutput::Load(FGConfigFile* AC_cfg)
 {
-  string token, parameter;
+  string token="", parameter="", separator="";
+  string name="", fname="";
   int OutRate = 0;
+  FGConfigFile* Output_cfg;
 
-  token = AC_cfg->GetValue("NAME");
-  Output->SetFilename(token);
+# ifndef macintosh
+    separator = "/";
+# else
+    separator = ";";
+# endif
+
+  name = AC_cfg->GetValue("NAME");
+  fname = AC_cfg->GetValue("FILE");
   token = AC_cfg->GetValue("TYPE");
   Output->SetType(token);
 
@@ -448,68 +457,84 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
     socket = new FGfdmSocket("localhost",1138);
   }
 #endif
-  
-  AC_cfg->GetNextConfigLine();
 
-  while ((token = AC_cfg->GetValue()) != string("/OUTPUT")) {
-    *AC_cfg >> parameter;
-    if (parameter == "RATE_IN_HZ") *AC_cfg >> OutRate;
+  if (!fname.empty()) {
+    outputInFileName = FDMExec->GetAircraftPath() + separator
+                        + FDMExec->GetModelName() + separator + fname + ".xml";
+    Output_cfg = new FGConfigFile(outputInFileName);
+    if (!Output_cfg->IsOpen()) {
+      cerr << "Could not open file: " << outputInFileName << endl;
+      return false;
+    }
+  } else {
+    Output_cfg = AC_cfg;
+  }
+  Output->SetFilename(name);
+
+  while ((token = Output_cfg->GetValue()) != string("/OUTPUT")) {
+    *Output_cfg >> parameter;
+    if (parameter == "RATE_IN_HZ") {
+      *Output_cfg >> OutRate;
+    }
     if (parameter == "SIMULATION") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssSimulation;
     }
     if (parameter == "AEROSURFACES") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssAerosurfaces;
     }
     if (parameter == "RATES") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssRates;
     }
     if (parameter == "VELOCITIES") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssVelocities;
     }
     if (parameter == "FORCES") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssForces;
     }
     if (parameter == "MOMENTS") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssMoments;
     }
     if (parameter == "ATMOSPHERE") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssAtmosphere;
     }
     if (parameter == "MASSPROPS") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssMassProps;
     }
     if (parameter == "POSITION") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssPosition;
     }
     if (parameter == "COEFFICIENTS") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssCoefficients;
     }
     if (parameter == "GROUND_REACTIONS") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssGroundReactions;
     }
     if (parameter == "FCS") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssFCS;
     }
     if (parameter == "PROPULSION") {
-      *AC_cfg >> parameter;
+      *Output_cfg >> parameter;
       if (parameter == "ON") SubSystems += ssPropulsion;
     }
+    if (Output_cfg->GetNextConfigLine() == "EOF") break;
   }
 
   OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
   rate = (int)(0.5 + 1.0/(State->Getdt()*OutRate));
+
+  Debug(2);
 
   return true;
 }
@@ -535,11 +560,32 @@ bool FGOutput::Load(FGConfigFile* AC_cfg)
 
 void FGOutput::Debug(int from)
 {
+  string scratch="";
+
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
 
+    }
+    if (from == 2) {
+      if (outputInFileName.empty())
+        cout << "  " << "Output parameters read inline" << endl;
+      else
+        cout << "    Output parameters read from file: " << outputInFileName << endl;
+      if (Filename == "cout" || Filename == "COUT") {
+        scratch = "    Log output goes to screen console";
+      } else if (!Filename.empty()) {
+        scratch = "    Log output goes to file: " + Filename;
+      }
+      switch (Type) {
+      case otCSV:
+        cout << scratch << " in CSV format output at rate " << 120/rate << " Hz" << endl;
+        break;
+      case otNone:
+        cout << "  No log output" << endl;
+        break;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

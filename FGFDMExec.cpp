@@ -75,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.96 2003/01/22 15:53:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.97 2003/01/25 16:10:50 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,19 +89,22 @@ FGPropertyManager* FGFDMExec::master=0;
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void checkTied( FGPropertyManager *node ) {
+void checkTied ( FGPropertyManager *node )
+{
   int N = node->nChildren();
   string name;
-  for(int i=0;i<N;i++) {
-    if(node->getChild(i)->nChildren() ) {
+
+  for (int i=0; i<N; i++) {
+    if (node->getChild(i)->nChildren() ) {
       checkTied( (FGPropertyManager*)node->getChild(i) );
-    } else if( node->getChild(i)->isTied() ) {
-      name=((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
+    } else if ( node->getChild(i)->isTied() ) {
+      name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
       cerr << name << " is tied" << endl;
     } 
   }
 }        
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
 FGFDMExec::FGFDMExec(FGPropertyManager* root)
@@ -274,8 +277,8 @@ bool FGFDMExec::Allocate(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::DeAllocate(void) {
-
+bool FGFDMExec::DeAllocate(void)
+{
   delete Atmosphere;
   delete FCS;
   delete Propulsion;
@@ -293,8 +296,6 @@ bool FGFDMExec::DeAllocate(void) {
   
   delete IC;
   delete Trim;
-  
-  
     
   FirstModel  = 0L;
   Error       = 0;
@@ -381,6 +382,7 @@ bool FGFDMExec::RunIC(void)
   State->Initialize(IC);
   Run();
   State->Resume();
+
   return true;
 }
 
@@ -401,9 +403,11 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model) {
-  FGFDMExec::AircraftPath=AircraftPath;
-  FGFDMExec::EnginePath=EnginePath;
+bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model)
+{
+  FGFDMExec::AircraftPath = AircraftPath;
+  FGFDMExec::EnginePath = EnginePath;
+
   return LoadModel(model);
 }  
 

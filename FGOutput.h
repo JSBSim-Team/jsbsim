@@ -56,7 +56,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.23 2003/01/22 15:53:34 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.24 2003/01/25 16:10:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -103,7 +103,7 @@ public:
 private:
   bool sFirstPass, dFirstPass, enabled;
   int SubSystems;
-  string Filename;
+  string Filename, outputInFileName;
   enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
   ofstream datafile;
   FGfdmSocket* socket;

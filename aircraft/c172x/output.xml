@@ -1,0 +1,15 @@
+    RATE_IN_HZ       20
+    SIMULATION       OFF
+    ATMOSPHERE       ON
+    MASSPROPS        ON
+    AEROSURFACES     ON
+    RATES            ON
+    VELOCITIES       ON
+    FORCES           ON
+    MOMENTS          ON
+    POSITION         ON
+    COEFFICIENTS     ON
+    GROUND_REACTIONS ON
+    FCS              ON
+    PROPULSION       ON
+
