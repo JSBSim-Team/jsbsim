@@ -44,7 +44,7 @@ INCLUDES
 #include <iomanip>
 #endif
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.26 2002/05/08 11:28:39 apeden Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.27 2002/05/26 16:02:12 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +165,7 @@ double FGTable::GetValue(double rowKey, double colKey)
   if ( r > 2 && Data[r-1][0] > rowKey ) {
     while ( Data[r-1][0] > rowKey && r > 2) { r--; }
   } else if ( Data[r][0] < rowKey ) { 
-    cout << Data[r][0] << endl;
+//    cout << Data[r][0] << endl;
     while ( r <= nRows && Data[r][0] <= rowKey ) { r++; }
     if ( r > nRows ) r = nRows;  
   }  
