@@ -72,7 +72,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.34 2001/03/07 23:41:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.35 2001/03/11 19:42:32 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -86,6 +86,28 @@ char fgcyan[6]   = {27, '[', '3', '6', 'm', '\0' };
 char fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
 char fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
 char fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GLOBAL DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+short debug_lvl;  // This describes to any interested entity the debug level
+                  // requested by setting the JSBSIM_DEBUG environment variable.
+                  // The bitmasked value choices are as follows:
+                  // a) unset: In this case (the default) JSBSim would only print
+                  //    out the normally expected messages, essentially echoing
+                  //    the config files as they are read. If the environment
+                  //    variable is not set, debug_lvl is set to -1 internally
+                  // b) 0: This requests JSBSim not to output any messages
+                  //    whatsoever.
+                  // c) 1: This value explicity requests the normal JSBSim
+                  //    startup messages
+                  // d) 2: This value asks for a message to be printed out when
+                  //    a class is instantiated
+                  // e) 4: When this value is set, a message is displayed when a
+                  //    FGModel object executes its Run() method
+                  // f) 8: When this value is set, various runtime state variables
+                  //    are printed out periodically
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -117,6 +139,14 @@ FGFDMExec::FGFDMExec(void)
                                  << JSBSIM_VERSION << underoff << normint << endl;
   cout << halfint << "            [cfg file spec v" << NEEDED_CFG_VERSION << "]\n\n";
   cout << normint << "JSBSim startup beginning ...\n\n";
+
+  try {
+    char* num = getenv("JSBSIM_DEBUG");
+    if (!num) debug_lvl = -1;
+    else debug_lvl = atoi(num); // set debug level
+  } catch (...) {                             // if error set to -1
+    debug_lvl = -1;
+  }
 
   Allocate();
 }
@@ -270,9 +300,9 @@ bool FGFDMExec::Run(void)
     RunScript();
     if (State->Getsim_time() >= EndTime) return false;
   }
-
-  if (getenv("JSBSIM_DEBUG")) cout << "=========================" << endl;
-
+cout << __FILE__ << " : " << __LINE__ << endl;
+  if (debug_lvl & 4) cout << "=========================" << endl;
+cout << __FILE__ << " : " << __LINE__ << endl;
   while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;
     if (model_iterator == 0L) break;

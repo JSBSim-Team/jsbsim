@@ -50,8 +50,14 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.8 2001/03/07 23:41:10 jberndt Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.cpp,v 1.9 2001/03/11 19:42:32 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GLOBAL DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+extern short debug_lvl;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -61,7 +67,7 @@ FGModel::FGModel(FGFDMExec* fdmex)
 {
   FDMExec     = fdmex;
   NextModel   = 0L;
-  
+
   State       = 0;
   Atmosphere  = 0;
   FCS         = 0;
@@ -111,8 +117,8 @@ bool FGModel::InitModel(void)
 
 bool FGModel::Run()
 {
-  if (getenv("JSBSIM_DEBUG")) cout << "Entering Run() for model " << Name << endl;
-  
+  if (debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
+
   if (exe_ctr == 1) {
     if (exe_ctr++ >= rate) exe_ctr = 1;
     return false;

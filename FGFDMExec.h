@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.29 2001/03/02 19:16:35 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.30 2001/03/11 19:42:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -107,7 +107,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.29 2001/03/02 19:16:35 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.30 2001/03/11 19:42:32 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -115,63 +115,31 @@ CLASS DOCUMENTATION
     class on the simulator side.
 
     <h4>Scripting support provided in the Executive</h4>
-
-    <p>There is simple scripting support provided in the FGFDMExec
-    class. Commands are specified using the <u>Simple Scripting
-    Directives for JSBSim</u> (SSDJ). The script file is in XML
-    format. A test condition (or conditions) can be set up in the
-    script and when the condition evaluates to true, the specified
-    action[s] is/are taken. A test condition can be <em>persistent</em>,
-    meaning that if a test condition evaluates to true, then passes
-    and evaluates to false, the condition is reset and may again be
-    triggered. When the set of tests evaluates to true for a given
-    condition, an item may be set to another value. This value might
-    be a boolean, a value, or a delta value, and the change from the
-    current value to the new value can be either via a step function,
-    a ramp, or an exponential approach. The speed of a ramp or
-    approach is specified via the time constant. Here is the format
-    of the script file:</p>
+    <p>There is simple scripting support provided in the FGFDMExec    class. Commands are specified using the <u>Simple Scripting    Directives for JSBSim</u> (SSDJ). The script file is in XML    format. A test condition (or conditions) can be set up in the    script and when the condition evaluates to true, the specified    action[s] is/are taken. A test condition can be <em>persistent</em>,    meaning that if a test condition evaluates to true, then passes    and evaluates to false, the condition is reset and may again be    triggered. When the set of tests evaluates to true for a given    condition, an item may be set to another value. This value might    be a boolean, a value, or a delta value, and the change from the    current value to the new value can be either via a step function,    a ramp, or an exponential approach. The speed of a ramp or    approach is specified via the time constant. Here is the format    of the script file:</p>    <pre><strong>&lt;?xml version=&quot;1.0&quot;?&gt;    &lt;runscript name=&quot;C172-01A&quot;&gt;    &lt;!--    This run is for testing C172 runs    --&gt;    &lt;use aircraft=&quot;c172&quot;&gt;    &lt;use initialize=&quot;reset00&quot;&gt;    &lt;run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;      &lt;when&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot;        action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;      &lt;/when&gt;      &lt;when&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot;        action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;      &lt;/when&gt;      &lt;when&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;        &lt;set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot;        action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;      &lt;/when&gt;    &lt;/run&gt;    &lt;/runscript&gt;</strong></pre>    <p>The first line must always be present. The second line    identifies this file as a script file, and gives a descriptive    name to the script file. Comments are next, delineated by the    &lt;!-- and --&gt; symbols. The aircraft and initialization files    to be used are specified in the &quot;use&quot; lines. Next,    comes the &quot;run&quot; section, where the conditions are    described in &quot;when&quot; clauses.</p>
 
-    <pre><strong>&lt;?xml version=&quot;1.0&quot;?&gt;
-    &lt;runscript name=&quot;C172-01A&quot;&gt;
+    <h4>JSBSim Debugging Directives</h4>
 
-    &lt;!--
-    This run is for testing C172 runs
-    --&gt;
+    This describes to any interested entity the debug level
+    requested by setting the JSBSIM_DEBUG environment variable.
+    The bitmasked value choices are as follows:<ol>
+    <li><b>unset</b>: In this case (the default) JSBSim would only print
+       out the normally expected messages, essentially echoing
+       the config files as they are read. If the environment
+       variable is not set, debug_lvl is set to -1 internally</li>
+    <li><b>0</b>: This requests JSBSim not to output any messages
+       whatsoever.</li>
+    <li><b>1</b>: This value explicity requests the normal JSBSim
+       startup messages</li>
+    <li><b>2</b>: This value asks for a message to be printed out when
+       a class is instantiated</li>
+    <li><b>4</b>: When this value is set, a message is displayed when a
+       FGModel object executes its Run() method</li>
+    <li><b>8</b>: When this value is set, various runtime state variables
+       are printed out periodically</li>
+    </ol>
 
-    &lt;use aircraft=&quot;c172&quot;&gt;
-    &lt;use initialize=&quot;reset00&quot;&gt;
-
-    &lt;run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
-        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot; action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
-      &lt;/when&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
-        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &lt;/when&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
-        &lt;set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot; action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &lt;/when&gt;
-    &lt;/run&gt;
-
-    &lt;/runscript&gt;</strong></pre>
-
-    <p>The first line must always be present. The second line
-    identifies this file as a script file, and gives a descriptive
-    name to the script file. Comments are next, delineated by the
-    &lt;!-- and --&gt; symbols. The aircraft and initialization files
-    to be used are specified in the &quot;use&quot; lines. Next,
-    comes the &quot;run&quot; section, where the conditions are
-    described in &quot;when&quot; clauses.</p>
-*/
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -180,12 +148,12 @@ class FGFDMExec
 public:
   /// Default constructor
   FGFDMExec(void);
-  
+
   /// Default destructor
   ~FGFDMExec(void);
 
   /** This routine places a model into the runlist at the specified rate. The
-      "rate" is not really a clock rate. It represents how many calls to the 
+      "rate" is not really a clock rate. It represents how many calls to the
       FGFDMExec::Run() method must be made before the model is executed. A
       value of 1 means that the model will be executed for each call to the
       exec's Run() method. A value of 5 means that the model will only be
@@ -194,7 +162,7 @@ public:
       @param rate The rate at which to execute the model as described above.
       @return Currently returns 0 always. */
   int  Schedule(FGModel* model, int rate);
-  
+
   /** This executes each scheduled model in succession, as well as running any
       scripts which are loaded.
       @return true if successful, false if sim should be ended  */
