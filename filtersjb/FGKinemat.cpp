@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.1 2001/12/02 16:02:09 apeden Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.2 2001/12/09 15:26:50 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,7 +86,7 @@ AC_cfg(AC_cfg) {
     }
   }
 
-  if (debug_lvl > 1) {
+  if (debug_lvl > 0) {
     cout << "      ID: " << ID << endl;
     cout << "      INPUT: " << InputIdx << endl;
     cout << "      DETENTS: " << NumDetents << endl;
