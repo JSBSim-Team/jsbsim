@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.10 2001/01/24 00:08:27 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropeller.cpp,v 1.11 2001/01/24 14:02:53 jsb Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,6 +120,7 @@ float FGPropeller::Calculate(float PowerAvailable)
   float J, C_Thrust, omega;
   float Vel = (fdmex->GetTranslation()->GetUVW())(1);
   float rho = fdmex->GetAtmosphere()->GetDensity();
+  float RPS = RPM/60.0;
 
   if (RPM > 0.10) {
     J = Vel / (Diameter * RPM / 60.0);
@@ -132,16 +133,17 @@ float FGPropeller::Calculate(float PowerAvailable)
   } else {                    // Variable pitch prop
     C_Thrust = cThrust->GetValue(J, Pitch);
   }
+cout << "Thrust Coeff: " << C_Thrust << endl;
 
-  Thrust = C_Thrust*RPM*RPM*Diameter*Diameter*Diameter*Diameter*rho/(3600.0);
+  Thrust = C_Thrust*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
 cout << "Thrust: " << Thrust << endl;
-  omega = (RPM/60.0)*2.0*M_PI;
+  omega = RPS*2.0*M_PI;
 
-  if (omega <= 500) omega = 10.0;
+  if (omega <= 500) omega = 1.0;
 
   Torque = PowerAvailable / omega;
 cout << "Torque: " << Torque << endl;
-  RPM += ((Torque / Ixx) * 60.0 / (2.0 * M_PI)) * deltaT;
+  RPM = (RPS + ((Torque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 cout << "RPM: " << RPM << endl;
   return Thrust; // return thrust in pounds
 }
@@ -154,17 +156,20 @@ float FGPropeller::GetPowerRequired(void)
 
   float J = (fdmex->GetTranslation()->GetUVW())(1) / (Diameter * RPM / 60.0);
   float rho = fdmex->GetAtmosphere()->GetDensity();
-  float cPReq;
+  float cPReq, RPS;
+
+  RPS = RPM / 60.0;
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
     cPReq = cPower->GetValue(J);
   } else {                    // Variable pitch prop
     cPReq = cPower->GetValue(J, Pitch);
   }
+cout << "Power Coeff: " << cPReq << endl;
 
-  PowerRequired = cPReq*RPM*RPM*RPM*Diameter*Diameter*Diameter*Diameter
-                                                       *Diameter*rho/(216000.0);
-
+  PowerRequired = cPReq*RPS*RPS*RPS*Diameter*Diameter*Diameter*Diameter
+                                                       *Diameter*rho;
+cout << "PowerRequired: " << PowerRequired << endl;
   return PowerRequired;
 }
 
