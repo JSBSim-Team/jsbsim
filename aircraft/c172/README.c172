@@ -1,0 +1,40 @@
+Here are some performance figures for a Cessna 172R with one 160HP
+engine.  Could someone with access to a POH check these?
+
+From the FAA TCDS
+-----------------
+
+Va1 (maneuvering): 99 KIAS
+Vno (max structural cruising): 129 KIAS
+Vne (never exceed): 163 KIAS
+Vfe (flaps extended): 85 KIAS
+
+
+From a separate FAA document
+----------------------------
+
+Maximum speed at sea level: 123 KIAS
+Cruise, 80% power at 8,000 ft: 122 KIAS
+Range, 80% power at 8,000 ft: 580 nm
+Range, 60% power at 10,000 ft: 687 nm
+Time, 80% power at 8,000 ft: 4.8 hr
+Time, 60% power at 10,000 ft: 6.6 hr
+Climb rate at sea level: 720 fpm
+Service ceiling: 13,500 ft
+Takeoff distance, ground roll: 945 ft
+Takeoff distance, over 50 ft obstacle: 1,685 ft
+Landing distance, ground roll: 550 ft
+Landing distance, over 50 ft obstacle: 1,295 ft
+Stall speed, power off, no flaps: 51 KCAS
+Stall speed, power off, full flaps: 47 KCAS
+Maximum takeoff/landing weight: 2,450 lb
+
+
+From unofficial sources
+-----------------------
+
+Vx (best angle of climb): 60 KIAS (elsewhere noted as 65 KIAS)
+Vy (best rate of climb): 79 KIAS
+Va (maneuvering speed) at 2,450 lb: 99 KIAS
+Va (maneuvering speed) at 2,000 lb: 92 KIAS
+Va (maneuvering speed) at 1,600 lb: 81 KIAS
