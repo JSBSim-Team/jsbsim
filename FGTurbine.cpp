@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.15 2004/06/20 19:28:16 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.16 2004/07/11 02:42:36 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -396,6 +396,7 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
       ThrustTables.back()->Load(Eng_cfg);
     }
     else cerr << "Unhandled token in Engine config file: " << token << endl;
+    if (token == "EOF") return false;
   }
 
   // Pre-calculations and initializations
