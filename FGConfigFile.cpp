@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.40 2002/01/07 23:44:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.41 2002/07/02 18:54:27 apeden Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,7 @@ string FGConfigFile::GetNextConfigLine(void)
 
 string FGConfigFile::GetValue(string val)
 {
-  unsigned int pos, p1, p2, ptest;
+  string::size_type pos, p1, p2, ptest;
 
   if (val == "") {    // this call is to return the tag value
     pos = CurrentLine.find("<");
@@ -229,7 +229,7 @@ string FGConfigFile::GetLine(void)
 
 FGConfigFile& FGConfigFile::operator>>(double& val)
 {
-  unsigned int pos, end;
+  string::size_type pos, end;
 
   pos = CurrentLine.find_first_not_of(", ",CurrentIndex);
   if (pos == CurrentLine.npos) pos = CurrentLine.length();
@@ -251,7 +251,7 @@ FGConfigFile& FGConfigFile::operator>>(double& val)
 
 FGConfigFile& FGConfigFile::operator>>(int& val)
 {
-  unsigned int pos, end;
+  string::size_type pos, end;
 
   pos = CurrentLine.find_first_not_of(", ",CurrentIndex);
   if (pos == CurrentLine.npos) pos = CurrentLine.length();
@@ -273,7 +273,7 @@ FGConfigFile& FGConfigFile::operator>>(int& val)
 
 FGConfigFile& FGConfigFile::operator>>(eParam& val)
 {
-  unsigned int pos, end;
+  string::size_type pos, end;
 
   pos = CurrentLine.find_first_not_of(", ",CurrentIndex);
   if (pos == CurrentLine.npos) pos = CurrentLine.length();
@@ -295,7 +295,7 @@ FGConfigFile& FGConfigFile::operator>>(eParam& val)
 
 FGConfigFile& FGConfigFile::operator>>(string& str)
 {
-  unsigned int pos, end;
+  string::size_type pos, end;
 
   pos = CurrentLine.find_first_not_of(", ",CurrentIndex);
   if (pos == CurrentLine.npos) pos = CurrentLine.length();
