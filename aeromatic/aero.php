@@ -894,20 +894,20 @@ if($ac_type == 0) { // if glider, do nothing here
   print("    PITCH $ac_engpitch[$i]\n");
   print("    YAW $ac_engyaw[$i]\n");
   print("    FEED $ac_engfeed[$i]\n");
-  print("  </AC_ENGINE>\n");
   if($ac_enginetype == 0) {
-    print("  <AC_THRUSTER FILE=\"$ac_name");
+    print("    <AC_THRUSTER FILE=\"$ac_name");
     print("_prop\">\n");
     }
     else {
-    print("  <AC_THRUSTER FILE=\"direct\">\n");
+    print("    <AC_THRUSTER FILE=\"direct\">\n");
     }
-  print("    XLOC $ac_thrusterlocx[$i]\n");
-  print("    YLOC $ac_thrusterlocy[$i]\n");
-  print("    ZLOC $ac_thrusterlocz[$i]\n");
-  print("    PITCH $ac_thrusterpitch[$i]\n");
-  print("    YAW $ac_thrusteryaw[$i]\n");
-  print("  </AC_THRUSTER>\n");
+  print("      XLOC $ac_thrusterlocx[$i]\n");
+  print("      YLOC $ac_thrusterlocy[$i]\n");
+  print("      ZLOC $ac_thrusterlocz[$i]\n");
+  print("      PITCH $ac_thrusterpitch[$i]\n");
+  print("      YAW $ac_thrusteryaw[$i]\n");
+  print("    </AC_THRUSTER>\n");
+  print("  </AC_ENGINE>\n");
   }
 
  //***** FUEL TANKS **************************************
