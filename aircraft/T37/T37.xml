@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="T37" VERSION="1.61" RELEASE="ALPHA">
+<FDM_CONFIG NAME="T37" VERSION="1.61">
 <!--
   File:     T37.xml
   Author:   Aero-Matic v 0.7
@@ -50,10 +50,6 @@
         Controls, Part I. Lawrence KS: DARcorporation, 1995,
         pg 501-503
 
-    * H-886: A flight test investigation of the rolling moments induced
-             on a T-37B airplane in the wake of a B-747 airplane.
-    * H-912: Stability and control derivatives of the T-37 airplane.
-
 -->
 
  <METRICS>
@@ -64,65 +60,65 @@
    AC_HTAILARM  11.73
    AC_VTAILAREA 28.59
    AC_LV        11.73
-   AC_IXX       3010		<!-- Roskam defines 7985 -->
-   AC_IYY       3847		<!-- Culp defined 6000, Roskam defines 3326 -->
-   AC_IZZ       6392		<!-- Roskam defines 11183 -->
+   AC_IXX       7985		<!-- Roskam -->
+   AC_IYY       6000		<!-- David Culp, Roskam defines 3326 -->
+   AC_IZZ       11183		<!-- Roskam -->
    AC_IXZ       0		<!-- Roskam -->
-   AC_EMPTYWT   4337		<!-- Roskam defines 6360 -->
-   AC_CGLOC     211.2  0.0 -8.8
-   AC_AERORP    211.2  0.0  0.0
-   AC_EYEPTLOC  70.4  0.0 38.0
-   AC_VRP       211.2  0.0 -8.8
+   AC_EMPTYWT   4056		<!-- Roskam defines 6360 -->
+   AC_CGLOC       0.0  0.0 -8.8
+   AC_AERORP      0.0  0.0  0.0
+   AC_EYEPTLOC  -13.1  0.0 18.6
+   AC_VRP      -118.57 0.0 -8.8
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   45.8  0.0 -42.2 1974.0 658.0  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
-  AC_GEAR LEFT_MLG  221.8 -36.5 -42.2 6580.0 1316.0  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
-  AC_GEAR RIGHT_MLG 221.8 36.5 -42.2 6580.0 1316.0  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
+  AC_GEAR NOSE_LG  -61.57 0.0 -31.4 3274.0 658.0  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
+  AC_GEAR LEFT_MLG    6.7 -31.7 -29.9 6580.0 1316.0  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
+  AC_GEAR RIGHT_MLG   6.7 31.7 -29.9 6580.0 1316.0  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
-  <AC_ENGINE FILE="J69-T25">
-    XLOC 291.996
-    YLOC -20
+  <AC_ENGINE FILE="J69-T25_sim">
+    XLOC  40.0
+    YLOC -30.0
     ZLOC 0
     PITCH 0
     YAW 0
     FEED 0
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 291.996
-    YLOC -20
+    XLOC  40.0
+    YLOC -30.0
     ZLOC 0
     PITCH 0
     YAW 0
   </AC_THRUSTER>
-  <AC_ENGINE FILE="J69-T25">
-    XLOC 291.996
-    YLOC 20
+  <AC_ENGINE FILE="J69-T25_sim">
+    XLOC  40.0
+    YLOC 30.0
     ZLOC 0
     PITCH 0
     YAW 0
     FEED 1
   </AC_ENGINE>
   <AC_THRUSTER FILE="direct">
-    XLOC 291.996
-    YLOC 20
+    XLOC  40.0
+    YLOC 30.0
     ZLOC 0
     PITCH 0
     YAW 0
   </AC_THRUSTER>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 211.1976
-    YLOC 0
-    ZLOC -8.7999
-    RADIUS 1
+    XLOC  0.0
+    YLOC 0 
+    ZLOC -8.7999 
+    RADIUS 1 
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 211.1976
-    YLOC 0
-    ZLOC -8.7999
-    RADIUS 1
+    XLOC 0.0
+    YLOC 0 
+    ZLOC -8.7999 
+    RADIUS 1 
     CAPACITY   700.0
     CONTENTS   350.0
   </AC_TANK>
@@ -135,8 +131,8 @@
    </COMPONENT>
    <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/pitch-trim-sum
-      MIN     -0.454
-      MAX      0.262
+      MIN     -0.350
+      MAX      0.300
       OUTPUT  fcs/elevator-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
@@ -146,14 +142,14 @@
    </COMPONENT>
    <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/roll-trim-sum
-      MIN    -0.262
-      MAX     0.262
+      MIN    -0.35
+      MAX     0.35
       OUTPUT  fcs/left-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
       INPUT  -fcs/roll-trim-sum
-      MIN    -0.262
-      MAX     0.262
+      MIN    -0.35
+      MAX     0.35
       OUTPUT  fcs/right-aileron-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Yaw Trim Sum" TYPE="SUMMER">
@@ -163,16 +159,16 @@
    </COMPONENT>
    <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
       INPUT   fcs/yaw-trim-sum
-      MIN     -0.436
-      MAX      0.436
+      MIN     -0.35
+      MAX      0.35
       OUTPUT  fcs/rudder-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
      INPUT   fcs/flap-cmd-norm
      DETENTS 3
              0   0
-             20  4
-             40  3
+             15  4
+             30  3
      OUTPUT  fcs/flap-pos-deg
    </COMPONENT>
    <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
@@ -185,9 +181,9 @@
    <COMPONENT NAME="Speedbrake Control" TYPE="KINEMAT">
      INPUT   fcs/speedbrake-cmd-norm
      DETENTS 2
-             0     0
-             1.153 1
-     OUTPUT  fcs/speedbrake-pos-rad
+             0   0
+             1   1
+     OUTPUT  fcs/speedbrake-pos-norm
    </COMPONENT>
  </FLIGHT_CONTROL>
  <AERODYNAMICS>
@@ -243,7 +239,7 @@
     </COEFFICIENT>
     <COEFFICIENT NAME="dCLsb" TYPE="VALUE">
        Delta_Lift_due_to_speedbrake
-       aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-rad
+       aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
        0
     </COEFFICIENT>
     <!-- Roskam -->
@@ -315,7 +311,7 @@
     </COEFFICIENT>
     <COEFFICIENT NAME="CDsb" TYPE="VALUE">
        Drag_due_to_speedbrakes
-       aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-rad
+       aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
        0.024
     </COEFFICIENT>
     <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
@@ -336,20 +332,11 @@
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="SIDE">
-    <!-- H-912 -->
-    <COEFFICIENT NAME="CYb" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="CYb" TYPE="VALUE">
        Side_force_due_to_beta
-       8
-       aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|aero/beta-rad
-       -0.0349  -0.32
-        0       -0.28
-        0.0349  -0.26
-        0.0698  -0.25
-        0.1047  -0.25
-        0.1396  -0.26
-        0.1745  -0.27
-        0.2094  -0.28
+       -0.346
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DCYbdf" TYPE="VALUE">
@@ -358,103 +345,42 @@
        -0.2478
     </COEFFICIENT>
     <!-- Roskam -->
-<!--
     <COEFFICIENT NAME="CYp" TYPE="VALUE">
        Side_force_due_to_roll_rate
        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/p-aero-rad_sec
        -0.0827
     </COEFFICIENT>
--->
     <!-- Roskam -->
-<!--
     <COEFFICIENT NAME="CYr" TYPE="VALUE">
        Side_force_due_to_yaw_rate
        aero/qbar-psf|metrics/Sw-sqft|aero/bi2vel|velocities/r-aero-rad_sec
        0.3
     </COEFFICIENT>
--->
-    <!-- H-912 -->
-    <COEFFICIENT NAME="CYdr" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="CYdr" TYPE="VALUE">
        Side_force_due_to_rudder
-       8 2
-       aero/alpha-rad
-       fcs/components/flaps-control/output-norm
        aero/qbar-psf|metrics/Sw-sqft|fcs/rudder-pos-rad
-                0      1
-       -0.0349  0.052  0.057
-        0       0.052  0.092
-        0.0349  0.097  0.109
-        0.0698  0.115  0.103
-        0.1047  0.103  0.092
-        0.1396  0.103  0.092
-        0.1745  0.103  0.103
-        0.2094  0.103  0.109
-    </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="CYda" TYPE="TABLE">
-       Side_force_due_to_aileron
-       7 2
-       aero/alpha-rad
-       fcs/components/flaps-control/output-norm
-       aero/qbar-psf|metrics/Sw-sqft|fcs/left-aileron-pos-rad
-                 0        1
-       -0.0349   0       -0.046
-        0       -0.0458  -0.046
-        0.0349  -0.0544  -0.046
-        0.0698  -0.0573  -0.046
-        0.1047  -0.0573  -0.046
-        0.1396  -0.0573  -0.046
-        0.1745  -0.0517  -0.046
+       0.2
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="ROLL">
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Clb" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Clb" TYPE="VALUE">
        Roll_moment_due_to_beta
-       8 2
-       aero/alpha-rad
-       fcs/components/flaps-control/output-norm
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/mag-beta-rad
-                 0       1
-       -0.0349  -0.03   -0.02
-        0       -0.05   -0.04
-        0.0349  -0.07   -0.04
-        0.0698  -0.06   -0.05
-        0.1047  -0.06   -0.05
-        0.1396  -0.07   -0.056
-        0.1745  -0.08   -0.06
-        0.2094  -0.08   -0.07
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
+       -0.0944
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Clp" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Clp" TYPE="VALUE">
        Roll_moment_due_to_roll_rate
-       8 2
-       aero/alpha-rad
-       fcs/components/flaps-control/output-norm
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
-                 0       1
-       -0.0349  -0.74   -0.55
-        0       -0.59   -0.49
-        0.0349  -0.60   -0.48
-        0.0698  -0.53   -0.51
-        0.1047  -0.50   -0.51
-        0.1396  -0.45   -0.51
-        0.1745  -0.44   -0.50
-        0.2094  -0.42   -0.49
+       -0.442
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Clr" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Clr" TYPE="VALUE">
        Roll_moment_due_to_yaw_rate
-       7
-       aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
-        0        0.2
-        0.0349   0.0
-        0.0698   0.4
-        0.1047   0.6
-        0.1396   0.8
-        0.1745   0.8
-        0.2094   0.8
+       0.0926
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DClrDg" TYPE="VALUE">
@@ -464,168 +390,73 @@
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DClrDf" TYPE="VALUE">
-      Delta_Roll_moment_due_to_yaw_rate_due_to_flaps
-      aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec|fcs/components/flaps-control/output-norm
-      0.18
+       Delta_Roll_moment_due_to_yaw_rate_due_to_flaps
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec|fcs/components/flaps-control/output-norm
+       0.18
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Clda" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Clda" TYPE="VECTOR">
        Roll_moment_due_to_aileron
-       8 2
-       aero/alpha-rad
-       gear/gear-pos-norm
+       2
+       velocities/mach-norm
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-                 0      1
-       -0.0349   0.206  0.189
-        0        0.212  0.189
-        0.0349   0.229  0.189
-        0.0698   0.218  0.189
-        0.1047   0.201  0.189
-        0.1396   0.201  0.189
-        0.1745   0.206  0.189
-        0.2094   0.212  0.155
+       0.0       0.181
+       2.0       0.040
     </COEFFICIENT>
-    <!-- aeromatic -->
-<!--
-    <COEFFICIENT NAME="DCldaM" TYPE="VALUE">
-       Delta_Roll_moment_due_to_aileron_due_to_mach
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad|velocities/mach-norm
-       -0.0705
-    </COEFFICIENT>
--->
     <!-- H-912 -->
     <COEFFICIENT NAME="DCldaDf" TYPE="VALUE">
-      Delta_Roll_moment_due_to_aileron_due_to_flaps
-      aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad|fcs/components/flaps-control/output-norm
-      -0.02
+       Delta_Roll_moment_due_to_aileron_due_to_flaps
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad|fcs/components/flaps-control/output-norm
+       -0.02
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cldr" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cldr" TYPE="VALUE">
        Roll_moment_due_to_rudder
-       7
-       aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
-       -0.0349   0.03438
-        0        0.01146
-        0.0349   0.00573
-        0.0698   0.00000
-        0.1047   0.00573
-        0.1396   0.02292
-        0.1745   0.04584
+       0.015
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="PITCH">
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cmalpha" TYPE="TABLE">
-       Pitch_moment_due_to_alpha
-       8 2
-       aero/alpha-rad
-       gear/gear-pos-norm
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+       Pitching_moment_at_zero_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
-                 0        1
-       -0.0349   -0.2292  -0.2292
-        0        -0.2578  -0.2292
-        0.0349   -0.3724  -0.2292
-        0.0698   -0.4011  -0.2292
-        0.1047   -0.3953  -0.2865
-        0.1396   -0.3610  -0.3896
-        0.1745   -0.3896  -0.4756
-        0.2094   -0.4584  -0.6016
+       0.025
     </COEFFICIENT>
     <!-- Roskam -->
-<!--
+    <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
+       Pitch_moment_due_to_alpha
+       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/alpha-rad
+       -0.7
+    </COEFFICIENT>
+    <!-- Roskam -->
     <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
        Pitch_moment_due_to_alpha_rate
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|aero/alphadot-rad_sec
        -6.95
     </COEFFICIENT>
--->
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cmde" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cmde" TYPE="VECTOR">
        Pitch_moment_due_to_elevator
-       8 2
-       aero/alpha-rad
-       gear/gear-pos-norm
+       2
+       velocities/mach-norm
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-                  0        1
-       -0.0349   -0.1318  -0.1318
-        0        -0.1174  -0.1174
-        0.0349   -0.1175  -0.1140
-        0.0698   -0.1249  -0.1140
-        0.1047   -0.1249  -0.1129
-        0.1396   -0.1203  -0.1060
-        0.1745   -0.1175  -0.0974
-        0.2094   -0.0974  -0.0917
+       0.0       -1.12
+       2.0       -0.200
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="DCmdeDf" TYPE="VECTOR">
-      Delta_Pitch_moment_due_to_elevator_due_to_flaps
-      7
-      aero/alpha-rad
-      aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad|fcs/components/flaps-control/output-norm
-       -0.0349   0.0057
-        0        0.0023
-        0.0349   0.0086
-        0.0698   0.0218
-        0.1047   0.0132
-        0.1396   0.0052
-        0.1745   0.0046
-    </COEFFICIENT>
-    <!-- aeromatic -->
-<!--
-    <COEFFICIENT NAME="CmdeM" TYPE="VALUE">
-       Pitch_moment_due_to_elevator
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad|velocities/mach-norm
-       0.46
-    </COEFFICIENT>
--->
-    <!-- H-912 -->
-    <COEFFICIENT NAME="DCmdf" TYPE="VECTOR">
-       Delta_Pitch_moment_due_to_flaps
-       8
-       aero/alpha-rad
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/components/flaps-control/output-norm
-       -0.0349  -0.2406
-        0       -0.0945
-        0.0349  -0.0372
-        0.0698  -0.0298
-        0.1047  -0.0871
-        0.1396  -0.1031
-        0.1745  -0.1117
-        0.2094  -0.1891
-    </COEFFICIENT>
-    <!-- H-912, Culp advises -50.0, Roskam defines -14.9 -->
-    <COEFFICIENT NAME="Cmq" TYPE="TABLE">
+    <!-- David Culp, Roskam defines -14.9 -->
+    <COEFFICIENT NAME="Cmq" TYPE="VALUE">
        Pitch_moment_due_to_pitch_rate
-       8 2
-       aero/alpha-rad
-       gear/gear-pos-norm
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-                  0      1
-       -0.0349   -25    -26
-        0        -21    -26
-        0.0349   -20    -26
-        0.0698   -22    -26
-        0.1047   -21    -22
-        0.1396   -19.5  -17
-        0.1745   -17    -16
-        0.2094   -13    -14
+      -50.0
     </COEFFICIENT>
   </AXIS>
   <AXIS NAME="YAW">
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cnb" TYPE="VALUE">
        Yaw_moment_due_to_beta
-       7
-       aero/alpha-rad
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/mag-beta-rad
-       -0.0349   0.092
-        0        0.093
-        0.0349   0.093
-        0.0698   0.097
-        0.1047   0.096
-        0.1396   0.097
-        0.1745   0.097
+       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/beta-rad
+       0.1106
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DCnbDg" TYPE="VALUE">
@@ -639,17 +470,11 @@
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/mag-beta-rad|fcs/components/flaps-control/output-norm
        -0.00882
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cnp" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cnp" TYPE="VALUE">
        Yaw_moment_due_to_roll_rate
-       5
-       aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
-       -0.0349   0.00
-        0       -0.05
-        0.0349  -0.07
-        0.0698  -0.10
-        0.1047  -0.12
+       -0.0243
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DCnpDf" TYPE="VALUE">
@@ -657,32 +482,17 @@
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
        -0.02
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cnr" TYPE="TABLE">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cnr" TYPE="VALUE">
        Yaw_moment_due_to_yaw_rate
-       5 2
-       aero/alpha-rad
-       fcs/components/flaps-control/output-norm
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/r-aero-rad_sec
-                 0      1
-       -0.0349  -0.24   -0.16
-        0       -0.23   -0.13
-        0.0349  -0.18   -0.13
-        0.0698  -0.16   -0.14
-        0.1047  -0.15   -0.15
+       -0.139
     </COEFFICIENT>
-    <!-- H-912 -->
-    <COEFFICIENT NAME="Cndr" TYPE="VECTOR">
+    <!-- Roskam -->
+    <COEFFICIENT NAME="Cndr" TYPE="VALUE">
        Yaw_moment_due_to_rudder
-       6
-       aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/rudder-pos-rad
-       -0.0349   -0.08
-        0        -0.07
-        0.0349   -0.06
-        0.0698   -0.05
-        0.1047   -0.05
-        0.1396   -0.06
+       -0.0365
     </COEFFICIENT>
     <!-- H-912 -->
     <COEFFICIENT NAME="DCndrDf" TYPE="VALUE">
@@ -694,25 +504,8 @@
     <COEFFICIENT NAME="Cnda" TYPE="VALUE">
        Adverse_yaw
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-       0.0254
+       -0.0254
     </COEFFICIENT>
   </AXIS>
  </AERODYNAMICS>
-  <OUTPUT NAME="JSBoutT37.csv" TYPE="NONE">
-    RATE_IN_HZ       20
-    SIMULATION       OFF
-    ATMOSPHERE       ON
-    MASSPROPS        ON
-    AEROSURFACES     ON
-    RATES            ON
-    VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          ON
-    POSITION         ON
-    COEFFICIENTS     ON
-    GROUND_REACTIONS ON
-    FCS              ON
-    PROPULSION       ON
-  </OUTPUT>
 </FDM_CONFIG>
-
