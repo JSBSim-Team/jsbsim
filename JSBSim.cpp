@@ -88,6 +88,7 @@ USEUNIT("FGPropulsion.cpp");
 USEUNIT("FGGroundReactions.cpp");
 USEUNIT("FGAerodynamics.cpp");
 USEUNIT("FGTurboProp.cpp");
+USEUNIT("FGTable.cpp");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif
@@ -124,7 +125,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.34 2000/11/22 23:49:03 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.35 2001/01/10 13:09:15 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -140,7 +141,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.34 2000/11/22 23:49:03 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.35 2001/01/10 13:09:15 jsb Exp $
     @see -
 */
 

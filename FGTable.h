@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGCoefficient.h
- Author:       Jon Berndt
- Date started: 12/28/98
+ Header:       FGTable.h
+ Author:       Jon S. Berndt
+ Date started: 1/9/2001
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2001  Jon S. Berndt (jsb@hal-pc.org) --------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
@@ -25,118 +25,83 @@
 
 HISTORY
 --------------------------------------------------------------------------------
-12/28/98   JSB   Created
+JSB  1/9/00          Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGCOEFFICIENT_H
-#define FGCOEFFICIENT_H
+#ifndef FGTABLE_H
+#define FGTABLE_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#endif
-
-#include <vector>
-#include <string>
 #include "FGConfigFile.h"
-#include "FGDefs.h"
-#include "FGTable.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COEFFICIENT "$Header"
-
-using std::vector;
+#define ID_TABLE "$Id: FGTable.h,v 1.1 2001/01/10 13:09:15 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFDMExec;
-class FGState;
-class FGAtmosphere;
-class FGFCS;
-class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
-class FGAuxiliary;
-class FGOutput;
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-Note that the coefficients need not be calculated each delta-t. This is
-something that may be fixed someday.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** This class models the stability derivative coefficient lookup tables.
-    Each coefficient for an axis is stored in that axes' vector of coefficients.
-    Each FDM execution frame the Run() method of the [currently] FGAircraft model
-    is called and the coefficient value is calculated.
+/** Lookup table  class.
+    Models a lookup table for use in FGCoefficient, FGPropeller, etc.
     @author Jon S. Berndt
-    @version $Id: FGCoefficient.h,v 1.20 2001/01/10 13:09:15 jsb Exp $
-    @see -
+    @version $Id: FGTable.h,v 1.1 2001/01/10 13:09:15 jsb Exp $
+    @see FGCoefficient
+    @see FGPropeller
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGCoefficient
-{
-  typedef vector <eParam> MultVec;
-  enum Type {UNKNOWN, VALUE, VECTOR, TABLE, EQUATION};
 
-  int numInstances;
-  string filename;
-  string description;
-  string name;
-  string method;
-  float StaticValue;
-  eParam LookupR, LookupC;
-  MultVec multipliers;
-  int rows, columns;
-  Type type;
-  float SD; // Actual stability derivative (or other coefficient) value
-  FGTable *Table;
-
-  FGFDMExec*      FDMExec;
-  FGState*        State;
-  FGAtmosphere*   Atmosphere;
-  FGFCS*          FCS;
-  FGAircraft*     Aircraft;
-  FGTranslation*  Translation;
-  FGRotation*     Rotation;
-  FGPosition*     Position;
-  FGAuxiliary*    Auxiliary;
-  FGOutput*       Output;
+class FGTable {
 
 public:
-  FGCoefficient(FGFDMExec*, FGConfigFile*);
-  ~FGCoefficient(void);
-
-  float Value(float, float);
-  float Value(float);
-  float Value(void);
-  float TotalValue(void);
-  inline string Getname(void) {return name;}
-  inline float GetSD(void) {return SD;}
-  inline MultVec Getmultipliers(void) {return multipliers;}
-  void DumpSD(void);
+  ~FGTable(void);
+  FGTable(int nRows);
+  FGTable(int nRows, int nCols);
+  float GetValue(float key);
+  float GetValue(float rowKey, float colKey);
+  /** Read the table in.
+      Data in the config file should be in matrix format with the row
+      independents as the first column and the column independents in
+      the first row.  The implication of this layout is that there should
+      be no value in the upper left corner of the matrix e.g:
+      <pre>
+           0  10  20 30 ...
+      -5   1  2   3  4  ...
+       ...
+       </pre>
+       */
+  void operator<<(FGConfigFile&);
+  inline float GetElement(int r, int c) {return Data[r][c];}
+    void Print(void);
+private:
+  enum type {tt1D, tt2D} Type;
+  unsigned int rowCounter;
+  unsigned int colCounter;
+  float** Data;
+  int nRows, nCols;
+  float** Allocate(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 #endif

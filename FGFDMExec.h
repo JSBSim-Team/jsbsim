@@ -77,9 +77,9 @@ public:
   void Freeze(void) {frozen = true;}
   void Resume(void) {frozen = false;}
 
-  bool SetEnginePath(string path)   {EnginePath = path;}
-  bool SetAircraftPath(string path) {AircraftPath = path;}
-  bool SetScriptPath(string path)   {ScriptPath = path;}
+  bool SetEnginePath(string path)   {EnginePath = path; return true;}
+  bool SetAircraftPath(string path) {AircraftPath = path; return true;}
+  bool SetScriptPath(string path)   {ScriptPath = path; return true;}
 
   bool LoadModel(string AircraftPath, string EnginePath, string model);
   bool RunScript(string script);

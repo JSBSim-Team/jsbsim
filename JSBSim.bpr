@@ -22,7 +22,8 @@ OBJFILES = JSBSim.obj FGUtility.obj FGAtmosphere.obj FGAuxiliary.obj FGCoefficie
   FGGain.obj FGGradient.obj FGSummer.obj FGDeadBand.obj FGFlaps.obj FGForce.obj \
   FGInertial.obj FGNozzle.obj FGPropeller.obj FGRotor.obj FGThruster.obj \
   FGMassBalance.obj FGRocket.obj FGTurboJet.obj FGPiston.obj FGTurboShaft.obj \
-  FGPropulsion.obj FGGroundReactions.obj FGAerodynamics.obj FGTurboProp.obj
+  FGPropulsion.obj FGGroundReactions.obj FGAerodynamics.obj FGTurboProp.obj \
+  FGTable.obj
 RESFILES = JSBSim.res
 RESDEPEN = $(RESFILES)
 LIBFILES =
