@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.103 2002/02/18 12:58:17 apeden Exp $
+// $Id: JSBSim.cxx,v 1.104 2002/02/18 18:34:14 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -326,9 +326,9 @@ bool FGJSBsim::copy_to_JSBsim() {
     Atmosphere->SetExTemperature(get_Static_temperature());
     Atmosphere->SetExPressure(get_Static_pressure());
     Atmosphere->SetExDensity(get_Density());
-    Atmosphere->SetWindNED(get_V_north_airmass(),
-                           get_V_east_airmass(),
-                           get_V_down_airmass());
+    Atmosphere->SetWindNED(get_V_north_airmass() * -1.0,
+                           get_V_east_airmass() * -1.0,
+                           get_V_down_airmass() * -1.0);
 //    SG_LOG(SG_FLIGHT,SG_INFO, "Wind NED: "
 //                  << get_V_north_airmass() << ", "
 //                  << get_V_east_airmass()  << ", "
