@@ -43,7 +43,7 @@ INCLUDES
 *******************************************************************************/
 
 #ifdef FGFS
-#  include <Include/compiler.h>
+#  include <simgear/compiler.h>
 #  include STL_STRING
    FG_USING_STD(string);
 #  ifdef FG_HAVE_STD_INCLUDES

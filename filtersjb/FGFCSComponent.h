@@ -43,7 +43,7 @@ INCLUDES
 *******************************************************************************/
 
 #ifdef FGFS
-#  include <Include/compiler.h>
+#  include <simgear/compiler.h>
 #  include STL_STRING
    FG_USING_STD(string);
 #else
@@ -89,7 +89,7 @@ public:
   inline string GetName(void) {return Name;}
 };
 
-#include "FGFCS.h"
+#include "../FGFCS.h"
 
 #endif
 

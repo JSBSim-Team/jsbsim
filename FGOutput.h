@@ -41,7 +41,7 @@ INCLUDES
 #include "FGModel.h"
 
 #ifdef FGFS
-#  include <Include/compiler.h>
+#  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <iostream>
 #    include <fstream>

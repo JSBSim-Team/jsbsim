@@ -38,7 +38,7 @@ SENTRY
 INCLUDES
 *******************************************************************************/
 #ifdef FGFS
-#  include <Include/compiler.h>
+#  include <simgear/compiler.h>
 #  include STL_STRING
    FG_USING_STD(string);
 #else

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.3 2000/04/15 13:16:54 jsb Exp $
+// $Id: FGControls.h,v 1.4 2000/04/26 10:55:57 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -177,6 +177,12 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.4  2000/04/26 10:55:57  jsb
+// Made changes as required by Curt to install JSBSim into FGFS
+//
+// Revision 1.7  2000/04/24 21:49:07  curt
+// Updated JSBsim code.
+//
 // Revision 1.3  2000/04/15 13:16:54  jsb
 // In good shape, now, changes to Coefficient and aircraft, mostly, with new commands added and inputs and outputs separated.
 //

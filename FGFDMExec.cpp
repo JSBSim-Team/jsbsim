@@ -39,7 +39,7 @@ INCLUDES
 *******************************************************************************/
 
 #ifdef FGFS
-#  include <Include/compiler.h>
+#  include <simgear/compiler.h>
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <iostream>
 #    include <ctime>
@@ -186,5 +186,4 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
   return true;
 }
   
-
 

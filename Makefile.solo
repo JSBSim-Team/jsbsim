@@ -1,4 +1,4 @@
-CC=bcc32
+CC = bcc32
 INCLUDES = -I.
 LINKDIR= -Lfiltersjb
 JSBSim_objects = FGAircraft.o FGAtmosphere.o FGCoefficient.o FGFCS.o FGFDMExec.o\
