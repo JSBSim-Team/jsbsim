@@ -71,10 +71,11 @@ AC_cfg(AC_cfg) {
       cout << "      ID: " << ID << endl;
     } else if (token == "INPUT") {
       token = AC_cfg->GetValue("INPUT");
-      cout << "      INPUT: " << token << endl;
+      cout << "      INPUT: " << token;
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
         InputIdx = fcs->GetState()->GetParameterIndex(token);
+        cout << " INPUTIDX: " << InputIdx << endl;
         InputType = itPilotAC;
       }
     } else if ( token == "DETENTS" ) {
@@ -91,8 +92,9 @@ AC_cfg(AC_cfg) {
 
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      cout << "      OUTPUT: " <<sOutputIdx <<  endl;
+      cout << "      OUTPUT: " <<sOutputIdx;
       OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
+      cout << " OUTPUTIDX: " << OutputIdx << endl;
     }
   }
 }
@@ -107,7 +109,7 @@ bool FGFlaps::Run(void ) {
   float dt=fcs->GetState()->Getdt();
   float flap_transit_rate=0;
 
-
+  FGFCSComponent::Run(); // call the base class for initialization of Input
   Flap_Handle=Input*Detents[NumDetents-1];
   Flap_Position=fcs->GetState()->GetParameter(OutputIdx);
 
@@ -116,13 +118,15 @@ bool FGFlaps::Run(void ) {
     Flap_Handle=Detents[0];
     lastFlapHandle=Flap_Handle;
     Flap_Position=Detents[0];
+    Output=Flap_Position;
   } else if(Flap_Handle > Detents[NumDetents-1]) {
     fi=NumDetents-1;
     Flap_Handle=Detents[fi];
     lastFlapHandle=Flap_Handle;
     Flap_Position=Detents[fi];
+    Output=Flap_Position;
   } else {
-    cout << "FGFlaps::Run Handle: " << Flap_Handle << " Position: " << Flap_Position << endl;
+    //cout << "FGFlaps::Run Handle: " << Flap_Handle << " Position: " << Flap_Position << endl;
     if(dt <= 0)
       Flap_Position=Flap_Handle;
     else {
@@ -157,9 +161,11 @@ bool FGFlaps::Run(void ) {
       }
     }
     lastFlapHandle=Flap_Handle;
+    Output=Flap_Position;
   }
-
+  //cout << "FGFlaps::Run Handle: " << Flap_Handle << " Position: " << Flap_Position << " Output: " << Output << endl;
   if (IsOutput) {
+    //cout << "Calling SetOutput()" << endl;
     SetOutput();
   }
   //cout << "Out FGFlap::Run" << endl;
