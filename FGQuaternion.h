@@ -49,15 +49,26 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.2 2004/03/29 02:15:51 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.3 2004/04/12 12:23:49 jberndt Exp $"
+
+namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   CLASS DOCUMENTATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the rotational portion of the Equations of Motion.
+/**  Models the Quaternion representation of rotations.
+    FGQuaternion is a representation of an arbitrary rotation through a
+    quaternion. It has vector properties. This class also contains access
+    functions to the euler angle representation of rotations and access to
+    transformation matrices for 3D vectors. Transformations and euler angles are
+    therefore computed once they are requested for the first time. Then they are
+    cached for later usage as long as the class is not accessed trough
+    a nonconst member function.
+
     Note: The order of rotations used in this class corresponds to a 3-2-1 sequence,
     or Y-P-R, or Z-Y-X, if you prefer.
+
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
     Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
     School, January 1994
@@ -69,81 +80,63 @@ SENTRY
     Wiley & Sons, 1979 ISBN 0-471-03032-5
     @see Bernard Etkin, "Dynamics of Flight, Stability and Control", Wiley & Sons,
     1982 ISBN 0-471-08936-2
+    @author Mathias Froehlich, extended FGColumnVector4 originally by Tony Peden
+            and Jon Berndt
 */
-
-namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   CLASS DECLARATION
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Quaternion representation of rotations.
- *
- * FGQuaternion is a representation of an arbitrary rotation through a
- * quaternion. It has vector properties as it is a 4-vector. This
- * class also contains access functions to the euler angle
- * representation of rotations and access to transformation matrices
- * for 3D vectors. Transformations and euler angles are therefore
- * computed once they are requested for the first time. Then they are
- * cached for later usage as long as the class is not accessed trough
- * a nonconst member function.
- */
 class FGQuaternion : private FGJSBBase {
 public:
   /** Default initializer.
-   * Default initializer, initializes the class with the identity rotation.
-   */
+      Default initializer, initializes the class with the identity rotation.  */
   FGQuaternion() : mQ0(1), mQ1(0), mQ2(0), mQ3(0), mCacheValid(false) {}
 
   /** Copy constructor.
-   * Copy constructor, initializes the quaternion.
-   * @param q  a constant reference to another FGQuaternion instance
-   */
+      Copy constructor, initializes the quaternion.
+      @param q  a constant reference to another FGQuaternion instance  */
   FGQuaternion(const FGQuaternion& q);
 
-  /** Inizializer by euler angles.
-   * Initialize the quaternion with the euler angles.
-   * @param phi The euler X axis (roll) angle in radians
-   * @param tht The euler Y axis (attitude) angle in radians
-   * @param psi The euler Z axis (heading) angle in radians
-   */
+  /** Initializer by euler angles.
+      Initialize the quaternion with the euler angles.
+      @param phi The euler X axis (roll) angle in radians
+      @param tht The euler Y axis (attitude) angle in radians
+      @param psi The euler Z axis (heading) angle in radians  */
   FGQuaternion(double phi, double tht, double psi);
 
   /// Destructor.
   ~FGQuaternion() {}
 
   /** Quaternion 'velocity' for given angular rates.
-   *  Computes the quaternion derivative which results from the given
-   *  angular velocities
-   *  @param PQR a constant reference to the body rate vector
-   */
+      Computes the quaternion derivative which results from the given
+      angular velocities
+      @param PQR a constant reference to the body rate vector
+      @return the quaternion derivative */
   FGQuaternion GetQDot(const FGColumnVector3& PQR) const;
 
   /** Transformation matrix.
-   *  Returns a reference to the transformation/rotation matrix
-   *  corresponding to this quaternion rotation.
-   */
+      @return a reference to the transformation/rotation matrix
+      corresponding to this quaternion rotation.  */
   const FGMatrix33& GetT() const { ComputeDerived(); return mT; }
 
   /** Backward transformation matrix.
-   *  Returns a reference to the backward transformation/rotation matrix
-   *  corresponding to this quaternion rotation.
-   */
+      @return a reference to the inverse transformation/rotation matrix
+      corresponding to this quaternion rotation.  */
   const FGMatrix33& GetTInv() const { ComputeDerived(); return mTInv; }
 
-  /** Euler angles.
-   *  Returns a reference to the 3-vector of euler angles corresponding
-   *  to this quaternion rotation.
-   */
+  /** Retrieves the Euler angles.
+      @return a reference to the triad of euler angles corresponding
+      to this quaternion rotation.  */
   const FGColumnVector3& GetEuler() const {
     ComputeDerived();
     return mEulerAngles;
   }
 
   /** Euler angle theta.
-   *  @return the euler angle theta (pitch attitude) in radians corresponding to this
-   *  quaternion rotation.
-   */
+      @return the euler angle theta (pitch attitude) in radians corresponding to this
+      quaternion rotation.  */
   double GetEulerTheta() const {
     ComputeDerived();
     return mEulerAngles(eTht);
@@ -159,54 +152,50 @@ public:
   }
 
   /** Euler angle psi.
-   *  Returns the euler angle psi corresponding to this quaternion
-   *  rotation.
-   */
+      @return the heading euler angle (psi) corresponding to this quaternion
+      rotation.
+      @units Radians  */
   double GetEulerPsi() const {
     ComputeDerived();
     return mEulerAngles(ePsi);
   }
 
-  /** Euler angle psi.
-   *  Returns the euler angle psi corresponding to this quaternion
-   *  rotation.
-   */
+  /** Retrieves the heading angle.
+      @return the Euler angle psi (heading) corresponding to this quaternion
+      rotation.  */
   double GetEulerPsiDeg() const {
     ComputeDerived();
     return radtodeg*mEulerAngles(ePsi);
   }
 
-  /** Euler angle phi.
-   *  Returns the euler angle phi corresponding to this quaternion
-   *  rotation.
-   */
+  /** Retrieves the roll angle.
+      @return the euler angle phi (roll) corresponding to this quaternion
+      rotation.
+      @units Radians  */
   double GetEulerPhi() const {
     ComputeDerived();
     return mEulerAngles(ePhi);
   }
 
-  /** Euler angle phi.
-   *  Returns the euler angle phi corresponding to this quaternion
-   *  rotation.
-   */
+  /** Retrieves the roll angle.
+      Returns the Euler angle phi (roll) corresponding to this quaternion rotation.
+      @units Deg */
   double GetEulerPhiDeg() const {
     ComputeDerived();
     return radtodeg*mEulerAngles(ePhi);
   }
 
-  /** Sine of euler angle theta.
-   *  Returns the sine of the euler angle theta corresponding to this
-   *  quaternion rotation.
-   */
+  /** Retrieves sine theta.
+      @return the sine of the Euler angle theta (pitch attitude) corresponding
+      to this quaternion rotation.  */
   double GetSinEulerTheta() const {
     ComputeDerived();
     return mEulerSines(eTht);
   }
 
-  /** Sine of euler angle psi.
-   *  Returns the sine of the euler angle psi corresponding to this
-   *  quaternion rotation.
-   */
+  /** Retrieves sine psi.
+      @return the sine of the euler angle psi (heading) corresponding to this
+      quaternion rotation.  */
   double GetSinEulerPsi() const {
     ComputeDerived();
     return mEulerSines(ePsi);
