@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.43 2001/12/08 00:22:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.44 2001/12/08 22:54:26 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,10 +230,12 @@ double FGPropeller::GetPowerRequired(void)
 
 FGColumnVector3 FGPropeller::GetPFactor()
 {
-   double px=0.0, py, pz;
+  double px=0.0, py, pz;
 
-   py = Thrust * Sense * (GetActingLocationY() - GetLocationY()) / 12.0;
-   pz = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
+  py = Thrust * Sense * (GetActingLocationY() - GetLocationY()) / 12.0;
+  pz = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
+
+  return FGColumnVector3(px, py, pz);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

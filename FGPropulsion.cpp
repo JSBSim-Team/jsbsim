@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.62 2001/12/08 00:22:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.63 2001/12/08 22:54:27 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +148,6 @@ bool FGPropulsion::GetSteadyState(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 bool FGPropulsion::ICEngineStart(void)
 {
@@ -373,6 +372,7 @@ string FGPropulsion::GetPropulsionStrings(void)
 
     PropulsionStrings += ", ";
 
+    FGPropeller* Propeller = (FGPropeller*)Thrusters[i];
     switch(Thrusters[i]->GetType()) {
     case FGThruster::ttNozzle:
       PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "]");
@@ -385,6 +385,8 @@ string FGPropulsion::GetPropulsionStrings(void)
       PropulsionStrings += (Thrusters[i]->GetName() + "_PFactor_Pitch[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_PFactor_Yaw[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "], ");
+      if (Propeller->IsVPitch())
+        PropulsionStrings += (Thrusters[i]->GetName() + "_Pitch[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_RPM[" + buffer + "]");
       break;
     default:
@@ -430,12 +432,16 @@ string FGPropulsion::GetPropulsionValues(void)
     case FGThruster::ttRotor:
       break;
     case FGThruster::ttPropeller:
-      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetTorque(), 10, buff)) + ", ");
-      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(eRoll), 10, buff)) + ", ");
-      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(ePitch), 10, buff)) + ", ");
-      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(eYaw), 10, buff)) + ", ");
-      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetThrust(), 10, buff)) + ", ");
-      PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetRPM(), 10, buff)));
+      FGPropeller* Propeller = (FGPropeller*)Thrusters[i];
+      FGColumnVector3 vPFactor = Propeller->GetPFactor();
+      PropulsionValues += string(gcvt(Propeller->GetTorque(), 10, buff)) + ", ";
+      PropulsionValues += string(gcvt(vPFactor(eRoll), 10, buff)) + ", ";
+      PropulsionValues += string(gcvt(vPFactor(ePitch), 10, buff)) + ", ";
+      PropulsionValues += string(gcvt(vPFactor(eYaw), 10, buff)) + ", ";
+      PropulsionValues += string(gcvt(Propeller->GetThrust(), 10, buff)) + ", ";
+      if (Propeller->IsVPitch())
+        PropulsionValues += string(gcvt(Propeller->GetPitch(), 10, buff)) + ", ";
+      PropulsionValues += string(gcvt(Propeller->GetRPM(), 10, buff));
       break;
     }
   }
