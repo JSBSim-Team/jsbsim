@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.59 2002/08/03 02:20:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.60 2002/08/16 12:42:30 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -211,6 +211,10 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << ", ";
       outstream << Aerodynamics->GetCoefficientStrings();
     }
+    if (SubSystems & ssFCS) {
+      outstream << ", ";
+      outstream << FCS->GetComponentStrings();
+    }
     if (SubSystems & ssGroundReactions) {
       outstream << ", ";
       outstream << GroundReactions->GetGroundReactionStrings();
@@ -293,6 +297,10 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssCoefficients) {
     outstream << ", ";
     outstream << Aerodynamics->GetCoefficientValues();
+  }
+  if (SubSystems & ssFCS) {
+    outstream << ", ";
+    outstream << FCS->GetComponentValues();
   }
   if (SubSystems & ssGroundReactions) {
     outstream << ", ";

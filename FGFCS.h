@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.52 2002/04/02 05:34:26 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.53 2002/08/16 12:42:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -141,7 +141,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.52 2002/04/02 05:34:26 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.53 2002/08/16 12:42:30 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -230,6 +230,138 @@ public:
       defaults to down.
       @return the current value of the gear extend/retract command*/
   inline double GetGearCmd(void) const { return GearCmd; }    
+  //@}
+
+  /// @name AUTOPilot -> FCS effectors command retrieval
+  //@{
+  /** Gets the AUTOPilot aileron command.
+      @return aileron command in radians */
+  inline double GetAPDaCmd(void) const { return AP_DaCmd; }
+  
+  /** Gets the AUTOPilot elevator command.
+      @return elevator command in radians */
+  inline double GetAPDeCmd(void) const { return AP_DeCmd; }
+
+  /** Gets the AUTOPilot rudder command.
+      @return rudder command in radians */
+  inline double GetAPDrCmd(void) const { return AP_DrCmd; }
+  
+  /** Gets the AUTOPilot throttle (all engines) command.
+      @return throttle command in percent */
+  inline double GetAPThrottleCmd(void) const { return AP_ThrottleCmd; }
+  //@}
+
+  /// @name AUTOPilot setpoint retrieval
+  //@{
+  /** Gets the autopilot pitch attitude setpoint
+      @return Pitch attitude setpoint in radians */
+  inline double GetAPAttitudeSetPt(void) const {return APAttitudeSetPt;}
+
+  /** Gets the autopilot altitude setpoint
+      @return Altitude setpoint in feet */
+  inline double GetAPAltitudeSetPt(void) const {return APAltitudeSetPt;}
+
+  /** Gets the autopilot heading setpoint
+      @return Heading setpoint in radians */
+  inline double GetAPHeadingSetPt(void) const {return APHeadingSetPt;}
+
+  /** Gets the autopilot airspeed setpoint
+      @return Airspeed setpoint in fps */
+  inline double GetAPAirspeedSetPt(void) const {return APAirspeedSetPt;}
+  //@}
+
+  /// @name AUTOPilot setpoint setting
+  //@{
+  /// Sets the autopilot pitch attitude setpoint
+  inline void SetAPAttitudeSetPt(double set) {APAttitudeSetPt = set;}
+
+  /// Sets the autopilot altitude setpoint
+  inline void SetAPAltitudeSetPt(double set) {APAltitudeSetPt = set;}
+
+  /// Sets the autopilot heading setpoint
+  inline void SetAPHeadingSetPt(double set) {APHeadingSetPt = set;}
+
+  /// Sets the autopilot airspeed setpoint
+  inline void SetAPAirspeedSetPt(double set) {APAirspeedSetPt = set;}
+  //@}
+
+
+    /// @name AUTOPilot mode setting
+  //@{
+  /** Turns on/off the attitude-seeking autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAcquireAttitude(bool set) {APAcquireAttitude = set;}
+  
+  /** Turns on/off the altitude-seeking autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAcquireAltitude(bool set) {APAcquireAltitude = set;}
+  
+  /** Turns on/off the heading-seeking autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAcquireHeading(bool set) {APAcquireHeading = set;}
+  
+  /** Turns on/off the airspeed-seeking autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAcquireAirspeed(bool set) {APAcquireAirspeed = set;}
+  
+  /** Turns on/off the attitude-holding autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAttitudeHold(bool set) {APAttitudeHold = set;}
+
+  /** Turns on/off the altitude-holding autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAltitudeHold(bool set) {APAltitudeHold = set;}
+
+  /** Turns on/off the heading-holding autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPHeadingHold(bool set) {APHeadingHold = set;}
+
+  /** Turns on/off the airspeed-holding autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPAirspeedHold(bool set) {APAirspeedHold = set;}
+
+  /** Turns on/off the wing-leveler autopilot.
+      @param set true turns the mode on, false turns it off  **/
+  inline void SetAPWingsLevelHold(bool set) {APWingsLevelHold = set;}
+  //@}
+  
+  /// @name AUTOPilot mode retrieval
+  //@{
+  /** Retrieves the on/off mode of the autopilot AcquireAttitude mode
+      @return true if on, false if off */
+  inline bool GetAPAcquireAttitude(void) const {return APAcquireAttitude;}
+
+  /** Retrieves the on/off mode of the autopilot AcquireAltitude mode
+      @return true if on, false if off */
+  inline bool GetAPAcquireAltitude(void) const {return APAcquireAltitude;}
+
+  /** Retrieves the on/off mode of the autopilot AcquireHeading mode
+      @return true if on, false if off */
+  inline bool GetAPAcquireHeading(void) const {return APAcquireHeading;}
+
+  /** Retrieves the on/off mode of the autopilot AcquireAirspeed mode
+      @return true if on, false if off */
+  inline bool GetAPAcquireAirspeed(void) const {return APAcquireAirspeed;}
+
+  /** Retrieves the on/off mode of the autopilot AttitudeHold mode
+      @return true if on, false if off */
+  inline bool GetAPAttitudeHold(void) const {return APAttitudeHold;}
+
+  /** Retrieves the on/off mode of the autopilot AltitudeHold mode
+      @return true if on, false if off */
+  inline bool GetAPAltitudeHold(void) const {return APAltitudeHold;}
+
+  /** Retrieves the on/off mode of the autopilot HeadingHold mode
+      @return true if on, false if off */
+  inline bool GetAPHeadingHold(void) const {return APHeadingHold;}
+
+  /** Retrieves the on/off mode of the autopilot AirspeedHold mode
+      @return true if on, false if off */
+  inline bool GetAPAirspeedHold(void) const {return APAirspeedHold;}
+
+  /** Retrieves the on/off mode of the autopilot WingsLevelHold mode
+      @return true if on, false if off */
+  inline bool GetAPWingsLevelHold(void) const {return APWingsLevelHold;}
   //@}
 
   /// @name Aerosurface position retrieval
@@ -370,6 +502,25 @@ public:
   void SetPropAdvanceCmd(int engine, double cmd);
   //@}
 
+  /// @name AUTOPilot -> FCS effector command setting
+  //@{
+  /** Sets the AUTOPilot aileron command
+      @param cmd AUTOPilot aileron command in radians*/
+  inline void SetAPDaCmd( double cmd ) { AP_DaCmd = cmd; }
+
+  /** Sets the AUTOPilot elevator command
+      @param cmd AUTOPilot elevator command in radians*/
+  inline void SetAPDeCmd(double cmd ) { AP_DeCmd = cmd; }
+
+  /** Sets the AUTOPilot rudder command
+      @param cmd AUTOPilot rudder command in radians*/
+  inline void SetAPDrCmd(double cmd) { AP_DrCmd = cmd; }
+
+  /** Sets the AUTOPilot throttle command
+      @param cmd AUTOPilot throttle command in percent*/
+  inline void SetAPThrottleCmd(double cmd) { AP_ThrottleCmd = cmd; }
+  //@}
+
   /// @name Aerosurface position setting
   //@{
   /** Sets the left aileron position
@@ -428,7 +579,7 @@ public:
   void SetPropAdvance(int engine, double cmd);
   //@}
 
-  /// @name Landing Gear brakes
+    /// @name Landing Gear brakes
   //@{
   /** Sets the left brake group
       @param cmd brake setting in percent (0.0 - 1.0) */
@@ -466,6 +617,7 @@ public:
   
 private:
   double DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
+  double AP_DaCmd, AP_DeCmd, AP_DrCmd, AP_ThrottleCmd;
   double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];  
   double DfPos[NForms], DsbPos[NForms], DspPos[NForms];
   double PTrimCmd, YTrimCmd, RTrimCmd;
@@ -477,11 +629,16 @@ private:
   vector <double> PropAdvance;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
-  
+
+  double APAttitudeSetPt, APAltitudeSetPt, APHeadingSetPt, APAirspeedSetPt;
+  bool APAcquireAttitude, APAcquireAltitude, APAcquireHeading, APAcquireAirspeed;
+  bool APAttitudeHold, APAltitudeHold, APHeadingHold, APAirspeedHold, APWingsLevelHold;
+
   bool DoNormalize;
   void Normalize(void);
 
-  vector <FGFCSComponent*> Components;
+  vector <FGFCSComponent*> FCSComponents;
+  vector <FGFCSComponent*> APComponents;
   int ToNormalize[NNorm];
   void Debug(int from);
 };

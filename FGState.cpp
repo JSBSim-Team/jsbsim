@@ -53,7 +53,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.119 2002/07/31 13:41:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.120 2002/08/16 12:42:30 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,6 +567,23 @@ void FGState::InitPropertyMaps(void)
   ParamNameToProp[  "FG_GEAR_CMD" ]="gear/gear-cmd-norm";
   ParamNameToProp[  "FG_GEAR_POS" ]="gear/gear-pos-norm";
   ParamNameToProp[  "FG_HYSTPARM" ]="aero/stall-hyst-norm";
+  ParamNameToProp[  "AP_ELEVATOR_CMD" ]="jsbsim/ap/elevator_cmd";
+  ParamNameToProp[  "AP_AILERON_CMD" ]="jsbsim/ap/aileron_cmd";
+  ParamNameToProp[  "AP_RUDDER_CMD" ]="jsbsim/ap/rudder_cmd";
+  ParamNameToProp[  "AP_THROTTLE_CMD" ]="jsbsim/ap/throttle_cmd";
+  ParamNameToProp[  "AP_SET_ATTITUDE" ]="jsbsim/ap/set_attitude";
+  ParamNameToProp[  "AP_SET_ALTITUDE" ]="jsbsim/ap/set_altitude";
+  ParamNameToProp[  "AP_SET_HEADING" ]="jsbsim/ap/set_heading";
+  ParamNameToProp[  "AP_SET_AIRSPEED" ]="jsbsim/ap/set_airspeed";
+  ParamNameToProp[  "AP_ACQUIRE_ATTITUDE" ]="jsbsim/ap/acquire_attitude";
+  ParamNameToProp[  "AP_ACQUIRE_ALTITUDE" ]="jsbsim/ap/acquire_altitude";
+  ParamNameToProp[  "AP_ACQUIRE_HEADING" ]="jsbsim/ap/acquire_heading";
+  ParamNameToProp[  "AP_ACQUIRE_AIRSPEED" ]="jsbsim/ap/acquire_aispeed";
+  ParamNameToProp[  "AP_ATTITUDE_HOLD_ON" ]="jsbsim/ap/attitude_hold_on";
+  ParamNameToProp[  "AP_ALTITUDE,_HOLD_ON" ]="jsbsim/ap/altitude_hold_on";
+  ParamNameToProp[  "AP_HEADING_HOLD_ON" ]="jsbsim/ap/heading_hold_on";
+  ParamNameToProp[  "AP_AIRSPEED_HOLD_ON" ]="jsbsim/ap/airspeed_hold_on";
+  ParamNameToProp[  "AP_WINGSLEVEL_HOLD_ON" ]="jsbsim/ap/wingslevel_hold_on";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -57,7 +57,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGKinemat.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.81 2002/07/26 04:49:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.82 2002/08/16 12:42:30 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -74,6 +74,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGFCS";
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
+  AP_DaCmd = AP_DeCmd = AP_DrCmd = AP_ThrottleCmd = 0.0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
@@ -104,7 +105,9 @@ FGFCS::~FGFCS()
   
   unbind();
 
-  for (i=0;i<Components.size();i++) delete Components[i];
+  for (i=0;i<APComponents.size();i++) delete APComponents[i];
+  for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
+
   Debug(1);
 }
 
@@ -118,7 +121,8 @@ bool FGFCS::Run(void)
     for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
     for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
     for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
-    for (i=0; i<Components.size(); i++)  Components[i]->Run();
+    for (i=0; i<APComponents.size(); i++)  APComponents[i]->Run();
+    for (i=0; i<FCSComponents.size(); i++)  FCSComponents[i]->Run();
     if (DoNormalize) Normalize();
 
 	return false;
@@ -267,6 +271,17 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 {
   string token;
   unsigned i;
+  vector <FGFCSComponent*> &Components = FCSComponents;
+
+  string delimiter = AC_cfg->GetValue();
+  
+  if (delimiter == "AUTOPILOT") {
+    Components = APComponents;
+  } else if (delimiter == "FLIGHT_CONTROL") {
+    Components = FCSComponents;
+  } else {
+    cerr << endl << "Unknown FCS delimiter" << endl << endl;
+  }
   
   Name = Name + ":" + AC_cfg->GetValue("NAME");
   if (debug_lvl > 0) cout << "    Control System Name: " << Name << endl;
@@ -275,7 +290,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
       cout << "    Automatic Control Surface Normalization Disabled" << endl;
   }    
   AC_cfg->GetNextConfigLine();
-  while ((token = AC_cfg->GetValue()) != string("/FLIGHT_CONTROL")) {
+  while ((token = AC_cfg->GetValue()) != string("/" + delimiter)) {
     if (token == "COMPONENT") {
       token = AC_cfg->GetValue("TYPE");
       if (debug_lvl > 0) cout << endl << "    Loading Component \""
@@ -337,7 +352,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
     }
   }     
   
-  bindModel();
+  if (delimiter == "FLIGHT_CONTROL") bindModel();
   
   return true;
 }
@@ -345,13 +360,13 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 double FGFCS::GetComponentOutput(int idx) {
-  return Components[idx]->GetOutput();
+  return FCSComponents[idx]->GetOutput();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGFCS::GetComponentName(int idx) {
-  return Components[idx]->GetName();
+  return FCSComponents[idx]->GetName();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -379,11 +394,15 @@ string FGFCS::GetComponentStrings(void)
   string CompStrings = "";
   bool firstime = true;
 
-  for (comp = 0; comp < Components.size(); comp++) {
+  for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
     else          CompStrings += ", ";
 
-    CompStrings += Components[comp]->GetName();
+    CompStrings += FCSComponents[comp]->GetName();
+  }
+
+  for (comp = 0; comp < APComponents.size(); comp++) {
+    CompStrings += APComponents[comp]->GetName();
   }
 
   return CompStrings;
@@ -398,11 +417,16 @@ string FGFCS::GetComponentValues(void)
   char buffer[10];
   bool firstime = true;
 
-  for (comp = 0; comp < Components.size(); comp++) {
+  for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
     else          CompValues += ", ";
 
-    sprintf(buffer, "%9.6f", Components[comp]->GetOutput());
+    sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
+    CompValues += string(buffer);
+  }
+
+  for (comp = 0; comp < APComponents.size(); comp++) {
+    sprintf(buffer, "%9.6f", APComponents[comp]->GetOutput());
     CompValues += string(buffer);
   }
 
@@ -430,31 +454,31 @@ void FGFCS::Normalize(void) {
   //ToNormalize is filled in Load()
   
   if ( ToNormalize[iDe] > -1 ) {
-    DePos[ofNorm] = Components[ToNormalize[iDe]]->GetOutputPct();
+    DePos[ofNorm] = FCSComponents[ToNormalize[iDe]]->GetOutputPct();
   }
   
   if ( ToNormalize[iDaL] > -1 ) {
-    DaLPos[ofNorm] = Components[ToNormalize[iDaL]]->GetOutputPct();
+    DaLPos[ofNorm] = FCSComponents[ToNormalize[iDaL]]->GetOutputPct();
   }
   
   if ( ToNormalize[iDaR] > -1 ) {
-    DaRPos[ofNorm] = Components[ToNormalize[iDaR]]->GetOutputPct();
+    DaRPos[ofNorm] = FCSComponents[ToNormalize[iDaR]]->GetOutputPct();
   }
 
   if ( ToNormalize[iDr] > -1 ) {
-    DrPos[ofNorm] = Components[ToNormalize[iDr]]->GetOutputPct();
+    DrPos[ofNorm] = FCSComponents[ToNormalize[iDr]]->GetOutputPct();
   }
        
   if ( ToNormalize[iDsb] > -1 ) { 
-    DsbPos[ofNorm] = Components[ToNormalize[iDsb]]->GetOutputPct();
+    DsbPos[ofNorm] = FCSComponents[ToNormalize[iDsb]]->GetOutputPct();
   }
   
   if ( ToNormalize[iDsp] > -1 ) {
-    DspPos[ofNorm] = Components[ToNormalize[iDsp]]->GetOutputPct();
+    DspPos[ofNorm] = FCSComponents[ToNormalize[iDsp]]->GetOutputPct();
   }
   
   if ( ToNormalize[iDf] > -1 ) {
-    DfPos[ofNorm] = Components[ToNormalize[iDf]]->GetOutputPct();
+    DfPos[ofNorm] = FCSComponents[ToNormalize[iDf]]->GetOutputPct();
   }
   
   DePos[ofMag]  = fabs(DePos[ofRad]);
@@ -603,6 +627,91 @@ void FGFCS::bind(void)
                        &FGFCS::GetGearPos,
                        &FGFCS::SetGearPos,
                        true);
+
+  PropertyManager->Tie("jsbsim/ap/elevator_cmd", this,
+                       &FGFCS::GetAPDeCmd,
+                       &FGFCS::SetAPDeCmd,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/aileron_cmd", this,
+                       &FGFCS::GetAPDaCmd,
+                       &FGFCS::SetAPDaCmd,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/rudder_cmd", this,
+                       &FGFCS::GetAPDrCmd,
+                       &FGFCS::SetAPDrCmd,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/throttle_cmd", this,
+                       &FGFCS::GetAPThrottleCmd,
+                       &FGFCS::SetAPThrottleCmd,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/attitude_setpoint", this,
+                       &FGFCS::GetAPAttitudeSetPt,
+                       &FGFCS::SetAPAttitudeSetPt,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/altitude_setpoint", this,
+                       &FGFCS::GetAPAltitudeSetPt,
+                       &FGFCS::SetAPAltitudeSetPt,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/heading_setpoint", this,
+                       &FGFCS::GetAPHeadingSetPt,
+                       &FGFCS::SetAPHeadingSetPt,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/airspeed_setpoint", this,
+                       &FGFCS::GetAPAirspeedSetPt,
+                       &FGFCS::SetAPAirspeedSetPt,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/acquire_attitude", this,
+                       &FGFCS::GetAPAcquireAttitude,
+                       &FGFCS::SetAPAcquireAttitude,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/acquire_altitude", this,
+                       &FGFCS::GetAPAcquireAltitude,
+                       &FGFCS::SetAPAcquireAltitude,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/acquire_heading", this,
+                       &FGFCS::GetAPAcquireHeading,
+                       &FGFCS::SetAPAcquireHeading,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/acquire_airspeed", this,
+                       &FGFCS::GetAPAcquireAirspeed,
+                       &FGFCS::SetAPAcquireAirspeed,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/attitude_hold", this,
+                       &FGFCS::GetAPAttitudeHold,
+                       &FGFCS::SetAPAttitudeHold,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/altitude_hold", this,
+                       &FGFCS::GetAPAltitudeHold,
+                       &FGFCS::SetAPAltitudeHold,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/heading_hold", this,
+                       &FGFCS::GetAPHeadingHold,
+                       &FGFCS::SetAPHeadingHold,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/airspeed_hold", this,
+                       &FGFCS::GetAPAirspeedHold,
+                       &FGFCS::SetAPAirspeedHold,
+                       true);
+
+  PropertyManager->Tie("jsbsim/ap/wingslevel_hold", this,
+                       &FGFCS::GetAPWingsLevelHold,
+                       &FGFCS::SetAPWingsLevelHold,
+                       true);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -685,6 +794,23 @@ void FGFCS::unbind(void)
   PropertyManager->Untie("fcs/mag-spoiler-pos-rad");
   PropertyManager->Untie("fcs/spoiler-pos-norm");
   PropertyManager->Untie("gear/gear-pos-norm");
+  PropertyManager->Untie("jsbsim/ap/elevator_cmd");
+  PropertyManager->Untie("jsbsim/ap/aileron_cmd");
+  PropertyManager->Untie("jsbsim/ap/rudder_cmd");
+  PropertyManager->Untie("jsbsim/ap/throttle_cmd");
+  PropertyManager->Untie("jsbsim/ap/attitude_setpoint");
+  PropertyManager->Untie("jsbsim/ap/altitude_setpoint");
+  PropertyManager->Untie("jsbsim/ap/heading_setpoint");
+  PropertyManager->Untie("jsbsim/ap/airspeed_setpoint");
+  PropertyManager->Untie("jsbsim/ap/acquire_attitude");
+  PropertyManager->Untie("jsbsim/ap/acquire_altitude");
+  PropertyManager->Untie("jsbsim/ap/acquire_heading");
+  PropertyManager->Untie("jsbsim/ap/acquire_airspeed");
+  PropertyManager->Untie("jsbsim/ap/attitude_hold");
+  PropertyManager->Untie("jsbsim/ap/altitude_hold");
+  PropertyManager->Untie("jsbsim/ap/heading_hold");
+  PropertyManager->Untie("jsbsim/ap/airspeed_hold");
+  PropertyManager->Untie("jsbsim/ap/wingslevel_hold");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

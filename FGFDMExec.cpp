@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.87 2002/07/26 04:49:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.88 2002/08/16 12:42:30 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -420,6 +420,9 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
       if (!ReadPropulsion(&AC_cfg)) result = false;
     } else if (token == "FLIGHT_CONTROL") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Flight Control" << fgdef << endl;
+      if (!ReadFlightControls(&AC_cfg)) result = false;
+    } else if (token == "AUTOPILOT") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Autopilot" << fgdef << endl;
       if (!ReadFlightControls(&AC_cfg)) result = false;
     } else if (token == "OUTPUT") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Output directives" << fgdef << endl;

@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGSummer.h"            
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.33 2002/04/14 15:49:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.34 2002/08/16 12:42:31 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,12 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
                             fcs->GetState()->GetPropertyName(token) );
         input->Idx=-1;                    
         input->Type = itPilotAC;
+      } else if (token.find("AP_") != token.npos) {
+        *AC_cfg >> token;
+        input->Node = PropertyManager->GetNode( 
+                            fcs->GetState()->GetPropertyName(token) );
+        input->Idx=-1;                    
+        input->Type = itAP;
       } else if (token.find(".") != token.npos) { // bias
         *AC_cfg >> Bias;
         input->Node=0;
@@ -129,6 +135,7 @@ bool FGSummer::Run(void )
 
   for (idx=0; idx<Inputs.size(); idx++) {
     switch (Inputs[idx]->Type) {
+    case itAP:
     case itPilotAC:
       Output += Inputs[idx]->Node->getDoubleValue();
       break;

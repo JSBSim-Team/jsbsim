@@ -59,7 +59,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.25 2002/08/03 02:20:06 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.26 2002/08/16 12:42:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -87,7 +87,6 @@ public:
   void bind(void);
   void unbind(void);
 
-  
 private:
   FGColumnVector3 vOmegaLocal;
   FGColumnVector3 vForces;

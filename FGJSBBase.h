@@ -81,7 +81,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.26 2002/05/04 15:26:02 apeden Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.27 2002/08/16 12:42:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,24 @@ enum eParam {
   FG_VBARV,     //vertical tail volume 
   FG_GEAR_CMD,
   FG_GEAR_POS,
-  FG_HYSTPARM
+  FG_HYSTPARM,
+  AP_ELEVATOR_CMD,
+  AP_AILERON_CMD,
+  AP_RUDDER_CMD,
+  AP_THROTTLE_CMD,
+  AP_SET_ATTITUDE,
+  AP_SET_ALTITUDE,
+  AP_SET_HEADING,
+  AP_SET_AIRSPEED,
+  AP_ACQUIRE_ATTITUDE,
+  AP_ACQUIRE_ALTITUDE,
+  AP_ACQUIRE_HEADING,
+  AP_ACQUIRE_AIRSPEED,
+  AP_ATTITUDE_HOLD_ON,
+  AP_ALTITUDE_HOLD_ON,
+  AP_HEADING_HOLD_ON,
+  AP_AIRSPEED_HOLD_ON,
+  AP_WINGSLEVEL_HOLD_ON
 };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +195,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.26 2002/05/04 15:26:02 apeden Exp $
+    @version $Id: FGJSBBase.h,v 1.27 2002/08/16 12:42:30 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
