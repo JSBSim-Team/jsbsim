@@ -64,7 +64,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.46 2003/02/12 18:33:11 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.47 2003/02/12 23:00:23 dmegginson Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,24 +271,21 @@ void FGAtmosphere::Turbulence(void)
     MagnitudeAccel    += MagnitudedAccelDt*rate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
 
-                                // Fade the magnitude within two wingspans
-                                // of the ground (WAG)
-    double AdjustedMagnitude = Magnitude;
-    double AdjustedMagnitudeAccel = MagnitudeAccel;
-    double HOverBMAC = Position->GetHOverBMAC();
-    if (HOverBMAC < 2.0) {
-        AdjustedMagnitude *= (HOverBMAC / 2.0);
-        AdjustedMagnitudeAccel *= (HOverBMAC / 2.0);
-    }
-    
     vDirectiondAccelDt.Normalize();
     vDirectionAccel += vDirectiondAccelDt*rate*State->Getdt();
     vDirectionAccel.Normalize();
     vDirection      += vDirectionAccel*rate*State->Getdt();
+
+                                // Diminish z-vector within two wingspans
+                                // of the ground
+    double HOverBMAC = Position->GetHOverBMAC();
+    if (HOverBMAC < 2.0)
+        vDirection(eZ) *= HOverBMAC / 2.0;
+
     vDirection.Normalize();
     
-    vTurbulence = TurbGain*AdjustedMagnitude * vDirection;
-    vTurbulenceGrad = TurbGain*AdjustedMagnitudeAccel * vDirection;
+    vTurbulence = TurbGain*Magnitude * vDirection;
+    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
 
     vBodyTurbGrad = State->GetTl2b()*vTurbulenceGrad;
     vTurbPQR(eP) = vBodyTurbGrad(eY)/Aircraft->GetWingSpan();
