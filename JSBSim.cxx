@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.23 2000/07/24 11:38:37 jsb Exp $
+// $Id: JSBSim.cxx,v 1.24 2000/07/25 11:51:41 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -40,20 +40,20 @@
 #include <Controls/controls.hxx>
 #include <Main/options.hxx>
 
-#include <FDM/JSBsim/FGFDMExec.h>
-#include <FDM/JSBsim/FGAircraft.h>
-#include <FDM/JSBsim/FGFCS.h>
-#include <FDM/JSBsim/FGPosition.h>
-#include <FDM/JSBsim/FGRotation.h>
-#include <FDM/JSBsim/FGState.h>
-#include <FDM/JSBsim/FGTranslation.h>
-#include <FDM/JSBsim/FGAuxiliary.h>
-#include <FDM/JSBsim/FGDefs.h>
-#include <FDM/JSBsim/FGInitialCondition.h>
-#include <FDM/JSBsim/FGTrimLong.h>
-#include <FDM/JSBsim/FGAtmosphere.h>
+#include <FDM/JSBSim/FGFDMExec.h>
+#include <FDM/JSBSim/FGAircraft.h>
+#include <FDM/JSBSim/FGFCS.h>
+#include <FDM/JSBSim/FGPosition.h>
+#include <FDM/JSBSim/FGRotation.h>
+#include <FDM/JSBSim/FGState.h>
+#include <FDM/JSBSim/FGTranslation.h>
+#include <FDM/JSBSim/FGAuxiliary.h>
+#include <FDM/JSBSim/FGDefs.h>
+#include <FDM/JSBSim/FGInitialCondition.h>
+#include <FDM/JSBSim/FGTrimLong.h>
+#include <FDM/JSBSim/FGAtmosphere.h>
 
-#include "JSBsim.hxx"
+#include "JSBSim.hxx"
 
 /******************************************************************************/
 
@@ -88,10 +88,8 @@ int FGJSBsim::init( double dt ) {
   }
 
   FDMExec.GetAtmosphere()->UseInternal();
-  
 
-  FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBsim with:" );
-  
+  FG_LOG( FG_FLIGHT, FG_INFO, "  Initializing JSBSim with:" );
 
   FGInitialCondition *fgic = new FGInitialCondition(&FDMExec);
   fgic->SetAltitudeFtIC(get_Altitude());
@@ -130,7 +128,6 @@ int FGJSBsim::init( double dt ) {
   FG_LOG( FG_FLIGHT, FG_INFO, "  lon: " <<  get_Longitude() );
   FG_LOG( FG_FLIGHT, FG_INFO, "  alt: " <<  get_Altitude() );
 
-  
   //must check > 0, != 0 will give bad result if --notrim set
   if(current_options.get_trim_mode() > 0) {
     FDMExec.RunIC(fgic);
@@ -160,7 +157,7 @@ int FGJSBsim::init( double dt ) {
 
   FG_LOG( FG_FLIGHT, FG_INFO, "  set dt" );
 
-  FG_LOG( FG_FLIGHT, FG_INFO, "Finished initializing JSBsim" );
+  FG_LOG( FG_FLIGHT, FG_INFO, "Finished initializing JSBSim" );
 
   copy_from_JSBsim();
 
@@ -189,8 +186,8 @@ int FGJSBsim::update( int multiloop ) {
   FDMExec.GetFCS()->SetPitchTrimCmd(controls.get_elevator_trim());
   FDMExec.GetFCS()->SetDrCmd( controls.get_rudder());
   FDMExec.GetFCS()->SetDfCmd( controls.get_flaps() );
-  FDMExec.GetFCS()->SetDsbCmd( 0.0 );
-  FDMExec.GetFCS()->SetDspCmd( 0.0 );
+  FDMExec.GetFCS()->SetDsbCmd( 0.0 ); //speedbrakes
+  FDMExec.GetFCS()->SetDspCmd( 0.0 ); //spoilers
   FDMExec.GetFCS()->SetThrottleCmd( FGControls::ALL_ENGINES,
                                     controls.get_throttle( 0 ) * 100.0 );
 
@@ -249,23 +246,65 @@ int FGJSBsim::copy_to_JSBsim() {
 
 int FGJSBsim::copy_from_JSBsim() {
 
+  set_Inertias( FDMExec.GetAircraft()->GetMass(),
+                FDMExec.GetAircraft()->GetIxx(),
+                FDMExec.GetAircraft()->GetIyy(),
+                FDMExec.GetAircraft()->GetIzz(),
+                FDMExec.GetAircraft()->GetIxz() );
+  
+  set_CG_Position ( FDMExec.GetAircraft()->GetXYZcg()(1),
+                    FDMExec.GetAircraft()->GetXYZcg()(2),
+                    FDMExec.GetAircraft()->GetXYZcg()(3) );
+  
+  set_Accels_Body ( FDMExec.GetTranslation()->GetUVWdot()(1),
+                    FDMExec.GetTranslation()->GetUVWdot()(2),
+                    FDMExec.GetTranslation()->GetUVWdot()(3) );
+  
+  set_Accels_CG_Body ( FDMExec.GetTranslation()->GetUVWdot()(1),
+                       FDMExec.GetTranslation()->GetUVWdot()(2),
+                       FDMExec.GetTranslation()->GetUVWdot()(3) );
+  
+  set_Accels_CG_Body_N ( FDMExec.GetTranslation()->GetNcg()(1),
+                         FDMExec.GetTranslation()->GetNcg()(2),
+                         FDMExec.GetTranslation()->GetNcg()(3) );
+  
+  set_Accels_Pilot_Body( FDMExec.GetAuxiliary()->GetPilotAccel()(1),
+                         FDMExec.GetAuxiliary()->GetPilotAccel()(2),
+                         FDMExec.GetAuxiliary()->GetPilotAccel()(3) );
+  
+  set_Accels_Pilot_Body_N( FDMExec.GetAuxiliary()->GetNpilot()(1),
+                           FDMExec.GetAuxiliary()->GetNpilot()(2),
+                           FDMExec.GetAuxiliary()->GetNpilot()(3) );
+  
+                           
+  
+  set_Nlf( FDMExec.GetAircraft()->GetNlf());                       
+  
+  
+   
   // Velocities
 
   set_Velocities_Local( FDMExec.GetPosition()->GetVn(),
                         FDMExec.GetPosition()->GetVe(),
                         FDMExec.GetPosition()->GetVd() );
 
+  set_Velocities_Wind_Body( FDMExec.GetTranslation()->GetUVW()(1),
+                            FDMExec.GetTranslation()->GetUVW()(2),
+                            FDMExec.GetTranslation()->GetUVW()(3)  );
+  
   set_V_equiv_kts( FDMExec.GetAuxiliary()->GetVequivalentKTS() );
 
   //set_V_calibrated( FDMExec.GetAuxiliary()->GetVcalibratedFPS() );
 
   set_V_calibrated_kts( FDMExec.GetAuxiliary()->GetVcalibratedKTS() );
+  
+  set_V_ground_speed ( FDMExec.GetPosition()->GetVground() );
 
   set_Omega_Body( FDMExec.GetState()->GetParameter(FG_ROLLRATE),
                   FDMExec.GetState()->GetParameter(FG_PITCHRATE),
                   FDMExec.GetState()->GetParameter(FG_YAWRATE) );
 
-  set_Euler_Rates( FDMExec.GetRotation()->Getphi(),
+  /* HUH!?! */ set_Euler_Rates( FDMExec.GetRotation()->Getphi(),
                    FDMExec.GetRotation()->Gettht(),
                    FDMExec.GetRotation()->Getpsi() );
 
@@ -303,6 +342,8 @@ int FGJSBsim::copy_from_JSBsim() {
 
   set_Gamma_vert_rad( FDMExec.GetPosition()->GetGamma() );
   // set_Gamma_horiz_rad( Gamma_horiz_rad );
+  
+  
 
   /* **FIXME*** */ set_Sea_level_radius( sl_radius2 * METER_TO_FEET );
   /* **FIXME*** */ set_Earth_position_angle( 0.0 );
@@ -318,6 +359,3 @@ int FGJSBsim::copy_from_JSBsim() {
 
   return 1;
 }
-
-/******************************************************************************/
-
