@@ -42,7 +42,7 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.24 2001/11/11 22:26:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.25 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -80,19 +80,19 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     control_value=0.5;
     break;
   case tBeta:
-    control_min=-30*DEGTORAD;
-    control_max=30*DEGTORAD;
-    control_convert=RADTODEG;
+    control_min=-30*degtorad;
+    control_max=30*degtorad;
+    control_convert=radtodeg;
     break;
   case tAlpha:
     control_min=fdmex->GetAircraft()->GetAlphaCLMin();
     control_max=fdmex->GetAircraft()->GetAlphaCLMax();
     if(control_max <= control_min) {
-      control_max=20*DEGTORAD;
-      control_min=-5*DEGTORAD;
+      control_max=20*degtorad;
+      control_min=-5*degtorad;
     }
     control_value= (control_min+control_max)/2;
-    control_convert=RADTODEG;
+    control_convert=radtodeg;
     solver_eps=tolerance/100;
     break;
   case tPitchTrim:
@@ -103,7 +103,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
   case tRudder:
     control_min=-1;
     control_max=1;
-    state_convert=RADTODEG;
+    state_convert=radtodeg;
     solver_eps=tolerance/100;
     break;
   case tAltAGL:
@@ -113,26 +113,26 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     solver_eps=tolerance/100;
     break;
   case tTheta:
-    control_min=fdmex->GetRotation()->Gettht() - 5*DEGTORAD;
-    control_max=fdmex->GetRotation()->Gettht() + 5*DEGTORAD;
-    state_convert=RADTODEG;
+    control_min=fdmex->GetRotation()->Gettht() - 5*degtorad;
+    control_max=fdmex->GetRotation()->Gettht() + 5*degtorad;
+    state_convert=radtodeg;
     break;
   case tPhi:
-    control_min=fdmex->GetRotation()->Getphi() - 30*DEGTORAD;
-    control_max=fdmex->GetRotation()->Getphi() + 30*DEGTORAD;
-    state_convert=RADTODEG;
-    control_convert=RADTODEG;
+    control_min=fdmex->GetRotation()->Getphi() - 30*degtorad;
+    control_max=fdmex->GetRotation()->Getphi() + 30*degtorad;
+    state_convert=radtodeg;
+    control_convert=radtodeg;
     break;
   case tGamma:
     solver_eps=tolerance/100;
-    control_min=-80*DEGTORAD;
-    control_max=80*DEGTORAD;
-    control_convert=RADTODEG;
+    control_min=-80*degtorad;
+    control_max=80*degtorad;
+    control_convert=radtodeg;
     break;
   case tHeading:
-    control_min=fdmex->GetRotation()->Getpsi() - 30*DEGTORAD;
-    control_max=fdmex->GetRotation()->Getpsi() + 30*DEGTORAD;
-    state_convert=RADTODEG;
+    control_min=fdmex->GetRotation()->Getpsi() - 30*degtorad;
+    control_max=fdmex->GetRotation()->Getpsi() + 30*degtorad;
+    state_convert=radtodeg;
     break;
   }
   
@@ -325,9 +325,9 @@ bool FGTrimAxis::initTheta(void) {
 	i++;   
   }	    	    	
   //cout << i << endl;
-  cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*RADTODEG << endl;
-  control_min=(theta+5)*DEGTORAD;
-  control_max=(theta-5)*DEGTORAD;
+  cout << "    Initial Theta: " << fdmex->GetRotation()->Gettht()*radtodeg << endl;
+  control_min=(theta+5)*degtorad;
+  control_max=(theta-5)*degtorad;
   fgic->SetAltitudeAGLFtIC(saveAlt);
   if(i < 100) 
     return true;

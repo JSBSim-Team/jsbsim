@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.21 2001/10/31 12:35:58 apeden Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.21 2001/10/31 12:35:58 apeden Exp $
+    @version $Id: FGAtmosphere.h,v 1.22 2001/11/11 23:06:26 jberndt Exp $
 */
 
 /******************************************************************************
@@ -87,6 +87,8 @@ public:
   /** Runs the Atmosphere model; called by the Executive
       @return false if no error */
   bool Run(void);
+
+  bool InitModel(void);
 
   /// Returns the temperature in degrees Rankine.
   inline float GetTemperature(void) {return temperature;}

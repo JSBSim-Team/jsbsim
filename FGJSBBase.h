@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.9 2001/11/10 15:23:49 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.10 2001/11/11 23:06:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.9 2001/11/10 15:23:49 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.10 2001/11/11 23:06:26 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ CLASS DECLARATION
 class FGJSBBase {
 public:
   /// Constructor for FGJSBBase.
-  FGJSBBase() {};
+  FGJSBBase();
 
   /// Destructor for FGJSBBase.
   virtual ~FGJSBBase() {};
@@ -195,6 +195,10 @@ protected:
   static short debug_lvl;
   static int frame;
   static unsigned int messageId;
+  
+  static const double radtodeg;
+  static const double degtorad;
+  static const double hptoftlbssec;
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

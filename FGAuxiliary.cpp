@@ -55,7 +55,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.20 2001/09/07 11:56:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.21 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +155,7 @@ bool FGAuxiliary::Run()
                   + Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt)
                   + Inertial->GetGravity();
 
-    earthPosAngle += State->Getdt()*OMEGA_EARTH;
+    earthPosAngle += State->Getdt()*Inertial->omega();
     return false;
   } else {
     return true;
@@ -186,6 +186,20 @@ float FGAuxiliary::GetCrossWind(void)
   vw = Atmosphere->GetWindNED().Magnitude();
 
   return  vw*sin(psiw - psi);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGAuxiliary::GetNpilot(void)
+{
+  return vPilotAccel/Inertial->gravity();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+float FGAuxiliary::GetNpilot(int idx)
+{
+  return (vPilotAccel/Inertial->gravity())(idx);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.14 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.15 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +70,7 @@ bool FGMassBalance::Run(void)
 
     Weight = EmptyWeight + Propulsion->GetTanksWeight();
 
-    Mass = Weight / GRAVITY;
+    Mass = Weight / Inertial->gravity();
 
 // Calculate new CG here.
 

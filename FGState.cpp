@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.80 2001/11/11 22:25:49 apeden Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.81 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -444,15 +444,15 @@ bool FGState::Reset(string path, string acname, string fname)
   }
   
   
-  Position->SetLatitude(latitude*DEGTORAD);
-  Position->SetLongitude(longitude*DEGTORAD);
+  Position->SetLatitude(latitude*degtorad);
+  Position->SetLongitude(longitude*degtorad);
   Position->Seth(h);
 
-  wnorth = wmag*KTSTOFPS*cos(wdir*DEGTORAD);
-  weast = wmag*KTSTOFPS*sin(wdir*DEGTORAD);
+  wnorth = wmag*KTSTOFPS*cos(wdir*degtorad);
+  weast = wmag*KTSTOFPS*sin(wdir*degtorad);
   
-  Initialize(U, V, W, phi*DEGTORAD, tht*DEGTORAD, psi*DEGTORAD,
-               latitude*DEGTORAD, longitude*DEGTORAD, h, wnorth, weast, 0.0);
+  Initialize(U, V, W, phi*degtorad, tht*degtorad, psi*degtorad,
+               latitude*degtorad, longitude*degtorad, h, wnorth, weast, 0.0);
 
   return true;
 }
@@ -718,28 +718,28 @@ void FGState::ReportState(void) {
                     Position->GetDistanceAGL() );
   cout << out;
   snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
-                    GetParameter(FG_ALPHA)*RADTODEG,
-                    Rotation->Gettht()*RADTODEG );
+                    GetParameter(FG_ALPHA)*radtodeg,
+                    Rotation->Gettht()*radtodeg );
   cout << out;
   snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
-                    Position->GetGamma()*RADTODEG,
+                    Position->GetGamma()*radtodeg,
                     Position->Gethdot()*60 );
   cout << out;                  
   snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
                     Aerodynamics->GetNlf(),
-                    GetParameter(FG_PITCHRATE)*RADTODEG );
+                    GetParameter(FG_PITCHRATE)*radtodeg );
   cout << out;
   snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg\n",
-                    Rotation->Getpsi()*RADTODEG,
-                    GetParameter(FG_BETA)*RADTODEG );                  
+                    Rotation->Getpsi()*radtodeg,
+                    GetParameter(FG_BETA)*radtodeg );                  
   cout << out;
   snprintf(out,80, "    Bank Angle: %5.2f deg\n",
-                    Rotation->Getphi()*RADTODEG );
+                    Rotation->Getphi()*radtodeg );
   cout << out;
   snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
-                    GetParameter(FG_ELEVATOR_POS)*RADTODEG,
-                    GetParameter(FG_AILERON_POS)*RADTODEG,
-                    GetParameter(FG_RUDDER_POS)*RADTODEG );
+                    GetParameter(FG_ELEVATOR_POS)*radtodeg,
+                    GetParameter(FG_AILERON_POS)*radtodeg,
+                    GetParameter(FG_RUDDER_POS)*radtodeg );
   cout << out;                  
   snprintf(out,80, "    Throttle: %5.2f%c\n",
                     FCS->GetThrottlePos(0)*100,'%' );
@@ -752,7 +752,7 @@ void FGState::ReportState(void) {
   
   snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
                     Position->GetVground()*jsbFPSTOKTS,
-                    Position->GetGroundTrack()*RADTODEG );
+                    Position->GetGroundTrack()*radtodeg );
   cout << out;                                   
 
 } 

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_POSITION "$Id: FGPosition.h,v 1.39 2001/07/28 15:33:18 apeden Exp $"
+#define ID_POSITION "$Id: FGPosition.h,v 1.40 2001/11/11 23:06:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ DOCUMENTATION
 
 /** Models the lateral and longitudinal translational EOM.
     @author Jon S. Berndt
-    @version $Id: FGPosition.h,v 1.39 2001/07/28 15:33:18 apeden Exp $
+    @version $Id: FGPosition.h,v 1.40 2001/11/11 23:06:26 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,8 @@ public:
   FGPosition(FGFDMExec*);
   /// Destructor
   ~FGPosition();
+
+  bool InitModel(void);
 
   /** Runs the Position model; called by the Executive
       @see JSBSim.cpp documentation

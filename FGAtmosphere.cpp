@@ -61,7 +61,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.21 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.22 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,22 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   htab[6]=200131.234;
   htab[7]=259186.352; //ft.
 
+  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGAtmosphere::~FGAtmosphere()
+{
+  if (debug_lvl & 2) cout << "Destroyed:    FGAtmosphere" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGAtmosphere::InitModel(void)
+{
+  FGModel::InitModel();
+
   Calculate(h);
   SLtemperature = temperature;
   SLpressure    = pressure;
@@ -94,15 +110,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex),
   rSLdensity     = 1.0/density;
   rSLsoundspeed  = 1.0/SLsoundspeed;
   useExternal=false;
-
-  if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGAtmosphere::~FGAtmosphere()
-{
-  if (debug_lvl & 2) cout << "Destroyed:    FGAtmosphere" << endl;
+  
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,13 +221,13 @@ void FGAtmosphere::Calculate(float altitude)
  
   if (slope == 0) {
     temperature = reftemp;
-    pressure = refpress*exp(-GRAVITY/(reftemp*Reng)*(altitude-htab[i]));
-    //density = refdens*exp(-GRAVITY/(reftemp*Reng)*(altitude-htab[i]));
+    pressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
+    //density = refdens*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
     density = pressure/(Reng*temperature);
   } else {
     temperature = reftemp+slope*(altitude-htab[i]);
-    pressure = refpress*pow(temperature/reftemp,-GRAVITY/(slope*Reng));
-    //density = refdens*pow(temperature/reftemp,-(GRAVITY/(slope*Reng)+1));
+    pressure = refpress*pow(temperature/reftemp,-Inertial->SLgravity()/(slope*Reng));
+    //density = refdens*pow(temperature/reftemp,-(Inertial->SLgravity()/(slope*Reng)+1));
     density = pressure/(Reng*temperature);
   }
   lastIndex=i;

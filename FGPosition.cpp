@@ -84,7 +84,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGPosition.cpp,v 1.41 2001/09/28 02:33:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPosition.cpp,v 1.42 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_POSITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,14 +105,6 @@ FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
   lastLongitudeDot = lastLatitudeDot = lastRadiusDot = 0.0;
   Longitude = Latitude = 0.0;
   gamma = Vt = Vground = 0.0;
-  h = 3.0;                                 // Est. height of aircraft cg off runway
-  SeaLevelRadius = EARTHRAD;               // For initialization ONLY
-  Radius         = SeaLevelRadius + h;
-  RunwayRadius   = SeaLevelRadius;
-  DistanceAGL    = Radius - RunwayRadius;  // Geocentric
-  vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
-  b =1;
-  
 
   if (debug_lvl & 2) cout << "Instantiated: " << Name << endl;
 }
@@ -125,15 +117,31 @@ FGPosition::~FGPosition()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGPosition::InitModel(void)
+{
+  FGModel::InitModel();
+
+  h = 3.0;                                 // Est. height of aircraft cg off runway
+  SeaLevelRadius = Inertial->RefRadius();  // For initialization ONLY
+  Radius         = SeaLevelRadius + h;
+  RunwayRadius   = SeaLevelRadius;
+  DistanceAGL    = Radius - RunwayRadius;  // Geocentric
+  vRunwayNormal(3) = -1.0;                 // Initialized for standalone mode
+  b = 1;
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 /*
 Purpose: Called on a schedule to perform Positioning algorithms
 Notes:   [TP] Make sure that -Vt <= hdot <= Vt, which, of course, should always
          be the case
-         [JB] Run in standalone mode, SeaLevelRadius will be EARTHRAD. In FGFS,
-         SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
+         [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
+	       In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
 */
 
-bool FGPosition:: Run(void) {
+bool FGPosition::Run(void) {
   double cosLat;
   double hdot_Vt;
 

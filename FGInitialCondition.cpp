@@ -56,13 +56,13 @@ INCLUDES
 #include "FGDefs.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.37 2001/08/20 12:14:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.38 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
 
-FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
-
+FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
+{
   vt=vc=ve=vg=0;
   mach=0;
   alpha=beta=gamma=0;
@@ -77,10 +77,9 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec){
   wdir=wmag=0;
   lastSpeedSet=setvt;
   lastWindSet=setwned;
-  sea_level_radius = EARTHRAD;
-  radius_to_vehicle = EARTHRAD;
+  sea_level_radius = FDMExec->GetInertial()->RefRadius();
+  radius_to_vehicle = FDMExec->GetInertial()->RefRadius();
   terrain_altitude = 0;
-  
 
   salpha=sbeta=stheta=sphi=spsi=sgamma=0;
   calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
@@ -347,7 +346,7 @@ void FGInitialCondition::SetWindMagKtsIC(float mag) {
 //******************************************************************************
 
 void FGInitialCondition::SetWindDirDegIC(float dir) {
-  wdir=dir*DEGTORAD;
+  wdir=dir*degtorad;
   lastWindSet=setwmd;
   calcWindUVW();    
   if(lastSpeedSet == setvg)
@@ -699,7 +698,7 @@ bool FGInitialCondition::solve(float *y,float x)
 
 float FGInitialCondition::GetWindDirDegIC(void) {
   if(weast != 0.0) 
-    return atan2(weast,wnorth)*RADTODEG;
+    return atan2(weast,wnorth)*radtodeg;
   else if(wnorth > 0) 
     return 0.0;
   else

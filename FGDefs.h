@@ -34,24 +34,13 @@ SENTRY
 #ifndef FGDEFS_H
 #define FGDEFS_H
 
-#define GRAVITY         32.174
-#define INVGRAVITY      0.031081
-#define EARTHRAD        20925650.00       // feet, equatorial
-#define EARTHRADSQRD    437882827922500.0
-#define ONESECOND       4.848136811E-6
 #define Reng            1716             //Specific Gas Constant,ft^2/(sec^2*R)
 #define SHRATIO         1.4              //Specific Heat Ratio
-#define RADTODEG        57.29578
-#define DEGTORAD        1.745329E-2
 #define KTSTOFPS        1.68781
 #define FPSTOKTS        0.592484
 #define INCHTOFT        0.08333333
-#define OMEGA_EARTH .00007272205217  
-#define NEEDED_CFG_VERSION "1.51"
-#define JSBSIM_VERSION  "0.9.0"
-
-#define HPTOFTLBSSEC 550
-#define METERS_TO_FEET 3.2808
+#define NEEDED_CFG_VERSION "1.55"
+#define JSBSIM_VERSION  "0.9.1"
 
 #if defined ( sgi ) && !defined( __GNUC__ )
 #define __STL_FUNCTION_TMPL_PARTIAL_ORDER

@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.60 2001/10/30 00:23:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.61 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,6 +101,8 @@ short debug_lvl;  // This describes to any interested entity the debug level
                   //    are printed out periodically
                   // g) 16: When set various parameters are sanity checked and
                   //    a message is printed out when they go out of bounds.
+
+unsigned int FGFDMExec::FDMctr = 0;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -132,6 +134,9 @@ FGFDMExec::FGFDMExec(void)
   frozen = false;
   modelLoaded = false;
   Scripted = false;
+
+  IdFDM = FDMctr;
+  FDMctr++;
 
   try {
     char* num = getenv("JSBSIM_DEBUG");

@@ -469,7 +469,6 @@ JSBSim.o: JSBSim.cpp FGFDMExec.h FGModel.h FGDefs.h FGJSBBase.h \
 makePlane.o: makePlane.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -omakePlane.o -c makePlane.cpp
 
-
 x15trim.o:x15trim.cpp
 	$(CC) $(INCLUDES) $(CCOPTS) -c x15trim.cpp
 

@@ -91,7 +91,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.95 2001/11/06 13:17:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.96 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +178,7 @@ bool FGAircraft::Run(void)
     
     vBodyAccel = vForces/MassBalance->GetMass();
     
-    vNcg = vBodyAccel*INVGRAVITY;
+    vNcg = vBodyAccel/Inertial->gravity();
     
     if (alphaclmax != 0) {
       if (Translation->Getalpha() > 0.85*alphaclmax) {

@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.4 2001/11/10 14:55:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.5 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,11 +56,21 @@ char FGJSBBase::fgred[6]    = {27, '[', '3', '1', 'm', '\0' };
 char FGJSBBase::fggreen[6]  = {27, '[', '3', '2', 'm', '\0' };
 char FGJSBBase::fgdef[6]    = {27, '[', '3', '9', 'm', '\0' };
 
+const double FGJSBBase::radtodeg = 57.29578;
+const double FGJSBBase::degtorad = 1.745329E-2;
+const double FGJSBBase::hptoftlbssec = 550.0;
+
 queue <struct Message*> FGJSBBase::Messages;
 struct Message FGJSBBase::localMsg;
 unsigned int FGJSBBase::messageId = 0;
 
 short FGJSBBase::debug_lvl  = 0;
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGJSBBase::FGJSBBase()
+{
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

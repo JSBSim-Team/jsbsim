@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.32 2001/11/08 19:22:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.33 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -194,7 +194,7 @@ float FGPiston::Calculate(float PowerRequired)
     HP = 0;
   }
 
-  PowerAvailable = (HP * HPTOFTLBSSEC) - PowerRequired;
+  PowerAvailable = (HP * hptoftlbssec) - PowerRequired;
   return PowerAvailable;
 }
 

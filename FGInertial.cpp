@@ -39,7 +39,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.14 2001/09/07 11:56:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.15 2001/11/11 23:06:26 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,6 +56,13 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex),
   Name = "FGInertial";
 
   vRadius.InitMatrix();
+  
+  // Defaults
+  RotationRate    = 0.00007272205217;
+  GM              = 14.06252720E15;
+  RadiusReference = 20925650.00;
+  gAccelReference = GM/(RadiusReference*RadiusReference);
+  gAccel          = GM/(RadiusReference*RadiusReference);
 
   if (debug_lvl & 2) cout << "Instantiated: FGInertial" << endl;
 }
@@ -75,23 +82,25 @@ bool FGInertial::Run(void)
 
   if (!FGModel::Run()) {
 
+    gAccel = GM / (Position->GetRadius()*Position->GetRadius());
+
     stht = sin(Rotation->GetEuler(eTht));
     ctht = cos(Rotation->GetEuler(eTht));
     sphi = sin(Rotation->GetEuler(ePhi));
     cphi = cos(Rotation->GetEuler(ePhi));
 
-    vGravity(eX) = vForces(eX) = -GRAVITY*stht;
-    vGravity(eY) = vForces(eY) =  GRAVITY*sphi*ctht;
-    vGravity(eZ) = vForces(eZ) =  GRAVITY*cphi*ctht;
+    vGravity(eX) = vForces(eX) = -gravity()*stht;
+    vGravity(eY) = vForces(eY) =  gravity()*sphi*ctht;
+    vGravity(eZ) = vForces(eZ) =  gravity()*cphi*ctht;
     
     // The following equation for vOmegaLocal terms shows the angular velocity
     // calculation _for_the_local_frame_ given the earth's rotation (first set)
     // at the current latitude, and also the component due to the aircraft
     // motion over the curved surface of the earth (second set).
 
-    vOmegaLocal(eX) = OMEGA_EARTH * cos(Position->GetLatitude());
+    vOmegaLocal(eX) = omega() * cos(Position->GetLatitude());
     vOmegaLocal(eY) = 0.0;
-    vOmegaLocal(eZ) = OMEGA_EARTH * -sin(Position->GetLatitude());
+    vOmegaLocal(eZ) = omega() * -sin(Position->GetLatitude());
 
     vOmegaLocal(eX) +=  Position->GetVe() / Position->GetRadius();
     vOmegaLocal(eY) += -Position->GetVn() / Position->GetRadius();

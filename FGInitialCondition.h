@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.30 2001/08/18 14:23:30 apeden Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.31 2001/11/11 23:06:26 jberndt Exp $"
 #define jsbFPSTOKTS 0.5924838
 #define jsbKTSTOFPS 1.6878099
 
@@ -127,7 +127,7 @@ CLASS DOCUMENTATION
 	 Setting climb rate is, for the purpose of this discussion, 
 	 considered equivalent to setting gamma.
    @author Anthony K. Peden
-   @version $Id: FGInitialCondition.h,v 1.30 2001/08/18 14:23:30 apeden Exp $
+   @version $Id: FGInitialCondition.h,v 1.31 2001/11/11 23:06:26 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,15 +148,15 @@ public:
   inline void SetVgroundKtsIC(float tt) { SetVgroundFpsIC(tt*jsbKTSTOFPS); }
   void SetMachIC(float tt);
   
-  inline void SetAlphaDegIC(float tt)      { SetAlphaRadIC(tt*DEGTORAD); }
-  inline void SetBetaDegIC(float tt)       { SetBetaRadIC(tt*DEGTORAD);}
+  inline void SetAlphaDegIC(float tt)      { SetAlphaRadIC(tt*degtorad); }
+  inline void SetBetaDegIC(float tt)       { SetBetaRadIC(tt*degtorad);}
   
-  inline void SetPitchAngleDegIC(float tt) { SetPitchAngleRadIC(tt*DEGTORAD); }
-  inline void SetRollAngleDegIC(float tt)  { SetRollAngleRadIC(tt*DEGTORAD);}
-  inline void SetTrueHeadingDegIC(float tt){ SetTrueHeadingRadIC(tt*DEGTORAD); }
+  inline void SetPitchAngleDegIC(float tt) { SetPitchAngleRadIC(tt*degtorad); }
+  inline void SetRollAngleDegIC(float tt)  { SetRollAngleRadIC(tt*degtorad);}
+  inline void SetTrueHeadingDegIC(float tt){ SetTrueHeadingRadIC(tt*degtorad); }
   
   void SetClimbRateFpmIC(float tt);
-  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(tt*DEGTORAD); }
+  inline void SetFlightPathAngleDegIC(float tt) { SetFlightPathAngleRadIC(tt*degtorad); }
 
   void SetAltitudeFtIC(float tt);
   void SetAltitudeAGLFtIC(float tt);
@@ -164,8 +164,8 @@ public:
   void SetSeaLevelRadiusFtIC(double tt);
   void SetTerrainAltitudeFtIC(double tt);
 
-  inline void SetLatitudeDegIC(float tt)  { latitude=tt*DEGTORAD; }
-  inline void SetLongitudeDegIC(float tt) { longitude=tt*DEGTORAD; }
+  inline void SetLatitudeDegIC(float tt)  { latitude=tt*degtorad; }
+  inline void SetLongitudeDegIC(float tt) { longitude=tt*degtorad; }
 
   
   inline float GetVcalibratedKtsIC(void) { return vc*jsbFPSTOKTS; }
@@ -175,17 +175,17 @@ public:
   inline float GetMachIC(void) { return mach; }
   
   inline float GetClimbRateFpmIC(void) { return hdot*60; }
-  inline float GetFlightPathAngleDegIC(void) { return gamma*RADTODEG; }
+  inline float GetFlightPathAngleDegIC(void) { return gamma*radtodeg; }
   
-  inline float GetAlphaDegIC(void)      { return alpha*RADTODEG; }
-  inline float GetBetaDegIC(void)       { return beta*RADTODEG; }
+  inline float GetAlphaDegIC(void)      { return alpha*radtodeg; }
+  inline float GetBetaDegIC(void)       { return beta*radtodeg; }
   
-  inline float GetPitchAngleDegIC(void) { return theta*RADTODEG; }
-  inline float GetRollAngleDegIC(void) { return phi*RADTODEG; }
-  inline float GetHeadingDegIC(void)   { return psi*RADTODEG; }
+  inline float GetPitchAngleDegIC(void) { return theta*radtodeg; }
+  inline float GetRollAngleDegIC(void) { return phi*radtodeg; }
+  inline float GetHeadingDegIC(void)   { return psi*radtodeg; }
 
-  inline float GetLatitudeDegIC(void)  { return latitude*RADTODEG; }
-  inline float GetLongitudeDegIC(void) { return longitude*RADTODEG; }
+  inline float GetLatitudeDegIC(void)  { return latitude*radtodeg; }
+  inline float GetLongitudeDegIC(void) { return longitude*radtodeg; }
   
   inline float GetAltitudeFtIC(void) { return altitude; }
   inline float GetAltitudeAGLFtIC(void) { return altitude - terrain_altitude; }
