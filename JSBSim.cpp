@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.90 2005/01/16 14:53:37 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.91 2005/01/16 15:19:29 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -392,6 +392,9 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   cout << "<?xml version=\"1.0\"?>" << endl;
   cout << "<?xml-stylesheet href=\"JSBSim.xsl\" type=\"application/xml\"?>" << endl;
   cout << "<fdm_config name=\"" << FDMExec->GetAircraft()->GetAircraftName() << "\" version=\"2.0\" release=\"BETA\">" << endl << endl;
+
+  // Header section
+
   cout << "    <fileheader>" << endl;
   cout << "        <author> Author Name </author>" << endl;
   cout << "        <filecreationdate> Creation Date </filecreationdate>" << endl;
@@ -399,6 +402,9 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   cout << "        <version> Version </version>" << endl;
   cout << "        <reference refID=\"None\" author=\"n/a\" title=\"n/a\" date=\"n/a\"/>" << endl;
   cout << "    </fileheader>" << endl << endl;
+
+  // metrics section
+
   cout << "    <metrics>" << endl;
   cout << "        <wingarea unit=\"FT2\"> " << FDMExec->GetAircraft()->GetWingArea() << " </wingarea>" << endl;
   cout << "        <wingspan unit=\"FT\"> " << FDMExec->GetAircraft()->GetWingSpan() << " </wingspan>" << endl;
@@ -423,6 +429,9 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   cout << "            <z> " << FDMExec->GetAircraft()->GetXYZvrp(3) << " </z>" << endl;
   cout << "        </location>" << endl;
   cout << "    </metrics>" << endl << endl;
+
+  // mass balance section
+
   cout << "    <mass_balance>" << endl;
   cout << "        <ixx unit=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(1,1) << " </ixx>" << endl;
   cout << "        <iyy unit=\"SLUG*FT2\"> " << FDMExec->GetMassBalance()->GetAircraftBaseInertias()(2,2) << " </iyy>" << endl;
@@ -437,6 +446,8 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   cout << "            <z> " << FDMExec->GetMassBalance()->GetbaseXYZcg(3) << " </z>" << endl;
   cout << "        </location>" << endl;
 
+  // add pointmasses, if any
+
   for (int i=0; i<FDMExec->GetMassBalance()->GetNumPointMasses(); i++) {
     cout << "        <pointmass name=\"name\">" << endl;
     cout << "            <weight unit=\"LBS\"> " << FDMExec->GetMassBalance()->GetPointMassWeight(i) << " </weight>" << endl;
@@ -449,7 +460,10 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   }
   cout << "    </mass_balance>" << endl << endl;
 
+  // ground reactions section
+
   cout << "    <ground_reactions>" << endl;
+  // add each contact
   for (int i=0; i<FDMExec->GetGroundReactions()->GetNumGearUnits(); i++) {
     JSBSim::FGLGear* gear = FDMExec->GetGroundReactions()->GetGearUnit(i);
     cout << "        <contact type=\"BOGEY\" name=\"" << gear->GetName() << "\">" << endl;
@@ -480,65 +494,66 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   }
   cout << "    </ground_reactions>" << endl;
 
+  // propulsion section
+
   cout << "    <propulsion>" << endl;
 
   for (int i=0; i<FDMExec->GetPropulsion()->GetNumEngines(); i++) {
     JSBSim::FGEngine* engine = FDMExec->GetPropulsion()->GetEngine(i);
 
-  cout << "        <engine file=\"  \">" << endl;
-  cout << "            <location unit=\"IN\">" << endl;
-  cout << "                <x> " << engine->GetPlacementX() << " </x>" << endl;
-  cout << "                <y> " << engine->GetPlacementY() << " </y>" << endl;
-  cout << "                <z> " << engine->GetPlacementZ() << " </z>" << endl;
-  cout << "            </location>" << endl;
-  cout << "            <orient unit=\"DEG\">" << endl;
-  cout << "                <roll> 0.0 </roll>" << endl;
-  cout << "                <pitch> " << engine->GetPitch() << " </pitch>" << endl;
-  cout << "                <yaw> " << engine->GetYaw() << " </yaw>" << endl;
-  cout << "            </orient>" << endl;
+    cout << "        <engine file=\"  \">" << endl;
+    cout << "            <location unit=\"IN\">" << endl;
+    cout << "                <x> " << engine->GetPlacementX() << " </x>" << endl;
+    cout << "                <y> " << engine->GetPlacementY() << " </y>" << endl;
+    cout << "                <z> " << engine->GetPlacementZ() << " </z>" << endl;
+    cout << "            </location>" << endl;
+    cout << "            <orient unit=\"DEG\">" << endl;
+    cout << "                <roll> 0.0 </roll>" << endl;
+    cout << "                <pitch> " << engine->GetPitch() << " </pitch>" << endl;
+    cout << "                <yaw> " << engine->GetYaw() << " </yaw>" << endl;
+    cout << "            </orient>" << endl;
 
-  for (int t=0; t<engine->GetNumSourceTanks(); t++) {
-    cout << "            <feed>" << engine->GetSourceTank(t) << "</feed>" << endl;
+    for (int t=0; t<engine->GetNumSourceTanks(); t++) {
+      cout << "            <feed>" << engine->GetSourceTank(t) << "</feed>" << endl;
+    }
+
+    JSBSim::FGThruster* thruster = engine->GetThruster();
+
+    cout << "            <thruster file=\" \">" << endl;
+    cout << "                <location unit=\"IN\">" << endl;
+    cout << "                    <x> " << thruster->GetLocationX() << " </x>" << endl;
+    cout << "                    <y> " << thruster->GetLocationY() << " </y>" << endl;
+    cout << "                    <z> " << thruster->GetLocationZ() << " </z>" << endl;
+    cout << "                </location>" << endl;
+    cout << "                <orient unit=\"DEG\">" << endl;
+    cout << "                    <roll> 0.0 </roll>" << endl;
+    cout << "                    <pitch> </pitch>" << endl;
+    cout << "                    <yaw> </yaw>" << endl;
+    cout << "                </orient>" << endl;
+    cout << "                <sense> </sense>" << endl;
+    cout << "                <p_factor> </p_factor>" << endl;
+    cout << "            </thruster>" << endl;
+    cout << "        </engine>" << endl;
   }
 
-  JSBSim::FGThruster* thruster = engine->GetThruster();
+  for (int t=0; t<FDMExec->GetPropulsion()->GetNumTanks(); t++) {
+    JSBSim::FGTank* tank = FDMExec->GetPropulsion()->GetTank(t);
+    if (tank->GetType() == 1) // FUEL
+      cout << "        <tank type=\"FUEL\">    <!-- Tank number " << t << " --> " << endl;
+    else if (tank->GetType() == 2) // OXIDIZER
+      cout << "        <tank type=\"OXIDIZER\">    <!-- Tank number " << t << " --> " << endl;
 
-  cout << "            <thruster file=\" \">" << endl;
-  cout << "                <location unit=\"IN\">" << endl;
-  cout << "                    <x> " << thruster->GetLocationX() << " </x>" << endl;
-  cout << "                    <y> " << thruster->GetLocationY() << " </y>" << endl;
-  cout << "                    <z> " << thruster->GetLocationZ() << " </z>" << endl;
-  cout << "                </location>" << endl;
-  cout << "                <orient unit=\"DEG\">" << endl;
-  cout << "                    <roll> 0.0 </roll>" << endl;
-  cout << "                    <pitch> </pitch>" << endl;
-  cout << "                    <yaw> </yaw>" << endl;
-  cout << "                </orient>" << endl;
-  cout << "                <sense> </sense>" << endl;
-  cout << "                <p_factor> </p_factor>" << endl;
-  cout << "            </thruster>" << endl;
-  cout << "        </engine>" << endl;
-  cout << "        <tank type=\"FUEL\">    <!-- Tank number 0 --> " << endl;
-  cout << "            <location unit=\"IN\">" << endl;
-  cout << "                <X>48.0</X>" << endl;
-  cout << "                <y>-112.0</Y>" << endl;
-  cout << "                <Z>59.4</Z>" << endl;
-  cout << "            </location>" << endl;
-  cout << "            <radius unit=\"IN\">29.4</radius>" << endl;
-  cout << "            <capacity unit=\"LBS\">168</capacity>" << endl;
-  cout << "            <contents unit=\"LBS\">168</contents>" << endl;
-  cout << "        </tank>" << endl;
-  cout << "        <tank type=\"FUEL\">    <!-- Tank number 1 -->" << endl;
-  cout << "            <location unit=\"IN\">" << endl;
-  cout << "                <x>48.0</x>" << endl;
-  cout << "                <y>112.0</y>" << endl;
-  cout << "                <z>59.4</z>" << endl;
-  cout << "            </location>" << endl;
-  cout << "            <radius unit=\"IN\">29.4</radius>" << endl;
-  cout << "            <capacity unit=\"LBS\">168</capacity>" << endl;
-  cout << "            <contents unit=\"LBS\">168</contents>" << endl;
-  cout << "        </tank>" << endl;
+    cout << "            <location unit=\"IN\">" << endl;
+    cout << "                <X> " << tank->GetXYZ(1) << " </X>" << endl;
+    cout << "                <y> " << tank->GetXYZ(2) << " </Y>" << endl;
+    cout << "                <Z> " << tank->GetXYZ(3) << " </Z>" << endl;
+    cout << "            </location>" << endl;
+    // cout << "            <radius unit=\"IN\"> 1 </radius>" << endl;  // Superfluous?
+    cout << "            <capacity unit=\"LBS\"> " << tank->GetContents()/tank->GetPctFull()*100.0 << " </capacity>" << endl;
+    cout << "            <contents unit=\"LBS\"> " << tank->GetContents() << " </contents>" << endl;
+    cout << "        </tank>" << endl;
   }
+
   cout << "    </propulsion>" << endl;
 
 }
