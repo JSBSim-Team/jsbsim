@@ -43,13 +43,14 @@ INCLUDES
 #include "FGModel.h"
 #include "FGInitialCondition.h"
 #include "FGJSBBase.h"
-#include <vector>
+#include "FGPropertyManager.h"
 
+#include <vector>
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.51 2001/12/22 16:18:36 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.52 2002/03/09 11:55:34 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.51 2001/12/22 16:18:36 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.52 2002/03/09 11:55:34 apeden Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -197,7 +198,8 @@ public:
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
-
+  
+  inline FGPropertyManager* GetPropertyManager(void) { return instance; }
 private:
   FGModel* FirstModel;
 
@@ -208,6 +210,9 @@ private:
   unsigned int IdFDM;
   static unsigned int FDMctr;
   bool modelLoaded;
+  
+  FGPropertyManager *master;
+  FGPropertyManager *instance;
 
   string AircraftPath;
   string EnginePath;

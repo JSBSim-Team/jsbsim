@@ -71,8 +71,9 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 #include "FGInitialCondition.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.80 2001/12/23 21:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.81 2002/03/09 11:55:33 apeden Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +90,7 @@ CLASS IMPLEMENTATION
 
 FGFDMExec::FGFDMExec(void)
 {
+  
   Frame           = 0;
   FirstModel      = 0;
   Error           = 0;
@@ -122,8 +124,12 @@ FGFDMExec::FGFDMExec(void)
     debug_lvl = 1;
   }
 
-  Debug(0);
+  if(master == NULL)
+    master = new FGPropertyManager;
 
+  instance = master->GetNode("/fdm/jsbsim",IdFDM,true);  
+  
+  Debug(0);
   Allocate();
 }
 

@@ -54,8 +54,9 @@ INCLUDES
 #include "FGMatrix33.h"
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
+#include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.28 2002/02/06 13:35:34 apeden Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.29 2002/03/09 11:54:53 apeden Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +70,8 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   vcas = veas = mach = qbar = pt = 0;
   psl = rhosl = 1;
   earthPosAngle = 0.0;
+  
+  vPilotAccelN.InitMatrix();
   
   Debug(0);
 }
@@ -157,6 +160,7 @@ bool FGAuxiliary::Run()
       vPilotAccel += Rotation->GetPQRdot() * vToEyePt;
       vPilotAccel += Rotation->GetPQR() * (Rotation->GetPQR() * vToEyePt);
       //vPilotAccel(2)*=-1;
+      vPilotAccelN = vPilotAccel/Inertial->gravity();
     }
     earthPosAngle += State->Getdt()*Inertial->omega();
     return false;
@@ -189,20 +193,6 @@ double FGAuxiliary::GetCrossWind(void)
   vw = Atmosphere->GetWindNED().Magnitude();
 
   return  vw*sin(psiw - psi);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGColumnVector3 FGAuxiliary::GetNpilot(void)
-{
-  return vPilotAccel/Inertial->gravity();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGAuxiliary::GetNpilot(int idx)
-{
-  return (vPilotAccel/Inertial->gravity())(idx);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -262,3 +252,51 @@ void FGAuxiliary::Debug(int from)
   }
 }
 
+void FGAuxiliary::bind(void){
+  PropertyManager->Tie("velocities/vc-fps", this,
+                       &FGAuxiliary::GetVcalibratedFPS);
+  PropertyManager->Tie("velocities/vc-kts", this,
+                       &FGAuxiliary::GetVcalibratedKTS);
+  PropertyManager->Tie("velocities/ve-fps", this,
+                       &FGAuxiliary::GetVequivalentFPS);
+  PropertyManager->Tie("velocities/ve-kts", this,
+                       &FGAuxiliary::GetVequivalentKTS);
+  PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this,1,
+                       &FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this,2,
+                       &FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/a-pilot-z-ft_sec2", this,3,
+                       &FGAuxiliary::GetPilotAccel);
+  PropertyManager->Tie("accelerations/n-pilot-x-norm", this,1,
+                       &FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("accelerations/n-pilot-y-norm", this,2,
+                       &FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("accelerations/n-pilot-z-norm", this,3,
+                       &FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("position/epa-rad", this,
+                       &FGAuxiliary::GetEarthPositionAngle);
+  /* PropertyManager->Tie("atmosphere/headwind-fps", this,
+                       &FGAuxiliary::GetHeadWind,
+                       true);
+  PropertyManager->Tie("atmosphere/crosswind-fps", this,
+                       &FGAuxiliary::GetCrossWind,
+                       true); */
+
+}
+
+void FGAuxiliary::unbind(void){
+  PropertyManager->Untie("velocities/vc-fps");
+  PropertyManager->Untie("velocities/vc-kts");
+  PropertyManager->Untie("velocities/ve-fps");
+  PropertyManager->Untie("velocities/ve-kts");
+  PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
+  PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
+  PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
+  PropertyManager->Untie("accelerations/n-pilot-x-norm");
+  PropertyManager->Untie("accelerations/n-pilot-y-norm");
+  PropertyManager->Untie("accelerations/n-pilot-z-norm");
+  PropertyManager->Untie("position/epa-rad");
+  /* PropertyManager->Untie("atmosphere/headwind-fps");
+  PropertyManager->Untie("atmosphere/crosswind-fps"); */
+
+}
