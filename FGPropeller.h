@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.24 2001/12/07 13:59:09 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.25 2001/12/08 00:22:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     <ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.24 2001/12/07 13:59:09 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.25 2001/12/08 00:22:46 jberndt Exp $
     @see FGEngine
     @see FGThruster
     @see FGTable
@@ -146,6 +146,7 @@ public:
       would be slowed.
       @return the thrust in pounds */
   double Calculate(double PowerAvailable);
+  FGColumnVector3 GetPFactor(void);
 
 private:
   int   numBlades;

@@ -54,7 +54,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.61 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.62 2001/12/08 00:22:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,6 +381,9 @@ string FGPropulsion::GetPropulsionStrings(void)
       break;
     case FGThruster::ttPropeller:
       PropulsionStrings += (Thrusters[i]->GetName() + "_Torque[" + buffer + "], ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_PFactor_Roll[" + buffer + "], ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_PFactor_Pitch[" + buffer + "], ");
+      PropulsionStrings += (Thrusters[i]->GetName() + "_PFactor_Yaw[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_Thrust[" + buffer + "], ");
       PropulsionStrings += (Thrusters[i]->GetName() + "_RPM[" + buffer + "]");
       break;
@@ -428,6 +431,9 @@ string FGPropulsion::GetPropulsionValues(void)
       break;
     case FGThruster::ttPropeller:
       PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetTorque(), 10, buff)) + ", ");
+      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(eRoll), 10, buff)) + ", ");
+      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(ePitch), 10, buff)) + ", ");
+      PropulsionValues += (string(gcvt(((FGColumnVector3)((FGPropeller*)Thrusters[i])->GetPFactor())(eYaw), 10, buff)) + ", ");
       PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetThrust(), 10, buff)) + ", ");
       PropulsionValues += (string(gcvt(((FGPropeller*)Thrusters[i])->GetRPM(), 10, buff)));
       break;

@@ -38,13 +38,17 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.42 2001/12/07 13:59:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.43 2001/12/08 00:22:46 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+// This class currently makes certain assumptions when calculating torque and 
+// p-factor. That is, that the axis of rotation is the X axis of the aircraft -
+// not just the X-axis of the engine/propeller. This may or may not work for a 
+// helicopter.
 
 FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(exec)
 {
@@ -220,6 +224,16 @@ double FGPropeller::GetPowerRequired(void)
   vTorque(eX) = PowerRequired / ((RPM/60)*2.0*M_PI);
 
   return PowerRequired;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3 FGPropeller::GetPFactor()
+{
+   double px=0.0, py, pz;
+
+   py = Thrust * Sense * (GetActingLocationY() - GetLocationY()) / 12.0;
+   pz = Thrust * Sense * (GetActingLocationZ() - GetLocationZ()) / 12.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
