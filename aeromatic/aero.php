@@ -265,7 +265,7 @@ switch($ac_type) {
 
 // set main gear longitudinal location relative to CG
 switch($ac_geartype) {
-  case 0: $ac_gearlocx_main = $ac_cglocx * 1.09; break;
+  case 0: $ac_gearlocx_main = $ac_cglocx * 1.05; break;
   case 1: $ac_gearlocx_main = $ac_cglocx * 0.91; break;
   }
 
@@ -299,8 +299,8 @@ $ac_gearlocx_tail = $ac_length * 0.91 * 12;
 $ac_gearlocy_tail = 0;
 $ac_gearlocz_tail = $ac_gearlocz_main * 0.30;
 
-$ac_gearspring_main = $ac_weight * 5.0;
-$ac_gearspring_nose = $ac_weight * 1.4;
+$ac_gearspring_main = $ac_weight * 1.0;
+$ac_gearspring_nose = $ac_weight * 0.3;
 $ac_gearspring_tail = $ac_weight * 1.0;
 
 $ac_geardamp_main = $ac_weight * 0.2;
@@ -748,7 +748,7 @@ switch($ac_type) {                   // adverse yaw
 //*                                              *
 //************************************************
 
-print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.60\">\n");
+print("<FDM_CONFIG NAME=\"$ac_name\" VERSION=\"1.60\" RELEASE=\"ALPHA\">\n");
 print("<!--\n  File:     $ac_name.xml\n");
 print("  Author:   Aero-Matic v $version\n\n");
 print("  Inputs:\n");
@@ -854,24 +854,24 @@ if($ac_type == 0) {  // if this is a glider
    print("$ac_gearrolling $ac_gearsteerable_main NONE 0 $ac_retract\n");
  }
  else {
-   if ($ac_geartype == 0) {
+   if ($ac_geartype == 0) {  // if this is a tricycle gear
      printf("  AC_GEAR NOSE_LG   %2.1f %2.1f %2.1f", $ac_gearlocx_nose, $ac_gearlocy_nose, $ac_gearlocz_nose);
      printf(" %2.1f %2.1f %2.1f %2.1f", $ac_gearspring_nose, $ac_geardamp_nose, $ac_geardynamic, $ac_gearstatic);
-     printf(" %2.1f $ac_gearsteerable_nose NONE %2.1f $ac_retract\n", $ac_gearrolling, $ac_gearmaxsteer);
+     printf(" %2.2f $ac_gearsteerable_nose NONE %2.1f $ac_retract\n", $ac_gearrolling, $ac_gearmaxsteer);
    }
 
    printf("  AC_GEAR LEFT_MLG  %2.1f %2.1f %2.1f", $ac_gearlocx_main, -$ac_gearlocy_main, $ac_gearlocz_main);
    printf(" %2.1f %2.1f %2.1f %2.1f", $ac_gearspring_main, $ac_geardamp_main, $ac_geardynamic, $ac_gearstatic);
-   printf(" %2.1f $ac_gearsteerable_main LEFT  0 $ac_retract\n", $ac_gearrolling);
+   printf(" %2.2f $ac_gearsteerable_main LEFT  0 $ac_retract\n", $ac_gearrolling);
 
    printf("  AC_GEAR RIGHT_MLG %2.1f %2.1f %2.1f", $ac_gearlocx_main, $ac_gearlocy_main, $ac_gearlocz_main);
    printf(" %2.1f %2.1f %2.1f %2.1f", $ac_gearspring_main, $ac_geardamp_main, $ac_geardynamic, $ac_gearstatic);
-   printf(" %2.1f $ac_gearsteerable_main RIGHT 0 $ac_retract\n", $ac_gearrolling);
+   printf(" %2.2f $ac_gearsteerable_main RIGHT 0 $ac_retract\n", $ac_gearrolling);
 
-   if ($ac_geartype == 1) {
+   if ($ac_geartype == 1) {  // if this is a taildragger
      printf("  AC_GEAR TAIL_LG  %2.1f %2.1f %2.1f", $ac_gearlocx_tail, $ac_gearlocy_tail, $ac_gearlocz_tail);
      printf(" %2.1f %2.1f %2.1f %2.1f", $ac_gearspring_tail, $ac_geardamp_tail, $ac_geardynamic, $ac_gearstatic);
-     printf(" %2.1f $ac_gearsteerable_tail NONE 0 $ac_retract\n", $ac_gearrolling);
+     printf(" %2.2f $ac_gearsteerable_tail NONE 0 $ac_retract\n", $ac_gearrolling);
    }
  }
 
@@ -934,7 +934,7 @@ print("   </COMPONENT>\n");
 print("   <COMPONENT NAME=\"Elevator Control\" TYPE=\"AEROSURFACE_SCALE\">\n");
 print("      INPUT   fcs/pitch-trim-sum\n");
 print("      MIN     -0.350\n");
-print("      MAX      0.175\n");
+print("      MAX      0.300\n");
 print("      OUTPUT  fcs/elevator-pos-rad\n");
 print("   </COMPONENT>\n");
 
