@@ -80,17 +80,20 @@ private:
   float Tolerance, A_Tolerance;
   float alphaMin, alphaMax;
   float wdot,udot,qdot;
+  float dth;
   float udot_subits, wdot_subits, qdot_subits;
-  int total_its, trimudot;
+  int total_its;
+  bool trimudot;
+  int axis_count;
 
   trimfp udotf,wdotf,qdotf;
   FGFDMExec* fdmex;
   FGInitialCondition* fgic;
 
   void setThrottlesPct(float tt);
-  bool checkLimits(trimfp fp,float current,float min, float max);
+  int checkLimits(trimfp fp,float current,float min, float max);
   // returns false if no sign change in fp(min)*fp(max) => no solution
-  bool solve(trimfp fp,float guess,float desired,float *result,float eps,int max_iterations,int *actual_its );
+  bool solve(trimfp fp,float guess,float desired,float *result,float eps,float min, float max,int max_iterations,int *actual_its );
   bool findInterval(trimfp fp, float *lo, float *hi,float guess,float desired,int max_iterations);
 
   float udot_func(float x);
@@ -104,11 +107,13 @@ public:
   bool DoTrim(void);
 
   void Report(void);
+  void ReportState(void);
   void TrimStats();
 
   inline void SetUdotTrim(bool bb) {
-    trimudot=false;
+    trimudot=bb;
   }
+
   inline bool GetUdotTrim(void) {
     return trimudot;
   }
