@@ -26,8 +26,8 @@
      TABLE(2)      augmented thrust multiplier vs. altitude and mach
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
-  MAXMILTHRUST 43500
-  MAXAUGTHRUST 43500
+  MILTHRUST    43500
+  MAXTHRUST    43500
   BYPASSRATIO  5.9
   TSFC         0.657
   ATSFC        0.0
@@ -36,7 +36,8 @@
   MAXN1        100.0
   MAXN2        100.0
   AUGMENTED    0
-  INJECTED     0
+  AUGMETHOD    1
+  INJECTED     1
 
 
   <TABLE NAME="IdleThrust" TYPE="TABLE">
