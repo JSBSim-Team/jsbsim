@@ -87,7 +87,6 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
 {
   FDMExec = fdex;
 
-  adot = bdot = 0.0;
   a = 1000.0;
   sim_time = 0.0;
   dt = 1.0/120.0;
@@ -144,11 +143,11 @@ float FGState::GetParameter(eParam val_idx) {
   case FG_ALPHA:
     return FDMExec->GetTranslation()->Getalpha();
   case FG_ALPHADOT:
-    return Getadot();
+    return FDMExec->GetTranslation()->Getadot();
   case FG_BETA:
     return FDMExec->GetTranslation()->Getbeta();
   case FG_BETADOT:
-    return Getbdot();
+    return FDMExec->GetTranslation()->Getbdot();
   case FG_PITCHRATE:
     return (FDMExec->GetRotation()->GetPQR())(2);
   case FG_ROLLRATE:

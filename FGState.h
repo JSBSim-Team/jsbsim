@@ -81,9 +81,6 @@ public:
   void Initialize(FGInitialCondition *FGIC);
   bool StoreData(string);
 
-  inline float Getadot(void) { return adot; }
-  inline float Getbdot(void) { return bdot; }
-
   inline float Geta(void) { return a; }
 
   inline float Getsim_time(void) { return sim_time; }
@@ -96,8 +93,6 @@ public:
   float GetParameter(string val_string);
   eParam GetParameterIndex(string val_string);
 
-  inline void Setadot(float tt) { adot = tt; }
-  inline void Setbdot(float tt) { bdot = tt; }
 
   inline void Seta(float tt) { a = tt; }
 
@@ -125,7 +120,6 @@ public:
 
 private:
 
-  float adot, bdot;                 // alpha dot and beta dot
   float a;                          // speed of sound
   float sim_time, dt;
   float saved_dt;
