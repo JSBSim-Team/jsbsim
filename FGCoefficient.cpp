@@ -110,26 +110,29 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       }
     }
 
+    // Here, read in the line of the form (e.g.) FG_MACH|FG_QBAR|FG_ALPHA
+    // where each non-dimensionalizing parameter for this coefficient is
+    // separated by a | character
+
     *AC_cfg >> multparms;
 
     end   = multparms.length();
     n     = multparms.find("|");
-    start = 0;
-    multipliers = 0;
-    mult_count = 0;
-    if (multparms.substr(0,1) == "F") {
-      while(n < end && n >= 0) {
-        n -= start;
-        multipliers += State->GetParameterIndex(multparms.substr(start,n));
-        mult_count++;
-        start += n+1;
-        n = multparms.find("|",start);
-      }
-      multipliers += State->GetParameterIndex(multparms.substr(start,end));
-    } else {
-      multipliers = atoi(multparms.c_str());
-      mult_count = 1;
+    start = mult_count = multipliers = 0;
+
+    while(n < end && n >= 0) {
+      n -= start;
+      mult_idx[mult_count] = State->GetParameterIndex(multparms.substr(start,n));
+      multipliers += mult_idx[mult_count];
+      mult_count++;
+      start += n+1;
+      n = multparms.find("|",start);
     }
+    mult_idx[mult_count] = State->GetParameterIndex(multparms.substr(start,n));
+    multipliers += mult_idx[mult_count];
+    mult_count++;
+
+    // End of non-dimensionalizing parameter read-in
 
     switch(type) {
     case VALUE:

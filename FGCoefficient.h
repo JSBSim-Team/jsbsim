@@ -143,10 +143,10 @@ private:
   float *Table2D;
   float **Table3D;
   float LookupR, LookupC;
+  long int multipliers;
   long int mult_idx[10];
   int rows, columns;
   Type type;
-  long int multipliers;
   int mult_count;
   float SD; // Actual stability derivative (or other coefficient) value
 

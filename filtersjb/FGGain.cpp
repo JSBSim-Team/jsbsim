@@ -141,8 +141,6 @@ bool FGGain::Run(void )
     else Output = Input * (-Min);
   }
 
-  cout << Type << " " << Name << " Output: " << Output << endl;
-
   return true;
 }
 

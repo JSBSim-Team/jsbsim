@@ -75,11 +75,9 @@ bool FGFCSComponent::Run(void)
   switch(InputType) {
   case itPilotAC:
     Input = fcs->GetState()->GetParameter(InputIdx);
-    cout << " Input Pilot/AC Value: " << Input << endl;
     break;
   case itFCS:
     Input = fcs->GetComponentOutput(InputIdx);
-    cout << "Input: " << fcs->GetComponentName(InputIdx) << " Value: " << Input << endl;
     break;
   case itAP:
     // implement autopilot input mechanism

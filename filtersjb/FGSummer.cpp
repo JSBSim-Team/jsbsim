@@ -84,7 +84,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
     } else if (token == "OUTPUT") {
       IsOutput = true;
       *AC_cfg >> sOutputIdx;
-      OutputIdx = fcs->GetState()->GetParameter(sOutputIdx);
+      OutputIdx = fcs->GetState()->GetParameterIndex(sOutputIdx);
     }
   }
 }
@@ -100,25 +100,21 @@ bool FGSummer::Run(void )
   unsigned int idx;
 
   // The Summer takes several inputs, so do not call the base class Run()
-  // FGFCSComponent::Run(); // call the base class for initialization of Input
+  // FGFCSComponent::Run(); 
 
   Output = 0.0;
   for (idx=0; idx<InputIndices.size(); idx++) {
     switch (InputTypes[idx]) {
     case itPilotAC:
       Output += fcs->GetState()->GetParameter(InputIndices[idx]);
-      cout << "Input Value (Pilot/AC Value): " << fcs->GetState()->GetParameter(InputIndices[idx]) << endl;
       break;
     case itFCS:
       Output += fcs->GetComponentOutput(InputIndices[idx]);
-      cout << "Input Value: " << fcs->GetComponentName(InputIndices[idx]) << " " << fcs->GetComponentOutput(InputIndices[idx]) << endl;
       break;
     }
   }
 
   if (IsOutput) SetOutput();
-  
-  cout << Type << " " << Name << " Output: " << Output << endl;
 
   return true;
 }
