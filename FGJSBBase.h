@@ -73,7 +73,10 @@ using std::queue;
 
 
 #ifndef max
-#  define max(x, y)    (((x) < (y)) ? (y) : (x))
+template <class T>
+inline const T& max(const T& a, const T& b) {
+  return  a < b ? b : a;
+}
 #endif
 
 
@@ -92,7 +95,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.32 2003/02/20 22:17:51 ehofman Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.33 2003/03/16 17:52:02 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +112,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.32 2003/02/20 22:17:51 ehofman Exp $
+    @version $Id: FGJSBBase.h,v 1.33 2003/03/16 17:52:02 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
