@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172r.xml,v 1.8 2004/10/14 01:04:24 jberndt Exp $
+  CVS Version: $Id: c172r.xml,v 1.9 2004/10/14 01:17:47 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -667,7 +667,7 @@ Standard empty weight 1,620 lbs.
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
     RATE_IN_HZ      5
     SIMULATION       OFF
     ATMOSPHERE       ON

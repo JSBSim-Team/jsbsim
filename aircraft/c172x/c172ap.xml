@@ -197,7 +197,7 @@ PITCH CHANNEL
 
 <COMPONENT NAME="Integral" TYPE="INTEGRATOR">
   INPUT          fcs/ap-alt-hold-switch
-  C1             0.0041
+  C1             0.00000001
 </COMPONENT>
 
 <COMPONENT NAME="Proportional" TYPE="PURE_GAIN">
