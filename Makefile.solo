@@ -499,7 +499,7 @@ clean:
 all:
 	touch *.cpp
 	cd filtersjb; make all -fMakefile.solo; cd ..
-	cd simgear/misc; make all -fMakefile.solo; cd ..
+	cd simgear/misc; rm libProperties.a; make all -fMakefile.solo; cd ..
 	make JSBSim -fMakefile.solo
 
 debug:

@@ -76,7 +76,7 @@ INCLUDES
 #include "FGColumnVector3.h"
 #include "FGColumnVector4.h"
 
-#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.37 2002/03/18 12:12:47 apeden Exp $"
+#define ID_TRANSLATION "$Id: FGTranslation.h,v 1.38 2002/03/20 14:27:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -91,8 +91,8 @@ public:
   inline FGColumnVector3& GetUVW   (void)    { return vUVW; }
   inline FGColumnVector3& GetUVWdot(void)    { return vUVWdot; }
   inline double           GetUVWdot(int idx) const { return vUVWdot(idx); }
-  inline FGColumnVector3& GetvAeroUVW (void)    { return vAeroUVW; }
-  inline double           GetvAeroUVW (int idx) const { return vAeroUVW(idx); }
+  inline FGColumnVector3& GetAeroUVW (void)    { return vAeroUVW; }
+  inline double           GetAeroUVW (int idx) const { return vAeroUVW(idx); }
 
   double Getalpha(void) const { return alpha; }
   double Getbeta (void) const { return beta; }
@@ -104,6 +104,7 @@ public:
   double Getbdot (void) const { return bdot; }
 
   void SetUVW(FGColumnVector3 tt) { vUVW = tt; }
+  void SetAeroUVW(FGColumnVector3 tt) { vAeroUVW = tt; }
 
   inline void Setalpha(double tt) { alpha = tt; }
   inline void Setbeta (double tt) { beta  = tt; }

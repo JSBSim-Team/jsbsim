@@ -73,7 +73,7 @@ INCLUDES
 #include "FGInitialCondition.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.82 2002/03/18 12:12:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.83 2002/03/20 14:27:09 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +81,7 @@ GLOBAL DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 unsigned int FGFDMExec::FDMctr = 0;
+FGPropertyManager* FGFDMExec::master=0;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -112,6 +113,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   terminate = false;
   frozen = false;
   modelLoaded = false;
+  IsSlave = false;
 
   IdFDM = FDMctr;
   FDMctr++;
@@ -124,11 +126,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
     debug_lvl = 1;
   }
 
+  if (root == 0)  master= new FGPropertyManager;
+  else            master = root;
 
-  if(root == 0) 
-    master= new FGPropertyManager;
-  else
-    master = root;  
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
   instance->SetDouble("zero",0);  
   
@@ -154,6 +154,9 @@ FGFDMExec::~FGFDMExec()
     cout << "Caught error: " << msg << endl;
   }    
 
+  for (int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
+  SlaveFDMList.clear();
+ 
   Debug(1);
 }
 
@@ -329,6 +332,11 @@ bool FGFDMExec::Run(void)
 
   Debug(2);
 
+  for (int i=0; i<SlaveFDMList.size(); i++) {
+    // TransferState(i);
+    // Run(i)
+  }
+
   while (!model_iterator->Run()) {
     model_iterator = model_iterator->NextModel;
     if (model_iterator == 0L) break;
@@ -349,6 +357,31 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
   Run();
   State->Resume();
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::TransferState(int idxFDM)
+{
+  SlaveFDMList[idxFDM]->exec->GetRotation()->SetEuler(Rotation->GetEuler());
+  SlaveFDMList[idxFDM]->exec->GetRotation()->SetAeroPQR(Rotation->GetAeroPQR());
+  SlaveFDMList[idxFDM]->exec->GetTranslation()->SetAeroUVW(Translation->GetAeroUVW());
+  SlaveFDMList[idxFDM]->exec->GetRotation()->SetEuler(Rotation->GetEuler());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+vector <string> FGFDMExec::EnumerateFDMs(void)
+{
+  vector <string> FDMList;
+
+  FDMList.push_back(Aircraft->GetAircraftName());
+
+  for (int i=1; i<SlaveFDMList.size(); i++) {
+    FDMList.push_back(SlaveFDMList[i]->exec->GetAircraft()->GetAircraftName());
+  }
+
+  return FDMList;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -383,6 +416,10 @@ bool FGFDMExec::LoadModel(string APath, string EPath, string model)
     if (token == "METRICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Metrics" << fgdef << endl;
       if (!ReadMetrics(&AC_cfg)) result = false;
+    } else if (token == "SLAVE") {
+      if (debug_lvl > 0) cout << fgcyan << "\n  Reading Slave flight vehicle: " << fgdef
+                                        << AC_cfg.GetValue("NAME") << endl;
+      if (!ReadSlave(&AC_cfg)) result = false;
     } else if (token == "AERODYNAMICS") {
       if (debug_lvl > 0) cout << fgcyan << "\n  Reading Aerodynamics" << fgdef << endl;
       if (!ReadAerodynamics(&AC_cfg)) result = false;
@@ -420,7 +457,7 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
   string token = AC_cfg->GetValue();
   string scratch;
   string AircraftName;
-  
+
   AircraftName = AC_cfg->GetValue("NAME");
   Aircraft->SetAircraftName(AircraftName);
 
@@ -432,7 +469,7 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
 
   if (debug_lvl > 0)
     cout << "                            Version: " << highint << CFGVersion
-                                                             << normint << endl;
+                                                    << normint << endl;
   if (CFGVersion != needed_cfg_version) {
     cerr << endl << fgred << "YOU HAVE AN INCOMPATIBLE CFG FILE FOR THIS AIRCRAFT."
             " RESULTS WILL BE UNPREDICTABLE !!" << endl;
@@ -440,6 +477,34 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
     cerr << "         You have version: " << CFGVersion << endl << fgdef << endl;
     return false;
   }
+
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::ReadSlave(FGConfigFile* AC_cfg)
+{
+  // Add a new slaveData object to the slave FDM list
+  // Populate that slaveData element with a new FDMExec object
+  // Set the IsSlave flag for that FDMExec object
+  // Get the aircraft name
+  // set debug level to print out no additional data for slave objects
+  // Load the model given the aircraft name
+  // reset debug level to prior setting
+
+  int saved_debug_lvl = debug_lvl;
+
+  SlaveFDMList.push_back(new slaveData);
+  SlaveFDMList.back()->exec = new FGFDMExec();
+  SlaveFDMList.back()->exec->SetSlave();
+
+  string AircraftName = AC_cfg->GetValue("FILE");
+
+  debug_lvl = 0;
+  SlaveFDMList.back()->exec->LoadModel("aircraft", "engine", AircraftName);
+  debug_lvl = saved_debug_lvl;
+
   return true;
 }
 

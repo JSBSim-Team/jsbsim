@@ -70,7 +70,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGPropertyManager.h"
 
-static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.43 2002/03/18 12:12:47 apeden Exp $";
+static const char *IdSrc = "$Id: FGTranslation.cpp,v 1.44 2002/03/20 14:27:09 jberndt Exp $";
 static const char *IdHdr = ID_TRANSLATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,11 +245,11 @@ void FGTranslation::bind(void){
   PropertyManager->Tie("accelerations/wdot-fps", this,3,
                        &FGTranslation::GetUVWdot);
   PropertyManager->Tie("velocities/u-aero-fps", this,1,
-                       &FGTranslation::GetvAeroUVW);
+                       &FGTranslation::GetAeroUVW);
   PropertyManager->Tie("velocities/v-aero-fps", this,2,
-                       &FGTranslation::GetvAeroUVW);
+                       &FGTranslation::GetAeroUVW);
   PropertyManager->Tie("velocities/w-aero-fps", this,3,
-                       &FGTranslation::GetvAeroUVW);
+                       &FGTranslation::GetAeroUVW);
   PropertyManager->Tie("aero/alpha-rad", this,
                        &FGTranslation::Getalpha,
                        &FGTranslation::Setalpha,

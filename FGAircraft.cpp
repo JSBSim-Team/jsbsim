@@ -92,7 +92,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.112 2002/03/18 12:12:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.113 2002/03/20 14:27:08 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,6 @@ CLASS IMPLEMENTATION
 
 FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 {
-  
   Name = "FGAircraft";
   alphaclmin = alphaclmax = 0;
   HTailArea = VTailArea = HTailArm = VTailArm = 0.0;
@@ -276,51 +275,9 @@ bool FGAircraft::Load(FGConfigFile* AC_cfg)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//    The bitmasked value choices are as follows:
-//    unset: In this case (the default) JSBSim would only print
-//       out the normally expected messages, essentially echoing
-//       the config files as they are read. If the environment
-//       variable is not set, debug_lvl is set to 1 internally
-//    0: This requests JSBSim not to output any messages
-//       whatsoever.
-//    1: This value explicity requests the normal JSBSim
-//       startup messages
-//    2: This value asks for a message to be printed out when
-//       a class is instantiated
-//    4: When this value is set, a message is displayed when a
-//       FGModel object executes its Run() method
-//    8: When this value is set, various runtime state variables
-//       are printed out periodically
-//    16: When set various parameters are sanity checked and
-//       a message is printed out when they go out of bounds
 
-void FGAircraft::Debug(int from)
+void FGAircraft::bind(void)
 {
-  if (debug_lvl <= 0) return;
-
-  if (debug_lvl & 1) { // Standard console startup message output
-    if (from == 0) { // Constructor
-    }
-  }
-  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGAircraft" << endl;
-    if (from == 1) cout << "Destroyed:    FGAircraft" << endl;
-  }
-  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
-  }
-  if (debug_lvl & 8 ) { // Runtime state variables
-  }
-  if (debug_lvl & 16) { // Sanity checking
-  }
-  if (debug_lvl & 64) {
-    if (from == 0) { // Constructor
-      cout << IdSrc << endl;
-      cout << IdHdr << endl;
-    }
-  }
-}
-
-void FGAircraft::bind(void){
   PropertyManager->Tie("metrics/Sw-sqft", this,
                        &FGAircraft::GetWingArea);
   PropertyManager->Tie("metrics/bw-ft", this,
@@ -387,7 +344,10 @@ void FGAircraft::bind(void){
                         &FGAircraft::GetStallWarn);
 }
 
-void FGAircraft::unbind(void){
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAircraft::unbind(void)
+{
   PropertyManager->Untie("metrics/Sw-sqft");
   PropertyManager->Untie("metrics/bw-ft");
   PropertyManager->Untie("metrics/cbarw-ft");
@@ -419,3 +379,49 @@ void FGAircraft::unbind(void){
   PropertyManager->Untie("aero/alpha-wing-rad");
   PropertyManager->Untie("systems/stall-warn-norm");
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
+
+void FGAircraft::Debug(int from)
+{
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
+    if (from == 0) { // Constructor
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGAircraft" << endl;
+    if (from == 1) cout << "Destroyed:    FGAircraft" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
+}
+

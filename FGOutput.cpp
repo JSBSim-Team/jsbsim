@@ -52,7 +52,7 @@ INCLUDES
 #include "FGPosition.h"
 #include "FGAuxiliary.h"
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.55 2002/02/27 14:36:12 apeden Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.56 2002/03/20 14:27:09 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,7 +245,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Translation->Getqbar() << ", ";
     outstream << Translation->GetVt() << ", ";
     outstream << Translation->GetUVW() << ", ";
-    outstream << Translation->GetvAeroUVW() << ", ";
+    outstream << Translation->GetAeroUVW() << ", ";
     outstream << Position->GetVel();
   }
   if (SubSystems & ssForces) {
@@ -367,9 +367,9 @@ void FGOutput::SocketOutput(void)
   socket->Append(Translation->GetUVW(eU));
   socket->Append(Translation->GetUVW(eV));
   socket->Append(Translation->GetUVW(eW));
-  socket->Append(Translation->GetvAeroUVW(eU));
-  socket->Append(Translation->GetvAeroUVW(eV));
-  socket->Append(Translation->GetvAeroUVW(eW));
+  socket->Append(Translation->GetAeroUVW(eU));
+  socket->Append(Translation->GetAeroUVW(eV));
+  socket->Append(Translation->GetAeroUVW(eW));
   socket->Append(Position->GetVn());
   socket->Append(Position->GetVe());
   socket->Append(Position->GetVd());

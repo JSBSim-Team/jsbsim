@@ -3,10 +3,20 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.37 2001/12/16 22:14:04 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.38 2002/03/20 14:27:09 jberndt Exp $
 
   Function: Models an X-15
   -->
+
+  <!-- MODE can be MATED or DETACHED -->
+  <SLAVE NAME="MK-82 (Drop tank #1 stand-in)" FILE="mk82" MODE="MATED">
+    XLOC 600.0
+    YLOC   0.0
+    ZLOC -40.0
+    PITCH  0.0
+    YAW    0.0
+    ROLL   0.0
+  </SLAVE>
 
   <METRICS>
 
@@ -681,7 +691,7 @@
     NOTE that Time is always output with the data.
   -->
 
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
+  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
     RATE_IN_HZ       20
     SIMULATION       ON
     ATMOSPHERE       OFF
