@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.28 2004/01/12 00:48:06 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.29 2004/01/13 14:30:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,25 +57,122 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates a filter for the flight control system.
-    Filters are modeled using the Tustin Substitution method. These types of
-    filters can currently be modeled:
-    
-    - Lag
-    - Lead-Lag
-    - Washout
-    - Integrator
-    - Second order
+The filter component can simulate any filter up to second order. The
+Tustin substitution is used to take filter definitions from LaPlace space to the
+time domain. The general format for a filter specification is:
 
-    The filter is specified in the config file like this:
-    <pre>
-    \<COMPONENT NAME="{name}" TYPE="{LAG_FILTER}"\><BR>
-      INPUT        15<BR>
-      C1           600<BR>
-      OUTPUT       fcs/elevator-pos-rad<BR>
-    \</COMPONENT\>
-    </pre>
+<pre>
+\<COMPONENT NAME="name" TYPE="type">
+  INPUT \<property>
+  C1  \<value>
+  [C2 \<value>]
+  [C3 \<value>]
+  [C4 \<value>]
+  [C5 \<value>]
+  [C6 \<value>]
+  [OUTPUT \<property>]
+\</COMPONENT>
+</pre>
+
+For a lag filter of the form,
+<pre>
+  C1
+------
+s + C1 
+</pre>
+the corresponding filter definition is:
+<pre>
+\<COMPONENT NAME="name" TYPE="LAG_FILTER">
+  INPUT \<property>
+  C1 \<value>
+  [OUTPUT \<property>]
+\</COMPONENT>
+</pre>
+As an example, for the specific filter:
+<pre>
+  600
+------
+s + 600 
+</pre>
+the corresponding filter definition could be:
+<pre>
+\<COMPONENT NAME="LAG_1" TYPE="LAG_FILTER">
+  INPUT aileron_cmd
+  C1 600
+\</COMPONENT>
+</pre>
+For a lead-lag filter of the form:
+<pre>
+C1*s + C2
+---------
+C3*s + C4 
+</pre>
+The corresponding filter definition is:
+<pre>
+\<COMPONENT NAME="name" TYPE="LEAD_LAG_FILTER">
+  INPUT \<property>
+  C1 \<value>
+  C2 \<value>
+  C3 \<value>
+  C4 \<value>
+  [OUTPUT \<property>]
+\</COMPONENT>
+</pre>
+For a washout filter of the form:
+<pre>
+  s
+------
+s + C1 
+</pre>
+The corresponding filter definition is:
+<pre>
+\<COMPONENT NAME="name" TYPE="WASHOUT_FILTER">
+  INPUT \<property>
+  C1 \<value>
+  [OUTPUT \<property>]
+\</COMPONENT>
+</pre>
+For a second order filter of the form:
+<pre>
+C1*s^2 + C2*s + C3
+------------------
+C4*s^2 + C5*s + C6
+</pre>
+The corresponding filter definition is:
+<pre>
+\<COMPONENT NAME="name" TYPE="SECOND_ORDER_FILTER">
+  INPUT \<property>
+  C1 \<value>
+  C2 \<value>
+  C3 \<value>
+  C4 \<value>
+  C5 \<value>
+  C6 \<value>
+  [OUTPUT \<property>]
+\</COMPONENT>
+</pre>
+For an integrator of the form:
+<pre>
+ C1
+ ---
+  s
+</pre>
+The corresponding filter definition is:
+<pre>
+\<COMPONENT NAME="name" TYPE="INTEGRATOR">
+  INPUT \<property>
+  C1 \<value>
+  [OUTPUT \<property>]
+  [TRIGGER \<property>]
+\</COMPONENT>
+</pre>
+For the integrator, the TRIGGER features the following behavior, if the TRIGGER property value is:
+  - -1 (or simply less than zero), all previous inputs and outputs are set to 0.0
+  - 0, no action is taken - the output is calculated normally
+  - +1 (or simply greater than zero), all previous outputs (only) will be set to 0.0
+  
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.28 2004/01/12 00:48:06 jberndt Exp $
+    @version $Id: FGFilter.h,v 1.29 2004/01/13 14:30:07 jberndt Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
