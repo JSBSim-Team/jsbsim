@@ -247,6 +247,7 @@
       INPUT         3
       INPUT        10
       OUTPUT       FG_ELEVATOR_POS
+      CLIPTO       -0.26 0.61
     </COMPONENT>
 
     <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
@@ -254,6 +255,7 @@
       INPUT         6
       INPUT        13
       OUTPUT       FG_AILERON_POS
+      CLIPTO       -0.35 0.35
     </COMPONENT>
 
     <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
@@ -261,6 +263,7 @@
       INPUT         9
       INPUT        14
       OUTPUT       FG_RUDDER_POS
+      CLIPTO       -0.52 0.52
     </COMPONENT>
 
   </FLIGHT_CONTROL>
@@ -577,7 +580,7 @@
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     OFF
+    COEFFICIENTS     ON
     GROUND_REACTIONS ON
     FCS              ON
   </OUTPUT>
