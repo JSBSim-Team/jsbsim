@@ -150,8 +150,10 @@ void FGTranslation::GetState(void)
   Mass = Aircraft->GetMass();
   rho = Atmosphere->GetDensity();
 
-  vEuler = Rotation->GetEuler();
 
-//  vWindUVW = Atmosphere->GetWindUVW();
+    vEuler = Rotation->GetEuler();
+   
+    vWindUVW = Atmosphere->GetWindUVW();
+
 }
 

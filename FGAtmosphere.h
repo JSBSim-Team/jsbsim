@@ -43,7 +43,7 @@ INCLUDES
 *******************************************************************************/
 
 #include "FGModel.h"
-
+#include "FGMatrix.h"
 /*******************************************************************************
 COMMENTS, REFERENCES,  and NOTES
 ********************************************************************************
@@ -76,9 +76,9 @@ public:
   inline float GetPressureSL(void)    { return SLpressure; }     //lbs/ft^2
   inline float GetSoundSpeedSL(void)  { return SLsoundspeed; }   //ft/s
   
-  inline float GetPressureRatio(void)     { return temperature/SLtemperature; }
+  inline float GetTemperatureRatio(void)  { return temperature/SLtemperature; }
   inline float GetDensityRatio(void) 	  { return density/SLdensity; }
-  inline float GetTemperatureRatio(void)  { return pressure/SLpressure; }
+  inline float GetPressureRatio(void)     { return pressure/SLpressure; }
   inline float GetSoundSpeedRatio(void)   { return soundspeed/SLsoundspeed; }
   
   inline void UseExternal(void)          { useExternal=true;  }
@@ -87,6 +87,14 @@ public:
   inline void SetExTemperature(float t)  { exTemperature=t; }
   inline void SetExDensity(float d)      { exDensity=d; }
   inline void SetExPressure(float p)     { exPressure=p; }
+  
+  inline void SetWindNED(float wN, float wE, float wD) { vWindNED(1)=wN; vWindNED(2)=wE; vWindNED(3)=wD;}
+  
+  inline float GetWindN(void) { return vWindNED(1); }
+  inline float GetWindE(void) { return vWindNED(2); }
+  inline float GetWindD(void) { return vWindNED(3); }
+  
+  inline FGColumnVector GetWindUVW(void) { return vWindUVW; }
 
 protected:
 
@@ -98,10 +106,13 @@ private:
   float temperature,density,pressure,soundspeed;
   bool useExternal;
   float exTemperature,exDensity,exPressure;
+  FGColumnVector vWindNED,vWindUVW;
+  
   void Calculate(float altitude);
-
-
+  
 };
+
+	
 
 /******************************************************************************/
 #endif
