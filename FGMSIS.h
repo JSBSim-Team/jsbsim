@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MSIS "$Id: FGMSIS.h,v 1.1 2003/12/17 12:27:07 jberndt Exp $"
+#define ID_MSIS "$Id: FGMSIS.h,v 1.2 2003/12/17 12:37:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,7 +72,7 @@ CLASS DOCUMENTATION
     and check http://www.brodo.de/english/pub/nrlmsise/index.html for
     updated releases of this package.
     @author David Culp
-    @version $Id: FGMSIS.h,v 1.1 2003/12/17 12:27:07 jberndt Exp $
+    @version $Id: FGMSIS.h,v 1.2 2003/12/17 12:37:44 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
