@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.27 2004/10/22 23:46:20 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.28 2004/11/20 13:04:48 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -145,13 +145,13 @@ Standard empty weight 1,620 lbs.
     AC_IZZ    1967
     AC_IXZ    0
     AC_EMPTYWT   1620
-    AC_AERORP    43.2  0.0 59.4
-    AC_CGLOC     41.0  0.0 36.5
+    AC_AERORP    40.6  0.0 59.4
+    AC_CGLOC     39.0  0.0 36.5
 <!-- Pilot -->
     AC_POINTMASS 180.0 36.0 -14.0 24.0
 <!-- Co-pilot -->
     AC_POINTMASS 180.0 36.0  14.0 24.0
-    AC_POINTMASS 120.0 36.0  0.0 24.0 <!-- luggage -->
+    AC_POINTMASS 120.0 95.0  0.0 24.0 <!-- luggage -->
     AC_EYEPTLOC  37.0  0.0 48.0
     AC_VRP       42.6  0.0 38.5
 
@@ -230,7 +230,7 @@ Standard empty weight 1,620 lbs.
     </AC_ENGINE>
 
     <AC_TANK TYPE="FUEL" NUMBER="0">
-      XLOC   56.0
+      XLOC   48.0
       YLOC -112.0
       ZLOC   59.4
       RADIUS 29.4
@@ -239,7 +239,7 @@ Standard empty weight 1,620 lbs.
     </AC_TANK>
 
     <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC   56.0
+      XLOC   48.0
       YLOC  112.0
       ZLOC   59.4
       RADIUS 29.4
