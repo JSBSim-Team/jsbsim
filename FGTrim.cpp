@@ -58,7 +58,7 @@ INCLUDES
 #pragma warning (disable : 4786 4788)
 #endif
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.36 2002/09/07 21:59:13 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.37 2002/09/15 01:22:43 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt) {
   xlo=xhi=alo=ahi=0.0;
   targetNlf=1.0;
   debug_axis=tAll;
-  SetMode(tGround);
+  SetMode(tt);
   if (debug_lvl & 2) cout << "Instantiated: FGTrim" << endl;
 }
 
@@ -614,7 +614,7 @@ void FGTrim::setDebug(void) {
 
 void FGTrim::SetMode(TrimMode tt) {
     ClearStates();
-    switch(mode) {
+    switch(tt) {
       case tFull:
         cout << "  Full Trim" << endl;
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
