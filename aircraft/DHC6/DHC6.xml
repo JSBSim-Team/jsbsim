@@ -319,20 +319,20 @@
   <AXIS NAME="ROLL">
     <!-- AIAA -->
     <COEFFICIENT NAME="Clb" TYPE="TABLE">
-       Roll_moment_due_to_alpha_and_beta
+       Roll_moment_due_to_beta
        9 4
        aero/beta-rad
        aero/alpha-rad
        aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft
                 0.0698	0.1745	0.2443	0.3491
       -0.3491    0.125   0.045   0.024  -0.027
-      -0.2618    0.900   0.022   0.003  -0.015
-      -0.1745    0.770   0.200  -0.010   0.000
-      -0.0873    0.360   0.027  -0.022  -0.008
-      0.0000     0.000  -0.100   0.200  -0.006
-      0.0873    -0.360  -0.017   0.200  -0.010
-      0.1745    -0.770  -0.100   0.005  -0.010
-      0.2618    -0.900  -0.025  -0.018   0.000
+      -0.2618    0.090   0.022   0.003  -0.015
+      -0.1745    0.077   0.020  -0.010   0.000
+      -0.0873    0.036   0.027  -0.022  -0.008
+      0.0000     0.000  -0.010   0.020  -0.006
+      0.0873    -0.036  -0.017   0.020  -0.010
+      0.1745    -0.077  -0.010   0.005  -0.010
+      0.2618    -0.090  -0.025  -0.018   0.000
       0.3491    -0.125  -0.045  -0.035   0.020
     </COEFFICIENT>
     <!-- UIUC -->
@@ -365,11 +365,14 @@
   </AXIS>
   <AXIS NAME="PITCH">
     <!-- UIUC -->
+<!-- I'm not sure about this one, EMH
     <COEFFICIENT NAME="Cmo" TYPE="VALUE">
        Pitching_moment_at_zero_alpha
        aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft
-       0.040
+       -0.040
     </COEFFICIENT>
+-->
+    <!-- AIAA -->
     <COEFFICIENT NAME="Cmalpha" TYPE="TABLE3D">
        Pitch_moment_due_to_alpha_and_elevator_and_flaps
        22 5 3
