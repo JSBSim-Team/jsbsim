@@ -105,7 +105,15 @@ enum eParam {
   FG_LEFT_BRAKE_CMD,
   FG_CENTER_BRAKE_CMD,
   FG_RIGHT_BRAKE_CMD,
-  FG_SET_LOGGING
+  FG_SET_LOGGING,
+  FG_ALPHAH,
+  FG_ALPHAW,
+  FG_LBARH,     //normalized horizontal tail arm
+  FG_LBARV,     //normalized vertical tail arm
+  FG_HTAILAREA,
+  FG_VTAILAREA,
+  FG_VBARH,    //horizontal tail volume 
+  FG_VBARV     //vertical tail volume 
 };
 
 enum eAction {
