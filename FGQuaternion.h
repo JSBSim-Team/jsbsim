@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.3 2004/04/12 12:23:49 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.4 2004/04/13 13:41:36 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -128,24 +128,26 @@ public:
 
   /** Retrieves the Euler angles.
       @return a reference to the triad of euler angles corresponding
-      to this quaternion rotation.  */
+      to this quaternion rotation.
+      @units radians  */
   const FGColumnVector3& GetEuler() const {
     ComputeDerived();
     return mEulerAngles;
   }
 
   /** Euler angle theta.
-      @return the euler angle theta (pitch attitude) in radians corresponding to this
-      quaternion rotation.  */
+      @return the euler angle theta (pitch attitude) corresponding to this
+      quaternion rotation.
+      @units radians  */
   double GetEulerTheta() const {
     ComputeDerived();
     return mEulerAngles(eTht);
   }
 
   /** Euler angle theta.
-   *  @return the euler angle theta (pitch attitude) in degrees corresponding to
-   *  this quaternion rotation.
-   */
+      @return the euler angle theta (pitch attitude) corresponding to
+      this quaternion rotation.
+      @units degrees  */
   double GetEulerThetaDeg() const {
     ComputeDerived();
     return radtodeg*mEulerAngles(eTht);
@@ -154,7 +156,7 @@ public:
   /** Euler angle psi.
       @return the heading euler angle (psi) corresponding to this quaternion
       rotation.
-      @units Radians  */
+      @units radians  */
   double GetEulerPsi() const {
     ComputeDerived();
     return mEulerAngles(ePsi);
@@ -162,7 +164,8 @@ public:
 
   /** Retrieves the heading angle.
       @return the Euler angle psi (heading) corresponding to this quaternion
-      rotation.  */
+      rotation.
+      @units degrees  */
   double GetEulerPsiDeg() const {
     ComputeDerived();
     return radtodeg*mEulerAngles(ePsi);
@@ -171,7 +174,7 @@ public:
   /** Retrieves the roll angle.
       @return the euler angle phi (roll) corresponding to this quaternion
       rotation.
-      @units Radians  */
+      @units radians  */
   double GetEulerPhi() const {
     ComputeDerived();
     return mEulerAngles(ePhi);
@@ -179,7 +182,7 @@ public:
 
   /** Retrieves the roll angle.
       Returns the Euler angle phi (roll) corresponding to this quaternion rotation.
-      @units Deg */
+      @units degrees  */
   double GetEulerPhiDeg() const {
     ComputeDerived();
     return radtodeg*mEulerAngles(ePhi);
@@ -194,7 +197,7 @@ public:
   }
 
   /** Retrieves sine psi.
-      @return the sine of the euler angle psi (heading) corresponding to this
+      @return the sine of the Euler angle psi (heading) corresponding to this
       quaternion rotation.  */
   double GetSinEulerPsi() const {
     ComputeDerived();
@@ -202,45 +205,42 @@ public:
   }
 
   /** Sine of euler angle phi.
-   *  Returns the sine of the euler angle phi corresponding to this
-   *  quaternion rotation.
-   */
+      @return the sine of the Euler angle phi (roll) corresponding to this
+      quaternion rotation.  */
   double GetSinEulerPhi() const {
     ComputeDerived();
     return mEulerSines(ePhi);
   }
 
   /** Cosine of euler angle theta.
-   *  Returns the cosine of the euler angle theta corresponding to this
-   *  quaternion rotation.
-   */
+      @return the cosine of the Euler angle theta (pitch) corresponding to this
+      quaternion rotation.  */
   double GetCosEulerTheta() const {
     ComputeDerived();
     return mEulerCosines(eTht);
   }
 
   /** Cosine of euler angle psi.
-   *  Returns the cosine of the euler angle psi corresponding to this
-   *  quaternion rotation.
-   */
+      @return the cosine of the Euler angle psi (heading) corresponding to this
+      quaternion rotation.  */
   double GetCosEulerPsi() const {
     ComputeDerived();
     return mEulerCosines(ePsi);
   }
 
   /** Cosine of euler angle phi.
-   *  Returns the cosine of the euler angle phi corresponding to this
-   *  quaternion rotation.
-   */
+      @return the cosine of the Euler angle phi (roll) corresponding to this
+      quaternion rotation.  */
   double GetCosEulerPhi() const {
     ComputeDerived();
     return mEulerCosines(ePhi);
   }
 
-  /** Assignment operator.
-   * Assign the value of q to the current object. Cached values are
-   * conserved.
-   */
+  /** Assignment operator "=".
+      Assign the value of q to the current object. Cached values are
+      conserved.
+      @param q reference to an FGQuaternion instance
+      @return reference to a quaternion object  */
   const FGQuaternion& operator=(const FGQuaternion& q) {
     // Copy the master values ...
     mQ0 = q.mQ0;
@@ -259,16 +259,16 @@ public:
     return *this;
   }
 
-  /** Comparison operator.
-   * Returns true if both quaternions represent the same rotation.
-   */
+  /** Comparison operator "==".
+      @param q a quaternion reference
+      @return true if both quaternions represent the same rotation.  */
   bool operator==(const FGQuaternion& q) const {
     return mQ0 == q.mQ0 && mQ1 == q.mQ1 && mQ2 == q.mQ2 && mQ3 == q.mQ3;
   }
 
-  /** Comparison operator.
-   * Returns true if both quaternions do not represent the same rotation.
-   */
+  /** Comparison operator "!=".
+      @param q a quaternion reference
+      @return true if both quaternions do not represent the same rotation.  */
   bool operator!=(const FGQuaternion& q) const { return ! operator==(q); }
   const FGQuaternion& operator+=(const FGQuaternion& q) {
     // Copy the master values ...
@@ -280,6 +280,9 @@ public:
     return *this;
   }
 
+  /** Arithmetic operator "-=".
+      @param q a quaternion reference.
+      @return a quaternion reference representing Q, where Q = Q - q. */
   const FGQuaternion& operator-=(const FGQuaternion& q) {
     // Copy the master values ...
     mQ0 -= q.mQ0;
@@ -290,6 +293,9 @@ public:
     return *this;
   }
 
+  /** Arithmetic operator "*=".
+      @param scalar a multiplicative value.
+      @return a quaternion reference representing Q, where Q = Q * scalar. */
   const FGQuaternion& operator*=(double scalar) {
     mQ0 *= scalar;
     mQ1 *= scalar;
@@ -299,22 +305,31 @@ public:
     return *this;
   }
 
+  /** Arithmetic operator "/=".
+      @param scalar a divisor value.
+      @return a quaternion reference representing Q, where Q = Q / scalar. */
   const FGQuaternion& operator/=(double scalar) {
     return operator*=(1.0/scalar);
   }
 
+  /** Arithmetic operator "+".
+      @param q a quaternion to be summed.
+      @return a quaternion representing Q, where Q = Q + q. */
   FGQuaternion operator+(const FGQuaternion& q) const {
     return FGQuaternion(mQ0+q.mQ0, mQ1+q.mQ1, mQ2+q.mQ2, mQ3+q.mQ3, false);
   }
 
+  /** Arithmetic operator "-".
+      @param q a quaternion to be subtracted.
+      @return a quaternion representing Q, where Q = Q - q. */
   FGQuaternion operator-(const FGQuaternion& q) const {
     return FGQuaternion(mQ0-q.mQ0, mQ1-q.mQ1, mQ2-q.mQ2, mQ3-q.mQ3, false);
   }
 
-  /** Multiplication of two quaternions.
-   * For quaternions there is a multiplication defined. Multiplication
-   * of two quaternions is like successive rotation.
-   */
+  /** Arithmetic operator "*".
+      Multiplication of two quaternions is like performing successive rotations.
+      @param q a quaternion to be multiplied.
+      @return a quaternion representing Q, where Q = Q * q. */
   FGQuaternion operator*(const FGQuaternion& q) const {
     return FGQuaternion(mQ0*q.mQ0-mQ1*q.mQ1-mQ2*q.mQ2-mQ3*q.mQ3,
                         mQ0*q.mQ1+mQ1*q.mQ0+mQ2*q.mQ3-mQ3*q.mQ2,
@@ -323,10 +338,10 @@ public:
                         false);
   }
 
-  /** Multiplication of two quaternions.
-   * For quaternions there is a multiplication defined. Multiplication
-   * of two quaternions is like successive rotation.
-   */
+  /** Arithmetic operator "*=".
+      Multiplication of two quaternions is like performing successive rotations.
+      @param q a quaternion to be multiplied.
+      @return a quaternion reference representing Q, where Q = Q * q. */
   const FGQuaternion& operator*=(const FGQuaternion& q) {
     double q0 = mQ0*q.mQ0-mQ1*q.mQ1-mQ2*q.mQ2-mQ3*q.mQ3;
     double q1 = mQ0*q.mQ1+mQ1*q.mQ0+mQ2*q.mQ3-mQ3*q.mQ2;
@@ -343,54 +358,46 @@ public:
   friend FGQuaternion operator*(double, const FGQuaternion&);
 
   /** Ties into the property tree.
-   * Ties the variables represented by this class into the property tree.
-   */
+      Ties the variables represented by this class into the property tree.  */
   void bind(FGPropertyManager*, const string&) const;
 
   /** Remove from property tree.
-   * Unties the variables represented by this class into the property tree.
-   */
+      Unties the variables represented by this class into the property tree.  */
   void unbind(FGPropertyManager*, const string&) const;
 
 private:
-  /** Copying by assigning the vector valued components.
-   */
+  /** Copying by assigning the vector valued components.  */
   FGQuaternion(double q0, double q1, double q2, double q3, bool valid)
     : mQ0(q0), mQ1(q1), mQ2(q2), mQ3(q3), mCacheValid(valid) {}
 
   /** Computation of derived values.
-   * This function checks if the derived values like euler angles and
-   * transformation matrices are already computed. If so, it
-   * returns. If they need to be computed this is done here.
-   */
+      This function checks if the derived values like euler angles and
+      transformation matrices are already computed. If so, it
+      returns. If they need to be computed this is done here.  */
   void ComputeDerived(void) const;
 
-  /** The quaternion values itself. This is the master copy.
-  *  The C++ keyword "mutable" tells the compiler that the data member is
-  *  allowed to change during a const member function.
-  */
+  /** The quaternion values themselves. These are the master copies.
+      The C++ keyword "mutable" tells the compiler that the data member is
+      allowed to change during a const member function.  */
   mutable double mQ0;
   mutable double mQ1;
   mutable double mQ2;
   mutable double mQ3;
 
   /** A data validity flag.
-   * This class implements caching of the derived values like the
-   * orthogonal rotation matrices or the Euler angles. For caching we
-   * carry a flag which signals if the values are valid or not.
-   */
+      This class implements caching of the derived values like the
+      orthogonal rotation matrices or the Euler angles. For caching we
+      carry a flag which signals if the values are valid or not.  */
   mutable bool mCacheValid;
 
-  /** This carries the transformation matrices.
-   */
+  /** This stores the transformation matrices.  */
   mutable FGMatrix33 mT;
   mutable FGMatrix33 mTInv;
 
-  /** The cached euler angles.
-   */
+  /** The cached euler angles.  */
   mutable FGColumnVector3 mEulerAngles;
-  /** The cached sines and cosines of the euler angles.
-   */
+
+  /** The cached sines and cosines of the euler angles.  */
   mutable FGColumnVector3 mEulerSines;
   mutable FGColumnVector3 mEulerCosines;
 };
