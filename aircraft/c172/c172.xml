@@ -3,7 +3,7 @@
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.112 2002/09/01 12:29:49 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.113 2002/09/07 22:11:53 apeden Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,
@@ -166,7 +166,6 @@
        ID            2
        INPUT         FG_AILERON_CMD
        INPUT         FG_ROLL_TRIM_CMD
-<!--       INPUT         AP_AILERON_CMD -->
        CLIPTO        -1 1
      </COMPONENT>
      <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
