@@ -23,7 +23,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.43 2003/01/22 15:53:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGConfigFile.cpp,v 1.44 2003/01/31 12:49:08 jberndt Exp $";
 static const char *IdHdr = ID_CONFIGFILE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,6 +223,12 @@ string FGConfigFile::GetLine(void)
       }
     }
   }
+
+  int index = scratch.find_last_not_of(" ");
+  if (index != string::npos && index < (scratch.size()-1)) {
+    scratch = scratch.substr(0,index+1);
+  }
+
   if (cfgfile.eof() && scratch.empty()) return string("EOF");
   return scratch;
 }
