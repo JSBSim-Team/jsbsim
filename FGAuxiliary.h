@@ -56,18 +56,10 @@ public:
   bool Run(void);
 
   //use FGInitialCondition to set these speeds
-  inline float GetVcalibratedFPS(void) {
-    return vcas;
-  }
-  inline float GetVcalibratedKTS(void) {
-    return vcas*FPSTOKTS;
-  }
-  inline float GetVequivalentFPS(void) {
-    return veas;
-  }
-  inline float GetVequivalentKTS(void) {
-    return veas*FPSTOKTS;
-  }
+  inline float GetVcalibratedFPS(void) { return vcas; }
+  inline float GetVcalibratedKTS(void) { return vcas*FPSTOKTS; }
+  inline float GetVequivalentFPS(void) { return veas; }
+  inline float GetVequivalentKTS(void) { return veas*FPSTOKTS; }
 
 
 
