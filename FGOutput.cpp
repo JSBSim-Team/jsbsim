@@ -412,7 +412,7 @@ void FGOutput::SocketOutput(void)
 {
   string asciiData;
   /*
-  if (socket <= 0) return;
+  if (socket == NULL) return;
 
   socket->Clear();
   if (sFirstPass) {
@@ -503,7 +503,7 @@ void FGOutput::SocketStatusOutput(string out_str)
 {
   string asciiData;
 
-  if (socket <= 0) return;
+  if (socket == NULL) return;
 
   socket->Clear();
   asciiData = string("<STATUS>") + out_str;

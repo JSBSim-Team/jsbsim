@@ -48,7 +48,7 @@ and the cg.
 #include "FGForce.h"
 
 
-FGForce::FGForce(FGFDMExec *FDMExec) : FGModel(FDMExec),
+FGForce::FGForce(FGFDMExec *FDMExec) :
     vFn(3),
     vMn(3),
     vFb(3),
@@ -103,7 +103,6 @@ FGMatrix FGForce::Transform(void) {
 }
 
 void FGForce::SetAnglesToBody(float broll, float bpitch, float byaw) {
-
 
   if(ttype == tCustom) {
     float cp,sp,cr,sr,cy,sy;

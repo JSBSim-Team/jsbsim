@@ -88,7 +88,10 @@ FGfdmSocket::FGfdmSocket(string address, int port)
 
 FGfdmSocket::~FGfdmSocket(void)
 {
+  #ifndef macintosh
   if (sckt) shutdown(sckt,2);
+  #endif
+  
   #ifdef __BORLANDC__
     WSACleanup();
   #endif

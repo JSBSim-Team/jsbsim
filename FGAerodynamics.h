@@ -1,8 +1,8 @@
 /*******************************************************************************
 
- Header:       FGFDMExec.h
- Author:       Jon Berndt
- Date started: 11/17/98
+ Header:       FGAerodynamics.h
+ Author:       Jon S. Berndt
+ Date started: 09/13/00
 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
 
@@ -25,82 +25,50 @@
 
 HISTORY
 --------------------------------------------------------------------------------
-11/17/98   JSB   Created
-7/31/99     TP   Added RunIC function that runs the sim so that every frame
-                 begins with the IC values from the given FGInitialCondition 
-	  	  	  	   object and dt=0. 
+09/13/00   JSB   Created
+
+********************************************************************************
+COMMENTS, REFERENCES,  and NOTES
+********************************************************************************
 
 ********************************************************************************
 SENTRY
 *******************************************************************************/
 
-#ifndef FGFDMEXEC_HEADER_H
-#define FGFDMEXEC_HEADER_H
+#ifndef FGAERODYNAMICS_H
+#define FGAERODYNAMICS_H
 
 /*******************************************************************************
 INCLUDES
 *******************************************************************************/
 
+#ifdef FGFS
+#  include <simgear/compiler.h>
+#  ifdef FG_HAVE_STD_INCLUDES
+#    include <vector>
+#  else
+#    include <vector.h>
+#  endif
+#else
+#  include <vector>
+#endif
+
 #include "FGModel.h"
-#include "FGInitialCondition.h"
 
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
-class FGState;
-class FGAtmosphere;
-class FGFCS;
-class FGAircraft;
-class FGTranslation;
-class FGRotation;
-class FGPosition;
-class FGAuxiliary;
-class FGOutput;
-class FGInitialCondition;
+class FGAerodynamics : public FGModel {
 
-class FGFDMExec
-{
 public:
-  FGFDMExec(void);
-  ~FGFDMExec(void);
+  FGAerodynamics(FGFDMExec*);
+  ~FGAerodynamics(void);
 
-  FGModel* FirstModel;
-
-  bool Initialize(void);
-  int  Schedule(FGModel* model, int rate);
   bool Run(void);
-  bool RunIC(FGInitialCondition *fgic); 
-  void Freeze(void) {frozen = true;}
-  void Resume(void) {frozen = false;}
-
-  inline FGState* GetState(void)             {return State;}
-  inline FGAtmosphere* GetAtmosphere(void)   {return Atmosphere;}
-  inline FGFCS* GetFCS(void)                 {return FCS;}
-  inline FGAircraft* GetAircraft(void)       {return Aircraft;}
-  inline FGTranslation* GetTranslation(void) {return Translation;}
-  inline FGRotation* GetRotation(void)       {return Rotation;}
-  inline FGPosition* GetPosition(void)       {return Position;}
-  inline FGAuxiliary* GetAuxiliary(void)     {return Auxiliary;}
-  inline FGOutput* GetOutput(void)           {return Output;}
-
-private:
-  bool frozen;
-  bool terminate;
-  int Error;
-
-  FGState*       State;
-  FGAtmosphere*  Atmosphere;
-  FGFCS*         FCS;
-  FGAircraft*    Aircraft;
-  FGTranslation* Translation;
-  FGRotation*    Rotation;
-  FGPosition*    Position;
-  FGAuxiliary*   Auxiliary;
-  FGOutput*      Output;
-
-protected:
+  bool LoadAerodynamics(FGConfigFile* AC_cfg);
 };
 
 /******************************************************************************/
 #endif
+

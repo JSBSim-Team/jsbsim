@@ -74,6 +74,20 @@ USEUNIT("filtersjb\FGDeadBand.cpp");
 USEUNIT("FGTrimLong.cpp");
 USEUNIT("filtersjb\FGFlaps.cpp");
 USEFILE("JSBSim.cxx");
+USEUNIT("FGForce.cpp");
+USEUNIT("FGInertial.cpp");
+USEUNIT("FGNozzle.cpp");
+USEUNIT("FGPropeller.cpp");
+USEUNIT("FGRotor.cpp");
+USEUNIT("FGThruster.cpp");
+USEUNIT("FGMassBalance.cpp");
+USEUNIT("FGRocket.cpp");
+USEUNIT("FGTurboJet.cpp");
+USEUNIT("FGPiston.cpp");
+USEUNIT("FGTurboShaft.cpp");
+USEUNIT("FGPropulsion.cpp");
+USEUNIT("FGGroundReactions.cpp");
+USEUNIT("FGAerodynamics.cpp");
 //---------------------------------------------------------------------------
 #pragma argsused
 #endif

@@ -114,9 +114,9 @@ bool FGRotation::Run(void)
         vEuler = State->CalcEuler();
         
         
-        cTht=cos(vEuler(eTht));   sTht=sin(vEuler(eTht));
-        cPhi=cos(vEuler(ePhi));   sPhi=sin(vEuler(ePhi));
-        cPsi=cos(vEuler(ePsi));   sPsi=sin(vEuler(ePsi));
+        cTht = cos(vEuler(eTht));   sTht = sin(vEuler(eTht));
+        cPhi = cos(vEuler(ePhi));   sPhi = sin(vEuler(ePhi));
+        cPsi = cos(vEuler(ePsi));   sPsi = sin(vEuler(ePsi));
 
 
         vEulerRates(eTht) = vPQR(2)*cPhi - vPQR(3)*sPhi;
