@@ -89,6 +89,9 @@ public:
   inline float Getsim_time(void) { return sim_time; }
   inline float Getdt(void) { return dt; }
 
+  inline void Suspend(void) {saved_dt = dt; dt = 0.0;}
+  inline void Resume(void)  {dt = saved_dt;}
+
   float GetParameter(eParam val_idx);
   float GetParameter(string val_string);
   eParam GetParameterIndex(string val_string);
@@ -125,6 +128,7 @@ private:
   float adot, bdot;                 // alpha dot and beta dot
   float a;                          // speed of sound
   float sim_time, dt;
+  float saved_dt;
 
   FGFDMExec* FDMExec;
   FGMatrix mTb2l;
