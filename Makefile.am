@@ -111,7 +111,8 @@ libJSBSim_a_SOURCES = \
 	FGUtility.h \
   FGTurbine.cpp \
   FGTurbine.h \
-  FGPropertyManager.h
+  FGPropertyManager.h \
+  FGPropertyManager.cpp
 
 libJSBSim_a_LIBADD = \
 	filtersjb/libFCSComponents.a \
