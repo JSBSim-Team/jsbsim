@@ -107,6 +107,9 @@ public:
   float GetAvgStability( void );
   bool checkLimits(void);
   inline int GetSolutionDomain(void) { return solutionDomain; }
+  
+  void SetThetaOnGround(void);
+  void SetPhiOnGround(void);
 
   void AxisReport(void);
 

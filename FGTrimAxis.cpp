@@ -43,6 +43,8 @@ INCLUDES
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
 
+/*****************************************************************************/
+
 FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
                        Control ctrl, float ff) {
 
@@ -116,15 +118,19 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
     accel_convert=RADTODEG;
     break;
   case tGamma:
-    control_min=-45*DEGTORAD;
-    control_max=45*DEGTORAD;
+    control_min=-80*DEGTORAD;
+    control_max=80*DEGTORAD;
     control_convert=RADTODEG;
     break;
   }
 
 }
 
+/*****************************************************************************/
+
 FGTrimAxis::~FGTrimAxis() {}
+
+/*****************************************************************************/
 
 float FGTrimAxis::getAccel(void) {
   switch(accel) {
@@ -136,6 +142,8 @@ float FGTrimAxis::getAccel(void) {
   case tRdot: accel_value=fdmex -> GetRotation()->GetPQRdot()(3); break;
   }
 }
+
+/*****************************************************************************/
 
 //Accels are not settable
 
@@ -154,6 +162,9 @@ float FGTrimAxis::getControl(void) {
   }
 }
 
+/*****************************************************************************/
+
+
 void FGTrimAxis::setControl(void) {
   switch(control) {
   case tThrottle: setThrottlesPct(); break;
@@ -169,6 +180,77 @@ void FGTrimAxis::setControl(void) {
   }
 }
 
+/*****************************************************************************/
+
+// the aircraft center of rotation is no longer the cg once the gear
+// contact the ground so the altitude needs to be changed when pitch 
+// and roll angle are adjusted.  Instead of attempting to calculate the 
+// new center of rotation, pick a gear unit as a reference and use its
+// location vector to calculate the new height change. i.e. new altitude =
+// earth z component of that vector (which is in body axes )  
+void FGTrimAxis::SetThetaOnGround(void) {
+  int center,i,ref;
+
+  // favor an off-center unit so that the same one can be used for both
+  // pitch and roll.  An on-center unit is used (for pitch)if that's all 
+  // that's in contact with the ground.
+  i=0; ref=-1; center=-1;
+  while( (ref < 0) && (i < fdmex->GetAircraft()->GetNumGearUnits()) ) {
+    if(fdmex->GetAircraft()->GetGearUnit(i)->GetWOW()) {
+      if(fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(2)) > 0.01)
+        ref=i;
+      else
+        center=i;
+    } 
+    i++; 
+  }
+  if((ref < 0) && (center >= 0)) {
+    ref=center;
+  }
+  if(ref >= 0) {
+    float sp=fdmex->GetRotation()->GetSinphi();
+    float cp=fdmex->GetRotation()->GetCosphi();
+    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(1);
+    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
+    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
+    float hagl = -1*lx*sin(control_value) +
+                    ly*sp*cos(control_value) +
+                    lz*cp*cos(control_value);
+   
+    fgic->SetAltitudeAGLFtIC(hagl);
+  }                   
+  fgic->SetPitchAngleRadIC(control_value);         
+}      
+
+/*****************************************************************************/
+
+void FGTrimAxis::SetPhiOnGround(void) {
+  int i,ref;
+
+  i=0; ref=-1;
+  //must have an off-center unit here 
+  while( (ref < 0) && (i < fdmex->GetAircraft()->GetNumGearUnits()) ) {
+    if( (fdmex->GetAircraft()->GetGearUnit(i)->GetWOW()) && 
+      (fabs(fdmex->GetAircraft()->GetGearUnit(i)->GetBodyLocation()(2)) > 0.01))
+        ref=i;
+    i++; 
+  }
+  if(ref >= 0) {
+    float st=fdmex->GetRotation()->GetSintht();
+    float ct=fdmex->GetRotation()->GetCostht();
+    float lx=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(1);
+    float ly=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(2);
+    float lz=fdmex->GetAircraft()->GetGearUnit(ref)->GetBodyLocation()(3);
+    float hagl = -1*lx*st +
+                    ly*sin(control_value)*ct +
+                    lz*cos(control_value)*ct;
+   
+    fgic->SetAltitudeAGLFtIC(hagl);
+  }                   
+  fgic->SetRollAngleRadIC(control_value);         
+}      
+
+/*****************************************************************************/
 
 float FGTrimAxis::Run(void) {
 
@@ -195,38 +277,34 @@ float FGTrimAxis::Run(void) {
   return accel_value;
 }
 
+/*****************************************************************************/
+
 void FGTrimAxis::setThrottlesPct(void) {
   float tMin,tMax;
   for(unsigned i=0;i<fdmex->GetAircraft()->GetNumEngines();i++) {
-    tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
-    tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
-
-    //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
-    fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
+      tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
+      tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
+      //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
+      fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
   }
 }
+
+
+/*****************************************************************************/
+
 
 void FGTrimAxis::AxisReport(void) {
   
   char out[80];
-  sprintf(out,"  %20s: %5.2f %5s: %9.2e Tolerance: %3.0e\n",
+  sprintf(out,"  %20s: %6.2f %5s: %9.2e Tolerance: %3.0e\n",
            GetControlName().c_str(), GetControl()*control_convert,
            GetAccelName().c_str(), GetAccel(), GetTolerance()); 
   cout << out;
-  /* cout << "  " << setw(20)
-  << GetControlName() << ": "
-  << setw(5) << setprecision(2) 
-  << GetControl()*control_convert << "  "
-  << setw(5) << GetAccelName() << ": "
-  << setw(5) << setprecision(2) 
-  << GetAccel() << "  "
-  << "Tolerance: " 
-  << setw(5) << setprecision(2) 
-  << GetTolerance()
-  << endl; */
 
 }
 
+
+/*****************************************************************************/
 
 bool FGTrimAxis::checkLimits(void) {
   float lo,hi;
@@ -271,6 +349,8 @@ bool FGTrimAxis::checkLimits(void) {
   Run();
   return change;
 }
+
+/*****************************************************************************/
 
 float FGTrimAxis::GetAvgStability( void ) {
   if(total_iterations > 0) {
