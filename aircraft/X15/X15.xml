@@ -261,7 +261,7 @@
     <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
       ID           16
       INPUT        15
-      C1           5
+      C1           600
       OUTPUT       FG_ELEVATOR_POS
     </COMPONENT>
 
