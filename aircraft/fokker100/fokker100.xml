@@ -16,14 +16,14 @@
     type:          two-engine transonic transport
     max weight:    95013.45 lb
     wing span:     92.13048 ft
-    length:        100.10331 ft
+    length:        115.32715 ft
     wing area:     1006.5275 sq-ft
     gear type:     tricycle
     retractable?:  yes
     # engines:     2
     engine type:   turbine
-    engine layout: aft fuselage
-    yaw damper?    no
+    engine layout: middle fuselage
+    yaw damper?    yes
 
   Outputs:
     wing loading:  94.40 lb/sq-ft
@@ -44,71 +44,71 @@
    AC_VTAILAREA 178.83			<!-- Lissys -->
    AC_LV        37.62			<!-- Lissys -->
    AC_IXX       587012
-   AC_IYY       1601122
-   AC_IZZ       2163095
+   AC_IYY       2125156
+   AC_IZZ       2519272
    AC_IXZ       0
    AC_EMPTYWT   54218			<!-- BH -->
-   AC_CGLOC     660.7  0.0 -30.0
-   AC_AERORP    660.7  0.0  0.0
-   AC_EYEPTLOC  84.1 -30.0 70.0
+   AC_CGLOC     761.2  0.0 -34.6
+   AC_AERORP    761.2  0.0  0.0
+   AC_EYEPTLOC  96.9 -30.0 70.0
    AC_VRP       0 0 0
  </METRICS>
  <UNDERCARRIAGE>
-  AC_GEAR NOSE_LG   156.2  0.0 -144.1 28504.0 9501.3  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
-  AC_GEAR LEFT_MLG  687.1 -99.5 -144.1 95013.4 19002.7  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
-  AC_GEAR RIGHT_MLG 687.1 99.5 -144.1 95013.4 19002.7  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
+  AC_GEAR NOSE_LG   179.9  0.0 -166.1 28504.0 9501.3  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT
+  AC_GEAR LEFT_MLG  791.6 -99.5 -166.1 95013.4 19002.7  0.5  0.8  0.02 FIXED LEFT  0 RETRACT
+  AC_GEAR RIGHT_MLG 791.6 99.5 -166.1 95013.4 19002.7  0.5  0.8  0.02 FIXED RIGHT 0 RETRACT
  </UNDERCARRIAGE>
  <PROPULSION>
   <AC_ENGINE FILE="Tay-651">
-    XLOC 1141.23972
+    XLOC 761.15919
     YLOC -20
-    ZLOC 0
+    ZLOC -12
     PITCH 0
     YAW 0
     FEED 0
     <AC_THRUSTER FILE="direct">
-      XLOC 1141.23972
+      XLOC 761.15919
       YLOC -20
-      ZLOC 0
+      ZLOC -12
       PITCH 0
       YAW 0
     </AC_THRUSTER>
   </AC_ENGINE>
   <AC_ENGINE FILE="Tay-651">
-    XLOC 1141.23972
+    XLOC 761.15919
     YLOC 20
-    ZLOC 0
+    ZLOC -12
     PITCH 0
     YAW 0
     FEED 1
     <AC_THRUSTER FILE="direct">
-      XLOC 1141.23972
+      XLOC 761.15919
       YLOC 20
-      ZLOC 0
+      ZLOC -12
       PITCH 0
       YAW 0
     </AC_THRUSTER>
   </AC_ENGINE>
   <AC_TANK TYPE="FUEL" NUMBER="0">
-    XLOC 660.681846 
+    XLOC 761.15919 
     YLOC 0 
-    ZLOC -30.030993 
+    ZLOC -34.598145 
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="1">
-    XLOC 660.681846 
+    XLOC 761.15919 
     YLOC 0 
-    ZLOC -30.030993 
+    ZLOC -34.598145 
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
   </AC_TANK>
   <AC_TANK TYPE="FUEL" NUMBER="2">
-    XLOC 660.681846 
+    XLOC 761.15919 
     YLOC 0 
-    ZLOC -30.030993 
+    ZLOC -34.598145 
     RADIUS 1 
     CAPACITY  1377.0
     CONTENTS   688.5
@@ -148,18 +148,51 @@
       INPUT   fcs/yaw-trim-cmd-norm
       CLIPTO  -1 1
    </COMPONENT>
-   <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+   <COMPONENT NAME="Yaw Damper Rate" TYPE="SCHEDULED_GAIN">
+      INPUT        velocities/r-aero-rad_sec
+      SCHEDULED_BY aero/qbar-psf
+      ROWS         2
+       3.00        0.00
+      11.00        2.00
+   </COMPONENT>
+   <COMPONENT NAME="Yaw Damper Beta" TYPE="SCHEDULED_GAIN">
+      INPUT        aero/beta-rad
+      SCHEDULED_BY aero/qbar-psf
+      ROWS         2
+       3.00        0.00
+      11.00        0.00
+   </COMPONENT>
+   <COMPONENT NAME="Yaw Damper Sum" TYPE="SUMMER">
+      INPUT        fcs/yaw-damper-beta
+      INPUT        fcs/yaw-damper-rate
+      CLIPTO      -0.2 0.2
+   </COMPONENT>
+   <COMPONENT NAME="Yaw Damper Final" TYPE="SCHEDULED_GAIN">
+      INPUT        fcs/yaw-damper-sum
+      SCHEDULED_BY aero/qbar-psf
+      ROWS         2
+      2.99         0.0
+      3.00         1.0
+   </COMPONENT>
+   <COMPONENT NAME="Rudder Sum" TYPE="SUMMER">
       INPUT   fcs/rudder-command-sum
+      INPUT   fcs/yaw-damper-final
+      CLIPTO  -1 1
+   </COMPONENT>
+   <COMPONENT NAME="Rudder Control" TYPE="AEROSURFACE_SCALE">
+      INPUT   fcs/rudder-sum
       MIN     -0.35
       MAX      0.35
       OUTPUT  fcs/rudder-pos-rad
    </COMPONENT>
    <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
      INPUT   fcs/flap-cmd-norm
-     DETENTS 3
+     DETENTS 5
              0   0
-             15  4
-             30  3
+             8   3
+             15  3
+             25  4
+             42  4
      OUTPUT  fcs/flap-pos-deg
    </COMPONENT>
    <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
@@ -186,15 +219,21 @@
       aero/alpha-rad
       aero/qbar-psf|metrics/Sw-sqft
       -0.20   -0.680
-       0.00    0.440
-       0.23    1.550
+       0.00    0.200
+       0.23    1.200
        0.60    0.600
     </COEFFICIENT>
-    <!-- AD -->
-    <COEFFICIENT NAME="dCLflap" TYPE="VALUE">
+    <!-- AD, BH -->
+    <COEFFICIENT NAME="dCLflap" TYPE="VECTOR">
        Delta_Lift_due_to_flaps
-       aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
-       2.0
+       5
+       fcs/components/flaps-control/output-norm
+       aero/qbar-psf|metrics/Sw-sqft
+       0.000   0.000
+       0.190   0.598
+       0.357   0.960
+       0.595   1.390
+       1.000   2.250
     </COEFFICIENT>
     <COEFFICIENT NAME="dCLsb" TYPE="VALUE">
        Delta_Lift_due_to_speedbrake
@@ -239,7 +278,7 @@
     <COEFFICIENT NAME="CDflap" TYPE="VALUE">
        Drag_due_to_flaps
        aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm
-       0.059
+       0.083
     </COEFFICIENT>
     <COEFFICIENT NAME="CDgear" TYPE="VALUE">
        Drag_due_to_gear
@@ -249,7 +288,7 @@
     <COEFFICIENT NAME="CDsb" TYPE="VALUE">
        Drag_due_to_speedbrakes
        aero/qbar-psf|metrics/Sw-sqft|fcs/speedbrake-pos-norm
-       0.02
+       0.12
     </COEFFICIENT>
     <COEFFICIENT NAME="CDbeta" TYPE="VECTOR">
        Drag_due_to_sideslip
