@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.156 2004/02/20 17:00:27 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.157 2004/02/28 17:43:05 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -62,6 +62,11 @@
 #include <FDM/JSBSim/FGLGear.h>
 #include <FDM/JSBSim/FGPropertyManager.h>
 #include <FDM/JSBSim/FGEngine.h>
+#include <FDM/JSBSim/FGPiston.h>
+#include <FDM/JSBSim/FGSimTurbine.h>
+#include <FDM/JSBSim/FGRocket.h>
+#include <FDM/JSBSim/FGNozzle.h>
+#include <FDM/JSBSim/FGPropeller.h>
 #include <FDM/JSBSim/FGRotor.h>
 #include "JSBSim.hxx"
 
