@@ -18,8 +18,12 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.127 2002/09/29 13:21:02 apeden Exp $
+// $Id: JSBSim.cxx,v 1.128 2002/12/04 15:30:03 apeden Exp $
 
+
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
 
 #include <simgear/compiler.h>
 
@@ -141,7 +145,7 @@ FGJSBsim::FGJSBsim( double dt )
     fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
     fgSetDouble("/fdm/trim/rudder",     FCS->GetDrCmd());
 
-    startup_trim = fgGetNode("/sim/startup/trim", true);
+    startup_trim = fgGetNode("/sim/presets/trim", true);
 
     trimmed = fgGetNode("/fdm/trim/trimmed", true);
     trimmed->setBoolValue(false);
@@ -151,8 +155,7 @@ FGJSBsim::FGJSBsim( double dt )
     aileron_trim = fgGetNode("/fdm/trim/aileron", true );
     rudder_trim = fgGetNode("/fdm/trim/rudder", true );
     
-    
-    stall_warning = fgGetNode("/sim/aero/alarms/stall-warning",true);
+    stall_warning = fgGetNode("/sim/alarms/stall-warning",true);
     stall_warning->setDoubleValue(0);
     
 
@@ -751,7 +754,7 @@ void FGJSBsim::update_gear(void) {
 void FGJSBsim::do_trim(void) {
 
         FGTrim *fgtrim;
-        if( fgGetBool("/sim/startup/onground") ) {
+        if( fgGetBool("/sim/presets/onground") ) {
             fgic->SetVcalibratedKtsIC(0.0);
             fgtrim=new FGTrim(fdmex,tGround);
         } else {
