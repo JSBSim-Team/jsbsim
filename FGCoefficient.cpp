@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.69 2004/05/29 17:27:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.70 2004/11/17 03:55:54 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -168,9 +168,10 @@ bool FGCoefficient::Load(FGConfigFile *AC_cfg)
     end = multparms.length();
 
     n = multparms.find("|");
+    if (n == string::npos) n = end;
     start = 0;
     if (multparms != string("none")) {
-      while (n < end && n >= 0) {
+      while (n < end && n != string::npos) {
         n -= start;
         mult = multparms.substr(start,n);
         multipliers.push_back( resolveSymbol( mult ) );
