@@ -52,7 +52,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGTank.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.21 2001/01/02 20:14:36 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGEngine.cpp,v 1.22 2001/01/04 13:42:31 jsb Exp $";
 static const char *IdHdr = "ID_ENGINE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ float FGEngine::Calculate(void) {
     if (Tank->GetType() == FGTank::ttFUEL) {
       Fshortage += Tank->Reduce(CalcFuelNeed()/Propulsion->GetnumSelectedFuelTanks());
     } else {
-      Oshortage += Tank->Reduce(CalcFuelNeed()/Propulsion->GetnumSelectedOxiTanks());
+      Oshortage += Tank->Reduce(CalcOxidizerNeed()/Propulsion->GetnumSelectedOxiTanks());
     }
   }
 

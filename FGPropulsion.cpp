@@ -58,7 +58,7 @@ INCLUDES
 
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.16 2001/01/02 20:14:36 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPropulsion.cpp,v 1.17 2001/01/04 13:42:31 jsb Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,8 @@ FGPropulsion::~FGPropulsion(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// Should probably be checking the Starved flag here
 
 bool FGPropulsion:: Run(void) {
   float tot_thrust;
@@ -137,6 +139,8 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
           Engines.push_back(new FGTurboShaft(FDMExec, &Eng_cfg));
         } else if (tag == "FG_TURBOPROP") {
           Engines.push_back(new FGTurboProp(FDMExec, &Eng_cfg));
+        } else {
+          cerr << "    Unrecognized engine type: " << &Eng_cfg << " found in config file.\n";
         }
 
         *AC_cfg >> xLoc >> yLoc >> zLoc;
@@ -144,7 +148,7 @@ bool FGPropulsion::LoadPropulsion(FGConfigFile* AC_cfg)
 
         Engines[numEngines]->SetPlacement(xLoc, yLoc, zLoc, engPitch, engYaw);
         Engines[numEngines]->SetName(engineName);
-        
+
         numEngines++;
       } else {
         cerr << "Could not read engine config file: " << fullpath << endl;

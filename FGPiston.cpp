@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGPiston.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.6 2000/12/04 13:26:24 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGPiston.cpp,v 1.7 2001/01/04 13:42:31 jsb Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,7 @@ float FGPiston::Calculate(void) {
   if (h < 0)
     h = 0;
 
-  pa=(SpeedSlope*v + SpeedIntercept)*(1 +AltitudeSlope*h)*BrakeHorsePower;
+  pa = (SpeedSlope*v + SpeedIntercept)*(1 +AltitudeSlope*h)*BrakeHorsePower;
 
   Thrust = Throttle*(pa*HPTOFTLBSSEC)/v;
 
