@@ -68,9 +68,7 @@
      the desired altitude (altitude_setpoint) from the actual altitude above sea
      level (_not_ Above Ground Level).  This error signal is interpreted as an
      hdot command (hdot is time rate of change of altitude, or rate of climb). As
-     such it is limited to a maximum value of 40 fps here (which corresponds to
-     about a 20 degree climb angle for a C-172) and a maximum descent rate of 20
-     fps. -->
+     such it is limited to a maximum absolute value of 10 fps here (600 fpm). -->
 
 <COMPONENT NAME="Altitude Error" TYPE="SUMMER">
   INPUT         -position/h-sl-ft
