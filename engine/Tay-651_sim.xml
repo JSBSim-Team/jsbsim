@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <!--
-  File:     Tay-620.xml
+  File:     Tay-650.xml
   Author:   Aero-Matic v 0.2
 
   Inputs:
-    name:           Tay-620
+    name:           Tay-650
     type:           turbine
-    thrust:         36327.68 lb
+    thrust:         15400 lb
     augmented?      no
     injected?       no
 -->
 
-<FG_SIMTURBINE NAME="Tay-620">
-  MAXMILTHRUST 36327.68
+<FG_SIMTURBINE NAME="Tay-650">
+  MAXMILTHRUST 15400
   BYPASSRATIO    1.0
   TSFC           0.8
   ATSFC          1.7
