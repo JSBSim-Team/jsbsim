@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.51 2001/12/24 22:58:40 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.52 2002/01/03 20:42:25 dmegginson Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,10 +159,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   // Check for windmilling.
   double radius = Diameter * 0.375; // 75% of radius
   double windmill_cutoff = tan(Pitch * 1.745329E-2) * omega * radius;
-  if (Vel > windmill_cutoff) {
-    cout << "Windmilling: " << Vel << " > " << windmill_cutoff << endl;
+  if (Vel > windmill_cutoff)
     Thrust = -Thrust;
-  }
 
   vFn(1) = Thrust;
 
