@@ -58,11 +58,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <cmath>
-#  else
-#    include <math.h>
-#  endif
+#  include STL_CMATH
 #else
 #  include <cmath>
 #endif
@@ -75,7 +71,7 @@ INCLUDES
 #include "FGModel.h"
 #include "FGMatrix.h"
 
-#define ID_ROTATION "$Id: FGRotation.h,v 1.23 2001/05/30 17:38:56 jberndt Exp $"
+#define ID_ROTATION "$Id: FGRotation.h,v 1.24 2001/06/05 12:52:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

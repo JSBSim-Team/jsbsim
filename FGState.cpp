@@ -38,11 +38,7 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <cmath>
-#  else
-#    include <math.h>
-#  endif
+#  include STL_CMATH
 #else
 #  include <cmath>
 #endif
@@ -54,7 +50,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.61 2001/05/30 17:38:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.62 2001/06/05 12:52:09 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;

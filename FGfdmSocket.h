@@ -47,15 +47,10 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include STL_STRING
+#  include STL_IOSTREAM
+#  include STL_FSTREAM
    SG_USING_STD(cout);
    SG_USING_STD(endl);
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <iostream>
-#    include <fstream>
-#  else
-#    include <iostream.h>
-#    include <fstream.h>
-#  endif
 #else
 #  include <iostream>
 #  include <fstream>
@@ -79,7 +74,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.14 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.15 2001/06/05 12:52:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

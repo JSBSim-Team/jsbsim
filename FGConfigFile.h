@@ -41,13 +41,8 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include STL_STRING
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <fstream>
-#    include <iostream>
-#  else
-#    include <fstream.h>
-#    include <iostream.h>
-#  endif
+#  include STL_FSTREAM
+#  include STL_IOSTREAM
    SG_USING_STD(string);
    SG_USING_STD(ostream);
    SG_USING_STD(istream);
@@ -76,7 +71,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.20 2001/06/04 19:52:14 jberndt Exp $"
+#define ID_CONFIGFILE "$Id: FGConfigFile.h,v 1.21 2001/06/05 12:52:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +88,7 @@ CLASS DOCUMENTATION
 /** Encapsulates reading a JSBSim config file.
     JSBSim config files are in XML format.
     @author Jon S. Berndt
-    @version $Id: FGConfigFile.h,v 1.20 2001/06/04 19:52:14 jberndt Exp $
+    @version $Id: FGConfigFile.h,v 1.21 2001/06/05 12:52:09 jberndt Exp $
     @see -
 */
 

@@ -24,21 +24,15 @@ INCLUDES
 #ifdef FGFS
 #  include <simgear/compiler.h>
 #  include STL_STRING
+#  include STL_FSTREAM
+#  include STL_CMATH
+#  include STL_IOSTREAM
    SG_USING_STD(string);
    SG_USING_STD(ostream);
    SG_USING_STD(istream);
    SG_USING_STD(cerr);
    SG_USING_STD(cout);
    SG_USING_STD(endl);
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <fstream>
-#    include <cmath>
-#    include <iostream>
-#  else
-#    include <fstream.h>
-#    include <math.h>
-#    include <iostream.h>
-#  endif
 #else
 #  include <fstream>
 #  include <cmath>
@@ -57,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX "$Id: FGMatrix.h,v 1.27 2001/05/29 20:13:31 jberndt Exp $"
+#define ID_MATRIX "$Id: FGMatrix.h,v 1.28 2001/06/05 12:52:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
