@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.17 2001/03/23 06:55:57 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.18 2001/03/23 23:30:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,6 +65,7 @@ CLASS DOCUMENTATION
         <li>Chamber pressure (in psf)</li>
         <li>Specific heat ratio (usually about 1.2 for hydrocarbon fuel and LOX)</li>
         <li>Propulsive efficiency (in percent, from 0 to 1.0)</li>
+        <li>Variance (in percent, from 0 to 1.0, nominally 0.05)</li>
     </ul>
     Additionally, the following control inputs, operating characteristics, and
     location are required, as with all other engine types:</font>
@@ -86,7 +87,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    @version $Id: FGRocket.h,v 1.17 2001/03/23 06:55:57 jberndt Exp $
+    @version $Id: FGRocket.h,v 1.18 2001/03/23 23:30:55 jberndt Exp $
     @see FGNozzle
     @see FGThruster
     @see FGForce
@@ -122,6 +123,7 @@ private:
   float maxPC;
   float propEff;
   float kFactor;
+  float Variance;
   void Debug(void);
 };
 

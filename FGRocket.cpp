@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGRocket.h"
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.21 2001/03/23 00:53:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.22 2001/03/23 23:30:55 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 extern short debug_lvl;
@@ -79,6 +79,9 @@ FGRocket::FGRocket(FGFDMExec* exec, FGConfigFile* Eng_cfg) : FGEngine(exec)
     } else if (token == "SLOXIFLOWMAX") {
       *Eng_cfg >> SLOxiFlowMax;
       cout << "      OxiFlowMax = " << SLOxiFlowMax << endl;
+    } else if (token == "VARIANCE") {
+      *Eng_cfg >> Variance;
+      cout << "      Variance = " << Variance << endl;
     } else {
       cout << "Unhandled token in Engine config file: " << token << endl;
     }
@@ -104,6 +107,7 @@ float FGRocket::Calculate(float pe)
 {
   float lastThrust;
   float Cf;
+  float chamberPress;
 
   ConsumeFuel();
 
@@ -115,15 +119,14 @@ float FGRocket::Calculate(float pe)
     Flameout = true;
   } else {
     PctPower = Throttle / MaxThrottle;
-    
-    Cf = sqrt(kFactor*(1 - pow(pe/(maxPC*PctPower), (SHR-1)/SHR)));
-
+    chamberPress = maxPC*PctPower * (1.0 + Variance * ((float)rand()/(float)RAND_MAX - 0.5));
+    Cf = sqrt(kFactor*(1 - pow(pe/(chamberPress), (SHR-1)/SHR)));
     Flameout = false;
   }
 
-//  if (State->Getdt() > 0.0) {  // actual thrust - if not in freeze
-//    Thrust -= 0.8*(Thrust - lastThrust);
-//  }
+  if (State->Getdt() > 0.0) {  // actual thrust - if not in freeze
+    Thrust -= 0.8*(Thrust - lastThrust);
+  }
 
   return Cf*maxPC*PctPower;
 }

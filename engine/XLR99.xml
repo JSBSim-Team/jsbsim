@@ -7,9 +7,10 @@
   -->
   SHR              1.23
   MAX_PC       86556.0
+  VARIANCE         0.10
   PROP_EFF         0.80
-  MAXTHROTTLE    100.0
-  MINTHROTTLE     40.0
+  MAXTHROTTLE      1.0
+  MINTHROTTLE      0.4
   SLFUELFLOWMAX   91.5
   SLOXIFLOWMAX   105.2
 </FG_ROCKET>

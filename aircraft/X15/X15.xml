@@ -632,7 +632,7 @@
   </COMMENT>
 
   <OUTPUT NAME="JSBout.csv" TYPE="CSV">
-    RATE_IN_HZ       60
+    RATE_IN_HZ       10
     SIMULATION       OFF
     ATMOSPHERE       OFF
     MASSPROPS        OFF

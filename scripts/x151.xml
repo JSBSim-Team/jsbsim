@@ -10,12 +10,12 @@
 
   <use initialize="reset00"> 
 
-  <run start="0.0" end="10.0" dt="0.10"> 
+  <run start="0.0" end="10.0" dt="0.01"> 
     <when> 
       <parameter name="FG_TIME" comparison="ge" value="0.5">
       <parameter name="FG_TIME" comparison="le" value="1.5">
       <set name="FG_AILERON_CMD" type="FG_DELTA" value="0.1" action="FG_EXP" persistent="false" tc ="0.5">
-      <set name="FG_THROTTLE_CMD" type="FG_VALUE" value="0.9" action="FG_EXP" persistent="false" tc ="0.5">
+      <set name="FG_THROTTLE_CMD" type="FG_VALUE" value="0.9" action="FG_RAMP" persistent="false" tc ="0.5">
     </when>
     <when> 
       <parameter name="FG_TIME" comparison="ge" value="1.5">

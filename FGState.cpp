@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.46 2001/03/23 13:08:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.47 2001/03/23 23:30:55 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -283,7 +283,7 @@ void FGState::SetParameter(eParam val_idx, float val) {
     break;
 
   case FG_ACTIVE_ENGINE:
-    ActiveEngine = val;
+    ActiveEngine = (int)val;
     break;
 
   default:
