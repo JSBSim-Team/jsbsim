@@ -3,14 +3,14 @@
   <METRICS>
 
     <COMMENT>
-
+    <!--
     Center of gravity location, empty weight, in aircraft's own structural coord
     system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
     right wing.
 
     Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
     X, Y, Z, in inches
-
+    -->
     </COMMENT>
 
     AC_WINGAREA 200
@@ -30,7 +30,7 @@
   <UNDERCARRIAGE>
 
     <COMMENT>
-
+    <!--
     The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
     
     AC_GEAR
@@ -44,7 +44,7 @@
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
     <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
-
+    -->
     </COMMENT>
 
     AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 0.02 FIXED NONE 0
@@ -56,7 +56,7 @@
   <PROPULSION>
 
     <COMMENT>
-
+    <!--
     Tank locations and characteristics, empty weight, in aircraft's own coord system:
     * X, Y, Z, in inches
     * effective radius of tank, in inches (for fuel slosh, if/when modeled)
@@ -69,7 +69,7 @@
     definition file in the "engines" directory) followed by x, y, z placement and
     pitch and yaw orientation. Coordinates are given in inches in the structural
     coordinate frame. Angles for pitch and yaw are specified in radians.
-
+    -->
     </COMMENT>
 
     <AC_TANK TYPE="OXIDIZER" NUMBER="0">
@@ -103,7 +103,7 @@
   </PROPULSION>
 
   <COMMENT>
-
+  <!--
   In the following section for flight controls the TYPE parameter may be one of
   the following:
 
@@ -143,7 +143,7 @@
 
   The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
   pounds.
-
+  -->
   </COMMENT>
 
   <FLIGHT_CONTROL NAME="X-15 SAS">
@@ -169,10 +169,12 @@
     </COMPONENT>
 
     <COMMENT>
+    <!--
       In the following component, the GAIN value is actually in addition to the
       scheduled gain in the next component. If the GAIN in a scheduled component
       is not required, it may be ignored and not specified here - it is initialized
       to one in the contructor.
+    -->
     </COMMENT>
 
     <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
@@ -317,10 +319,8 @@
   <AERODYNAMICS>
 
     <COMMENT>
-
+    <!--
     For Multiplier parameter identifiers, see the definition for enum eParam in FGDefs.h
-
-
 
     The aerodynamics section is arranged as follows:
 
@@ -371,7 +371,7 @@
            </COEFFICIENT>
 
          </AXIS>
-
+    -->
     </COMMENT>
 
     <AXIS NAME="LIFT">
@@ -570,7 +570,7 @@
   </AERODYNAMICS>
 
   <COMMENT>
-
+  <!--
     OUTPUT section definition
 
     The following specifies the way that JSBSim writes out data.
@@ -612,7 +612,7 @@
     FCS              ON|OFF
 
     NOTE that Time is always output with the data.
-
+  -->
   </COMMENT>
 
   <OUTPUT NAME="JSBout.csv" TYPE="CSV">
@@ -632,4 +632,3 @@
   </OUTPUT>
 
 </FDM_CONFIG>
-

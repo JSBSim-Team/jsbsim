@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.23 2001/01/24 00:08:27 jsb Exp $
+    @version $Id: FGFCS.h,v 1.24 2001/02/02 01:16:57 jsb Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -308,7 +308,7 @@ public:
   /** Gets the brake for a specified group.
       @param bg which brakegroup to retrieve the command for
       @return the brake setting for the supplied brake group argument */
-  float GetBrake(FGLGear::eBrakeGroup bg);
+  float GetBrake(FGLGear::BrakeGroup bg);
   //@}
 
   /** Loads the Flight Control System.
@@ -334,7 +334,6 @@ private:
   float LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;
-
 };
 
 #include "FGState.h"

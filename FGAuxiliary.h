@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates various uncategorized scheduled functions.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.12 2001/01/28 14:02:50 jsb Exp $
+    @version $Id: FGAuxiliary.h,v 1.13 2001/02/02 01:16:56 jsb Exp $
     @see -
 */
 

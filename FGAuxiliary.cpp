@@ -52,7 +52,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGMatrix.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.9 2001/01/29 02:54:36 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAuxiliary.cpp,v 1.10 2001/02/02 01:16:56 jsb Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

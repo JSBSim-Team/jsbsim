@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGDeadBand.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGDeadBand.cpp,v 1.7 2000/10/16 12:32:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGDeadBand.cpp,v 1.8 2001/02/02 01:17:03 jsb Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

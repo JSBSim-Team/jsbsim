@@ -21,7 +21,7 @@ INCLUDES
 #include <stdlib.h>
 #include <math.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.10 2001/01/22 23:34:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGConfigFile.cpp,v 1.11 2001/02/02 01:16:57 jsb Exp $";
 static const char *IdHdr = "ID_CONFIGFILE";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

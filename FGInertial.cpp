@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGInertial.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.cpp,v 1.3 2000/10/16 12:32:45 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInertial.cpp,v 1.4 2001/02/02 01:16:58 jsb Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -56,6 +56,8 @@ INCLUDES
 
 #define ID_TRIMAXIS "$Header"
 
+#define DEFAULT_TOLERANCE 0.001
+
 const string StateNames[7]=   { "udot","vdot","wdot","qdot","pdot","rdot","hmgt" };
 const string ControlNames[14]= { "Throttle","Sideslip","Angle of Attack",
                                  "Elevator","Ailerons","Rudder",
@@ -75,7 +77,7 @@ enum Control { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
 class FGTrimAxis {
 public:
   FGTrimAxis(FGFDMExec* fdmex, FGInitialCondition *ic, State st,
-             Control ctrl, float tolerance);
+             Control ctrl );
   ~FGTrimAxis();
 
   void Run(void);
@@ -157,6 +159,8 @@ private:
   void getState(void);
   void getControl(void);
   void setControl(void);
+  
+  float computeHmgt(void);
   
   
 

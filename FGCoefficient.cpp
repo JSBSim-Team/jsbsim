@@ -50,7 +50,7 @@ INCLUDES
 
 #include <iomanip.h>
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.22 2001/01/22 23:34:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGCoefficient.cpp,v 1.23 2001/02/02 01:16:56 jsb Exp $";
 static const char *IdHdr = "ID_COEFFICIENT";
 
 extern char highint[5];

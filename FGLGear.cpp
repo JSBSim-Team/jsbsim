@@ -31,6 +31,7 @@ FUNCTIONAL DESCRIPTION
 HISTORY
 --------------------------------------------------------------------------------
 11/18/99   JSB   Created
+01/30/01   NHP   Extended gear model to properly simulate steering and braking
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -47,7 +48,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.34 2001/01/19 13:43:13 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.35 2001/02/02 01:16:58 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +63,7 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)  
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
-	          >> rollingFCoeff >> SteerType >> BrakeGroup >> maxSteerAngle;
+                  >> rollingFCoeff >> sSteerType >> sBrakeGroup >> maxSteerAngle;
     
   cout << "    Name: " << name << endl;
   cout << "      Location: " << vXYZ << endl;
@@ -71,28 +72,37 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
   cout << "      Static Friction:  " << staticFCoeff << endl;
   cout << "      Rolling Friction: " << rollingFCoeff << endl;
-  cout << "      Steering Type:    " << SteerType << endl;
-  cout << "      Grouping:         " << BrakeGroup << endl;
+  cout << "      Steering Type:    " << sSteerType << endl;
+  cout << "      Grouping:         " << sBrakeGroup << endl;
   cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
 
-  if      (BrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
-  else if (BrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
-  else if (BrakeGroup == "CENTER") eBrakeGrp = bgCenter;
-  else if (BrakeGroup == "NOSE"  ) eBrakeGrp = bgNose;
-  else if (BrakeGroup == "TAIL"  ) eBrakeGrp = bgTail;
-  else if (BrakeGroup == "NONE"  ) eBrakeGrp = bgNone;
+  if      (sBrakeGroup == "LEFT"  ) eBrakeGrp = bgLeft;
+  else if (sBrakeGroup == "RIGHT" ) eBrakeGrp = bgRight;
+  else if (sBrakeGroup == "CENTER") eBrakeGrp = bgCenter;
+  else if (sBrakeGroup == "NOSE"  ) eBrakeGrp = bgNose;
+  else if (sBrakeGroup == "TAIL"  ) eBrakeGrp = bgTail;
+  else if (sBrakeGroup == "NONE"  ) eBrakeGrp = bgNone;
   else {
     cerr << "Improper braking group specification in config file: "
-         << BrakeGroup << " is undefined." << endl;
+         << sBrakeGroup << " is undefined." << endl;
   }
 
-// add some AI here to determine if gear is located properly according to its
-// brake group type
+  if      (sSteerType == "STEERABLE") eSteerType = stSteer;
+  else if (sSteerType == "FIXED"    ) eSteerType = stFixed;
+  else if (sSteerType == "CASTERED" ) eSteerType = stCaster;
+  else {
+    cerr << "Improper steering type specification in config file: "
+         << sSteerType << " is undefined." << endl;
+  }
+
+// Add some AI here to determine if gear is located properly according to its
+// brake group type ??
 
   State       = Exec->GetState();
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
+  FCS         = Exec->GetFCS();
   
   WOW = false;
   ReportEnable=true;
@@ -143,8 +153,9 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GroundSpeed     = lgear.GroundSpeed;
   Reported        = lgear.Reported;
   name            = lgear.name;
-  SteerType       = lgear.SteerType;
-  BrakeGroup      = lgear.BrakeGroup;
+  sSteerType      = lgear.sSteerType;
+  eSteerType      = lgear.eSteerType;
+  sBrakeGroup     = lgear.sBrakeGroup;
   eBrakeGrp       = lgear.eBrakeGrp;
   maxSteerAngle   = lgear.maxSteerAngle;
 }
@@ -157,6 +168,11 @@ FGLGear::~FGLGear(void) {}
 
 FGColumnVector FGLGear::Force(void)
 {
+  float SteerGain, SteerAngle, BrakeFCoeff;
+  float SinWheel, CosWheel, SideWhlVel, RollingWhlVel;
+  float RudderPedal, RollingForce, SideForce, FCoeff;
+  float WheelSlip;
+
   FGColumnVector vForce(3);
   FGColumnVector vLocalForce(3);
   //FGColumnVector vLocalGear(3);     // Vector: CG to this wheel (Local)
@@ -168,11 +184,18 @@ FGColumnVector FGLGear::Force(void)
 
   vLocalGear = State->GetTb2l() * vWhlBodyVec;
   
+// For now, gear compression is assumed to happen in the Local Z axis,
+// not the strut axis as it should be.  Will fix this later.
+
   compressLength = vLocalGear(eZ) - Position->GetDistanceAGL();
 
   if (compressLength > 0.00) {
      
     WOW = true;
+
+// The next equation should really use the vector to the contact patch of the tire
+// including the strut compression and not vWhlBodyVec.  Will fix this later.
+
     vWhlVelVec      =  State->GetTb2l() * (Rotation->GetPQR() * vWhlBodyVec);
     vWhlVelVec     +=  Position->GetVel();
 
@@ -184,45 +207,132 @@ FGColumnVector FGLGear::Force(void)
       GroundSpeed   =  Position->GetVel().Magnitude();
     }
 
+// the following needs work regarding friction coefficients and braking and steering
+
+// Note to Jon: Need to substitute the correct variables for LeftBrake and RightBrake.
+// Also, if there is already a predefined CenterBrake, then delete this computation.
+// All of the brake variables are assumed to be defined over the range 0.0 to 1.0.
+// The BrakeFCoeff formula assumes that an anti-skid system is used.  It also assumes that
+// we won't be turning and braking at the same time.  Will fix this later.
+
+    switch (eBrakeGrp) {
+    case bgLeft:
+        SteerGain = -maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) + staticFCoeff*FCS->GetBrake(bgLeft);
+      break;
+    case bgRight:
+        SteerGain = -maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) + staticFCoeff*FCS->GetBrake(bgRight);
+      break;
+    case bgCenter:
+        SteerGain = -maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) + staticFCoeff*FCS->GetBrake(bgCenter);
+      break;
+    case bgNose:
+        SteerGain = maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff;
+      break;
+    case bgTail:
+        SteerGain = -maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff;
+      break;
+    case bgNone:
+        SteerGain = -maxSteerAngle;
+        BrakeFCoeff = rollingFCoeff;
+      break;
+    default:
+      cerr << "Improper brake group membership detected for this gear." << endl;
+      break;
+    }
+
+// Note to Jon: Need to substitute the correct variable for RudderPedal.
+// It is assumed that rudder pedal has a range of -1.0 to 1.0.
+
+    switch (eSteerType) {
+    case stSteer:
+      SteerAngle = SteerGain*RudderPedal;
+      break;
+    case stFixed:
+      SteerAngle = 0.0;
+      break;
+    case stCaster:
+    // Note to Jon: This is not correct for castering gear.  I'll fix it later.
+      SteerAngle = 0.0;
+      break;
+    default:
+      cerr << "Improper steering type membership detected for this gear." << endl;
+      break;
+    }
+
+// Transform the wheel velocities from the local axis system to the wheel axis system.
+// For now, steering angle is assumed to happen in the Local Z axis,
+// not the strut axis as it should be.  Will fix this later.
+// Note to Jon: Please substitute the correct variable for Deg2Rad conversion.
+
+    SinWheel      = sin(Rotation->Getpsi() + SteerAngle*DEGTORAD);
+    CosWheel      = cos(Rotation->Getpsi() + SteerAngle*DEGTORAD);
+    RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
+    SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
+
+// Calculate tire slip angle.
+// Note to Jon: Please substitute the correct variable for Rad2Deg conversion.
+
+    if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
+      WheelSlip = 0.0;
+    } else {
+      WheelSlip = RADTODEG*atan2(SideWhlVel, RollingWhlVel);
+    }
+
     // The following code normalizes the wheel velocity vector, reverses it, and zeroes out
     // the z component of the velocity. The question is, should the Z axis velocity be zeroed
     // out first before the normalization takes place or not? Subsequent to that, the Wheel
     // Velocity vector now points as a unit vector backwards and parallel to the wheel
     // velocity vector. It acts AT the wheel.
 
-    vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
-    vWhlVelVec(eZ)  =  0.00;
+// Note to Jon: I commented out this line because I wasn't sure we want to do this.
+//    vWhlVelVec      = -1.0 * vWhlVelVec.Normalize();
+//    vWhlVelVec(eZ)  =  0.00;
 
-// the following needs work regarding friction coefficients and braking and steering
+// Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
+// Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
+// transition from static to dynamic friction.  There are more complicated formulations
+// of this that avoid the discrete jump.  Will fix this later.
 
-    switch (eBrakeGrp) {
-    case bgLeft:
-
-      break;
-    case bgRight:
-      break;
-    case bgCenter:
-      break;
-    case bgNose:
-      break;
-    case bgTail:
-      break;
-    case bgNone:
-      break;
-    default:
-      cerr << "Improper brake group membership detected for this gear." << endl;
-      break;
+    if (fabs(WheelSlip) <= 10.0) {
+      FCoeff = staticFCoeff*WheelSlip/10.0;
+    } else {
+      FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
     }
-//
+
+// Compute the vertical force on the wheel.
 
     vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
-    vLocalForce(eX) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eX);
-    vLocalForce(eY) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eY);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
     MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
 
-    vForce  = State->GetTl2b() * vLocalForce ;
+// Compute the forces in the wheel ground plane.
+
+    RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
+    SideForce    = vLocalForce(eZ) * FCoeff;
+
+// Transform these forces back to the local reference frame.
+
+    vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
+    vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
+
+// Note to Jon: At this point the forces will be too big when the airplane is stopped or
+// rolling to a stop.  We need to make sure that the gear forces just balance out the non-gear forces
+// when the airplane is stopped.  That way the airplane won't start to accelerate until the non-gear
+// forces are larger than the gear forces.  I think that the proper fix should go into FGAircraft::FMGear.
+// This routine would only compute the local strut forces and return them to FMGear.  All of the gear
+// forces would get adjusted in FMGear using the total non-gear forces.  Then the gear moments would be
+// calculated.  If strange things start happening to the airplane during testing as it rolls to a stop,
+// then we need to implement this change.  I ran out of time to do it now but have the equations.
+
+// Transform the forces back to the body frame and compute the moment.
+
+    vForce  = State->GetTl2b() * vLocalForce;
     vMoment = vWhlBodyVec * vForce;
 
   } else {
@@ -247,6 +357,7 @@ FGColumnVector FGLGear::Force(void)
   if (ReportEnable && Position->GetVel().Magnitude() <= 0.05 && !Reported) {
     Report();
   }
+  
   return vForce;
 }
 

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGForce.h"
 #include "FGConfigFile.h"
 
-#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.11 2001/01/22 23:34:32 jsb Exp $"
+#define ID_THRUSTER "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGThruster.h,v 1.12 2001/02/02 01:17:01 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

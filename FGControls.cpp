@@ -18,13 +18,13 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.cpp,v 1.4 2000/10/13 19:21:02 jsb Exp $
+// $Id: FGControls.cpp,v 1.5 2001/02/02 01:16:57 jsb Exp $
 // (Log is kept at end of this file)
 
 
 #include "FGControls.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGControls.cpp,v 1.4 2000/10/13 19:21:02 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGControls.cpp,v 1.5 2001/02/02 01:16:57 jsb Exp $";
 static const char *IdHdr = "ID_CONTROLS";
 
 FGControls controls;
@@ -53,6 +53,9 @@ FGControls::~FGControls() {
 
 
 // $Log: FGControls.cpp,v $
+// Revision 1.5  2001/02/02 01:16:57  jsb
+// ** JSB ** trim, prop, gear changes
+//
 // Revision 1.4  2000/10/13 19:21:02  jsb
 // ** JSB ** Added version identifiers for all files
 //

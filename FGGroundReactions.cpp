@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGGroundReactions.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGGroundReactions.cpp,v 1.3 2000/10/16 12:32:44 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGGroundReactions.cpp,v 1.4 2001/02/02 01:16:58 jsb Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

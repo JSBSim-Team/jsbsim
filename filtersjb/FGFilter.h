@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.11 2000/12/06 23:57:08 jsb Exp $"
+#define ID_FILTER "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFilter.h,v 1.12 2001/02/02 01:17:04 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     &lt/COMPONENT>
     </pre>
     @author Jon S. Berndt
-    @version $Id: FGFilter.h,v 1.11 2000/12/06 23:57:08 jsb Exp $
+    @version $Id: FGFilter.h,v 1.12 2001/02/02 01:17:04 jsb Exp $
     */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -127,7 +127,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.40 2001/01/29 02:00:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/JSBSim.cpp,v 1.41 2001/02/02 01:17:03 jsb Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -143,7 +143,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.40 2001/01/29 02:00:20 jsb Exp $
+    @version $Id: JSBSim.cpp,v 1.41 2001/02/02 01:17:03 jsb Exp $
     @see -
 */
 

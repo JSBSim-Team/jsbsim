@@ -61,6 +61,7 @@ FORWARD DECLARATIONS
 class FGAircraft;
 class FGPosition;
 class FGRotation;
+class FGFCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -143,6 +144,7 @@ CLASS DOCUMENTATION
     length times the spring coefficient and the gear velocity times the damping
     coefficient.</li>
     <li>The lateral/directional force acting on the aircraft through the landing
+
     gear (along the local frame X and Y axes) is calculated next. First, the
     friction coefficient is multiplied by the recently calculated Z-force. This
     is the friction force. It must be given direction in addition to magnitude.
@@ -156,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.28 2000/12/27 23:44:44 jsb Exp $
+    @version $Id: FGLGear.h,v 1.29 2001/02/02 01:16:59 jsb Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -171,7 +173,9 @@ class FGLGear
 {
 public:
   /// Brake grouping enumerators
-  enum eBrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
+  enum BrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
+  /// Steering group membership enumerators
+  enum SteerType {stSteer, stFixed, stCaster};
   /** Constructor
       @param Executive a pointer to the parent executive object
       @param File a pointer to the config file instance */
@@ -187,6 +191,7 @@ public:
   FGColumnVector Force(void);
   /// The Moment vector for this gear
   FGColumnVector Moment(void) {return vMoment;}
+
   /// Gets the location of the gear in Body axes
   FGColumnVector GetBodyLocation(void) { return vWhlBodyVec; }
   
@@ -236,16 +241,18 @@ private:
   bool Reported;
   bool ReportEnable;
   string name;
-  string SteerType;
-  string BrakeGroup;
-  eBrakeGroup eBrakeGrp;
+  string sSteerType;
+  string sBrakeGroup;
+  BrakeGroup eBrakeGrp;
+  SteerType  eSteerType;
   float  maxSteerAngle;
 
-  FGFDMExec*     Exec;
-  FGState*       State;
-  FGAircraft*    Aircraft;
-  FGPosition*    Position;
-  FGRotation*    Rotation;
+  FGFDMExec*  Exec;
+  FGState*    State;
+  FGAircraft* Aircraft;
+  FGPosition* Position;
+  FGRotation* Rotation;
+  FGFCS*      FCS;
 
   void Report(void);
 };
@@ -253,6 +260,7 @@ private:
 #include "FGAircraft.h"
 #include "FGPosition.h"
 #include "FGRotation.h"
+#include "FGFCS.h"
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

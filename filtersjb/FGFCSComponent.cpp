@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGFCSComponent.h"    				
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.14 2000/10/16 12:32:50 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGFCSComponent.cpp,v 1.15 2001/02/02 01:17:04 jsb Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

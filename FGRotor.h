@@ -44,7 +44,7 @@ INCLUDES
 
 #include "FGThruster.h"
 
-#define ID_ROTOR "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.h,v 1.4 2001/01/22 15:38:56 jsb Exp $"
+#define ID_ROTOR "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGRotor.h,v 1.5 2001/02/02 01:17:01 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

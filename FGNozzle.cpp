@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGNozzle.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.5 2001/01/19 23:36:06 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGNozzle.cpp,v 1.6 2001/02/02 01:16:59 jsb Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

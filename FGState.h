@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.21 2000/10/16 12:32:48 jsb Exp $"
+#define ID_STATE "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGState.h,v 1.22 2001/02/02 01:17:01 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION

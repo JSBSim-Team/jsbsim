@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.11 2000/11/22 23:49:01 jsb Exp $"
+#define ID_MODEL "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGModel.h,v 1.12 2001/02/02 01:16:59 jsb Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS

@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     <li>\URL[Gradient Component]{FGGradient.html}</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.19 2000/11/15 23:48:06 jsb Exp $
+    @version $Id: FGFCSComponent.h,v 1.20 2001/02/02 01:17:04 jsb Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */

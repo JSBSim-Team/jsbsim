@@ -71,7 +71,7 @@ INCLUDES
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-typedef enum { tLongitudinal, tFull, tGround } TrimMode;
+typedef enum { tLongitudinal, tFull, tGround, tCustom, tNone } TrimMode;
 
 class FGTrim {
 private:
@@ -79,7 +79,6 @@ private:
   vector<FGTrimAxis*> TrimAxes;
   int current_axis;
   int N, Nsub;
-  int NumAxes;
   TrimMode mode;
   int Debug;
   float Tolerance, A_Tolerance;
@@ -122,8 +121,10 @@ public:
   void ReportState(void);
   void TrimStats();
 
-  inline void SetUdotTrim(bool bb) { trimudot=bb; }
-  inline bool GetUdotTrim(void) { return trimudot; }
+  void ClearStates(void);
+  bool AddState( State state, Control control );
+  bool RemoveState( State state );
+  bool EditState( State state, Control new_control );
 
   inline void SetGammaFallback(bool bb) { gamma_fallback=true; }
   inline bool GetGammaFallback(void) { return gamma_fallback; }

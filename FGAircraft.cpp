@@ -137,7 +137,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.57 2001/01/29 02:00:19 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGAircraft.cpp,v 1.58 2001/02/02 01:16:56 jsb Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];

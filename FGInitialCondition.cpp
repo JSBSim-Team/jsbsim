@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGDefs.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.23 2001/01/28 13:57:15 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGInitialCondition.cpp,v 1.24 2001/02/02 01:16:58 jsb Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 

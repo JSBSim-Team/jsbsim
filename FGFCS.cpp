@@ -56,7 +56,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.37 2001/01/24 00:08:27 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.38 2001/02/02 01:16:57 jsb Exp $";
 static const char *IdHdr = "ID_FCS";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
 
   DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = PTrimCmd = 0.0;
   DaPos = DePos = DrPos = DfPos = DsbPos = DspPos = 0.0;
+  LeftBrake = RightBrake = CenterBrake = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,7 +172,7 @@ string FGFCS::GetComponentName(int idx) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-float FGFCS::GetBrake(FGLGear::eBrakeGroup bg) {
+float FGFCS::GetBrake(FGLGear::BrakeGroup bg) {
   switch (bg) {
   case FGLGear::bgLeft:
     return LeftBrake;

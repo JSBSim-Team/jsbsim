@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGGradient.h"    				
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.6 2000/10/16 12:32:51 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/filtersjb/Attic/FGGradient.cpp,v 1.7 2001/02/02 01:17:04 jsb Exp $";
 static const char *IdHdr = ID_GRADIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

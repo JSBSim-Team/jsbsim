@@ -47,7 +47,7 @@ and the cg.
 #include "FGDefs.h"
 #include "FGForce.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.6 2001/01/29 02:00:19 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGForce.cpp,v 1.7 2001/02/02 01:16:58 jsb Exp $";
 static const char *IdHdr = "ID_FORCE";
 
 FGForce::FGForce(FGFDMExec *FDMExec) :

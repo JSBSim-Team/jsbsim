@@ -39,7 +39,7 @@ INCLUDES
 
 #include "FGfdmSocket.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGfdmSocket.cpp,v 1.5 2000/10/16 12:32:49 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGfdmSocket.cpp,v 1.6 2001/02/02 01:17:03 jsb Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

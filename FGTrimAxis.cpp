@@ -42,19 +42,18 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.14 2001/01/29 02:00:20 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.15 2001/02/02 01:17:02 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
 
 FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
-                       Control ctrl, float ff) {
+                       Control ctrl) {
 
   fdmex=fdex;
   fgic=ic;
   state=st;
   control=ctrl;
-  tolerance=ff;
   solver_eps=tolerance;
   max_iterations=10;
   control_value=0;
@@ -109,8 +108,8 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     state_convert=RADTODEG;
     break;
   case tPhi:
-    control_min=fdmex->GetRotation()->Getphi() - 20*DEGTORAD;
-    control_max=fdmex->GetRotation()->Getphi() + 20*DEGTORAD;
+    control_min=fdmex->GetRotation()->Getphi() - 30*DEGTORAD;
+    control_max=fdmex->GetRotation()->Getphi() + 30*DEGTORAD;
     state_convert=RADTODEG;
     control_convert=RADTODEG;
     break;
@@ -126,6 +125,16 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
     state_convert=RADTODEG;
     break;
   }
+  
+  switch(state) {
+    case tUdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tVdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tWdot: tolerance = DEFAULT_TOLERANCE; break;
+    case tQdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tPdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tRdot: tolerance = DEFAULT_TOLERANCE / 10; break;
+    case tHmgt: tolerance = 0.01; break;
+  }  
   
 }
 
@@ -143,9 +152,7 @@ void FGTrimAxis::getState(void) {
   case tQdot: state_value=fdmex->GetRotation()->GetPQRdot()(2);break;
   case tPdot: state_value=fdmex->GetRotation()->GetPQRdot()(1); break;
   case tRdot: state_value=fdmex->GetRotation()->GetPQRdot()(3); break;
-  case tHmgt: state_value=fdmex->GetRotation()->Getpsi() - 
-                          fdmex->GetPosition()->GetGroundTrack();
-                          break;
+  case tHmgt: state_value=computeHmgt(); break;
   }
 }
 
@@ -172,6 +179,24 @@ void FGTrimAxis::getControl(void) {
   }
 }
 
+/*****************************************************************************/
+
+float FGTrimAxis::computeHmgt(void) {
+  float diff;
+  
+  diff   = fdmex->GetRotation()->Getpsi() - 
+             fdmex->GetPosition()->GetGroundTrack();
+  
+  if( diff < -M_PI ) {
+     return (diff + 2*M_PI);
+  } else if( diff > M_PI ) {
+     return (diff - 2*M_PI);
+  } else {
+     return diff;
+  }
+
+}
+       
 /*****************************************************************************/
 
 

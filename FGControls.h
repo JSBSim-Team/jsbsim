@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: FGControls.h,v 1.7 2000/10/13 19:21:02 jsb Exp $
+// $Id: FGControls.h,v 1.8 2001/02/02 01:16:57 jsb Exp $
 // (Log is kept at end of this file)
 
 
@@ -178,6 +178,9 @@ extern FGControls controls;
 
 
 // $Log: FGControls.h,v $
+// Revision 1.8  2001/02/02 01:16:57  jsb
+// ** JSB ** trim, prop, gear changes
+//
 // Revision 1.7  2000/10/13 19:21:02  jsb
 // ** JSB ** Added version identifiers for all files
 //
