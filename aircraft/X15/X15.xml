@@ -3,7 +3,7 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.36 2001/12/02 16:00:34 apeden Exp $
+  CVS Version: $Id: X15.xml,v 1.37 2001/12/16 22:14:04 jberndt Exp $
 
   Function: Models an X-15
   -->
@@ -491,12 +491,6 @@
         Side_force_due_to_aileron
         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
         -0.05
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
-        Side_force_due_to_rudder
-        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
-        0.45
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
