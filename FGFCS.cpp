@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.97 2004/05/24 12:42:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.98 2004/06/06 13:37:09 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -74,8 +74,6 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   LeftBrake = RightBrake = CenterBrake = 0.0;
   APAttitudeSetPt = APAltitudeSetPt = APHeadingSetPt = APAirspeedSetPt = 0.0;
   DoNormalize=true;
-
-  eMode = mNone;
 
   bind();
   for (i=0;i<=NForms;i++) {
@@ -117,26 +115,18 @@ bool FGFCS::Run(void)
 {
   unsigned int i;
 
-  if (!FGModel::Run()) {
-    for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
-    for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
-    for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
-    for (i=0; i<APComponents.size(); i++)  {
-      eMode = mAP;
-      APComponents[i]->Run();
-      eMode = mNone;
-    }
-    for (i=0; i<FCSComponents.size(); i++)  {
-      eMode = mFCS;
-      FCSComponents[i]->Run();
-      eMode = mNone;
-    }
-    if (DoNormalize) Normalize();
+  if (FGModel::Run()) return true; // fast exit if nothing to do
 
-    return false;
-  } else {
-    return true;
-  }
+  for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
+  for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
+  for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
+
+  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run(); // cycle AP components
+  for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run(); // cycle FCS components
+
+  if (DoNormalize) Normalize();
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -324,11 +314,9 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 
   if (delimiter == "AUTOPILOT") {
     Components = &APComponents;
-    eMode = mAP;
     Name = "Autopilot: " + name;
   } else if (delimiter == "FLIGHT_CONTROL") {
     Components = &FCSComponents;
-    eMode = mFCS;
     Name = "FCS: " + name;
   } else {
     cerr << endl << "Unknown FCS delimiter" << endl << endl;
@@ -402,41 +390,7 @@ bool FGFCS::Load(FGConfigFile* AC_cfg)
 
   if (delimiter == "FLIGHT_CONTROL") bindModel();
 
-  eMode = mNone;
-
   return true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-double FGFCS::GetComponentOutput(int idx)
-{
-  switch (eMode) {
-  case mFCS:
-    return FCSComponents[idx]->GetOutput();
-  case mAP:
-    return APComponents[idx]->GetOutput();
-  case mNone:
-    cerr << "Unknown FCS mode" << endl;
-    break;
-  }
-  return 0.0;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-string FGFCS::GetComponentName(int idx)
-{
-  switch (eMode) {
-  case mFCS:
-    return FCSComponents[idx]->GetName();
-  case mAP:
-    return APComponents[idx]->GetName();
-  case mNone:
-    cerr << "Unknown FCS mode" << endl;
-    break;
-  }
-  return string("");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.62 2004/04/06 03:58:12 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.63 2004/06/06 13:37:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.62 2004/04/06 03:58:12 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.63 2004/06/06 13:37:09 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -417,16 +417,6 @@ public:
       @return pointer to the State object */
   inline FGState* GetState(void) { return State; }
 
-  /** Retrieves a components output value
-      @param idx the index of the component (the component ID)
-      @return output value from the component */
-  double GetComponentOutput(int idx);
-
-  /** Retrieves the component name
-      @param idx the index of the component (the component ID)
-      @return name of the component */
-  string GetComponentName(int idx);
-
   /** Retrieves all component names for inclusion in output stream */
   string GetComponentStrings(void);
 
@@ -618,8 +608,6 @@ private:
   vector <double> PropAdvance;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
-
-  enum Mode {mAP, mFCS, mNone} eMode;
 
   double APAttitudeSetPt, APAltitudeSetPt, APHeadingSetPt, APAirspeedSetPt;
   bool APAcquireAttitude, APAcquireAltitude, APAcquireHeading, APAcquireAirspeed;
