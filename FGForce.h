@@ -39,10 +39,12 @@ computing the moments due to the difference between the point of application
 and the cg.
 
 CAVEAT:  if the custom transform is used for wind-to-body transforms then the
-         user *must* always pass this class the negative of beta.  I do not yet
-         understand why this is true.  Note that use of the custom transform for
-         this purpose shouldn't be necessary as it is already provided by 
-         SetTransform(tWindBody) and is not subject to the same restriction.
+         user *must* always pass this class the negative of beta. This is true
+         because sideslip angle does not follow the right hand rule i.e. it is 
+         positive for aircraft nose left sideslip.  Note that use of the custom 
+         transform for this purpose shouldn't be necessary as it is already 
+         provided by SetTransform(tWindBody) and is not subject to the same
+         restriction.
  
 ********************************************************************************
 SENTRY
