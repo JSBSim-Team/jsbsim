@@ -54,6 +54,7 @@ INCLUDES
 #include "filtersjb/FGGradient.h"
 #include "filtersjb/FGSwitch.h"
 #include "filtersjb/FGSummer.h"
+#include "filtersjb/FGFlaps.h"
 
 /*******************************************************************************
 ************************************ CODE **************************************
@@ -84,6 +85,7 @@ bool FGFCS::Run(void) {
     for (unsigned int i=0; i<Components.size(); i++) Components[i]->Run();
 
   } else {}
+
 
   return false;
 }
@@ -144,6 +146,8 @@ bool FGFCS::LoadFCS(FGConfigFile* AC_cfg) {
         Components.push_back(new FGGradient(this, AC_cfg));
       } else if (token == "SWITCH") {
         Components.push_back(new FGSwitch(this, AC_cfg));
+      } else if (token == "FLAPS") {
+        Components.push_back(new FGFlaps(this, AC_cfg));
       }
       cout << "    Load complete" << endl;
       AC_cfg->GetNextConfigLine();
