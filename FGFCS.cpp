@@ -59,7 +59,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.93 2003/06/03 09:53:44 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.94 2004/01/27 12:48:19 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -110,7 +110,6 @@ FGFCS::~FGFCS()
   MixturePos.clear();
   PropAdvanceCmd.clear();
   PropAdvance.clear();
-
 
   unsigned int i;
 

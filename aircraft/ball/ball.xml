@@ -4,9 +4,9 @@
 
   File:        ball.xml
   Author:      Jon Berndt
-  CVS Version: $Id: ball.xml,v 1.1 2004/01/27 12:36:21 jberndt Exp $
+  CVS Version: $Id: ball.xml,v 1.2 2004/01/27 12:48:19 jberndt Exp $
 
-  Function: Models a 500 lb. ball for testing
+  Function: Models a 50 lb. ball for testing
   Notes:    Try running JSBSim using this command line,
 
   -->
@@ -65,7 +65,7 @@
     -->
   </PROPULSION>
 
-  <FLIGHT_CONTROL NAME="MK-82 FCS">
+  <FLIGHT_CONTROL NAME="dumb ball">
     <!--
       No FCS
     -->
@@ -73,10 +73,6 @@
 
 
   <AERODYNAMICS>
-
-    <!--
-      Data as computed from Missile DATCOM by Cameron Munro
-    -->
 
     <AXIS NAME="LIFT">
       <!--
@@ -136,3 +132,4 @@
   </OUTPUT>
 
 </FDM_CONFIG>
+
