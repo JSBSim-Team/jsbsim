@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.50 2002/01/19 17:23:45 dmegginson Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.51 2002/02/08 12:36:11 dmegginson Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -213,26 +213,21 @@ void FGPiston::doEngineStartup(void)
   }
 
   //Check mode of engine operation
-  // ACK - unfortunately this hack doesn't work in JSBSim since the RPM is reset
-  // each iteration by the propeller :-(
   if (Cranking) {
     crank_counter++;
     if (RPM <= 480) {
-      RPM += 100;
-      if (RPM > 480)
-        RPM = 480;
+      // Do nothing !! - cranking power output is now handled in the doPower section
     } else {
       // consider making a horrible noise if the starter is engaged with
       // the engine running
     }
-    // TODO - find a better guess at cranking speed
   }
   
   // if ((!Running) && (spark) && (fuel) && (crank_counter > 120)) {
 
   if ((!Running) && (spark) && (fuel)) {
   // start the engine if revs high enough
-    if (RPM > 450) {
+    if ((RPM > 450) && (crank_counter > 175)) {
       // For now just instantaneously start but later we should maybe crank for
       // a bit
       Running = true;
@@ -351,28 +346,32 @@ void FGPiston::doFuelFlow(void)
 void FGPiston::doEnginePower(void)
 {
   ManifoldPressure_inHg *= p_amb / p_amb_sea_level;
-  double ManXRPM = ManifoldPressure_inHg * RPM;
+  if(Running) {	
+    double ManXRPM = ManifoldPressure_inHg * RPM;
         // FIXME: this needs to be generalized
-  Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
-  double T_amb_degF = (T_amb * 1.8) - 459.67;
-  double T_amb_sea_lev_degF = (288 * 1.8) - 459.67; 
-  Percentage_Power =
-    Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
-  double Percentage_of_best_power_mixture_power =
-    Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
-  Percentage_Power =
-    Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
-  if (Percentage_Power < 0.0)
-    Percentage_Power = 0.0;
-  else if (Percentage_Power > 100.0)
-    Percentage_Power = 100.0;
-  HP = Percentage_Power * MaxHP / 100.0;
-
-  //Hack
-  if (!Running) {
+    Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
+    double T_amb_degF = (T_amb * 1.8) - 459.67;
+    double T_amb_sea_lev_degF = (288 * 1.8) - 459.67; 
+    Percentage_Power =
+      Percentage_Power + ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+    double Percentage_of_best_power_mixture_power =
+      Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
+    Percentage_Power =
+      Percentage_Power * Percentage_of_best_power_mixture_power / 100.0;
+    if (Percentage_Power < 0.0)
+      Percentage_Power = 0.0;
+    else if (Percentage_Power > 100.0)
+      Percentage_Power = 100.0;
+    HP = Percentage_Power * MaxHP / 100.0;
+  } else {  
+    // Power output when the engine is not running
     if (Cranking) {
-      if (RPM < 480) {
-        HP = 3.0 + ((480 - RPM) / 10.0);
+      if (RPM < 10) {
+        HP = 3.0;	// This is a hack to prevent overshooting the idle rpm in the first time step
+                    // It may possibly need to be changed if the prop model is changed.
+      } else if (RPM < 480) {
+        HP = 3.0 + ((480 - RPM) / 10.0);  
+        // This is a guess - would be nice to find a proper starter moter torque curve
       } else {
         HP = 3.0;
       }
