@@ -47,7 +47,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.28 2000/10/24 12:21:11 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGLGear.cpp,v 1.29 2000/10/25 12:18:50 jsb Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,6 +101,44 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   MaximumStrutForce = MaximumStrutTravel = 0.0;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGLGear::FGLGear(const FGLGear& lgear)
+{
+  State    = lgear.State;
+  Aircraft = lgear.Aircraft;
+  Position = lgear.Position;
+  Rotation = lgear.Rotation;
+  Exec     = lgear.Exec;
+
+  vXYZ = lgear.vXYZ;
+  vMoment = lgear.vMoment;
+  vWhlBodyVec = lgear.vWhlBodyVec;
+
+  WOW                = lgear.WOW;
+  ReportEnable       = lgear.ReportEnable;
+  FirstContact       = lgear.FirstContact;
+  DistanceTraveled   = lgear.DistanceTraveled;
+  MaximumStrutForce  = lgear.MaximumStrutForce;
+  MaximumStrutTravel = lgear.MaximumStrutTravel;
+
+  kSpring         = lgear.kSpring;
+  bDamp           = lgear.bDamp;
+  compressLength  = lgear.compressLength;
+  compressSpeed   = lgear.compressSpeed;
+  staticFCoeff    = lgear.staticFCoeff;
+  dynamicFCoeff   = lgear.dynamicFCoeff;
+  brakePct        = lgear.brakePct;
+  maxCompLen      = lgear.maxCompLen;
+  SinkRate        = lgear.SinkRate;
+  GroundSpeed     = lgear.GroundSpeed;
+  Reported        = lgear.Reported;
+  name            = lgear.name;
+  SteerType       = lgear.SteerType;
+  BrakeGroup      = lgear.BrakeGroup;
+  eBrakeGrp       = lgear.eBrakeGrp;
+  maxSteerAngle   = lgear.maxSteerAngle;
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
 /** Landing gear model
     Calculates forces and moments due to landing gear reactions.
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.23 2000/10/24 12:21:11 jsb Exp $
+    @version $Id: FGLGear.h,v 1.24 2000/10/25 12:18:51 jsb Exp $
     @see -
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
 	   NASA-Ames", NASA CR-2497, January 1975
@@ -92,8 +92,12 @@ public:
       @param Executive a pointer to the parent executive object
       @param File a pointer to the config file instance */
   FGLGear(FGConfigFile* File, FGFDMExec* Executive);
+  /** Constructor
+      @param lgear a reference to an existing FGLGear object     */
+  FGLGear(const FGLGear& lgear);
   /// Destructor
   ~FGLGear(void);
+
 
   /// The Force vector for this gear
   FGColumnVector Force(void);
