@@ -78,9 +78,6 @@ FGCoefficient.o: FGCoefficient.cpp FGCoefficient.h FGConfigFile.h \
 FGColumnVector3.o: FGColumnVector3.cpp FGColumnVector3.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGColumnVector3.o -c FGColumnVector3.cpp
 
-FGColumnVector4.o: FGColumnVector4.cpp FGColumnVector4.h FGJSBBase.h
-	$(CC) $(INCLUDES) $(CCOPTS) -oFGColumnVector4.o -c FGColumnVector4.cpp
-
 FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGJSBBase.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGConfigFile.o -c FGConfigFile.cpp
 
