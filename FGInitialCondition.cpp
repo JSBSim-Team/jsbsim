@@ -55,7 +55,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.49 2002/01/20 14:17:17 apeden Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.50 2002/02/03 14:34:55 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -671,7 +671,6 @@ bool FGInitialCondition::solve(double *y,double x)
   i=0;
   while ((fabs(d) > eps) && (i < 100)) {
     d=(x3-x1)/d0;
-    cout << "f3-f1= " << f3-f1 << endl;
     x2 = x1-d*d0*f1/(f3-f1);
     
     f2=(this->*sfunc)(x2)-x;
