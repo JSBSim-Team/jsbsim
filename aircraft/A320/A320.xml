@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.4 2004/01/15 10:06:02 ehofman Exp $
+  CVS Version: $Id: A320.xml,v 1.5 2004/01/15 10:31:32 ehofman Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 
@@ -26,9 +26,9 @@
     AC_EYEPTLOC    80.0 -30.0  70.0
   </METRICS>
   <UNDERCARRIAGE>
-    AC_GEAR NOSE_LG    200.0    0.0  -95.0  100000  5000 0.8 0.50 0.02 STEERABLE NONE   5  RETRACT
-    AC_GEAR LEFT_MLG   700.0 -150.0  -95.0  150000 12000 0.8 0.50 0.02 FIXED     LEFT   0   RETRACT
-    AC_GEAR RIGHT_MLG  700.0  150.0  -95.0  150000 12000 0.8 0.50 0.02 FIXED     RIGHT  0   RETRACT
+    AC_GEAR NOSE_LG    196.1    0.0 -138.2  100000  5000 0.8 0.50 0.02 STEERABLE NONE   5  RETRACT
+    AC_GEAR LEFT_MLG   688.7 -144.4 -142.0  150000 12000 0.8 0.50 0.02 FIXED     LEFT   0   RETRACT
+    AC_GEAR RIGHT_MLG  688.7  144.4 -142.0  150000 12000 0.8 0.50 0.02 FIXED     RIGHT  0   RETRACT
     AC_GEAR TAIL_1     987.0    0.0   -55.7 1500000 60000 0.2 0.2  0.02 FIXED     NONE   0   FIXED
     AC_GEAR ENG_1      515.4  226.2  -104.3 1500000 60000 0.2 0.2  0.02 FIXED     NONE   0   FIXED
     AC_GEAR ENG_2      515.4 -226.2  -104.3 1500000 60000 0.2 0.2  0.02 FIXED     NONE   0   FIXED
