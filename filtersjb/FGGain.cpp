@@ -38,9 +38,8 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGGain.h" 
-#include <FGPropertyManager.h>           
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.42 2002/09/29 13:22:16 apeden Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.43 2002/09/29 13:23:57 apeden Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
