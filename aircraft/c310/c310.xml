@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c310" VERSION="1.56">
+<FDM_CONFIG NAME="c310" VERSION="1.57">
 <!--
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.6 2001/12/01 21:20:04 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.7 2001/12/02 16:00:36 apeden Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,
@@ -78,15 +78,16 @@
     <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
     <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
     <max steer angle>                Maximum steerable angle in degrees
+    <retractable>                    One of RETRACT or FIXED
     -->
 
 
-     AC_GEAR	NOSE       -60.2   0.0 -27.0  5400 1600  0.5  0.8 0.02 STEERABLE NONE 20
-     AC_GEAR	LEFT_MAIN   50.7 -70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0
-     AC_GEAR	RIGHT_MAIN  50.7  70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0
-     AC_GEAR	TAIL_SKID  221.8   0.0   0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0
-     AC_GEAR	LEFT_TIP    48.1 -222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0
-     AC_GEAR	RIGHT_TIP   48.1  222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0
+     AC_GEAR	NOSE       -60.2   0.0 -27.0  5400 1600  0.5  0.8 0.02 STEERABLE NONE 20 RETRACT
+     AC_GEAR	LEFT_MAIN   50.7 -70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  LEFT  0 RETRACT
+     AC_GEAR	RIGHT_MAIN  50.7  70.8 -31.0  5400 1600  0.5  0.8 0.02 CASTERED  RIGHT 0 RETRACT
+     AC_GEAR	TAIL_SKID  221.8   0.0   0.0 20000 1000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	LEFT_TIP    48.1 -222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
+     AC_GEAR	RIGHT_TIP   48.1  222.0 18.9 10000 2000  0.2   0.2 0.2  FIXED NONE 0 FIXED
 
 </UNDERCARRIAGE>
 
@@ -195,7 +196,7 @@
        GAIN         0.01745
        OUTPUT       FG_RUDDER_POS
      </COMPONENT>
-     <COMPONENT NAME="Flaps Control" TYPE="FLAPS">
+     <COMPONENT NAME="Flaps Control" TYPE="KINEMAT">
        ID           4
        INPUT        FG_FLAPS_CMD
        DETENTS      4
@@ -204,6 +205,14 @@
                     25   1
                     35   1
        OUTPUT      FG_FLAPS_POS
+     </COMPONENT>
+     <COMPONENT NAME="Gear Control" TYPE="KINEMAT">
+       ID           5
+       INPUT        FG_GEAR_CMD
+       DETENTS      2
+                    0    0
+                    1    5
+       OUTPUT       FG_GEAR_POS
      </COMPONENT>
    </FLIGHT_CONTROL>
    <AERODYNAMICS>
@@ -335,6 +344,11 @@
          Drag_due_to_sideslip
          FG_QBAR|FG_WINGAREA|FG_ABETA
          0.14
+       </COEFFICIENT>
+       <COEFFICIENT NAME="CDgear" TYPE="VALUE">
+         Drag_due_to_landing_gear
+         FG_QBAR|FG_WINGAREA|FG_GEAR_POS
+         0.03
        </COEFFICIENT>
 
     </AXIS>
