@@ -4,7 +4,7 @@
 
   File:        mk82.xml
   Author:      Cameron Munro
-  CVS Version: $Id: mk82.xml,v 1.4 2002/09/22 18:06:03 apeden Exp $
+  CVS Version: $Id: mk82.xml,v 1.5 2004/02/14 09:25:39 ehofman Exp $
 
   Function: Models a 500 lb. Mk-82 bomb
   Notes:    Try running JSBSim using this command line,
@@ -33,6 +33,7 @@
     AC_CGLOC    31.0 0.0 0.0
     AC_EYEPTLOC  0.0  0.0 0.0
     AC_AERORP   33.08 0.0 0.0
+    AC_VRP      31.0 0.0 0.0
 
   </METRICS>
 

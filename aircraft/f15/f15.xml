@@ -3,7 +3,7 @@
 <!--
   File:        f15.xml
   Author:      Erik Hofman
-  CVS Version: $Id: f15.xml,v 1.15 2004/02/02 21:02:37 jberndt Exp $
+  CVS Version: $Id: f15.xml,v 1.16 2004/02/14 09:25:37 ehofman Exp $
 
   Function: Models an F-15 "Eagle"
   Status:   Early production
@@ -52,6 +52,7 @@
     AC_AERORP          -234.15   0.0    0.0
     AC_EYEPTLOC        -398.45   0.0   37.0
     AC_POINTMASS 230.0 -398.45   0.0   20.0
+    AC_VRP             -237.25   0.0    4.58
 
   </METRICS>
 

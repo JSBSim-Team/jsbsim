@@ -3,7 +3,7 @@
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.41 2002/12/17 14:42:14 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.42 2004/02/14 09:25:35 ehofman Exp $
 
   Function: Models an X-15
   -->
@@ -40,6 +40,7 @@
     AC_CGLOC    345.0  0.0    0.0
     AC_EYEPTLOC 115.9  0.0   26.0
     AC_AERORP   345.4  0.0    0.0
+    AC_VRP      342.82 0.0    0.0
 
   </METRICS>
 

@@ -2,7 +2,7 @@
 <!--                                                                                             -
   File:        A320.xml
   Author:      David Culp
-  CVS Version: $Id: A320.xml,v 1.6 2004/02/02 21:02:36 jberndt Exp $
+  CVS Version: $Id: A320.xml,v 1.7 2004/02/14 09:25:19 ehofman Exp $
 
   Function: Models an Airbus A320-200 with CFM56 engines
 
@@ -24,6 +24,7 @@
     AC_CGLOC      672.0   0.0 -40.0
     AC_AERORP     672.0   0.0  20.0 
     AC_EYEPTLOC    80.0 -30.0  70.0
+    AC_VRP        661.1   0.0 -37.0
   </METRICS>
   <UNDERCARRIAGE>
     AC_GEAR NOSE_LG    196.1    0.0 -138.2  100000  5000 0.8 0.50 0.02 STEERABLE NONE   5  RETRACT

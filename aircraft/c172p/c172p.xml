@@ -2,7 +2,7 @@
 <!--
   File:        c172p.xml
   Author:      David Megginson (based on c172r.xml by Tony Peden)
-  CVS Version: $Id: c172p.xml,v 1.10 2003/11/25 17:08:58 dmegginson Exp $
+  CVS Version: $Id: c172p.xml,v 1.11 2004/02/14 09:25:36 ehofman Exp $
 
   Function: Models a 1981 Cessna 172P.
 
@@ -64,7 +64,7 @@
 <!-- Co-pilot -->
 <!-- AC_POINTMASS 180.0 36.0  14.0 24.0 -->
     AC_EYEPTLOC  37.0  0.0 48.0
-
+    AC_VRP       42.6  0.0 38.5
   </METRICS>
 
   <UNDERCARRIAGE>

@@ -164,6 +164,7 @@ Aerodynamics:
    AC_CGLOC     1327.0   0.0 -24.0 // Z point is guesstimated
    AC_AERORP    1377.0   0.0 -24.0 // Estimated Y component
    AC_EYEPTLOC   308.0 -21.0 138.0
+   AC_VRP       1327.0   0.0 -24.0
  </METRICS>
  <UNDERCARRIAGE>
   AC_GEAR NOSE_LG    396.0    0.0 -206.0  22000.0 87302.6  0.5  0.8  0.02 STEERABLE NONE  5.0 RETRACT

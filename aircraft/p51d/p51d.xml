@@ -3,7 +3,7 @@
 
   File:        p51d
   Author:      Jon Berndt
-  CVS Version: $Id: p51d.xml,v 1.3 2003/11/04 16:05:57 dpculp Exp $
+  CVS Version: $Id: p51d.xml,v 1.4 2004/02/14 09:25:39 ehofman Exp $
 
   Function: Models a North American Aviation P-51D
   Notes:    See NACA TN 1044, NACA Report 829, NASA SP-468
@@ -28,6 +28,7 @@
     AC_AERORP    99.0 0.0 -26.5  <!-- inches      -->
     AC_CGLOC     98.0 0.0  -9.0  <!-- inches      -->
     AC_EYEPTLOC  128.0 0.0 30.0  <!-- inches      -->
+    AC_VRP       98.0 0.0  -9.0  <!-- inches, also incorrect -->
     <!-- Pilot -->
     AC_POINTMASS 180.0 0.0 15.0  <!-- pounds, inches -->
   </METRICS>

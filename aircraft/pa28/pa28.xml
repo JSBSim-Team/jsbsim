@@ -3,7 +3,7 @@
   File:        PA28-180.xml
   Author:      Cameron Munro & Cameron Moore
   Function:    Models a Piper Cherokee 180 (PA28-180)
-  CVS Version: $Id: pa28.xml,v 1.8 2004/02/02 21:02:38 jberndt Exp $
+  CVS Version: $Id: pa28.xml,v 1.9 2004/02/14 09:25:40 ehofman Exp $
 -->
 
   <METRICS>
@@ -52,6 +52,7 @@
     <!-- Pilot -->
     AC_POINTMASS 180.0 81.6 -9.6 0
     AC_EYEPTLOC    81.6 -9.6 21
+    AC_VRP         88.32  0.0  0.0
     AC_ALPHALIMITS -0.175 0.349
 
   </METRICS>

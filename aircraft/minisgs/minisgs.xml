@@ -61,6 +61,7 @@
     AC_CGLOC     0.0 0.0 0.0      <!-- SGS inches -->
     AC_POINTMASS 0.0 0.0 0.0 0.0  <!-- no pilot -->
     AC_EYEPTLOC  0.0  0.0 0.0     <!-- made up -->
+    AC_VRP       0.0 0.0 0.0
 
   </METRICS>
 

@@ -3,7 +3,7 @@
 <!--                                                                                   - -
   File:      f104.xml
   Author:    Erik Hofman
-  CVS Version: $Id: f104.xml,v 1.10 2004/02/02 21:02:37 jberndt Exp $
+  CVS Version: $Id: f104.xml,v 1.11 2004/02/14 09:25:37 ehofman Exp $
 
   Function: Models an F-104G "Starfighter"
   Status:   Early production
@@ -44,6 +44,7 @@
    AC_CGLOC           -273.0   0.0   0.0
    AC_EYEPTLOC        -467.3   0.0  29.1 
    AC_POINTMASS 230.0 -467.3   0.0   9.4
+   AC_VRP             -275.1   0.0   0.1
   </METRICS>
   <UNDERCARRIAGE>
    AC_GEAR NOSE       -404.0    0.0 -56.9 15000 5000 0.5 0.8 0.02 STEERABLE NONE 10 RETRACT
