@@ -51,7 +51,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.92 2003/07/02 14:38:38 ehofman Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.93 2003/07/28 14:04:00 ehofman Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -406,7 +406,7 @@ FGColumnVector3& FGLGear::Force(void)
       RollingForce = 0;
       if (fabs(RollingWhlVel) > 1E-3) {
         RollingForce = (1.0 - TirePressureNorm) * 30
-                       * vLocalForce(eZ) * BrakeFCoeff
+                       + vLocalForce(eZ) * BrakeFCoeff
                        * fabs(RollingWhlVel)/RollingWhlVel;
       }
       SideForce    = vLocalForce(eZ) * FCoeff;

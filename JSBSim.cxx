@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.140 2003/07/13 20:12:10 dmegginson Exp $
+// $Id: JSBSim.cxx,v 1.141 2003/07/28 14:04:00 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -807,6 +807,7 @@ void FGJSBsim::init_gear(void ) {
       node->setBoolValue("wow", gr->GetGearUnit(i)->GetWOW());
       node->setBoolValue("has-brake", gr->GetGearUnit(i)->GetBrakeGroup() > 0);
       node->setDoubleValue("position-norm", FCS->GetGearPos());
+      node->setDoubleValue("tire-pressure-norm", gr->GetGearUnit(i)->GetTirePressure());
     }  
 }
 
@@ -820,6 +821,7 @@ void FGJSBsim::update_gear(void) {
 	->setBoolValue(gr->GetGearUnit(i)->GetWOW());
       node->getChild("position-norm", 0, true)
 	->setDoubleValue(FCS->GetGearPos());
+      gr->GetGearUnit(i)->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
     }  
 }
 
