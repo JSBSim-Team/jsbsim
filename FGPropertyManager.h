@@ -10,6 +10,8 @@
 
 #include <simgear/misc/props.hxx>
 
+using namespace std;
+
 class FGPropertyManager:public SGPropertyNode {
   public:
     FGPropertyManager::FGPropertyManager(void) {
