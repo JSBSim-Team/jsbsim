@@ -25,10 +25,13 @@
 #endif
 
 #include <iostream.h>
+#include <fstream.h>
 #include <cstdio>
 #include <cstdlib>
 #include "dislin.h"
 #include "datafile.h"
+
+void plotdata(ifstream* datafile);
 
 int main(int argc, char *argv[])
 {
@@ -40,12 +43,24 @@ int main(int argc, char *argv[])
   float sf, ef;
   char scratch;
 
-  if (argc != 2 ) {
-    cout << endl << "Usage: SimPlot <data_file_name.csv>" << endl << endl;
+  if (argc > 3 || argc == 1 ) {
+    cout << endl << "Usage: SimPlot <data_file_name.csv> [<autoplot file>]" << endl << endl;
     exit(-1);
   }
 
   DataFile df(argv[1]);
+  
+  ifstream f;
+  if (argc == 3) {
+    f.open(argv[2]);
+    if (!f) {
+      cerr << "Could not open autoplot file " << argv[2] << endl << endl;
+    } else {
+      f.setf(ios::skipws);
+    }
+    plotdata(&f);
+    exit(0);
+  }
 
   cout << endl << endl << "Here are the available parameters which may be plotted: " << endl;
   cout << endl;
@@ -63,16 +78,16 @@ nextplot:
   commands_vec.clear();
 
   bool col1 = true;
-  for (unsigned int i=0; i<df.names.size();i++) {
+  unsigned int i;
+  for (i=0; i<df.names.size();i++) {
+    cout << i << ") " << df.names[i];
     if (col1) {
-      cout << i << ") " << df.names[i];
       for (unsigned int j=0; j<= namelen - df.names[i].size() + 2; j++) cout << " ";
       if (i<10) cout << " ";
-      col1=!col1;
     } else {
-      cout << i << ") " << df.names[i] << endl;
-      col1=!col1;
+      cout << endl;
     }
+    col1=!col1;
   }
 
   int numvars   = df.GetNumFields();
@@ -293,5 +308,40 @@ savepng:
   } else {
     goto nextplot;
   }    
+}
+
+
+void plotdata(ifstream* datafile)
+{
+  string data_str;
+  string Title, Y_Axis_Caption, X_Axis_Caption;
+  string Y_Variables;
+  string X_Variable;
+  string Ranges;
+  double xmin, ymin, xmax, ymax;
+  int delim;
+  
+  while (!datafile->eof()) {
+    getline(*datafile, Title);
+    getline(*datafile, X_Axis_Caption);
+    getline(*datafile, Y_Axis_Caption);
+    getline(*datafile, Ranges);
+    getline(*datafile, X_Variable);
+    getline(*datafile, Y_Variables);
+    
+    if (datafile->eof()) break;
+    
+    if (Ranges.find("auto") != string::npos) { // autoscaling
+      xmin = xmax = ymin = ymax = 0.00;
+      cout << "Autoscaling ..." << endl;
+    } else {
+      delim = Ranges.find_first_of("|");
+      xmin = strtod(Ranges.substr(0, delim-1).c_str(), NULL);
+      cout << "Range: " << xmin;
+    }
+    
+    
+    
+  }
 }
 

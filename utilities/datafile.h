@@ -30,8 +30,8 @@
 
 class DataFile {
 public: 
-	DataFile();
-	~DataFile();
+  DataFile();
+  ~DataFile();
   DataFile(string fname);
 
   std::vector <string> names;
