@@ -87,6 +87,7 @@ FGTranslation::FGTranslation(FGFDMExec* fdmex) : FGModel(fdmex),
   Vt = 0.0;
   Mach = 0.0;
   alpha = beta = 0.0;
+  adot = bdot = 0.0;
   rho = 0.002378;
 }
 
@@ -127,7 +128,25 @@ bool FGTranslation::Run(void) {
     if (vUVW(eV) != 0.0)
       beta = vUVW(eU)*vUVW(eU)+vUVW(eW)*vUVW(eW) > 0.0 ? atan2(vUVW(eV),
              sqrt(vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW))) : 0.0;
+    
+     
+	
+	  // stolen, quite shamelessly, from LaRCsim
+    float mUW = (vUVW(eU)*vUVW(eU) + vUVW(eW)*vUVW(eW));
+    float signU=1;
+    if (vUVW(eU) != 0.0)
+		  signU = vUVW(eU)/fabs(vUVW(eU));
 
+	  if( (mUW == 0.0) || (Vt == 0.0) ) {
+		  adot = 0.0;
+		  bdot = 0.0;
+	  } else {
+		  adot = (vUVW(eU)*vUVWdot(eW) - vUVW(eW)*vUVWdot(eU))/mUW;
+		  bdot = (signU*mUW*vUVWdot(eV) - vUVW(eV)*(vUVW(eU)*vUVWdot(eU) 
+              + vUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
+	  }
+    //
+    
     qbar = 0.5*rho*Vt*Vt;
 
     Mach = Vt / State->Geta();

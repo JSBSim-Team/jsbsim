@@ -88,7 +88,8 @@ public:
   inline float Getqbar (void) { return qbar; }
   inline float GetVt   (void) { return Vt; }
   inline float GetMach (void) { return Mach; }
-
+  inline float Getadot (void) { return adot; }
+  inline float Getbdot (void) { return bdot; }
 
   void SetUVW(FGColumnVector tt) { vUVW = tt; }
 
@@ -97,6 +98,8 @@ public:
   inline void Setqbar (float tt) { qbar = tt; }
   inline void SetVt   (float tt) { Vt = tt; }
   inline void SetMach (float tt) { Mach=tt; }
+  inline void Setadot (float tt) { adot = tt; }
+  inline void Setbdot (float tt) { bdot = tt; }
 
   inline void SetAB(float t1, float t2) { alpha=t1; beta=t2; }
 
@@ -115,6 +118,7 @@ private:
   float Vt, qbar, Mach;
   float Mass, dt;
   float alpha, beta;
+  float adot,bdot;
   float rho;
 
   void GetState(void);
