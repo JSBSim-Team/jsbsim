@@ -42,7 +42,7 @@ INCLUDES
 #include "FGTurbine.h"
 
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.3 2002/09/10 01:53:12 apeden Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.4 2002/10/01 12:04:07 apeden Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,7 +197,7 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
   *Eng_cfg >> token >> MaxMilThrust;
   *Eng_cfg >> token >> MaxAugThrust;
   i=0;
-  while( Eng_cfg->GetValue() != "/FG_TURBINE" && i < 10){
+  while( Eng_cfg->GetValue() != string("/FG_TURBINE") && i < 10){
     ThrustTables.push_back( new FGCoefficient(FDMExec) );
     ThrustTables.back()->Load(Eng_cfg);
     i++;
