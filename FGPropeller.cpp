@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGPropeller.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.35 2001/11/28 06:02:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.36 2001/12/01 13:32:05 apeden Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,8 +158,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   if (P_Factor > 0.0001) {
     alpha = fdmex->GetTranslation()->Getalpha();
     beta  = fdmex->GetTranslation()->Getbeta();
-    SetLocationY(P_Factor*alpha*fabs(Sense)/Sense);
-    SetLocationZ(P_Factor*beta*fabs(Sense)/Sense);
+    SetLocationY( GetLocationY() + P_Factor*alpha*fabs(Sense)/Sense);
+    SetLocationZ( GetLocationZ() + P_Factor*beta*fabs(Sense)/Sense);
   } else if (P_Factor < 0.000) {
     cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
