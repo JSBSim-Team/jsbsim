@@ -60,7 +60,7 @@ INCLUDES
 #  include STL_IOMANIP
 #endif
 
-static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.18 2002/03/22 11:50:12 apeden Exp $";
+static const char *IdSrc = "$Id: FGFactorGroup.cpp,v 1.19 2002/04/10 00:36:44 jberndt Exp $";
 static const char *IdHdr = ID_FACTORGROUP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,7 +121,6 @@ double FGFactorGroup::TotalValue(void)
      totalValue += sum[i]->TotalValue();
      SDtotal += sum[i]->GetSD();
   }
-  //cout << totalValue << "  " << FGCoefficient::TotalValue() << endl;
   totalValue *= FGCoefficient::TotalValue();
   SDtotal *= FGCoefficient::GetSD();
   Debug(2);
@@ -130,13 +129,10 @@ double FGFactorGroup::TotalValue(void)
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void FGFactorGroup::bind(FGPropertyManager* parent) {
-  
-  cout << "In FGFactorGroup::bind" << endl;
-  cout << parent->getName() << endl;
+void FGFactorGroup::bind(FGPropertyManager* parent)
+{
   unsigned i;
   node=parent->GetNode(name,true);
-  cout << node->getName() << endl;
   node->SetString("description",description);
   FGCoefficient::bind(node);
   for (i=0; i < sum.size(); i++) { 
@@ -148,7 +144,8 @@ void FGFactorGroup::bind(FGPropertyManager* parent) {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
   
-void FGFactorGroup::unbind(void) {
+void FGFactorGroup::unbind(void)
+{
   unsigned i;
   
   FGCoefficient::unbind();
