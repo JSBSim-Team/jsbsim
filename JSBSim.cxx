@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.45 2000/12/27 23:44:44 jsb Exp $
+// $Id: JSBSim.cxx,v 1.46 2001/01/09 11:49:21 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -161,11 +161,6 @@ bool FGJSBsim::update( int multiloop ) {
     int i;
     double save_alt = 0.0;
   
-    // lets try to avoid really screwing up the JSBsim model
-    if ( get_Altitude() < -9000 ) {
-      save_alt = get_Altitude();
-      set_Altitude( 0.0 );
-    }
 
     copy_to_JSBsim();
     
@@ -206,16 +201,11 @@ bool FGJSBsim::update( int multiloop ) {
       get_engine(i)->set_Throttle( controls.get_throttle(i) );
     }
     
-  
     for ( int i = 0; i < multiloop; i++ ) fdmex->Run();
 
     // translate JSBsim back to FG structure so that the
     // autopilot (and the rest of the sim can use the updated values
     copy_from_JSBsim();
-
-    // but lets restore our original bogus altitude when we are done
-
-    if ( save_alt < -9000.0 ) set_Altitude( save_alt );
   
     //climb rate now set from FDM in copy_from_x()
     return true;
