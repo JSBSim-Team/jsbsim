@@ -59,11 +59,16 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.47 2002/03/18 12:12:46 apeden Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.48 2002/03/21 12:25:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf } FcIdx;
+int const NNorm=7;
+typedef enum { ofRad=0, ofNorm, ofMag } OutputForm;
+int const NForms=3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -138,7 +143,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.47 2002/03/18 12:12:46 apeden Exp $
+    @version $Id: FGFCS.h,v 1.48 2002/03/21 12:25:27 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -152,11 +157,6 @@ CLASS DOCUMENTATION
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf } FcIdx;
-int const NNorm=7;
-typedef enum { ofRad=0, ofNorm, ofMag } OutputForm;
-int const NForms=3;
 
 class FGFCS : public FGModel {
 
@@ -269,7 +269,6 @@ public:
   inline double GetDfPos( int form = ofRad ) 
                          const { return DspPos[form]; }
                          
-  
   /** Gets the throttle position.
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
