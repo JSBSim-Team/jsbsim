@@ -83,8 +83,6 @@ public:
   void Initialize(float, float, float, float, float, float, float, float, float);
   void Initialize(FGInitialCondition *FGIC);
   bool StoreData(string);
-  bool DumpData(string);
-  bool DisplayData(void);
 
   inline float GetVt(void) {return Vt;}
 
