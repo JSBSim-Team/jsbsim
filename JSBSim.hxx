@@ -39,6 +39,7 @@ INCLUDES
 
 #include <FDM/JSBSim/FGFDMExec.h>
 #include <FDM/JSBSim/FGInitialCondition.h>
+#include <FDM/JSBSim/FGMassBalance.h>
 #undef MAX_ENGINES
 #include <Aircraft/aircraft.hxx>
 
@@ -67,7 +68,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.14 2001/04/09 13:03:51 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.15 2001/04/19 23:26:48 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -206,6 +207,7 @@ private:
 	FGAtmosphere*  Atmosphere;
 	FGFCS*         FCS;
 	FGPropulsion*  Propulsion;
+	FGMassBalance* MassBalance;
 	FGAircraft*    Aircraft;
 	FGTranslation* Translation;
 	FGRotation*    Rotation;

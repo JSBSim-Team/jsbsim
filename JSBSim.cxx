@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.58 2001/04/09 23:36:25 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.59 2001/04/19 23:26:48 jberndt Exp $
 
 
 #include <simgear/compiler.h>
@@ -68,6 +68,7 @@ FGJSBsim::FGJSBsim( double dt )
     State       = fdmex->GetState();
     Atmosphere  = fdmex->GetAtmosphere();
     FCS         = fdmex->GetFCS();
+    MassBalance = fdmex->GetMassBalance();
     Propulsion  = fdmex->GetPropulsion();
     Aircraft    = fdmex->GetAircraft();
     Translation = fdmex->GetTranslation();
@@ -292,15 +293,15 @@ bool FGJSBsim::copy_to_JSBsim() {
 bool FGJSBsim::copy_from_JSBsim() {
     unsigned int i, j;
 
-    _set_Inertias( Aircraft->GetMass(),
-                   Aircraft->GetIxx(),
-                   Aircraft->GetIyy(),
-                   Aircraft->GetIzz(),
-                   Aircraft->GetIxz() );
+    _set_Inertias( MassBalance->GetMass(),
+                   MassBalance->GetIxx(),
+                   MassBalance->GetIyy(),
+                   MassBalance->GetIzz(),
+                   MassBalance->GetIxz() );
 
-    _set_CG_Position( Aircraft->GetXYZcg(1),
-                      Aircraft->GetXYZcg(2),
-                      Aircraft->GetXYZcg(3) );
+    _set_CG_Position( MassBalance->GetXYZcg(1),
+                      MassBalance->GetXYZcg(2),
+                      MassBalance->GetXYZcg(3) );
 
     _set_Accels_Body( Translation->GetUVWdot(1),
                       Translation->GetUVWdot(2),
