@@ -51,21 +51,21 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
 {
   string tmp;
   *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)  
-            >> kSpring >> bDamp >> statFCoeff >> brakeCoeff;
-  
-  
+            >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
+	          >> SteerType >> BrakeType >> GroupMember >> maxSteerAngle;
+    
   cout << "    Name: " << name << endl;
   cout << "      Location: " << vXYZ << endl;
-  cout << "      Spring Constant: " << kSpring << endl;
+  cout << "      Spring Constant:  " << kSpring << endl;
   cout << "      Damping Constant: " << bDamp << endl;
-  cout << "      Rolling Resistance: " << statFCoeff << endl;
-  cout << "      Braking Coeff: " << brakeCoeff << endl;
+  cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
+  cout << "      Static Friction:  " << staticFCoeff << endl;
+  cout << "      Braking setting:  " << brakePct << endl;
   
   State       = Exec->GetState();
   Aircraft    = Exec->GetAircraft();
   Position    = Exec->GetPosition();
   Rotation    = Exec->GetRotation();
-  
   
   WOW = false;
   ReportEnable=true;
@@ -117,8 +117,8 @@ FGColumnVector FGLGear::Force(void)
     vWhlVelVec(eZ)  =  0.00;
 
     vLocalForce(eZ) =  min(-compressLength * kSpring - compressSpeed * bDamp, (float)0.0);
-    vLocalForce(eX) =  fabs(vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eX);
-    vLocalForce(eY) =  fabs(vLocalForce(eZ) * statFCoeff) * vWhlVelVec(eY);
+    vLocalForce(eX) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eX);
+    vLocalForce(eY) =  fabs(vLocalForce(eZ) * staticFCoeff) * vWhlVelVec(eY);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
     MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));

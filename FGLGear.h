@@ -101,10 +101,12 @@ private:
   FGColumnVector vXYZ;
   FGColumnVector vMoment;
   FGColumnVector vWhlBodyVec;
-  float kSpring, bDamp, compressLength, compressSpeed;
-  float statFCoeff, rollFCoeff, skidFCoeff;
-  float frictionForce, compForce;
-  float brakePct, brakeForce, brakeCoeff;
+  float kSpring;
+  float bDamp;
+  float compressLength;
+  float compressSpeed;
+  float staticFCoeff, dynamicFCoeff;
+  float brakePct;
   float maxCompLen;
   double SinkRate;
   double GroundSpeed;
@@ -116,6 +118,10 @@ private:
   bool Reported;
   bool ReportEnable;
   string name;
+  string BrakeType;
+  string SteerType;
+  string GroupMember;
+  float  maxSteerAngle;
 
   FGFDMExec*     Exec;
   FGState*       State;

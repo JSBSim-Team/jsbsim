@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.30">
+<FDM_CONFIG NAME="X-15" VERSION="1.35">
 
   <METRICS>
 
@@ -29,9 +29,27 @@
 
   <UNDERCARRIAGE>
 
-    AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0
-    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0
-    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0
+    <COMMENT>
+
+    The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+    
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brakeable>                      One of <NO_BRAKE | HAS_BRAKE>
+    <group membership>               One of <LEFT | CENTER | RIGHT >
+    <max steer angle>                Maximum steerable angle in degrees
+
+    </COMMENT>
+    
+    AC_GEAR     NOSE        63.0   0.0 -48.0 15000  1000  0.02 0.5 FIXED NO_BRAKE CENTER 0
+    AC_GEAR     LEFT_SKID  540.6 -56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE LEFT   0
+    AC_GEAR     RIGHT_SKID 540.6  56.8 -76.6 15000  1000  0.2  0.9 FIXED NO_BRAKE RIGHT  0
 
   </UNDERCARRIAGE>
 
@@ -40,13 +58,10 @@
     <COMMENT>
 
     Tank locations and characteristics, empty weight, in aircraft's own coord system:
-    X, Y, Z, in inches
-    effective radius of tank, in inches (for fuel slosh, if/when modeled)
-    capacity in pounds
-    current contents, in pounds
-
-    AC_TANK OXIDIZER 282.3 0.0 0.0 26.0 9470.0 9470.0
-    AC_TANK FUEL     408.3 0.0 0.0 26.0 8236.0 8236.0
+    * X, Y, Z, in inches
+    * effective radius of tank, in inches (for fuel slosh, if/when modeled)
+    * capacity in pounds
+    * current contents, in pounds
 
     </COMMENT>
 
