@@ -77,7 +77,8 @@ MACROS
 //
 // For every term registered here there must be a corresponding handler in
 // GetParameter() below that retrieves that parameter. Also, there must be an
-// entry in the enum eParam definition in FGDefs.h
+// entry in the enum eParam definition in FGDefs.h. The ID is what must be used
+// in any config file entry which references that item.
 
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     mTl2b(3,3),
