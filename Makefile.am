@@ -11,7 +11,6 @@ libJSBSim_a_SOURCES = \
 	FGAuxiliary.cpp FGAuxiliary.h \
 	FGCoefficient.cpp FGCoefficient.h \
         FGColumnVector3.cpp FGColumnVector3.h \
-        FGColumnVector4.cpp FGColumnVector4.h \
 	FGConfigFile.cpp FGConfigFile.h \
 	FGDefs.h \
         FGElectric.cpp FGElectric.h \
@@ -56,7 +55,5 @@ libJSBSim_a_SOURCES = \
 
 
 # noinst_PROGRAMS = testJSBsim
-
-AM_CXXFLAGS = -DFGFS
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src
