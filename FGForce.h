@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.32 2004/02/26 15:03:55 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.33 2004/05/29 17:27:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.32 2004/02/26 15:03:55 jberndt Exp $
+    @version $Id: FGForce.h,v 1.33 2004/05/29 17:27:44 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -261,7 +261,7 @@ public:
     vXYZn(eZ) = z;
     SetActingLocation(x, y, z);
   }
-  
+
   /** Acting point of application.
       JSBsim structural coords used (inches, x +back, y +right, z +up).
       This function sets the point at which the force acts - this may
@@ -283,7 +283,7 @@ public:
   inline double SetActingLocationZ(double z) {vActingXYZn(eZ) = z; return z;}
   inline void SetLocation(FGColumnVector3 vv) { vXYZn = vv; SetActingLocation(vv);}
   inline void SetActingLocation(FGColumnVector3 vv) { vActingXYZn = vv; }
-  
+
   inline double GetLocationX( void ) { return vXYZn(eX);}
   inline double GetLocationY( void ) { return vXYZn(eY);}
   inline double GetLocationZ( void ) { return vXYZn(eZ);}
@@ -320,7 +320,7 @@ protected:
   FGColumnVector3 vFn;
   FGColumnVector3 vMn;
   FGColumnVector3 vH;
-  
+
 private:
   FGColumnVector3 vFb;
   FGColumnVector3 vM;
@@ -331,7 +331,7 @@ private:
 
   FGMatrix33 mT;
 
-  virtual void Debug(int from);
+  void Debug(int from);
 };
 }
 #endif

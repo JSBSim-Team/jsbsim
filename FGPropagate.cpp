@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.14 2004/05/25 11:46:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.15 2004/05/29 17:27:44 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,7 +118,7 @@ bool FGPropagate::InitModel(void)
   SeaLevelRadius = Inertial->RefRadius();          // For initialization ONLY
   RunwayRadius   = SeaLevelRadius;
 
-  vLocation.SetRadius( SeaLevelRadius + 4.0 );
+  VState.vLocation.SetRadius( SeaLevelRadius + 4.0 );
 
   return true;
 }
@@ -131,27 +131,27 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   RunwayRadius = FGIC->GetSeaLevelRadiusFtIC() + FGIC->GetTerrainAltitudeFtIC();
 
   // Set the position lat/lon/radius
-  vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
+  VState.vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
                           FGIC->GetLatitudeRadIC(),
                           FGIC->GetAltitudeFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
 
   // Set the Orientation from the euler angles
-  vQtrn = FGQuaternion( FGIC->GetPhiRadIC(),
+  VState.vQtrn = FGQuaternion( FGIC->GetPhiRadIC(),
                         FGIC->GetThetaRadIC(),
                         FGIC->GetPsiRadIC() );
 
   // Set the velocities in the instantaneus body frame
-  vUVW = FGColumnVector3( FGIC->GetUBodyFpsIC(),
+  VState.vUVW = FGColumnVector3( FGIC->GetUBodyFpsIC(),
                           FGIC->GetVBodyFpsIC(),
                           FGIC->GetWBodyFpsIC() );
 
   // Set the angular velocities in the instantaneus body frame.
-  vPQR = FGColumnVector3( FGIC->GetPRadpsIC(),
+  VState.vPQR = FGColumnVector3( FGIC->GetPRadpsIC(),
                           FGIC->GetQRadpsIC(),
                           FGIC->GetRRadpsIC() );
 
   // Compute some derived values.
-  vVel = vQtrn.GetTInv()*vUVW;
+  vVel = VState.vQtrn.GetTInv()*VState.vUVW;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,52 +159,53 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 Purpose: Called on a schedule to perform EOM integration
 Notes:   [JB] Run in standalone mode, SeaLevelRadius will be reference radius.
          In FGFS, SeaLevelRadius is stuffed from FGJSBSim in JSBSim.cxx each pass.
+
+At the top of this Run() function, see several "shortcuts" (or, aliases) being
+set up for use later, rather than using the longer class->function() notation.
+
+Here, propagation of state is done using a simple explicit Euler scheme (see the
+bottom of the function). This propagation is done using the current state values
+and current derivatives. Based on these values we compute an approximation to the
+state values for (now + dt).
+
 */
 
 bool FGPropagate::Run(void)
 {
-  // Fast return if we have nothing to do ...
-  if (FGModel::Run()) return true;
+  if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
 
-  // The 'stepsize'
-  double dt = State->Getdt()*rate;
+  double dt = State->Getdt()*rate;  // The 'stepsize'
+  const FGColumnVector3 omega( 0.0, 0.0, Inertial->omega() ); // earth rotation
+  const FGColumnVector3& vForces = Aircraft->GetForces();     // current forces
+  const FGColumnVector3& vMoments = Aircraft->GetMoments();   // current moments
 
-  // Get earth rotation angular velocity
-  const FGColumnVector3 omega( 0.0, 0.0, Inertial->omega() );
-
-  // Get current forces and moments.
-  const FGColumnVector3& vForces = Aircraft->GetForces();
-  const FGColumnVector3& vMoments = Aircraft->GetMoments();
-
-  // Get the mass and inertia values.
-  double mass = MassBalance->GetMass();
-  const FGMatrix33& J = MassBalance->GetJ();
-  const FGMatrix33& Jinv = MassBalance->GetJinv();
+  double mass = MassBalance->GetMass();             // mass
+  const FGMatrix33& J = MassBalance->GetJ();        // inertia matrix
+  const FGMatrix33& Jinv = MassBalance->GetJinv();  // inertia matrix inverse
+  double r = GetRadius();                           // radius
+  if (r == 0.0) {cerr << "radius = 0 !" << endl; r = 1e-16;} // radius check
+  double rInv = 1.0/r;
+  FGColumnVector3 gAccel( 0.0, 0.0, Inertial->GetGAccel(r) );
 
   // The rotation matrices:
-  // From the local horizontal frame to the body frame
-  const FGMatrix33& Tl2b = GetTl2b();
-  // From the body frame to the local horizontal
-  const FGMatrix33& Tb2l = GetTb2l();
-  // From the earth centered frame to the local horizontal frame
-  const FGMatrix33& Tec2l = vLocation.GetTec2l();
-  // From the local horizontal frame to the earth centered frame
-  const FGMatrix33& Tl2ec = vLocation.GetTl2ec();
+  const FGMatrix33& Tl2b = GetTl2b();  // local to body frame
+  const FGMatrix33& Tb2l = GetTb2l();  // body to local frame
+  const FGMatrix33& Tec2l = VState.vLocation.GetTec2l();  // earth centered to local frame
+  const FGMatrix33& Tl2ec = VState.vLocation.GetTl2ec();  // local to earth centered frame
 
   // Inertial angular velocity measured in the body frame.
-  const FGColumnVector3 pqri = vPQR + Tl2b*(Tec2l*omega);
+  const FGColumnVector3 pqri = VState.vPQR + Tl2b*(Tec2l*omega);
 
-  // Compute the velocity of the vehicle with respect to the earth centered
-  // frame expressed in the horizontal local frame.
-  vVel = Tb2l * vUVW;
+  // Compute vehicle velocity wrt EC frame, expressed in Local horizontal frame.
+  vVel = Tb2l * VState.vUVW;
 
-  // First compute the time derivatives of the vehicles' state values.
+  // First compute the time derivatives of the vehicle state values:
 
-  // Compute the body rotational accelerations based on the current body moments
+  // Compute body frame rotational accelerations based on the current body moments
   vPQRdot = Jinv*(vMoments - pqri*(J*pqri));
 
-  // Compute the body frame accelerations based on the current body forces
-  vUVWdot = vUVW*vPQR + vForces/mass;
+  // Compute body frame accelerations based on the current body forces
+  vUVWdot = VState.vUVW*VState.vPQR + vForces/mass;
 
   // Centrifugal acceleration.
   FGColumnVector3 ecVel = Tl2ec*vVel;
@@ -212,47 +213,29 @@ bool FGPropagate::Run(void)
   vUVWdot -= Tl2b*(Tec2l*ace);
 
   // Coriolis acceleration.
-  FGColumnVector3 aeec = omega*(omega*vLocation);
+  FGColumnVector3 aeec = omega*(omega*VState.vLocation);
   vUVWdot -= Tl2b*(Tec2l*aeec);
 
   // Gravitation accel
-  double r = GetRadius();
-  FGColumnVector3 gAccel( 0.0, 0.0, Inertial->GetGAccel(r) );
   vUVWdot += Tl2b*gAccel;
 
-  // Compute the velocity of the vehicle with respect to the earth centered
-  // frame expressed in the earth centered frame.
+  // Compute vehicle velocity wrt EC frame, expressed in EC frame
   FGColumnVector3 vLocationDot = Tl2ec * vVel;
 
-  // Compute the angular rate of the local horizontal frame.
-  if (r == 0.0) {
-    PutMessage( "Fatal error in FGTimestep: "
-                "You traversed exactly the middle of the earth, "
-                "we tried our best, but this will most likely fail!" );
-    r = 1e-16;
-  }
-  double rInv = 1.0/r;
   FGColumnVector3 omegaLocal( rInv*vVel(eEast),
                               -rInv*vVel(eNorth),
-                              -rInv*vVel(eEast)*vLocation.GetTanLatitude() );
+                              -rInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
-  // Compute the quaternion orientation derivative on the current
-  // body rotational rates
-  FGQuaternion vQtrndot = vQtrn.GetQDot( vPQR - Tl2b*omegaLocal );
+  // Compute quaternion orientation derivative on current body rates
+  FGQuaternion vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*omegaLocal );
 
-  // Now do propagation.
-  // This is for now done with a simple explicit euler scheme.
-  // That means use the current state values and their current derivatives.
-  // Based on these values compute an approximatioin to the state values at the
-  // time (now + dt).
+  // Propagate velocities
+  VState.vPQR += dt*vPQRdot;
+  VState.vUVW += dt*vUVWdot;
 
-  // Propagate the velocities
-  vPQR += dt*vPQRdot;
-  vUVW += dt*vUVWdot;
-
-  // Propagate the positions
-  vQtrn += dt*vQtrndot;
-  vLocation += dt*vLocationDot;
+  // Propagate positions
+  VState.vQtrn += dt*vQtrndot;
+  VState.vLocation += dt*vLocationDot;
 
   return false;
 }
@@ -261,14 +244,14 @@ bool FGPropagate::Run(void)
 
 void FGPropagate::Seth(double tt)
 {
-  vLocation.SetRadius( tt + SeaLevelRadius );
+  VState.vLocation.SetRadius( tt + SeaLevelRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGPropagate::SetDistanceAGL(double tt)
 {
-  vLocation.SetRadius( tt + RunwayRadius );
+  VState.vLocation.SetRadius( tt + RunwayRadius );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

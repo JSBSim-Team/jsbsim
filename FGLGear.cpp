@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.114 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.115 2004/05/29 17:27:44 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -387,7 +387,7 @@ FGColumnVector3& FGLGear::Force(void)
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
 // transition from static to dynamic friction.  There are more complicated formulations
-// of this that avoid the discrete jump.  Will fix this later.
+// of this that avoid the discrete jump (similar to Pacejka).  Will fix this later.
 
       if (fabs(WheelSlip) <= 20.0) {
         FCoeff = staticFCoeff*WheelSlip/20.0;

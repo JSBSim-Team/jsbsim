@@ -77,7 +77,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.56 2004/05/27 11:52:46 frohlich Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.57 2004/05/29 17:27:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.56 2004/05/27 11:52:46 frohlich Exp $
+    @version $Id: FGJSBBase.h,v 1.57 2004/05/29 17:27:44 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,10 +101,10 @@ CLASS DECLARATION
 class FGJSBBase {
 public:
   /// Constructor for FGJSBBase.
-  FGJSBBase();
+  FGJSBBase() {};
 
   /// Destructor for FGJSBBase.
-  virtual ~FGJSBBase() {};
+  ~FGJSBBase() {};
 
   /// JSBSim Message structure
   typedef struct Msg {
@@ -194,7 +194,7 @@ protected:
 
   static std::queue <Message*> Messages;
 
-  virtual void Debug(int from) {};
+  void Debug(int from) {};
 
   static unsigned int frame;
   static unsigned int messageId;

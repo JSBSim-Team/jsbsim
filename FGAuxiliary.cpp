@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.60 2004/05/26 12:29:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.61 2004/05/29 17:27:41 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +184,7 @@ bool FGAuxiliary::Run()
     tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
     tatc = RankineToCelsius(tat);
 
-    if (Mach < 1) {   // Calculate total pressure assuming isentropic flow
+    if (MachU < 1) {   // Calculate total pressure assuming isentropic flow
       pt = p*pow((1 + 0.2*MachU*MachU),3.5);
     } else {
       // Use Rayleigh pitot tube formula for normal shock in front of pitot tube

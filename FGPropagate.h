@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.12 2004/05/21 12:52:54 frohlich Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.13 2004/05/29 17:27:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,12 +62,21 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.12 2004/05/21 12:52:54 frohlich Exp $
+    @version $Id: FGPropagate.h,v 1.13 2004/05/29 17:27:44 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+// state vector
+
+struct VehicleState {
+  FGLocation vLocation;
+  FGColumnVector3 vUVW;
+  FGColumnVector3 vPQR;
+  FGQuaternion vQtrn;
+};
 
 class FGPropagate : public FGModel {
 public:
@@ -85,19 +94,19 @@ public:
   bool Run(void);
 
   const FGColumnVector3& GetVel(void) const { return vVel; }
-  const FGColumnVector3& GetUVW(void) const { return vUVW; }
+  const FGColumnVector3& GetUVW(void) const { return VState.vUVW; }
   const FGColumnVector3& GetUVWdot(void) const { return vUVWdot; }
-  const FGColumnVector3& GetPQR(void) const {return vPQR;}
+  const FGColumnVector3& GetPQR(void) const {return VState.vPQR;}
   const FGColumnVector3& GetPQRdot(void) const {return vPQRdot;}
-  const FGColumnVector3& GetEuler(void) const { return vQtrn.GetEuler(); }
+  const FGColumnVector3& GetEuler(void) const { return VState.vQtrn.GetEuler(); }
 
-  double GetUVW   (int idx) const { return vUVW(idx); }
+  double GetUVW   (int idx) const { return VState.vUVW(idx); }
   double GetUVWdot(int idx) const { return vUVWdot(idx); }
   double GetVel(int idx) const { return vVel(idx); }
-  double Geth(void)   const { return vLocation.GetRadius() - SeaLevelRadius; }
-  double GetPQR(int axis) const {return vPQR(axis);}
+  double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
+  double GetPQR(int axis) const {return VState.vPQR(axis);}
   double GetPQRdot(int idx) const {return vPQRdot(idx);}
-  double GetEuler(int axis) const { return vQtrn.GetEuler()(axis); }
+  double GetEuler(int axis) const { return VState.vQtrn.GetEuler()(axis); }
   double Gethdot(void) const { return -vVel(eDown); }
 
   /** Returns the "constant" RunwayRadius.
@@ -107,38 +116,38 @@ public:
       @units feet */
   double GetRunwayRadius(void) const { return RunwayRadius; }
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
-  double GetDistanceAGL(void)  const { return vLocation.GetRadius()-RunwayRadius; }
-  double GetRadius(void) const { return vLocation.GetRadius(); }
-  double GetLongitude(void) const { return vLocation.GetLongitude(); }
-  double GetLatitude(void) const { return vLocation.GetLatitude(); }
-  const FGLocation& GetLocation(void) const { return vLocation; }
+  double GetDistanceAGL(void)  const { return VState.vLocation.GetRadius()-RunwayRadius; }
+  double GetRadius(void) const { return VState.vLocation.GetRadius(); }
+  double GetLongitude(void) const { return VState.vLocation.GetLongitude(); }
+  double GetLatitude(void) const { return VState.vLocation.GetLatitude(); }
+  const FGLocation& GetLocation(void) const { return VState.vLocation; }
 
-  double Getphi(void) const { return vQtrn.GetEulerPhi(); }
-  double Gettht(void) const { return vQtrn.GetEulerTheta(); }
-  double Getpsi(void) const { return vQtrn.GetEulerPsi(); }
+  double Getphi(void) const { return VState.vQtrn.GetEulerPhi(); }
+  double Gettht(void) const { return VState.vQtrn.GetEulerTheta(); }
+  double Getpsi(void) const { return VState.vQtrn.GetEulerPsi(); }
 
-  double GetCosphi(void) const { return vQtrn.GetCosEulerPhi(); }
-  double GetCostht(void) const { return vQtrn.GetCosEulerTheta(); }
-  double GetCospsi(void) const { return vQtrn.GetCosEulerPsi(); }
+  double GetCosphi(void) const { return VState.vQtrn.GetCosEulerPhi(); }
+  double GetCostht(void) const { return VState.vQtrn.GetCosEulerTheta(); }
+  double GetCospsi(void) const { return VState.vQtrn.GetCosEulerPsi(); }
 
-  double GetSinphi(void) const { return vQtrn.GetSinEulerPhi(); }
-  double GetSintht(void) const { return vQtrn.GetSinEulerTheta(); }
-  double GetSinpsi(void) const { return vQtrn.GetSinEulerPsi(); }
+  double GetSinphi(void) const { return VState.vQtrn.GetSinEulerPhi(); }
+  double GetSintht(void) const { return VState.vQtrn.GetSinEulerTheta(); }
+  double GetSinpsi(void) const { return VState.vQtrn.GetSinEulerPsi(); }
 
   /** Retrieves the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.  */
-  const FGMatrix33& GetTl2b(void) const { return vQtrn.GetT(); }
+  const FGMatrix33& GetTl2b(void) const { return VState.vQtrn.GetT(); }
 
   /** Retrieves the body-to-local transformation matrix.
       @return a reference to the body-to-local matrix.  */
-  const FGMatrix33& GetTb2l(void) const { return vQtrn.GetTInv(); }
+  const FGMatrix33& GetTb2l(void) const { return VState.vQtrn.GetTInv(); }
 
 // SET functions
 
-  void SetLongitude(double lon) { vLocation.SetLongitude(lon); }
-  void SetLatitude(double lat) { vLocation.SetLatitude(lat); }
-  void SetRadius(double r) { vLocation.SetRadius(r); }
-  void SetLocation(const FGLocation& l) { vLocation = l; }
+  void SetLongitude(double lon) { VState.vLocation.SetLongitude(lon); }
+  void SetLatitude(double lat) { VState.vLocation.SetLatitude(lat); }
+  void SetRadius(double r) { VState.vLocation.SetRadius(r); }
+  void SetLocation(const FGLocation& l) { VState.vLocation = l; }
   void Seth(double tt);
   void SetRunwayRadius(double tt) { RunwayRadius = tt; }
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
@@ -149,15 +158,13 @@ public:
   void unbind(void);
 
 private:
-  /// Location of the aircrafts center of gravity in the earth centered frame.
-  FGLocation vLocation;
-  /// Orientation with respect to the horizontal local frame.
-  FGQuaternion vQtrn;
+
+// state vector
+
+  struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vPQR;
   FGColumnVector3 vPQRdot;
-  FGColumnVector3 vUVW;
   FGColumnVector3 vUVWdot;
 
   double RunwayRadius, SeaLevelRadius;
