@@ -54,7 +54,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.15 2003/06/03 09:53:44 ehofman Exp $"
+#define ID_FACTORGROUP "$Id: FGFactorGroup.h,v 1.16 2003/11/26 13:37:36 jberndt Exp $"
 
 using std::vector;
 
@@ -76,21 +76,12 @@ class FGAuxiliary;
 class FGOutput;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** This class encapsulates the functionality needed to manage a factor group
     i.e. factor*(coeff1 + coeff2 + coeff3)
     @author Tony Peden
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFactorGroup.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFactorGroup.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

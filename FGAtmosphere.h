@@ -52,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.36 2003/07/13 20:12:10 dmegginson Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.37 2003/11/26 13:37:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,23 +61,15 @@ FORWARD DECLARATIONS
 namespace JSBSim {
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-[1]   Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
-      1989, ISBN 0-07-001641-0
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.36 2003/07/13 20:12:10 dmegginson Exp $
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGAtmosphere.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
+    @version $Id: FGAtmosphere.h,v 1.37 2003/11/26 13:37:36 jberndt Exp $
+    @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
+         1989, ISBN 0-07-001641-0
+
 */
 
 /******************************************************************************

@@ -28,10 +28,6 @@ HISTORY
 09/13/00   JSB   Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES,  and NOTES
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -59,9 +55,17 @@ INCLUDES
 #include "FGInertial.h"
 #include "FGMatrix33.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.22 2003/06/03 09:53:45 ehofman Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.23 2003/11/26 13:37:36 jberndt Exp $"
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FORWARD DECLARATIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS DOCUMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -83,11 +87,10 @@ public:
   string GetGroundReactionValues(void);
   
   inline int GetNumGearUnits(void) const { return lGear.size(); }
+
   /** Gets a gear instance
       @param gear index of gear instance
       @return a pointer to the FGLGear instance of the gear unit requested */
-  
-  
   inline FGLGear* GetGearUnit(int gear) { return &(lGear[gear]); }
   
   void bind(void);

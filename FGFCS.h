@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.58 2003/06/03 09:53:44 ehofman Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.59 2003/11/26 13:37:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,10 +69,6 @@ namespace JSBSim {
 
 typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf, NNorm } FcIdx;
 typedef enum { ofRad=0, ofNorm, ofMag , NForms} OutputForm;
-
-/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -143,7 +139,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.58 2003/06/03 09:53:44 ehofman Exp $
+    @version $Id: FGFCS.h,v 1.59 2003/11/26 13:37:36 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -152,10 +148,6 @@ CLASS DOCUMENTATION
     @see FGGradient
     @see FGFilter
     @see FGDeadBand
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFCS.h?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Header File </a>
-    @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/FGFCS.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
-         Source File </a>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
