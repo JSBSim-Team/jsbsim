@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.4 2004/10/05 14:08:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.5 2004/10/07 00:28:39 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +161,29 @@ Element* Element::FindElement(string el)
   }
   for (int i=0; i<children.size(); i++) {
     if (el == children[i]->GetName()) {
-      element_index = i;
+      element_index = i+1;
+      return children[i];
+    }
+  }
+  element_index = 0;
+  return 0L;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Element* Element::FindNextElement(string el)
+{
+  if (el.empty()) {
+    if (element_index < children.size()) {
+      return children[element_index++];
+    } else {
+      element_index = 0;
+      return 0L;
+    }
+  }
+  for (int i=element_index; i<children.size(); i++) {
+    if (el == children[i]->GetName()) {
+      element_index = i+1;
       return children[i];
     }
   }
@@ -205,7 +227,7 @@ double Element::FindElementValueAsNumberConvertTo(string el, string target_units
 
 double Element::FindElementValueAsNumberConvertFromTo( string el,
                                                        string supplied_units,
-		                                                   string target_units)
+                                                       string target_units)
 {
   Element* element = FindElement(el);
   double value;
@@ -219,28 +241,6 @@ double Element::FindElementValueAsNumberConvertFromTo( string el,
     return HUGE_VAL;
   }
   return value;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Element* Element::FindNextElement(string el)
-{
-  if (el.empty()) {
-    if (element_index < children.size()) {
-      return children[element_index++];
-    } else {
-      element_index = 0;
-      return 0L;
-    }
-  }
-  for (int i=element_index; i<children.size(); i++) {
-    if (el == children[i]->GetName()) {
-      element_index = i+1;
-      return children[i];
-    }
-  }
-  element_index = 0;
-  return 0L;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
