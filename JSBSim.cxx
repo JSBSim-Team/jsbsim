@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.115 2002/03/22 12:46:23 apeden Exp $
+// $Id: JSBSim.cxx,v 1.116 2002/04/11 14:40:21 dmegginson Exp $
 
 
 #include <simgear/compiler.h>
@@ -328,9 +328,14 @@ bool FGJSBsim::copy_to_JSBsim() {
     FCS->SetDfCmd(  globals->get_controls()->get_flaps() );
     FCS->SetDsbCmd( 0.0 ); //speedbrakes
     FCS->SetDspCmd( 0.0 ); //spoilers
-    FCS->SetLBrake( globals->get_controls()->get_brake( 0 ) );
-    FCS->SetRBrake( globals->get_controls()->get_brake( 1 ) );
+
+				// Parking brake sets minimum braking
+				// level for mains.
+    double parking_brake = globals->get_controls()->get_parking_brake();
+    FCS->SetLBrake(fmax(globals->get_controls()->get_brake(0), parking_brake));
+    FCS->SetRBrake(fmax(globals->get_controls()->get_brake(1), parking_brake));
     FCS->SetCBrake( globals->get_controls()->get_brake( 2 ) );
+
     FCS->SetGearCmd( globals->get_controls()->get_gear_down());
     for (i = 0; i < Propulsion->GetNumEngines(); i++) {
       FGEngine * eng = Propulsion->GetEngine(i);
