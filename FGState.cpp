@@ -4,34 +4,34 @@
  Author:       Jon Berndt
  Date started: 11/17/98
  Called by:    FGFDMExec and accessed by all models.
-
+ 
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
-
+ 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
-
+ 
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
-
+ 
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
-
+ 
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
-
+ 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
 See header file.
-
+ 
 HISTORY
 --------------------------------------------------------------------------------
 11/17/98   JSB   Created
-
+ 
 ********************************************************************************
 INCLUDES
 *******************************************************************************/
@@ -64,10 +64,9 @@ INCLUDES
 
 
 FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
-                                    mTl2b(3,3),
-                                    mTs2b(3,3),
-                                    vQtrn(4)
-{
+    mTl2b(3,3),
+    mTs2b(3,3),
+vQtrn(4) {
   FDMExec = fdex;
 
   adot = bdot = 0.0;
@@ -110,17 +109,15 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
 
 /******************************************************************************/
 
-FGState::~FGState(void)
-{
-}
+FGState::~FGState(void) {}
 
 //***************************************************************************
 //
 // Reset: Assume all angles READ FROM FILE IN DEGREES !!
 //
 
-bool FGState::Reset(string path, string acname, string fname)
-{
+
+bool FGState::Reset(string path, string acname, string fname) {
   string resetDef;
   float U, V, W;
   float phi, tht, psi;
@@ -163,8 +160,7 @@ bool FGState::Reset(string path, string acname, string fname)
 
 void FGState::Initialize(float U, float V, float W,
                          float phi, float tht, float psi,
-                         float Latitude, float Longitude, float H)
-{
+                         float Latitude, float Longitude, float H) {
   FGColumnVector vUVW(3);
   FGColumnVector vLocalVelNED(3);
   FGColumnVector vEuler(3);
@@ -193,7 +189,7 @@ void FGState::Initialize(float U, float V, float W,
   vEuler << phi << tht << psi;
   FDMExec->GetRotation()->SetEuler(vEuler);
 
-  FDMExec->GetTranslation()->SetABG(alpha, beta, gamma);
+  FDMExec->GetTranslation()->SetAB(alpha, beta);
 
   Vt = sqrt(U*U + V*V + W*W);
   FDMExec->GetTranslation()->SetVt(Vt);
@@ -209,8 +205,7 @@ void FGState::Initialize(float U, float V, float W,
 
 /******************************************************************************/
 
-void FGState::Initialize(FGInitialCondition *FGIC)
-{
+void FGState::Initialize(FGInitialCondition *FGIC) {
 
   float tht,psi,phi;
   float U, V, W, h;
@@ -231,8 +226,7 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 
 /******************************************************************************/
 
-bool FGState::StoreData(string fname)
-{
+bool FGState::StoreData(string fname) {
   ofstream datafile(fname.c_str());
 
   if (datafile) {
@@ -255,15 +249,13 @@ bool FGState::StoreData(string fname)
 
 /******************************************************************************/
 
-float FGState::GetParameter(string val_string)
-{
+float FGState::GetParameter(string val_string) {
   return GetParameter(coeffdef[val_string]);
 }
 
 /******************************************************************************/
 
-int FGState::GetParameterIndex(string val_string)
-{
+int FGState::GetParameterIndex(string val_string) {
   return coeffdef[val_string];
 }
 
@@ -271,8 +263,7 @@ int FGState::GetParameterIndex(string val_string)
 //
 // NEED WORK BELOW TO ADD NEW PARAMETERS !!!
 //
-float FGState::GetParameter(int val_idx)
-{
+float FGState::GetParameter(int val_idx) {
   switch(val_idx) {
   case FG_QBAR:
     return FDMExec->GetTranslation()->Getqbar();
@@ -334,8 +325,7 @@ float FGState::GetParameter(int val_idx)
 
 /******************************************************************************/
 
-void FGState::SetParameter(int val_idx, float val)
-{
+void FGState::SetParameter(int val_idx, float val) {
   switch(val_idx) {
   case FG_ELEVATOR_POS:
     FDMExec->GetFCS()->SetDePos(val);
@@ -360,8 +350,7 @@ void FGState::SetParameter(int val_idx, float val)
 
 /******************************************************************************/
 
-void FGState::InitMatrices(float phi, float tht, float psi)
-{
+void FGState::InitMatrices(float phi, float tht, float psi) {
   float thtd2, psid2, phid2;
   float Sthtd2, Spsid2, Sphid2;
   float Cthtd2, Cpsid2, Cphid2;
@@ -397,8 +386,7 @@ void FGState::InitMatrices(float phi, float tht, float psi)
 
 /******************************************************************************/
 
-void FGState::CalcMatrices(void)
-{
+void FGState::CalcMatrices(void) {
   float Q0Q0, Q1Q1, Q2Q2, Q3Q3;
   float Q0Q1, Q0Q2, Q0Q3, Q1Q2;
   float Q1Q3, Q2Q3;
@@ -430,8 +418,7 @@ void FGState::CalcMatrices(void)
 
 /******************************************************************************/
 
-void FGState::IntegrateQuat(FGColumnVector vPQR, int rate)
-{
+void FGState::IntegrateQuat(FGColumnVector vPQR, int rate) {
   static FGColumnVector vlastQdot(4);
   static FGColumnVector vQdot(4);
 
@@ -449,8 +436,7 @@ void FGState::IntegrateQuat(FGColumnVector vPQR, int rate)
 
 /******************************************************************************/
 
-FGColumnVector FGState::CalcEuler(void)
-{
+FGColumnVector FGState::CalcEuler(void) {
   static FGColumnVector vEuler(3);
 
   if (mTb2l(3,3) == 0)    vEuler(ePhi) = 0.0;
@@ -468,8 +454,7 @@ FGColumnVector FGState::CalcEuler(void)
 
 /******************************************************************************/
 
-FGMatrix FGState::GetTs2b(float alpha, float beta)
-{
+FGMatrix FGState::GetTs2b(float alpha, float beta) {
   float ca, cb, sa, sb;
 
   ca = cos(alpha);
