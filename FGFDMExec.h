@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.37 2001/04/19 22:05:21 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.38 2001/04/23 14:37:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,6 +69,7 @@ class FGAtmosphere;
 class FGFCS;
 class FGPropulsion;
 class FGMassBalance;
+class FGAerodynamics;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -107,7 +108,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the JSBSim simulation executive.
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.37 2001/04/19 22:05:21 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.38 2001/04/23 14:37:29 jberndt Exp $
 
     @doc This class is the interface class through which all other simulation classes
     are instantiated, initialized, and run. When integrated with FlightGear (or
@@ -279,6 +280,8 @@ public:
   inline FGPropulsion* GetPropulsion(void)    {return Propulsion;}
   /// Returns the FGAircraft pointer.
   inline FGMassBalance* GetMassBalance(void)  {return MassBalance;}
+  /// Returns the FGAerodynamics pointer
+  inline FGAerodynamics* GetAerodynamics(void){return Aerodynamics;}
   /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
   /// Returns the FGTranslation pointer.
@@ -316,17 +319,18 @@ private:
   float  EndTime;
   vector <struct condition> Conditions;
 
-  FGState*       State;
-  FGAtmosphere*  Atmosphere;
-  FGFCS*         FCS;
-  FGPropulsion*  Propulsion;
-  FGMassBalance* MassBalance;
-  FGAircraft*    Aircraft;
-  FGTranslation* Translation;
-  FGRotation*    Rotation;
-  FGPosition*    Position;
-  FGAuxiliary*   Auxiliary;
-  FGOutput*      Output;
+  FGState*        State;
+  FGAtmosphere*   Atmosphere;
+  FGFCS*          FCS;
+  FGPropulsion*   Propulsion;
+  FGMassBalance*  MassBalance;
+  FGAerodynamics* Aerodynamics;
+  FGAircraft*     Aircraft;
+  FGTranslation*  Translation;
+  FGRotation*     Rotation;
+  FGPosition*     Position;
+  FGAuxiliary*    Auxiliary;
+  FGOutput*       Output;
 
   bool Allocate(void);
   bool DeAllocate(void);

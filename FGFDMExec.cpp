@@ -65,6 +65,7 @@ INCLUDES
 #include "FGFCS.h"
 #include "FGPropulsion.h"
 #include "FGMassBalance.h"
+#include "FGAerodynamics.h"
 #include "FGAircraft.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
@@ -73,7 +74,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.45 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.46 2001/04/23 14:37:29 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -120,20 +121,21 @@ CLASS IMPLEMENTATION
 
 FGFDMExec::FGFDMExec(void)
 {
-  Frame       = 0;
-  FirstModel  = 0;
-  Error       = 0;
-  State       = 0;
-  Atmosphere  = 0;
-  FCS         = 0;
-  Propulsion  = 0;
-  MassBalance = 0;
-  Aircraft    = 0;
-  Translation = 0;
-  Rotation    = 0;
-  Position    = 0;
-  Auxiliary   = 0;
-  Output      = 0;
+  Frame        = 0;
+  FirstModel   = 0;
+  Error        = 0;
+  State        = 0;
+  Atmosphere   = 0;
+  FCS          = 0;
+  Propulsion   = 0;
+  MassBalance  = 0;
+  Aerodynamics = 0;
+  Aircraft     = 0;
+  Translation  = 0;
+  Rotation     = 0;
+  Position     = 0;
+  Auxiliary    = 0;
+  Output       = 0;
 
   terminate = false;
   frozen = false;
@@ -173,20 +175,21 @@ bool FGFDMExec::Allocate(void) {
 
   bool result=true;
 
-  Atmosphere  = new FGAtmosphere(this);
-  FCS         = new FGFCS(this);
-  Propulsion  = new FGPropulsion(this);
-  MassBalance = new FGMassBalance(this);
-  Aircraft    = new FGAircraft(this);
-  Translation = new FGTranslation(this);
-  Rotation    = new FGRotation(this);
-  Position    = new FGPosition(this);
-  Auxiliary   = new FGAuxiliary(this);
-  Output      = new FGOutput(this);
+  Atmosphere   = new FGAtmosphere(this);
+  FCS          = new FGFCS(this);
+  Propulsion   = new FGPropulsion(this);
+  MassBalance  = new FGMassBalance(this);
+  Aerodynamics = new FGAerodynamics (this);
+  Aircraft     = new FGAircraft(this);
+  Translation  = new FGTranslation(this);
+  Rotation     = new FGRotation(this);
+  Position     = new FGPosition(this);
+  Auxiliary    = new FGAuxiliary(this);
+  Output       = new FGOutput(this);
 
-  State       = new FGState(this); // This must be done here, as the FGState
-                                   // class needs valid pointers to the above
-				   // model classes
+  State        = new FGState(this); // This must be done here, as the FGState
+                                    // class needs valid pointers to the above
+  // model classes
 
   // Initialize models so they can communicate with each other
 
@@ -202,24 +205,27 @@ bool FGFDMExec::Allocate(void) {
   if (!MassBalance->InitModel()) {
     cerr << fgred << "FGMassBalance model init failed" << fgdef << endl;
     Error+=8;}
+  if (!Aerodynamics->InitModel()) {
+    cerr << fgred << "FGAerodynamics model init failed" << fgdef << endl;
+    Error+=16;}
   if (!Aircraft->InitModel())   {
     cerr << fgred << "Aircraft model init failed" << fgdef << endl;
-    Error+=16;}
+    Error+=32;}
   if (!Translation->InitModel()){
     cerr << fgred << "Translation model init failed" << fgdef << endl;
-    Error+=32;}
+    Error+=64;}
   if (!Rotation->InitModel())   {
     cerr << fgred << "Rotation model init failed" << fgdef << endl;
-    Error+=64;}
+    Error+=128;}
   if (!Position->InitModel())   {
     cerr << fgred << "Position model init failed" << fgdef << endl;
-    Error+=128;}
+    Error+=256;}
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
-    Error+=256;}
+    Error+=512;}
   if (!Output->InitModel())     {
     cerr << fgred << "Output model init failed" << fgdef << endl;
-    Error+=512;}
+    Error+=1024;}
 
   if (Error > 0) result = false;
 
@@ -231,6 +237,7 @@ bool FGFDMExec::Allocate(void) {
   Schedule(FCS,          1);
   Schedule(Propulsion,   1);
   Schedule(MassBalance,  1);
+  Schedule(Aerodynamics, 1);
   Schedule(Aircraft,     1);
   Schedule(Rotation,     1);
   Schedule(Translation,  1);
@@ -251,6 +258,7 @@ bool FGFDMExec::DeAllocate(void) {
   if ( FCS != 0 )         delete FCS;
   if ( Propulsion != 0)   delete Propulsion;
   if ( MassBalance != 0)  delete MassBalance;
+  if ( Aerodynamics != 0) delete Aerodynamics;
   if ( Aircraft != 0 )    delete Aircraft;
   if ( Translation != 0 ) delete Translation;
   if ( Rotation != 0 )    delete Rotation;
@@ -262,17 +270,18 @@ bool FGFDMExec::DeAllocate(void) {
   FirstModel  = 0L;
   Error       = 0;
 
-  State       = 0;
-  Atmosphere  = 0;
-  FCS         = 0;
-  Propulsion  = 0;
-  MassBalance = 0;
-  Aircraft    = 0;
-  Translation = 0;
-  Rotation    = 0;
-  Position    = 0;
-  Auxiliary   = 0;
-  Output      = 0;
+  State        = 0;
+  Atmosphere   = 0;
+  FCS          = 0;
+  Propulsion   = 0;
+  MassBalance  = 0;
+  Aerodynamics = 0;
+  Aircraft     = 0;
+  Translation  = 0;
+  Rotation     = 0;
+  Position     = 0;
+  Auxiliary    = 0;
+  Output       = 0;
 
   modelLoaded = false;
   return modelLoaded;
@@ -315,7 +324,7 @@ bool FGFDMExec::Run(void)
   model_iterator = FirstModel;
   if (model_iterator == 0L) return false;
 
-  if (Scripted) {                                              
+  if (Scripted) {
     RunScript();
     if (State->Getsim_time() >= EndTime) return false;
   }
@@ -351,12 +360,12 @@ bool FGFDMExec::RunIC(FGInitialCondition *fgic)
 bool FGFDMExec::LoadModel(string APath, string EPath, string model)
 {
   bool result = false;
-  
+
   if (modelLoaded) {
     DeAllocate();
     Allocate();
   }
-  
+
   AircraftPath = APath;
   EnginePath   = EPath;
   result = Aircraft->LoadAircraft(AircraftPath, EnginePath, model);

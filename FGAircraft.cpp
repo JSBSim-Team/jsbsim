@@ -120,6 +120,7 @@ INCLUDES
 
 #include "FGAircraft.h"
 #include "FGMassBalance.h"
+#include "FGAerodynamics.h"
 #include "FGTranslation.h"
 #include "FGRotation.h"
 #include "FGAtmosphere.h"
@@ -138,7 +139,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.74 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.75 2001/04/23 14:37:29 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 extern char highint[5];
@@ -200,7 +201,6 @@ FGAircraft::~FGAircraft() {
     }
   }
   delete[] Coeff;
-  
   if (debug_lvl & 2) cout << "Destroyed:    FGAircraft" << endl;
 }
 
@@ -270,7 +270,7 @@ bool FGAircraft::Run(void)
     nlf = 0;
     if (fabs(Position->GetGamma()) < 1.57) {
         nlf = vFs(eZ)/(MassBalance->GetWeight()*cos(Position->GetGamma()));
-    }    
+    }
     return false;
   } else {                               // skip Run() execution this time
     return true;
@@ -279,7 +279,11 @@ bool FGAircraft::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::FMAero(void) {
+void FGAircraft::FMAero(void)
+{
+    vForces += Aerodynamics->GetForces();
+    vMoments += Aerodynamics->GetMoments();
+/*
   unsigned int axis_ctr,ctr;
 
   vLastFs = vFs;
@@ -303,12 +307,13 @@ void FGAircraft::FMAero(void) {
   vMoments(eL) += vAeroBodyForces(eZ)*vDXYZcg(eY) - vAeroBodyForces(eY)*vDXYZcg(eZ); // rolling moment
   vMoments(eM) += vAeroBodyForces(eX)*vDXYZcg(eZ) - vAeroBodyForces(eZ)*vDXYZcg(eX); // pitching moment
   vMoments(eN) += vAeroBodyForces(eY)*vDXYZcg(eX) - vAeroBodyForces(eX)*vDXYZcg(eY); // yawing moment
-  
+
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
       vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->TotalValue();
     }
   }
+*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -434,11 +439,17 @@ void FGAircraft::ReadFlightControls(FGConfigFile* AC_cfg) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
+void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg)
+{
+  if (!Aerodynamics->LoadAerodynamics(AC_cfg)) {
+    cerr << "Aerodynamics not successfully loaded" << endl;
+  }
+
+/*
   string token, axis;
 
   AC_cfg->GetNextConfigLine();
-  
+
   while ((token = AC_cfg->GetValue()) != string("/AERODYNAMICS")) {
     if (token == "AXIS") {
       CoeffArray ca;
@@ -452,6 +463,7 @@ void FGAircraft::ReadAerodynamics(FGConfigFile* AC_cfg) {
       AC_cfg->GetNextConfigLine();
     }
   }
+*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -38,7 +38,7 @@ INCLUDES
 
 #include "FGAerodynamics.h"
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.8 2001/04/22 13:39:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.9 2001/04/23 14:37:29 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 extern short debug_lvl;
@@ -56,17 +56,6 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec),
     vDXYZcg(3),
     vAeroBodyForces(3)
 {
-  if (debug_lvl & 2) cout << "Instantiated: FGAerodynamics" << endl;
-
-  State = FDMExec->GetState();
-  MassBalance = FDMExec->GetMassBalance();
-  Translation = FDMExec->GetTranslation();
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGAerodynamics::~FGAerodynamics()
-{
   AxisIdx["DRAG"]  = 0;
   AxisIdx["SIDE"]  = 1;
   AxisIdx["LIFT"]  = 2;
@@ -76,12 +65,27 @@ FGAerodynamics::~FGAerodynamics()
 
   Coeff = new CoeffArray[6];
 
+  if (debug_lvl & 2) cout << "Instantiated: FGAerodynamics" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGAerodynamics::~FGAerodynamics()
+{
+  unsigned int i,j;
+  for (i=0; i<6; i++) {
+    for (j=0; j<Coeff[i].size(); j++) {
+      delete Coeff[i][j];
+    }
+  }
+  delete[] Coeff;
+
   if (debug_lvl & 2) cout << "Destroyed:    FGAerodynamics" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGAerodynamics:: Run(void)
+bool FGAerodynamics::Run(void)
 {
   float alpha, beta;
 
@@ -148,6 +152,8 @@ bool FGAerodynamics::LoadAerodynamics(FGConfigFile* AC_cfg)
       AC_cfg->GetNextConfigLine();
     }
   }
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

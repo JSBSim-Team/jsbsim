@@ -53,7 +53,7 @@ INCLUDES
 
 #include <string>
 
-#define ID_MODEL "$Id: FGModel.h,v 1.17 2001/04/17 23:00:31 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.18 2001/04/23 14:37:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -71,6 +71,7 @@ class FGAtmosphere;
 class FGFCS;
 class FGPropulsion;
 class FGMassBalance;
+class FGAerodynamics;
 class FGAircraft;
 class FGTranslation;
 class FGRotation;
@@ -131,6 +132,7 @@ protected:
   FGFCS*          FCS;
   FGPropulsion*   Propulsion;
   FGMassBalance*  MassBalance;
+  FGAerodynamics* Aerodynamics;
   FGAircraft*     Aircraft;
   FGTranslation*  Translation;
   FGRotation*     Rotation;

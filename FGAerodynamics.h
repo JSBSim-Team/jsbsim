@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.11 2001/04/22 13:39:46 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.12 2001/04/23 14:37:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,7 +82,7 @@ CLASS DOCUMENTATION
     aerodynamic properties of this aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
     @author Jon S. Berndt
-    @version $Id: FGAerodynamics.h,v 1.11 2001/04/22 13:39:46 jberndt Exp $
+    @version $Id: FGAerodynamics.h,v 1.12 2001/04/23 14:37:29 jberndt Exp $
     @see -
 */
 
@@ -107,16 +107,25 @@ public:
       @return true if successful */
   bool LoadAerodynamics(FGConfigFile* AC_cfg);
 
+  /** Outputs coefficient information.
+      Non-dimensionalizing parameter descriptions are output
+      for each aero coefficient defined.
+      @param multipliers the list of multipliers for this coefficient.*/
   void DisplayCoeffFactors(vector <eParam> multipliers);
+
+  /** Gets the total aerodynamic force vector.
+      @return a force vector reference. */
+  FGColumnVector& GetForces(void) {return vForces;}
+
+  /** Gets the total aerodynamic moment vector.
+      @return a moment vector reference. */
+  FGColumnVector& GetMoments(void) {return vMoments;}
 
 private:
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
   typedef vector<FGCoefficient*> CoeffArray;
   CoeffArray* Coeff;
-  FGState* State;
-  FGMassBalance* MassBalance;
-  FGTranslation* Translation;
   FGColumnVector vFs;
   FGColumnVector vAeroBodyForces;
   FGColumnVector vForces;
