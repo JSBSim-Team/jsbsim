@@ -26,7 +26,7 @@ AC_CANONICAL_HOST
 
 case "$host" in
 mips-sgi-irix*)
-    if test "x$CXX" = "xCC"; then
+    if test "x$CXX" = "xCC" -o "x$CXX" = "xccache CC"; then
         WFLAG="-fullwarn";
         AR="CC -ar"
         AC_SUBST(AR)
