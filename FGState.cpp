@@ -49,7 +49,7 @@ INCLUDES
 
 #include "FGState.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.78 2001/10/30 00:23:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.79 2001/11/06 12:49:31 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -739,7 +739,7 @@ void FGState::ReportState(void) {
                     GetParameter(FG_RUDDER_POS)*RADTODEG );
   cout << out;                  
   snprintf(out,80, "    Throttle: %5.2f%c\n",
-                    FCS->GetThrottlePos(0),'%' );
+                    FCS->GetThrottlePos(0)*100,'%' );
   cout << out;
   
   snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
