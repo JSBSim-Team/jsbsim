@@ -52,7 +52,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.11 2000/10/29 17:06:31 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.12 2000/11/01 11:37:47 jsb Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -491,7 +491,7 @@ bool FGTrim::checkLimits(void) {
   solutionDomain=0;
   solutionExists=false;
   if(fabs(ahi-alo) > TrimAxes[current_axis]->GetTolerance()) {
-    if(alo*current_accel < 0) {
+    if(alo*current_accel <= 0) {
       solutionExists=true;
       solutionDomain=-1;
       xhi=current_control;

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.41 2000/10/27 10:21:41 jsb Exp $
+// $Id: JSBSim.cxx,v 1.42 2000/11/01 11:38:37 jsb Exp $
 
 
 #include <simgear/compiler.h>
@@ -117,7 +117,7 @@ bool FGJSBsim::init( double dt ) {
 #endif
 
     if (result) {
-	FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft" << globals->get_options()->get_aircraft() );
+	FG_LOG( FG_FLIGHT, FG_INFO, "  loaded aircraft " << globals->get_options()->get_aircraft() );
     } else {
 	FG_LOG( FG_FLIGHT, FG_INFO, "  aircraft "
 		<< globals->get_options()->get_aircraft()
@@ -210,10 +210,15 @@ bool FGJSBsim::update( int multiloop ) {
 	set_Altitude( 0.0 );
     }
 
-  
-  
     if(needTrim) {
-	FGTrim *fgtrim=new FGTrim(fdmex,fgic,tLongitudinal);
+	
+	FGTrim *fgtrim;
+	if(fgic->GetVcalibratedKtsIC() < 10 ) {
+		fgic->SetVcalibratedKtsIC(0.0);
+		fgtrim=new FGTrim(fdmex,fgic,tGround);
+	} else {
+		fgtrim=new FGTrim(fdmex,fgic,tLongitudinal);
+	}	
 	if(!fgtrim->DoTrim()) {
 	    fgtrim->Report();
 	    fgtrim->TrimStats();
@@ -223,6 +228,9 @@ bool FGJSBsim::update( int multiloop ) {
     
 	needTrim=false;
     
+        cout << "fdmex->GetFCS()->GetPitchTrimCmd(): " << fdmex->GetFCS()->GetPitchTrimCmd() << endl;
+	cout << "fdmex->GetFCS()->GetDeCmd(): " << fdmex->GetFCS()->GetDeCmd() << endl;
+         
 	controls.set_elevator_trim(fdmex->GetFCS()->GetPitchTrimCmd());
 	controls.set_elevator(fdmex->GetFCS()->GetDeCmd());
 	controls.set_throttle(FGControls::ALL_ENGINES,
@@ -405,7 +413,7 @@ void FGJSBsim::snap_shot(void) {
   	fgic->SetAltitudeFtIC( get_Altitude() );
   	fgic->SetTerrainAltitudeFtIC( get_Runway_altitude() );
   	fgic->SetVtrueFpsIC( get_V_rel_wind() );
-  	fgic->SetPitchAngleRadIC( get_Theta() );
+  	//fgic->SetPitchAngleRadIC( get_Theta() );
   	fgic->SetRollAngleRadIC( get_Phi() );
   	fgic->SetTrueHeadingRadIC( get_Psi() );
   	fgic->SetClimbRateFpsIC( get_Climb_Rate() );
