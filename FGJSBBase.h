@@ -47,6 +47,11 @@ INCLUDES
 SG_USING_STD(string);
 SG_USING_STD(queue);
 
+# ifndef M_PI
+#  include <simgear/constants.h>
+#  define M_PI SG_PI
+# endif
+
 #else
 
 #  include <queue>
@@ -59,12 +64,18 @@ SG_USING_STD(queue);
 
 using std::string;
 using std::queue;
+
+# ifndef M_PI
+#  define M_PI 3.14159265358979323846
+# endif
+
 #endif
 
-#ifndef M_PI 
-#  include <simgear/constants.h>
-#  define M_PI SG_PI
+
+#ifndef max
+#  define max(x, y)    (((x) < (y)) ? (y) : (x))
 #endif
+
 
 #ifdef __FreeBSD__ // define gcvt on FreeBSD
 
@@ -81,7 +92,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.31 2003/01/22 15:53:33 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.32 2003/02/20 22:17:51 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +109,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.31 2003/01/22 15:53:33 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.32 2003/02/20 22:17:51 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
