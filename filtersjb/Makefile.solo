@@ -10,8 +10,8 @@ libFCSComponents.a: $(libFCSComponents_OBJECTS)
 	ranlib libFCSComponents.a
 
 FGDeadBand.o: FGDeadBand.cpp FGDeadBand.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -23,8 +23,8 @@ FGDeadBand.o: FGDeadBand.cpp FGDeadBand.h FGFCSComponent.h ../FGDefs.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGDeadBand.o -c FGDeadBand.cpp
 
 FGFCSComponent.o: FGFCSComponent.cpp FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -36,8 +36,8 @@ FGFCSComponent.o: FGFCSComponent.cpp FGFCSComponent.h ../FGDefs.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFCSComponent.o -c FGFCSComponent.cpp
 
 FGFilter.o: FGFilter.cpp FGFilter.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -49,8 +49,8 @@ FGFilter.o: FGFilter.cpp FGFilter.h FGFCSComponent.h ../FGDefs.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFilter.o -c FGFilter.cpp
 
 FGFlaps.o: FGFlaps.cpp FGFlaps.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -61,9 +61,9 @@ FGFlaps.o: FGFlaps.cpp FGFlaps.h FGFCSComponent.h ../FGDefs.h \
  ../FGThruster.h ../FGForce.h ../FGNozzle.h
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGFlaps.o -c FGFlaps.cpp
 
-FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGDefs.h ../FGFCS.h \
- ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGDefs.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -75,8 +75,8 @@ FGGain.o: FGGain.cpp FGGain.h FGFCSComponent.h ../FGDefs.h ../FGFCS.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGain.o -c FGGain.cpp
 
 FGGradient.o: FGGradient.cpp FGGradient.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -88,8 +88,8 @@ FGGradient.o: FGGradient.cpp FGGradient.h FGFCSComponent.h ../FGDefs.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGGradient.o -c FGGradient.cpp
 
 FGSummer.o: FGSummer.cpp FGSummer.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
@@ -101,8 +101,8 @@ FGSummer.o: FGSummer.cpp FGSummer.h FGFCSComponent.h ../FGDefs.h \
 	$(CC) $(INCLUDES) $(CCOPTS) -oFGSummer.o -c FGSummer.cpp
 
 FGSwitch.o: FGSwitch.cpp FGSwitch.h FGFCSComponent.h ../FGDefs.h \
- ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h ../FGLGear.h \
- ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
+ ../FGJSBBase.h ../FGFCS.h ../filtersjb/FGFCSComponent.h ../FGModel.h \
+ ../FGLGear.h ../FGConfigFile.h ../FGMatrix33.h ../FGColumnVector3.h \
  ../FGColumnVector4.h ../FGFDMExec.h ../FGInitialCondition.h \
  ../FGAtmosphere.h ../FGAircraft.h ../FGPropulsion.h ../FGRocket.h \
  ../FGEngine.h ../FGState.h ../FGTranslation.h ../FGRotation.h \
