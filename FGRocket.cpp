@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.46 2004/11/02 05:19:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.47 2004/12/05 04:06:57 dpculp Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ double FGRocket::Calculate(void)
     Flameout = false;
   }
 
-  return Thruster->Calculate(Cf*maxPC*PctPower*propEff);
+  return Thrust = Thruster->Calculate(Cf*maxPC*PctPower*propEff);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

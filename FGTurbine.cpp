@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.20 2004/11/28 15:17:11 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.21 2004/12/05 04:06:57 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,8 +456,6 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name, &N2);
   snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow", EngineNumber);
   PropertyManager->Tie( property_name, &FuelFlow_pph);
-  snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
-  PropertyManager->Tie( property_name, &Thrust);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -471,8 +469,6 @@ void FGTurbine::unbind()
   snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
   PropertyManager->Untie(property_name);
   snprintf(property_name, 80, "propulsion/engine[%u]/fuel-flow", EngineNumber);
-  PropertyManager->Untie( property_name);
-  snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
   PropertyManager->Untie( property_name);
 }
 
