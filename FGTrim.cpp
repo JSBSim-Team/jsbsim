@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.45 2004/04/08 19:53:46 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.46 2004/04/12 04:07:36 apeden Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +243,9 @@ bool FGTrim::DoTrim(void) {
 
   fdmex->GetOutput()->Disable();
   
-  fdmex->GetRotation()->SetPQR(0,0,0);
+  fgic->SetPRadpsIC(0.0);
+  fgic->SetQRadpsIC(0.0);
+  fgic->SetRRadpsIC(0.0);
 
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<TrimAxes.size();current_axis++) {
@@ -559,7 +561,7 @@ void FGTrim::setupPullup() {
        << fgic->GetVtrueFpsIC() << endl;
   q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
   cout << targetNlf << ", " << q << endl;
-  fdmex->GetRotation()->SetPQR(0,q,0);
+  fgic->SetQRadpsIC(q);
   cout << "setPitchRateInPullup() complete" << endl;
   
 }  
@@ -595,13 +597,15 @@ void FGTrim::updateRates(void){
     } else {
       p=q=r=0;
     }      
-    fdmex->GetRotation()->SetPQR(p,q,r);
+    fgic->SetPRadpsIC(p);
+    fgic->SetQRadpsIC(q);
+    fgic->SetRRadpsIC(r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
       float g,q,cgamma;
       g=fdmex->GetInertial()->gravity();
       cgamma=cos(fgic->GetFlightPathAngleRadIC());
       q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();
-      fdmex->GetRotation()->SetPQR(0,q,0);
+      fgic->SetQRadpsIC(q);
   }  
 }  
 

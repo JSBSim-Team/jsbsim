@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.131 2004/04/06 13:15:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.132 2004/04/12 04:07:36 apeden Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,7 @@ FGState::~FGState()
 //
 
 void FGState::Initialize(double U, double V, double W,
+                         double p, double q, double r,
                          double phi, double tht, double psi,
                          double Latitude, double Longitude, double H,
                          double wnorth, double weast, double wdown)
@@ -121,6 +122,7 @@ void FGState::Initialize(double U, double V, double W,
   Atmosphere->Run();
 
   Rotation->SetEuler( FGColumnVector3(phi, tht, psi) );
+  Rotation->SetPQR( p, q, r );
 
   vUVW << U << V << W;
   Translation->SetUVW(vUVW);
@@ -158,6 +160,7 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 {
   double tht,psi,phi;
   double U, V, W, h;
+  double p, q, r;
   double latitude, longitude;
   double wnorth,weast, wdown;
 
@@ -170,6 +173,9 @@ void FGState::Initialize(FGInitialCondition *FGIC)
   tht = FGIC->GetThetaRadIC();
   phi = FGIC->GetPhiRadIC();
   psi = FGIC->GetPsiRadIC();
+  p = FGIC->GetPRadpsIC();
+  q = FGIC->GetQRadpsIC();
+  r = FGIC->GetRRadpsIC();
   wnorth = FGIC->GetWindNFpsIC();
   weast = FGIC->GetWindEFpsIC();
   wdown = FGIC->GetWindDFpsIC();
@@ -179,7 +185,7 @@ void FGState::Initialize(FGInitialCondition *FGIC)
                                              FGIC->GetTerrainAltitudeFtIC() );
 
   // need to fix the wind speed args, here.
-  Initialize(U, V, W, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
+  Initialize(U, V, W, p, q, r, phi, tht, psi, latitude, longitude, h, wnorth, weast, wdown);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

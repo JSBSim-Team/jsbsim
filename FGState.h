@@ -81,7 +81,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.76 2004/03/26 04:51:54 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.77 2004/04/12 04:07:36 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.76 2004/03/26 04:51:54 jberndt Exp $
+    @version $Id: FGState.h,v 1.77 2004/04/12 04:07:36 apeden Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,6 +128,9 @@ public:
   void Initialize(double U,
                   double V,
                   double W,
+                  double P,
+                  double Q,
+                  double R,
                   double lat,
                   double lon,
                   double phi,

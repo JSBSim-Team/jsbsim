@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.58 2004/03/01 13:56:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.59 2004/04/12 04:07:36 apeden Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -67,6 +67,7 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
   altitude=hdot=0;
   latitude=longitude=0;
   u=v=w=0;
+  p=q=r=0;
   uw=vw=ww=0;
   vnorth=veast=vdown=0;
   wnorth=weast=wdown=0;
@@ -925,6 +926,19 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetLongitudeRadIC,
                        &FGInitialCondition::SetLongitudeRadIC,
                        true);
+  PropertyManager->Tie("ic/p-rad_sec", this,
+                       &FGInitialCondition::GetPRadpsIC,
+                       &FGInitialCondition::SetPRadpsIC,
+                       true);
+  PropertyManager->Tie("ic/q-rad_sec", this,
+                       &FGInitialCondition::GetQRadpsIC,
+                       &FGInitialCondition::SetQRadpsIC,
+                       true);
+  PropertyManager->Tie("ic/r-rad_sec", this,
+                       &FGInitialCondition::GetRRadpsIC,
+                       &FGInitialCondition::SetRRadpsIC,
+                       true);
+                       
 }
 
 //******************************************************************************
@@ -973,6 +987,10 @@ void FGInitialCondition::unbind(void){
   PropertyManager->Untie("ic/psi-true-rad");
   PropertyManager->Untie("ic/lat-gc-rad");
   PropertyManager->Untie("ic/long-gc-rad");
+  PropertyManager->Untie("ic/p-rad_sec");
+  PropertyManager->Untie("ic/q-rad_sec");
+  PropertyManager->Untie("ic/r-rad_sec");
+  
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

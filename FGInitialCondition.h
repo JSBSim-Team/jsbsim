@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.44 2004/02/26 15:03:56 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.45 2004/04/12 04:07:36 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -118,7 +118,7 @@ CLASS DOCUMENTATION
    Setting climb rate is, for the purpose of this discussion, 
    considered equivalent to setting gamma.
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.44 2004/02/26 15:03:56 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.45 2004/04/12 04:07:36 apeden Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,6 +192,9 @@ public:
   void SetVnorthFpsIC(double tt);
   void SetVeastFpsIC(double tt);
   void SetVdownFpsIC(double tt);
+  void SetPRadpsIC(double tt)  { p = tt; }
+  void SetQRadpsIC(double tt) { q = tt; }
+  void SetRRadpsIC(double tt) { r = tt; }
   
   void SetWindNEDFpsIC(double wN, double wE, double wD);
  
@@ -218,6 +221,9 @@ public:
   double GetUBodyFpsIC(void);
   double GetVBodyFpsIC(void);
   double GetWBodyFpsIC(void);
+  double GetPRadpsIC() const { return p; }
+  double GetQRadpsIC() const { return q; }
+  double GetRRadpsIC() const { return r; }
   void SetFlightPathAngleRadIC(double tt);
   void SetAlphaRadIC(double tt);
   void SetPitchAngleRadIC(double tt);
@@ -253,6 +259,7 @@ private:
   double altitude,hdot;
   double latitude,longitude;
   double u,v,w;
+  double p,q,r;
   double uw,vw,ww;
   double vnorth,veast,vdown;
   double wnorth,weast,wdown;
