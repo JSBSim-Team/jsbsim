@@ -72,7 +72,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.46 2001/02/25 17:05:08 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.47 2001/03/10 21:44:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -85,10 +85,10 @@ DOCUMENTATION
 /** Standalone JSBSim main program
     This is the wrapper program used to instantiate the JSBSim system and control
     it. Use this program to build a version of JSBSim that can be run from the
-    command line. This program is also designed to be built using Borland C++
-    Builder, v4.0 or greater.
+    command line. To get any use out of this, you will have to create a script
+    to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.46 2001/02/25 17:05:08 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.47 2001/03/10 21:44:44 jberndt Exp $
     @see -
 */
 
