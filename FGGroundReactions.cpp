@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.40 2004/07/06 09:39:44 frohlich Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.41 2004/11/02 05:19:42 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,30 +120,30 @@ bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGGroundReactions::GetGroundReactionStrings(void)
+string FGGroundReactions::GetGroundReactionStrings(string delimeter)
 {
   std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
     string name = lGear[i].GetName();
-    buf << name << "_WOW, "
-        << name << "_stroke, "
-        << name << "_strokeVel, "
-        << name << "_CompressForce, "
-        << name << "_WhlSideForce, "
-        << name << "_WhlVelVecX, "
-        << name << "_WhlVelVecY, "
-        << name << "_WhlRollForce, "
-        << name << "_BodyXForce, "
-        << name << "_BodyYForce, "
-        << name << "_WhlSlipDegrees, ";
+    buf << name << "_WOW" << delimeter
+        << name << "_stroke" << delimeter
+        << name << "_strokeVel" << delimeter
+        << name << "_CompressForce" << delimeter
+        << name << "_WhlSideForce" << delimeter
+        << name << "_WhlVelVecX" << delimeter
+        << name << "_WhlVelVecY" << delimeter
+        << name << "_WhlRollForce" << delimeter
+        << name << "_BodyXForce" << delimeter
+        << name << "_BodyYForce" << delimeter
+        << name << "_WhlSlipDegrees" << delimeter;
   }
 
-  buf << "TotalGearForce_X, "
-      << "TotalGearForce_Y, "
-      << "TotalGearForce_Z, "
-      << "TotalGearMoment_L, "
-      << "TotalGearMoment_M, "
+  buf << "TotalGearForce_X" << delimeter
+      << "TotalGearForce_Y" << delimeter
+      << "TotalGearForce_Z" << delimeter
+      << "TotalGearMoment_L" << delimeter
+      << "TotalGearMoment_M" << delimeter
       << "TotalGearMoment_N";
 
   return buf.str();
@@ -151,30 +151,30 @@ string FGGroundReactions::GetGroundReactionStrings(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGGroundReactions::GetGroundReactionValues(void)
+string FGGroundReactions::GetGroundReactionValues(string delimeter)
 {
   std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
     FGLGear& gear = lGear[i];
     buf << (gear.GetWOW() ? "1, " : "0, ")
-        << setprecision(5) << gear.GetCompLen() << ", "
-        << setprecision(6) << gear.GetCompVel() << ", "
-        << setprecision(10) << gear.GetCompForce() << ", "
-        << setprecision(6) << gear.GetWheelVel(eX) << ", "
-        << gear.GetWheelVel(eY) << ", "
-        << gear.GetWheelSideForce() << ", "
-        << gear.GetWheelRollForce() << ", "
-        << gear.GetBodyXForce() << ", "
-        << gear.GetBodyYForce() << ", "
-        << gear.GetWheelSlipAngle() << ", ";
+        << setprecision(5) << gear.GetCompLen() << delimeter
+        << setprecision(6) << gear.GetCompVel() << delimeter
+        << setprecision(10) << gear.GetCompForce() << delimeter
+        << setprecision(6) << gear.GetWheelVel(eX) << delimeter
+        << gear.GetWheelVel(eY) << delimeter
+        << gear.GetWheelSideForce() << delimeter
+        << gear.GetWheelRollForce() << delimeter
+        << gear.GetBodyXForce() << delimeter
+        << gear.GetBodyYForce() << delimeter
+        << gear.GetWheelSlipAngle() << delimeter;
   }
 
-  buf << vForces(eX) << ", "
-      << vForces(eY) << ", "
-      << vForces(eZ) << ", "
-      << vMoments(eX) << ", "
-      << vMoments(eY) << ", "
+  buf << vForces(eX) << delimeter
+      << vForces(eY) << delimeter
+      << vForces(eZ) << delimeter
+      << vMoments(eX) << delimeter
+      << vMoments(eY) << delimeter
       << vMoments(eZ);
 
   return buf.str();

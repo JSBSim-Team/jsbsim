@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.67 2004/09/10 20:08:29 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.68 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,7 @@ FGPropeller::~FGPropeller()
   char property_name[80];
   snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
   PropertyManager->Untie( property_name );
-  
+
   Debug(1);
 }
 
@@ -252,16 +252,16 @@ FGColumnVector3 FGPropeller::GetPFactor()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropeller::GetThrusterLabels(int id)
+string FGPropeller::GetThrusterLabels(int id, string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_Torque[" << id << "], "
-      << Name << "_PFactor_Pitch[" << id << "], "
-      << Name << "_PFactor_Yaw[" << id << "], "
-      << Name << "_Thrust[" << id << "], ";
+  buf << Name << "_Torque[" << id << "]" << delimeter
+      << Name << "_PFactor_Pitch[" << id << "]" << delimeter
+      << Name << "_PFactor_Yaw[" << id << "]" << delimeter
+      << Name << "_Thrust[" << id << "]" << delimeter;
   if (IsVPitch())
-    buf << Name << "_Pitch[" << id << "], ";
+    buf << Name << "_Pitch[" << id << "]" << delimeter;
   buf << Name << "_RPM[" << id << "]";
 
   return buf.str();
@@ -269,17 +269,17 @@ string FGPropeller::GetThrusterLabels(int id)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropeller::GetThrusterValues(int id)
+string FGPropeller::GetThrusterValues(int id, string delimeter)
 {
   std::ostringstream buf;
 
   FGColumnVector3 vPFactor = GetPFactor();
-  buf << vTorque(eX) << ", "
-      << vPFactor(ePitch) << ", "
-      << vPFactor(eYaw) << ", "
-      << Thrust << ", ";
+  buf << vTorque(eX) << delimeter
+      << vPFactor(ePitch) << delimeter
+      << vPFactor(eYaw) << delimeter
+      << Thrust << delimeter;
   if (IsVPitch())
-    buf << Pitch << ", ";
+    buf << Pitch << delimeter;
   buf << RPM;
 
   return buf.str();

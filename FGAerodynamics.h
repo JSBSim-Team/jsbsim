@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.41 2004/02/26 15:03:55 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.42 2004/11/02 05:19:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     \</AERODYNAMICS> </pre>
     
     @author Jon S. Berndt, Tony Peden
-    $Id: FGAerodynamics.h,v 1.41 2004/02/26 15:03:55 jberndt Exp $
+    $Id: FGAerodynamics.h,v 1.42 2004/11/02 05:19:41 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,13 +156,15 @@ public:
   inline void SetAlphaCLMin(double tt) { alphaclmin=tt; }
 
   /** Gets the strings for the current set of coefficients.
+      @param delimeter either a tab or comma string depending on output type
       @return a string containing the descriptive names for all coefficients */
-  string GetCoefficientStrings(void);
+  string GetCoefficientStrings(string delimeter);
 
   /** Gets the coefficient values.
+      @param delimeter either a tab or comma string depending on output type
       @return a string containing the numeric values for the current set of
       coefficients */
-  string GetCoefficientValues(void);
+  string GetCoefficientValues(string delimeter);
   
   void bind(void);
   void bindModel(void);

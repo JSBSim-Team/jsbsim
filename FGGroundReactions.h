@@ -54,7 +54,7 @@ INCLUDES
 #include "FGLGear.h"
 #include "FGColumnVector3.h"
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.25 2004/02/26 15:03:55 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.26 2004/11/02 05:19:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,8 +85,8 @@ public:
   double GetForces(int idx) const {return vForces(idx);}
   FGColumnVector3& GetMoments(void) {return vMoments;}
   double GetMoments(int idx) const {return vMoments(idx);}
-  string GetGroundReactionStrings(void);
-  string GetGroundReactionValues(void);
+  string GetGroundReactionStrings(string delimeter);
+  string GetGroundReactionValues(string delimeter);
   
   inline int GetNumGearUnits(void) const { return lGear.size(); }
 

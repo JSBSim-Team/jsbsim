@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.17 2004/09/13 09:33:24 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.18 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -427,26 +427,26 @@ bool FGTurbine::Load(FGConfigFile *Eng_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGTurbine::GetEngineLabels(void)
+string FGTurbine::GetEngineLabels(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_N1[" << EngineNumber << "], "
-      << Name << "_N2[" << EngineNumber << "], "
-      << Thruster->GetThrusterLabels(EngineNumber);
+  buf << Name << "_N1[" << EngineNumber << "]" << delimeter
+      << Name << "_N2[" << EngineNumber << "]" << delimeter
+      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGTurbine::GetEngineValues(void)
+string FGTurbine::GetEngineValues(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << N1 << ", "
-      << N2 << ", "
-      << Thruster->GetThrusterValues(EngineNumber);
+  buf << N1 << delimeter
+      << N2 << delimeter
+      << Thruster->GetThrusterValues(EngineNumber, delimeter);
 
   return buf.str();
 }

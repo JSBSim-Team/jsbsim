@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.30 2004/06/20 16:14:51 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.31 2004/11/02 05:19:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     determined.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.30 2004/06/20 16:14:51 jberndt Exp $
+    $Id: FGRocket.h,v 1.31 2004/11/02 05:19:43 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -123,8 +123,8 @@ public:
       sustainable setting.
       @return true if engine has flamed out. */
   bool GetFlameout(void) {return Flameout;}
-  string GetEngineLabels(void);
-  string GetEngineValues(void);
+  string GetEngineLabels(string delimeter);
+  string GetEngineValues(string delimeter);
 
 private:
   double SHR;

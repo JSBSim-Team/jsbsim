@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.36 2004/09/13 09:33:24 ehofman Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.37 2004/11/02 05:19:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.36 2004/09/13 09:33:24 ehofman Exp $
+    @version $Id: FGThruster.h,v 1.37 2004/11/02 05:19:43 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +92,8 @@ public:
   string GetName(void) {return Name;}
   virtual double GetRPM(void) { return 0.0; };
   double GetGearRatio(void) {return GearRatio; }
-  virtual string GetThrusterLabels(int id);
-  virtual string GetThrusterValues(int id);
+  virtual string GetThrusterLabels(int id, string delimeter);
+  virtual string GetThrusterValues(int id, string delimeter);
 
   inline void SetThrustCoefficient(double ct) { ThrustCoeff = ct; }
 

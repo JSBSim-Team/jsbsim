@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.68 2004/10/14 00:15:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.69 2004/11/02 05:19:42 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -698,24 +698,25 @@ void FGPiston::doOilPressure(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPiston::GetEngineLabels(void)
+string FGPiston::GetEngineLabels(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_PwrAvail[" << EngineNumber << "], "
-      << Name << "_HP[" << EngineNumber << "], "
-      << Thruster->GetThrusterLabels(EngineNumber);
+  buf << Name << "_PwrAvail[" << EngineNumber << "]" << delimeter
+      << Name << "_HP[" << EngineNumber << "]" << delimeter
+      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPiston::GetEngineValues(void)
+string FGPiston::GetEngineValues(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << PowerAvailable << ", " << HP << ", " << Thruster->GetThrusterValues(EngineNumber);
+  buf << PowerAvailable << delimeter << HP << delimeter
+      << Thruster->GetThrusterValues(EngineNumber, delimeter);
 
   return buf.str();
 }

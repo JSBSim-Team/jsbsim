@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.33 2004/04/30 12:06:20 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.34 2004/11/02 05:19:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -115,7 +115,7 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.33 2004/04/30 12:06:20 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.34 2004/11/02 05:19:42 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +161,7 @@ public:
 private:
   bool sFirstPass, dFirstPass, enabled;
   int SubSystems;
-  string Filename, outputInFileName;
+  string Filename, outputInFileName, delimeter;
   enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
   ofstream datafile;
   FGfdmSocket* socket;

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.4 2004/06/20 16:14:50 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.5 2004/11/02 05:19:41 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
     zero to POWER_WATTS.  This power value (converted internally to horsepower)
     is then used by FGPropeller to apply torque to the propeller.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.4 2004/06/20 16:14:50 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.5 2004/11/02 05:19:41 jberndt Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,8 +82,8 @@ public:
   double GetPowerAvailable(void) {return PowerAvailable;}
   double CalcFuelNeed(void);
   double getRPM(void) {return RPM;}
-  string GetEngineLabels(void);
-  string GetEngineValues(void);
+  string GetEngineLabels(string delimeter);
+  string GetEngineValues(string delimeter);
 
 private:
 

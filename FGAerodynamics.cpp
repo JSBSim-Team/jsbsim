@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.50 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.51 2004/11/02 05:19:26 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -220,7 +220,7 @@ bool FGAerodynamics::Load(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientStrings(void)
+string FGAerodynamics::GetCoefficientStrings(string delimeter)
 {
   string CoeffStrings = "";
   bool firstime = true;
@@ -231,7 +231,7 @@ string FGAerodynamics::GetCoefficientStrings(void)
       if (firstime) {
         firstime = false;
       } else {
-        CoeffStrings += ", ";
+        CoeffStrings += delimeter;
       }
       CoeffStrings += Coeff[axis][sd]->GetCoefficientName();
     }
@@ -241,7 +241,7 @@ string FGAerodynamics::GetCoefficientStrings(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGAerodynamics::GetCoefficientValues(void)
+string FGAerodynamics::GetCoefficientValues(string delimeter)
 {
   string SDValues = "";
   bool firstime = true;
@@ -251,7 +251,7 @@ string FGAerodynamics::GetCoefficientValues(void)
       if (firstime) {
         firstime = false;
       } else {
-        SDValues += ", ";
+        SDValues += delimeter;
       }
       SDValues += Coeff[axis][sd]->GetSDstring();
     }

@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.67 2004/06/20 16:14:50 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.68 2004/11/02 05:19:41 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -97,7 +97,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.67 2004/06/20 16:14:50 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.68 2004/11/02 05:19:41 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,8 +175,8 @@ public:
   bool LoadThruster(FGConfigFile* AC_cfg);
   FGThruster* GetThruster(void) {return Thruster;}
 
-  virtual string GetEngineLabels(void) = 0;
-  virtual string GetEngineValues(void) = 0;
+  virtual string GetEngineLabels(string delimeter) = 0;
+  virtual string GetEngineValues(string delimeter) = 0;
 
 protected:
   FGPropertyManager* PropertyManager;

@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.91 2004/08/21 11:51:04 frohlich Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.92 2004/11/02 05:19:42 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,6 +72,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   SubSystems = 0;
   enabled = true;
   outputInFileName = "";
+  delimeter = ", ";
 
   Debug(0);
 }
@@ -94,7 +95,7 @@ bool FGOutput::Run(void)
     if (FGModel::Run()) return true;
     if (Type == otSocket) {
       SocketOutput();
-    } else if (Type == otCSV) {
+    } else if (Type == otCSV || Type == otTab) {
       DelimitedOutput(Filename);
     } else if (Type == otTerminal) {
       // Not done yet
@@ -113,8 +114,10 @@ void FGOutput::SetType(string type)
 {
   if (type == "CSV") {
     Type = otCSV;
+    delimeter = ", ";
   } else if (type == "TABULAR") {
     Type = otTab;
+    delimeter = "\t";
   } else if (type == "SOCKET") {
     Type = otSocket;
   } else if (type == "TERMINAL") {
@@ -147,89 +150,89 @@ void FGOutput::DelimitedOutput(string fname)
       // Nothing here, yet
     }
     if (SubSystems & ssAerosurfaces) {
-      outstream << ", ";
-      outstream << "Aileron Cmd, ";
-      outstream << "Elevator Cmd, ";
-      outstream << "Rudder Cmd, ";
-      outstream << "Flap Cmd, ";
-      outstream << "Left Aileron Pos, ";
-      outstream << "Right Aileron Pos, ";
-      outstream << "Elevator Pos, ";
-      outstream << "Rudder Pos, ";
+      outstream << delimeter;
+      outstream << "Aileron Cmd" + delimeter;
+      outstream << "Elevator Cmd" + delimeter;
+      outstream << "Rudder Cmd" + delimeter;
+      outstream << "Flap Cmd" + delimeter;
+      outstream << "Left Aileron Pos" + delimeter;
+      outstream << "Right Aileron Pos" + delimeter;
+      outstream << "Elevator Pos" + delimeter;
+      outstream << "Rudder Pos" + delimeter;
       outstream << "Flap Pos";
     }
     if (SubSystems & ssRates) {
-      outstream << ", ";
-      outstream << "P, Q, R, ";
-      outstream << "Pdot, Qdot, Rdot";
+      outstream << delimeter;
+      outstream << "P" + delimeter + "Q" + delimeter + "R" + delimeter;
+      outstream << "Pdot" + delimeter + "Qdot" + delimeter + "Rdot";
     }
     if (SubSystems & ssVelocities) {
-      outstream << ", ";
-      outstream << "QBar, ";
-      outstream << "Vtotal, ";
-      outstream << "UBody, VBody, WBody, ";
-      outstream << "UAero, VAero, WAero, ";
-      outstream << "Vn, Ve, Vd";
+      outstream << delimeter;
+      outstream << "QBar" + delimeter;
+      outstream << "Vtotal" + delimeter;
+      outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
+      outstream << "UAero" + delimeter + "VAero" + delimeter + "WAero" + delimeter;
+      outstream << "Vn" + delimeter + "Ve" + delimeter + "Vd";
     }
     if (SubSystems & ssForces) {
-      outstream << ", ";
-      outstream << "Drag, Side, Lift, ";
-      outstream << "L/D, ";
-      outstream << "Xforce, Yforce, Zforce";
+      outstream << delimeter;
+      outstream << "Drag" + delimeter + "Side" + delimeter + "Lift" + delimeter;
+      outstream << "L/D" + delimeter;
+      outstream << "Xforce" + delimeter + "Yforce" + delimeter + "Zforce";
     }
     if (SubSystems & ssMoments) {
-      outstream << ", ";
-      outstream << "L, M, N";
+      outstream << delimeter;
+      outstream << "L" + delimeter + "M" + delimeter + "N";
     }
     if (SubSystems & ssAtmosphere) {
-      outstream << ", ";
-      outstream << "Rho, ";
-      outstream << "NWind, EWind, DWind";
+      outstream << delimeter;
+      outstream << "Rho" + delimeter;
+      outstream << "NWind" + delimeter + "EWind" + delimeter + "DWind";
     }
     if (SubSystems & ssMassProps) {
-      outstream << ", ";
-      outstream << "Ixx, ";
-      outstream << "Ixy, ";
-      outstream << "Ixz, ";
-      outstream << "Iyx, ";
-      outstream << "Iyy, ";
-      outstream << "Iyz, ";
-      outstream << "Izx, ";
-      outstream << "Izy, ";
-      outstream << "Izz, ";
-      outstream << "Mass, ";
-      outstream << "Xcg, Ycg, Zcg";
+      outstream << delimeter;
+      outstream << "Ixx" + delimeter;
+      outstream << "Ixy" + delimeter;
+      outstream << "Ixz" + delimeter;
+      outstream << "Iyx" + delimeter;
+      outstream << "Iyy" + delimeter;
+      outstream << "Iyz" + delimeter;
+      outstream << "Izx" + delimeter;
+      outstream << "Izy" + delimeter;
+      outstream << "Izz" + delimeter;
+      outstream << "Mass" + delimeter;
+      outstream << "Xcg" + delimeter + "Ycg" + delimeter + "Zcg";
     }
     if (SubSystems & ssPropagate) {
-      outstream << ", ";
-      outstream << "Altitude, ";
-      outstream << "Phi, Tht, Psi, ";
-      outstream << "Alpha, ";
-      outstream << "Beta, ";
-      outstream << "Latitude (Deg), ";
-      outstream << "Longitude (Deg), ";
-      outstream << "Distance AGL, ";
+      outstream << delimeter;
+      outstream << "Altitude" + delimeter;
+      outstream << "Phi" + delimeter + "Tht" + delimeter + "Psi" + delimeter;
+      outstream << "Alpha" + delimeter;
+      outstream << "Beta" + delimeter;
+      outstream << "Latitude (Deg)" + delimeter;
+      outstream << "Longitude (Deg)" + delimeter;
+      outstream << "Distance AGL" + delimeter;
       outstream << "Runway Radius";
     }
     if (SubSystems & ssCoefficients) {
-      scratch = Aerodynamics->GetCoefficientStrings();
-      if (scratch.length() != 0) outstream << ", " << scratch;
+      scratch = Aerodynamics->GetCoefficientStrings(delimeter);
+      if (scratch.length() != 0) outstream << delimeter << scratch;
     }
     if (SubSystems & ssFCS) {
-      scratch = FCS->GetComponentStrings();
-      if (scratch.length() != 0) outstream << ", " << scratch;
+      scratch = FCS->GetComponentStrings(delimeter);
+      if (scratch.length() != 0) outstream << delimeter << scratch;
     }
     if (SubSystems & ssGroundReactions) {
-      outstream << ", ";
-      outstream << GroundReactions->GetGroundReactionStrings();
+      outstream << delimeter;
+      outstream << GroundReactions->GetGroundReactionStrings(delimeter);
     }
     if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0) {
-      outstream << ", ";
-      outstream << Propulsion->GetPropulsionStrings();
+      outstream << delimeter;
+      outstream << Propulsion->GetPropulsionStrings(delimeter);
     }
     if (OutputProperties.size() > 0) {
       for (unsigned int i=0;i<OutputProperties.size();i++) {
-        outstream << ", " << OutputProperties[i]->GetName();
+        outstream << delimeter << OutputProperties[i]->GetName();
       }
     }
 
@@ -241,81 +244,81 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssSimulation) {
   }
   if (SubSystems & ssAerosurfaces) {
-    outstream << ", ";
-    outstream << FCS->GetDaCmd() << ", ";
-    outstream << FCS->GetDeCmd() << ", ";
-    outstream << FCS->GetDrCmd() << ", ";
-    outstream << FCS->GetDfCmd() << ", ";
-    outstream << FCS->GetDaLPos() << ", ";
-    outstream << FCS->GetDaRPos() << ", ";
-    outstream << FCS->GetDePos() << ", ";
-    outstream << FCS->GetDrPos() << ", ";
+    outstream << delimeter;
+    outstream << FCS->GetDaCmd() << delimeter;
+    outstream << FCS->GetDeCmd() << delimeter;
+    outstream << FCS->GetDrCmd() << delimeter;
+    outstream << FCS->GetDfCmd() << delimeter;
+    outstream << FCS->GetDaLPos() << delimeter;
+    outstream << FCS->GetDaRPos() << delimeter;
+    outstream << FCS->GetDePos() << delimeter;
+    outstream << FCS->GetDrPos() << delimeter;
     outstream << FCS->GetDfPos();
   }
   if (SubSystems & ssRates) {
-    outstream << ", ";
-    outstream << Propagate->GetPQR() << ", ";
-    outstream << Propagate->GetPQRdot();
+    outstream << delimeter;
+    outstream << Propagate->GetPQR().Dump(delimeter) << delimeter;
+    outstream << Propagate->GetPQRdot().Dump(delimeter);
   }
   if (SubSystems & ssVelocities) {
-    outstream << ", ";
-    outstream << Auxiliary->Getqbar() << ", ";
-    outstream << setprecision(12) << Auxiliary->GetVt() << ", ";
-    outstream << setprecision(12) << Propagate->GetUVW() << ", ";
-    outstream << Auxiliary->GetAeroUVW() << ", ";
-    outstream << Propagate->GetVel();
+    outstream << delimeter;
+    outstream << Auxiliary->Getqbar() << delimeter;
+    outstream << setprecision(12) << Auxiliary->GetVt() << delimeter;
+    outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
+    outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
+    outstream << Propagate->GetVel().Dump(delimeter);
   }
   if (SubSystems & ssForces) {
-    outstream << ", ";
-    outstream << Aerodynamics->GetvFs() << ", ";
-    outstream << Aerodynamics->GetLoD() << ", ";
-    outstream << Aircraft->GetForces();
+    outstream << delimeter;
+    outstream << Aerodynamics->GetvFs() << delimeter;
+    outstream << Aerodynamics->GetLoD() << delimeter;
+    outstream << Aircraft->GetForces().Dump(delimeter);
   }
   if (SubSystems & ssMoments) {
-    outstream << ", ";
-    outstream << Aircraft->GetMoments();
+    outstream << delimeter;
+    outstream << Aircraft->GetMoments().Dump(delimeter);
   }
   if (SubSystems & ssAtmosphere) {
-    outstream << ", ";
-    outstream << Atmosphere->GetDensity() << ", ";
-    outstream << Atmosphere->GetWindNED();
+    outstream << delimeter;
+    outstream << Atmosphere->GetDensity() << delimeter;
+    outstream << Atmosphere->GetWindNED().Dump(delimeter);
   }
   if (SubSystems & ssMassProps) {
-    outstream << ", ";
-    outstream << MassBalance->GetJ() << ", ";
-    outstream << MassBalance->GetMass() << ", ";
+    outstream << delimeter;
+    outstream << MassBalance->GetJ() << delimeter;
+    outstream << MassBalance->GetMass() << delimeter;
     outstream << MassBalance->GetXYZcg();
   }
   if (SubSystems & ssPropagate) {
-    outstream << ", ";
-    outstream << Propagate->Geth() << ", ";
-    outstream << Propagate->GetEuler() << ", ";
-    outstream << Auxiliary->Getalpha(inDegrees) << ", ";
-    outstream << Auxiliary->Getbeta(inDegrees) << ", ";
-    outstream << Propagate->GetLocation().GetLatitudeDeg() << ", ";
-    outstream << Propagate->GetLocation().GetLongitudeDeg() << ", ";
-    outstream << Propagate->GetDistanceAGL() << ", ";
+    outstream << delimeter;
+    outstream << Propagate->Geth() << delimeter;
+    outstream << Propagate->GetEuler().Dump(delimeter) << delimeter;
+    outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
+    outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
+    outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
+    outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
+    outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << Propagate->GetRunwayRadius();
   }
   if (SubSystems & ssCoefficients) {
-    scratch = Aerodynamics->GetCoefficientValues();
-    if (scratch.length() != 0) outstream << ", " << scratch;
+    scratch = Aerodynamics->GetCoefficientValues(delimeter);
+    if (scratch.length() != 0) outstream << delimeter << scratch;
   }
   if (SubSystems & ssFCS) {
-    scratch = FCS->GetComponentValues();
-    if (scratch.length() != 0) outstream << ", " << scratch;
+    scratch = FCS->GetComponentValues(delimeter);
+    if (scratch.length() != 0) outstream << delimeter << scratch;
   }
   if (SubSystems & ssGroundReactions) {
-    outstream << ", ";
-    outstream << GroundReactions->GetGroundReactionValues();
+    outstream << delimeter;
+    outstream << GroundReactions->GetGroundReactionValues(delimeter);
   }
   if (SubSystems & ssPropulsion && Propulsion->GetNumEngines() > 0) {
-    outstream << ", ";
-    outstream << Propulsion->GetPropulsionValues();
+    outstream << delimeter;
+    outstream << Propulsion->GetPropulsionValues(delimeter);
   }
 
   for (unsigned int i=0;i<OutputProperties.size();i++) {
-    outstream << ", " << OutputProperties[i]->getDoubleValue();
+    outstream << delimeter << OutputProperties[i]->getDoubleValue();
   }
 
   outstream << endl;

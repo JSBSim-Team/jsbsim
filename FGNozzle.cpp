@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.37 2004/09/13 09:33:24 ehofman Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.38 2004/11/02 05:19:42 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,7 +111,7 @@ double FGNozzle::GetPowerRequired(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGNozzle::GetThrusterLabels(int id)
+string FGNozzle::GetThrusterLabels(int id, string delimeter)
 {
   std::ostringstream buf;
 
@@ -122,7 +122,7 @@ string FGNozzle::GetThrusterLabels(int id)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGNozzle::GetThrusterValues(int id)
+string FGNozzle::GetThrusterValues(int id, string delimeter)
 {
   std::ostringstream buf;
 

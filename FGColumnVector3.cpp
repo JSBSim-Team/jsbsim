@@ -19,10 +19,11 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGColumnVector3.h"
+#include <cstdio>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.23 2004/10/04 19:19:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.24 2004/11/02 05:19:41 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,6 +38,15 @@ FGColumnVector3::FGColumnVector3(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+string FGColumnVector3::Dump(string delimeter) const
+{
+  char buffer[256];
+  sprintf(buffer, "%f%s%f%s%f", Entry(1), delimeter.c_str(), Entry(2), delimeter.c_str(), Entry(3));
+  return string(buffer);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
 {
   if (scalar != 0.0)
@@ -44,7 +54,7 @@ FGColumnVector3 FGColumnVector3::operator/(const double scalar) const
 
   cerr << "Attempt to divide by zero in method "
     "FGColumnVector3::operator/(const double scalar), "
-    "object " << this << endl; 
+    "object " << this << endl;
   return FGColumnVector3();
 }
 
@@ -97,7 +107,7 @@ ostream& operator<<(ostream& os, const FGColumnVector3& col)
 {
   os << col(1) << " , " << col(2) << " , " << col(3);
   return os;
-}  
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 //    The bitmasked value choices are as follows:

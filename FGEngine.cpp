@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.71 2004/10/22 14:43:51 ehofman Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.72 2004/11/02 05:19:41 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,8 +107,7 @@ FGEngine::FGEngine(FGFDMExec* exec, int engine_number) : EngineNumber(engine_num
 
 FGEngine::~FGEngine()
 {
-  if (Thruster)
-    delete Thruster;
+  if (Thruster) delete Thruster;
 
   Debug(1);
 }

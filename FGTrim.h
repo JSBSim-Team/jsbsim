@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.35 2004/10/22 23:54:36 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.36 2004/11/02 05:19:43 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -122,7 +122,7 @@ CLASS DOCUMENTATION
     }
     fgt.Report(); </pre>
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.35 2004/10/22 23:54:36 jberndt Exp $"
+    @version "$Id: FGTrim.h,v 1.36 2004/11/02 05:19:43 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.45 2004/06/20 16:14:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.46 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,23 +118,23 @@ double FGRocket::Calculate(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRocket::GetEngineLabels(void)
+string FGRocket::GetEngineLabels(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_ChamberPress[" << EngineNumber << "], "
-      << Thruster->GetThrusterLabels(EngineNumber);
+  buf << Name << "_ChamberPress[" << EngineNumber << "]" << delimeter
+      << Thruster->GetThrusterLabels(EngineNumber, delimeter);
 
   return buf.str();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRocket::GetEngineValues(void)
+string FGRocket::GetEngineValues(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << PC << ", " << Thruster->GetThrusterValues(EngineNumber);
+  buf << PC << delimeter << Thruster->GetThrusterValues(EngineNumber, delimeter);
 
   return buf.str();
 }

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.63 2004/06/07 13:45:07 dpculp Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.64 2004/11/02 05:19:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,7 +83,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.63 2004/06/07 13:45:07 dpculp Exp $
+    @version $Id: FGPropulsion.h,v 1.64 2004/11/02 05:19:43 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -150,8 +150,8 @@ public:
       be done before calling this (i.e. magnetos, starter engage, etc.) */
   bool ICEngineStart(void);
 
-  string GetPropulsionStrings(void);
-  string GetPropulsionValues(void);
+  string GetPropulsionStrings(string delimeter);
+  string GetPropulsionValues(string delimeter);
 
   inline FGColumnVector3& GetForces(void)  {return vForces; }
   inline double GetForces(int n) const { return vForces(n);}

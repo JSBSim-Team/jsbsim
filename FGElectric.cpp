@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGElectric.cpp,v 1.3 2004/06/20 16:14:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGElectric.cpp,v 1.4 2004/11/02 05:19:41 jberndt Exp $";
 static const char *IdHdr = ID_ELECTRIC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,14 +96,14 @@ double FGElectric::Calculate(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGElectric::GetEngineLabels(void)
+string FGElectric::GetEngineLabels(string delimeter)
 {
   return ""; // currently no labels are returned for this engine
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGElectric::GetEngineValues(void)
+string FGElectric::GetEngineValues(string delimeter)
 {
   return ""; // currently no values are returned for this engine
 }

@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.100 2004/07/06 09:39:43 frohlich Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.101 2004/11/02 05:19:41 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -420,7 +420,7 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentStrings(void)
+string FGFCS::GetComponentStrings(string delimeter)
 {
   unsigned int comp;
   string CompStrings = "";
@@ -428,14 +428,14 @@ string FGFCS::GetComponentStrings(void)
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          CompStrings += ", ";
+    else          CompStrings += delimeter;
 
     CompStrings += FCSComponents[comp]->GetName();
   }
 
   for (comp = 0; comp < APComponents.size(); comp++)
   {
-    CompStrings += ", ";
+    CompStrings += delimeter;
     CompStrings += APComponents[comp]->GetName();
   }
 
@@ -444,7 +444,7 @@ string FGFCS::GetComponentStrings(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGFCS::GetComponentValues(void)
+string FGFCS::GetComponentValues(string delimeter)
 {
   unsigned int comp;
   string CompValues = "";
@@ -453,14 +453,14 @@ string FGFCS::GetComponentValues(void)
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
     if (firstime) firstime = false;
-    else          CompValues += ", ";
+    else          CompValues += delimeter;
 
     sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
     CompValues += string(buffer);
   }
 
   for (comp = 0; comp < APComponents.size(); comp++) {
-    sprintf(buffer, ", %9.6f", APComponents[comp]->GetOutput());
+    sprintf(buffer, "%s%9.6f", delimeter.c_str(), APComponents[comp]->GetOutput());
     CompValues += string(buffer);
   }
 

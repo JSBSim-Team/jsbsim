@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.27 2004/09/10 20:08:45 ehofman Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.28 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,7 @@ FGThruster::~FGThruster()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGThruster::GetThrusterLabels(int id)
+string FGThruster::GetThrusterLabels(int id, string delimeter)
 {
   std::ostringstream buf;
 
@@ -105,7 +105,7 @@ string FGThruster::GetThrusterLabels(int id)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGThruster::GetThrusterValues(int id)
+string FGThruster::GetThrusterValues(int id, string delimeter)
 {
   std::ostringstream buf;
 

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.64 2004/07/06 09:39:43 frohlich Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.65 2004/11/02 05:19:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.64 2004/07/06 09:39:43 frohlich Exp $
+    @version $Id: FGFCS.h,v 1.65 2004/11/02 05:19:42 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -425,11 +425,16 @@ public:
       @return pointer to the State object */
   inline FGState* GetState(void) { return State; }
 
-  /** Retrieves all component names for inclusion in output stream */
-  string GetComponentStrings(void);
+  /** Retrieves all component names for inclusion in output stream
+      @param delimeter either a tab or comma string depending on output type
+      @return a string containing the descriptive names for all components */
+  string GetComponentStrings(string delimeter);
 
-  /** Retrieves all component outputs for inclusion in output stream */
-  string GetComponentValues(void);
+  /** Retrieves all component outputs for inclusion in output stream
+      @param delimeter either a tab or comma string depending on output type
+      @return a string containing the numeric values for the current set of
+      component outputs */
+  string GetComponentValues(string delimeter);
 
   /// @name Pilot input command setting
   //@{

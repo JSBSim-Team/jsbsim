@@ -50,12 +50,11 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGElectric.h"
 #include "FGPropertyManager.h"
-
 #include <sstream>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.113 2004/10/23 11:15:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.114 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -320,7 +319,7 @@ bool FGPropulsion::Load(FGConfigFile* AC_cfg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionStrings(void)
+string FGPropulsion::GetPropulsionStrings(string delimeter)
 {
   string PropulsionStrings = "";
   bool firstime = true;
@@ -328,38 +327,36 @@ string FGPropulsion::GetPropulsionStrings(void)
 
   for (unsigned int i=0;i<Engines.size();i++) {
     if (firstime)  firstime = false;
-    else           PropulsionStrings += ", ";
-    PropulsionStrings += Engines[i]->GetEngineLabels();
-  }
+    else           PropulsionStrings += delimeter;
 
-  for (unsigned int i=0;i<Tanks.size();i++) {
-    if (Tanks[i]->GetType() == FGTank::ttFUEL) buf << ", Fuel Tank " << i;
-    else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << ", Oxidizer Tank " << i;
+    PropulsionStrings += Engines[i]->GetEngineLabels(delimeter);
   }
-  PropulsionStrings += buf.str();
+  for (unsigned int i=0;i<Tanks.size();i++) {
+    if (Tanks[i]->GetType() == FGTank::ttFUEL) buf << delimeter << "Fuel Tank " << i;
+    else if (Tanks[i]->GetType() == FGTank::ttOXIDIZER) buf << delimeter << "Oxidizer Tank " << i;
+  }
 
   return PropulsionStrings;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropulsion::GetPropulsionValues(void)
+string FGPropulsion::GetPropulsionValues(string delimeter)
 {
-  stringstream buf;
-
   string PropulsionValues = "";
   bool firstime = true;
+  stringstream buf;
 
   for (unsigned int i=0;i<Engines.size();i++) {
     if (firstime)  firstime = false;
-    else           PropulsionValues += ", ";
-    PropulsionValues += Engines[i]->GetEngineValues();
+    else           PropulsionValues += delimeter;
+
+    PropulsionValues += Engines[i]->GetEngineValues(delimeter);
   }
   for (unsigned int i=0;i<Tanks.size();i++) {
-    buf << ", ";
+    buf << delimeter;
     buf << Tanks[i]->GetContents();
   }
-  PropulsionValues += buf.str();
 
   return PropulsionValues;
 }

@@ -45,7 +45,7 @@ INCLUDES
 #include "FGConfigFile.h"
 #include "FGCoefficient.h"
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.12 2004/09/13 09:33:24 ehofman Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.13 2004/11/02 05:19:43 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.12 2004/09/13 09:33:24 ehofman Exp $"
+    @version "$Id: FGTurbine.h,v 1.13 2004/11/02 05:19:43 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,8 +182,8 @@ public:
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
 
-  string GetEngineLabels(void);
-  string GetEngineValues(void);
+  string GetEngineLabels(string delimeter);
+  string GetEngineValues(string delimeter);
 
 private:
 

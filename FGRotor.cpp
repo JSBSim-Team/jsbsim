@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRotor.cpp,v 1.19 2004/05/26 12:29:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRotor.cpp,v 1.20 2004/11/02 05:19:43 jberndt Exp $";
 static const char *IdHdr = ID_ROTOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,14 +68,14 @@ double FGRotor::Calculate(double PowerAvailable)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRotor::GetThrusterLabels(int id)
+string FGRotor::GetThrusterLabels(int id, string delimeter)
 {
   return "";
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGRotor::GetThrusterValues(int id)
+string FGRotor::GetThrusterValues(int id, string delimeter)
 {
   return "";
 }
