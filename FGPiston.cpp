@@ -41,7 +41,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.41 2001/12/12 18:31:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.42 2001/12/14 04:43:46 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -285,8 +285,14 @@ void FGPiston::doEngineStartup(void)
 
 void FGPiston::doManifoldPressure(void)
 {
-  ManifoldPressure_inHg = MinManifoldPressure_inHg +
-    (Throttle * (MaxManifoldPressure_inHg - MinManifoldPressure_inHg));
+  if (Running ) {
+    ManifoldPressure_inHg = MinManifoldPressure_inHg +
+            (Throttle * (MaxManifoldPressure_inHg - MinManifoldPressure_inHg));
+  } else if (Cranking) {
+    ManifoldPressure_inHg += dt*(ManifoldPressure_inHg - MinManifoldPressure_inHg / 6.0)/2.0;
+  } else {
+    ManifoldPressure_inHg = 0.0;
+  }  
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
