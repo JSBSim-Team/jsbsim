@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.22 2004/05/19 07:58:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.23 2004/05/27 11:58:02 frohlich Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,7 +164,7 @@ bool FGKinemat::Run(void )
       } else
         // Handle this case separate to make shure the termination condition
         // is met even in inexact arithmetics ...
-        Output = Input;
+        Output = ThisInput;
 
       dt -= ThisDt;
     }
