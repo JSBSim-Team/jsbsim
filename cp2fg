@@ -32,7 +32,7 @@ if [ ! -d "$FG_ROOT/Engine" ]; then
 	exit;
 fi
 
-for i in c172 X15 shuttle c310 c182; do
+for i in c172 X15 shuttle c310 c182 x24b; do
     if [ ! -d "$FG_ROOT/Aircraft/$i" ]; then
 	echo "No $FG_ROOT/Aircraft/$i";
 	exit;
@@ -51,4 +51,4 @@ $INSTALL aircraft/X15/X15.xml $FG_ROOT/Aircraft/X15/
 $INSTALL aircraft/shuttle/shuttle.xml $FG_ROOT/Aircraft/shuttle/
 $INSTALL aircraft/c310/c310.xml $FG_ROOT/Aircraft/c310/
 $INSTALL aircraft/c182/c182.xml $FG_ROOT/Aircraft/c182/
-
+$INSTALL aircraft/x24b/x24b.xml $FG_ROOT/Aircraft/x24b/
