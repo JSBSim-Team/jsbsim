@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.10 2000/10/25 02:07:13 jsb Exp $
+    @version $Id: JSBSim.hxx,v 1.11 2000/10/27 10:21:42 jsb Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -206,6 +206,8 @@ private:
     bool trimmed;
     float trim_elev;
     float trim_throttle;
+    
+    void snap_shot(void);
 };
 
 
