@@ -3,9 +3,8 @@ SUBDIRS = \
 	engine \
 	filtersjb \
 	scripts \
-	tools \
-	simgear \
-  utilities
+	simgear 
+	#utilities
 
 INCLUDES = \
 	-Wall
