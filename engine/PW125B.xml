@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  File:     PW125B_sim.xml
+  File:     PW125B.xml
   Author:   Aero-Matic v 0.7
 
   Inputs:
@@ -11,7 +11,7 @@
     injected?       no
 -->
 
-<FG_SIMTURBINE NAME="PW125B_sim">
+<FG_TURBINE NAME="PW125B">
   MILTHRUST 5600.00
   MAXTHRUST 5600.00
   BYPASSRATIO    0.0
@@ -57,4 +57,4 @@
   1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0
 </TABLE>
 
-</FG_SIMTURBINE>
+</FG_TURBINE>
