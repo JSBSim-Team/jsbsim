@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.17 2001/10/04 03:49:10 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.18 2001/10/04 20:44:34 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -68,7 +68,7 @@ DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (porting and additional code)
-    @version $Id: FGPiston.h,v 1.17 2001/10/04 03:49:10 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.18 2001/10/04 20:44:34 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,6 @@ private:
   float dt;
 
   // engine state
-  bool running;
   bool cranking;
 
   void doEngineStartup(void);
@@ -120,7 +119,6 @@ private:
   const float calorific_value_fuel;  // W/Kg (approximate)
   const float Cp_air;      // J/KgK
   const float Cp_fuel;     // J/KgK
-  const float Oil_Temp;    // degC
 
   //
   // Configuration

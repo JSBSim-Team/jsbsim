@@ -42,7 +42,7 @@ INCLUDES
 #include "FGPiston.h"
 #include "FGPropulsion.h"
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.27 2001/10/04 03:49:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.28 2001/10/04 20:44:34 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
     calorific_value_fuel(47.3e6),
     Cp_air(1005),
     Cp_fuel(1700),
-    Oil_Temp(85)                   // FIXME: should be dynamic
+    cranking(false)
 {
   string token;
 
@@ -99,6 +99,7 @@ FGPiston::FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg)
 
   Type = etPiston;
   EngineNumber = 0;    // FIXME: this should be the actual number
+  OilTemp_degK = 298;  // FIXME: should be initialized in FGEngine
 
   dt = State->Getdt();
 
@@ -148,6 +149,7 @@ float FGPiston::Calculate(float PowerRequired)
     doEnginePower();
     doEGT();
     doCHT();
+    doOilTemperature();
     doOilPressure();
   } else {
     HP = 0;
@@ -430,7 +432,7 @@ void FGPiston::doOilTemperature(void)
   float target_oil_temp;        // Steady state oil temp at the current engine conditions
   float time_constant;          // The time constant for the differential equation
 
-  if (running) {
+  if (Running) {
     target_oil_temp = 363;
     time_constant = 500;        // Time constant for engine-on idling.
     if (Percentage_Power > idle_percentage_power) {
@@ -460,6 +462,7 @@ void FGPiston::doOilPressure(void)
   float Oil_Press_Relief_Valve = 60; // FIXME: may vary by engine
   float Oil_Press_RPM_Max = 1800;    // FIXME: may vary by engine
   float Design_Oil_Temp = 85;        // FIXME: may vary by engine
+				     // FIXME: WRONG!!! (85 degK???)
   float Oil_Viscosity_Index = 0.25;
 
   OilPressure_psi = (Oil_Press_Relief_Valve / Oil_Press_RPM_Max) * RPM;
@@ -468,7 +471,7 @@ void FGPiston::doOilPressure(void)
     OilPressure_psi = Oil_Press_Relief_Valve;
   }
 
-  OilPressure_psi += (Design_Oil_Temp - Oil_Temp) * Oil_Viscosity_Index;
+  OilPressure_psi += (Design_Oil_Temp - OilTemp_degK) * Oil_Viscosity_Index;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
