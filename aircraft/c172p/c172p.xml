@@ -1,13 +1,27 @@
 <FDM_CONFIG NAME="c172" VERSION="1.60">
 <!--
-
-  File:        c172p.xml (originally c172.xml)
-  Author:      Tony Peden
-  CVS Version: $Id: c172p.xml,v 1.6 2002/12/17 00:11:16 apeden Exp $
+  File:        c172p.xml
+  Author:      David Megginson (based on c172r.xml by Tony Peden)
+  CVS Version: $Id: c172p.xml,v 1.7 2002/12/17 12:38:13 apeden Exp $
 
   Function: Models a 1981 Cessna 172P.
-  Notes:    Try running FlightGear using this command line,
-            fgfs --aircraft=c172p
+
+  Sources:
+    Tony Peden, c172r.xml, JSBSim (http://jsbsim.sourceforge.net/).
+    Jan Roskam, Airplane Flight Dynamics and Automatic Flight
+      Controls.  Part I.  DARcorporation, 1995.
+
+  Notes:
+
+    Roskam's data is for a 182, not a 172, but it should be close
+    enough.  He gives linear coefficients for three states:
+
+    1. Climb (5.4 deg alpha).
+    2. Cruise (0 deg alpha).
+    3. Approach (4 deg alpha, and presumably, full flaps).
+
+    I have extrapolated small tables from this data to account for the
+    effects of flaps and alpha, especially in the lateral coefficients.
 -->
 
   <METRICS>
@@ -208,89 +222,110 @@
      AC_ALPHALIMITS -0.087 0.28
      AC_HYSTLIMITS   0.09  0.36
 
-     <AXIS NAME="LIFT">
-       <GROUP NAME="CLb">
-         Basic_lift
-         <FACTOR NAME="kCLge" TYPE="VECTOR">
-            Change_in_lift_due_to_ground_effect
-            13
-            aero/h_b-mac-ft
-            none
-            0.0   1.203
-            0.1   1.127
-            0.15  1.090
-            0.2   1.073
-            0.3   1.046
-            0.4   1.055
-            0.5   1.019
-            0.6   1.013
-            0.7   1.008
-            0.8   1.006
-            0.9   1.003
-            1.0   1.002
-            1.1   1.0
-         </FACTOR>
-         <COEFFICIENT NAME="CLwbh" TYPE="TABLE">
-            Lift_due_to_alpha
-            17
-            2
-            aero/alpha-rad
-            aero/stall-hyst-norm
-            aero/qbar-psf | metrics/Sw-sqft
-                   0     1
-            -0.09 -0.22 -0.22
-             0	   0.25  0.25
-             0.09  0.73  0.73    
-             0.1   0.83  0.78
-             0.12  0.92  0.79    
-             0.14  1.02  0.81
-             0.16  1.08  0.82    
-             0.17  1.13  0.83  
-             0.19  1.19  0.85  
-             0.21  1.25  0.86
-             0.24  1.35  0.88
-             0.26  1.44  0.9 
-             0.28  1.47  0.92
-             0.3   1.43  0.95
-             0.32  1.38  0.99
-             0.34  1.3   1.05  
-             0.36  1.15  1.15
-          </COEFFICIENT>
-          <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
-            Delta_lift_due_to_flap_deflection
-            4
-            fcs/flap-pos-deg
-            aero/qbar-psf | metrics/Sw-sqft
-            0   0
-            10  0.20
-            20  0.30
-            30  0.35
-          </COEFFICIENT>
-       </GROUP>
-       <COEFFICIENT NAME="CLDe" TYPE="VALUE">
-         Lift_due_to_Elevator_Deflection
-         aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad
-         0.347
-       </COEFFICIENT>
-       <COEFFICIENT NAME="CLadot" TYPE="VALUE">
-         Lift_due_to_alpha_rate
-         aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
-         1.7
-       </COEFFICIENT>
-       <COEFFICIENT NAME="CLq" TYPE="VALUE">
-         Lift_due_to_pitch_rate
-         aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
-         3.9
-       </COEFFICIENT>
-    </AXIS>
-    <AXIS NAME="DRAG">
-      <COEFFICIENT NAME="CDo" TYPE="VALUE">
-         Drag_at_zero_lift
-         aero/qbar-psf | metrics/Sw-sqft
-         0.026
+    <AXIS NAME="LIFT">
+
+      <GROUP NAME="CLb">
+        Basic_lift
+
+        <!-- Peden -->
+        <FACTOR NAME="kCLge" TYPE="VECTOR">
+          Change_in_lift_due_to_ground_effect
+          13
+          aero/h_b-mac-ft
+          none
+          0.0   1.203
+          0.1   1.127
+          0.15  1.090
+          0.2   1.073
+          0.3   1.046
+          0.4   1.055
+          0.5   1.019
+          0.6   1.013
+          0.7   1.008
+          0.8   1.006
+          0.9   1.003
+          1.0   1.002
+          1.1   1.0
+        </FACTOR>
+
+        <!-- Peden -->
+        <COEFFICIENT NAME="CLwbh" TYPE="TABLE">
+          Lift_due_to_alpha
+          17
+          2
+          aero/alpha-rad
+          aero/stall-hyst-norm
+          aero/qbar-psf | metrics/Sw-sqft
+                 0     1
+          -0.09 -0.22 -0.22
+           0     0.25  0.25
+           0.09  0.73  0.73    
+           0.1   0.83  0.78
+           0.12  0.92  0.79    
+           0.14  1.02  0.81
+           0.16  1.08  0.82    
+           0.17  1.13  0.83  
+           0.19  1.19  0.85  
+           0.21  1.25  0.86
+           0.24  1.35  0.88
+           0.26  1.44  0.9 
+           0.28  1.47  0.92
+           0.3   1.43  0.95
+           0.32  1.38  0.99
+           0.34  1.3   1.05  
+           0.36  1.15  1.15
+         </COEFFICIENT>
+
+         <!-- Peden -->
+         <COEFFICIENT NAME="CLDf" TYPE="VECTOR">
+           Delta_lift_due_to_flap_deflection
+           4
+           fcs/flap-pos-deg
+           aero/qbar-psf | metrics/Sw-sqft
+           0   0
+           10  0.20
+           20  0.30
+           30  0.35
+        </COEFFICIENT>
+
+      </GROUP>
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="CLDe" TYPE="VALUE">
+        Lift_due_to_Elevator_Deflection
+        aero/qbar-psf | metrics/Sw-sqft | fcs/elevator-pos-rad
+        0.43
       </COEFFICIENT>
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="CLadot" TYPE="VALUE">
+        Lift_due_to_alpha_rate
+        aero/qbar-psf | metrics/Sw-sqft | aero/alphadot-rad_sec | aero/ci2vel
+        1.7
+      </COEFFICIENT>
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="CLq" TYPE="VALUE">
+        Lift_due_to_pitch_rate
+        aero/qbar-psf | metrics/Sw-sqft | velocities/q-aero-rad_sec | aero/ci2vel
+        3.9
+      </COEFFICIENT>
+
+    </AXIS>
+
+    <AXIS NAME="DRAG">
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="CDo" TYPE="VALUE">
+        Drag_at_zero_lift
+        aero/qbar-psf | metrics/Sw-sqft
+        0.0270
+      </COEFFICIENT>
+
       <GROUP NAME="CDb">
          Basic_drag
+
+         <!-- Peden -->
          <FACTOR NAME="kCDge" TYPE="VECTOR">
             Change_in_drag_due_to_ground_effect
             13
@@ -310,6 +345,8 @@
             1.0   1.0
             1.1   1.0
          </FACTOR>
+
+         <!-- Peden -->
          <COEFFICIENT NAME="CDDf" TYPE="VECTOR">
            Delta_drag_due_to_flap_deflection
            4
@@ -320,6 +357,8 @@
            20  0.012
            30  0.018
          </COEFFICIENT>
+
+         <!-- Peden -->
          <COEFFICIENT NAME="CDwbh" TYPE="TABLE">
            Drag_due_to_alpha
            26
@@ -354,173 +393,262 @@
           0.314159    0.161786      0.211468       0.2388         0.253089
           0.331613    0.147493      0.19508        0.221364       0.235129
           0.349066    0.109678      0.151171       0.174408       0.186649
-         </COEFFICIENT>
-       </GROUP>  
-       <COEFFICIENT NAME="CDDe" TYPE="VALUE">
-         Drag_due_to_Elevator_Deflection
-         aero/qbar-psf | metrics/Sw-sqft | fcs/mag-elevator-pos-rad
-         0.06
-       </COEFFICIENT>
-       <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
-         Drag_due_to_sideslip
-         aero/qbar-psf | metrics/Sw-sqft | aero/mag-beta-rad
-         0.17
-       </COEFFICIENT>
+        </COEFFICIENT>
+
+      </GROUP>  
+
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="CDDe" TYPE="VALUE">
+        Drag_due_to_Elevator_Deflection
+        aero/qbar-psf | metrics/Sw-sqft | fcs/mag-elevator-pos-rad
+        0
+      </COEFFICIENT>
+
+      <!-- Peden -->
+      <COEFFICIENT NAME="CDbeta" TYPE="VALUE">
+        Drag_due_to_sideslip
+        aero/qbar-psf | metrics/Sw-sqft | aero/mag-beta-rad
+        0.17
+      </COEFFICIENT>
 
     </AXIS>
 
     <AXIS NAME="SIDE">
-       <COEFFICIENT NAME="CYb" TYPE="VECTOR">
-         Side_force_due_to_beta
-         3
-         aero/beta-rad
-         aero/qbar-psf | metrics/Sw-sqft
-         -0.349   0.108 
-          0       0
-          0.349  -0.108
-       </COEFFICIENT>
 
-       <COEFFICIENT NAME="CYda" TYPE="VALUE">
-         Side_force_due_to_aileron
-         aero/qbar-psf | metrics/Sw-sqft | fcs/left-aileron-pos-rad
-        -0.05
+      <!-- based on Roskam p.482, clamped to +/-20deg beta -->
+      <COEFFICIENT NAME="CYb" TYPE="TABLE">
+        Side_force_due_to_beta
+        3
+        2
+        aero/beta-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft
+                 0     30
+        -0.349   0.137  0.106
+         0       0      0
+         0.349  -0.137 -0.106
       </COEFFICIENT>
 
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="CYda" TYPE="VALUE">
+        Side_force_due_to_aileron
+        aero/qbar-psf | metrics/Sw-sqft | fcs/left-aileron-pos-rad
+        0
+      </COEFFICIENT>
+
+      <!-- Roskam p.482 -->
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
-         Side_force_due_to_rudder
-         aero/qbar-psf | metrics/Sw-sqft | fcs/rudder-pos-rad
-         0.098
+        Side_force_due_to_rudder
+        aero/qbar-psf | metrics/Sw-sqft | fcs/rudder-pos-rad
+        0.187
       </COEFFICIENT>
-      <COEFFICIENT NAME="CYp" TYPE="VALUE">
-         Side_force_due_to_roll_rate
-         aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/p-aero-rad_sec
-         -0.037
+
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="CYp" TYPE="TABLE">
+        Side_force_due_to_roll_rate
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/p-aero-rad_sec
+               0      30
+        0.000 -0.075  -0.161
+        0.094 -0.145  -0.231
       </COEFFICIENT>
-      <COEFFICIENT NAME="CYr" TYPE="VALUE">
-         Side_force_due_to_yaw_rate
-         aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/r-aero-rad_sec
-         0.21
+
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="CYr" TYPE="TABLE">
+        Side_force_due_to_yaw_rate
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | aero/bi2vel | velocities/r-aero-rad_sec
+              0      30
+        0.000 0.214  0.162
+        0.094 0.267  0.215
       </COEFFICIENT>
+
     </AXIS>
 
     <AXIS NAME="ROLL">
-       <COEFFICIENT NAME="Clb" TYPE="VECTOR">
-         Roll_moment_due_to_beta
-         3
-         aero/beta-rad
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
-         -0.349  0.0311
-          0      0
-          0.349 -0.0311
-       </COEFFICIENT>
 
-       <COEFFICIENT NAME="Clp" TYPE="VALUE">
-         Roll_moment_due_to_roll_rate_(roll_damping)
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
-         -0.47
-       </COEFFICIENT>
+      <!-- based on Roskam p.482, clamped to +/-20deg beta -->
+      <COEFFICIENT NAME="Clb" TYPE="VECTOR">
+        Roll_moment_due_to_beta
+        3
+        aero/beta-rad
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
+        -0.349  0.0322
+         0      0
+         0.349 -0.0322
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Clr" TYPE="VECTOR">
-         Roll_moment_due_to_yaw_rate
-         2
-         aero/alpha-rad
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-         0.000 0.08
-         0.094 0.19
-       </COEFFICIENT>
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="Clp" TYPE="VALUE">
+        Roll_moment_due_to_roll_rate_(roll_damping)
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
+        -0.484
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Clda" TYPE="VALUE">
-         Roll_moment_due_to_aileron
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
-         0.23
-       </COEFFICIENT>
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="Clr" TYPE="TABLE">
+        Roll_moment_due_to_yaw_rate
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
+              0      30
+        0.000 0.0798  0.1246
+        0.094 0.1869  0.2317
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Cldr" TYPE="VALUE">
-         Roll_moment_due_to_rudder
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
-         0.0147
-        </COEFFICIENT>
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="ClDa" TYPE="VALUE">
+        Roll_moment_due_to_aileron
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
+        0.229
+      </COEFFICIENT>
 
-      </AXIS>
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="Cldr" TYPE="VALUE">
+        Roll_moment_due_to_rudder
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
+        0.0147
+      </COEFFICIENT>
+
+    </AXIS>
 
     <AXIS NAME="PITCH">
 
-      <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
-        Pitch_moment_due_to_alpha
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
-        -1.8
-      </COEFFICIENT>
-      <COEFFICIENT NAME="CmDf" TYPE="VECTOR">
-         Delta_pitching_moment_due_to_flap_deflection
-         4
-         fcs/flap-pos-deg
-         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
-         0    0
-         10  -0.0654
-         20  -0.0981
-         30  -0.1140
-       </COEFFICIENT>
-      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
-         Pitch_moment_due_to_pitch_rate
-         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
-         -12.4
-      </COEFFICIENT>
-      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
-        Pitch_moment_due_to_alpha_rate
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
-        -5.2
-      </COEFFICIENT>
-      <COEFFICIENT NAME="Cmo" TYPE="VALUE">
+      <!-- Roskam p.481 -->
+      <COEFFICIENT NAME="Cmo" TYPE="VECTOR">
         Pitching_moment_at_zero_alpha
+        2
+        fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft
-        0.1
+        0  0.04
+        30 0.09
       </COEFFICIENT>
 
-      <COEFFICIENT NAME="Cmde" TYPE="VALUE">
+      <!-- based on Roskam p.481 -->
+      <COEFFICIENT NAME="Cmalpha" TYPE="TABLE">
+        Pitch_moment_due_to_alpha
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
+                 0     30
+         0      -0.613 -0.584
+         0.0943 -0.650 -0.621
+      </COEFFICIENT>
+
+      <!-- based on Roskam p.481 -->
+      <COEFFICIENT NAME="Cmq" TYPE="TABLE">
+         Pitch_moment_due_to_pitch_rate
+         2
+         2
+         aero/alpha-rad
+         fcs/flap-pos-deg
+         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
+                 0     30
+         0      -12.4  -9.3
+         0.0943 -15.2 -12.1
+      </COEFFICIENT>
+
+      <!-- based on Roskam p.481 -->
+      <COEFFICIENT NAME="Cmadot" TYPE="TABLE">
+        Pitch_moment_due_to_alpha_rate
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
+                0    30
+        0      -7.27 -6.66
+        0.0943 -5.57 -4.96
+      </COEFFICIENT>
+
+      <!-- based on Roskam p.481 -->
+      <COEFFICIENT NAME="Cmde" TYPE="TABLE">
         Pitch_moment_due_to_elevator_deflection
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | fcs/elevator-pos-rad
-        -1.28
+                0     30
+        0      -1.122 -0.846
+        0.0943 -1.369 -1.093
       </COEFFICIENT>
 
     </AXIS>
 
     <AXIS NAME="YAW">
 
-       <COEFFICIENT NAME="Cnb" TYPE="VECTOR">
-         Yaw_moment_due_to_beta
-         3
-         aero/beta-rad
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
-         -0.349  -0.0227
-          0      0
-          0.349  0.0227
-       </COEFFICIENT>
-       <COEFFICIENT NAME="Cnp" TYPE="VALUE">
-         Yaw_moment_due_to_roll_rate
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
-         -0.03
-        </COEFFICIENT>
+      <!-- based on Roskam p.482, clamped to +/-20deg beta -->
+      <COEFFICIENT NAME="Cnb" TYPE="TABLE">
+        Yaw_moment_due_to_beta
+        3
+        2
+        aero/beta-rad
+        aero/alpha-rad
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft
+                0       0.0943
+        -0.349 -0.0205 -0.0317
+         0      0       0
+         0.349  0.0205  0.0317
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
-         Yaw_moment_due_to_yaw_rate
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-         -0.099
-       </COEFFICIENT>
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="Cnp" TYPE="TABLE">
+        Yaw_moment_due_to_roll_rate
+        2
+        2
+        aero/alpha-rad
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/p-aero-rad_sec
+                0       30
+        0      -0.0278  -0.0685
+        0.0943 -0.0649  -0.1056
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Cnda" TYPE="VALUE">
-         Yaw_moment_due_to_aileron
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
-         0.0053
-       </COEFFICIENT>
+      <!-- Roskam p.482 -->
+      <COEFFICIENT NAME="Cnr" TYPE="VECTOR">
+        Yaw_moment_due_to_yaw_rate
+        2
+        aero/alpha-rad
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
+        0      -0.0937
+        0.0943 -0.1199
+      </COEFFICIENT>
 
-       <COEFFICIENT NAME="Cndr" TYPE="VALUE">
-         Yaw_moment_due_to_rudder
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
-         -0.043
-       </COEFFICIENT>
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="Cnda" TYPE="VECTOR">
+        Yaw_moment_due_to_aileron
+        2
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/left-aileron-pos-rad
+        0  -0.0216
+        30 -0.0573
+      </COEFFICIENT>
+
+      <!-- based on Roskam p.482 -->
+      <COEFFICIENT NAME="Cndr" TYPE="VECTOR">
+        Yaw_moment_due_to_rudder
+        2
+        fcs/flap-pos-deg
+        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | fcs/rudder-pos-rad
+        0  -0.0645
+        30 -0.0485
+      </COEFFICIENT>
 
     </AXIS>
+
   </AERODYNAMICS>
+
   <!--
     OUTPUT section definition
 
@@ -565,7 +693,7 @@
 
     NOTE that Time is always output with the data.
   -->
-  <OUTPUT NAME="JSBout172.csv" TYPE="NONE">
+  <OUTPUT NAME="JSBout172.csv" TYPE="CSV">
     RATE_IN_HZ       20
     SIMULATION       OFF
     ATMOSPHERE       ON
@@ -582,4 +710,3 @@
     PROPULSION       ON
   </OUTPUT>
 </FDM_CONFIG>
-
