@@ -1,8 +1,4 @@
-lib_LIBRARIES = libProperties.a
+SUBDIRS = misc
 
-INCLUDES = \
-	-Wall
+EXTRA_DIST = compiler.h
 
-libProperties_a_SOURCES = \
-	props.cxx \
-  props.hxx
