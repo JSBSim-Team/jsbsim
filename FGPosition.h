@@ -93,7 +93,7 @@ public:
   inline FGColumnVector GetRunwayNormal(void) { return vRunwayNormal; }
   
   inline double GetGamma(void) { return gamma; }
-  inline double SetGamma(float tt) { gamma=tt; }
+  inline double SetGamma(float tt) { gamma = tt; }
   inline double GetHOverB(void) { return hoverb; }
   void SetvVel(const FGColumnVector& v) { vVel = v; }
   void SetLatitude(float tt) { Latitude = tt; }

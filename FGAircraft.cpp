@@ -222,8 +222,8 @@ bool FGAircraft::Run(void) {
     FMGear();
     FMMass();
 
-    nlf=0;
-    if(fabs(Position->GetGamma()) < 1.57) {
+    nlf = 0;
+    if (fabs(Position->GetGamma()) < 1.57) {
         nlf = vFs(eZ)/(Weight*cos(Position->GetGamma()));
     }    
         

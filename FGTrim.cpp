@@ -206,8 +206,8 @@ void FGTrim::ReportState(void) {
 bool FGTrim::DoTrim(void) {
   
   trim_failed=false;
-  bool outputState=fdmex->GetOutput()->GetEnabled();
-  fdmex->GetOutput()->SetEnabled(false);
+
+  fdmex->GetOutput()->Disable();
 
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<NumAxes;current_axis++) {
@@ -293,7 +293,7 @@ bool FGTrim::DoTrim(void) {
     total_its=N;
     cout << endl << "  Trim failed" << endl;
   }
-  fdmex->GetOutput()->SetEnabled(outputState);
+  fdmex->GetOutput()->Enable();
   return !trim_failed;
 }
 

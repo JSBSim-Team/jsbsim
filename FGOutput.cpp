@@ -78,7 +78,7 @@ FGOutput::~FGOutput(void)
 
 bool FGOutput::Run(void)
 {
-  if(enabled) {
+  if (enabled) {
     if (!FGModel::Run()) {
 
       if (Type == otSocket) {
