@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.41 2001/12/17 00:27:56 dmegginson Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.42 2001/12/17 02:06:27 apeden Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.41 2001/12/17 00:27:56 dmegginson Exp $
+    @version $Id: FGFCS.h,v 1.42 2001/12/17 02:06:27 apeden Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -170,27 +170,27 @@ public:
   /// @name Pilot input command retrieval
   //@{
   /** Gets the aileron command.
-      @return aileron command in radians */
+      @return aileron command in percent */
   inline double GetDaCmd(void) { return DaCmd; }
 
   /** Gets the elevator command.
-      @return elevator command in radians */
+      @return elevator command in percent */
   inline double GetDeCmd(void) { return DeCmd; }
 
   /** Gets the rudder command.
-      @return rudder command in radians */
+      @return rudder command in percent */
   inline double GetDrCmd(void) { return DrCmd; }
 
   /** Gets the flaps command.
-      @return flaps command in radians */
+      @return flaps command in percent */
   inline double GetDfCmd(void) { return DfCmd; }
 
   /** Gets the speedbrake command.
-      @return speedbrake command in radians */
+      @return speedbrake command in percent */
   inline double GetDsbCmd(void) { return DsbCmd; }
 
   /** Gets the spoiler command.
-      @return spoiler command in radians */
+      @return spoiler command in percent */
   inline double GetDspCmd(void) { return DspCmd; }
 
   /** Gets the throttle command.
@@ -209,15 +209,15 @@ public:
   inline double GetPropAdvanceCmd(int engine) { return PropAdvanceCmd[engine]; }
 
   /** Gets the pitch trim command.
-      @return pitch trim command in radians */
+      @return pitch trim command in percent */
   inline double GetPitchTrimCmd(void) { return PTrimCmd; }
   
   /** Gets the rudder trim command.
-      @return rudder trim command in radians */
+      @return rudder trim command in percent */
   inline double GetYawTrimCmd(void) { return YTrimCmd; }
   
   /** Gets the aileron trim command.
-      @return aileron trim command in radians */
+      @return aileron trim command in percent */
   inline double GetRollTrimCmd(void) { return RTrimCmd; }
   
   /** Get the gear extend/retract command. 0 commands gear up, 1 down.
@@ -296,39 +296,39 @@ public:
   /// @name Pilot input command setting
   //@{
   /** Sets the aileron command
-      @param cmd aileron command in radians*/
+      @param cmd aileron command in percent*/
   inline void SetDaCmd(double cmd) { DaCmd = cmd; }
 
   /** Sets the elevator command
-      @param cmd elevator command in radians*/
+      @param cmd elevator command in percent*/
   inline void SetDeCmd(double cmd) { DeCmd = cmd; }
 
   /** Sets the rudder command
-      @param cmd rudder command in radians*/
+      @param cmd rudder command in percent*/
   inline void SetDrCmd(double cmd) { DrCmd = cmd; }
 
   /** Sets the flaps command
-      @param cmd flaps command in radians*/
+      @param cmd flaps command in percent*/
   inline void SetDfCmd(double cmd) { DfCmd = cmd; }
 
   /** Sets the speedbrake command
-      @param cmd speedbrake command in radians*/
+      @param cmd speedbrake command in percent*/
   inline void SetDsbCmd(double cmd) { DsbCmd = cmd; }
 
   /** Sets the spoilers command
-      @param cmd spoilers command in radians*/
+      @param cmd spoilers command in percent*/
   inline void SetDspCmd(double cmd) { DspCmd = cmd; }
 
   /** Sets the pitch trim command
-      @param cmd pitch trim command in radians*/
+      @param cmd pitch trim command in percent*/
   inline void SetPitchTrimCmd(double cmd) { PTrimCmd = cmd; }
 
   /** Sets the rudder trim command
-      @param cmd rudder trim command in radians*/
+      @param cmd rudder trim command in percent*/
   inline void SetYawTrimCmd(double cmd) { YTrimCmd = cmd; }
 
   /** Sets the aileron trim command
-      @param cmd aileron trim command in radians*/
+      @param cmd aileron trim command in percent*/
   inline void SetRollTrimCmd(double cmd) { RTrimCmd = cmd; }
 
   /** Sets the throttle command for the specified engine
