@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.109 2004/06/27 08:35:32 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.110 2004/07/03 10:49:14 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -503,7 +503,9 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
   }
 
   if (Release == "ALPHA") {
+#ifndef _MSC_VER
     system("banner ALPHA");
+#endif
     cout << endl << endl
          << highint << "This aircraft model is an " << fgred << Release
          << reset << highint << " release!!!" << endl << endl << reset
@@ -512,7 +514,9 @@ bool FGFDMExec::ReadPrologue(FGConfigFile* AC_cfg)
          << fgred << highint << "Use this model for development purposes ONLY!!!"
          << normint << reset << endl << endl;
   } else if (Release == "BETA") {
+#ifndef _MSC_VER
     system("banner BETA");
+#endif
     cout << endl << endl
          << highint << "This aircraft model is a " << fgred << Release
          << reset << highint << " release!!!" << endl << endl << reset
