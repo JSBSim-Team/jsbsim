@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.26 2003/06/03 09:53:52 ehofman Exp $";
+static const char *IdSrc = "$Id: FGDeadBand.cpp,v 1.27 2005/01/20 07:27:36 jberndt Exp $";
 static const char *IdHdr = ID_DEADBAND;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,6 +119,33 @@ bool FGDeadBand::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGDeadBand::convert(void)
+{
+  cout << endl;
+  cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
+
+  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+
+  if (gain != 1.0)
+    cout << "            <gain>" << gain << "</gain>" << endl;
+
+  cout << "                <width>" << width << "</width>" << endl;
+
+  if (clip) {
+    cout << "            <clip>" << endl;
+    cout << "                <min>" << clipmin << "</min>" << endl;
+    cout << "                <max>" << clipmax << "</max>" << endl;
+    cout << "            </clip>" << endl;
+  }
+
+  if (IsOutput)
+    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+
+  cout << "        </component>" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

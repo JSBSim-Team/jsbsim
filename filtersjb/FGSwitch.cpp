@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.34 2004/05/25 11:46:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.35 2005/01/20 07:27:37 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,6 +186,44 @@ bool FGSwitch::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSwitch::convert(void)
+{
+  cout << endl;
+  cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
+
+//  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+
+  for (int i=0; i<tests.size(); i++) {
+    if (tests[i].Logic == eDefault) {
+      if (tests[i].OutputProp == 0L)
+        cout << "            <default value=\"" << tests[i].OutputVal << "\"/>" << endl;
+      else
+        cout << "            <default value=\"" << tests[i].OutputProp->GetName() << "\"/>" << endl;
+    } else if (tests[i].Logic == eAND) {
+      if (tests[i].OutputProp == 0L)
+        cout << "            <test logic=\"AND\" value=\"" << tests[i].OutputVal << "\">" << endl;
+      else
+        cout << "            <test logic=\"AND\" value=\"" << tests[i].OutputProp->GetName() << "\">" << endl;
+    } else if (tests[i].Logic == eOR) {
+      if (tests[i].OutputProp == 0L)
+        cout << "            <test logic=\"OR\" value=\"" << tests[i].OutputVal << "\">" << endl;
+      else
+        cout << "            <test logic=\"OR\" value=\"" << tests[i].OutputProp->GetName() << "\">" << endl;
+    }
+    for (int j=0; j<tests[i].conditions.size(); j++) {
+      tests[i].conditions[j].convert();
+    }
+    if (tests[i].Logic != eDefault) cout << "            </test>" << endl;
+  }
+
+  if (IsOutput)
+    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+
+  cout << "        </component>" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.91 2005/01/16 15:19:29 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.92 2005/01/20 07:27:35 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -555,5 +555,21 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   }
 
   cout << "    </propulsion>" << endl;
+
+  // flight control section
+
+  cout << "    <flight_control name=\"" << FDMExec->GetFCS()->Name << "\">" << endl;
+
+  FDMExec->GetFCS()->convert();
+
+  cout << "    </flight_control>" << endl;
+
+  // aerodynamics section
+
+  cout << "    <aerodynamics>" << endl;
+
+  FDMExec->GetAerodynamics()->convert();
+
+  cout << "    </aerodynamics>" << endl;
 
 }

@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.42 2003/12/03 13:13:06 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.43 2005/01/20 07:27:36 jberndt Exp $"
 
 using std::string;
 
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
     - FGGradient
     
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.42 2003/12/03 13:13:06 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.43 2005/01/20 07:27:36 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
          FGConfigFile.
 */
@@ -104,7 +104,7 @@ public:
   inline string GetName(void) const {return Name;}
   inline string GetType(void) const { return Type; }
   virtual double GetOutputPct(void) const { return 0; }
-  
+  virtual void convert(void) {};  
   virtual void bind();
   FGPropertyManager* resolveSymbol(string token);
   

@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.27 2004/01/17 19:32:21 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.28 2005/01/20 07:27:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     Note that there can be only one BIAS statement per component.
     
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.27 2004/01/17 19:32:21 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.28 2005/01/20 07:27:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,7 @@ public:
 
   /// The execution method for this FCS component.
   bool Run(void);
+  void convert(void);
 
 private:
   FGConfigFile* AC_cfg;

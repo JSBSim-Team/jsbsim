@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.52 2004/05/04 12:22:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.53 2005/01/20 07:27:36 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,6 +173,40 @@ bool FGGain::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGGain::convert(void)
+{
+  cout << endl;
+  cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
+
+  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+
+  if (Gain != 1.0)
+    cout << "            <gain>" << Gain << "</gain>" << endl;
+
+  if (Type == "PURE_GAIN") {                       // PURE_GAIN
+  } else if (Type == "SCHEDULED_GAIN") {           // SCHEDULED_GAIN
+  } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
+    cout << "            <limit>" << endl;
+    cout << "                <min>" << Min << "</min>" << endl;
+    cout << "                <max>" << Max << "</max>" << endl;
+    cout << "            </limit>" << endl;
+  }
+
+  if (clip) {
+    cout << "            <clip>" << endl;
+    cout << "                <min>" << clipmin << "</min>" << endl;
+    cout << "                <max>" << clipmax << "</max>" << endl;
+    cout << "            </clip>" << endl;
+  }
+
+  if (IsOutput)
+    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+
+  cout << "        </component>" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

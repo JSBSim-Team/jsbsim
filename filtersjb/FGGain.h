@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.27 2005/01/20 07:27:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $
+    @version $Id: FGGain.h,v 1.27 2005/01/20 07:27:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,7 +173,7 @@ public:
   ~FGGain();
 
   double GetOutputPct() const { return OutputPct; }
-
+  void convert(void);
   bool Run (void);
 
 private:

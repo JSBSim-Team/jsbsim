@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.30 2004/01/17 19:32:21 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.31 2005/01/20 07:27:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -177,7 +177,7 @@ is so that the last component in a "string" can copy its value to the appropriat
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Id: FGFilter.h,v 1.30 2004/01/17 19:32:21 jberndt Exp $
+@version $Id: FGFilter.h,v 1.31 2005/01/20 07:27:36 jberndt Exp $
 */
    
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,6 +195,7 @@ public:
   /** When true, causes previous values to be set to current values. This
       is particularly useful for first pass. */
   bool Initialize;
+  void convert(void);
 
   enum {eLag, eLeadLag, eOrder2, eWashout, eIntegrator, eUnknown} FilterType;
 

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.34 2004/04/17 21:21:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.35 2005/01/20 07:27:35 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,8 +335,9 @@ FGTable& FGTable::operator<<(const int n)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGTable::Print(void)
+void FGTable::Print(int spaces)
 {
+  string tabspace;
   int startRow=0;
   int startCol=0;
 
@@ -349,9 +350,11 @@ void FGTable::Print(void)
   ios::fmtflags flags = cout.setf(ios::fixed); // set up output stream
 #endif
 
+  for (int i=0;i<spaces;i++) tabspace+=" ";
+
   cout.precision(4);
   for (int r=startRow; r<=nRows; r++) {
-    cout << "	";
+    cout << tabspace;
     for (int c=startCol; c<=nCols; c++) {
       if (r == 0 && c == 0) {
         cout << "	";
@@ -359,7 +362,7 @@ void FGTable::Print(void)
         cout << Data[r][c] << "	";
         if (Type == tt3D) {
           cout << endl;
-          Tables[r-1].Print();
+          Tables[r-1].Print(spaces);
         }
       }
     }

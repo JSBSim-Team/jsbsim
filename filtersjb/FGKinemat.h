@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.11 2004/05/19 08:00:18 frohlich Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.12 2005/01/20 07:27:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +101,8 @@ public:
       The routine doing the work.
    */
   bool Run (void);
-  
+  void convert(void);
+
 private:
   FGConfigFile* AC_cfg;
   vector<double> Detents;

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.65 2004/11/02 05:19:42 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.66 2005/01/20 07:27:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.65 2004/11/02 05:19:42 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.66 2005/01/20 07:27:35 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -611,6 +611,7 @@ public:
   void AddGear(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
+  void convert(void);
 
   void bind(void);
   void bindModel(void);

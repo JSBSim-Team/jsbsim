@@ -3,7 +3,7 @@
  Module:       FGSummer.cpp
  Author:       Jon S. Berndt
  Date started: 4/2000
- 
+
  ------------- Copyright (C) 2000 -------------
 
  This program is free software; you can redistribute it and/or modify it under
@@ -37,11 +37,11 @@ COMMENTS, REFERENCES,  and NOTES
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGSummer.h"            
+#include "FGSummer.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSummer.cpp,v 1.44 2004/05/04 12:22:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSummer.cpp,v 1.45 2005/01/20 07:27:37 jberndt Exp $";
 static const char *IdHdr = ID_SUMMER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       } else {
         InputSigns.push_back( 1.0);
       }
-      
+
       InputNodes.push_back( resolveSymbol(token) );
     } else if (token == "BIAS") {
       *AC_cfg >> Bias;
@@ -90,7 +90,7 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
       OutputNode = PropertyManager->GetNode(sOutputIdx, true);
     }
   }
- 
+
   FGFCSComponent::bind();
 
   Debug(0);
@@ -131,6 +131,37 @@ bool FGSummer::Run(void )
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSummer::convert(void)
+{
+  string sSign;
+
+  cout << endl;
+  cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
+
+  for (int i=0; i<InputNodes.size(); i++) {
+    if (InputSigns[i] < 0.0) sSign = "-";
+    else                     sSign = "";
+    cout << "            <input>" << sSign << InputNodes[i]->GetName() << "</input>" << endl;
+  }
+
+  if (Bias != 0.0)
+    cout << "            <bias>" << Bias << "</bias>" << endl;
+
+  if (clip) {
+    cout << "            <clip>" << endl;
+    cout << "                <min>" << clipmin << "</min>" << endl;
+    cout << "                <max>" << clipmax << "</max>" << endl;
+    cout << "            </clip>" << endl;
+  }
+
+  if (IsOutput)
+    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+
+  cout << "        </component>" << endl;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print
 //       out the normally expected messages, essentially echoing
@@ -163,7 +194,7 @@ void FGSummer::Debug(int from)
           cout << "       " << InputNodes[i]->getName() << endl;
       }
       if (Bias != 0.0) cout << "       Bias: " << Bias << endl;
-      if (clip) cout << "      CLIPTO: " << clipmin 
+      if (clip) cout << "      CLIPTO: " << clipmin
                                   << ", " << clipmax << endl;
       if (IsOutput) cout << "      OUTPUT: " <<OutputNode->getName() <<  endl;
     }

@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.101 2004/11/02 05:19:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.102 2005/01/20 07:27:35 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -825,6 +825,15 @@ void FGFCS::unbind(FGPropertyManager *node)
     } else if( node->getChild(i)->isTied() ) {
       node->getChild(i)->untie();
     }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::convert(void)
+{
+  for (int i=0; i<FCSComponents.size(); i++) {
+    FCSComponents[i]->convert();
   }
 }
 

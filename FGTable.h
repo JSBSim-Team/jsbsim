@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.18 2004/04/10 04:22:04 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.19 2005/01/20 07:27:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,7 +190,7 @@ CLASS DOCUMENTATION
     combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
 
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.18 2004/04/10 04:22:04 jberndt Exp $
+    @version $Id: FGTable.h,v 1.19 2005/01/20 07:27:35 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -244,7 +244,7 @@ public:
   FGTable& operator<<(const int n);
   inline double GetElement(int r, int c) {return Data[r][c];}
   inline double GetElement(int r, int c, int t);
-  void Print(void);
+  void Print(int spaces=0);
 
 private:
   enum type {tt1D, tt2D, tt3D} Type;

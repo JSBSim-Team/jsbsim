@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.27 2005/01/20 07:27:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +119,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.26 2004/05/04 12:22:45 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.27 2005/01/20 07:27:37 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +133,7 @@ public:
   ~FGSwitch();
 
   bool Run(void);
+  void convert(void);
 
   enum eLogic {elUndef=0, eAND, eOR, eDefault};
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.42 2004/11/02 05:19:41 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.43 2005/01/20 07:27:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     \</AERODYNAMICS> </pre>
     
     @author Jon S. Berndt, Tony Peden
-    $Id: FGAerodynamics.h,v 1.42 2004/11/02 05:19:41 jberndt Exp $
+    $Id: FGAerodynamics.h,v 1.43 2005/01/20 07:27:35 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,7 @@ public:
   void bind(void);
   void bindModel(void);
   void unbind(void);
+  void convert(void);
   
 private:
   typedef map<string,int> AxisIndex;

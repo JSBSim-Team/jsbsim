@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.7 2003/12/02 12:56:05 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.8 2005/01/20 07:27:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,6 +72,7 @@ public:
 
   bool Evaluate(void);
   void PrintCondition(void);
+  void convert(void);
 
 private:
   FGConfigFile* AC_cfg;
@@ -86,7 +87,8 @@ private:
   eComparison Comparison;
   bool isGroup;
   string conditional;
-  
+  string property1, property2;
+
   static string indent;
 
   vector <FGCondition> conditions;

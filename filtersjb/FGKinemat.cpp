@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.24 2004/05/30 11:46:25 frohlich Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.25 2005/01/20 07:27:37 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,6 +176,30 @@ bool FGKinemat::Run(void )
   if (IsOutput) SetOutput();
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGKinemat::convert(void)
+{
+  cout << endl;
+  cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
+
+  cout << "            <input>" << InputNodes[0]->GetName() << "</input>" << endl;
+
+  cout << "            <traverse>" << endl;
+  for (int i=0; i<Detents.size(); i++) {
+    cout << "                <setting>" << endl;
+    cout << "                    <position>" << Detents[i] << "</position>" << endl;
+    cout << "                    <time>" << TransitionTimes[i] << "</time>" << endl;
+    cout << "                </setting>" << endl;
+  }
+  cout << "            </traverse>" << endl;
+
+  if (IsOutput)
+    cout << "            <output>" << OutputNode->GetName() << "</output>" << endl;
+
+  cout << "        </component>" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -46,12 +46,12 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.51 2004/11/02 05:19:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.52 2005/01/20 07:27:34 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
-const char* AxisNames[] = { "drag", "side-force", "lift", "rolling-moment",
-                            "pitching-moment","yawing-moment" };
+const char* AxisNames[] = { "drag", "side", "lift", "roll",
+                            "pitch","yaw" };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -356,6 +356,23 @@ void FGAerodynamics::unbind(void)
 
      }
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAerodynamics::convert(void)
+{
+
+  for (int axis=0; axis<6; axis++) {
+    if (Coeff[axis].size()>0) {
+      cout << endl << "        <axis name=\"" << AxisNames[axis] << "\">" << endl;
+      for (int c=0; c<Coeff[axis].size(); c++) {
+        Coeff[axis][c]->convert();
+      }
+      cout << "        </axis>" << endl;
+    }
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.70 2004/11/17 03:55:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.71 2005/01/20 07:27:35 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -382,6 +382,58 @@ FGPropertyManager* FGCoefficient::resolveSymbol(string name)
     exit(1);
   }
   return tmpn;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGCoefficient::convert(void)
+{
+  cout << "            <function name=\"" << name << "\">" << endl;
+  cout << "                <description>" << description << "</description>" << endl;
+  cout << "                <product>" << endl;
+
+  for (int i=0; i<multipliers.size(); i++)
+    cout << "                    <property>" << multipliers[i]->GetName() << "</property>" << endl;
+
+  switch (type) {
+  case VALUE:
+  cout << "                    <value>" << StaticValue << "</value>" << endl;
+    break;
+
+  case VECTOR:
+    cout << "                      <table>" << endl;
+    cout << "                          <independentVar>" << LookupR->GetName() << "</independentVar>" << endl;
+    cout << "                          <tableData>" << endl;
+    Table->Print(30);
+    cout << "                          </tableData>" << endl;
+    cout << "                      </table>" << endl;
+    break;
+
+  case TABLE:
+    cout << "                      <table>" << endl;
+    cout << "                          <independentVar lookup=\"row\">" << LookupR->GetName() << "</independentVar>" << endl;
+    cout << "                          <independentVar lookup=\"column\">" << LookupC->GetName() << "</independentVar>" << endl;
+    cout << "                          <tableData>" << endl;
+    Table->Print(30);
+    cout << "                          </tableData>" << endl;
+    cout << "                      </table>" << endl;
+    break;
+
+  case TABLE3D:
+    cout << "                      <table>" << endl;
+    cout << "                          <independentVar lookup=\"row\">" << LookupR->GetName() << "</independentVar>" << endl;
+    cout << "                          <independentVar lookup=\"column\">" << LookupC->GetName() << "</independentVar>" << endl;
+    cout << "                          <independentVar lookup=\"table\">" << LookupT->GetName() << "</independentVar>" << endl;
+    cout << "                          <tableData>" << endl;
+    Table->Print(30);
+    cout << "                          </tableData>" << endl;
+    cout << "                      </table>" << endl;
+    break;
+
+  }
+
+  cout << "                </product>" << endl;
+  cout << "            </function>" << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
