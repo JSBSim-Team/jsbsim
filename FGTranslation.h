@@ -96,6 +96,7 @@ public:
   inline void Setbeta (float tt) { beta  = tt; }
   inline void Setqbar (float tt) { qbar = tt; }
   inline void SetVt   (float tt) { Vt = tt; }
+  inline void SetMach (float tt) { Mach=tt; }
 
   inline void SetAB(float t1, float t2) { alpha=t1; beta=t2; }
 
