@@ -60,6 +60,7 @@ INCLUDES
 ************************************ CODE **************************************
 *******************************************************************************/
 
+char const *Id = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGFCS.cpp,v 1.27 2000/10/12 22:51:25 jsb Exp $";
 
 FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex) {
   Name = "FGFCS";
