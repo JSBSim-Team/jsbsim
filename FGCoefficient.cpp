@@ -164,6 +164,10 @@ FGCoefficient::FGCoefficient(FGFDMExec* fdex, FGConfigFile* AC_cfg)
       }
 
       break;
+    case EQUATION:
+    case UNKNOWN:
+      cerr << "Unimplemented coefficient type: " << type << endl;
+      break;  
     }
     AC_cfg->GetNextConfigLine();
   }
@@ -201,7 +205,8 @@ bool FGCoefficient::Allocate(int n)
 float FGCoefficient::Value(float rVal, float cVal)
 {
   float rFactor, cFactor, col1temp, col2temp, Value;
-  int r, c, midx;
+  int r, c;
+  unsigned midx;
 
   if (rows < 2 || columns < 2) return 0.0;
 
@@ -230,8 +235,11 @@ float FGCoefficient::Value(float rVal, float cVal)
 
 float FGCoefficient::Value(float Val)
 {
+  
+  
   float Factor, Value;
-  int r, midx;
+  int r;
+  unsigned midx;
 
   if (rows < 2) return 0.0;
 
@@ -246,9 +254,9 @@ float FGCoefficient::Value(float Val)
   }
 
   SD = Value = Factor*(Table3D[r][1] - Table3D[r-1][1]) + Table3D[r-1][1];
-
   for (midx=0; midx < multipliers.size(); midx++) {
     Value *= State->GetParameter(multipliers[midx]);
+
   }
 
   return Value;
@@ -259,7 +267,7 @@ float FGCoefficient::Value(float Val)
 float FGCoefficient::Value(void)
 {
 	float Value;
-	int midx;
+	unsigned midx;
 
 	SD = Value = StaticValue;
 
