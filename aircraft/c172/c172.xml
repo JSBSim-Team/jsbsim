@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c172" VERSION="1.55">
+<FDM_CONFIG NAME="c172" VERSION="1.56">
 <!--
 
   File:        c172.xml
   Author:      Tony Peden
-  CVS Version: $Id: c172.xml,v 1.63 2001/11/23 20:06:17 jberndt Exp $
+  CVS Version: $Id: c172.xml,v 1.64 2001/12/01 00:45:02 jberndt Exp $
 
   Function: Models a Cessna 172
   Notes:    Try running FlightGear using this command line,

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="X-15" VERSION="1.55">
+<FDM_CONFIG NAME="X-15" VERSION="1.56">
   <!--
 
   File:        X15.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: X15.xml,v 1.34 2001/11/20 21:25:11 jberndt Exp $
+  CVS Version: $Id: X15.xml,v 1.35 2001/12/01 00:45:02 jberndt Exp $
 
   Function: Models an X-15
   -->

@@ -1,9 +1,9 @@
-<FDM_CONFIG NAME="c310" VERSION="1.55">
+<FDM_CONFIG NAME="c310" VERSION="1.56">
 <!--
 
   File:        c310.xml
   Author:      David Megginson, based on c172.xml by Tony Peden
-  CVS Version: $Id: c310.xml,v 1.4 2001/11/30 17:07:45 jberndt Exp $
+  CVS Version: $Id: c310.xml,v 1.5 2001/12/01 00:45:03 jberndt Exp $
 
   Function: Models a Cessna 310
   Notes:    Try running FlightGear using this command line,

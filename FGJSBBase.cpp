@@ -37,7 +37,7 @@ INCLUDES
 
 #include "FGJSBBase.h"
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.9 2001/11/28 00:20:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.10 2001/12/01 00:45:02 jberndt Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ const double FGJSBBase::ktstofps = 1.68781;
 const double FGJSBBase::inchtoft = 0.08333333;
 const double FGJSBBase::Reng = 1716.0;
 const double FGJSBBase::SHRatio = 1.40;
-const string FGJSBBase::needed_cfg_version = "1.55";
+const string FGJSBBase::needed_cfg_version = "1.56";
 const string FGJSBBase::JSBSim_version = "0.9.1";
 
 queue <FGJSBBase::Message*> FGJSBBase::Messages;
