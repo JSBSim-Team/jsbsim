@@ -88,7 +88,8 @@ extern double globalSeaLevelRadius;
 
 FGPosition::FGPosition(FGFDMExec* fdmex) : FGModel(fdmex),
     vUVW(3),
-    vVel(3)
+    vVel(3),
+    vVelDot(3)
 {
   Name = "FGPosition";
   LongitudeDot = LatitudeDot = RadiusDot = 0.0;
@@ -169,6 +170,7 @@ void FGPosition::GetState(void) {
   vUVW      = Translation->GetUVW();
   Vt        = Translation->GetVt();
   vVel      = State->GetTb2l()*vUVW;
+  vVelDot   = State->GetTb2l() * Translation->GetUVWdot();
 
   b = Aircraft->GetWingSpan();
   

@@ -50,9 +50,11 @@ CLASS DECLARATION
 *******************************************************************************/
 
 class FGPosition : public FGModel {
+  
   FGColumnVector vUVW;
   FGColumnVector vVel;
-
+  FGColumnVector vVelDot;
+  
   double Vee, invMass, invRadius;
   double Radius, h;
   double LatitudeDot, LongitudeDot, RadiusDot;
@@ -73,6 +75,7 @@ public:
   ~FGPosition(void);
 
   inline FGColumnVector GetVel(void) { return vVel; }
+  inline FGColumnVector GetVelDot(void) { return vVelDot; }
   inline FGColumnVector GetUVW(void) { return vUVW; }
   inline double GetVn(void)  { return vVel(eX); }
   inline double GetVe(void)  { return vVel(eY); }
@@ -81,7 +84,9 @@ public:
   inline double Geth(void)  { return h; }
   inline double Gethdot(void) { return RadiusDot; }
   inline double GetLatitude(void) { return Latitude; }
+  inline double GetLatitudeDot(void) { return LatitudeDot; }
   inline double GetLongitude(void) { return Longitude; }
+  inline double GetLongitudeDot(void) { return LongitudeDot; }
   inline double GetRunwayRadius(void) { return RunwayRadius; }
   inline double GetDistanceAGL(void)  { return DistanceAGL; }
   inline double GetGamma(void) { return gamma; }
