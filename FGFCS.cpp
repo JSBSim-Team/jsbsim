@@ -58,7 +58,7 @@ INCLUDES
 #include "filtersjb/FGSummer.h"
 #include "filtersjb/FGFlaps.h"
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.53 2001/08/14 20:31:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.54 2001/10/03 22:21:55 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,8 @@ FGFCS::~FGFCS()
 {
   ThrottleCmd.clear();
   ThrottlePos.clear();
+  MixtureCmd.clear();
+  MixturePos.clear();
 
   unsigned int i;
 
@@ -97,6 +99,7 @@ bool FGFCS::Run(void)
 
   if (!FGModel::Run()) {
     for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
+    for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
     for (i=0; i<Components.size(); i++)  Components[i]->Run();
   } else {
   }
@@ -173,6 +176,32 @@ float FGFCS::GetThrottlePos(int engineNum)
     cerr << "Throttle " << engineNum << " does not exist! " << ThrottlePos.size()
          << " engines exist, but attempted throttle position setting is for engine "
          << engineNum << endl;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetMixtureCmd(int engineNum, float setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < 0) {
+    for (ctr=0;ctr<MixtureCmd.size();ctr++) MixtureCmd[ctr] = setting;
+  } else {
+    MixtureCmd[engineNum] = setting;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetMixturePos(int engineNum, float setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < 0) {
+    for (ctr=0;ctr<=MixtureCmd.size();ctr++) MixturePos[ctr] = MixtureCmd[ctr];
+  } else {
+    MixturePos[engineNum] = setting;
   }
 }
 
@@ -297,6 +326,8 @@ void FGFCS::AddThrottle(void)
 {
   ThrottleCmd.push_back(0.0);
   ThrottlePos.push_back(0.0);
+  MixtureCmd.push_back(0.0);	// assume throttle and mixture are coupled
+  MixturePos.push_back(0.0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 09/12/2000  JSB  Created
+10/01/2001  DPM  Modified to use equations from Dave Luff's piston model.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES,  and NOTES
@@ -45,7 +46,7 @@ INCLUDES
 #include "FGEngine.h"
 #include "FGConfigFile.h"
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.13 2001/03/22 14:10:24 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.14 2001/10/03 22:21:55 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -55,7 +56,7 @@ class FGPiston : public FGEngine
 {
 public:
   FGPiston(FGFDMExec* exec, FGConfigFile* Eng_cfg);
-  ~FGPiston();
+  virtual ~FGPiston();
 
   float Calculate(float PowerRequired);
   float GetPowerAvailable(void) {return PowerAvailable;}
@@ -66,9 +67,61 @@ private:
   float SpeedIntercept;
   float AltitudeSlope;
   float PowerAvailable;
+
+  void doEngineStartup(void);
+  void doManifoldPressure(void);
+  void doAirFlow(void);
+  void doFuelFlow(void);
+  void doEnginePower(void);
+  void doEGT(void);
+  void doCHT(void);
+  void doOilPressure(void);
+
+  //
+  // constants
+  //
+  const float CONVERT_CUBIC_INCHES_TO_METERS_CUBED;
+
+  const float R_air;
+  const float rho_fuel;    // kg/m^3
+  const float calorific_value_fuel;  // W/Kg (approximate)
+  const float Cp_air;      // J/KgK
+  const float Cp_fuel;     // J/KgK
+  const float Oil_Temp;    // degC
+
+  //
+  // Configuration
+  //
+  float MinManifoldPressure_inHg; // Inches Hg
+  float MaxManifoldPressure_inHg; // Inches Hg
+  float Displacement;             // cubic inches
+  float MaxHP;                    // horsepower
+  float Cycles;                   // cycles/power stroke
+  float IdleRPM;                  // revolutions per minute
+
+  //
+  // Inputs (in addition to those in FGEngine).
+  //
+  float p_amb;              // Pascals
+  float p_amb_sea_level;    // Pascals
+  float T_amb;              // degrees Kelvin
+  float RPM;                // revolutions per minute
+  float IAS;                // knots
+
+  //
+  // Outputs (in addition to those in FGEngine).
+  //
+  float rho_air;
+  float volumetric_efficiency;
+  float m_dot_air;
+  float equivalence_ratio;
+  float m_dot_fuel;
+  float Percentage_Power;
+  float HP;
+  float combustion_efficiency;
+
   void Debug(void);
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

@@ -1,11 +1,25 @@
 <?xml version="1.0"?>
+<!--
+  MINMP:         minimum manifold pressure in inches Hg
+  MAXMP:         maximum manifold pressure in inches Hg
+  DISPLACEMENT:  total cylinder space (??) in cubic inches
+  MAXHP:         maximum horsepower produced (=BRAKEHORSEPOWER in the old
+                 config)
+  CYCLES:        cycles/power stroke
+  IDLERPM:       minimum RPM when the engine is running
+  MAXTHROTTLE:   maximum throttle setting (as before)
+  MINTHROTTLE:   minimum throttle setting (as before)
+  SLFUELFLOWMAX: maximum fuel flow (as before; units unknown)
+-->
 <FG_PISTON NAME="IO360C">
-  BRAKEHORSEPOWER 180.0
+  MINMP             6.5
+  MAXMP            28.5
+  DISPLACEMENT    360.0
+  MAXHP           180.0
+  CYCLES            2.0
+  IDLERPM         900.0
   MAXTHROTTLE       1.0
   MINTHROTTLE       0.2
   SLFUELFLOWMAX     8.7
-  SPEEDSLOPE        0.00144
-  SPEEDINTERCEPT    0.546
-  ALTITUDESLOPE    -1.6E-5
 </FG_PISTON>
 

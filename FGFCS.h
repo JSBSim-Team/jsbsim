@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.33 2001/09/28 02:07:03 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.34 2001/10/03 22:21:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -138,7 +138,7 @@ CLASS DOCUMENTATION
     individual components for more information on how they are mechanized.
     
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.33 2001/09/28 02:07:03 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.34 2001/10/03 22:21:55 jberndt Exp $
     @see FGFCSComponent
     @see FGConfigFile
     @see FGGain
@@ -198,6 +198,11 @@ public:
       @return throttle command in percent ( 0 - 100) for the given engine */
   float GetThrottleCmd(int engine);
 
+  /** Gets the mixture command.
+      @param engine engine ID number
+      @return mixture command in percent ( 0 - 100) for the given engine */
+  inline float GetMixtureCmd(int engine) { return MixtureCmd[engine]; }
+
   /** Gets the pitch trim command.
       @return pitch trim command in radians */
   inline float GetPitchTrimCmd(void) { return PTrimCmd; }
@@ -233,6 +238,11 @@ public:
       @param engine engine ID number
       @return throttle position for the given engine in percent ( 0 - 100)*/
   float GetThrottlePos(int engine);
+
+  /** Gets the mixture position.
+      @param engine engine ID number
+      @return mixture position for the given engine in percent ( 0 - 100)*/
+  inline float GetMixturePos(int engine) { return MixturePos[engine]; }
   //@}
 
   /** Retrieves the State object pointer.
@@ -290,6 +300,11 @@ public:
       @param engine engine ID number
       @param cmd throttle command in percent (0 - 100)*/
   void SetThrottleCmd(int engine, float cmd);
+
+  /** Sets the mixture command for the specified engine
+      @param engine engine ID number
+      @param cmd mixture command in percent (0 - 100)*/
+  void SetMixtureCmd(int engine, float cmd);
   //@}
 
   /// @name Aerosurface position setting
@@ -322,6 +337,11 @@ public:
       @param engine engine ID number
       @param cmd throttle setting in percent (0 - 100)*/
   void SetThrottlePos(int engine, float cmd);
+
+  /** Sets the actual mixture setting for the specified engine
+      @param engine engine ID number
+      @param cmd mixture setting in percent (0 - 100)*/
+  void SetMixturePos(int engine, float cmd);
   //@}
 
   /// @name Landing Gear brakes
@@ -360,6 +380,8 @@ private:
   float PTrimCmd;
   vector <float> ThrottleCmd;
   vector <float> ThrottlePos;
+  vector <float> MixtureCmd;
+  vector <float> MixturePos;
   float LeftBrake, RightBrake, CenterBrake; // Brake settings
 
   vector <FGFCSComponent*> Components;
