@@ -90,6 +90,8 @@ public:
   inline FGPosition* GetPosition(void)       {return Position;}
   inline FGAuxiliary* GetAuxiliary(void)     {return Auxiliary;}
   inline FGOutput* GetOutput(void)           {return Output;}
+  
+  
 
 private:
   bool frozen;
@@ -99,6 +101,7 @@ private:
   string AircraftPath;
   string EnginePath;
   string ScriptPath;
+
 
   FGState*       State;
   FGAtmosphere*  Atmosphere;
