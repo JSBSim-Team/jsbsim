@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.182 2004/08/21 11:51:04 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.183 2004/12/06 04:32:26 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -171,7 +171,8 @@ FGJSBsim::FGJSBsim( double dt )
         node->setDoubleValue("level-gal_us", Propulsion->GetTank(i)->GetContents() / 6.6);
       }
     }
-
+    Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
+    
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
     fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
@@ -503,7 +504,8 @@ bool FGJSBsim::copy_to_JSBsim()
     }
     SGPropertyNode* node = fgGetNode("/systems/refuel", true);
     Propulsion->SetRefuel(node->getDoubleValue("contact"));
-
+    Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
+    
     return true;
 }
 
@@ -692,11 +694,9 @@ bool FGJSBsim::copy_from_JSBsim()
 
     }
 
-    static const SGPropertyNode *fuel_freeze = fgGetNode("/sim/freeze/fuel");
-
     // Copy the fuel levels from JSBSim if fuel
     // freeze not enabled.
-    if ( ! fuel_freeze->getBoolValue() ) {
+    if ( ! Propulsion->GetFuelFreeze() ) {
       for (i = 0; i < Propulsion->GetNumTanks(); i++) {
         SGPropertyNode * node = fgGetNode("/consumables/fuel/tank", i, true);
         FGTank* tank = Propulsion->GetTank(i);
