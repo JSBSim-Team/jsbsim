@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.59 2001/06/27 23:22:57 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.60 2001/07/17 14:46:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     corresponding "ReadXXX()" method is called. From within this method the 
     "Load()" method of that system is called (e.g. LoadFCS).
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.59 2001/06/27 23:22:57 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.60 2001/07/17 14:46:09 jberndt Exp $
     @see
      <ol><li>Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
@@ -162,14 +162,14 @@ public:
   inline float GetAlphaCLMax(void) { return alphaclmax; }
   inline float GetAlphaCLMin(void) { return alphaclmin; }
 
-  inline void SetGearUp(bool tt) { GearUp = tt; }
+  inline void SetGear(bool tt) { GearUp = tt; }
+  inline void SetGearUp(void) { GearUp = true; }
+  inline void SetGearDown(bool tt) { GearUp = false; }
   inline void SetAlphaCLMax(float tt) { alphaclmax=tt; }
   inline void SetAlphaCLMin(float tt) { alphaclmin=tt; }
 
   string GetGroundReactionStrings(void);
   string GetGroundReactionValues(void);
-
-  float GetLoD(void);
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  SubSystems {
