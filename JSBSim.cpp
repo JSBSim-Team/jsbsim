@@ -132,7 +132,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.72 2002/09/07 22:05:34 apeden Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.73 2002/09/07 22:41:44 apeden Exp $";
 
 string ScriptName;
 string AircraftName;
@@ -161,7 +161,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.72 2002/09/07 22:05:34 apeden Exp $
+    @version $Id: JSBSim.cpp,v 1.73 2002/09/07 22:41:44 apeden Exp $
     @see <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/jsbsim/JSBSim/JSBSim.cpp?rev=HEAD&content-type=text/vnd.viewcvs-markup">
          Source File </a>
 */
@@ -184,7 +184,9 @@ int main(int argc, char* argv[])
   options(argc, argv);
 
   FDMExec = new FGFDMExec();
-
+  FDMExec->SetAircraftPath("aircraft");
+  FDMExec->SetEnginePath("engine");
+  
   if (!ScriptName.empty()) { // SCRIPTED CASE
 
     Script = new FGScript(FDMExec);
