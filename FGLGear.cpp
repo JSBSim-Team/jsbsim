@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.81 2002/04/10 00:36:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.82 2002/04/10 00:42:40 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -263,11 +263,6 @@ FGColumnVector3& FGLGear::Force(void)
 // Will fix this later.
 // [JSB] The braking force coefficients include normal rolling coefficient +
 // a percentage of the static friction coefficient based on braking applied.
-// Note also that the total braking friction coefficient cannot exceed the 
-// static friction coefficient. That is the reason for the decay of the rolling
-// resistance weighted by the brake setting. The left, right, and center brake
-// groups will accept a braking command, while the nose, tail, and none brake
-// groups do not accept braking commands.
 
       switch (eBrakeGrp) {
       case bgLeft:
@@ -327,11 +322,9 @@ FGColumnVector3& FGLGear::Force(void)
       RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
       SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
-// Calculate tire slip angle. This is analogous to the aircraft angle of attack
-// in aerodynamic terms. If the wheel slip angle is too high, a slip results - 
-// i.e. the tire slides with the dynamic friction coefficient rather than grips.
+// Calculate tire slip angle.
 
-      if (fabs(RollingWhlVel) <= 0.01 && fabs(SideWhlVel) <= 0.01) {
+      if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, RollingWhlVel);
@@ -339,29 +332,20 @@ FGColumnVector3& FGLGear::Force(void)
 
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
-// transition from static friction to 0.0 - i.e. no side force is capable of being produced.
-// FCoeff corresponds
-// to a steering force coefficient, analogous to the lift coefficient. We also
-// consider that the root-mean-square magnitude of the steering coeff (side force)
-// and the braking coeff cannot exceed the static friction coefficient or sliding
-// results and no directional control is retained. Additionally, since the tire is
-// now sliding, the braking coefficient reverts to the dynamic (sliding) value.
+// transition from static to dynamic friction.  There are more complicated formulations
+// of this that avoid the discrete jump.  Will fix this later.
 
       if (fabs(WheelSlip) <= 10.0) {
-        FCoeff = fabs(staticFCoeff*WheelSlip/10.0);
-        if (sqrt(FCoeff*FCoeff + BrakeFCoeff*BrakeFCoeff) >= staticFCoeff) {
-          FCoeff = 0.0;
-          BrakeFCoeff = dynamicFCoeff;
-        }
+        FCoeff = staticFCoeff*WheelSlip/10.0;
       } else {
-        FCoeff = 0.0;
+        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
       }
 
 // Compute the vertical force on the wheel using square-law damping (per comment
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
 // allowing for both square and linear damping force calculation. Also need to
 // possibly give a "rebound damping factor" that differs from the compression
-// case. NOTE: SQUARE LAW DAMPING NO GOOD!
+// case.
 
       vLocalForce(eZ) =  min(-compressLength * kSpring
                              - compressSpeed * bDamp, (double)0.0);
@@ -371,33 +355,28 @@ FGColumnVector3& FGLGear::Force(void)
 
 // Compute the forces in the wheel ground plane.
 
-      double threshold = 0.5;
       RollingForce = 0;
-      if (RollingWhlVel > threshold) {
-        RollingForce = vLocalForce(eZ) * BrakeFCoeff;
-      } else if (RollingWhlVel < -threshold) {
-        RollingForce = vLocalForce(eZ) * -BrakeFCoeff;
-      } else if (fabs(RollingWhlVel) > 0.01) {
-        RollingForce = vLocalForce(eZ) * (RollingWhlVel/threshold) * BrakeFCoeff;
+      if (fabs(RollingWhlVel) > 1E-3) {
+        RollingForce = vLocalForce(eZ) * BrakeFCoeff * fabs(RollingWhlVel)/RollingWhlVel;
       }
-
-      threshold = 0.5;
-      SideForce = 0;
-      if (SideWhlVel > threshold) {
-        SideForce = vLocalForce(eZ) * FCoeff;
-      } else if (SideWhlVel < -threshold) {
-        SideForce = vLocalForce(eZ) * -FCoeff;
-      } else if (fabs(SideWhlVel) > 0.01) {
-        SideForce = vLocalForce(eZ) * (SideWhlVel/threshold) * 
-          (staticFCoeff + fabs(SideWhlVel/threshold)*(FCoeff-staticFCoeff));
-      } else {
-        SideForce = vLocalForce(eZ) * SideWhlVel/0.01 * staticFCoeff; 
-      }
+      SideForce    = vLocalForce(eZ) * FCoeff;
 
 // Transform these forces back to the local reference frame.
 
       vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
       vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
+
+// Note to Jon: At this point the forces will be too big when the airplane is
+// stopped or rolling to a stop.  We need to make sure that the gear forces just
+// balance out the non-gear forces when the airplane is stopped.  That way the
+// airplane won't start to accelerate until the non-gear/ forces are larger than
+// the gear forces.  I think that the proper fix should go into FGAircraft::FMGear.
+// This routine would only compute the local strut forces and return them to
+// FMGear. All of the gear forces would get adjusted in FMGear using the total
+// non-gear forces. Then the gear moments would be calculated. If strange things
+// start happening to the airplane during testing as it rolls to a stop, then we
+// need to implement this change.  I ran out of time to do it now but have the
+// equations.
 
 // Transform the forces back to the body frame and compute the moment.
 
