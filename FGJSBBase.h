@@ -88,7 +88,7 @@ static char *gcvt(double number, size_t ndigit, char *buf)
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.52 2004/04/24 17:12:57 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.53 2004/04/29 07:20:20 frohlich Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.52 2004/04/24 17:12:57 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.53 2004/04/29 07:20:20 frohlich Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,22 +164,22 @@ public:
   /** Creates a message with the given text and places it on the queue.
       @param text message text
       @return pointer to a Message structure */
-  Message* PutMessage(string text);
+  Message* PutMessage(const string& text);
   /** Creates a message with the given text and boolean value and places it on the queue.
       @param text message text
       @param bVal boolean value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(string text, bool bVal);
+  Message* PutMessage(const string& text, bool bVal);
   /** Creates a message with the given text and integer value and places it on the queue.
       @param text message text
       @param iVal integer value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(string text, int iVal);
+  Message* PutMessage(const string& text, int iVal);
   /** Creates a message with the given text and double value and places it on the queue.
       @param text message text
       @param dVal double value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(string text, double dVal);
+  Message* PutMessage(const string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
       @return pointer to a Message structure (or NULL if no mesage) */
   Message* ReadMessage(void);

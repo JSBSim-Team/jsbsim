@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.27 2004/03/15 09:20:01 ehofman Exp $";
+static const char *IdSrc = "$Id: FGJSBBase.cpp,v 1.28 2004/04/29 07:20:20 frohlich Exp $";
 static const char *IdHdr = ID_JSBBASE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,7 +104,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(Message* msg)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::PutMessage(string text)
+FGJSBBase::Message* FGJSBBase::PutMessage(const string& text)
 {
   Message *msg = new Message();
   msg->text = text;
@@ -117,7 +117,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(string text)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::PutMessage(string text, bool bVal)
+FGJSBBase::Message* FGJSBBase::PutMessage(const string& text, bool bVal)
 {
   Message *msg = new Message();
   msg->text = text;
@@ -131,7 +131,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(string text, bool bVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::PutMessage(string text, int iVal)
+FGJSBBase::Message* FGJSBBase::PutMessage(const string& text, int iVal)
 {
   Message *msg = new Message();
   msg->text = text;
@@ -145,7 +145,7 @@ FGJSBBase::Message* FGJSBBase::PutMessage(string text, int iVal)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGJSBBase::Message* FGJSBBase::PutMessage(string text, double dVal)
+FGJSBBase::Message* FGJSBBase::PutMessage(const string& text, double dVal)
 {
   Message *msg = new Message();
   msg->text = text;
