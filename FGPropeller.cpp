@@ -38,7 +38,7 @@ INCLUDES
 #include "FGPropeller.h"
 #include "FGFCS.h"
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.39 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.40 2001/12/07 00:45:56 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, FGConfigFile* Prop_cfg) : FGThruster(e
 
   Type = ttPropeller;
   RPM = 0;
+  Torque.InitMatrix();
 
   if (debug_lvl & 2) cout << "Instantiated: FGPropeller" << endl;
 }
@@ -176,10 +177,8 @@ double FGPropeller::Calculate(double PowerAvailable)
   if (omega <= 5) omega = 1.0;
 
   Torque(eX) = -(PowerAvailable / omega) * Sense;
-
   RPM = (RPS + ((fabs(Torque(eX)) / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
   vMn = fdmex->GetRotation()->GetPQR()*vH + Torque;
-
   return Thrust; // return thrust in pounds
 }
 

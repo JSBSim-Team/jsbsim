@@ -40,7 +40,7 @@ INCLUDES
 
 #include "FGMassBalance.h"
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.16 2001/12/06 20:56:54 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.17 2001/12/07 00:45:56 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,12 +122,7 @@ FGColumnVector3& FGMassBalance::GetPointMassCG(void)
   for (unsigned int i=0; i<PointMassLoc.size(); i++) {
     PointMassCG += PointMassWeight[i]*PointMassLoc[i];
   }
-  if (PointMassWeight.size() == 0) {
-    return PointMassCG;
-  } else {
-    PointMassCG /= GetPointMassWeight();
-    return PointMassCG;
-  }
+  return PointMassCG;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -75,7 +75,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.69 2001/12/06 20:56:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.70 2001/12/07 00:45:56 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -583,8 +583,6 @@ bool FGFDMExec::LoadScript(string script)
     cerr << "Aircraft file " << aircraft << " was not found" << endl;
 	  exit(-1);
   }
-  if ( ! State->Reset("aircraft", aircraft, initialize))
-                 State->Initialize(2000,0,0,0,0,0,0.5,0.5,40000,0,0,0);
 
   return true;
 }

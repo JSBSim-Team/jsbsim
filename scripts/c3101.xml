@@ -6,7 +6,7 @@
 
   <use aircraft="c310">
   <use initialize="reset00">
-  <run start="0.0" end="120" dt="0.00833333">
+  <run start="0.0" end="140" dt="0.00833333">
     <when>
       <parameter name="FG_TIME" comparison="ge" value="0.25">
       <parameter name="FG_TIME" comparison="le" value="1.00">
@@ -17,9 +17,9 @@
     </when>
 
     <when> <!-- Set the Elevator to takeoff -->
-      <parameter name="FG_QBAR" comparison="ge" value="20.0">
+      <parameter name="FG_QBAR" comparison="ge" value="17.0">
       <parameter name="FG_ALTITUDE" comparison="le" value="2000">
-      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.007" action="FG_EXP" persistent="false" tc ="2.0">
+      <set name="FG_ELEVATOR_CMD" type="FG_VALUE" value="-0.05" action="FG_EXP" persistent="false" tc ="2.0">
     </when>
 
     <when>
