@@ -52,7 +52,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.12 2000/11/01 11:37:47 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrim.cpp,v 1.13 2001/01/28 13:57:50 jsb Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim,A_Tolerance));
+    TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta,0.1*DEGTORAD));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron,A_Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder,A_Tolerance));
@@ -128,7 +129,7 @@ void FGTrim::TrimStats() {
     for(current_axis=0; current_axis<NumAxes; current_axis++) {
       run_sum+=TrimAxes[current_axis]->GetRunCount();
       sprintf(out,"   %5s: %3.0f average: %5.2f  successful: %3.0f  stability: %5.2f\n",
-                  TrimAxes[current_axis]->GetAccelName().c_str(),
+                  TrimAxes[current_axis]->GetStateName().c_str(),
                   sub_iterations[current_axis],
                   sub_iterations[current_axis]/float(total_its),
                   successful[current_axis],
@@ -205,8 +206,20 @@ void FGTrim::ReportState(void) {
   cout << out;                  
   sprintf(out, "    Throttle: %5.2f%c\n",
                     fdmex->GetFCS()->GetThrottlePos(0),'%' );
-  cout << out;                                  
-}
+  cout << out;
+  
+  sprintf(out, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind, %5.2f kts down\n",                                  
+                    fdmex->GetAuxiliary()->GetHeadWind()*jsbFPSTOKTS,
+                    fdmex->GetAuxiliary()->GetCrossWind()*jsbFPSTOKTS,
+                    fdmex->GetAtmosphere()->GetWindNED()(3)*jsbFPSTOKTS );
+  cout << out; 
+  
+  sprintf(out, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
+                    fdmex->GetPosition()->GetVground()*jsbFPSTOKTS,
+                    fdmex->GetPosition()->GetGroundTrack()*RADTODEG );
+  cout << out;                                   
+
+}                  
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -223,9 +236,9 @@ bool FGTrim::DoTrim(void) {
 
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<NumAxes;current_axis++) {
-    //cout << current_axis << "  " << TrimAxes[current_axis]->GetAccelName()
+    //cout << current_axis << "  " << TrimAxes[current_axis]->GetStateName()
     //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
-    if(TrimAxes[current_axis]->GetAccelType() == tQdot) {
+    if(TrimAxes[current_axis]->GetStateType() == tQdot) {
       if(mode == tGround) 
     	  TrimAxes[current_axis]->initTheta();
     }  
@@ -278,11 +291,11 @@ bool FGTrim::DoTrim(void) {
             // special case this for now -- if other cases arise proper
             // support can be added to FGTrimAxis
             if( (gamma_fallback) &&
-                (TrimAxes[current_axis]->GetAccelType() == tUdot) &&
+                (TrimAxes[current_axis]->GetStateType() == tUdot) &&
                 (TrimAxes[current_axis]->GetControlType() == tThrottle)) {
               cout << "  Can't trim udot with throttle, trying flight"
               << " path angle. (" << N << ")" << endl;
-              if(TrimAxes[current_axis]->GetAccel() > 0)
+              if(TrimAxes[current_axis]->GetState() > 0)
                 TrimAxes[current_axis]->SetControlToMin();
               else
                 TrimAxes[current_axis]->SetControlToMax();
@@ -291,7 +304,7 @@ bool FGTrim::DoTrim(void) {
               TrimAxes[current_axis]=new FGTrimAxis(fdmex,fgic,tUdot,
                                                     tGamma,Tolerance);
             } else {
-              cout << "  Sorry, " << TrimAxes[current_axis]->GetAccelName()
+              cout << "  Sorry, " << TrimAxes[current_axis]->GetStateName()
               << " doesn't appear to be trimmable" << endl;
               //total_its=k;
               trim_failed=true; //force the trim to fail
@@ -349,7 +362,7 @@ bool FGTrim::solve(void) {
       x2=x1-d*d0*f1/(f3-f1);
       TrimAxes[current_axis]->SetControl(x2);
       TrimAxes[current_axis]->Run();
-      f2=TrimAxes[current_axis]->GetAccel();
+      f2=TrimAxes[current_axis]->GetState();
       if(Debug > 1) {
         cout << "FGTrim::solve Nsub,x1,x2,x3: " << Nsub << ", " << x1
         << ", " << x2 << ", " << x3 << endl;
@@ -406,7 +419,7 @@ bool FGTrim::findInterval(void) {
   bool found=false;
   float step;
   float current_control=TrimAxes[current_axis]->GetControl();
-  float current_accel=TrimAxes[current_axis]->GetAccel();;
+  float current_accel=TrimAxes[current_axis]->GetState();;
   float xmin=TrimAxes[current_axis]->GetControlMin();
   float xmax=TrimAxes[current_axis]->GetControlMax();
   float lastxlo,lastxhi,lastalo,lastahi;
@@ -426,10 +439,10 @@ bool FGTrim::findInterval(void) {
     if(xhi > xmax) xhi=xmax;
     TrimAxes[current_axis]->SetControl(xlo);
     TrimAxes[current_axis]->Run();
-    alo=TrimAxes[current_axis]->GetAccel();
+    alo=TrimAxes[current_axis]->GetState();
     TrimAxes[current_axis]->SetControl(xhi);
     TrimAxes[current_axis]->Run();
-    ahi=TrimAxes[current_axis]->GetAccel();
+    ahi=TrimAxes[current_axis]->GetState();
     if(fabs(ahi-alo) <= TrimAxes[current_axis]->GetTolerance()) continue;
     if(alo*ahi <=0) {  //found interval with root
       found=true;
@@ -475,16 +488,16 @@ bool FGTrim::findInterval(void) {
 bool FGTrim::checkLimits(void) {
   bool solutionExists;
   float current_control=TrimAxes[current_axis]->GetControl();
-  float current_accel=TrimAxes[current_axis]->GetAccel();
+  float current_accel=TrimAxes[current_axis]->GetState();
   xlo=TrimAxes[current_axis]->GetControlMin();
   xhi=TrimAxes[current_axis]->GetControlMax();
 
   TrimAxes[current_axis]->SetControl(xlo);
   TrimAxes[current_axis]->Run();
-  alo=TrimAxes[current_axis]->GetAccel();
+  alo=TrimAxes[current_axis]->GetState();
   TrimAxes[current_axis]->SetControl(xhi);
   TrimAxes[current_axis]->Run();
-  ahi=TrimAxes[current_axis]->GetAccel();
+  ahi=TrimAxes[current_axis]->GetState();
   if(Debug > 1)
     cout << "checkLimits() xlo,xhi,alo,ahi: " << xlo << ", " << xhi << ", "
                                               << alo << ", " << ahi << endl;

@@ -41,17 +41,17 @@ INCLUDES
 #include "FGTrimAxis.h"
 #include "FGAircraft.h"
 
-static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.12 2000/11/23 04:56:23 jsb Exp $";
+static const char *IdSrc = "$Header: /cvsroot/jsbsim/JSBSim/Attic/FGTrimAxis.cpp,v 1.13 2001/01/28 13:58:23 jsb Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
 
-FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
+FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, State st,
                        Control ctrl, float ff) {
 
   fdmex=fdex;
   fgic=ic;
-  accel=acc;
+  state=st;
   control=ctrl;
   tolerance=ff;
   solver_eps=tolerance;
@@ -60,9 +60,9 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
   its_to_stable_value=0;
   total_iterations=0;
   total_stability_iterations=0;
-  accel_convert=1.0;
+  state_convert=1.0;
   control_convert=1.0;
-  accel_value=0;
+  state_value=0;
   switch(control) {
   case tThrottle:
     control_min=0;
@@ -93,7 +93,7 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
   case tRudder:
     control_min=-1;
     control_max=1;
-    accel_convert=RADTODEG;
+    state_convert=RADTODEG;
     solver_eps=tolerance/100;
     break;
   case tAltAGL:
@@ -105,18 +105,24 @@ FGTrimAxis::FGTrimAxis(FGFDMExec* fdex, FGInitialCondition* ic, Accel acc,
   case tTheta:
     control_min=fdmex->GetRotation()->Gettht() - 5*DEGTORAD;
     control_max=fdmex->GetRotation()->Gettht() + 5*DEGTORAD;
-    accel_convert=RADTODEG;
+    state_convert=RADTODEG;
     break;
   case tPhi:
-    control_min=fdmex->GetRotation()->Getphi() - 5*DEGTORAD;
-    control_max=fdmex->GetRotation()->Getphi() + 5*DEGTORAD;
-    accel_convert=RADTODEG;
+    control_min=fdmex->GetRotation()->Getphi() - 20*DEGTORAD;
+    control_max=fdmex->GetRotation()->Getphi() + 20*DEGTORAD;
+    state_convert=RADTODEG;
+    control_convert=RADTODEG;
     break;
   case tGamma:
     solver_eps=tolerance/100;
     control_min=-80*DEGTORAD;
     control_max=80*DEGTORAD;
     control_convert=RADTODEG;
+    break;
+  case tHeading:
+    control_min=fdmex->GetRotation()->Getpsi() - 30*DEGTORAD;
+    control_max=fdmex->GetRotation()->Getpsi() + 30*DEGTORAD;
+    state_convert=RADTODEG;
     break;
   }
   
@@ -128,20 +134,23 @@ FGTrimAxis::~FGTrimAxis() {}
 
 /*****************************************************************************/
 
-void FGTrimAxis::getAccel(void) {
-  switch(accel) {
-  case tUdot: accel_value=fdmex -> GetTranslation()->GetUVWdot()(1); break;
-  case tVdot: accel_value=fdmex -> GetTranslation()->GetUVWdot()(2); break;
-  case tWdot: accel_value=fdmex -> GetTranslation()->GetUVWdot()(3); break;
-  case tQdot: accel_value=fdmex -> GetRotation()->GetPQRdot()(2);break;
-  case tPdot: accel_value=fdmex -> GetRotation()->GetPQRdot()(1); break;
-  case tRdot: accel_value=fdmex -> GetRotation()->GetPQRdot()(3); break;
+void FGTrimAxis::getState(void) {
+  switch(state) {
+  case tUdot: state_value=fdmex->GetTranslation()->GetUVWdot()(1); break;
+  case tVdot: state_value=fdmex->GetTranslation()->GetUVWdot()(2); break;
+  case tWdot: state_value=fdmex->GetTranslation()->GetUVWdot()(3); break;
+  case tQdot: state_value=fdmex->GetRotation()->GetPQRdot()(2);break;
+  case tPdot: state_value=fdmex->GetRotation()->GetPQRdot()(1); break;
+  case tRdot: state_value=fdmex->GetRotation()->GetPQRdot()(3); break;
+  case tHmgt: state_value=fdmex->GetRotation()->Getpsi() - 
+                          fdmex->GetPosition()->GetGroundTrack();
+                          break;
   }
 }
 
 /*****************************************************************************/
 
-//Accels are not settable
+//States are not settable
 
 void FGTrimAxis::getControl(void) {
   switch(control) {
@@ -158,6 +167,7 @@ void FGTrimAxis::getControl(void) {
   case tTheta:     control_value=fdmex->GetRotation()->Gettht(); break;
   case tPhi:       control_value=fdmex->GetRotation()->Getphi(); break;
   case tGamma:     control_value=fdmex->GetPosition()->GetGamma();break;
+  case tHeading:   control_value=fdmex->GetRotation()->Getpsi(); break;
   }
 }
 
@@ -169,16 +179,17 @@ void FGTrimAxis::setControl(void) {
   case tThrottle:  setThrottlesPct(); break;
   case tBeta:      fgic->SetBetaRadIC(control_value); break;
   case tAlpha:     fgic->SetAlphaRadIC(control_value);  break;
-  case tPitchTrim: fdmex->GetFCS() -> SetPitchTrimCmd(control_value); break;
-  case tElevator:  fdmex-> GetFCS() -> SetDeCmd(control_value); break;
+  case tPitchTrim: fdmex->GetFCS()->SetPitchTrimCmd(control_value); break;
+  case tElevator:  fdmex->GetFCS()->SetDeCmd(control_value); break;
   case tRollTrim:
-  case tAileron:   fdmex-> GetFCS() -> SetDaCmd(control_value); break;
+  case tAileron:   fdmex->GetFCS()->SetDaCmd(control_value); break;
   case tYawTrim:
-  case tRudder:    fdmex-> GetFCS() -> SetDrCmd(control_value); break;
+  case tRudder:    fdmex->GetFCS()->SetDrCmd(control_value); break;
   case tAltAGL:    fgic->SetAltitudeAGLFtIC(control_value); break;
   case tTheta:     fgic->SetPitchAngleRadIC(control_value); break;
   case tPhi:       fgic->SetRollAngleRadIC(control_value); break;
   case tGamma:     fgic->SetFlightPathAngleRadIC(control_value); break;
+  case tHeading:   fgic->SetTrueHeadingRadIC(control_value); break;
   }
 }
 
@@ -326,7 +337,7 @@ void FGTrimAxis::SetPhiOnGround(float ff) {
 
 void FGTrimAxis::Run(void) {
 
-  float last_accel_value;
+  float last_state_value;
   int i;
   setControl();
   //cout << "FGTrimAxis::Run: " << control_value << endl;
@@ -334,12 +345,12 @@ void FGTrimAxis::Run(void) {
   bool stable=false;
   while(!stable) {
     i++;
-    last_accel_value=accel_value;
+    last_state_value=state_value;
     fdmex->RunIC(fgic);
-    getAccel();
-    if (i > 1) {
-      if ((fabs(last_accel_value - accel_value) < tolerance) || (i >= 100) )
-        stable = true;
+    getState();
+    if(i > 1) {
+      if((fabs(last_state_value - state_value) < tolerance) || (i >= 100) )
+        stable=true;
     }
   }
 
@@ -351,13 +362,12 @@ void FGTrimAxis::Run(void) {
 /*****************************************************************************/
 
 void FGTrimAxis::setThrottlesPct(void) {
-  float tMin, tMax;
-
-  for (unsigned int i=0; i<fdmex->GetPropulsion()->GetNumEngines(); i++) {
-    tMin = fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-    tMax = fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-    //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
-    fdmex->GetFCS()->SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
+  float tMin,tMax;
+  for(unsigned i=0;i<fdmex->GetAircraft()->GetNumEngines();i++) {
+      tMin=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMin();
+      tMax=fdmex->GetAircraft()->GetEngine(i)->GetThrottleMax();
+      //cout << "setThrottlespct: " << i << ", " << control_min << ", " << control_max << ", " << control_value;
+      fdmex -> GetFCS() -> SetThrottleCmd(i,tMin+control_value*(tMax-tMin));
   }
 }
 
@@ -370,7 +380,7 @@ void FGTrimAxis::AxisReport(void) {
   char out[80];
   sprintf(out,"  %20s: %6.2f %5s: %9.2e Tolerance: %3.0e\n",
            GetControlName().c_str(), GetControl()*control_convert,
-           GetAccelName().c_str(), GetAccel(), GetTolerance()); 
+           GetStateName().c_str(), GetState(), GetTolerance()); 
   cout << out;
 
 }
