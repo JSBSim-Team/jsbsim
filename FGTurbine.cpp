@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.18 2004/11/02 05:19:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.19 2004/11/14 00:56:44 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,19 +113,16 @@ double FGTurbine::Calculate(void)
   if (Stalled) phase = tpStall;
   if (Seized) phase = tpSeize;
 
-  double CT = 0.0;
   switch (phase) {
     case tpOff:    Thrust = Off(); break;
-    case tpRun:    Thrust = Run(CT); break;
+    case tpRun:    Thrust = Run(); break;
     case tpSpinUp: Thrust = SpinUp(); break;
     case tpStart:  Thrust = Start(); break;
     case tpStall:  Thrust = Stall(); break;
     case tpSeize:  Thrust = Seize(); break;
-    case tpTrim:   Thrust = Trim(CT); break;
+    case tpTrim:   Thrust = Trim(); break;
     default: Thrust = Off();
   }
-
-  Thruster->SetThrustCoefficient(CT);
 
   return Thruster->Calculate(Thrust);
 }
@@ -150,13 +147,12 @@ double FGTurbine::Off(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTurbine::Run(double &TC)
+double FGTurbine::Run(void)
 {
   double idlethrust, milthrust, thrust;
   double N2norm;   // 0.0 = idle N2, 1.0 = maximum N2
-
-  idlethrust = ThrustTables[0]->TotalValue();
-  milthrust = (1.0 - idlethrust) * ThrustTables[1]->TotalValue();
+  idlethrust = MilThrust * ThrustTables[0]->TotalValue();
+  milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
 
   Running = true;
   Starter = false;
@@ -164,19 +160,18 @@ double FGTurbine::Run(double &TC)
   N2 = Seek(&N2, IdleN2 + ThrottlePos * N2_factor, delay, delay * 3.0);
   N1 = Seek(&N1, IdleN1 + ThrottlePos * N1_factor, delay, delay * 2.4);
   N2norm = (N2 - IdleN2) / N2_factor;
-  TC = idlethrust + (milthrust * N2norm * N2norm);
-  thrust = TC * MilThrust;
+  thrust = idlethrust + (milthrust * N2norm * N2norm);
   EGT_degC = TAT + 363.1 + ThrottlePos * 357.1;
   OilPressure_psi = N2 * 0.62;
   OilTemp_degK = Seek(&OilTemp_degK, 366.0, 1.2, 0.1);
 
   if (!Augmentation) {
-    double correctedTSFC = TSFC + TSFC - (N2norm * TSFC);
+    double correctedTSFC = TSFC * (0.84 + (1-N2norm)*(1-N2norm));
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * correctedTSFC, 1000.0, 100000);
     if (FuelFlow_pph < IdleFF) FuelFlow_pph = IdleFF;
     NozzlePosition = Seek(&NozzlePosition, 1.0 - N2norm, 0.8, 0.8);
-    TC = TC * (1.0 - BleedDemand);
-    EPR = 1.0 + TC;
+    thrust = thrust * (1.0 - BleedDemand);
+    EPR = 1.0 + thrust/MilThrust;
   }
 
   if (AugMethod == 1) {
@@ -185,8 +180,7 @@ double FGTurbine::Run(double &TC)
   }
 
   if ((Augmented == 1) && Augmentation && (AugMethod < 2)) {
-    TC = ThrustTables[2]->TotalValue();
-    thrust = TC * MaxThrust;
+    thrust = MaxThrust * ThrustTables[2]->TotalValue();
     FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
     NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   }
@@ -194,9 +188,8 @@ double FGTurbine::Run(double &TC)
   if (AugMethod == 2) {
     if (AugmentCmd > 0.0) {
       Augmentation = true;
-      double tdiff = ThrustTables[2]->TotalValue() - TC;
-      TC += (tdiff * AugmentCmd);
-      thrust = TC * MaxThrust;
+      double tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
+      thrust += (tdiff * AugmentCmd);
       FuelFlow_pph = Seek(&FuelFlow_pph, thrust * ATSFC, 5000.0, 10000.0);
       NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
     } else {
@@ -205,8 +198,7 @@ double FGTurbine::Run(double &TC)
   }
 
   if ((Injected == 1) && Injection) {
-    TC = TC * ThrustTables[3]->TotalValue();
-    thrust = thrust * ThrustTables[3]->TotalValue();
+     thrust = thrust * ThrustTables[3]->TotalValue();
   }
 
   ConsumeFuel();
@@ -290,20 +282,17 @@ double FGTurbine::Seize(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGTurbine::Trim(double &TC)
+double FGTurbine::Trim(void)
 {
     double idlethrust, milthrust, thrust, tdiff;
-    idlethrust = ThrustTables[0]->TotalValue();;
-    milthrust = (1.0 - TC) * ThrustTables[1]->TotalValue();
-    TC = (idlethrust + (milthrust * ThrottlePos * ThrottlePos))
+    idlethrust = MilThrust * ThrustTables[0]->TotalValue();;
+    milthrust = (MilThrust - idlethrust) * ThrustTables[1]->TotalValue();
+    thrust = (idlethrust + (milthrust * ThrottlePos * ThrottlePos))
           * (1.0 - BleedDemand);
     if (AugmentCmd > 0.0) {
-      tdiff = ThrustTables[2]->TotalValue() - TC;
-      TC += (tdiff * AugmentCmd);
-      thrust = TC * MaxThrust;
-
-     } else
-      thrust = TC * MilThrust;
+      tdiff = (MaxThrust * ThrustTables[2]->TotalValue()) - thrust;
+      thrust += (tdiff * AugmentCmd);
+    } 
 
     return thrust;
 }
