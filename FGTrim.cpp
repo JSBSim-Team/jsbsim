@@ -71,6 +71,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
   mode=tt;
   switch(mode) {
   case tFull:
+    cout << "  Full 6-DOF Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tElevator,A_Tolerance));
@@ -79,18 +80,19 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,FGInitialCondition *FGIC, TrimMode tt ) {
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder,A_Tolerance));
     break;
   case tLongitudinal:
-    cout << "Longitudinal Trim" << endl;
+    cout << "  Longitudinal Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle,Tolerance));
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tElevator,A_Tolerance));
     break;
   case tGround:
+    cout << "  Ground Trim" << endl;
     TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAltAGL,Tolerance));
     //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tPhi,A_Tolerance));
     //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tTheta,A_Tolerance));
     break;
   }
-  cout << "NumAxes: " << TrimAxes.size() << endl;
+  //cout << "NumAxes: " << TrimAxes.size() << endl;
   NumAxes=TrimAxes.size();
   sub_iterations=new float[NumAxes];
   current_axis=0;
@@ -126,7 +128,7 @@ void FGTrim::TrimStats() {
 /******************************************************************************/
 
 void FGTrim::Report(void) {
-  cout << "Trim Results: " << endl;
+  cout << "  Trim Results: " << endl;
   for(current_axis=0; current_axis<NumAxes; current_axis++)
     TrimAxes[current_axis]->AxisReport();
 
@@ -280,13 +282,12 @@ bool FGTrim::DoTrim(void) {
   float qdot;
   //clear the sub iterations counts & zero out the controls
   for(current_axis=0;current_axis<NumAxes;current_axis++) {
-    cout << current_axis << "  " << TrimAxes[current_axis]->GetAccelName()
-    << "  " << TrimAxes[current_axis]->GetControlName()<< endl;
+    //cout << current_axis << "  " << TrimAxes[current_axis]->GetAccelName()
+    //<< "  " << TrimAxes[current_axis]->GetControlName()<< endl;
     TrimAxes[current_axis]->SetControl(0);
     TrimAxes[current_axis]->Run();
     sub_iterations[current_axis]=0;
   }
-  cout << endl << endl;
   do {
     axis_count=0;
     for(current_axis=0;current_axis<NumAxes;current_axis++) {
@@ -300,19 +301,19 @@ bool FGTrim::DoTrim(void) {
     } */
 
     }
-    cout << endl;
     for(current_axis=0;current_axis<NumAxes;current_axis++) {
       //these checks need to be done after all the axes have run
       if(Debug > 0) {
         TrimAxes[current_axis]->AxisReport();
       }
-      if(fabs(TrimAxes[current_axis]->GetAccel()) < TrimAxes[current_axis]->GetTolerance())
+      if(fabs(TrimAxes[current_axis]->GetAccel()) < 
+               TrimAxes[current_axis]->GetTolerance())
         axis_count++;
-      else
-        cout << TrimAxes[current_axis]->GetAccelName() << " failed" << endl;
+      //else
+      //  cout << TrimAxes[current_axis]->GetAccelName() << " failed" << endl;  
     }
     if((axis_count == NumAxes-1) && (NumAxes > 1)) {
-      cout << NumAxes-1 << " out of " << NumAxes << "!" << endl;
+      //cout << NumAxes-1 << " out of " << NumAxes << "!" << endl;
       //At this point we can check the input limits of the failed axis
       //and declare the trim failed if there is no sign change. If there
       //is, keep going until success or max iteration count
@@ -325,13 +326,12 @@ bool FGTrim::DoTrim(void) {
 
           TrimAxes[current_axis]->checkLimits();
           if(TrimAxes[current_axis]->GetSolutionDomain() == 0) {
-            cout << "No solution found" << endl;
             // special case this for now -- if other cases arise proper
             // support can be added to FGTrimAxis
             if( (gamma_fallback) &&
                 (TrimAxes[current_axis]->GetAccelType() == tUdot) &&
                 (TrimAxes[current_axis]->GetControlType() == tThrottle)) {
-              cout << "Can't trim udot with throttle, trying flight"
+              cout << "  Can't trim udot with throttle, trying flight"
               << " path angle." << endl;
               if(TrimAxes[current_axis]->GetAccel() > 0)
                 TrimAxes[current_axis]->SetControlToMin();
@@ -342,7 +342,7 @@ bool FGTrim::DoTrim(void) {
               TrimAxes[current_axis]=new FGTrimAxis(fdmex,fgic,tUdot,
                                                     tGamma,Tolerance);
             } else {
-              cout << "    Sorry, " << TrimAxes[current_axis]->GetAccelName()
+              cout << "  Sorry, " << TrimAxes[current_axis]->GetAccelName()
               << " doesn't appear to be trimmable" << endl;
               //total_its=k;
               trim_failed=true; //force the trim to fail
