@@ -40,9 +40,16 @@ for i in c172 X15 shuttle c310 c182 x24b; do
 done
 
 # Perform the copy
-$INSTALL JSBSim.cxx $FG_SRC/FDM/
-$INSTALL *.cpp $FG_SRC/FDM/JSBSim/
-$INSTALL *.h $FG_SRC/FDM/JSBSim/
+$INSTALL JSBSim.[ch]xx $FG_SRC/FDM/
+
+for i in FG*.cpp; do
+    $INSTALL $i $FG_SRC/FDM/JSBSim/
+done
+    
+for i in FG*.h; do
+    $INSTALL $i $FG_SRC/FDM/JSBSim/
+done    
+
 $INSTALL filtersjb/*.cpp $FG_SRC/FDM/JSBSim/filtersjb/
 $INSTALL filtersjb/*.h $FG_SRC/FDM/JSBSim/filtersjb/
 $INSTALL engine/*.xml $FG_ROOT/Engine/
