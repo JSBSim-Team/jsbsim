@@ -74,7 +74,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: c172_vti.cpp,v 1.2 2001/12/18 22:06:56 jberndt Exp $";
+static const char *IdSrc = "$Id: c172_vti.cpp,v 1.3 2001/12/19 10:29:38 apeden Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -90,7 +90,7 @@ DOCUMENTATION
     command line. To get any use out of this, you will have to create a script
     to run a test case and specify what kind of output you would like.
     @author Jon S. Berndt
-    @version $Id: c172_vti.cpp,v 1.2 2001/12/18 22:06:56 jberndt Exp $
+    @version $Id: c172_vti.cpp,v 1.3 2001/12/19 10:29:38 apeden Exp $
     @see -
 */
 
@@ -140,7 +140,7 @@ int main(int argc, char** argv)
   FGInitialCondition* fgic = new FGInitialCondition(fdmex);
   
   //set speed, etc from reset file
-  fgic->Load("../JSBSim/aircraft","c172","reset01");
+  fgic->Load("../aircraft","c172","reset01");
   fdmex->RunIC(fgic);
   
   //compute cyo and clo from config file cno
