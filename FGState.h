@@ -65,7 +65,7 @@ INCLUDES
 DEFINES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.31 2001/04/09 13:03:51 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.32 2001/04/09 23:36:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
@@ -77,6 +77,9 @@ class FGState {
 public:
   FGState(FGFDMExec*);
   ~FGState();
+
+  enum {ePhi=1, eTht, ePsi};
+  enum {eP=1, eQ, eR};
 
   bool Reset(string, string, string);
   void Initialize(float, float, float, float, float, float, float, float, float);
@@ -141,14 +144,7 @@ private:
 
   FGColumnVector vQdot;
   FGColumnVector vTmp;
-  FGColumnVector vDXYZcg;
-  FGColumnVector vAeroBodyForces;
   FGColumnVector vEuler;
-
-
-  protected:
-  enum {ePhi=1, eTht, ePsi};
-  enum {eP=1, eQ, eR};
 };
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -50,7 +50,7 @@ GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.50 2001/04/09 05:28:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.51 2001/04/09 23:36:25 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 extern short debug_lvl;
@@ -331,10 +331,10 @@ FGColumnVector FGLGear::Force(void)
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
 // allowing for both square and linear damping force calculation. Also need to
 // possibly give a "rebound damping factor" that differs from the compression
-// case.
+// case. NOTE: SQUARE LAW DAMPING NO GOOD!
 
     vLocalForce(eZ) =  min(-compressLength * kSpring
-                           - compressSpeed * compressSpeed * bDamp, (float)0.0);
+                           - compressSpeed * bDamp, (float)0.0);
 
     MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
     MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));

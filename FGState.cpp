@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.52 2001/04/09 05:28:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.53 2001/04/09 23:36:25 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 extern short debug_lvl;
@@ -92,10 +92,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
     vlastQdot(4),
     vQdot(4),
     vTmp(4),
-    vDXYZcg(3),
-    vAeroBodyForces(3),
     vEuler(3)
-
 {
   FDMExec = fdex;
 
@@ -378,7 +375,7 @@ void FGState::Initialize(float U, float V, float W,
                          float Latitude, float Longitude, float H) {
   FGColumnVector vUVW(3);
   FGColumnVector vLocalVelNED(3);
-  FGColumnVector vEuler(3);
+  FGColumnVector vLocalEuler(3);
   float alpha, beta;
   float qbar, Vt;
 
@@ -400,8 +397,8 @@ void FGState::Initialize(float U, float V, float W,
   vUVW << U << V << W;
   FDMExec->GetTranslation()->SetUVW(vUVW);
 
-  vEuler << phi << tht << psi;
-  FDMExec->GetRotation()->SetEuler(vEuler);
+  vLocalEuler << phi << tht << psi;
+  FDMExec->GetRotation()->SetEuler(vLocalEuler);
 
   FDMExec->GetTranslation()->SetAB(alpha, beta);
 
