@@ -1,4 +1,4 @@
-<FDM_CONFIG NAME="c172" VERSION="1.30">
+<FDM_CONFIG NAME="c172" VERSION="1.35">
   <METRICS>
 
     <COMMENT>
@@ -34,9 +34,25 @@
 
   <UNDERCARRIAGE>
 
-    AC_GEAR    NOSE        -6.8   0.0  -24.2 1400  300  0.01  0
-    AC_GEAR    LEFT_MAIN   58.2 -43.0 -17.9  2500  800  0.01  0
-    AC_GEAR    RIGHT_MAIN  58.2  43.0 -17.9  2500  800  0.01  0
+    The gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
+
+    AC_GEAR
+    <name>                           name of gear entry - no spaces allowed
+    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
+    <spring constant>                spring constant in lbs/ft
+    <damping coefficient>            damping coefficient in lbs/ft/sec
+    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
+    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
+    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
+    <brakeable>                      One of <NO_BRAKE | HAS_BRAKE>
+    <group membership>               One of <LEFT | CENTER | RIGHT >
+    <max steer angle>                Maximum steerable angle in degrees
+
+    </COMMENT>
+
+    AC_GEAR    NOSE        -6.8   0.0  -24.2 1400  300  0.01  0.05 STEERABLE NO_BRAKE CENTER 0
+    AC_GEAR    LEFT_MAIN   58.2 -43.0 -17.9  2500  800  0.01  0.05 CASTERED  HAS_BRAKE LEFT  0
+    AC_GEAR    RIGHT_MAIN  58.2  43.0 -17.9  2500  800  0.01  0.05 CASTERED  HAS_BRAKE RIGHT 0
 
   </UNDERCARRIAGE>
   
