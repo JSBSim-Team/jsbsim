@@ -60,7 +60,10 @@ FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex) : vXYZ(3),
   cout << "      Damping Constant: " << bDamp << endl;
   cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
   cout << "      Static Friction:  " << staticFCoeff << endl;
-  cout << "      Braking setting:  " << brakePct << endl;
+  cout << "      Brake Type:       " << BrakeType << endl;
+  cout << "      Grouping:         " << GroupMember << endl;
+  cout << "      Steering Type:    " << SteerType << endl;
+  cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
   
   State       = Exec->GetState();
   Aircraft    = Exec->GetAircraft();
@@ -129,7 +132,6 @@ FGColumnVector FGLGear::Force(void)
     vMoment = vWhlBodyVec * vForce;
     cout << "      Force: " << vForce << endl;
     cout << "      Moment: " << vMoment << endl;
-
 
   } else {
 
