@@ -72,7 +72,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.44 2001/02/23 00:08:28 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.45 2001/02/25 00:56:58 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -88,7 +88,7 @@ DOCUMENTATION
     command line. This program is also designed to be built using Borland C++
     Builder, v4.0 or greater.
     @author Jon S. Berndt
-    @version $Id: JSBSim.cpp,v 1.44 2001/02/23 00:08:28 jberndt Exp $
+    @version $Id: JSBSim.cpp,v 1.45 2001/02/25 00:56:58 jberndt Exp $
     @see -
 */
 
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
          << "  You must enter the name of a registered aircraft and reset point:"
          << endl << endl << "  FDM <aircraft name> <reset file>" << endl;
     cout << endl << "  Alternatively, you may specify only the name of a script file:"
-         << endl << endl << "  FDM <script file>" << endl;
+         << endl << endl << "  FDM <script file>" << endl << endl;
     exit(0);
   }
 

@@ -56,8 +56,8 @@ FGCoefficient.o: FGCoefficient.cpp FGCoefficient.h FGConfigFile.h \
 FGConfigFile.o: FGConfigFile.cpp FGConfigFile.h FGDefs.h
 	$(CC) $(INCLUDES) $(CCOPTS) -c FGConfigFile.cpp
 
-FGControls.bak.o: FGControls.bak.cpp FGControls.h
-	$(CC) $(INCLUDES) $(CCOPTS) -c FGControls.bak.cpp
+FGControls.o: FGControls.cpp FGControls.h
+	$(CC) $(INCLUDES) $(CCOPTS) -c FGControls.cpp
 
 FGEngine.o: FGEngine.cpp FGEngine.h FGState.h FGDefs.h \
  FGInitialCondition.h FGFDMExec.h FGModel.h FGAtmosphere.h FGMatrix.h \

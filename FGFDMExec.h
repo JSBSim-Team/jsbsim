@@ -41,7 +41,7 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.18 2001/02/23 00:08:28 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.19 2001/02/25 00:56:58 jberndt Exp $"
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -62,15 +62,15 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 struct condition {
-  eParam  TestParam;
-  eParam  SetParam;
-  float   TestValue;
-  float   SetValue;
-  float   Tolerance;
-  float   Factor;
-  int     Repeat;
-  eAction Action;
-  eType   Type;
+  vector <eParam>  TestParam;
+  vector <eParam>  SetParam;
+  vector <float>   TestValue;
+  vector <float>   SetValue;
+  vector <string>  Comparison;
+  vector <float>   TC;
+  vector <int>     Repeat;
+  vector <eAction> Action;
+  vector <eType>   Type;
 };
 
 class FGState;

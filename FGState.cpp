@@ -63,7 +63,7 @@ INCLUDES
 #include "FGAuxiliary.h"
 #include "FGOutput.h"
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.41 2001/02/23 00:08:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.42 2001/02/25 00:56:58 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,6 +94,7 @@ FGState::FGState(FGFDMExec* fdex) : mTb2l(3,3),
   sim_time = 0.0;
   dt = 1.0/120.0;
 
+  RegisterVariable(FG_TIME,           " time "           );
   RegisterVariable(FG_QBAR,           " qbar "           );
   RegisterVariable(FG_WINGAREA,       " wing_area "      );
   RegisterVariable(FG_WINGSPAN,       " wingspan "       );
@@ -135,6 +136,8 @@ FGState::~FGState(void) {}
 
 float FGState::GetParameter(eParam val_idx) {
   switch(val_idx) {
+  case FG_TIME:
+    return sim_time;
   case FG_QBAR:
     return FDMExec->GetTranslation()->Getqbar();
   case FG_WINGAREA:

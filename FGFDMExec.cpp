@@ -43,13 +43,16 @@ INCLUDES
 #  ifdef FG_HAVE_STD_INCLUDES
 #    include <iostream>
 #    include <ctime>
+#    include <iterator>
 #  else
 #    include <iostream.h>
 #    include <time.h>
+#    include <iterator.h>
 #  endif
 #else
 #  include <iostream>
 #  include <ctime>
+#  include <iterator>
 #endif
 
 #include "FGFDMExec.h"
@@ -65,7 +68,7 @@ INCLUDES
 #include "FGOutput.h"
 #include "FGConfigFile.h"
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.27 2001/02/23 00:08:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.28 2001/02/25 00:56:58 jberndt Exp $";
 static const char *IdHdr = "ID_FDMEXEC";
 
 char highint[5]  = {27, '[', '1', 'm', '\0'      };
@@ -305,7 +308,7 @@ bool FGFDMExec::LoadScript(string script)
   string initialize="";
   bool result=false;
   float dt=0.0;
-  struct condition newCondition;
+  struct condition *newCondition;
 
   if (!Script.IsOpen()) return false;
 
@@ -337,25 +340,34 @@ bool FGFDMExec::LoadScript(string script)
         if (token == "when") {
           Script.GetNextConfigLine();
           token = Script.GetValue();
+          newCondition = new struct condition();
           while (token != "/when") {
             if (token == "parameter") {
-              newCondition.TestParam = State->GetParameterIndex(Script.GetValue("name"));
-              newCondition.TestValue = strtod(Script.GetValue("value").c_str(), NULL);
-              newCondition.Tolerance = strtod(Script.GetValue("tolerance").c_str(), NULL);
+              newCondition->TestParam.push_back(State->GetParameterIndex(Script.GetValue("name")));
+              newCondition->TestValue.push_back(strtod(Script.GetValue("value").c_str(), NULL));
+              newCondition->Comparison.push_back(Script.GetValue("comparison"));
             } else if (token == "set") {
-              newCondition.SetParam = State->GetParameterIndex(Script.GetValue("name"));
-              newCondition.Type = (eType)strtol(Script.GetValue("type").c_str(), NULL, 10);
-              newCondition.SetValue = strtod(Script.GetValue("value").c_str(), NULL);
-              newCondition.Action = (eAction)strtol(Script.GetValue("action").c_str(), NULL, 10);
-              newCondition.Repeat = strtol(Script.GetValue("repeat").c_str(), NULL, 10);
-              newCondition.Factor = strtod(Script.GetValue("factor").c_str(), NULL);
+              newCondition->SetParam.push_back(State->GetParameterIndex(Script.GetValue("name")));
+              newCondition->SetValue.push_back(strtod(Script.GetValue("value").c_str(), NULL));
+              string tempCompare = Script.GetValue("type");
+              if      (tempCompare == "FG_DELTA") newCondition->Type.push_back(FG_DELTA);
+              else if (tempCompare == "FG_BOOL")  newCondition->Type.push_back(FG_BOOL);
+              else if (tempCompare == "FG_VALUE") newCondition->Type.push_back(FG_VALUE);
+              else                                newCondition->Type.push_back((eType)0);
+              tempCompare = Script.GetValue("action");
+              if      (tempCompare == "FG_RAMP") newCondition->Action.push_back(FG_RAMP);
+              else if (tempCompare == "FG_STEP") newCondition->Action.push_back(FG_STEP);
+              else if (tempCompare == "FG_EXP")  newCondition->Action.push_back(FG_EXP);
+              else                               newCondition->Action.push_back((eAction)0);
+              newCondition->Repeat.push_back(strtol(Script.GetValue("repeat").c_str(), NULL, 10));
+              newCondition->TC.push_back(strtod(Script.GetValue("tc").c_str(), NULL));
             } else {
               cerr << "Unrecognized keyword in script file: \" [when] " << token << "\"" << endl;
             }
             Script.GetNextConfigLine();
             token = Script.GetValue();
           }
-          Conditions.push_back(newCondition);
+          Conditions.push_back(*newCondition);
           Script.GetNextConfigLine();
           token = Script.GetValue();
 
@@ -373,7 +385,78 @@ bool FGFDMExec::LoadScript(string script)
     cerr << "Aircraft file not loaded in script" << endl;
     exit(-1);
   }
-  
+
+  // print out conditions for double-checking
+
+  vector <struct condition>::iterator iterConditions = Conditions.begin();
+
+  int count=0;
+
+  cout << "\n  Script goes from " << StartTime << " to " << EndTime
+       << " with dt = " << dt << endl << endl;
+
+  while (iterConditions < Conditions.end()) {
+    cout << "  Condition: " << count++ << endl;
+    cout << "    if (";
+
+    for (int i=0; i<iterConditions->TestValue.size(); i++) {
+      if (i>0) cout << " and" << endl << "        ";
+      cout << "(" << State->paramdef[iterConditions->TestParam[i]]
+                  << iterConditions->Comparison[i] << " "
+                  << iterConditions->TestValue[i] << ")";
+    }
+    cout << ") then {" << endl;
+
+    for (int i=0; i<iterConditions->SetValue.size(); i++) {
+      cout << "      set" << State->paramdef[iterConditions->SetParam[i]]
+           << "to " << iterConditions->SetValue[i];
+
+      switch (iterConditions->Type[i]) {
+      case FG_VALUE:
+        cout << " (constant";
+        break;
+      case FG_DELTA:
+        cout << " (delta";
+        break;
+      case FG_BOOL:
+        cout << " (boolean";
+        break;
+      default:
+        cout << " (unspecified type";
+      }
+
+      switch (iterConditions->Action[i]) {
+      case FG_RAMP:
+        cout << " via ramp";
+        break;
+      case FG_STEP:
+        cout << " via step";
+        break;
+      case FG_EXP:
+        cout << " via exponential approach";
+        break;
+      default:
+        cout << " via unspecified action";
+      }
+
+      if (iterConditions->Repeat[i] == 0) cout << endl
+                         << "                              once";
+      else cout << endl
+                         << "                              repeating "
+                         << iterConditions->Repeat[i] << " time[s]";
+
+      if (iterConditions->Action[i] == FG_RAMP ||
+          iterConditions->Action[i] == FG_EXP) cout << endl
+                         << "                              with time constant "
+                         << iterConditions->TC[i];
+    }
+    cout << ")" << endl << "    }" << endl << endl;
+
+    iterConditions++;
+  }
+
+  cout << endl;
+
   result = LoadModel("aircraft", "engine", aircraft);
   if (!result) {
     cerr << "Aircraft file " << aircraft << " was not found" << endl;
@@ -381,11 +464,78 @@ bool FGFDMExec::LoadScript(string script)
   }
   if ( ! State->Reset("aircraft", aircraft, initialize))
                  State->Initialize(2000,0,0,0,0,0,0.5,0.5,40000);
-  
+
   return true;
 }
 
+
 bool FGFDMExec::RunScript(void)
 {
+  vector <struct condition>::iterator iC = Conditions.begin();
+  bool truth;
+  bool WholeTruth;
+
+  int count=0;
+
+  while (iC < Conditions.end()) {
+
+    for (int i=0; i<iC->TestValue.size(); i++) {
+           if (iC->Comparison[i] == "lt")
+              truth = iC->TestValue[i] <  State->GetParameter(iC->TestParam[i]);
+      else if (iC->Comparison[i] == "le")
+              truth = iC->TestValue[i] <= State->GetParameter(iC->TestParam[i]);
+      else if (iC->Comparison[i] == "eq")
+              truth = iC->TestValue[i] == State->GetParameter(iC->TestParam[i]);
+      else if (iC->Comparison[i] == "ge")
+              truth = iC->TestValue[i] >= State->GetParameter(iC->TestParam[i]);
+      else if (iC->Comparison[i] == "gt")
+              truth = iC->TestValue[i] >  State->GetParameter(iC->TestParam[i]);
+      else if (iC->Comparison[i] == "ne")
+              truth = iC->TestValue[i] != State->GetParameter(iC->TestParam[i]);
+      else
+              cerr << "Bad comparison" << endl;
+
+      if (i == 0) WholeTruth = truth;
+      else        WholeTruth = WholeTruth && truth;
+    }
+
+    for (int i=0; i<iC->SetValue.size(); i++) {
+
+      switch (iC->Type[i]) {
+      case FG_VALUE:
+        break;
+      case FG_DELTA:
+        break;
+      case FG_BOOL:
+        break;
+      default:
+        break;
+      }
+
+      switch (iC->Action[i]) {
+      case FG_RAMP:
+        break;
+      case FG_STEP:
+        break;
+      case FG_EXP:
+        break;
+      default:
+        break;
+      }
+
+      if (iC->Repeat[i] == 0) cout << endl
+                         << "                              once";
+      else cout << endl
+                         << "                              repeating "
+                         << iC->Repeat[i] << " time[s]";
+
+      if (iC->Action[i] == FG_RAMP ||
+          iC->Action[i] == FG_EXP) cout << endl
+                         << "                              with time constant "
+                         << iC->TC[i];
+    }
+
+    iC++;
+  }
 }
 

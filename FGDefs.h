@@ -62,6 +62,7 @@ SENTRY
 
 enum eParam {
   FG_UNDEF = 0,
+  FG_TIME,
   FG_QBAR,
   FG_WINGAREA,
   FG_WINGSPAN,
