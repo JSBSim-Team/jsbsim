@@ -49,8 +49,6 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
-class FGFCS;
-
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
@@ -66,7 +64,6 @@ class FGFilter  : public FGFCSComponent
   float PreviousInput2;
   float PreviousOutput1;
   float PreviousOutput2;
-  FGFCS* fcs;
   FGConfigFile* AC_cfg;
 
 public:
@@ -94,7 +91,5 @@ public:
 
   bool Run (void);
 };
-
-#include "FGFCS.h"
 
 #endif

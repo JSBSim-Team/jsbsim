@@ -49,24 +49,20 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
-class FGFCS;
-
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
-class FGSwitch  : public FGFCSComponent         
+class FGSwitch  : public FGFCSComponent
 {
   FGFCS* fcs;
   FGConfigFile* AC_cfg;
-  
+
 public:
   FGSwitch(FGFCS* fcs, FGConfigFile* AC_cfg);
  ~ FGSwitch ( ) { }       //Destructor
 
   bool Run (void )  ;
 };
-
-#include "FGFCS.h"
 
 #endif

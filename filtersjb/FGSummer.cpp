@@ -50,12 +50,13 @@ INCLUDES
 //  Parameters: void
 //  Comments:
 
-FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
+FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
+                                                       AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
   AC_cfg->GetNextConfigLine();
   string token;
-  int Input;
+  int tmpInputIndex;
 
   while ((token = AC_cfg->GetValue()) != "/COMPONENT") {
     *AC_cfg >> token;
@@ -67,27 +68,48 @@ FGSummer::FGSummer(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
       token = AC_cfg->GetValue("INPUT");
       if (token.find("FG_") != token.npos) {
         *AC_cfg >> token;
-        Input = fcs->GetState()->GetParameterIndex(token);
-        InputType = itPilotAC;
-        InputIndices.push_back(Input);
-        InputTypes.push_back(itFCS);
+        tmpInputIndex = fcs->GetState()->GetParameterIndex(token);
+        InputIndices.push_back(tmpInputIndex);
+        InputTypes.push_back(itPilotAC);
       } else {
-        *AC_cfg >> Input;
-        InputIndices.push_back(Input);
+        *AC_cfg >> tmpInputIndex;
+        InputIndices.push_back(tmpInputIndex);
         InputTypes.push_back(itFCS);
       }
+    } else if (token == "OUTPUT") {
+      IsOutput = true;
+      *AC_cfg >> OutputIdx;
     }
   }
 }
 
 // *****************************************************************************
 //  Function:   Run
-//  Purpose:    
-//  Parameters: void 
-//  Comments:   
+//  Purpose:
+//  Parameters: void
+//  Comments:
 
 bool FGSummer::Run(void )
 {
+  unsigned int idx;
+
+  // The Summer takes several inputs, so do not call the base class Run()
+  // FGFCSComponent::Run(); // call the base class for initialization of Input
+
+  Output = 0.0;
+  for (idx=0; idx<InputIndices.size(); idx++) {
+    switch (InputTypes[idx]) {
+    case itPilotAC:
+      Output += fcs->GetState()->GetParameter(InputIndices[idx]);
+      break;
+    case itFCS:
+      Output += fcs->GetComponentOutput(idx);
+      break;
+    }
+  }
+
+  if (IsOutput) SetOutput();
+  
   return true;
 }
 

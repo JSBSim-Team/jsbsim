@@ -79,6 +79,7 @@ public:
   FGConfigFile& operator>>(float&);
   FGConfigFile& operator>>(int&);
   FGConfigFile& operator>>(string&);
+  void ResetLineIndexToZero(void);
 
 protected:
 

@@ -229,3 +229,9 @@ FGConfigFile& FGConfigFile::operator>>(string& str)
   return *this;
 }
 
+
+void FGConfigFile::ResetLineIndexToZero(void)
+{
+  CurrentIndex = 0;
+}
+

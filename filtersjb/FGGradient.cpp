@@ -50,7 +50,8 @@ INCLUDES
 //  Parameters: void
 //  Comments:
 
-FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
+FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
+                                                           AC_cfg(AC_cfg)
 {
   
 }
@@ -63,6 +64,8 @@ FGGradient::FGGradient(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_c
 
 bool FGGradient::Run(void )
 {
+  FGFCSComponent::Run(); // call the base class for initialization of Input
+
   return true;
 }
 

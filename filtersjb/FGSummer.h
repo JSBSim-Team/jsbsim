@@ -63,15 +63,12 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
-class FGFCS;
-
 /*******************************************************************************
 CLASS DECLARATION
 *******************************************************************************/
 
 class FGSummer  : public FGFCSComponent
 {
-  FGFCS* fcs;
   FGConfigFile* AC_cfg;
   vector<int> InputIndices;
   vector<int> InputTypes;
@@ -82,7 +79,5 @@ public:
 
   bool Run (void );
 };
-
-#include "FGFCS.h"
 
 #endif

@@ -127,6 +127,8 @@ public:
   inline float Setsim_time(float tt) {sim_time = tt; return sim_time;}
   inline void  Setdt(float tt) {dt = tt;}
 
+  void SetParameter(int, float);
+
   inline float IncrTime(void) {sim_time+=dt;return sim_time;}
   void CalcMatrices(float phi, float tht, float psi);
   void IntegrateQuat(FGColumnVector vPQR, int rate);

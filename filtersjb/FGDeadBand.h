@@ -57,7 +57,6 @@ CLASS DECLARATION
 
 class FGDeadBand  : public FGFCSComponent         
 {
-  FGFCS* fcs;
   FGConfigFile* AC_cfg;
   
 public:
@@ -66,7 +65,5 @@ public:
 
   bool Run (void )  ;
 };
-
-#include "FGFCS.h"
 
 #endif

@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     if (FDMExec->GetState()->Getsim_time() > 5.0 &&
         FDMExec->GetState()->Getsim_time() < 6.0)
     {
-      FDMExec->GetFCS()->SetDeCmd(10);    // input in pounds force on stick
+      FDMExec->GetFCS()->SetDeCmd(0.2);    // input betwwen -1 and 1
     } else {
       FDMExec->GetFCS()->SetDeCmd(0.0);
     }

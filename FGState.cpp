@@ -255,7 +255,9 @@ int FGState::GetParameterIndex(string val_string)
 }
 
 /******************************************************************************/
-
+//
+// NEED WORK BELOW TO ADD NEW PARAMETERS !!!
+//
 float FGState::GetParameter(int val_idx)
 {
   switch(val_idx) {
@@ -287,6 +289,24 @@ float FGState::GetParameter(int val_idx)
     return FDMExec->GetFCS()->GetDaPos();
   case FG_RUDDER_POS:
     return FDMExec->GetFCS()->GetDrPos();
+  case FG_SPDBRAKE_POS:
+    return FDMExec->GetFCS()->GetDsbPos();
+  case FG_SPOILERS_POS:
+    return FDMExec->GetFCS()->GetDspPos();
+  case FG_FLAPS_POS:
+    return FDMExec->GetFCS()->GetDfPos();
+  case FG_ELEVATOR_CMD:
+    return FDMExec->GetFCS()->GetDeCmd();
+  case FG_AILERON_CMD:
+    return FDMExec->GetFCS()->GetDaCmd();
+  case FG_RUDDER_CMD:
+    return FDMExec->GetFCS()->GetDrCmd();
+  case FG_SPDBRAKE_CMD:
+    return FDMExec->GetFCS()->GetDsbCmd();
+  case FG_SPOILERS_CMD:
+    return FDMExec->GetFCS()->GetDspCmd();
+  case FG_FLAPS_CMD:
+    return FDMExec->GetFCS()->GetDfCmd();
   case FG_MACH:
     return GetMach();
   case FG_ALTITUDE:
@@ -297,6 +317,32 @@ float FGState::GetParameter(int val_idx)
     return FDMExec->GetAircraft()->Getcbar()/(2.0 * GetVt());
   }
   return 0;
+}
+
+/******************************************************************************/
+
+void FGState::SetParameter(int val_idx, float val)
+{
+  switch(val_idx) {
+  case FG_ELEVATOR_POS:
+    FDMExec->GetFCS()->SetDePos(val);
+    break;
+  case FG_AILERON_POS:
+    FDMExec->GetFCS()->SetDaPos(val);
+    break;
+  case FG_RUDDER_POS:
+    FDMExec->GetFCS()->SetDrPos(val);
+    break;
+  case FG_SPDBRAKE_POS:
+    FDMExec->GetFCS()->SetDrPos(val);
+    break;
+  case FG_SPOILERS_POS:
+    FDMExec->GetFCS()->SetDrPos(val);
+    break;
+  case FG_FLAPS_POS:
+    FDMExec->GetFCS()->SetDrPos(val);
+    break;
+  }
 }
 
 /******************************************************************************/

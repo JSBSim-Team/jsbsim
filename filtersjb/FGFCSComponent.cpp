@@ -50,12 +50,39 @@ INCLUDES
 //  Parameters: void
 //  Comments:
 
-FGFCSComponent::FGFCSComponent(void )
+FGFCSComponent::FGFCSComponent(FGFCS* _fcs) : fcs(_fcs)
 {
-  Type = "";
-  ID = 0;
+
+  Type       = "";
+  ID         = 0;
   QueueOrder = 0;
-  Output = 0;
-  InputIdx = 0;
+  Input      = 0.0;
+  InputIdx   = 0;
+  Output     = 0.0;
+  OutputIdx  = 0;
+  IsOutput   = false;
 }
 
+
+void FGFCSComponent::SetOutput(void)
+{
+  fcs->GetState()->SetParameter(OutputIdx, Output);
+}
+
+
+bool FGFCSComponent::Run(void)
+{
+  switch(InputType) {
+  case itPilotAC:
+    Input = fcs->GetState()->GetParameter(InputIdx);
+    break;
+  case itFCS:
+    Input = fcs->GetComponentOutput(InputIdx);
+    break;
+  case itAP:
+    // implement autopilot input mechanism
+    break;
+  }
+
+  return true;
+}

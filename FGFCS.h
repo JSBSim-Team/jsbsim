@@ -66,8 +66,8 @@ using namespace std;
 class FGFCS : public FGModel
 {
 private:
-  float DaCmd, DeCmd, DrCmd, DfCmd, DsCmd;
-  float DaPos, DePos, DrPos, DfPos, DsPos;
+  float DaCmd, DeCmd, DrCmd, DfCmd, DsbCmd, DspCmd;
+  float DaPos, DePos, DrPos, DfPos, DsbPos, DspPos;
   float ThrottleCmd[MAX_ENGINES];
   float ThrottlePos[MAX_ENGINES];
 
@@ -83,14 +83,16 @@ public:
 	inline float GetDeCmd(void) {return DeCmd;}
 	inline float GetDrCmd(void) {return DrCmd;}
 	inline float GetDfCmd(void) {return DfCmd;}
-	inline float GetDsCmd(void) {return DsCmd;}
+	inline float GetDsbCmd(void) {return DsbCmd;}
+	inline float GetDspCmd(void) {return DspCmd;}
 	inline float GetThrottleCmd(int ii) {return ThrottleCmd[ii];}
 
 	inline float GetDaPos(void) {return DaPos;}
 	inline float GetDePos(void) {return DePos;}
 	inline float GetDrPos(void) {return DrPos;}
 	inline float GetDfPos(void) {return DfPos;}
-	inline float GetDsPos(void) {return DsPos;}
+	inline float GetDsbPos(void) {return DsbPos;}
+	inline float GetDspPos(void) {return DspPos;}
 	inline float GetThrottlePos(int ii) {return ThrottlePos[ii];}
 
   inline FGState* GetState(void) {return State;}
@@ -100,14 +102,16 @@ public:
 	inline void SetDeCmd(float tt) {DeCmd = tt;}
 	inline void SetDrCmd(float tt) {DrCmd = tt;}
 	inline void SetDfCmd(float tt) {DfCmd = tt;}
-	inline void SetDsCmd(float tt) {DsCmd = tt;}
+	inline void SetDsbCmd(float tt) {DsbCmd = tt;}
+	inline void SetDspCmd(float tt) {DspCmd = tt;}
 	void SetThrottleCmd(int ii, float tt);
 
 	inline void SetDaPos(float tt) {DaPos = tt;}
 	inline void SetDePos(float tt) {DePos = tt;}
 	inline void SetDrPos(float tt) {DrPos = tt;}
 	inline void SetDfPos(float tt) {DfPos = tt;}
-	inline void SetDsPos(float tt) {DsPos = tt;}
+	inline void SetDsbPos(float tt) {DsbPos = tt;}
+	inline void SetDspPos(float tt) {DspPos = tt;}
 	void SetThrottlePos(int ii, float tt);
 
   bool LoadFCS(FGConfigFile* AC_cfg);

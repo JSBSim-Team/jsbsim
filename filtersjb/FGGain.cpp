@@ -50,7 +50,8 @@ INCLUDES
 //  Parameters: void
 //  Comments:   Types are PURE_GAIN, SCHEDULED_GAIN, and AEROSURFACE_SCALE
 
-FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
+FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
+                                                   AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
   AC_cfg->GetNextConfigLine();
@@ -85,6 +86,7 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
     } else if (token == "SCHEDULED_BY") {
       *AC_cfg >> ScheduledBy;
     } else {
+      AC_cfg->ResetLineIndexToZero();
       lookup = new float[2];
       *AC_cfg >> lookup[0] >> lookup[1];
       Schedule.push_back(lookup);
@@ -100,33 +102,38 @@ FGGain::FGGain(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
 
 bool FGGain::Run(void ) 
 {
+  FGFCSComponent::Run(); // call the base class for initialization of Input
+
   if (Type == "PURE_GAIN") {
-    switch(InputType) {
-    case itPilotAC:
-      Output = Gain * fcs->GetState()->GetParameter(InputIdx);
-      break;
-    case itFCS:
-      Output = Gain * fcs->GetComponentOutput(InputIdx);
-      break;
-    case itAP:
-      break;
-    }
+
+    Output = Gain * Input;
+
   } else if (Type == "SCHEDULED_GAIN") {
-    // implement me
-  } else if (Type == "AEROSURFACE_SCALE") {
-    switch(InputType) {
-    case itPilotAC:
-      Output = fcs->GetState()->GetParameter(InputIdx);
-      break;
-    case itFCS:
-      Output = fcs->GetComponentOutput(InputIdx);
-      break;
-    case itAP:
-      break;
+
+    float LookupVal = fcs->GetState()->GetParameter(ScheduledBy);
+    unsigned int last = Schedule.size()-1;
+    float lowVal = Schedule[0][0], hiVal = Schedule[last][0];
+    float factor = 1.0;
+
+    if (LookupVal <= lowVal) Output = Schedule[0][1];
+    else if (LookupVal >= hiVal) Output = Schedule[last][1];
+    else {
+      for (unsigned int ctr = 1; ctr < last; ctr++) {
+        if (LookupVal < Schedule[ctr][0]) {
+          hiVal = Schedule[ctr][0];
+          lowVal = Schedule[ctr-1][0];
+          factor = (LookupVal - lowVal) / (hiVal - lowVal);
+          Gain = Schedule[ctr-1][1] + factor*(Schedule[ctr][1] - Schedule[ctr-1][1]);
+          Output = Gain * Input;
+          break;
+        }
+      }
     }
 
-    if (Output >= 0.0) Output *= Max;
-    else Output *= -Min;
+  } else if (Type == "AEROSURFACE_SCALE") {
+
+    if (Output >= 0.0) Output = Gain * Max;
+    else Output = Gain * (-Min);
   }
 
   return true;

@@ -50,7 +50,8 @@ INCLUDES
 //  Parameters: void
 //  Comments:
 
-FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_cfg)
+FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : FGFCSComponent(fcs),
+                                                           AC_cfg(AC_cfg)
 {
   Type = AC_cfg->GetValue("TYPE");
   AC_cfg->GetNextConfigLine();
@@ -78,6 +79,8 @@ FGDeadBand::FGDeadBand(FGFCS* fcs, FGConfigFile* AC_cfg) : fcs(fcs), AC_cfg(AC_c
 
 bool FGDeadBand::Run(void )
 {
+  FGFCSComponent::Run(); // call the base class for initialization of Input
+
   return true;
 }
 

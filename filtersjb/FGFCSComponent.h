@@ -54,6 +54,8 @@ INCLUDES
 DEFINES
 *******************************************************************************/
 
+class FGFCS;
+
 using namespace std;
 
 /*******************************************************************************
@@ -62,21 +64,30 @@ CLASS DECLARATION
 
 class FGFCSComponent
 {
+private:
+
 protected:
+  FGFCS* fcs;
   string Type;
-  enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopliot inputs
+  enum {itPilotAC, itFCS, itAP} InputType; // Pilot/Aircraft, FCS, Autopilot inputs
   int ID;
   int QueueOrder;
-  float Output;
   int InputIdx;
+  float Input;
+  int OutputIdx;
+  float Output;
+  bool IsOutput;
 
 public:
-  FGFCSComponent(void);
-
-  bool Run (void) {return true;}
-  inline float GetOutput (void) {return Output;}
+  FGFCSComponent(FGFCS*);
   ~FGFCSComponent ( ) { }       //Destructor
+
+  virtual bool Run (void);
+  inline float GetOutput (void) {return Output;}
+  void SetOutput(void);
 };
+
+#include "FGFCS.h"
 
 #endif
 

@@ -180,7 +180,7 @@ private:
   float WingArea, WingSpan, cbar;
   float Weight, EmptyWeight;
   float dt;
-  float CFGVersion;
+  double CFGVersion;
   string AircraftName;
   
   int numTanks;

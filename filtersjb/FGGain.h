@@ -71,7 +71,6 @@ CLASS DECLARATION
 
 class FGGain  : public FGFCSComponent         
 {
-  FGFCS* fcs;
   FGConfigFile* AC_cfg;
   float Gain;
   float* lookup;
@@ -83,9 +82,7 @@ public:
   FGGain(FGFCS* fcs, FGConfigFile* AC_cfg);
   ~FGGain ( ) { }       //Destructor
 
-  bool Run (void )  ;
+  bool Run (void);
 };
-
-#include "FGFCS.h"
 
 #endif
