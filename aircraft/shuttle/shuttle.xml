@@ -3,7 +3,7 @@
   <!--
   File:        shuttle.xml
   Author:      Jon S. Berndt
-  CVS Version: $Id: shuttle.xml,v 1.9 2002/02/04 23:05:34 jberndt Exp $
+  CVS Version: $Id: shuttle.xml,v 1.10 2002/04/28 11:32:58 apeden Exp $
 
   Function: Models the U.S. Space Shuttle
   Notes:    Try running FlightGear using this command line,
@@ -391,12 +391,6 @@
         Side_force_due_to_aileron
         FG_QBAR|FG_WINGAREA|FG_AILERON_POS
         -0.05
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="CYdr" TYPE="VALUE">
-        Side_force_due_to_rudder
-        FG_QBAR|FG_WINGAREA|FG_RUDDER_POS
-        0.45
       </COEFFICIENT>
 
       <COEFFICIENT NAME="CYdr" TYPE="VALUE">
