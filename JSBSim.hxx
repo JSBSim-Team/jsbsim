@@ -39,6 +39,7 @@ INCLUDES
 
 #undef MAX_ENGINES
 #include <Aircraft/aircraft.hxx>
+#include "FDM/JSBSim/FGDefs.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -64,6 +65,7 @@ class FGPosition;
 class FGAuxiliary;
 class FGOutput;
 class FGInitialCondition;
+class FGFDMExec;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
@@ -80,7 +82,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.17 2001/06/05 19:00:39 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.18 2001/06/05 19:20:44 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
