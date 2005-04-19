@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.137 2004/05/21 12:52:54 frohlich Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.138 2005/04/19 19:41:53 frohlich Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,8 +165,8 @@ FGMatrix33& FGState::GetTs2b(void)
 
 FGMatrix33& FGState::GetTb2s(void)
 {
-  float alpha,beta;
-  float ca, cb, sa, sb;
+  double alpha,beta;
+  double ca, cb, sa, sb;
 
   alpha = Auxiliary->Getalpha();
   beta  = Auxiliary->Getbeta();

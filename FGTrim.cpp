@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.46 2004/04/12 04:07:36 apeden Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.47 2005/04/19 19:41:53 frohlich Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -554,7 +554,7 @@ bool FGTrim::checkLimits(void) {
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrim::setupPullup() {
-  float g,q,cgamma;
+  double g,q,cgamma;
   g=fdmex->GetInertial()->gravity();
   cgamma=cos(fgic->GetFlightPathAngleRadIC());
   cout << "setPitchRateInPullup():  " << g << ", " << cgamma << ", "
@@ -601,7 +601,7 @@ void FGTrim::updateRates(void){
     fgic->SetQRadpsIC(q);
     fgic->SetRRadpsIC(r);
   } else if( mode == tPullup && fabs(targetNlf-1) > 0.01) {
-      float g,q,cgamma;
+      double g,q,cgamma;
       g=fdmex->GetInertial()->gravity();
       cgamma=cos(fgic->GetFlightPathAngleRadIC());
       q=g*(targetNlf-cgamma)/fgic->GetVtrueFpsIC();

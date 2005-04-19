@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.20 2003/12/02 05:42:12 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.21 2005/04/19 19:41:53 frohlich Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -135,8 +135,8 @@ public:
   void SetThetaOnGround(double ff);
   void SetPhiOnGround(double ff);
   
-  inline void SetStateTarget(float target) { state_target=target; }
-  inline float GetStateTarget(void) { return state_target; }
+  inline void SetStateTarget(double target) { state_target=target; }
+  inline double GetStateTarget(void) { return state_target; }
   
   bool initTheta(void);
   
@@ -151,10 +151,10 @@ private:
   State   state;
   Control control;
   
-  float state_target;
+  double state_target;
   
-  float state_value;
-  float control_value;
+  double state_value;
+  double control_value;
 
   double control_min;
   double control_max;
