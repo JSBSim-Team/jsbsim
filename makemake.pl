@@ -14,7 +14,7 @@ print "FGTank.o FGAuxiliary.o FGfdmSocket.o FGTrim.o FGTrimAxis.o\\\n";
 print "FGConfigFile.o FGInitialCondition.o FGLGear.o FGMatrix33.o FGPropulsion.o FGRocket.o\\\n";
 print "FGPiston.o FGForce.o FGThruster.o FGEngine.o\\\n";
 print "FGTable.o FGPropeller.o FGNozzle.o FGAerodynamics.o FGMassBalance.o FGInertial.o\\\n";
-print "FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGScript.o\\\n";
+print "FGFactorGroup.o FGColumnVector3.o FGQuaternion.o FGGroundReactions.o FGGroundCallback.o FGScript.o\\\n";
 print "FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocation.o\n\n";
 #
 print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\\\n";

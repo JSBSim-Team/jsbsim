@@ -27,6 +27,7 @@ libJSBSim_a_SOURCES = \
 	FGFDMExec.cpp \
 	FGFactorGroup.cpp \
 	FGForce.cpp \
+	FGGroundCallback.cpp \
 	FGGroundReactions.cpp \
 	FGInertial.cpp \
 	FGInitialCondition.cpp \
@@ -70,6 +71,7 @@ noinst_HEADERS = \
 	FGFDMExec.h \
 	FGFactorGroup.h \
 	FGForce.h \
+	FGGroundCallback.h \
 	FGGroundReactions.h \
 	FGInertial.h \
 	FGInitialCondition.h \

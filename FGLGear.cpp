@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.119 2005/01/13 07:15:32 frohlich Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.120 2005/04/23 09:53:21 frohlich Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,11 +59,9 @@ CLASS IMPLEMENTATION
 
 FGLGear::FGLGear(FGConfigFile* AC_cfg, FGFDMExec* fdmex, int number) : Exec(fdmex)
 {
-  string tmp;
-
   GearNumber = number;
 
-  *AC_cfg >> tmp >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
+  *AC_cfg >> name >> vXYZ(1) >> vXYZ(2) >> vXYZ(3)
             >> kSpring >> bDamp>> dynamicFCoeff >> staticFCoeff
                   >> rollingFCoeff >> sSteerType >> sBrakeGroup
                      >> maxSteerAngle >> sRetractable;
@@ -211,7 +209,7 @@ FGLGear::~FGLGear()
 FGColumnVector3& FGLGear::Force(void)
 {
   double SinWheel, CosWheel;
-  double deltaT = State->Getdt()*Aircraft->GetRate();
+  double deltaT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
@@ -251,6 +249,7 @@ FGColumnVector3& FGLGear::Force(void)
   }
 
   if (GearDown) {
+    double t = Exec->GetState()->Getsim_time();
 
     vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
 
@@ -260,7 +259,10 @@ FGColumnVector3& FGLGear::Force(void)
 
 // vLocalGear now stores the vector from the cg to the wheel in local coords.
 
-    compressLength = vLocalGear(eZ) - Propagate->GetDistanceAGL();
+    FGColumnVector3 normal, cvel;
+    FGLocation contact;
+    FGLocation gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
+    compressLength = - Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
 
 // The compression length is currently measured in the Z-axis, only, at this time.
 // It should be measured along the strut axis. If the local-frame gear position
@@ -283,7 +285,7 @@ FGColumnVector3& FGLGear::Force(void)
 // wheel velocity.
 
       vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
-      vWhlVelVec     +=  Propagate->GetVel();
+      vWhlVelVec     +=  Propagate->GetVel() - cvel;
       compressSpeed   =  vWhlVelVec(eZ);
 
 // If this is the first time the wheel has made contact, remember some values
