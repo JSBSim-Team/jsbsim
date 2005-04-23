@@ -3,7 +3,7 @@
 
   File:        c172r.xml (originally C172.xml)
   Author:      Tony Peden
-  CVS Version: $Id: c172x.xml,v 1.29 2004/12/31 19:19:56 jberndt Exp $
+  CVS Version: $Id: c172x.xml,v 1.30 2005/04/23 18:16:16 jberndt Exp $
 
   Function: Models a 1997 Cessna 172R
   Notes:    Try running FlightGear using this command line,
@@ -676,15 +676,15 @@ Standard empty weight 1,620 lbs.
     RATE_IN_HZ     2 
     SIMULATION       OFF
     ATMOSPHERE       ON
-    MASSPROPS        ON
+    MASSPROPS        OFF
     AEROSURFACES     ON
     RATES            ON
     VELOCITIES       ON
     FORCES           ON
     MOMENTS          ON
     POSITION         ON
-    COEFFICIENTS     ON
-    GROUND_REACTIONS ON
+    COEFFICIENTS     OFF
+    GROUND_REACTIONS OFF
     FCS              ON
     PROPULSION       ON
   </OUTPUT>

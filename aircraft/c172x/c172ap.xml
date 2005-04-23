@@ -216,7 +216,7 @@ PITCH CHANNEL
 
 <COMPONENT NAME="Proportional" TYPE="PURE_GAIN">
   INPUT          fcs/ap-alt-hold-switch
-  GAIN           0.035
+  GAIN           0.03
 </COMPONENT>
 
 <COMPONENT NAME="Control Summer" TYPE="SUMMER">

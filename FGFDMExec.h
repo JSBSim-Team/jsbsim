@@ -44,9 +44,7 @@ INCLUDES
 #include "FGTrim.h"
 #include "FGInitialCondition.h"
 #include "FGJSBBase.h"
-#include "FGGroundCallback.h"
 #include "FGPropertyManager.h"
-#include "FGPropagate.h"
 
 #include <vector>
 
@@ -54,7 +52,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.74 2005/04/23 09:53:21 frohlich Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.75 2005/04/23 18:16:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +98,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.74 2005/04/23 09:53:21 frohlich Exp $
+    @version $Id: FGFDMExec.h,v 1.75 2005/04/23 18:16:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,8 +141,6 @@ public:
 
   /// Resumes the sim
   void Resume(void) {frozen = false;}
-
-  void SetGroundCallback(FGGroundCallback*);
 
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft directory. For instance:
@@ -204,8 +200,6 @@ public:
   inline FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
   /// Returns the FGFCS pointer.
   inline FGFCS* GetFCS(void)                  {return FCS;}
-  /// Returns the FGGroundCallback pointer.
-  inline FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
   /// Returns the FGPropulsion pointer.
   inline FGPropulsion* GetPropulsion(void)    {return Propulsion;}
   /// Returns the FGAircraft pointer.
@@ -219,7 +213,7 @@ public:
   /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
   /// Returns the FGPropagate pointer.
-  inline FGPropagate* GetPropagate(void)      {return Propagate;}
+  inline FGPropagate* GetPropagate(void)        {return Propagate;}
   /// Returns the FGAuxiliary pointer.
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
   /// Returns the FGOutput pointer.
@@ -287,7 +281,6 @@ private:
   FGState*           State;
   FGAtmosphere*      Atmosphere;
   FGFCS*             FCS;
-  FGGroundCallback*  GroundCallback;
   FGPropulsion*      Propulsion;
   FGMassBalance*     MassBalance;
   FGAerodynamics*    Aerodynamics;

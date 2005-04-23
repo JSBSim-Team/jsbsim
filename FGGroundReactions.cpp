@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.42 2005/04/23 09:53:21 frohlich Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.43 2005/04/23 18:16:13 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,15 +110,9 @@ bool FGGroundReactions::Load(FGConfigFile* AC_cfg)
   AC_cfg->GetNextConfigLine();
 
   while ((token = AC_cfg->GetValue()) != string("/UNDERCARRIAGE")) {
-    string type;
-    *AC_cfg >> type;
-    if (type == "AC_GEAR") {
-      int num = lGear.size();
-      lGear.push_back(FGLGear(AC_cfg, FDMExec, num));
-      FCS->AddGear();
-    } else {
-      cerr << "Unknown undercarriage type \"" << type << "\"" << endl;
-    }
+    int num = lGear.size();
+    lGear.push_back(FGLGear(AC_cfg, FDMExec, num));
+    FCS->AddGear();
   }
 
   return true;

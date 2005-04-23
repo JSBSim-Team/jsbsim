@@ -27,7 +27,7 @@
       <parameter name="aero/qbar-psf" comparison="ge" value="4.0">
       <set name="ap/altitude_setpoint" type="FG_VALUE" value="20.0" action="FG_EXP" persistent="false" tc ="3.0">
       <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
-      <set name="fcs/flap-cmd-norm" type="FG_VALUE" value="10" action="FG_STEP" persisten="false" tc="1.0">
+      <set name="fcs/flap-cmd-norm" type="FG_VALUE" value="0.33" action="FG_STEP" persisten="false" tc="1.0">
     </when>
 
     <when> <!-- Set Autopilot for 8000 ft -->
