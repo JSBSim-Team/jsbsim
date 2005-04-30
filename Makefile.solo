@@ -12,7 +12,7 @@ FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FGLocatio
 
 JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\
 Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\
-atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README
+atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README configure.in simgear/compiler.h
 
 JSBSim : $(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a libAtmosphere.a
 	$(CC) $(INCLUDES) $(CCOPTS) $(LINKDIR) $(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere

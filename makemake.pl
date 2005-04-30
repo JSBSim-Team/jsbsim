@@ -19,7 +19,7 @@ print "FGJSBBase.o FGPropertyManager.o FGTurbine.o FGElectric.o FGPropagate.o FG
 #
 print "JSBSim_sources = FG*.cpp FG*.h JSBSim.cpp *.?xx filtersjb/*.cpp filtersjb/*.h simgear/props/*.?xx control/*.xml\\\n";
 print "Makefile.* aircraft/*/*.xml engine/*.xml scripts/*.xml *ake* */*ake* */*/*ake*\\\n";
-print "atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README\n\n";
+print "atmosphere/*.cpp atmosphere/*.h autogen.sh INSTALL COPYING AUTHORS ChangeLog NEWS README configure.in simgear/compiler.h\n\n";
 #
 print "JSBSim : \$(JSBSim_objects) JSBSim.o libFCSComponents.a libProperties.a libAtmosphere.a\n";
 print "	\$(CC) \$(INCLUDES) \$(CCOPTS) \$(LINKDIR) \$(JSBSim_objects) JSBSim.o -oJSBSim -lm -lFCSComponents -lProperties -lAtmosphere\n\n";
