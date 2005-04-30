@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.21 2005/04/23 18:16:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.22 2005/04/30 15:49:51 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,7 +128,7 @@ bool FGPropagate::InitModel(void)
 void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
   SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
-  RunwayRadius = FGIC->GetSeaLevelRadiusFtIC() + FGIC->GetTerrainAltitudeFtIC();
+  RunwayRadius = SeaLevelRadius;
 
   // Set the position lat/lon/radius
   VState.vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
@@ -155,6 +155,9 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 
   // Finaly make shure that the quaternion stays normalized.
   VState.vQtrn.Normalize();
+
+  // Recompute the RunwayRadius level.
+  RecomputeRunwayRadius();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,6 +179,8 @@ state values for (now + dt).
 bool FGPropagate::Run(void)
 {
   if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
+
+  RecomputeRunwayRadius();
 
   double dt = State->Getdt()*rate;  // The 'stepsize'
   const FGColumnVector3 omega( 0.0, 0.0, Inertial->omega() ); // earth rotation
@@ -245,9 +250,38 @@ bool FGPropagate::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropagate::RecomputeRunwayRadius(void)
+{
+  // Get the runway radius.
+  // Boring: this does not belong here, but since Jon placed the RunwayRadius
+  // value here it is better done here than somewhere else.
+  FGLocation contactloc;
+  FGColumnVector3 dv;
+  FGGroundCallback* gcb = FDMExec->GetGroundCallback();
+  double t = State->Getsim_time();
+  gcb->GetAGLevel(t, VState.vLocation, contactloc, dv, dv);
+  RunwayRadius = contactloc.GetRadius();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::Seth(double tt)
 {
   VState.vLocation.SetRadius( tt + SeaLevelRadius );
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropagate::GetRunwayRadius(void) const
+{
+  return RunwayRadius;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropagate::GetDistanceAGL(void) const
+{
+  return VState.vLocation.GetRadius() - RunwayRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,7 +324,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
 
-  PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius, &FGPropagate::SetRunwayRadius);
+  PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius);
 
   PropertyManager->Tie("attitude/phi-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/theta-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);

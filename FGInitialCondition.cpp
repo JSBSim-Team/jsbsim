@@ -53,7 +53,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.65 2005/04/23 18:16:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.66 2005/04/30 15:49:50 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -423,9 +423,7 @@ void FGInitialCondition::SetAltitudeFtIC(double tt) {
 //******************************************************************************
 
 void FGInitialCondition::SetAltitudeAGLFtIC(double tt) {
-  fdmex->GetPropagate()->SetDistanceAGL(tt);
-  altitude=fdmex->GetPropagate()->Geth();
-  SetAltitudeFtIC(altitude);
+  SetAltitudeFtIC(terrain_altitude + tt);
 }
 
 //******************************************************************************

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.185 2005/04/23 18:16:15 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.186 2005/04/30 15:49:51 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -61,6 +61,7 @@
 #include <FDM/JSBSim/FGPropertyManager.h>
 #include <FDM/JSBSim/FGEngine.h>
 #include <FDM/JSBSim/FGPiston.h>
+#include <FDM/JSBSim/FGGroundCallback.h>
 #include <FDM/JSBSim/FGTurbine.h>
 #include <FDM/JSBSim/FGRocket.h>
 #include <FDM/JSBSim/FGElectric.h>
@@ -76,6 +77,37 @@ FMAX (double a, double b)
   return a > b ? a : b;
 }
 
+class FGFSGroundCallback : public FGGroundCallback {
+public:
+  FGFSGroundCallback(FGInterface* ifc) : mInterface(ifc) {}
+  virtual ~FGFSGroundCallback() {}
+
+  /** Get the altitude above sea level depenent on the location. */
+  virtual double GetAltitude(const FGLocation& l) const {
+    double pt[3] = { SG_FEET_TO_METER*l(eX),
+                     SG_FEET_TO_METER*l(eY),
+                     SG_FEET_TO_METER*l(eZ) };
+    double lat, lon, alt;
+    sgCartToGeod( pt, &lat, &lon, &alt);
+    return alt * SG_METER_TO_FEET;
+  }
+  /** Compute the altitude above ground. */
+  virtual double GetAGLevel(double t, const FGLocation& l,
+                            FGLocation& cont,
+                            FGColumnVector3& n, FGColumnVector3& v) const {
+    double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+    double contact[3], normal[3], vel[3], lc, ff, agl;
+    int groundtype;
+    mInterface->get_agl_ft(t, loc_cart, contact, normal, vel,
+                           &groundtype, &lc, &ff, &agl);
+    n = l.GetTec2l()*FGColumnVector3( normal[0], normal[1], normal[2] );
+    v = l.GetTec2l()*FGColumnVector3( vel[0], vel[1], vel[2] );
+    cont = FGColumnVector3( contact[0], contact[1], contact[2] );
+    return agl;
+  }
+private:
+  FGInterface* mInterface;
+};
 
 /******************************************************************************/
 
@@ -110,6 +142,9 @@ FGJSBsim::FGJSBsim( double dt )
     }
 
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
+
+    // Register ground callback.
+    fdmex->SetGroundCallback( new FGFSGroundCallback(this) );
 
     State           = fdmex->GetState();
     Atmosphere      = fdmex->GetAtmosphere();
@@ -349,18 +384,55 @@ void FGJSBsim::update( double dt )
 
     int i;
 
-    // double save_alt = 0.0;
+    // Compute the radius of the aircraft. That is the radius of a ball
+    // where all gear units are in. At the moment it is at least 10ft ...
+    double acrad = 10.0;
+    int n_gears = GroundReactions->GetNumGearUnits();
+    for (i=0; i<n_gears; ++i) {
+      FGColumnVector3 bl = GroundReactions->GetGearUnit(i)->GetBodyLocation();
+      double r = bl.Magnitude();
+      if (acrad < r)
+        acrad = r;
+    }
 
+    // Compute the potential movement of this aircraft and query for the
+    // ground in this area.
+    double groundCacheRadius = acrad + 2*dt*Propagate->GetUVW().Magnitude();
+    FGColumnVector3 cart = Auxiliary->GetLocationVRP();
+    if ( needTrim && startup_trim->getBoolValue() ) {
+      double alt = fgic->GetAltitudeFtIC();
+      double slr = fgic->GetSeaLevelRadiusFtIC();
+      double lat = fgic->GetLatitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      double lon = fgic->GetLongitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      cart = FGLocation(lon, lat, alt+slr);
+    }
+    double cart_pos[3] = { cart(1), cart(2), cart(3) };
+    bool cache_ok = prepare_ground_cache_ft( State->Getsim_time(), cart_pos,
+                                             groundCacheRadius );
+    if (!cache_ok) {
+      SG_LOG(SG_FLIGHT, SG_WARN,
+             "FGInterface is beeing called without scenery below the aircraft!");
+      return;
+    }
+      
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
 
     if ( needTrim ) {
       if ( startup_trim->getBoolValue() ) {
+        double contact[3], dummy[3], lc, ff, agl;
+        int groundtype;
+        get_agl_ft(State->Getsim_time(), cart_pos, contact,
+                   dummy, dummy, &groundtype, &lc, &ff, &agl);
+        double terrain_alt = sqrt(contact[0]*contact[0] + contact[1]*contact[1]
+             + contact[2]*contact[2]) - fgic->GetSeaLevelRadiusFtIC();
+
         SG_LOG(SG_FLIGHT, SG_INFO,
           "Ready to trim, terrain altitude is: "
-            << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
-        fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
+            << terrain_alt * SG_METER_TO_FEET );
+
+        fgic->SetTerrainAltitudeFtIC( terrain_alt );
         do_trim();
       } else {
         fdmex->RunIC();  //apply any changes made through the set_ functions
@@ -472,10 +544,7 @@ bool FGJSBsim::copy_to_JSBsim()
     }
 
  
-    _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
     Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
-    Propagate->SetRunwayRadius( get_Runway_altitude()
-                               + get_Sea_level_radius() );
 
     Atmosphere->SetExTemperature(
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
@@ -575,11 +644,21 @@ bool FGJSBsim::copy_from_JSBsim()
     _set_Mach_number( Auxiliary->GetMach() );
 
     // Positions of Visual Reference Point
-    _updateGeocentricPosition( Auxiliary->GetLocationVRP().GetLatitude(),
-                               Auxiliary->GetLocationVRP().GetLongitude(),
-                               Auxiliary->GethVRP() );
+    FGLocation l = Auxiliary->GetLocationVRP();
+    _updateGeocentricPosition( l.GetLatitude(), l.GetLongitude(),
+                               l.GetRadius() - get_Sea_level_radius() );
 
     _set_Altitude_AGL( Propagate->GetDistanceAGL() );
+    {
+      double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+      double contact[3], d[3], sd, t;
+      int id;
+      is_valid_m(&t, d, &sd);
+      get_agl_ft(t, loc_cart, contact, d, d, &id, &sd, &sd, &sd);
+      double rwrad
+        = FGColumnVector3( contact[0], contact[1], contact[2] ).Magnitude();
+      _set_Runway_altitude( rwrad - get_Sea_level_radius() );
+    }
 
     _set_Euler_Angles( Propagate->GetEuler(ePhi),
                        Propagate->GetEuler(eTht),
@@ -766,8 +845,6 @@ void FGJSBsim::set_Latitude(double lat)
                       &sea_level_radius_meters, &lat_geoc );
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET  );
-    _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
-    fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
     fgic->SetLatitudeRadIC( lat_geoc );
     needTrim=true;
 }
@@ -782,8 +859,6 @@ void FGJSBsim::set_Longitude(double lon)
 
     update_ic();
     fgic->SetLongitudeRadIC( lon );
-    _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
-    fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
     needTrim=true;
 }
 
@@ -804,8 +879,6 @@ void FGJSBsim::set_Altitude(double alt)
                   &sea_level_radius_meters, &lat_geoc);
     _set_Sea_level_radius( sea_level_radius_meters * SG_METER_TO_FEET  );
     fgic->SetSeaLevelRadiusFtIC( sea_level_radius_meters * SG_METER_TO_FEET );
-    _set_Runway_altitude( cur_fdm_state->get_Runway_altitude() );
-    fgic->SetTerrainAltitudeFtIC( cur_fdm_state->get_ground_elev_ft() );
     SG_LOG(SG_FLIGHT, SG_INFO,
           "Terrain altitude: " << cur_fdm_state->get_Runway_altitude() * SG_METER_TO_FEET );
     fgic->SetLatitudeRadIC( lat_geoc );
