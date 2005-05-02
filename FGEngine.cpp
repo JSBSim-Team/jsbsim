@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.76 2005/01/27 12:23:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.77 2005/05/02 18:22:14 dpculp Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,27 +131,35 @@ void FGEngine::ConsumeFuel(void)
 {
   if (FuelFreeze) return;
   unsigned int i;
-  double Fshortage, Oshortage, TanksWithFuel;
+  double Fshortage, Oshortage, TanksWithFuel, TanksWithOxidizer;
   FGTank* Tank;
+  bool haveOxTanks = false;
 
   if (TrimMode) return;
-  Fshortage = Oshortage = TanksWithFuel = 0.0;
+  Fshortage = Oshortage = TanksWithFuel = TanksWithOxidizer = 0.0;
 
-  // count how many assigned tanks have fuel
+  // count how many assigned tanks have fuel or oxidizer
   for (i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
-    if (Tank->GetContents() > 0.0) {
-      ++TanksWithFuel;
+    if (Tank->GetType() == FGTank::ttFUEL){
+      if (Tank->GetContents() > 0.0) {
+        ++TanksWithFuel;
+      }
+    } else if (Tank->GetType() == FGTank::ttOXIDIZER) {
+      haveOxTanks = true;
+      if (Tank->GetContents() > 0.0) {
+        ++TanksWithOxidizer;
+      }
     }
   }
-  if (!TanksWithFuel) return;
+  if (!TanksWithFuel || (haveOxTanks && !TanksWithOxidizer)) return;
 
   for (i=0; i<SourceTanks.size(); i++) {
     Tank = Propulsion->GetTank(SourceTanks[i]);
     if (Tank->GetType() == FGTank::ttFUEL) {
        Fshortage += Tank->Drain(CalcFuelNeed()/TanksWithFuel);
-    } else {
-       Oshortage += Tank->Drain(CalcOxidizerNeed()/TanksWithFuel);
+    } else if (Tank->GetType() == FGTank::ttOXIDIZER) {
+       Oshortage += Tank->Drain(CalcOxidizerNeed()/TanksWithOxidizer);
     }
   }
 
