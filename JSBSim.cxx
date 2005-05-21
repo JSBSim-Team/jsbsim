@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.186 2005/04/30 15:49:51 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.187 2005/05/21 07:17:10 frohlich Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -26,6 +26,7 @@
 #endif
 
 #include <simgear/compiler.h>
+#include <simgear/math/sg_geodesy.hxx>
 
 #include <stdio.h>	//	size_t
 #ifdef SG_MATH_EXCEPTION_CLASH
@@ -621,9 +622,34 @@ bool FGJSBsim::copy_from_JSBsim()
                                Propagate->GetUVW(3) );
 
     // Make the HUD work ...
-    _set_Velocities_Ground( Propagate->GetVel(eNorth),
-                            Propagate->GetVel(eEast),
-                            -Propagate->GetVel(eDown) );
+    {
+      const FGLocation& l = Auxiliary->GetLocationVRP();
+      double xyz[3] = { l(eX)*SG_FEET_TO_METER,
+                        l(eY)*SG_FEET_TO_METER,
+                        l(eZ)*SG_FEET_TO_METER };
+      double lat, lon, alt;
+      sgCartToGeod(xyz, &lat, &lon, &alt);
+      FGQuaternion Tec2geodhl(0, -0.5*M_PI-lat, lon);
+
+      FGColumnVector3 ecVel = l.GetTl2ec()*Propagate->GetVel();
+      FGColumnVector3 geodhlVel = Tec2geodhl.GetT()*ecVel;
+
+      _set_Velocities_Ground( geodhlVel(eNorth)*SG_FEET_TO_METER,
+                              geodhlVel(eEast)*SG_FEET_TO_METER,
+                              -geodhlVel(eDown)*SG_FEET_TO_METER );
+
+      // Transform the acceleration to the earth centered frame and then
+      // back to the geodetic hl frame.
+      FGColumnVector3 accel = Propagate->GetUVWdot();
+      accel -= Propagate->GetUVW()*Propagate->GetPQR();
+      accel = Propagate->GetTb2l()*accel;
+      accel = l.GetTl2ec()*accel;
+      accel = Tec2geodhl.GetT()*accel;
+
+      _set_Accels_Local( accel(eNorth)*SG_FEET_TO_METER,
+                         accel(eEast)*SG_FEET_TO_METER,
+                         -accel(eDown)*SG_FEET_TO_METER);
+    }
 
     _set_V_rel_wind( Auxiliary->GetVt() );
 
