@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.54 2005/01/27 12:23:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.55 2005/05/27 14:44:44 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,13 +182,21 @@ void FGGain::convert(void)
   cout << endl;
   cout << "        <component name=\"" << Name << "\" type=\"" << Type << "\">" << endl;
 
-  cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
+  if (invert)
+    cout << "            <input>-" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
+  else
+    cout << "            <input>" << (InputNodes[0]->GetFullyQualifiedName()).substr(12) << "</input>" << endl;
 
   if (Gain != 1.0)
     cout << "            <gain>" << Gain << "</gain>" << endl;
 
   if (Type == "PURE_GAIN") {                       // PURE_GAIN
   } else if (Type == "SCHEDULED_GAIN") {           // SCHEDULED_GAIN
+    cout << "            <table>" << endl;
+    cout << "              <independentVar>" << ScheduledBy->GetFullyQualifiedName().substr(12) << "</independentVar>" << endl;
+    cout << "              <tableData>" << endl;
+    cout << "              </tableData>" << endl;
+    cout << "            </table>" << endl;
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
     cout << "            <limit>" << endl;
     cout << "                <min>" << Min << "</min>" << endl;
