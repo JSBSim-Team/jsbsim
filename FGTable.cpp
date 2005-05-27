@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.35 2005/01/20 07:27:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.36 2005/05/27 14:44:07 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,6 +66,7 @@ FGTable::FGTable(int NRows, int NCols, int NTables)
   Data = Allocate(); // this data array will contain the keys for the associated tables
   Tables.reserve(nTables);
   for (int i=0; i<nTables; i++) Tables.push_back(FGTable(NRows, NCols));
+  lastRowIndex=lastColumnIndex=2;
 
   Debug(0);
 }
