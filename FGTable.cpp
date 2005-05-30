@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.36 2005/05/27 14:44:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.37 2005/05/30 06:20:01 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,7 +283,7 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey)
   }
 
   Value = Factor*(Tables[r-1].GetValue(rowKey, colKey) - Tables[r-2].GetValue(rowKey, colKey))
-                              + Tables[r-1].GetValue(rowKey, colKey);
+                              + Tables[r-2].GetValue(rowKey, colKey);
 
   return Value;
 }
