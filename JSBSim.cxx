@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.187 2005/05/21 07:17:10 frohlich Exp $
+// $Id: JSBSim.cxx,v 1.188 2005/05/31 11:13:11 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -26,7 +26,6 @@
 #endif
 
 #include <simgear/compiler.h>
-#include <simgear/math/sg_geodesy.hxx>
 
 #include <stdio.h>	//	size_t
 #ifdef SG_MATH_EXCEPTION_CLASH
@@ -39,6 +38,7 @@
 #include <simgear/debug/logstream.hxx>
 #include <simgear/math/sg_geodesy.hxx>
 #include <simgear/misc/sg_path.hxx>
+#include <simgear/structure/commands.hxx>
 
 #include <FDM/flight.hxx>
 
@@ -92,6 +92,7 @@ public:
     sgCartToGeod( pt, &lat, &lon, &alt);
     return alt * SG_METER_TO_FEET;
   }
+
   /** Compute the altitude above ground. */
   virtual double GetAGLevel(double t, const FGLocation& l,
                             FGLocation& cont,
@@ -116,7 +117,6 @@ FGJSBsim::FGJSBsim( double dt )
   : FGInterface(dt)
 {
     bool result;
-
                                 // Set up the debugging level
                                 // FIXME: this will not respond to
                                 // runtime changes
@@ -208,7 +208,7 @@ FGJSBsim::FGJSBsim( double dt )
       }
     }
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
-    
+
     fgSetDouble("/fdm/trim/pitch-trim", FCS->GetPitchTrimCmd());
     fgSetDouble("/fdm/trim/throttle",   FCS->GetThrottleCmd(0));
     fgSetDouble("/fdm/trim/aileron",    FCS->GetDaCmd());
@@ -316,6 +316,14 @@ void FGJSBsim::init()
      << ", " << fdmex->GetAtmosphere()->GetPressure()
      << ", " << fdmex->GetAtmosphere()->GetDensity() );
 
+    if (fgGetBool("/sim/presets/running")) {
+          for (int i=0; i < Propulsion->GetNumEngines(); i++) {
+            SGPropertyNode * node = fgGetNode("engines/engine", i, true);
+            node->setBoolValue("running", true);
+            Propulsion->GetEngine(i)->SetRunning(true);
+          }
+    }
+
     common_init();
 
     copy_to_JSBsim();
@@ -399,12 +407,13 @@ void FGJSBsim::update( double dt )
     // Compute the potential movement of this aircraft and query for the
     // ground in this area.
     double groundCacheRadius = acrad + 2*dt*Propagate->GetUVW().Magnitude();
+    double alt, slr, lat, lon;
     FGColumnVector3 cart = Auxiliary->GetLocationVRP();
     if ( needTrim && startup_trim->getBoolValue() ) {
-      double alt = fgic->GetAltitudeFtIC();
-      double slr = fgic->GetSeaLevelRadiusFtIC();
-      double lat = fgic->GetLatitudeDegIC() * SGD_DEGREES_TO_RADIANS;
-      double lon = fgic->GetLongitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      alt = fgic->GetAltitudeFtIC();
+      slr = fgic->GetSeaLevelRadiusFtIC();
+      lat = fgic->GetLatitudeDegIC() * SGD_DEGREES_TO_RADIANS;
+      lon = fgic->GetLongitudeDegIC() * SGD_DEGREES_TO_RADIANS;
       cart = FGLocation(lon, lat, alt+slr);
     }
     double cart_pos[3] = { cart(1), cart(2), cart(3) };
@@ -412,10 +421,14 @@ void FGJSBsim::update( double dt )
                                              groundCacheRadius );
     if (!cache_ok) {
       SG_LOG(SG_FLIGHT, SG_WARN,
-             "FGInterface is beeing called without scenery below the aircraft!");
-      return;
+             "FGInterface is being called without scenery below the aircraft!");
+      cout << "altitude         = " << alt << endl;
+      cout << "sea level radius = " << slr << endl;
+      cout << "latitude         = " << lat << endl;
+      cout << "longitude        = " << lon << endl;
+      //return;
     }
-      
+
     copy_to_JSBsim();
 
     trimmed->setBoolValue(false);
@@ -544,7 +557,7 @@ bool FGJSBsim::copy_to_JSBsim()
       } // end FGEngine code block
     }
 
- 
+
     Propagate->SetSeaLevelRadius( get_Sea_level_radius() );
 
     Atmosphere->SetExTemperature(
@@ -575,7 +588,7 @@ bool FGJSBsim::copy_to_JSBsim()
     SGPropertyNode* node = fgGetNode("/systems/refuel", true);
     Propulsion->SetRefuel(node->getDoubleValue("contact"));
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
-    
+
     return true;
 }
 
@@ -622,34 +635,9 @@ bool FGJSBsim::copy_from_JSBsim()
                                Propagate->GetUVW(3) );
 
     // Make the HUD work ...
-    {
-      const FGLocation& l = Auxiliary->GetLocationVRP();
-      double xyz[3] = { l(eX)*SG_FEET_TO_METER,
-                        l(eY)*SG_FEET_TO_METER,
-                        l(eZ)*SG_FEET_TO_METER };
-      double lat, lon, alt;
-      sgCartToGeod(xyz, &lat, &lon, &alt);
-      FGQuaternion Tec2geodhl(0, -0.5*M_PI-lat, lon);
-
-      FGColumnVector3 ecVel = l.GetTl2ec()*Propagate->GetVel();
-      FGColumnVector3 geodhlVel = Tec2geodhl.GetT()*ecVel;
-
-      _set_Velocities_Ground( geodhlVel(eNorth)*SG_FEET_TO_METER,
-                              geodhlVel(eEast)*SG_FEET_TO_METER,
-                              -geodhlVel(eDown)*SG_FEET_TO_METER );
-
-      // Transform the acceleration to the earth centered frame and then
-      // back to the geodetic hl frame.
-      FGColumnVector3 accel = Propagate->GetUVWdot();
-      accel -= Propagate->GetUVW()*Propagate->GetPQR();
-      accel = Propagate->GetTb2l()*accel;
-      accel = l.GetTl2ec()*accel;
-      accel = Tec2geodhl.GetT()*accel;
-
-      _set_Accels_Local( accel(eNorth)*SG_FEET_TO_METER,
-                         accel(eEast)*SG_FEET_TO_METER,
-                         -accel(eDown)*SG_FEET_TO_METER);
-    }
+    _set_Velocities_Ground( Propagate->GetVel(eNorth),
+                            Propagate->GetVel(eEast),
+                            -Propagate->GetVel(eDown) );
 
     _set_V_rel_wind( Auxiliary->GetVt() );
 
@@ -824,6 +812,13 @@ bool FGJSBsim::copy_from_JSBsim()
     flap_pos_pct->setDoubleValue( FCS->GetDfPos(ofNorm) );
     speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
     spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
+
+    // force a sim reset if crashed (altitude AGL < 0)
+    if (get_Altitude_AGL() < 0.0) {
+         fgSetBool("/sim/crashed", true);
+         SGPropertyNode* node = fgGetNode("/sim/presets", true);
+         globals->get_commands()->execute("old-reinit-dialog", node);
+    }
 
     return true;
 }
