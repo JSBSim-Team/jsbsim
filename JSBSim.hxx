@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.48 2005/04/19 19:41:52 frohlich Exp $
+    @version $Id: JSBSim.hxx,v 1.49 2005/06/10 02:02:12 dpculp Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -205,6 +205,9 @@ public:
     void do_trim(void);
     void update_ic(void);
 
+    //** Handle a crash of the user aircraft. */
+    void crash_handler();
+
 private:
     FGFDMExec *fdmex;
     FGInitialCondition *fgic;
@@ -262,6 +265,11 @@ private:
 
     void init_gear(void);
     void update_gear(void);
+
+    bool reset_on_crash;
+    bool pause_on_crash;
+    bool crashed;
+    string crash_message;
 
 };
 

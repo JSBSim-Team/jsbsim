@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.188 2005/05/31 11:13:11 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.189 2005/06/10 02:02:12 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -141,6 +141,11 @@ FGJSBsim::FGJSBsim( double dt )
             break;
         }
     }
+
+    reset_on_crash = fgGetBool("/sim/reset-on-crash", false);
+    pause_on_crash = fgGetBool("/sim/pause-on-crash", false); 
+    crashed = false;
+    fgSetBool("/sim/crashed", false);
 
     fdmex = new FGFDMExec( (FGPropertyManager*)globals->get_props() );
 
@@ -813,11 +818,10 @@ bool FGJSBsim::copy_from_JSBsim()
     speedbrake_pos_pct->setDoubleValue( FCS->GetDsbPos(ofNorm) );
     spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
 
-    // force a sim reset if crashed (altitude AGL < 0)
+    // crashed (altitude AGL < 0)
     if (get_Altitude_AGL() < 0.0) {
-         fgSetBool("/sim/crashed", true);
-         SGPropertyNode* node = fgGetNode("/sim/presets", true);
-         globals->get_commands()->execute("old-reinit-dialog", node);
+      crash_message = "Attempted to fly under ground.";
+      crash_handler();
     }
 
     return true;
@@ -1093,3 +1097,20 @@ void FGJSBsim::update_ic(void)
    }
 }
 
+void FGJSBsim::crash_handler(void)
+{
+   if (crashed) return;  // we already crashed
+   crashed = true;
+   fgSetBool("/sim/crashed", true);
+   SG_LOG( SG_FLIGHT, SG_WARN, "  Crash: " << crash_message );
+   if (reset_on_crash) {
+     SGPropertyNode* node = fgGetNode("/sim/presets", true);
+     globals->get_commands()->execute("old-reinit-dialog", node);   
+     return;
+   }
+   if (pause_on_crash) {
+     fgSetBool("/sim/freeze/master", true);
+     fgSetBool("/sim/freeze/clock", true);
+     return;
+   }
+}
