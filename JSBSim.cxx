@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.189 2005/06/10 02:02:12 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.190 2005/06/11 00:06:38 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -143,7 +143,6 @@ FGJSBsim::FGJSBsim( double dt )
     }
 
     reset_on_crash = fgGetBool("/sim/reset-on-crash", false);
-    pause_on_crash = fgGetBool("/sim/pause-on-crash", false); 
     crashed = false;
     fgSetBool("/sim/crashed", false);
 
@@ -1106,11 +1105,8 @@ void FGJSBsim::crash_handler(void)
    if (reset_on_crash) {
      SGPropertyNode* node = fgGetNode("/sim/presets", true);
      globals->get_commands()->execute("old-reinit-dialog", node);   
-     return;
-   }
-   if (pause_on_crash) {
+   } else {
      fgSetBool("/sim/freeze/master", true);
      fgSetBool("/sim/freeze/clock", true);
-     return;
    }
 }

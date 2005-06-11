@@ -85,7 +85,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.49 2005/06/10 02:02:12 dpculp Exp $
+    @version $Id: JSBSim.hxx,v 1.50 2005/06/11 00:06:38 dpculp Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -267,7 +267,6 @@ private:
     void update_gear(void);
 
     bool reset_on_crash;
-    bool pause_on_crash;
     bool crashed;
     string crash_message;
 
