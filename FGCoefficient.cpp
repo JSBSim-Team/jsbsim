@@ -63,7 +63,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.74 2005/01/27 12:23:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCoefficient.cpp,v 1.75 2005/06/12 02:53:19 jberndt Exp $";
 static const char *IdHdr = ID_COEFFICIENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -432,8 +432,14 @@ void FGCoefficient::convert(string prop)
     cout << "                          <independentVar lookup=\"row\">" << (LookupR->GetFullyQualifiedName()).substr(12) << "</independentVar>" << endl;
     cout << "                          <independentVar lookup=\"column\">" << (LookupC->GetFullyQualifiedName()).substr(12) << "</independentVar>" << endl;
     cout << "                          <independentVar lookup=\"table\">" << (LookupT->GetFullyQualifiedName()).substr(12) << "</independentVar>" << endl;
-    cout << "                          <tableData>" << endl;
-    Table->Print(30);
+    cout << "                          <tableData breakPoint=\"" << Table->GetElement(1,1) << "\">" << endl;
+    Table->GetTable(0).Print(30);
+    cout << "                          </tableData>" << endl;
+    cout << "                          <tableData breakPoint=\"" << Table->GetElement(2,1) << "\">" << endl;
+    Table->GetTable(1).Print(30);
+    cout << "                          </tableData>" << endl;
+    cout << "                          <tableData breakPoint=\"" << Table->GetElement(3,1) << "\">" << endl;
+    Table->GetTable(2).Print(30);
     cout << "                          </tableData>" << endl;
     cout << "                      </table>" << endl;
     break;

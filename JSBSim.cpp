@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.95 2005/01/27 12:23:11 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.96 2005/06/12 02:53:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -230,18 +230,13 @@ int main(int argc, char* argv[])
       exit(-1);
     }
 
-    JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
-    if ( ! IC->Load(ResetName)) {
-      cerr << "Initialization unsuccessful" << endl;
-      exit(-1);
+    if (!bConvert) {
+      JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
+      if ( ! IC->Load(ResetName)) {
+        cerr << "Initialization unsuccessful" << endl;
+        exit(-1);
+      }
     }
-/*
-    JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
-    if ( !fgt.DoTrim() ) {
-      cout << "Trim Failed" << endl;
-    }
-    fgt.Report();
-*/
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);
@@ -564,9 +559,9 @@ void convert(JSBSim::FGFDMExec* FDMExec)
   // flight control section
 
   cout << "    <flight_control name=\"" << FDMExec->GetFCS()->Name << "\">" << endl;
-
+  cout << "     <channel name=\"All\">" << endl;
   FDMExec->GetFCS()->convert();
-
+  cout << "     </channel>" << endl;
   cout << "    </flight_control>" << endl;
 
   // aerodynamics section
