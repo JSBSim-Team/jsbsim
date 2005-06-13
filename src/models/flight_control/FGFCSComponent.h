@@ -43,15 +43,15 @@ INCLUDES
 
 #include <string>
 #include <vector>
-#include "FGJSBBase.h"
-#include "FGPropertyManager.h"
-#include "FGXMLElement.h"
+#include <FGJSBBase.h>
+#include <input_output/FGPropertyManager.h>
+#include <input_output/FGXMLElement.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
 
 using std::string;
 
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
     - FGGradient
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 

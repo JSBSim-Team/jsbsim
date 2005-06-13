@@ -38,11 +38,11 @@ INCLUDES
 #include <sstream>
 
 #include "FGNozzle.h"
-#include "FGAtmosphere.h"
+#include <models/FGAtmosphere.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

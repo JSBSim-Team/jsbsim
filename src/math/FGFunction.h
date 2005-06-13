@@ -18,14 +18,14 @@ INCLUDES
 #include <vector>
 #include <string>
 #include "FGParameter.h"
-#include "FGXMLElement.h"
-#include "FGPropertyManager.h"
+#include <input_output/FGXMLElement.h>
+#include <input_output/FGPropertyManager.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

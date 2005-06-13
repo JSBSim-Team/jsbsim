@@ -18,15 +18,6 @@ JSBSim home page here:
 
 http://www.jsbsim.org
 
-The standalone version of JSBSim can be easily built from the command
-line of a unix or unix-like (CygWin/Linux/Unix/IRIX, etc.) system like
-this:
-
-make -fMakefile.solo
-
-Directions are also provided below for using traditional auto* utilities
-also provided with JSBSim.
-
 
 2) Building with autoconf/automake
 ----------------------------------
@@ -43,7 +34,7 @@ snapshot, you will need to create the initial configure script. The
 commands to do this have been included in the 'autogen.sh' script, so
 just :
 
-$ ./autogen.sh
+$ ./autogen.sh [--no-configure]
 
 If you wish to customise your version of JSBSim, use the following to
 determine any build-time options you may be interested in.
@@ -72,4 +63,5 @@ install 'JSBSim.a' into '/usr/local/lib'.
 ----------
 
 For more information on JSBSim contact Jon Berndt at jon@jsbsim.org.
+
 

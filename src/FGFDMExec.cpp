@@ -56,23 +56,23 @@ INCLUDES
 
 #include "FGFDMExec.h"
 #include "FGState.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGPropulsion.h"
-#include "FGMassBalance.h"
-#include "FGGroundReactions.h"
-#include "FGAerodynamics.h"
-#include "FGInertial.h"
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
-#include "FGInitialCondition.h"
-#include "FGPropertyManager.h"
+#include <models/FGAtmosphere.h>
+#include <models/FGFCS.h>
+#include <models/FGPropulsion.h>
+#include <models/FGMassBalance.h>
+#include <models/FGGroundReactions.h>
+#include <models/FGAerodynamics.h>
+#include <models/FGInertial.h>
+#include <models/FGAircraft.h>
+#include <models/FGPropagate.h>
+#include <models/FGAuxiliary.h>
+#include <models/FGOutput.h>
+#include <initialization/FGInitialCondition.h>
+#include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.2 2005/06/13 00:35:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

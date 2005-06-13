@@ -58,18 +58,18 @@ INCLUDES
 #endif
 
 #include "FGInitialCondition.h"
-#include "FGFDMExec.h"
-#include "FGInertial.h"
-#include "FGAtmosphere.h"
-#include "FGAerodynamics.h"
-#include "FGPropagate.h"
-#include "FGPropertyManager.h"
-#include "FGPropulsion.h"
-#include "FGXMLParse.h"
+#include <FGFDMExec.h>
+#include <models/FGInertial.h>
+#include <models/FGAtmosphere.h>
+#include <models/FGAerodynamics.h>
+#include <models/FGPropagate.h>
+#include <input_output/FGPropertyManager.h>
+#include <models/FGPropulsion.h>
+#include <input_output/FGXMLParse.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.2 2005/06/13 00:54:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************

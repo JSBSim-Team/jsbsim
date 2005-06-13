@@ -59,26 +59,26 @@ INCLUDES
 #include <string>
 #include <map>
 #include "FGJSBBase.h"
-#include "FGInitialCondition.h"
-#include "FGMatrix33.h"
-#include "FGColumnVector3.h"
-#include "FGQuaternion.h"
+#include <initialization/FGInitialCondition.h>
+#include <math/FGMatrix33.h>
+#include <math/FGColumnVector3.h>
+#include <math/FGQuaternion.h>
 #include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGPropagate.h"
-#include "FGAuxiliary.h"
-#include "FGAerodynamics.h"
-#include "FGOutput.h"
-#include "FGAircraft.h"
-#include "FGGroundReactions.h"
-#include "FGPropulsion.h"
+#include <models/FGAtmosphere.h>
+#include <models/FGFCS.h>
+#include <models/FGPropagate.h>
+#include <models/FGAuxiliary.h>
+#include <models/FGAerodynamics.h>
+#include <models/FGOutput.h>
+#include <models/FGAircraft.h>
+#include <models/FGGroundReactions.h>
+#include <models/FGPropulsion.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $
+    @version $Id: FGState.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

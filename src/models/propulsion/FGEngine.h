@@ -57,15 +57,15 @@ INCLUDES
 #  include <string>
 #endif
 
-#include "FGJSBBase.h"
+#include <FGJSBBase.h>
 #include "FGThruster.h"
-#include "FGPropertyManager.h"
+#include <input_output/FGPropertyManager.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
 
 using std::string;
 using std::vector;
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,17 +222,17 @@ protected:
   void Debug(int from);
 };
 }
-#include "FGState.h"
-#include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGPropulsion.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
-#include "FGThruster.h"
-#include "FGXMLElement.h"
+#include <FGState.h>
+#include <FGFDMExec.h>
+#include <models/FGAtmosphere.h>
+#include <models/FGFCS.h>
+#include <models/FGAircraft.h>
+#include <models/FGPropagate.h>
+#include <models/FGPropulsion.h>
+#include <models/FGAuxiliary.h>
+#include <models/FGOutput.h>
+#include <models/propulsion/FGThruster.h>
+#include <input_output/FGXMLElement.h>
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif

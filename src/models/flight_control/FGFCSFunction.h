@@ -38,14 +38,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCSComponent.h"
-#include "FGXMLElement.h"
-#include "FGFunction.h"
+#include <input_output/FGXMLElement.h>
+#include <math/FGFunction.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $"
+#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,7 @@ CLASS DOCUMENTATION
 
 /** Models a FCSFunction object.
     @author Jon S. Berndt
-    @version $Id: FGFCSFunction.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $
+    @version $Id: FGFCSFunction.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

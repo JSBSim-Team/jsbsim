@@ -56,16 +56,16 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGEngine.h"
-#include "FGTank.h"
-#include "FGMatrix33.h"
-#include "FGXMLElement.h"
+#include <models/propulsion/FGEngine.h>
+#include <models/propulsion/FGTank.h>
+#include <math/FGMatrix33.h>
+#include <input_output/FGXMLElement.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $
     @see
     FGEngine
     FGTank

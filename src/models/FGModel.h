@@ -38,9 +38,9 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "FGPropertyManager.h"
-#include "FGXMLElement.h"
+#include <FGJSBBase.h>
+#include <input_output/FGPropertyManager.h>
+#include <input_output/FGXMLElement.h>
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
 
 using namespace std;
 

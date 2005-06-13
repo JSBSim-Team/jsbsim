@@ -38,22 +38,22 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGFCS.h"
-#include "FGFDMExec.h"
-#include "FGPropertyManager.h"
+#include <FGFDMExec.h>
+#include <input_output/FGPropertyManager.h>
 #include <fstream>
 
-#include "FGFilter.h"
-#include "FGDeadBand.h"
-#include "FGGain.h"
-#include "FGGradient.h"
-#include "FGSwitch.h"
-#include "FGSummer.h"
-#include "FGKinemat.h"
-#include "FGFCSFunction.h"
+#include <models/flight_control/FGFilter.h>
+#include <models/flight_control/FGDeadBand.h>
+#include <models/flight_control/FGGain.h>
+#include <models/flight_control/FGGradient.h>
+#include <models/flight_control/FGSwitch.h>
+#include <models/flight_control/FGSummer.h>
+#include <models/flight_control/FGKinemat.h>
+#include <models/flight_control/FGFCSFunction.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.2 2005/06/13 00:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.3 2005/06/13 16:59:17 ehofman Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)

@@ -56,11 +56,11 @@ INCLUDES
 
 #include "FGScript.h"
 #include "FGXMLParse.h"
-#include "FGTrim.h"
+#include <initialization/FGTrim.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.2 2005/06/13 00:54:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

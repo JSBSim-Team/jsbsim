@@ -50,13 +50,13 @@ INCLUDES
    using std::endl;
 #endif
 
-#include "FGColumnVector3.h"
+#include <math/FGColumnVector3.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -133,7 +133,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

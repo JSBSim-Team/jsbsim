@@ -39,19 +39,19 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGState.h"
-#include "FGFCS.h"
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGAuxiliary.h"
-#include "FGOutput.h"
-#include "FGScript.h"
-#include "FGJSBBase.h"
-#include "FGTrim.h"
+#include <FGFDMExec.h>
+#include <models/FGAtmosphere.h>
+#include <FGState.h>
+#include <models/FGFCS.h>
+#include <models/FGAircraft.h>
+#include <models/FGPropagate.h>
+#include <models/FGAuxiliary.h>
+#include <models/FGOutput.h>
+#include <input_output/FGScript.h>
+#include <FGJSBBase.h>
+#include <initialization/FGTrim.h>
 
-#if !defined(__GNUC__)
+#if !defined(__GNUC__) && !defined(sgi)
 #  include <time>
 #else
 #  include <time.h>
@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.2 2005/06/13 00:35:18 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA

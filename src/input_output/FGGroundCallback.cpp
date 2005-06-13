@@ -31,8 +31,8 @@ HISTORY
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGColumnVector3.h"
-#include "FGLocation.h"
+#include <math/FGColumnVector3.h>
+#include <math/FGLocation.h>
 #include "FGGroundCallback.h"
 
 namespace JSBSim {

@@ -50,16 +50,16 @@ INCLUDES
 #endif
 
 #include <string>
-#include "FGFCSComponent.h"
-#include "FGModel.h"
-#include "FGLGear.h"
-#include "FGXMLElement.h"
+#include <models/flight_control/FGFCSComponent.h>
+#include <models/FGModel.h>
+#include <models/FGLGear.h>
+#include <input_output/FGXMLElement.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain

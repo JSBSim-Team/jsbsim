@@ -53,14 +53,14 @@ INCLUDES
 #endif
 
 #include "FGModel.h"
-#include "FGXMLElement.h"
-#include "FGColumnVector3.h"
+#include <input_output/FGXMLElement.h>
+#include <math/FGColumnVector3.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994

@@ -42,17 +42,17 @@ INCLUDES
 #  include <simgear/compiler.h>
 #endif
 
-#include "FGJSBBase.h"
-#include "FGFDMExec.h"
-#include "FGXMLElement.h"
-#include "FGColumnVector3.h"
+#include <FGJSBBase.h>
+#include <FGFDMExec.h>
+#include <input_output/FGXMLElement.h>
+#include <math/FGColumnVector3.h>
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +158,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.2 2005/06/13 00:54:44 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",

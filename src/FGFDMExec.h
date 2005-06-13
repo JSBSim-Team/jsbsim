@@ -40,14 +40,14 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGModel.h"
-#include "FGTrim.h"
-#include "FGInitialCondition.h"
-#include "FGJSBBase.h"
-#include "FGPropertyManager.h"
-#include "FGXMLParse.h"
-#include "FGGroundCallback.h"
-#include "FGPropagate.h"
+#include <models/FGModel.h>
+#include <initialization/FGTrim.h>
+#include <initialization/FGInitialCondition.h>
+#include <FGJSBBase.h>
+#include <input_output/FGPropertyManager.h>
+#include <input_output/FGXMLParse.h>
+#include <input_output/FGGroundCallback.h>
+#include <models/FGPropagate.h>
 
 #include <vector>
 
@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +101,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

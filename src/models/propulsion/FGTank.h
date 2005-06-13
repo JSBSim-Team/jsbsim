@@ -44,10 +44,10 @@ SENTRY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGJSBBase.h"
-#include "FGXMLElement.h"
-#include "FGColumnVector3.h"
-#include "FGAuxiliary.h"
+#include <FGJSBBase.h>
+#include <input_output/FGXMLElement.h>
+#include <math/FGColumnVector3.h>
+// #include <FGAuxiliary.h>
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.2 2005/06/13 00:54:46 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS

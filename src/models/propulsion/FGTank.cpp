@@ -36,6 +36,8 @@ HISTORY
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+#include <FGFDMExec.h>
+#include <models/FGAuxiliary.h>
 #include "FGTank.h"
 
 #if !defined ( sgi ) || defined( __GNUC__ ) && (_COMPILER_VERSION < 740)
@@ -46,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.2 2005/06/13 00:54:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
