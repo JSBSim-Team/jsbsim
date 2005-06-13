@@ -6,6 +6,6 @@
   Models a one mega-watt electric engine (about 1341 HP)
 -->
 
-<FG_ELECTRIC NAME="electric_1mw">
-  POWER_WATTS   1000000.0
-</FG_ELECTRIC>
+<electric_engine name="electric_1mw">
+  <power unit="WATTS">  1000000.0 </power>
+</electric_engine>

@@ -1,14 +1,13 @@
 <?xml version="1.0"?>
-<FG_NOZZLE NAME="X-15 XLR-99 Nozzle">
+<nozzle name="X-15 XLR-99 Nozzle">
   <!--
-    PE      = Nozzle exit pressure, psf.
-    EXPR    = Nozzle expansion ratio, Ae/At, sqft.
-    NZL_EFF = Nozzle efficiency, 0.0 - 1.0
-    DIAM    = Nozzle diameter, ft.
+    pe      = Nozzle exit pressure, psf.
+    expr    = Nozzle expansion ratio, Ae/At, sqft. dimensionless ratio
+    nzl_eff = Nozzle efficiency, 0.0 - 1.0
+    diam    = Nozzle diameter, ft.
   -->
-  PE     40
-  EXPR    9.8
-  NZL_EFF 0.67
-  DIAM    3.2
-</FG_NOZZLE>
-
+  <pe unit="PSF"> 40.0  </pe>
+  <expr>           9.8  </expr>
+  <nzl_eff>        0.67 </nzl_eff>
+  <diam unit="FT"> 3.2  </diam>
+</nozzle>

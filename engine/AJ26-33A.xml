@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
   File:     AJ26-33A.xml
-  Author:   Aero-Matic v 0.7; refined by Jon Berndt
+  Author:   Aero-Matic v 0.8; refined by Jon Berndt
 
   Inputs:
     Name:           AJ26-33A (Aerojet)
@@ -32,12 +32,13 @@
 
 -->
 
-<FG_ROCKET NAME="AJ26-33A">
-  SHR              1.24
-  MAX_PC      303700.0
-  PROP_EFF         0.67
-  MAXTHROTTLE      1.0
-  MINTHROTTLE      0.4
-  SLFUELFLOWMAX  314.0
-  SLOXIFLOWMAX   816.0
-</FG_ROCKET>
+<rocket_engine name="AJ26-33A">
+  <shr>                   1.24  </shr>
+  <max_pc unit="PSF">303700.00  </max_pc>
+  <variance>              0.10  </variance>
+  <prop_eff>              0.67  </prop_eff>
+  <maxthrottle>           1.00  </maxthrottle>
+  <minthrottle>           0.40  </minthrottle>
+  <slfuelflowmax unit="LBS/SEC">  314.0  </slfuelflowmax>
+  <sloxiflowmax unit="LBS/SEC">   816.0  </sloxiflowmax>
+</rocket_engine>

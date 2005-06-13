@@ -1,74 +1,54 @@
 <?xml version="1.0"?>
+<!--
+  File:     T76.xml
+  Author:   Aero-Matic v 0.8
 
-<!-- T76 turboprop engine model
-     for the FGTurbine turbine model -->
+  Inputs:
+    name:           T76
+    type:           turboprop
+    power:          717 hp
+    augmented?      no
+    injected?       no
+-->
 
-<FG_TURBINE NAME="T76">
-  <!--
-     MILTHRUST     max static thrust (without afterburning) at S.L. (installed), lbf
-     MAXTHRUST     max static thrust with afterburning at S.L. (installed), lbf
-     BYPASSRATIO   bypass ratio
-     TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
-     ATSFC         augmented TSFC (lbm/hr/lbf)
-     IDLEN1        idle percent rpm of fan spool
-     IDLEN2        idle percent rpm of inner spool
-     MAXN1         N1 at 100% throttle
-     MAXN2         N2 at 100% throttle
-     AUGMENTED     = 1 if augmentation installed, else = 0
-     AUGMETHOD     = 0 if using property /engine[n]/augmentation
-                   = 1 if using last 1% of throttle movement
-                   = 2 if using FCS-defined throttle
-     INJECTED      = 1 if water injection installed
+<turbine_engine name="T76">
+  <milthrust>    1600.0 </milthrust>
+  <tsfc>            0.55 </tsfc>
+  <idlen2>         61.0  </idlen2>
+  <maxn2>         100.0  </maxn2>
+  <augmented>         0  </augmented>
+  <injected>          0  </injected>
 
-     TABLE(0)      idle thrust vs. altitude and mach
-     TABLE(1)      maximum un-augmented thrust vs. altitude and mach
-     TABLE(2)      augmented thrust multiplier vs. altitude and mach
-     TABLE(3)      water-injection multiplier vs. altitude and mach
-  -->
+  <function name="IdleThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000       0   10000   20000   30000   40000   50000
+     0.0  0.0430  0.0488  0.0528  0.0694  0.0899  0.1183  0.1467
+     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342
+     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
+     0.6  0.0     0.0     0.0     0.0276  0.0718  0.0430  0.0
+     0.8  0.0     0.0     0.0     0.0     0.0174  0.0086  0.0
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0
+   </tableData>
+   </table>
+  </function>
 
-  MILTHRUST    1600
-  MAXTHRUST    1600
-  BYPASSRATIO  0
-  TSFC         0.55
-  ATSFC        0.00
-  IDLEN1       0.0
-  IDLEN2       61.0
-  MAXN1        0.0
-  MAXN2        100.0
-  AUGMENTED    0
-  AUGMETHOD    0
-  INJECTED     0
+  <function name="MilThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000       0   10000   20000   30000   40000   50000
+     0.0  1.1260  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
+     0.2  1.1000  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430
+     0.4  1.0000  0.6410  0.6120  0.4060  0.3570  0.2330  0.1450
+     0.6  0.4430  0.3510  0.2710  0.2020  0.1780  0.1020  0.0640
+     0.8  0.0240  0.0200  0.0160  0.0130  0.0110  0.0100  0.0
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0     0.0
+    </tableData>
+   </table>
+  </function>
 
-  <TABLE NAME="IdleThrust" TYPE="TABLE">
-    Idle_power_thrust_factor
-    6
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0   10000   20000   30000   40000  50000
-    0.0    0.0836  0.0528  0.0694  0.0899  0.1183  0.1467
-    0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
-    0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
-    0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073
-    0.8   -0.2129 -0.1498 -0.1025 -0.0195  0.0473  0.0868
-    1.0   -0.2839 -0.1104 -0.0469 -0.0270 -0.0158  0.0552
-  </TABLE>
-
- <TABLE NAME="MilThrust" TYPE="TABLE">
-  Military_power_thrust_factor
-  6
-  6
-  velocities/mach-norm
-  position/h-sl-ft
-  none
-              0   10000   20000   30000   40000   50000
-  0.0    1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
-  0.2    0.7340  0.6970  0.5060  0.3550  0.2310  0.1430
-  0.4    0.6210  0.5920  0.4060  0.3570  0.2330  0.1450
-  0.6    0.3510  0.2710  0.2020  0.1780  0.1020  0.0640
-  0.8    0.0200  0.0200  0.0200  0.0200  0.0200  0.0200
-  1.0    0.0     0.0     0.0     0.0     0.0     0.0
- </TABLE>
-
-</FG_TURBINE>
+</turbine_engine>

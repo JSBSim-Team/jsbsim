@@ -1,17 +1,16 @@
 <?xml version="1.0"?>
-<FG_ROCKET NAME="XLR-99">
+<rocket_engine name="XLR-99">
   <!--
-    SHR      = Specific Heat Ratio, for LOX/Ammonia this is 1.23
-    MAX_PC   = Maximum chamber pressure in psf
-    PROP_EFF = propulsive efficiency. This is largely a fudge factor.
+    shr      = Specific Heat Ratio, for LOX/Ammonia this is 1.23
+    max_pc   = Maximum chamber pressure in psf
+    prop_eff = propulsive efficiency. This is largely a fudge factor.
   -->
-  SHR              1.23
-  MAX_PC       86556.0
-  VARIANCE         0.10
-  PROP_EFF         0.67
-  MAXTHROTTLE      1.0
-  MINTHROTTLE      0.4
-  SLFUELFLOWMAX   91.5
-  SLOXIFLOWMAX   105.2
-</FG_ROCKET>
-
+  <shr>                   1.23  </shr>
+  <max_pc unit="PSF"> 86556.00  </max_pc>
+  <variance>              0.10  </variance>
+  <prop_eff>              0.67  </prop_eff>
+  <maxthrottle>           1.00  </maxthrottle>
+  <minthrottle>           0.40  </minthrottle>
+  <slfuelflowmax unit="LBS/SEC">   91.5  </slfuelflowmax>
+  <sloxiflowmax unit="LBS/SEC">   105.2  </sloxiflowmax>
+</rocket_engine>

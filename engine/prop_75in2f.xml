@@ -1,11 +1,16 @@
 <?xml version="1.0"?>
-<FG_PROPELLER  NAME="Fixed-Pitch 75-inch Two-Blade Propeller">
-  IXX       1.67
-  DIAMETER  75
-  NUMBLADES  2
-  MINPITCH 22
-  MAXPITCH 22
-  C_THRUST 25 1 
+
+<propeller name="Fixed-Pitch 75-inch Two-Blade Propeller">
+  <ixx> 1.67 </ixx>
+  <diameter unit="IN"> 75.0 </diameter>
+  <numblades> 2 </numblades>
+  <minpitch> 22 </minpitch>
+  <maxpitch> 22 </maxpitch>
+
+  <function name="C_THRUST">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <tableData>
   0.0   0.068
   0.1   0.068
   0.2   0.067
@@ -31,7 +36,14 @@
   2.2   -0.067
   2.3   -0.068
   5.0   -0.068
-  C_POWER 26 1  
+      </tableData>
+    </table>
+  </function>
+
+  <function name="C_POWER">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <tableData>
   0.0   0.0580
   0.1   0.0620
   0.2   0.0600
@@ -58,4 +70,8 @@
   2.3   0.0431
   2.4   0.0424
   5.0   0.0413
-</FG_PROPELLER>
+      </tableData>
+    </table>
+  </function>
+
+</propeller>

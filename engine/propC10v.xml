@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
-<FG_PROPELLER  NAME="Clark Y 0.08 thickness/chord ratio variable pitch">
-  IXX       1.8
-  DIAMETER  84
-  NUMBLADES  2
-  MINPITCH 11
-  MAXPITCH 27
-  MINRPM 700
-  MAXRPM 2700
-  C_THRUST 41 5
+
+<propeller name="Clark Y 0.08 t/c ratio, variable pitch">
+  <ixx>                1.8 </ixx>
+  <diameter unit="IN"> 84.0 </diameter>
+  <numblades>          2   </numblades>
+  <minpitch>          11   </minpitch>
+  <maxpitch>          27   </maxpitch>
+  <minrpm>           700   </minrpm>
+  <maxrpm>          2700   </maxrpm>
+
+  <function name="C_THRUST">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <independentVar lookup="column">propulsion/blade-angle</independentVar>
+      <tableData>
            11.0000  15.0000  19.0000   23.0000  27.0000
   0.1000   0.0750   0.0818    0.0910   0.0870   0.0950
   0.1500   0.0670   0.0795    0.0910   0.0882   0.0933
@@ -50,7 +56,15 @@
   2.0000   -0.0800  -0.0800  -0.0800   -0.0800  -0.0790
   3.0000   -0.0810  -0.0800  -0.0800   -0.0800  -0.0800
   4.0000   -0.0820  -0.0800  -0.0800   -0.0800  -0.0800
-  C_POWER 35 5
+      </tableData>
+    </table>
+  </function>
+
+  <function name="C_POWER">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <independentVar lookup="column">propulsion/blade-angle</independentVar>
+      <tableData>
          11.0000  15.000  19.000  23.000  27.000
   0.1000  0.0295  0.0400  0.0520  0.0769  0.1055
   0.1500  0.0290  0.0400  0.0521  0.0755  0.1029
@@ -87,5 +101,8 @@
   2.0350  0.0300  0.0400  0.0525  0.0663  0.0700
   3.0000  0.0300  0.0400  0.0523  0.0740  0.0928
   4.0000  0.0300  0.0400  0.0521  0.0769  0.1000
-</FG_PROPELLER>
+      </tableData>
+    </table>
+  </function>
 
+</propeller>

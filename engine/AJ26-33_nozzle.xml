@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
-<FG_NOZZLE NAME="AJ26-33 Nozzle">
+<nozzle name="AJ26-33 Nozzle">
   <!--
-    PE      = Nozzle exit pressure, psf.
-    EXPR    = Nozzle expansion ratio, Ae/At, sqft.
-    NZL_EFF = Nozzle efficiency, 0.0 - 1.0
-    DIAM    = Nozzle diameter, ft.
+    pe      = Nozzle exit pressure, psf.
+    expr    = Nozzle expansion ratio, Ae/At, sqft.
+    nzl_eff = Nozzle efficiency, 0.0 - 1.0
+    diam    = Nozzle diameter, ft.
   -->
-  PE     2116
-  EXPR    27.0
-  NZL_EFF 0.67
-  DIAM    4.9
-</FG_NOZZLE>
+  <pe unit="PSF">  40.0  </pe>
+  <expr>            9.8  </expr>
+  <nzl_eff>         0.67 </nzl_eff>
+  <diam unit="FT">  3.2  </diam>
+</nozzle>
 

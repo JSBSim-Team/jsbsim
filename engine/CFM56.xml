@@ -1,76 +1,59 @@
 <?xml version="1.0"?>
+<!--
+  File:     CFM56_5.xml
+  Author:   Aero-Matic v 0.8
 
-<!-- CFM56 turbofan engine model
-     Version 1.0, 14 Mar 2003, David Culp, davidculp2@comcast.net
-     Updated 20 Oct 2003, DPC, new MAXTHRUST item
+  Inputs:
+    name:           CFM56
+    type:           turbine
+    thrust:         20000 lb
+    augmented?      no
+    injected?       no
 -->
 
-<FG_TURBINE NAME="CFM56">
-  <!--
-     MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
-     MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
-     BYPASSRATIO   bypass ratio
-     TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
-     ATSFC         augmented TSFC (lbm/hr/lbf)
-     BLEED         bleed loss (four percent is typical)
-     IDLEN1        idle percent rpm of fan spool
-     IDLEN2        idle percent rpm of inner spool
-     MAXN1         N1 at 100% throttle
-     MAXN2         N2 at 100% throttle
-     AUGMENTED     =1 if augmentation installed, else =0
-     INJECTED      =1 if water injection installed, else =0  
+<turbine_engine name="CFM56">
+  <milthrust> 20000.0 </milthrust>
+  <bypassratio>     5.9 </bypassratio>
+  <tsfc>            0.657 </tsfc>
+  <bleed>           0.04 </bleed>
+  <idlen1>         30.0 </idlen1>
+  <idlen2>         60.0 </idlen2>
+  <maxn1>         100.0 </maxn1>
+  <maxn2>         100.0 </maxn2>
+  <augmented>         0 </augmented>
+  <injected>          0 </injected>
 
-     TABLE(0)      idle thrust vs. altitude and mach
-     TABLE(1)      maximum un-augmented thrust vs. altitude and mach
-     TABLE(2)      augmented thrust multiplier vs. altitude and mach
-     TABLE(3)      water-injection multiplier vs. altitude and mach
-  -->
+  <function name="IdleThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+         -10000     0     10000   20000   30000   40000   50000
+     0.0  0.0420  0.0436  0.0528  0.0694  0.0899  0.1183  0.1467
+     0.2  0.0500  0.0501  0.0335  0.0544  0.0797  0.1049  0.1342
+     0.4  0.0040  0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
+     0.6  0.0     0.0     0.0     0.0     0.0276  0.0718  0.1073
+     0.8  0.0     0.0     0.0     0.0     0.0174  0.0468  0.0900
+     1.0  0.0     0.0     0.0     0.0     0.0     0.0422  0.0700
+    </tableData>
+   </table>
+  </function>
 
-  MILTHRUST    20000
-  MAXTHRUST    20000
-  BYPASSRATIO  5.9
-  TSFC         0.657
-  ATSFC        0.0
-  BLEED        0.04 
-  IDLEN1       30.0
-  IDLEN2       60.0
-  MAXN1        100.0
-  MAXN2        100.0
-  AUGMENTED    0
-  INJECTED     0
+  <function name="MilThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+          -10000       0   10000   20000   30000   40000   50000
+     0.0   1.2600  1.0000  0.7400  0.5340  0.3720  0.2410  0.1490
+     0.2   1.1710  0.9340  0.6970  0.5060  0.3550  0.2310  0.1430
+     0.4   1.1500  0.9210  0.6920  0.5060  0.3570  0.2330  0.1450
+     0.6   1.1810  0.9510  0.7210  0.5320  0.3780  0.2480  0.1540
+     0.8   1.2580  1.0200  0.7820  0.5820  0.4170  0.2750  0.1700
+     1.0   1.3690  1.1200  0.8710  0.6510  0.4750  0.3150  0.1950
+     1.2   0.0000  0.0000  0.0000  0.0000  0.0000  0.0000  0.0000
+    </tableData>
+   </table>
+  </function>
 
-
-  <TABLE NAME="IdleThrust" TYPE="TABLE">
-    Idle_power_thrust_factor
-    6
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-                0   10000   20000   30000   40000  50000
-    0.0    0.0317  0.0528  0.0694  0.0899  0.1183  0.1467
-    0.2    0.0501  0.0335  0.0544  0.0797  0.1049  0.1341
-    0.4    0.0047  0.0020  0.0272  0.0595  0.0891  0.1203
-    0.6   -0.0804 -0.0560 -0.0237  0.0276  0.0718  0.1073
-    0.8   -0.2129 -0.1498 -0.1025 -0.0195  0.0473  0.0868
-    1.0   -0.2839 -0.1104 -0.0469 -0.0270 -0.0158  0.0552
-  </TABLE>
-
-  <TABLE NAME="MilThrust" TYPE="TABLE">
-    Effects_of_altitude_and_mach_on_thrust
-    7
-    6
-    velocities/mach-norm
-    position/h-sl-ft
-    none
-               0    10000   20000     30000    40000    50000
-    0.0   1.0000   0.7216   0.4890   0.3115   0.1932   0.1104
-    0.2   1.0000   0.7216   0.4979   0.3186   0.1948   0.1104
-    0.4   0.9945   0.7344   0.5213   0.3383   0.2050   0.1230
-    0.6   0.9968   0.7759   0.5591   0.3675   0.2240   0.1309
-    0.8   0.9771   0.8025   0.6112   0.4196   0.2563   0.1522
-    0.9   0.9300   0.7900   0.6000   0.3900   0.2300   0.1300
-    1.0   0.5000   0.5000   0.4000   0.2000   0.1500   0.0900
-  </TABLE>
-
-</FG_TURBINE>
+</turbine_engine>

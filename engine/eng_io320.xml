@@ -1,12 +1,23 @@
 <?xml version="1.0"?>
-<FG_PISTON NAME="IO320">
-  MINMP             6.5
-  MAXMP            29.92
-  DISPLACEMENT    320.0
-  MAXHP           160.0
-  CYCLES            2.0
-  IDLERPM         550.0
-  MAXTHROTTLE       1.0
-  MINTHROTTLE       0.2
-</FG_PISTON>
+<!--
+  File:     IO320.xml
+  Author:   Aero-Matic v 0.8
 
+  Inputs:
+    name:           IO320
+    type:           piston
+    power:          160.0 hp
+    augmented?      no
+    injected?       no
+-->
+
+<piston_engine name="IO320">
+  <minmp unit="INHG">          6.5 </minmp>
+  <maxmp unit="INHG">         29.92 </maxmp>
+  <displacement unit="IN3"> 320.00 </displacement>
+  <maxhp>        160.00 </maxhp>
+  <cycles>         2.0 </cycles>
+  <idlerpm>      550.0 </idlerpm>
+  <maxthrottle>    1.0 </maxthrottle>
+  <minthrottle>    0.2 </minthrottle>
+</piston_engine>

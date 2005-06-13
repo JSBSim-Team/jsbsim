@@ -2,5 +2,5 @@
 <!--
   Thrust is computed directly by the engine
 -->
-<FG_DIRECT NAME="Direct">
-</FG_DIRECT>
+<direct name="Direct">
+</direct>

@@ -1,11 +1,16 @@
 <?xml version="1.0"?>
-<FG_PROPELLER  NAME="30 Degree Fixed Pitch 2 Blade 5868-9 Clark Y">
-  IXX       5
-  DIAMETER  76
-  NUMBLADES  2
-  MINPITCH 20
-  MAXPITCH 20
-  C_THRUST 34 1
+
+<propeller name="30 Degree Fixed Pitch 2 Blade 5868-9 Clark Y">
+  <ixx> 5.0 </ixx>
+  <diameter unit="IN"> 76.0 </diameter>
+  <numblades> 2 </numblades>
+  <minpitch> 20 </minpitch>
+  <maxpitch> 20 </maxpitch>
+
+  <function name="C_THRUST">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <tableData>
   0.00 0.117
   0.10 0.117
   0.20 0.115
@@ -40,7 +45,14 @@
   3.00 -0.117
   3.10 -0.117
   5.00 -0.120
-  C_P0WER  34 1
+      </tableData>
+    </table>
+  </function>
+
+  <function name="C_POWER">
+    <table>
+      <independentVar lookup="row">propulsion/advance-ratio</independentVar>
+      <tableData>
   0.00 0.143
   0.10 0.140
   0.20 0.138
@@ -75,4 +87,8 @@
   3.10 0.140
   3.20 0.143
   5.00 0.150
-</FG_PROPELLER>
+      </tableData>
+    </table>
+  </function>
+
+</propeller>
