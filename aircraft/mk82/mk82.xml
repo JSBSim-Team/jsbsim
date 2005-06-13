@@ -1,277 +1,320 @@
-<FDM_CONFIG NAME="MK-82" VERSION="1.65">
+<?xml version="1.0"?>
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<fdm_config name="MK-82" version="2.0" release="BETA">
 
-  <!--
+    <fileheader>
+        <author> Author Name </author>
+        <filecreationdate> Creation Date </filecreationdate>
+        <description> Description </description>
+        <version> Version </version>
+        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+    </fileheader>
 
-  File:        mk82.xml
-  Author:      Cameron Munro
-  CVS Version: $Id: mk82.xml,v 1.7 2004/05/26 12:30:17 jberndt Exp $
+    <metrics>
+        <wingarea unit="FT2"> 2.54 </wingarea>
+        <wingspan unit="FT"> 0.9 </wingspan>
+        <chord unit="FT"> 0.9 </chord>
+        <htailarea unit="FT2"> 0 </htailarea>
+        <htailarm unit="FT"> 0 </htailarm>
+        <vtailarea unit="FT2"> 0 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 33.08 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 31 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
 
-  Function: Models a 500 lb. Mk-82 bomb
-  Notes:    Try running JSBSim using this command line,
-            ./jsbsim mk82 reset00
-  -->
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 0.66 </ixx>
+        <iyy unit="SLUG*FT2"> 633 </iyy>
+        <izz unit="SLUG*FT2"> 633 </izz>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <emptywt unit="LBS"> 500 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 31 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>
 
-  <METRICS>
+    <ground_reactions>
+        <contact type="BOGEY" name="NOSE_CONTACT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 0 </static_friction>
+            <dynamic_friction> 0 </dynamic_friction>
+            <rolling_friction> 0 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 200000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="TAIL_CONTACT">
+            <location unit="IN">
+                <x> 66 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 0 </static_friction>
+            <dynamic_friction> 0 </dynamic_friction>
+            <rolling_friction> 0 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 200000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+    <propulsion>
+    </propulsion>
+    <flight_control name="FCS: MK-82 FCS">
+    </flight_control>
+    <aerodynamics>
 
-    <!--
-    Center of gravity location, empty weight, in aircraft structural coord
-    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
-    right wing.
+        <axis name="DRAG">
+            <function name="aero/coefficient/CDmin">
+                <description>Drag_minimum</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                      <table>
+                          <independentVar>velocities/mach-norm</independentVar>
+                          <tableData>
+                              0.2000	0.1400	
+                              0.4000	0.1390	
+                              0.8000	0.1440	
+                              0.9000	0.1490	
+                              0.9500	0.2110	
+                              0.9800	0.2520	
+                              1.0000	0.2810	
+                              1.0200	0.3050	
+                              1.0500	0.3270	
+                              1.1000	0.3590	
+                              1.2000	0.3730	
+                              1.4000	0.4180	
+                              1.6000	0.2750	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDi">
+                <description>Drag_induced</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/cl-squared-norm</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
+                              0.1750	0.1560	0.1500	0.1070	0.1050	0.1030	0.1020	0.1020	0.1010	0.0990	0.0980	0.1110	0.1600	0.1190	
+                              0.3490	0.6730	0.5730	0.4500	0.4510	0.4440	0.4430	0.4450	0.4430	0.4450	0.4470	0.6230	0.8560	0.7290	
+                              0.5240	1.4760	1.3320	1.1990	1.4870	1.5370	1.6100	1.6740	1.7090	1.7460	1.7740	1.9140	2.3430	1.9960	
+                              0.6980	2.1210	2.0970	2.8570	2.9140	2.9880	3.1060	3.2080	3.2780	3.3460	3.3770	3.5290	4.2260	3.5760	
+                              0.8730	2.5020	2.7550	4.5630	4.5610	4.6780	4.9210	5.1210	5.2740	5.4180	5.4270	5.5120	6.2080	5.3600	
+                              1.0470	2.9490	3.3400	6.2000	6.2250	6.3620	6.6550	6.8950	7.0660	7.2180	7.2770	7.4390	8.0250	7.1240	
+                              1.2220	3.2720	4.0200	7.6130	7.5170	7.6200	8.0050	8.3230	8.5590	8.7720	8.8950	9.0890	9.4860	8.6470	
+                              1.3960	3.4140	4.4490	8.5890	8.3450	8.5060	8.9530	9.3140	9.5900	9.8810	10.0510	10.1820	10.4330	9.7400	
+                              1.5530	3.3830	4.5250	8.9570	8.6620	8.8520	9.3210	9.6990	10.0120	10.3210	10.5040	10.5930	10.7020	10.1650	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
 
-    Pilot eyepoint location, in aircraft coord system, FROM cg.
-    X, Y, Z, in inches
-    -->
+        <axis name="SIDE">
+            <function name="aero/coefficient/CYb">
+                <description>Side_force_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/beta-rad</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	-4.5720	-4.7780	-2.8390	-2.7830	-2.7820	-2.7820	-2.8020	-2.7880	-2.7260	-2.6240	-2.1270	-3.7510	-1.8680	
+                              0.1750	-3.4650	-3.4620	-2.5390	-2.5700	-2.5920	-2.6220	-2.6620	-2.6740	-2.6870	-2.6990	-3.2400	-5.0870	-3.5300	
+                              0.3490	-4.0330	-3.1760	-2.3060	-2.4370	-2.4890	-2.5570	-2.6210	-2.6490	-2.7270	-2.8330	-4.4100	-6.4600	-5.2600	
+                              0.5240	-3.7880	-3.2320	-2.9470	-4.1930	-4.5100	-4.8660	-5.1520	-5.3400	-5.5510	-5.7630	-6.4010	-7.7820	-6.4780	
+                              0.6980	-3.1380	-3.0860	-4.9400	-5.1690	-5.4310	-5.7500	-6.0080	-6.2040	-6.4040	-6.5570	-6.9630	-7.8090	-6.5080	
+                              0.8730	-2.9750	-3.2000	-5.2580	-5.3000	-5.5000	-5.8190	-6.0770	-6.2740	-6.4640	-6.5150	-6.6640	-7.2910	-6.2470	
+                              1.0470	-2.7910	-3.0190	-4.9470	-4.9880	-5.1250	-5.3530	-5.5420	-5.6700	-5.7860	-5.8440	-6.0050	-6.4240	-5.6280	
+                              1.2220	-2.5860	-2.8680	-4.3030	-4.2850	-4.3540	-4.5250	-4.6730	-4.7700	-4.8570	-4.9100	-5.0550	-5.3130	-4.7050	
+                              1.3960	-2.3880	-2.5850	-3.4120	-3.3890	-3.4360	-3.5320	-3.6200	-3.6690	-3.7200	-3.7470	-3.8640	-4.0610	-3.5780	
+                              1.5530	-2.2370	-2.2840	-2.4930	-2.5160	-2.5300	-2.5510	-2.5830	-2.5840	-2.5840	-2.5790	-2.7030	-2.9020	-2.4700	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
 
-    AC_WINGAREA 2.54
-    AC_WINGSPAN 0.9
-    AC_CHORD    0.9
-    AC_IXX      0.66
-    AC_IYY      633.0
-    AC_IZZ      633.0
-    AC_IXZ      0
-    AC_EMPTYWT  500
-    AC_CGLOC    31.0 0.0 0.0
-    AC_EYEPTLOC  0.0  0.0 0.0
-    AC_AERORP   33.08 0.0 0.0
-    AC_VRP      31.0 0.0 0.0
+        <axis name="LIFT">
+            <function name="aero/coefficient/CLwbh">
+                <description>Lift_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/alpha-rad</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
+                              0.1750	0.8920	0.8530	0.6050	0.5960	0.5830	0.5770	0.5780	0.5720	0.5640	0.5510	0.6290	0.0000	0.0000	
+                              0.3490	1.8910	1.5980	1.2390	1.2460	1.2240	1.2220	1.2310	1.2240	1.2300	1.2340	1.7500	0.9180	0.6530	
+                              0.5240	2.6800	2.3890	2.1310	2.7150	2.8200	2.9670	3.0950	3.1670	3.2450	3.3060	3.5860	2.3710	1.9530	
+                              0.6980	2.7130	2.6710	3.8650	3.9660	4.0880	4.2740	4.4320	4.5460	4.6580	4.7190	4.9500	4.0820	3.3810	
+                              0.8730	2.2200	2.4250	4.1130	4.1320	4.2580	4.4950	4.6880	4.8340	4.9760	5.0020	5.1060	5.0580	4.1590	
+                              1.0470	1.7770	1.9990	3.7420	3.7690	3.8700	4.0620	4.2180	4.3260	4.4280	4.4760	4.5890	5.2690	4.4650	
+                              1.2220	1.2300	1.5000	2.8490	2.8190	2.8740	3.0280	3.1540	3.2430	3.3290	3.3840	3.4650	4.7080	4.1210	
+                              1.3960	0.6120	0.7940	1.5350	1.4940	1.5310	1.6170	1.6850	1.7320	1.7870	1.8230	1.8500	3.5210	3.1700	
+                              1.5530	0.0470	0.0670	0.1450	0.1400	0.1440	0.1520	0.1590	0.1600	0.1650	0.1690	0.1720	1.8770	1.7320	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
 
-  </METRICS>
+        <axis name="ROLL">
+            <function name="aero/coefficient/Clbeta">
+                <description>Roll_moment_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/beta-rad</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
+                              0.1750	0.1500	0.0890	0.0050	0.0110	0.0140	0.0160	0.0170	0.0170	0.0180	0.0190	0.0210	0.0370	0.0400	
+                              0.3490	-0.0550	-0.0550	-0.0370	-0.0290	-0.0270	-0.0240	-0.0220	-0.0200	-0.0160	-0.0100	0.0020	0.0350	0.0420	
+                              0.5240	-0.0280	-0.0200	0.0110	0.0160	0.0180	0.0190	0.0200	0.0210	0.0220	0.0180	0.0260	0.0500	0.0740	
+                              0.6980	0.2960	0.2760	0.2300	0.2210	0.2130	0.2090	0.2080	0.2040	0.1980	0.1880	0.1790	0.1560	0.1660	
+                              0.8730	0.3000	0.2920	0.2750	0.2730	0.2700	0.2690	0.2700	0.2680	0.2660	0.2610	0.2660	0.2690	0.2570	
+                              1.0470	0.2960	0.2980	0.3070	0.3110	0.3100	0.3110	0.3130	0.3120	0.3110	0.3080	0.3210	0.3390	0.3230	
+                              1.2220	0.3100	0.3120	0.3240	0.3290	0.3290	0.3300	0.3330	0.3320	0.3300	0.3280	0.3430	0.3650	0.3520	
+                              1.3960	0.3160	0.3170	0.3300	0.3360	0.3370	0.3380	0.3410	0.3400	0.3390	0.3380	0.3540	0.3780	0.3660	
+                              1.5530	0.3120	0.3130	0.3270	0.3320	0.3330	0.3340	0.3380	0.3370	0.3360	0.3340	0.3500	0.3740	0.3630	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+        </axis>
 
-  <UNDERCARRIAGE>
+        <axis name="PITCH">
+            <function name="aero/coefficient/Cmalpha">
+                <description>Pitch_moment_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/alpha-rad</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	-1.3720	-1.7830	-1.3250	-0.2610	-0.2670	-0.0530	-0.2280	-0.1110	0.3980	-0.0010	-1.6930	-3.6220	9.0240	
+                              0.1750	-3.6990	-3.7670	-2.3840	-1.2630	-1.1680	-0.9210	-1.0390	-0.8730	-0.3300	-0.5070	-1.5380	-2.5500	8.7340	
+                              0.3490	-6.2840	-6.2120	-4.5940	-3.4430	-3.2580	-2.9880	-3.0420	-2.8720	-2.3760	-2.4010	-3.1630	-3.7190	5.6670	
+                              0.5240	-6.6830	-6.6450	-5.4900	-4.8850	-4.7620	-4.5880	-4.6300	-4.5470	-4.2660	-4.3030	-5.0530	-5.7670	0.4580	
+                              0.6980	-1.3220	-1.7460	-2.7300	-3.1210	-3.2820	-3.3450	-3.4360	-3.5030	-3.5630	-3.7900	-4.5880	-6.0190	-3.9490	
+                              0.8730	0.4270	-0.0950	-2.1340	-2.9000	-3.1370	-3.3200	-3.3910	-3.5370	-3.8170	-3.9870	-4.4190	-5.6210	-7.8500	
+                              1.0470	-3.0160	-3.0290	-4.1670	-4.9730	-5.0950	-5.2690	-5.2630	-5.4040	-5.7450	-5.6550	-5.4110	-5.5440	-11.3800	
+                              1.2220	-4.2180	-4.1060	-5.2920	-6.2680	-6.3560	-6.5490	-6.5100	-6.6640	-7.0630	-6.8850	-6.3960	-6.1490	-14.1200	
+                              1.3960	-4.5480	-4.4880	-5.7950	-6.8090	-6.8780	-7.0910	-7.0530	-7.2180	-7.6500	-7.4550	-6.9020	-6.5500	-15.1500	
+                              1.5530	-4.5480	-4.5460	-5.8850	-6.8540	-6.9290	-7.1500	-7.1170	-7.2760	-7.7250	-7.5390	-6.9700	-6.6060	-15.1600	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmq">
+                <description>Pitch_moment_due_to_pitch_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>velocities/q-aero-rad_sec</property>
+                    <value>-50.0000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmadot">
+                <description>Pitch_moment_due_to_alpha_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>aero/alphadot-rad_sec</property>
+                    <value>-3.4600</value>
+                </product>
+            </function>
+        </axis>
 
-    <!--
-    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-
-    AC_GEAR
-    <name>                           name of gear entry - no spaces allowed
-    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
-    <spring constant>                spring constant in lbs/ft
-    <damping coefficient>            damping coefficient in lbs/ft/sec
-    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
-    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
-    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
-    <max steer angle>                Maximum steerable angle in degrees
-    <retractable>                    FIXED or RETRACTABLE
-    -->
-
-   AC_GEAR  NOSE_CONTACT    0.0  0.0  0.0  10000 200000  0.0  0.0  0.0  FIXED NONE 0 FIXED
-   AC_GEAR  TAIL_CONTACT   66.0  0.0  0.0  10000 200000  0.0  0.0  0.0  FIXED NONE 0 FIXED
-
-  </UNDERCARRIAGE>
-
-  <PROPULSION>
-    <!--
-      No propulsion
-    -->
-  </PROPULSION>
-
-  <FLIGHT_CONTROL NAME="MK-82 FCS">
-    <!--
-      No FCS
-    -->
-  </FLIGHT_CONTROL>
-
-
-  <AERODYNAMICS>
-
-    <!--
-      Data as computed from Missile DATCOM by Cameron Munro
-    -->
-
-    <AXIS NAME="LIFT">
-
-      <COEFFICIENT NAME="CLwbh" TYPE="TABLE">
-        Lift_due_to_alpha
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | aero/alpha-rad
-                0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
-        0.000   0       0       0       0       0       0       0       0       0       0       0       0       0
-        0.175   0.892   0.853   0.605   0.596   0.583   0.577   0.578   0.572   0.564   0.551   0.629   0       0
-        0.349   1.891   1.598   1.239   1.246   1.224   1.222   1.231   1.224   1.23    1.234   1.75    0.918   0.653
-        0.524   2.68    2.389   2.131   2.715   2.82    2.967   3.095   3.167   3.245   3.306   3.586   2.371   1.953
-        0.698   2.713   2.671   3.865   3.966   4.088   4.274   4.432   4.546   4.658   4.719   4.95    4.082   3.381
-        0.873   2.22    2.425   4.113   4.132   4.258   4.495   4.688   4.834   4.976   5.002   5.106   5.058   4.159
-        1.047   1.777   1.999   3.742   3.769   3.87    4.062   4.218   4.326   4.428   4.476   4.589   5.269   4.465
-        1.222   1.23    1.5     2.849   2.819   2.874   3.028   3.154   3.243   3.329   3.384   3.465   4.708   4.121
-        1.396   0.612   0.794   1.535   1.494   1.531   1.617   1.685   1.732   1.787   1.823   1.85    3.521   3.17
-        1.553   0.047   0.067   0.145   0.14    0.144   0.152   0.159   0.16    0.165   0.169   0.172   1.877   1.732
-      </COEFFICIENT>
-
-    </AXIS>
-
-    <AXIS NAME="DRAG">
-
-      <COEFFICIENT NAME="CDmin" TYPE="VECTOR">
-        Drag_minimum
-        13
-        velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft
-        0.2     0.14
-        0.4     0.139
-        0.8     0.144
-        0.9     0.149
-        0.95    0.211
-        0.98    0.252
-        1.0     0.281
-        1.02    0.305
-        1.05    0.327
-        1.1     0.359
-        1.2     0.373
-        1.4     0.418
-        1.6     0.275
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="CDi" TYPE="TABLE">
-        Drag_induced
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | aero/cl-squared-norm
-                0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
-        0       0       0       0       0       0       0       0       0       0       0       0       0       0
-        0.175   0.156   0.15    0.107   0.105   0.103   0.102   0.102   0.101   0.099   0.098   0.111   0.16    0.119
-        0.349   0.673   0.573   0.45    0.451   0.444   0.443   0.445   0.443   0.445   0.447   0.623   0.856   0.729
-        0.524   1.476   1.332   1.199   1.487   1.537   1.61    1.674   1.709   1.746   1.774   1.914   2.343   1.996
-        0.698   2.121   2.097   2.857   2.914   2.988   3.106   3.208   3.278   3.346   3.377   3.529   4.226   3.576
-        0.873   2.502   2.755   4.563   4.561   4.678   4.921   5.121   5.274   5.418   5.427   5.512   6.208   5.36
-        1.047   2.949   3.34    6.2     6.225   6.362   6.655   6.895   7.066   7.218   7.277   7.439   8.025   7.124
-        1.222   3.272   4.02    7.613   7.517   7.62    8.005   8.323   8.559   8.772   8.895   9.089   9.486   8.647
-        1.396   3.414   4.449   8.589   8.345   8.506   8.953   9.314   9.59    9.881   10.051  10.182  10.433  9.74
-        1.553   3.383   4.525   8.957   8.662   8.852   9.321   9.699   10.012  10.321  10.504  10.593  10.702  10.165
-      </COEFFICIENT>
-
-    </AXIS>
-
-    <AXIS NAME="SIDE">
-
-      <COEFFICIENT NAME="CYb" TYPE="TABLE">
-        Side_force_due_to_beta
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | aero/beta-rad
-                0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
-        0.000  -4.572  -4.778  -2.839  -2.783  -2.782  -2.782  -2.802  -2.788  -2.726  -2.624  -2.127  -3.751  -1.868
-        0.175  -3.465  -3.462  -2.539  -2.570  -2.592  -2.622  -2.662  -2.674  -2.687  -2.699  -3.240  -5.087  -3.530
-        0.349  -4.033  -3.176  -2.306  -2.437  -2.489  -2.557  -2.621  -2.649  -2.727  -2.833  -4.410  -6.460  -5.260
-        0.524  -3.788  -3.232  -2.947  -4.193  -4.510  -4.866  -5.152  -5.340  -5.551  -5.763  -6.401  -7.782  -6.478
-        0.698  -3.138  -3.086  -4.940  -5.169  -5.431  -5.750  -6.008  -6.204  -6.404  -6.557  -6.963  -7.809  -6.508
-        0.873  -2.975  -3.200  -5.258  -5.300  -5.500  -5.819  -6.077  -6.274  -6.464  -6.515  -6.664  -7.291  -6.247
-        1.047  -2.791  -3.019  -4.947  -4.988  -5.125  -5.353  -5.542  -5.670  -5.786  -5.844  -6.005  -6.424  -5.628
-        1.222  -2.586  -2.868  -4.303  -4.285  -4.354  -4.525  -4.673  -4.770  -4.857  -4.910  -5.055  -5.313  -4.705
-        1.396  -2.388  -2.585  -3.412  -3.389  -3.436  -3.532  -3.620  -3.669  -3.720  -3.747  -3.864  -4.061  -3.578
-        1.553  -2.237  -2.284  -2.493  -2.516  -2.530  -2.551  -2.583  -2.584  -2.584  -2.579  -2.703  -2.902  -2.470
-      </COEFFICIENT>
-
-    </AXIS>
-
-    <AXIS NAME="ROLL">
-      <COEFFICIENT NAME="Clbeta" TYPE="TABLE">
-        Roll_moment_due_to_beta
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/beta-rad
-                0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
-        0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000   0.000
-        0.175   0.150   0.089   0.005   0.011   0.014   0.016   0.017   0.017   0.018   0.019   0.021   0.037   0.040
-        0.349   -0.055  -0.055  -0.037  -0.029  -0.027  -0.024  -0.022  -0.020  -0.016  -0.010  0.002   0.035   0.042
-        0.524   -0.028  -0.020  0.011   0.016   0.018   0.019   0.020   0.021   0.022   0.018   0.026   0.050   0.074
-        0.698   0.296   0.276   0.230   0.221   0.213   0.209   0.208   0.204   0.198   0.188   0.179   0.156   0.166
-        0.873   0.300   0.292   0.275   0.273   0.270   0.269   0.270   0.268   0.266   0.261   0.266   0.269   0.257
-        1.047   0.296   0.298   0.307   0.311   0.310   0.311   0.313   0.312   0.311   0.308   0.321   0.339   0.323
-        1.222   0.310   0.312   0.324   0.329   0.329   0.330   0.333   0.332   0.330   0.328   0.343   0.365   0.352
-        1.396   0.316   0.317   0.330   0.336   0.337   0.338   0.341   0.340   0.339   0.338   0.354   0.378   0.366
-        1.553   0.312   0.313   0.327   0.332   0.333   0.334   0.338   0.337   0.336   0.334   0.350   0.374   0.363
-      </COEFFICIENT>
-
-    </AXIS>
-
-    <AXIS NAME="PITCH">
-
-      <COEFFICIENT NAME="Cmalpha" TYPE="TABLE">
-        Pitch_moment_due_to_alpha
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/alpha-rad
-                 0.2     0.4     0.8     0.9     0.95    0.98    1       1.02    1.05    1.1     1.2     1.4     1.6
-        0.000   -1.372  -1.783  -1.325  -0.261  -0.267  -0.053  -0.228  -0.111  0.398   -0.001  -1.693  -3.622   9.024
-        0.175   -3.699  -3.767  -2.384  -1.263  -1.168  -0.921  -1.039  -0.873  -0.330  -0.507  -1.538  -2.550   8.734
-        0.349   -6.284  -6.212  -4.594  -3.443  -3.258  -2.988  -3.042  -2.872  -2.376  -2.401  -3.163  -3.719   5.667
-        0.524   -6.683  -6.645  -5.490  -4.885  -4.762  -4.588  -4.630  -4.547  -4.266  -4.303  -5.053  -5.767   0.458
-        0.698   -1.322  -1.746  -2.730  -3.121  -3.282  -3.345  -3.436  -3.503  -3.563  -3.790  -4.588  -6.019  -3.949
-        0.873    0.427  -0.095  -2.134  -2.900  -3.137  -3.320  -3.391  -3.537  -3.817  -3.987  -4.419  -5.621  -7.850
-        1.047   -3.016  -3.029  -4.167  -4.973  -5.095  -5.269  -5.263  -5.404  -5.745  -5.655  -5.411  -5.544  -11.380
-        1.222   -4.218  -4.106  -5.292  -6.268  -6.356  -6.549  -6.510  -6.664  -7.063  -6.885  -6.396  -6.149  -14.120
-        1.396   -4.548  -4.488  -5.795  -6.809  -6.878  -7.091  -7.053  -7.218  -7.650  -7.455  -6.902  -6.550  -15.150
-        1.553   -4.548  -4.546  -5.885  -6.854  -6.929  -7.150  -7.117  -7.276  -7.725  -7.539  -6.970  -6.606  -15.160
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="Cmq" TYPE="VALUE">
-         Pitch_moment_due_to_pitch_rate
-         aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | velocities/q-aero-rad_sec
-         -50
-      </COEFFICIENT>
-
-      <COEFFICIENT NAME="Cmadot" TYPE="VALUE">
-        Pitch_moment_due_to_alpha_rate
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/ci2vel | aero/alphadot-rad_sec
-        -3.46
-      </COEFFICIENT>
-
-    </AXIS>
-
-    <AXIS NAME="YAW">
-
-      <COEFFICIENT NAME="Cnbeta" TYPE="TABLE">
-        Yaw_moment_due_to_beta
-        10
-        13
-        aero/alpha-rad velocities/mach-norm
-        aero/qbar-psf | metrics/Sw-sqft | metrics/cbarw-ft | aero/beta-rad
-                0.2    0.4    0.8    0.9    0.95   0.98   1      1.02    1.05  1.1    1.2    1.4     1.6
-        0.000   1.372  1.783  1.325  0.261  0.267  0.053  0.228  0.111 -0.398  0.001  1.693  3.622  -9.024
-        0.175   3.699  3.767  2.384  1.263  1.168  0.921  1.039  0.873  0.330  0.507  1.538  2.550  -8.734
-        0.349   6.284  6.212  4.594  3.443  3.258  2.988  3.042  2.872  2.376  2.401  3.163  3.719  -5.667
-        0.524   6.683  6.645  5.490  4.885  4.762  4.588  4.630  4.547  4.266  4.303  5.053  5.767  -0.458
-        0.698   1.322  1.746  2.730  3.121  3.282  3.345  3.436  3.503  3.563  3.790  4.588  6.019   3.949
-        0.873  -0.427  0.095  2.134  2.900  3.137  3.320  3.391  3.537  3.817  3.987  4.419  5.621   7.850
-        1.047   3.016  3.029  4.167  4.973  5.095  5.269  5.263  5.404  5.745  5.655  5.411  5.544   11.380
-        1.222   4.218  4.106  5.292  6.268  6.356  6.549  6.510  6.664  7.063  6.885  6.396  6.149   14.120
-        1.396   4.548  4.488  5.795  6.809  6.878  7.091  7.053  7.218  7.650  7.455  6.902  6.550   15.150
-        1.553   4.548  4.546  5.885  6.854  6.929  7.150  7.117  7.276  7.725  7.539  6.970  6.606   15.160
-      </COEFFICIENT>
-
-       <COEFFICIENT NAME="Cnr" TYPE="VALUE">
-         Yaw_moment_due_to_yaw_rate
-         aero/qbar-psf | metrics/Sw-sqft | metrics/bw-ft | aero/bi2vel | velocities/r-aero-rad_sec
-         -60
-       </COEFFICIENT>
-
-    </AXIS>
-
-  </AERODYNAMICS>
-
-  <OUTPUT NAME="JSBout.csv" TYPE="CSV">
-    RATE_IN_HZ       20
-    SIMULATION       ON
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
-    AEROSURFACES     ON
-    RATES            ON
-    VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          ON
-    POSITION         ON
-    COEFFICIENTS     OFF
-    GROUND_REACTIONS ON
-    FCS              ON
-    PROPULSION       ON
-  </OUTPUT>
-
-</FDM_CONFIG>
+        <axis name="YAW">
+            <function name="aero/coefficient/Cnbeta">
+                <description>Yaw_moment_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/beta-rad</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
+                              0.0000	1.3720	1.7830	1.3250	0.2610	0.2670	0.0530	0.2280	0.1110	-0.3980	0.0010	1.6930	3.6220	-9.0240	
+                              0.1750	3.6990	3.7670	2.3840	1.2630	1.1680	0.9210	1.0390	0.8730	0.3300	0.5070	1.5380	2.5500	-8.7340	
+                              0.3490	6.2840	6.2120	4.5940	3.4430	3.2580	2.9880	3.0420	2.8720	2.3760	2.4010	3.1630	3.7190	-5.6670	
+                              0.5240	6.6830	6.6450	5.4900	4.8850	4.7620	4.5880	4.6300	4.5470	4.2660	4.3030	5.0530	5.7670	-0.4580	
+                              0.6980	1.3220	1.7460	2.7300	3.1210	3.2820	3.3450	3.4360	3.5030	3.5630	3.7900	4.5880	6.0190	3.9490	
+                              0.8730	-0.4270	0.0950	2.1340	2.9000	3.1370	3.3200	3.3910	3.5370	3.8170	3.9870	4.4190	5.6210	7.8500	
+                              1.0470	3.0160	3.0290	4.1670	4.9730	5.0950	5.2690	5.2630	5.4040	5.7450	5.6550	5.4110	5.5440	11.3800	
+                              1.2220	4.2180	4.1060	5.2920	6.2680	6.3560	6.5490	6.5100	6.6640	7.0630	6.8850	6.3960	6.1490	14.1200	
+                              1.3960	4.5480	4.4880	5.7950	6.8090	6.8780	7.0910	7.0530	7.2180	7.6500	7.4550	6.9020	6.5500	15.1500	
+                              1.5530	4.5480	4.5460	5.8850	6.8540	6.9290	7.1500	7.1170	7.2760	7.7250	7.5390	6.9700	6.6060	15.1600	
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cnr">
+                <description>Yaw_moment_due_to_yaw_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/r-aero-rad_sec</property>
+                    <value>-60.0000</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+</fdm_config>

@@ -1,50 +1,86 @@
-<FDM_CONFIG NAME="BALL" VERSION="1.65" RELEASE= "ALPHA" >
+<?xml version="1.0"?>
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<fdm_config name="BALL" version="2.0" release="BETA">
 
-  <METRICS>
+    <fileheader>
+        <author> Jon Berndt </author>
+        <filecreationdate> 6/2004 </filecreationdate>
+        <description> Test file </description>
+        <version> Version 1.0 </version>
+    </fileheader>
 
-    AC_WINGAREA 1.0
-    AC_WINGSPAN 1.0
-    AC_IXX      10.0
-    AC_IYY      10.0
-    AC_IZZ      10.0
-    AC_IXZ      0.0
-    AC_EMPTYWT  50.0
-    AC_CGLOC    0.0 0.0 0.0
+    <metrics>
+        <wingarea unit="FT2"> 1 </wingarea>
+        <wingspan unit="FT"> 1 </wingspan>
+        <chord unit="FT"> 0 </chord>
+        <htailarea unit="FT2"> 0 </htailarea>
+        <htailarm unit="FT"> 0 </htailarm>
+        <vtailarea unit="FT2"> 0 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
 
-  </METRICS>
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 10 </ixx>
+        <iyy unit="SLUG*FT2"> 10 </iyy>
+        <izz unit="SLUG*FT2"> 10 </izz>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <emptywt unit="LBS"> 50 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>
 
-  <UNDERCARRIAGE>
+    <ground_reactions>
+        <contact type="BOGEY" name="NOSE_CONTACT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <static_friction> 0 </static_friction>
+            <dynamic_friction> 0 </dynamic_friction>
+            <rolling_friction> 0 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 200000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+    <propulsion>
+    </propulsion>
+    <flight_control name="FGFCS">
+    </flight_control>
+    <aerodynamics>
 
-   AC_GEAR  NOSE_CONTACT    0.0  0.0  0.0  10000 200000  0.0  0.0  0.0  FIXED NONE 0 FIXED
-
-  </UNDERCARRIAGE>
-
-  <AERODYNAMICS>
-    <AXIS NAME="DRAG">
-      <COEFFICIENT NAME="CD" TYPE="VALUE">
-         Drag
-         aero/qbar-psf | metrics/Sw-sqft
-         0.0001
-      </COEFFICIENT>
-    </AXIS>
-  </AERODYNAMICS>
-
-  <OUTPUT NAME="JSBoutBall.csv" TYPE="CSV">
-    RATE_IN_HZ      1
-    SIMULATION       ON
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
-    AEROSURFACES     OFF
-    RATES            ON
-    VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          OFF
-    POSITION         ON
-    COEFFICIENTS     OFF
-    GROUND_REACTIONS OFF
-    FCS              OFF
-    PROPULSION       OFF
-  </OUTPUT>
-
-</FDM_CONFIG>
-
+        <axis name="DRAG">
+            <function name="aero/coefficient/CD">
+                <description>Drag</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <value>0.0001</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+</fdm_config>

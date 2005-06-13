@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 
   Author:   Jon Berndt
@@ -12,23 +13,24 @@
 
           ap/elevator_cmd,
           ap/aileron_cmd,
-          ap/rudder_cmd,
-          ap/throttle_cmd,
-          ap/set_attitude,
-          ap/set_altitude,
-          ap/set_heading,
-          ap/set_airspeed,
-          ap/acquire_attitude,
-          ap/acquire_altitude,
-          ap/acquire_heading,
-          ap/acquire_aispeed,
           ap/attitude_hold,
           ap/altitude_hold,
           ap/heading_hold,
-          ap/airspeed_hold,
-          ap/wingslevel_hold
+          ap/altitude_setpoint,
+          ap/heading_setpoint
 
 -->
+<autopilot name="C-172X Autopilot">
+
+<!-- INTERFACE PROPERTIES -->
+
+  <property>ap/attitude_hold</property>
+  <property>ap/altitude_hold</property>
+  <property>ap/heading_hold</property>
+  <property>ap/altitude_setpoint</property>
+  <property>ap/heading_setpoint</property>
+  <property>ap/aileron_cmd</property>
+  <property>ap/elevator_cmd</property>
 
 <!--
 =====================================================
@@ -38,119 +40,128 @@ ROLL CHANNEL
 
 <!-- Wing leveler -->
 
-<COMPONENT NAME="Roll A/P Wing Leveler" TYPE="PURE_GAIN">
-   INPUT         attitude/phi-rad
-   GAIN          2.0
-   MIN           -0.255
-   MAX            0.255
-</COMPONENT>
+<channel name="AP Roll Wing Leveler">
+  <component name="Roll AP Wing Leveler" type="PURE_GAIN">
+    <input>attitude/phi-rad</input>
+    <gain>2.0</gain>
+    <clipto>
+      <min>-0.255</min>
+      <max>0.255</max>
+    </clipto>
+  </component>
 
-<COMPONENT NAME="Roll A/P Error Integrator" TYPE="INTEGRATOR">
-   INPUT         attitude/phi-rad
-   C1            0.125
-</COMPONENT>
+  <component name="Roll AP Error Integrator" type="INTEGRATOR">
+    <input> attitude/phi-rad </input>
+    <c1> 0.125 </c1>
+  </component>
 
-<COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
-   INPUT         velocities/p-rad_sec
-   INPUT         fcs/roll-ap-wing-leveler
-   INPUT         fcs/roll-ap-error-integrator
-   CLIPTO       -1.0 1.0
-</COMPONENT>
+  <component name="Roll AP Error summer" type="SUMMER">
+     <input> velocities/p-rad_sec</input>
+     <input> fcs/roll-ap-wing-leveler</input>
+     <input> fcs/roll-ap-error-integrator</input>
+     <clipto>
+       <min>-1.0</min>
+       <max> 1.0</max>
+     </clipto>
+  </component>
 
-<COMPONENT NAME="Roll A/P Autoswitch" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="0.0">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/roll-ap-error-summer">
-    ap/attitude_hold == 1
-  </TEST>
-</COMPONENT>
+  <component name="Roll AP Autoswitch" type="SWITCH">
+    <default value="0.0"/>
+    <test logic="AND" value="fcs/roll-ap-error-summer">
+      ap/attitude_hold == 1
+    </test>
+  </component>
 
-<COMPONENT NAME="Roll A/P Aileron Command Normalizer" TYPE="PURE_GAIN">
-   INPUT         fcs/roll-ap-autoswitch
-   GAIN          -1
-</COMPONENT>
-
+  <component name="Roll AP Aileron Command Normalizer" type="PURE_GAIN">
+     <input>fcs/roll-ap-autoswitch</input>
+     <gain>-1</gain>
+  </component>
+</channel>
 
 <!-- Heading hold -->
 
-<COMPONENT NAME="Heading True Degrees" TYPE="PURE_GAIN">
-  INPUT         attitude/heading-true-rad
-  GAIN          57.3 <!-- convert to degrees -->
-</COMPONENT>
+<channel name="AP Roll Heading Hold">
+  <component name="Heading True Degrees" type="PURE_GAIN">
+    <input>attitude/heading-true-rad</input>
+    <gain>57.3</gain> <!-- convert to degrees -->
+  </component>
 
-<COMPONENT NAME="Heading Error" TYPE="SUMMER">
-  INPUT         -fcs/heading-true-degrees
-  INPUT          ap/heading_setpoint
-</COMPONENT>
+  <component name="Heading Error" type="SUMMER">
+    <input> -fcs/heading-true-degrees</input>
+    <input> ap/heading_setpoint </input>
+  </component>
 
-<COMPONENT NAME="Heading Error Bias Switch" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="0.0">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="360.0">
-    fcs/heading-error < -180
-  </TEST>
-  <TEST LOGIC="AND" VALUE="-360.0">
-    fcs/heading-error > 180
-  </TEST>
-</COMPONENT>
+  <component name="Heading Error Bias Switch" type="SWITCH">
+    <default value="0.0"/>
+    <test logic="AND" value="360.0">
+      fcs/heading-error lt -180
+    </test>
+    <test logic="AND" value="-360.0">
+      fcs/heading-error gt 180
+    </test>
+  </component>
 
-<COMPONENT NAME="Heading Corrected" TYPE="SUMMER">
-  INPUT          fcs/heading-error-bias-switch
-  INPUT          fcs/heading-error
-  CLIPTO         -30 30
-</COMPONENT>
+  <component name="Heading Corrected" type="SUMMER">
+    <input> fcs/heading-error-bias-switch </input>
+    <input> fcs/heading-error </input>
+    <clipto>
+      <min>-30</min>
+      <max> 30</max>
+    </clipto>
+  </component>
 
-<COMPONENT NAME="Heading Command" TYPE="PURE_GAIN">
-  INPUT          fcs/heading-corrected
-  GAIN           0.01745
-</COMPONENT>
+  <component name="Heading Command" type="PURE_GAIN">
+    <input> fcs/heading-corrected </input>
+    <gain> 0.01745 </gain>
+  </component>
 
-<COMPONENT NAME="Heading Roll Error Lag" TYPE="LAG_FILTER">
-  INPUT          fcs/heading-command
-  C1             0.50
-</COMPONENT>
+  <component name="Heading Roll Error Lag" type="LAG_FILTER">
+    <input> fcs/heading-command </input>
+    <c1> 0.50 </c1>
+  </component>
 
-<COMPONENT NAME="Heading Roll Error" TYPE="SUMMER">
-  INPUT          fcs/heading-roll-error-lag
-  INPUT         -attitude/phi-rad
-</COMPONENT>
+  <component name="Heading Roll Error" type="SUMMER">
+    <input> fcs/heading-roll-error-lag </input>
+    <input> -attitude/phi-rad </input>
+  </component>
 
-<COMPONENT NAME="Heading Roll Error Switch" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="0.0">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/heading-roll-error">
-    ap/heading_hold == 1
-  </TEST>
-</COMPONENT>
+  <component name="Heading Roll Error Switch" type="SWITCH">
+    <default value="0.0"/>
+    <test logic="AND" value="fcs/heading-roll-error">
+      ap/heading_hold == 1
+    </test>
+  </component>
 
-<COMPONENT NAME="Heading Proportional" TYPE="PURE_GAIN">
-  INPUT          fcs/heading-roll-error-switch
-  GAIN           1.0
-</COMPONENT>
+  <component name="Heading Proportional" type="PURE_GAIN">
+    <input> fcs/heading-roll-error-switch </input>
+    <gain> 1.0 </gain>
+  </component>
 
-<COMPONENT NAME="Heading Integral" TYPE="INTEGRATOR">
-  INPUT          fcs/heading-roll-error-switch
-  C1             0.10
-</COMPONENT>
+  <component name="Heading Integral" type="INTEGRATOR">
+    <input> fcs/heading-roll-error-switch </input>
+    <c1> 0.10 </c1>
+  </component>
 
-<COMPONENT NAME="Heading Error Summer" TYPE="SUMMER">
-  INPUT          fcs/heading-integral
-  INPUT          fcs/heading-proportional
-  CLIPTO         -1.0 1.0
-</COMPONENT>
+  <component name="Heading Error Summer" type="SUMMER">
+    <input> fcs/heading-integral </input>
+    <input> fcs/heading-proportional </input>
+    <clipto>
+      <min>-1.0</min>
+      <max> 1.0</max>
+    </clipto>
+  </component>
 
-<COMPONENT NAME="Roll Command Selector" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="0.0">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/heading-error-summer">
-    ap/heading_hold == 1
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/roll-ap-aileron-command-normalizer">
-    ap/attitude_hold == 1
-  </TEST>
-  OUTPUT ap/aileron_cmd
-</COMPONENT>
-
+  <component name="Roll Command Selector" type="SWITCH">
+    <default value="0.0"/>
+    <test logic="AND" value="fcs/heading-error-summer">
+      ap/heading_hold == 1
+    </test>
+    <test logic="AND" value="fcs/roll-ap-aileron-command-normalizer">
+      ap/attitude_hold == 1
+    </test>
+    <output>ap/aileron_cmd</output>
+  </component>
+</channel>
 <!--
 =====================================================
 PITCH CHANNEL
@@ -166,69 +177,78 @@ PITCH CHANNEL
      such it is limited to a maximum absolute value of 10 fps here (600 fpm).
 -->
 
-<COMPONENT NAME="Altitude Error" TYPE="SUMMER">
-  INPUT         -position/h-sl-ft
-  INPUT          ap/altitude_setpoint
-  CLIPTO        -100.0 100.0
-</COMPONENT>
+<channel name="AP Pitch Altitude hold">
+  <component name="Altitude Error" type="SUMMER">
+    <input> -position/h-sl-ft </input>
+    <input> ap/altitude_setpoint </input>
+    <clipto>
+      <min>-100</min>
+      <max> 100</max>
+    </clipto>
+  </component>
 
-<COMPONENT NAME="Alt Error Lag" TYPE="LAG_FILTER">
-  INPUT          fcs/altitude-error
-  C1             0.25
-</COMPONENT>
+  <component name="Alt Error Lag" type="LAG_FILTER">
+    <input> fcs/altitude-error </input>
+    <c1> 1 </c1>
+  </component>
 
-<COMPONENT NAME="HDot Command" TYPE="SCHEDULED_GAIN">
-  INPUT          fcs/alt-error-lag
-  SCHEDULED_BY   position/h-sl-ft
-  ROWS           13
-  0     0.12
-  1000  0.11
-  2000  0.10
-  3000  0.096
-  4000  0.093
-  5000  0.086
-  6000  0.078
-  7000  0.069
-  8000  0.061
-  9000  0.053
-  10000 0.045
-  11000 0.037
-  12000 0.028
-</COMPONENT>
+  <component name="HDot Command" type="SCHEDULED_GAIN">
+    <input> fcs/alt-error-lag </input>
+    <table>
+      <independentVar>position/h-sl-ft</independentVar>
+      <tableData>
+           0.0   0.12
+        1000.0   0.11
+        2000.0   0.10
+        3000.0   0.096
+        4000.0   0.093
+        5000.0   0.086
+        6000.0   0.078
+        7000.0   0.069
+        8000.0   0.061
+        9000.0   0.053
+       10000.0   0.045
+       11000.0   0.037
+       12000.0   0.028
+      </tableData>
+    </table>
+  </component>
 
-<COMPONENT NAME="HDot Error" TYPE="SUMMER">
-  INPUT          fcs/hdot-command
-  INPUT         -velocities/h-dot-fps
-</COMPONENT>
+  <component name="HDot Error" type="SUMMER">
+    <input> fcs/hdot-command </input>
+    <input> -velocities/h-dot-fps </input>
+  </component>
 
-<COMPONENT NAME="AP Alt Hold Switch" TYPE="SWITCH">
-  <TEST LOGIC="DEFAULT" VALUE="0.0">
-  </TEST>
-  <TEST LOGIC="AND" VALUE="fcs/hdot-error">
-    ap/altitude_hold == 1
-  </TEST>
-</COMPONENT>
+  <component name="AP Alt Hold Switch" type="SWITCH">
+    <default value="0.0"/>
+    <test logic="AND" value="fcs/hdot-error">
+      ap/altitude_hold == 1
+    </test>
+  </component>
 
-<COMPONENT NAME="Integral" TYPE="INTEGRATOR">
-  INPUT          fcs/ap-alt-hold-switch
-  C1             0.00001
-</COMPONENT>
+  <component name="Integral" type="INTEGRATOR">
+    <input> fcs/ap-alt-hold-switch </input>
+    <c1> 0.00001 </c1>
+  </component>
 
-<COMPONENT NAME="Proportional" TYPE="PURE_GAIN">
-  INPUT          fcs/ap-alt-hold-switch
-  GAIN           0.03
-</COMPONENT>
+  <component name="Proportional" type="PURE_GAIN">
+    <input> fcs/ap-alt-hold-switch </input>
+    <gain> 0.02 </gain>
+  </component>
 
-<COMPONENT NAME="Control Summer" TYPE="SUMMER">
-  INPUT          fcs/integral
-  INPUT          fcs/proportional
-  CLIPTO         -1.0 1.0
-</COMPONENT>
+  <component name="Control Summer" type="SUMMER">
+    <input> fcs/integral </input>
+    <input> fcs/proportional </input>
+    <clipto>
+      <min>-1.0</min>
+      <max> 1.0</max>
+    </clipto>
+  </component>
 
-<COMPONENT NAME="Elevator" TYPE="PURE_GAIN">
-  INPUT          fcs/control-summer
-  GAIN          -1.0
-  OUTPUT         ap/elevator_cmd
-</COMPONENT>
-
-
+  <component name="Elevator" type="PURE_GAIN">
+    <input> fcs/control-summer </input>
+    <gain> -1.0 </gain>
+    <output> ap/elevator_cmd </output>
+  </component>
+</channel>
+</autopilot>

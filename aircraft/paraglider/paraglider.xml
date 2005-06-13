@@ -1,137 +1,266 @@
-<FDM_CONFIG NAME="paraglider" VERSION="1.65">
-<!--
-  File:     paraglider.xml
-  Author:   David Culp
-  Adapted from glider model
+<?xml version="1.0"?>
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<fdm_config name="paraglider" version="2.0" release="BETA">
 
-  Recommended command line parameters:
-  --in-air
-  --notrim
-  --altitude=1000
-  --heading=280
-  --uBody=10
-  --wBody=8
+    <fileheader>
+        <author> Author Name </author>
+        <filecreationdate> Creation Date </filecreationdate>
+        <description> Description </description>
+        <version> Version </version>
+        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+    </fileheader>
 
--->
- <METRICS>
-   AC_WINGAREA  160.0
-   AC_WINGSPAN  20.0
-   AC_CHORD     8.0
-   AC_HTAILAREA 1.0
-   AC_HTAILARM  1.0
-   AC_VTAILAREA 1.0
-   AC_LV        1.0
-   AC_IXX       2000.0
-   AC_IYY       2000.0
-   AC_IZZ       100.0
-   AC_IXZ       0
-   AC_EMPTYWT   200.0
-   AC_CGLOC     48.0 0 -144.0
-   AC_AERORP    48.0 0 0
-   AC_EYEPTLOC  48.0 0 -120.0
- </METRICS>
- <UNDERCARRIAGE>
-  AC_GEAR LMLG       48.0 -10 -180.0 200.0 50.0 0.5 0.8 0.5 FIXED NONE 0 FIXED
-  AC_GEAR RMLG       48.0  10 -180.0 200.0 50.0 0.5 0.8 0.5 FIXED NONE 0 FIXED
-  AC_GEAR NOSE_LG    30.0   0 -180.0 200.0 50.0 0.5 0.8 0.5 STEERABLE NONE 80 FIXED
- </UNDERCARRIAGE>
- <PROPULSION>
- </PROPULSION>
- <FLIGHT_CONTROL NAME="paraglider_FCS">
-   <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-      INPUT   fcs/elevator-cmd-norm
-      INPUT   fcs/pitch-trim-cmd-norm
-      CLIPTO  -1 1
-   </COMPONENT>
-   <COMPONENT NAME="Elevator Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/pitch-trim-sum
-      MIN     -25
-      MAX     35
-      GAIN    0.018
-      OUTPUT  fcs/elevator-pos-rad
-   </COMPONENT>
-   <COMPONENT NAME="Roll Trim Sum" TYPE="SUMMER">
-      INPUT   fcs/aileron-cmd-norm
-      INPUT   fcs/roll-trim-cmd-norm
-      CLIPTO  -1 1
-   </COMPONENT>
-   <COMPONENT NAME="Left Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   fcs/roll-trim-sum
-      MIN     -20
-      MAX     15
-      GAIN    0.02
-      OUTPUT  fcs/left-aileron-pos-rad
-   </COMPONENT>
-   <COMPONENT NAME="Right Aileron Control" TYPE="AEROSURFACE_SCALE">
-      INPUT   -fcs/roll-trim-sum
-      MIN     -20
-      MAX     15
-      GAIN    0.02
-      OUTPUT  fcs/right-aileron-pos-rad
-   </COMPONENT>
- </FLIGHT_CONTROL>
- <AERODYNAMICS>
-  <AXIS NAME="LIFT">
-    <COEFFICIENT NAME="CLalpha" TYPE="VALUE">
-      Lift_due_to_alpha
-      aero/qbar-psf|metrics/Sw-sqft|aero/alpha-rad
-      10
-    </COEFFICIENT>
-  </AXIS>
-  <AXIS NAME="DRAG">
-    <COEFFICIENT NAME="CD0" TYPE="VALUE">
-       Drag_at_zero_lift
-       aero/qbar-psf|metrics/Sw-sqft
-       0.05
-    </COEFFICIENT>
-    <COEFFICIENT NAME="CDalpha" TYPE="VALUE">
-       Drag_due_to_alpha
-       aero/qbar-psf|metrics/Sw-sqft|aero/alpha-rad
-       0.5
-    </COEFFICIENT>
-    <COEFFICIENT NAME="CDde" TYPE="VALUE">
-       Drag_due_to_Elevator_Deflection
-       aero/qbar-psf|metrics/Sw-sqft|fcs/elevator-pos-norm
-       0.03
-    </COEFFICIENT>
-  </AXIS>
-  <AXIS NAME="SIDE">
-  </AXIS>
-  <AXIS NAME="ROLL">
-    <COEFFICIENT NAME="Clt" TYPE="VALUE">
-       Roll_moment_due_to_roll_angle
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
-       -5
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Clp" TYPE="VALUE">
-       Roll_moment_due_to_roll_rate
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|aero/bi2vel|velocities/p-aero-rad_sec
-       -3
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Clda" TYPE="VALUE">
-       Roll_moment_due_to_aileron
-       aero/qbar-psf|metrics/Sw-sqft|metrics/bw-ft|fcs/left-aileron-pos-rad
-       0.2
-    </COEFFICIENT>
-  </AXIS>
-  <AXIS NAME="PITCH">
-    <COEFFICIENT NAME="Cmalpha" TYPE="VALUE">
-       Pitch_moment_due_to_alpha
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/alpha-rad
-       -3
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Cmde" TYPE="VALUE">
-       Pitch_moment_due_to_elevator
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|fcs/elevator-pos-rad
-       -2
-    </COEFFICIENT>
-    <COEFFICIENT NAME="Cmq" TYPE="VALUE">
-       Pitch_moment_due_to_pitch_rate
-       aero/qbar-psf|metrics/Sw-sqft|metrics/cbarw-ft|aero/ci2vel|velocities/q-aero-rad_sec
-       -30
-    </COEFFICIENT>
-  </AXIS>
-  <AXIS NAME="YAW">
-  </AXIS>
- </AERODYNAMICS>
-</FDM_CONFIG>
+    <metrics>
+        <wingarea unit="FT2"> 160 </wingarea>
+        <wingspan unit="FT"> 20 </wingspan>
+        <chord unit="FT"> 8 </chord>
+        <htailarea unit="FT2"> 1 </htailarea>
+        <htailarm unit="FT"> 1 </htailarm>
+        <vtailarea unit="FT2"> 1 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 48 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 48 </x>
+            <y> 0 </y>
+            <z> -120 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 2000 </ixx>
+        <iyy unit="SLUG*FT2"> 2000 </iyy>
+        <izz unit="SLUG*FT2"> 100 </izz>
+        <ixz unit="SLUG*FT2"> -0 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <emptywt unit="LBS"> 200 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 48 </x>
+            <y> 0 </y>
+            <z> -144 </z>
+        </location>
+    </mass_balance>
+
+    <ground_reactions>
+        <contact type="BOGEY" name="LMLG">
+            <location unit="IN">
+                <x> 48 </x>
+                <y> -10 </y>
+                <z> -180 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 50 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="RMLG">
+            <location unit="IN">
+                <x> 48 </x>
+                <y> 10 </y>
+                <z> -180 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 50 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="NOSE_LG">
+            <location unit="IN">
+                <x> 30 </x>
+                <y> 0 </y>
+                <z> -180 </z>
+            </location>
+            <static_friction> 0.8 </static_friction>
+            <dynamic_friction> 0.5 </dynamic_friction>
+            <rolling_friction> 0.5 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 50 </damping_coeff>
+            <max_steer unit="DEG"> 80 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+    <propulsion>
+    </propulsion>
+    <flight_control name="FCS: paraglider_FCS">
+        <channel name="Pitch">
+            <component name="Pitch Trim Sum" type="SUMMER">
+                <input>fcs/elevator-cmd-norm</input>
+                <input>fcs/pitch-trim-cmd-norm</input>
+                <clip>
+                    <min>-1</min>
+                    <max>1</max>
+                </clip>
+            </component>
+
+            <component name="Elevator Control" type="AEROSURFACE_SCALE">
+                <input>fcs/pitch-trim-sum</input>
+                <gain>0.018</gain>
+                <limit>
+                    <min>-25</min>
+                    <max>35</max>
+                </limit>
+                <output>fcs/elevator-pos-rad</output>
+            </component>
+        </channel>
+        <channel name="Roll">
+            <component name="Roll Trim Sum" type="SUMMER">
+                <input>fcs/aileron-cmd-norm</input>
+                <input>fcs/roll-trim-cmd-norm</input>
+                <clip>
+                    <min>-1</min>
+                    <max>1</max>
+                </clip>
+            </component>
+
+            <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+                <input>fcs/roll-trim-sum</input>
+                <gain>0.02</gain>
+                <limit>
+                    <min>-20</min>
+                    <max>15</max>
+                </limit>
+                <output>fcs/left-aileron-pos-rad</output>
+            </component>
+
+            <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+                <input>-fcs/roll-trim-sum</input>
+                <gain>0.02</gain>
+                <limit>
+                    <min>-20</min>
+                    <max>15</max>
+                </limit>
+                <output>fcs/right-aileron-pos-rad</output>
+            </component>
+        </channel>
+    </flight_control>
+    <aerodynamics>
+
+        <axis name="DRAG">
+            <function name="aero/coefficient/CD0">
+                <description>Drag_at_zero_lift</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <value>0.05</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDalpha">
+                <description>Drag_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/alpha-rad</property>
+                    <value>0.5</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDde">
+                <description>Drag_due_to_Elevator_Deflection</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/elevator-pos-norm</property>
+                    <value>0.03</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="LIFT">
+            <function name="aero/coefficient/CLalpha">
+                <description>Lift_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/alpha-rad</property>
+                    <value>10</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="ROLL">
+            <function name="aero/coefficient/Clt">
+                <description>Roll_moment_due_to_roll_angle</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/p-aero-rad_sec</property>
+                    <value>-5</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clp">
+                <description>Roll_moment_due_to_roll_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/p-aero-rad_sec</property>
+                    <value>-3</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clda">
+                <description>Roll_moment_due_to_aileron</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+                    <value>0.2</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="PITCH">
+            <function name="aero/coefficient/Cmalpha">
+                <description>Pitch_moment_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/alpha-rad</property>
+                    <value>-3</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmde">
+                <description>Pitch_moment_due_to_elevator</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>fcs/elevator-pos-rad</property>
+                    <value>-2</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmq">
+                <description>Pitch_moment_due_to_pitch_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>velocities/q-aero-rad_sec</property>
+                    <value>-30</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+</fdm_config>

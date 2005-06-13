@@ -1,392 +1,288 @@
-<FDM_CONFIG NAME="Lunar Module" VERSION="1.65" RELEASE="ALPHA">
-  <!--
-
-  File:        LM.xml
-  Author:      Jon S. Berndt
-  CVS Version: $Id: LM.xml,v 1.6 2004/05/26 12:29:57 jberndt Exp $
-
-  Function: Models a Grumman Aerospace Lunar Module
-  -->
-
-  <METRICS>
-
-    <!--
-    Center of gravity location, empty weight, in spacecraft own structural coord
-    system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
-    right wing.
-
-    Pilot eyepoint location, in aircraft own coord system, FROM cg.
-    X, Y, Z, in inches
-    -->
-
-    AC_WINGAREA 0
-    AC_WINGSPAN 0
-    AC_CHORD    0
-    AC_IXX      12750
-    AC_IYY      13629
-    AC_IZZ      16099
-    AC_IXZ      231
-    AC_IXY      652
-    AC_EMPTYWT  16370-0.6
-    AC_CGLOC      0.0   0.0   0.0
-    AC_EYEPTLOC -58.0 -21.0 104.9
-    AC_AERORP     0.0   0.0   0.0
-    AC_VRP        0.0   0.0   0.0
-
-  </METRICS>
-
-  <UNDERCARRIAGE>
-
-    <!--
-    the gear parameters that can be specified are as follows, IN ORDER OF APPEARANCE:
-
-    AC_GEAR
-    <name>                           name of gear entry - no spaces allowed
-    <X> <Y> <Z>                      Gear location in aircraft body coords in inches
-    <spring constant>                spring constant in lbs/ft
-    <damping coefficient>            damping coefficient in lbs/ft/sec
-    <dynamic friction coefficient>   Self-explanatory: sliding friction coefficient
-    <static friction coefficient>    Self-explanatory: "onset" friction coefficient
-    <rolling resistance coefficient> Self-explanatory: rolling resistance coefficient
-    <steerability attribute>         One of <STEERABLE | FIXED | CASTERED>
-    <brake group membership>         One of <LEFT | CENTER | RIGHT | NOSE | TAIL | NONE>
-    <max steer angle>                Maximum steerable angle in degrees
-    -->
-
-    AC_GEAR  LADDER -163.0    0.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
-    AC_GEAR  LEFT      0.0 -163.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
-    AC_GEAR  RIGHT     0.0 -163.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
-    AC_GEAR  REAR    163.0    0.0 -105.0 15000  1000  0.2 0.9 0.20 FIXED NONE 0 FIXED
-
-  </UNDERCARRIAGE>
-
-  <PROPULSION>
-
-    <!--
-      TANKS SECTION
-
-      Tank locations and characteristics, empty weight, in aircrafts own coord system:
-      X, Y, Z, in inches
-      effective radius of tank, in inches (for fuel slosh, if/when modeled)
-      capacity in pounds
-      Current contents, in pounds
-
-      ENGINE[S] SECTION
-
-      Engine[s] is|are specified by giving engine name (which corresponds to an engine
-      definition file in the "engines" directory) followed by x, y, z placement and
-      pitch and yaw orientation. Coordinates are given in inches in the structural
-      coordinate frame. Angles for pitch and yaw are specified in radians.
-
-      AC_ENGINE name x y z pitch yaw
-
-      THRUSTER[S] SECTION
-
-      AC_THRUSTER name x y z pitch yaw
-    -->
-
-    <AC_TANK TYPE="OXIDIZER" NUMBER="0">
-      XLOC 282.3
-      YLOC 0.0
-      ZLOC 0.0
-      RADIUS 26.0
-      CAPACITY 9470.0
-      CONTENTS 9470.0
-    </AC_TANK>
-
-    <AC_TANK TYPE="FUEL" NUMBER="1">
-      XLOC 408.3
-      YLOC 0.0
-      ZLOC 0.0
-      RADIUS 26.0
-      CAPACITY 8236.0
-      CONTENTS 8236.0
-    </AC_TANK>
-
-    <AC_ENGINE FILE="LMdescent">
-      XLOC 600.0
-      YLOC   0.0
-      ZLOC   0.0
-      PITCH  0.0
-      YAW    0.0
-      FEED     0
-      FEED     1
-      <AC_THRUSTER FILE="LM_descent_nozzle">
-        XLOC  600.0
-        YLOC    0.0
-        ZLOC    0.0
-        PITCH   0.0
-        YAW     0.0
-      </AC_THRUSTER>
-    </AC_ENGINE>
-
-  </PROPULSION>
-
-  <!--
-  In the following section for flight controls the TYPE parameter may be one of
-  the following:
-
-    LAG_FILTER
-    LEAD_LAG_FILTER
-    SECOND_ORDER_FILTER
-    WASHOUT_FILTER
-    INTEGRATOR
-    PURE_GAIN
-    SCHEDULED_GAIN
-    HYSTERESIS
-    SUMMER
-    DEADBAND
-    GRADIENT
-    AEROSURFACE_SCALE
-
-  Most flight control systems should be able to be modeled by the above
-  components.
-
-  According to Etkin, (From the Flight Safety Foundation Human Engineering
-  Bulletin 56-5H) the stick and rudder forces a pilot may be expected to apply
-  are as follows (averaged, for a right-handed pilot):
-
-  Stick Pull:  50 lbs.
-        Push:  50
-        Right: 20
-        Left:  20
-
-  Pedal Push: 300 lbs.
-
-  It is assumed that most flight control systems will list the pilot input in
-  pounds force (or the metric equivalent). It is also assumed that the aerosurfaces
-  will all have limits specified, and that the joystick inputs from FlightGear will be
-  from -1 to 0 to +1. Given all those parameters, it should be possible to
-  calculate a scaling factor that will convert the +/-1 range into a push/pull
-  force command ready for input to the FCS.
-
-  The MAX and MIN pilot input forces in AEROSURFACE_SCALE types below are given in
-  pounds.
-  -->
-
-  <FLIGHT_CONTROL NAME="X-15 SAS">
-
-    <COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       INPUT        fcs/elevator-cmd-norm
-       INPUT        fcs/pitch-trim-cmd-norm
-       CLIPTO       -1 1
-    </COMPONENT>
-
-    <COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
-      INPUT        fcs/pitch-trim-sum
-      MIN         -50
-      MAX          50
-    </COMPONENT>
-
-    <COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
-      INPUT        fcs/pitch-command-scale
-      GAIN         -0.36
-    </COMPONENT>
-
-    <!--
-      In the following component, the GAIN value is actually in addition to the
-      scheduled gain in the next component. If the GAIN in a scheduled component
-      is not required, it may be ignored and not specified here - it is initialized
-      to one in the contructor.
-    -->
-
-    <COMPONENT NAME="Pitch Scheduled Gain 1" TYPE="SCHEDULED_GAIN">
-      INPUT        fcs/pitch-gain-1
-      GAIN         0.017
-      ROWS         22
-      SCHEDULED_BY fcs/elevator-pos-rad
-      -0.68  -26.548
-      -0.595 -20.513
-      -0.51  -15.328
-      -0.425 -10.993
-      -0.34   -7.508
-      -0.255  -4.873
-      -0.17   -3.088
-      -0.085  -2.153
-       0      -2.068
-       0.085  -2.833
-       0.102  -3.088
-       0.119  -3.377
-       0.136  -3.7
-       0.153  -4.057
-       0.17   -4.448
-       0.187  -4.873
-       0.272  -7.508
-       0.357 -10.993
-       0.442 -15.328
-       0.527 -20.513
-       0.612 -26.548
-       0.697 -33.433
-    </COMPONENT>
-
-    <COMPONENT NAME="Roll Command Scale" TYPE="AEROSURFACE_SCALE">
-      INPUT        fcs/aileron-cmd-norm
-      MIN         -20
-      MAX          20
-    </COMPONENT>
-
-    <COMPONENT NAME="Roll Gain 1" TYPE="PURE_GAIN">
-      INPUT        fcs/roll-command-scale
-      GAIN         0.42
-    </COMPONENT>
-
-    <COMPONENT NAME="Roll Gain 2" TYPE="PURE_GAIN">
-      INPUT        fcs/roll-gain-1
-      GAIN         0.027
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw Command Scale" TYPE="AEROSURFACE_SCALE">
-      INPUT        fcs/rudder-cmd-norm
-      MIN         -250
-      MAX          250
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw Gain 1" TYPE="PURE_GAIN">
-      INPUT        fcs/yaw-command-scale
-      GAIN         0.082
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw Gain 2" TYPE="PURE_GAIN">
-      INPUT        fcs/yaw-gain-1
-      GAIN         0.040
-    </COMPONENT>
-
-    <COMPONENT NAME="Pitch SAS Feedback" TYPE="PURE_GAIN">
-      INPUT        velocities/q-rad_sec
-      GAIN         0.75
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw-Roll Crossover Gain" TYPE="PURE_GAIN">
-      INPUT        velocities/r-rad_sec
-      GAIN         -0.90
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw Coupled Aileron Feedback Sum" TYPE="SUMMER">
-      INPUT        velocities/p-rad_sec
-      INPUT        fcs/yaw-roll-crossover-gain
-    </COMPONENT>
-
-    <COMPONENT NAME="Roll SAS Gain" TYPE="PURE_GAIN">
-      INPUT        fcs/yaw-coupled-aileron-feedback-sum
-      GAIN         -0.50
-    </COMPONENT>
-
-    <COMPONENT NAME="Yaw SAS Gain" TYPE="PURE_GAIN">
-      INPUT        velocities/r-rad_sec
-      GAIN         0.30
-    </COMPONENT>
-
-    <COMPONENT NAME="Elevator Positioning" TYPE="SUMMER">
-      INPUT         fcs/pitch-scheduled-gain-1
-      INPUT        fcs/pitch-sas-feedback
-      CLIPTO       -0.26 0.61
-    </COMPONENT>
-
-    <COMPONENT NAME="Elevator Filter" TYPE="LAG_FILTER">
-      INPUT        fcs/elevator-positioning
-      C1           600
-      OUTPUT       fcs/elevator-pos-rad
-    </COMPONENT>
-
-    <COMPONENT NAME="Aileron Positioning" TYPE="SUMMER">
-      INPUT         fcs/roll-gain-2
-      INPUT        fcs/roll-sas-gain
-      OUTPUT       fcs/left-aileron-pos-rad
-      CLIPTO       -0.35 0.35
-    </COMPONENT>
-
-    <COMPONENT NAME="Rudder Positioning" TYPE="SUMMER">
-      INPUT         fcs/yaw-gain-2
-      INPUT        fcs/yaw-sas-gain
-      OUTPUT       fcs/rudder-pos-rad
-      CLIPTO       -0.52 0.52
-    </COMPONENT>
-
-  </FLIGHT_CONTROL>
-
-  <AERODYNAMICS>
-
-    <AXIS NAME="LIFT">
-    </AXIS>
-
-    <AXIS NAME="DRAG">
-    </AXIS>
-
-    <AXIS NAME="SIDE">
-    </AXIS>
-
-    <AXIS NAME="ROLL">
-    </AXIS>
-
-    <AXIS NAME="PITCH">
-    </AXIS>
-
-    <AXIS NAME="YAW">
-    </AXIS>
-
-  </AERODYNAMICS>
-
-  <!--
-    OUTPUT section definition
-
-    The following specifies the way that JSBSim writes out data.
-
-    NAME is the filename you want the output to go to
-
-    TYPE can be:
-      CSV       Comma separated data. If a filename is supplied then the data
-                goes to that file. If COUT or cout is specified, the data goes
-                to stdout. If the filename is a null filename the data goes to
-                stdout, as well.
-      SOCKET    Will eventually send data to a socket output, where NAME
-                would then be the IP address of the machine the data should be
-                sent to. DONT USE THIS YET!
-      TABULAR   Columnar data. NOT IMPLEMENTED YET!
-      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
-      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
-                off the data output without having to mess with anything else.
-
-    The arguments that can be supplied, currently, are
-
-    RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
-                value may not be *exactly* what you want, due to the dependence
-                on dt, the cycle rate for the FDM.
-
-    The following parameters tell which subsystems of data to output:
-
-    SIMULATION       ON|OFF
-    ATMOSPHERE       ON|OFF
-    MASSPROPS        ON|OFF
-    AEROSURFACES     ON|OFF
-    RATES            ON|OFF
-    VELOCITIES       ON|OFF
-    FORCES           ON|OFF
-    MOMENTS          ON|OFF
-    POSITION         ON|OFF
-    COEFFICIENTS     ON|OFF
-    GROUND_REACTIONS ON|OFF
-    FCS              ON|OFF
-    PROPULSION       ON|OFF
-
-    NOTE that Time is always output with the data.
-  -->
-
-  <OUTPUT NAME="JSBout.csv" TYPE="NONE">
-    RATE_IN_HZ       20
-    SIMULATION       ON
-    ATMOSPHERE       OFF
-    MASSPROPS        OFF
-    AEROSURFACES     ON
-    RATES            ON
-    VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          ON
-    POSITION         ON
-    COEFFICIENTS     OFF
-    GROUND_REACTIONS ON
-    FCS              ON
-    PROPULSION       ON
-  </OUTPUT>
-
-</FDM_CONFIG>
-
+<?xml version="1.0"?>
+<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<fdm_config name="Lunar Module" version="2.0" release="BETA">
+
+    <fileheader>
+        <author> Author Name </author>
+        <filecreationdate> Creation Date </filecreationdate>
+        <description> Description </description>
+        <version> Version </version>
+        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+    </fileheader>
+
+    <metrics>
+        <wingarea unit="FT2"> 0 </wingarea>
+        <wingspan unit="FT"> 0 </wingspan>
+        <chord unit="FT"> 0 </chord>
+        <htailarea unit="FT2"> 0 </htailarea>
+        <htailarm unit="FT"> 0 </htailarm>
+        <vtailarea unit="FT2"> 0 </vtailarea>
+        <vtailarm unit="FT"> 0 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> -58 </x>
+            <y> -21 </y>
+            <z> 104.9 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 12750 </ixx>
+        <iyy unit="SLUG*FT2"> 13629 </iyy>
+        <izz unit="SLUG*FT2"> 16099 </izz>
+        <ixz unit="SLUG*FT2"> -231 </ixz>
+        <iyz unit="SLUG*FT2"> -0 </iyz>
+        <ixy unit="SLUG*FT2"> -652 </ixy>
+        <emptywt unit="LBS"> 16370 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 0 </x>
+            <y> 0 </y>
+            <z> 0 </z>
+        </location>
+    </mass_balance>
+
+    <ground_reactions>
+        <contact type="BOGEY" name="LADDER">
+            <location unit="IN">
+                <x> -163 </x>
+                <y> 0 </y>
+                <z> -105 </z>
+            </location>
+            <static_friction> 0.9 </static_friction>
+            <dynamic_friction> 0.2 </dynamic_friction>
+            <rolling_friction> 0.2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="LEFT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> -163 </y>
+                <z> -105 </z>
+            </location>
+            <static_friction> 0.9 </static_friction>
+            <dynamic_friction> 0.2 </dynamic_friction>
+            <rolling_friction> 0.2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT">
+            <location unit="IN">
+                <x> 0 </x>
+                <y> -163 </y>
+                <z> -105 </z>
+            </location>
+            <static_friction> 0.9 </static_friction>
+            <dynamic_friction> 0.2 </dynamic_friction>
+            <rolling_friction> 0.2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="REAR">
+            <location unit="IN">
+                <x> 163 </x>
+                <y> 0 </y>
+                <z> -105 </z>
+            </location>
+            <static_friction> 0.9 </static_friction>
+            <dynamic_friction> 0.2 </dynamic_friction>
+            <rolling_friction> 0.2 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 15000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+    <propulsion>
+        <engine file="LMdescent">
+            <location unit="IN">
+                <x> 600 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0 </pitch>
+                <yaw> 0 </yaw>
+            </orient>
+            <feed>0</feed>
+            <feed>1</feed>
+            <thruster file="LM_descent_nozzle">
+                <location unit="IN">
+                    <x> 600 </x>
+                    <y> 0 </y>
+                    <z> 0 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <tank type="OXIDIZER">    <!-- Tank number 0 --> 
+            <location unit="IN">
+                <x> 282.3 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <capacity unit="LBS"> 9470 </capacity>
+            <contents unit="LBS"> 9470 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 1 --> 
+            <location unit="IN">
+                <x> 408.3 </x>
+                <y> 0 </y>
+                <z> 0 </z>
+            </location>
+            <capacity unit="LBS"> 8236 </capacity>
+            <contents unit="LBS"> 8236 </contents>
+        </tank>
+    </propulsion>
+    <flight_control name="FCS: X-15 SAS">
+
+        <component name="Pitch Trim Sum" type="SUMMER">
+            <input>fcs/elevator-cmd-norm</input>
+            <input>fcs/pitch-trim-cmd-norm</input>
+            <clip>
+                <min>-1</min>
+                <max>1</max>
+            </clip>
+        </component>
+
+        <component name="Pitch Command Scale" type="AEROSURFACE_SCALE">
+            <input>fcs/pitch-trim-sum</input>
+            <limit>
+                <min>-50</min>
+                <max>50</max>
+            </limit>
+        </component>
+
+        <component name="Pitch Gain 1" type="PURE_GAIN">
+            <input>fcs/pitch-command-scale</input>
+            <gain>-0.36</gain>
+        </component>
+
+        <component name="Pitch Scheduled Gain 1" type="SCHEDULED_GAIN">
+            <input>fcs/pitch-gain-1</input>
+            <gain>0.017</gain>
+        </component>
+
+        <component name="Roll Command Scale" type="AEROSURFACE_SCALE">
+            <input>fcs/aileron-cmd-norm</input>
+            <limit>
+                <min>-20</min>
+                <max>20</max>
+            </limit>
+        </component>
+
+        <component name="Roll Gain 1" type="PURE_GAIN">
+            <input>fcs/roll-command-scale</input>
+            <gain>0.42</gain>
+        </component>
+
+        <component name="Roll Gain 2" type="PURE_GAIN">
+            <input>fcs/roll-gain-1</input>
+            <gain>0.027</gain>
+        </component>
+
+        <component name="Yaw Command Scale" type="AEROSURFACE_SCALE">
+            <input>fcs/rudder-cmd-norm</input>
+            <limit>
+                <min>-250</min>
+                <max>250</max>
+            </limit>
+        </component>
+
+        <component name="Yaw Gain 1" type="PURE_GAIN">
+            <input>fcs/yaw-command-scale</input>
+            <gain>0.082</gain>
+        </component>
+
+        <component name="Yaw Gain 2" type="PURE_GAIN">
+            <input>fcs/yaw-gain-1</input>
+            <gain>0.04</gain>
+        </component>
+
+        <component name="Pitch SAS Feedback" type="PURE_GAIN">
+            <input>velocities/q-rad_sec</input>
+            <gain>0.75</gain>
+        </component>
+
+        <component name="Yaw-Roll Crossover Gain" type="PURE_GAIN">
+            <input>velocities/r-rad_sec</input>
+            <gain>-0.9</gain>
+        </component>
+
+        <component name="Yaw Coupled Aileron Feedback Sum" type="SUMMER">
+            <input>velocities/p-rad_sec</input>
+            <input>fcs/yaw-roll-crossover-gain</input>
+        </component>
+
+        <component name="Roll SAS Gain" type="PURE_GAIN">
+            <input>fcs/yaw-coupled-aileron-feedback-sum</input>
+            <gain>-0.5</gain>
+        </component>
+
+        <component name="Yaw SAS Gain" type="PURE_GAIN">
+            <input>velocities/r-rad_sec</input>
+            <gain>0.3</gain>
+        </component>
+
+        <component name="Elevator Positioning" type="SUMMER">
+            <input>fcs/pitch-scheduled-gain-1</input>
+            <input>fcs/pitch-sas-feedback</input>
+            <clip>
+                <min>-0.26</min>
+                <max>0.61</max>
+            </clip>
+        </component>
+
+        <component name="Elevator Filter" type="LAG_FILTER">
+            <input>fcs/elevator-positioning</input>
+            <c1>600</c1>
+            <output>fcs/elevator-pos-rad</output>
+        </component>
+
+        <component name="Aileron Positioning" type="SUMMER">
+            <input>fcs/roll-gain-2</input>
+            <input>fcs/roll-sas-gain</input>
+            <clip>
+                <min>-0.35</min>
+                <max>0.35</max>
+            </clip>
+            <output>fcs/left-aileron-pos-rad</output>
+        </component>
+
+        <component name="Rudder Positioning" type="SUMMER">
+            <input>fcs/yaw-gain-2</input>
+            <input>fcs/yaw-sas-gain</input>
+            <clip>
+                <min>-0.52</min>
+                <max>0.52</max>
+            </clip>
+            <output>fcs/rudder-pos-rad</output>
+        </component>
+    </flight_control>
+    <aerodynamics>
+    </aerodynamics>
+</fdm_config>
