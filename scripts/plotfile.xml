@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<plotset>
+   <plot>
+      <!--This plot normally shows a straight line; need to fix it up so it is more descriptive. It might be nice to even do a 3D plot of flight path.-->
+      <title>Ground Track</title>
+      <label axis="x">Longitude (deg)</label>
+      <label axis="y">Latitude (deg)</label>
+      <scale>
+         <min axis="x">121.5</min>
+         <min axis="y">46.5</min>
+         <max axis="x">122.5</max>
+         <max axis="y">47.5</max>
+      </scale>
+      <parameter axis="x">Longitude (Deg)</parameter>
+      <parameter axis="y">Latitude (Deg)</parameter>
+   </plot>
+   <plot>
+      <title>Body Rates</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">P, Q, R (rad/sec)</label>
+      <scale>
+         <min axis="x">50.0</min>
+         <min axis="y">-0.6</min>
+         <max axis="x">100.0</max>
+         <max axis="y">0.6</max>
+      </scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">P</parameter>
+      <parameter axis="y">Q</parameter>
+      <parameter axis="y">R</parameter>
+   </plot>
+   <plot>
+      <title>Body Velocities</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">U, V, W (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">UBody</parameter>
+      <parameter axis="y">VBody</parameter>
+      <parameter axis="y">WBody</parameter>
+   </plot>
+   <plot>
+      <title>Aero Velocities</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">U, V, W (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">UAero</parameter>
+      <parameter axis="y">VAero</parameter>
+      <parameter axis="y">WAero</parameter>
+   </plot>
+   <plot>
+      <title>Earth Frame Vertical Velocity</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Vdown (ft/sec)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Vd</parameter>
+   </plot>
+   <plot>
+      <title>Elevator Response</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Elevator/Pitch (rad)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Elevator Cmd</parameter>
+      <parameter axis="y">Elevator Pos</parameter>
+      <parameter axis="y">Tht</parameter>
+      <parameter axis="y">Q</parameter>
+   </plot>
+   <plot>
+      <title>Altitude</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Altitude (ft)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Altitude</parameter>
+   </plot>
+   <plot>
+      <title>Euler Angles</title>
+      <label axis="x">Time (sec)</label>
+      <label axis="y">Phi, Theta, Psi (rad)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Phi</parameter>
+      <parameter axis="y">Tht</parameter>
+      <parameter axis="y">Psi</parameter>
+   </plot>
+   <plot>
+      <title>Body Forces</title>
+      <label axis="x">Time</label>
+      <label axis="y">Forces (lbs)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">Xforce</parameter>
+      <parameter axis="y">Yforce</parameter>
+      <parameter axis="y">Zforce</parameter>
+   </plot>
+   <plot>
+      <title>Body Moments</title>
+      <label axis="x">Time</label>
+      <label axis="y">Moments (ft-lbs)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">L</parameter>
+      <parameter axis="y">M</parameter>
+      <parameter axis="y">N</parameter>
+   </plot>
+   <plot>
+      <title>Gear Stroke</title>
+      <label axis="x">Time (seconds)</label>
+      <label axis="y">Length (ft)</label>
+      <scale>
+         <min axis="x">0</min>
+         <min axis="y">-1</min>
+         <max axis="x">2</max>
+         <max axis="y">2</max>
+      </scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">NOSE_stroke</parameter>
+      <parameter axis="y">LEFT_MAIN_stroke</parameter>
+      <parameter axis="y">RIGHT_MAIN_stroke</parameter>
+   </plot>
+   <plot>
+      <title>Gear Compression Force</title>
+      <label axis="x">Time (seconds)</label>
+      <label axis="y">Force (lbs)</label>
+      <scale>
+         <min axis="x">0</min>
+         <min axis="y">-4000</min>
+         <max axis="x">20</max>
+         <max axis="y">1000</max>
+      </scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">NOSE_CompressForce</parameter>
+      <parameter axis="y">LEFT_MAIN_CompressForce</parameter>
+      <parameter axis="y">RIGHT_MAIN_CompressForce</parameter>
+   </plot>
+   <plot>
+      <title>Wheel Steering Angle</title>
+      <label axis="x">Time (seconds)</label>
+      <label axis="y">Angle (deg)</label>
+      <scale>
+         <min axis="x">0</min>
+         <min axis="y">-20</min>
+         <max axis="x">10</max>
+         <max axis="y">20</max>
+      </scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">NOSE_WhlSlipDegrees</parameter>
+   </plot>
+   <plot>
+      <title>Tire Forces</title>
+      <label axis="x">Time (seconds)</label>
+      <label axis="y">Forces (lbs)</label>
+      <scale>auto</scale>
+      <parameter axis="x">Time</parameter>
+      <parameter axis="y">NOSE_WhlSideForce</parameter>
+      <parameter axis="y">NOSE_WhlRollForce</parameter>
+      <parameter axis="y">NOSE_BodyXForce</parameter>
+      <parameter axis="y">NOSE_BodyYForce</parameter>
+   </plot>
+</plotset>

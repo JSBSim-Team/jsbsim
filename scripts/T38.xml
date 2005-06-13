@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<runscript name="T38 aircraft taxi run">
+  <!--
+    This run is for testing a T38 aircraft for taxiing behaviour
+  -->
+
+  <use aircraft="T38">
+  <use initialize="reset00">
+  <run start="0.0" end="100" dt="0.00833333">
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="0.25">
+      <set name="propulsion/starter_cmd" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="0.05">
+    </when>
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="5.0">
+      <set name="propulsion/cutoff_cmd" type="FG_VALUE" value="0" action="FG_STEP" persistent="false" tc ="0.05">
+    </when>
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="6.0">
+      <set name="fcs/throttle-cmd-norm[0]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.5">
+    </when>
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="6.0">
+      <set name="fcs/throttle-cmd-norm[1]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.5">
+    </when>
+  </run>
+</runscript>

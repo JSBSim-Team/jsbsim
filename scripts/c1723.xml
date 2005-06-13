@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<runscript name="C172-01A takeoff run">
+  <!--
+    This run is for testing the C172 altitude hold autopilot
+  -->
+
+  <use aircraft="c172x"/>
+  <use initialize="reset00"/>
+  <run start="0.0" end="600" dt="0.0083333">
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="0.10"/>
+      <parameter name="sim-time-sec" comparison="le" value="0.11"/>
+      <set name="simulation/do_trim" value="2"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
+      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
+      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.05"/>
+      <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.05"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+    </when>
+
+    <when> <!-- Set Heading when reach 5 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="5"/>
+      <set name="ap/heading_setpoint" value="200"/>
+      <set name="ap/attitude_hold" value="0"/>
+      <set name="ap/heading_hold" value="1"/>
+    </when>
+
+    <when> <!-- Set Autopilot for 20 ft -->
+      <parameter name="aero/qbar-psf" comparison="ge" value="4.0"/>
+      <set name="ap/altitude_setpoint" value="100.0" action="FG_EXP" tc ="2.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="fcs/flap-cmd-norm" value=".33"/>
+    </when>
+
+    <when> <!-- Set Autopilot for 8000 ft -->
+      <parameter name="aero/qbar-psf" comparison="ge" value="5.0"/>
+      <set name="ap/altitude_setpoint" value="8000.0" action="FG_EXP" tc ="3.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+    </when>
+
+    <when> <!-- remove flaps at 50 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="100.0"/>
+      <set name="fcs/mixture-cmd-norm" value="0.69" action="FG_EXP" tc ="400.0"/>
+      <set name="fcs/flap-cmd-norm" value="0"/>
+    </when>
+
+  </run>
+
+</runscript>

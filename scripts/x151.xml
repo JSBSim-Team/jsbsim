@@ -1,0 +1,34 @@
+<?xml version="1.0"?> 
+<runscript name="X-15-01A"> 
+
+  <!--
+  This run is for testing X-15 high altitude, 
+  high speed pitch pulses in the simulator. 
+  --> 
+
+  <use aircraft="X15"> 
+
+  <use initialize="reset00"> 
+
+  <run start="0.0" end="10.0" dt="0.01"> 
+    <when> 
+      <parameter name="sim-time-sec" comparison="ge" value="0.5">
+      <parameter name="sim-time-sec" comparison="le" value="1.5">
+      <set name="fcs/aileron-cmd-norm" type="FG_DELTA" value="0.1" action="FG_EXP" persistent="false" tc ="0.5">
+      <set name="fcs/throttle-cmd-norm" type="FG_VALUE" value="0.9" action="FG_RAMP" persistent="false" tc ="0.5">
+    </when>
+    <when> 
+      <parameter name="sim-time-sec" comparison="ge" value="1.5">
+      <parameter name="sim-time-sec" comparison="le" value="2.5">
+      <set name="fcs/rudder-cmd-norm" type="FG_DELTA" value="0.2" action="FG_RAMP" persistent="false" tc ="0.5">
+    </when>
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="2.5">
+      <parameter name="sim-time-sec" comparison="le" value="3.5">
+      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.1" action="FG_EXP" persistent="false" tc ="0.5">
+    </when>
+  </run>
+
+</runscript> 
+
+

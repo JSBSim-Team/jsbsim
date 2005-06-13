@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<runscript name="C310-01A takeoff run">
+  <!--
+    This run is for testing C310 runs
+  -->
+
+  <use aircraft="c310">
+  <use initialize="reset00">
+  <run start="0.0" end="140" dt="0.00833333">
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="0.25">
+      <parameter name="sim-time-sec" comparison="le" value="1.00">
+      <set name="fcs/throttle-cmd-norm" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05">
+      <set name="fcs/mixture-cmd-norm" type="FG_VALUE" value="0.55" action="FG_RAMP" persistent="false" tc ="0.05">
+      <set name="propulsion/magneto_cmd" type="FG_VALUE" value="3" action="FG_STEP" persistent="false" tc ="1.00">
+      <set name="propulsion/starter_cmd" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="1.00">
+    </when>
+
+    <when> <!-- Set the Elevator to takeoff -->
+      <parameter name="aero/qbar-psf" comparison="ge" value="17.0">
+      <parameter name="position/h-sl-ft" comparison="le" value="2000">
+      <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="-0.5" action="FG_EXP" persistent="false" tc ="2.0">
+    </when>
+
+    <when>
+      <parameter name="position/h-sl-ft" comparison="ge" value="2000">
+      <parameter name="attitude/theta-rad" comparison="ge" value="0.30">
+      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.06" action="FG_EXP" persistent="true" tc ="12.0">
+    </when>
+
+    <when>
+      <parameter name="position/h-sl-ft" comparison="le" value="2000">
+      <parameter name="attitude/theta-rad" comparison="le" value="0.25">
+      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="-0.06" action="FG_EXP" persistent="true" tc ="12.0">
+    </when>
+
+    <when>
+      <parameter name="position/h-sl-ft" comparison="ge" value="2000">
+      <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="0.00" action="FG_EXP" persistent="false" tc ="1.0">
+    </when>
+
+  </run>
+
+</runscript>
