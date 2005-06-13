@@ -1,0 +1,28 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(JSBSim.cpp, 0.9.8, jsb@hal-pc.org)
+AM_INIT_AUTOMAKE(JSBSim, 0.9.8)
+
+dnl Checks for programs.
+AC_PROG_CPP
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_CXX
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_FUNC_MEMCMP
+
+AC_OUTPUT(Makefile initialization/Makefile models/Makefile models/atmosphere/Makefile \
+          models/propulsion/Makefile models/flight_control/Makefile input_output/Makefile
+          math/Makefile simgear/Makefile simgear/props/Makefile simgear/xml/Makefile)
