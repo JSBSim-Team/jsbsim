@@ -1,10 +1,10 @@
 EXTRA_DIST = \
 	autogen.sh
 
-SUBDIRS	= src
+SUBDIRS	= src aircraft engine scripts
 
 dist-hook:
-	(cd $(top_srcdir); $(HOME)/Projects/FlightGear-0.9/admin/am2dsp.pl)
+	(cd $(top_srcdir))
 
 #
 # Rule to build RPM distribution package

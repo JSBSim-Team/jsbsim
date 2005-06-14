@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--C++BuilderX Project-->
 <project>
-  <property category="build.config" name="active" value="0"/>
+  <property category="build.config" name="active" value="1"/>
   <property category="build.config" name="count" value="1"/>
   <property category="build.config" name="excludedefaultforzero" value="0"/>
   <property category="build.config.0" name="builddir" value="Debug"/>
@@ -238,7 +238,7 @@
   <property category="win32.Debug_Build.win32b.ilink32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="option.v.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="option.x.enabled" value="1"/>
-  <property category="win32.Debug_Build.win32b.ilink32" name="param.exefile.1" value="C:\cygwin\home\Jon\JSBSim_XML\JSBSim.exe"/>
+  <property category="win32.Debug_Build.win32b.ilink32" name="param.exefile.1" value=".\JSBSim.exe"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.libfiles.1" value="cw32.lib"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.libfiles.2" value="import32.lib"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.objfiles.1" value="c0x32.obj"/>
@@ -299,7 +299,7 @@
   <property category="win32.Release_Build.win32b.ilink32" name="option.b:xxxx.enabled" value="0"/>
   <property category="win32.Release_Build.win32b.ilink32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Release_Build.win32b.ilink32" name="option.x.enabled" value="1"/>
-  <property category="win32.Release_Build.win32b.ilink32" name="param.exefile.1" value="C:\cygwin\home\Jon\JSBSim\JSBSim.exe"/>
+  <property category="win32.Release_Build.win32b.ilink32" name="param.exefile.1" value=".\JSBSim.exe"/>
   <property category="win32.Release_Build.win32b.ilink32" name="param.libfiles.1" value="cw32.lib"/>
   <property category="win32.Release_Build.win32b.ilink32" name="param.libfiles.2" value="import32.lib"/>
   <property category="win32.win32b.Debug_Build" name="saved" value="1"/>
@@ -766,6 +766,7 @@
     </file>
     <file path="src/JSBSim.cxx">
       <property category="build.win32.Debug_Build.win32b" name="exclude" value="1"/>
+      <property category="build.win32.Release_Build.win32b" name="exclude" value="1"/>
       <property category="unique" name="id" value="363"/>
     </file>
     <file path="src/JSBSim.hxx">

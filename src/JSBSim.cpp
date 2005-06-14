@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.4 2005/06/14 13:10:40 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -279,7 +279,10 @@ int main(int argc, char* argv[])
     // if running realtime, throttle the execution, else just run flat-out fast
     if (realtime) {
       while (clock_ticks/CLOCKS_PER_SEC  >= FDMExec->GetState()->Getsim_time()) {
-        if (Scripted) if (!Script->RunScript()) break;
+        if (Scripted) if (!Script->RunScript()) {
+          result = false;
+          break;
+        }
         result = FDMExec->Run();
       }
 
@@ -290,7 +293,10 @@ int main(int argc, char* argv[])
       }
 
     } else {
-      if (Scripted) if (!Script->RunScript()) break;
+      if (Scripted) if (!Script->RunScript()) {
+        result = false;
+        break;
+      }
       result = FDMExec->Run();
     }
     clock_ticks = clock();
