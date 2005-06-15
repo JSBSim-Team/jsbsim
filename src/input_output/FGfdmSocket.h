@@ -76,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.3 2005/06/15 12:01:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,10 +103,12 @@ public:
   FGfdmSocket(string, int);
   ~FGfdmSocket();
   void Send(void);
+  void Append(const string s) {Append(s.c_str());}
   void Append(const char*);
   void Append(double);
   void Append(long);
   void Clear(void);
+  void Clear(string s);
   bool GetConnectStatus(void) {return connected;}
 
 private:

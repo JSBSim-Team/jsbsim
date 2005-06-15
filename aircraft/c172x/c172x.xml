@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.31 2005/06/13 00:29:41 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.32 2005/06/15 12:01:54 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -795,19 +795,21 @@
 
     </aerodynamics>
 
-    <output name="JSBout172.csv" type="CSV" rate="2">
+    <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>
-        <atmosphere> ON </atmosphere>
+        <atmosphere> OFF </atmosphere>
         <massprops> OFF</massprops>
-        <aerosurfaces> ON </aerosurfaces>
-        <rates> ON </rates>
-        <velocities> ON </velocities>
-        <forces> ON </forces>
-        <moments> ON </moments>
-        <position> ON </position>
+        <aerosurfaces> OFF </aerosurfaces>
+        <rates> OFF </rates>
+        <velocities> OFF </velocities>
+        <forces> OFF </forces>
+        <moments> OFF </moments>
+        <position> OFF </position>
         <coefficients> OFF </coefficients>
-        <ground_reactions> ON </ground_reactions>
-        <fcs> ON </fcs>
-        <propulsion> ON </propulsion>
+        <ground_reactions> OFF </ground_reactions>
+        <fcs> OFF </fcs>
+        <propulsion> OFF </propulsion>
+        <property> position/h-agl-ft </property>
+        <property> velocities/vc-kts </property>
     </output>
 </fdm_config>
