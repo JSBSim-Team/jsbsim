@@ -58,4 +58,7 @@ src/math/Makefile \
 src/simgear/Makefile \
 src/simgear/props/Makefile \
 src/simgear/xml/Makefile \
+aircraft/Makefile \
+engine/Makefile \
+scripts/Makefile \
 )

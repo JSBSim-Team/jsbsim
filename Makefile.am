@@ -1,7 +1,7 @@
 EXTRA_DIST = \
-	autogen.sh
+	autogen.sh aircraft engine scripts
 
-SUBDIRS	= src aircraft engine scripts
+SUBDIRS	= src
 
 dist-hook:
 	(cd $(top_srcdir))
