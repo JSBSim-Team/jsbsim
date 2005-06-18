@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGGain.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,6 +178,7 @@ public:
 
 private:
   FGTable* Table;
+  FGPropertyManager* GainPropertyNode;
   double Gain;
   double Min, Max;
   double OutputPct;

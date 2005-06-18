@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.3 2005/06/18 14:50:00 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,8 +53,9 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Element *input_element, *clip_el;
   Input = Output = clipmin = clipmax = 0.0;
   OutputNode = treenode = 0;
+  ClipMinPropertyNode = ClipMaxPropertyNode = 0;
   IsOutput   = clip = false;
-  string input;
+  string input, clip_string;
 
   PropertyManager = fcs->GetPropertyManager();
   Type = element->GetAttributeValue("type");
@@ -79,8 +80,18 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   }
 
   if (clip_el = element->FindElement("clipto")) {
-    clipmin = clip_el->FindElementValueAsNumber("min");
-    clipmax = clip_el->FindElementValueAsNumber("max");
+    clip_string = clip_el->FindElementValue("min");
+    if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+      ClipMinPropertyNode = PropertyManager->GetNode( clip_string );
+    } else {
+      clipmin = clip_el->FindElementValueAsNumber("min");
+    }
+    clip_string = clip_el->FindElementValue("max");
+    if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+      ClipMaxPropertyNode = PropertyManager->GetNode( clip_string );
+    } else {
+      clipmax = clip_el->FindElementValueAsNumber("max");
+    }
     clip = true;
   }
 
@@ -116,6 +127,8 @@ bool FGFCSComponent::Run(void)
 void FGFCSComponent::Clip(void)
 {
   if (clip) {
+    if (ClipMinPropertyNode != 0) clipmin = ClipMinPropertyNode->getDoubleValue();
+    if (ClipMaxPropertyNode != 0) clipmax = ClipMaxPropertyNode->getDoubleValue();
     if (Output > clipmax)      Output = clipmax;
     else if (Output < clipmin) Output = clipmin;
   }

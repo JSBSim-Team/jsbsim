@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.3 2005/06/18 14:50:01 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,21 +51,27 @@ CLASS IMPLEMENTATION
 FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   Element *scale_element;
-  string strScheduledBy;
+  string strScheduledBy, gain_string;
 
+  GainPropertyNode = 0;
   Gain = 1.000;
   Rows = 0;
   Table = 0;
   Min = Max = OutputPct = 0.0;
 
-  if ( element->FindElement("gain") ) {
-    Gain = element->FindElementValueAsNumber("gain");
-  }
-
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
       cerr << "No GAIN supplied for PURE_GAIN component: " << Name << endl;
       exit(-1);
+    }
+  }
+
+  if ( element->FindElement("gain") ) {
+    gain_string = element->FindElementValue("gain");
+    if (gain_string.find_first_not_of("+-.0123456789") != string::npos) { // property
+      GainPropertyNode = PropertyManager->GetNode(gain_string);
+    } else {
+      Gain = element->FindElementValueAsNumber("gain");
     }
   }
 
@@ -116,6 +122,8 @@ bool FGGain::Run(void )
   double SchedGain = 1.0;
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+
+  if (GainPropertyNode != 0) Gain = GainPropertyNode->getDoubleValue();
 
   if (Type == "PURE_GAIN") {                       // PURE_GAIN
 
