@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.2 2005/06/13 00:35:18 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.3 2005/06/18 13:06:53 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -826,17 +826,19 @@ bool FGJSBsim::copy_from_JSBsim()
 
 bool FGJSBsim::ToggleDataLogging(void)
 {
-    return fdmex->GetOutput()->Toggle();
+  // ToDo: handle this properly
+  fdmex->DisableOutput();
+  return false;
 }
 
 
 bool FGJSBsim::ToggleDataLogging(bool state)
 {
     if (state) {
-      fdmex->GetOutput()->Enable();
+      fdmex->EnableOutput();
       return true;
     } else {
-      fdmex->GetOutput()->Disable();
+      fdmex->DisableOutput();
       return false;
     }
 }
