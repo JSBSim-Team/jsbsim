@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--C++BuilderX Project-->
 <project>
+  <property category="backuppath" name="bak" value="../../../../borland/CBuilderX/bin/bak"/>
   <property category="build.config" name="active" value="1"/>
   <property category="build.config" name="count" value="1"/>
   <property category="build.config" name="excludedefaultforzero" value="0"/>
@@ -35,7 +36,7 @@
   <property category="build.platform" name="win32.gnuc++.enabled" value="0"/>
   <property category="build.platform" name="win32.mswin32.enabled" value="0"/>
   <property category="build.platform" name="win32.win32b.enabled" value="1"/>
-  <property category="cbproject" name="lastnodeid" value="636"/>
+  <property category="cbproject" name="lastnodeid" value="638"/>
   <property category="cbproject" name="version" value="X.1.0"/>
   <property category="classbrowser" name="GroupByVisibility" value="1"/>
   <property category="classbrowser" name="SeparateByKind" value="1"/>
@@ -171,7 +172,7 @@
   <property category="team" name="ignorePath.8" value="filtersjb/FGFilter.o"/>
   <property category="team" name="ignorePath.80" value="StellarJ_DataLog.csv"/>
   <property category="team" name="ignorePath.9" value="filtersjb/FGGain.o"/>
-  <property category="unique" name="id" value="636"/>
+  <property category="unique" name="id" value="638"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="container.SelectedWarnings.option.winl.enabled" value="0"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.arg.1" value="_DEBUG"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.enabled" value="1"/>
@@ -201,7 +202,7 @@
   <property category="win32.Debug_Build.win32b.bcc32" name="option.j.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.k.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.o.arg.merge" value="0"/>
-  <property category="win32.Debug_Build.win32b.bcc32" name="option.o.enabled" value="1"/>
+  <property category="win32.Debug_Build.win32b.bcc32" name="option.o.enabled" value="0"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.r.enabled" value="0"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.tWC.enabled" value="1"/>
@@ -238,7 +239,7 @@
   <property category="win32.Debug_Build.win32b.ilink32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="option.v.enabled" value="1"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="option.x.enabled" value="1"/>
-  <property category="win32.Debug_Build.win32b.ilink32" name="param.exefile.1" value=".\JSBSim.exe"/>
+  <property category="win32.Debug_Build.win32b.ilink32" name="param.exefile.1" value="JSBSim.exe"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.libfiles.1" value="cw32.lib"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.libfiles.2" value="import32.lib"/>
   <property category="win32.Debug_Build.win32b.ilink32" name="param.objfiles.1" value="c0x32.obj"/>
@@ -268,7 +269,8 @@
   <property category="win32.Release_Build.win32b.bcc32" name="option.j.arg" value="25"/>
   <property category="win32.Release_Build.win32b.bcc32" name="option.j.enabled" value="1"/>
   <property category="win32.Release_Build.win32b.bcc32" name="option.k.enabled" value="0"/>
-  <property category="win32.Release_Build.win32b.bcc32" name="option.o.enabled" value="1"/>
+  <property category="win32.Release_Build.win32b.bcc32" name="option.o.arg.merge" value="0"/>
+  <property category="win32.Release_Build.win32b.bcc32" name="option.o.enabled" value="0"/>
   <property category="win32.Release_Build.win32b.bcc32" name="option.r.enabled" value="1"/>
   <property category="win32.Release_Build.win32b.bcc32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Release_Build.win32b.bcc32" name="option.tWC.enabled" value="1"/>
@@ -299,7 +301,7 @@
   <property category="win32.Release_Build.win32b.ilink32" name="option.b:xxxx.enabled" value="0"/>
   <property category="win32.Release_Build.win32b.ilink32" name="option.responsefile.enabled" value="1"/>
   <property category="win32.Release_Build.win32b.ilink32" name="option.x.enabled" value="1"/>
-  <property category="win32.Release_Build.win32b.ilink32" name="param.exefile.1" value=".\JSBSim.exe"/>
+  <property category="win32.Release_Build.win32b.ilink32" name="param.exefile.1" value="JSBSim.exe"/>
   <property category="win32.Release_Build.win32b.ilink32" name="param.libfiles.1" value="cw32.lib"/>
   <property category="win32.Release_Build.win32b.ilink32" name="param.libfiles.2" value="import32.lib"/>
   <property category="win32.win32b.Debug_Build" name="saved" value="1"/>
@@ -675,12 +677,6 @@
       <file path="src/models/FGPropulsion.h">
         <property category="unique" name="id" value="461"/>
       </file>
-      <file path="src/models/FGUtility.cpp">
-        <property category="unique" name="id" value="463"/>
-      </file>
-      <file path="src/models/FGUtility.h">
-        <property category="unique" name="id" value="465"/>
-      </file>
     </node>
     <node name="simgear" type="Folder">
       <property category="unique" name="id" value="603"/>
@@ -707,6 +703,9 @@
           <property category="build.win32.Debug_Build.win32b" name="exclude" value="1"/>
           <property category="build.win32.Release_Build.win32b" name="exclude" value="1"/>
           <property category="unique" name="id" value="611"/>
+        </file>
+        <file path="src/simgear/xml/expat_config.h">
+          <property category="unique" name="id" value="637"/>
         </file>
         <file path="src/simgear/xml/xmlparse.c">
           <property category="unique" name="id" value="613"/>
@@ -739,9 +738,6 @@
           <property category="win32.Release_Build.win32b.bcc32" name="option.disablewarns.enabled" value="1"/>
         </file>
       </node>
-      <file path="src/simgear/expat_config.h">
-        <property category="unique" name="id" value="605"/>
-      </file>
     </node>
     <file path="src/FGFDMExec.cpp">
       <property category="unique" name="id" value="349"/>
