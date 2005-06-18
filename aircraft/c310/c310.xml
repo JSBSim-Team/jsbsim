@@ -901,4 +901,41 @@
             </function>
         </axis>
     </aerodynamics>
+    <output name="C310.csv" type="CSV" rate="2">
+        <simulation> OFF </simulation>
+        <atmosphere> OFF </atmosphere>
+        <massprops> OFF</massprops>
+        <aerosurfaces> OFF </aerosurfaces>
+        <rates> OFF </rates>
+        <velocities> OFF </velocities>
+        <forces> OFF </forces>
+        <moments> OFF </moments>
+        <position> OFF </position>
+        <coefficients> OFF </coefficients>
+        <ground_reactions> OFF </ground_reactions>
+        <fcs> OFF </fcs>
+        <propulsion> ON </propulsion>
+    </output>
+    <output name="localhost" type="SOCKET" port="1138" rate="2">
+        <simulation> OFF </simulation>
+        <atmosphere> OFF </atmosphere>
+        <massprops> OFF</massprops>
+        <aerosurfaces> OFF </aerosurfaces>
+        <rates> OFF </rates>
+        <velocities> OFF </velocities>
+        <forces> OFF </forces>
+        <moments> OFF </moments>
+        <position> OFF </position>
+        <coefficients> OFF </coefficients>
+        <ground_reactions> OFF </ground_reactions>
+        <fcs> OFF </fcs>
+        <propulsion> OFF </propulsion>
+        <property> position/h-agl-ft </property>
+        <property> velocities/vc-kts </property>
+    </output>
+    <output name="localhost" type="SOCKET" port="1139" rate="2">
+        <property> propulsion/engine[0]/advance-ratio </property>
+        <property> propulsion/engine[0]/advance-ratio </property>
+        <property> forces/fbx-gear-lbs </property>
+    </output>
 </fdm_config>
