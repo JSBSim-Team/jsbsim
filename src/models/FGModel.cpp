@@ -51,11 +51,10 @@ INCLUDES
 #include "FGAircraft.h"
 #include "FGPropagate.h"
 #include "FGAuxiliary.h"
-#include "FGOutput.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.2 2005/06/13 00:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.3 2005/06/18 02:02:14 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +81,6 @@ FGModel::FGModel(FGFDMExec* fdmex)
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
-  Output          = 0;
 
   //in order for FGModel derived classes to self-bind (that is, call
   //their bind function in the constructor, the PropertyManager pointer
@@ -117,7 +115,6 @@ bool FGModel::InitModel(void)
   Aircraft        = FDMExec->GetAircraft();
   Propagate       = FDMExec->GetPropagate();
   Auxiliary       = FDMExec->GetAuxiliary();
-  Output          = FDMExec->GetOutput();
 
   if (!State ||
       !Atmosphere ||
@@ -129,8 +126,7 @@ bool FGModel::InitModel(void)
       !GroundReactions ||
       !Aircraft ||
       !Propagate ||
-      !Auxiliary ||
-      !Output) return(false);
+      !Auxiliary) return(false);
   else return(true);
 }
 

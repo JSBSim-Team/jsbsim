@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.4 2005/06/18 02:02:14 jberndt Exp $"
 
 using namespace std;
 
@@ -85,7 +85,6 @@ class FGGroundReactions;
 class FGAircraft;
 class FGPropagate;
 class FGAuxiliary;
-class FGOutput;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -144,7 +143,6 @@ protected:
   FGAircraft*        Aircraft;
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
-  FGOutput*          Output;
   FGPropertyManager* PropertyManager;
 };
 }

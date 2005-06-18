@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.2 2005/06/13 00:35:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.3 2005/06/18 02:02:13 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,7 +77,6 @@ FGState::FGState(FGFDMExec* fdex)
   Propagate    = FDMExec->GetPropagate();
   Auxiliary    = FDMExec->GetAuxiliary();
   FCS          = FDMExec->GetFCS();
-  Output       = FDMExec->GetOutput();
   Atmosphere   = FDMExec->GetAtmosphere();
   Aerodynamics = FDMExec->GetAerodynamics();
   GroundReactions = FDMExec->GetGroundReactions();

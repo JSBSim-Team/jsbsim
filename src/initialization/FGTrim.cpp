@@ -39,7 +39,6 @@ scheme. */
 
 //  !!!!!!! BEWARE ALL YE WHO ENTER HERE !!!!!!!
 
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -63,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.4 2005/06/18 02:02:14 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,7 +240,7 @@ bool FGTrim::DoTrim(void) {
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(false);
   }
 
-  fdmex->GetOutput()->Disable();
+  fdmex->DisableOutput();
   
   fgic->SetPRadpsIC(0.0);
   fgic->SetQRadpsIC(0.0);
@@ -358,7 +357,7 @@ bool FGTrim::DoTrim(void) {
   for(i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
-  fdmex->GetOutput()->Enable();
+  fdmex->EnableOutput();
   return !trim_failed;
 }
 

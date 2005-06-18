@@ -41,6 +41,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <models/FGModel.h>
+#include <models/FGOutput.h>
 #include <initialization/FGTrim.h>
 #include <initialization/FGInitialCondition.h>
 #include <FGJSBBase.h>
@@ -55,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +102,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
+    @version $Id: FGFDMExec.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,8 +224,8 @@ public:
   inline FGPropagate* GetPropagate(void)      {return Propagate;}
   /// Returns the FGAuxiliary pointer.
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
-  /// Returns the FGOutput pointer.
-  inline FGOutput* GetOutput(void)            {return Output;}
+//  /// Returns the FGOutput pointer.
+//  inline FGOutput* GetOutput(void)            {return Output;}
   // Returns a pointer to the FGInitialCondition object
   inline FGInitialCondition* GetIC(void)      {return IC;}
   // Returns a pointer to the FGTrim object
@@ -235,8 +236,6 @@ public:
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
-//  /// Retrieves the control path.
-//  inline string GetControlPath(void)        {return ControlPath;}
 
   string GetModelName(void) { return modelName; }
 
@@ -244,6 +243,8 @@ public:
   vector <string> EnumerateFDMs(void);
   void SetSlave(void) {IsSlave = true;}
   void DoTrim(int mode);
+  void DisableOutput(void);
+  void EnableOutput(void);
 
 private:
   FGModel* FirstModel;
@@ -281,7 +282,6 @@ private:
 
   string AircraftPath;
   string EnginePath;
-//  string ControlPath;
 
   string CFGVersion;
   string Release;
@@ -298,7 +298,7 @@ private:
   FGAircraft*        Aircraft;
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
-  FGOutput*          Output;
+  vector <FGOutput*> Outputs;
 
   FGInitialCondition* IC;
   FGTrim *Trim;

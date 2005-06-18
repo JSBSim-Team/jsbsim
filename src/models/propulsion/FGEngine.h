@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.4 2005/06/18 02:02:14 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -84,7 +84,6 @@ class FGAircraft;
 class FGPropagate;
 class FGPropulsion;
 class FGAuxiliary;
-class FGOutput;
 class FGThruster;
 class Element;
 
@@ -96,7 +95,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGEngine.h,v 1.4 2005/06/18 02:02:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,7 +214,6 @@ protected:
   FGAircraft*     Aircraft;
   FGPropagate*    Propagate;
   FGAuxiliary*    Auxiliary;
-  FGOutput*       Output;
   FGThruster*     Thruster;
 
   vector <int> SourceTanks;
@@ -230,7 +228,6 @@ protected:
 #include <models/FGPropagate.h>
 #include <models/FGPropulsion.h>
 #include <models/FGAuxiliary.h>
-#include <models/FGOutput.h>
 #include <models/propulsion/FGThruster.h>
 #include <input_output/FGXMLElement.h>
 

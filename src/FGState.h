@@ -69,7 +69,6 @@ INCLUDES
 #include <models/FGPropagate.h>
 #include <models/FGAuxiliary.h>
 #include <models/FGAerodynamics.h>
-#include <models/FGOutput.h>
 #include <models/FGAircraft.h>
 #include <models/FGGroundReactions.h>
 #include <models/FGPropulsion.h>
@@ -78,7 +77,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
+    @version $Id: FGState.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +177,6 @@ private:
 
   FGAircraft* Aircraft;
   FGPropagate* Propagate;
-  FGOutput* Output;
   FGAtmosphere* Atmosphere;
   FGFCS* FCS;
   FGAerodynamics* Aerodynamics;

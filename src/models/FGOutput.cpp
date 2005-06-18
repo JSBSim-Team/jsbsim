@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.3 2005/06/15 12:01:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.4 2005/06/18 02:02:14 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -597,14 +597,13 @@ bool FGOutput::Load(Element* element)
 
   name = document->GetAttributeValue("name");
   type = document->GetAttributeValue("type");
-  Output->SetType(type);
+  SetType(type);
   if (!document->GetAttributeValue("port").empty() && type == string("SOCKET")) {
     port = atoi(document->GetAttributeValue("port").c_str());
     socket = new FGfdmSocket(name, port);
   } else {
     Filename = name;
   }
-
   if (!document->GetAttributeValue("rate").empty()) {
     OutRate = (int)document->GetAttributeValueAsNumber("rate");
   } else {

@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.4 2005/06/18 02:02:13 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,7 +122,6 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
-  Output          = 0;
   IC              = 0;
   Trim            = 0;
 
@@ -202,7 +201,6 @@ bool FGFDMExec::Allocate(void)
   Aircraft        = new FGAircraft(this);
   Propagate       = new FGPropagate(this);
   Auxiliary       = new FGAuxiliary(this);
-  Output          = new FGOutput(this);
 
   GroundCallback  = new FGGroundCallback();
   State           = new FGState(this); // This must be done here, as the FGState
@@ -241,9 +239,6 @@ bool FGFDMExec::Allocate(void)
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
     Error+=2058;}
-  if (!Output->InitModel())     {
-    cerr << fgred << "Output model init failed" << fgdef << endl;
-    Error+=4096;}
 
   if (Error > 0) result = false;
 
@@ -264,7 +259,6 @@ bool FGFDMExec::Allocate(void)
   Schedule(Aircraft,        1);
   Schedule(Propagate,       1);
   Schedule(Auxiliary,       1);
-  Schedule(Output,          1);
 
   modelLoaded = false;
 
@@ -285,8 +279,13 @@ bool FGFDMExec::DeAllocate(void)
   delete Aircraft;
   delete Propagate;
   delete Auxiliary;
-  delete Output;
   delete State;
+
+  for (int i=0; i<Outputs.size(); i++) {
+    delete Outputs[i];
+  }
+
+  Outputs.clear();
 
   delete IC;
   delete Trim;
@@ -307,7 +306,6 @@ bool FGFDMExec::DeAllocate(void)
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
-  Output          = 0;
 
   modelLoaded = false;
   return modelLoaded;
@@ -468,7 +466,13 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     else if (element_name == "autopilot")        result = FCS->Load(element);
     else if (element_name == "flight_control")   result = FCS->Load(element);
     else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
-    else if (element_name == "output")           result = Output->Load(element);
+    else if (element_name == "output")           {
+        FGOutput* Output = new FGOutput(this);
+        Output->InitModel();
+        Schedule(Output,       1);
+        Outputs.push_back(Output);
+        result = Output->Load(element);
+    }
     else {
       cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
       result = false;
@@ -623,16 +627,36 @@ bool FGFDMExec::ReadSlave(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGPropertyManager* FGFDMExec::GetPropertyManager(void) {
+FGPropertyManager* FGFDMExec::GetPropertyManager(void)
+{
   return instance;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTrim* FGFDMExec::GetTrim(void) {
+FGTrim* FGFDMExec::GetTrim(void)
+{
   delete Trim;
   Trim = new FGTrim(this,tNone);
   return Trim;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DisableOutput(void)
+{
+  for (int i=0; i<Outputs.size(); i++) {
+    Outputs[i]->Disable();
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::EnableOutput(void)
+{
+  for (int i=0; i<Outputs.size(); i++) {
+    Outputs[i]->Enable();
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
