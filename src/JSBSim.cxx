@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.3 2005/06/18 13:06:53 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.4 2005/06/27 11:23:32 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -47,29 +47,30 @@
 #include <Main/globals.hxx>
 #include <Main/fg_props.hxx>
 
+#include <FDM/JSBSim/models/FGModel.h>
 #include <FDM/JSBSim/FGFDMExec.h>
-#include <FDM/JSBSim/FGAircraft.h>
-#include <FDM/JSBSim/FGFCS.h>
-#include <FDM/JSBSim/FGPropagate.h>
+#include <FDM/JSBSim/models/FGAircraft.h>
+#include <FDM/JSBSim/models/FGFCS.h>
+#include <FDM/JSBSim/models/FGPropagate.h>
 #include <FDM/JSBSim/FGState.h>
-#include <FDM/JSBSim/FGAuxiliary.h>
-#include <FDM/JSBSim/FGInitialCondition.h>
-#include <FDM/JSBSim/FGTrim.h>
-#include <FDM/JSBSim/FGAtmosphere.h>
-#include <FDM/JSBSim/FGMassBalance.h>
-#include <FDM/JSBSim/FGAerodynamics.h>
-#include <FDM/JSBSim/FGLGear.h>
-#include <FDM/JSBSim/FGPropertyManager.h>
-#include <FDM/JSBSim/FGEngine.h>
-#include <FDM/JSBSim/FGPiston.h>
-#include <FDM/JSBSim/FGGroundCallback.h>
-#include <FDM/JSBSim/FGTurbine.h>
-#include <FDM/JSBSim/FGRocket.h>
-#include <FDM/JSBSim/FGElectric.h>
-#include <FDM/JSBSim/FGNozzle.h>
-#include <FDM/JSBSim/FGPropeller.h>
-#include <FDM/JSBSim/FGRotor.h>
-#include <FDM/JSBSim/FGTank.h>
+#include <FDM/JSBSim/models/FGAuxiliary.h>
+#include <FDM/JSBSim/initialization/FGInitialCondition.h>
+#include <FDM/JSBSim/initialization/FGTrim.h>
+#include <FDM/JSBSim/models/FGAtmosphere.h>
+#include <FDM/JSBSim/models/FGMassBalance.h>
+#include <FDM/JSBSim/models/FGAerodynamics.h>
+#include <FDM/JSBSim/models/FGLGear.h>
+#include <FDM/JSBSim/input_output/FGPropertyManager.h>
+#include <FDM/JSBSim/models/propulsion/FGEngine.h>
+#include <FDM/JSBSim/models/propulsion/FGPiston.h>
+#include <FDM/JSBSim/initialization/FGGroundCallback.h>
+#include <FDM/JSBSim/models/propulsion/FGTurbine.h>
+#include <FDM/JSBSim/models/propulsion/FGRocket.h>
+#include <FDM/JSBSim/models/propulsion/FGElectric.h>
+#include <FDM/JSBSim/models/propulsion/FGNozzle.h>
+#include <FDM/JSBSim/models/propulsion/FGPropeller.h>
+#include <FDM/JSBSim/models/propulsion/FGRotor.h>
+#include <FDM/JSBSim/models/propulsion/FGTank.h>
 #include "JSBSim.hxx"
 
 static inline double

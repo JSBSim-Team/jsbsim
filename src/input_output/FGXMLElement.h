@@ -35,9 +35,18 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifdef FGFS
-#  include STL_STRING
-#  include STL_MAP
-#  include STL_VECTOR
+#  include <simgear/compiler.h>
+#  ifdef SG_HAVE_STD_INCLUDES
+#    include <string>
+#    include <vector>
+#    include <iostream>
+#    include <map>
+#  else
+#    include <vector.h>
+#    include <string>
+#    include <iostream.h>
+#    include <map.h>
+#  endif
 #else
 #  include <string>
 #  include <map>
@@ -49,6 +58,11 @@ INCLUDES
    using std::cout;
    using std::endl;
 #endif
+   using std::string;
+   using std::map;
+   using std::vector;
+   using std::cout;
+   using std::endl;
 
 #include <math/FGColumnVector3.h>
 
@@ -56,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.4 2005/06/27 11:23:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -133,7 +147,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $
+    @version $Id: FGXMLElement.h,v 1.4 2005/06/27 11:23:14 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
