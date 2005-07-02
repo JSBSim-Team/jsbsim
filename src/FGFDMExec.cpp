@@ -72,7 +72,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.4 2005/06/18 02:02:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.5 2005/07/02 16:58:58 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,7 +418,6 @@ bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model,
 
 bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 {
-  bool result = true;
   string token;
   string aircraftCfgFileName;
   string separator = "/";
@@ -455,7 +454,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   ReadPrologue(document);
   element = document->GetElement();
 
-  while (element) {
+  bool result = true;
+  while (element && result) {
     string element_name = element->GetName();
     if (element_name == "fileheader" )           result = ReadFileHeader(element);
     else if (element_name == "slave")            result = ReadSlave(element);
@@ -486,7 +486,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     Debug(3);
   } else {
     cerr << fgred
-         << "  FGFDMExec: Failed to load aircraft and/or engine model"
+         << "  JSBSim failed to load aircraft and/or engine model"
          << fgdef << endl;
   }
 

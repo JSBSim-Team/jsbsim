@@ -46,13 +46,14 @@ INCLUDES
 #include <FGFDMExec.h>
 #include <input_output/FGXMLElement.h>
 #include <math/FGColumnVector3.h>
+#include <math/FGFunction.h>
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.4 2005/07/02 16:58:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $
+    @version $Id: FGLGear.h,v 1.4 2005/07/02 16:58:58 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -308,6 +309,8 @@ private:
 
   void Report(ReportType rt);
   void Debug(int from);
+
+  FGFunction *ForceY_Function;
 
   // EXPERIMENT JSB 05/29/05
   double lastFX, lastFY;

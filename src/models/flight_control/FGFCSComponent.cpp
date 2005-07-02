@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.3 2005/06/18 14:50:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.4 2005/07/02 16:58:59 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,8 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     OutputNode = PropertyManager->GetNode( element->FindElementValue("output") );
   }
 
-  if (clip_el = element->FindElement("clipto")) {
+  clip_el = element->FindElement("clipto");
+  if (clip_el) {
     clip_string = clip_el->FindElementValue("min");
     if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
       ClipMinPropertyNode = PropertyManager->GetNode( clip_string );

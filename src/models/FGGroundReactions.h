@@ -54,7 +54,7 @@ INCLUDES
 #include <math/FGColumnVector3.h>
 #include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.4 2005/07/02 16:58:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -104,6 +104,9 @@ private:
   FGColumnVector3 vMoments;
   FGColumnVector3 vMaxStaticGrip;
   FGColumnVector3 vMaxMomentResist;
+
+  double GetSlipAngle(void) const;
+  int ActiveGearUnit;
 
   void Debug(int from);
 };

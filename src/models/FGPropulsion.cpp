@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.3 2005/06/13 16:59:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.4 2005/07/02 16:58:58 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -269,7 +269,7 @@ bool FGPropulsion::Load(Element* el)
   int Feed;
   bool ThrottleAdded = false;
   Element* document;
-  FGXMLParse *engine_file_parser;
+  FGXMLParse engine_file_parser;
   ifstream* engine_file;
 
   Debug(2);
@@ -278,21 +278,14 @@ bool FGPropulsion::Load(Element* el)
   while (engine_element) {
     engine_filename = engine_element->GetAttributeValue("file");
 
-    if (!engine_filename.empty()) {
-      engine_file = FindEngineFile(engine_filename);
-      if (!engine_file->is_open()) {
-        cerr << "Could not open engine file: " << engine_filename << ".xml" << endl;
-        exit(-1);;
-      }
-    } else {
+    if (engine_filename.empty()) {
       cerr << "Engine definition did not supply an engine file." << endl;
-      exit(-1);
+      return false;
     }
 
-    engine_file_parser = new FGXMLParse();
-    readXML(*engine_file, *engine_file_parser);
-    delete engine_file;
-    document = engine_file_parser->GetDocument(); // document holds the engine description
+    engine_filename = FindEngineFullPathname(engine_filename);
+    readXML(engine_filename, engine_file_parser);
+    document = engine_file_parser.GetDocument(); // document holds the engine description
     document->SetParent(engine_element);
 
     type = document->GetName();
@@ -323,7 +316,7 @@ bool FGPropulsion::Load(Element* el)
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
-    delete engine_file_parser;
+    engine_file_parser.reset();
   }
 
   // Process tank definitions
@@ -348,6 +341,37 @@ bool FGPropulsion::Load(Element* el)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+string FGPropulsion::FindEngineFullPathname(string engine_filename)
+{
+  string fullpath, localpath;
+  string enginePath = FDMExec->GetEnginePath();
+  string aircraftPath = FDMExec->GetAircraftPath();
+  ifstream* engine_file = new ifstream();
+
+  string separator = "/";
+# ifdef macintosh
+  separator = ";";
+# endif
+
+  fullpath = enginePath + separator;
+  localpath = aircraftPath + separator + "Engines" + separator;
+
+  engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
+  if ( !engine_file->is_open()) {
+    engine_file->open(string(localpath + engine_filename + ".xml").c_str());
+      if ( !engine_file->is_open()) {
+        cerr << " Could not open engine file: " << engine_filename << " in path "
+             << fullpath << " or " << localpath << endl;
+        return string("");
+      } else {
+        return string(localpath + engine_filename + ".xml");
+      }
+  }
+  return string(fullpath + engine_filename + ".xml");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 ifstream* FGPropulsion::FindEngineFile(string engine_filename)
 {
   string fullpath, localpath;
@@ -366,6 +390,10 @@ ifstream* FGPropulsion::FindEngineFile(string engine_filename)
   engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
   if ( !engine_file->is_open()) {
     engine_file->open(string(localpath + engine_filename + ".xml").c_str());
+      if ( !engine_file->is_open()) {
+        cerr << " Could not open engine file: " << engine_filename << " in path "
+             << fullpath << " or " << localpath << endl;
+      }
   }
   return engine_file;
 }

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $"
+#define ID_XMLPARSE "$Id: FGXMLParse.h,v 1.3 2005/07/02 16:58:58 jberndt Exp $"
 #define VALID_CHARS """`!@#$%^&*()_+`1234567890-={}[];':,.<>/?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates an XML parser based on the EasyXML parser from the SimGear library.
     @author Jon S. Berndt
-    @version $Id: FGXMLParse.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $
+    @version $Id: FGXMLParse.h,v 1.3 2005/07/02 16:58:58 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,6 +90,7 @@ public:
   void data (const char * s, int length);
   void pi (const char * target, const char * data);
   void warning (const char * message, int line, int column);
+  void reset(void);
 
 private:
   bool first_element_read;

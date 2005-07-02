@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.2 2005/06/13 00:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.3 2005/07/02 16:58:58 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +60,9 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
                  GearNumber(number)
 {
+  Element *force_function=0;
+  string force_type="";
+
   kSpring = bDamp = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
   sSteerType = sBrakeGroup = sSteerType = "";
   isRetractable = 0;
@@ -80,6 +83,17 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
     maxSteerAngle = el->FindElementValueAsNumberConvertTo("max_steer", "DEG");
   if (el->FindElement("retractable"))
     isRetractable = (int)el->FindElementValueAsNumber("retractable");
+
+  force_function = el->FindElement("function");
+  while (force_function) {
+    force_type = force_function->GetAttributeValue("type");
+    if (force_type == "CORNERING_COEFF") {
+      ForceY_Function = new FGFunction(Exec->GetPropertyManager(), force_function);
+    } else {
+      cerr << "Undefined force function for " << name << " contact point" << endl;
+    }
+    force_function = el->FindNextElement("function");
+  }
 
   sSteerType = el->FindElementValue("steer_type");
   sBrakeGroup = el->FindElementValue("brake_group");
@@ -153,6 +167,10 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
 
   FirstPass = true;
 
+  char property_name[80];
+  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
+
   Debug(0);
 }
 
@@ -215,12 +233,20 @@ FGLGear::FGLGear(const FGLGear& lgear)
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
   FirstPass       = lgear.FirstPass;
+  ForceY_Function = lgear.ForceY_Function;
+
+  char property_name[80];
+  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLGear::~FGLGear()
 {
+  char property_name[80];
+  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+  Exec->GetPropertyManager()->Untie( property_name );
   Debug(1);
 }
 
@@ -339,8 +365,8 @@ FGColumnVector3& FGLGear::Force(void)
 
       switch (eBrakeGrp) {
       case bgLeft:
-         BrakeFCoeff = ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                        staticFCoeff*FCS->GetBrake(bgLeft) );
+        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                         staticFCoeff*FCS->GetBrake(bgLeft) );
         break;
       case bgRight:
         BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
@@ -391,14 +417,20 @@ FGColumnVector3& FGLGear::Force(void)
 // transition from static to dynamic friction.  There are more complicated formulations
 // of this that avoid the discrete jump (similar to Pacejka).  Will fix this later.
 
-      if (fabs(WheelSlip) <= 20.0) {
-        FCoeff = staticFCoeff*WheelSlip/20.0;
-      } else if (fabs(WheelSlip) <= 40.0) {
-//        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
-        FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 20.0)/20.0 +
-                  staticFCoeff*(40.0 - fabs(WheelSlip))/20.0)*fabs(WheelSlip)/WheelSlip;
+      if (ForceY_Function) {
+
+        FCoeff = ForceY_Function->GetValue();
+
       } else {
-        FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
+
+        if (fabs(WheelSlip) <= 10.0) {
+          FCoeff = staticFCoeff*WheelSlip/10.0;
+        } else if (fabs(WheelSlip) <= 40.0) {
+          FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 10.0)/10.0 +
+                    staticFCoeff*(40.0 - fabs(WheelSlip))/10.0)*fabs(WheelSlip)/WheelSlip;
+        } else {
+          FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
+        }
       }
 
 // Compute the vertical force on the wheel using square-law damping (per comment

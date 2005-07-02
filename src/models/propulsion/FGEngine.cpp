@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.4 2005/06/18 02:02:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.5 2005/07/02 16:58:59 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,14 +243,14 @@ FGColumnVector3& FGEngine::GetMoments(void)
 bool FGEngine::LoadThruster(Element *thruster_element)
 {
   string token, fullpath, localpath;
-  string thruster_filename, thrType;
+  string thruster_filename, thruster_fullpathname, thrType;
   double xLoc, yLoc, zLoc, Pitch, Yaw;
   double P_Factor = 0, Sense = 0.0;
   string enginePath = FDMExec->GetEnginePath();
   string aircraftPath = FDMExec->GetAircraftPath();
-  ifstream thruster_file;
   FGXMLParse thruster_file_parser;
   Element *document, *element;
+  ifstream thruster_file;
   FGColumnVector3 location, orientation;
 
 # ifndef macintosh
@@ -264,9 +264,9 @@ bool FGEngine::LoadThruster(Element *thruster_element)
 
   thruster_filename = thruster_element->GetAttributeValue("file");
   if ( !thruster_filename.empty()) {
-    thruster_file.open(string(fullpath + thruster_filename + ".xml").c_str());
+    thruster_fullpathname = fullpath + thruster_filename + ".xml";
     if ( !thruster_file.is_open()) {
-      thruster_file.open(string(localpath + thruster_filename + ".xml").c_str());
+      thruster_fullpathname = localpath + thruster_filename + ".xml";
       if ( !thruster_file.is_open()) {
         cerr << "Could not open thruster file: " << thruster_filename << ".xml" << endl;
         return false;
@@ -277,7 +277,7 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     return false;
   }
 
-  readXML(thruster_file, thruster_file_parser);
+  readXML(thruster_fullpathname, thruster_file_parser);
   document = thruster_file_parser.GetDocument(); // document holds the thruster description
   document->SetParent(thruster_element);
 

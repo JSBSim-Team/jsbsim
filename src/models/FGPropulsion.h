@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.4 2005/07/02 16:58:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $
+    @version $Id: FGPropulsion.h,v 1.4 2005/07/02 16:58:59 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -170,6 +170,7 @@ public:
   double GetTanksWeight(void);
 
   ifstream* FindEngineFile(string filename);
+  string FindEngineFullPathname(string engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) {return fuel_freeze;}
   double GetAdvanceRatio(void) const;
