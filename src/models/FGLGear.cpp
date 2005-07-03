@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.3 2005/07/02 16:58:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.4 2005/07/03 00:37:04 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   if (el->FindElement("retractable"))
     isRetractable = (int)el->FindElementValueAsNumber("retractable");
 
+  ForceY_Function = 0;
   force_function = el->FindElement("function");
   while (force_function) {
     force_type = force_function->GetAttributeValue("type");
