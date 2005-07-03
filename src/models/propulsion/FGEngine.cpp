@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.5 2005/07/02 16:58:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.6 2005/07/03 00:22:33 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,12 +265,18 @@ bool FGEngine::LoadThruster(Element *thruster_element)
   thruster_filename = thruster_element->GetAttributeValue("file");
   if ( !thruster_filename.empty()) {
     thruster_fullpathname = fullpath + thruster_filename + ".xml";
+    thruster_file.open(thruster_fullpathname.c_str());
     if ( !thruster_file.is_open()) {
       thruster_fullpathname = localpath + thruster_filename + ".xml";
+      thruster_file.open(thruster_fullpathname.c_str());
       if ( !thruster_file.is_open()) {
         cerr << "Could not open thruster file: " << thruster_filename << ".xml" << endl;
         return false;
+      } else {
+        thruster_file.close();
       }
+    } else {
+      thruster_file.close();
     }
   } else {
     cerr << "No thruster filename given." << endl;
