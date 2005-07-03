@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.4 2005/06/27 11:23:32 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.5 2005/07/03 13:47:08 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -63,7 +63,7 @@
 #include <FDM/JSBSim/input_output/FGPropertyManager.h>
 #include <FDM/JSBSim/models/propulsion/FGEngine.h>
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
-#include <FDM/JSBSim/initialization/FGGroundCallback.h>
+#include <FDM/JSBSim/input_output/FGGroundCallback.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
 #include <FDM/JSBSim/models/propulsion/FGRocket.h>
 #include <FDM/JSBSim/models/propulsion/FGElectric.h>
