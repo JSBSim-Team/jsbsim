@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
  Header:       FGSensor.h
- Author:
- Date started:
+ Author:       Jon Berndt
+ Date started: 9 July 2005
 
- ------------- Copyright (C)  -------------
+ ------------- Copyright (C) 2005 -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.1 2005/07/12 04:44:04 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.2 2005/07/13 13:04:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,7 +66,7 @@ Syntax:
   <input> property </input>
   <lag> number </lag>
   <noise variation=”PERCENT|ABSOLUTE”> number </noise>
-  <quantization>
+  <quantization name="name">
     <bits> number </bits>
     <min> number </min>
     <max> number </max>
@@ -81,11 +81,11 @@ Example:
   <input> aero/qbar </input>
   <lag> 0.5 </lag>
   <noise variation=”PERCENT”> 2 </noise>
-  <quantization>
+  <quantization name="aero/sensor/quantized/qbar">
     <bits> 12 </bits>
     <min> 0 </min>
     <max> 400 </max>
- </quantization>
+  </quantization>
   <bias> 0.5 </bias>
 </sensor>
 

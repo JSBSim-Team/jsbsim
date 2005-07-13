@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.4 2005/07/02 16:58:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.5 2005/07/13 13:04:07 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,8 +65,10 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 
 FGGroundReactions::~FGGroundReactions(void)
 {
-  unbind();
+  for (int i=0; i<lGear.size();i++) lGear[i].unbind();
+  lGear.clear();
 
+  unbind();
   Debug(1);
 }
 
@@ -114,16 +116,18 @@ double FGGroundReactions::GetSlipAngle(void) const
 
 bool FGGroundReactions::Load(Element* el)
 {
-  Element* contact_element = el->FindElement("contact");
   int num=0;
 
   Debug(2);
 
+  Element* contact_element = el->FindElement("contact");
   while (contact_element) {
     lGear.push_back(FGLGear(contact_element, FDMExec, num++));
     FCS->AddGear(); // make the FCS aware of the landing gear
     contact_element = el->FindNextElement("contact");
   }
+
+  for (int i=0; i<lGear.size();i++) lGear[i].bind();
 
   return true;
 }

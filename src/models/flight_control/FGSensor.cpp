@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.1 2005/07/12 04:44:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.2 2005/07/13 13:04:08 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,16 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
   if ( element->FindElement("noise") ) {
     noise_variance = element->FindElementValueAsNumber("noise");
+    string variation = element->FindElement("noise")->GetAttributeValue("variation");
+    if (variation == "PERCENT") {
+      NoiseType = ePercent;
+    } else if (variation == "ABSOLUTE") {
+      NoiseType = eAbsolute;
+    } else {
+      NoiseType = ePercent;
+      cerr << "Unknown noise type in sensor: " << Name << endl;
+      cerr << "  defaulting to PERCENT." << endl;
+    }
   }
 
   FGFCSComponent::bind();

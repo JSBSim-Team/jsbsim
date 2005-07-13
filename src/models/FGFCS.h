@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.4 2005/07/13 13:04:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
+    @version $Id: FGFCS.h,v 1.4 2005/07/13 13:04:07 jberndt Exp $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -486,6 +486,7 @@ private:
   vector <FGFCSComponent*> FCSComponents;
   vector <FGFCSComponent*> APComponents;
   vector <double*> interface_properties;
+  vector <FGFCSComponent*> sensors;
   int ToNormalize[NNorm];
   void Debug(int from);
 };

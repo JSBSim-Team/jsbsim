@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.4 2005/06/14 13:10:40 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.5 2005/07/13 13:04:07 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -254,6 +254,13 @@ int main(int argc, char* argv[])
   result = FDMExec->Run();
   clock_ticks = 0;
 
+// Print actual time at start
+  char s[100];
+  time_t tod;
+  time(&tod);
+  strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
+  cout << "Start: " << s << endl;
+
   while (result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
@@ -302,6 +309,10 @@ int main(int argc, char* argv[])
     clock_ticks = clock();
 
   }
+
+  time(&tod);
+  strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
+  cout << "End: " << s << endl;
 
   delete FDMExec;
   cout << endl << "Seconds processor time used: " << clock()/CLOCKS_PER_SEC << " seconds" << endl;

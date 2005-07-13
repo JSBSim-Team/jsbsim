@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.4 2005/07/03 00:37:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.5 2005/07/13 13:04:08 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,7 +63,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   Element *force_function=0;
   string force_type="";
 
-  kSpring = bDamp = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
+  kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
   sSteerType = sBrakeGroup = sSteerType = "";
   isRetractable = 0;
 
@@ -73,6 +73,12 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
     kSpring = el->FindElementValueAsNumberConvertTo("spring_coeff", "LBS/FT");
   if (el->FindElement("damping_coeff"))
     bDamp   = el->FindElementValueAsNumberConvertTo("damping_coeff", "LBS/FT/SEC");
+
+  if (el->FindElement("damping_coeff_rebound"))
+    bDampRebound   = el->FindElementValueAsNumberConvertTo("damping_coeff_rebound", "LBS/FT/SEC");
+  else
+    bDampRebound   = bDamp;
+
   if (el->FindElement("dynamic_friction"))
     dynamicFCoeff = el->FindElementValueAsNumber("dynamic_friction");
   if (el->FindElement("static_friction"))
@@ -168,10 +174,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
 
   FirstPass = true;
 
-  char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
-
   Debug(0);
 }
 
@@ -235,19 +237,12 @@ FGLGear::FGLGear(const FGLGear& lgear)
   Servicable      = lgear.Servicable;
   FirstPass       = lgear.FirstPass;
   ForceY_Function = lgear.ForceY_Function;
-
-  char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGLGear::~FGLGear()
 {
-  char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-  Exec->GetPropertyManager()->Untie( property_name );
   Debug(1);
 }
 
@@ -278,7 +273,7 @@ FGColumnVector3& FGLGear::Force(void)
   }
 
   // Compute the steering angle in any case.
-  // Will make shure that animations will look right.
+  // Will make sure that animations will look right.
   switch (eSteerType) {
   case stSteer:
     SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
@@ -440,8 +435,17 @@ FGColumnVector3& FGLGear::Force(void)
 // possibly give a "rebound damping factor" that differs from the compression
 // case.
 
-      vLocalForce(eZ) =  min(-compressLength * kSpring
-                             - compressSpeed * bDamp, (double)0.0);
+      double springForce = 0;
+      double dampForce = 0;
+
+      springForce = -compressLength * kSpring;
+
+      if (compressSpeed >= 0.0) {
+        dampForce   = -compressSpeed * bDamp;
+      } else {
+        dampForce   = -compressSpeed * bDampRebound;
+      }
+      vLocalForce(eZ) =  min(springForce + dampForce, (double)0.0);
 
       MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
       MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
@@ -547,6 +551,40 @@ FGColumnVector3& FGLGear::Force(void)
     }
   }
   return vForce;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// These bind() and unbind() functions are called from the landing gear "executive"
+// FGGroundReactions, because these objects are stored in a vector, and when new
+// instances are added to the vector, each existing object is copied, destroyed,
+// and re-added to the vector. Another way to avoid this would be to calculate
+// the total number of gear objects to be added and then allocate space for that
+// many objects before instantiating them.
+//
+
+void FGLGear::bind(void)
+{
+  char property_name[80];
+  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// These bind() and unbind() functions are called from the landing gear "executive"
+// FGGroundReactions, because these objects are stored in a vector, and when new
+// instances are added to the vector, each existing object is copied, destroyed,
+// and re-added to the vector. Another way to avoid this would be to calculate
+// the total number of gear objects to be added and then allocate space for that
+// many objects before instantiating them.
+//
+
+void FGLGear::unbind(void)
+{
+  char property_name[80];
+  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+  Exec->GetPropertyManager()->Untie( property_name );
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

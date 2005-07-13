@@ -32,6 +32,22 @@
   <property>ap/aileron_cmd</property>
   <property>ap/elevator_cmd</property>
 
+<!--  <property>attitude/sensor/phi-rad</property> -->
+
+<!-- SENSOR -->
+
+  <sensor name="attitude/sensor/phi-rad">
+    <input> attitude/phi-rad </input>
+    <lag> 0.5 </lag>
+    <noise variation="PERCENT"> 0.05 </noise>
+    <quantization name="attitude/sensor/quantized/phi-rad">
+      <bits> 12 </bits>
+      <min> -180 </min>
+      <max> 180 </max>
+    </quantization>
+    <bias> 0.001 </bias>
+  </sensor>
+
 <!--
 =====================================================
 ROLL CHANNEL
@@ -42,7 +58,7 @@ ROLL CHANNEL
 
 <channel name="AP Roll Wing Leveler">
   <component name="Roll AP Wing Leveler" type="PURE_GAIN">
-    <input>attitude/phi-rad</input>
+    <input>fcs/attitude/sensor/phi-rad</input>
     <gain>2.0</gain>
     <clipto>
       <min>-0.255</min>

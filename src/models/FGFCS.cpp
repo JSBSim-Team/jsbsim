@@ -50,10 +50,11 @@ INCLUDES
 #include <models/flight_control/FGSummer.h>
 #include <models/flight_control/FGKinemat.h>
 #include <models/flight_control/FGFCSFunction.h>
+#include <models/flight_control/FGSensor.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.3 2005/06/13 16:59:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.4 2005/07/13 13:04:07 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -106,7 +107,11 @@ FGFCS::~FGFCS()
 
   for (i=0;i<APComponents.size();i++) delete APComponents[i];
   for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
+  for (i=0;i<sensors.size();i++) delete sensors[i];
 
+  APComponents.clear();
+  FCSComponents.clear();
+  sensors.clear();
   interface_properties.clear();
 
   Debug(1);
@@ -131,6 +136,7 @@ bool FGFCS::Run(void)
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
 
+  for (i=0; i<sensors.size(); i++) sensors[i]->Run(); // cycle sensors
   for (i=0; i<APComponents.size(); i++) APComponents[i]->Run(); // cycle AP components
   for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run(); // cycle FCS components
 
@@ -280,7 +286,7 @@ bool FGFCS::Load(Element* el)
   string name, file, fname, comp_name, interface_property_string;
   unsigned i;
   vector <FGFCSComponent*> *Components;
-  Element *FCS_cfg, *document, *component_element, *property_element;
+  Element *FCS_cfg, *document, *component_element, *property_element, *sensor_element;
   Element *channel_element;
   ifstream* controls_file = new ifstream();
   FGXMLParse controls_file_parser;
@@ -334,6 +340,12 @@ bool FGFCS::Load(Element* el)
     interface_property_string = property_element->GetDataLine();
     PropertyManager->Tie(interface_property_string, interface_properties.back());
     property_element = document->FindNextElement("property");
+  }
+
+  sensor_element = document->FindElement("sensor");
+  while (sensor_element) {
+    sensors.push_back(new FGSensor(this, sensor_element));
+    sensor_element = document->FindNextElement("sensor");
   }
 
   channel_element = document->FindElement("channel");

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.3 2005/07/13 13:04:08 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,6 +103,7 @@ double FGRocket::Calculate(void)
     PC = 0.0;
   } else {
     PctPower = Throttle / MaxThrottle;
+    //todo: remove Variance?
     PC = maxPC*PctPower * (1.0 + Variance * ((double)rand()/(double)RAND_MAX - 0.5));
     // The Cf (below) is CF from Eqn. 3-30, "Rocket Propulsion Elements", Fifth Edition,
     // George P. Sutton. Note that the thruster function GetPowerRequired() might

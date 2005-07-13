@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.4 2005/07/02 16:58:58 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.5 2005/07/13 13:04:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.4 2005/07/02 16:58:58 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.5 2005/07/13 13:04:08 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -249,6 +249,9 @@ public:
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
 
+  void bind(void);
+  void unbind(void);
+
 private:
   int GearNumber;
   FGColumnVector3 vXYZ;
@@ -261,6 +264,7 @@ private:
   double SteerAngle;
   double kSpring;
   double bDamp;
+  double bDampRebound;
   double compressLength;
   double compressSpeed;
   double staticFCoeff, dynamicFCoeff, rollingFCoeff;
