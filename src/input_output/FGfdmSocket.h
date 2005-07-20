@@ -65,18 +65,20 @@ INCLUDES
 
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
   #include <winsock.h>
+  #include <io.h>
 #else
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <netdb.h>
   #include <errno.h>
+  #include <sys/ioctl.h>
 #endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.3 2005/06/15 12:01:55 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.4 2005/07/20 03:18:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,13 +98,16 @@ CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 using std::string;
+using std::cerr;
 
 class FGfdmSocket : public FGJSBBase
 {
 public:
   FGfdmSocket(string, int);
+  FGfdmSocket(int);
   ~FGfdmSocket();
   void Send(void);
+  string Receive(void);
   void Append(const string s) {Append(s.c_str());}
   void Append(const char*);
   void Append(double);
@@ -113,6 +118,7 @@ public:
 
 private:
   int sckt;
+  int sckt_in;
   int size;
   struct sockaddr_in scktName;
   struct hostent *host;

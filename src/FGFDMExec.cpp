@@ -66,13 +66,14 @@ INCLUDES
 #include <models/FGAircraft.h>
 #include <models/FGPropagate.h>
 #include <models/FGAuxiliary.h>
+#include <models/FGInput.h>
 #include <models/FGOutput.h>
 #include <initialization/FGInitialCondition.h>
 #include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.5 2005/07/02 16:58:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.6 2005/07/20 03:18:50 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -122,6 +123,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
+  Input           = 0;
   IC              = 0;
   Trim            = 0;
 
@@ -201,6 +203,7 @@ bool FGFDMExec::Allocate(void)
   Aircraft        = new FGAircraft(this);
   Propagate       = new FGPropagate(this);
   Auxiliary       = new FGAuxiliary(this);
+  Input           = new FGInput(this);
 
   GroundCallback  = new FGGroundCallback();
   State           = new FGState(this); // This must be done here, as the FGState
@@ -235,20 +238,23 @@ bool FGFDMExec::Allocate(void)
     Error+=128;}
   if (!Propagate->InitModel())   {
     cerr << fgred << "Propagate model init failed" << fgdef << endl;
-    Error+=512;}
+    Error+=256;}
   if (!Auxiliary->InitModel())  {
     cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
-    Error+=2058;}
+    Error+=512;}
+  if (!Input->InitModel())  {
+    cerr << fgred << "Input model init failed" << fgdef << endl;
+    Error+=1024;}
 
   if (Error > 0) result = false;
 
   IC = new FGInitialCondition(this);
 
   // Schedule a model. The second arg (the integer) is the pass number. For
-  // instance, the atmosphere model gets executed every fifth pass it is called
-  // by the executive. Everything else here gets executed each pass.
-  // IC and Trim objects are NOT scheduled.
+  // instance, the atmosphere model could get executed every fifth pass it is called
+  // by the executive. IC and Trim objects are NOT scheduled.
 
+  Schedule(Input,           1);
   Schedule(Atmosphere,      1);
   Schedule(FCS,             1);
   Schedule(Propulsion,      1);
@@ -269,6 +275,7 @@ bool FGFDMExec::Allocate(void)
 
 bool FGFDMExec::DeAllocate(void)
 {
+  delete Input;
   delete Atmosphere;
   delete FCS;
   delete Propulsion;
@@ -296,6 +303,7 @@ bool FGFDMExec::DeAllocate(void)
   Error       = 0;
 
   State           = 0;
+  Input           = 0;
   Atmosphere      = 0;
   FCS             = 0;
   Propulsion      = 0;
@@ -466,6 +474,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     else if (element_name == "autopilot")        result = FCS->Load(element);
     else if (element_name == "flight_control")   result = FCS->Load(element);
     else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
+    else if (element_name == "input")            result = Input->Load(element);
     else if (element_name == "output")           {
         FGOutput* Output = new FGOutput(this);
         Output->InitModel();

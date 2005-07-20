@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.3 2005/06/15 12:01:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.4 2005/07/20 03:18:51 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,7 @@ CLASS IMPLEMENTATION
 
 FGfdmSocket::FGfdmSocket(string address, int port)
 {
-  size = 0;
+  sckt = sckt_in = size = 0;
   connected = false;
 
   #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
@@ -96,16 +96,106 @@ FGfdmSocket::FGfdmSocket(string address, int port)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+FGfdmSocket::FGfdmSocket(int port)
+{
+  size = 0;
+  connected = false;
+  unsigned long NoBlock = true;
+
+  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+    WSADATA wsaData;
+    int wsaReturnCode;
+    wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
+    if (wsaReturnCode == 0) cout << "Winsock DLL loaded ..." << endl;
+    else cerr << "Winsock DLL not initialized ..." << endl;
+  #endif
+
+  sckt = socket(AF_INET, SOCK_STREAM, 0);
+
+  if (sckt >= 0) {  // successful
+    memset(&scktName, 0, sizeof(struct sockaddr_in));
+    scktName.sin_family = AF_INET;
+    scktName.sin_port = htons(port);
+//    memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
+    int len = sizeof(struct sockaddr_in);
+    if (bind(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+      cout << "Successfully bound to socket ..." << endl;
+      if (listen(sckt, 5) >= 0) { // successful listen()
+        #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+          ioctlsocket(sckt, FIONBIO, &NoBlock);
+        #else
+          ioctl(sckt, FIONBIO, &NoBlock);
+        #endif
+        sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+      } else {
+        cerr << "Could not listen ..." << endl;
+      }
+      connected = true;
+    } else {                // unsuccessful
+      cerr << "Could not bind to socket ..." << endl;
+    }
+  } else {          // unsuccessful
+    cerr << "Could not create socket for FDM, error = " << errno << endl;
+  }
+
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGfdmSocket::~FGfdmSocket()
 {
   #ifndef macintosh
   if (sckt) shutdown(sckt,2);
+  if (sckt_in) shutdown(sckt_in,2);
   #endif
 
   #ifdef __BORLANDC__
     WSACleanup();
   #endif
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGfdmSocket::Receive(void)
+{
+  char buf[1024];
+  char buf2[1024];
+  int len = sizeof(struct sockaddr_in);
+  int num_chars=0;
+  int total_chars = 0;
+  unsigned long NoBlock = true;
+  string data = ""; // todo: should allocate this with a standard size as a
+                    // class attribute and pass as a reference?
+
+  if (sckt_in <= 0) {
+    sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+    if (sckt_in > 0) {
+      #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+         ioctlsocket(sckt_in, FIONBIO,&NoBlock);
+      #else
+         ioctl(sckt_in, FIONBIO, &NoBlock);
+      #endif
+      send(sckt_in, "Connected to JSBSim server\nJSBSim> ", 35, 0);
+    }
+  }
+
+  if (sckt_in > 0) {
+    while ((num_chars = recv(sckt_in, buf, 1024, 0)) > 0) {
+      data += string(buf).substr(0,num_chars);
+      total_chars += num_chars;
+    }
+
+    if (total_chars > 0) {
+      sprintf(buf2, "Transferred %d characters: %s\n", total_chars, data.c_str());
+      send(sckt_in, buf2, strlen(buf2), 0);
+      send(sckt_in, "JSBSim> ", 8, 0);
+    }
+
+  }
+
+  return data.substr(0, total_chars);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

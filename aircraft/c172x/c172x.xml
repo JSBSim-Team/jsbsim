@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.34 2005/07/13 13:04:07 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.35 2005/07/20 03:18:50 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -797,6 +797,7 @@
 
     </aerodynamics>
 
+    <input port="1137"/>
     <output name="JSBout172B" type="CSV" rate="20">
         <ground_reactions> ON </ground_reactions>
     </output>

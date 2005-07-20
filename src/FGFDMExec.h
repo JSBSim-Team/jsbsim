@@ -42,6 +42,7 @@ INCLUDES
 
 #include <models/FGModel.h>
 #include <models/FGOutput.h>
+#include <models/FGInput.h>
 #include <initialization/FGTrim.h>
 #include <initialization/FGInitialCondition.h>
 #include <FGJSBBase.h>
@@ -56,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.5 2005/07/20 03:18:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +103,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.4 2005/06/18 02:02:13 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.5 2005/07/20 03:18:50 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +225,8 @@ public:
   inline FGPropagate* GetPropagate(void)      {return Propagate;}
   /// Returns the FGAuxiliary pointer.
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
+  /// Returns the FGInput pointer.
+  inline FGInput* GetInput(void)              {return Input;}
 //  /// Returns the FGOutput pointer.
 //  inline FGOutput* GetOutput(void)            {return Output;}
   // Returns a pointer to the FGInitialCondition object
@@ -298,6 +301,7 @@ private:
   FGAircraft*        Aircraft;
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
+  FGInput*           Input;
   vector <FGOutput*> Outputs;
 
   FGInitialCondition* IC;
