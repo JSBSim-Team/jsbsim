@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.4 2005/07/20 03:18:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.5 2005/07/20 11:53:04 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -196,6 +196,21 @@ string FGfdmSocket::Receive(void)
   }
 
   return data.substr(0, total_chars);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int FGfdmSocket::Reply(string text)
+{
+  int num_chars_sent=0;
+
+  if (sckt_in >= 0) {
+    num_chars_sent = send(sckt_in, text.c_str(), text.size(), 0);
+  } else {
+    cerr << "Socket reply must be to a valid socket" << endl;
+    return -1;
+  }
+  return num_chars_sent;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
