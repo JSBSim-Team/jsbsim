@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.6 2005/07/20 11:57:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.7 2005/07/21 14:06:22 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,11 +187,8 @@ string FGfdmSocket::Receive(void)
       total_chars += num_chars;
     }
 
-    if (total_chars > 0) {
-      sprintf(buf2, "Transferred %d characters: %s\n", total_chars, data.c_str());
-      send(sckt_in, buf2, strlen(buf2), 0);
-      send(sckt_in, "JSBSim> ", 8, 0);
-    }
+    // new line prompt
+    if (total_chars > 0) send(sckt_in, "JSBSim> ", 8, 0);
 
   }
 
@@ -212,6 +209,13 @@ int FGfdmSocket::Reply(string text)
     return -1;
   }
   return num_chars_sent;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGfdmSocket::Close(void)
+{
+  close(sckt_in);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
