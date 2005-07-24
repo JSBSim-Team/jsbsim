@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.5 2005/07/13 13:04:07 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.6 2005/07/24 21:00:33 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -74,6 +74,7 @@ string LogOutputName;
 string LogDirectiveName;
 JSBSim::FGFDMExec* FDMExec;
 bool realtime;
+bool suspend;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -196,12 +197,14 @@ int main(int argc, char* argv[])
   LogOutputName = "";
   LogDirectiveName = "";
   bool result = false;
+  bool script_result = true;
   bool Scripted = false;
   double new_five_second_value = 0.0;
   JSBSim::FGScript* Script;
 
-  long clock_ticks = 0;
+  long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
   realtime = false;
+  suspend = false;
 
   options(argc, argv);
 
@@ -252,6 +255,9 @@ int main(int argc, char* argv[])
 
   JSBSim::FGJSBBase::Message* msg;
   result = FDMExec->Run();
+
+  if (suspend) FDMExec->Hold();
+
   clock_ticks = 0;
 
 // Print actual time at start
@@ -261,7 +267,9 @@ int main(int argc, char* argv[])
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
   cout << "Start: " << s << endl;
 
-  while (result) {
+  // Begin cyclic execution
+
+  while (result && script_result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
@@ -284,26 +292,45 @@ int main(int argc, char* argv[])
     }
 
     // if running realtime, throttle the execution, else just run flat-out fast
-    if (realtime) {
-      while (clock_ticks/CLOCKS_PER_SEC  >= FDMExec->GetState()->Getsim_time()) {
-        if (Scripted) if (!Script->RunScript()) {
-          result = false;
-          break;
+    // if suspended, then don't increment realtime counter
+
+    if ( ! FDMExec->Holding()) {
+      if (realtime) { // realtime mode
+
+        // track times when simulation is suspended
+        if (pause_ticks != 0) {
+          total_pause_ticks += clock_ticks - pause_ticks;
+          pause_ticks = 0;
+        }
+
+        while ((clock_ticks-total_pause_ticks)/CLOCKS_PER_SEC  >= FDMExec->GetState()->Getsim_time()) {
+          if (Scripted) {
+            if (!Script->RunScript()) {
+              script_result = false;
+              break;
+            }
+          }
+          result = FDMExec->Run();
+
+          // print out status every five seconds
+          if (FDMExec->GetState()->Getsim_time() >= new_five_second_value) {
+            cout << "Simulation elapsed time: " << FDMExec->GetState()->Getsim_time() << endl;
+            new_five_second_value += 5.0;
+          }
+          if (FDMExec->Holding()) break;
+        }
+
+      } else { // batch mode
+        if (Scripted) {
+          if (!Script->RunScript()) {
+            script_result = false;
+            break;
+          }
         }
         result = FDMExec->Run();
       }
-
-      // print out status every five seconds
-      if (FDMExec->GetState()->Getsim_time() >= new_five_second_value) {
-        cout << "Simulation elapsed time: " << FDMExec->GetState()->Getsim_time() << endl;
-        new_five_second_value += 5.0;
-      }
-
-    } else {
-      if (Scripted) if (!Script->RunScript()) {
-        result = false;
-        break;
-      }
+    } else { // Suspended
+      if (pause_ticks == 0) pause_ticks = clock(); // remember start of pause
       result = FDMExec->Run();
     }
     clock_ticks = clock();
@@ -315,7 +342,7 @@ int main(int argc, char* argv[])
   cout << "End: " << s << endl;
 
   delete FDMExec;
-  cout << endl << "Seconds processor time used: " << clock()/CLOCKS_PER_SEC << " seconds" << endl;
+  cout << endl << "Seconds processor time used: " << (clock_ticks - total_pause_ticks)/CLOCKS_PER_SEC << " seconds" << endl;
 
   return 0;
 }
@@ -337,6 +364,7 @@ void options(int count, char **arg)
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
       cout << "    --realtime  specifies to run in actual real world time" << endl;
+      cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
       cout << "    --initfile=<filename>  specifies an initilization file" << endl << endl;
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
     cout << "        an option is followed by a filename" << endl << endl;
@@ -355,6 +383,8 @@ void options(int count, char **arg)
       cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
+      cout << "    --realtime  specifies to run in actual real world time" << endl;
+      cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
       cout << "    --initfile=<filename>  specifies an initilization file" << endl << endl;
       cout << "  NOTE: There can be no spaces around the = sign when" << endl;
       cout << "        an option is followed by a filename" << endl << endl;
@@ -364,6 +394,8 @@ void options(int count, char **arg)
       exit (0);
     } else if (argument.find("--realtime") != string::npos) {
       realtime = true;
+    } else if (argument.find("--suspend") != string::npos) {
+      suspend = true;
     } else if (argument.find("--outputlogfile") != string::npos) {
       n = argument.find("=")+1;
       if (n > 0) {

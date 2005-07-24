@@ -78,7 +78,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.3 2005/06/13 16:59:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,28 +112,27 @@ FGAircraft::~FGAircraft()
 
 bool FGAircraft::Run(void)
 {
-  if (!FGModel::Run()) {                 // if false then execute this Run()
-    vForces.InitMatrix();
-    vForces += Aerodynamics->GetForces();
-    vForces += Propulsion->GetForces();
-    vForces += GroundReactions->GetForces();
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
-    vMoments.InitMatrix();
-    vMoments += Aerodynamics->GetMoments();
-    vMoments += Propulsion->GetMoments();
-    vMoments += GroundReactions->GetMoments();
+  vForces.InitMatrix();
+  vForces += Aerodynamics->GetForces();
+  vForces += Propulsion->GetForces();
+  vForces += GroundReactions->GetForces();
 
-    vBodyAccel = vForces/MassBalance->GetMass();
+  vMoments.InitMatrix();
+  vMoments += Aerodynamics->GetMoments();
+  vMoments += Propulsion->GetMoments();
+  vMoments += GroundReactions->GetMoments();
 
-    vNcg = vBodyAccel/Inertial->gravity();
+  vBodyAccel = vForces/MassBalance->GetMass();
 
-    vNwcg = State->GetTb2s() * vNcg;
-    vNwcg(3) = -1*vNwcg(3) + 1;
+  vNcg = vBodyAccel/Inertial->gravity();
 
-    return false;
-  } else {                               // skip Run() execution this time
-    return true;
-  }
+  vNwcg = State->GetTb2s() * vNcg;
+  vNwcg(3) = -1*vNwcg(3) + 1;
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.5 2005/07/13 13:04:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.6 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGGroundReactions::~FGGroundReactions(void)
 bool FGGroundReactions::Run(void)
 {
   if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
   vForces.InitMatrix();
   vMoments.InitMatrix();

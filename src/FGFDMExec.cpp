@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.6 2005/07/20 03:18:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.7 2005/07/24 21:00:33 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,9 +128,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
   Trim            = 0;
 
   terminate = false;
-  frozen = false;
   modelLoaded = false;
   IsSlave = false;
+  holding = false;
 
   // Multiple FDM's are stopped for now.  We need to ensure that
   // the "user" instance always gets the zeroeth instance number,
@@ -352,8 +352,6 @@ bool FGFDMExec::Run(void)
 {
   FGModel* model_iterator;
 
-  if (frozen) return true;
-
   model_iterator = FirstModel;
   if (model_iterator == 0L) return false;
 
@@ -370,7 +368,7 @@ bool FGFDMExec::Run(void)
   }
 
   frame = Frame++;
-  State->IncrTime();
+  if (!Holding()) State->IncrTime();
   return true;
 }
 

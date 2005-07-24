@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.3 2005/06/13 16:59:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,58 +130,56 @@ bool FGMassBalance::Run(void)
   double denom, k1, k2, k3, k4, k5, k6;
   double Ixx, Iyy, Izz, Ixy, Ixz, Iyz;
 
-  if (!FGModel::Run()) {
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
-    Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
+  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
 
-    Mass = lbtoslug*Weight;
+  Mass = lbtoslug*Weight;
 
 // Calculate new CG
 
-    vXYZcg = (Propulsion->GetTanksMoment() + EmptyWeight*vbaseXYZcg
-                                       + GetPointMassMoment() ) / Weight;
+  vXYZcg = (Propulsion->GetTanksMoment() + EmptyWeight*vbaseXYZcg
+                                     + GetPointMassMoment() ) / Weight;
 
 // Calculate new total moments of inertia
 
-    // At first it is the base configuration inertia matrix ...
-    mJ = baseJ;
-    // ... with the additional term originating from the parallel axis theorem.
-    mJ += GetPointmassInertia( lbtoslug * EmptyWeight, vbaseXYZcg );
-    // Then add the contributions from the additional pointmasses.
-    mJ += CalculatePMInertias();
-    mJ += Propulsion->CalculateTankInertias();
+  // At first it is the base configuration inertia matrix ...
+  mJ = baseJ;
+  // ... with the additional term originating from the parallel axis theorem.
+  mJ += GetPointmassInertia( lbtoslug * EmptyWeight, vbaseXYZcg );
+  // Then add the contributions from the additional pointmasses.
+  mJ += CalculatePMInertias();
+  mJ += Propulsion->CalculateTankInertias();
 
-    Ixx = mJ(1,1);
-    Iyy = mJ(2,2);
-    Izz = mJ(3,3);
-    Ixy = -mJ(1,2);
-    Ixz = -mJ(1,3);
-    Iyz = -mJ(2,3);
+  Ixx = mJ(1,1);
+  Iyy = mJ(2,2);
+  Izz = mJ(3,3);
+  Ixy = -mJ(1,2);
+  Ixz = -mJ(1,3);
+  Iyz = -mJ(2,3);
 
 // Calculate inertia matrix inverse (ref. Stevens and Lewis, "Flight Control & Simulation")
 
-    k1 = (Iyy*Izz - Iyz*Iyz);
-    k2 = (Iyz*Ixz + Ixy*Izz);
-    k3 = (Ixy*Iyz + Iyy*Ixz);
+  k1 = (Iyy*Izz - Iyz*Iyz);
+  k2 = (Iyz*Ixz + Ixy*Izz);
+  k3 = (Ixy*Iyz + Iyy*Ixz);
 
-    denom = 1.0/(Ixx*k1 - Ixy*k2 - Ixz*k3 );
-    k1 = k1*denom;
-    k2 = k2*denom;
-    k3 = k3*denom;
-    k4 = (Izz*Ixx - Ixz*Ixz)*denom;
-    k5 = (Ixy*Ixz + Iyz*Ixx)*denom;
-    k6 = (Ixx*Iyy - Ixy*Ixy)*denom;
+  denom = 1.0/(Ixx*k1 - Ixy*k2 - Ixz*k3 );
+  k1 = k1*denom;
+  k2 = k2*denom;
+  k3 = k3*denom;
+  k4 = (Izz*Ixx - Ixz*Ixz)*denom;
+  k5 = (Ixy*Ixz + Iyz*Ixx)*denom;
+  k6 = (Ixx*Iyy - Ixy*Ixy)*denom;
 
-    mJinv.InitMatrix( k1, k2, k3,
-                      k2, k4, k5,
-                      k3, k5, k6 );
+  mJinv.InitMatrix( k1, k2, k3,
+                    k2, k4, k5,
+                    k3, k5, k6 );
 
-    Debug(0);
+  Debug(0);
 
-    return false;
-  } else {
-    return true;
-  }
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

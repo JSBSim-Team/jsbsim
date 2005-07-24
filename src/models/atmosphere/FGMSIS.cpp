@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.2 2005/06/13 00:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.3 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -146,54 +146,52 @@ bool MSIS::InitModel(void)
 
 bool MSIS::Run(void)
 {
-  if (!FGModel::Run()) {  // if false then execute this Run()
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
-    //do temp, pressure, and density first
-    if (!useExternal) {
-      // get sea-level values
-      Calculate(Auxiliary->GetDayOfYear(),
-                Auxiliary->GetSecondsInDay(),
-                0.0,
-                Propagate->GetLocation().GetLatitudeDeg(),
-                Propagate->GetLocation().GetLongitudeDeg());
-      SLtemperature = output.t[1] * 1.8;
-      SLdensity     = output.d[5] * 1.940321;
-      SLpressure    = 1716.488 * SLdensity * SLtemperature;
-      SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
-      rSLtemperature = 1.0/SLtemperature;
-      rSLpressure    = 1.0/SLpressure;
-      rSLdensity     = 1.0/SLdensity;
-      rSLsoundspeed  = 1.0/SLsoundspeed;
+  //do temp, pressure, and density first
+  if (!useExternal) {
+    // get sea-level values
+    Calculate(Auxiliary->GetDayOfYear(),
+              Auxiliary->GetSecondsInDay(),
+              0.0,
+              Propagate->GetLocation().GetLatitudeDeg(),
+              Propagate->GetLocation().GetLongitudeDeg());
+    SLtemperature = output.t[1] * 1.8;
+    SLdensity     = output.d[5] * 1.940321;
+    SLpressure    = 1716.488 * SLdensity * SLtemperature;
+    SLsoundspeed  = sqrt(2403.0832 * SLtemperature);
+    rSLtemperature = 1.0/SLtemperature;
+    rSLpressure    = 1.0/SLpressure;
+    rSLdensity     = 1.0/SLdensity;
+    rSLsoundspeed  = 1.0/SLsoundspeed;
 
-      // get at-altitude values
-      Calculate(Auxiliary->GetDayOfYear(),
-                Auxiliary->GetSecondsInDay(),
-                Propagate->Geth(),
-                Propagate->GetLocation().GetLatitudeDeg(),
-                Propagate->GetLocation().GetLongitudeDeg());
-      intTemperature = output.t[1] * 1.8;
-      intDensity     = output.d[5] * 1.940321;
-      intPressure    = 1716.488 * intDensity * intTemperature;
-      soundspeed     = sqrt(2403.0832 * intTemperature);
-      //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
-      //cout << intPressure << " a=" << soundspeed << endl;
-    }
-
-    if (turbType != ttNone) {
-      Turbulence();
-      vWindNED += vTurbulence;
-    }
-
-    if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
-
-    if (psiw < 0) psiw += 2*M_PI;
-
-    Debug(2);
-
-    return false;
-  } else {                               // skip Run() execution this time
-    return true;
+    // get at-altitude values
+    Calculate(Auxiliary->GetDayOfYear(),
+              Auxiliary->GetSecondsInDay(),
+              Propagate->Geth(),
+              Propagate->GetLocation().GetLatitudeDeg(),
+              Propagate->GetLocation().GetLongitudeDeg());
+    intTemperature = output.t[1] * 1.8;
+    intDensity     = output.d[5] * 1.940321;
+    intPressure    = 1716.488 * intDensity * intTemperature;
+    soundspeed     = sqrt(2403.0832 * intTemperature);
+    //cout << "T=" << intTemperature << " D=" << intDensity << " P=";
+    //cout << intPressure << " a=" << soundspeed << endl;
   }
+
+  if (turbType != ttNone) {
+    Turbulence();
+    vWindNED += vTurbulence;
+  }
+
+  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
+
+  if (psiw < 0) psiw += 2*M_PI;
+
+  Debug(2);
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

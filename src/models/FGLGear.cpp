@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.5 2005/07/13 13:04:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.6 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -547,21 +547,13 @@ FGColumnVector3& FGLGear::Force(void)
         SinkRate > 1.4666*30)
     {
       PutMessage("Crash Detected: Simulation FREEZE.");
-      Exec->Freeze();
+      State->Suspend();
     }
   }
   return vForce;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// These bind() and unbind() functions are called from the landing gear "executive"
-// FGGroundReactions, because these objects are stored in a vector, and when new
-// instances are added to the vector, each existing object is copied, destroyed,
-// and re-added to the vector. Another way to avoid this would be to calculate
-// the total number of gear objects to be added and then allocate space for that
-// many objects before instantiating them.
-//
 
 void FGLGear::bind(void)
 {
@@ -571,14 +563,6 @@ void FGLGear::bind(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// These bind() and unbind() functions are called from the landing gear "executive"
-// FGGroundReactions, because these objects are stored in a vector, and when new
-// instances are added to the vector, each existing object is copied, destroyed,
-// and re-added to the vector. Another way to avoid this would be to calculate
-// the total number of gear objects to be added and then allocate space for that
-// many objects before instantiating them.
-//
 
 void FGLGear::unbind(void)
 {

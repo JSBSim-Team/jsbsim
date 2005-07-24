@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.4 2005/07/13 13:04:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.5 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -124,6 +124,7 @@ bool FGFCS::Run(void)
   unsigned int i;
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
+  if (FDMExec->Holding()) return false;
 
   // Set the default engine commands
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];

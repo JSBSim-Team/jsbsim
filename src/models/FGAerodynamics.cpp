@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.3 2005/06/13 16:59:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -108,81 +108,79 @@ bool FGAerodynamics::Run(void)
   unsigned int axis_ctr, ctr, i;
   double alpha, twovel;
 
-  if (!FGModel::Run()) {
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false; // if paused don't execute
 
-    // calculate some oft-used quantities for speed
+  // calculate some oft-used quantities for speed
 
-    twovel = 2*Auxiliary->GetVt();
-    if (twovel != 0) {
-      bi2vel = Aircraft->GetWingSpan() / twovel;
-      ci2vel = Aircraft->Getcbar() / twovel;
-    }
-    alphaw = Auxiliary->Getalpha() + Aircraft->GetWingIncidence();
-    alpha = Auxiliary->Getalpha();
-    qbar_area = Aircraft->GetWingArea() * Auxiliary->Getqbar();
-
-    if (alphaclmax != 0) {
-      if (alpha > 0.85*alphaclmax) {
-        impending_stall = 10*(alpha/alphaclmax - 0.85);
-      } else {
-        impending_stall = 0;
-      }
-    }
-
-    if (alphahystmax != 0.0 && alphahystmin != 0.0) {
-      if (alpha > alphahystmax) {
-         stall_hyst = 1;
-      } else if (alpha < alphahystmin) {
-         stall_hyst = 0;
-      }
-    }
-
-    vLastFs = vFs;
-    vFs.InitMatrix();
-
-    // Tell the variable functions to cache their values, so while the aerodynamic
-    // functions are being calculated for each axis, these functions do not get
-    // calculated each time, but instead use the values that have already
-    // been calculated for this frame.
-    for (i=0; i<variables.size(); i++) variables[i]->cacheValue(true);
-
-    for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-      for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-        vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
-      }
-    }
-
-    // calculate lift coefficient squared
-    if ( Auxiliary->Getqbar() > 0) {
-      clsq = vFs(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
-      clsq *= clsq;
-    }
-
-    if ( vFs(eDrag)  > 0) {
-      lod = vFs(eLift) / vFs(eDrag);
-    }
-
-    //correct signs of drag and lift to wind axes convention
-    //positive forward, right, down
-    vFs(eDrag)*=-1; vFs(eLift)*=-1;
-
-    // transform stability axis forces into body axes
-    vForces = State->GetTs2b()*vFs;
-
-    vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-
-    vMoments = vDXYZcg*vForces; // M = r X F
-
-    for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
-      for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
-        vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->GetValue();
-      }
-    }
-
-    return false;
-  } else {
-    return true;
+  twovel = 2*Auxiliary->GetVt();
+  if (twovel != 0) {
+    bi2vel = Aircraft->GetWingSpan() / twovel;
+    ci2vel = Aircraft->Getcbar() / twovel;
   }
+  alphaw = Auxiliary->Getalpha() + Aircraft->GetWingIncidence();
+  alpha = Auxiliary->Getalpha();
+  qbar_area = Aircraft->GetWingArea() * Auxiliary->Getqbar();
+
+  if (alphaclmax != 0) {
+    if (alpha > 0.85*alphaclmax) {
+      impending_stall = 10*(alpha/alphaclmax - 0.85);
+    } else {
+      impending_stall = 0;
+    }
+  }
+
+  if (alphahystmax != 0.0 && alphahystmin != 0.0) {
+    if (alpha > alphahystmax) {
+       stall_hyst = 1;
+    } else if (alpha < alphahystmin) {
+       stall_hyst = 0;
+    }
+  }
+
+  vLastFs = vFs;
+  vFs.InitMatrix();
+
+  // Tell the variable functions to cache their values, so while the aerodynamic
+  // functions are being calculated for each axis, these functions do not get
+  // calculated each time, but instead use the values that have already
+  // been calculated for this frame.
+  for (i=0; i<variables.size(); i++) variables[i]->cacheValue(true);
+
+  for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
+    for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
+      vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
+    }
+  }
+
+  // calculate lift coefficient squared
+  if ( Auxiliary->Getqbar() > 0) {
+    clsq = vFs(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
+    clsq *= clsq;
+  }
+
+  if ( vFs(eDrag)  > 0) {
+    lod = vFs(eLift) / vFs(eDrag);
+  }
+
+  //correct signs of drag and lift to wind axes convention
+  //positive forward, right, down
+  vFs(eDrag)*=-1; vFs(eLift)*=-1;
+
+  // transform stability axis forces into body axes
+  vForces = State->GetTs2b()*vFs;
+
+  vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+
+  vMoments = vDXYZcg*vForces; // M = r X F
+
+  for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
+    for (ctr = 0; ctr < Coeff[axis_ctr+3].size(); ctr++) {
+      vMoments(axis_ctr+1) += Coeff[axis_ctr+3][ctr]->GetValue();
+    }
+  }
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

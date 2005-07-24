@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.3 2005/06/13 16:59:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,6 +179,7 @@ state values for (now + dt).
 bool FGPropagate::Run(void)
 {
   if (FGModel::Run()) return true;  // Fast return if we have nothing to do ...
+  if (FDMExec->Holding()) return false;
 
   RecomputeRunwayRadius();
 

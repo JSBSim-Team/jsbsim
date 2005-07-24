@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.4 2005/07/02 16:58:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.5 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -103,6 +103,7 @@ bool FGPropulsion::Run(void)
   unsigned int i;
 
   if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
   double dt = State->Getdt();
 

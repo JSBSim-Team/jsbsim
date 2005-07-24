@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.5 2005/07/20 03:18:50 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.6 2005/07/24 21:00:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,7 +103,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.5 2005/07/20 03:18:50 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.6 2005/07/24 21:00:33 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,12 +140,6 @@ public:
       @return true if successful
        */
   bool RunIC(void);
-
-  /// Freezes the sim
-  void Freeze(void) {frozen = true;}
-
-  /// Resumes the sim
-  void Resume(void) {frozen = false;}
 
   void SetGroundCallback(FGGroundCallback*);
 
@@ -248,12 +242,15 @@ public:
   void DoTrim(int mode);
   void DisableOutput(void);
   void EnableOutput(void);
+  void Hold(void) {holding = true;}
+  void Resume(void) {holding = false;}
+  bool Holding(void) {return holding;}
 
 private:
   FGModel* FirstModel;
 
-  bool frozen;
   bool terminate;
+  bool holding;
   int  Error;
   unsigned int Frame;
   unsigned int IdFDM;

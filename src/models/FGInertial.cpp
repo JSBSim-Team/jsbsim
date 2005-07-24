@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.2 2005/06/13 00:54:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.3 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ bool FGInertial::Run(void)
 {
   // Fast return if we have nothing to do ...
   if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
   // Gravitation accel
   double r = Propagate->GetRadius();

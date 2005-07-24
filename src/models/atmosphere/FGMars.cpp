@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.3 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,31 +112,29 @@ bool FGMars::InitModel(void)
 
 bool FGMars::Run(void)
 {
-  if (!FGModel::Run()) {  // if false then execute this Run()
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
 
-    //do temp, pressure, and density first
-    if (!useExternal) {
-      h = Propagate->Geth();
-      Calculate(h);
-    }
-
-    if (turbType != ttNone) {
-      Turbulence();
-      vWindNED += vTurbulence;
-    }
-
-    if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
-
-    if (psiw < 0) psiw += 2*M_PI;
-
-    soundspeed = sqrt(SHRatio*Reng*(*temperature));
-
-    Debug(2);
-
-    return false;
-  } else {                               // skip Run() execution this time
-    return true;
+  //do temp, pressure, and density first
+  if (!useExternal) {
+    h = Propagate->Geth();
+    Calculate(h);
   }
+
+  if (turbType != ttNone) {
+    Turbulence();
+    vWindNED += vTurbulence;
+  }
+
+  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
+
+  if (psiw < 0) psiw += 2*M_PI;
+
+  soundspeed = sqrt(SHRatio*Reng*(*temperature));
+
+  Debug(2);
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

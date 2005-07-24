@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.1 2005/07/21 14:07:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.2 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,7 @@ bool FGInput::Run(void)
   FGPropertyManager* node=0;
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
+  // This model DOES execute if "Exec->Holding"
 
   data = socket->Receive(); // get socket transmission if present
 
@@ -125,10 +126,10 @@ bool FGInput::Run(void)
           sprintf(buf, "%s = %12.6f\n", token.c_str(), node->getDoubleValue());
           socket->Reply(buf);
         }
-      } else if (token == "pause" || token == "PAUSE") {                // PAUSE
-        // pause the sim
+      } else if (token == "hold" || token == "HOLD") {                // PAUSE
+        FDMExec->Hold();
       } else if (token == "resume" || token == "RESUME") {             // RESUME
-        // resume the sim
+        FDMExec->Resume();
       } else if (token == "quit" || token == "QUIT") {                   // QUIT
         // close the socket connection
         socket->Close();
@@ -139,15 +140,16 @@ bool FGInput::Run(void)
         " JSBSim Server commands:\n\n"
         "   get {property name}\n"
         "   set {property name} {value}\n"
-        "   pause\n"
+        "   hold\n"
         "   resume\n"
         "   help\n"
         "   quit\n"
         "   info\n\n");
+      } else {
+        socket->Reply(string("Unknown command: ") +  token + string("\n"));
       }
 
       start = string_end;
-      cout << line << endl;
     }
   }
 

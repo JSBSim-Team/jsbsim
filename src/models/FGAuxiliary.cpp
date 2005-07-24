@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.3 2005/06/13 16:59:17 ehofman Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,134 +107,132 @@ bool FGAuxiliary::Run()
   const FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
   const FGColumnVector3& vVel = Propagate->GetVel();
 
-  if (!FGModel::Run())
-  {
-    p = Atmosphere->GetPressure();
-    rhosl = Atmosphere->GetDensitySL();
-    psl = Atmosphere->GetPressureSL();
-    sat = Atmosphere->GetTemperature();
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false;
+
+  p = Atmosphere->GetPressure();
+  rhosl = Atmosphere->GetDensitySL();
+  psl = Atmosphere->GetPressureSL();
+  sat = Atmosphere->GetTemperature();
 
 // Rotation
 
-    double cTht = Propagate->GetCosEuler(eTht);
-    double cPhi = Propagate->GetCosEuler(ePhi);
-    double sPhi = Propagate->GetSinEuler(ePhi);
+  double cTht = Propagate->GetCosEuler(eTht);
+  double cPhi = Propagate->GetCosEuler(ePhi);
+  double sPhi = Propagate->GetSinEuler(ePhi);
 
-    vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
-    if (cTht != 0.0) {
-      vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
-      vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
-    }
+  vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
+  if (cTht != 0.0) {
+    vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
+    vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
+  }
 
-    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
+  vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
 
 // Translation
 
-    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
+  vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
 
-    Vt = vAeroUVW.Magnitude();
-    if ( Vt > 0.05) {
-      if (vAeroUVW(eW) != 0.0)
-        alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
-      if (vAeroUVW(eV) != 0.0)
-        beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
-               sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
+  Vt = vAeroUVW.Magnitude();
+  if ( Vt > 0.05) {
+    if (vAeroUVW(eW) != 0.0)
+      alpha = vAeroUVW(eU)*vAeroUVW(eU) > 0.0 ? atan2(vAeroUVW(eW), vAeroUVW(eU)) : 0.0;
+    if (vAeroUVW(eV) != 0.0)
+      beta = vAeroUVW(eU)*vAeroUVW(eU)+vAeroUVW(eW)*vAeroUVW(eW) > 0.0 ? atan2(vAeroUVW(eV),
+             sqrt(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW))) : 0.0;
 
-      double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
-      double signU=1;
-      if (vAeroUVW(eU) != 0.0)
-        signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
+    double mUW = (vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+    double signU=1;
+    if (vAeroUVW(eU) != 0.0)
+      signU = vAeroUVW(eU)/fabs(vAeroUVW(eU));
 
-      if ( (mUW == 0.0) || (Vt == 0.0) ) {
-        adot = 0.0;
-        bdot = 0.0;
-      } else {
-        adot = (vAeroUVW(eU)*vUVWdot(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
-        bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
-                + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
-      }
+    if ( (mUW == 0.0) || (Vt == 0.0) ) {
+      adot = 0.0;
+      bdot = 0.0;
     } else {
-      alpha = beta = adot = bdot = 0;
+      adot = (vAeroUVW(eU)*vUVWdot(eW) - vAeroUVW(eW)*vUVWdot(eU))/mUW;
+      bdot = (signU*mUW*vUVWdot(eV) - vAeroUVW(eV)*(vAeroUVW(eU)*vUVWdot(eU)
+              + vAeroUVW(eW)*vUVWdot(eW)))/(Vt*Vt*sqrt(mUW));
     }
+  } else {
+    alpha = beta = adot = bdot = 0;
+  }
 
-    qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
-    qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
-    qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
-    Mach = Vt / Atmosphere->GetSoundSpeed();
-    MachU = vMachUVW(eU) = vAeroUVW(eU) / Atmosphere->GetSoundSpeed();
-    vMachUVW(eV) = vAeroUVW(eV) / Atmosphere->GetSoundSpeed();
-    vMachUVW(eW) = vAeroUVW(eW) / Atmosphere->GetSoundSpeed();
+  qbar = 0.5*Atmosphere->GetDensity()*Vt*Vt;
+  qbarUW = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eW)*vAeroUVW(eW));
+  qbarUV = 0.5*Atmosphere->GetDensity()*(vAeroUVW(eU)*vAeroUVW(eU) + vAeroUVW(eV)*vAeroUVW(eV));
+  Mach = Vt / Atmosphere->GetSoundSpeed();
+  MachU = vMachUVW(eU) = vAeroUVW(eU) / Atmosphere->GetSoundSpeed();
+  vMachUVW(eV) = vAeroUVW(eV) / Atmosphere->GetSoundSpeed();
+  vMachUVW(eW) = vAeroUVW(eW) / Atmosphere->GetSoundSpeed();
 
 // Position
 
-    Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
+  Vground = sqrt( vVel(eNorth)*vVel(eNorth) + vVel(eEast)*vVel(eEast) );
 
-    if (vVel(eNorth) == 0) psigt = 0;
-    else psigt =  atan2(vVel(eEast), vVel(eNorth));
+  if (vVel(eNorth) == 0) psigt = 0;
+  else psigt =  atan2(vVel(eEast), vVel(eNorth));
 
-    if (psigt < 0.0) psigt += 2*M_PI;
+  if (psigt < 0.0) psigt += 2*M_PI;
 
-    if (Vt != 0) {
-      hdot_Vt = -vVel(eDown)/Vt;
-      if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
-    } else {
-      gamma = 0.0;
-    }
-
-    tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
-    tatc = RankineToCelsius(tat);
-
-    if (MachU < 1) {   // Calculate total pressure assuming isentropic flow
-      pt = p*pow((1 + 0.2*MachU*MachU),3.5);
-    } else {
-      // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
-      B = 5.76*MachU*MachU/(5.6*MachU*MachU - 0.8);
-      D = (2.8*MachU*MachU-0.4)*0.4167;
-      pt = p*pow(B,3.5)*D;
-    }
-
-    A = pow(((pt-p)/psl+1),0.28571);
-    if (MachU > 0.0) {
-      vcas = sqrt(7*psl/rhosl*(A-1));
-      veas = sqrt(2*qbar/rhosl);
-    } else {
-      vcas = veas = 0.0;
-    }
-
-    vPilotAccel.InitMatrix();
-    if ( Vt > 1.0 ) {
-       vPilotAccel =  Aerodynamics->GetForces()
-                      +  Propulsion->GetForces()
-                      +  GroundReactions->GetForces();
-       vPilotAccel /= MassBalance->GetMass();
-       vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
-       vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
-       vPilotAccel += vPQR * (vPQR * vToEyePt);
-    } else {
-       vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, Inertial->gravity() );
-    }
-
-    vPilotAccelN = vPilotAccel/Inertial->gravity();
-
-    earthPosAngle += State->Getdt()*Inertial->omega();
-
-    // VRP computation
-    const FGLocation& vLocation = Propagate->GetLocation();
-    FGColumnVector3 vrpStructural = Aircraft->GetXYZvrp();
-    FGColumnVector3 vrpBody = MassBalance->StructuralToBody( vrpStructural );
-    FGColumnVector3 vrpLocal = Propagate->GetTb2l() * vrpBody;
-    vLocationVRP = vLocation.LocalToLocation( vrpLocal );
-
-    // Recompute some derived values now that we know the dependent parameters values ...
-    hoverbcg = Propagate->GetDistanceAGL() / Aircraft->GetWingSpan();
-
-    FGColumnVector3 vMac = Propagate->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
-    hoverbmac = (Propagate->GetDistanceAGL() + vMac(3)) / Aircraft->GetWingSpan();
-
-    return false;
+  if (Vt != 0) {
+    hdot_Vt = -vVel(eDown)/Vt;
+    if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
   } else {
-    return true;
+    gamma = 0.0;
   }
+
+  tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
+  tatc = RankineToCelsius(tat);
+
+  if (MachU < 1) {   // Calculate total pressure assuming isentropic flow
+    pt = p*pow((1 + 0.2*MachU*MachU),3.5);
+  } else {
+    // Use Rayleigh pitot tube formula for normal shock in front of pitot tube
+    B = 5.76*MachU*MachU/(5.6*MachU*MachU - 0.8);
+    D = (2.8*MachU*MachU-0.4)*0.4167;
+    pt = p*pow(B,3.5)*D;
+  }
+
+  A = pow(((pt-p)/psl+1),0.28571);
+  if (MachU > 0.0) {
+    vcas = sqrt(7*psl/rhosl*(A-1));
+    veas = sqrt(2*qbar/rhosl);
+  } else {
+    vcas = veas = 0.0;
+  }
+
+  vPilotAccel.InitMatrix();
+  if ( Vt > 1.0 ) {
+     vPilotAccel =  Aerodynamics->GetForces()
+                    +  Propulsion->GetForces()
+                    +  GroundReactions->GetForces();
+     vPilotAccel /= MassBalance->GetMass();
+     vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
+     vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
+     vPilotAccel += vPQR * (vPQR * vToEyePt);
+  } else {
+     vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, Inertial->gravity() );
+  }
+
+  vPilotAccelN = vPilotAccel/Inertial->gravity();
+
+  earthPosAngle += State->Getdt()*Inertial->omega();
+
+  // VRP computation
+  const FGLocation& vLocation = Propagate->GetLocation();
+  FGColumnVector3 vrpStructural = Aircraft->GetXYZvrp();
+  FGColumnVector3 vrpBody = MassBalance->StructuralToBody( vrpStructural );
+  FGColumnVector3 vrpLocal = Propagate->GetTb2l() * vrpBody;
+  vLocationVRP = vLocation.LocalToLocation( vrpLocal );
+
+  // Recompute some derived values now that we know the dependent parameters values ...
+  hoverbcg = Propagate->GetDistanceAGL() / Aircraft->GetWingSpan();
+
+  FGColumnVector3 vMac = Propagate->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+  hoverbmac = (Propagate->GetDistanceAGL() + vMac(3)) / Aircraft->GetWingSpan();
+
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
