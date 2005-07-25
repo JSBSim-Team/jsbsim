@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.6 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.7 2005/07/25 11:48:19 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -547,7 +547,7 @@ FGColumnVector3& FGLGear::Force(void)
         SinkRate > 1.4666*30)
     {
       PutMessage("Crash Detected: Simulation FREEZE.");
-      State->Suspend();
+      State->SuspendIntegration();
     }
   }
   return vForce;

@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.7 2005/07/24 21:00:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.8 2005/07/25 11:48:14 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -377,10 +377,10 @@ bool FGFDMExec::Run(void)
 
 bool FGFDMExec::RunIC(void)
 {
-  State->Suspend();
+  State->SuspendIntegration();
   State->Initialize(IC);
   Run();
-  State->Resume();
+  State->ResumeIntegration();
 
   return true;
 }

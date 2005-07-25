@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.6 2005/07/24 21:00:33 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.7 2005/07/25 11:48:19 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -330,7 +330,10 @@ int main(int argc, char* argv[])
         result = FDMExec->Run();
       }
     } else { // Suspended
-      if (pause_ticks == 0) pause_ticks = clock(); // remember start of pause
+      if (pause_ticks == 0) {
+        pause_ticks = clock(); // remember start of pause
+        cout << endl << "  ... Holding ..." << endl << endl;
+      }
       result = FDMExec->Run();
     }
     clock_ticks = clock();

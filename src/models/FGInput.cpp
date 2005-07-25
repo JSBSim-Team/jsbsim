@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.2 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.3 2005/07/25 11:48:19 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,7 @@ FGInput::~FGInput()
 
 bool FGInput::Run(void)
 {
-  string line, token;
+  string line, token, info_string;
   int start=0, string_start=0, string_end=0;
   int token_start=0, token_end=0;
   char buf[100];
@@ -126,7 +126,7 @@ bool FGInput::Run(void)
           sprintf(buf, "%s = %12.6f\n", token.c_str(), node->getDoubleValue());
           socket->Reply(buf);
         }
-      } else if (token == "hold" || token == "HOLD") {                // PAUSE
+      } else if (token == "hold" || token == "HOLD") {                  // PAUSE
         FDMExec->Hold();
       } else if (token == "resume" || token == "RESUME") {             // RESUME
         FDMExec->Resume();
@@ -135,6 +135,12 @@ bool FGInput::Run(void)
         socket->Close();
       } else if (token == "info" || token == "INFO") {                   // INFO
         // get info about the sim run and/or aircraft, etc.
+        sprintf(buf, "%8.3f\0", State->Getsim_time());
+        info_string  = "JSBSim version: " + JSBSim_version + "\n";
+        info_string += "Config File version: " + needed_cfg_version + "\n";
+        info_string += "Aircraft simulated: " + Aircraft->GetAircraftName() + "\n";
+        info_string += "Simulation time: " + string(buf) + "\n";
+        socket->Reply(info_string);
       } else if (token == "help" || token == "HELP") {                   // HELP
         socket->Reply(
         " JSBSim Server commands:\n\n"

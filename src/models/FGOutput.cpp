@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.5 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.6 2005/07/25 11:48:19 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +93,7 @@ bool FGOutput::Run(void)
 {
   if (FGModel::Run()) return true;
 
-  if (enabled && !State->Suspended()&& !FDMExec->Holding()) {
+  if (enabled && !State->IntegrationSuspended()&& !FDMExec->Holding()) {
     if (Type == otSocket) {
       SocketOutput();
     } else if (Type == otCSV || Type == otTab) {

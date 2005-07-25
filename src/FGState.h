@@ -77,7 +77,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.5 2005/07/24 21:00:33 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.6 2005/07/25 11:48:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,7 +91,7 @@ CLASS DOCUMENTATION
 
 /** Encapsulates the calculation of aircraft state.
     @author Jon S. Berndt
-    @version $Id: FGState.h,v 1.5 2005/07/24 21:00:33 jberndt Exp $
+    @version $Id: FGState.h,v 1.6 2005/07/25 11:48:19 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,11 +121,11 @@ public:
   }
 
   /// Suspends the simulation and sets the delta T to zero.
-  inline void Suspend(void) {saved_dt = dt; dt = 0.0;}
+  inline void SuspendIntegration(void) {saved_dt = dt; dt = 0.0;}
   /// Resumes the simulation by resetting delta T to the correct value.
-  inline void Resume(void)  {dt = saved_dt;}
+  inline void ResumeIntegration(void)  {dt = saved_dt;}
 
-  bool Suspended(void) {return dt == 0.0;}
+  bool IntegrationSuspended(void) {return dt == 0.0;}
 
   /** Sets the current sim time.
       @param cur_time the current time
