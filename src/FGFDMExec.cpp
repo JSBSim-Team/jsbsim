@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.8 2005/07/25 11:48:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.9 2005/07/28 03:54:20 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +82,11 @@ GLOBAL DECLARATIONS
 
 unsigned int FGFDMExec::FDMctr = 0;
 FGPropertyManager* FGFDMExec::master=0;
+
+struct PropertyCatalogStructure {
+  string base_string;
+  FGPropertyManager *node;
+};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -166,6 +171,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
 
   typedef int (FGFDMExec::*iPMF)(void) const;
   instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -497,7 +503,48 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
          << fgdef << endl;
   }
 
+  struct PropertyCatalogStructure masterPCS;
+  masterPCS.base_string = "";
+  masterPCS.node = (FGPropertyManager*)master;
+
+  BuildPropertyCatalog(&masterPCS);
+
   return result;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
+{
+  struct PropertyCatalogStructure* pcsNew = new struct PropertyCatalogStructure;
+  int node_idx = 0;
+  char int_buf[10];
+
+  for (int i=0; i<pcs->node->nChildren(); i++) {
+    pcsNew->base_string = pcs->base_string + "/" + pcs->node->getChild(i)->getName();
+    node_idx = pcs->node->getChild(i)->getIndex();
+    sprintf(int_buf, "[%d]", node_idx);
+    if (node_idx != 0) pcsNew->base_string += string(int_buf);
+    if (pcs->node->getChild(i)->nChildren() == 0) {
+      PropertyCatalog.push_back(pcsNew->base_string);
+    } else {
+      pcsNew->node = (FGPropertyManager*)pcs->node->getChild(i);
+      BuildPropertyCatalog(pcsNew);
+    }
+  }
+  delete pcsNew;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGFDMExec::QueryPropertyCatalog(string in)
+{
+  string results="";
+  for (int i=0; i<PropertyCatalog.size(); i++) {
+    if (PropertyCatalog[i].find(in) != string::npos) results += PropertyCatalog[i] + "\n";
+  }
+  if (results.empty()) return "No matches found\n";
+  return results;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

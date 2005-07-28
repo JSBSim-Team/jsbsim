@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.6 2005/07/24 21:00:33 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.7 2005/07/28 03:54:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -103,7 +103,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.6 2005/07/24 21:00:33 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.7 2005/07/28 03:54:20 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -245,6 +245,8 @@ public:
   void Hold(void) {holding = true;}
   void Resume(void) {holding = false;}
   bool Holding(void) {return holding;}
+  void BuildPropertyCatalog(struct PropertyCatalogStructure* pcs);
+  string QueryPropertyCatalog(string);
 
 private:
   FGModel* FirstModel;
@@ -260,6 +262,7 @@ private:
   bool IsSlave;
   static FGPropertyManager *master;
   FGPropertyManager *instance;
+  vector <string> PropertyCatalog;
 
   struct slaveData {
     FGFDMExec* exec;

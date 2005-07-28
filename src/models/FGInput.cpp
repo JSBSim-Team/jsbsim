@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.3 2005/07/25 11:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.4 2005/07/28 03:54:20 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,6 +75,9 @@ FGInput::~FGInput()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// This function handles accepting input commands from the socket interface.
+//
 
 bool FGInput::Run(void)
 {
@@ -104,7 +107,9 @@ bool FGInput::Run(void)
       token_start = line.find_first_not_of(" ", 0);
       token_end = line.find_first_of(" ", token_start);
       token = line.substr(token_start, token_end - token_start);
+
       if (token == "set" || token == "SET" ) {                   // SET PROPERTY
+
         token_start = line.find_first_not_of(" ", token_end);
         token_end = line.find_first_of(" ", token_start);
         token = line.substr(token_start, token_end-token_start);
@@ -117,23 +122,49 @@ bool FGInput::Run(void)
           value = atof(token.c_str());
           node->setDoubleValue(value);
         }
+
       } else if (token == "get" || token == "GET") {             // GET PROPERTY
+
         token_start = line.find_first_not_of(" ", token_end);
-        token = line.substr(token_start, line.size()-token_start);
-        node = PropertyManager->GetNode(token);
-        if (node == 0) socket->Reply("Unknown property\n");
-        else {
+        if (token_start == string::npos) {
+          socket->Reply("No property argument supplied.\n");
+          break;
+        } else {
+          token = line.substr(token_start, line.size()-token_start);
+        }
+        try {
+          node = PropertyManager->GetNode(token);
+        } catch(...) {
+          socket->Reply("Badly formed property query\n");
+          break;
+        }
+        if (node == 0) {
+          if (FDMExec->Holding()) { // if holding can query property list
+            string query = FDMExec->QueryPropertyCatalog(token);
+            socket->Reply(query);
+          } else {
+            socket->Reply("Must be in HOLD to search properties\n");
+          }
+        } else if (node > 0) {
           sprintf(buf, "%s = %12.6f\n", token.c_str(), node->getDoubleValue());
           socket->Reply(buf);
         }
+
       } else if (token == "hold" || token == "HOLD") {                  // PAUSE
+
         FDMExec->Hold();
+
       } else if (token == "resume" || token == "RESUME") {             // RESUME
+
         FDMExec->Resume();
+
       } else if (token == "quit" || token == "QUIT") {                   // QUIT
+
         // close the socket connection
         socket->Close();
+
       } else if (token == "info" || token == "INFO") {                   // INFO
+
         // get info about the sim run and/or aircraft, etc.
         sprintf(buf, "%8.3f\0", State->Getsim_time());
         info_string  = "JSBSim version: " + JSBSim_version + "\n";
@@ -141,7 +172,9 @@ bool FGInput::Run(void)
         info_string += "Aircraft simulated: " + Aircraft->GetAircraftName() + "\n";
         info_string += "Simulation time: " + string(buf) + "\n";
         socket->Reply(info_string);
+
       } else if (token == "help" || token == "HELP") {                   // HELP
+
         socket->Reply(
         " JSBSim Server commands:\n\n"
         "   get {property name}\n"
@@ -151,6 +184,7 @@ bool FGInput::Run(void)
         "   help\n"
         "   quit\n"
         "   info\n\n");
+
       } else {
         socket->Reply(string("Unknown command: ") +  token + string("\n"));
       }
