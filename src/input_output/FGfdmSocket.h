@@ -60,7 +60,6 @@ INCLUDES
 #  endif
 #endif
 
-#include <unistd.h>
 #include <sys/types.h>
 #include "FGJSBBase.h"
 
@@ -68,6 +67,7 @@ INCLUDES
   #include <winsock.h>
   #include <io.h>
 #else
+  #include <unistd.h>
   #include <sys/socket.h>
   #include <netinet/in.h>
   #include <netdb.h>
@@ -79,7 +79,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.7 2005/07/28 16:23:35 ehofman Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.8 2005/07/29 05:16:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
