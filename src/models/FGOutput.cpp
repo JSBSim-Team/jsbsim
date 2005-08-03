@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.6 2005/07/25 11:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.7 2005/08/03 13:47:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
 FGOutput::~FGOutput()
 {
   if (socket) delete socket;
-  for (unsigned int i=0; i<OutputProperties.size(); i++) delete OutputProperties[i];
+  OutputProperties.clear();
 
   Debug(1);
 }
