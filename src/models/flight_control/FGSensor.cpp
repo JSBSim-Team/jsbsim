@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.2 2005/07/13 13:04:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.3 2005/08/03 13:00:22 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,11 +51,15 @@ CLASS IMPLEMENTATION
 
 FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
+  double denom;
+  dt = fcs->GetState()->Getdt();
+
   // inputs are read from the base class constructor
 
   dt = fcs->GetState()->Getdt();
 
   bits = quantized = divisions = 0;
+  PreviousInput = PreviousOutput = 0.0;
   min = max = bias = noise_variance = lag = drift_rate = drift = span = 0.0;
   granularity = 0.0;
   noise_type = 0;
@@ -83,6 +87,9 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
   if ( element->FindElement("lag") ) {
     lag = element->FindElementValueAsNumber("lag");
+    denom = 2.00 + dt*lag;
+    ca = dt*lag / denom;
+    cb = (2.00 - dt*lag) / denom;
   }
   if ( element->FindElement("noise") ) {
     noise_variance = element->FindElementValueAsNumber("noise");
@@ -177,7 +184,11 @@ void FGSensor::Quantize(void)
 
 void FGSensor::Lag(void)
 {
-  // not done, yet
+  // "Output" on the right side of the "=" is the current frame input
+  Output = ca * (Output + PreviousInput) + PreviousOutput * cb;
+
+  PreviousOutput = Output;
+  PreviousInput  = Input;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

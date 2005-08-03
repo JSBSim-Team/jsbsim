@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.2 2005/07/13 13:04:08 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.3 2005/08/03 13:00:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -124,6 +124,10 @@ private:
   double noise_variance;
   double lag;
   double granularity;
+  double ca; /// lag filter coefficient "a"
+  double cb; /// lag filter coefficient "b"
+  double PreviousOutput;
+  double PreviousInput;
   int noise_type;
   int bits;
   int quantized;
