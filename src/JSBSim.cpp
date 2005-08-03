@@ -57,16 +57,23 @@ INCLUDES
 #  include <time.h>
 #endif
 
+#ifndef ROOTDIR
+# define ROOT_DIR ""
+#else
+# define ROOT_DIR "src/"ROOTDIR"/"
+#endif
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.7 2005/07/25 11:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.8 2005/08/03 08:45:57 ehofman Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+string RootDir = ROOT_DIR;
 string ScriptName;
 string AircraftName;
 string ResetName;
@@ -209,11 +216,12 @@ int main(int argc, char* argv[])
   options(argc, argv);
 
   FDMExec = new JSBSim::FGFDMExec();
-  FDMExec->SetAircraftPath("aircraft");
-  FDMExec->SetEnginePath("engine");
+  FDMExec->SetAircraftPath(RootDir + "aircraft");
+  FDMExec->SetEnginePath(RootDir + "engine");
 
   if (!ScriptName.empty()) { // SCRIPTED CASE
 
+    ScriptName = RootDir + ScriptName;
     Script = new JSBSim::FGScript(FDMExec);
     result = Script->LoadScript(ScriptName);
 
@@ -227,7 +235,9 @@ int main(int argc, char* argv[])
 
   } else if (!AircraftName.empty() || !ResetName.empty()) {        // form jsbsim <acname> <resetfile>
 
-    if ( ! FDMExec->LoadModel("aircraft", "engine",AircraftName)) {
+    AircraftName = RootDir + AircraftName;
+    ResetName = RootDir + ResetName;
+    if ( ! FDMExec->LoadModel(RootDir + "aircraft", RootDir + "engine", AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
     }
@@ -364,6 +374,7 @@ void options(int count, char **arg)
       cout << "    --version  returns the version number" << endl;
       cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
       cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
+      cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
       cout << "    --realtime  specifies to run in actual real world time" << endl;
@@ -384,6 +395,7 @@ void options(int count, char **arg)
       cout << "    --version  returns the version number" << endl;
       cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
       cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
+      cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
       cout << "    --realtime  specifies to run in actual real world time" << endl;
@@ -413,6 +425,14 @@ void options(int count, char **arg)
         LogDirectiveName = argument.substr(argument.find("=")+1);
       } else {
         cerr << "  Log directives file not valid or not understood." << endl << endl;
+        exit(1);
+      }
+    } else if (argument.find("--root") != string::npos) {
+      n = argument.find("=")+1;
+      if (n > 0) {
+        RootDir = argument.substr(argument.find("=")+1);
+      } else {
+        cerr << "  Root directory not valid or not understood." << endl << endl;
         exit(1);
       }
     } else if (argument.find("--aircraft") != string::npos) {
