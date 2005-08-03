@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.4 2005/07/28 03:54:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.5 2005/08/03 14:15:46 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,6 +161,7 @@ bool FGInput::Run(void)
       } else if (token == "quit" || token == "QUIT") {                   // QUIT
 
         // close the socket connection
+        socket->Reply("");
         socket->Close();
 
       } else if (token == "info" || token == "INFO") {                   // INFO
