@@ -42,10 +42,22 @@
     <noise variation="PERCENT"> 0.05 </noise>
     <quantization name="attitude/sensor/quantized/phi-rad">
       <bits> 12 </bits>
-      <min> -180 </min>
-      <max> 180 </max>
+      <min> -3.141593 </min>
+      <max>  3.141593 </max>
     </quantization>
     <bias> 0.001 </bias>
+  </sensor>
+
+  <sensor name="aero/sensor/qbar-psf">
+    <input> aero/qbar-psf </input>
+    <lag> 5.0 </lag>
+    <noise variation="PERCENT"> 0.03 </noise>
+    <quantization name="aero/sensor/quantized/qbar-psf">
+      <bits> 12 </bits>
+      <min>   0.0 </min>
+      <max> 200.0 </max>
+    </quantization>
+    <bias> 0.01 </bias>
   </sensor>
 
 <!--
