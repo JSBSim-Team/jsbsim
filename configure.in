@@ -4,7 +4,7 @@ AC_INIT(JSBSim.cpp, 0.9.8, jsb@hal-pc.org)
 dnl set the $host variable based on local machine/os
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE(JSBSim, 0.9.8)
+AM_INIT_AUTOMAKE(JSBSim, 0.9.9)
 
 dnl Checks for programs.
 AC_PROG_CPP
