@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.3 2005/08/03 13:00:33 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.4 2005/08/09 05:24:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -110,6 +110,14 @@ class FGSensor  : public FGFCSComponent
 public:
   FGSensor(FGFCS* fcs, Element* element);
   ~FGSensor();
+  
+  inline void SetFailLow(double val) {if (val > 0.0) fail_low = true; else fail_low = false;}
+  inline void SetFailHigh(double val) {if (val > 0.0) fail_high = true; else fail_high = false;}
+  inline void SetFailStuck(double val) {if (val > 0.0) fail_stuck = true; else fail_stuck = false;}
+
+  inline double GetFailLow(void) const {if (fail_low) return 1.0; else return 0.0;}
+  inline double GetFailHigh(void) const {if (fail_high) return 1.0; else return 0.0;}
+  inline double GetFailStuck(void) const {if (fail_stuck) return 1.0; else return 0.0;}
 
   bool Run (void);
 
@@ -132,12 +140,17 @@ private:
   int bits;
   int quantized;
   int divisions;
+  bool fail_low;
+  bool fail_high;
+  bool fail_stuck;
 
   void Noise(void);
   void Bias(void);
   void Drift(void);
   void Quantize(void);
   void Lag(void);
+
+  void bind(void);
 
   void Debug(int from);
 };

@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.9 2005/07/28 03:54:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.10 2005/08/09 05:24:14 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,7 +295,7 @@ bool FGFDMExec::DeAllocate(void)
   delete State;
 
   for (int i=0; i<Outputs.size(); i++) {
-    delete Outputs[i];
+    if (Outputs[i]) delete Outputs[i];
   }
 
   Outputs.clear();

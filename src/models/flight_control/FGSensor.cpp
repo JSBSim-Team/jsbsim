@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.3 2005/08/03 13:00:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.4 2005/08/09 05:24:16 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,11 +63,12 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   min = max = bias = noise_variance = lag = drift_rate = drift = span = 0.0;
   granularity = 0.0;
   noise_type = 0;
+  fail_low = fail_high = fail_stuck = false;
 
   Element* quantization_element = element->FindElement("quantization");
   if ( quantization_element) {
     if ( quantization_element->FindElement("bits") ) {
-      bits = quantization_element->FindElementValueAsNumber("bits");
+      bits = (int)quantization_element->FindElementValueAsNumber("bits");
     }
     divisions = (1<<bits);
     if ( quantization_element->FindElement("min") ) {
@@ -106,6 +107,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
 
   FGFCSComponent::bind();
+  bind();
 
   Debug(0);
 }
@@ -127,10 +129,19 @@ bool FGSensor::Run(void )
 
   // Degrade signal as specified
 
+  if (fail_stuck) {
+    Output = PreviousOutput;
+    return true;
+  }
+
   if (lag != 0.0)            Lag();       // models sensor lag
   if (noise_variance != 0.0) Noise();     // models noise
   if (drift_rate != 0.0)     Drift();     // models drift over time
   if (bias != 0.0)           Bias();      // models a finite bias
+
+  if (fail_low)  Output = -HUGE_VAL;
+  if (fail_high) Output =  HUGE_VAL;
+
   if (bits != 0)             Quantize();  // models quantization degradation
 //  if (delay != 0.0)          Delay();     // models system signal transport latencies
 
@@ -189,6 +200,20 @@ void FGSensor::Lag(void)
 
   PreviousOutput = Output;
   PreviousInput  = Input;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGSensor::bind(void)
+{
+  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  const string tmp_low = tmp + "/malfunction/fail_low";
+  const string tmp_high = tmp + "/malfunction/fail_high";
+  const string tmp_stuck = tmp + "/malfunction/fail_stuck";
+
+  PropertyManager->Tie( tmp_low, this, &FGSensor::GetFailLow, &FGSensor::SetFailLow);
+  PropertyManager->Tie( tmp_high, this, &FGSensor::GetFailHigh, &FGSensor::SetFailHigh);
+  PropertyManager->Tie( tmp_stuck, this, &FGSensor::GetFailStuck, &FGSensor::SetFailStuck);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
