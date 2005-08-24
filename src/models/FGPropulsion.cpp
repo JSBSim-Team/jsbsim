@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.5 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.6 2005/08/24 04:12:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -78,6 +78,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   tankJ.InitMatrix();
   refuel = false;
   fuel_freeze = false;
+  IsBound =
   HavePistonEngine =
   HaveTurbineEngine =
   HaveRocketEngine =
@@ -292,19 +293,19 @@ bool FGPropulsion::Load(Element* el)
     type = document->GetName();
     if (type == "piston_engine") {
       HavePistonEngine = true;
-      bind();
+      if (!IsBound) bind();
       Engines.push_back(new FGPiston(FDMExec, document, numEngines));
     } else if (type == "turbine_engine") {
       HaveTurbineEngine = true;
-      bind();
+      if (!IsBound) bind();
       Engines.push_back(new FGTurbine(FDMExec, document, numEngines));
     } else if (type == "rocket_engine") {
       HaveRocketEngine = true;
-      bind();
+      if (!IsBound) bind();
       Engines.push_back(new FGRocket(FDMExec, document, numEngines));
     } else if (type == "electric_engine") {
       HaveElectricEngine = true;
-      bind();
+      if (!IsBound) bind();
       Engines.push_back(new FGElectric(FDMExec, document, numEngines));
     } else {
       cerr << "Unknown engine type: " << type << endl;
@@ -614,6 +615,8 @@ void FGPropulsion::bind(void)
 {
   typedef double (FGPropulsion::*PMF)(int) const;
   typedef int (FGPropulsion::*iPMF)(void) const;
+
+  IsBound = true;
 
   if (HaveTurbineEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  true);

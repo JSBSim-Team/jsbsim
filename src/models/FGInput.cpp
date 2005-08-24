@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.5 2005/08/03 14:15:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.6 2005/08/24 04:12:53 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +89,7 @@ bool FGInput::Run(void)
   FGPropertyManager* node=0;
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
+  if (port == 0) return true; // Do nothing here if port not defined
   // This model DOES execute if "Exec->Holding"
 
   data = socket->Receive(); // get socket transmission if present
