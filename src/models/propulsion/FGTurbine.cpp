@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.2 2005/06/13 00:54:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.3 2005/08/25 12:09:18 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,7 +399,7 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("milthrust"))
     MilThrust = el->FindElementValueAsNumberConvertTo("milthrust","LBS");
   if (el->FindElement("maxthrust"))
-    MilThrust = el->FindElementValueAsNumberConvertTo("maxthrust","LBS");
+    MaxThrust = el->FindElementValueAsNumberConvertTo("maxthrust","LBS");
   if (el->FindElement("bypassratio"))
     BypassRatio = el->FindElementValueAsNumber("bypassratio");
   if (el->FindElement("bleed"))

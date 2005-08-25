@@ -692,4 +692,7 @@
             </function>
         </axis>
     </aerodynamics>
+    <output name="T38.csv" type="CSV">
+        <propulsion> ON </propulsion>
+    </output>
 </fdm_config>
