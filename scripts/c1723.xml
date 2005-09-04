@@ -6,7 +6,7 @@
 
   <use aircraft="c172x"/>
   <use initialize="reset00"/>
-  <run start="0.0" end="60" dt="0.0083333">
+  <run start="0.0" end="600" dt="0.0083333">
 <!--
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="0.10"/>
@@ -37,10 +37,18 @@
       <set name="fcs/flap-cmd-norm" value=".33"/>
     </when>
 
-    <when> <!-- Set Autopilot for 8000 ft -->
+    <when> <!-- Set Autopilot for 4000 ft -->
       <parameter name="aero/qbar-psf" comparison="ge" value="5.0"/>
-      <set name="ap/altitude_setpoint" value="8000.0" action="FG_EXP" tc ="3.0"/>
+      <set name="ap/altitude_setpoint" value="4000.0"/>
       <set name="ap/altitude_hold" value="1"/>
+    </when>
+
+    <!-- setting fcs/throttle-cmd-norm is the same as
+         setting fcs/throttle-cmd-norm[0] -->
+
+    <when> <!-- When altitude reaches 4000 feet, set throttle to 0.70 -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="4000"/>
+      <set name="fcs/throttle-cmd-norm" value="0.70"/>
     </when>
 
     <when> <!-- remove flaps at 50 ft -->
