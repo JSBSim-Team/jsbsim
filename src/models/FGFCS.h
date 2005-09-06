@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.4 2005/07/13 13:04:07 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.5 2005/09/06 19:51:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,8 +67,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-typedef enum { iDe=0, iDaL, iDaR, iDr, iDsb, iDsp, iDf, NNorm } FcIdx;
-typedef enum { ofRad=0, ofNorm, ofMag , NForms} OutputForm;
+typedef enum { ofRad=0, ofDeg, ofNorm, ofMag , NForms} OutputForm;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -134,7 +133,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.4 2005/07/13 13:04:07 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.5 2005/09/06 19:51:47 jberndt Exp $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -370,38 +369,31 @@ public:
   //@{
   /** Sets the left aileron position
       @param cmd left aileron position in radians*/
-  inline void SetDaLPos( int form , double pos )
-                                      { DaLPos[form] = pos; }
+  inline void SetDaLPos( int form , double pos );
 
   /** Sets the right aileron position
       @param cmd right aileron position in radians*/
-  inline void SetDaRPos( int form , double pos )
-                                      { DaRPos[form] = pos; }
+  inline void SetDaRPos( int form , double pos );
 
   /** Sets the elevator position
       @param cmd elevator position in radians*/
-  inline void SetDePos( int form , double pos )
-                                      { DePos[form] = pos; }
+  inline void SetDePos( int form , double pos );
 
   /** Sets the rudder position
       @param cmd rudder position in radians*/
-  inline void SetDrPos( int form , double pos )
-                                      { DrPos[form] = pos; }
+  inline void SetDrPos( int form , double pos );
 
    /** Sets the flaps position
       @param cmd flaps position in radians*/
-  inline void SetDfPos( int form , double pos )
-                                      { DfPos[form] = pos; }
+  inline void SetDfPos( int form , double pos );
 
   /** Sets the speedbrake position
       @param cmd speedbrake position in radians*/
-  inline void SetDsbPos( int form , double pos )
-                                      { DsbPos[form] = pos; }
+  inline void SetDsbPos( int form , double pos );
 
   /** Sets the spoiler position
       @param cmd spoiler position in radians*/
-  inline void SetDspPos( int form , double pos )
-                                      { DspPos[form] = pos; }
+  inline void SetDspPos( int form , double pos );
 
   /** Sets the actual throttle setting for the specified engine
       @param engine engine ID number
@@ -461,10 +453,6 @@ public:
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 
-  void bind(void);
-  void bindModel(void);
-  void unbind(FGPropertyManager *node);
-
 private:
   double DaCmd, DeCmd, DrCmd, DsCmd, DfCmd, DsbCmd, DspCmd;
   double DePos[NForms], DaLPos[NForms], DaRPos[NForms], DrPos[NForms];
@@ -480,14 +468,14 @@ private:
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
 
-  bool DoNormalize;
-  void Normalize(void);
-
   vector <FGFCSComponent*> FCSComponents;
   vector <FGFCSComponent*> APComponents;
   vector <double*> interface_properties;
   vector <FGFCSComponent*> sensors;
-  int ToNormalize[NNorm];
+  void bind(void);
+  void bindModel(void);
+  void bindThrottle(unsigned int);
+  void unbind(FGPropertyManager *node);
   void Debug(int from);
 };
 }

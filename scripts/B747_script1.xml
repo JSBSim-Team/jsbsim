@@ -21,15 +21,15 @@
       <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
+      <parameter name="sim-time-sec" comparison="ge" value="7.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0" action="FG_RAMP" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
+      <parameter name="sim-time-sec" comparison="ge" value="8.0"/>
       <set name="fcs/throttle-cmd-norm[2]" value="1.0" action="FG_RAMP" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
+      <parameter name="sim-time-sec" comparison="ge" value="9.0"/>
       <set name="fcs/throttle-cmd-norm[3]" value="1.0" action="FG_RAMP" tc ="0.5"/>
     </when>
   </run>

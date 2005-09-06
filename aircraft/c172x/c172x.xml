@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.36 2005/08/03 13:01:14 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.37 2005/09/06 19:51:47 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -800,9 +800,14 @@
     <input port="1137"/>
     <output name="JSBout172B.csv" type="CSV" rate="20">
         <property> aero/qbar-psf </property>
-        <property> fcs/aero/sensor/qbar-psf </property>
+<!--        <property> fcs/aero/sensor/qbar-psf </property> -->
         <property> attitude/phi-rad </property>
         <property> fcs/attitude/sensor/phi-rad </property>
+        <property> position/h-sl-ft </property>
+        <property> velocities/vc-kts </property>
+        <property> fcs/throttle-cmd-norm </property>
+        <propulsion> ON </propulsion>
+        <aerosurfaces> ON </aerosurfaces>
     </output>
     <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>

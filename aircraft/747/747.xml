@@ -1205,8 +1205,8 @@
         <moments> ON </moments>
         <position> ON </position>
         <coefficients> OFF </coefficients>
-        <ground_reactions> ON </ground_reactions>
+        <ground_reactions> OFF </ground_reactions>
         <fcs> OFF </fcs>
-        <propulsion> OFF </propulsion>
+        <propulsion> ON </propulsion>
     </output>
 </fdm_config>

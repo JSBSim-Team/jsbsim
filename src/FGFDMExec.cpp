@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.10 2005/08/09 05:24:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.11 2005/09/06 19:51:47 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -501,6 +501,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     cerr << fgred
          << "  JSBSim failed to load aircraft and/or engine model"
          << fgdef << endl;
+    return false;
   }
 
   struct PropertyCatalogStructure masterPCS;

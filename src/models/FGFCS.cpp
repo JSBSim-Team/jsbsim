@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.5 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.6 2005/09/06 19:51:47 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -74,7 +74,6 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;
-  DoNormalize=true;
 
   bind();
   for (i=0;i<=NForms;i++) {
@@ -82,7 +81,6 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
   }
 
-  for (i=0;i<NNorm;i++) { ToNormalize[i]=-1;}
   Debug(0);
 }
 
@@ -118,6 +116,12 @@ FGFCS::~FGFCS()
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Notes: In this logic the default engine commands are set. This is simply a
+// sort of safe-mode method in case the user has not defined control laws for
+// throttle, mixture, and prop-advance. The throttle, mixture, and prop advance
+// positions are set equal to the respective commands. Any control logic that is
+// actually present in the flight_control or autopilot section will override
+// these simple assignments.
 
 bool FGFCS::Run(void)
 {
@@ -126,7 +130,6 @@ bool FGFCS::Run(void)
   if (FGModel::Run()) return true; // fast exit if nothing to do
   if (FDMExec->Holding()) return false;
 
-  // Set the default engine commands
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
   for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
@@ -137,13 +140,145 @@ bool FGFCS::Run(void)
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
 
-  for (i=0; i<sensors.size(); i++) sensors[i]->Run(); // cycle sensors
-  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run(); // cycle AP components
-  for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run(); // cycle FCS components
-
-  if (DoNormalize) Normalize();
+  // Cycle through the sensor, autopilot, and flight control components
+  for (i=0; i<sensors.size(); i++) sensors[i]->Run();
+  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run();
+  for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run();
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDaLPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DaLPos[ofRad] = pos;
+    DaLPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DaLPos[ofRad] = pos*degtorad;
+    DaLPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DaLPos[ofNorm] = pos;
+  }
+  DaLPos[ofMag] = fabs(DaLPos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDaRPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DaRPos[ofRad] = pos;
+    DaRPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DaRPos[ofRad] = pos*degtorad;
+    DaRPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DaRPos[ofNorm] = pos;
+  }
+  DaRPos[ofMag] = fabs(DaRPos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDePos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DePos[ofRad] = pos;
+    DePos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DePos[ofRad] = pos*degtorad;
+    DePos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DePos[ofNorm] = pos;
+  }
+  DePos[ofMag] = fabs(DePos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDrPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DrPos[ofRad] = pos;
+    DrPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DrPos[ofRad] = pos*degtorad;
+    DrPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DrPos[ofNorm] = pos;
+  }
+  DrPos[ofMag] = fabs(DrPos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDfPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DfPos[ofRad] = pos;
+    DfPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DfPos[ofRad] = pos*degtorad;
+    DfPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DfPos[ofNorm] = pos;
+  }
+  DfPos[ofMag] = fabs(DfPos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDsbPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DsbPos[ofRad] = pos;
+    DsbPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DsbPos[ofRad] = pos*degtorad;
+    DsbPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DsbPos[ofNorm] = pos;
+  }
+  DsbPos[ofMag] = fabs(DsbPos[ofRad]);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetDspPos( int form , double pos )
+{
+  switch(form) {
+  case ofRad:
+    DspPos[ofRad] = pos;
+    DspPos[ofDeg] = pos*radtodeg;
+    break;
+  case ofDeg:
+    DspPos[ofRad] = pos*degtorad;
+    DspPos[ofDeg] = pos;
+    break;
+  case ofNorm:
+    DspPos[ofNorm] = pos;
+  }
+  DspPos[ofMag] = fabs(DspPos[ofRad]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,7 +480,11 @@ bool FGFCS::Load(Element* el)
 
   sensor_element = document->FindElement("sensor");
   while (sensor_element) {
-    sensors.push_back(new FGSensor(this, sensor_element));
+    try {
+      sensors.push_back(new FGSensor(this, sensor_element));
+    } catch (...) {
+      throw("Unable to process sensor in config file");
+    }
     sensor_element = document->FindNextElement("sensor");
   }
 
@@ -354,65 +493,40 @@ bool FGFCS::Load(Element* el)
     component_element = channel_element->FindElement("component");
     while (component_element) {
       comp_name = component_element->GetAttributeValue("type");
-      if ((comp_name == "LAG_FILTER") ||
-          (comp_name == "LEAD_LAG_FILTER") ||
-          (comp_name == "SECOND_ORDER_FILTER") ||
-          (comp_name == "WASHOUT_FILTER") ||
-          (comp_name == "INTEGRATOR") )
-      {
-        Components->push_back(new FGFilter(this, component_element));
-      } else if ((comp_name == "PURE_GAIN") ||
-                 (comp_name == "SCHEDULED_GAIN") ||
-                 (comp_name == "AEROSURFACE_SCALE") )
-      {
-        Components->push_back(new FGGain(this, component_element));
-      } else if (comp_name == "SUMMER") {
-        Components->push_back(new FGSummer(this, component_element));
-      } else if (comp_name == "DEADBAND") {
-        Components->push_back(new FGDeadBand(this, component_element));
-      } else if (comp_name == "GRADIENT") {
-        Components->push_back(new FGGradient(this, component_element));
-      } else if (comp_name == "SWITCH") {
-        Components->push_back(new FGSwitch(this, component_element));
-      } else if (comp_name == "KINEMAT") {
-        Components->push_back(new FGKinemat(this, component_element));
-      } else if (comp_name == "FUNCTION") {
-        Components->push_back(new FGFCSFunction(this, component_element));
-      } else {
-        cerr << "Unknown FCS component: " << comp_name << endl;
+      try {
+        if ((comp_name == "LAG_FILTER") ||
+            (comp_name == "LEAD_LAG_FILTER") ||
+            (comp_name == "SECOND_ORDER_FILTER") ||
+            (comp_name == "WASHOUT_FILTER") ||
+            (comp_name == "INTEGRATOR") )
+        {
+          Components->push_back(new FGFilter(this, component_element));
+        } else if ((comp_name == "PURE_GAIN") ||
+                   (comp_name == "SCHEDULED_GAIN") ||
+                   (comp_name == "AEROSURFACE_SCALE") )
+        {
+          Components->push_back(new FGGain(this, component_element));
+        } else if (comp_name == "SUMMER") {
+          Components->push_back(new FGSummer(this, component_element));
+        } else if (comp_name == "DEADBAND") {
+          Components->push_back(new FGDeadBand(this, component_element));
+        } else if (comp_name == "GRADIENT") {
+          Components->push_back(new FGGradient(this, component_element));
+        } else if (comp_name == "SWITCH") {
+          Components->push_back(new FGSwitch(this, component_element));
+        } else if (comp_name == "KINEMAT") {
+          Components->push_back(new FGKinemat(this, component_element));
+        } else if (comp_name == "FUNCTION") {
+          Components->push_back(new FGFCSFunction(this, component_element));
+        } else {
+          cerr << "Unknown FCS component: " << comp_name << endl;
+        }
+      } catch (...) {
+        return false;
       }
       component_element = channel_element->FindNextElement("component");
     }
     channel_element = document->FindNextElement("channel");
-  }
-
-  //collect information for normalizing control surfaces
-  // ToDO: I'd like to do away with this here and move it to JSBSim.cxx if needed
-
-  string nodeName;
-  for (i=0; i<Components->size(); i++) {
-
-    if ( (((*Components)[i])->GetType() == "AEROSURFACE_SCALE"
-          || ((*Components)[i])->GetType() == "KINEMAT")
-                    && ((*Components)[i])->GetOutputNode() ) {
-      nodeName = ((*Components)[i])->GetOutputNode()->GetName();
-      if ( nodeName == "elevator-pos-rad" ) {
-        ToNormalize[iDe]=i;
-      } else if ( nodeName  == "left-aileron-pos-rad"
-                   || nodeName == "aileron-pos-rad" ) {
-        ToNormalize[iDaL]=i;
-      } else if ( nodeName == "right-aileron-pos-rad" ) {
-        ToNormalize[iDaR]=i;
-      } else if ( nodeName == "rudder-pos-rad" ) {
-        ToNormalize[iDr]=i;
-      } else if ( nodeName == "speedbrake-pos-rad" ) {
-        ToNormalize[iDsb]=i;
-      } else if ( nodeName == "spoiler-pos-rad" ) {
-        ToNormalize[iDsp]=i;
-      } else if ( nodeName == "flap-pos-deg" ) {
-        ToNormalize[iDf]=i;
-      }
-    }
   }
 
   if (document->GetName() == "flight_control") bindModel();
@@ -496,6 +610,9 @@ void FGFCS::AddThrottle(void)
   MixturePos.push_back(0.0);
   PropAdvanceCmd.push_back(0.0); // assume throttle and prop pitch are coupled
   PropAdvance.push_back(0.0);
+
+  unsigned int num = ThrottleCmd.size()-1;
+  bindThrottle(num);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -503,51 +620,6 @@ void FGFCS::AddThrottle(void)
 void FGFCS::AddGear(void)
 {
   SteerPosDeg.push_back(0.0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCS::Normalize(void) {
-
-  //not all of these are guaranteed to be defined for every model
-  //those that are have an index >=0 in the ToNormalize array
-  //ToNormalize is filled in Load()
-
-  if ( ToNormalize[iDe] > -1 ) {
-    DePos[ofNorm] = FCSComponents[ToNormalize[iDe]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDaL] > -1 ) {
-    DaLPos[ofNorm] = FCSComponents[ToNormalize[iDaL]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDaR] > -1 ) {
-    DaRPos[ofNorm] = FCSComponents[ToNormalize[iDaR]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDr] > -1 ) {
-    DrPos[ofNorm] = FCSComponents[ToNormalize[iDr]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDsb] > -1 ) {
-    DsbPos[ofNorm] = FCSComponents[ToNormalize[iDsb]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDsp] > -1 ) {
-    DspPos[ofNorm] = FCSComponents[ToNormalize[iDsp]]->GetOutputPct();
-  }
-
-  if ( ToNormalize[iDf] > -1 ) {
-    DfPos[ofNorm] = FCSComponents[ToNormalize[iDf]]->GetOutputPct();
-  }
-
-  DePos[ofMag]  = fabs(DePos[ofRad]);
-  DaLPos[ofMag] = fabs(DaLPos[ofRad]);
-  DaRPos[ofMag] = fabs(DaRPos[ofRad]);
-  DrPos[ofMag]  = fabs(DrPos[ofRad]);
-  DsbPos[ofMag] = fabs(DsbPos[ofRad]);
-  DspPos[ofMag] = fabs(DspPos[ofRad]);
-  DfPos[ofMag]  = fabs(DfPos[ofRad]);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,60 +639,77 @@ void FGFCS::bind(void)
   PropertyManager->Tie("gear/gear-cmd-norm", this, &FGFCS::GetGearCmd, &FGFCS::SetGearCmd);
 
   PropertyManager->Tie("fcs/left-aileron-pos-rad", this, ofRad, &FGFCS::GetDaLPos, &FGFCS::SetDaLPos);
+  PropertyManager->Tie("fcs/left-aileron-pos-deg", this, ofDeg, &FGFCS::GetDaLPos, &FGFCS::SetDaLPos);
   PropertyManager->Tie("fcs/left-aileron-pos-norm", this, ofNorm, &FGFCS::GetDaLPos, &FGFCS::SetDaLPos);
-  PropertyManager->Tie("fcs/mag-left-aileron-pos-rad", this, ofMag, &FGFCS::GetDaLPos, &FGFCS::SetDaLPos);
+  PropertyManager->Tie("fcs/mag-left-aileron-pos-rad", this, ofMag, &FGFCS::GetDaLPos);
 
   PropertyManager->Tie("fcs/right-aileron-pos-rad", this, ofRad, &FGFCS::GetDaRPos, &FGFCS::SetDaRPos);
+  PropertyManager->Tie("fcs/right-aileron-pos-deg", this, ofDeg, &FGFCS::GetDaRPos, &FGFCS::SetDaRPos);
   PropertyManager->Tie("fcs/right-aileron-pos-norm", this, ofNorm, &FGFCS::GetDaRPos, &FGFCS::SetDaRPos);
-  PropertyManager->Tie("fcs/mag-right-aileron-pos-rad", this, ofMag, &FGFCS::GetDaRPos, &FGFCS::SetDaRPos);
+  PropertyManager->Tie("fcs/mag-right-aileron-pos-rad", this, ofMag, &FGFCS::GetDaRPos);
 
   PropertyManager->Tie("fcs/elevator-pos-rad", this, ofRad, &FGFCS::GetDePos, &FGFCS::SetDePos);
+  PropertyManager->Tie("fcs/elevator-pos-deg", this, ofDeg, &FGFCS::GetDePos, &FGFCS::SetDePos);
   PropertyManager->Tie("fcs/elevator-pos-norm", this, ofNorm, &FGFCS::GetDePos, &FGFCS::SetDePos);
-  PropertyManager->Tie("fcs/mag-elevator-pos-rad", this, ofMag, &FGFCS::GetDePos, &FGFCS::SetDePos);
+  PropertyManager->Tie("fcs/mag-elevator-pos-rad", this, ofMag, &FGFCS::GetDePos);
 
   PropertyManager->Tie("fcs/rudder-pos-rad", this,ofRad, &FGFCS::GetDrPos, &FGFCS::SetDrPos);
+  PropertyManager->Tie("fcs/rudder-pos-deg", this,ofDeg, &FGFCS::GetDrPos, &FGFCS::SetDrPos);
   PropertyManager->Tie("fcs/rudder-pos-norm", this,ofNorm, &FGFCS::GetDrPos, &FGFCS::SetDrPos);
-  PropertyManager->Tie("fcs/mag-rudder-pos-rad", this,ofMag, &FGFCS::GetDrPos, &FGFCS::SetDrPos);
+  PropertyManager->Tie("fcs/mag-rudder-pos-rad", this,ofMag, &FGFCS::GetDrPos);
 
-  PropertyManager->Tie("fcs/flap-pos-deg", this,ofRad, &FGFCS::GetDfPos, &FGFCS::SetDfPos);
+  PropertyManager->Tie("fcs/flap-pos-rad", this,ofRad, &FGFCS::GetDfPos, &FGFCS::SetDfPos);
+  PropertyManager->Tie("fcs/flap-pos-deg", this,ofDeg, &FGFCS::GetDfPos, &FGFCS::SetDfPos);
   PropertyManager->Tie("fcs/flap-pos-norm", this,ofNorm, &FGFCS::GetDfPos, &FGFCS::SetDfPos);
 
   PropertyManager->Tie("fcs/speedbrake-pos-rad", this,ofRad, &FGFCS::GetDsbPos, &FGFCS::SetDsbPos);
+  PropertyManager->Tie("fcs/speedbrake-pos-deg", this,ofDeg, &FGFCS::GetDsbPos, &FGFCS::SetDsbPos);
   PropertyManager->Tie("fcs/speedbrake-pos-norm", this,ofNorm, &FGFCS::GetDsbPos, &FGFCS::SetDsbPos);
-  PropertyManager->Tie("fcs/mag-speedbrake-pos-rad", this,ofMag, &FGFCS::GetDsbPos, &FGFCS::SetDsbPos);
+  PropertyManager->Tie("fcs/mag-speedbrake-pos-rad", this,ofMag, &FGFCS::GetDsbPos);
 
-  PropertyManager->Tie("fcs/spoiler-pos-rad", this,ofRad, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
-  PropertyManager->Tie("fcs/spoiler-pos-norm", this,ofNorm, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
-  PropertyManager->Tie("fcs/mag-spoiler-pos-rad", this,ofMag, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
+  PropertyManager->Tie("fcs/spoiler-pos-rad", this, ofRad, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
+  PropertyManager->Tie("fcs/spoiler-pos-deg", this, ofDeg, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
+  PropertyManager->Tie("fcs/spoiler-pos-norm", this, ofNorm, &FGFCS::GetDspPos, &FGFCS::SetDspPos);
+  PropertyManager->Tie("fcs/mag-spoiler-pos-rad", this, ofMag, &FGFCS::GetDspPos);
 
   PropertyManager->Tie("gear/gear-pos-norm", this, &FGFCS::GetGearPos, &FGFCS::SetGearPos);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Technically, this function should probably bind propulsion type specific controls
+// rather than mixture and prop-advance.
+//
+
+void FGFCS::bindThrottle(unsigned int num)
+{
+  char tmp[80];
+
+  snprintf(tmp, 80, "fcs/throttle-cmd-norm[%u]",num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetThrottleCmd,
+                                        &FGFCS::SetThrottleCmd);
+  snprintf(tmp, 80, "fcs/throttle-pos-norm[%u]",num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetThrottlePos,
+                                        &FGFCS::SetThrottlePos);
+  snprintf(tmp, 80, "fcs/mixture-cmd-norm[%u]",num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetMixtureCmd,
+                                        &FGFCS::SetMixtureCmd);
+  snprintf(tmp, 80, "fcs/mixture-pos-norm[%u]",num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetMixturePos,
+                                        &FGFCS::SetMixturePos);
+  snprintf(tmp, 80, "fcs/advance-cmd-norm[%u]",num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropAdvanceCmd,
+                                        &FGFCS::SetPropAdvanceCmd);
+  snprintf(tmp, 80, "fcs/advance-pos-norm[%u]", num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropAdvance,
+                                        &FGFCS::SetPropAdvance);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFCS::bindModel(void)
 {
-  unsigned i;
+  unsigned int i;
   char tmp[80];
-
-  for (i=0; i<ThrottleCmd.size(); i++) {
-    snprintf(tmp,80,"fcs/throttle-cmd-norm[%u]",i);
-    PropertyManager->Tie( tmp,this,i, &FGFCS::GetThrottleCmd, &FGFCS::SetThrottleCmd);
-    snprintf(tmp,80,"fcs/throttle-pos-norm[%u]",i);
-    PropertyManager->Tie( tmp,this,i, &FGFCS::GetThrottlePos, &FGFCS::SetThrottlePos);
-    if ( MixtureCmd.size() > i ) {
-      snprintf(tmp,80,"fcs/mixture-cmd-norm[%u]",i);
-      PropertyManager->Tie( tmp,this,i, &FGFCS::GetMixtureCmd, &FGFCS::SetMixtureCmd);
-      snprintf(tmp,80,"fcs/mixture-pos-norm[%u]",i);
-      PropertyManager->Tie( tmp,this,i, &FGFCS::GetMixturePos, &FGFCS::SetMixturePos);
-    }
-    if ( PropAdvanceCmd.size() > i ) {
-      snprintf(tmp,80,"fcs/advance-cmd-norm[%u]",i);
-      PropertyManager->Tie( tmp,this,i, &FGFCS::GetPropAdvanceCmd, &FGFCS::SetPropAdvanceCmd);
-      snprintf(tmp,80,"fcs/advance-pos-norm[%u]",i);
-      PropertyManager->Tie( tmp,this,i, &FGFCS::GetPropAdvance, &FGFCS::SetPropAdvance);
-    }
-  }
 
   for (i=0; i<SteerPosDeg.size(); i++) {
     if (GroundReactions->GetGearUnit(i)->GetSteerable()) {
