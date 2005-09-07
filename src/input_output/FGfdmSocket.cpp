@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.9 2005/08/03 14:16:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.10 2005/09/07 12:12:12 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,10 +123,11 @@ FGfdmSocket::FGfdmSocket(int port)
       if (listen(sckt, 5) >= 0) { // successful listen()
         #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
           ioctlsocket(sckt, FIONBIO, &NoBlock);
+          sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
         #else
           ioctl(sckt, FIONBIO, &NoBlock);
+          sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
         #endif
-        sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
       } else {
         cerr << "Could not listen ..." << endl;
       }
@@ -169,7 +170,11 @@ string FGfdmSocket::Receive(void)
                     // class attribute and pass as a reference?
 
   if (sckt_in <= 0) {
-    sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+    #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+      sckt_in = accept(sckt, (struct sockaddr*)&scktName, &len);
+    #else
+      sckt_in = accept(sckt, (struct sockaddr*)&scktName, (socklen_t*)&len);
+    #endif
     if (sckt_in > 0) {
       #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
          ioctlsocket(sckt_in, FIONBIO,&NoBlock);
