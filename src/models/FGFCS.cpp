@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.7 2005/09/10 12:49:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.8 2005/09/10 13:00:34 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -482,8 +482,9 @@ bool FGFCS::Load(Element* el)
   while (sensor_element) {
     try {
       sensors.push_back(new FGSensor(this, sensor_element));
-    } catch (...) {
-      throw("Unable to process sensor in config file");
+    } catch (string s) {
+      cerr << highint << fgred << endl << "  " << s << endl;
+      return false;
     }
     sensor_element = document->FindNextElement("sensor");
   }
@@ -524,8 +525,6 @@ bool FGFCS::Load(Element* el)
       } catch(string s) {
         cerr << highint << fgred << endl << "  " << s << endl;
         cerr << reset << endl;
-        return false;
-      } catch (...) {
         return false;
       }
       component_element = channel_element->FindNextElement("component");

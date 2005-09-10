@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.5 2005/09/06 19:51:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.6 2005/09/10 13:00:35 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     OutputNode = PropertyManager->GetNode( element->FindElementValue("output") );
     if (!OutputNode) {
       cerr << endl << "  Unable to process property: " << element->FindElementValue("output") << endl;
-      throw("Invalid output property name in flight control definition");
+      throw(string("Invalid output property name in flight control definition"));
     }
   }
 
