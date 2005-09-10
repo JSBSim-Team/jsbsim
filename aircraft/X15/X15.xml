@@ -6,7 +6,7 @@
         <author> Jon Berndt </author>
         <filecreationdate> 1998 </filecreationdate>
         <description> Models the X-15 hypersonic research aircraft </description>
-        <version> $Revision: 1.46 $ </version>
+        <version> $Revision: 1.47 $ </version>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
     </fileheader>
@@ -158,10 +158,10 @@
 
             <component name="Pitch Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/pitch-trim-sum</input>
-                <limit>
+                <range>
                     <min>-50</min>
                     <max>50</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Pitch Gain 1" type="PURE_GAIN">
@@ -227,10 +227,10 @@
 
             <component name="Roll Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/aileron-cmd-norm</input>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max>20</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Roll Gain 1" type="PURE_GAIN">
@@ -274,10 +274,10 @@
 
             <component name="Yaw Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/rudder-cmd-norm</input>
-                <limit>
+                <range>
                     <min>-250</min>
                     <max>250</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Yaw Gain 1" type="PURE_GAIN">

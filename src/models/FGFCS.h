@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.5 2005/09/06 19:51:47 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.6 2005/09/10 12:49:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,26 +82,26 @@ CLASS DOCUMENTATION
     the configuration file. For instance, for the X-15:
 
     <pre>
-    \<FLIGHT_CONTROL NAME="X-15 SAS">
+    \<flight_control name="X-15 SAS">
+      \<channel>
+        \<component name="Pitch Trim Sum" type="SUMMER">
+           <input> fcs/elevator-cmd-norm </input>
+           <input> fcs/pitch-trim-cmd-norm </input>
+           <clipto>
+             <min>-1</min>
+             <max>1</max>
+           </clipto>
+        \</component>
 
-    \<COMPONENT NAME="Pitch Trim Sum" TYPE="SUMMER">
-       INPUT        fcs/elevator-cmd-norm
-       INPUT        fcs/pitch-trim-cmd-norm
-       CLIPTO       -1 1
-    \</COMPONENT>
+        \<component name="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+          <input> fcs/pitch-trim-sum </input>
+          <limit>
+            <min> -50 </min>
+            <max>  50 </max>
+          </limit>
+        \</component>
 
-    \<COMPONENT NAME="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
-      INPUT        fcs/pitch-trim-sum
-      MIN         -50
-      MAX          50
-    \</COMPONENT>
-
-    \<COMPONENT NAME="Pitch Gain 1" TYPE="PURE_GAIN">
-      INPUT        fcs/pitch-command-scale
-      GAIN         -0.36
-    \</COMPONENT>
-
-    ... etc.
+        ... etc.
     </pre>
 
     In the above case we can see the first few components of the pitch channel
@@ -113,27 +113,27 @@ CLASS DOCUMENTATION
     gain (see the LoadFCS() method for insight on how the various types of
     components map into the actual component classes).  This continues until the
     final component for an axis when the
-    OUTPUT keyword specifies where the output is supposed to go. See the
+    \<output> element specifies where the output is supposed to go. See the
     individual components for more information on how they are mechanized.
 
     Another option for the flight controls portion of the config file is that in
     addition to using the "NAME" attribute in,
 
     <pre>
-    \<FLIGHT_CONTROL NAME="X-15 SAS">
+    \<flight_control name="X-15 SAS">
     </pre>
 
     one can also supply a filename:
 
     <pre>
-    \<FLIGHT_CONTROL NAME="X-15 SAS" FILE="X15.xml">
-    \</FLIGHT_CONTROL>
+    \<flight_control name="X-15 SAS" file="X15.xml">
+    \</flight_control>
     </pre>
 
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.5 2005/09/06 19:51:47 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.6 2005/09/10 12:49:46 jberndt Exp $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain

@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.5 2005/09/10 12:49:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $
+    @version $Id: FGGain.h,v 1.5 2005/09/10 12:49:46 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,16 +172,13 @@ public:
   FGGain(FGFCS* fcs, Element* element);
   ~FGGain();
 
-  double GetOutputPct() const { return OutputPct; }
-
   bool Run (void);
 
 private:
   FGTable* Table;
   FGPropertyManager* GainPropertyNode;
   double Gain;
-  double Min, Max;
-  double OutputPct;
+  double InMin, InMax, OutMin, OutMax;
   int Rows;
 
   void Debug(int from);

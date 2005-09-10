@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.37 2005/09/06 19:51:47 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.38 2005/09/10 12:49:46 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -215,10 +215,10 @@
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
                 <input>fcs/pitch-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-28</min>
                     <max> 23</max>
-                </limit>
+                </range>
                 <output>fcs/elevator-pos-rad</output>
             </component>
         </channel>
@@ -235,19 +235,19 @@
             <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
                 <input>fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max> 15</max>
-                </limit>
+                </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </component>
             <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
                 <input>-fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max> 15</max>
-                </limit>
+                </range>
                 <output>fcs/right-aileron-pos-rad</output>
             </component>
         </channel>
@@ -263,10 +263,10 @@
             <component name="Rudder Control" type="AEROSURFACE_SCALE">
                 <input>fcs/yaw-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-16</min>
                     <max> 16</max>
-                </limit>
+                </range>
                 <output>fcs/rudder-pos-rad</output>
             </component>
         </channel>

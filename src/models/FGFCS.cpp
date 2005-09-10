@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.6 2005/09/06 19:51:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.7 2005/09/10 12:49:46 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -521,6 +521,10 @@ bool FGFCS::Load(Element* el)
         } else {
           cerr << "Unknown FCS component: " << comp_name << endl;
         }
+      } catch(string s) {
+        cerr << highint << fgred << endl << "  " << s << endl;
+        cerr << reset << endl;
+        return false;
       } catch (...) {
         return false;
       }

@@ -112,10 +112,10 @@
 
             <component name="Pitch Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/pitch-trim-sum</input>
-                <limit>
+                <range>
                     <min>-50</min>
                     <max>50</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Pitch Gain 1" type="PURE_GAIN">
@@ -181,10 +181,10 @@
 
             <component name="Roll Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/aileron-cmd-norm</input>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max>20</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Roll Gain 1" type="PURE_GAIN">
@@ -228,10 +228,10 @@
 
             <component name="Yaw Command Scale" type="AEROSURFACE_SCALE">
                 <input>fcs/rudder-cmd-norm</input>
-                <limit>
+                <range>
                     <min>-250</min>
                     <max>250</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Yaw Gain 1" type="PURE_GAIN">

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.3 2005/06/18 14:50:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.4 2005/09/10 12:49:46 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,9 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   Gain = 1.000;
   Rows = 0;
   Table = 0;
-  Min = Max = OutputPct = 0.0;
+  InMin = -1.0;
+  InMax =  1.0;
+  OutMin = OutMax = 0.0;
 
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
@@ -76,13 +78,22 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
 
   if (Type == "AEROSURFACE_SCALE") {
-    scale_element = element->FindElement("limit");
+    scale_element = element->FindElement("domain");
+    if (scale_element) {
+      if (scale_element->FindElement("max") && scale_element->FindElement("min") )
+      {
+        InMax = scale_element->FindElementValueAsNumber("max");
+        InMin = scale_element->FindElementValueAsNumber("min");
+      }
+    }
+    scale_element = element->FindElement("range");
+    if (!scale_element) throw(string("No range supplied for aerosurface scale component"));
     if (scale_element->FindElement("max") && scale_element->FindElement("min") )
     {
-      Max = scale_element->FindElementValueAsNumber("max");
-      Min = scale_element->FindElementValueAsNumber("min");
+      OutMax = scale_element->FindElementValueAsNumber("max");
+      OutMin = scale_element->FindElementValueAsNumber("min");
     } else {
-      cerr << "A maximum and minimum scale value must be supplied for the "
+      cerr << "Maximum and minimum output values must be supplied for the "
               "aerosurface scale component" << endl;
       exit(-1);
     }
@@ -98,12 +109,6 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   }
 
   FGFCSComponent::bind();
-
-// this output related to normalization may not be accurate. It assumes the input
-// will be in a rnage from 0 or -1 to +1. This may not always be the case.
-
-//  if (Type == "AEROSURFACE_SCALE")
-//    treenode->Tie( "output-norm", this, &FGGain::GetOutputPct );
 
   Debug(0);
 }
@@ -136,11 +141,10 @@ bool FGGain::Run(void )
 
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
 
-    OutputPct = Input;
-    if (Input >= 0.0) Output = Input * Max;
-    else Output = Input * -Min;
-    Output *= Gain;
+    if (Input >= 0.0) Output = Input * OutMax / InMax;
+    else              Output = Input * OutMin / InMin;
 
+    Output *= Gain;
   }
 
   Clip();
@@ -182,8 +186,11 @@ void FGGain::Debug(int from)
       cout << "      GAIN: " << Gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       if (Type == "AEROSURFACE_SCALE") {
-        cout << "      MIN: " << Min << endl;
-        cout << "      MAX: " << Max << endl;
+        cout << "      In/Out Mapping" << endl;
+        cout << "      Input MIN: " << InMin << endl;
+        cout << "      Input MAX: " << InMax << endl;
+        cout << "      Output MIN: " << OutMin << endl;
+        cout << "      Output MAX: " << OutMax << endl;
       }
       if (Table != 0) {
         cout << "      Scheduled by table: " << endl;

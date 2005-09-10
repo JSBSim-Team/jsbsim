@@ -287,10 +287,10 @@
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
                 <input>fcs/pitch-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-26</min>
                     <max>15</max>
-                </limit>
+                </range>
                 <output>fcs/elevator-pos-rad</output>
             </component>
         </channel>
@@ -313,20 +313,20 @@
             <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
                 <input>fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max>20</max>
-                </limit>
+                </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </component>
 
             <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
                 <input>fcs/roll-trim-sum</input>
                 <gain>-0.01745</gain>
-                <limit>
+                <range>
                     <min>-20</min>
                     <max>20</max>
-                </limit>
+                </range>
                 <output>fcs/right-aileron-pos-rad</output>
             </component>
         </channel>
@@ -349,10 +349,10 @@
             <component name="Rudder Control" type="AEROSURFACE_SCALE">
                 <input>fcs/yaw-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-30</min>
                     <max>30</max>
-                </limit>
+                </range>
                 <output>fcs/rudder-pos-rad</output>
             </component>
         </channel>

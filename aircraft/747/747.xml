@@ -387,10 +387,10 @@
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
                 <input>fcs/elevator-input</input>
                 <gain>0.0175</gain>
-                <limit>
+                <range>
                     <min>-25</min>
                     <max>15</max>
-                </limit>
+                </range>
             </component>
 
             <component name="Elevator Summer" type="SUMMER">
@@ -410,10 +410,10 @@
             <component name="Stabilizer Control" type="AEROSURFACE_SCALE">
                 <input>fcs/stabilizer-input</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-12</min>
                     <max>3</max>
-                </limit>
+                </range>
                 <output>fcs/speedbrake-pos-rad</output>
             </component>
 
@@ -433,20 +433,20 @@
             <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
                 <input>fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-25</min>
                     <max>25</max>
-                </limit>
+                </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </component>
 
             <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
                 <input>-fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-25</min>
                     <max>25</max>
-                </limit>
+                </range>
                 <output>fcs/right-aileron-pos-rad</output>
             </component>
 
@@ -479,10 +479,10 @@
             <component name="Rudder Control" type="AEROSURFACE_SCALE">
                 <input>fcs/rudder-sum</input>
                 <gain>0.01745</gain>
-                <limit>
+                <range>
                     <min>-25</min>
                     <max>25</max>
-                </limit>
+                </range>
                 <output>fcs/rudder-pos-rad</output>
             </component>
 

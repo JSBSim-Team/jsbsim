@@ -311,10 +311,10 @@
 
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
                 <input>fcs/g-load-command</input>
-                <limit>
+                <range>
                     <min>-0.436</min>
                     <max>0.436</max>
-                </limit>
+                </range>
                 <output>fcs/elevator-pos-rad</output>
             </component>
         </channel>
@@ -358,19 +358,19 @@
 
             <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
                 <input>fcs/roll-rate-command</input>
-                <limit>
+                <range>
                     <min>-0.375</min>
                     <max>0.375</max>
-                </limit>
+                </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </component>
 
             <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
                 <input>-fcs/roll-rate-command</input>
-                <limit>
+                <range>
                     <min>-0.375</min>
                     <max>0.375</max>
-                </limit>
+                </range>
                 <output>fcs/right-aileron-pos-rad</output>
             </component>
         </channel>
@@ -414,10 +414,10 @@
 
             <component name="Rudder Control" type="AEROSURFACE_SCALE">
                 <input>fcs/yaw-rate-command</input>
-                <limit>
+                <range>
                     <min>-0.524</min>
                     <max>0.524</max>
-                </limit>
+                </range>
                 <output>fcs/rudder-pos-rad</output>
             </component>
         </channel>
