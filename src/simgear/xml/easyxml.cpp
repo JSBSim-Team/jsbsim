@@ -246,22 +246,25 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
   while (!input.eof()) {
 
     if (!input.good()) {
-      XML_ParserFree(parser);
       cerr << "Problem reading input file" << endl;
+      XML_ParserFree(parser);
+      return;
     }
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
-      XML_ParserFree(parser);
       cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
+      XML_ParserFree(parser);
+      return;
     }
 
   }
 
 // Verify end of document.
   if (!XML_Parse(parser, buf, 0, true)) {
-    XML_ParserFree(parser);
     cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
+    XML_ParserFree(parser);
+    return;
   }
 
   XML_ParserFree(parser);

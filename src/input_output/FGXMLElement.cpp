@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.2 2005/06/13 00:54:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.3 2005/09/12 11:58:49 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -360,6 +360,8 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
 
 void Element::Print(int level)
 {
+  int i, spaces;
+
   level+=2;
   for (int spaces=0; spaces<=level; spaces++) cout << " "; // format output
   cout << "Element Name: " << name;
@@ -367,11 +369,11 @@ void Element::Print(int level)
     cout << "  " << attribute_key[i] << " = " << attributes[attribute_key[i]];
   }
   cout << endl;
-  for (int i=0; i<data_lines.size(); i++) {
-    for (int spaces=0; spaces<=level; spaces++) cout << " "; // format output
+  for (i=0; i<data_lines.size(); i++) {
+    for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
     cout << data_lines[i] << endl;
   }
-  for (int i=0; i<children.size(); i++) {
+  for (i=0; i<children.size(); i++) {
     children[i]->Print(level);
   }
 }

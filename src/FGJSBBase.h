@@ -48,12 +48,12 @@ INCLUDES
 
 SG_USING_STD(string);
 
-# ifndef M_PI
-#  include <simgear/constants.h>
-#  define M_PI SG_PI
-# endif
+#  ifndef M_PI
+#    include <simgear/constants.h>
+#    define M_PI SG_PI
+#  endif
 
-#else
+#else  // JSBSim section
 
 #  include <queue>
 #  include <string>
@@ -64,11 +64,24 @@ SG_USING_STD(string);
 #  endif
 
 using std::string;
+
+#  if defined(_MSC_VER) && _MSC_VER <= 1200
+#    ifndef max
+#      define max(a,b)            (((a) > (b)) ? (a) : (b))
+#    endif
+
+#    ifndef min
+#      define min(a,b)            (((a) < (b)) ? (a) : (b))
+#    endif
+#  else
+
 using std::fabs;
 
-# ifndef M_PI
-#  define M_PI 3.14159265358979323846
-# endif
+#  endif
+
+#  ifndef M_PI
+#    define M_PI 3.14159265358979323846
+#  endif
 
 #endif
 
@@ -80,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -94,7 +107,7 @@ CLASS DOCUMENTATION
 
 /** JSBSim Base class.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.2 2005/06/13 00:35:17 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

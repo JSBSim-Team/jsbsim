@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.7 2005/07/25 11:48:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.8 2005/09/12 11:58:49 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +210,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
 
   kSpring         = lgear.kSpring;
   bDamp           = lgear.bDamp;
+  bDampRebound    = lgear.bDampRebound;
   compressLength  = lgear.compressLength;
   compressSpeed   = lgear.compressSpeed;
   staticFCoeff    = lgear.staticFCoeff;

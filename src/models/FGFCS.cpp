@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.8 2005/09/10 13:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.9 2005/09/12 11:58:49 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -70,7 +70,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   int i;
   Name = "FGFCS";
 
-  DaCmd = DeCmd = DrCmd = DfCmd = DsbCmd = DspCmd = 0.0;
+  DaCmd = DeCmd = DrCmd = DsCmd = DfCmd = DsbCmd = DspCmd = 0;
   PTrimCmd = YTrimCmd = RTrimCmd = 0.0;
   GearCmd = GearPos = 1; // default to gear down
   LeftBrake = RightBrake = CenterBrake = 0.0;

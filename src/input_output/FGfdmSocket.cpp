@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.10 2005/09/07 12:12:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.11 2005/09/12 11:58:49 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,10 +190,6 @@ string FGfdmSocket::Receive(void)
       data += string(buf).substr(0,num_chars);
       total_chars += num_chars;
     }
-
-    // new line prompt
-//    if (total_chars <= 1) send(sckt_in, "JSBSim> ", 8, 0);
-
   }
 
   return data.substr(0, total_chars);

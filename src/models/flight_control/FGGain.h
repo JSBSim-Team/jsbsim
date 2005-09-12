@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.5 2005/09/10 12:49:46 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.6 2005/09/12 11:58:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -71,11 +71,11 @@ CLASS DOCUMENTATION
     The gain component merely multiplies the input by a gain.  The form of the
     gain component specification is:
     <pre>
-    \<COMPONENT NAME="name" TYPE="PURE_GAIN">
-      INPUT \<property>
-      GAIN  \<value>
-      [OUTPUT \<property>]
-    \</COMPONENT>
+    \<component name="name" type="PURE_GAIN">
+      \<input> property \</input>
+      \<gain> value \</gain>
+      [\<output> property \</output>]
+    \</component>
     </pre>
     Note: as is the case with the Summer component, the input property name may be
     immediately preceded by a minus sign to invert that signal.
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.5 2005/09/10 12:49:46 jberndt Exp $
+    @version $Id: FGGain.h,v 1.6 2005/09/12 11:58:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

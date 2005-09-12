@@ -51,7 +51,7 @@ INCLUDES
 #include <FGJSBBase.h>
 #include <initialization/FGTrim.h>
 
-#if !defined(__GNUC__) && !defined(sgi)
+#if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
 #else
 #  include <time.h>
@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.8 2005/08/03 08:45:57 ehofman Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.9 2005/09/12 11:58:49 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA

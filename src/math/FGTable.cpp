@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.2 2005/06/13 00:54:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.3 2005/09/12 11:58:49 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +95,8 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
 FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(propMan)
 {
+  int i;
+
   stringstream buf;
   string property_string;
   FGPropertyManager* node;
@@ -118,7 +120,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
       return;
     }
 
-    for (int i=0; i<3; i++) lookupProperty[i] = 0;
+    for (i=0; i<3; i++) lookupProperty[i] = 0;
+
     while (axisElement) {
       property_string = axisElement->GetDataLine();
       node = PropertyManager->GetNode(property_string);
@@ -133,7 +136,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
       }
       axisElement = el->FindNextElement("independentVar");
     }
-    for (int i=0; i<3; i++) if (lookupProperty[i] != 0) dimension++;
+    for (i=0; i<3; i++) if (lookupProperty[i] != 0) dimension++;
   }
   // end lookup property code
 
@@ -197,7 +200,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     Data = Allocate(); // this data array will contain the keys for the associated tables
     Tables.reserve(nTables); // necessary?
     tableData = el->FindElement("tableData");
-    for (int i=0; i<nTables; i++) {
+    for (i=0; i<nTables; i++) {
       Tables.push_back(new FGTable(PropertyManager, tableData));
       Data[i+1][1] = tableData->GetAttributeValueAsNumber("breakPoint");
       Tables[i]->SetRowIndexProperty(lookupProperty[eRow]);
@@ -260,6 +263,9 @@ double FGTable::GetValue(void) const
     return GetValue(lookupProperty[eRow]->getDoubleValue(),
                     lookupProperty[eColumn]->getDoubleValue(),
                     lookupProperty[eTable]->getDoubleValue());
+  default:
+    cerr << "Attempted to GetValue() for invalid/unknown table type" << endl;
+    throw(string("Attempted to GetValue() for invalid/unknown table type"));
   }
 }
 

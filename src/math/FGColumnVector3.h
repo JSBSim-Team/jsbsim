@@ -33,7 +33,6 @@ INCLUDES
    SG_USING_STD(cerr);
    SG_USING_STD(cout);
    SG_USING_STD(endl);
-//   SG_USING_STD(sqrt);
 #else
 #  include <string>
 #  if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
@@ -53,7 +52,9 @@ INCLUDES
      using std::cerr;
      using std::cout;
      using std::endl;
-     using std::sqrt;
+#    if !(defined(_MSC_VER) && _MSC_VER <= 1200)
+       using std::sqrt;
+#    endif
 #  endif
    using std::string;
 #endif
@@ -64,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +79,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
