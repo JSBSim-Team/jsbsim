@@ -18,17 +18,17 @@
 
     <when>
       <parameter name="propulsion/n2[1]" comparison="ge" value="15"/>
-      <set name="fcs/throttle-cmd-norm[0]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[1]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[2]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[3]" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.05"/>
-      <set name="propulsion/cutoff_cmd" type="FG_VALUE" value="0" action="FG_STEP" persistent="false" tc ="1.00"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="0.05"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0" action="FG_RAMP" tc ="0.05"/>
+      <set name="fcs/throttle-cmd-norm[2]" value="1.0" action="FG_RAMP" tc ="0.05"/>
+      <set name="fcs/throttle-cmd-norm[3]" value="1.0" action="FG_RAMP" tc ="0.05"/>
+      <set name="propulsion/cutoff_cmd" value="0"/>
     </when>
 
     <when> <!-- Set Autopilot for 50000 ft -->
-      <parameter name="aero/qbar-psf" comparison="ge" value="25.0">
-      <set name="ap/altitude_setpoint" type="FG_VALUE" value="50000.0" action="FG_EXP" persistent="false" tc ="3.0">
-      <set name="ap/altitude_hold" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc="1.0">
+      <parameter name="aero/qbar-psf" comparison="ge" value="25.0"/>
+      <set name="ap/altitude_setpoint" value="50000.0" action="FG_EXP" tc ="3.0"/>
+      <set name="ap/altitude_hold" value="1"/>
     </when>
 
   </run>
