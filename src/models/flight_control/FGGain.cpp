@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.4 2005/09/10 12:49:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.5 2005/09/17 20:31:13 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,11 +186,11 @@ void FGGain::Debug(int from)
       cout << "      GAIN: " << Gain << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
       if (Type == "AEROSURFACE_SCALE") {
-        cout << "      In/Out Mapping" << endl;
-        cout << "      Input MIN: " << InMin << endl;
-        cout << "      Input MAX: " << InMax << endl;
-        cout << "      Output MIN: " << OutMin << endl;
-        cout << "      Output MAX: " << OutMax << endl;
+        cout << "      In/Out Mapping:" << endl;
+        cout << "        Input MIN: " << InMin << endl;
+        cout << "        Input MAX: " << InMax << endl;
+        cout << "        Output MIN: " << OutMin << endl;
+        cout << "        Output MAX: " << OutMax << endl;
       }
       if (Table != 0) {
         cout << "      Scheduled by table: " << endl;
