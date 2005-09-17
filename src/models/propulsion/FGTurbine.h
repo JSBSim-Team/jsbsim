@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.4 2005/09/17 17:46:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+    @version "$Id: FGTurbine.h,v 1.4 2005/09/17 17:46:04 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -229,7 +229,6 @@ private:
   double InletPosition;
   double NozzlePosition;
   double correctedTSFC;
-  double N2Norm;
 
   double Off(void);
   double Run();
