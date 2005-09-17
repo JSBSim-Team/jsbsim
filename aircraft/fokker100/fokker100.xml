@@ -209,7 +209,7 @@
             <contents unit="LBS"> 688.5 </contents>
         </tank>
     </propulsion>
-    <flight_control name="FCS: Fokker 100">
+    <flight_control name="Fokker 100">
         <channel name="Pitch">
             <component name="Pitch Trim Sum" type="SUMMER">
                 <input>fcs/elevator-cmd-norm</input>
@@ -354,6 +354,19 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </component>
+
+            <component name="Flaps Control Normalizer" type="AEROSURFACE_SCALE">
+                <input>fcs/flap-pos-deg</input>
+                <domain>
+                    <min>0</min>
+                    <max>42</max>
+                </domain>
+                <range>
+                    <min>0</min>
+                    <max>1</max>
+                </range>
+                <output> fcs/flap-pos-norm </output>
+            </component>
         </channel>
         <channel name="Landing Gear">
             <component name="Gear Control" type="KINEMAT">
@@ -403,7 +416,7 @@
                 <output>fcs/spoiler-pos-norm</output>
             </component>
 
-            <component name="Spoiler Control" type="KINEMAT">
+            <component name="Reverser Pos Norm" type="KINEMAT">
                 <input>fcs/spoiler-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -415,7 +428,6 @@
                         <time>1</time>
                     </setting>
                 </traverse>
-                <output>fcs/reverser-pos-norm</output>
             </component>
         </channel>
     </flight_control>
@@ -503,7 +515,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCDge</property>
                     <value>0.0830</value>
                 </product>
@@ -603,10 +615,10 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.2000	-0.6800
-                              0.0000	0.2000
-                              0.2300	1.3000
-                              0.6000	0.6000
+                              -0.2000 -0.6800
+                              0.0000 0.2000
+                              0.2300 1.3000
+                              0.6000 0.6000
                           </tableData>
                       </table>
                 </product>
@@ -618,7 +630,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCLge</property>
                       <table>
-                          <independentVar>fcs/components/flaps-control/output-norm</independentVar>
+                          <independentVar>fcs/flap-pos-norm</independentVar>
                           <tableData>
                               0.0000	0.0000
                               0.3570	0.4900
