@@ -253,6 +253,19 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </component>
+
+            <component name="Flap Control Normalized" type="AEROSURFACE_SCALE">
+                <input>fcs/flap-pos-deg</input>
+                <domain>
+                    <min>0</min>
+                    <max>30</max>
+                </domain>
+                <range>
+                    <min>0</min>
+                    <max>1</max>
+                </range>
+                <output> fcs/flap-pos-norm </output>
+            </component>
         </channel>
         <channel name="Landing Gear">
             <component name="Gear Control" type="KINEMAT">
@@ -388,7 +401,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCDge</property>
                     <value>0.0750</value>
                 </product>
@@ -513,7 +526,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCLge</property>
                     <value>0.3500</value>
                 </product>
@@ -611,7 +624,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/bi2vel</property>
                     <property>velocities/r-aero-rad_sec</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.1800</value>
                 </product>
             </function>
@@ -638,7 +651,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>-0.0200</value>
                 </product>
             </function>
@@ -743,7 +756,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/mag-beta-rad</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>-0.0088</value>
                 </product>
             </function>
@@ -797,7 +810,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/rudder-pos-rad</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.0020</value>
                 </product>
             </function>
