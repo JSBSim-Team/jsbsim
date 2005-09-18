@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.4 2005/09/17 17:46:04 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.5 2005/09/18 13:08:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.4 2005/09/17 17:46:04 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.5 2005/09/18 13:08:40 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,6 +150,7 @@ public:
   double Calculate(void);
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
+  double GetThrust(void) const {return Thrust;}
   double Seek(double* var, double target, double accel, double decel);
 
   phaseType GetPhase(void) { return phase; }
