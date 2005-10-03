@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.3 2005/10/03 03:12:37 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,20 +124,12 @@ FGFilter::~FGFilter()
 
 bool FGFilter::Run(void)
 {
-  int test = 0;
+  double test = 0.0;
 
   if (Initialize) {
 
     PreviousOutput1 = PreviousInput1 = Output = Input;
     Initialize = false;
-
-  } else if (Trigger != 0) {
-    test = Trigger->getIntValue();
-    if (test < 0) {
-      Input  = PreviousInput1 = PreviousInput2 = 0.0;
-    } else {
-      Output = PreviousOutput1 = PreviousOutput2 = 0.0;
-    }
 
   } else {
 
@@ -157,6 +149,12 @@ bool FGFilter::Run(void)
         Output = Input * ca - PreviousInput1 * ca + PreviousOutput1 * cb;
         break;
       case eIntegrator:
+        if (Trigger != 0) {
+          test = Trigger->getDoubleValue();
+          if (fabs(test) > 0.000001) {
+            Input  = PreviousInput1 = PreviousInput2 = 0.0;
+          }
+        }
         Output = Input * ca + PreviousInput1 * ca + PreviousOutput1;
         break;
       case eUnknown:

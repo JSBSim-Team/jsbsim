@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.4 2005/10/03 03:12:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,75 +62,75 @@ Tustin substitution is used to take filter definitions from LaPlace space to the
 time domain. The general format for a filter specification is:
 
 <pre>
-\<COMPONENT NAME="name" TYPE="type">
-  INPUT \<property>
-  C1  \<value>
-  [C2 \<value>]
-  [C3 \<value>]
-  [C4 \<value>]
-  [C5 \<value>]
-  [C6 \<value>]
-  [OUTPUT \<property>]
-\</COMPONENT>
+\<component name="name" type="type">
+  \<input> property \</input>
+  \<c1> value \<c/1>
+  [\<c2> value \<c/2>]
+  [\<c3> value \<c/3>]
+  [\<c4> value \<c/4>]
+  [\<c5> value \<c/5>]
+  [\<c6> value \<c/6>]
+  [\<output> property \<output>]
+\</component>
 </pre>
 
 For a lag filter of the form,
 <pre>
   C1
 ------
-s + C1 
+s + C1
 </pre>
 the corresponding filter definition is:
 <pre>
-\<COMPONENT NAME="name" TYPE="LAG_FILTER">
-  INPUT \<property>
-  C1 \<value>
-  [OUTPUT \<property>]
-\</COMPONENT>
+\<component name="name" type="LAG_FILTER">
+  \<input> property \</input>
+  \<c1> value \<c/1>
+  [\<output> property \<output>]
+\</component>
 </pre>
 As an example, for the specific filter:
 <pre>
   600
 ------
-s + 600 
+s + 600
 </pre>
 the corresponding filter definition could be:
 <pre>
-\<COMPONENT NAME="LAG_1" TYPE="LAG_FILTER">
-  INPUT aileron_cmd
-  C1 600
-\</COMPONENT>
+\<component name="Heading Roll Error Lag" type="LAG_FILTER">
+  \<input> fcs/heading-command \</input>
+  \<c1> 600 \</c1>
+\</component>
 </pre>
 For a lead-lag filter of the form:
 <pre>
 C1*s + C2
 ---------
-C3*s + C4 
+C3*s + C4
 </pre>
 The corresponding filter definition is:
 <pre>
-\<COMPONENT NAME="name" TYPE="LEAD_LAG_FILTER">
-  INPUT \<property>
-  C1 \<value>
-  C2 \<value>
-  C3 \<value>
-  C4 \<value>
-  [OUTPUT \<property>]
-\</COMPONENT>
+\<component name="name" type="LEAD_LAG_FILTER">
+  \<input> property \</input>
+  \<c1> value \<c/1>
+  \<c2> value \<c/2>
+  \<c3> value \<c/3>
+  \<c4> value \<c/4>
+  [\<output> property \<output>]
+\</component>
 </pre>
 For a washout filter of the form:
 <pre>
   s
 ------
-s + C1 
+s + C1
 </pre>
 The corresponding filter definition is:
 <pre>
-\<COMPONENT NAME="name" TYPE="WASHOUT_FILTER">
-  INPUT \<property>
-  C1 \<value>
-  [OUTPUT \<property>]
-\</COMPONENT>
+\<component name="name" type="WASHOUT_FILTER">
+  \<input> property \</input>
+  \<c1> value \</c1>
+  [\<output> property \<output>]
+\</component>
 </pre>
 For a second order filter of the form:
 <pre>
@@ -140,16 +140,16 @@ C4*s^2 + C5*s + C6
 </pre>
 The corresponding filter definition is:
 <pre>
-\<COMPONENT NAME="name" TYPE="SECOND_ORDER_FILTER">
-  INPUT \<property>
-  C1 \<value>
-  C2 \<value>
-  C3 \<value>
-  C4 \<value>
-  C5 \<value>
-  C6 \<value>
-  [OUTPUT \<property>]
-\</COMPONENT>
+\<component name="name" type="SECOND_ORDER_FILTER">
+  \<input> property \</input>
+  \<c1> value \<c/1>
+  \<c2> value \<c/2>
+  \<c3> value \<c/3>
+  \<c4> value \<c/4>
+  \<c5> value \<c/5>
+  \<c6> value \<c/6>
+  [\<output> property \<output>]
+\</component>
 </pre>
 For an integrator of the form:
 <pre>
@@ -159,32 +159,32 @@ For an integrator of the form:
 </pre>
 The corresponding filter definition is:
 <pre>
-\<COMPONENT NAME="name" TYPE="INTEGRATOR">
-  INPUT \<property>
-  C1 \<value>
-  [OUTPUT \<property>]
-  [TRIGGER \<property>]
-\</COMPONENT>
+\<component name="name" type="INTEGRATOR">
+  \<input> property \</input>
+  \<c1> value \<c/1>
+  [\<trigger> property \</trigger>]
+  [\<output> property \<output>]
+\</component>
 </pre>
-For the integrator, the TRIGGER features the following behavior, if the TRIGGER
+For the integrator, the trigger features the following behavior. If the trigger
 property value is:
-  - -1 (or simply less than zero), all previous inputs and outputs are set to 0.0
-  - 0, no action is taken - the output is calculated normally
-  - +1 (or simply greater than zero), all previous outputs (only) will be set to 0.0
+  - 0: no action is taken - the output is calculated normally
+  - not 0: (or simply greater than zero), all current and previous inputs will
+           be set to 0.0
 
-In all the filter specifications above, an [OUTPUT] keyword is also seen.  This
+In all the filter specifications above, an \<output> element is also seen.  This
 is so that the last component in a "string" can copy its value to the appropriate
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Id: FGFilter.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+@version $Id: FGFilter.h,v 1.4 2005/10/03 03:12:37 jberndt Exp $
 */
-   
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFilter  : public FGFCSComponent         
+class FGFilter  : public FGFCSComponent
 {
 public:
   FGFilter(FGFCS* fcs, Element* element);

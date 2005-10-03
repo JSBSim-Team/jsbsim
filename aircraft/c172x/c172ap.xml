@@ -33,7 +33,7 @@
   <property>ap/elevator_cmd</property>
   <property>ap/airspeed_setpoint</property>
   <property>ap/airspeed_hold</property>
-<property>ap/throttle-cmd-norm</property>
+  <property>ap/throttle-cmd-norm</property>
 
 <!--  <property>attitude/sensor/phi-rad</property> -->
 
@@ -193,24 +193,44 @@ PITCH CHANNEL
      the desired altitude (altitude_setpoint) from the actual altitude above sea
      level (_not_ Above Ground Level).  This error signal is interpreted as an
      hdot command (hdot is time rate of change of altitude, or rate of climb). As
-     such it is limited to a maximum absolute value of 10 fps here (600 fpm).
+     such it is limited to a maximum absolute value of 12 fps here (720 fpm). The
+     maximum achievable climb rate depends on altitude. The commanded climb rate
+     is scheduled in the HDot Command component, below. For the given altitude
+     (left column in the table), the commanded maaximum climb rate divided by 100
+     is given in the right column.
 -->
 
 <channel name="AP Pitch Altitude hold">
+
+  <!--
+  The difference between the desired altitude and the actual altitude
+  is determined, and limited to 100. The output from this component is
+  the desired climb rate in percent of maximum.
+  -->
   <component name="Altitude Error" type="SUMMER">
-    <input> -position/h-sl-ft </input>
     <input> ap/altitude_setpoint </input>
+    <input> -position/h-sl-ft </input>
     <clipto>
       <min>-100</min>
       <max> 100</max>
     </clipto>
   </component>
 
+  <!--
+  The desired climb rate is lagged slightly for stability.
+  -->
   <component name="Alt Error Lag" type="LAG_FILTER">
     <input> fcs/altitude-error </input>
     <c1> 1 </c1>
   </component>
 
+  <!--
+  Dependent on altitude, the lagged (and limited) altitude error is multipled
+  by the scheduled gain determined from the table, below. The output from this
+  component is the absolute climb rate in feet/second. For example, if the desired
+  climb rate is 100 percent of maximum and the current altitude is 1000.0 ft., then
+  the output from this component would be 11 ft. sec.
+  -->
   <component name="HDot Command" type="SCHEDULED_GAIN">
     <input> fcs/alt-error-lag </input>
     <table>
@@ -233,11 +253,21 @@ PITCH CHANNEL
     </table>
   </component>
 
+  <!--
+  This component calculates the climb rate error, taking the difference between
+  the commanded climb rate (from the previous component) and actual climb rate
+  in ft./sec.
+  -->
   <component name="HDot Error" type="SUMMER">
     <input> fcs/hdot-command </input>
     <input> -velocities/h-dot-fps </input>
   </component>
 
+  <!--
+  If the altitude hold autopilot command is ON, then this switch component will
+  pass through the climb rate error (from the previous component). Otherwise, it
+  will pass zero.
+  -->
   <component name="AP Alt Hold Switch" type="SWITCH">
     <default value="0.0"/>
     <test logic="AND" value="fcs/hdot-error">
@@ -245,16 +275,45 @@ PITCH CHANNEL
     </test>
   </component>
 
+  <!--
+  The windup trigger below assumes the elevator will travel +/-23 degrees. The
+  elevator, however, does not travel symmetrically. This will need to be addressed
+  in a fix to the deadband component.
+  -->
+  <component name="Windup Trigger" type="DEADBAND">
+    <input> fcs/elevator-pos-deg </input>
+    <width>46.0</width>
+  </component>
+
+  <!--
+  The integrator integrates the hdot error (when the switch component passes that
+  signal through above when the altitude hold is selected ON). In the situation
+  where the elevator becomes saturated, the integrator ceases to integrate. The
+  windup protection is indicated below, with the windup-trigger property being
+  the trigger to halt integration. When the windup trigger is non-zero (when the
+  elevator position falls outside the range +/- 23 degrees - a deadband of 46
+  degrees) then the deadband passes a non-zero value, triggering the anti-windup
+  logic in the integrator.
+  -->
   <component name="Integral" type="INTEGRATOR">
     <input> fcs/ap-alt-hold-switch </input>
-    <c1> 0.00001 </c1>
+    <trigger> fcs/windup-trigger </trigger>
+    <c1> 0.00008 </c1>
   </component>
 
+  <!--
+  The proportional component multiplies the error signal by a constant, providing
+  the proportional control action of this PI altitude hold controller.
+  -->
   <component name="Proportional" type="PURE_GAIN">
     <input> fcs/ap-alt-hold-switch </input>
-    <gain> 0.02 </gain>
+    <gain> 0.025 </gain>
   </component>
 
+  <!--
+  The control summer component sums the proprortional and integral control
+  signals. It clips the sum to +/- 1.0.
+  -->
   <component name="Control Summer" type="SUMMER">
     <input> fcs/integral </input>
     <input> fcs/proportional </input>
@@ -264,6 +323,10 @@ PITCH CHANNEL
     </clipto>
   </component>
 
+  <!--
+  The elevator component flips the sign on the output of the control summer
+  above and sets the ap/elevator_command property.
+  -->
   <component name="Elevator" type="PURE_GAIN">
     <input> fcs/control-summer </input>
     <gain> -1.0 </gain>

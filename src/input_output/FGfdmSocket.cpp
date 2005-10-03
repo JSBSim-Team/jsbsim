@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.11 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.12 2005/10/03 03:12:37 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,19 @@ string FGfdmSocket::Receive(void)
       data += string(buf).substr(0,num_chars);
       total_chars += num_chars;
     }
+
+#if defined(_MSC_VER)
+    // when nothing received and the error isn't "would block"
+    // then assume that the client has closed the socket.
+    if (num_chars == 0) {
+        DWORD err = WSAGetLastError ();
+        if (err != WSAEWOULDBLOCK) {
+            printf ("Socket Closed. back to listening\n");
+            closesocket (sckt_in);
+            sckt_in = -1;
+        }
+    }
+#endif
   }
 
   return data.substr(0, total_chars);

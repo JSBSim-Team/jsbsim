@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.38 2005/09/10 12:49:46 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.39 2005/10/03 03:12:37 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -212,13 +212,18 @@
                     <max> 1</max>
                 </clipto>
             </component>
+
+            <!--
+            Map the -1 to +1 input into the range specified below, then
+            multiply by 0.01745 to convert to radians
+            -->
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
                 <input>fcs/pitch-trim-sum</input>
-                <gain>0.01745</gain>
                 <range>
                     <min>-28</min>
                     <max> 23</max>
                 </range>
+                <gain>0.01745</gain>
                 <output>fcs/elevator-pos-rad</output>
             </component>
         </channel>
@@ -808,6 +813,7 @@
         <property> fcs/throttle-cmd-norm </property>
         <propulsion> ON </propulsion>
         <aerosurfaces> ON </aerosurfaces>
+        <fcs> ON </fcs>
     </output>
     <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>

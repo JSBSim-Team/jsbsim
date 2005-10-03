@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.5 2005/09/18 13:08:40 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.6 2005/10/03 03:12:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,7 +127,7 @@ Definition of the turbine engine configuration file parameters:
   1 == Water injection installed
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.5 2005/09/18 13:08:40 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.6 2005/10/03 03:12:37 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,21 +155,21 @@ public:
 
   phaseType GetPhase(void) { return phase; }
 
-  bool GetOvertemp(void)  {return Overtemp; }
-  bool GetInjection(void) {return Injection;}
-  bool GetFire(void) { return Fire; }
-  bool GetAugmentation(void) {return Augmentation;}
-  bool GetReversed(void) { return Reversed; }
-  bool GetCutoff(void) { return Cutoff; }
-  int GetIgnition(void) {return Ignition;}
+  bool GetOvertemp(void)  const {return Overtemp; }
+  bool GetInjection(void) const {return Injection;}
+  bool GetFire(void) const { return Fire; }
+  bool GetAugmentation(void) const {return Augmentation;}
+  bool GetReversed(void) const { return Reversed; }
+  bool GetCutoff(void) const { return Cutoff; }
+  int GetIgnition(void) const {return Ignition;}
 
-  double GetInlet(void) { return InletPosition; }
-  double GetNozzle(void) { return NozzlePosition; }
-  double GetBleedDemand(void) {return BleedDemand;}
-  double GetN1(void) {return N1;}
-  double GetN2(void) {return N2;}
-  double GetEPR(void) {return EPR;}
-  double GetEGT(void) {return EGT_degC;}
+  double GetInlet(void) const { return InletPosition; }
+  double GetNozzle(void) const { return NozzlePosition; }
+  double GetBleedDemand(void) const {return BleedDemand;}
+  double GetN1(void) const {return N1;}
+  double GetN2(void) const {return N2;}
+  double GetEPR(void) const {return EPR;}
+  double GetEGT(void) const {return EGT_degC;}
 
   double getOilPressure_psi () const {return OilPressure_psi;}
   double getOilTemp_degF (void) {return KelvinToFahrenheit(OilTemp_degK);}
