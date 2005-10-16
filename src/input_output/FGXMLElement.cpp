@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.3 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.4 2005/10/16 16:39:12 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,6 +76,8 @@ Element::Element(string nm)
   convert["LBS"]["N"] = 1.0/convert["N"]["LBS"];
   convert["KTS"]["FT/SEC"] = 1.68781;
   convert["FT/SEC"]["KTS"] = 1.0/convert["KTS"]["FT/SEC"];
+  convert["FT*LBS"]["N*M"] = 1.35581795;
+  convert["N*M"]["FT*LBS"] = 1/convert["FT*LBS"]["N*M"];
 
   convert["M"]["M"] = 1.00;
   convert["FT"]["FT"] = 1.00;
@@ -103,6 +105,8 @@ Element::Element(string nm)
   convert["LBS/SEC"]["LBS/SEC"] = 1.00;
   convert["FT/SEC"]["FT/SEC"] = 1.00;
   convert["KTS"]["KTS"] = 1.00;
+  convert["FT*LBS"]["FT*LBS"] = 1.00;
+  convert["N*M"]["N*M"] = 1.00;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
