@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.4 2005/10/16 16:39:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.5 2005/11/12 13:56:28 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -185,6 +185,19 @@ double Element::GetDataAsNumber(void)
   } else {
     return 99e99;
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int Element::GetNumElements(string element_name)
+{
+  int number_of_elements=0;
+  Element* el=FindElement(element_name);
+  while (el) {
+    number_of_elements++;
+    el=FindNextElement(element_name);
+  }
+  return number_of_elements;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

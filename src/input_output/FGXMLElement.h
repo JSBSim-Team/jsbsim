@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.4 2005/06/27 11:23:14 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.5 2005/11/12 13:56:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -147,7 +147,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.4 2005/06/27 11:23:14 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.5 2005/11/12 13:56:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,9 @@ public:
 
   /// Returns the number of child elements for this element.
   int GetNumElements(void) {return children.size();}
+
+  /// Returns the number of named child elements for this element.
+  int GetNumElements(string);
 
   /** Converts the element data to a number.
       This function attempts to convert the first (and presumably only) line of

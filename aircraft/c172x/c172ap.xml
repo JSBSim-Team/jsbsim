@@ -298,7 +298,7 @@ PITCH CHANNEL
   <component name="Integral" type="INTEGRATOR">
     <input> fcs/ap-alt-hold-switch </input>
     <trigger> fcs/windup-trigger </trigger>
-    <c1> 0.00008 </c1>
+    <c1> 0.00000 </c1>
   </component>
 
   <!--
@@ -307,7 +307,7 @@ PITCH CHANNEL
   -->
   <component name="Proportional" type="PURE_GAIN">
     <input> fcs/ap-alt-hold-switch </input>
-    <gain> 0.025 </gain>
+    <gain> 0.027 </gain>
   </component>
 
   <!--
