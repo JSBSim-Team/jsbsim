@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.4 2005/11/12 13:37:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
 {
   string token;
   int rows, cols;
-  Element *function_element, *local_element;
+  Element *table_element, *local_element;
   string name="";
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();
 
@@ -87,14 +87,14 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     MaxRPM = prop_element->FindElementValueAsNumber("maxrpm");
 
   for (int i=0; i<2; i++) {
-    function_element = prop_element->FindNextElement("function");
-    name = function_element->GetAttributeValue("name");
+    table_element = prop_element->FindNextElement("table");
+    name = table_element->GetAttributeValue("name");
     if (name == "C_THRUST") {
-      cThrust = new FGFunction(PropertyManager, function_element);
+      cThrust = new FGTable(PropertyManager, table_element);
     } else if (name == "C_POWER") {
-      cPower = new FGFunction(PropertyManager, function_element);
+      cPower = new FGTable(PropertyManager, table_element);
     } else {
-      cerr << "Unknown function type: " << name << " in propeller definition." << endl;
+      cerr << "Unknown table type: " << name << " in propeller definition." << endl;
     }
   }
 
@@ -107,20 +107,21 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   if (local_element) {
     P_Factor = local_element->GetDataAsNumber();
   }
+  if (P_Factor < 0) {
+    cerr << "P-Factor value in config file must be greater than zero" << endl;
+  }
 
   Type = ttPropeller;
   RPM = 0;
   vTorque.InitMatrix();
+  D4 = Diameter*Diameter*Diameter*Diameter;
+  D5 = D4*Diameter;
 
   char property_name[80];
   snprintf(property_name, 80, "propulsion/engine[%d]/advance-ratio", EngineNum);
   PropertyManager->Tie( property_name, &J );
   snprintf(property_name, 80, "propulsion/engine[%d]/blade-angle", EngineNum);
   PropertyManager->Tie( property_name, &Pitch );
-
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Tie( property_name, &ThrustCoeff );
 
   Debug(0);
 }
@@ -137,10 +138,6 @@ FGPropeller::~FGPropeller()
   PropertyManager->Untie( property_name );
   snprintf(property_name, 80, "propulsion/engine[%d]/blade-angle", EngineNum);
   PropertyManager->Untie( property_name );
-
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Untie( property_name );
 
   Debug(1);
 }
@@ -161,34 +158,26 @@ FGPropeller::~FGPropeller()
 
 double FGPropeller::Calculate(double PowerAvailable)
 {
-  double omega;
+  double omega, alpha, beta;
+
   double Vel = fdmex->GetAuxiliary()->GetAeroUVW(eU);
   double rho = fdmex->GetAtmosphere()->GetDensity();
   double RPS = RPM/60.0;
-  double alpha, beta;
 
-  if (RPM > 0.10) {
-    J = Vel / (Diameter * RPS);
-  } else {
-    J = 0.0;
-  }
+  if (RPS > 0.00) J = Vel / (Diameter * RPS); // Calculate J normally
+  else            J = 1000.0;                 // Set J to a high number
 
-  if (MaxPitch == MinPitch) { // Fixed pitch prop
-    ThrustCoeff = cThrust->GetValue(); // need to fix, took J
-  } else {                    // Variable pitch prop
-    ThrustCoeff = cThrust->GetValue(); // need to fix, took J, Pitch
-  }
+  if (MaxPitch == MinPitch)  ThrustCoeff = cThrust->GetValue(J);
+  else                       ThrustCoeff = cThrust->GetValue(J, Pitch);
 
   if (P_Factor > 0.0001) {
     alpha = fdmex->GetAuxiliary()->Getalpha();
     beta  = fdmex->GetAuxiliary()->Getbeta();
     SetActingLocationY( GetLocationY() + P_Factor*alpha*Sense);
     SetActingLocationZ( GetLocationZ() + P_Factor*beta*Sense);
-  } else if (P_Factor < 0.000) {
-    cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
 
-  Thrust = ThrustCoeff*RPS*RPS*Diameter*Diameter*Diameter*Diameter*rho;
+  Thrust = ThrustCoeff*RPS*RPS*D4*rho;
   omega = RPS*2.0*M_PI;
 
   vFn(1) = Thrust;
@@ -201,16 +190,12 @@ double FGPropeller::Calculate(double PowerAvailable)
   vH(eY) = 0.0;
   vH(eZ) = 0.0;
 
-  if (omega <= 5) omega = 1.0;
+  if (omega > 0.0) ExcessTorque = GearRatio * PowerAvailable / omega;
+  else             ExcessTorque = GearRatio * PowerAvailable / 1.0;
 
-  ExcessTorque = PowerAvailable / omega * GearRatio;
   RPM = (RPS + ((ExcessTorque / Ixx) / (2.0 * M_PI)) * deltaT) * 60.0;
 
-        // The friction from the engine should
-        // stop it somewhere; I chose an
-        // arbitrary point.
-  if (RPM < 5.0)
-    RPM = 0;
+  if (RPM < 1.0) RPM = 0; // Engine friction stops rotation arbitrarily at 1 RPM.
 
   vMn = fdmex->GetPropagate()->GetPQR()*vH + vTorque*Sense;
 
@@ -221,17 +206,17 @@ double FGPropeller::Calculate(double PowerAvailable)
 
 double FGPropeller::GetPowerRequired(void)
 {
-  if (RPM <= 0.10) return 0.0; // If the prop ain't turnin', the fuel ain't burnin'.
-
-  double cPReq, RPS = RPM / 60.0;
-
-  double J = fdmex->GetAuxiliary()->GetAeroUVW(eU) / (Diameter * RPS);
+  double cPReq, J;
   double rho = fdmex->GetAtmosphere()->GetDensity();
+  double RPS = RPM / 60.0;
+
+  if (RPS != 0) J = fdmex->GetAuxiliary()->GetAeroUVW(eU) / (Diameter * RPS);
+  else          J = 1000.0; // Set J to a high number
 
   if (MaxPitch == MinPitch) { // Fixed pitch prop
     Pitch = MinPitch;
-    cPReq = cPower->GetValue(); // need to fix, took J
-  } else {                    // Variable pitch prop
+    cPReq = cPower->GetValue(J);
+  } else {                      // Variable pitch prop
 
     if (MaxRPM != MinRPM) {   // fixed-speed prop
       double rpmReq = MinRPM + (MaxRPM - MinRPM) * Advance;
@@ -245,12 +230,16 @@ double FGPropeller::GetPowerRequired(void)
     } else {
       Pitch = MinPitch + (MaxPitch - MinPitch) * Advance;
     }
-    cPReq = cPower->GetValue(); // need to fix, took J, Pitch
+    cPReq = cPower->GetValue(J, Pitch);
   }
 
-  PowerRequired = cPReq*RPS*RPS*RPS*Diameter*Diameter*Diameter*Diameter
-                                                       *Diameter*rho;
-  vTorque(eX) = -Sense*PowerRequired / (RPS*2.0*M_PI);
+  if (RPS > 0) {
+    PowerRequired = cPReq*RPS*RPS*RPS*D5*rho;
+    vTorque(eX) = -Sense*PowerRequired / (RPS*2.0*M_PI);
+  } else {
+    PowerRequired = 0.0;
+    vTorque(eX) = 0.0;
+  }
 
   return PowerRequired;
 }

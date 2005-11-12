@@ -39,13 +39,13 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGThruster.h"
-#include <math/FGFunction.h>
+#include <math/FGTable.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.4 2005/11/12 13:37:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGPropeller.h,v 1.4 2005/11/12 13:37:32 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -170,9 +170,11 @@ private:
   double Sense;
   double Advance;
   double ExcessTorque;
+  double D4;
+  double D5;
   FGColumnVector3 vTorque;
-  FGFunction *cThrust;
-  FGFunction *cPower;
+  FGTable *cThrust;
+  FGTable *cPower;
   void Debug(int from);
 };
 }
