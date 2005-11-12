@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.4 2005/11/12 13:37:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.5 2005/11/12 16:28:19 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,6 +67,9 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
 
   MaxPitch = MinPitch = P_Factor = Pitch = Advance = MinRPM = MaxRPM = 0.0;
   Sense = 1; // default clockwise rotation
+  ReversePitch = 0.0;
+  Reversed = false;
+  Reverse_coef = 0.0;
   GearRatio = 1.0;
 
   if (prop_element->FindElement("ixx"))
@@ -85,7 +88,8 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
     MinRPM = prop_element->FindElementValueAsNumber("minrpm");
   if (prop_element->FindElement("maxrpm"))
     MaxRPM = prop_element->FindElementValueAsNumber("maxrpm");
-
+  if (prop_element->FindElement("reversepitch"))
+    ReversePitch = prop_element->FindElementValueAsNumber("reversepitch");
   for (int i=0; i<2; i++) {
     table_element = prop_element->FindNextElement("table");
     name = table_element->GetAttributeValue("name");
@@ -219,15 +223,41 @@ double FGPropeller::GetPowerRequired(void)
   } else {                      // Variable pitch prop
 
     if (MaxRPM != MinRPM) {   // fixed-speed prop
-      double rpmReq = MinRPM + (MaxRPM - MinRPM) * Advance;
-      double dRPM = rpmReq - RPM;
 
-      Pitch -= dRPM / 10;
+      // do normal calculation when propeller is neither feathered nor reversed
+      if (!Feathered) {
+        if (!Reversed) {
 
-      if (Pitch < MinPitch)       Pitch = MinPitch;
-      else if (Pitch > MaxPitch)  Pitch = MaxPitch;
+          double rpmReq = MinRPM + (MaxRPM - MinRPM) * Advance;
+          double dRPM = rpmReq - RPM;
+          // The pitch of a variable propeller cannot be changed when the RPMs are
+          // too low - the oil pump does not work.
+          if (RPM > 200) Pitch -= dRPM / 10;
 
-    } else {
+          if (Pitch < MinPitch)       Pitch = MinPitch;
+          else if (Pitch > MaxPitch)  Pitch = MaxPitch;
+
+        } else { // Reversed propeller
+
+          // when reversed calculate propeller pitch depending on throttle lever position
+          // (beta range for taxing full reverse for braking)
+          double PitchReq = MinPitch - ( MinPitch - ReversePitch ) * Reverse_coef;
+          // The pitch of a variable propeller cannot be changed when the RPMs are
+          // too low - the oil pump does not work.
+          if (RPM > 200) Pitch += (PitchReq - Pitch) / 200;
+          if (RPM > MaxRPM) {
+            Pitch += (MaxRPM - RPM) / 50;
+            if (Pitch < ReversePitch) Pitch = ReversePitch;
+            else if (Pitch > MaxPitch)  Pitch = MaxPitch;
+          }
+        }
+
+      } else { // Feathered propeller
+               // ToDo: Make feathered and reverse settings done via FGKinemat
+        Pitch += (MaxPitch - Pitch) / 300; // just a guess (about 5 sec to fully feathered)
+      }
+
+    } else { // Variable Speed Prop
       Pitch = MinPitch + (MaxPitch - MinPitch) * Advance;
     }
     cPReq = cPower->GetValue(J, Pitch);

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.4 2005/11/12 13:37:32 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.5 2005/11/12 16:28:19 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.4 2005/11/12 13:37:32 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.5 2005/11/12 16:28:19 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -155,6 +155,13 @@ public:
   string GetThrusterLabels(int id, string delimeter);
   string GetThrusterValues(int id, string delimeter);
 
+  void   SetReverseCoef (double c) { Reverse_coef = c; }
+  double GetReverseCoef (void) { return Reverse_coef; }
+  void   SetReverse (bool r) { Reversed = r; }
+  bool   GetReverse (void) { return Reversed; }
+  void   SetFeather (bool f) { Feathered = f; }
+  bool   GetFeather (void) { return Feathered; }
+
 private:
   int   numBlades;
   double J;
@@ -176,6 +183,10 @@ private:
   FGTable *cThrust;
   FGTable *cPower;
   void Debug(int from);
+  double ReversePitch; // Pitch, when fully reversed
+  bool   Reversed;		 // true, when propeller is reversed
+  double Reverse_coef; // 0 - 1 defines AdvancePitch (0=MIN_PITCH 1=REVERSE_PITCH)
+  bool   Feathered;    // true, if feather command
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
