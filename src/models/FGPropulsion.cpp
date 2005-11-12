@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.6 2005/08/24 04:12:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.7 2005/11/12 14:10:29 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -74,7 +74,6 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numTanks = numEngines = 0;
   numOxiTanks = numFuelTanks = 0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
-  CurrentEngine = -1;
   tankJ.InitMatrix();
   refuel = false;
   fuel_freeze = false;
@@ -112,12 +111,10 @@ bool FGPropulsion::Run(void)
   vMoments.InitMatrix();
 
   for (i=0; i<numEngines; i++) {
-    CurrentEngine = i;
     Engines[i]->Calculate();
     vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
     vMoments += Engines[i]->GetMoments();     // sum body frame moments
   }
-  CurrentEngine = -1; // set back to -1 (all engines)
 
   for (i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( dt * rate );
@@ -126,79 +123,6 @@ bool FGPropulsion::Run(void)
   if (refuel) DoRefuel( dt * rate );
 
   return false;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Note: This function returns the advance ratio for a propeller connected to
-// the engine denoted by CurrentEngine. CurrentEngine is set in the loop that
-// executes during the Run() function. The format to use for the property
-// is: "propulsion/advance-ratio". This function accesses the value of the
-// advance-ratio for the current engine using the engine-specific property for
-// the advance ratio, "propulsion/engine[n]/advance-ratio". This pattern allows
-// property specification of advance-ratio in a generic sense, such as in a
-// propeller config file, where the engine-specific value cannot be provided.
-
-double FGPropulsion::GetAdvanceRatio(void) const
-{
-  double aRatio=0;
-  char property_name[80];
-
-  if (CurrentEngine < 0) { // if CurrentEngine -1 that means get all engines
-    if (numEngines == 1) { // can only get all engines if there is one engine
-      if (Engines[0]->GetType() == JSBSim::FGEngine::etPiston) {
-        snprintf(property_name, 80, "propulsion/engine[0]/advance-ratio");
-        aRatio = PropertyManager->getDoubleValue(property_name);
-      } else {
-        cerr << "Cannot get advance ratio for non-piston engine" << endl;
-      }
-    } else { // print error otherwise
-      cerr << "Cannot get advance ratio for ALL ENGINES" << endl;
-    }
-  } else if (CurrentEngine < numEngines) { // CurrentEngine points to a specific engine
-    if (Engines[CurrentEngine]->GetType() == JSBSim::FGEngine::etPiston) {
-      snprintf(property_name, 80, "propulsion/engine[%d]/advance-ratio", CurrentEngine);
-      aRatio = PropertyManager->getDoubleValue(property_name);
-    } else {
-      cerr << "Cannot get advance ratio for non-piston engine" << endl;
-    }
-  } else { // CurrentEngine points to a bad engine
-    cerr << "Cannot get advance ratio for engine " << CurrentEngine << ". Engine does\
-             not exist" << endl;
-  }
-  return aRatio;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Note: This function works the same as the above function.
-
-double FGPropulsion::GetBladeAngle(void) const
-{
-  double BladeAngle=0.0;
-  char property_name[80];
-
-  if (CurrentEngine < 0) { // if CurrentEngine -1 that means get all engines
-    if (numEngines == 1) { // can only get all engines if there is one engine
-      if (Engines[0]->GetType() == JSBSim::FGEngine::etPiston) {
-        snprintf(property_name, 80, "propulsion/engine[0]/blade-angle");
-        BladeAngle = PropertyManager->getDoubleValue(property_name);
-      } else {
-        cerr << "Cannot get blade angle for non-piston engine" << endl;
-      }
-    } else { // print error otherwise
-      cerr << "Cannot get blade angle for ALL ENGINES" << endl;
-    }
-  } else if (CurrentEngine < numEngines) { // CurrentEngine points to a specific engine
-    if (Engines[CurrentEngine]->GetType() == JSBSim::FGEngine::etPiston) {
-      snprintf(property_name, 80, "propulsion/engine[%d]/blade-angle", CurrentEngine);
-      BladeAngle = PropertyManager->getDoubleValue(property_name);
-    } else {
-      cerr << "Cannot get blade angle for non-piston engine" << endl;
-    }
-  } else { // CurrentEngine points to a bad engine
-    cerr << "Cannot get blade angle for engine " << CurrentEngine << ". Engine does\
-             not exist" << endl;
-  }
-  return BladeAngle;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -626,8 +550,6 @@ void FGPropulsion::bind(void)
   if (HavePistonEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  true);
     PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)0, &FGPropulsion::SetMagnetos, true);
-    PropertyManager->Tie("propulsion/advance-ratio", this, &FGPropulsion::GetAdvanceRatio);
-    PropertyManager->Tie("propulsion/blade-angle", this, &FGPropulsion::GetBladeAngle);
   }
 
   PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
@@ -637,7 +559,6 @@ void FGPropulsion::bind(void)
 
 void FGPropulsion::unbind(void)
 {
-  CurrentEngine = 0;
   if (HaveTurbineEngine) {
     PropertyManager->Untie("propulsion/starter_cmd");
     PropertyManager->Untie("propulsion/cutoff_cmd");
@@ -645,8 +566,6 @@ void FGPropulsion::unbind(void)
   if (HavePistonEngine) {
     PropertyManager->Untie("propulsion/starter_cmd");
     PropertyManager->Untie("propulsion/magneto_cmd");
-    PropertyManager->Untie("propulsion/advance-ratio");
-    PropertyManager->Untie("propulsion/blade-angle");
   }
   PropertyManager->Untie("propulsion/active_engine");
 }

@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.5 2005/08/24 04:12:53 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.6 2005/11/12 14:10:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.5 2005/08/24 04:12:53 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.6 2005/11/12 14:10:29 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -173,8 +173,6 @@ public:
   string FindEngineFullPathname(string engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) {return fuel_freeze;}
-  double GetAdvanceRatio(void) const;
-  double GetBladeAngle(void) const;
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);
@@ -197,7 +195,6 @@ private:
   unsigned int numEngines;
   unsigned int numTanks;
   int ActiveEngine;
-  int CurrentEngine;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
   FGColumnVector3 vTankXYZ;
