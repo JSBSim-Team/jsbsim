@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.4 2005/11/12 13:36:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.5 2005/11/12 16:27:29 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +60,7 @@ FGTable::FGTable(int NRows) : nRows(NRows), nCols(1), PropertyManager(0)
   Type = tt1D;
   colCounter = 0;
   rowCounter = 1;
+  nTables = 0;
 
   Data = Allocate();
   Debug(0);
@@ -109,6 +110,8 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   Element *axisElement;
   string operation_types = "function, product, sum, difference, quotient,"
                            "pow, abs, sin, cos, asin, acos, tan, atan, table";
+
+  nTables = 0;
 
   // Is this an internal lookup table?
 
@@ -271,6 +274,7 @@ double** FGTable::Allocate(void)
 FGTable::~FGTable()
 {
   if (nTables > 0) {
+cout << "nTables = " << nTables << endl;
     for (int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();
   }
