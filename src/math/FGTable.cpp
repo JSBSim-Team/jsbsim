@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.3 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.4 2005/11/12 13:36:10 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,6 +78,7 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
   nCols = t.nCols;
   nTables = t.nTables;
   dimension = t.dimension;
+  internal = t.internal;
 
   Tables = t.Tables;
   Data = Allocate();
@@ -99,25 +100,53 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
 
   stringstream buf;
   string property_string;
+  string lookup_axis;
+  string call_type;
+  string parent_type;
   FGPropertyManager* node;
-  dimension = 0;
   Element *tableData;
+  Element *parent_element;
   Element *axisElement;
+  string operation_types = "function, product, sum, difference, quotient,"
+                           "pow, abs, sin, cos, asin, acos, tan, atan, table";
+
+  // Is this an internal lookup table?
+
+  internal = false;
+  call_type = el->GetAttributeValue("type");
+  if (call_type == string("internal")) {
+    parent_element = el->GetParent();
+    parent_type = parent_element->GetName();
+    if (operation_types.find(parent_type) == string::npos) {
+      internal = true;
+    } else {
+      // internal table is a child element of a restricted type
+      cerr << endl << fgred << "  An internal table cannot be nested within another type," << endl;
+      cerr << "  such as a function. The 'internal' keyword is ignored." << fgdef << endl << endl;
+    }
+  } else if (!call_type.empty()) {
+    cerr << endl << fgred << "  An unknown table type attribute is listed: " << call_type
+                 << ". Execution cannot continue." << fgdef << endl << endl;
+    abort();
+  }
 
   // Determine and store the lookup properties for this table unless this table
   // is part of a 3D table, in which case its independentVar property indexes will
   // be set by a call from the owning table during creation
 
-  tableData = el->FindElement("tableData");
-  axisElement = el->FindElement("independentVar");
+  dimension = 0;
 
-  if (!tableData) { // this is a tableData dataset from a 3D table
-    tableData = el;
-    dimension = 2;
-  } else {
-    if (!axisElement) {
-      cerr << "No independent variable found for table." << endl;
-      return;
+  axisElement = el->FindElement("independentVar");
+  if (axisElement) {
+
+    // The 'internal' attribute of the table element cannot be specified
+    // at the same time that independentVars are specified.
+    if (internal) {
+      cerr << endl << fgred << "  This table specifies both 'internal' call type" << endl;
+      cerr << "  and specific lookup properties via the 'independentVar' element." << endl;
+      cerr << "  These are mutually exclusive specifications. The 'internal'" << endl;
+      cerr << "  attribute will be ignored." << fgdef << endl << endl;
+      internal = false;
     }
 
     for (i=0; i<3; i++) lookupProperty[i] = 0;
@@ -125,21 +154,44 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     while (axisElement) {
       property_string = axisElement->GetDataLine();
       node = PropertyManager->GetNode(property_string);
-      if (axisElement->GetAttributeValue("lookup") == string("row")) {
+
+      lookup_axis = axisElement->GetAttributeValue("lookup");
+      if (lookup_axis == string("row")) {
         lookupProperty[eRow] = node;
-      } else if (axisElement->GetAttributeValue("lookup") == string("column")) {
+      } else if (lookup_axis == string("column")) {
         lookupProperty[eColumn] = node;
-      } else if (axisElement->GetAttributeValue("lookup") == string("table")) {
+      } else if (lookup_axis == string("table")) {
         lookupProperty[eTable] = node;
       } else { // assumed single dimension table; row lookup
         lookupProperty[eRow] = node;
       }
+      dimension++;
       axisElement = el->FindNextElement("independentVar");
     }
-    for (i=0; i<3; i++) if (lookupProperty[i] != 0) dimension++;
+
+  } else if (internal) { // This table is an internal table
+
+  // determine how many rows, columns, and tables in this table (dimension).
+
+    if (el->GetNumElements("tableData") > 1) {
+      dimension = 3; // this is a 3D table
+    } else {
+      tableData = el->FindElement("tableData");
+      string test_line = tableData->GetDataLine(1);  // examine second line in table for dimension
+      if (FindNumColumns(test_line) == 2) dimension = 1;    // 1D table
+      else if (FindNumColumns(test_line) > 2) dimension = 2; // 2D table
+      else {
+        cerr << "Invalid number of columns in table" << endl;
+      }
+    }
+
+  } else { // no independentVars found, and table is not marked as internal
+    cerr << endl << fgred << "No independent variable found for table." << fgdef << endl << endl;
+    abort();
   }
   // end lookup property code
 
+  tableData = el->FindElement("tableData");
   for (int i=0; i<tableData->GetNumDataLines(); i++) {
     buf << tableData->GetDataLine(i) << string(" ");
   }
@@ -157,40 +209,23 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     break;
   case 2:
     nRows = tableData->GetNumDataLines()-1;
-    if (nRows >= 2) {
-      nCols = 0;
-      // determine number of data columns in table (first column is row lookup - don't count)
-      int position=0;
-      while ((position = tableData->GetDataLine(0).find_first_not_of(" \t", position)) != string::npos) {
-        nCols++;
-        position = tableData->GetDataLine(0).find_first_of(" \t", position);
-      }
-    } else {
-      cerr << "Not enough rows" << endl;
+
+    if (nRows >= 2) nCols = FindNumColumns(tableData->GetDataLine(0));
+    else {
+      cerr << endl << fgred << "Not enough rows in this table." << fgdef << endl;
+      abort();
     }
-    if (nCols > 1) {
-      Type = tt2D;
-      colCounter = 1;
-      rowCounter = 0;
-    } else if (nCols == 1) {
-      Type = tt1D;
-      colCounter = 0;
-      rowCounter = 1;
-    } else {
-      cerr << "FGTable cannot accept 'Rows=0'" << endl;
-    }
+
+    Type = tt2D;
+    colCounter = 1;
+    rowCounter = 0;
 
     Data = Allocate();
     lastRowIndex = lastColumnIndex = 2;
     *this << buf;
     break;
-  case 3: // not done, yet
-    nTables=0;
-    tableData = el->FindElement("tableData");
-    while (tableData) {
-      nTables++;
-      tableData = el->FindNextElement("tableData");
-    }
+  case 3:
+    nTables = el->GetNumElements("tableData");
     nRows = nTables;
     nCols = 1;
     Type = tt3D;
@@ -242,6 +277,20 @@ FGTable::~FGTable()
   for (int r=0; r<=nRows; r++) if (Data[r]) delete[] Data[r];
   if (Data) delete[] Data;
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int FGTable::FindNumColumns(string test_line)
+{
+  // determine number of data columns in table (first column is row lookup - don't count)
+  int position=0;
+  int nCols=0;
+  while ((position = test_line.find_first_not_of(" \t", position)) != string::npos) {
+    nCols++;
+    position = test_line.find_first_of(" \t", position);
+  }
+  return nCols;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,7 +365,6 @@ double FGTable::GetValue(double key) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 double FGTable::GetValue(double rowKey, double colKey) const
 {
   double rFactor, cFactor, col1temp, col2temp, Value;
@@ -326,7 +374,6 @@ double FGTable::GetValue(double rowKey, double colKey) const
   if ( r > 2 && Data[r-1][0] > rowKey ) {
     while ( Data[r-1][0] > rowKey && r > 2) { r--; }
   } else if ( Data[r][0] < rowKey ) {
-//    cout << Data[r][0] << endl;
     while ( r <= nRows && Data[r][0] <= rowKey ) { r++; }
     if ( r > nRows ) r = nRows;
   }
@@ -409,7 +456,6 @@ void FGTable::operator<<(stringstream& in_stream)
 {
   int startRow=0;
   int startCol=0;
-  int tableCtr=0;
 
   if (Type == tt1D || Type == tt3D) startRow = 1;
   if (Type == tt3D) startCol = 1;
@@ -418,10 +464,6 @@ void FGTable::operator<<(stringstream& in_stream)
     for (int c=startCol; c<=nCols; c++) {
       if (r != 0 || c != 0) {
         in_stream >> Data[r][c];
-//        if (Type == tt3D) {
-//          *Tables[tableCtr] << in_stream;
-//          tableCtr++;
-//        }
       }
     }
   }

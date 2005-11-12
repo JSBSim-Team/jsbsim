@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.4 2005/11/12 13:36:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
     combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
 
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
+    @version $Id: FGTable.h,v 1.4 2005/11/12 13:36:10 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -256,9 +256,11 @@ public:
 private:
   enum type {tt1D, tt2D, tt3D} Type;
   enum axis {eRow=0, eColumn, eTable};
+  bool internal;
   FGPropertyManager *lookupProperty[3];
   double** Data;
   vector <FGTable*> Tables;
+  int  FindNumColumns(string);
   int nRows, nCols, nTables, dimension;
   int colCounter, rowCounter, tableCounter;
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
