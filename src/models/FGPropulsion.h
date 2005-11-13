@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.6 2005/11/12 14:10:29 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.6 2005/11/12 14:10:29 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -205,6 +205,7 @@ private:
   bool IsBound;
   bool HavePistonEngine;
   bool HaveTurbineEngine;
+  bool HaveTurboPropEngine;
   bool HaveRocketEngine;
   bool HaveElectricEngine;
 

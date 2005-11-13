@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.6 2005/09/10 12:49:46 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -133,7 +133,7 @@ CLASS DOCUMENTATION
     In this case, the FCS would be read in from another file.
 
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.6 2005/09/10 12:49:46 jberndt Exp $
+    @version $Id: FGFCS.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -205,6 +205,11 @@ public:
       @param engine engine ID number
       @return pitch command in range from 0.0 - 1.0 for the given engine */
   inline double GetPropAdvanceCmd(int engine) const { return PropAdvanceCmd[engine]; }
+
+  /** Gets the prop feather command.
+      @param engine engine ID number
+      @return feather command for the given engine (on / off)*/
+  inline bool GetFeatherCmd(int engine) const { return PropFeatherCmd[engine]; }
 
   /** Gets the pitch trim command.
       @return pitch trim command in range from -1.0 to 1.0 */
@@ -285,6 +290,11 @@ public:
       @param engine engine ID number
       @return prop pitch position for the given engine in range from 0 - 1.0 */
   inline double GetPropAdvance(int engine) const { return PropAdvance[engine]; }
+
+  /** Gets the prop feather position.
+      @param engine engine ID number
+      @return prop fether for the given engine (on / off)*/
+  inline bool GetPropFeather(int engine) const { return PropFeather[engine]; }
   //@}
 
   /** Retrieves the State object pointer.
@@ -363,6 +373,11 @@ public:
       @param engine engine ID number
       @param cmd mixture command in percent (0.0 - 1.0)*/
   void SetPropAdvanceCmd(int engine, double cmd);
+
+   /** Sets the propeller feather command for the specified engine
+      @param engine engine ID number
+      @param cmd feather (bool)*/
+  void SetFeatherCmd(int engine, bool cmd);
   //@}
 
   /// @name Aerosurface position setting
@@ -418,6 +433,11 @@ public:
       @param engine engine ID number
       @param cmd prop pitch setting in percent (0.0 - 1.0)*/
   void SetPropAdvance(int engine, double cmd);
+
+  /** Sets the actual prop feather setting for the specified engine
+      @param engine engine ID number
+      @param cmd prop fether setting (bool)*/
+  void SetPropFeather(int engine, bool cmd);
   //@}
 
     /// @name Landing Gear brakes
@@ -464,6 +484,8 @@ private:
   vector <double> MixturePos;
   vector <double> PropAdvanceCmd;
   vector <double> PropAdvance;
+  vector <bool> PropFeatherCmd;
+  vector <bool> PropFeather;
   vector <double> SteerPosDeg;
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;

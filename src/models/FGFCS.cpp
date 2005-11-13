@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.9 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.10 2005/11/13 18:44:48 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -100,6 +100,8 @@ FGFCS::~FGFCS()
   PropAdvanceCmd.clear();
   PropAdvance.clear();
   SteerPosDeg.clear();
+  PropFeatherCmd.clear();
+  PropFeather.clear();
 
   unsigned int i;
 
@@ -133,6 +135,8 @@ bool FGFCS::Run(void)
   for (i=0; i<ThrottlePos.size(); i++) ThrottlePos[i] = ThrottleCmd[i];
   for (i=0; i<MixturePos.size(); i++) MixturePos[i] = MixtureCmd[i];
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
+  for (i=0; i<PropFeather.size(); i++) PropFeather[i] = PropFeatherCmd[i];
+
 
   // Set the default steering angle
   for (i=0; i<SteerPosDeg.size(); i++) {
@@ -417,6 +421,35 @@ void FGFCS::SetPropAdvance(int engineNum, double setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGFCS::SetFeatherCmd(int engineNum, bool setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<PropFeatherCmd.size();ctr++) PropFeatherCmd[ctr] = setting;
+    } else {
+      PropFeatherCmd[engineNum] = setting;
+    }
+  } 
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFCS::SetPropFeather(int engineNum, bool setting)
+{
+  unsigned int ctr;
+
+  if (engineNum < (int)ThrottlePos.size()) {
+    if (engineNum < 0) {
+      for (ctr=0;ctr<=PropFeatherCmd.size();ctr++) PropFeather[ctr] = PropFeatherCmd[ctr];
+    } else {
+      PropFeather[engineNum] = setting;
+    }
+  }
+}
+
+
 bool FGFCS::Load(Element* el)
 {
   string name, file, fname, comp_name, interface_property_string;
@@ -613,6 +646,8 @@ void FGFCS::AddThrottle(void)
   MixturePos.push_back(0.0);
   PropAdvanceCmd.push_back(0.0); // assume throttle and prop pitch are coupled
   PropAdvance.push_back(0.0);
+  PropFeatherCmd.push_back(false); 
+  PropFeather.push_back(false);
 
   unsigned int num = ThrottleCmd.size()-1;
   bindThrottle(num);
@@ -705,6 +740,13 @@ void FGFCS::bindThrottle(unsigned int num)
   snprintf(tmp, 80, "fcs/advance-pos-norm[%u]", num);
   PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropAdvance,
                                         &FGFCS::SetPropAdvance);
+  snprintf(tmp, 80, "fcs/feather-cmd-norm[%u]", num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetFeatherCmd,
+                                        &FGFCS::SetFeatherCmd);
+  snprintf(tmp, 80, "fcs/feather-pos-norm[%u]", num);
+  PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropFeather,
+                                        &FGFCS::SetPropFeather);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

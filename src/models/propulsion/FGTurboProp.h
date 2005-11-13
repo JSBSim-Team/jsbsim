@@ -44,9 +44,9 @@ INCLUDES
 #include <vector>
 #include "FGEngine.h"
 #include <input_output/FGXMLElement.h>
-#include <math/FGFunction.h>
+#include <math/FGTable.h>
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.1 2005/10/16 16:39:12 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.2 2005/11/13 18:44:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -187,9 +187,9 @@ private:
   void unbind(void);
   void Debug(int from);
 
-  FGFunction* ITT_N1; // ITT temperature depending on throttle command
-  FGFunction* EnginePowerRPM_N1;
-  FGFunction* EnginePowerVC;
+  FGTable* ITT_N1; // ITT temperature depending on throttle command
+  FGTable* EnginePowerRPM_N1;
+  FGTable* EnginePowerVC;
 
   int EngineNumber;
 };

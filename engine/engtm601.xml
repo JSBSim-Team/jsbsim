@@ -25,7 +25,7 @@ itt_delay [-] time constant for ITT change
     (ITT = Inter Turbine Temperature)
 -->
 
-<turboprop name="M601">
+<turboprop_engine name="M601">
   <milthrust unit="LBS">       1500.0   </milthrust>
   <idlen1>                       60.0   </idlen1>
   <maxn1>                       100.0   </maxn1>
@@ -39,7 +39,7 @@ itt_delay [-] time constant for ITT change
   <betarangeend>                 64     </betarangeend>
   <reversemaxpower>              60     </reversemaxpower>
 
-  <table>
+  <table name="EnginePowerVC">
     <description> Engine power, function of airspeed and pressure </description>
     <independentVar lookup="row">atmosphere/P-sl-psf</independentVar>
     <independentVar lookup="column">velocities/ve-kts</independentVar>
@@ -56,8 +56,8 @@ itt_delay [-] time constant for ITT change
     </tableData>
   </table>
 
-  <table type="internal">
-    <description> Engine Power, function of RPM and blade angle </description>
+  <table name="EnginePowerRPM_N1" type="internal">
+    <description> Engine Power, function of RPM and N1 </description>
     <tableData>
             0   5   60    86   94   95   96   97   98   99  100  101
          0  0   0.5  0.5   0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
@@ -69,7 +69,7 @@ itt_delay [-] time constant for ITT change
     </tableData>
   </table>
 
-  <table type="internal">
+  <table name="ITT_N1" type="internal">
     <description> Inter-Turbine Temperature ITT [deg C] depending on N1 and engine run (0=off / 1=running) </description>
     <tableData>
               0     1
@@ -81,4 +81,4 @@ itt_delay [-] time constant for ITT change
     </tableData>
   </table>
 
-</turboprop>
+</turboprop_engine>

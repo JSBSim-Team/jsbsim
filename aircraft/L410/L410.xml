@@ -174,6 +174,54 @@
     </propulsion>
 
     <flight_control name="FCS: l410">
+
+     <!-- Interface properties : ONLY for use in JSBSim standalone -->
+     <!-- THIS MUST BE COMMENTED OUT FOR USE IN FLIGHTGEAR         -->
+
+     <property>/systems/l410/battery-all-ok</property>
+     <property>/systems/l410/battery-one-ok</property>
+     <property>/systems/l410/battery-two-ok</property>
+     <property>/controls/switches/specbus_28v_115v_36v</property>
+     <property>/instrumentation/warn-disp/wde1-beta</property>
+     <property>/instrumentation/warn-disp/wde2-beta</property>
+     <property>/instrumentation/engine/indicated-tl-norm</property>
+     <property>/instrumentation/engine/indicated-throttlel-norm</property>
+     <property>/instrumentation/engine/indicated-tr-norm</property>
+     <property>/instrumentation/engine/indicated-throttler-norm</property>
+     <property>/instrumentation/engine/indicated-cutoffl-norm</property>
+     <property>/instrumentation/engine/indicated-cutoffr-norm</property>
+     <property>/instrumentation/engine/eng-n-koef</property>
+     <property>/instrumentation/engine/indicated-gen1-perc</property>
+     <property>/instrumentation/engine/indicated-gen2-perc</property>
+     <property>/instrumentation/engine/indicated-prop1-rpm</property>
+     <property>/instrumentation/engine/indicated-prop2-rpm</property>
+     <property>/instrumentation/engine/indicated-pshaft1-perc</property>
+     <property>/instrumentation/engine/indicated-pshaft2-perc</property>
+     <property>/instrumentation/engine/indicated-itt1-degc</property>
+     <property>/instrumentation/engine/indicated-itt2-degc</property>
+     <property>/instrumentation/engine/indicated-fuelfl1-kgph</property>
+     <property>/instrumentation/engine/indicated-fuelfl2-kgph</property>
+     <property>/instrumentation/engine/indicated-fuel1-kg</property>
+     <property>/instrumentation/engine/indicated-fuel2-kg</property>
+     <property>/controls/gear/brake-left</property>
+     <property>/controls/gear/brake-right</property>
+     <property>/controls/gear/brake-parking</property>
+     <property>/instrumentation/pressure/indicated-parkingbrake-kp_cm2</property>
+     <property>/instrumentation/pressure/indicated-leftbrake-kp_cm2</property>
+     <property>/instrumentation/pressure/indicated-rightbrake-kp_cm2</property>
+     <property>/instrumentation/temperature/indicated-oil1-degc</property>
+     <property>/instrumentation/temperature/indicated-oilr-degc</property>
+     <property>/instrumentation/temperature/indicated-oil2-degc</property>
+     <property>/instrumentation/lights/beacon-on</property>
+     <property>/instrumentation/lights/navigation-on</property>
+     <property>/instrumentation/lights/search1-on</property>
+     <property>/instrumentation/lights/search2-on</property>
+     <property>/instrumentation/warn-disp/wd-extinguish-eng</property>
+     <property>fcs/steer-pos-deg</property>
+     <property>/gear/gear[0]/steering-lever-norm</property>
+
+     <!-- END of Interface Properties -->
+
      <channel name="All">
 
         <!-- battery status -->
@@ -815,7 +863,6 @@
 
         <component name="abc-position" type="PURE_GAIN">
             <input>/controls/engines/aileron-abc-norm</input>
-            <output>fcs/abc-position</output>
         </component>
 
         <!-- Standard flight control components -->
@@ -991,10 +1038,11 @@
                     2.0000	1.0000
                 </tableData>
             </table>
-            <output>/gear/gear/steering-lever-norm</output>
+            <output>/gear/gear[0]/steering-lever-norm</output>
         </component>
      </channel>
     </flight_control>
+
     <aerodynamics>
 
         <axis name="DRAG">
@@ -1172,7 +1220,7 @@
         </axis>
 
         <axis name="ROLL">
-            <function name="aero/coefficient/Clb">
+            <function name="aero/coefficient/Clroll">
                 <description>Roll_moment_due_to_roll</description>
                 <product>
                     <property>aero/qbar-psf</property>

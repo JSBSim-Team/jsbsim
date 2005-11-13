@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.1 2005/10/16 16:39:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.2 2005/11/13 18:44:49 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,22 +117,22 @@ bool FGTurboProp::Load(FGFDMExec* exec, Element *el)
   if (el->FindElement("itt_delay"))
     ITT_Delay = el->FindElementValueAsNumber("itt_delay");
 
-  Element *function_element;
+  Element *table_element;
   string name;
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();
 
   while (true) {
-    function_element = el->FindNextElement("function");
-    if (!function_element) break;
-    name = function_element->GetAttributeValue("name");
+    table_element = el->FindNextElement("table");
+    if (!table_element) break;
+    name = table_element->GetAttributeValue("name");
     if (name == "EnginePowerVC") {
-      EnginePowerVC = new FGFunction(PropertyManager, function_element);
+      EnginePowerVC = new FGTable(PropertyManager, table_element);
     } else if (name == "EnginePowerRPM_N1") {
-      EnginePowerRPM_N1 = new FGFunction(PropertyManager, function_element);
+      EnginePowerRPM_N1 = new FGTable(PropertyManager, table_element);
     } else if (name == "ITT_N1") {
-      ITT_N1 = new FGFunction(PropertyManager, function_element);
+      ITT_N1 = new FGTable(PropertyManager, table_element);
     } else {
-      cerr << "Unknown function type: " << name << " in turbine definition." <<
+      cerr << "Unknown table type: " << name << " in turbine definition." <<
       endl;
     }
   }
@@ -285,7 +285,7 @@ double FGTurboProp::Run(void)
   double old_N1 = N1;
   N1 = ExpSeek(&N1, IdleN1 + ThrottleCmd * N1_factor, Idle_Max_Delay, Idle_Max_Delay * 2.4);
 
-  EngPower_HP = EnginePowerRPM_N1->GetValue(Prop_RPM,N1); // ToDo: Enhance FGFunction to accept lookup args
+  EngPower_HP = EnginePowerRPM_N1->GetValue(Prop_RPM,N1);
   EngPower_HP *= EnginePowerVC->GetValue();
   if (EngPower_HP > MaxPower) EngPower_HP = MaxPower;
 

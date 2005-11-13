@@ -49,6 +49,7 @@ INCLUDES
 #include <models/propulsion/FGTurbine.h>
 #include <models/propulsion/FGPiston.h>
 #include <models/propulsion/FGElectric.h>
+#include <models/propulsion/FGTurboProp.h>
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGXMLParse.h>
 #include <math/FGColumnVector3.h>
@@ -56,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.7 2005/11/12 14:10:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.8 2005/11/13 18:44:48 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -81,6 +82,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   HavePistonEngine =
   HaveTurbineEngine =
   HaveRocketEngine =
+  HaveTurboPropEngine =
   HaveElectricEngine = false;
 
   Debug(0);
@@ -223,6 +225,10 @@ bool FGPropulsion::Load(Element* el)
       HaveTurbineEngine = true;
       if (!IsBound) bind();
       Engines.push_back(new FGTurbine(FDMExec, document, numEngines));
+    } else if (type == "turboprop_engine") {
+      HaveTurboPropEngine = true;
+      if (!IsBound) bind();
+      Engines.push_back(new FGTurboProp(FDMExec, document, numEngines));
     } else if (type == "rocket_engine") {
       HaveRocketEngine = true;
       if (!IsBound) bind();
