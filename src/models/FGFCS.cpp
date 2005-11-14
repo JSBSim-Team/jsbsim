@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.10 2005/11/13 18:44:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.11 2005/11/14 13:55:23 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -431,7 +431,7 @@ void FGFCS::SetFeatherCmd(int engineNum, bool setting)
     } else {
       PropFeatherCmd[engineNum] = setting;
     }
-  } 
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,6 +449,7 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
   }
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 bool FGFCS::Load(Element* el)
 {
@@ -502,6 +503,8 @@ bool FGFCS::Load(Element* el)
   //       have to duplicate this block of code after channel read code.
   //       Input properties could be write only (nah), and output could be read
   //       only.
+
+  if (document->GetName() == "flight_control") bindModel();
 
   property_element = document->FindElement("property");
   while (property_element) {
@@ -564,8 +567,6 @@ bool FGFCS::Load(Element* el)
     }
     channel_element = document->FindNextElement("channel");
   }
-
-  if (document->GetName() == "flight_control") bindModel();
 
   return true;
 }
@@ -646,7 +647,7 @@ void FGFCS::AddThrottle(void)
   MixturePos.push_back(0.0);
   PropAdvanceCmd.push_back(0.0); // assume throttle and prop pitch are coupled
   PropAdvance.push_back(0.0);
-  PropFeatherCmd.push_back(false); 
+  PropFeatherCmd.push_back(false);
   PropFeather.push_back(false);
 
   unsigned int num = ThrottleCmd.size()-1;
@@ -746,7 +747,6 @@ void FGFCS::bindThrottle(unsigned int num)
   snprintf(tmp, 80, "fcs/feather-pos-norm[%u]", num);
   PropertyManager->Tie( tmp, this, num, &FGFCS::GetPropFeather,
                                         &FGFCS::SetPropFeather);
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

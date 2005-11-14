@@ -46,7 +46,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGTable.h>
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.2 2005/11/13 18:44:49 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.3 2005/11/14 13:55:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,8 +190,6 @@ private:
   FGTable* ITT_N1; // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
   FGTable* EnginePowerVC;
-
-  int EngineNumber;
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

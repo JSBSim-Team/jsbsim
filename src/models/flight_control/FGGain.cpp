@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.6 2005/11/13 18:44:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.7 2005/11/14 13:55:23 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,7 +63,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if (Type == "PURE_GAIN") {
     if ( !element->FindElement("gain") ) {
-      cerr << "No GAIN specified (default: 1.0) for PURE_GAIN component: " << Name << endl;
+      cout << highint << "      No GAIN specified (default: 1.0)" << normint << endl;
     }
   }
 

@@ -175,54 +175,119 @@
 
     <flight_control name="FCS: l410">
 
-     <!-- Interface properties : ONLY for use in JSBSim standalone -->
-     <!-- THIS MUST BE COMMENTED OUT FOR USE IN FLIGHTGEAR         -->
+      <!-- Interface properties : ONLY for use in JSBSim standalone     -->
+      <!-- THIS MUST BE COMMENTED OUT FOR USE IN FLIGHTGEAR ... I think -->
 
-     <property>/systems/l410/battery-all-ok</property>
-     <property>/systems/l410/battery-one-ok</property>
-     <property>/systems/l410/battery-two-ok</property>
-     <property>/controls/switches/specbus_28v_115v_36v</property>
-     <property>/instrumentation/warn-disp/wde1-beta</property>
-     <property>/instrumentation/warn-disp/wde2-beta</property>
-     <property>/instrumentation/engine/indicated-tl-norm</property>
-     <property>/instrumentation/engine/indicated-throttlel-norm</property>
-     <property>/instrumentation/engine/indicated-tr-norm</property>
-     <property>/instrumentation/engine/indicated-throttler-norm</property>
-     <property>/instrumentation/engine/indicated-cutoffl-norm</property>
-     <property>/instrumentation/engine/indicated-cutoffr-norm</property>
-     <property>/instrumentation/engine/eng-n-koef</property>
-     <property>/instrumentation/engine/indicated-gen1-perc</property>
-     <property>/instrumentation/engine/indicated-gen2-perc</property>
-     <property>/instrumentation/engine/indicated-prop1-rpm</property>
-     <property>/instrumentation/engine/indicated-prop2-rpm</property>
-     <property>/instrumentation/engine/indicated-pshaft1-perc</property>
-     <property>/instrumentation/engine/indicated-pshaft2-perc</property>
-     <property>/instrumentation/engine/indicated-itt1-degc</property>
-     <property>/instrumentation/engine/indicated-itt2-degc</property>
-     <property>/instrumentation/engine/indicated-fuelfl1-kgph</property>
-     <property>/instrumentation/engine/indicated-fuelfl2-kgph</property>
-     <property>/instrumentation/engine/indicated-fuel1-kg</property>
-     <property>/instrumentation/engine/indicated-fuel2-kg</property>
-     <property>/controls/gear/brake-left</property>
-     <property>/controls/gear/brake-right</property>
-     <property>/controls/gear/brake-parking</property>
-     <property>/instrumentation/pressure/indicated-parkingbrake-kp_cm2</property>
-     <property>/instrumentation/pressure/indicated-leftbrake-kp_cm2</property>
-     <property>/instrumentation/pressure/indicated-rightbrake-kp_cm2</property>
-     <property>/instrumentation/temperature/indicated-oil1-degc</property>
-     <property>/instrumentation/temperature/indicated-oilr-degc</property>
-     <property>/instrumentation/temperature/indicated-oil2-degc</property>
-     <property>/instrumentation/lights/beacon-on</property>
-     <property>/instrumentation/lights/navigation-on</property>
-     <property>/instrumentation/lights/search1-on</property>
-     <property>/instrumentation/lights/search2-on</property>
-     <property>/instrumentation/warn-disp/wd-extinguish-eng</property>
-     <property>fcs/steer-pos-deg</property>
-     <property>/gear/gear[0]/steering-lever-norm</property>
+      <property>/systems/l410/battery-all-ok</property>
+      <property>/systems/l410/battery-one-ok</property>
+      <property>/systems/l410/battery-two-ok</property>
+      <property>/systems/l410/bus36v-on</property>
+      <property>/systems/l410/bus24v-on</property>
+      <property>/systems/l410/extinguish-e1-1-ok</property>
+      <property>/systems/l410/extinguish-e1-2-ok</property>
+      <property>/systems/l410/extinguish-e2-1-ok</property>
+      <property>/systems/l410/extinguish-e2-2-ok</property>
 
-     <!-- END of Interface Properties -->
+      <property>/systems/electrical/outputs/bus28v</property>
+      <property>/systems/electrical/outputs/bus36v</property>
+      <property>/systems/electrical/outputs/bus115v</property>
+      <property>/systems/electrical/outputs/beacon-lights</property>
+      <property>/systems/electrical/outputs/navigation-lights</property>
+      <property>/systems/electrical/outputs/landing-lights</property>
 
-     <channel name="All">
+      <property>/instrumentation/warn-disp/wde1-beta</property>
+      <property>/instrumentation/warn-disp/wde2-beta</property>
+      <property>/instrumentation/warn-disp/wd-e1-on</property>
+      <property>/instrumentation/warn-disp/wd-e2-on</property>
+      <property>/instrumentation/warn-disp/wd-extinguish-eng</property>
+
+      <property>/instrumentation/engine/indicated-tl-norm</property>
+      <property>/instrumentation/engine/indicated-throttlel-norm</property>
+      <property>/instrumentation/engine/indicated-tr-norm</property>
+      <property>/instrumentation/engine/indicated-throttler-norm</property>
+      <property>/instrumentation/engine/indicated-cutoffl-norm</property>
+      <property>/instrumentation/engine/indicated-cutoffr-norm</property>
+      <property>/instrumentation/engine/eng-n-koef</property>
+      <property>/instrumentation/engine/indicated-gen1-perc</property>
+      <property>/instrumentation/engine/indicated-gen2-perc</property>
+      <property>/instrumentation/engine/indicated-prop1-rpm</property>
+      <property>/instrumentation/engine/indicated-prop2-rpm</property>
+      <property>/instrumentation/engine/indicated-pshaft1-perc</property>
+      <property>/instrumentation/engine/indicated-pshaft2-perc</property>
+      <property>/instrumentation/engine/indicated-itt1-degc</property>
+      <property>/instrumentation/engine/indicated-itt2-degc</property>
+      <property>/instrumentation/engine/indicated-fuelfl1-kgph</property>
+      <property>/instrumentation/engine/indicated-fuelfl2-kgph</property>
+      <property>/instrumentation/engine/indicated-fuel1-kg</property>
+      <property>/instrumentation/engine/indicated-fuel2-kg</property>
+
+      <property>/instrumentation/pressure/indicated-parkingbrake-kp_cm2</property>
+      <property>/instrumentation/pressure/indicated-leftbrake-kp_cm2</property>
+      <property>/instrumentation/pressure/indicated-rightbrake-kp_cm2</property>
+
+      <property>/instrumentation/temperature/indicated-oil1-degc</property>
+      <property>/instrumentation/temperature/indicated-oil2-degc</property>
+      <property>/instrumentation/temperature/c-f-s-konst</property>
+
+      <property>/instrumentation/lights/beacon-kinemat-in</property>
+      <property>/instrumentation/lights/beacon-kinemat-out</property>
+      <property>/instrumentation/lights/beacon-on</property>
+      <property>/instrumentation/lights/navigation-on</property>
+      <property>/instrumentation/lights/search1-on</property>
+      <property>/instrumentation/lights/search2-on</property>
+      <property>/instrumentation/lights/instr-flash-out</property>
+      <property>/instrumentation/lights/instr-flash-in</property>
+
+      <property>/instrumentation/wiper/position-dir</property>
+      <property>/instrumentation/wiper/position-norm</property>
+      <property>/instrumentation/wiper/switched-on</property>
+
+      <property>/gear/gear[0]/steering-lever-norm</property>
+
+      <property>/controls/switches/specbus_28v_115v_36v</property>
+      <property>/controls/switches/full-steering-sw</property>
+      <property>/controls/switches/isolvalve1-sw</property>
+      <property>/controls/switches/isolvalve2-sw</property>
+      <property>/controls/switches/wiper-sw</property>
+      <property>/controls/switches/lgh-beacon-sw</property>
+      <property>/controls/switches/lgh-navigation-sw</property>
+      <property>/controls/switches/chck-extinguish-eng-sw</property>
+
+      <property>/controls/engines/engine[0]/reverser</property>
+      <property>/controls/engines/engine[1]/reverser</property>
+      <property>/controls/engines/engine[0]/cutoff-cmd</property>
+      <property>/controls/engines/engine[1]/cutoff-cmd</property>
+      <property>/controls/engines/aileron-abc-norm</property>
+
+      <property>/controls/gear/brake-left</property>
+      <property>/controls/gear/brake-right</property>
+      <property>/controls/gear/brake-parking</property>
+      <property>/controls/gear/parking-brake-cmd</property>
+      <property>/controls/gear/wheel[0]/brake-cmd-cond</property>
+      <property>/controls/gear/wheel[1]/brake-cmd-cond</property>
+      <property>/controls/gear/gear-down-cond</property>
+      <property>/controls/flight/flaps-cond</property>
+      <property>/controls/flight/spoilers-cond</property>
+
+      <property>/engines/engine[0]/n1</property>
+      <property>/engines/engine[1]/n1</property>
+      <property>/engines/engine[0]/thruster/rpm</property>
+      <property>/engines/engine[1]/thruster/rpm</property>
+      <property>/engines/engine[0]/thruster/torque</property>
+      <property>/engines/engine[1]/thruster/torque</property>
+      <property>/engines/engine[0]/itt_degC</property>
+      <property>/engines/engine[1]/itt_degC</property>
+      <property>/engines/engine[0]/fuel-flow_pph</property>
+      <property>/engines/engine[1]/fuel-flow_pph</property>
+      <property>/engines/engine[0]/oil-temperature-degf</property>
+      <property>/engines/engine[1]/oil-temperature-degf</property>
+
+      <property>/consumables/fuel/tank[0]/level-lb</property>
+      <property>/consumables/fuel/tank[1]/level-lb</property>
+
+      <!-- END of Interface Properties -->
+
+      <channel name="All">
 
         <!-- battery status -->
 
@@ -314,7 +379,7 @@
         <component name="indicated-throttle-l" type="SCHEDULED_GAIN">
             <input>fcs/indicated-throttle-l2</input>
             <table>
-                <independentVar>/controls/engines/engine/reverser</independentVar>
+                <independentVar>/controls/engines/engine[0]/reverser</independentVar>
                 <tableData>
                     0.0000	1.0000
                     1.0000	-0.7000
@@ -443,7 +508,7 @@
         </component>
 
         <component name="indicated-eng-propshaft1" type="SCHEDULED_GAIN">
-            <input>/engines/engine/thruster/torque</input>
+            <input>/engines/engine[0]/thruster/torque</input>
             <gain>-0.0571</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -493,7 +558,7 @@
         </component>
 
         <component name="indicated-fuelfl1-kgph" type="SCHEDULED_GAIN">
-            <input>/engines/engine/fuel-flow_pph</input>
+            <input>/engines/engine[0]/fuel-flow_pph</input>
             <gain>0.4536</gain>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -964,6 +1029,8 @@
             <output>fcs/flap-pos-deg</output>
         </component>
 
+<!-- need to add a component here that turns the flaps command in degrees to a norm -->
+
         <component name="Gear Control" type="KINEMAT">
             <input>/controls/gear/gear-down-cond</input>
             <traverse>
@@ -1025,7 +1092,7 @@
                     2.0000	45.0000
                 </tableData>
             </table>
-            <output>fcs/steer-pos-deg</output>
+            <output>fcs/steer-pos-deg[0]</output>
         </component>
 
         <component name="Steer lever Pos Deg" type="SCHEDULED_GAIN">
