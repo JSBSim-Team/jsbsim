@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.2 2005/11/13 18:44:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.3 2005/11/19 01:19:17 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -495,12 +495,13 @@ void FGTurboProp::bindmodel()
 {
   char property_name[80];
 
+// ToDo: Do a proper Tie here, this should be read only.
+
   snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
   PropertyManager->Tie( property_name, &N1);
   snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
   PropertyManager->Tie( property_name, &N2);
-
-  snprintf(property_name, 80, "/controls/engines/engine[%u]/reverser_nase", EngineNumber);
+  snprintf(property_name, 80, "propulsion/engine[%u]/reverser", EngineNumber);
   PropertyManager->Tie( property_name, &Reversed);
 
 }
@@ -514,6 +515,8 @@ void FGTurboProp::unbind()
   snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
   PropertyManager->Untie(property_name);
   snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
+  PropertyManager->Untie(property_name);
+  snprintf(property_name, 80, "propulsion/engine[%u]/reverser", EngineNumber);
   PropertyManager->Untie(property_name);
 }
 
