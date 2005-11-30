@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.4 2005/11/30 01:31:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,8 +106,10 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** JSBSim Base class.
+*   This class provides universal constants, utility functions, messaging
+*   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.4 2005/11/30 01:31:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,23 +194,40 @@ public:
       @return pointer to a Message structure (or NULL if no mesage) */
   Message* ProcessMessage(void);
   //@}
+
+  /** Returns the version number of JSBSim.
+  *   @return The version number of JSBSim. */
   string GetVersion(void) {return JSBSim_version;}
 
+  /// Disables highlighting in the console output.
   void disableHighLighting(void);
 
   static short debug_lvl;
+
+  /** Converts from degrees Kelvin to degrees Fahrenheit.
+  *   @param kelvin The temperature in degrees Kelvin.
+  *   @return The temperature in Fahrenheit. */
   static double KelvinToFahrenheit (double kelvin) {
     return 1.8*kelvin - 459.4;
   }
 
+  /** Converts from degrees Rankine to degrees Celsius.
+  *   @param rankine The temperature in degrees Rankine.
+  *   @return The temperature in Celsius. */
   static double RankineToCelsius (double rankine) {
     return (rankine - 491.67)/1.8;
   }
 
+  /** Converts from degrees Fahrenheit to degrees Celsius.
+  *   @param fahrenheit The temperature in degrees Fahrenheit.
+  *   @return The temperature in Celsius. */
   static double FahrenheitToCelsius (double fahrenheit) {
     return (fahrenheit - 32.0)/1.8;
   }
 
+  /** Converts from degrees Celsius to degrees Fahrenheit.
+  *   @param celsius The temperature in degrees Celsius.
+  *   @return The temperature in Fahrenheit. */
   static double CelsiusToFahrenheit (double celsius) {
     return celsius * 1.8 + 32.0;
   }
@@ -272,7 +291,6 @@ protected:
   static const double slugtolb;
   static const string needed_cfg_version;
   static const string JSBSim_version;
-};
 
 /// Moments L, M, N
 enum {eL     = 1, eM,     eN    };
@@ -294,6 +312,8 @@ enum {eNorth = 1, eEast,  eDown };
 enum {eLat = 1, eLong, eRad     };
 /// Conversion specifiers
 enum {inNone = 0, inDegrees, inRadians, inMeters, inFeet };
+
+};
 
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

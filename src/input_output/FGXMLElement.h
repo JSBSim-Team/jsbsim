@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.5 2005/11/12 13:56:28 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.6 2005/11/30 01:31:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -147,7 +147,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.5 2005/11/12 13:56:28 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.6 2005/11/30 01:31:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -317,11 +317,22 @@ public:
       @param p pointer to the parent Element. */
   void SetParent(Element* p) {parent = p;}
 
-  /**  */
+  /** Adds a child element to the list of children stored for this element.
+  *   @param el Child element to add. */
   void AddChildElement(Element* el) {children.push_back(el);}
+
+  /** Stores an attribute belonging to this element.
+  *   @param name The string name of the attribute.
+  *   @param value The string value of the attribute. */
   void AddAttribute(string name, string value);
+
+  /** Stores data belonging to this element.
+  *   @param d the data to store. */
   void AddData(string d);
 
+  /** Prints the element.
+  *   Prints this element and calls the Print routine for child elements.
+  *   @param d The tab level. A level corresponds to a single space. */
   void Print(int level=0);
 
 private:

@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.11 2005/09/06 19:51:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.12 2005/11/30 01:31:18 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,11 +82,6 @@ GLOBAL DECLARATIONS
 
 unsigned int FGFDMExec::FDMctr = 0;
 FGPropertyManager* FGFDMExec::master=0;
-
-struct PropertyCatalogStructure {
-  string base_string;
-  FGPropertyManager *node;
-};
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
@@ -110,7 +105,7 @@ void checkTied ( FGPropertyManager *node )
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Constructor
 
-FGFDMExec::FGFDMExec(FGPropertyManager* root)
+FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 {
 
   Frame           = 0;
@@ -154,8 +149,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root)
     debug_lvl = 1;
   }
 
-  if (root == 0)  master= new FGPropertyManager;
-  else            master = root;
+
+  if (Root == 0)  master= new FGPropertyManager;
+  else            master = Root;
 
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
 
@@ -183,6 +179,7 @@ FGFDMExec::~FGFDMExec()
   try {
     DeAllocate();
     checkTied( instance );
+    if (Root == 0)  delete master;
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;
   }
@@ -419,7 +416,6 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
 bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model,
                 bool addModelToPath)
 {
-
   FGFDMExec::AircraftPath = AircraftPath;
   FGFDMExec::EnginePath = EnginePath;
 

@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.7 2005/07/28 03:54:20 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.8 2005/11/30 01:31:18 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,8 +77,7 @@ CLASS DOCUMENTATION
 
     When an aircraft model is loaded the config file is parsed and for each of the
     sections of the config file (propulsion, flight control, etc.) the
-    corresponding "ReadXXX()" method is called. From within this method the
-    "Load()" method of that system is called (e.g. LoadFCS).
+    corresponding Load() method is called (e.g. LoadFCS).
 
     <h4>JSBSim Debugging Directives</h4>
 
@@ -103,7 +102,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.7 2005/07/28 03:54:20 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.8 2005/11/30 01:31:18 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,11 +136,12 @@ public:
 
   /** Initializes the sim from the initial condition object and executes
       each scheduled model without integrating i.e. dt=0.
-      @return true if successful
-       */
+      @return true if successful */
   bool RunIC(void);
 
-  void SetGroundCallback(FGGroundCallback*);
+  /** Sets the ground callback pointer.
+      @param gc A pointer to a ground callback object.  */
+  void SetGroundCallback(FGGroundCallback* gc);
 
   /** Loads an aircraft model.
       @param AircraftPath path to the aircraft directory. For instance:
@@ -159,7 +159,6 @@ public:
   bool LoadModel(string AircraftPath, string EnginePath, string model,
                  bool addModelToPath = true);
 
-
   /** Loads an aircraft model.  The paths to the aircraft and engine
       config file directories must be set prior to calling this.  See
       below.
@@ -172,33 +171,19 @@ public:
       @return true if successful*/
   bool LoadModel(string model, bool addModelToPath = true);
 
-
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
-      files are kept, for instance "engine"
-  */
+      files are kept, for instance "engine"  */
   bool SetEnginePath(string path)   { EnginePath = path; return true; }
 
   /** Sets the path to the aircraft config file directories.
       @param path path to the aircraft directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
-      modeled aircraft such as C172/, x15/, etc.
-  */
+      modeled aircraft such as C172/, x15/, etc.  */
   bool SetAircraftPath(string path) { AircraftPath = path; return true; }
-
-  /** Sets the path to the autopilot config file directories.
-      @param path path to the control directory. For instance:
-      "control".
-  */
-//  bool SetControlPath(string path) { ControlPath = path; return true; }
-
 
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
-  /// Returns the FGGroundCallback pointer.
-  inline FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
-  /// Returns the FGState pointer.
-  inline FGState* GetState(void)              {return State;}
   /// Returns the FGAtmosphere pointer.
   inline FGAtmosphere* GetAtmosphere(void)    {return Atmosphere;}
   /// Returns the FGFCS pointer.
@@ -221,12 +206,14 @@ public:
   inline FGAuxiliary* GetAuxiliary(void)      {return Auxiliary;}
   /// Returns the FGInput pointer.
   inline FGInput* GetInput(void)              {return Input;}
-//  /// Returns the FGOutput pointer.
-//  inline FGOutput* GetOutput(void)            {return Output;}
+  /// Returns the FGGroundCallback pointer.
+  inline FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
+  /// Returns the FGState pointer.
+  inline FGState* GetState(void)              {return State;}
   // Returns a pointer to the FGInitialCondition object
   inline FGInitialCondition* GetIC(void)      {return IC;}
   // Returns a pointer to the FGTrim object
-  FGTrim* GetTrim(void);
+  inline FGTrim* GetTrim(void);
   //@}
 
   /// Retrieves the engine path.
@@ -234,19 +221,59 @@ public:
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
 
+  /// Returns the model name.
   string GetModelName(void) { return modelName; }
 
+  /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
+  /// Returns a vector of strings representing the names of all loaded models (future)
   vector <string> EnumerateFDMs(void);
+  /// Marks this instance of the Exec object as a "slave" object.
   void SetSlave(void) {IsSlave = true;}
+
+  /** Executes trimming in the selected mode.
+  *   @param mode Specifies how to trim:
+  * - tLongitudinal=0
+  * - tFull
+  * - tGround
+  * - tPullup
+  * - tCustom
+  * - tTurn
+  * - tNone
+  */
   void DoTrim(int mode);
+
+  /// Disables data logging to all outputs.
   void DisableOutput(void);
+  /// Enables data logging to all outputs.
   void EnableOutput(void);
+  /// Pauses execution by preventing time from incrementing.
   void Hold(void) {holding = true;}
+  /// Resumes execution from a "Hold".
   void Resume(void) {holding = false;}
+  /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
+
+  struct PropertyCatalogStructure {
+    /// Name of the property.
+    string base_string;
+    /// The node for the property.
+    FGPropertyManager *node;
+  };
+
+  /** Builds a catalog of properties.
+  *   This function descends the property tree and creates a list (an STL vector)
+  *   containing the name and node for all properties.
+  *   @param pcs The "root" property catalog structure pointer.  */
   void BuildPropertyCatalog(struct PropertyCatalogStructure* pcs);
-  string QueryPropertyCatalog(string);
+
+  /** Retrieves property or properties matching the supplied string.
+  *   A string is returned that contains a carriage return delimited list of all
+  *   strings in the property catalog that matches the supplied chack string.
+  *   @param check The string to search for in the property catalog.
+  *   @return the carriage-return-delimited string containing all matching strings
+  *               in the catalog.  */
+  string QueryPropertyCatalog(string check);
 
 private:
   FGModel* FirstModel;
@@ -256,6 +283,7 @@ private:
   int  Error;
   unsigned int Frame;
   unsigned int IdFDM;
+  FGPropertyManager* Root;
   static unsigned int FDMctr;
   bool modelLoaded;
   string modelName;

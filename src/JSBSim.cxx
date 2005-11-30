@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.6 2005/11/12 13:26:21 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.7 2005/11/30 01:31:18 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -65,6 +65,7 @@
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
 #include <FDM/JSBSim/input_output/FGGroundCallback.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
+#include <FDM/JSBSim/models/propulsion/FGTurboProp.h>
 #include <FDM/JSBSim/models/propulsion/FGRocket.h>
 #include <FDM/JSBSim/models/propulsion/FGElectric.h>
 #include <FDM/JSBSim/models/propulsion/FGNozzle.h>
@@ -525,6 +526,7 @@ bool FGJSBsim::copy_to_JSBsim()
       FCS->SetThrottleCmd(i, globals->get_controls()->get_throttle(i));
       FCS->SetMixtureCmd(i, globals->get_controls()->get_mixture(i));
       FCS->SetPropAdvanceCmd(i, globals->get_controls()->get_prop_advance(i));
+      FCS->SetFeatherCmd(i, globals->get_controls()->get_feather(i));
 
       switch (Propulsion->GetEngine(i)->GetType()) {
       case FGEngine::etPiston:
@@ -548,6 +550,19 @@ bool FGJSBsim::copy_to_JSBsim()
         FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
         break;
         } // end FGRocket code block
+      case FGEngine::etTurboProp:
+        { // FGTurboProp code block
+        FGTurboProp* eng = (FGTurboProp*)Propulsion->GetEngine(i);
+        eng->SetAugmentation( globals->get_controls()->get_augmentation(i) );
+        eng->SetReverse( globals->get_controls()->get_reverser(i) );
+        eng->SetInjection( globals->get_controls()->get_water_injection(i) );
+        eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
+        eng->SetIgnition( globals->get_controls()->get_ignition(i) );
+
+		eng->SetGeneratorPower( globals->get_controls()->get_generator_breaker(i) );
+		eng->SetCondition( globals->get_controls()->get_condition(i) );
+        break;
+        } // end FGTurboProp code block
       }
 
       { // FGEngine code block
@@ -742,6 +757,32 @@ bool FGJSBsim::copy_from_JSBsim()
         globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
         } // end FGTurbine code block
         break;
+      case FGEngine::etTurboProp:
+        { // FGTurboProp code block
+        FGTurboProp* eng = (FGTurboProp*)Propulsion->GetEngine(i);
+        node->setDoubleValue("n1", eng->GetN1());
+        //node->setDoubleValue("n2", eng->GetN2());
+        node->setDoubleValue("itt_degf", 32 + eng->GetITT()*9/5);
+        node->setBoolValue("augmentation", eng->GetAugmentation());
+        node->setBoolValue("water-injection", eng->GetInjection());
+        node->setBoolValue("ignition", eng->GetIgnition());
+        node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
+        node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
+        node->setDoubleValue("oil-pressure-psi", eng->getOilPressure_psi());
+        node->setBoolValue("reversed", eng->GetReversed());
+        node->setBoolValue("cutoff", eng->GetCutoff());
+        node->setBoolValue("starting", eng->GetEngStarting());
+        node->setBoolValue("generator-power", eng->GetGeneratorPower());
+        node->setBoolValue("damaged", eng->GetCondition());
+        node->setBoolValue("ielu-intervent", eng->GetIeluIntervent());
+        node->setDoubleValue("oil-temperature-degf", eng->getOilTemp_degF());
+//        node->setBoolValue("onfire", eng->GetFire());
+        globals->get_controls()->set_reverser(i, eng->GetReversed() );
+        globals->get_controls()->set_cutoff(i, eng->GetCutoff() );
+        globals->get_controls()->set_water_injection(i, eng->GetInjection() );
+        globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
+        } // end FGTurboProp code block
+        break;
       case FGEngine::etElectric:
         { // FGElectric code block
         FGElectric* eng = (FGElectric*)Propulsion->GetEngine(i);
@@ -773,6 +814,7 @@ bool FGJSBsim::copy_from_JSBsim()
         tnode->setDoubleValue("rpm", thruster->GetRPM());
         tnode->setDoubleValue("pitch", prop->GetPitch());
         tnode->setDoubleValue("torque", prop->GetTorque());
+        tnode->setBoolValue("feathered", prop->GetFeather());
         } // end FGPropeller code block
         break;
       case FGThruster::ttRotor:

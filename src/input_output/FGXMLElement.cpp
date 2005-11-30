@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.5 2005/11/12 13:56:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.6 2005/11/30 01:31:18 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -346,7 +346,7 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
     value = 0.0;
     cerr << "Could not find an X triplet item for this column vector." << endl;
   }
-  triplet(eX) = value;
+  triplet(1) = value;
 
   item = FindElement("y");
   if (!item) item = FindElement("pitch");
@@ -357,7 +357,7 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
     value = 0.0;
     cerr << "Could not find a Y triplet item for this column vector." << endl;
   }
-  triplet(eY) = value;
+  triplet(2) = value;
 
   item = FindElement("z");
   if (!item) item = FindElement("yaw");
@@ -368,7 +368,7 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
     value = 0.0;
     cerr << "Could not find a Z triplet item for this column vector." << endl;
   }
-  triplet(eZ) = value;
+  triplet(3) = value;
 
   return triplet;
 }

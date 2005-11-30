@@ -67,7 +67,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.9 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.10 2005/11/30 01:31:18 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -129,10 +129,8 @@ CLASS DOCUMENTATION
  * basic theoretical aero knowledge.
  *
  * One of the more unique features of JSBSim is its method of modeling flight
- * control systems and the autopilot.  These are modeled by assembling strings
- * of components that represent filters, switches, summers, gains, etc.  The
- * components are listed in the configuration file in the order they are to be
- * executed.
+ * control systems and an autopilot.  These are modeled by assembling strings
+ * of components that represent filters, switches, summers, gains, sensors, etc.
  *
  * Another unique feature is displayed in the use of "properties".  Properties
  * essentially expose chosen variables as nodes in a tree, in a directory-like
@@ -145,9 +143,9 @@ CLASS DOCUMENTATION
  *
  * The equations of motion are modeled essentially as they are presented in
  * aerospace textbooks for the benefit of student users, but quaternions are
- * used to track orientation, avoiding "gimbal lock". While JSBSim is currently
+ * used to track orientation, avoiding "gimbal lock". While JSBSim is
  * designed to model primarily atmospheric flight at lower speeds, coriolis and
- * centripetal accelerations will be incorporated into the EOM in the future to
+ * centripetal accelerations are incorporated into the EOM to
  * permit a wider range of vehicles to be simulated.
  *
  * Currently under development is an expansion of the atmospheric modeling for
