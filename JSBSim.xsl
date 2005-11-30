@@ -14,7 +14,6 @@
                     <!-- FILEHEADER -->
                     <tr bgcolor="EEEEEE">
                         <font face="Arial" size="2">
-                            <xsl:variable name="fileheader" select="/fdm_config/fileheader"></xsl:variable>
                             <b>FILE INFORMATION</b><br/><br/>
                             <b>Author[s]: </b>
                             <xsl:for-each select="fileheader/author" >
@@ -38,7 +37,6 @@
                     <!-- METRICS -->
                     <tr bgcolor="DDEEFF">
                         <font face="Arial" size="2">
-                            <xsl:variable name="metrics" select="/fdm_config/metrics"></xsl:variable>
                             <b>METRICS</b><br/><br/>
                             <b>Wing span: </b><xsl:value-of select="metrics/wingspan"/>
                             <xsl:if test="metrics/wingspan/@unit != 0">(unit: <xsl:value-of select="metrics/wingspan/@unit"/>)</xsl:if><br/>
@@ -112,7 +110,6 @@
                     <!-- GROUND REACTIONS -->
                     <tr bgcolor="DDEEFF">
                         <font face="Arial" size="2">
-                            <xsl:variable name="groundreactions" select="ground_reactions"/>
                             <b>GROUND REACTIONS</b><br/><br/>
                         </font>
                     </tr>
@@ -122,7 +119,6 @@
                     <!-- PROPULSION -->
                     <tr bgcolor="DDEEFF">
                         <font face="Arial" size="2">
-                            <xsl:variable name="propulsion" select="propulsion"/>
                             <b>PROPULSION</b><br/><br/>
                         </font>
                     </tr>
@@ -130,21 +126,126 @@
 <tr><br/></tr>
                     
                     <!-- AUTOPILOT -->
-                    <tr bgcolor="FFEEEE">
+                    <tr bgcolor="FFDDDD">
                         <font face="Arial" size="2">
-                            <xsl:variable name="autopilot" select="autopilot"></xsl:variable>
                             <b>AUTOPILOT</b><br/><br/>
                         </font></tr>                    
-<tr><br/></tr>
+<!-- <tr><br/></tr> -->
                     <!-- FLIGHT CONTROL -->
-                    <tr bgcolor="FFEEEE">
-                        <table width="100%" bgcolor="FFEEEE">
+                    <tr bgcolor="FFDDDD"><table width="100%" bgcolor="FFDDDD">
                             <th align="left" colspan="2"><font face="Arial" size="2"><b>FLIGHT CONTROL</b><br/></font></th>
-                                <xsl:for-each select="flight_control/channel"><tr><td valign="top"><font face="Arial" size="2">Channel <xsl:value-of select="@name"/></font></td>
+                                <xsl:for-each select="flight_control/channel"><tr><td valign="top"><font face="Arial" size="2"><b>Channel </b><xsl:value-of select="@name"/></font></td>
                                     <td><xsl:for-each select="component">
-                                        <font face="Arial" size="2"><p>Component: <xsl:value-of select="@name"/></p></font>
+                                        <font face="Arial" size="2">
+                                            <p><b>Component: </b><xsl:value-of select="@name"/>, Type: 
+                                            <xsl:choose>
+                                                <xsl:when test="@type = 'LAG_FILTER'">
+                                                    <i>Lag filter</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                    <table>
+                                                        <tr><td nowrap="1" valign="center" align="left"><font face="Arial"
+                                                        size="2">Filter:</font></td><td align="center" nowrap="1"><font face="Arial" size="2">
+                                                        <xsl:value-of select="c1"/><br/><hr width="100%"/>
+                                                        s + <xsl:value-of select="c1"/>
+                                                        </font></td></tr>
+                                                    </table>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'LEAD_LAG_FILTER'" >
+                                                    <i>Lead-lag filter</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                    <table>
+                                                        <tr><td nowrap="1" valign="center" align="left"><font face="Arial"
+                                                        size="2">Filter:</font></td><td align="center" nowrap="1"><font face="Arial" size="2">
+                                                        <xsl:if test="count(c1)>0"><xsl:value-of select="c1"/>s</xsl:if>
+                                                        <xsl:if test="count(c1)>0 and count(c2)>1"> + </xsl:if>
+                                                        <xsl:if test="count(c2)>0"><xsl:value-of select="c2"/></xsl:if>
+                                                        <br/><hr width="100%"/>
+                                                        <xsl:if test="count(c3)>0"><xsl:value-of select="c3"/>s</xsl:if>
+                                                        <xsl:if test="count(c3)>0 and count(c4)>1"> + </xsl:if>
+                                                        <xsl:if test="count(c4)>0"><xsl:value-of select="c4"/></xsl:if>
+                                                        </font></td></tr>
+                                                    </table>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'SECOND_ORDER_FILTER'" >
+                                                    <i>Second order filter</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                    <table>
+                                                        <tr><td nowrap="1" valign="center" align="left"><font face="Arial"
+                                                        size="2">Filter:</font></td><td align="center" nowrap="1"><font face="Arial" size="2">
+                                                        <xsl:value-of select="c1"/>s<sup>2</sup> +
+                                                        <xsl:value-of select="c2"/>s + <xsl:value-of select="c3"/><br/><hr width="100%"/>
+                                                        <xsl:value-of select="c4"/>s<sup>2</sup> + <xsl:value-of select="c5"/>s + <xsl:value-of select="c6"/>
+                                                        </font></td></tr>
+                                                    </table>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'WASHOUT_FILTER'" >
+                                                    <i>Washout filter</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'PURE_GAIN'" >
+                                                    <i>Gain</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'SCHEDULED_GAIN'" >
+                                                    <i>Scheduled gain</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'AEROSURFACE_SCALE'" >
+                                                    <i>Aerosurface scale</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'SUMMER'" >
+                                                    <i>Summer</i><br/>
+                                                    <xsl:for-each select="input">
+                                                        Input: <i><xsl:value-of select="."/></i><br/>
+                                                    </xsl:for-each>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'DEADBAND'" >
+                                                    <i>Deadband</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'SWITCH'" >
+                                                    <i>Switch</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                    <ul>
+                                                    <xsl:for-each select="test">
+                                                        <li>
+                                                        <xsl:choose>
+                                                            <xsl:when test="@logic='AND'">
+                                                                If all of the following tests are true:
+                                                            </xsl:when>
+                                                            <xsl:when test="@logic='OR'">
+                                                                If any of the following tests are true:
+                                                            </xsl:when>
+                                                            <xsl:when test="count(@logic)=0">
+                                                                If all of the following tests are true:
+                                                            </xsl:when>
+                                                        </xsl:choose>
+                                                        <pre style="font-size:100%"><xsl:value-of select="."/></pre>
+                                                        then the switch value is: <xsl:value-of select="@value"/><br/></li>
+                                                    </xsl:for-each>
+                                                    <xsl:if test="default/@value"><li>Otherwise, the value is: <xsl:value-of
+                                                    select="default/@value"/></li></xsl:if><br/>
+                                                    </ul>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'KINEMAT'" >
+                                                    <i>Kinematic</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                                <xsl:when test="@type =  'FUNCTION'" >
+                                                    <i>Function</i><br/>
+                                                    <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
+                                                </xsl:when>
+                                            </xsl:choose>
+                                            <xsl:if test="clipto">
+                                                <xsl:if test="clipto/min">Minimum limit: <xsl:value-of select="clipto/min"/><br/></xsl:if>
+                                                <xsl:if test="clipto/max">Maximum limit: <xsl:value-of select="clipto/max"/></xsl:if>
+                                            </xsl:if>
+                                            <xsl:if test="output">Output to: <i><xsl:value-of select="output"/></i></xsl:if>
+
+                                            </p></font>
                                     </xsl:for-each>
-                                    </td></tr>
+                                    <p/></td></tr>
                                 </xsl:for-each>
                             </table>
                     </tr>
@@ -152,9 +253,8 @@
 <tr><br/></tr>
                     
                     <!-- AERODYNAMICS -->
-                    <tr bgcolor="DDFFDD">
+                    <tr bgcolor="CCCCCC">
                         <font face="Arial" size="2">
-                            <xsl:variable name="aerodynamics" select="aerodynamics"></xsl:variable>
                             <b>AERODYNAMICS</b><br/><br/>
                         </font>
                     </tr>
@@ -162,9 +262,8 @@
 <tr><br/></tr>
                     
                     <!-- INPUT -->
-                    <tr bgcolor="EEEEEE">
+                    <tr bgcolor="BBBBBB">
                         <font face="Arial" size="2">
-                            <xsl:variable name="input" select="input"></xsl:variable>
                             <b>INPUT</b><br/><br/>
                         </font>
                     </tr>
@@ -172,9 +271,8 @@
 <tr><br/></tr>
                     
                     <!-- OUTPUT -->
-                    <tr bgcolor="EEEEEE">
+                    <tr bgcolor="AAAAAA">
                         <font face="Arial" size="2">
-                            <xsl:variable name="output" select="output"></xsl:variable>
                             <b>OUTPUT</b><br/><br/>
                         </font>
                     </tr>
@@ -183,3 +281,4 @@
         </html>
     </xsl:template>
 </xsl:stylesheet>
+
