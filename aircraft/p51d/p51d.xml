@@ -3,10 +3,10 @@
 <fdm_config name="P51D" version="2.0" release="BETA">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
+        <author> Aeromatic / Jon Berndt / DATCOM </author>
+        <filecreationdate> 2001 </filecreationdate>
+        <description> Simple model of P-51D fighter </description>
+        <version> 0.1 </version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
 

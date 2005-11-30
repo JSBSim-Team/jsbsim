@@ -297,6 +297,7 @@
                 /systems/l410/battery1-ok == 1
                 /systems/l410/battery2-ok == 1
             </test>
+            <output>/systems/l410/battery-all-ok</output>
         </component>
 
         <component name="battery-one-ok" type="SWITCH">
@@ -305,15 +306,6 @@
                 /systems/l410/battery1-ok == 1
                 /systems/l410/battery2-ok == 1
             </test>
-        </component>
-
-        <component name="battery-all-ok2" type="PURE_GAIN">
-            <input>fcs/battery-all-ok</input>
-            <output>/systems/l410/battery-all-ok</output>
-        </component>
-
-        <component name="battery-one-ok2" type="PURE_GAIN">
-            <input>fcs/battery-one-ok</input>
             <output>/systems/l410/battery-one-ok</output>
         </component>
 
@@ -327,10 +319,6 @@
                 /systems/electrical/outputs/bus36v > 10
                 /systems/electrical/outputs/bus115v > 10
             </test>
-        </component>
-
-        <component name="spec-turn2" type="PURE_GAIN">
-            <input>fcs/spec-turn</input>
             <output>/controls/switches/specbus_28v_115v_36v</output>
         </component>
 
@@ -342,10 +330,6 @@
                 /instrumentation/warn-disp/wd-e1-on == 1
                 /controls/engines/engine[0]/reverser == 1
             </test>
-        </component>
-
-        <component name="wd-1beta2" type="PURE_GAIN">
-            <input>fcs/wd-1beta1</input>
             <output>/instrumentation/warn-disp/wde1-beta</output>
         </component>
 
@@ -355,10 +339,6 @@
                 /instrumentation/warn-disp/wd-e2-on == 1
                 /controls/engines/engine[1]/reverser == 1
             </test>
-        </component>
-
-        <component name="wd-2beta2" type="PURE_GAIN">
-            <input>fcs/wd-2beta1</input>
             <output>/instrumentation/warn-disp/wde2-beta</output>
         </component>
 
@@ -369,15 +349,11 @@
             <test logic="AND" value="0.0000">
                 /controls/switches/isolvalve1-sw lt 2
             </test>
-        </component>
-
-        <component name="indicated-throttle-l2" type="PURE_GAIN">
-            <input>fcs/indicated-throttle-l3</input>
             <output>/instrumentation/engine/indicated-tl-norm</output>
         </component>
 
         <component name="indicated-throttle-l" type="SCHEDULED_GAIN">
-            <input>fcs/indicated-throttle-l2</input>
+            <input>fcs/indicated-throttle-l3</input>
             <table>
                 <independentVar>/controls/engines/engine[0]/reverser</independentVar>
                 <tableData>
@@ -393,15 +369,11 @@
             <test logic="AND" value="0.0000">
                 /controls/switches/isolvalve2-sw lt 2
             </test>
-        </component>
-
-        <component name="indicated-throttle-r2" type="PURE_GAIN">
-            <input>fcs/indicated-throttle-r3</input>
             <output>/instrumentation/engine/indicated-tr-norm</output>
         </component>
 
         <component name="indicated-throttle-r" type="SCHEDULED_GAIN">
-            <input>fcs/indicated-throttle-r2</input>
+            <input>fcs/indicated-throttle-r3</input>
             <table>
                 <independentVar>/controls/engines/engine[1]/reverser</independentVar>
                 <tableData>
@@ -421,10 +393,6 @@
                 /controls/switches/isolvalve1-sw == 2
                 /controls/engines/engine[0]/cutoff-cmd == 0
             </test>
-        </component>
-
-        <component name="indicated-cutoff-l2" type="PURE_GAIN">
-            <input>fcs/indicated-cutoff-l1</input>
             <output>/instrumentation/engine/indicated-cutoffl-norm</output>
         </component>
 
@@ -437,10 +405,6 @@
                 /controls/switches/isolvalve2-sw == 2
                 /controls/engines/engine[1]/cutoff-cmd == 0
             </test>
-        </component>
-
-        <component name="indicated-cutoff-r2" type="PURE_GAIN">
-            <input>fcs/indicated-cutoff-r1</input>
             <output>/instrumentation/engine/indicated-cutoffr-norm</output>
         </component>
 
@@ -622,10 +586,6 @@
                 /instrumentation/wiper/position-dir == 1
                 /instrumentation/wiper/position-norm == 1
             </test>
-        </component>
-
-        <component name="sterace-endpos2" type="PURE_GAIN">
-            <input>fcs/sterace-endpos1</input>
             <output>/instrumentation/wiper/position-dir</output>
         </component>
 
@@ -783,10 +743,6 @@
                 /instrumentation/lights/instr-flash-out == 1
                 /instrumentation/lights/instr-flash-in == 1
             </test>
-        </component>
-
-        <component name="instr-flash2" type="PURE_GAIN">
-            <input>fcs/instr-flash</input>
             <output>/instrumentation/lights/instr-flash-in</output>
         </component>
 
@@ -819,10 +775,6 @@
                 /instrumentation/lights/beacon-kinemat-in == 1
                 /instrumentation/lights/beacon-kinemat-out == 1
             </test>
-        </component>
-
-        <component name="beacon-swon2" type="PURE_GAIN">
-            <input>fcs/beacon-swon</input>
             <output>/instrumentation/lights/beacon-kinemat-in</output>
         </component>
 
@@ -847,10 +799,6 @@
                 /instrumentation/lights/beacon-kinemat-out > 0.90
                 /instrumentation/lights/beacon-kinemat-out lt 0.97
             </test>
-        </component>
-
-        <component name="beacon-swon4" type="PURE_GAIN">
-            <input>fcs/beacon-swon3</input>
             <output>/instrumentation/lights/beacon-on</output>
         </component>
 
@@ -862,10 +810,6 @@
                 /controls/switches/lgh-navigation-sw == 1
                 /systems/electrical/outputs/navigation-lights > 20
             </test>
-        </component>
-
-        <component name="navig-swon2" type="PURE_GAIN">
-            <input>fcs/navig-swon</input>
             <output>/instrumentation/lights/navigation-on</output>
         </component>
 
@@ -876,10 +820,6 @@
             <test logic="AND" value="0.0000">
                 /systems/electrical/outputs/landing-lights > 20
             </test>
-        </component>
-
-        <component name="search1-swon2" type="PURE_GAIN">
-            <input>fcs/search1-swon</input>
             <output>/instrumentation/lights/search1-on</output>
         </component>
 
@@ -888,10 +828,6 @@
             <test logic="AND" value="0.0000">
                 /systems/electrical/outputs/landing-lights > 20
             </test>
-        </component>
-
-        <component name="search2-swon2" type="PURE_GAIN">
-            <input>fcs/search2-swon</input>
             <output>/instrumentation/lights/search2-on</output>
         </component>
 
@@ -919,10 +855,6 @@
                 /controls/switches/chck-extinguish-eng-sw == 2
                 /systems/l410/extinguish-e2-2-ok == 1
             </test>
-        </component>
-
-        <component name="chck-extinguish2" type="PURE_GAIN">
-            <input>fcs/chck-extinguish</input>
             <output>/instrumentation/warn-disp/wd-extinguish-eng</output>
         </component>
 
@@ -1029,7 +961,11 @@
             <output>fcs/flap-pos-deg</output>
         </component>
 
-<!-- need to add a component here that turns the flaps command in degrees to a norm -->
+        <component name="Flap Normalizer" type="PURE_GAIN">
+          <input>fcs/flap-pos-deg</input>
+          <gain>0.0238</gain> <!-- 1/42 -->
+          <output>fcs/flap-pos-norm</output>
+        </component>
 
         <component name="Gear Control" type="KINEMAT">
             <input>/controls/gear/gear-down-cond</input>
@@ -1160,7 +1096,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.0390</value>
                 </product>
             </function>
@@ -1253,7 +1189,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.4000</value>
                 </product>
             </function>

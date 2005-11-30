@@ -5,7 +5,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.40 2005/11/12 13:56:28 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.41 2005/11/30 01:29:53 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -202,7 +202,7 @@
     </propulsion>
     <autopilot file="c172ap"/>
     <flight_control name="c172">
-        <channel name="pitch">
+        <channel name="Pitch">
             <component name="Pitch Trim Sum" type="SUMMER">
                 <input>ap/elevator_cmd</input>
                 <input>fcs/elevator-cmd-norm</input>
