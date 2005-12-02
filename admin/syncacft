@@ -1,0 +1,52 @@
+#!/bin/sh
+
+if [ x$1 = x ]; then
+   echo "Usage:"
+   echo " $0 [path to the Aircraft directory of the FlightGear base package]"
+   exit;
+fi
+if [ ! -d $1 -o ! -d $1/Generic ]; then
+   echo "Not the FlightGear Aircraft directory: $1"
+   exit;
+fi
+if [ ! -d engine ]; then
+   echo "Please change to the root directory of the JSBSim package."
+   exit;
+fi
+
+CDIR=`pwd`
+ADIR=$1
+
+NOTFOUND=
+cd aircraft
+FILES=`grep JSBSim.xsl */*.xml | awk -F':' '{print $1}'`
+for n in $FILES; do
+    if [ ! -f $ADIR/$n ]; then
+        NOTFOUND="$NOTFOUND $n";
+    else
+        cp -p $n $ADIR/$n;
+    fi
+done
+if [ "x$NOTFOUND" != "x" ]; then
+   echo "The following aircraft files could not be found in the FlightGear"
+   echo "base package:"
+   for n in $NOTFOUND; do echo "    "$n; done
+   echo
+fi
+
+NOTFOUND=
+cd $ADIR
+for n in `ls -1 */Engines/*.xml`; do 
+    FILE=`echo $n | awk -F'/' '{printf $3}'`;
+    if [ ! -f $CDIR/engine/$FILE ]; then 
+        NOTFOUND="$NOTFOUND $n";
+    else
+        cp -p $CDIR/engine/$FILE $n;
+    fi
+done
+
+if [ "x$NOTFOUND" != "x" ]; then
+   echo "The following engine files could not be found in the JSBSim directory:"
+   for n in $NOTFOUND; do echo "    "$n; done
+fi
+cd  $CDIR;
