@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.4 2005/11/30 01:31:18 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.5 2005/12/02 10:56:07 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.4 2005/11/30 01:31:18 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.5 2005/12/02 10:56:07 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,6 +292,7 @@ protected:
   static const string needed_cfg_version;
   static const string JSBSim_version;
 
+public:
 /// Moments L, M, N
 enum {eL     = 1, eM,     eN    };
 /// Rates P, Q, R

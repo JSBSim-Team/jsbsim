@@ -72,7 +72,8 @@ class FGOutput;
 class FGInitialCondition;
 }
 
-using namespace JSBSim;
+// Adding it here will cause a namespace clash in FlightGear -EMH-
+// using namespace JSBSim;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -85,7 +86,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.2 2005/06/13 00:35:18 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.3 2005/12/02 10:56:07 ehofman Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -206,20 +207,20 @@ public:
     void update_ic(void);
 
 private:
-    FGFDMExec *fdmex;
-    FGInitialCondition *fgic;
+    JSBSim::FGFDMExec *fdmex;
+    JSBSim::FGInitialCondition *fgic;
     bool needTrim;
 
-    FGState*        State;
-    FGAtmosphere*   Atmosphere;
-    FGFCS*          FCS;
-    FGPropulsion*   Propulsion;
-    FGMassBalance*  MassBalance;
-    FGAircraft*     Aircraft;
-    FGPropagate*    Propagate;
-    FGAuxiliary*    Auxiliary;
-    FGAerodynamics* Aerodynamics;
-    FGGroundReactions *GroundReactions;
+    JSBSim::FGState*        State;
+    JSBSim::FGAtmosphere*   Atmosphere;
+    JSBSim::FGFCS*          FCS;
+    JSBSim::FGPropulsion*   Propulsion;
+    JSBSim::FGMassBalance*  MassBalance;
+    JSBSim::FGAircraft*     Aircraft;
+    JSBSim::FGPropagate*    Propagate;
+    JSBSim::FGAuxiliary*    Auxiliary;
+    JSBSim::FGAerodynamics* Aerodynamics;
+    JSBSim::FGGroundReactions *GroundReactions;
 
     int runcount;
     double trim_elev;

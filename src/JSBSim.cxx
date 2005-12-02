@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.7 2005/11/30 01:31:18 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.8 2005/12/02 10:56:07 ehofman Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -43,27 +43,27 @@
 #include <FDM/flight.hxx>
 
 #include <Aircraft/aircraft.hxx>
-#include <Controls/controls.hxx>
+#include <Aircraft/controls.hxx>
 #include <Main/globals.hxx>
 #include <Main/fg_props.hxx>
 
-#include <FDM/JSBSim/models/FGModel.h>
+#include "JSBSim.hxx"
 #include <FDM/JSBSim/FGFDMExec.h>
+#include <FDM/JSBSim/FGJSBBase.h>
+#include <FDM/JSBSim/FGState.h>
+#include <FDM/JSBSim/initialization/FGInitialCondition.h>
+#include <FDM/JSBSim/initialization/FGTrim.h>
+#include <FDM/JSBSim/models/FGModel.h>
 #include <FDM/JSBSim/models/FGAircraft.h>
 #include <FDM/JSBSim/models/FGFCS.h>
 #include <FDM/JSBSim/models/FGPropagate.h>
-#include <FDM/JSBSim/FGState.h>
 #include <FDM/JSBSim/models/FGAuxiliary.h>
-#include <FDM/JSBSim/initialization/FGInitialCondition.h>
-#include <FDM/JSBSim/initialization/FGTrim.h>
 #include <FDM/JSBSim/models/FGAtmosphere.h>
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
 #include <FDM/JSBSim/models/FGLGear.h>
-#include <FDM/JSBSim/input_output/FGPropertyManager.h>
 #include <FDM/JSBSim/models/propulsion/FGEngine.h>
 #include <FDM/JSBSim/models/propulsion/FGPiston.h>
-#include <FDM/JSBSim/input_output/FGGroundCallback.h>
 #include <FDM/JSBSim/models/propulsion/FGTurbine.h>
 #include <FDM/JSBSim/models/propulsion/FGTurboProp.h>
 #include <FDM/JSBSim/models/propulsion/FGRocket.h>
@@ -72,7 +72,10 @@
 #include <FDM/JSBSim/models/propulsion/FGPropeller.h>
 #include <FDM/JSBSim/models/propulsion/FGRotor.h>
 #include <FDM/JSBSim/models/propulsion/FGTank.h>
-#include "JSBSim.hxx"
+#include <FDM/JSBSim/input_output/FGPropertyManager.h>
+#include <FDM/JSBSim/input_output/FGGroundCallback.h>
+
+using namespace JSBSim;
 
 static inline double
 FMAX (double a, double b)
@@ -286,9 +289,6 @@ void FGJSBsim::init()
     // Explicitly call the superclass's
     // init method first.
 
-#ifdef FG_WEATHERCM
-    Atmosphere->UseInternal();
-#else
     if (fgGetBool("/environment/params/control-fdm-atmosphere")) {
       Atmosphere->UseExternal();
       Atmosphere->SetExTemperature(
@@ -305,7 +305,6 @@ void FGJSBsim::init()
     } else {
       Atmosphere->UseInternal();
     }
-#endif
 
     fgic->SetVnorthFpsIC( wind_from_north->getDoubleValue() );
     fgic->SetVeastFpsIC( wind_from_east->getDoubleValue() );
@@ -337,9 +336,9 @@ void FGJSBsim::init()
     switch(fgic->GetSpeedSet()) {
     case setned:
         SG_LOG(SG_FLIGHT,SG_INFO, "  Vn,Ve,Vd= "
-               << Propagate->GetVel(eNorth) << ", "
-               << Propagate->GetVel(eEast) << ", "
-               << Propagate->GetVel(eDown) << " ft/s");
+               << Propagate->GetVel(FGJSBBase::eNorth) << ", "
+               << Propagate->GetVel(FGJSBBase::eEast) << ", "
+               << Propagate->GetVel(FGJSBBase::eDown) << " ft/s");
     break;
     case setuvw:
         SG_LOG(SG_FLIGHT,SG_INFO, "  U,V,W= "
@@ -361,11 +360,11 @@ void FGJSBsim::init()
     stall_warning->setDoubleValue(0);
 
     SG_LOG( SG_FLIGHT, SG_INFO, "  Bank Angle: "
-            << Propagate->GetEuler(ePhi)*RADTODEG << " deg" );
+            << Propagate->GetEuler(FGJSBBase::ePhi)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Pitch Angle: "
-            << Propagate->GetEuler(eTht)*RADTODEG << " deg" );
+            << Propagate->GetEuler(FGJSBBase::eTht)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  True Heading: "
-            << Propagate->GetEuler(ePsi)*RADTODEG << " deg" );
+            << Propagate->GetEuler(FGJSBBase::ePsi)*RADTODEG << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Latitude: "
             << Propagate->GetLocation().GetLatitudeDeg() << " deg" );
     SG_LOG( SG_FLIGHT, SG_INFO, "  Longitude: "
@@ -550,12 +549,10 @@ bool FGJSBsim::copy_to_JSBsim()
         FGRocket* eng = (FGRocket*)Propulsion->GetEngine(i);
         break;
         } // end FGRocket code block
-      case FGEngine::etTurboProp:
+      case FGEngine::etTurboprop:
         { // FGTurboProp code block
         FGTurboProp* eng = (FGTurboProp*)Propulsion->GetEngine(i);
-        eng->SetAugmentation( globals->get_controls()->get_augmentation(i) );
         eng->SetReverse( globals->get_controls()->get_reverser(i) );
-        eng->SetInjection( globals->get_controls()->get_water_injection(i) );
         eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
         eng->SetIgnition( globals->get_controls()->get_ignition(i) );
 
@@ -642,18 +639,18 @@ bool FGJSBsim::copy_from_JSBsim()
 
     // Velocities
 
-    _set_Velocities_Local( Propagate->GetVel(eNorth),
-                           Propagate->GetVel(eEast),
-                           Propagate->GetVel(eDown) );
+    _set_Velocities_Local( Propagate->GetVel(FGJSBBase::eNorth),
+                           Propagate->GetVel(FGJSBBase::eEast),
+                           Propagate->GetVel(FGJSBBase::eDown) );
 
     _set_Velocities_Wind_Body( Propagate->GetUVW(1),
                                Propagate->GetUVW(2),
                                Propagate->GetUVW(3) );
 
     // Make the HUD work ...
-    _set_Velocities_Ground( Propagate->GetVel(eNorth),
-                            Propagate->GetVel(eEast),
-                            -Propagate->GetVel(eDown) );
+    _set_Velocities_Ground( Propagate->GetVel(FGJSBBase::eNorth),
+                            Propagate->GetVel(FGJSBBase::eEast),
+                            -Propagate->GetVel(FGJSBBase::eDown) );
 
     _set_V_rel_wind( Auxiliary->GetVt() );
 
@@ -663,13 +660,13 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_V_ground_speed( Auxiliary->GetVground() );
 
-    _set_Omega_Body( Propagate->GetPQR(eP),
-                     Propagate->GetPQR(eQ),
-                     Propagate->GetPQR(eR) );
+    _set_Omega_Body( Propagate->GetPQR(FGJSBBase::eP),
+                     Propagate->GetPQR(FGJSBBase::eQ),
+                     Propagate->GetPQR(FGJSBBase::eR) );
 
-    _set_Euler_Rates( Auxiliary->GetEulerRates(ePhi),
-                      Auxiliary->GetEulerRates(eTht),
-                      Auxiliary->GetEulerRates(ePsi) );
+    _set_Euler_Rates( Auxiliary->GetEulerRates(FGJSBBase::ePhi),
+                      Auxiliary->GetEulerRates(FGJSBBase::eTht),
+                      Auxiliary->GetEulerRates(FGJSBBase::ePsi) );
 
     _set_Mach_number( Auxiliary->GetMach() );
 
@@ -680,7 +677,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_Altitude_AGL( Propagate->GetDistanceAGL() );
     {
-      double loc_cart[3] = { l(eX), l(eY), l(eZ) };
+      double loc_cart[3] = { l(FGJSBBase::eX), l(FGJSBBase::eY), l(FGJSBBase::eZ) };
       double contact[3], d[3], sd, t;
       int id;
       is_valid_m(&t, d, &sd);
@@ -690,9 +687,9 @@ bool FGJSBsim::copy_from_JSBsim()
       _set_Runway_altitude( rwrad - get_Sea_level_radius() );
     }
 
-    _set_Euler_Angles( Propagate->GetEuler(ePhi),
-                       Propagate->GetEuler(eTht),
-                       Propagate->GetEuler(ePsi) );
+    _set_Euler_Angles( Propagate->GetEuler(FGJSBBase::ePhi),
+                       Propagate->GetEuler(FGJSBBase::eTht),
+                       Propagate->GetEuler(FGJSBBase::ePsi) );
 
     _set_Alpha( Auxiliary->Getalpha() );
     _set_Beta( Auxiliary->Getbeta() );
@@ -757,14 +754,12 @@ bool FGJSBsim::copy_from_JSBsim()
         globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
         } // end FGTurbine code block
         break;
-      case FGEngine::etTurboProp:
+      case FGEngine::etTurboprop:
         { // FGTurboProp code block
         FGTurboProp* eng = (FGTurboProp*)Propulsion->GetEngine(i);
         node->setDoubleValue("n1", eng->GetN1());
         //node->setDoubleValue("n2", eng->GetN2());
         node->setDoubleValue("itt_degf", 32 + eng->GetITT()*9/5);
-        node->setBoolValue("augmentation", eng->GetAugmentation());
-        node->setBoolValue("water-injection", eng->GetInjection());
         node->setBoolValue("ignition", eng->GetIgnition());
         node->setDoubleValue("nozzle-pos-norm", eng->GetNozzle());
         node->setDoubleValue("inlet-pos-norm", eng->GetInlet());
@@ -779,8 +774,6 @@ bool FGJSBsim::copy_from_JSBsim()
 //        node->setBoolValue("onfire", eng->GetFire());
         globals->get_controls()->set_reverser(i, eng->GetReversed() );
         globals->get_controls()->set_cutoff(i, eng->GetCutoff() );
-        globals->get_controls()->set_water_injection(i, eng->GetInjection() );
-        globals->get_controls()->set_augmentation(i, eng->GetAugmentation() );
         } // end FGTurboProp code block
         break;
       case FGEngine::etElectric:
