@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.3 2005/12/03 13:51:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGKinemat.cpp,v 1.4 2005/12/03 14:20:17 jberndt Exp $";
 static const char *IdHdr = ID_FLAPS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ FGKinemat::FGKinemat(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element
   Detents.clear();
   TransitionTimes.clear();
 
-  OutputPct=0;
+  Output = OutputPct = 0;
   DoScale = true;
 
   if (element->FindElement("noscale")) DoScale = false;
@@ -105,7 +105,7 @@ bool FGKinemat::Run(void )
 
   if (DoScale) Input *= Detents[NumDetents-1];
 
-  Output = OutputNode->getDoubleValue();
+  if (IsOutput) Output = OutputNode->getDoubleValue();
 
   if (Input < Detents[0])
     Input = Detents[0];
