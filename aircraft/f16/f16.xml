@@ -261,7 +261,12 @@
             <contents unit="LBS"> 500 </contents>
         </tank>
     </propulsion>
-    <flight_control name="FCS: F-16 FC">
+    <flight_control name="F-16 FC">
+
+      <!-- Declare some interface properties -->
+
+        <property>fcs/alpha-norm</property>
+
         <channel name="Pitch">
             <component name="elevator cmd limiter" type="SUMMER">
                 <input>fcs/elevator-cmd-norm</input>
@@ -343,6 +348,8 @@
             <component name="roll rate d" type="LEAD_LAG_FILTER">
                 <input>fcs/roll-trim-error</input>
                 <c1>-0.00125</c1>
+                <c2>0.0</c2>
+                <c3>0.0</c3>
                 <c4>1</c4>
             </component>
 
@@ -421,6 +428,7 @@
                 <output>fcs/rudder-pos-rad</output>
             </component>
         </channel>
+
         <channel name="Leading Edge Flap">
             <component name="Alpha Norm Gain" type="PURE_GAIN">
                 <input>aero/alpha-rad</input>
@@ -428,7 +436,7 @@
                 <output>fcs/alpha-norm</output>
             </component>
 
-            <component name="LEF Control" type="KINEMAT">
+            <component name="LEF Pos Deg" type="KINEMAT">
                 <input>fcs/alpha-norm</input>
                 <traverse>
                     <setting>
@@ -444,9 +452,29 @@
                         <time>2</time>
                     </setting>
                 </traverse>
-                <output>fcs/lef-pos-deg</output>
             </component>
+
+            <!-- ===============================================================
+                 Component for Leading edge flap position, NORMALIZED
+                 Input: fcs/lef-pos-deg (above)
+                 Output: Component (output) value is normalized leading edge
+                         flap position, mapping the LEF domain of
+                         -2 to +25 degrees into a range of 0 to 1.
+            -->
+            <component name="LEF Pos Norm" type="AEROSURFACE_SCALE">
+              <input>fcs/lef-pos-deg</input>
+              <domain>
+                <min>-2</min>  <!-- LEF actual minimum position -->
+                <max>25</max>  <!-- LEF actual maximum position -->
+              </domain>
+              <range>
+                <min>0</min>  <!-- LEF normalized minimum position -->
+                <max>1</max>  <!-- LEF normalized maximum position -->
+              </range>
+            </component>
+
         </channel>
+
         <channel name="Throttle">
             <component name="Throttle1" type="PURE_GAIN">
                 <input>fcs/throttle-cmd-norm</input>
@@ -454,13 +482,13 @@
                 <output>fcs/throttle-pos-norm</output>
             </component>
         </channel>
+
         <channel name="Flaps">
+
             <component name="Flap Command" type="SWITCH">
                 <default value="0"/>
-                <test logic="AND" value="1">
-                    velocities/vc-kts lt 250
-                </test>
                 <test logic="OR" value="1">
+                    velocities/vc-kts lt 250
                     gear/gear-cmd-norm == 1
                 </test>
             </component>
@@ -483,7 +511,22 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </component>
+
+            <component name="Flap Position Normalizer" type="AEROSURFACE_SCALE">
+              <input>fcs/flaps-control</input>
+              <domain>
+                <min>-2</min>  <!-- Flaps actual minimum position -->
+                <max>20</max>  <!-- Flaps actual maximum position -->
+              </domain>
+              <range>
+                <min>0</min>  <!-- Flaps normalized minimum position -->
+                <max>1</max>  <!-- Flaps normalized maximum position -->
+              </range>
+              <output>fcs/flap-pos-norm</output>
+            </component>
+
         </channel>
+
         <channel name="Speedbrake">
             <component name="Speedbrake Control" type="KINEMAT">
                 <input>fcs/speedbrake-cmd-norm</input>
@@ -603,7 +646,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/lef-control/output-norm</property>
+                    <property>fcs/lef-pos-norm</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
@@ -628,7 +671,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.0800</value>
                 </product>
             </function>
@@ -699,7 +742,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>velocities/q-aero-rad_sec</property>
                     <property>aero/ci2vel</property>
-                    <property>fcs/components/lef-control/output-norm</property>
+                    <property>fcs/lef-pos-norm</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
@@ -852,7 +895,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/lef-control/output-norm</property>
+                    <property>fcs/lef-pos-norm</property>
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
@@ -878,7 +921,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCLge</property>
                     <value>0.3500</value>
                 </product>
