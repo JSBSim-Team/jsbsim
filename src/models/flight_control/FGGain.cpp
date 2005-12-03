@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.7 2005/11/14 13:55:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.8 2005/12/03 12:50:40 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,8 +140,7 @@ bool FGGain::Run(void )
 
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
 
-    if (Input >= 0.0) Output = Input * OutMax / InMax;
-    else              Output = Input * OutMin / InMin;
+    Output = OutMin + ((Input - InMin) / (InMax - InMin)) * (OutMax - OutMin);
 
     Output *= Gain;
   }
