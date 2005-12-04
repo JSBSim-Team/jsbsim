@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<runscript name="L410 test script">
+  <!-- This run is for testing Jiri Javurek's L410 -->
+
+  <use aircraft="L410"/>
+  <use initialize="reset00"/>
+  <run start="0.0" end="10" dt="0.0010">
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
+      <set name="/systems/l410/battery1-ok" value="1"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
+      <set name="/systems/l410/battery2-ok" value="1"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="7.0"/>
+      <set name="/systems/electrical/outputs/bus28v" value="28" action="FG_EXP" tc="0.50"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="8.0"/>
+      <set name="/systems/electrical/outputs/bus36v" value="36" action="FG_EXP" tc="0.50"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="9.0"/>
+      <set name="/systems/electrical/outputs/bus115v" value="115" action="FG_EXP" tc="0.50"/>
+    </when>
+
+  </run>
+
+</runscript>
