@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.4 2005/12/04 02:48:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGThruster.h,v 1.4 2005/12/04 02:48:50 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@ public:
 
   virtual double Calculate(double tt) {
        Thrust = tt; vFn(1) = Thrust;
-       return 0.0;
+       return Thrust;
   }
   void SetName(string name) {Name = name;}
   virtual void SetRPM(double rpm) {};

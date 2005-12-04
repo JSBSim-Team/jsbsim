@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.5 2005/09/18 13:08:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.6 2005/12/04 02:48:50 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,8 +128,9 @@ double FGTurbine::Calculate(void)
     default: Thrust = Off();
   }
 
-  // allow thuster to modify thrust (i.e. reversing)
-  return Thrust = Thruster->Calculate(Thrust);
+  Thrust = Thruster->Calculate(Thrust); // allow thruster to modify thrust (i.e. reversing)
+
+  return Thrust;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
