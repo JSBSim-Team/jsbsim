@@ -1479,4 +1479,14 @@
             </function>
         </axis>
     </aerodynamics>
+    <input port="1137"/>
+    <output name="localhost" type="SOCKET" port="1137" rate="5">
+      <property>propulsion/starter_cmd</property>
+      <property>propulsion/cutoff_cmd</property>
+      <property>fcs/throttle-pos-norm</property>
+      <property>propulsion/engine[0]/n1</property>
+      <property>propulsion/engine[0]/n2</property>
+      <property>propulsion/engine[0]/thrust</property>
+      <property>velocities/vc-kts</property>
+    </output>
 </fdm_config>
