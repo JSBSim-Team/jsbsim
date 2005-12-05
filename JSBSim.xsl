@@ -305,12 +305,15 @@
                                     and force components in <xsl:value-of select="count(aerodynamics/axis)"/> axes.<p/></td></tr>
                                 <xsl:if test="count(aerodynamics/function) >0"><tr><td colspan="3"><b>Global Functions</b></td></tr></xsl:if>
                                 <xsl:for-each select="aerodynamics/function">
-                                    <tr><td width="300"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/></td></tr>
+                                    <tr><td width="300"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/>
+                                    <xsl:call-template name="process_function"/>
+                                    </td></tr>
                                 </xsl:for-each>
                                 <xsl:for-each select="aerodynamics/axis">
                                     <tr><td colspan="3"><b><xsl:value-of select="@name"/> Axis</b></td></tr>
                                     <xsl:for-each select="function">
-                                        <tr><td width="300"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/></td></tr>
+                                        <tr><td width="300" valign="top"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/>
+                                        <p/><xsl:call-template name="process_function"/></td></tr>
                                     </xsl:for-each>
                                 </xsl:for-each>
                             </table>
@@ -345,5 +348,26 @@
             </body>
         </html>
     </xsl:template>
+    
+    <xsl:template name="process_function">
+        <xsl:for-each select="product|table">
+            <xsl:call-template name="process_products"/>
+        </xsl:for-each>
+    </xsl:template>
+
+    <xsl:template name="process_products">
+        [
+        <xsl:for-each select="property">
+            (<xsl:value-of select="."/>) 
+        </xsl:for-each>
+        <xsl:for-each select="table">
+            <xsl:choose>
+                <xsl:when test="@name">(<xsl:value-of select="@name"/>) </xsl:when>
+                <xsl:otherwise>(table) </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
+        ]
+    </xsl:template>
+
 </xsl:stylesheet>
 
