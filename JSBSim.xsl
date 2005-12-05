@@ -5,136 +5,179 @@
             <head>
                 <title><xsl:value-of select="@name"/></title>
             </head>
-            <body>
+            <body style="font-family=Arial;font-size=90%">
+                <a name="top"/>
                 <font face="Arial" size="3" color="224488"><b><xsl:value-of select="@name"/></b></font><br/>
                 <font face="Arial" size="2">Configuration File Version: <xsl:value-of select="@version"/></font><br/>
-                <hr width="100%"/>
+                <hr width="100%"/><font face="Arial" size="1">
+                [<a href="#fileheader">File Information</a>] [<a href="#metrics">Metrics</a>] [<a href="#massbalance">Mass and Balance</a>] 
+                [<a href="#groundreactions">Ground Reactions</a>] [<a href="#propulsion">Propulsion</a>] [<a href="#autopilot">Autopilot</a>] 
+                [<a href="#flightcontrol">Flight Control</a>] [<a href="#aerodynamics">Aerodynamics</a>] [<a href="#input">Input</a>] 
+                [<a href="#output">Output</a>]</font><p/>
                 <table width="100%">
-                    
+
                     <!-- FILEHEADER -->
+                    <a name="fileheader"/>
                     <tr bgcolor="EEEEEE">
-                        <font face="Arial" size="2">
-                            <b>FILE INFORMATION</b><br/><br/>
-                            <b>Author[s]: </b>
+                        <table width="100%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0" style="font-family=Arial; font-size=90%">
+                                <tr><td colspan="4"><b>FILE INFORMATION</b></td></tr>
+                            <tr><td colspan="4" height="3"><hr size="1"/></td></tr>
+                            <tr><td><b>Author[s]</b></td><td valign="top" colspan="3" align="left">
                             <xsl:for-each select="fileheader/author" >
-                                <xsl:value-of select="."/><br/>
+                                <xsl:value-of select="."/>, 
                             </xsl:for-each>
-                            <b>File created: </b><xsl:value-of select="fileheader/filecreationdate"/><br/> 
-                            <b>Description: </b><xsl:value-of select="fileheader/description"/><br/> 
-                            <b>Model version information: </b><xsl:value-of select="fileheader/version"/><br/> 
-                            <b>References: </b><br/>
-                            <xsl:for-each select="fileheader/reference">
-                                <xsl:value-of select="@refID"/>
-                                , <i><xsl:value-of select="@title"/></i>
-                                , <xsl:value-of select="@author"/>
-                                , <xsl:value-of select="@date"/><br/>
+                            </td></tr>
+                                <tr><td><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
+                                <tr><td><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
+                                <tr><td><b>Model version information</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
+                                <tr><td><b>References:</b><br/></td><td></td><td></td><td></td></tr>
+                                <xsl:for-each select="fileheader/reference">
+                                <tr>
+                                <td><xsl:value-of select="@refID"/></td>
+                                <td><i><xsl:value-of select="@title"/></i></td>
+                                <td><xsl:value-of select="@author"/></td>
+                                <td><xsl:value-of select="@date"/></td>
+                                </tr>
                             </xsl:for-each>
-                        </font>
+                            </table>
                     </tr>
 
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
                     <!-- METRICS -->
+                    <a name="metrics"/>
                     <tr bgcolor="DDEEFF">
-                        <font face="Arial" size="2">
-                            <b>METRICS</b><br/><br/>
-                            <b>Wing span: </b><xsl:value-of select="metrics/wingspan"/>
-                            <xsl:if test="metrics/wingspan/@unit != 0">(unit: <xsl:value-of select="metrics/wingspan/@unit"/>)</xsl:if><br/>
-                            <b>Wing area: </b><xsl:value-of select="metrics/wingarea"/>
-                            <xsl:if test="metrics/wingarea/@unit != 0">(unit: <xsl:value-of select="metrics/wingarea/@unit"/>)</xsl:if><br/>
-                            <b>Chord: </b><xsl:value-of select="metrics/chord"/>
-                            <xsl:if test="metrics/chord/@unit != 0">(unit: <xsl:value-of select="metrics/chord/@unit"/>)</xsl:if><br/>
+                        <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                            <tr><td colspan="2"><b>METRICS</b></td></tr>
+                            <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            <!-- wingspan -->
+                            <tr><td width="300"><b>Wing span <xsl:if test="metrics/wingspan/@unit != 0">(<xsl:value-of select="metrics/wingspan/@unit"/>)</xsl:if></b></td>
+                                <td align="left"><xsl:value-of select="metrics/wingspan"/></td></tr>
+                            <!-- Wing area -->
+                            <tr><td width="300"><b>Wing area <xsl:if test="metrics/wingarea/@unit != 0">(<xsl:value-of select="metrics/wingarea/@unit"/>)</xsl:if></b></td>
+                                <td><xsl:value-of select="metrics/wingarea"/></td></tr>
+                            <!-- Chord -->
+                            <tr><td width="300"><b>Chord <xsl:if test="metrics/chord/@unit != 0">(<xsl:value-of select="metrics/chord/@unit"/>)</xsl:if></b></td>
+                                <td><xsl:value-of select="metrics/chord"/></td></tr>
+                            <!-- horizontal tail area -->
                             <xsl:if test="metrics/htailarea">
-                              <b>Horizontal tail area: </b><xsl:value-of select="metrics/htailarea"/>
-                              <xsl:if test="metrics/htailarea/@unit != 0">(unit: <xsl:value-of select="metrics/htailarea/@unit"/>)</xsl:if><br/>
-                            </xsl:if>
+                                <tr><td width="300"><b>Horizontal tail area <xsl:if test="metrics/htailarea/@unit != 0">(<xsl:value-of select="metrics/htailarea/@unit"/>)</xsl:if></b></td>
+                                <td><xsl:value-of select="metrics/htailarea"/></td></tr>
+                              </xsl:if>
+                            <!-- Horizontal tail arm -->
                             <xsl:if test="metrics/htailarm">
-                                <b>Horizontal tail arm: </b><xsl:value-of select="metrics/htailarm"/>
-                                <xsl:if test="metrics/htailarm/@unit != 0">(unit: <xsl:value-of select="metrics/htailarm/@unit"/>)</xsl:if><br/>
+                                <tr><td width="300"><b>Horizontal tail arm <xsl:if test="metrics/htailarm/@unit != 0">(<xsl:value-of select="metrics/htailarm/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="metrics/htailarm"/></td></tr>
                             </xsl:if>
+                            <!-- Horizontal tail area -->
                             <xsl:if test="metrics/htailarea">
-                                <b>Vertical tail area: </b><xsl:value-of select="metrics/vtailarea"/>
-                                <xsl:if test="metrics/vtailarea/@unit != 0">(unit: <xsl:value-of select="metrics/vtailarea/@unit"/>)</xsl:if><br/>
+                                <tr><td width="300"><b>Vertical tail area <xsl:if test="metrics/vtailarea/@unit != 0">(<xsl:value-of select="metrics/vtailarea/@unit"/>)</xsl:if></b></td>
+                                <td><xsl:value-of select="metrics/vtailarea"/></td></tr>
                             </xsl:if>
+                            <!-- Vertical tail arm -->
                             <xsl:if test="metrics/vtailarm">
-                                <b>Vertical tail arm: </b><xsl:value-of select="metrics/vtailarm"/>
-                                <xsl:if test="metrics/vtailarm/@unit != 0">(unit: <xsl:value-of select="metrics/vtailarm/@unit"/>)</xsl:if><br/>
+                                <tr><td width="300"><b>Vertical tail arm <xsl:if test="metrics/vtailarm/@unit != 0">(<xsl:value-of select="metrics/vtailarm/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="metrics/vtailarm"/></td></tr>
                             </xsl:if>
+                            <!-- locations -->
                             <xsl:for-each select="metrics/location">
                                 <xsl:choose>
                                     <xsl:when test="@name = 'AERORP'">
-                                      <b>Aerodynamic reference point location (<xsl:value-of select="@unit"/>): </b><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/><br/>
+                                        <tr><td width="300"><b>Aerodynamic reference point location (<xsl:value-of select="@unit"/>) </b></td>
+                                          <td><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/></td></tr>
                                     </xsl:when>
                                     <xsl:when test="@name = 'VRP'">
-                                        <b>Visual reference point location (<xsl:value-of select="@unit"/>): </b><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/><br/>
+                                        <tr><td width="300"><b>Visual reference point location (<xsl:value-of select="@unit"/>): </b></td>
+                                            <td><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/></td></tr>
                                     </xsl:when>
                                     <xsl:when test="@name = 'EYEPOINT'">
-                                        <b>Eyepoint location (<xsl:value-of select="@unit"/>): </b><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/><br/>
+                                        <tr><td width="300"><b>Eyepoint location (<xsl:value-of select="@unit"/>): </b></td>
+                                            <td><xsl:value-of select="x"/>, <xsl:value-of select="y"/>, <xsl:value-of select="z"/></td></tr>
                                     </xsl:when>
-                                    <xsl:otherwise><font color="FF0000"><xsl:value-of select="@name"/> is an invalid location!</font><br/></xsl:otherwise>
+                                    <xsl:otherwise><font color="FF0000"><tr><td colspan="2"><xsl:value-of select="@name"/> is an invalid location!</td></tr></font><br/></xsl:otherwise>
                                 </xsl:choose>
                             </xsl:for-each>
-                        </font>
-                    </tr>
+                            </table>
+                        </tr>
                     
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- MASS and BALANCE -->
+                    <a name="massbalance"/>
                     <tr bgcolor="DDEEFF">
-                        <font face="Arial" size="2">
-                            <b>MASS AND BALANCE</b><br/><br/>
-                            Moments of Inertia<br/>
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>MASS AND BALANCE</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                                <tr><td colspan="2">Moments of Inertia</td></tr>
                             <xsl:if test="mass_balance/ixx">
-                                <b>Ixx (<xsl:value-of select="mass_balance/ixx/@unit"/>): </b><xsl:value-of select="mass_balance/ixx"/><br/>
+                                <tr><td width="300"><b>Ixx <xsl:if test="mass_balance/ixx/@unit != 0">(<xsl:value-of select="mass_balance/ixx/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/ixx"/></td></tr>
                             </xsl:if>
                             <xsl:if test="mass_balance/iyy">
-                                <b>Iyy (<xsl:value-of select="mass_balance/iyy/@unit"/>): </b><xsl:value-of select="mass_balance/iyy"/><br/>
+                                <tr><td width="300"><b>Iyy <xsl:if test="mass_balance/iyy/@unit != 0">(<xsl:value-of select="mass_balance/iyy/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/iyy"/></td></tr>
                             </xsl:if>
                             <xsl:if test="mass_balance/izz">
-                                <b>Izz (<xsl:value-of select="mass_balance/izz/@unit"/>): </b><xsl:value-of select="mass_balance/izz"/><br/>
+                                <tr><td width="300"><b>Izz <xsl:if test="mass_balance/izz/@unit != 0">(<xsl:value-of select="mass_balance/izz/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/izz"/></td></tr>
                             </xsl:if>
                             <xsl:if test="mass_balance/ixy">
-                                <b>Ixy (<xsl:value-of select="mass_balance/ixy/@unit"/>): </b><xsl:value-of select="mass_balance/ixy"/><br/>
+                                <tr><td width="300"><b>Ixy <xsl:if test="mass_balance/ixy/@unit != 0">(<xsl:value-of select="mass_balance/ixy/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/ixy"/></td></tr>
                             </xsl:if>
                             <xsl:if test="mass_balance/ixz">
-                                <b>Ixz (<xsl:value-of select="mass_balance/ixz/@unit"/>): </b><xsl:value-of select="mass_balance/ixz"/><br/>
+                                <tr><td width="300"><b>Ixz <xsl:if test="mass_balance/ixz/@unit != 0">(<xsl:value-of select="mass_balance/ixz/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/ixz"/></td></tr>
                             </xsl:if>
                             <xsl:if test="mass_balance/iyz">
-                                <b>Iyz (<xsl:value-of select="mass_balance/iyz/@unit"/>): </b><xsl:value-of select="mass_balance/iyz"/><br/>
+                                <tr><td width="300"><b>Iyz <xsl:if test="mass_balance/iyz/@unit != 0">(<xsl:value-of select="mass_balance/iyz/@unit"/>)</xsl:if></b></td>
+                                    <td><xsl:value-of select="mass_balance/iyz"/></td></tr>
                             </xsl:if>
-                        </font>
+                                </table>
                     </tr>
-                    
-<tr><br/></tr>
-                    
+
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
+
                     <!-- GROUND REACTIONS -->
+                    <a name="groundreactions"/>
                     <tr bgcolor="DDEEFF">
-                        <font face="Arial" size="2">
-                            <b>GROUND REACTIONS</b><br/><br/>
-                        </font>
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>GROUND REACTIONS</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            </table>
                     </tr>
                     
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- PROPULSION -->
+                    <a name="propulsion"/>
                     <tr bgcolor="DDEEFF">
-                        <font face="Arial" size="2">
-                            <b>PROPULSION</b><br/><br/>
-                        </font>
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="DDEEFF" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>PROPULSION</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            </table>
                     </tr>
                     
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- AUTOPILOT -->
+                    <a name="autopilot"/>
                     <tr bgcolor="FFDDDD">
-                        <font face="Arial" size="2">
-                            <b>AUTOPILOT</b><br/><br/>
-                        </font></tr>                    
-<!-- <tr><br/></tr> -->
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="FFDDDD" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>AUTOPILOT</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            </table>
+                    </tr>                    
+
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
+                    
                     <!-- FLIGHT CONTROL -->
-                    <tr bgcolor="FFDDDD"><table width="100%" bgcolor="FFDDDD">
-                            <th align="left" colspan="2"><font face="Arial" size="2"><b>FLIGHT CONTROL</b><br/></font></th>
-                                <xsl:for-each select="flight_control/channel"><tr><td valign="top"><font face="Arial" size="2"><b>Channel </b><xsl:value-of select="@name"/></font></td>
+                    <a name="flightcontrol"/>
+                    <tr bgcolor="FFDDDD">
+                        <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="FFDDDD" cellpadding="0" cellspacing="0">
+                            <tr><td colspan="2"><b>FLIGHT CONTROL</b></td></tr>
+                            <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            <xsl:for-each select="flight_control/channel"><tr><td valign="top"><font face="Arial" size="2"><b>Channel </b><xsl:value-of select="@name"/></font></td>
                                     <td><xsl:for-each select="component">
                                         <font face="Arial" size="2">
                                             <p><b>Component: </b><xsl:value-of select="@name"/>, Type: 
@@ -157,11 +200,11 @@
                                                         <tr><td nowrap="1" valign="center" align="left"><font face="Arial"
                                                         size="2">Filter:</font></td><td align="center" nowrap="1"><font face="Arial" size="2">
                                                         <xsl:if test="count(c1)>0"><xsl:value-of select="c1"/>s</xsl:if>
-                                                        <xsl:if test="count(c1)>0 and count(c2)>1"> + </xsl:if>
+                                                        <xsl:if test="count(c1)=1 and count(c2)=1"> + </xsl:if>
                                                         <xsl:if test="count(c2)>0"><xsl:value-of select="c2"/></xsl:if>
                                                         <br/><hr width="100%"/>
                                                         <xsl:if test="count(c3)>0"><xsl:value-of select="c3"/>s</xsl:if>
-                                                        <xsl:if test="count(c3)>0 and count(c4)>1"> + </xsl:if>
+                                                        <xsl:if test="count(c3)=1 and count(c4)=1"> + </xsl:if>
                                                         <xsl:if test="count(c4)>0"><xsl:value-of select="c4"/></xsl:if>
                                                         </font></td></tr>
                                                     </table>
@@ -221,7 +264,7 @@
                                                                 If all of the following tests are true:
                                                             </xsl:when>
                                                         </xsl:choose>
-                                                        <pre style="font-size:100%"><xsl:value-of select="."/></pre>
+                                                        <pre style="font-size:90%"><xsl:value-of select="."/></pre>
                                                         then the switch value is: <xsl:value-of select="@value"/><br/></li>
                                                     </xsl:for-each>
                                                     <xsl:if test="default/@value"><li>Otherwise, the value is: <xsl:value-of
@@ -250,33 +293,55 @@
                             </table>
                     </tr>
 
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- AERODYNAMICS -->
+                    <a name="aerodynamics"/>
                     <tr bgcolor="CCCCCC">
-                        <font face="Arial" size="2">
-                            <b>AERODYNAMICS</b><br/><br/>
-                        </font>
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="3"><b>AERODYNAMICS</b></td></tr>
+                                <tr><td colspan="3" height="3"><hr size="1"/></td></tr>
+                                <tr><td colspan="3">The aerodynamics specification for this aircraft consists of <xsl:value-of select="count(aerodynamics/function)"/> function[s]
+                                    and force components in <xsl:value-of select="count(aerodynamics/axis)"/> axes.<p/></td></tr>
+                                <xsl:if test="count(aerodynamics/function) >0"><tr><td colspan="3"><b>Global Functions</b></td></tr></xsl:if>
+                                <xsl:for-each select="aerodynamics/function">
+                                    <tr><td width="300"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/></td></tr>
+                                </xsl:for-each>
+                                <xsl:for-each select="aerodynamics/axis">
+                                    <tr><td colspan="3"><b><xsl:value-of select="@name"/> Axis</b></td></tr>
+                                    <xsl:for-each select="function">
+                                        <tr><td width="300"><xsl:value-of select="@name"/></td><td colspan="2"><xsl:value-of select="description"/></td></tr>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </table>
                     </tr>
                     
-<tr><br/></tr>
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- INPUT -->
+                    <a name="input"/>
                     <tr bgcolor="BBBBBB">
-                        <font face="Arial" size="2">
-                            <b>INPUT</b><br/><br/>
-                        </font>
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>INPUT</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                                <tr><td>Input accepted on port <xsl:value-of select="input/@port"/>.</td></tr>
+                            </table>
                     </tr>
-
-<tr><br/></tr>
+                    
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
                     
                     <!-- OUTPUT -->
-                    <tr bgcolor="AAAAAA">
-                        <font face="Arial" size="2">
-                            <b>OUTPUT</b><br/><br/>
-                        </font>
+                    <a name="output"/>
+                    <tr bgcolor="BBBBBB">
+                            <table width="100%" style="font-family=Arial; font-size=90%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0">
+                                <tr><td colspan="2"><b>OUTPUT</b></td></tr>
+                                <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
+                            </table>
                     </tr>
-                </table>                
+                </table>
+
+<tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
+                
             </body>
         </html>
     </xsl:template>
