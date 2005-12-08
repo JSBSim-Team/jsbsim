@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="http://www.jsbsim.org/JSBSim.xsl" type="application/xml"?>
-<fdm_config name="F-16" version="2.0" release="BETA">
+<?xml-stylesheet href="http://www.jsbsim.org/JSBSim.xsl" type="text/xsl"?>
+<fdm_config name="General Dynamics F-16A" version="2.0" release="BETA">
 
     <fileheader>
         <author> Erik Hofman </author>
@@ -604,7 +604,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                      <table>
+                      <table name="CDdHT">
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
                           <independentVar lookup="column">fcs/elevator-pos-rad</independentVar>
                           <tableData>
