@@ -45,6 +45,24 @@ esac
 AC_SUBST(AR)
 AC_SUBST(ARFLAGS)
 
+dnl check for socklen_t (in Unix98)
+AC_MSG_CHECKING(for socklen_t)
+AC_TRY_COMPILE([
+#include <sys/types.h>
+#include <sys/socket.h>
+socklen_t apa;
+],[],[
+AC_MSG_RESULT(yes)],[
+AC_TRY_COMPILE([
+#include <sys/types.h>
+#include <sys/socket.h>
+int accept (int, struct sockaddr *, size_t *);
+],[],[
+AC_MSG_RESULT(size_t)
+AC_DEFINE(socklen_t,size_t)], [
+AC_MSG_RESULT(int)
+AC_DEFINE(socklen_t,int)])])
+
 AC_OUTPUT( \
 Makefile \
 src/Makefile \
