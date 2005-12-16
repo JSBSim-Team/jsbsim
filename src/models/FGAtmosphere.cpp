@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.5 2005/12/16 05:16:18 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,12 +137,12 @@ bool FGAtmosphere::Run(void)
     h = Propagate->Geth();
     Calculate(h);
   }
-
+/*
   if (turbType != ttNone) {
     Turbulence();
     vWindNED += vTurbulence;
   }
-
+*/
   if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
 
   if (psiw < 0) psiw += 2*M_PI;

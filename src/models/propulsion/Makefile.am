@@ -8,4 +8,4 @@ noinst_HEADERS =  FGElectric.h FGEngine.h FGForce.h FGNozzle.h FGPiston.h \
                   FGPropeller.h FGRocket.h FGRotor.h FGTank.h FGThruster.h \
                   FGTurbine.h FGTurboProp.h
 
-INCLUDES = -I$(top_srcdir)/src
+INCLUDES = -I$(top_srcdir)/src -I../../

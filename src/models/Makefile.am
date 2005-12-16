@@ -9,6 +9,6 @@ libModels_a_SOURCES = FGAerodynamics.cpp FGAircraft.cpp FGAtmosphere.cpp \
 
 noinst_HEADERS = FGAerodynamics.h FGAircraft.h FGAtmosphere.h FGAuxiliary.h \
                  FGFCS.h FGGroundReactions.h FGInertial.h FGLGear.h FGMassBalance.h \
-                 FGModel.h FGOutput.h FGPropagate.h FGPropulsion.h FGInput.h 
+                 FGModel.h FGOutput.h FGPropagate.h FGPropulsion.h FGInput.h
 
-INCLUDES = -I$(top_srcdir)/src
+INCLUDES = -I$(top_srcdir)/src -I../

@@ -451,13 +451,13 @@
     <xs:complexType>
       <xs:sequence>
         <xs:choice>
+          <xs:element ref="summer_type"/>
           <xs:group ref="lag_filterGroup"/>
           <xs:group ref="lead_lag_filterGroup"/>
           <xs:group ref="washout_filterGroup"/>
           <xs:group ref="order2_filterGroup"/>
           <xs:group ref="integratorGroup"/>
           <xs:group ref="switchGroup"/>
-          <xs:group ref="summerGroup"/>
           <xs:group ref="deadbandGroup"/>
           <xs:group ref="gainGroup"/>
           <xs:group ref="sched_gainGroup"/>
@@ -553,6 +553,14 @@
   </xs:group>
 
   <xs:group name="scaleGroup">
+    <xs:annotation>
+      <xs:documentation>
+        The aerosurface scale component maps an input value (which must fall within the span specified in the domain element)
+        to an output value that falls within the span specified in the range element. For example, if the actual input value is 30% of
+        the distance from the minimum to the maximum domain value, the output would be the value corresponding
+        to 30% of the span of the range, from the minimum range value.
+      </xs:documentation>
+    </xs:annotation>
     <xs:sequence>
       <xs:element ref="input"/>
       <xs:element ref="gain"/>
@@ -569,21 +577,85 @@
     </xs:sequence>
   </xs:group>
 
-  <xs:group name="summerGroup">
-    <xs:sequence>
-      <xs:element ref="inputs"/>
-      <xs:element ref="bias"/>
-    </xs:sequence>
-  </xs:group>
-
-  <xs:complexType name="inputs">
-    <xs:choice>
-    <xs:element maxOccurs="unbounded" ref="input"/>
-    </xs:choice>
-  </xs:complexType>
-
+  <xs:element name="summer_type">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="input" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="bias"/>
+      </xs:sequence>
+      <xs:attribute name="type" fixed="SUMMER" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
   <xs:element name="input" type="xs:string"/>
+  <xs:element name="c1" type="xs:float"/>
+  <xs:element name="c2" type="xs:float"/>
+  <xs:element name="c3" type="xs:float"/>
+  <xs:element name="c4" type="xs:float"/>
+  <xs:element name="c5" type="xs:float"/>
+  <xs:element name="c6" type="xs:float"/>
+  
+  <xs:element name="trigger" type="xs:string"/>
+  
+  <xs:element name="default">
+    <xs:complexType>
+      <xs:attribute name="value" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="test">
+    <xs:complexType>
+      <xs:attribute name="logic" default="AND" use="optional">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="OR"/>
+            <xs:enumeration value="AND"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="value" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="bias" type="xs:float"/>
+  <xs:element name="width" type="PositiveNumber">
+    <xs:annotation>
+      <xs:documentation>The width value specifies the wisth of the deadband - i.e. 
+        the total span about zero where the input will be mapped to zero output.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  
+  <xs:element name="gain" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
 
+  <xs:element name="domain">
+    <xs:annotation>
+      <xs:documentation>The domain defines the minimum and maximum input value allowed.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="min" type="xs:float"/>
+        <xs:element name="max" type="xs:float"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="range">
+    <xs:annotation>
+      <xs:documentation>The range defines the minimum and maximum output value mapped..</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="min" type="xs:float"/>
+        <xs:element name="max" type="xs:float"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+  
   <!-- AERODYNAMICS SECTION -->
   
   <xs:element name="aerodynamics">

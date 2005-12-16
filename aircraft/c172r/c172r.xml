@@ -219,10 +219,10 @@
             <component name="Pitch Trim Sum" type="SUMMER">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </component>
 
             <component name="Elevator Control" type="AEROSURFACE_SCALE">
@@ -239,10 +239,10 @@
             <component name="Roll Trim Sum" type="SUMMER">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </component>
 
             <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
@@ -269,10 +269,10 @@
             <component name="Yaw Trim Sum" type="SUMMER">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </component>
 
             <component name="Rudder Control" type="AEROSURFACE_SCALE">

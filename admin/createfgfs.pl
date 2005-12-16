@@ -105,7 +105,7 @@ if (!chdir "src") {
   $FGFS    = 1;
 } else {
   chdir; # go back to $HOME
-  if (!chdir "fgfsbase/CVS") {
+  if (!chdir "data/CVS") {
     print "\nYou have not yet installed the base package. Base package will be installed\n";
     $UPDATE = 1;
     $BUILD   = 1;
@@ -119,14 +119,14 @@ if (!chdir "src") {
     $PLIB   = 1;
   }
   chdir; # go back to $HOME
-  if (!chdir "src/SimGear/CVS") {
+  if (!chdir "src/simgear/CVS") {
     print "\nYou have not yet installed the simgear package. SimGear will be installed\n";
     $UPDATE  = 1;
     $BUILD   = 1;
     $SIMGEAR = 1;
   }
   chdir; # go back to $HOME
-  if (!chdir "src/FlightGear/CVS") {
+  if (!chdir "src/flightgear/source/CVS") {
     print "\nYou have not yet installed the flightgear package. FlightGear will be installed\n";
     $UPDATE = 1;
     $BUILD   = 1;
@@ -148,8 +148,8 @@ if ($UPDATE) { #start update code
       print "Checking out plib from cvs\n\n";
       print "Hit enter key when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d:pserver:anonymous\@cvs.plib.sourceforge.net:/cvsroot/plib login");
-      system("cvs -z3 -d:pserver:anonymous\@cvs.plib.sourceforge.net:/cvsroot/plib co plib");
+      system("cvs -d:pserver:anonymous\@cvs.sourceforge.net:/cvsroot/plib login");
+      system("cvs -z3 -d:pserver:anonymous\@cvs.sourceforge.net:/cvsroot/plib co -P plib");
     } else {
       print "\n\n--------------------------------\n\n";
       print "Updating plib from cvs\n\n";
@@ -163,18 +163,18 @@ if ($UPDATE) { #start update code
 
   if ($SIMGEAR) {
     if (!chdir "") {die "Cannot chdir to ~\n";}
-    $result = open (SGFILE, "src/SimGear/CVS/root" ) ;
+    $result = open (SGFILE, "src/simgear/CVS/root" ) ;
     close(SGFILE);
     if (!$result) {
-      if (!chdir "src") {die "Cannot chdir to ~src/\n";}
+      if (!chdir "src/simgear") {die "Cannot chdir to ~src/simgear\n";}
       print "\n\n--------------------------------\n\n";
       print "Checking out simgear from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
       system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 login");
-      system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 co SimGear");
+      system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 co source");
     } else {
-      if (!chdir "src/SimGear/") {die "Cannot chdir to ~/src/SimGear/\n";}
+      if (!chdir "src/simgear/") {die "Cannot chdir to ~/src/simgear/\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating simgear from cvs\n\n";
       print "--------------------------------\n";
@@ -186,17 +186,17 @@ if ($UPDATE) { #start update code
 
   if ($FGB) {
     if (!chdir "") {die "Cannot chdir to ~\n";}
-    $result = open (FGBFILE, "fgfsbase/CVS/root" ) ;
+    $result = open (FGBFILE, "data/CVS/root" ) ;
     close(FGBFILE);
     if (!$result) {
       print "\n\n--------------------------------\n\n";
       print "Checking out flightgear base from cvs\n\n";
       print "Enter 'guest' when requested for cvs password\n";
       print "--------------------------------\n";
-      system("cvs -d :pserver:cvsguest@cvs.flightgear.org:/var/cvs/FlightGear-0.9 login");
-      system("cvs -d :pserver:cvsguest@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co data");
+      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 login");
+      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co data");
     } else {
-      if (!chdir "fgfsbase") {die "Cannot chdir to ~/fgfsbase\n";}
+      if (!chdir "data") {die "Cannot chdir to ~/data\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating flightgear base from cvs\n\n";
       print "--------------------------------\n";
@@ -208,18 +208,18 @@ if ($UPDATE) { #start update code
 
   if ($FGFS) {
     if (!chdir "") {die "Cannot chdir to ~\n";}
-    $result = open (FGFILE, "src/FlightGear/CVS/root" ) ;
+    $result = open (FGFILE, "src/flightgear/source/src/CVS/root" ) ;
     close(FGFILE);
     if (!$result) {
-      if (!chdir "src") {die "Cannot chdir to ~/src\n";}
+      if (!chdir "src/flightgear") {die "Cannot chdir to ~/src/flightgear\n";}
       print "\n\n--------------------------------\n\n";
       print "Checking out flightgear DEVELOPMENT source from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
       print "--------------------------------\n";
       system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 login");
-      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co FlightGear");
+      system("cvs -d :pserver:cvsguest\@cvs.flightgear.org:/var/cvs/FlightGear-0.9 co source");
     } else {
-      if (!chdir "src/FlightGear/") {die "Cannot chdir to ~/src/FlightGear/\n";}
+      if (!chdir "src/flightgear/source/src/") {die "Cannot chdir to ~/src/flightgear/source/src/\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating flightgear source from cvs\n\n";
       print "--------------------------------\n";
@@ -260,7 +260,7 @@ if ($PLIB) { #make plib
 
 if ($SIMGEAR) { #make simgear
   if (!chdir "") {die "Cannot chdir to ~\n";}
-  if (!chdir "src/SimGear") {die "Cannot chdir to ~/src/SimGear\n";}
+  if (!chdir "src/simgear/source") {die "Cannot chdir to ~/src/simgear/source\n";}
   if ($BUILD) {
     print "\n\n BUILDING SIMGEAR ***";
     print "\n\n   --- rm config.cache ---\n\n";
@@ -289,7 +289,7 @@ if ($SIMGEAR) { #make simgear
 
 if ($FGFS) { #make flightgear
   if (!chdir "") {die "Cannot chdir to ~\n";}
-  if (!chdir "src/FlightGear") {die "Cannot chdir to ~/src/FlightGear\n";}
+  if (!chdir "src/flightgear/source") {die "Cannot chdir to ~/src/flightgear/source\n";}
   if ($BUILD) {
     print "\n\n BUILDING FLIGHTGEAR ***";
     print "\n\n   --- rm config.cache ---\n\n";

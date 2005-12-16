@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.8 2005/09/12 11:58:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.9 2005/12/16 05:16:18 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -482,20 +482,6 @@ FGColumnVector3& FGLGear::Force(void)
 // Transform the forces back to the body frame and compute the moment.
 
       vForce  = Propagate->GetTl2b() * vLocalForce;
-
-//   *** START EXPERIMENT ***
-// as an experiment (05/29/2005) lag the ground plane forces
-
-      if (FirstPass) {
-        FirstPass = false;
-      } else {
-        vForce(eX) = 0.5*(lastFX + vForce(eX));
-        vForce(eY) = 0.5*(lastFY + vForce(eY));
-      }
-      lastFX = vForce(eX);
-      lastFY = vForce(eY);
-
-//   *** END EXPERIMENT ***
 
       vMoment = vWhlBodyVec * vForce;
 
