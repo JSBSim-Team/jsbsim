@@ -46,14 +46,14 @@ INCLUDES
 #include <FGFDMExec.h>
 #include <input_output/FGXMLElement.h>
 #include <math/FGColumnVector3.h>
-#include <math/FGFunction.h>
+#include <math/FGTable.h>
 #include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.5 2005/07/13 13:04:08 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.6 2005/12/17 16:04:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.5 2005/07/13 13:04:08 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.6 2005/12/17 16:04:35 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -249,6 +249,8 @@ public:
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
 
+  bool IsBogey(void) {return contactType == string("BOGEY");}
+
   void bind(void);
   void unbind(void);
 
@@ -283,6 +285,7 @@ private:
   double WheelSlip;
   double lastWheelSlip;
   double TirePressureNorm;
+  double SinWheel, CosWheel;
   bool WOW;
   bool lastWOW;
   bool FirstContact;
@@ -311,15 +314,20 @@ private:
   FGFCS*         FCS;
   FGMassBalance* MassBalance;
 
+  void ComputeRetractionState(void);
+  void ComputeBrakeForceCoefficient(void);
+  void ComputeSteeringAngle(void);
+  void ComputeSlipAngle(void);
+  void ComputeSideForceCoefficient(void);
+  void ComputeVerticalStrutForce(void);
+  void CrashDetect(void);
+  void InitializeReporting(void);
+  void ResetReporting(void);
+  void ReportTakeoffOrLanding(void);
   void Report(ReportType rt);
   void Debug(int from);
 
-  FGFunction *ForceY_Function;
-
-  // EXPERIMENT JSB 05/29/05
-  double lastFX, lastFY;
-  bool FirstPass;
-
+  FGTable *ForceY_Table;
 };
 }
 #include "FGAircraft.h"

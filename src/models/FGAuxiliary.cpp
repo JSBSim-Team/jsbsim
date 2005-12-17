@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.5 2005/12/17 16:04:35 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,11 +127,21 @@ bool FGAuxiliary::Run()
     vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
   }
 
-  vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
+// 12/16/2005, JSB: For ground handling purposes, at this time, let's ramp
+// in the effects of wind from 10 fps to 30 fps when there is weight on the
+// landing gear wheels.
 
-// Translation
-
-  vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
+  if (GroundReactions->GetWOW() && vUVW(eU) < 10) {
+    vAeroPQR = vPQR;
+    vAeroUVW = vUVW;
+  } else if (GroundReactions->GetWOW() && vUVW(eU) < 30) {
+    double factor = (vUVW(eU) - 10.0)/20.0;
+    vAeroPQR = vPQR + factor*Atmosphere->GetTurbPQR();
+    vAeroUVW = vUVW + factor*Propagate->GetTl2b()*Atmosphere->GetWindNED();
+  } else {
+    vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
+    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
+  }
 
   Vt = vAeroUVW.Magnitude();
   if ( Vt > 0.05) {

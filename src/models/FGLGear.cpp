@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.10 2005/12/17 02:51:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.11 2005/12/17 16:04:35 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,7 @@ CLASS IMPLEMENTATION
 FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
                  GearNumber(number)
 {
-  Element *force_function=0;
+  Element *force_table=0;
   string force_type="";
 
   kSpring = bDamp = bDampRebound = dynamicFCoeff = staticFCoeff = rollingFCoeff = maxSteerAngle = 0;
@@ -90,16 +90,16 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   if (el->FindElement("retractable"))
     isRetractable = (int)el->FindElementValueAsNumber("retractable");
 
-  ForceY_Function = 0;
-  force_function = el->FindElement("function");
-  while (force_function) {
-    force_type = force_function->GetAttributeValue("type");
+  ForceY_Table = 0;
+  force_table = el->FindElement("table");
+  while (force_table) {
+    force_type = force_table->GetAttributeValue("type");
     if (force_type == "CORNERING_COEFF") {
-      ForceY_Function = new FGFunction(Exec->GetPropertyManager(), force_function);
+      ForceY_Table = new FGTable(Exec->GetPropertyManager(), force_table);
     } else {
-      cerr << "Undefined force function for " << name << " contact point" << endl;
+      cerr << "Undefined force table for " << name << " contact point" << endl;
     }
-    force_function = el->FindNextElement("function");
+    force_table = el->FindNextElement("table");
   }
 
   sSteerType = el->FindElementValue("steer_type");
@@ -234,7 +234,9 @@ FGLGear::FGLGear(const FGLGear& lgear)
   lastWheelSlip   = lgear.lastWheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
-  ForceY_Function = lgear.ForceY_Function;
+  ForceY_Table    = lgear.ForceY_Table;
+  CosWheel        = lgear.CosWheel;
+  SinWheel        = lgear.SinWheel;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,30 +250,118 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  double SinWheel, CosWheel;
-  double deltaT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
+  FGColumnVector3 normal, cvel;
+  FGLocation contact, gearLoc;
+  double t = Exec->GetState()->Getsim_time();
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
 
-  if (isRetractable) {
-    if (FCS->GetGearPos() < 0.01) {
-      GearUp   = true;
-      GearDown = false;
-     } else if (FCS->GetGearPos() > 0.99) {
-      GearDown = true;
-      GearUp   = false;
-     } else {
-      GearUp   = false;
-      GearDown = false;
-     }
-  } else {
-      GearUp   = false;
-      GearDown = true;
+  if (isRetractable) ComputeRetractionState();
+
+  if (GearUp) return vForce;
+
+  vWhlBodyVec = MassBalance->StructuralToBody(vXYZ); // Get wheel in body frame
+  vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
+
+  gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
+  compressLength = -Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
+
+  // The compression length is measured in the Z-axis, only, at this time.
+
+  if (compressLength > 0.00) {
+
+    WOW = true;
+
+    // [The next equation should really use the vector to the contact patch of
+    // the tire including the strut compression and not the original vWhlBodyVec.]
+
+    vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
+    vWhlVelVec     +=  Propagate->GetVel() - cvel;
+    compressSpeed   =  vWhlVelVec(eZ);
+
+    InitializeReporting();
+    ComputeBrakeForceCoefficient();
+    ComputeSteeringAngle();
+    ComputeSlipAngle();
+    ComputeSideForceCoefficient();
+    ComputeVerticalStrutForce();
+
+    // Compute the forces in the wheel ground plane.
+
+    RollingForce = (1.0 - TirePressureNorm) * 30
+                   + vLocalForce(eZ) * BrakeFCoeff * (RollingWhlVel>=0?1.0:-1.0);
+    SideForce    = vLocalForce(eZ) * FCoeff;
+
+    // Transform these forces back to the local reference frame.
+
+    vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
+    vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
+
+    // Transform the forces back to the body frame and compute the moment.
+
+    vForce  = Propagate->GetTl2b() * vLocalForce;
+    vMoment = vWhlBodyVec * vForce;
+
+  } else { // Gear is NOT compressed
+
+    WOW = false;
+    compressLength = 0.0;
+
+    // Return to neutral position between 1.0 and 0.8 gear pos.
+    SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
+
+    ResetReporting();
   }
 
-  // Compute the steering angle in any case.
-  // Will make sure that animations will look right.
+  ReportTakeoffOrLanding();
+  CrashDetect();
+
+  return vForce;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::ComputeRetractionState(void)
+{
+  if (FCS->GetGearPos() < 0.01) {
+    GearUp   = true;
+    GearDown = false;
+  } else if (FCS->GetGearPos() > 0.99) {
+    GearDown = true;
+    GearUp   = false;
+  } else {
+    GearUp   = false;
+    GearDown = false;
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLGear::ComputeSlipAngle(void)
+{
+  // Transform the wheel velocities from the local axis system to the wheel axis system.
+
+  RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
+  SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
+
+  // Calculate tire slip angle.
+
+  if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
+    WheelSlip = 0.0;
+  } else if (fabs(RollingWhlVel) < 1.0) {
+    WheelSlip = SteerAngle*radtodeg;
+  } else {
+    WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Compute the steering angle in any case.
+// This will also make sure that animations will look right.
+
+void FGLGear::ComputeSteeringAngle(void)
+{
   switch (eSteerType) {
   case stSteer:
     SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
@@ -280,7 +370,9 @@ FGColumnVector3& FGLGear::Force(void)
     SteerAngle = 0.0;
     break;
   case stCaster:
-    // Note to Jon: This is not correct for castering gear.  I'll fix it later.
+    // This is not correct for castering gear. Should make steer angle parallel
+    // to the actual velocity vector of the wheel, given aircraft velocity vector
+    // and omega.
     SteerAngle = 0.0;
     break;
   default:
@@ -288,68 +380,95 @@ FGColumnVector3& FGLGear::Force(void)
     break;
   }
 
-  if (GearDown) {
-    double t = Exec->GetState()->Getsim_time();
+  SinWheel      = sin(Propagate->GetEuler(ePsi) + SteerAngle);
+  CosWheel      = cos(Propagate->GetEuler(ePsi) + SteerAngle);
+}
 
-    vWhlBodyVec = MassBalance->StructuralToBody(vXYZ);
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Reset reporting functionality after takeoff
 
-// vWhlBodyVec now stores the vector from the cg to this wheel
+void FGLGear::ResetReporting(void)
+{
+  if (Propagate->GetDistanceAGL() > 200.0) {
+    FirstContact = false;
+    StartedGroundRun = false;
+    LandingReported = false;
+    LandingDistanceTraveled = 0.0;
+    MaximumStrutForce = MaximumStrutTravel = 0.0;
+  }
+}
 
-    vLocalGear = Propagate->GetTb2l() * vWhlBodyVec;
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-// vLocalGear now stores the vector from the cg to the wheel in local coords.
+void FGLGear::InitializeReporting(void)
+{
+  // If this is the first time the wheel has made contact, remember some values
+  // for later printout.
 
-    FGColumnVector3 normal, cvel;
-    FGLocation contact;
-    FGLocation gearLoc = Propagate->GetLocation().LocalToLocation(vLocalGear);
-    compressLength = - Exec->GetGroundCallback()->GetAGLevel(t, gearLoc, contact, normal, cvel);
+  if (!FirstContact) {
+    FirstContact  = true;
+    SinkRate      =  compressSpeed;
+    GroundSpeed   =  Propagate->GetVel().Magnitude();
+    TakeoffReported = false;
+  }
 
-// The compression length is measured in the Z-axis, only, at this time.
-// It should be measured along the strut axis. If the local-frame gear position
-// "hangs down" below the CG greater than the altitude, then the compressLength
-// will be positive - i.e. the gear will have made contact.
+  // If the takeoff run is starting, initialize.
 
-    if (compressLength > 0.00) {
+  if ((Propagate->GetVel().Magnitude() > 0.1) &&
+      (FCS->GetBrake(bgLeft) == 0) &&
+      (FCS->GetBrake(bgRight) == 0) &&
+      (FCS->GetThrottlePos(0) == 1) && !StartedGroundRun)
+  {
+    TakeoffDistanceTraveled = 0;
+    TakeoffDistanceTraveled50ft = 0;
+    StartedGroundRun = true;
+  }
+}
 
-      WOW = true; // Weight-On-Wheels is true
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Takeoff and landing reporting functionality
 
-// [The next equation should really use the vector to the contact patch of the tire
-// including the strut compression and not vWhlBodyVec.]
-// As it stands, now, the following equation takes the aircraft body-frame
-// rotational rate and calculates the cross-product with the vector from the CG
-// to the wheel, thus producing the instantaneous velocity vector of the tire
-// in Body coords. The frame is also converted to local coordinates. When the
-// aircraft local-frame velocity is added to this quantity, the total velocity of
-// the wheel in local frame is then known. Subsequently, the compression speed
-// (used for calculating damping force) is found by taking the Z-component of the
-// wheel velocity.
+void FGLGear::ReportTakeoffOrLanding(void)
+{
+  double deltaT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
-      vWhlVelVec      =  Propagate->GetTb2l() * (Propagate->GetPQR() * vWhlBodyVec);
-      vWhlVelVec     +=  Propagate->GetVel() - cvel;
-      compressSpeed   =  vWhlVelVec(eZ);
+  if (FirstContact) LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
 
-// If this is the first time the wheel has made contact, remember some values
-// for later printout.
+  if (StartedGroundRun) {
+     TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
+    if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
+  }
 
-      if (!FirstContact) {
-        FirstContact  = true;
-        SinkRate      =  compressSpeed;
-        GroundSpeed   =  Propagate->GetVel().Magnitude();
-        TakeoffReported = false;
-      }
+  if (ReportEnable && Auxiliary->GetVground() <= 0.05 && !LandingReported) {
+    if (debug_lvl > 0) Report(erLand);
+  }
 
-// If the takeoff run is starting, initialize.
+  if (ReportEnable && !TakeoffReported &&
+     (vLocalGear(eZ) - Propagate->GetDistanceAGL()) < -50.0)
+  {
+    if (debug_lvl > 0) Report(erTakeoff);
+  }
 
-      if ((Propagate->GetVel().Magnitude() > 0.1) &&
-          (FCS->GetBrake(bgLeft) == 0) &&
-          (FCS->GetBrake(bgRight) == 0) &&
-          (FCS->GetThrottlePos(0) == 1) && !StartedGroundRun)
-      {
-        TakeoffDistanceTraveled = 0;
-        TakeoffDistanceTraveled50ft = 0;
-        StartedGroundRun = true;
-      }
+  if (lastWOW != WOW) PutMessage("GEAR_CONTACT: " + name, WOW);
+  lastWOW = WOW;
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Crash detection logic (really out-of-bounds detection)
+
+void FGLGear::CrashDetect(void)
+{
+  if (compressLength > 500.0 ||
+      vForce.Magnitude() > 100000000.0 ||
+      vMoment.Magnitude() > 5000000000.0 ||
+      SinkRate > 1.4666*30)
+  {
+    PutMessage("Crash Detected: Simulation FREEZE.");
+    State->SuspendIntegration();
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // The following needs work regarding friction coefficients and braking and
 // steering The BrakeFCoeff formula assumes that an anti-skid system is used.
 // It also assumes that we won't be turning and braking at the same time.
@@ -357,181 +476,87 @@ FGColumnVector3& FGLGear::Force(void)
 // [JSB] The braking force coefficients include normal rolling coefficient +
 // a percentage of the static friction coefficient based on braking applied.
 
-      switch (eBrakeGrp) {
-      case bgLeft:
-        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
-                         staticFCoeff*FCS->GetBrake(bgLeft) );
-        break;
-      case bgRight:
-        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
-                         staticFCoeff*FCS->GetBrake(bgRight) );
-        break;
-      case bgCenter:
-        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                         staticFCoeff*FCS->GetBrake(bgCenter) );
-        break;
-      case bgNose:
-        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                         staticFCoeff*FCS->GetBrake(bgCenter) );
-        break;
-      case bgTail:
-        BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
-                         staticFCoeff*FCS->GetBrake(bgCenter) );
-        break;
-      case bgNone:
-        BrakeFCoeff =  rollingFCoeff;
-        break;
-      default:
-        cerr << "Improper brake group membership detected for this gear." << endl;
-        break;
-      }
+void FGLGear::ComputeBrakeForceCoefficient(void)
+{
+  switch (eBrakeGrp) {
+  case bgLeft:
+    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgLeft)) +
+                     staticFCoeff*FCS->GetBrake(bgLeft) );
+    break;
+  case bgRight:
+    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgRight)) +
+                     staticFCoeff*FCS->GetBrake(bgRight) );
+    break;
+  case bgCenter:
+    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    break;
+  case bgNose:
+    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    break;
+  case bgTail:
+    BrakeFCoeff =  ( rollingFCoeff*(1.0 - FCS->GetBrake(bgCenter)) +
+                     staticFCoeff*FCS->GetBrake(bgCenter) );
+    break;
+  case bgNone:
+    BrakeFCoeff =  rollingFCoeff;
+    break;
+  default:
+    cerr << "Improper brake group membership detected for this gear." << endl;
+    break;
+  }
+}
 
-// Transform the wheel velocities from the local axis system to the wheel axis system.
-// For now, steering angle is assumed to happen in the Local Z axis,
-// not the strut axis as it should be.  Will fix this later.
-
-      SinWheel      = sin(Propagate->GetEuler(ePsi) + SteerAngle);
-      CosWheel      = cos(Propagate->GetEuler(ePsi) + SteerAngle);
-      RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
-      SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
-
-// Calculate tire slip angle.
-
-      if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
-        WheelSlip = 0.0;
-      } else if (fabs(RollingWhlVel) < 1.0) {
-        WheelSlip = SteerAngle*radtodeg;
-      } else {
-        WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
-      }
-
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
 // transition from static to dynamic friction.  There are more complicated formulations
 // of this that avoid the discrete jump (similar to Pacejka).  Will fix this later.
 
-      if (ForceY_Function) {
+void FGLGear::ComputeSideForceCoefficient(void)
+{
+  if (ForceY_Table) {
 
-        FCoeff = ForceY_Function->GetValue(); // Todo: Replace this with a table
+    FCoeff = ForceY_Table->GetValue(WheelSlip);
 
-      } else {
+  } else {
 
-        if (fabs(WheelSlip) <= 10.0) {
-          FCoeff = staticFCoeff*WheelSlip/10.0;
-        } else if (fabs(WheelSlip) <= 40.0) {
-          FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 10.0)/10.0 +
-                    staticFCoeff*(40.0 - fabs(WheelSlip))/10.0)*fabs(WheelSlip)/WheelSlip;
-        } else {
-          FCoeff = dynamicFCoeff*(WheelSlip>=0?1.0:-1.0);
-        }
-      }
+    if (fabs(WheelSlip) <= 10.0) {
+      FCoeff = staticFCoeff*WheelSlip/10.0;
+    } else if (fabs(WheelSlip) <= 40.0) {
+      FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 10.0)/10.0
+                + staticFCoeff*(40.0 - fabs(WheelSlip))/10.0)*(WheelSlip>=0?1.0:-1.0);
+    } else {
+      FCoeff = dynamicFCoeff*(WheelSlip>=0?1.0:-1.0);
+    }
+  }
+}
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Compute the vertical force on the wheel using square-law damping (per comment
 // in paper AIAA-2000-4303 - see header prologue comments). We might consider
 // allowing for both square and linear damping force calculation. Also need to
 // possibly give a "rebound damping factor" that differs from the compression
 // case.
 
-      double springForce = 0;
-      double dampForce = 0;
+void FGLGear::ComputeVerticalStrutForce(void)
+{
+  double springForce = 0;
+  double dampForce = 0;
 
-      springForce = -compressLength * kSpring;
+  springForce = -compressLength * kSpring;
 
-      if (compressSpeed >= 0.0) {
-        dampForce   = -compressSpeed * bDamp;
-      } else {
-        dampForce   = -compressSpeed * bDampRebound;
-      }
-      vLocalForce(eZ) =  min(springForce + dampForce, (double)0.0);
-
-      MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
-      MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
-
-// Compute the forces in the wheel ground plane.
-// The dependence of RollingForce on TirePressureNorm needs to be given more thought.
-
-      RollingForce = (1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff * (RollingWhlVel>=0?1.0:-1.0);
-      SideForce    = vLocalForce(eZ) * FCoeff;
-
-// Transform these forces back to the local reference frame.
-
-      vLocalForce(eX) = RollingForce*CosWheel - SideForce*SinWheel;
-      vLocalForce(eY) = SideForce*CosWheel    + RollingForce*SinWheel;
-
-// Note to Jon: At this point the forces will be too big when the airplane is
-// stopped or rolling to a stop.  We need to make sure that the gear forces just
-// balance out the non-gear forces when the airplane is stopped.  That way the
-// airplane won't start to accelerate until the non-gear/ forces are larger than
-// the gear forces.  I think that the proper fix should go into FGAircraft::FMGear.
-// This routine would only compute the local strut forces and return them to
-// FMGear. All of the gear forces would get adjusted in FMGear using the total
-// non-gear forces. Then the gear moments would be calculated. If strange things
-// start happening to the airplane during testing as it rolls to a stop, then we
-// need to implement this change.  I ran out of time to do it now but have the
-// equations.
-
-// Transform the forces back to the body frame and compute the moment.
-
-      vForce  = Propagate->GetTl2b() * vLocalForce;
-
-      vMoment = vWhlBodyVec * vForce;
-
-    } else { // Gear is NOT compressed
-
-      WOW = false;
-
-      // Return to neutral position between 1.0 and 0.8 gear pos.
-//      SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
-
-      // Reset reporting functionality after takeoff
-
-      if (Propagate->GetDistanceAGL() > 200.0) {
-        FirstContact = false;
-        StartedGroundRun = false;
-        LandingReported = false;
-        LandingDistanceTraveled = 0.0;
-        MaximumStrutForce = MaximumStrutTravel = 0.0;
-      }
-
-      compressLength = 0.0; // reset compressLength to zero for data output validity
-    }
-
-    // Takeoff and landing reporting functionality
-
-    if (FirstContact) LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
-
-    if (StartedGroundRun) {
-       TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
-      if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
-    }
-
-    if (ReportEnable && Auxiliary->GetVground() <= 0.05 && !LandingReported) {
-      if (debug_lvl > 0) Report(erLand);
-    }
-
-    if (ReportEnable && !TakeoffReported &&
-       (vLocalGear(eZ) - Propagate->GetDistanceAGL()) < -50.0)
-    {
-      if (debug_lvl > 0) Report(erTakeoff);
-    }
-
-    // End of reporting code
-
-    if (lastWOW != WOW) PutMessage("GEAR_CONTACT: " + name, WOW);
-    lastWOW = WOW;
-
-    // Crash detection logic (really out-of-bounds detection)
-
-    if (compressLength > 500.0 ||
-        vForce.Magnitude() > 100000000.0 ||
-        vMoment.Magnitude() > 5000000000.0 ||
-        SinkRate > 1.4666*30)
-    {
-      PutMessage("Crash Detected: Simulation FREEZE.");
-      State->SuspendIntegration();
-    }
+  if (compressSpeed >= 0.0) {
+    dampForce   = -compressSpeed * bDamp;
+  } else {
+    dampForce   = -compressSpeed * bDampRebound;
   }
-  return vForce;
+  vLocalForce(eZ) =  min(springForce + dampForce, (double)0.0);
+
+  // Remember these values for reporting
+  MaximumStrutForce = max(MaximumStrutForce, fabs(vLocalForce(eZ)));
+  MaximumStrutTravel = max(MaximumStrutTravel, fabs(compressLength));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.6 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.7 2005/12/17 16:04:35 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,6 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 {
   Name = "FGGroundReactions";
 
-  ActiveGearUnit = 0;
   bind();
 
   Debug(0);
@@ -91,12 +90,10 @@ bool FGGroundReactions::Run(void)
     // Perhaps there is some commonality for things which only need to be
     // calculated once.
 
-    ActiveGearUnit = 0;
     while (iGear != lGear.end()) {
       vForces  += iGear->Force();
       vMoments += iGear->Moment();
       iGear++;
-      ActiveGearUnit++;
     }
 
   }
@@ -106,11 +103,12 @@ bool FGGroundReactions::Run(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGGroundReactions::GetSlipAngle(void) const
+bool FGGroundReactions::GetWOW(void)
 {
-  char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", ActiveGearUnit);
-  return PropertyManager->getDoubleValue(property_name);
+  for (int i=0; i<lGear.size(); i++) {
+    if (lGear[i].IsBogey() && lGear[i].GetWOW()) return true;
+  }
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +199,6 @@ void FGGroundReactions::bind(void)
 {
   typedef double (FGGroundReactions::*PMF)(int) const;
   PropertyManager->Tie("gear/num-units", this, &FGGroundReactions::GetNumGearUnits);
-  PropertyManager->Tie("gear/slip-angle-deg", this, &FGGroundReactions::GetSlipAngle);
   PropertyManager->Tie("moments/l-gear-lbsft", this, eL, (PMF)&FGGroundReactions::GetMoments);
   PropertyManager->Tie("moments/m-gear-lbsft", this, eM, (PMF)&FGGroundReactions::GetMoments);
   PropertyManager->Tie("moments/n-gear-lbsft", this, eN, (PMF)&FGGroundReactions::GetMoments);
@@ -215,7 +212,6 @@ void FGGroundReactions::bind(void)
 void FGGroundReactions::unbind(void)
 {
   PropertyManager->Untie("gear/num-units");
-  PropertyManager->Untie("gear/slip-angle-deg");
   PropertyManager->Untie("moments/l-gear-lbsft");
   PropertyManager->Untie("moments/m-gear-lbsft");
   PropertyManager->Untie("moments/n-gear-lbsft");

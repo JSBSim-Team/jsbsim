@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.5 2005/12/16 05:16:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.6 2005/12/17 16:04:35 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,12 +137,12 @@ bool FGAtmosphere::Run(void)
     h = Propagate->Geth();
     Calculate(h);
   }
-/*
-  if (turbType != ttNone) {
+
+  if (turbType != ttStandard) {
     Turbulence();
     vWindNED += vTurbulence;
   }
-*/
+
   if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
 
   if (psiw < 0) psiw += 2*M_PI;
@@ -258,7 +258,6 @@ void FGAtmosphere::Calculate(double altitude)
     intDensity = intPressure/(Reng*intTemperature);
   }
   lastIndex=i;
-  //cout << "Atmosphere:  h=" << altitude << " rho= " << intDensity << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -395,7 +394,8 @@ void FGAtmosphere::Turbulence(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAtmosphere::UseExternal(void) {
+void FGAtmosphere::UseExternal(void)
+{
   temperature=&exTemperature;
   pressure=&exPressure;
   density=&exDensity;
@@ -404,7 +404,8 @@ void FGAtmosphere::UseExternal(void) {
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGAtmosphere::UseInternal(void) {
+void FGAtmosphere::UseInternal(void)
+{
   temperature=&intTemperature;
   pressure=&intPressure;
   density=&intDensity;

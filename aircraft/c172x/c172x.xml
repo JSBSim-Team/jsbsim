@@ -7,7 +7,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.42 2005/12/04 02:50:17 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.43 2005/12/17 16:04:35 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
@@ -816,6 +816,7 @@
         <propulsion> OFF </propulsion>
         <aerosurfaces> ON </aerosurfaces>
         <fcs> ON </fcs>
+        <ground_reactions> ON </ground_reactions>
     </output>
     <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>
