@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.9 2005/12/16 05:16:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.10 2005/12/17 02:51:16 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,8 +172,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   WheelSlip = lastWheelSlip = 0.0;
   TirePressureNorm = 1.0;
 
-  FirstPass = true;
-
   Debug(0);
 }
 
@@ -236,7 +234,6 @@ FGLGear::FGLGear(const FGLGear& lgear)
   lastWheelSlip   = lgear.lastWheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
-  FirstPass       = lgear.FirstPass;
   ForceY_Function = lgear.ForceY_Function;
 }
 
@@ -403,11 +400,10 @@ FGColumnVector3& FGLGear::Force(void)
       if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
         WheelSlip = 0.0;
       } else if (fabs(RollingWhlVel) < 1.0) {
-        WheelSlip = 0.05*radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel)) + 0.95*WheelSlip;
+        WheelSlip = SteerAngle*radtodeg;
       } else {
         WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
       }
-      lastWheelSlip = WheelSlip;
 
 // Compute the sideforce coefficients using similar assumptions to LaRCSim for now.
 // Allow a maximum of 10 degrees tire slip angle before wheel slides.  At that point,
@@ -416,7 +412,7 @@ FGColumnVector3& FGLGear::Force(void)
 
       if (ForceY_Function) {
 
-        FCoeff = ForceY_Function->GetValue();
+        FCoeff = ForceY_Function->GetValue(); // Todo: Replace this with a table
 
       } else {
 
@@ -426,7 +422,7 @@ FGColumnVector3& FGLGear::Force(void)
           FCoeff = (dynamicFCoeff*(fabs(WheelSlip) - 10.0)/10.0 +
                     staticFCoeff*(40.0 - fabs(WheelSlip))/10.0)*fabs(WheelSlip)/WheelSlip;
         } else {
-          FCoeff = dynamicFCoeff*fabs(WheelSlip)/WheelSlip;
+          FCoeff = dynamicFCoeff*(WheelSlip>=0?1.0:-1.0);
         }
       }
 
@@ -454,12 +450,7 @@ FGColumnVector3& FGLGear::Force(void)
 // Compute the forces in the wheel ground plane.
 // The dependence of RollingForce on TirePressureNorm needs to be given more thought.
 
-      RollingForce = 0;
-      if (fabs(RollingWhlVel) > 1E-3) {
-        RollingForce = (1.0 - TirePressureNorm) * 30
-                       + vLocalForce(eZ) * BrakeFCoeff
-                       * fabs(RollingWhlVel)/RollingWhlVel;
-      }
+      RollingForce = (1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff * (RollingWhlVel>=0?1.0:-1.0);
       SideForce    = vLocalForce(eZ) * FCoeff;
 
 // Transform these forces back to the local reference frame.
@@ -490,7 +481,9 @@ FGColumnVector3& FGLGear::Force(void)
       WOW = false;
 
       // Return to neutral position between 1.0 and 0.8 gear pos.
-      SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
+//      SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
+
+      // Reset reporting functionality after takeoff
 
       if (Propagate->GetDistanceAGL() > 200.0) {
         FirstContact = false;
@@ -502,6 +495,8 @@ FGColumnVector3& FGLGear::Force(void)
 
       compressLength = 0.0; // reset compressLength to zero for data output validity
     }
+
+    // Takeoff and landing reporting functionality
 
     if (FirstContact) LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
 
@@ -520,13 +515,12 @@ FGColumnVector3& FGLGear::Force(void)
       if (debug_lvl > 0) Report(erTakeoff);
     }
 
-    if (lastWOW != WOW) {
-      PutMessage("GEAR_CONTACT: " + name, WOW);
-    }
+    // End of reporting code
 
+    if (lastWOW != WOW) PutMessage("GEAR_CONTACT: " + name, WOW);
     lastWOW = WOW;
 
-// Crash detection logic (really out-of-bounds detection)
+    // Crash detection logic (really out-of-bounds detection)
 
     if (compressLength > 500.0 ||
         vForce.Magnitude() > 100000000.0 ||
