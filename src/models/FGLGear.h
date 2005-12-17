@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.6 2005/12/17 16:04:35 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.7 2005/12/17 22:06:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.6 2005/12/17 16:04:35 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.7 2005/12/17 22:06:57 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -249,7 +249,7 @@ public:
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
 
-  bool IsBogey(void) {return contactType == string("BOGEY");}
+  bool IsBogey(void) {return (sContactType == string("BOGEY"));}
 
   void bind(void);
   void unbind(void);
@@ -300,7 +300,7 @@ private:
   string sSteerType;
   string sBrakeGroup;
   string sRetractable;
-  string contactType;
+  string sContactType;
 
   BrakeGroup eBrakeGrp;
   SteerType  eSteerType;

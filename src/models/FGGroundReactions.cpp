@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.7 2005/12/17 16:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.8 2005/12/17 22:06:57 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,10 +105,14 @@ bool FGGroundReactions::Run(void)
 
 bool FGGroundReactions::GetWOW(void)
 {
+  bool result = false;
   for (int i=0; i<lGear.size(); i++) {
-    if (lGear[i].IsBogey() && lGear[i].GetWOW()) return true;
+    if (lGear[i].IsBogey() && lGear[i].GetWOW()) {
+      result = true;
+      break;
+    }
   }
-  return false;
+  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

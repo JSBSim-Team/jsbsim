@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.11 2005/12/17 16:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.12 2005/12/17 22:06:57 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,7 +68,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   isRetractable = 0;
 
   name = el->GetAttributeValue("name");
-  contactType = el->GetAttributeValue("type");
+  sContactType = el->GetAttributeValue("type");
   if (el->FindElement("spring_coeff"))
     kSpring = el->FindElementValueAsNumberConvertTo("spring_coeff", "LBS/FT");
   if (el->FindElement("damping_coeff"))
@@ -223,8 +223,9 @@ FGLGear::FGLGear(const FGLGear& lgear)
   name            = lgear.name;
   sSteerType      = lgear.sSteerType;
   sRetractable    = lgear.sRetractable;
-  eSteerType      = lgear.eSteerType;
+  sContactType    = lgear.sContactType;
   sBrakeGroup     = lgear.sBrakeGroup;
+  eSteerType      = lgear.eSteerType;
   eBrakeGrp       = lgear.eBrakeGrp;
   maxSteerAngle   = lgear.maxSteerAngle;
   isRetractable   = lgear.isRetractable;
@@ -632,13 +633,13 @@ void FGLGear::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor - loading and initialization
-      cout << "    " << contactType << " " << name          << endl;
+      cout << "    " << sContactType << " " << name          << endl;
       cout << "      Location: "         << vXYZ          << endl;
       cout << "      Spring Constant:  " << kSpring       << endl;
       cout << "      Damping Constant: " << bDamp         << endl;
       cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
       cout << "      Static Friction:  " << staticFCoeff  << endl;
-      if (contactType == "BOGEY") {
+      if (sContactType == "BOGEY") {
         cout << "      Rolling Friction: " << rollingFCoeff << endl;
         cout << "      Steering Type:    " << sSteerType    << endl;
         cout << "      Grouping:         " << sBrakeGroup   << endl;
