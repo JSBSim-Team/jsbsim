@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
-<fdm_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="../../JSBSim.xsd"
-  name="Cessna C-172 Skyhawk"  version="2.0" release="BETA">
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<fdm_config name="Cessna C-172 Skyhawk"  version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../JSBSim.xsd">
     <fileheader>
         <author>Tony Peden</author>
         <filecreationdate>1999</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.44 2005/12/17 22:06:57 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.45 2005/12/18 14:02:57 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>

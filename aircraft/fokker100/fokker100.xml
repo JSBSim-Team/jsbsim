@@ -1,8 +1,5 @@
 <?xml version="1.0"?>
-<!-- Failed to tie property fcs/spoiler-control to object methods
-     Failed to tie property output-value to object methods
-     Failed to tie property output-norm to object methods        -->
-<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="Fokker 100" version="2.0" release="BETA">
 
     <fileheader>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="737" version="2.0" release="BETA">
 
     <fileheader>
@@ -669,7 +669,7 @@
             </function>
         </axis>
     </aerodynamics>
-    <output name="737out.csv" type="CSV" rate="20">
+    <output name="737out.csv" type="NONE" rate="20">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> position/h-sl-ft </property>

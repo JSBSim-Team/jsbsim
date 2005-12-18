@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="JSBSim.xsl" type="application/xml"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="sgs126" version="2.0" release="BETA">
 
     <fileheader>
