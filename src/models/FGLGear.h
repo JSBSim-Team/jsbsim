@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.7 2005/12/17 22:06:57 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.8 2005/12/21 15:23:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.7 2005/12/17 22:06:57 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.8 2005/12/21 15:23:16 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -328,6 +328,8 @@ private:
   void Debug(int from);
 
   FGTable *ForceY_Table;
+  FGColumnVector3 last_vForce;
+  double last_WheelSlip;
 };
 }
 #include "FGAircraft.h"

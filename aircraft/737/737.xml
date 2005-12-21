@@ -669,7 +669,7 @@
             </function>
         </axis>
     </aerodynamics>
-    <output name="737out.csv" type="NONE" rate="20">
+    <output name="JSBout172B.csv" type="CSV" rate="10">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> position/h-sl-ft </property>
@@ -681,8 +681,8 @@
         <moments> ON </moments>
         <position> ON </position>
         <propulsion> ON </propulsion>
-        <aerosurfaces> ON </aerosurfaces>
-        <fcs> ON </fcs>
+        <aerosurfaces> OFF </aerosurfaces>
+        <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>
     </output>
 </fdm_config>

@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.12 2005/12/17 22:06:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.13 2005/12/21 15:23:16 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,6 +302,15 @@ FGColumnVector3& FGLGear::Force(void)
     // Transform the forces back to the body frame and compute the moment.
 
     vForce  = Propagate->GetTl2b() * vLocalForce;
+
+    // Lag and attenuate the XY-plane forces dependent on velocity
+
+    vForce(eX) = 0.5*vForce(eX) + 0.50*last_vForce(eX);
+    vForce(eY) = 0.25*vForce(eY) + 0.750*last_vForce(eY);
+    last_vForce = vForce;
+    if (fabs(RollingWhlVel) <= 0.01) vForce(eX) *= fabs(RollingWhlVel)*100.0;
+    if (fabs(SideWhlVel) <= 0.1) vForce(eY) *= fabs(SideWhlVel)*10.0;
+
     vMoment = vWhlBodyVec * vForce;
 
   } else { // Gear is NOT compressed
@@ -348,13 +357,15 @@ void FGLGear::ComputeSlipAngle(void)
 
   // Calculate tire slip angle.
 
-  if (RollingWhlVel == 0.0 && SideWhlVel == 0.0) {
-    WheelSlip = 0.0;
-  } else if (fabs(RollingWhlVel) < 1.0) {
+  if (fabs(RollingWhlVel) < 0.1 && fabs(SideWhlVel) < 0.01) {
     WheelSlip = SteerAngle*radtodeg;
+  } else if (fabs(SideWhlVel) < 0.005) {
+    WheelSlip = 0.0;
   } else {
     WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
   }
+  WheelSlip = 0.9*WheelSlip + 0.1*last_WheelSlip;
+  last_WheelSlip = WheelSlip;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
