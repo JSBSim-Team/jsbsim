@@ -8,8 +8,8 @@
   <use initialize="reset00"/>
   <run start="0.0" end="20" dt="0.0083333">
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="10"/>
-      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc="1.0"/>
+      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
+      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
     </when>
   </run>
 

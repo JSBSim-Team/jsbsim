@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.13 2005/12/21 15:23:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.14 2005/12/22 03:42:28 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   brakePct        = 0.0;
   maxCompLen      = 0.0;
 
-  WheelSlip = lastWheelSlip = 0.0;
+  WheelSlip = last_WheelSlip = 0.0;
   TirePressureNorm = 1.0;
 
   Debug(0);
@@ -232,7 +232,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
   WheelSlip       = lgear.WheelSlip;
-  lastWheelSlip   = lgear.lastWheelSlip;
+  last_WheelSlip  = lgear.last_WheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
   ForceY_Table    = lgear.ForceY_Table;
@@ -358,11 +358,9 @@ void FGLGear::ComputeSlipAngle(void)
   // Calculate tire slip angle.
 
   if (fabs(RollingWhlVel) < 0.1 && fabs(SideWhlVel) < 0.01) {
-    WheelSlip = SteerAngle*radtodeg;
-  } else if (fabs(SideWhlVel) < 0.005) {
-    WheelSlip = 0.0;
+    WheelSlip = -SteerAngle*radtodeg;
   } else {
-    WheelSlip = radtodeg*atan2(SideWhlVel, fabs(RollingWhlVel));
+    WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
   }
   WheelSlip = 0.9*WheelSlip + 0.1*last_WheelSlip;
   last_WheelSlip = WheelSlip;

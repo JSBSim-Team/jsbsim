@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.8 2005/12/21 15:23:16 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.9 2005/12/22 03:42:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.8 2005/12/21 15:23:16 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.9 2005/12/22 03:42:28 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -263,6 +263,8 @@ private:
   FGColumnVector3 vForce;
   FGColumnVector3 vLocalForce;
   FGColumnVector3 vWhlVelVec;     // Velocity of this wheel (Local)
+  FGColumnVector3 last_vForce;
+  FGTable *ForceY_Table;
   double SteerAngle;
   double kSpring;
   double bDamp;
@@ -283,7 +285,7 @@ private:
   double SideWhlVel, RollingWhlVel;
   double RollingForce, SideForce, FCoeff;
   double WheelSlip;
-  double lastWheelSlip;
+  double last_WheelSlip;
   double TirePressureNorm;
   double SinWheel, CosWheel;
   bool WOW;
@@ -326,10 +328,6 @@ private:
   void ReportTakeoffOrLanding(void);
   void Report(ReportType rt);
   void Debug(int from);
-
-  FGTable *ForceY_Table;
-  FGColumnVector3 last_vForce;
-  double last_WheelSlip;
 };
 }
 #include "FGAircraft.h"
