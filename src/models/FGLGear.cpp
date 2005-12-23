@@ -34,7 +34,7 @@ HISTORY
 11/18/99   JSB   Created
 01/30/01   NHP   Extended gear model to properly simulate steering and braking
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.14 2005/12/22 03:42:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.15 2005/12/23 07:06:36 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -232,12 +232,17 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
   WheelSlip       = lgear.WheelSlip;
-  last_WheelSlip  = lgear.last_WheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
   ForceY_Table    = lgear.ForceY_Table;
   CosWheel        = lgear.CosWheel;
   SinWheel        = lgear.SinWheel;
+  In              = lgear.In;
+  prevIn          = lgear.prevIn;
+  prevOut         = lgear.prevOut;
+  slipIn          = lgear.slipIn;
+  last_SlipIn     = lgear.last_SlipIn;
+  last_WheelSlip  = lgear.last_WheelSlip;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -305,11 +310,18 @@ FGColumnVector3& FGLGear::Force(void)
 
     // Lag and attenuate the XY-plane forces dependent on velocity
 
-    vForce(eX) = 0.5*vForce(eX) + 0.50*last_vForce(eX);
-    vForce(eY) = 0.25*vForce(eY) + 0.750*last_vForce(eY);
-    last_vForce = vForce;
-    if (fabs(RollingWhlVel) <= 0.01) vForce(eX) *= fabs(RollingWhlVel)*100.0;
-    if (fabs(SideWhlVel) <= 0.1) vForce(eY) *= fabs(SideWhlVel)*10.0;
+double RFRV = 0.015; // Rolling Force Relaxation Velocity
+double SFRV = 0.1;  // Side Force Relaxation Velocity (0.1 best for C172)
+double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
+
+    In = vForce;
+    vForce(eX) = (0.25)*(In(eX) + prevIn(eX)) + (0.50)*prevOut(eX);
+    vForce(eY) = (0.20)*(In(eY) + prevIn(eY)) + (0.60)*prevOut(eY);
+    prevOut = vForce;
+    prevIn = In;
+    
+    if (fabs(RollingWhlVel) <= RFRV) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
+    if (fabs(SideWhlVel) <= SFRV) vForce(eY) *= fabs(SideWhlVel)/SFRV;
 
     vMoment = vWhlBodyVec * vForce;
 
@@ -350,6 +362,8 @@ void FGLGear::ComputeRetractionState(void)
 
 void FGLGear::ComputeSlipAngle(void)
 {
+  double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
+
   // Transform the wheel velocities from the local axis system to the wheel axis system.
 
   RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
@@ -362,8 +376,10 @@ void FGLGear::ComputeSlipAngle(void)
   } else {
     WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
   }
-  WheelSlip = 0.9*WheelSlip + 0.1*last_WheelSlip;
+  slipIn = WheelSlip;
+  WheelSlip = (0.40)*(slipIn + last_SlipIn) + (0.10)*last_WheelSlip;
   last_WheelSlip = WheelSlip;
+  last_SlipIn = slipIn;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
