@@ -73,7 +73,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.12 2005/11/30 01:31:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.13 2005/12/24 17:34:59 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,14 +149,11 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
     debug_lvl = 1;
   }
 
-
   if (Root == 0)  master= new FGPropertyManager;
   else            master = Root;
 
   instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
-
   Debug(0);
-
   // this is to catch errors in binding member functions to the property tree.
   try {
     Allocate();
@@ -165,9 +162,10 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
     exit(1);
   }
 
+  Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
   instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
-
+  Constructing = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -390,9 +388,10 @@ bool FGFDMExec::RunIC(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGFDMExec::SetGroundCallback(FGGroundCallback* p) {
-  if (GroundCallback)
-    delete GroundCallback;
+void FGFDMExec::SetGroundCallback(FGGroundCallback* p)
+{
+  if (GroundCallback) delete GroundCallback;
+
   GroundCallback = p;
 }
 
@@ -715,6 +714,11 @@ void FGFDMExec::EnableOutput(void)
 void FGFDMExec::DoTrim(int mode)
 {
   double saved_time;
+
+cout << "DoTrim called" << endl;
+
+  if (Constructing) return;
+
   if (mode < 0 || mode > JSBSim::tNone) {
     cerr << endl << "Illegal trimming mode!" << endl << endl;
     return;

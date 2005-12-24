@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.8 2005/11/30 01:31:18 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.9 2005/12/24 17:34:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.8 2005/11/30 01:31:18 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.9 2005/12/24 17:34:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -280,6 +280,7 @@ private:
 
   bool terminate;
   bool holding;
+  bool Constructing;
   int  Error;
   unsigned int Frame;
   unsigned int IdFDM;
