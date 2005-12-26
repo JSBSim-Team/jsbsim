@@ -19,14 +19,23 @@ ADIR=$1
 
 NOTFOUND=
 cd aircraft
-FILES=`grep JSBSim.xsl */*.xml | awk -F':' '{print $1}'`
-for n in $FILES; do
-    if [ ! -f $ADIR/$n ]; then
-        NOTFOUND="$NOTFOUND $n";
-    else
-        cp -p $n $ADIR/$n;
+DIRS=`find . -type d -maxdepth 1 -printf "%f\n"`
+for n in $DIRS; do
+    if [ $n"x" != ".x" -a $n"x" != "CVSx" ]; then
+        if [ ! -f $n/INSTALL ]; then
+            INSTALL="$ADIR/$n/$n.xml";
+        else
+            INSTALL="$ADIR/`grep "^FlightGear:" $n/INSTALL | awk '{print $2}'`";
+        fi;
+
+        if [ $n"x" != ".x" -a ! -f $INSTALL ]; then
+            NOTFOUND="$NOTFOUND $INSTALL";
+        else
+            cp -p $n/$n.xml $INSTALL;
+        fi
     fi
 done
+
 if [ "x$NOTFOUND" != "x" ]; then
    echo "The following aircraft files could not be found in the FlightGear"
    echo "base package:"
