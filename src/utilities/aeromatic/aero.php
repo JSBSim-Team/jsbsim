@@ -162,34 +162,6 @@ if ($ac_vtailarm == 0) {
     }
   }
 
-//***** MOMENTS OF INERTIA ******************************
-
-// use Roskam's formulae to estimate moments of inertia
-switch($ac_type) {  // moment-of-inertia factors 
-  case 0: $Rx = 0.34;$Ry = 0.33;$Rz = 0.47; break;
-  case 1: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
-  case 2: $Rx = 0.27;$Ry = 0.35;$Rz = 0.45; break;
-  case 3: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
-  case 4: $Rx = 0.27;$Ry = 0.35;$Rz = 0.40; break;
-  case 5: $Rx = 0.29;$Ry = 0.34;$Rz = 0.41; break;
-  case 6: $Rx = 0.25;$Ry = 0.38;$Rz = 0.46; break;
-  case 7: $Rx = 0.25;$Ry = 0.36;$Rz = 0.47; break;
-  case 8: $Rx = 0.32;$Ry = 0.34;$Rz = 0.47; break;
-  case 9: $Rx = 0.32;$Ry = 0.35;$Rz = 0.47; break;
-  }
-
-$ac_rawixx = ($ac_weight / 32.2)* pow(($Rx * $ac_wingspan / 2), 2);
-$ac_rawiyy = ($ac_weight / 32.2)* pow(($Ry * $ac_length / 2), 2);
-$ac_rawizz = ($ac_weight / 32.2)* pow(($Rz * (($ac_wingspan + $ac_length)/2) / 2), 2);
-// assume 4 degree angle between longitudinal and inertial axes
-// $ac_rawixz = abs($ac_rawizz - $ac_rawixx) * 0.06975647;
-
-$ac_ixx = $ac_rawixx;
-$ac_iyy = $ac_rawiyy;
-$ac_izz = $ac_rawizz;
-$ac_ixz = 0;
-
-
 //***** EMPTY WEIGHT *********************************
 
 // estimate empty weight
@@ -207,6 +179,37 @@ if ($ac_emptyweight == 0) {
     case 9:  $ac_emptyweight = $ac_weight * .60;
     }
   }
+  
+//***** MOMENTS OF INERTIA ******************************
+
+// use Roskam's formulae to estimate moments of inertia
+switch($ac_type) {  // moment-of-inertia factors 
+  case 0: $Rx = 0.34;$Ry = 0.33;$Rz = 0.47; break;
+  case 1: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
+  case 2: $Rx = 0.27;$Ry = 0.35;$Rz = 0.45; break;
+  case 3: $Rx = 0.27;$Ry = 0.36;$Rz = 0.42; break;
+  case 4: $Rx = 0.27;$Ry = 0.35;$Rz = 0.40; break;
+  case 5: $Rx = 0.29;$Ry = 0.34;$Rz = 0.41; break;
+  case 6: $Rx = 0.25;$Ry = 0.38;$Rz = 0.46; break;
+  case 7: $Rx = 0.25;$Ry = 0.36;$Rz = 0.47; break;
+  case 8: $Rx = 0.32;$Ry = 0.34;$Rz = 0.47; break;
+  case 9: $Rx = 0.32;$Ry = 0.35;$Rz = 0.47; break;
+  }
+
+// These are for an empty airplane  
+$ac_rawixx = ($ac_emptyweight / 32.2)* pow(($Rx * $ac_wingspan / 2), 2);
+$ac_rawiyy = ($ac_emptyweight / 32.2)* pow(($Ry * $ac_length / 2), 2);
+$ac_rawizz = ($ac_emptyweight / 32.2)* pow(($Rz * (($ac_wingspan + $ac_length)/2) / 2), 2);
+// assume 4 degree angle between longitudinal and inertial axes
+// $ac_rawixz = abs($ac_rawizz - $ac_rawixx) * 0.06975647;
+
+$ac_ixx = $ac_rawixx;
+$ac_iyy = $ac_rawiyy;
+$ac_izz = $ac_rawizz;
+$ac_ixz = 0;
+$ac_iyz = 0;
+$ac_ixy = 0;
+
 
 //***** CG LOCATION ***********************************
 
@@ -621,7 +624,7 @@ switch($ac_type) {
   case 0: $ac_Mcrit = 0.70; break;
   case 1: $ac_Mcrit = 0.70; break;
   case 2: $ac_Mcrit = 0.72; break;
-  case 3: $ac_Mcrit = 0.73; break;
+  case 3: $ac_Mcrit = 0.75; break;
   case 4: $ac_Mcrit = 0.81; break;
   case 5: $ac_Mcrit = 0.81; break;
   case 6: $ac_Mcrit = 0.79; break;
@@ -750,7 +753,7 @@ switch($ac_type) {                   // adverse yaw
 //************************************************
 
 print("<?xml version=\"1.0\"?>\n");
-print("<?xml-stylesheet href=\"JSBSim.xsl\" type=\"application/xml\"?>\n");
+print("<?xml-stylesheet href=\"http://jsbsim.sourceforge.net/JSBSim.xsl\" ?>\n");
 print("<fdm_config name=\"$ac_name\" version=\"2.0\" release=\"ALPHA\">\n");
 
 print(" <fileheader>\n");
@@ -850,6 +853,8 @@ printf("   <ixx unit=\"SLUG*FT2\">  %8.0f </ixx>\n", $ac_ixx);
 printf("   <iyy unit=\"SLUG*FT2\">  %8.0f </iyy>\n", $ac_iyy);
 printf("   <izz unit=\"SLUG*FT2\">  %8.0f </izz>\n", $ac_izz);
 printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
+printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
+printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
 printf("   <emptywt unit=\"LBS\" >  %8.0f </emptywt>\n", $ac_emptyweight);
 print("   <location name=\"CG\" unit=\"IN\">\n");
 printf("     <x> %6.2f </x>\n", $ac_cglocx);
@@ -1101,64 +1106,72 @@ print(" </propulsion>\n\n");
 
 //***** FLIGHT CONTROL SYSTEM ***************************
 
-print(" <flight_control name=\"$ac_name\">\n\n");
+print(" <flight_control name=\"FCS: $ac_name\">\n\n");
 
-print("   <component name=\"Pitch Trim Sum\" type=\"SUMMER\">\n");
+print("  <channel name=\"Pitch\">\n");
+
+print("   <summer name=\"Pitch Trim Sum\">\n");
 print("      <input>fcs/elevator-cmd-norm</input>\n");
 print("      <input>fcs/pitch-trim-cmd-norm</input>\n");
 print("      <clipto>\n");
 print("        <min> -1 </min>\n");
 print("        <max>  1 </max>\n");
 print("      </clipto>\n");
-print("   </component>\n\n");
+print("   </summer>\n\n");
 
-print("   <component name=\"Elevator Control\" type=\"AEROSURFACE_SCALE\">\n");
+print("   <aerosurface_scale name=\"Elevator Control\">\n");
 print("      <input>fcs/pitch-trim-sum</input>\n");
 print("      <limit>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.30 </max>\n");
 print("      </limit>\n");
 print("      <output>fcs/elevator-pos-rad</output>\n");
-print("   </component>\n\n");
+print("   </aerosurface_scale>\n\n");
 
-print("   <component name=\"Roll Trim Sum\" type=\"SUMMER\">\n");
+print("  </channel>\n\n");
+print("  <channel name=\"Roll\">\n");
+
+print("   <summer name=\"Roll Trim Sum\">\n");
 print("      <input>fcs/aileron-cmd-norm</input>\n");
 print("      <input>fcs/roll-trim-cmd-norm</input>\n");
 print("      <clipto>\n");
 print("        <min> -1 </min>\n");
 print("        <max>  1 </max>\n");
 print("      </clipto>\n");
-print("   </component>\n\n");
+print("   </summer>\n\n");
 
-print("   <component name=\"Left Aileron Control\" type=\"AEROSURFACE_SCALE\">\n");
+print("   <aerosurface_scale name=\"Left Aileron Control\">\n");
 print("      <input>fcs/roll-trim-sum</input>\n");
 print("      <limit>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
 print("      </limit>\n");
 print("      <output>fcs/left-aileron-pos-rad</output>\n");
-print("   </component>\n\n");
+print("   </aerosurface_scale>\n\n");
 
-print("   <component name=\"Right Aileron Control\" type=\"AEROSURFACE_SCALE\">\n");
+print("   <aerosurface_scale name=\"Right Aileron Control\">\n");
 print("      <input>fcs/roll-trim-sum</input>\n");
 print("      <limit>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
 print("      </limit>\n");
 print("      <output>fcs/right-aileron-pos-rad</output>\n");
-print("   </component>\n\n");
+print("   </aerosurface_scale>\n\n");
 
-print("   <component name=\"Rudder Command Sum\" type=\"SUMMER\">\n");
+print("  </channel>\n\n");
+print("  <channel name=\"Yaw\">\n");
+
+print("   <summer name=\"Rudder Command Sum\">\n");
 print("      <input>fcs/rudder-cmd-norm</input>\n");
 print("      <input>fcs/yaw-trim-cmd-norm</input>\n");
 print("      <limit>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
 print("      </limit>\n");
-print("   </component>\n\n");
+print("   </summer>\n\n");
 
 if($ac_yawdamper == 1) {
-  print("   <component name=\"Yaw Damper Rate\" type=\"SCHEDULED_GAIN\">\n");
+  print("   <scheduled_gain name=\"Yaw Damper Rate\">\n");
   print("      <input>velocities/r-aero-rad_sec</input>\n");
   print("      <table>\n");
   print("        <independentVar lookup=\"row\">velocities/ve-kts</independentVar>\n");
@@ -1167,9 +1180,9 @@ if($ac_yawdamper == 1) {
   print("            60     2.00\n");
   print("         </tableData>\n");
   print("      </table>\n");
-  print("   </component>\n\n");
+  print("   </scheduled_gain>\n\n");
 
-  print("   <component name=\"Yaw Damper Beta\" type=\"SCHEDULED_GAIN\">\n");
+  print("   <scheduled_gain name=\"Yaw Damper Beta\">\n");
   print("      <input>aero/beta-rad</input>\n");
   print("      <table>\n");
   print("        <independentVar lookup=\"row\">velocities/ve-kts</independentVar>\n");
@@ -1178,18 +1191,18 @@ if($ac_yawdamper == 1) {
   print("           60     0.00\n");
   print("        </tableData>\n");
   print("      </table>\n");
-  print("   </component>\n\n");
+  print("   </scheduled_gain>\n\n");
 
-  print("   <component name=\"Yaw Damper Sum\" type=\"SUMMER\">\n");
+  print("   <summer name=\"Yaw Damper Sum\">\n");
   print("      <input>fcs/yaw-damper-beta</input>\n");
   print("      <input>fcs/yaw-damper-rate</input>\n");
   print("      <limit>\n");
   print("        <min> -0.1 </min>\n");
   print("        <max>  0.1 </max>\n");
   print("      </limit>\n");
-  print("   </component>\n\n");
+  print("   </summer>\n\n");
 
-  print("   <component name=\"Yaw Damper Final\" type=\"SCHEDULED_GAIN\">\n");
+  print("   <scheduled_gain name=\"Yaw Damper Final\">\n");
   print("      <input>fcs/yaw-damper-sum</input>\n");
   print("      <table>\n");
   print("        <independentVar lookup=\"row\">velocities/ve-kts</independentVar>\n");
@@ -1198,38 +1211,41 @@ if($ac_yawdamper == 1) {
   print("           31         1.0\n");
   print("        </tableData>\n");
   print("      </table>\n");
-  print("   </component>\n\n");
+  print("   </scheduled_gain>\n\n");
 
-  print("   <component name=\"Rudder Sum\" type=\"SUMMER\">\n");
+  print("   <summer name=\"Rudder Sum\">\n");
   print("      <input>fcs/rudder-command-sum</input>\n");
   print("      <input>fcs/yaw-damper-final</input>\n");
   print("      <limit>\n");
   print("        <min> -1 </min>\n");
   print("        <max>  1 </max>\n");
   print("      </limit>\n");
-  print("   </component>\n\n");
+  print("   </summer>\n\n");
 
-  print("   <component name=\"Rudder Control\" type=\"AEROSURFACE_SCALE\">\n");
+  print("   <aerosurface_scale name=\"Rudder Control\">\n");
   print("      <input>fcs/rudder-sum</input>\n");
   print("      <limit>\n");
   print("        <min> -0.35 </min>\n");
   print("        <max>  0.35 </max>\n");
   print("      </limit>\n");
   print("      <output>fcs/rudder-pos-rad</output>\n");
-  print("   </component>\n\n"); 
+  print("   </aerosurface_scale>\n\n"); 
   }
   else {
-   print("   <component name=\"Rudder Control\" type=\"AEROSURFACE_SCALE\">\n");
+   print("   <aerosurface_scale name=\"Rudder Control\">\n");
    print("      <input>fcs/rudder-command-sum</input>\n");
    print("      <limit>\n");
    print("        <min> -0.35 </min>\n");
    print("        <max>  0.35 </max>\n");
    print("      </limit>\n");
    print("      <output>fcs/rudder-pos-rad</output>\n");
-   print("   </component>\n\n"); 
+   print("   </aerosurface_scale>\n\n"); 
   }
 
-print("   <component name=\"Flaps Control\" type=\"KINEMAT\">\n");
+print("  </channel>\n\n");
+print("  <channel name=\"Flaps\">\n");
+
+print("   <kinemat name=\"Flaps Control\">\n");
 print("     <input>fcs/flap-cmd-norm</input>\n");
 print("     <traverse>\n");
 print("       <setting>\n");
@@ -1246,10 +1262,13 @@ print("          <time>      3 </time>\n");
 print("       </setting>\n");
 print("     </traverse>\n");
 print("     <output>fcs/flap-pos-deg</output>\n");
-print("   </component>\n\n");
+print("   </kinemat>\n\n");
+
+print("  </channel>\n\n");
+print("  <channel name=\"Landing Gear\">\n");
 
 if($ac_gearretract == 1) {
-  print("   <component name=\"Gear Control\" type=\"KINEMAT\">\n");
+  print("   <kinemat name=\"Gear Control\">\n");
   print("     <input>gear/gear-cmd-norm</input>\n");
   print("     <traverse>\n");
   print("       <setting>\n");
@@ -1262,10 +1281,13 @@ if($ac_gearretract == 1) {
   print("       </setting>\n");
   print("     </traverse>\n");
   print("     <output>gear/gear-pos-norm</output>\n");
-  print("   </component>\n\n");
+  print("   </kinemat>\n\n");
 }
 
-print("   <component name=\"Speedbrake Control\" type=\"KINEMAT\">\n");
+print("  </channel>\n\n");
+print("  <channel name=\"Speedbrake\">\n");
+
+print("   <kinemat name=\"Speedbrake Control\">\n");
 print("     <input>fcs/speedbrake-cmd-norm</input>\n");
 print("     <traverse>\n");
 print("       <setting>\n");
@@ -1278,7 +1300,9 @@ print("          <time>     1 </time>\n");
 print("       </setting>\n");
 print("     </traverse>\n");
 print("     <output>fcs/speedbrake-pos-norm</output>\n");
-print("   </component>\n\n");
+print("   </kinemat>\n\n");
+
+print("  </channel>\n\n");
 
 print(" </flight_control>\n\n");
 
@@ -1295,10 +1319,9 @@ print(" <aerodynamics>\n\n");
 print("  <axis name=\"LIFT\">\n\n");
 
 // build a lift curve with four points
-print("    <coefficient name=\"CLalpha\">\n");
+print("    <function name=\"aero/coefficient/CLalpha\">\n");
 print("      <description>Lift_due_to_alpha</description>\n");
-print("      <function>\n");
-print("        <product>\n");
+print("      <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <table>\n");
@@ -1313,46 +1336,39 @@ $point = $ac_CLmax - (0.6 * $alpha * $ac_CLalpha);
 printf("               0.60 %4.3f\n", $point);
 print("            </tableData>\n");
 print("          </table>\n");
-print("        </product>\n");
-print("      </function>\n");
-print("    </coefficient>\n\n");
+print("      </product>\n");
+print("    </function>\n\n");
 
 $ac_dCLflap_per_deg = $ac_dCLflaps / 30.0;
-print("    <coefficient name=\"dCLflap\">\n"); 
+print("    <function name=\"aero/coefficient/dCLflap\">\n"); 
 print("       <description>Delta_Lift_due_to_flaps</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/flap-pos-deg</property>\n");
 printf("           <value> %6.5f </value>\n", $ac_dCLflap_per_deg);
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"dCLsb\">\n"); 
+print("    <function name=\"aero/coefficient/dCLsb\">\n"); 
 print("       <description>Delta_Lift_due_to_speedbrake</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/speedbrake-pos-norm</property>\n");
 print("           <value>$ac_dCLspeedbrake</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"CLde\">\n"); 
+print("    <function name=\"aero/coefficient/CLde\">\n"); 
 print("       <description>Lift_due_to_Elevator_Deflection</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/elevator-pos-rad</property>\n");
 print("           <value>$ac_CLde</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 
@@ -1360,10 +1376,9 @@ print("  </axis>\n\n");
 
 print("  <axis name=\"DRAG\">\n\n");
 
-print("    <coefficient name=\"CD0\">\n"); 
+print("    <function name=\"aero/coefficient/CD0\">\n"); 
 print("       <description>Drag_at_zero_lift</description>\n");
-print("       <function>\n");
-print("        <product>\n");
+print("       <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <table>\n");
@@ -1377,25 +1392,21 @@ printf("              0.26    %4.3f\n", $ac_CD02);
 print( "              1.57       1.500\n");
 print("            </tableData>\n");
 print("          </table>\n");
-print("        </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"CDi\">\n"); 
+print("    <function name=\"aero/coefficient/CDi\">\n"); 
 print("       <description>Induced_drag</description>\n");
-print("       <function>\n");
 print("         <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>aero/cl-squared-norm</property>\n");
 print("           <value>$ac_K</value>\n");
 print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"CDmach\">\n"); 
+print("    <function name=\"aero/coefficient/CDmach\">\n"); 
 print("       <description>Drag_due_to_mach</description>\n");
-print("       <function>\n");
 print("        <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
@@ -1409,52 +1420,44 @@ print("                1.80      0.015\n");
 print("            </tableData>\n");
 print("          </table>\n");
 print("        </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("    </function>\n\n");
 
 $ac_CDflaps_per_deg = $ac_CDflaps / 30.0;
-print("    <coefficient name=\"CDflap\">\n"); 
+print("    <function name=\"aero/coefficient/CDflap\">\n"); 
 print("       <description>Drag_due_to_flaps</description>\n");
-print("       <function>\n");
 print("         <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/flap-pos-deg</property>\n");
 printf("           <value> %6.5f </value>\n", $ac_CDflaps_per_deg);
 print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("    </function>\n\n");
 
 if($ac_gearretract == 1) {
-  print("    <coefficient name=\"CDgear\">\n"); 
+  print("    <function name=\"aero/coefficient/CDgear\">\n"); 
   print("       <description>Drag_due_to_gear</description>\n");
-  print("       <function>\n");
   print("         <product>\n");
   print("           <property>aero/qbar-psf</property>\n");
   print("           <property>metrics/Sw-sqft</property>\n");
   print("           <property>gear/gear-pos-norm</property>\n");
   print("           <value>$ac_CDgear</value>\n");
   print("         </product>\n");
-  print("       </function>\n");
-  print("    </coefficient>\n\n");
+  print("    </function>\n\n");
 }
 
-print("    <coefficient name=\"CDsb\">\n"); 
+print("    <function name=\"aero/coefficient/CDsb\">\n"); 
 print("       <description>Drag_due_to_speedbrakes</description>\n");
-print("       <function>\n");
 print("         <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/speedbrake-pos-norm</property>\n");
 print("           <value>$ac_CDspeedbrake</value>\n");
 print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"CDbeta\">\n"); 
+print("    <function name=\"aero/coefficient/CDbeta\">\n"); 
 print("       <description>Drag_due_to_sideslip</description>\n");
-print("       <function>\n");
-print("        <product>\n");
+print("       <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <table>\n");
@@ -1468,21 +1471,18 @@ printf("               0.26    %4.3f\n", $ac_CDb26);
 print( "               1.57       1.230\n");
 print("            </tableData>\n");
 print("          </table>\n");
-print("        </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"CDde\">\n"); 
+print("    <function name=\"aero/coefficient/CDde\">\n"); 
 print("       <description>Drag_due_to_Elevator_Deflection</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>fcs/elevator-pos-norm</property>\n");
 print("           <value>$ac_CDde</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 
@@ -1490,17 +1490,15 @@ print("  </axis>\n\n");
 
 print("  <axis name=\"SIDE\">\n\n");
 
-print("    <coefficient name=\"CYb\">\n");
+print("    <function name=\"aero/coefficient/CYb\">\n");
 print("       <description>Side_force_due_to_beta</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>aero/beta-rad</property>\n");
 print("           <value>$ac_CYbeta</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 
@@ -1508,51 +1506,44 @@ print("  </axis>\n\n");
 
 print("  <axis name=\"ROLL\">\n\n");
 
-print("    <coefficient name=\"Clb\">\n");
+print("    <function name=\"aero/coefficient/Clb\">\n");
 print("       <description>Roll_moment_due_to_beta</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>aero/beta-rad</property>\n");
 print("           <value>$ac_Clbeta</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Clp\">\n");
+print("    <function name=\"aero/coefficient/Clp\">\n");
 print("       <description>Roll_moment_due_to_roll_rate</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>aero/bi2vel</property>\n");
 print("           <property>velocities/p-aero-rad_sec</property>\n");
 print("           <value>$ac_Clp</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Clr\">\n");
+print("    <function name=\"aero/coefficient/Clr\">\n");
 print("       <description>Roll_moment_due_to_yaw_rate</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>aero/bi2vel</property>\n");
 print("           <property>velocities/r-aero-rad_sec</property>\n");
 print("           <value>$ac_Clr</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Clda\">\n");
+print("    <function name=\"aero/coefficient/Clda\">\n");
 print("       <description>Roll_moment_due_to_aileron</description>\n");
-print("       <function>\n");
-print("        <product>\n");
+print("       <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <property>metrics/bw-ft</property>\n");
@@ -1565,22 +1556,19 @@ $ac_Clda3 = $ac_Clda * 0.333;
 printf("              2.0    %4.3f\n", $ac_Clda3);
 print("            </tableData>\n");
 print("          </table>\n");
-print("        </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cldr\">\n");
+print("    <function name=\"aero/coefficient/Cldr\">\n");
 print("       <description>Roll_moment_due_to_rudder</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>fcs/rudder-pos-rad</property>\n");
 print("           <value>$ac_Cldr</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 
@@ -1588,23 +1576,20 @@ print("  </axis>\n\n");
 
 print("  <axis name=\"PITCH\">\n\n");
 
-print("    <coefficient name=\"Cmalpha\">\n");
+print("    <function name=\"aero/coefficient/Cmalpha\">\n");
 print("       <description>Pitch_moment_due_to_alpha</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/cbarw-ft</property>\n");
 print("           <property>aero/alpha-rad</property>\n");
 print("           <value>$ac_Cmalpha</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cmde\">\n");
+print("    <function name=\"aero/coefficient/Cmde\">\n");
 print("       <description>Pitch_moment_due_to_elevator</description>\n");
-print("       <function>\n");
-print("        <product>\n");
+print("       <product>\n");
 print("          <property>aero/qbar-psf</property>\n");
 print("          <property>metrics/Sw-sqft</property>\n");
 print("          <property>metrics/cbarw-ft</property>\n");
@@ -1617,37 +1602,32 @@ $ac_Cmde4 = $ac_Cmde * 0.25;
 printf("              2.0     %4.3f\n", $ac_Cmde4);
 print("            </tableData>\n");
 print("          </table>\n");
-print("        </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cmq\">\n");
+print("    <function name=\"aero/coefficient/Cmq\">\n");
 print("       <description>Pitch_moment_due_to_pitch_rate</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/cbarw-ft</property>\n");
 print("           <property>aero/ci2vel</property>\n");
 print("           <property>velocities/q-aero-rad_sec</property>\n");
 print("           <value>$ac_Cmq</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cmadot\">\n");
+print("    <function name=\"aero/coefficient/Cmadot\">\n");
 print("       <description>Pitch_moment_due_to_alpha_rate</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/cbarw-ft</property>\n");
 print("           <property>aero/ci2vel</property>\n");
 print("           <property>aero/alphadot-rad_sec</property>\n");
 print("           <value>$ac_Cmadot</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 
@@ -1655,58 +1635,50 @@ print("  </axis>\n\n");
 
 print("  <axis name=\"YAW\">\n\n");
 
-print("    <coefficient name=\"Cnb\">\n");
+print("    <function name=\"aero/coefficient/Cnb\">\n");
 print("       <description>Yaw_moment_due_to_beta</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>aero/beta-rad</property>\n");
 print("           <value>$ac_Cnbeta</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cnr\">\n");
+print("    <function name=\"aero/coefficient/Cnr\">\n");
 print("       <description>Yaw_moment_due_to_yaw_rate</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>aero/bi2vel</property>\n");
 print("           <property>velocities/r-aero-rad_sec</property>\n");
 print("           <value>$ac_Cnr</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cndr\">\n");
+print("    <function name=\"aero/coefficient/Cndr\">\n");
 print("       <description>Yaw_moment_due_to_rudder</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>fcs/rudder-pos-rad</property>\n");
 print("           <value>$ac_Cndr</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
-print("    <coefficient name=\"Cnda\">\n");
+print("    <function name=\"aero/coefficient/Cnda\">\n");
 print("       <description>Adverse_yaw</description>\n");
-print("       <function>\n");
-print("         <product>\n");
+print("       <product>\n");
 print("           <property>aero/qbar-psf</property>\n");
 print("           <property>metrics/Sw-sqft</property>\n");
 print("           <property>metrics/bw-ft</property>\n");
 print("           <property>fcs/left-aileron-pos-rad</property>\n");
 print("           <value>$ac_Cnda</value>\n");
-print("         </product>\n");
-print("       </function>\n");
-print("    </coefficient>\n\n");
+print("       </product>\n");
+print("    </function>\n\n");
 
 print("  </axis>\n\n");
 print(" </aerodynamics>\n\n");

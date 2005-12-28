@@ -113,10 +113,15 @@ function MakeTurbine() {
 
   print("<turbine_engine name=\"$ac_enginename\">\n");  
   printf("  <milthrust>%8.1f </milthrust>\n", $ac_enginepower);
+  if ($ac_augmented) {
   printf("  <maxthrust>%8.1f </maxthrust>\n", $ac_maxthrust);
+  }
   print("  <bypassratio>     1.0 </bypassratio>\n");
   print("  <tsfc>            0.8 </tsfc>\n");
+  if ($ac_augmented) {
   print("  <atsfc>           1.7 </atsfc>\n");
+  }
+  print("  <bleed>           0.03</bleed>\n");
   print("  <idlen1>         30.0 </idlen1>\n");
   print("  <idlen2>         60.0 </idlen2>\n");
   print("  <maxn1>         100.0 </maxn1>\n");
@@ -126,7 +131,6 @@ function MakeTurbine() {
     print("  <augmethod>         1 </augmethod>\n");
   }else {
     print("  <augmented>         0 </augmented>\n");
-    print("  <augmethod>         1 </augmethod>\n");
   }
   if($ac_injected == 1) {
     print("  <injected>          1 </injected>\n");
@@ -229,16 +233,14 @@ if(($ac_engineunits == 0) || ($ac_engineunits == 1)) {
 
   print("<turbine_engine name=\"$ac_enginename\">\n");  
   printf("  <milthrust>%8.1f </milthrust>\n", $ac_enginepower);
-  printf("  <maxthrust>%8.1f </maxthrust>\n", $ac_enginepower);
   print("  <bypassratio>     0.0  </bypassratio>\n");
   print("  <tsfc>            0.55 </tsfc>\n");
-  print("  <atsfc>           0.0  <atsfc>\n");
+  print("  <bleed>           0.03 </bleed>\n");
   print("  <idlen1>         30.0  </idlen1>\n");
   print("  <idlen2>         60.0  </idlen2>\n");
   print("  <maxn1>         100.0  </maxn1>\n");
   print("  <maxn2>         100.0  </maxn2>\n");
   print("  <augmented>         0  </augmented>\n");
-  print("  <augmethod>         1  </augmethod>\n");
   print("  <injected>          0  </injected>\n\n");
 
 
