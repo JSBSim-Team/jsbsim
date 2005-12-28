@@ -60,21 +60,21 @@ ROLL CHANNEL
 <!-- Wing leveler -->
 
 <channel name="AP Roll Wing Leveler">
-  <component name="Roll AP Wing Leveler" type="PURE_GAIN">
+  <pure_gain name="Roll AP Wing Leveler">
     <input>fcs/attitude/sensor/phi-rad</input>
     <gain>2.0</gain>
     <clipto>
       <min>-0.255</min>
       <max>0.255</max>
     </clipto>
-  </component>
+  </pure_gain>
 
-  <component name="Roll AP Error Integrator" type="INTEGRATOR">
+  <integrator name="Roll AP Error Integrator">
     <input> attitude/phi-rad </input>
     <c1> 0.125 </c1>
-  </component>
+  </integrator>
 
-  <component name="Roll AP Error summer" type="SUMMER">
+  <summer name="Roll AP Error summer">
      <input> velocities/p-rad_sec</input>
      <input> fcs/roll-ap-wing-leveler</input>
      <input> fcs/roll-ap-error-integrator</input>
@@ -82,35 +82,35 @@ ROLL CHANNEL
        <min>-1.0</min>
        <max> 1.0</max>
      </clipto>
-  </component>
+  </summer>
 
-  <component name="Roll AP Autoswitch" type="SWITCH">
+  <switch name="Roll AP Autoswitch">
     <default value="0.0"/>
     <test logic="AND" value="fcs/roll-ap-error-summer">
       ap/attitude_hold == 1
     </test>
-  </component>
+  </switch>
 
-  <component name="Roll AP Aileron Command Normalizer" type="PURE_GAIN">
+  <pure_gain name="Roll AP Aileron Command Normalizer">
      <input>fcs/roll-ap-autoswitch</input>
      <gain>-1</gain>
-  </component>
+  </pure_gain>
 </channel>
 
 <!-- Heading hold -->
 
 <channel name="AP Roll Heading Hold">
-  <component name="Heading True Degrees" type="PURE_GAIN">
+  <pure_gain name="Heading True Degrees">
     <input>attitude/heading-true-rad</input>
     <gain>57.3</gain> <!-- convert to degrees -->
-  </component>
+  </pure_gain>
 
-  <component name="Heading Error" type="SUMMER">
+  <summer name="Heading Error">
     <input> -fcs/heading-true-degrees</input>
     <input> ap/heading_setpoint </input>
-  </component>
+  </summer>
 
-  <component name="Heading Error Bias Switch" type="SWITCH">
+  <switch name="Heading Error Bias Switch">
     <default value="0.0"/>
     <test logic="AND" value="360.0">
       fcs/heading-error lt -180
@@ -118,59 +118,59 @@ ROLL CHANNEL
     <test logic="AND" value="-360.0">
       fcs/heading-error gt 180
     </test>
-  </component>
+  </switch>
 
-  <component name="Heading Corrected" type="SUMMER">
+  <summer name="Heading Corrected">
     <input> fcs/heading-error-bias-switch </input>
     <input> fcs/heading-error </input>
     <clipto>
       <min>-30</min>
       <max> 30</max>
     </clipto>
-  </component>
+  </summer>
 
-  <component name="Heading Command" type="PURE_GAIN">
+  <pure_gain name="Heading Command">
     <input> fcs/heading-corrected </input>
     <gain> 0.01745 </gain>
-  </component>
+  </pure_gain>
 
-  <component name="Heading Roll Error Lag" type="LAG_FILTER">
+  <lag_filter name="Heading Roll Error Lag">
     <input> fcs/heading-command </input>
     <c1> 0.50 </c1>
-  </component>
+  </lag_filter>
 
-  <component name="Heading Roll Error" type="SUMMER">
+  <summer name="Heading Roll Error">
     <input> fcs/heading-roll-error-lag </input>
     <input> -attitude/phi-rad </input>
-  </component>
+  </summer>
 
-  <component name="Heading Roll Error Switch" type="SWITCH">
+  <switch name="Heading Roll Error Switch">
     <default value="0.0"/>
     <test logic="AND" value="fcs/heading-roll-error">
       ap/heading_hold == 1
     </test>
-  </component>
+  </switch>
 
-  <component name="Heading Proportional" type="PURE_GAIN">
+  <pure_gain name="Heading Proportional">
     <input> fcs/heading-roll-error-switch </input>
     <gain> 1.0 </gain>
-  </component>
+  </pure_gain>
 
-  <component name="Heading Integral" type="INTEGRATOR">
+  <integrator name="Heading Integral">
     <input> fcs/heading-roll-error-switch </input>
     <c1> 0.10 </c1>
-  </component>
+  </integrator>
 
-  <component name="Heading Error Summer" type="SUMMER">
+  <summer name="Heading Error Summer">
     <input> fcs/heading-integral </input>
     <input> fcs/heading-proportional </input>
     <clipto>
       <min>-1.0</min>
       <max> 1.0</max>
     </clipto>
-  </component>
+  </summer>
 
-  <component name="Roll Command Selector" type="SWITCH">
+  <switch name="Roll Command Selector">
     <default value="0.0"/>
     <test logic="AND" value="fcs/heading-error-summer">
       ap/heading_hold == 1
@@ -179,7 +179,7 @@ ROLL CHANNEL
       ap/attitude_hold == 1
     </test>
     <output>ap/aileron_cmd</output>
-  </component>
+  </switch>
 </channel>
 <!--
 =====================================================
@@ -207,22 +207,22 @@ PITCH CHANNEL
   is determined, and limited to 100. The output from this component is
   the desired climb rate in percent of maximum.
   -->
-  <component name="Altitude Error" type="SUMMER">
+  <summer name="Altitude Error">
     <input> ap/altitude_setpoint </input>
     <input> -position/h-sl-ft </input>
     <clipto>
       <min>-100</min>
       <max> 100</max>
     </clipto>
-  </component>
+  </summer>
 
   <!--
   The desired climb rate is lagged slightly for stability.
   -->
-  <component name="Alt Error Lag" type="LAG_FILTER">
+  <lag_filter name="Alt Error Lag">
     <input> fcs/altitude-error </input>
     <c1> 1 </c1>
-  </component>
+  </lag_filter>
 
   <!--
   Dependent on altitude, the lagged (and limited) altitude error is multipled
@@ -231,7 +231,7 @@ PITCH CHANNEL
   climb rate is 100 percent of maximum and the current altitude is 1000.0 ft., then
   the output from this component would be 11 ft. sec.
   -->
-  <component name="HDot Command" type="SCHEDULED_GAIN">
+  <scheduled_gain name="HDot Command">
     <input> fcs/alt-error-lag </input>
     <table>
       <independentVar>position/h-sl-ft</independentVar>
@@ -251,39 +251,39 @@ PITCH CHANNEL
        12000.0   0.028
       </tableData>
     </table>
-  </component>
+  </scheduled_gain>
 
   <!--
   This component calculates the climb rate error, taking the difference between
   the commanded climb rate (from the previous component) and actual climb rate
   in ft./sec.
   -->
-  <component name="HDot Error" type="SUMMER">
+  <summer name="HDot Error">
     <input> fcs/hdot-command </input>
     <input> -velocities/h-dot-fps </input>
-  </component>
+  </summer>
 
   <!--
   If the altitude hold autopilot command is ON, then this switch component will
   pass through the climb rate error (from the previous component). Otherwise, it
   will pass zero.
   -->
-  <component name="AP Alt Hold Switch" type="SWITCH">
+  <switch name="AP Alt Hold Switch">
     <default value="0.0"/>
     <test logic="AND" value="fcs/hdot-error">
       ap/altitude_hold == 1
     </test>
-  </component>
+  </switch>
 
   <!--
   The windup trigger below assumes the elevator will travel +/-23 degrees. The
   elevator, however, does not travel symmetrically. This will need to be addressed
   in a fix to the deadband component.
   -->
-  <component name="Windup Trigger" type="DEADBAND">
+  <deadband name="Windup Trigger">
     <input> fcs/elevator-pos-deg </input>
     <width>46.0</width>
-  </component>
+  </deadband>
 
   <!--
   The integrator integrates the hdot error (when the switch component passes that
@@ -295,43 +295,43 @@ PITCH CHANNEL
   degrees) then the deadband passes a non-zero value, triggering the anti-windup
   logic in the integrator.
   -->
-  <component name="Integral" type="INTEGRATOR">
+  <integrator name="Integral">
     <input> fcs/ap-alt-hold-switch </input>
     <trigger> fcs/windup-trigger </trigger>
     <c1> 0.00000 </c1>
-  </component>
+  </integrator>
 
   <!--
   The proportional component multiplies the error signal by a constant, providing
   the proportional control action of this PI altitude hold controller.
   -->
-  <component name="Proportional" type="PURE_GAIN">
+  <pure_gain name="Proportional">
     <input> fcs/ap-alt-hold-switch </input>
     <gain> 0.027 </gain>
-  </component>
+  </pure_gain>
 
   <!--
   The control summer component sums the proprortional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
-  <component name="Control Summer" type="SUMMER">
+  <summer name="Control Summer">
     <input> fcs/integral </input>
     <input> fcs/proportional </input>
     <clipto>
       <min>-1.0</min>
       <max> 1.0</max>
     </clipto>
-  </component>
+  </summer>
 
   <!--
   The elevator component flips the sign on the output of the control summer
   above and sets the ap/elevator_command property.
   -->
-  <component name="Elevator" type="PURE_GAIN">
+  <pure_gain name="Elevator">
     <input> fcs/control-summer </input>
     <gain> -1.0 </gain>
     <output> ap/elevator_cmd </output>
-  </component>
+  </pure_gain>
 </channel>
 
 </autopilot>

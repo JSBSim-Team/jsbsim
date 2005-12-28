@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="General Dynamics F-16A" version="2.0" release="BETA">
+<fdm_config name="General Dynamics F-16A" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../JSBSim.xsd">
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate> 2001 </filecreationdate>
+        <filecreationdate> 2001-01-01 </filecreationdate>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <version> $Version: $ </version>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
@@ -44,9 +46,9 @@
         <ixx unit="SLUG*FT2"> 9496 </ixx>
         <iyy unit="SLUG*FT2"> 55814 </iyy>
         <izz unit="SLUG*FT2"> 63100 </izz>
+        <ixy unit="SLUG*FT2"> 0 </ixy>
         <ixz unit="SLUG*FT2"> -982 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
+        <iyz unit="SLUG*FT2"> 0 </iyz>
         <emptywt unit="LBS"> 17400 </emptywt>
         <location name="CG" unit="IN">
             <x> -193 </x>
@@ -268,175 +270,183 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
-            <component name="elevator cmd limiter" type="SUMMER">
+            <summer name="elevator cmd limiter">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <bias>-0.1</bias>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>0.44</max>
-                </clip>
-            </component>
+                </clipto>
+            </summer>
 
-            <component name="g load norm" type="PURE_GAIN">
-                <input>accelerations/n-pilot-z-norm</input>
+            <pure_gain name="g load norm">
+                <input>-accelerations/n-pilot-z-norm</input>
                 <gain>0.125</gain>
-            </component>
+            </pure_gain>
 
-            <component name="g load error" type="SUMMER">
+            <summer name="g load error">
                 <input>fcs/elevator-cmd-limiter</input>
                 <input>fcs/g-load-norm</input>
-            </component>
+            </summer>
 
-            <component name="g load p" type="PURE_GAIN">
+            <pure_gain name="g load p">
                 <input>fcs/g-load-error</input>
                 <gain>0.66</gain>
-            </component>
+            </pure_gain>
 
-            <component name="g load i" type="INTEGRATOR">
+            <integrator name="g load i">
                 <input>fcs/g-load-error</input>
                 <c1>0.005</c1>
-            </component>
+            </integrator>
 
-            <component name="g load d" type="LEAD_LAG_FILTER">
+            <lead_lag_filter name="g load d">
                 <input>fcs/g-load-error</input>
                 <c1>-0.000125</c1>
                 <c4>1</c4>
-            </component>
+            </lead_lag_filter>
 
-            <component name="g load command" type="SUMMER">
+            <summer name="g load command">
                 <input>fcs/g-load-p</input>
                 <input>fcs/g-load-i</input>
                 <input>fcs/g-load-d</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
-            </component>
+                </clipto>
+            </summer>
 
-            <component name="Elevator Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Elevator Control">
                 <input>fcs/g-load-command</input>
                 <range>
                     <min>-0.436</min>
                     <max>0.436</max>
                 </range>
                 <output>fcs/elevator-pos-rad</output>
-            </component>
+            </aerosurface_scale>
+            
         </channel>
+        
         <channel name="Roll">
-            <component name="roll rate norm" type="PURE_GAIN">
+            
+            <pure_gain name="roll rate norm">
                 <input>velocities/p-aero-rad_sec</input>
                 <gain>0.31831</gain>
-            </component>
+            </pure_gain>
 
-            <component name="roll trim error" type="SUMMER">
+            <summer name="roll trim error">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <input>-fcs/roll-rate-norm</input>
-            </component>
+            </summer>
 
-            <component name="roll rate p" type="PURE_GAIN">
+            <pure_gain name="roll rate p">
                 <input>fcs/roll-trim-error</input>
                 <gain>3</gain>
-            </component>
+            </pure_gain>
 
-            <component name="roll rate i" type="INTEGRATOR">
+            <integrator name="roll rate i">
                 <input>fcs/roll-trim-error</input>
                 <c1>0.05</c1>
-            </component>
+            </integrator>
 
-            <component name="roll rate d" type="LEAD_LAG_FILTER">
+            <lead_lag_filter name="roll rate d">
                 <input>fcs/roll-trim-error</input>
                 <c1>-0.00125</c1>
                 <c2>0.0</c2>
                 <c3>0.0</c3>
                 <c4>1</c4>
-            </component>
+            </lead_lag_filter>
 
-            <component name="roll rate command" type="SUMMER">
+            <summer name="roll rate command">
                 <input>fcs/roll-rate-p</input>
                 <input>fcs/roll-rate-i</input>
                 <input>fcs/roll-rate-d</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
-            </component>
+                </clipto>
+            </summer>
 
-            <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Left Aileron Control">
                 <input>fcs/roll-rate-command</input>
                 <range>
                     <min>-0.375</min>
                     <max>0.375</max>
                 </range>
                 <output>fcs/left-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Right Aileron Control">
                 <input>-fcs/roll-rate-command</input>
                 <range>
                     <min>-0.375</min>
                     <max>0.375</max>
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
+            
         </channel>
+        
         <channel name="Yaw">
-            <component name="yaw rate norm" type="PURE_GAIN">
+            
+            <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
                 <gain>0.31831</gain>
-            </component>
+            </pure_gain>
 
-            <component name="yaw trim error" type="SUMMER">
+            <summer name="yaw trim error">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
                 <input>fcs/yaw-rate-norm</input>
-            </component>
+            </summer>
 
-            <component name="yaw rate p" type="PURE_GAIN">
+            <pure_gain name="yaw rate p">
                 <input>fcs/yaw-trim-error</input>
                 <gain>3</gain>
-            </component>
+            </pure_gain>
 
-            <component name="yaw rate i" type="INTEGRATOR">
+            <integrator name="yaw rate i">
                 <input>fcs/yaw-trim-error</input>
                 <c1>0.05</c1>
-            </component>
+            </integrator>
 
-            <component name="yaw rate d" type="LEAD_LAG_FILTER">
+            <lead_lag_filter name="yaw rate d">
                 <input>fcs/yaw-trim-error</input>
                 <c1>-0.00125</c1>
                 <c4>1</c4>
-            </component>
+            </lead_lag_filter>
 
-            <component name="yaw rate command" type="SUMMER">
+            <summer name="yaw rate command">
                 <input>fcs/yaw-rate-p</input>
                 <input>fcs/yaw-rate-i</input>
                 <input>fcs/yaw-rate-d</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
-            </component>
+                </clipto>
+            </summer>
 
-            <component name="Rudder Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Rudder Control">
                 <input>fcs/yaw-rate-command</input>
                 <range>
                     <min>-0.524</min>
                     <max>0.524</max>
                 </range>
                 <output>fcs/rudder-pos-rad</output>
-            </component>
+            </aerosurface_scale>
+
         </channel>
 
         <channel name="Leading Edge Flap">
-            <component name="Alpha Norm Gain" type="PURE_GAIN">
+
+            <pure_gain name="Alpha Norm Gain">
                 <input>aero/alpha-rad</input>
                 <gain>1.90986</gain>
                 <output>fcs/alpha-norm</output>
-            </component>
+            </pure_gain>
 
-            <component name="LEF Pos Deg" type="KINEMAT">
+            <kinematic name="LEF Pos Deg">
                 <input>fcs/alpha-norm</input>
                 <traverse>
                     <setting>
@@ -452,7 +462,7 @@
                         <time>2</time>
                     </setting>
                 </traverse>
-            </component>
+            </kinematic>
 
             <!-- ===============================================================
                  Component for Leading edge flap position, NORMALIZED
@@ -461,7 +471,7 @@
                          flap position, mapping the LEF domain of
                          -2 to +25 degrees into a range of 0 to 1.
             -->
-            <component name="LEF Pos Norm" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="LEF Pos Norm">
               <input>fcs/lef-pos-deg</input>
               <domain>
                 <min>-2</min>  <!-- LEF actual minimum position -->
@@ -471,29 +481,31 @@
                 <min>0</min>  <!-- LEF normalized minimum position -->
                 <max>1</max>  <!-- LEF normalized maximum position -->
               </range>
-            </component>
+            </aerosurface_scale>
 
         </channel>
 
         <channel name="Throttle">
-            <component name="Throttle1" type="PURE_GAIN">
+            
+            <pure_gain name="Throttle1">
                 <input>fcs/throttle-cmd-norm</input>
                 <gain>2</gain>
                 <output>fcs/throttle-pos-norm</output>
-            </component>
+            </pure_gain>
+            
         </channel>
 
         <channel name="Flaps">
 
-            <component name="Flap Command" type="SWITCH">
+            <switch name="Flap Command">
                 <default value="0"/>
                 <test logic="OR" value="1">
                     velocities/vc-kts lt 250
                     gear/gear-cmd-norm == 1
                 </test>
-            </component>
+            </switch>
 
-            <component name="Flaps Control" type="KINEMAT">
+            <kinematic name="Flaps Control">
                 <input>fcs/flap-command</input>
                 <traverse>
                     <setting>
@@ -510,9 +522,9 @@
                     </setting>
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
-            </component>
+            </kinematic>
 
-            <component name="Flap Position Normalizer" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Flap Position Normalizer">
               <input>fcs/flaps-control</input>
               <domain>
                 <min>-2</min>  <!-- Flaps actual minimum position -->
@@ -523,12 +535,13 @@
                 <max>1</max>  <!-- Flaps normalized maximum position -->
               </range>
               <output>fcs/flap-pos-norm</output>
-            </component>
+            </aerosurface_scale>
 
         </channel>
 
         <channel name="Speedbrake">
-            <component name="Speedbrake Control" type="KINEMAT">
+            
+            <kinematic name="Speedbrake Control">
                 <input>fcs/speedbrake-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -541,10 +554,13 @@
                     </setting>
                 </traverse>
                 <output>fcs/speedbrake-pos-norm</output>
-            </component>
+            </kinematic>
+            
         </channel>
+        
         <channel name="Landing Gear">
-            <component name="Gear Control" type="KINEMAT">
+            
+            <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -557,9 +573,9 @@
                     </setting>
                 </traverse>
                 <output>gear/gear-pos-norm</output>
-            </component>
+            </kinematic>
 
-            <component name="Scheduled Steer Pos Deg" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Scheduled Steer Pos Deg">
                 <input>fcs/steer-cmd-norm</input>
                 <table>
                     <independentVar>velocities/vg-fps</independentVar>
@@ -570,11 +586,14 @@
                     </tableData>
                 </table>
                 <output>fcs/steer-pos-deg</output>
-            </component>
+            </scheduled_gain>
+            
         </channel>
+        
     </flight_control>
 
     <aerodynamics>
+        
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
             <product>

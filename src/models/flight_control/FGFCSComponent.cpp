@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.6 2005/09/10 13:00:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.7 2005/12/28 15:06:05 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,7 +58,41 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   string input, clip_string;
 
   PropertyManager = fcs->GetPropertyManager();
-  Type = element->GetAttributeValue("type");
+  Type = element->GetAttributeValue("type"); // Old, deprecated format
+  if (Type.empty()) {
+    if        (element->GetName() == string("lag_filter")) {
+      Type = "LAG_FILTER";
+    } else if (element->GetName() == string("lead_lag_filter")) {
+      Type = "LEAD_LAG_FILTER";
+    } else if (element->GetName() == string("washout_filter")) {
+      Type = "WASHOUT_FILTER";
+    } else if (element->GetName() == string("second_order_filter")) {
+      Type = "SECOND_ORDER_FILTER";
+    } else if (element->GetName() == string("integrator")) {
+      Type = "INTEGRATOR";
+    } else if (element->GetName() == string("summer")) {
+      Type = "SUMMER";
+    } else if (element->GetName() == string("pure_gain")) {
+      Type = "PURE_GAIN";
+    } else if (element->GetName() == string("scheduled_gain")) {
+      Type = "SCHEDULED_GAIN";
+    } else if (element->GetName() == string("aerosurface_scale")) {
+      Type = "AEROSURFACE_SCALE";
+    } else if (element->GetName() == string("switch")) {
+      Type = "SWITCH";
+    } else if (element->GetName() == string("kinematic")) {
+      Type = "KINEMATIC";
+    } else if (element->GetName() == string("deadband")) {
+      Type = "DEADBAND";
+    } else if (element->GetName() == string("fcs_function")) {
+      Type = "FCS_FUNCTION";
+    } else if (element->GetName() == string("sensor")) {
+      Type = "SENSOR";
+    } else { // illegal component in this channel
+      Type = "UNKNOWN";
+    }
+  }
+
   Name = element->GetAttributeValue("name");
 
   input_element = element->FindElement("input");
