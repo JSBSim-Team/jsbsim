@@ -386,10 +386,10 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCDge</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0000
-                              0.8100	0.0000
+                              0.7700	0.0000
                               1.1000	0.0230
                               1.8000	0.0150
                           </tableData>
@@ -636,7 +636,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.1810
                               2.0000	0.0400
@@ -706,7 +706,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	-1.1200
                               2.0000	-0.2000

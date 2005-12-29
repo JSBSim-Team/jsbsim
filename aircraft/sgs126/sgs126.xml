@@ -274,7 +274,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                     <value>0.0230</value>
                 </product>
             </function>
@@ -284,7 +284,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0000
                               0.7000	0.0000
@@ -448,7 +448,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0600
                               2.0000	0.0200
@@ -487,7 +487,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	-0.8000
                               2.0000	-0.2000

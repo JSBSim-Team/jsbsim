@@ -8,7 +8,7 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 1998-07-01 </filecreationdate>
-        <version> $Revision: 1.52 $ </version>
+        <version> $Revision: 1.53 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
@@ -323,7 +323,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0610
                               0.1000	0.0610
@@ -356,9 +356,9 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.2000
                               0.5000	0.2000
@@ -414,7 +414,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/alpha-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	4.5000
                               0.4000	3.8000
@@ -435,7 +435,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	1.0000
                               0.6000	1.0500
@@ -457,9 +457,9 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>velocities/mach-norm</property>
+                    <property>velocities/mach</property>
                       <table>
-                          <independentVar lookup="row">velocities/mach-norm</independentVar>
+                          <independentVar lookup="row">velocities/mach</independentVar>
                           <independentVar lookup="column">position/h-sl-ft</independentVar>
                           <tableData>
                                 0.0000	40000.0000	60000.0000	80000.0000
@@ -518,7 +518,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar lookup="row">velocities/mach-norm</independentVar>
+                          <independentVar lookup="row">velocities/mach</independentVar>
                           <independentVar lookup="column">position/h-sl-ft</independentVar>
                           <tableData>
                                 0.0000	80000.0000
@@ -585,9 +585,9 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
-                    <property>velocities/mach-norm</property>
+                    <property>velocities/mach</property>
                       <table>
-                          <independentVar lookup="row">velocities/mach-norm</independentVar>
+                          <independentVar lookup="row">velocities/mach</independentVar>
                           <independentVar lookup="column">position/h-sl-ft</independentVar>
                           <tableData>
                                 0.0000	40000.0000	60000.0000	80000.0000
@@ -613,7 +613,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	-1.5000
                               0.8000	-1.6000
