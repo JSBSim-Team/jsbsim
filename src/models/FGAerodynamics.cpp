@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.5 2005/12/29 21:56:14 dpculp Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -303,7 +303,7 @@ void FGAerodynamics::bind(void)
                        (PMF)&FGAerodynamics::GetvFs);
   PropertyManager->Tie("forces/lod-norm", this,
                        &FGAerodynamics::GetLoD);
-  PropertyManager->Tie("aero/cl-squared-norm", this,
+  PropertyManager->Tie("aero/cl-squared", this,
                        &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/qbar-area", &qbar_area);
   PropertyManager->Tie("aero/alpha-max-deg", this,
@@ -342,7 +342,7 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("forces/fwy-aero-lbs");
   PropertyManager->Untie("forces/fwz-aero-lbs");
   PropertyManager->Untie("forces/lod-norm");
-  PropertyManager->Untie("aero/cl-squared-norm");
+  PropertyManager->Untie("aero/cl-squared");
   PropertyManager->Untie("aero/qbar-area");
   PropertyManager->Untie("aero/alpha-max-deg");
   PropertyManager->Untie("aero/alpha-min-deg");

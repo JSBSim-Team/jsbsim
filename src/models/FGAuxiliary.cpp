@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.5 2005/12/17 16:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.6 2005/12/29 21:56:14 dpculp Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -293,7 +293,7 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("velocities/v-aero-fps", this, eV, (PMF)&FGAuxiliary::GetAeroUVW);
   PropertyManager->Tie("velocities/w-aero-fps", this, eW, (PMF)&FGAuxiliary::GetAeroUVW);
   PropertyManager->Tie("velocities/vt-fps", this, &FGAuxiliary::GetVt, &FGAuxiliary::SetVt, true);
-  PropertyManager->Tie("velocities/mach-norm", this, &FGAuxiliary::GetMach, &FGAuxiliary::SetMach, true);
+  PropertyManager->Tie("velocities/mach", this, &FGAuxiliary::GetMach, &FGAuxiliary::SetMach, true);
   PropertyManager->Tie("velocities/vg-fps", this, &FGAuxiliary::GetVground);
   PropertyManager->Tie("accelerations/a-pilot-x-ft_sec2", this, eX, (PMF)&FGAuxiliary::GetPilotAccel);
   PropertyManager->Tie("accelerations/a-pilot-y-ft_sec2", this, eY, (PMF)&FGAuxiliary::GetPilotAccel);
@@ -345,7 +345,7 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("velocities/v-aero-fps");
   PropertyManager->Untie("velocities/w-aero-fps");
   PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocities/mach-norm");
+  PropertyManager->Untie("velocities/mach");
   PropertyManager->Untie("velocities/vg-fps");
   PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
   PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
