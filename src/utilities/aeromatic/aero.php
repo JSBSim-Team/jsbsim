@@ -17,6 +17,7 @@ $version = 0.8;
 // Updated: 21 Feb 2004, DPC - added VRP, increased version to 1.61
 // Updated: 17 Jun 2004, JSB - increased version number to 1.65
 // Updated: 14 Dec 2004, DPC - adapted to new XML format, v2.0
+// Updated: 29 Dec 2005, DPC - more v2.0 updates, added incidence
 
 header("Content-type: text/plain");
 
@@ -96,6 +97,9 @@ $ac_aspectratio = $ac_wingspan / $ac_wingchord;
 
 // calculate half-span
 $ac_halfspan = $ac_wingspan / 2;
+
+// for now let's use a standard 2 degrees wing incidence
+$ac_wingincidence = 2.0;
 
 // estimate horizontal tail area
 if ($ac_htailarea == 0) {
@@ -826,6 +830,7 @@ print("\n-->\n\n");
 print(" <metrics>\n");
 printf("   <wingarea  unit=\"FT2\"> %7.2f </wingarea>\n", $ac_wingarea);
 printf("   <wingspan  unit=\"FT\" > %7.2f </wingspan>\n", $ac_wingspan);
+printf("   <wing_incidence>         %7.2f </wing_incidence>\n", $ac_wingincidence);
 printf("   <chord     unit=\"FT\" > %7.2f </chord>\n", $ac_wingchord);
 printf("   <htailarea unit=\"FT2\"> %7.2f </htailarea>\n", $ac_htailarea);
 printf("   <htailarm  unit=\"FT\" > %7.2f </htailarm>\n", $ac_htailarm);
