@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="1970 Boeing 747 100B" version="2.0" release="BETA">
+<fdm_config name="1970 Boeing 747 100B" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author>Darren Jones</author>
@@ -8,10 +10,10 @@
         <organization>Department of Mechanical Engineering,
                       University of Bath,
                       UK                                    </organization>
-        <filecreationdate>2003</filecreationdate>
+        <filecreationdate>2003-01-01 </filecreationdate>
+        <version>1.0</version>
         <description> Models a 1970 Boeing 747-100B with Pratt and Whitney JT9D-3
                       turbofan engines                      </description>
-        <version>1.0</version>
         <note>Since a moving stabilizer property is not available the
               speedbrake property is being used to emulate the Boeing
               747 trimmable horizontal stabilizer.</note>
@@ -55,8 +57,6 @@
         <iyy unit="SLUG*FT2"> 2.528e+07 </iyy>
         <izz unit="SLUG*FT2"> 5.298e+07 </izz>
         <ixz unit="SLUG*FT2"> -940000 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 370000 </emptywt>
         <location name="CG" unit="IN">
             <x> 1340 </x>
@@ -378,10 +378,10 @@
         <channel name="Pitch">
             <summer name="Elevator Input">
                 <input>fcs/elevator-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -401,10 +401,10 @@
 
             <summer name="Stabilizer Input">
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Stabilizer Control">
@@ -424,10 +424,10 @@
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -461,19 +461,19 @@
             <summer name="Yaw Trim Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <summer name="Rudder Sum">
                 <input>fcs/yaw-trim-sum</input>
                 <input>fcs/yaw-damper-rate</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
@@ -1198,15 +1198,15 @@
         <simulation> OFF </simulation>
         <atmosphere> OFF </atmosphere>
         <massprops> ON </massprops>
-        <aerosurfaces> OFF </aerosurfaces>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
         <moments> ON </moments>
         <position> ON </position>
-        <coefficients> OFF </coefficients>
-        <ground_reactions> OFF </ground_reactions>
-        <fcs> OFF </fcs>
         <propulsion> ON </propulsion>
+        <aerosurfaces> OFF </aerosurfaces>
+        <fcs> OFF </fcs>
+        <ground_reactions> OFF </ground_reactions>
+        <coefficients> OFF </coefficients>
     </output>
 </fdm_config>

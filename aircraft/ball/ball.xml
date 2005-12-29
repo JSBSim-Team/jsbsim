@@ -7,8 +7,8 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 2004-06-01 </filecreationdate>
-        <description> Test file </description>
         <version> Version 1.0 </version>
+        <description> Test file </description>
     </fileheader>
 
     <metrics>

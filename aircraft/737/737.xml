@@ -8,8 +8,8 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <description> Models a 737. </description>
         <version> Version </version>
+        <description> Models a 737. </description>
     </fileheader>
 
     <metrics>

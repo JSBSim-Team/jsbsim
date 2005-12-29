@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="C130" version="2.0" release="BETA">
+<fdm_config name="C130" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <author> Unknown </author>
+        <filecreationdate> 2004-01-01 </filecreationdate>
+        <version> $Id: C130.xml,v 1.8 2005/12/29 19:34:34 jberndt Exp $ </version>
+        <description> Models a Lockheed C-130 Hercules. </description>
     </fileheader>
 
     <metrics>
@@ -39,9 +40,9 @@
         <ixx unit="SLUG*FT2"> 3.66391e+06 </ixx>
         <iyy unit="SLUG*FT2"> 2.38552e+06 </iyy>
         <izz unit="SLUG*FT2"> 5.9669e+06 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
         <ixz unit="SLUG*FT2"> -0 </ixz>
         <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 105000 </emptywt>
         <location name="CG" unit="IN">
             <x> 586.5 </x>
@@ -245,14 +246,14 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: C130">
-
+      <channel name="all">
         <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
             <input>fcs/pitch-trim-cmd-norm</input>
-            <clip>
+            <clipto>
                 <min>-1</min>
                 <max>1</max>
-            </clip>
+            </clipto>
         </summer>
 
         <aerosurface_scale name="Elevator Control">
@@ -267,10 +268,10 @@
         <summer name="Roll Trim Sum">
             <input>fcs/aileron-cmd-norm</input>
             <input>fcs/roll-trim-cmd-norm</input>
-            <clip>
+            <clipto>
                 <min>-1</min>
                 <max>1</max>
-            </clip>
+            </clipto>
         </summer>
 
         <aerosurface_scale name="Left Aileron Control">
@@ -294,10 +295,10 @@
         <summer name="Rudder Command Sum">
             <input>fcs/rudder-cmd-norm</input>
             <input>fcs/yaw-trim-cmd-norm</input>
-            <clip>
+            <clipto>
                 <min>-1</min>
                 <max>1</max>
-            </clip>
+            </clipto>
         </summer>
 
         <aerosurface_scale name="Rudder Control">
@@ -357,6 +358,7 @@
             </traverse>
             <output>fcs/speedbrake-pos-norm</output>
         </kinematic>
+      </channel>
     </flight_control>
     <aerodynamics>
 

@@ -8,8 +8,8 @@
     <fileheader>
         <author> Jon Berndt </author>
         <filecreationdate> 1998-07-01 </filecreationdate>
+        <version> $Revision: 1.52 $ </version>
         <description> Models the X-15 hypersonic research aircraft </description>
-        <version> $Revision: 1.51 $ </version>
         <reference refID="NASA-TN-D-6208" author="Anonymous" title="EXPERIENCE WITH THE X-15 ADAPTIVE FLIGHT CONTROL SYSTEM" date="March 1971"/>
         <reference refID="NASA-TN-D-2532" author="Roxanah B. Yancey" title="Flight Measurements of Stability and Control Derivatives of the X-15 Research Airplane to a Mach Number of 6.02 and an Angle of Attack of 25 degrees" date="1964"/>
     </fileheader>

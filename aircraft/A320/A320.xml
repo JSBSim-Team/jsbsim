@@ -2,13 +2,13 @@
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="A320-200" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../JSBSim.xsd">
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <description> Airbus A320 </description>
         <version> Version </version>
+        <description> Airbus A320 </description>
     </fileheader>
 
     <metrics>
