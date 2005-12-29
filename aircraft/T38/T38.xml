@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="T38" version="2.0" release="BETA">
+<fdm_config name="T38" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+    
  <fileheader>
   <author>Aeromatic v 0.8, DPC</author>
-  <filecreationdate>now</filecreationdate>
+  <filecreationdate>2004-01-01</filecreationdate>
   <description>Models a Northrop T-38</description>
-  <reference refID="None" author="n/a" title="n/a" date="n/a" />
+  <version>$Id: T38.xml,v 1.17 2005/12/29 16:03:29 jberndt Exp $</version>
  </fileheader>
 
 <!--
@@ -62,9 +65,6 @@
         <ixx unit="SLUG*FT2"> 7806 </ixx>
         <iyy unit="SLUG*FT2"> 36075 </iyy>
         <izz unit="SLUG*FT2"> 31319 </izz>
-        <ixz unit="SLUG*FT2"> -0 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 7574 </emptywt>
         <location name="CG" unit="IN">
             <x> 314 </x>
@@ -195,10 +195,10 @@
             <summer name="Pilot Pitch Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <scheduled_gain name="Pitch Feel">
@@ -226,10 +226,10 @@
             <summer name="Pilot Roll Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <scheduled_gain name="Roll Feel">
@@ -266,10 +266,10 @@
             <summer name="Rudder Command Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <scheduled_gain name="Yaw SAS Rate">
@@ -298,19 +298,19 @@
             <summer name="Yaw SAS Sum">
                 <input>fcs/yaw-sas-rate</input>
                 <input>fcs/yaw-sas-beta</input>
-                <clip>
+                <clipto>
                     <min>-0.1</min>
                     <max>0.1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <summer name="Rudder Sum">
                 <input>fcs/rudder-command-sum</input>
                 <input>fcs/yaw-sas-sum</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
