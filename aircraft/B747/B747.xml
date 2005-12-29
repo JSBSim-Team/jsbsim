@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: B747.xml,v 1.17 2005/12/29 19:34:34 jberndt Exp $ </version>
+        <version> $Id: B747.xml,v 1.18 2005/12/29 22:20:24 dpculp Exp $ </version>
         <description> Description </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
@@ -447,7 +447,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0000
                               0.7900	0.0000
@@ -611,7 +611,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.1000
                               2.0000	0.0330
@@ -650,7 +650,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	-1.3000
                               2.0000	-0.3250
