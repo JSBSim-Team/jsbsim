@@ -400,7 +400,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0160
                               0.8000	0.0160
@@ -430,7 +430,7 @@
                     <property>metrics/Sw-sqft</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                                 0.0000	0.8000	0.9000	1.0000	1.2000	1.4000	1.6000	1.8000	2.0000
                               -0.0700	0.0034	0.0049	0.0059	0.0093	0.0109	0.0040	0.0035	0.0042	0.0041
@@ -481,7 +481,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-1.1800
                               1.8000	-1.0450
@@ -505,7 +505,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/rudder-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.3290
                               1.8000	0.0870
@@ -543,7 +543,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCLge</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.4000	0.0100
                               0.6000	0.0100
@@ -565,10 +565,10 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>aero/alpha-rad</property>
-                    <property>velocities/mach-norm</property>
+                    <property>velocities/mach</property>
                     <property>aero/function/kCLge</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.4000	7.1154
                               0.6000	4.8432
@@ -591,7 +591,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCLge</property>
                       <table>
-                          <independentVar lookup="row">velocities/mach-norm</independentVar>
+                          <independentVar lookup="row">velocities/mach</independentVar>
                           <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
                           <tableData>
                                 0.0000	7.0000	13.0000
@@ -613,7 +613,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.6800
                               1.8000	0.5200
@@ -629,7 +629,7 @@
                     <property>velocities/q-aero-rad_sec</property>
                     <property>aero/ci2vel</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	2.3000
                               1.8000	1.9000
@@ -645,7 +645,7 @@
                     <property>aero/alphadot-rad_sec</property>
                     <property>aero/ci2vel</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.6600
                               1.8000	0.8200
@@ -664,7 +664,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-0.1750
                               1.8000	-0.0930
@@ -681,7 +681,7 @@
                     <property>aero/bi2vel</property>
                     <property>velocities/p-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-0.2850
                               1.8000	-0.2720
@@ -698,7 +698,7 @@
                     <property>aero/bi2vel</property>
                     <property>velocities/r-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.2650
                               1.8000	0.1540
@@ -714,7 +714,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.0392
                               1.8000	0.0173
@@ -730,7 +730,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/rudder-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.0448
                               1.8000	0.0079
@@ -749,7 +749,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>aero/alpha-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-0.6440
                               1.8000	-1.3080
@@ -764,7 +764,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.0300
                               1.8000	-0.0280
@@ -781,7 +781,7 @@
                     <property>aero/ci2vel</property>
                     <property>velocities/q-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-6.8400
                               1.8000	-5.8300
@@ -798,7 +798,7 @@
                     <property>aero/ci2vel</property>
                     <property>aero/alphadot-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-1.6400
                               1.8000	-2.0500
@@ -814,7 +814,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-1.4000
                               1.8000	-1.2100
@@ -833,7 +833,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.5070
                               1.8000	0.2420
@@ -850,7 +850,7 @@
                     <property>aero/bi2vel</property>
                     <property>velocities/p-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-0.1440
                               1.8000	-0.0930
@@ -867,7 +867,7 @@
                     <property>aero/bi2vel</property>
                     <property>velocities/r-rad_sec</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-1.2530
                               1.8000	-0.8490
@@ -883,7 +883,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	0.0042
                               1.8000	0.0025
@@ -899,7 +899,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/rudder-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2570	-0.1645
                               1.8000	-0.0435

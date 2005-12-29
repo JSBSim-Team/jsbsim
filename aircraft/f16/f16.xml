@@ -650,7 +650,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000  0.0000
                               0.8100  0.0000
@@ -800,7 +800,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.4000  0.0000
                               1.2000  0.0573
@@ -1062,7 +1062,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               0.8000  0.1891
@@ -1165,7 +1165,7 @@
                     <property>aero/alpha-rad</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               1.2000  -0.0630
@@ -1183,7 +1183,7 @@
                     <property>aero/alpha-rad</property>
                     <property>fcs/rudder-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               1.6000  -0.0201
@@ -1257,7 +1257,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>aero/alpha-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               0.8000  0.0974
@@ -1334,7 +1334,7 @@
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               0.7000  -0.0688
@@ -1410,7 +1410,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               0.8000  0.0149
@@ -1487,7 +1487,7 @@
                     <property>aero/alpha-rad</property>
                     <property>fcs/rudder-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.6000  0.0000
                               1.2000  0.0401

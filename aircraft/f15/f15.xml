@@ -456,7 +456,7 @@
                     <property>aero/function/kCDge</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                                 0.5000	1.4000
                               -0.4190	0.3800	0.0970
@@ -591,7 +591,7 @@
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                                 0.5000	1.4000
                               -0.3490	-0.9300	-0.2500
@@ -763,7 +763,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
-                    <property>velocities/mach-norm</property>
+                    <property>velocities/mach</property>
                     <value>-0.0000</value>
                 </product>
             </function>
