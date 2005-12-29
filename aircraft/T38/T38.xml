@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="T38" version="2.0" release="ALPHA">
+<fdm_config name="T38" version="2.0" release="BETA">
  <fileheader>
   <author>Aeromatic v 0.8, DPC</author>
   <filecreationdate>now</filecreationdate>
-  <description>Models a T38</description>
+  <description>Models a Northrop T-38</description>
   <reference refID="None" author="n/a" title="n/a" date="n/a" />
  </fileheader>
 
@@ -322,21 +322,20 @@
                 <output>fcs/rudder-pos-rad</output>
             </aerosurface_scale>
         </channel>
-        <channel name="Flaps">
-<!--
-        <pure_gain name="Throttle1">
+        <channel name="Throttles">      
+         <pure_gain name="Throttle1">
             <input>fcs/throttle-cmd-norm</input>
             <gain>2</gain>
             <output>fcs/throttle-pos-norm</output>
-        </pure_gain>
+         </pure_gain>
 
-        <pure_gain name="Throttle2">
+         <pure_gain name="Throttle2">
             <input>fcs/throttle-cmd-norm[1]</input>
             <gain>2</gain>
             <output>fcs/throttle-pos-norm[1]</output>
-        </pure_gain>
--->
-
+         </pure_gain>
+        </channel>
+        <channel name="Flaps">
             <kinematic name="Flaps Control">
                 <input>fcs/flap-cmd-norm</input>
                 <traverse>
