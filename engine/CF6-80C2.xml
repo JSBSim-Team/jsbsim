@@ -27,7 +27,7 @@
 
   <function name="IdleThrust">
    <table>
-    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
     <tableData>
          -10000     0     10000   20000   30000   40000   50000
@@ -43,7 +43,7 @@
 
   <function name="MilThrust">
    <table>
-    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
     <tableData>
           -10000       0   10000   20000   30000   40000   50000
