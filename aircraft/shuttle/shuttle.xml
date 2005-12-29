@@ -101,29 +101,29 @@
     </propulsion>
     <flight_control name="X-15 SAS">
         <channel name="Pitch">
-            <component name="Pitch Trim Sum" type="SUMMER">
+            <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <clip>
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Pitch Command Scale" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Pitch Command Scale">
                 <input>fcs/pitch-trim-sum</input>
                 <range>
                     <min>-50</min>
                     <max>50</max>
                 </range>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Pitch Gain 1" type="PURE_GAIN">
+            <pure_gain name="Pitch Gain 1">
                 <input>fcs/pitch-command-scale</input>
                 <gain>-0.36</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Pitch Scheduled Gain 1" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Pitch Scheduled Gain 1">
                 <input>fcs/pitch-gain-1</input>
                 <gain>0.017</gain>
                 <table>
@@ -153,66 +153,66 @@
                          0.697 -33.433
                     </tableData>
                 </table>
-            </component>
+            </scheduled_gain>
 
-            <component name="Pitch SAS Feedback" type="PURE_GAIN">
+            <pure_gain name="Pitch SAS Feedback">
                 <input>velocities/q-rad_sec</input>
                 <gain>0.75</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Elevator Positioning" type="SUMMER">
+            <summer name="Elevator Positioning">
                 <input>fcs/pitch-scheduled-gain-1</input>
                 <input>fcs/pitch-sas-feedback</input>
                 <clip>
                     <min>-0.26</min>
                     <max>0.61</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Elevator Filter" type="LAG_FILTER">
+            <lag_filter name="Elevator Filter">
                 <input>fcs/elevator-positioning</input>
                 <c1>600</c1>
                 <output>fcs/elevator-pos-rad</output>
-            </component>
+            </lag_filter>
 
         </channel>
 
         <channel name="Roll">
 
-            <component name="Roll Command Scale" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Roll Command Scale">
                 <input>fcs/aileron-cmd-norm</input>
                 <range>
                     <min>-20</min>
                     <max>20</max>
                 </range>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Roll Gain 1" type="PURE_GAIN">
+            <pure_gain name="Roll Gain 1">
                 <input>fcs/roll-command-scale</input>
                 <gain>0.42</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Roll Gain 2" type="PURE_GAIN">
+            <pure_gain name="Roll Gain 2">
                 <input>fcs/roll-gain-1</input>
                 <gain>0.027</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Yaw-Roll Crossover Gain" type="PURE_GAIN">
+            <pure_gain name="Yaw-Roll Crossover Gain">
                 <input>velocities/r-rad_sec</input>
                 <gain>-0.9</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Yaw Coupled Aileron Feedback Sum" type="SUMMER">
+            <summer name="Yaw Coupled Aileron Feedback Sum">
                 <input>velocities/p-rad_sec</input>
                 <input>fcs/yaw-roll-crossover-gain</input>
-            </component>
+            </summer>
 
-            <component name="Roll SAS Gain" type="PURE_GAIN">
+            <pure_gain name="Roll SAS Gain">
                 <input>fcs/yaw-coupled-aileron-feedback-sum</input>
                 <gain>-0.5</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Aileron Positioning" type="SUMMER">
+            <summer name="Aileron Positioning">
                 <input>fcs/roll-gain-2</input>
                 <input>fcs/roll-sas-gain</input>
                 <clip>
@@ -220,36 +220,36 @@
                     <max>0.35</max>
                 </clip>
                 <output>fcs/left-aileron-pos-rad</output>
-            </component>
+            </summer>
 
         </channel>
 
         <channel name="Yaw">
 
-            <component name="Yaw Command Scale" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Yaw Command Scale">
                 <input>fcs/rudder-cmd-norm</input>
                 <range>
                     <min>-250</min>
                     <max>250</max>
                 </range>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Yaw Gain 1" type="PURE_GAIN">
+            <pure_gain name="Yaw Gain 1">
                 <input>fcs/yaw-command-scale</input>
                 <gain>0.082</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Yaw Gain 2" type="PURE_GAIN">
+            <pure_gain name="Yaw Gain 2">
                 <input>fcs/yaw-gain-1</input>
                 <gain>0.04</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Yaw SAS Gain" type="PURE_GAIN">
+            <pure_gain name="Yaw SAS Gain">
                 <input>velocities/r-rad_sec</input>
                 <gain>0.3</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Rudder Positioning" type="SUMMER">
+            <summer name="Rudder Positioning">
                 <input>fcs/yaw-gain-2</input>
                 <input>fcs/yaw-sas-gain</input>
                 <clip>
@@ -257,7 +257,7 @@
                     <max>0.52</max>
                 </clip>
                 <output>fcs/rudder-pos-rad</output>
-            </component>
+            </summer>
         </channel>
     </flight_control>
     <aerodynamics>

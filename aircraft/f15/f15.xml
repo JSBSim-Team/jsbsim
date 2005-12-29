@@ -269,12 +269,12 @@
     </propulsion>
     <flight_control name="FCS: f15">
         <channel name="Roll">
-            <component name="Pitch Damper Gain" type="PURE_GAIN">
+            <pure_gain name="Pitch Damper Gain">
                 <input>velocities/q-rad_sec</input>
                 <gain>0.000698</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Pitch Trim Sum" type="SUMMER">
+            <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <input>fcs/pitch-damper-gain</input>
@@ -282,9 +282,9 @@
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Elevator Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Elevator Control">
                 <input>fcs/pitch-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -292,15 +292,15 @@
                     <max>15</max>
                 </range>
                 <output>fcs/elevator-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Roll">
-            <component name="Roll Damper Gain" type="PURE_GAIN">
+            <pure_gain name="Roll Damper Gain">
                 <input>velocities/p-rad_sec</input>
                 <gain>-0.013963</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Roll Trim Sum" type="SUMMER">
+            <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <input>fcs/roll-damper-gain</input>
@@ -308,9 +308,9 @@
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Left Aileron Control">
                 <input>fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -318,9 +318,9 @@
                     <max>20</max>
                 </range>
                 <output>fcs/left-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Right Aileron Control">
                 <input>fcs/roll-trim-sum</input>
                 <gain>-0.01745</gain>
                 <range>
@@ -328,15 +328,15 @@
                     <max>20</max>
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Yaw">
-            <component name="Yaw Damper Gain" type="PURE_GAIN">
+            <pure_gain name="Yaw Damper Gain">
                 <input>velocities/r-rad_sec</input>
                 <gain>-0.001745</gain>
-            </component>
+            </pure_gain>
 
-            <component name="Yaw Trim Sum" type="SUMMER">
+            <summer name="Yaw Trim Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
                 <input>fcs/yaw-damper-gain</input>
@@ -344,9 +344,9 @@
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Rudder Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Rudder Control">
                 <input>fcs/yaw-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -354,10 +354,10 @@
                     <max>30</max>
                 </range>
                 <output>fcs/rudder-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Landing Gear">
-            <component name="Gear Control" type="KINEMAT">
+            <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -370,7 +370,7 @@
                     </setting>
                 </traverse>
                 <output>gear/gear-pos-norm</output>
-            </component>
+            </kinematic>
         </channel>
     </flight_control>
     <aerodynamics>

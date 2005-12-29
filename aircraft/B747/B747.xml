@@ -246,61 +246,61 @@
     </propulsion>
     <flight_control name="FCS: B747">
 
-        <component name="Pitch Trim Sum" type="SUMMER">
+        <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
             <input>fcs/pitch-trim-cmd-norm</input>
             <clip>
                 <min>-1</min>
                 <max>1</max>
             </clip>
-        </component>
+        </summer>
 
-        <component name="Elevator Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Elevator Control">
             <input>fcs/pitch-trim-sum</input>
             <range>
                 <min>-0.35</min>
                 <max>0.175</max>
             </range>
             <output>fcs/elevator-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Roll Trim Sum" type="SUMMER">
+        <summer name="Roll Trim Sum">
             <input>fcs/aileron-cmd-norm</input>
             <input>fcs/roll-trim-cmd-norm</input>
             <clip>
                 <min>-1</min>
                 <max>1</max>
             </clip>
-        </component>
+        </summer>
 
-        <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Left Aileron Control">
             <input>fcs/roll-trim-sum</input>
             <range>
                 <min>-0.35</min>
                 <max>0.35</max>
             </range>
             <output>fcs/left-aileron-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Right Aileron Control">
             <input>-fcs/roll-trim-sum</input>
             <range>
                 <min>-0.35</min>
                 <max>0.35</max>
             </range>
             <output>fcs/right-aileron-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Rudder Command Sum" type="SUMMER">
+        <summer name="Rudder Command Sum">
             <input>fcs/rudder-cmd-norm</input>
             <input>fcs/yaw-trim-cmd-norm</input>
             <clip>
                 <min>-1</min>
                 <max>1</max>
             </clip>
-        </component>
+        </summer>
 
-        <component name="Yaw Damper Rate" type="SCHEDULED_GAIN">
+        <scheduled_gain name="Yaw Damper Rate">
             <input>velocities/r-aero-rad_sec</input>
             <table dimension="1">
               <independentVar lookup="row">aero/qbar-psf</independentVar>
@@ -309,9 +309,9 @@
                  11.00        2.00
                </tableData>
             </table>
-        </component>
+        </scheduled_gain>
 
-        <component name="Yaw Damper Beta" type="SCHEDULED_GAIN">
+        <scheduled_gain name="Yaw Damper Beta">
             <input>aero/beta-rad</input>
             <table dimension="1">
               <independentVar lookup="row">velocities/ve-kts</independentVar>
@@ -320,18 +320,18 @@
                  60        0.00
               </tableData>
             </table>
-        </component>
+        </scheduled_gain>
 
-        <component name="Yaw Damper Sum" type="SUMMER">
+        <summer name="Yaw Damper Sum">
             <input>fcs/yaw-damper-beta</input>
             <input>fcs/yaw-damper-rate</input>
             <clip>
                 <min>-0.2</min>
                 <max>0.2</max>
             </clip>
-        </component>
+        </summer>
 
-        <component name="Yaw Damper Final" type="SCHEDULED_GAIN">
+        <scheduled_gain name="Yaw Damper Final">
             <input>fcs/yaw-damper-sum</input>
             <table dimension="1">
               <independentVar lookup="row">aero/qbar-psf</independentVar>
@@ -340,27 +340,27 @@
                  3.00         1.0
               </tableData>
             </table>
-        </component>
+        </scheduled_gain>
 
-        <component name="Rudder Sum" type="SUMMER">
+        <summer name="Rudder Sum">
             <input>fcs/rudder-command-sum</input>
             <input>fcs/yaw-damper-final</input>
             <clip>
                 <min>-1</min>
                 <max>1</max>
             </clip>
-        </component>
+        </summer>
 
-        <component name="Rudder Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Rudder Control">
             <input>fcs/rudder-sum</input>
             <range>
                 <min>-0.35</min>
                 <max>0.35</max>
             </range>
             <output>fcs/rudder-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Flaps Control" type="KINEMAT">
+        <kinematic name="Flaps Control">
             <input>fcs/flap-cmd-norm</input>
             <traverse>
                 <setting>
@@ -377,9 +377,9 @@
                 </setting>
             </traverse>
             <output>fcs/flap-pos-deg</output>
-        </component>
+        </kinematic>
 
-        <component name="Gear Control" type="KINEMAT">
+        <kinematic name="Gear Control">
             <input>gear/gear-cmd-norm</input>
             <traverse>
                 <setting>
@@ -392,9 +392,9 @@
                 </setting>
             </traverse>
             <output>gear/gear-pos-norm</output>
-        </component>
+        </kinematic>
 
-        <component name="Speedbrake Control" type="KINEMAT">
+        <kinematic name="Speedbrake Control">
             <input>fcs/speedbrake-cmd-norm</input>
             <traverse>
                 <setting>
@@ -407,7 +407,7 @@
                 </setting>
             </traverse>
             <output>fcs/speedbrake-pos-norm</output>
-        </component>
+        </kinematic>
     </flight_control>
     <aerodynamics>
 

@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="l410" version="2.0" release="BETA">
-
+<fdm_config name="l410" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
     <fileheader>
         <author> Jiri Javurek, jjavurek@walterengines.com </author>
         <author> Jiri Javurek, javky@rozhled.cz </author>
-        <filecreationdate> 2005 </filecreationdate>
+        <author> Jon Berndt, jsb@hal-pc.org (conversion to v2.0 only) </author>
+        <filecreationdate> 2005-11-01 </filecreationdate>
         <description> Czech Republic LET 410 Light Twin </description>
         <version> 4.0 </version>
     </fileheader>
@@ -39,9 +41,9 @@
         <ixx unit="SLUG*FT2"> 60000.0000 </ixx>
         <iyy unit="SLUG*FT2"> 42000.0000 </iyy>
         <izz unit="SLUG*FT2"> 107845.0000 </izz>
+        <ixy unit="SLUG*FT2"> -0.0000 </ixy>
         <ixz unit="SLUG*FT2"> -0.0000 </ixz>
         <iyz unit="SLUG*FT2"> -0.0000 </iyz>
-        <ixy unit="SLUG*FT2"> -0.0000 </ixy>
         <emptywt unit="LBS"> 8467.0000 </emptywt>
         <location name="CG" unit="IN">
             <x> 212.0000 </x>
@@ -291,28 +293,28 @@
 
         <!-- battery status -->
 
-        <component name="battery-all-ok" type="SWITCH">
+        <switch name="battery-all-ok">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /systems/l410/battery1-ok == 1
                 /systems/l410/battery2-ok == 1
             </test>
             <output>/systems/l410/battery-all-ok</output>
-        </component>
+        </switch>
 
-        <component name="battery-one-ok" type="SWITCH">
+        <switch name="battery-one-ok">
             <default value="0.0000"/>
             <test logic="OR" value="1.0000">
                 /systems/l410/battery1-ok == 1
                 /systems/l410/battery2-ok == 1
             </test>
             <output>/systems/l410/battery-one-ok</output>
-        </component>
+        </switch>
 
         <!-- special electrical buses (simplification for instruments that
              need more different voltage inputs) -->
 
-        <component name="spec-turn" type="SWITCH">
+        <switch name="spec-turn">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /systems/electrical/outputs/bus28v > 10
@@ -320,39 +322,39 @@
                 /systems/electrical/outputs/bus115v > 10
             </test>
             <output>/controls/switches/specbus_28v_115v_36v</output>
-        </component>
+        </switch>
 
         <!-- Engine warnings -->
 
-        <component name="wd-1beta1" type="SWITCH">
+        <switch name="wd-1beta1">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /instrumentation/warn-disp/wd-e1-on == 1
                 /controls/engines/engine[0]/reverser == 1
             </test>
             <output>/instrumentation/warn-disp/wde1-beta</output>
-        </component>
+        </switch>
 
-        <component name="wd-2beta1" type="SWITCH">
+        <switch name="wd-2beta1">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /instrumentation/warn-disp/wd-e2-on == 1
                 /controls/engines/engine[1]/reverser == 1
             </test>
             <output>/instrumentation/warn-disp/wde2-beta</output>
-        </component>
+        </switch>
 
         <!-- end warnings -->
 
-        <component name="indicated-throttle-l3" type="SWITCH">
+        <switch name="indicated-throttle-l3">
             <default value="0.0000"/>
             <test logic="AND" value="0.0000">
                 /controls/switches/isolvalve1-sw lt 2
             </test>
             <output>/instrumentation/engine/indicated-tl-norm</output>
-        </component>
+        </switch>
 
-        <component name="indicated-throttle-l" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-throttle-l">
             <input>fcs/indicated-throttle-l3</input>
             <table>
                 <independentVar>/controls/engines/engine[0]/reverser</independentVar>
@@ -362,17 +364,17 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-throttlel-norm</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-throttle-r3" type="SWITCH">
+        <switch name="indicated-throttle-r3">
             <default value="0.0000"/>
             <test logic="AND" value="0.0000">
                 /controls/switches/isolvalve2-sw lt 2
             </test>
             <output>/instrumentation/engine/indicated-tr-norm</output>
-        </component>
+        </switch>
 
-        <component name="indicated-throttle-r" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-throttle-r">
             <input>fcs/indicated-throttle-r3</input>
             <table>
                 <independentVar>/controls/engines/engine[1]/reverser</independentVar>
@@ -382,9 +384,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-throttler-norm</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-cutoff-l1" type="SWITCH">
+        <switch name="indicated-cutoff-l1">
             <default value="0.0000"/>
             <test logic="AND" value="-1.0000">
                 /controls/engines/engine[0]/cutoff-cmd == 1
@@ -394,9 +396,9 @@
                 /controls/engines/engine[0]/cutoff-cmd == 0
             </test>
             <output>/instrumentation/engine/indicated-cutoffl-norm</output>
-        </component>
+        </switch>
 
-        <component name="indicated-cutoff-r1" type="SWITCH">
+        <switch name="indicated-cutoff-r1">
             <default value="0.0000"/>
             <test logic="AND" value="-1.0000">
                 /controls/engines/engine[1]/cutoff-cmd == 1
@@ -406,9 +408,9 @@
                 /controls/engines/engine[1]/cutoff-cmd == 0
             </test>
             <output>/instrumentation/engine/indicated-cutoffr-norm</output>
-        </component>
+        </switch>
 
-        <component name="eng-n-koef" type="KINEMAT">
+        <kinematic name="eng-n-koef">
             <input>/systems/l410/bus36v-on</input>
             <traverse>
                 <setting>
@@ -421,9 +423,9 @@
                 </setting>
             </traverse>
             <output>/instrumentation/engine/eng-n-koef</output>
-        </component>
+        </kinematic>
 
-        <component name="indicated-eng-ngen1" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-ngen1">
             <input>/engines/engine/n1</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -433,9 +435,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-gen1-perc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-eng-ngen2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-ngen2">
             <input>/engines/engine[1]/n1</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -445,9 +447,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-gen2-perc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-eng-nprop1" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-nprop1">
             <input>/engines/engine/thruster/rpm</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -457,9 +459,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-prop1-rpm</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-eng-nprop2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-nprop2">
             <input>/engines/engine[1]/thruster/rpm</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -469,9 +471,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-prop2-rpm</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-eng-propshaft1" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-propshaft1">
             <input>/engines/engine[0]/thruster/torque</input>
             <gain>-0.0571</gain>
             <table>
@@ -482,9 +484,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-pshaft1-perc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-eng-propshaft2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-eng-propshaft2">
             <input>/engines/engine[1]/thruster/torque</input>
             <gain>-0.0571</gain>
             <table>
@@ -495,9 +497,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-pshaft2-perc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-itt1-degc" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-itt1-degc">
             <input>/engines/engine/itt_degC</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -507,9 +509,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-itt1-degc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-itt2-degc" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-itt2-degc">
             <input>/engines/engine[1]/itt_degC</input>
             <table>
                 <independentVar>/instrumentation/engine/eng-n-koef</independentVar>
@@ -519,9 +521,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-itt2-degc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-fuelfl1-kgph" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-fuelfl1-kgph">
             <input>/engines/engine[0]/fuel-flow_pph</input>
             <gain>0.4536</gain>
             <table>
@@ -532,9 +534,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-fuelfl1-kgph</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-fuelfl2-kgph" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-fuelfl2-kgph">
             <input>/engines/engine[1]/fuel-flow_pph</input>
             <gain>0.4536</gain>
             <table>
@@ -545,9 +547,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-fuelfl2-kgph</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-fuel1-kg" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-fuel1-kg">
             <input>/consumables/fuel/tank/level-lb</input>
             <gain>0.4536</gain>
             <table>
@@ -558,9 +560,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-fuel1-kg</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-fuel2-kg" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-fuel2-kg">
             <input>/consumables/fuel/tank[1]/level-lb</input>
             <gain>0.4536</gain>
             <table>
@@ -571,11 +573,11 @@
                 </tableData>
             </table>
             <output>/instrumentation/engine/indicated-fuel2-kg</output>
-        </component>
+        </scheduled_gain>
 
         <!-- windshield wipers -->
 
-        <component name="sterace-endpos1" type="SWITCH">
+        <switch name="sterace-endpos1">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /instrumentation/wiper/position-dir == 0
@@ -587,9 +589,9 @@
                 /instrumentation/wiper/position-norm == 1
             </test>
             <output>/instrumentation/wiper/position-dir</output>
-        </component>
+        </switch>
 
-        <component name="sterace-norm" type="KINEMAT">
+        <kinematic name="sterace-norm">
             <input>/instrumentation/wiper/position-dir</input>
             <traverse>
                 <setting>
@@ -602,16 +604,17 @@
                 </setting>
             </traverse>
             <output>/instrumentation/wiper/position-norm</output>
-        </component>
+        </kinematic>
 
-        <component name="sterace-vyp" type="PURE_GAIN">
+        <pure_gain name="sterace-vyp">
             <input>/controls/switches/wiper-sw</input>
+            <gain>1</gain>
             <output>/instrumentation/wiper/switched-on</output>
-        </component>
+        </pure_gain>
 
         <!-- Brakes -->
 
-        <component name="brzdy1" type="KINEMAT">
+        <kinematic name="brzdy1">
             <input>/controls/gear/wheel/brake-cmd-cond</input>
             <traverse>
                 <setting>
@@ -624,9 +627,9 @@
                 </setting>
             </traverse>
             <output>/controls/gear/brake-left</output>
-        </component>
+        </kinematic>
 
-        <component name="brzdy2" type="KINEMAT">
+        <kinematic name="brzdy2">
             <input>/controls/gear/wheel[1]/brake-cmd-cond</input>
             <traverse>
                 <setting>
@@ -639,9 +642,9 @@
                 </setting>
             </traverse>
             <output>/controls/gear/brake-right</output>
-        </component>
+        </kinematic>
 
-        <component name="brzdy4" type="KINEMAT">
+        <kinematic name="brzdy4">
             <input>/controls/gear/parking-brake-cmd</input>
             <traverse>
                 <setting>
@@ -654,9 +657,9 @@
                 </setting>
             </traverse>
             <output>/controls/gear/brake-parking</output>
-        </component>
+        </kinematic>
 
-        <component name="indicated-parkingbrake-kp_cm2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-parkingbrake-kp_cm2">
             <input>/controls/gear/brake-parking</input>
             <gain>25.0000</gain>
             <table>
@@ -667,9 +670,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/pressure/indicated-parkingbrake-kp_cm2</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-leftbrake-kp_cm2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-leftbrake-kp_cm2">
             <input>/controls/gear/brake-left</input>
             <gain>45.0000</gain>
             <table>
@@ -680,9 +683,9 @@
                 </tableData>
             </table>
             <output>/instrumentation/pressure/indicated-leftbrake-kp_cm2</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="indicated-rightbrake-kp_cm2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="indicated-rightbrake-kp_cm2">
             <input>/controls/gear/brake-right</input>
             <gain>45.0000</gain>
             <table>
@@ -693,14 +696,14 @@
                 </tableData>
             </table>
             <output>/instrumentation/pressure/indicated-rightbrake-kp_cm2</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="temp-oil1-1" type="SUMMER">
+        <summer name="temp-oil1-1">
             <input>/engines/engine/oil-temperature-degf</input>
             <input>/instrumentation/temperature/c-f-s-konst</input>
-        </component>
+        </summer>
 
-        <component name="temp-oil1-2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="temp-oil1-2">
             <input>fcs/temp-oil1-1</input>
             <gain>0.5555</gain>
             <table>
@@ -711,14 +714,14 @@
                 </tableData>
             </table>
             <output>/instrumentation/temperature/indicated-oil1-degc</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="temp-oil2-1" type="SUMMER">
+        <summer name="temp-oil2-1">
             <input>/engines/engine[1]/oil-temperature-degf</input>
             <input>/instrumentation/temperature/c-f-s-konst</input>
-        </component>
+        </summer>
 
-        <component name="temp-oil2-2" type="SCHEDULED_GAIN">
+        <scheduled_gain name="temp-oil2-2">
             <input>fcs/temp-oil2-1</input>
             <gain>0.5555</gain>
             <table>
@@ -729,11 +732,11 @@
                 </tableData>
             </table>
             <output>/instrumentation/temperature/indicated-oil2-degc</output>
-        </component>
+        </scheduled_gain>
 
         <!-- Lights -->
 
-        <component name="instr-flash" type="SWITCH">
+        <switch name="instr-flash">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /instrumentation/lights/instr-flash-out == 0
@@ -744,9 +747,9 @@
                 /instrumentation/lights/instr-flash-in == 1
             </test>
             <output>/instrumentation/lights/instr-flash-in</output>
-        </component>
+        </switch>
 
-        <component name="instr-flash3" type="KINEMAT">
+        <kinematic name="instr-flash3">
             <input>/instrumentation/lights/instr-flash-in</input>
             <traverse>
                 <setting>
@@ -759,11 +762,11 @@
                 </setting>
             </traverse>
             <output>/instrumentation/lights/instr-flash-out</output>
-        </component>
+        </kinematic>
 
         <!-- Beacon -->
 
-        <component name="beacon-swon" type="SWITCH">
+        <switch name="beacon-swon">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /controls/switches/lgh-beacon-sw == 1
@@ -776,9 +779,9 @@
                 /instrumentation/lights/beacon-kinemat-out == 1
             </test>
             <output>/instrumentation/lights/beacon-kinemat-in</output>
-        </component>
+        </switch>
 
-        <component name="beacon-norm" type="KINEMAT">
+        <kinematic name="beacon-norm">
             <input>/instrumentation/lights/beacon-kinemat-in</input>
             <traverse>
                 <setting>
@@ -791,49 +794,49 @@
                 </setting>
             </traverse>
             <output>/instrumentation/lights/beacon-kinemat-out</output>
-        </component>
+        </kinematic>
 
-        <component name="beacon-swon3" type="SWITCH">
+        <switch name="beacon-swon3">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /instrumentation/lights/beacon-kinemat-out > 0.90
                 /instrumentation/lights/beacon-kinemat-out lt 0.97
             </test>
             <output>/instrumentation/lights/beacon-on</output>
-        </component>
+        </switch>
 
        <!-- navigation (red, green) -->
 
-       <component name="navig-swon" type="SWITCH">
+       <switch name="navig-swon">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /controls/switches/lgh-navigation-sw == 1
                 /systems/electrical/outputs/navigation-lights > 20
             </test>
             <output>/instrumentation/lights/navigation-on</output>
-        </component>
+        </switch>
 
         <!-- Front -->
 
-        <component name="search1-swon" type="SWITCH">
+        <switch name="search1-swon">
             <default value="0.0000"/>
             <test logic="AND" value="0.0000">
                 /systems/electrical/outputs/landing-lights > 20
             </test>
             <output>/instrumentation/lights/search1-on</output>
-        </component>
+        </switch>
 
-        <component name="search2-swon" type="SWITCH">
+        <switch name="search2-swon">
             <default value="0.0000"/>
             <test logic="AND" value="0.0000">
                 /systems/electrical/outputs/landing-lights > 20
             </test>
             <output>/instrumentation/lights/search2-on</output>
-        </component>
+        </switch>
 
         <!-- FIRE and EXTINGUISH -->
 
-        <component name="chck-extinguish" type="SWITCH">
+        <switch name="chck-extinguish">
             <default value="0.0000"/>
             <test logic="AND" value="1.0000">
                 /systems/l410/bus24v-on == 1
@@ -856,93 +859,94 @@
                 /systems/l410/extinguish-e2-2-ok == 1
             </test>
             <output>/instrumentation/warn-disp/wd-extinguish-eng</output>
-        </component>
+        </switch>
 
-        <component name="abc-position" type="PURE_GAIN">
+        <pure_gain name="abc-position">
             <input>/controls/engines/aileron-abc-norm</input>
-        </component>
+            <gain>1</gain>
+        </pure_gain>
 
         <!-- Standard flight control components -->
 
-        <component name="pitch-trim-uprava-nase" type="PURE_GAIN">
+        <pure_gain name="pitch-trim-uprava-nase">
             <input>fcs/pitch-trim-cmd-norm</input>
             <gain>0.3333</gain>
-        </component>
+        </pure_gain>
 
-        <component name="Pitch Trim Sum" type="SUMMER">
+        <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
             <input>fcs/pitch-trim-uprava-nase</input>
-            <clip>
+            <clipto>
                 <min>-1.0000</min>
                 <max>1.0000</max>
-            </clip>
-        </component>
+            </clipto>
+        </summer>
 
-        <component name="Elevator Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Elevator Control">
             <input>fcs/pitch-trim-sum</input>
             <range>
                 <min>-0.3500</min>
                 <max>0.1750</max>
             </range>
             <output>fcs/elevator-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="roll-trim-uprava-nase" type="PURE_GAIN">
+        <pure_gain name="roll-trim-uprava-nase">
             <input>fcs/roll-trim-cmd-norm</input>
             <gain>0.3333</gain>
-        </component>
+        </pure_gain>
 
-        <component name="Roll Trim Sum nase" type="SUMMER">
+        <summer name="Roll Trim Sum nase">
             <input>fcs/aileron-cmd-norm</input>
             <input>fcs/roll-trim-uprava-nase</input>
-            <clip>
+            <clipto>
                 <min>-1.0000</min>
                 <max>1.0000</max>
-            </clip>
-        </component>
+            </clipto>
+        </summer>
 
-        <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Left Aileron Control">
             <input>fcs/roll-trim-sum-nase</input>
             <range>
                 <min>-0.4500</min>
                 <max>0.4500</max>
             </range>
             <output>fcs/left-aileron-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Right Aileron Control">
             <input>-fcs/roll-trim-sum-nase</input>
             <range>
                 <min>-0.4500</min>
                 <max>0.4500</max>
             </range>
             <output>fcs/right-aileron-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="yaw-trim-uprava-nase" type="PURE_GAIN">
+        <pure_gain name="yaw-trim-uprava-nase">
             <input>fcs/yaw-trim-cmd-norm</input>
             <gain>0.4000</gain>
-        </component>
+        </pure_gain>
 
-        <component name="Rudder Command Sum" type="SUMMER">
+        <summer name="Rudder Command Sum">
             <input>fcs/rudder-cmd-norm</input>
             <input>fcs/yaw-trim-uprava-nase</input>
-            <clip>
+            <clipto>
                 <min>-1.0000</min>
                 <max>1.0000</max>
-            </clip>
-        </component>
+            </clipto>
+        </summer>
 
-        <component name="Rudder Control" type="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Rudder Control">
             <input>fcs/rudder-command-sum</input>
             <range>
                 <min>-0.3500</min>
                 <max>0.3500</max>
             </range>
             <output>fcs/rudder-pos-rad</output>
-        </component>
+        </aerosurface_scale>
 
-        <component name="Flaps Control" type="KINEMAT">
+        <kinematic name="Flaps Control">
             <input>/controls/flight/flaps-cond</input>
             <traverse>
                 <setting>
@@ -959,15 +963,15 @@
                 </setting>
             </traverse>
             <output>fcs/flap-pos-deg</output>
-        </component>
+        </kinematic>
 
-        <component name="Flap Normalizer" type="PURE_GAIN">
+        <pure_gain name="Flap Normalizer">
           <input>fcs/flap-pos-deg</input>
           <gain>0.0238</gain> <!-- 1/42 -->
           <output>fcs/flap-pos-norm</output>
-        </component>
+        </pure_gain>
 
-        <component name="Gear Control" type="KINEMAT">
+        <kinematic name="Gear Control">
             <input>/controls/gear/gear-down-cond</input>
             <traverse>
                 <setting>
@@ -980,9 +984,9 @@
                 </setting>
             </traverse>
             <output>gear/gear-pos-norm</output>
-        </component>
+        </kinematic>
 
-        <component name="Speedbrake Control" type="KINEMAT">
+        <kinematic name="Speedbrake Control">
             <input>fcs/speedbrake-cmd-norm</input>
             <traverse>
                 <setting>
@@ -995,9 +999,9 @@
                 </setting>
             </traverse>
             <output>fcs/speedbrake-pos-norm</output>
-        </component>
+        </kinematic>
 
-        <component name="Spoiler Control" type="KINEMAT">
+        <kinematic name="Spoiler Control">
             <input>/controls/flight/spoilers-cond</input>
             <traverse>
                 <setting>
@@ -1010,15 +1014,15 @@
                 </setting>
             </traverse>
             <output>fcs/spoiler-pos-norm</output>
-        </component>
+        </kinematic>
 
-        <component name="Spoiler Control rad" type="PURE_GAIN">
+        <pure_gain name="Spoiler Control rad">
             <input>fcs/spoiler-pos-norm</input>
             <gain>72.0000</gain>
             <output>fcs/spoiler-pos-rad</output>
-        </component>
+        </pure_gain>
 
-        <component name="Scheduled Steer Pos Deg" type="SCHEDULED_GAIN">
+        <scheduled_gain name="Scheduled Steer Pos Deg">
             <input>fcs/steer-cmd-norm</input>
             <table>
                 <independentVar>/controls/switches/full-steering-sw</independentVar>
@@ -1029,9 +1033,9 @@
                 </tableData>
             </table>
             <output>fcs/steer-pos-deg[0]</output>
-        </component>
+        </scheduled_gain>
 
-        <component name="Steer lever Pos Deg" type="SCHEDULED_GAIN">
+        <scheduled_gain name="Steer lever Pos Deg">
             <input>fcs/steer-cmd-norm</input>
             <table>
                 <independentVar>/controls/switches/full-steering-sw</independentVar>
@@ -1042,7 +1046,7 @@
                 </tableData>
             </table>
             <output>/gear/gear[0]/steering-lever-norm</output>
-        </component>
+        </scheduled_gain>
      </channel>
     </flight_control>
 

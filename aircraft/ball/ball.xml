@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="BALL" version="2.0" release="BETA">
+<fdm_config name="BALL" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Jon Berndt </author>
-        <filecreationdate> 6/2004 </filecreationdate>
+        <filecreationdate> 2004-06-01 </filecreationdate>
         <description> Test file </description>
         <version> Version 1.0 </version>
     </fileheader>
@@ -38,9 +40,9 @@
         <ixx unit="SLUG*FT2"> 10 </ixx>
         <iyy unit="SLUG*FT2"> 10 </iyy>
         <izz unit="SLUG*FT2"> 10 </izz>
+        <ixy unit="SLUG*FT2"> -0 </ixy>
         <ixz unit="SLUG*FT2"> -0 </ixz>
         <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 50 </emptywt>
         <location name="CG" unit="IN">
             <x> 0 </x>

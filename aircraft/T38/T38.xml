@@ -192,16 +192,16 @@
     </propulsion>
     <flight_control name="FCS: T38-FCS">
         <channel name="Pitch">
-            <component name="Pilot Pitch Sum" type="SUMMER">
+            <summer name="Pilot Pitch Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <clip>
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Pitch Feel" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Pitch Feel">
                 <input>fcs/pilot-pitch-sum</input>
                 <table>
                   <independentVar>velocities/mach-norm</independentVar>
@@ -211,28 +211,28 @@
                         1.2000	0.7000
                     </tableData>
                 </table>
-            </component>
+            </scheduled_gain>
 
-            <component name="Elevator Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Elevator Control">
                 <input>fcs/pitch-feel</input>
                 <range>
                     <min>-0.3</min>
                     <max>0.175</max>
                 </range>
                 <output>fcs/elevator-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Roll">
-            <component name="Pilot Roll Sum" type="SUMMER">
+            <summer name="Pilot Roll Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <clip>
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Roll Feel" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Roll Feel">
                 <input>fcs/pilot-roll-sum</input>
                 <table>
                   <independentVar>velocities/mach-norm</independentVar>
@@ -242,37 +242,37 @@
                         1.2000	0.7000
                     </tableData>
                 </table>
-            </component>
+            </scheduled_gain>
 
-            <component name="Left Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Left Aileron Control">
                 <input>fcs/roll-feel</input>
                 <range>
                     <min>-0.35</min>
                     <max>0.26</max>
                 </range>
                 <output>fcs/left-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
 
-            <component name="Right Aileron Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Right Aileron Control">
                 <input>-fcs/roll-feel</input>
                 <range>
                     <min>-0.35</min>
                     <max>0.26</max>
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Yaw">
-            <component name="Rudder Command Sum" type="SUMMER">
+            <summer name="Rudder Command Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
                 <clip>
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Yaw SAS Rate" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Yaw SAS Rate">
                 <input>velocities/r-aero-rad_sec</input>
                 <table>
                   <independentVar>velocities/mach-norm</independentVar>
@@ -282,9 +282,9 @@
                         0.1100	1.0000
                     </tableData>
                 </table>
-            </component>
+            </scheduled_gain>
 
-            <component name="Yaw SAS Beta" type="SCHEDULED_GAIN">
+            <scheduled_gain name="Yaw SAS Beta">
                 <input>aero/beta-rad</input>
                 <table>
                   <independentVar>velocities/mach-norm</independentVar>
@@ -293,51 +293,51 @@
                         1.2000	0.0000
                     </tableData>
                 </table>
-            </component>
+            </scheduled_gain>
 
-            <component name="Yaw SAS Sum" type="SUMMER">
+            <summer name="Yaw SAS Sum">
                 <input>fcs/yaw-sas-rate</input>
                 <input>fcs/yaw-sas-beta</input>
                 <clip>
                     <min>-0.1</min>
                     <max>0.1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Rudder Sum" type="SUMMER">
+            <summer name="Rudder Sum">
                 <input>fcs/rudder-command-sum</input>
                 <input>fcs/yaw-sas-sum</input>
                 <clip>
                     <min>-1</min>
                     <max>1</max>
                 </clip>
-            </component>
+            </summer>
 
-            <component name="Rudder Control" type="AEROSURFACE_SCALE">
+            <aerosurface_scale name="Rudder Control">
                 <input>fcs/rudder-sum</input>
                 <range>
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
                 <output>fcs/rudder-pos-rad</output>
-            </component>
+            </aerosurface_scale>
         </channel>
         <channel name="Flaps">
 <!--
-        <component name="Throttle1" type="PURE_GAIN">
+        <pure_gain name="Throttle1">
             <input>fcs/throttle-cmd-norm</input>
             <gain>2</gain>
             <output>fcs/throttle-pos-norm</output>
-        </component>
+        </pure_gain>
 
-        <component name="Throttle2" type="PURE_GAIN">
+        <pure_gain name="Throttle2">
             <input>fcs/throttle-cmd-norm[1]</input>
             <gain>2</gain>
             <output>fcs/throttle-pos-norm[1]</output>
-        </component>
+        </pure_gain>
 -->
 
-            <component name="Flaps Control" type="KINEMAT">
+            <kinematic name="Flaps Control">
                 <input>fcs/flap-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -354,10 +354,10 @@
                     </setting>
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
-            </component>
+            </kinematic>
         </channel>
         <channel name="Landing Gear">
-            <component name="Gear Control" type="KINEMAT">
+            <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -370,10 +370,10 @@
                     </setting>
                 </traverse>
                 <output>gear/gear-pos-norm</output>
-            </component>
+            </kinematic>
         </channel>
         <channel name="Speedbrake">
-            <component name="Speedbrake Control" type="KINEMAT">
+            <kinematic name="Speedbrake Control">
                 <input>fcs/speedbrake-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -386,7 +386,7 @@
                     </setting>
                 </traverse>
                 <output>fcs/speedbrake-pos-norm</output>
-            </component>
+            </kinematic>
         </channel>
     </flight_control>
     <aerodynamics>
