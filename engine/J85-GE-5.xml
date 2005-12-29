@@ -18,6 +18,7 @@
   <bypassratio>     0.0 </bypassratio>
   <tsfc>            0.85 </tsfc>
   <atsfc>           1.72 </atsfc>
+  <bleed>           0.03 </bleed>
   <idlen1>          0.0 </idlen1>
   <idlen2>         53.0 </idlen2>
   <maxn1>         100.0 </maxn1>
@@ -28,7 +29,7 @@
 
   <function name="IdleThrust">
    <table>
-    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
     <tableData>
          -10000     0     10000   20000   30000   40000   50000
@@ -44,7 +45,7 @@
 
   <function name="MilThrust">
    <table>
-    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
     <tableData>
           -10000       0   10000   20000   30000   40000   50000
@@ -62,7 +63,7 @@
 
   <function name="AugThrust">
    <table>
-    <independentVar lookup="row">velocities/mach-norm</independentVar>
+    <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
     <tableData>
            -10000       0   10000   20000   30000   40000   50000
