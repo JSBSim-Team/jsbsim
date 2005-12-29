@@ -141,7 +141,7 @@ function MakeTurbine() {
 
   print("  <function name=\"IdleThrust\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("         -10000     0     10000   20000   30000   40000   50000\n");
@@ -157,7 +157,7 @@ function MakeTurbine() {
 
   print("  <function name=\"MilThrust\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("          -10000       0   10000   20000   30000   40000   50000\n");
@@ -176,7 +176,7 @@ function MakeTurbine() {
  if ($ac_augmented) {
   print("  <function name=\"AugThrust\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("           -10000       0   10000   20000   30000   40000   50000\n");
@@ -202,7 +202,7 @@ function MakeTurbine() {
  if ($ac_injected) {
   print("  <function name=\"WaterFactor\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("            0       50000\n");
@@ -246,7 +246,7 @@ if(($ac_engineunits == 0) || ($ac_engineunits == 1)) {
 
   print("  <function name=\"IdleThrust\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("         -10000       0   10000   20000   30000   40000   50000\n");
@@ -262,7 +262,7 @@ if(($ac_engineunits == 0) || ($ac_engineunits == 1)) {
 
   print("  <function name=\"MilThrust\">\n");
   print("   <table>\n");
-  print("    <independentVar lookup=\"row\">velocities/mach-norm</independentVar>\n");  
+  print("    <independentVar lookup=\"row\">velocities/mach</independentVar>\n");  
   print("    <independentVar lookup=\"column\">atmosphere/density-altitude</independentVar>\n");  
   print("    <tableData>\n");
   print("         -10000       0   10000   20000   30000   40000   50000\n");
