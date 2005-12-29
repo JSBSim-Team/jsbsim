@@ -95,7 +95,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.2000	0.1400	
                               0.4000	0.1390	
@@ -119,10 +119,10 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
@@ -150,7 +150,7 @@
                     <property>aero/beta-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	-4.5720	-4.7780	-2.8390	-2.7830	-2.7820	-2.7820	-2.8020	-2.7880	-2.7260	-2.6240	-2.1270	-3.7510	-1.8680	
@@ -178,7 +178,7 @@
                     <property>aero/alpha-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
@@ -207,7 +207,7 @@
                     <property>aero/beta-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	0.0000	
@@ -236,7 +236,7 @@
                     <property>aero/alpha-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	-1.3720	-1.7830	-1.3250	-0.2610	-0.2670	-0.0530	-0.2280	-0.1110	0.3980	-0.0010	-1.6930	-3.6220	9.0240	
@@ -287,7 +287,7 @@
                     <property>aero/beta-rad</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.2000	0.4000	0.8000	0.9000	0.9500	0.9800	1.0000	1.0200	1.0500	1.1000	1.2000	1.4000	1.6000	
                               0.0000	1.3720	1.7830	1.3250	0.2610	0.2670	0.0530	0.2280	0.1110	-0.3980	0.0010	1.6930	3.6220	-9.0240	
