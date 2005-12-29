@@ -253,11 +253,11 @@
                                 <xsl:variable name="ucletters">ABCDEFGHIJKLMNOPQRSTUVWXYZ </xsl:variable>
                                 <xsl:variable name="lcletters">abcdefghijklmnopqrstuvwxyz-</xsl:variable>
                                 
-                                <td><xsl:for-each select="component">
+                                <td><xsl:for-each select="child::*">
                                         <font face="Arial" size="2">
                                             <p><b>Component: </b><xsl:value-of select="@name"/>, Type: 
                                             <xsl:choose>
-                                                <xsl:when test="@type = 'LAG_FILTER'">
+                                                <xsl:when test="name() = 'lag_filter'">
                                                     <i>Lag filter</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -269,7 +269,7 @@
                                                         </font></td></tr>
                                                     </table>
                                                 </xsl:when>
-                                                <xsl:when test="@type = 'INTEGRATOR'">
+                                                <xsl:when test="name() = 'integrator'">
                                                     <i>Integrator</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -283,7 +283,7 @@
 						    Trigger property: <xsl:value-of select="trigger"/>
 						    </xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'LEAD_LAG_FILTER'" >
+                                                <xsl:when test="name() =  'lead_lag_filter'" >
                                                     <i>Lead-lag filter</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -300,7 +300,7 @@
                                                         </font></td></tr>
                                                     </table>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'SECOND_ORDER_FILTER'" >
+                                                <xsl:when test="name() =  'second_order_filter'" >
                                                     <i>Second order filter</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -313,7 +313,7 @@
                                                         </font></td></tr>
                                                     </table>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'WASHOUT_FILTER'" >
+                                                <xsl:when test="name() = 'washout_filter'" >
                                                     <i>Washout filter</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -325,34 +325,34 @@
                                                         </font></td></tr>
                                                     </table>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'PURE_GAIN'" >
+                                                <xsl:when test="name() =  'pure_gain'" >
                                                     <i>Gain</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'SCHEDULED_GAIN'" >
+                                                <xsl:when test="name() =  'scheduled_gain'" >
                                                     <i>Scheduled gain</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'AEROSURFACE_SCALE'" >
+                                                <xsl:when test="name() =  'aerosurface_scale'" >
                                                     <i>Aerosurface scale</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'SUMMER'" >
+                                                <xsl:when test="name() =  'summer'" >
                                                     <i>Summer</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:for-each select="input">
                                                         Input: <i><xsl:value-of select="."/></i><br/>
                                                     </xsl:for-each>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'DEADBAND'" >
+                                                <xsl:when test="name() =  'deadband'" >
                                                     <i>Deadband</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'SWITCH'" >
+                                                <xsl:when test="name() =  'switch'" >
                                                     <i>Switch</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
@@ -377,12 +377,12 @@
                                                     select="default/@value"/></li></xsl:if><br/>
                                                     </ul>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'KINEMAT'" >
+                                                <xsl:when test="name() =  'kinematic'" >
                                                     <i>Kinematic</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>
                                                 </xsl:when>
-                                                <xsl:when test="@type =  'FUNCTION'" >
+                                                <xsl:when test="name() =  'fcs_function'" >
                                                     <i>Function</i><br/>
                                                     Component property name: <i>fcs/<xsl:value-of select="translate(normalize-space(@name), $ucletters, $lcletters)"/></i><br/>
                                                     <xsl:if test="input">Input: <i><xsl:value-of select="input"/></i><br/></xsl:if>

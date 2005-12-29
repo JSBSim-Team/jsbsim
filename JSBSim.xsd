@@ -923,7 +923,7 @@
   <xs:element name="radius">
     <xs:complexType>
       <xs:simpleContent>
-        <xs:extension base="xs:decimal">
+        <xs:extension base="xs:double">
           <xs:attribute name="unit" use="required" type="xs:NCName"/>
         </xs:extension>
       </xs:simpleContent>
@@ -932,7 +932,7 @@
   <xs:element name="capacity">
     <xs:complexType>
       <xs:simpleContent>
-        <xs:extension base="xs:integer">
+        <xs:extension base="xs:double">
           <xs:attribute name="unit" use="required" type="xs:NCName"/>
         </xs:extension>
       </xs:simpleContent>
@@ -941,8 +941,8 @@
   <xs:element name="contents">
     <xs:complexType>
       <xs:simpleContent>
-        <xs:extension base="xs:integer">
-          <xs:attribute name="unit" use="required" type="xs:NCName"/>
+        <xs:extension base="xs:double">
+          <xs:attribute name="unit" use="required" type="xs:string"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
