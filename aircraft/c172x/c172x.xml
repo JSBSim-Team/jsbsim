@@ -7,7 +7,7 @@
         <author>Tony Peden</author>
         <filecreationdate>1999-01-01</filecreationdate>
         <description>Models a 1997 Cessna 172R.</description>
-        <version>$Id: c172x.xml,v 1.48 2005/12/29 14:23:10 jberndt Exp $</version>
+        <version>$Id: c172x.xml,v 1.49 2005/12/30 00:12:43 jberndt Exp $</version>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
     <metrics>
