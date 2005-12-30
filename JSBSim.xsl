@@ -40,7 +40,7 @@
                                 <tr><td width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
                                 <tr><td width="150"><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
                                 <tr><td width="150"><b>Model version</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
-                                <xsl:if test="fileheader/reference"><tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr></xsl:if>
+                                <xsl:if test="fileheader/reference"><tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr>
                                 <xsl:for-each select="fileheader/reference">
                                 <tr valign="top">
                                 <td><xsl:value-of select="@refID"/></td>
@@ -49,7 +49,22 @@
                                 <td><xsl:value-of select="@date"/></td>
                                 </tr>
                                 </xsl:for-each>
-                            </table>
+                                </xsl:if>
+                            <xsl:if test="fileheader/note"><tr><td width="150"><b>Notes:</b><br/></td><td></td><td></td><td></td></tr>
+                                <tr><td colspan="4"><ol>
+                                <xsl:for-each select="fileheader/note">
+                                    <li><xsl:value-of select="."/></li>
+                                </xsl:for-each>
+                                </ol></td></tr>
+                            </xsl:if>
+                            <xsl:if test="fileheader/limitation"><tr><td width="150"><b>Limitations:</b><br/></td><td></td><td></td><td></td></tr>
+                                <tr><td colspan="4"><ol>
+                                    <xsl:for-each select="fileheader/limitation">
+                                        <li><xsl:value-of select="."/></li>
+                                    </xsl:for-each>
+                                </ol></td></tr>
+                            </xsl:if>
+                        </table>
                     </tr>
 
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
