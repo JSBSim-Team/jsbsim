@@ -125,18 +125,22 @@
   <xs:element name="fileheader">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="author" maxOccurs="unbounded"/>
-        <xs:element ref="filecreationdate"/>
-        <xs:element ref="description"/>
-        <xs:element ref="version"/>
-        <xs:element ref="reference" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="author" type="xs:string"/>
+          <xs:element name="email" type="xs:string"/>
+          <xs:element name="organization" type="xs:string"/>
+        </xs:choice>
+        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="note" type="xs:string"/>
+          <xs:element name="limitation" type="xs:string"/>
+          <xs:element ref="reference"/>
+        </xs:choice>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="author" type="xs:string"/>
-  <xs:element name="filecreationdate" type="xs:date"/>
-  <xs:element name="version" type="xs:string"/>
 
   <xs:element name="reference">
     <xs:complexType>
@@ -965,24 +969,24 @@
 
   <xs:element name="output">
     <xs:complexType>
-      <xs:choice maxOccurs="2">
-        <xs:sequence minOccurs="0">
+      <xs:choice maxOccurs="3">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
           <xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:sequence minOccurs="0">
-        <xs:element name="simulation" type="xs:string" minOccurs="0"/>
-        <xs:element name="atmosphere" type="xs:string" minOccurs="0"/>
-        <xs:element name="massprops" type="xs:string" minOccurs="0"/>
-        <xs:element name="rates" type="xs:string" minOccurs="0"/>
-        <xs:element name="velocities" type="xs:string" minOccurs="0"/>
-        <xs:element name="forces" type="xs:string" minOccurs="0"/>
-        <xs:element name="moments" type="xs:string" minOccurs="0"/>
-        <xs:element name="position" type="xs:string" minOccurs="0"/>
-        <xs:element name="propulsion" type="xs:string" minOccurs="0"/>
-        <xs:element name="aerosurfaces" type="xs:string" minOccurs="0"/>
-        <xs:element name="fcs" type="xs:string" minOccurs="0"/>
-        <xs:element name="ground_reactions" type="xs:string" minOccurs="0"/>
-        <xs:element name="coefficients" type="xs:string" minOccurs="0"/>
+          <xs:element name="simulation" type="xs:string" minOccurs="0"/>
+          <xs:element name="atmosphere" type="xs:string" minOccurs="0"/>
+          <xs:element name="massprops" type="xs:string" minOccurs="0"/>
+          <xs:element name="rates" type="xs:string" minOccurs="0"/>
+          <xs:element name="velocities" type="xs:string" minOccurs="0"/>
+          <xs:element name="forces" type="xs:string" minOccurs="0"/>
+          <xs:element name="moments" type="xs:string" minOccurs="0"/>
+          <xs:element name="position" type="xs:string" minOccurs="0"/>
+          <xs:element name="propulsion" type="xs:string" minOccurs="0"/>
+          <xs:element name="aerosurfaces" type="xs:string" minOccurs="0"/>
+          <xs:element name="fcs" type="xs:string" minOccurs="0"/>
+          <xs:element name="ground_reactions" type="xs:string" minOccurs="0"/>
+          <xs:element name="coefficients" type="xs:string" minOccurs="0"/>
         </xs:sequence>
       </xs:choice> 
       <xs:attribute name="name" type="xs:string"/>
@@ -1047,7 +1051,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element maxOccurs="unbounded" ref="independentVar"/>
-        <xs:element ref="tableData"/>
+        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="name" use="optional" type="xs:string"/>
     </xs:complexType>
@@ -1058,6 +1062,15 @@
       <xs:attribute name="lookup" type="xs:string"/>
     </xs:complexType>
   </xs:element>
-  <xs:element name="tableData" type="xs:string"/>
+  
+  <xs:element name="tableData">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute name="breakPoint" type="xs:double" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
 

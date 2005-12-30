@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="c172" version="2.0" release="BETA">
+<fdm_config name="c172" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <author> Unknown </author>
+        <filecreationdate> 2002-01-01 </filecreationdate>
+        <version> $Id: c172r.xml,v 1.17 2005/12/30 04:32:49 jberndt Exp $ </version>
+        <description> Cessna C-172r </description>
     </fileheader>
 
     <metrics>
@@ -39,9 +40,6 @@
         <ixx unit="SLUG*FT2"> 948 </ixx>
         <iyy unit="SLUG*FT2"> 1346 </iyy>
         <izz unit="SLUG*FT2"> 1967 </izz>
-        <ixz unit="SLUG*FT2"> -0 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 1620 </emptywt>
         <location name="CG" unit="IN">
             <x> 39 </x>

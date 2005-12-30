@@ -7,8 +7,8 @@
  <fileheader>
   <author>Aeromatic v 0.8, DPC</author>
   <filecreationdate>2004-01-01</filecreationdate>
-  <description>Models a Northrop T-38</description>
-  <version>$Id: T38.xml,v 1.18 2005/12/29 22:54:30 dpculp Exp $</version>
+     <version>$Id: T38.xml,v 1.19 2005/12/30 04:32:49 jberndt Exp $</version>
+     <description>Models a Northrop T-38</description>
  </fileheader>
 
 <!--

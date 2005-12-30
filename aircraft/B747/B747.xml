@@ -7,9 +7,8 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: B747.xml,v 1.19 2005/12/30 03:37:24 jberndt Exp $ </version>
-        <description> Description </description>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <version> $Id: B747.xml,v 1.20 2005/12/30 04:32:48 jberndt Exp $ </version>
+        <description> Boeing 747 </description>
     </fileheader>
 
     <metrics>

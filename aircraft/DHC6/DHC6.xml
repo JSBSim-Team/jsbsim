@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="DHC-6" version="2.0" release="BETA">
+<fdm_config name="DHC-6" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Erik Hofman </author>
-        <filecreationdate>  </filecreationdate>
-        <description>  </description>
-        <version>  </version>
+        <filecreationdate> 2003-01-01 </filecreationdate>
+        <version> $Id: DHC6.xml,v 1.13 2005/12/30 04:32:48 jberndt Exp $ </version>
+        <description> DeHavilland DHC-6 </description>
     </fileheader>
 
     <metrics>
@@ -39,8 +41,6 @@
         <iyy unit="SLUG*FT2"> 24679 </iyy>
         <izz unit="SLUG*FT2"> 35344 </izz>
         <ixz unit="SLUG*FT2"> -1099 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 8100 </emptywt>
         <location name="CG" unit="IN">
             <x> 211.8 </x>
@@ -181,10 +181,10 @@
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -200,10 +200,10 @@
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -228,10 +228,10 @@
             <summer name="Rudder Command Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
