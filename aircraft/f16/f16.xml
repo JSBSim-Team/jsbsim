@@ -7,8 +7,8 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
+        <version> $Revision: 1.57 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
-        <version> $Version: $ </version>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
         <reference refID="None" author="Richard Murray" title="http://www.cds.caltech.edu/~murray/projects/afosr95-vehicles/models/f16/" date="n/a"/>

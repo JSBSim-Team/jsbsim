@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="Lunar Module" version="2.0" release="BETA">
+<fdm_config name="Lunar Module" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <author> Jon Berndt </author>
+        <filecreationdate> 2002-06-01 </filecreationdate>
+        <version> $Revision: 1.11 $ </version>
+        <description> NASA/Grumman Lunar Module </description>
     </fileheader>
 
     <metrics>
@@ -39,9 +40,8 @@
         <ixx unit="SLUG*FT2"> 12750 </ixx>
         <iyy unit="SLUG*FT2"> 13629 </iyy>
         <izz unit="SLUG*FT2"> 16099 </izz>
-        <ixz unit="SLUG*FT2"> -231 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
         <ixy unit="SLUG*FT2"> -652 </ixy>
+        <ixz unit="SLUG*FT2"> -231 </ixz>
         <emptywt unit="LBS"> 16370 </emptywt>
         <location name="CG" unit="IN">
             <x> 0 </x>
@@ -159,14 +159,14 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: X-15 SAS">
-
+      <channel name="all">
         <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
             <input>fcs/pitch-trim-cmd-norm</input>
-            <clip>
+            <clipto>
                 <min>-1</min>
                 <max>1</max>
-            </clip>
+            </clipto>
         </summer>
 
         <aerosurface_scale name="Pitch Command Scale">
@@ -185,6 +185,33 @@
         <scheduled_gain name="Pitch Scheduled Gain 1">
             <input>fcs/pitch-gain-1</input>
             <gain>0.017</gain>
+            <table>
+                <independentVar>fcs/elevator-pos-rad</independentVar>
+                <tableData>
+                    -0.68  -26.548
+                    -0.595 -20.513
+                    -0.51  -15.328
+                    -0.425 -10.993
+                    -0.34   -7.508
+                    -0.255  -4.873
+                    -0.17   -3.088
+                    -0.085  -2.153
+                    0      -2.068
+                    0.085  -2.833
+                    0.102  -3.088
+                    0.119  -3.377
+                    0.136  -3.7
+                    0.153  -4.057
+                    0.17   -4.448
+                    0.187  -4.873
+                    0.272  -7.508
+                    0.357 -10.993
+                    0.442 -15.328
+                    0.527 -20.513
+                    0.612 -26.548
+                    0.697 -33.433
+                </tableData>
+            </table>
         </scheduled_gain>
 
         <aerosurface_scale name="Roll Command Scale">
@@ -251,10 +278,10 @@
         <summer name="Elevator Positioning">
             <input>fcs/pitch-scheduled-gain-1</input>
             <input>fcs/pitch-sas-feedback</input>
-            <clip>
+            <clipto>
                 <min>-0.26</min>
                 <max>0.61</max>
-            </clip>
+            </clipto>
         </summer>
 
         <lag_filter name="Elevator Filter">
@@ -266,23 +293,22 @@
         <summer name="Aileron Positioning">
             <input>fcs/roll-gain-2</input>
             <input>fcs/roll-sas-gain</input>
-            <clip>
+            <clipto>
                 <min>-0.35</min>
                 <max>0.35</max>
-            </clip>
+            </clipto>
             <output>fcs/left-aileron-pos-rad</output>
         </summer>
 
         <summer name="Rudder Positioning">
             <input>fcs/yaw-gain-2</input>
             <input>fcs/yaw-sas-gain</input>
-            <clip>
+            <clipto>
                 <min>-0.52</min>
                 <max>0.52</max>
-            </clip>
+            </clipto>
             <output>fcs/rudder-pos-rad</output>
         </summer>
+      </channel>
     </flight_control>
-    <aerodynamics>
-    </aerodynamics>
 </fdm_config>

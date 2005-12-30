@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="X-24B" version="2.0" release="BETA">
+<fdm_config name="X-24B" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <author> Jon Berndt </author>
+        <filecreationdate> 2001-01-01 </filecreationdate>
+        <version> $Revision: 1.13 $ </version>
+        <description> X-24B research aircraft </description>
     </fileheader>
 
     <metrics>
@@ -40,8 +41,6 @@
         <iyy unit="SLUG*FT2"> 23710 </iyy>
         <izz unit="SLUG*FT2"> 24120 </izz>
         <ixz unit="SLUG*FT2"> -620 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 8500 </emptywt>
         <location name="CG" unit="IN">
             <x> 288 </x>
@@ -148,10 +147,10 @@
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Pitch Command Scale">
@@ -207,10 +206,10 @@
             <summer name="Elevator Positioning">
                 <input>fcs/pitch-scheduled-gain-1</input>
                 <input>fcs/pitch-sas-feedback</input>
-                <clip>
+                <clipto>
                     <min>-0.26</min>
                     <max>0.61</max>
-                </clip>
+                </clipto>
             </summer>
 
             <lag_filter name="Elevator Filter">
@@ -259,10 +258,10 @@
             <summer name="Aileron Positioning">
                 <input>fcs/roll-gain-2</input>
                 <input>fcs/roll-sas-gain</input>
-                <clip>
+                <clipto>
                     <min>-0.35</min>
                     <max>0.35</max>
-                </clip>
+                </clipto>
                 <output>fcs/left-aileron-pos-rad</output>
             </summer>
 
@@ -296,10 +295,10 @@
             <summer name="Rudder Positioning">
                 <input>fcs/yaw-gain-2</input>
                 <input>fcs/yaw-sas-gain</input>
-                <clip>
+                <clipto>
                     <min>-0.52</min>
                     <max>0.52</max>
-                </clip>
+                </clipto>
                 <output>fcs/rudder-pos-rad</output>
             </summer>
         </channel>

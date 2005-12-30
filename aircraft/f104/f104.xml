@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="F-104" version="2.0" release="BETA">
+<fdm_config name="F-104" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <description> Description </description>
-        <version> Version </version>
-        <reference refID="None" author="n/a" title="n/a" date="n/a"/>
+        <author> Unknown </author>
+        <filecreationdate> 2001-01-01 </filecreationdate>
+        <version> $Revision: 1.20 $ </version>
+        <description> F-104 model </description>
     </fileheader>
 
     <metrics>
@@ -39,9 +40,6 @@
         <ixx unit="SLUG*FT2"> 3600 </ixx>
         <iyy unit="SLUG*FT2"> 59000 </iyy>
         <izz unit="SLUG*FT2"> 60000 </izz>
-        <ixz unit="SLUG*FT2"> -0 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 16300 </emptywt>
         <location name="CG" unit="IN">
             <x> -273 </x>
@@ -231,10 +229,10 @@
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <pure_gain name="Pitch Damper Gain">
@@ -256,10 +254,10 @@
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <pure_gain name="Roll Damper Gain">
@@ -313,10 +311,10 @@
             <summer name="Yaw Trim Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <pure_gain name="Yaw Damper Gain">

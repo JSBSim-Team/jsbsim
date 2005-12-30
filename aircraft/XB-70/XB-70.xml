@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="XB-70" version="2.0" release="BETA">
+<fdm_config name="XB-70" version="2.0" release="BETA"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Jon Berndt/Aeromatic </author>
-        <filecreationdate> 2004 </filecreationdate>
+        <filecreationdate> 2004-01-01 </filecreationdate>
+        <version>$Revision: 1.7 $ </version>
         <description> XB-70 bomber flight model approximation </description>
-        <version> 0.5 </version>
         <reference
           refID="TM X-2933"
           author="NASA"
@@ -44,8 +46,6 @@
         <iyy unit="SLUG*FT2"> 1.6e+07 </iyy>
         <izz unit="SLUG*FT2"> 1.68e+07 </izz>
         <ixz unit="SLUG*FT2"> 590000 </ixz>
-        <iyz unit="SLUG*FT2"> -0 </iyz>
-        <ixy unit="SLUG*FT2"> -0 </ixy>
         <emptywt unit="LBS"> 300000 </emptywt>
         <location name="CG" unit="IN">
             <x> 1593 </x>
@@ -322,10 +322,10 @@
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -341,10 +341,10 @@
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -369,10 +369,10 @@
             <summer name="Rudder Command Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
-                <clip>
+                <clipto>
                     <min>-1</min>
                     <max>1</max>
-                </clip>
+                </clipto>
             </summer>
 
             <scheduled_gain name="Yaw Damper Rate">
@@ -400,10 +400,10 @@
             <summer name="Yaw Damper Sum">
                 <input>fcs/yaw-damper-beta</input>
                 <input>fcs/yaw-damper-rate</input>
-                <clip>
+                <clipto>
                     <min>-0.2000</min>
                     <max>0.2000</max>
-                </clip>
+                </clipto>
             </summer>
 
             <scheduled_gain name="Yaw Damper Final">
@@ -420,10 +420,10 @@
             <summer name="Rudder Sum">
                 <input>fcs/rudder-command-sum</input>
                 <input>fcs/yaw-damper-final</input>
-                <clip>
+                <clipto>
                     <min>-1.0000</min>
                     <max>1.0000</max>
-                </clip>
+                </clipto>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
