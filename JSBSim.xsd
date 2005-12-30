@@ -17,26 +17,28 @@
         <!--The geometric information for the aircraft model. -->
         <xs:element ref="mass_balance"/>
         <!-- The weight and balance information for the aircraft model.</xs:annotation -->
-        <xs:element ref="ground_reactions"/>
+        <xs:element ref="ground_reactions" minOccurs="0"/>
         <!--The landing gear and/or structural contact point information for the aircraft model. -->
-        <xs:element ref="propulsion"/>
+        <xs:element ref="propulsion" minOccurs="0"/>
         <!-- The propulsion system information for the aircraft model. -->
         <xs:element ref="autopilot" minOccurs="0"/>
         <!-- The autopilot definition for the aircraft model. -->
-        <xs:element ref="flight_control"/>
+        <xs:element ref="flight_control" minOccurs="0"/>
         <!-- The flight control system for the aircraft model. -->
-        <xs:element ref="aerodynamics"/>
+        <xs:element ref="aerodynamics" minOccurs="0"/>
         <!-- The aerodynamics definition for the aircraft model. -->
-        <xs:element minOccurs="0" ref="input"/>
+        <xs:element ref="input" minOccurs="0"/>
         <!-- The input definition for the aircraft model. -->
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="output"/>
+        <xs:element ref="output" minOccurs="0" maxOccurs="unbounded"/>
         <!--The output specification for the aircraft model. -->
       </xs:sequence>
+
       <xs:attribute name="name" use="required" type="xs:string">
         <xs:annotation>
           <xs:documentation> The name of the aircraft this model represents. </xs:documentation>
         </xs:annotation>
       </xs:attribute>
+
       <xs:attribute name="release" use="optional" default="PRODUCTION">
         <xs:annotation>
           <xs:documentation>
@@ -44,6 +46,7 @@
             that this preproduction release may not be of high quality.
           </xs:documentation>
         </xs:annotation>
+
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:enumeration value="PRODUCTION"/>
@@ -52,6 +55,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
+
       <xs:attribute name="version" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
@@ -144,9 +148,9 @@
 
   <xs:element name="reference">
     <xs:complexType>
-      <xs:attribute name="author" use="required"/>
-      <xs:attribute name="date" use="required"/>
-      <xs:attribute name="refID" use="required" type="xs:string"/>
+      <xs:attribute name="author" use="optional"/>
+      <xs:attribute name="date" use="optional"/>
+      <xs:attribute name="refID" use="optional" type="xs:string"/>
       <xs:attribute name="title" use="required"/>
     </xs:complexType>
   </xs:element>
@@ -777,8 +781,8 @@
       <xs:sequence>
         <xs:element ref="alphalimits" minOccurs="0"/>
         <xs:element ref="hysteresis_limits" minOccurs="0"/>
-        <xs:element maxOccurs="unbounded" ref="function" minOccurs="0"/>
-        <xs:element maxOccurs="6" ref="axis"/>
+        <xs:element ref="function" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="axis" minOccurs="0" maxOccurs="6"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>

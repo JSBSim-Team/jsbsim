@@ -32,7 +32,7 @@
                         <table width="100%" bgcolor="EEEEEE" cellpadding="0" cellspacing="0" style="font-family:arial;font-size:90%">
                             <tr><td colspan="4"><b>FILE INFORMATION</b></td></tr>
                             <tr><td colspan="4" height="3"><hr size="1"/></td></tr>
-                            <tr><td><b>Author[s]</b></td><td valign="top" colspan="3" align="left">
+                            <tr><td valign="top"><b>Author[s]</b></td><td valign="top" colspan="3" align="left">
                             <xsl:for-each select="fileheader/author" >
                                 <xsl:value-of select="."/>, 
                             </xsl:for-each>
@@ -40,7 +40,7 @@
                                 <tr><td width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
                                 <tr><td width="150"><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
                                 <tr><td width="150"><b>Model version</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
-                                <tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr>
+                                <xsl:if test="fileheader/reference"><tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr></xsl:if>
                                 <xsl:for-each select="fileheader/reference">
                                 <tr valign="top">
                                 <td><xsl:value-of select="@refID"/></td>
