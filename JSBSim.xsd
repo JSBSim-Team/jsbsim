@@ -57,6 +57,10 @@
       </xs:attribute>
 
       <xs:attribute name="version" use="required">
+        <xs:annotation>
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.10 $", so that
+            a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
+        </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:pattern value="[0-9](.[0-9])*"/>
@@ -127,26 +131,33 @@
   <!-- FILEHEADER ELEMENT -->
   
   <xs:element name="fileheader">
+    <xs:annotation>
+      <xs:documentation>The fileheader section is where important information about the model is recorded. The authors, their contact information
+      and affiliation, are all documented in this section. Notes about the model, as well as limitations and reference information are also recorded
+      in this section.</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="author" type="xs:string"/>
-          <xs:element name="email" type="xs:string"/>
-          <xs:element name="organization" type="xs:string"/>
+          <xs:element name="author" type="xs:string"><xs:annotation><xs:documentation>The name of the model author[s].</xs:documentation></xs:annotation></xs:element>
+          <xs:element name="email" type="xs:string"><xs:annotation><xs:documentation>The contact email address for an author (optional).</xs:documentation></xs:annotation></xs:element>
+          <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
-        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.10 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="note" type="xs:string"/>
-          <xs:element name="limitation" type="xs:string"/>
-          <xs:element ref="reference"/>
+          <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
+          <xs:element name="limitation" type="xs:string"><xs:annotation><xs:documentation>Limitations for this model should be noted. For instance, if gear is not aerodynamically modeled.</xs:documentation></xs:annotation></xs:element>
+          <xs:element ref="reference"><xs:annotation><xs:documentation>All references used in creating this model should be included.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
   <xs:element name="reference">
+    <xs:annotation><xs:documentation>A reference consists of an author, a publication date, a reference ID (document ID, etc.),
+    and of course a title. The title is the only item in a reference that is required.</xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:attribute name="author" use="optional"/>
       <xs:attribute name="date" use="optional"/>
@@ -159,7 +170,11 @@
   
   <xs:element name="metrics">
     <xs:annotation>
-      <xs:documentation> This section contains geometric information about the aircraft.
+      <xs:documentation>
+        The metrics section holds information about the geometric characteristics of the aircraft that are important
+        for the equations of motion and aerodynamics. Wing (or reference area) area, wing span (or lateral reference length),
+        and wing chord (or longitudinal reference length) are all recorded in this section. The center of graivty is also recorded
+        in this section. Units may be given as shown in this section.
       </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -212,7 +227,7 @@
   
   <xs:element name="chord">
     <xs:annotation>
-      <xs:documentation> Chord (lateral reference length) for the vehicle being modeled. The default
+      <xs:documentation> Chord (longitudinal reference length) for the vehicle being modeled. The default
         unit is feet (FT). </xs:documentation>
     </xs:annotation>
     <xs:complexType>
@@ -228,8 +243,7 @@
   
   <xs:element name="htailarea">
     <xs:annotation>
-      <xs:documentation> Horizontal tail area. The default unit is square feet (FT2).
-      </xs:documentation>
+      <xs:documentation> Horizontal tail area. The default unit is square feet (FT2).</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
@@ -244,7 +258,8 @@
   
   <xs:element name="htailarm">
     <xs:annotation>
-      <xs:documentation> Horizontal tail arm. The default unit is feet (FT). </xs:documentation>
+      <xs:documentation> Horizontal tail arm. This is the distance from the center of gravity
+        to the quarter chord of the horizontal tail. The default unit is feet (FT).</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
