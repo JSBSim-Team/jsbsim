@@ -454,13 +454,13 @@ $ac_tanklocx = $ac_cglocx;
 $ac_tanklocy = $ac_cglocy;
 $ac_tanklocz = $ac_cglocz;
 $ac_tankradius = 1;
-switch($ac_type) {
+switch($ac_type) {  // capacity in pounds
   case 0: $ac_tankcapacity = 0; break;
-  case 1: $ac_tankcapacity = 20; break;
-  case 2: $ac_tankcapacity = 50; break;
-  case 3: $ac_tankcapacity = 200; break;
-  case 4: $ac_tankcapacity = 500; break;
-  case 5: $ac_tankcapacity = 700; break;
+  case 1: $ac_tankcapacity = 100; break;
+  case 2: $ac_tankcapacity = 300; break;
+  case 3: $ac_tankcapacity = 1000; break;
+  case 4: $ac_tankcapacity = 3000; break;
+  case 5: $ac_tankcapacity = 4500; break;
   case 6: $ac_tankcapacity = $ac_weight/23.0/($ac_numengines + 1); break;
   case 7: $ac_tankcapacity = $ac_weight/16.0/($ac_numengines + 1); break;
   case 8: $ac_tankcapacity = $ac_weight/16.0/($ac_numengines + 1); break;
@@ -765,8 +765,8 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
 print("  <filecreationdate> now </filecreationdate>\n");
-print("  <description> Models a $ac_name. </description>\n");
 print("  <version> 0.0 </version>\n");
+print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
 print("<!--\n  File:     $ac_name.xml\n");
@@ -859,9 +859,9 @@ print(" <mass_balance>\n");
 printf("   <ixx unit=\"SLUG*FT2\">  %8.0f </ixx>\n", $ac_ixx);
 printf("   <iyy unit=\"SLUG*FT2\">  %8.0f </iyy>\n", $ac_iyy);
 printf("   <izz unit=\"SLUG*FT2\">  %8.0f </izz>\n", $ac_izz);
+printf("   <ixy unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
 printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
 printf("   <iyz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
-printf("   <ixy unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
 printf("   <emptywt unit=\"LBS\" >  %8.0f </emptywt>\n", $ac_emptyweight);
 print("   <location name=\"CG\" unit=\"IN\">\n");
 printf("     <x> %6.2f </x>\n", $ac_cglocx);
