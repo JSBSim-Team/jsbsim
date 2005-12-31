@@ -1,6 +1,6 @@
 <?php
 
-$version = 0.8;
+$version = 0.9;
 
 //****************************************************
 //                                                   *
@@ -757,14 +757,16 @@ switch($ac_type) {                   // adverse yaw
 //************************************************
 
 print("<?xml version=\"1.0\"?>\n");
-print("<?xml-stylesheet href=\"http://jsbsim.sourceforge.net/JSBSim.xsl\" ?>\n");
-print("<fdm_config name=\"$ac_name\" version=\"2.0\" release=\"ALPHA\">\n");
+print("<?xml-stylesheet type=\"text/xsl\" href=\"http://jsbsim.sourceforge.net/JSBSim.xsl\"?>\n");
+print("<fdm_config name=\"$ac_name\" version=\"2.0\" release=\"ALPHA\"\n");
+print("   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.xsd\">\n\n");
 
 print(" <fileheader>\n");
-print("  <author>Aeromatic v $version</author>\n");
-print("  <filecreationdate>now</filecreationdate>\n");
-print("  <description>Models a $ac_name</description>\n");
-print("  <reference refID=\"None\" author=\"n/a\" title=\"n/a\" date=\"n/a\" />\n");
+print("  <author> Aeromatic v $version </author>\n");
+print("  <filecreationdate> now </filecreationdate>\n");
+print("  <description> Models a $ac_name. </description>\n");
+print("  <version> 0.0 </version>\n");
 print(" </fileheader>\n\n");
  
 print("<!--\n  File:     $ac_name.xml\n");
@@ -830,7 +832,7 @@ print("\n-->\n\n");
 print(" <metrics>\n");
 printf("   <wingarea  unit=\"FT2\"> %7.2f </wingarea>\n", $ac_wingarea);
 printf("   <wingspan  unit=\"FT\" > %7.2f </wingspan>\n", $ac_wingspan);
-printf("   <wing_incidence>         %7.2f </wing_incidence>\n", $ac_wingincidence);
+printf("   <wing_incidence>       %7.2f </wing_incidence>\n", $ac_wingincidence);
 printf("   <chord     unit=\"FT\" > %7.2f </chord>\n", $ac_wingchord);
 printf("   <htailarea unit=\"FT2\"> %7.2f </htailarea>\n", $ac_htailarea);
 printf("   <htailarm  unit=\"FT\" > %7.2f </htailarm>\n", $ac_htailarm);
@@ -858,8 +860,8 @@ printf("   <ixx unit=\"SLUG*FT2\">  %8.0f </ixx>\n", $ac_ixx);
 printf("   <iyy unit=\"SLUG*FT2\">  %8.0f </iyy>\n", $ac_iyy);
 printf("   <izz unit=\"SLUG*FT2\">  %8.0f </izz>\n", $ac_izz);
 printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
-printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
-printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
+printf("   <iyz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
+printf("   <ixy unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
 printf("   <emptywt unit=\"LBS\" >  %8.0f </emptywt>\n", $ac_emptyweight);
 print("   <location name=\"CG\" unit=\"IN\">\n");
 printf("     <x> %6.2f </x>\n", $ac_cglocx);
@@ -1126,10 +1128,10 @@ print("   </summer>\n\n");
 
 print("   <aerosurface_scale name=\"Elevator Control\">\n");
 print("      <input>fcs/pitch-trim-sum</input>\n");
-print("      <limit>\n");
+print("      <range>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.30 </max>\n");
-print("      </limit>\n");
+print("      </range>\n");
 print("      <output>fcs/elevator-pos-rad</output>\n");
 print("   </aerosurface_scale>\n\n");
 
@@ -1147,19 +1149,19 @@ print("   </summer>\n\n");
 
 print("   <aerosurface_scale name=\"Left Aileron Control\">\n");
 print("      <input>fcs/roll-trim-sum</input>\n");
-print("      <limit>\n");
+print("      <range>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
-print("      </limit>\n");
+print("      </range>\n");
 print("      <output>fcs/left-aileron-pos-rad</output>\n");
 print("   </aerosurface_scale>\n\n");
 
 print("   <aerosurface_scale name=\"Right Aileron Control\">\n");
 print("      <input>fcs/roll-trim-sum</input>\n");
-print("      <limit>\n");
+print("      <range>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
-print("      </limit>\n");
+print("      </range>\n");
 print("      <output>fcs/right-aileron-pos-rad</output>\n");
 print("   </aerosurface_scale>\n\n");
 
@@ -1229,20 +1231,20 @@ if($ac_yawdamper == 1) {
 
   print("   <aerosurface_scale name=\"Rudder Control\">\n");
   print("      <input>fcs/rudder-sum</input>\n");
-  print("      <limit>\n");
+  print("      <range>\n");
   print("        <min> -0.35 </min>\n");
   print("        <max>  0.35 </max>\n");
-  print("      </limit>\n");
+  print("      </range>\n");
   print("      <output>fcs/rudder-pos-rad</output>\n");
   print("   </aerosurface_scale>\n\n"); 
   }
   else {
    print("   <aerosurface_scale name=\"Rudder Control\">\n");
    print("      <input>fcs/rudder-command-sum</input>\n");
-   print("      <limit>\n");
+   print("      <range>\n");
    print("        <min> -0.35 </min>\n");
    print("        <max>  0.35 </max>\n");
-   print("      </limit>\n");
+   print("      </range>\n");
    print("      <output>fcs/rudder-pos-rad</output>\n");
    print("   </aerosurface_scale>\n\n"); 
   }
@@ -1250,7 +1252,7 @@ if($ac_yawdamper == 1) {
 print("  </channel>\n\n");
 print("  <channel name=\"Flaps\">\n");
 
-print("   <kinemat name=\"Flaps Control\">\n");
+print("   <kinematic name=\"Flaps Control\">\n");
 print("     <input>fcs/flap-cmd-norm</input>\n");
 print("     <traverse>\n");
 print("       <setting>\n");
@@ -1267,13 +1269,13 @@ print("          <time>      3 </time>\n");
 print("       </setting>\n");
 print("     </traverse>\n");
 print("     <output>fcs/flap-pos-deg</output>\n");
-print("   </kinemat>\n\n");
+print("   </kinematic>\n\n");
 
 print("  </channel>\n\n");
 print("  <channel name=\"Landing Gear\">\n");
 
 if($ac_gearretract == 1) {
-  print("   <kinemat name=\"Gear Control\">\n");
+  print("   <kinematic name=\"Gear Control\">\n");
   print("     <input>gear/gear-cmd-norm</input>\n");
   print("     <traverse>\n");
   print("       <setting>\n");
@@ -1286,13 +1288,13 @@ if($ac_gearretract == 1) {
   print("       </setting>\n");
   print("     </traverse>\n");
   print("     <output>gear/gear-pos-norm</output>\n");
-  print("   </kinemat>\n\n");
+  print("   </kinematic>\n\n");
 }
 
 print("  </channel>\n\n");
 print("  <channel name=\"Speedbrake\">\n");
 
-print("   <kinemat name=\"Speedbrake Control\">\n");
+print("   <kinematic name=\"Speedbrake Control\">\n");
 print("     <input>fcs/speedbrake-cmd-norm</input>\n");
 print("     <traverse>\n");
 print("       <setting>\n");
@@ -1305,7 +1307,7 @@ print("          <time>     1 </time>\n");
 print("       </setting>\n");
 print("     </traverse>\n");
 print("     <output>fcs/speedbrake-pos-norm</output>\n");
-print("   </kinemat>\n\n");
+print("   </kinematic>\n\n");
 
 print("  </channel>\n\n");
 
