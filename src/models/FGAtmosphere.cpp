@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.7 2006/01/02 17:23:26 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.8 2006/01/02 19:05:27 dpculp Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -275,7 +275,7 @@ void FGAtmosphere::CalculateDerived(void)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // Get the standard atmospheric properties at a specified altitude
 
-void FGAtmosphere::GetAtmosphere(double altitude) {
+void FGAtmosphere::GetStdAtmosphere(double altitude) {
   StandardTempOnly = true;
   Calculate(altitude);
   StandardTempOnly = false;
@@ -288,26 +288,26 @@ void FGAtmosphere::GetAtmosphere(double altitude) {
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the pressure at a specified altitude
+// Get the standard pressure at a specified altitude
 
 double FGAtmosphere::GetPressure(double altitude) {
-  GetAtmosphere(altitude);
+  GetStdAtmosphere(altitude);
   return atmosphere.Pressure;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the temperature at a specified altitude
+// Get the standard temperature at a specified altitude
 
 double FGAtmosphere::GetTemperature(double altitude) {
-  GetAtmosphere(altitude);
+  GetStdAtmosphere(altitude);
   return atmosphere.Temperature;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Get the density at a specified altitude
+// Get the standard density at a specified altitude
 
 double FGAtmosphere::GetDensity(double altitude) {
-  GetAtmosphere(altitude);
+  GetStdAtmosphere(altitude);
   return atmosphere.Density;
 }
 

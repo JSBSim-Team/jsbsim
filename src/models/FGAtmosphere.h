@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.4 2006/01/02 17:23:26 dpculp Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.5 2006/01/02 19:05:27 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.4 2006/01/02 17:23:26 dpculp Exp $
+    @version $Id: FGAtmosphere.h,v 1.5 2006/01/02 19:05:27 dpculp Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -200,9 +200,12 @@ protected:
   FGColumnVector3 vWindNED;
   double psiw;
 
+  /// Calculate the atmosphere for the given altitude, including effects of temperature deviation.
   void Calculate(double altitude);
+  /// Calculate atmospheric properties other than the basic T, P and rho.
   void CalculateDerived(void);
-  void GetAtmosphere(double altitude);
+  /// Get T, P and rho for a standard atmosphere at the given altitude.
+  void GetStdAtmosphere(double altitude);
   void Turbulence(void);
   void Debug(int from);
 };
