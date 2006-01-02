@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.4 2006/01/02 17:23:26 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
+    @version $Id: FGAtmosphere.h,v 1.4 2006/01/02 17:23:26 dpculp Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -82,7 +82,6 @@ public:
   /** Runs the Atmosphere model; called by the Executive
       @return false if no error */
   bool Run(void);
-
   bool InitModel(void);
 
   /// Returns the temperature in degrees Rankine.
@@ -92,8 +91,12 @@ public:
   inline double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
   inline double GetPressure(void)  const {return *pressure;}
-  /// Returns the pressure at an arbitrary altitude in psf
-  double GetPressure(double alt);
+  /// Returns the standard pressure at a specified altitude
+  double GetPressure(double altitude);
+  /// Returns the standard temperature at a specified altitude
+  double GetTemperature(double altitude);
+  /// Returns the standard density at a specified altitude
+  double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
   inline double GetSoundSpeed(void) const {return soundspeed;}
 
@@ -166,19 +169,23 @@ protected:
   double rho;
 
   enum tType {ttStandard, ttBerndt, ttNone} turbType;
+  struct atmType {double Temperature; double Pressure; double Density;};
 
   int lastIndex;
   double h;
   double htab[8];
-  double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
+  double StdSLtemperature,StdSLdensity,StdSLpressure,StdSLsoundspeed;
   double rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
+  double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
   double *temperature,*density,*pressure;
   double soundspeed;
   bool useExternal;
   double exTemperature,exDensity,exPressure;
   double intTemperature, intDensity, intPressure;
   double T_dev_sl, T_dev, delta_T, density_altitude;
-  
+  atmType atmosphere;
+  bool StandardTempOnly;
+
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
   double TurbRate;
@@ -194,6 +201,8 @@ protected:
   double psiw;
 
   void Calculate(double altitude);
+  void CalculateDerived(void);
+  void GetAtmosphere(double altitude);
   void Turbulence(void);
   void Debug(int from);
 };

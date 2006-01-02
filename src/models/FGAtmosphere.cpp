@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.6 2005/12/17 16:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.7 2006/01/02 17:23:26 dpculp Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,6 +88,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   TurbRate = 1.0;
 
   T_dev_sl = T_dev = delta_T = 0.0;
+  StandardTempOnly = false;
 
   bind();
   Debug(0);
@@ -107,20 +108,17 @@ bool FGAtmosphere::InitModel(void)
 {
   FGModel::InitModel();
 
-  Calculate(h);
-  SLtemperature = intTemperature;
-  SLpressure    = intPressure;
-  SLdensity     = intDensity;
-  SLsoundspeed  = sqrt(SHRatio*Reng*intTemperature);
-  rSLtemperature = 1.0/intTemperature;
-  rSLpressure    = 1.0/intPressure;
-  rSLdensity     = 1.0/intDensity;
-  rSLsoundspeed  = 1.0/SLsoundspeed;
-  temperature=&intTemperature;
-  pressure=&intPressure;
-  density=&intDensity;
+  UseInternal();  // this is the default
 
-  useExternal=false;
+  Calculate(h);
+  StdSLtemperature = SLtemperature = 518.67;
+  StdSLpressure    = SLpressure = 2116.22;
+  StdSLdensity     = SLdensity = 0.00237767;
+  StdSLsoundspeed  = SLsoundspeed = sqrt(SHRatio*Reng*StdSLtemperature);
+  rSLtemperature = 1.0/StdSLtemperature;
+  rSLpressure    = 1.0/StdSLpressure;
+  rSLdensity     = 1.0/StdSLdensity;
+  rSLsoundspeed  = 1.0/StdSLsoundspeed;
 
   return true;
 }
@@ -132,25 +130,17 @@ bool FGAtmosphere::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
-  //do temp, pressure, and density first
+  T_dev = 0.0;
+  h = Propagate->Geth();
+
   if (!useExternal) {
-    h = Propagate->Geth();
     Calculate(h);
-  }
-
-  if (turbType != ttStandard) {
-    Turbulence();
-    vWindNED += vTurbulence;
-  }
-
-  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
-
-  if (psiw < 0) psiw += 2*M_PI;
-
-  soundspeed = sqrt(SHRatio*Reng*(*temperature));
+    CalculateDerived();
+  } else {
+    CalculateDerived();
+  } 
 
   Debug(2);
-
   return false;
 }
 
@@ -235,41 +225,92 @@ void FGAtmosphere::Calculate(double altitude)
 
   }
 
-  T_dev = 0.0;
-  if (delta_T != 0.0) {
-    T_dev = delta_T;
-  } else {
-    if ((h < 36089.239) && (T_dev_sl != 0.0)) {
-      T_dev = T_dev_sl * ( 1.0 - (h/36089.239));
-    }
-  }
-  density_altitude = h + T_dev * 66.7;
+  // If delta_T is set, then that is our temperature deviation at any altitude.
+  // If not, then we'll estimate a deviation based on the sea level deviation (if set).
 
-  reftemp+=T_dev;
+  if(!StandardTempOnly) { 
+    T_dev = 0.0; 
+    if (delta_T != 0.0) {
+      T_dev = delta_T;
+    } else {
+      if ((altitude < 36089.239) && (T_dev_sl != 0.0)) {
+        T_dev = T_dev_sl * ( 1.0 - (altitude/36089.239));
+      }
+    }
+    reftemp+=T_dev;
+  } 
+
   if (slope == 0) {
     intTemperature = reftemp;
     intPressure = refpress*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
-    //intDensity = refdens*exp(-Inertial->SLgravity()/(reftemp*Reng)*(altitude-htab[i]));
     intDensity = intPressure/(Reng*intTemperature);
   } else {
     intTemperature = reftemp+slope*(altitude-htab[i]);
     intPressure = refpress*pow(intTemperature/reftemp,-Inertial->SLgravity()/(slope*Reng));
-    //intDensity = refdens*pow(intTemperature/reftemp,-(Inertial->SLgravity()/(slope*Reng)+1));
     intDensity = intPressure/(Reng*intTemperature);
   }
+
   lastIndex=i;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// Return the pressure at an arbitrary altitude and then restore the internal state
+// Calculate parameters derived from T, P and rho
 
-double FGAtmosphere::GetPressure(double alt) {
-  Calculate(alt);
-  double p = *pressure;
-  // Reset the internal atmospheric state
-  Run();
-  return(p);
+void FGAtmosphere::CalculateDerived(void)
+{
+  T_dev = (*temperature) - GetTemperature(h);
+  density_altitude = h + T_dev * 66.7;
+
+  if (turbType != ttStandard) {
+    Turbulence();
+    vWindNED += vTurbulence;
+  }
+  if (vWindNED(1) != 0.0) psiw = atan2( vWindNED(2), vWindNED(1) );
+  if (psiw < 0) psiw += 2*M_PI;
+
+  soundspeed = sqrt(SHRatio*Reng*(*temperature));
 }
+
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the standard atmospheric properties at a specified altitude
+
+void FGAtmosphere::GetAtmosphere(double altitude) {
+  StandardTempOnly = true;
+  Calculate(altitude);
+  StandardTempOnly = false;
+  atmosphere.Temperature = intTemperature;
+  atmosphere.Pressure = intPressure;
+  atmosphere.Density = intDensity;
+
+  // Reset the internal atmospheric state
+  Calculate(h);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the pressure at a specified altitude
+
+double FGAtmosphere::GetPressure(double altitude) {
+  GetAtmosphere(altitude);
+  return atmosphere.Pressure;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the temperature at a specified altitude
+
+double FGAtmosphere::GetTemperature(double altitude) {
+  GetAtmosphere(altitude);
+  return atmosphere.Temperature;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Get the density at a specified altitude
+
+double FGAtmosphere::GetDensity(double altitude) {
+  GetAtmosphere(altitude);
+  return atmosphere.Density;
+}
+
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 // square a value, but preserve the original sign
@@ -433,13 +474,13 @@ void FGAtmosphere::bind(void)
                        &FGAtmosphere::GetPressureSL);
   PropertyManager->Tie("atmosphere/a-sl-fps", this,
                        &FGAtmosphere::GetSoundSpeedSL);
-  PropertyManager->Tie("atmosphere/theta-norm", this,
+  PropertyManager->Tie("atmosphere/theta", this,
                        &FGAtmosphere::GetTemperatureRatio);
-  PropertyManager->Tie("atmosphere/sigma-norm", this,
+  PropertyManager->Tie("atmosphere/sigma", this,
                        &FGAtmosphere::GetDensityRatio);
-  PropertyManager->Tie("atmosphere/delta-norm", this,
+  PropertyManager->Tie("atmosphere/delta", this,
                        &FGAtmosphere::GetPressureRatio);
-  PropertyManager->Tie("atmosphere/a-norm", this,
+  PropertyManager->Tie("atmosphere/a-ratio", this,
                        &FGAtmosphere::GetSoundSpeedRatio);
   PropertyManager->Tie("atmosphere/psiw-rad", this,
                        &FGAtmosphere::GetWindPsi);
@@ -472,10 +513,10 @@ void FGAtmosphere::unbind(void)
   PropertyManager->Untie("atmosphere/delta-T");
   PropertyManager->Untie("atmosphere/T-sl-dev-F");
   PropertyManager->Untie("atmosphere/density-altitude");
-  PropertyManager->Untie("atmosphere/theta-norm");
-  PropertyManager->Untie("atmosphere/sigma-norm");
-  PropertyManager->Untie("atmosphere/delta-norm");
-  PropertyManager->Untie("atmosphere/a-norm");
+  PropertyManager->Untie("atmosphere/theta");
+  PropertyManager->Untie("atmosphere/sigma");
+  PropertyManager->Untie("atmosphere/delta");
+  PropertyManager->Untie("atmosphere/a-ratio");
   PropertyManager->Untie("atmosphere/psiw-rad");
   PropertyManager->Untie("atmosphere/p-turb-rad_sec");
   PropertyManager->Untie("atmosphere/q-turb-rad_sec");
