@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.5 2005/11/12 16:28:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.6 2006/01/03 20:45:08 dpculp Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Sense = 1; // default clockwise rotation
   ReversePitch = 0.0;
   Reversed = false;
+  Feathered = false;
   Reverse_coef = 0.0;
   GearRatio = 1.0;
 
