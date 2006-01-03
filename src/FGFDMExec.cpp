@@ -57,6 +57,8 @@ INCLUDES
 #include "FGFDMExec.h"
 #include "FGState.h"
 #include <models/FGAtmosphere.h>
+#include <models/atmosphere/FGMSIS.h>
+#include <models/atmosphere/FGMars.h>
 #include <models/FGFCS.h>
 #include <models/FGPropulsion.h>
 #include <models/FGMassBalance.h>
@@ -73,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.13 2005/12/24 17:34:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.14 2006/01/03 01:40:39 dpculp Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,6 +133,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   modelLoaded = false;
   IsSlave = false;
   holding = false;
+
 
   // Multiple FDM's are stopped for now.  We need to ensure that
   // the "user" instance always gets the zeroeth instance number,
@@ -728,6 +731,34 @@ cout << "DoTrim called" << endl;
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
   State->Setsim_time(saved_time);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::UseAtmosphereMSIS(void)
+{
+  FGAtmosphere *oldAtmosphere = Atmosphere;
+  Atmosphere = new MSIS(this);
+  if (!Atmosphere->InitModel()) {
+    cerr << fgred << "MSIS Atmosphere model init failed" << fgdef << endl;
+    Error+=1;
+  }
+  delete oldAtmosphere;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::UseAtmosphereMars(void)
+{
+/*
+  FGAtmosphere *oldAtmosphere = Atmosphere;
+  Atmosphere = new FGMars(this);
+  if (!Atmosphere->InitModel()) {
+    cerr << fgred << "Mars Atmosphere model init failed" << fgdef << endl;
+    Error+=1;
+  }
+  delete oldAtmosphere;
+*/
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

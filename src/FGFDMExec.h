@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.9 2005/12/24 17:34:59 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.10 2006/01/03 01:40:39 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -102,7 +102,7 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.9 2005/12/24 17:34:59 jberndt Exp $
+    @version $Id: FGFDMExec.h,v 1.10 2006/01/03 01:40:39 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -274,6 +274,12 @@ public:
   *   @return the carriage-return-delimited string containing all matching strings
   *               in the catalog.  */
   string QueryPropertyCatalog(string check);
+
+  /// Use the MSIS atmosphere model.
+  void UseAtmosphereMSIS(void);
+
+  /// Use the Mars atmosphere model. (Not operative yet.)
+  void UseAtmosphereMars(void); 
 
 private:
   FGModel* FirstModel;
