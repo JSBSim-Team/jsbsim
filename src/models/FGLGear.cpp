@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.16 2005/12/24 04:50:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.17 2006/01/04 04:49:50 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
     force_table = el->FindNextElement("table");
   }
 
-  sSteerType = el->FindElementValue("steer_type");
   sBrakeGroup = el->FindElementValue("brake_group");
 
   if (maxSteerAngle == 360) sSteerType = "CASTERED";
@@ -319,7 +318,7 @@ FGColumnVector3& FGLGear::Force(void)
     vForce(eY) = (0.15)*(In(eY) + prevIn(eY)) + (0.70)*prevOut(eY);
     prevOut = vForce;
     prevIn = In;
-    
+
     if (fabs(RollingWhlVel) <= RFRV) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
     if (fabs(SideWhlVel) <= SFRV) vForce(eY) *= fabs(SideWhlVel)/SFRV;
 

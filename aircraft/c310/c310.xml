@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c310.xml,v 1.45 2006/01/04 04:49:50 jberndt Exp $ </version>
+        <version> $Revision: 1.46 $ </version>
         <description> Models a Cessna 310 light twin. </description>
     </fileheader>
 
