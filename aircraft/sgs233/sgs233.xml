@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.8 $ </version>
+        <version> $Revision: 1.9 $ </version>
         <description> SGS-233 glider </description>
     </fileheader>
 
@@ -18,7 +18,7 @@
         <htailarea unit="FT2"> 24 </htailarea>
         <htailarm unit="FT"> 14 </htailarm>
         <vtailarea unit="FT2"> 18 </vtailarea>
-        <vtailarm unit="FT"> 0 </vtailarm>
+        <vtailarm unit="FT"> 14 </vtailarm>
         <location name="AERORP" unit="IN">
             <x> 103.2 </x>
             <y> 0 </y>
