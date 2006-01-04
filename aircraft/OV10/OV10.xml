@@ -7,7 +7,7 @@
     <fileheader>
         <author> Dave Culp, based on Aero-Matic </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.19 $ </version>
+        <version> $Revision: 1.20 $ </version>
         <description> OV-10 Bronco </description>
     </fileheader>
 
@@ -18,7 +18,7 @@
         <htailarea unit="FT2"> 46.56 </htailarea>
         <htailarm unit="FT"> 20.8 </htailarm>
         <vtailarea unit="FT2"> 52.38 </vtailarea>
-        <vtailarm unit="FT"> 0 </vtailarm>
+        <vtailarm unit="FT"> 18.5 </vtailarm>
         <location name="AERORP" unit="IN">
             <x> 249.6 </x>
             <y> 0 </y>
@@ -30,9 +30,9 @@
             <z> 45 </z>
         </location>
         <location name="VRP" unit="IN">
-            <x> 249.6 </x>
+            <x> 0 </x>
             <y> 0 </y>
-            <z> -12.5 </z>
+            <z> 0 </z>
         </location>
     </metrics>
 
@@ -40,7 +40,7 @@
         <ixx unit="SLUG*FT2"> 19561 </ixx>
         <iyy unit="SLUG*FT2"> 35552 </iyy>
         <izz unit="SLUG*FT2"> 56531 </izz>
-        <emptywt unit="LBS"> 8640 </emptywt>
+        <emptywt unit="LBS">   8640 </emptywt>
         <location name="CG" unit="IN">
             <x> 249.6 </x>
             <y> 0 </y>
@@ -57,7 +57,7 @@
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
-            <rolling_friction> 0 </rolling_friction>
+            <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 20160 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 1440 </damping_coeff>
             <max_steer unit="DEG"> 5 </max_steer>
@@ -72,7 +72,7 @@
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
-            <rolling_friction> 0 </rolling_friction>
+            <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 72000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2880 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
@@ -87,7 +87,7 @@
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
-            <rolling_friction> 0 </rolling_friction>
+            <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 72000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2880 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
@@ -146,32 +146,23 @@
                 </orient>
             </thruster>
         </engine>
-        <tank type="FUEL">    <!-- Tank number 0 -->
+        <tank type="FUEL">    <!-- Internal -->
             <location unit="IN">
                 <x> 249.6 </x>
-                <y> -80 </y>
+                <y> 0 </y>
                 <z> 12 </z>
             </location>
-            <capacity unit="LBS"> 777 </capacity>
-            <contents unit="LBS"> 700 </contents>
+            <capacity unit="LBS"> 1554 </capacity>
+            <contents unit="LBS"> 1500 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 1 -->
-            <location unit="IN">
-                <x> 249.6 </x>
-                <y> 80 </y>
-                <z> 12 </z>
-            </location>
-            <capacity unit="LBS"> 777 </capacity>
-            <contents unit="LBS"> 700 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 2 -->
+        <tank type="FUEL">    <!-- External Tank -->
             <location unit="IN">
                 <x> 249.6 </x>
                 <y> 0 </y>
                 <z> -20 </z>
             </location>
-            <capacity unit="LBS"> 700 </capacity>
-            <contents unit="LBS"> 0 </contents>
+            <capacity unit="LBS"> 1450 </capacity>
+            <contents unit="LBS"> 1400 </contents>
         </tank>
     </propulsion>
     <flight_control name="FCS: OV10">
@@ -191,7 +182,7 @@
                     <min>-0.35</min>
                     <max>0.175</max>
                 </range>
-                <output>fcs/elevator-pos-rad</output>
+                <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Roll">
@@ -210,7 +201,7 @@
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
-                <output>fcs/left-aileron-pos-rad</output>
+                <output>fcs/left-aileron-pos-norm</output>
             </aerosurface_scale>
 
             <aerosurface_scale name="Right Aileron Control">
@@ -219,7 +210,7 @@
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
-                <output>fcs/right-aileron-pos-rad</output>
+                <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Yaw">
@@ -238,7 +229,7 @@
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
-                <output>fcs/rudder-pos-rad</output>
+                <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Flaps">
@@ -250,15 +241,15 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
+                        <position>0.5</position>
                         <time>4</time>
                     </setting>
                     <setting>
-                        <position>30</position>
+                        <position>1</position>
                         <time>3</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
+                <output>fcs/flap-pos-norm</output>
             </kinematic>
         </channel>
         <channel name="Landing Gear">
