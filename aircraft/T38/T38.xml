@@ -7,7 +7,7 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2004-01-01</filecreationdate>
-     <version>$Revision: 1.20 $</version>
+     <version>$Revision: 1.21 $</version>
      <description>Models a Northrop T-38</description>
  </fileheader>
 
@@ -37,13 +37,13 @@
 -->
 
     <metrics>
-        <wingarea unit="FT2"> 170 </wingarea>
-        <wingspan unit="FT"> 25.25 </wingspan>
-        <chord unit="FT"> 6.73 </chord>
-        <htailarea unit="FT2"> 34 </htailarea>
-        <htailarm unit="FT"> 13 </htailarm>
-        <vtailarea unit="FT2"> 47 </vtailarea>
-        <vtailarm unit="FT"> 0 </vtailarm>
+        <wingarea unit="FT2">  170 </wingarea>
+        <wingspan unit="FT">    25.25 </wingspan>
+        <chord unit="FT">        6.73 </chord>
+        <htailarea unit="FT2">  34 </htailarea>
+        <htailarm unit="FT">    13 </htailarm>
+        <vtailarea unit="FT2">  47 </vtailarea>
+        <vtailarm unit="FT">    13 </vtailarm>
         <location name="AERORP" unit="IN">
             <x> 320 </x>
             <y> 0 </y>
@@ -62,10 +62,10 @@
     </metrics>
 
     <mass_balance>
-        <ixx unit="SLUG*FT2"> 7806 </ixx>
+        <ixx unit="SLUG*FT2">  7806 </ixx>
         <iyy unit="SLUG*FT2"> 36075 </iyy>
         <izz unit="SLUG*FT2"> 31319 </izz>
-        <emptywt unit="LBS"> 7574 </emptywt>
+        <emptywt unit="LBS">   7574 </emptywt>
         <location name="CG" unit="IN">
             <x> 314 </x>
             <y> 0 </y>
@@ -80,7 +80,7 @@
                 <y> 0 </y>
                 <z> -60 </z>
             </location>
-            <static_friction> 0.8 </static_friction>
+            <static_friction>  0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 5000 </spring_coeff>
@@ -219,7 +219,7 @@
                     <min>-0.3</min>
                     <max>0.175</max>
                 </range>
-                <output>fcs/elevator-pos-rad</output>
+                <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Roll">
@@ -250,7 +250,7 @@
                     <min>-0.35</min>
                     <max>0.26</max>
                 </range>
-                <output>fcs/left-aileron-pos-rad</output>
+                <output>fcs/left-aileron-pos-norm</output>
             </aerosurface_scale>
 
             <aerosurface_scale name="Right Aileron Control">
@@ -259,7 +259,7 @@
                     <min>-0.35</min>
                     <max>0.26</max>
                 </range>
-                <output>fcs/right-aileron-pos-rad</output>
+                <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Yaw">
@@ -319,7 +319,7 @@
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
-                <output>fcs/rudder-pos-rad</output>
+                <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
         </channel>
         <channel name="Throttles">      
@@ -352,7 +352,7 @@
                         <time>3</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
+                <output>fcs/flap-pos-norm</output>
             </kinematic>
         </channel>
         <channel name="Landing Gear">
@@ -399,8 +399,8 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -1.5700	1.5000
-                              -0.2600	0.0320
+                             -1.5700	1.5000
+                             -0.2600	0.0320
                               0.0000	0.0160
                               0.2600	0.0320
                               1.5700	1.5000
@@ -468,8 +468,8 @@
                       <table>
                           <independentVar>aero/beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300
-                              -0.2600	0.0500
+                             -1.5700	1.2300
+                             -0.2600	0.0500
                               0.0000	0.0000
                               0.2600	0.0500
                               1.5700	1.2300
@@ -691,7 +691,9 @@
             </function>
         </axis>
     </aerodynamics>
+<!--
     <output name="T38.csv" type="CSV">
         <propulsion> ON </propulsion>
     </output>
+-->
 </fdm_config>
