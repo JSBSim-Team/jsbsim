@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="c310" version="2.0" release="BETA"
+<fdm_config name="Cessna 310 Light Twin General Aviation Aircraft" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c310.xml,v 1.44 2005/12/30 04:32:49 jberndt Exp $ </version>
+        <version> $Id: c310.xml,v 1.45 2006/01/04 04:49:50 jberndt Exp $ </version>
         <description> Models a Cessna 310 light twin. </description>
     </fileheader>
 
@@ -46,42 +46,42 @@
             <y> 0 </y>
             <z> 8.6 </z>
         </location>
-        <pointmass name="name">
+        <pointmass name="Pilot">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 37 </x>
                 <y> -14 </y>
                 <z> 24 </z>
             </location>
         </pointmass>
-        <pointmass name="name">
+        <pointmass name="Co-Pilot">
             <weight unit="LBS"> 180 </weight>
-            <location name="POINTMASS" unit="IN">
+            <location unit="IN">
                 <x> 37 </x>
                 <y> 14 </y>
                 <z> 24 </z>
             </location>
         </pointmass>
-        <pointmass name="name">
+        <pointmass name="Pilot's wife">
             <weight unit="LBS"> 150 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 71 </x>
+            <location unit="IN">
+                <x> 61 </x>
                 <y> -14 </y>
                 <z> 24 </z>
             </location>
         </pointmass>
-        <pointmass name="name">
+        <pointmass name="Co-Pilot's husband">
             <weight unit="LBS"> 150 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 71 </x>
+            <location unit="IN">
+                <x> 61 </x>
                 <y> 14 </y>
                 <z> 24 </z>
             </location>
         </pointmass>
-        <pointmass name="name">
+        <pointmass name="Luggage">
             <weight unit="LBS"> 100 </weight>
-            <location name="POINTMASS" unit="IN">
-                <x> 96 </x>
+            <location unit="IN">
+                <x> 90 </x>
                 <y> 0 </y>
                 <z> 24 </z>
             </location>
@@ -115,7 +115,7 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 5400 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 1600 </damping_coeff>
-            <max_steer unit="DEG"> 360.0 </max_steer>
+            <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
         </contact>
@@ -130,11 +130,11 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 5400 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 1600 </damping_coeff>
-            <max_steer unit="DEG"> 360.0 </max_steer>
+            <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
         </contact>
-        <contact type="BOGEY" name="TAIL_SKID">
+        <contact type="STRUCTURE" name="TAIL_SKID">
             <location unit="IN">
                 <x> 221.8 </x>
                 <y> 0 </y>
@@ -142,29 +142,21 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 20000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 1000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="NOSE">
+        <contact type="STRUCTURE" name="NOSE">
             <location unit="IN">
-                <x> 96.3 </x>
+                <x> -96.3 </x>
                 <y> 0 </y>
                 <z> 10.3 </z>
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="CABIN_LEFT">
+        <contact type="STRUCTURE" name="CABIN_LEFT">
             <location unit="IN">
                 <x> 0 </x>
                 <y> -25 </y>
@@ -172,14 +164,10 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="CABIN_RIGHT">
+        <contact type="STRUCTURE" name="CABIN_RIGHT">
             <location unit="IN">
                 <x> 0 </x>
                 <y> 25 </y>
@@ -187,14 +175,10 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="ROOF">
+        <contact type="STRUCTURE" name="ROOF">
             <location unit="IN">
                 <x> 41.3 </x>
                 <y> 0 </y>
@@ -202,14 +186,10 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="LEFT_TIP">
+        <contact type="STRUCTURE" name="LEFT_TIP">
             <location unit="IN">
                 <x> 48.1 </x>
                 <y> -222 </y>
@@ -217,14 +197,10 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_TIP">
+        <contact type="STRUCTURE" name="RIGHT_TIP">
             <location unit="IN">
                 <x> 48.1 </x>
                 <y> 222 </y>
@@ -232,12 +208,8 @@
             </location>
             <static_friction> 0.2 </static_friction>
             <dynamic_friction> 0.2 </dynamic_friction>
-            <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
     </ground_reactions>
     <propulsion>
@@ -908,7 +880,7 @@
         <velocities> OFF </velocities>
         <forces> OFF </forces>
         <moments> OFF </moments>
-        <position> OFF </position>
+        <position> ON </position>
         <propulsion> ON </propulsion>
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
