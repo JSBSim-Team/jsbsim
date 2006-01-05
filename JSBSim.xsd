@@ -58,7 +58,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.10 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.11 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -144,7 +144,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.10 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.11 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -934,12 +934,13 @@
   <xs:element name="p_factor" type="xs:decimal"/>
   <xs:element name="tank">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="location"/>
+      <xs:all>
+        <xs:element name="temperature" type="xs:double" minOccurs="0"/>
+        <xs:element ref="location" minOccurs="1"/>
         <xs:element ref="radius" minOccurs="0"/>
-        <xs:element ref="capacity"/>
-        <xs:element ref="contents"/>
-      </xs:sequence>
+        <xs:element ref="capacity" minOccurs="0"/>
+        <xs:element ref="contents" minOccurs="0"/>
+      </xs:all>
       <xs:attribute name="type" use="required" type="xs:NCName"/>
     </xs:complexType>
   </xs:element>

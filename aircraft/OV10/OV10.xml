@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
-<fdm_config name="OV10" version="2.0" release="BETA"
+<fdm_config name="OV10 Bronco" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
         <author> Dave Culp, based on Aero-Matic </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.20 $ </version>
+        <version> $Revision: 1.21 $ </version>
         <description> OV-10 Bronco </description>
     </fileheader>
 
