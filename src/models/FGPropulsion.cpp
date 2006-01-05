@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.9 2006/01/05 22:24:57 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.10 2006/01/05 22:35:20 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -122,7 +122,9 @@ bool FGPropulsion::Run(void)
   TotalFuelQuantity = 0.0;
   for (i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( dt * rate );
-    TotalFuelQuantity += Tanks[i]->GetContents();
+    if (Tanks[i]->GetType() == FGTank::ttFUEL) {
+      TotalFuelQuantity += Tanks[i]->GetContents();
+    } 
   }
 
   if (refuel) DoRefuel( dt * rate );
