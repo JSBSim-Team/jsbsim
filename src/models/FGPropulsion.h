@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.8 2006/01/05 22:24:57 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.8 2006/01/05 22:24:57 dpculp Exp $
     @see
     FGEngine
     FGTank
@@ -173,6 +173,7 @@ public:
   string FindEngineFullPathname(string engine_filename);
   inline int GetActiveEngine(void) const {return ActiveEngine;}
   inline bool GetFuelFreeze(void) {return fuel_freeze;}
+  double GetTotalFuelQuantity(void) const {return TotalFuelQuantity;}
 
   void SetMagnetos(int setting);
   void SetStarter(int setting);
@@ -202,6 +203,7 @@ private:
   FGMatrix33 tankJ;
   bool refuel;
   bool fuel_freeze;
+  double TotalFuelQuantity;
   bool IsBound;
   bool HavePistonEngine;
   bool HaveTurbineEngine;

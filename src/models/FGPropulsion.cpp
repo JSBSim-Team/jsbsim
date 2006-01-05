@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.8 2005/11/13 18:44:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.9 2006/01/05 22:24:57 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -78,6 +78,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   tankJ.InitMatrix();
   refuel = false;
   fuel_freeze = false;
+  TotalFuelQuantity = 0.0;
   IsBound =
   HavePistonEngine =
   HaveTurbineEngine =
@@ -118,8 +119,10 @@ bool FGPropulsion::Run(void)
     vMoments += Engines[i]->GetMoments();     // sum body frame moments
   }
 
+  TotalFuelQuantity = 0.0;
   for (i=0; i<numTanks; i++) {
     Tanks[i]->Calculate( dt * rate );
+    TotalFuelQuantity += Tanks[i]->GetContents();
   }
 
   if (refuel) DoRefuel( dt * rate );
@@ -558,7 +561,9 @@ void FGPropulsion::bind(void)
     PropertyManager->Tie("propulsion/magneto_cmd", this, (iPMF)0, &FGPropulsion::SetMagnetos, true);
   }
 
-  PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine, &FGPropulsion::SetActiveEngine, true);
+  PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine,
+                        &FGPropulsion::SetActiveEngine, true);
+  PropertyManager->Tie("propulsion/total-fuel-lbs", this, &FGPropulsion::GetTotalFuelQuantity);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -574,6 +579,7 @@ void FGPropulsion::unbind(void)
     PropertyManager->Untie("propulsion/magneto_cmd");
   }
   PropertyManager->Untie("propulsion/active_engine");
+  PropertyManager->Untie("propulsion/total-fuel-lbs");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
