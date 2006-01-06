@@ -751,6 +751,8 @@ switch($ac_type) {                   // adverse yaw
   case 9: $ac_Cnda = -0.008; break;
   }
 
+// get the server date/time
+$date_string = date('Y-m-d');  
 
 //************************************************
 //*                                              *
@@ -766,8 +768,8 @@ print("   xsi:noNamespaceSchemaLocation=\"http://jsbsim.sourceforge.net/JSBSim.x
 
 print(" <fileheader>\n");
 print("  <author> Aeromatic v $version </author>\n");
-print("  <filecreationdate> now </filecreationdate>\n");
-print("  <version> 0.0 </version>\n");
+print("  <filecreationdate> $date_string </filecreationdate>\n");
+print("  <version>\$Revison: \$</version>\n");
 print("  <description> Models a $ac_name. </description>\n");
 print(" </fileheader>\n\n");
  
@@ -861,9 +863,9 @@ print(" <mass_balance>\n");
 printf("   <ixx unit=\"SLUG*FT2\">  %8.0f </ixx>\n", $ac_ixx);
 printf("   <iyy unit=\"SLUG*FT2\">  %8.0f </iyy>\n", $ac_iyy);
 printf("   <izz unit=\"SLUG*FT2\">  %8.0f </izz>\n", $ac_izz);
-printf("   <ixy unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
-printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
-printf("   <iyz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
+//printf("   <ixy unit=\"SLUG*FT2\">  %8.0f </ixy>\n", $ac_ixy);
+//printf("   <ixz unit=\"SLUG*FT2\">  %8.0f </ixz>\n", $ac_ixz);
+//printf("   <iyz unit=\"SLUG*FT2\">  %8.0f </iyz>\n", $ac_iyz);
 printf("   <emptywt unit=\"LBS\" >  %8.0f </emptywt>\n", $ac_emptyweight);
 print("   <location name=\"CG\" unit=\"IN\">\n");
 printf("     <x> %6.2f </x>\n", $ac_cglocx);
