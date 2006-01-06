@@ -1175,10 +1175,10 @@ print("  <channel name=\"Yaw\">\n");
 print("   <summer name=\"Rudder Command Sum\">\n");
 print("      <input>fcs/rudder-cmd-norm</input>\n");
 print("      <input>fcs/yaw-trim-cmd-norm</input>\n");
-print("      <limit>\n");
+print("      <clipto>\n");
 print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
-print("      </limit>\n");
+print("      </clipto>\n");
 print("   </summer>\n\n");
 
 if($ac_yawdamper == 1) {
@@ -1207,10 +1207,10 @@ if($ac_yawdamper == 1) {
   print("   <summer name=\"Yaw Damper Sum\">\n");
   print("      <input>fcs/yaw-damper-beta</input>\n");
   print("      <input>fcs/yaw-damper-rate</input>\n");
-  print("      <limit>\n");
+  print("      <clipto>\n");
   print("        <min> -0.1 </min>\n");
   print("        <max>  0.1 </max>\n");
-  print("      </limit>\n");
+  print("      </clipto>\n");
   print("   </summer>\n\n");
 
   print("   <scheduled_gain name=\"Yaw Damper Final\">\n");
@@ -1227,10 +1227,10 @@ if($ac_yawdamper == 1) {
   print("   <summer name=\"Rudder Sum\">\n");
   print("      <input>fcs/rudder-command-sum</input>\n");
   print("      <input>fcs/yaw-damper-final</input>\n");
-  print("      <limit>\n");
+  print("      <clipto>\n");
   print("        <min> -1 </min>\n");
   print("        <max>  1 </max>\n");
-  print("      </limit>\n");
+  print("      </clipto>\n");
   print("   </summer>\n\n");
 
   print("   <aerosurface_scale name=\"Rudder Control\">\n");
