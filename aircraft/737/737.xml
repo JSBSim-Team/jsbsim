@@ -8,7 +8,7 @@
         <author> Dave Culp </author>
         <author> Aeromatic </author>
         <filecreationdate> 2006-01-04 </filecreationdate>
-        <version> 1.0 </version>
+        <version>$Revison: 1.0 $</version>
         <description> Models a 737. </description>
     </fileheader>
 
@@ -204,6 +204,19 @@
                 <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
 
+            <aerosurface_scale name="Elevator Normalized">
+                <input>fcs/elevator-pos-rad</input>
+                <domain>
+                    <min>-0.3</min>
+                    <max> 0.3</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
+                <output>fcs/elevator-pos-norm</output>
+            </aerosurface_scale>
+
         </channel>
         <channel name="Roll">
 
@@ -232,6 +245,32 @@
                     <max> 0.35</max>
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Left aileron Normalized">
+                <input>fcs/left-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
+                <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right aileron Normalized">
+                <input>fcs/right-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
+                <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
 
         </channel>
@@ -286,6 +325,19 @@
                     <max> 0.35</max>
                 </range>
                 <output>fcs/rudder-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Rudder Normalized">
+                <input>fcs/rudder-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
+                <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
 
         </channel>
