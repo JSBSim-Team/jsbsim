@@ -1134,9 +1134,22 @@ print("   <aerosurface_scale name=\"Elevator Control\">\n");
 print("      <input>fcs/pitch-trim-sum</input>\n");
 print("      <range>\n");
 print("        <min> -0.35 </min>\n");
-print("        <max>  0.30 </max>\n");
+print("        <max>  0.35 </max>\n");
 print("      </range>\n");
 print("      <output>fcs/elevator-pos-rad</output>\n");
+print("   </aerosurface_scale>\n\n");
+
+print("   <aerosurface_scale name=\"elevator normalization\">\n");
+print("      <input>fcs/elevator-pos-rad</input>\n");
+print("      <domain>\n");
+print("        <min> -0.35 </min>\n");
+print("        <max>  0.35 </max>\n");
+print("      </domain>\n");
+print("      <range>\n");
+print("        <min> -1 </min>\n");
+print("        <max>  1 </max>\n");
+print("      </range>\n");
+print("      <output>fcs/elevator-pos-norm</output>\n");
 print("   </aerosurface_scale>\n\n");
 
 print("  </channel>\n\n");
@@ -1167,6 +1180,32 @@ print("        <min> -0.35 </min>\n");
 print("        <max>  0.35 </max>\n");
 print("      </range>\n");
 print("      <output>fcs/right-aileron-pos-rad</output>\n");
+print("   </aerosurface_scale>\n\n");
+
+print("   <aerosurface_scale name=\"left aileron normalization\">\n");
+print("      <input>fcs/left-aileron-pos-rad</input>\n");
+print("      <domain>\n");
+print("        <min> -0.35 </min>\n");
+print("        <max>  0.35 </max>\n");
+print("      </domain>\n");
+print("      <range>\n");
+print("        <min> -1 </min>\n");
+print("        <max>  1 </max>\n");
+print("      </range>\n");
+print("      <output>fcs/left-aileron-pos-norm</output>\n");
+print("   </aerosurface_scale>\n\n");
+
+print("   <aerosurface_scale name=\"right aileron normalization\">\n");
+print("      <input>fcs/right-aileron-pos-rad</input>\n");
+print("      <domain>\n");
+print("        <min> -0.35 </min>\n");
+print("        <max>  0.35 </max>\n");
+print("      </domain>\n");
+print("      <range>\n");
+print("        <min> -1 </min>\n");
+print("        <max>  1 </max>\n");
+print("      </range>\n");
+print("      <output>fcs/right-aileron-pos-norm</output>\n");
 print("   </aerosurface_scale>\n\n");
 
 print("  </channel>\n\n");
@@ -1253,6 +1292,19 @@ if($ac_yawdamper == 1) {
    print("   </aerosurface_scale>\n\n"); 
   }
 
+print("   <aerosurface_scale name=\"rudder normalization\">\n");
+print("      <input>fcs/rudder-pos-rad</input>\n");
+print("      <domain>\n");
+print("        <min> -0.35 </min>\n");
+print("        <max>  0.35 </max>\n");
+print("      </domain>\n");
+print("      <range>\n");
+print("        <min> -1 </min>\n");
+print("        <max>  1 </max>\n");
+print("      </range>\n");
+print("      <output>fcs/rudder-pos-norm</output>\n");
+print("   </aerosurface_scale>\n\n");
+  
 print("  </channel>\n\n");
 print("  <channel name=\"Flaps\">\n");
 
@@ -1274,6 +1326,19 @@ print("       </setting>\n");
 print("     </traverse>\n");
 print("     <output>fcs/flap-pos-deg</output>\n");
 print("   </kinematic>\n\n");
+
+print("   <aerosurface_scale name=\"flap normalization\">\n");
+print("      <input>fcs/flap-pos-deg</input>\n");
+print("      <domain>\n");
+print("        <min>  0 </min>\n");
+print("        <max> 30 </max>\n");
+print("      </domain>\n");
+print("      <range>\n");
+print("        <min> 0 </min>\n");
+print("        <max> 1 </max>\n");
+print("      </range>\n");
+print("      <output>fcs/flap-pos-norm</output>\n");
+print("   </aerosurface_scale>\n\n");
 
 print("  </channel>\n\n");
 print("  <channel name=\"Landing Gear\">\n");
