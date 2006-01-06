@@ -317,7 +317,9 @@ $ac_geardamp_tail = $ac_weight * 0.8;
 
 $ac_geardynamic = 0.5;
 $ac_gearstatic  = 0.8;
+$ac_bearingstatic = 0.006;
 $ac_gearrolling = 0.02;
+$ac_bearingrolling = 0.003;
 if($ac_type == 0) $ac_gearrolling = 0.5;  // glider
 
 $ac_gearsteerable_nose = 'STEERABLE';
@@ -883,9 +885,9 @@ if($ac_type == 0) {  // if this is a glider
   printf("      <y> %6.2f </y>\n", -$ac_gearlocy_main);
   printf("      <z> %6.2f </z>\n", $ac_gearlocz_main);
   print("    </location>\n");
-  printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+  printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
   printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-  printf("    <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+  printf("    <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
   printf("    <spring_coeff  unit=\"LBS/FT\">     %8.2f </spring_coeff>\n", $ac_gearspring_main);
   printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
   print("    <max_steer unit=\"DEG\">0</max_steer>\n");
@@ -899,9 +901,9 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", $ac_gearlocy_main);
   printf("     <z> %6.2f </z>\n", $ac_gearlocz_main);
   print("   </location>\n");
-  printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+  printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
   printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-  printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+  printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
   printf("   <spring_coeff unit=\"LBS/FT\">     %8.2f </spring_coeff>\n", $ac_gearspring_main);
   printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
   print("   <max_steer unit=\"DEG\">0</max_steer>\n");
@@ -915,9 +917,9 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", $ac_gearlocy_nose);
   printf("     <z> %6.2f </z>\n", $ac_gearlocz_nose);
   print("   </location>\n");
-  printf("  <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+  printf("  <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
   printf("  <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-  printf("  <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+  printf("  <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
   printf("  <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_nose);
   printf("  <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_nose);
   print("  <max_steer unit=\"DEG\">0</max_steer>\n");
@@ -931,7 +933,7 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", -$ac_halfspan);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
-  printf("  <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+  printf("  <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
   printf("  <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
   printf("  <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
   printf("  <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
@@ -943,7 +945,7 @@ if($ac_type == 0) {  // if this is a glider
   printf("     <y> %6.2f </y>\n", $ac_halfspan);
   printf("     <z> %6.2f </z>\n", $ac_cglocz);
   print("   </location>\n");
-  printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+  printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
   printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
   printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
   printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
@@ -958,9 +960,9 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", $ac_gearlocy_nose);
     printf("     <z> %6.2f </z>\n", $ac_gearlocz_nose);
     print("   </location>\n");
-    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_nose);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_nose);
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
@@ -976,9 +978,9 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", -$ac_gearlocy_main);
     printf("     <z> %6.2f </z>\n", $ac_gearlocz_main);
     print("   </location>\n");
-    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
     print("   <max_steer unit=\"DEG\">0</max_steer>\n");
@@ -992,9 +994,9 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", $ac_gearlocy_main);
     printf("     <z> %6.2f </z>\n", $ac_gearlocz_main);
     print("   </location>\n");
-    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
     print("   <max_steer unit=\"DEG\">0</max_steer>\n");
@@ -1010,9 +1012,9 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", $ac_gearlocy_tail);
     printf("     <z> %6.2f </z>\n", $ac_gearlocz_tail);
     print("   </location>\n");
-    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("   <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("   <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
-    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling);
+    printf("   <rolling_friction> %2.2f </rolling_friction>\n", $ac_gearrolling + $ac_bearingrolling);
     printf("   <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_tail);
     printf("   <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_tail);
     printf("   <max_steer unit=\"DEG\"> %2.2f </max_steer>\n", $ac_gearmaxsteer);
@@ -1028,7 +1030,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", -$ac_halfspan);
     printf("     <z> %6.2f </z>\n", $ac_cglocz);
     print("    </location>\n");
-    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
     printf("    <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
     printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
@@ -1040,7 +1042,7 @@ if($ac_type == 0) {  // if this is a glider
     printf("     <y> %6.2f </y>\n", $ac_halfspan);
     printf("     <z> %6.2f </z>\n", $ac_cglocz);
     print("    </location>\n");
-    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic);
+    printf("    <static_friction>  %2.2f </static_friction>\n", $ac_gearstatic + $ac_bearingstatic);
     printf("    <dynamic_friction> %2.2f </dynamic_friction>\n", $ac_geardynamic);
     printf("    <spring_coeff unit=\"LBS/FT\">      %8.2f </spring_coeff>\n", $ac_gearspring_main);
     printf("    <damping_coeff unit=\"LBS/FT/SEC\"> %8.2f </damping_coeff>\n", $ac_geardamp_main);
