@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<runscript name="C310-01A takeoff run">
+  <!--
+    This run is for testing C310 runs
+  -->
+
+  <use aircraft="c310"/>
+  <use initialize="reset00"/>
+  <run start="0.0" end="200" dt="0.00833333">
+    <when>
+      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
+      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
+      <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
+      <set name="fcs/mixture-cmd-norm[1]" value="0.87"/>
+      <set name="fcs/advance-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/advance-cmd-norm[1]" value="1.0"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+    </when>
+
+    <when> <!-- Set Heading when reach 3.5 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="3.5"/>
+      <set name="ap/heading_setpoint" value="200"/>
+      <set name="ap/attitude_hold" value="1"/>
+      <set name="ap/heading_hold" value="0"/>
+    </when>
+
+    <when> <!-- Set altitude target when reach 5 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="5.0"/>
+      <set name="ap/altitude_setpoint" value="1000.0" action="FG_EXP" tc ="6.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+    </when>
+
+    <when> <!-- Raise gear when reach 20 ft -->
+      <parameter name="position/h-agl-ft" comparison="ge" value="20"/>
+      <set name="gear/gear-cmd-norm" value="0"/>
+    </when>
+
+  </run>
+
+</runscript>

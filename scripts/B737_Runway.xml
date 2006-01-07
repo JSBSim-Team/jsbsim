@@ -10,10 +10,12 @@
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
       <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
+      <set name="fcs/elevator-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
     </when>
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="7.0"/>
       <set name="fcs/steer-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
+      <set name="fcs/elevator-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
     </when>
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="15.0"/>

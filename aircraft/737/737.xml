@@ -729,13 +729,14 @@
             </function>
         </axis>
     </aerodynamics>
-<!--
-    <output name="JSBout172B.csv" rate="10" type="CSV">
+
+    <output name="B737_datalog.csv" rate="10" type="CSV">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> position/h-sl-ft </property>
         <property> velocities/vc-kts </property>
         <property> fcs/throttle-cmd-norm </property>
+        <property> fcs/elevator-pos-norm </property>
         <rates> OFF </rates>
         <velocities> OFF </velocities>
         <forces> ON </forces>
@@ -746,5 +747,5 @@
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
     </output>
--->
+
 </fdm_config>
