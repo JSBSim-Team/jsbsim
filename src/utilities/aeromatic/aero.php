@@ -1064,7 +1064,7 @@ print("    </COEFFICIENT>\n");
 
 print("    <COEFFICIENT NAME=\"dCLflap\" TYPE=\"VALUE\">\n"); 
 print("       Delta_Lift_due_to_flaps\n");
-print("       aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm\n");
+print("       aero/qbar-psf|metrics/Sw-sqft|fcs/flap-pos-norm\n");
 print("       $ac_dCLflaps\n");
 print("    </COEFFICIENT>\n");
 
@@ -1118,7 +1118,7 @@ print("    </COEFFICIENT>\n");
 
 print("    <COEFFICIENT NAME=\"CDflap\" TYPE=\"VALUE\">\n"); 
 print("       Drag_due_to_flaps\n");
-print("       aero/qbar-psf|metrics/Sw-sqft|fcs/components/flaps-control/output-norm\n");
+print("       aero/qbar-psf|metrics/Sw-sqft|fcs/flap-pos-norm\n");
 print("       $ac_CDflaps\n");
 print("    </COEFFICIENT>\n");
 
