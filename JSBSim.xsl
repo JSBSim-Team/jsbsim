@@ -37,9 +37,9 @@
                                 <xsl:value-of select="."/>, 
                             </xsl:for-each>
                             </td></tr>
-                                <tr><td width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
-                                <tr><td width="150"><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
-                                <tr><td width="150"><b>Model version</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
+                                <tr><td valign="top" width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
+                                <tr><td valign="top" width="150"><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
+                                <tr><td valign="top" width="150"><b>Model version</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
                                 <xsl:if test="fileheader/reference"><tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr>
                                 <xsl:for-each select="fileheader/reference">
                                 <tr valign="top">
