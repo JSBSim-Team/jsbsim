@@ -5,10 +5,23 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Unknown </author>
-        <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Revision: 1.47 $ </version>
-        <description> Models a Cessna 310 light twin. </description>
+        <author> David Megginson </author>
+        <author> Tony Peden </author>
+        <author> Jon Berndt </author>
+        <filecreationdate> 2001-11-24 </filecreationdate>
+        <version> $Revision: 1.48 $ </version>
+        <reference title="Full-Scale Wind Tunnel Investigation of Static Longitudinal and Lateral Characteristics of a Light Twin-Engine Airplane"
+            author="Marvin P. Fink, Delma C. Freeman, Jr."
+            date="1969-01-01" refID="NASA TN D-4983"/>
+        <description>
+            Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
+            an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
+            of the wing through the fuselage. The wing airfoil section is a modified NACA 64(2)A215 airfoil
+            with the trailing edge cusp faired out. The wing has 5 degrees of dihedral, no twist, and is at 2 degrees
+            positive incidence with respect to the fuselage reference line. Thrust axes are parallel to the reference line.
+            The horizontal tail is all-movable, with a deflection range of 4 to -14 degrees. Control deflection
+            range for the ailerons is 14 to -18 degrees. Normal rudder deflection range is +/-27 degrees.
+        </description>
     </fileheader>
 
     <metrics>
@@ -327,14 +340,15 @@
 
             <aerosurface_scale name="Elevator Control">
                 <input>fcs/pitch-trim-sum</input>
-                <gain>0.01745</gain>
                 <range>
-                    <min>-16.5</min>
-                    <max>15</max>
+                    <min> -14.0 </min>
+                    <max>   4.0 </max>
                 </range>
+                <gain>0.01745</gain>
                 <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
         </channel>
+
         <channel name="Roll">
             <summer name="Roll Trim Sum">
                 <input>ap/aileron_cmd</input>
@@ -346,17 +360,55 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Aileron Control">
-                <input>fcs/roll-trim-sum</input>
-                <gain>0.01745</gain>
+            <aerosurface_scale name="Left Aileron Control">
+                <input>fcs/roll-trim-sum</input>   <!-- input is normalized  -->
                 <range>
-                    <min>-20</min>
-                    <max>20</max>
+                    <min> -18.0 </min>             <!-- map to degree limits -->
+                    <max>  14.0 </max>
                 </range>
+                <gain>0.01745</gain>               <!-- convert to radians   -->
                 <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
+
+            <aerosurface_scale name="Left Aileron Control Normalized">
+                <input>fcs/left-aileron-control</input>
+                <domain>
+                    <min> -0.3141 </min> <!-- -18 degrees -->
+                    <max>  0.2443 </max> <!-- +14 degrees -->
+                </domain>
+                <range>
+                    <min> -1.0 </min>
+                    <max>  1.0 </max>
+                </range>
+                <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right Aileron Control">
+                <input>-fcs/roll-trim-sum</input>
+                <range>
+                    <min> -18.0 </min>
+                    <max>  14.0 </max>
+                </range>
+                <gain>0.01745</gain>
+                <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right Aileron Control Normalized">
+                <input>fcs/right-aileron-control</input>
+                <domain>
+                    <min> -0.3141 </min> <!-- -18 degrees -->
+                    <max>  0.2443 </max> <!-- +14 degrees -->
+                </domain>
+                <range>
+                    <min> -1.0 </min>
+                    <max>  1.0 </max>
+                </range>
+                <output>fcs/right-aileron-pos-norm</output>
+            </aerosurface_scale>
+
         </channel>
         <channel name="Yaw">
+
             <summer name="Yaw Trim Sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
@@ -444,14 +496,16 @@
         </function>
 
         <axis name="DRAG">
+	
             <function name="aero/coefficient/CDo">
                 <description>Drag_at_zero_lift</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <value>0.029</value>
+                    <value>0.028</value>
                 </product>
             </function>
+	    
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
                 <product>
@@ -490,6 +544,7 @@
                       </table>
                 </product>
             </function>
+	    
             <function name="aero/coefficient/CDDf">
                 <description>Delta_drag_due_to_flap_deflection</description>
                 <product>
@@ -498,14 +553,15 @@
                       <table>
                           <independentVar>fcs/flap-pos-deg</independentVar>
                           <tableData>
-                              0.0000	0.0000
-                              15.0000	0.0070
-                              25.0000	0.0120
-                              45.0000	0.0180
+                              0.0000	0.000
+                              15.0000	0.020
+                              25.0000	0.040
+                              45.0000	0.060
                           </tableData>
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDDe">
                 <description>Drag_due_to_Elevator_Deflection</description>
                 <product>
@@ -515,6 +571,7 @@
                     <value>0.0000</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDbeta">
                 <description>Drag_due_to_sideslip</description>
                 <product>
@@ -524,6 +581,7 @@
                     <value>0.1400</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDgear">
                 <description>Drag_due_to_landing_gear</description>
                 <product>
@@ -583,15 +641,27 @@
         </axis>
 
         <axis name="LIFT">
+
             <function name="aero/coefficient/CLo">
-                <description>Lift_at_zero_alpha</description>
+                <description>Lift_at_zero_alpha. This data is extrapolated from the reference
+		featured in the file header notes.</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>aero/function/kCLge</property>
-                    <value>0.2880</value>
+                    <table>
+                        <independentVar>fcs/flap-pos-deg</independentVar>
+                        <tableData>
+                             0.0  0.280
+                            15.0  0.526
+                            25.0  0.723
+                            45.0  1.018
+			    60.0  1.264
+                        </tableData>
+                    </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CLalpha">
                 <description>Lift_due_to_alpha</description>
                 <product>
@@ -620,23 +690,7 @@
                       </table>
                 </product>
             </function>
-            <function name="aero/coefficient/CLDf">
-                <description>Delta_lift_due_to_flap_deflection</description>
-                <product>
-                    <property>aero/qbar-psf</property>
-                    <property>metrics/Sw-sqft</property>
-                    <property>aero/function/kCLge</property>
-                      <table>
-                          <independentVar>fcs/flap-pos-deg</independentVar>
-                          <tableData>
-                              0.0000	0.0000
-                              15.0000	0.0650
-                              25.0000	0.0160
-                              45.0000	0.2540
-                          </tableData>
-                      </table>
-                </product>
-            </function>
+
             <function name="aero/coefficient/CLDe">
                 <description>Lift_due_to_Elevator_Deflection</description>
                 <product>
@@ -653,6 +707,7 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CLadot">
                 <description>Lift_due_to_alpha_rate</description>
                 <product>
@@ -670,6 +725,7 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CLq">
                 <description>Lift_due_to_pitch_rate</description>
                 <product>
@@ -757,7 +813,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
-                    <value>0.0700</value>
+                    <value>0.070</value>
                 </product>
             </function>
             <function name="aero/coefficient/Cmalpha">
@@ -767,7 +823,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
                     <property>aero/alpha-rad</property>
-                    <value>-0.1370</value>
+                    <value>-0.989</value>
                 </product>
             </function>
             <function name="aero/coefficient/Cmadot">
@@ -811,10 +867,10 @@
                       <table>
                           <independentVar>fcs/flap-pos-deg</independentVar>
                           <tableData>
-                              0.0000	0.0000
-                              15.0000	0.0654
-                              25.0000	0.0981
-                              45.0000	0.1140
+                               0.0   0.000
+                              15.0  -0.05
+                              25.0  -0.10
+                              45.0  -0.15
                           </tableData>
                       </table>
                 </product>

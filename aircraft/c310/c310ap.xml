@@ -27,6 +27,8 @@
   <property>ap/attitude_hold</property>
   <property>ap/altitude_hold</property>
   <property>ap/heading_hold</property>
+  <property>ap/wp_latitude_rad</property>
+  <property>ap/wp_longitude_rad</property>
   <property>ap/altitude_setpoint</property>
   <property>ap/heading_setpoint</property>
   <property>ap/aileron_cmd</property>
@@ -100,6 +102,44 @@ ROLL CHANNEL
      <input>fcs/roll-ap-autoswitch</input>
      <gain>-1</gain>
   </pure_gain>
+</channel>
+
+<!-- Waypoint Heading hold -->
+
+<channel name="AP Waypoint Heading Director">
+
+  <fcs_function name="Heading to Waypoint">
+    <function>
+      <atan2> <!-- atan2 (deltaY, deltaX )-->
+	<difference>
+          <property>ap/wp_latitude_rad</property>
+	  <property>position/lat-gc-rad</property>
+	</difference>
+	<product>
+	  <difference>
+            <property>ap/wp_longitude_rad</property>
+	    <property>position/long-gc-rad</property>
+	  </difference>
+	  <cos>
+            <property>ap/wp_latitude_rad</property>
+	  </cos>
+	</product>
+      </atan2>
+    </function>
+  </fcs_function>
+
+  <summer name="Heading to Waypoint360">
+    <input> -fcs/heading-to-waypoint </input>
+    <bias> 360.0 </bias>
+  </summer>
+
+  <switch name="WP Heading Corrector">
+    <default value="-fcs/heading-to-waypoint"/>
+    <test logic="AND" value="fcs/heading-to-waypoint360">
+      fcs/heading-to-waypoint gt 0.0
+    </test>
+  </switch>
+
 </channel>
 
 <!-- Heading hold -->
@@ -231,32 +271,30 @@ PITCH CHANNEL
 
   <!--
   Dependent on altitude, the lagged (and limited) altitude error is multipled
-  by the scheduled gain determined from the table, below. The output from this
-  component is the absolute climb rate in feet/second. For example, if the desired
-  climb rate is 100 percent of maximum and the current altitude is 1000.0 ft., then
-  the output from this component would be 11 ft. sec.
+  by the gain determined from the function, below. The output from this
+  component is the absolute expected climb rate in feet/second. For example, if
+  the desired climb rate is 100 percent of maximum and the current altitude is
+  1000.0 ft., then the output from this component would be 24.5 ft. sec.
+  The equation representing climb rate for the C-310 is:
+
+  ROC (ft/sec) = 25.7 - h/833.33
   -->
-  <scheduled_gain name="HDot Command">
+
+  <fcs_function name="HDot Command">
     <input> fcs/alt-error-lag </input>
-    <table>
-      <independentVar>position/h-sl-ft</independentVar>
-      <tableData>
-           0.0   0.12
-        1000.0   0.11
-        2000.0   0.10
-        3000.0   0.096
-        4000.0   0.093
-        5000.0   0.086
-        6000.0   0.078
-        7000.0   0.069
-        8000.0   0.061
-        9000.0   0.053
-       10000.0   0.045
-       11000.0   0.037
-       12000.0   0.028
-      </tableData>
-    </table>
-  </scheduled_gain>
+    <function>
+      <quotient>
+        <difference>
+          <value>25.70</value>
+          <quotient>
+            <property>position/h-sl-ft</property>
+            <value>833.33</value>
+          </quotient>
+        </difference>
+        <value>100.0</value>
+      </quotient>
+    </function>
+  </fcs_function>
 
   <!--
   This component calculates the climb rate error, taking the difference between
