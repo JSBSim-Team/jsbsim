@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.8 2005/12/03 12:50:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.9 2006/01/11 13:11:31 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,8 +50,8 @@ CLASS IMPLEMENTATION
 
 FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  Element *scale_element;
-  string strScheduledBy, gain_string;
+  Element *scale_element, *zero_centered;
+  string strScheduledBy, gain_string, sZeroCentered;
 
   GainPropertyNode = 0;
   Gain = 1.000;
@@ -95,6 +95,14 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       cerr << "Maximum and minimum output values must be supplied for the "
               "aerosurface scale component" << endl;
       exit(-1);
+    }
+    ZeroCentered = true;
+    zero_centered = element->FindElement("zero_centered");
+    if (zero_centered) {
+      sZeroCentered = zero_centered->FindElementValue("zero_centered");
+      if (sZeroCentered == string("0") || sZeroCentered == string("false")) {
+        ZeroCentered = false;
+      }
     }
   }
 
@@ -140,7 +148,17 @@ bool FGGain::Run(void )
 
   } else if (Type == "AEROSURFACE_SCALE") {        // AEROSURFACE_SCALE
 
-    Output = OutMin + ((Input - InMin) / (InMax - InMin)) * (OutMax - OutMin);
+    if (ZeroCentered) {
+      if (Input == 0.0) {
+        Output = 0.0;
+      } else if (Input > 0) {
+        Output = (Input / InMax) * OutMax;
+      } else {
+        Output = (Input / InMin) * OutMin;
+      }
+    } else {
+      Output = OutMin + ((Input - InMin) / (InMax - InMin)) * (OutMax - OutMin);
+    }
 
     Output *= Gain;
   }

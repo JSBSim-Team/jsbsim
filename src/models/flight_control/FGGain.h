@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.6 2005/09/12 11:58:49 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.7 2006/01/11 13:11:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     immediately preceded by a minus sign to invert that signal.
 
     @author Jon S. Berndt
-    @version $Id: FGGain.h,v 1.6 2005/09/12 11:58:49 jberndt Exp $
+    @version $Id: FGGain.h,v 1.7 2006/01/11 13:11:31 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,6 +180,7 @@ private:
   double Gain;
   double InMin, InMax, OutMin, OutMax;
   int Rows;
+  bool ZeroCentered;
 
   void Debug(int from);
 };
