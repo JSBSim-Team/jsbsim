@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.2 2005/06/13 00:54:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.3 2006/01/11 13:10:29 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +64,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eACos;
   } else if (operation == string("atan")) {
     Type = eATan;
+  } else if (operation == string("atan2")) {
+    Type = eATan2;
   } else if (operation != string("description")) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -92,7 +94,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("tan") ||
                operation == string("asin") ||
                operation == string("acos") ||
-               operation == string("atan"))
+               operation == string("atan") ||
+               operation == string("atan2"))
     {
       Parameters.push_back(new FGFunction(PropertyManager, element));
     } else if (operation != string("description")) {
@@ -172,6 +175,9 @@ double FGFunction::GetValue(void) const
     break;
   case eATan:
     temp = atan(temp);
+    break;
+  case eATan2:
+    temp = atan2(temp, Parameters[1]->GetValue());
     break;
   default:
     cerr << "Unknown function operation type" << endl;
