@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.4 2006/01/03 13:50:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.5 2006/01/13 09:47:07 ehofman Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -278,7 +278,7 @@ double FGTurboProp::Off(void)
 
 double FGTurboProp::Run(void)
 {
-  double idlethrust, milthrust, thrust, EngPower_HP, eff_coef;
+  double idlethrust, milthrust, thrust = 0.0, EngPower_HP, eff_coef;
   Running = true; Starter = false; EngStarting = false;
 
 //---

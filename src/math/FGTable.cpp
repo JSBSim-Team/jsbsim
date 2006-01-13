@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.5 2005/11/12 16:27:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.6 2006/01/13 09:47:07 ehofman Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -195,7 +195,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   // end lookup property code
 
   tableData = el->FindElement("tableData");
-  for (int i=0; i<tableData->GetNumDataLines(); i++) {
+  for (i=0; i<tableData->GetNumDataLines(); i++) {
     buf << tableData->GetDataLine(i) << string(" ");
   }
   switch (dimension) {

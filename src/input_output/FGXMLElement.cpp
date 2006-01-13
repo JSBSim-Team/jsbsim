@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.6 2005/11/30 01:31:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.7 2006/01/13 09:47:06 ehofman Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -380,9 +380,9 @@ void Element::Print(int level)
   int i, spaces;
 
   level+=2;
-  for (int spaces=0; spaces<=level; spaces++) cout << " "; // format output
+  for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
   cout << "Element Name: " << name;
-  for (int i=0; i<attributes.size(); i++) {
+  for (i=0; i<attributes.size(); i++) {
     cout << "  " << attribute_key[i] << " = " << attributes[attribute_key[i]];
   }
   cout << endl;

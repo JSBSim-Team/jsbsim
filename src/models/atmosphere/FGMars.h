@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MARS "$Id: FGMars.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_MARS "$Id: FGMars.h,v 1.4 2006/01/13 09:47:07 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ CLASS DOCUMENTATION
 
 /** Models the Martian atmosphere.
     @author Jon Berndt
-    @version $Id: FGMars.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGMars.h,v 1.4 2006/01/13 09:47:07 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ public:
   /// Constructor
   FGMars(FGFDMExec*);
   /// Destructor
-  ~FGMars();
+  //~FGMars();
   /** Runs the Martian atmosphere model; called by the Executive
       @return false if no error */
   bool Run(void);
@@ -136,7 +136,7 @@ public:
   inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
   
-  void bind(void);
+  //void bind(void);
   void unbind(void);
 
   
