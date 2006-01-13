@@ -31,7 +31,11 @@ for n in $DIRS; do
         if [ $n"x" != ".x" -a ! -f $INSTALL ]; then
             NOTFOUND="$NOTFOUND $INSTALL";
         else
-            cp -p $n/$n.xml $INSTALL;
+            NUM=`diff $n/$n.xml $INSTALL | grep -e ">" -e "<" | wc -l`;
+            NUM_ID=`diff $n/$n.xml $INSTALL | grep -e ">" -e "<" | grep "\$Revision:" | wc -l`;
+            if [ ! $NUM -eq $NUM_ID ]; then
+                cp -p $n/$n.xml $INSTALL;
+            fi;
         fi
     fi
 done
