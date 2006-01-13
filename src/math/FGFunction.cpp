@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.3 2006/01/11 13:10:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.4 2006/01/13 05:22:19 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -203,8 +203,10 @@ string FGFunction::GetValueAsString(void) const
 
 void FGFunction::bind(void)
 {
-  string tmp = PropertyManager->mkPropertyName(Prefix + Name, false); // Allow upper case
-  PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
+  if ( !Name.empty() ) {
+    string tmp = PropertyManager->mkPropertyName(Prefix + Name, false); // Allow upper case
+    PropertyManager->Tie( tmp, this, &FGFunction::GetValue);
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

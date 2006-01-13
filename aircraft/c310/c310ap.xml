@@ -93,7 +93,7 @@ ROLL CHANNEL
 
   <switch name="Roll AP Autoswitch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/roll-ap-error-summer">
+    <test value="fcs/roll-ap-error-summer">
       ap/attitude_hold == 1
     </test>
   </switch>
@@ -111,19 +111,19 @@ ROLL CHANNEL
   <fcs_function name="Heading to Waypoint">
     <function>
       <atan2> <!-- atan2 (deltaY, deltaX )-->
-	<difference>
+        <difference>
           <property>ap/wp_latitude_rad</property>
-	  <property>position/lat-gc-rad</property>
-	</difference>
-	<product>
-	  <difference>
+          <property>position/lat-gc-rad</property>
+        </difference>
+        <product>
+          <difference>
             <property>ap/wp_longitude_rad</property>
-	    <property>position/long-gc-rad</property>
-	  </difference>
-	  <cos>
+            <property>position/long-gc-rad</property>
+          </difference>
+          <cos>
             <property>ap/wp_latitude_rad</property>
-	  </cos>
-	</product>
+          </cos>
+        </product>
       </atan2>
     </function>
   </fcs_function>
@@ -135,7 +135,7 @@ ROLL CHANNEL
 
   <switch name="WP Heading Corrector">
     <default value="-fcs/heading-to-waypoint"/>
-    <test logic="AND" value="fcs/heading-to-waypoint360">
+    <test value="fcs/heading-to-waypoint360">
       fcs/heading-to-waypoint gt 0.0
     </test>
   </switch>
@@ -157,10 +157,10 @@ ROLL CHANNEL
 
   <switch name="Heading Error Bias Switch">
     <default value="0.0"/>
-    <test logic="AND" value="360.0">
+    <test value="360.0">
       fcs/heading-error lt -180
     </test>
-    <test logic="AND" value="-360.0">
+    <test value="-360.0">
       fcs/heading-error gt 180
     </test>
   </switch>
@@ -191,7 +191,7 @@ ROLL CHANNEL
 
   <switch name="Heading Roll Error Switch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/heading-roll-error">
+    <test value="fcs/heading-roll-error">
       ap/heading_hold == 1
     </test>
   </switch>
@@ -217,10 +217,10 @@ ROLL CHANNEL
 
   <switch name="Roll Command Selector">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/heading-error-summer">
+    <test value="fcs/heading-error-summer">
       ap/heading_hold == 1
     </test>
-    <test logic="AND" value="fcs/roll-ap-aileron-command-normalizer">
+    <test value="fcs/roll-ap-aileron-command-normalizer">
       ap/attitude_hold == 1
     </test>
     <output>ap/aileron_cmd</output>
@@ -281,7 +281,7 @@ PITCH CHANNEL
   -->
 
   <fcs_function name="HDot Command">
-    <input> fcs/alt-error-lag </input>
+    <input>fcs/alt-error-lag</input>
     <function>
       <quotient>
         <difference>
@@ -302,8 +302,8 @@ PITCH CHANNEL
   in ft./sec.
   -->
   <summer name="HDot Error">
-    <input> fcs/hdot-command </input>
-    <input> -velocities/h-dot-fps </input>
+    <input>fcs/hdot-command</input>
+    <input>-velocities/h-dot-fps</input>
   </summer>
 
   <!--
@@ -313,7 +313,7 @@ PITCH CHANNEL
   -->
   <switch name="AP Alt Hold Switch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/hdot-error">
+    <test value="fcs/hdot-error">
       ap/altitude_hold == 1
     </test>
   </switch>
