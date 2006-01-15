@@ -1,36 +1,36 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGAtmosphere.h
  Author:       Jon Berndt
                Implementation of 1959 Standard Atmosphere added by Tony Peden
  Date started: 11/24/98
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
- 
+
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 11/24/98   JSB   Created
 07/23/99   TP    Added implementation of 1959 Standard Atmosphere
                  Moved calculation of Mach number to FGPropagate
                  Updated to '76 model
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.5 2006/01/02 19:05:27 dpculp Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.6 2006/01/15 04:46:36 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.5 2006/01/02 19:05:27 dpculp Exp $
+    @version $Id: FGAtmosphere.h,v 1.6 2006/01/15 04:46:36 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -92,11 +92,11 @@ public:
   /// Returns the pressure in psf.
   inline double GetPressure(void)  const {return *pressure;}
   /// Returns the standard pressure at a specified altitude
-  double GetPressure(double altitude);
+  inline double GetPressure(double altitude);
   /// Returns the standard temperature at a specified altitude
-  double GetTemperature(double altitude);
+  inline double GetTemperature(double altitude);
   /// Returns the standard density at a specified altitude
-  double GetDensity(double altitude);
+  inline double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
   inline double GetSoundSpeed(void) const {return soundspeed;}
 
@@ -137,9 +137,9 @@ public:
   /// Gets the temperature deviation at sea-level in degrees Fahrenheit
   inline double GetSLTempDev(void) const { return T_dev_sl; }
   /// Sets the current delta-T in degrees Fahrenheit
-  inline void SetDeltaT(double d)  { delta_T = d; } 
+  inline void SetDeltaT(double d)  { delta_T = d; }
   /// Gets the current delta-T in degrees Fahrenheit
-  inline double GetDeltaT(void) const  { return delta_T; } 
+  inline double GetDeltaT(void) const  { return delta_T; }
   /// Gets the at-altitude temperature deviation in degrees Fahrenheit
   inline double GetTempDev(void) const { return T_dev; }
   /// Gets the density altitude in feet
@@ -150,21 +150,21 @@ public:
 
   /// Retrieves the wind components in NED frame.
   inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
-  
+
   /** Retrieves the wind direction. The direction is defined as north=0 and
       increases counterclockwise. The wind heading is returned in radians.*/
   inline double GetWindPsi(void) const { return psiw; }
-  
+
   inline void SetTurbGain(double tt) {TurbGain = tt;}
   inline void SetTurbRate(double tt) {TurbRate = tt;}
-  
+
   inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
-  
+
   void bind(void);
   void unbind(void);
 
-  
+
 protected:
   double rho;
 
@@ -177,7 +177,7 @@ protected:
   double StdSLtemperature,StdSLdensity,StdSLpressure,StdSLsoundspeed;
   double rSLtemperature,rSLdensity,rSLpressure,rSLsoundspeed; //reciprocals
   double SLtemperature,SLdensity,SLpressure,SLsoundspeed;
-  double *temperature,*density,*pressure;
+  double *temperature, *density, *pressure;
   double soundspeed;
   bool useExternal;
   double exTemperature,exDensity,exPressure;

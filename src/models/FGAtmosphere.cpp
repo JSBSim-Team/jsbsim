@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.8 2006/01/02 19:05:27 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.9 2006/01/15 04:46:36 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +138,7 @@ bool FGAtmosphere::Run(void)
     CalculateDerived();
   } else {
     CalculateDerived();
-  } 
+  }
 
   Debug(2);
   return false;
@@ -228,8 +228,8 @@ void FGAtmosphere::Calculate(double altitude)
   // If delta_T is set, then that is our temperature deviation at any altitude.
   // If not, then we'll estimate a deviation based on the sea level deviation (if set).
 
-  if(!StandardTempOnly) { 
-    T_dev = 0.0; 
+  if(!StandardTempOnly) {
+    T_dev = 0.0;
     if (delta_T != 0.0) {
       T_dev = delta_T;
     } else {
@@ -238,7 +238,7 @@ void FGAtmosphere::Calculate(double altitude)
       }
     }
     reftemp+=T_dev;
-  } 
+  }
 
   if (slope == 0) {
     intTemperature = reftemp;
@@ -458,44 +458,26 @@ void FGAtmosphere::UseInternal(void)
 void FGAtmosphere::bind(void)
 {
   typedef double (FGAtmosphere::*PMF)(int) const;
-  PropertyManager->Tie("atmosphere/T-R", this,
-                       &FGAtmosphere::GetTemperature);
-  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this,
-                       &FGAtmosphere::GetDensity);
-//  PropertyManager->Tie("atmosphere/P-psf", this,
-//                       &FGAtmosphere::GetPressure);
-  PropertyManager->Tie("atmosphere/a-fps", this,
-                       &FGAtmosphere::GetSoundSpeed);
-  PropertyManager->Tie("atmosphere/T-sl-R", this,
-                       &FGAtmosphere::GetTemperatureSL);
-  PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this,
-                       &FGAtmosphere::GetDensitySL);
-  PropertyManager->Tie("atmosphere/P-sl-psf", this,
-                       &FGAtmosphere::GetPressureSL);
-  PropertyManager->Tie("atmosphere/a-sl-fps", this,
-                       &FGAtmosphere::GetSoundSpeedSL);
-  PropertyManager->Tie("atmosphere/theta", this,
-                       &FGAtmosphere::GetTemperatureRatio);
-  PropertyManager->Tie("atmosphere/sigma", this,
-                       &FGAtmosphere::GetDensityRatio);
-  PropertyManager->Tie("atmosphere/delta", this,
-                       &FGAtmosphere::GetPressureRatio);
-  PropertyManager->Tie("atmosphere/a-ratio", this,
-                       &FGAtmosphere::GetSoundSpeedRatio);
-  PropertyManager->Tie("atmosphere/psiw-rad", this,
-                       &FGAtmosphere::GetWindPsi);
-  PropertyManager->Tie("atmosphere/delta-T", this,
-                       &FGAtmosphere::GetDeltaT, &FGAtmosphere::SetDeltaT);
-  PropertyManager->Tie("atmosphere/T-sl-dev-F", this,
-                       &FGAtmosphere::GetSLTempDev, &FGAtmosphere::SetSLTempDev);
-  PropertyManager->Tie("atmosphere/density-altitude", this,
-                       &FGAtmosphere::GetDensityAltitude);
-  PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1,
-                       (PMF)&FGAtmosphere::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2,
-                       (PMF)&FGAtmosphere::GetTurbPQR);
-  PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3,
-                       (PMF)&FGAtmosphere::GetTurbPQR);
+  typedef double (FGAtmosphere::*PMFv)(void) const;
+  PropertyManager->Tie("atmosphere/T-R", this, (PMFv)&FGAtmosphere::GetTemperature);
+  PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, (PMFv)&FGAtmosphere::GetDensity);
+  PropertyManager->Tie("atmosphere/P-psf", this, (PMFv)&FGAtmosphere::GetPressure);
+  PropertyManager->Tie("atmosphere/a-fps", this, &FGAtmosphere::GetSoundSpeed);
+  PropertyManager->Tie("atmosphere/T-sl-R", this, &FGAtmosphere::GetTemperatureSL);
+  PropertyManager->Tie("atmosphere/rho-sl-slugs_ft3", this, &FGAtmosphere::GetDensitySL);
+  PropertyManager->Tie("atmosphere/P-sl-psf", this, &FGAtmosphere::GetPressureSL);
+  PropertyManager->Tie("atmosphere/a-sl-fps", this, &FGAtmosphere::GetSoundSpeedSL);
+  PropertyManager->Tie("atmosphere/theta", this, &FGAtmosphere::GetTemperatureRatio);
+  PropertyManager->Tie("atmosphere/sigma", this, &FGAtmosphere::GetDensityRatio);
+  PropertyManager->Tie("atmosphere/delta", this, &FGAtmosphere::GetPressureRatio);
+  PropertyManager->Tie("atmosphere/a-ratio", this, &FGAtmosphere::GetSoundSpeedRatio);
+  PropertyManager->Tie("atmosphere/psiw-rad", this, &FGAtmosphere::GetWindPsi);
+  PropertyManager->Tie("atmosphere/delta-T", this, &FGAtmosphere::GetDeltaT, &FGAtmosphere::SetDeltaT);
+  PropertyManager->Tie("atmosphere/T-sl-dev-F", this, &FGAtmosphere::GetSLTempDev, &FGAtmosphere::SetSLTempDev);
+  PropertyManager->Tie("atmosphere/density-altitude", this, &FGAtmosphere::GetDensityAltitude);
+  PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGAtmosphere::GetTurbPQR);
+  PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGAtmosphere::GetTurbPQR);
+  PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGAtmosphere::GetTurbPQR);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -504,7 +486,7 @@ void FGAtmosphere::unbind(void)
 {
   PropertyManager->Untie("atmosphere/T-R");
   PropertyManager->Untie("atmosphere/rho-slugs_ft3");
-//  PropertyManager->Untie("atmosphere/P-psf");
+  PropertyManager->Untie("atmosphere/P-psf");
   PropertyManager->Untie("atmosphere/a-fps");
   PropertyManager->Untie("atmosphere/T-sl-R");
   PropertyManager->Untie("atmosphere/rho-sl-slugs_ft3");
