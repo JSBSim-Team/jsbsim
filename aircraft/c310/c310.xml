@@ -9,10 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.48 $ </version>
-        <reference title="Full-Scale Wind Tunnel Investigation of Static Longitudinal and Lateral Characteristics of a Light Twin-Engine Airplane"
-            author="Marvin P. Fink, Delma C. Freeman, Jr."
-            date="1969-01-01" refID="NASA TN D-4983"/>
+        <version> $Revision: 1.49 $ </version>
         <description>
             Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -22,6 +19,9 @@
             The horizontal tail is all-movable, with a deflection range of 4 to -14 degrees. Control deflection
             range for the ailerons is 14 to -18 degrees. Normal rudder deflection range is +/-27 degrees.
         </description>
+        <reference title="Full-Scale Wind Tunnel Investigation of Static Longitudinal and Lateral Characteristics of a Light Twin-Engine Airplane"
+            author="Marvin P. Fink, Delma C. Freeman, Jr."
+            date="1969-01-01" refID="NASA TN D-4983"/>
     </fileheader>
 
     <metrics>

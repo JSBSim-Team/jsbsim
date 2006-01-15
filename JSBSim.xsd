@@ -58,7 +58,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.11 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.12 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -144,7 +144,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.11 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.12 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -439,7 +439,7 @@
         <xs:element ref="weight"/>
         <xs:element ref="location"/>
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:NCName"/>
+      <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="weight">
@@ -1027,13 +1027,31 @@
   
   <!-- Functions -->
 
+  <xs:group name="func_group">
+    <xs:choice>
+      <xs:element ref="table"/>
+      <xs:element ref="product"/>
+      <xs:element ref="difference"/>
+      <xs:element ref="sum"/>
+      <xs:element ref="quotient"/>
+      <xs:element ref="pow"/>
+      <xs:element ref="abs"/>
+      <xs:element ref="sin"/>
+      <xs:element ref="cos"/>
+      <xs:element ref="tan"/>
+      <xs:element ref="asin"/>
+      <xs:element ref="acos"/>
+      <xs:element ref="atan"/>
+      <xs:element ref="atan2"/>
+    </xs:choice>
+  </xs:group>
+  
   <xs:element name="function">
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="description"/>
         <xs:choice>
-          <xs:element ref="table"/>
-          <xs:element ref="product"/>
+          <xs:group ref="func_group"/>
         </xs:choice>
       </xs:sequence>
       <xs:attribute name="name" use="required"/>
@@ -1043,7 +1061,127 @@
   <xs:element name="product">
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:element ref="table"/>
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="difference">
+    <xs:complexType>
+      <xs:choice maxOccurs="2">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="sum">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="quotient">
+    <xs:complexType>
+      <xs:choice maxOccurs="2">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="abs">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="pow">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="sin">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="cos">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="tan">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="asin">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="acos">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="atan">
+    <xs:complexType>
+      <xs:choice maxOccurs="1" minOccurs="1">
+        <xs:group ref="func_group"/>
+        <xs:element ref="value"/>
+        <xs:element ref="property"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  
+  <xs:element name="atan2">
+    <xs:complexType>
+      <xs:choice maxOccurs="2" minOccurs="2">
+        <xs:group ref="func_group"/>
         <xs:element ref="value"/>
         <xs:element ref="property"/>
       </xs:choice>
