@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.6 2006/01/15 04:46:36 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.7 2006/01/16 15:51:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.6 2006/01/15 04:46:36 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.7 2006/01/16 15:51:07 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -90,9 +90,9 @@ public:
       <i>This function may <b>only</b> be used if Run() is called first.</i> */
   inline double GetDensity(void)  const {return *density;}
   /// Returns the pressure in psf.
-  inline double GetPressure(void)  const {return *pressure;}
+  double GetPressure(void)  const {return *pressure;}
   /// Returns the standard pressure at a specified altitude
-  inline double GetPressure(double altitude);
+  double GetPressure(double altitude);
   /// Returns the standard temperature at a specified altitude
   inline double GetTemperature(double altitude);
   /// Returns the standard density at a specified altitude
