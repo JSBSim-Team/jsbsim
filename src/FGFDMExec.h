@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.12 2006/01/18 04:43:40 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.13 2006/01/18 04:46:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -160,7 +160,7 @@ CLASS DOCUMENTATION
                                  (such as by a script) causes a trim to be performed.
 
     @author Jon S. Berndt
-    @version $Version: $
+    @version $revision: $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
