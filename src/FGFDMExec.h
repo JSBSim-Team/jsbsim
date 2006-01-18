@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.10 2006/01/03 01:40:39 dpculp Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.11 2006/01/18 04:43:16 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,7 +77,60 @@ CLASS DOCUMENTATION
 
     When an aircraft model is loaded the config file is parsed and for each of the
     sections of the config file (propulsion, flight control, etc.) the
-    corresponding Load() method is called (e.g. LoadFCS).
+    corresponding Load() method is called (e.g. FGFCS::Load()).
+
+    Integration of JSBSim within a simulator such as FlightGear is accomplished
+    using some kind of interface class. At the time of initialization, the interface
+    class creates an instance of the JSBSim executive class, FGFDMExec. The
+    executive is subsequently directed to load the chosen aircraft specification
+    file:
+    <pre>
+
+    fdmex = new FGFDMExec( … );
+    result = fdmex->LoadModel( … );
+    </pre>
+    Subsequent to the creation of the executive and loading of the model,
+    initialization is performed. Initialization involves copying control inputs
+    into the appropriate JSBSim data storage locations, configuring it for the set
+    of user supplied initial conditions, and then copying state variables from
+    JSBSim. The state variables are used to drive the instrument displays and to
+    place the vehicle model in world space for visual rendering:
+    <pre>
+
+    copy_to_JSBsim(); // copy control inputs to JSBSim
+    fdmex->RunIC(); // loop JSBSim once w/o integrating
+    copy_from_JSBsim(); // update the bus
+    </pre>
+    Once initialization is complete, cyclic execution proceeds:
+    <pre>
+
+    copy_to_JSBsim(); // copy control inputs to JSBSim
+    fdmex->Run(); // execute JSBSim
+    copy_from_JSBsim(); // update the bus
+    </pre>
+    JSBSim can be used in a standalone mode by creating a compact stub program
+    that effectively performs the same progression of steps as outlined above for
+    the integrated version, but with two exceptions. First, the copy_to_JSBSim()
+    and copy_from_JSBSim() functions are not used because the control inputs are
+    handled directly by the scripting facilities and outputs are handled by the
+    output (data logging) class. Second, the name of a script file can be supplied
+    to the stub program. Scripting (see FGScript) provides a way to supply command
+    inputs to the simulation:
+    <pre>
+
+    FDMExec = new JSBSim::FGFDMExec();
+    Script = new JSBSim::FGScript( … );
+    Script->LoadScript( ScriptName ); // the script loads the aircraft and ICs
+    result = FDMExec->Run();
+    while (result) { // cyclic execution
+      if (Scripted) if (!Script->RunScript()) break; // execute script
+      result = FDMExec->Run(); // execute JSBSim
+    }
+    </pre>
+    The standalone mode has been useful for verifying changes before committing
+    updates to the source code repository. It is also useful for running sets of
+    tests that reveal some aspects of simulated aircraft performance, such as
+    range, time-to-climb, takeoff distance, etc.
 
     <h4>JSBSim Debugging Directives</h4>
 
@@ -101,8 +154,13 @@ CLASS DOCUMENTATION
     - <b>16</b>: When set various parameters are sanity checked and
        a message is printed out when they go out of bounds
 
+    @properties simulator/do_trim Can be set to the integer equivalent to one of
+                                 tLongitudinal (0), tFull (1), tGround (2), tPullup (3),
+                                 tCustom (4), tTurn (5). Setting this to a legal value
+                                 (such as by a script) causes a trim to be performed.
+
     @author Jon S. Berndt
-    @version $Id: FGFDMExec.h,v 1.10 2006/01/03 01:40:39 dpculp Exp $
+    @version $Version: $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +182,8 @@ public:
       FGFDMExec::Run() method must be made before the model is executed. A
       value of 1 means that the model will be executed for each call to the
       exec's Run() method. A value of 5 means that the model will only be
-      executed every 5th call to the exec's Run() method.
+      executed every 5th call to the exec's Run() method. Use of a rate other than
+      one is at this time not recommended.
       @param model A pointer to the model being scheduled.
       @param rate The rate at which to execute the model as described above.
       @return Currently returns 0 always. */
@@ -144,7 +203,7 @@ public:
   void SetGroundCallback(FGGroundCallback* gc);
 
   /** Loads an aircraft model.
-      @param AircraftPath path to the aircraft directory. For instance:
+      @param AircraftPath path to the aircraft/ directory. For instance:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.
       @param EnginePath path to the directory under which engine config
@@ -155,7 +214,7 @@ public:
       instance: "aircraft/x15/x15.xml"
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
-      @return true if successful*/
+      @return true if successful */
   bool LoadModel(string AircraftPath, string EnginePath, string model,
                  bool addModelToPath = true);
 
@@ -240,6 +299,7 @@ public:
   * - tCustom
   * - tTurn
   * - tNone
+  * @callgraph
   */
   void DoTrim(int mode);
 
@@ -279,7 +339,7 @@ public:
   void UseAtmosphereMSIS(void);
 
   /// Use the Mars atmosphere model. (Not operative yet.)
-  void UseAtmosphereMars(void); 
+  void UseAtmosphereMars(void);
 
 private:
   FGModel* FirstModel;
