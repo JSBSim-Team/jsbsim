@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.14 2006/01/18 04:50:10 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.15 2006/01/18 14:50:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -84,30 +84,27 @@ CLASS DOCUMENTATION
     class creates an instance of the JSBSim executive class, FGFDMExec. The
     executive is subsequently directed to load the chosen aircraft specification
     file:
-    <pre>
-
+    @code
     fdmex = new FGFDMExec( … );
     result = fdmex->LoadModel( … );
-    </pre>
+    @endcode
     Subsequent to the creation of the executive and loading of the model,
     initialization is performed. Initialization involves copying control inputs
     into the appropriate JSBSim data storage locations, configuring it for the set
     of user supplied initial conditions, and then copying state variables from
     JSBSim. The state variables are used to drive the instrument displays and to
     place the vehicle model in world space for visual rendering:
-    <pre>
-
+    @code
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->RunIC(); // loop JSBSim once w/o integrating
     copy_from_JSBsim(); // update the bus
-    </pre>
+    @endcode
     Once initialization is complete, cyclic execution proceeds:
-    <pre>
-
+    @code
     copy_to_JSBsim(); // copy control inputs to JSBSim
     fdmex->Run(); // execute JSBSim
     copy_from_JSBsim(); // update the bus
-    </pre>
+    @endcode
     JSBSim can be used in a standalone mode by creating a compact stub program
     that effectively performs the same progression of steps as outlined above for
     the integrated version, but with two exceptions. First, the copy_to_JSBSim()
@@ -116,8 +113,7 @@ CLASS DOCUMENTATION
     output (data logging) class. Second, the name of a script file can be supplied
     to the stub program. Scripting (see FGScript) provides a way to supply command
     inputs to the simulation:
-    <pre>
-
+    @code
     FDMExec = new JSBSim::FGFDMExec();
     Script = new JSBSim::FGScript( … );
     Script->LoadScript( ScriptName ); // the script loads the aircraft and ICs
@@ -126,7 +122,7 @@ CLASS DOCUMENTATION
       if (Scripted) if (!Script->RunScript()) break; // execute script
       result = FDMExec->Run(); // execute JSBSim
     }
-    </pre>
+    @endcode
     The standalone mode has been useful for verifying changes before committing
     updates to the source code repository. It is also useful for running sets of
     tests that reveal some aspects of simulated aircraft performance, such as
@@ -154,13 +150,14 @@ CLASS DOCUMENTATION
     - <b>16</b>: When set various parameters are sanity checked and
        a message is printed out when they go out of bounds
 
-    @properties simulator/do_trim Can be set to the integer equivalent to one of
-                                 tLongitudinal (0), tFull (1), tGround (2), tPullup (3),
-                                 tCustom (4), tTurn (5). Setting this to a legal value
-                                 (such as by a script) causes a trim to be performed.
+    <h4>Properties</h4>
+    @property simulator/do_trim Can be set to the integer equivalent to one of
+                                tLongitudinal (0), tFull (1), tGround (2), tPullup (3),
+                                tCustom (4), tTurn (5). Setting this to a legal value
+                                (such as by a script) causes a trim to be performed.
 
     @author Jon S. Berndt
-    @version $Revision: 1.14 $
+    @version $Revision: 1.15 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

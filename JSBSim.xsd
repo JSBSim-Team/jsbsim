@@ -3,7 +3,46 @@
   <xs:annotation>
     <xs:documentation> The JSBSim v2.0 configuration file format is the medium for describing an
       aircraft flight characteristics to the JSBSim code. For more information about JSBSim, see the
-      web site at: www.jsbsim.org. </xs:documentation>
+      web site at: www.jsbsim.org.
+    </xs:documentation>
+    <xs:documentation>
+      The config file format stores and conveys the characteristics of any unique aircraft to the JSBSim
+      executable. The information that is specified in the configuration file are:
+    </xs:documentation>
+    <xs:documentation>
+      - Administrative
+    </xs:documentation>
+    <xs:documentation>
+      - Geometric and measurement
+    </xs:documentation>
+    <xs:documentation>
+      - Mass and weight/balance
+    </xs:documentation>
+    <xs:documentation>
+      - Ground contact
+    </xs:documentation>
+    <xs:documentation>
+      - Propulsion
+    </xs:documentation>
+    <xs:documentation>
+      - Autopilot
+    </xs:documentation>
+    <xs:documentation>
+      - Flight control
+    </xs:documentation>
+    <xs:documentation>
+      - Aerodynamics
+    </xs:documentation>
+    <xs:documentation>
+      - Input
+    </xs:documentation>
+    <xs:documentation>
+      - Output
+    </xs:documentation>
+    <xs:documentation>
+      The basic structure of the configuration file at the highest level is shown beginning with the
+      fdm_config element definition.
+    </xs:documentation>
   </xs:annotation>
   <xs:element name="fdm_config">
     <xs:annotation>
@@ -58,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.12 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.13 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -144,7 +183,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.12 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.13 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -172,7 +211,7 @@
     <xs:annotation>
       <xs:documentation>
         The metrics section holds information about the geometric characteristics of the aircraft that are important
-        for the equations of motion and aerodynamics. Wing (or reference area) area, wing span (or lateral reference length),
+        for the equations of motion and aerodynamics. Wing (or reference) area, wing span (or lateral reference length),
         and wing chord (or longitudinal reference length) are all recorded in this section. The center of graivty is also recorded
         in this section. Units may be given as shown in this section.
       </xs:documentation>
@@ -306,7 +345,7 @@
   <xs:element name="mass_balance">
     <xs:annotation>
       <xs:documentation>Mass properties are specified in this section. The moments of inertia
-        are specified first. All of Ixx, Iyy, and Izz are required, in order. The products of inertia are
+      are specified first. All of Ixx, Iyy, and Izz are required, in order. The products of inertia are
       not required but, if present, must appear in order Ixy, Ixz, Iyz. Next, the empty weight of
       the aircraft, and the CG location are specified, in that order. Finally, any number of point masses
       can be specified.</xs:documentation>
@@ -451,7 +490,12 @@
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
+
   <xs:element name="location">
+    <xs:annotation>
+      <xs:documentation>A location is a vector, containing an x, Y, and Z, element. The default unit is inches (IN). The unit is specifed
+      in the unit attribute of the location - not in the individual x, y, or z child elements.</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="x"/>
@@ -477,6 +521,11 @@
   <!-- AUTOPILOT SECTION -->
   
   <xs:element name="autopilot">
+    <xs:annotation>
+      <xs:documentation> The autopilot section is not required for many uses, including for use within Flightgear.
+        The autopilot functions can be specified within the autopilot section, or a file name can be given where the 
+        autopilot is specified.</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel"/>
@@ -491,6 +540,10 @@
   <!-- flight control types -->
 
   <xs:element name="clipto">
+    <xs:annotation>
+      <xs:documentation>This element specifies a minimum and/or a maximum limit that the associated component will be allowed
+      to have. The result will be clipped to the specified limits.</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:all>
         <xs:element name="min" type="xs:double"/>
@@ -1050,9 +1103,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="description"/>
-        <xs:choice>
-          <xs:group ref="func_group"/>
-        </xs:choice>
+        <xs:group ref="func_group"/>
       </xs:sequence>
       <xs:attribute name="name" use="required"/>
     </xs:complexType>
