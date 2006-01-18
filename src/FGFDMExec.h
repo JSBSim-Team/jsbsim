@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.11 2006/01/18 04:43:16 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.12 2006/01/18 04:43:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -298,9 +298,7 @@ public:
   * - tPullup
   * - tCustom
   * - tTurn
-  * - tNone
-  * @callgraph
-  */
+  * - tNone  */
   void DoTrim(int mode);
 
   /// Disables data logging to all outputs.
