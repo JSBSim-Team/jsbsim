@@ -15,7 +15,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.3 2005/07/02 16:58:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.4 2006/01/20 06:52:33 frohlich Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,21 +95,18 @@ void FGXMLParse::startElement (const char * name, const XMLAttributes &atts)
 
 void FGXMLParse::endElement (const char * name)
 {
-  int size, pos;
   string local_work_string;
 
   while (!working_string.empty()) {
-     // clear leading newlines and spaces
-    while (working_string[0] == '\n' || working_string[0] == ' ')
-      working_string.erase(0,1);
+    // clear leading newlines and spaces
+    string::size_type pos = working_string.find_first_not_of( " \n");
+    if (pos > 0)
+      working_string.erase(0, pos);
 
     // remove spaces (only) from end of string
-    size = working_string.size();
-    while (working_string[size-1] == ' ')
-    {
-      working_string.erase(size-1,1);
-      size = working_string.size();
-    }
+    pos = working_string.find_last_not_of( " ");
+    if (pos != string::npos)
+      working_string.erase( ++pos);
 
     if (!working_string.empty()) {
       pos = working_string.find("\n");
