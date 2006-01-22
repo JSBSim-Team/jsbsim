@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.57 $ </version>
+        <version> $Revision: 1.58 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -324,6 +324,19 @@
                 </range>
                 <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
+
+            <aerosurface_scale name="Elevator Normalized">
+                <input>fcs/elevator-pos-rad</input>
+                <domain>
+                    <min>-1</min>
+                    <max>1</max>
+                </domain>
+                <range>
+                    <min>-0.436</min>
+                    <max>0.436</max>
+                </range>
+                <output>fcs/elevator-pos-norm</output>
+            </aerosurface_scale>
             
         </channel>
         
@@ -377,6 +390,19 @@
                 <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
 
+            <aerosurface_scale name="Left Aileron Normalized">
+                <input>fcs/left-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.375</min>
+                    <max>0.375</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max>1</max>
+                </range>
+                <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
             <aerosurface_scale name="Right Aileron Control">
                 <input>-fcs/roll-rate-command</input>
                 <range>
@@ -384,6 +410,19 @@
                     <max>0.375</max>
                 </range>
                 <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right Aileron Normalized">
+                <input>fcs/right-aileron-pos-rad</input>
+                <domain>
+                    <min>-1</min>
+                    <max>1</max>
+                </domain>
+                <range>
+                    <min>-0.375</min>
+                    <max>0.375</max>
+                </range>
+                <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
             
         </channel>
@@ -417,7 +456,7 @@
                 <c4>1</c4>
             </lead_lag_filter>
 
-            <summer name="yaw rate command">
+            <summer name="yaw command">
                 <input>fcs/yaw-rate-p</input>
                 <input>fcs/yaw-rate-i</input>
                 <input>fcs/yaw-rate-d</input>
@@ -428,12 +467,25 @@
             </summer>
 
             <aerosurface_scale name="Rudder Control">
-                <input>fcs/yaw-rate-command</input>
+                <input>fcs/yaw-command</input>
                 <range>
                     <min>-0.524</min>
                     <max>0.524</max>
                 </range>
                 <output>fcs/rudder-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Rudder Normalized">
+                <input>fcs/rudder-pos-rad</input>
+                <domain>
+                    <min>-1</min>
+                    <max>1</max>
+                </domain>
+                <range>
+                    <min>-0.524</min>
+                    <max>0.524</max>
+                </range>
+                <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
 
         </channel>
