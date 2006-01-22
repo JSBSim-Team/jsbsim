@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.58 $ </version>
+        <version> $Revision: 1.59 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -111,7 +111,7 @@
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
         </contact>
-        <contact type="BOGEY" name="LEFT_WT">
+        <contact type="STRUCTURE" name="LEFT_WT">
             <location unit="IN">
                 <x> -121.3 </x>
                 <y> -189 </y>
@@ -122,11 +122,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_WT">
+        <contact type="STRUCTURE" name="RIGHT_WT">
             <location unit="IN">
                 <x> -121.3 </x>
                 <y> 189 </y>
@@ -137,11 +134,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="TOP_VS">
+        <contact type="STRUCTURE" name="TOP_VS">
             <location unit="IN">
                 <x> -27.2 </x>
                 <y> 0 </y>
@@ -152,11 +146,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="LEFT_VFT">
+        <contact type="STRUCTURE" name="LEFT_VFT">
             <location unit="IN">
                 <x> -97.6 </x>
                 <y> -24.8 </y>
@@ -167,11 +158,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 5000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_VFT">
+        <contact type="STRUCTURE" name="RIGHT_VFT">
             <location unit="IN">
                 <x> -97.6 </x>
                 <y> 24.8 </y>
@@ -182,11 +170,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 200 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 5000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="INTAKE">
+        <contact type="STRUCTURE" name="INTAKE">
             <location unit="IN">
                 <x> -322.4 </x>
                 <y> 0 </y>
@@ -197,11 +182,8 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RADOME">
+        <contact type="STRUCTURE" name="RADOME">
             <location unit="IN">
                 <x> -486.6 </x>
                 <y> 0 </y>
@@ -212,9 +194,6 @@
             <rolling_friction> 0.2 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 10000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 2000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
     </ground_reactions>
     <propulsion>
@@ -337,11 +316,11 @@
                 </range>
                 <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
-            
+
         </channel>
-        
+
         <channel name="Roll">
-            
+
             <pure_gain name="roll rate norm">
                 <input>velocities/p-aero-rad_sec</input>
                 <gain>0.31831</gain>
@@ -424,11 +403,11 @@
                 </range>
                 <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
-            
+
         </channel>
-        
+
         <channel name="Yaw">
-            
+
             <pure_gain name="yaw rate norm">
                 <input>velocities/r-aero-rad_sec</input>
                 <gain>0.31831</gain>
@@ -538,13 +517,13 @@
         </channel>
 
         <channel name="Throttle">
-            
+
             <pure_gain name="Throttle1">
                 <input>fcs/throttle-cmd-norm</input>
                 <gain>2</gain>
                 <output>fcs/throttle-pos-norm</output>
             </pure_gain>
-            
+
         </channel>
 
         <channel name="Flaps">
@@ -592,7 +571,7 @@
         </channel>
 
         <channel name="Speedbrake">
-            
+
             <kinematic name="Speedbrake Control">
                 <input>fcs/speedbrake-cmd-norm</input>
                 <traverse>
@@ -607,11 +586,11 @@
                 </traverse>
                 <output>fcs/speedbrake-pos-norm</output>
             </kinematic>
-            
+
         </channel>
-        
+
         <channel name="Landing Gear">
-            
+
             <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
                 <traverse>
@@ -639,13 +618,13 @@
                 </table>
                 <output>fcs/steer-pos-deg</output>
             </scheduled_gain>
-            
+
         </channel>
-        
+
     </flight_control>
 
     <aerodynamics>
-        
+
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
             <product>
