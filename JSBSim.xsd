@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.13 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.14 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -154,7 +154,7 @@
     </xs:restriction>
   </xs:simpleType>
   
-  <xs:simpleType name="SteerType">
+  <xs:simpleType name="AngleType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="DEG"/>
       <xs:enumeration value="RAD"/>
@@ -183,7 +183,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.13 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.14 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -854,23 +854,27 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  
   <xs:element name="alphalimits">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="min" type="xs:double"/>
         <xs:element name="max" type="xs:double"/>
       </xs:sequence>
-      <xs:attribute name="unit" use="required" type="xs:NCName"/>
+      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG"/>
     </xs:complexType>
   </xs:element>
+  
   <xs:element name="hysteresis_limits">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="min" type="xs:double"/>
         <xs:element name="max" type="xs:double"/>
       </xs:sequence>
+      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG"/>
     </xs:complexType>
   </xs:element>
+  
   <xs:element name="axis">
     <xs:complexType>
       <xs:sequence>
@@ -922,7 +926,7 @@
           <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="PositiveNumber">
-                <xs:attribute name="unit" use="optional" default="DEG" type="SteerType"/>
+                <xs:attribute name="unit" use="optional" default="DEG" type="AngleType"/>
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
