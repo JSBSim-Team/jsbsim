@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.8 2005/12/02 10:56:07 ehofman Exp $
+// $Id: JSBSim.cxx,v 1.9 2006/01/23 13:50:10 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1009,9 +1009,9 @@ void FGJSBsim::set_Euler_Angles( double phi, double theta, double psi )
     FGInterface::set_Euler_Angles(phi, theta, psi);
 
     update_ic();
-    fgic->SetPitchAngleRadIC(theta);
-    fgic->SetRollAngleRadIC(phi);
-    fgic->SetTrueHeadingRadIC(psi);
+    fgic->SetThetaRadIC(theta);
+    fgic->SetPhiRadIC(phi);
+    fgic->SetPsiRadIC(psi);
     needTrim=true;
 }
 
@@ -1126,9 +1126,9 @@ void FGJSBsim::update_ic(void)
      fgic->SetLongitudeRadIC( get_Longitude() );
      fgic->SetAltitudeFtIC( get_Altitude() );
      fgic->SetVcalibratedKtsIC( get_V_calibrated_kts() );
-     fgic->SetPitchAngleRadIC( get_Theta() );
-     fgic->SetRollAngleRadIC( get_Phi() );
-     fgic->SetTrueHeadingRadIC( get_Psi() );
+     fgic->SetThetaRadIC( get_Theta() );
+     fgic->SetPhiRadIC( get_Phi() );
+     fgic->SetPsiRadIC( get_Psi() );
      fgic->SetClimbRateFpsIC( get_Climb_Rate() );
    }
 }

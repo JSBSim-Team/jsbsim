@@ -50,7 +50,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTrimAxis.cpp,v 1.4 2006/01/23 13:50:10 jberndt Exp $";
 static const char *IdHdr = ID_TRIMAXIS;
 
 /*****************************************************************************/
@@ -230,10 +230,10 @@ void FGTrimAxis::setControl(void) {
   case tYawTrim:
   case tRudder:    fdmex->GetFCS()->SetDrCmd(control_value); break;
   case tAltAGL:    fgic->SetAltitudeAGLFtIC(control_value); break;
-  case tTheta:     fgic->SetPitchAngleRadIC(control_value); break;
-  case tPhi:       fgic->SetRollAngleRadIC(control_value); break;
+  case tTheta:     fgic->SetThetaRadIC(control_value); break;
+  case tPhi:       fgic->SetPhiRadIC(control_value); break;
   case tGamma:     fgic->SetFlightPathAngleRadIC(control_value); break;
-  case tHeading:   fgic->SetTrueHeadingRadIC(control_value); break;
+  case tHeading:   fgic->SetPsiRadIC(control_value); break;
   }
 }
 
@@ -282,7 +282,7 @@ void FGTrimAxis::SetThetaOnGround(double ff) {
     fgic->SetAltitudeAGLFtIC(hagl);
     cout << "SetThetaOnGround new alt: " << hagl << endl;
   }
-  fgic->SetPitchAngleRadIC(ff);
+  fgic->SetThetaRadIC(ff);
   cout << "SetThetaOnGround new theta: " << ff << endl;
 }
 
@@ -327,10 +327,10 @@ bool FGTrimAxis::initTheta(void) {
   zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
   zDiff = zForward - zAft;
   level=false;
-  theta=fgic->GetPitchAngleDegIC();
+  theta=fgic->GetThetaDegIC();
   while(!level && (i < 100)) {
     theta+=radtodeg*atan(zDiff/xDiff);
-    fgic->SetPitchAngleDegIC(theta);
+    fgic->SetThetaDegIC(theta);
     fdmex->RunIC();
     zAft=fdmex->GetGroundReactions()->GetGearUnit(iAft)->GetLocalGear(3);
     zForward=fdmex->GetGroundReactions()->GetGearUnit(iForward)->GetLocalGear(3);
@@ -381,7 +381,7 @@ void FGTrimAxis::SetPhiOnGround(double ff) {
 
     fgic->SetAltitudeAGLFtIC(hagl);
   }
-  fgic->SetRollAngleRadIC(ff);
+  fgic->SetPhiRadIC(ff);
 
 }
 

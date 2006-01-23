@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.4 2006/01/23 11:29:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.5 2006/01/23 13:50:10 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -225,7 +225,7 @@ void FGInitialCondition::SetAlphaRadIC(double tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetPitchAngleRadIC(double tt) {
+void FGInitialCondition::SetThetaRadIC(double tt) {
   theta=tt;
   stheta=sin(theta); ctheta=cos(theta);
   getAlpha();
@@ -242,7 +242,7 @@ void FGInitialCondition::SetBetaRadIC(double tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetRollAngleRadIC(double tt) {
+void FGInitialCondition::SetPhiRadIC(double tt) {
   phi=tt;
   sphi=sin(phi); cphi=cos(phi);
   getTheta();
@@ -250,7 +250,7 @@ void FGInitialCondition::SetRollAngleRadIC(double tt) {
 
 //******************************************************************************
 
-void FGInitialCondition::SetTrueHeadingRadIC(double tt) {
+void FGInitialCondition::SetPsiRadIC(double tt) {
     psi=tt;
     spsi=sin(psi); cpsi=cos(psi);
     calcWindUVW();
@@ -774,11 +774,11 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   if (document->FindElement("longitude"))
     SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
   if (document->FindElement("phi"))
-    SetRollAngleDegIC(document->FindElementValueAsNumberConvertTo("phi", "DEG"));
+    SetPhiDegIC(document->FindElementValueAsNumberConvertTo("phi", "DEG"));
   if (document->FindElement("theta"))
-    SetPitchAngleDegIC(document->FindElementValueAsNumberConvertTo("theta", "DEG"));
+    SetThetaDegIC(document->FindElementValueAsNumberConvertTo("theta", "DEG"));
   if (document->FindElement("psi"))
-    SetTrueHeadingDegIC(document->FindElementValueAsNumberConvertTo("psi", "DEG"));
+    SetPsiDegIC(document->FindElementValueAsNumberConvertTo("psi", "DEG"));
   if (document->FindElement("alpha"))
     SetAlphaDegIC(document->FindElementValueAsNumberConvertTo("alpha", "DEG"));
   if (document->FindElement("beta"))
@@ -858,15 +858,15 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::SetBetaDegIC,
                        true);
   PropertyManager->Tie("ic/theta-deg", this,
-                       &FGInitialCondition::GetPitchAngleDegIC,
-                       &FGInitialCondition::SetPitchAngleDegIC,
+                       &FGInitialCondition::GetThetaDegIC,
+                       &FGInitialCondition::SetThetaDegIC,
                        true);
   PropertyManager->Tie("ic/phi-deg", this,
-                       &FGInitialCondition::GetRollAngleDegIC,
-                       &FGInitialCondition::SetRollAngleDegIC,
+                       &FGInitialCondition::GetPhiDegIC,
+                       &FGInitialCondition::SetPhiDegIC,
                        true);
   PropertyManager->Tie("ic/psi-true-deg", this,
-                       &FGInitialCondition::GetHeadingDegIC );
+                       &FGInitialCondition::GetPsiDegIC );
   PropertyManager->Tie("ic/lat-gc-deg", this,
                        &FGInitialCondition::GetLatitudeDegIC,
                        &FGInitialCondition::SetLatitudeDegIC,
@@ -944,19 +944,19 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::SetAlphaRadIC,
                        true);
   PropertyManager->Tie("ic/theta-rad", this,
-                       &FGInitialCondition::GetPitchAngleRadIC,
-                       &FGInitialCondition::SetPitchAngleRadIC,
+                       &FGInitialCondition::GetThetaRadIC,
+                       &FGInitialCondition::SetThetaRadIC,
                        true);
   PropertyManager->Tie("ic/beta-rad", this,
                        &FGInitialCondition::GetBetaRadIC,
                        &FGInitialCondition::SetBetaRadIC,
                        true);
   PropertyManager->Tie("ic/phi-rad", this,
-                       &FGInitialCondition::GetRollAngleRadIC,
-                       &FGInitialCondition::SetRollAngleRadIC,
+                       &FGInitialCondition::GetPhiRadIC,
+                       &FGInitialCondition::SetPhiRadIC,
                        true);
   PropertyManager->Tie("ic/psi-true-rad", this,
-                       &FGInitialCondition::GetHeadingRadIC);
+                       &FGInitialCondition::GetPsiRadIC);
   PropertyManager->Tie("ic/lat-gc-rad", this,
                        &FGInitialCondition::GetLatitudeRadIC,
                        &FGInitialCondition::SetLatitudeRadIC,

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.4 2006/01/23 11:29:56 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.5 2006/01/23 13:50:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -191,7 +191,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.4 2006/01/23 11:29:56 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.5 2006/01/23 13:50:10 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,15 +236,15 @@ public:
 
   /** Sets pitch angle initial condition in degrees.
       @param theta Theta (pitch) angle in degrees */
-  inline void SetPitchAngleDegIC(double theta) { SetPitchAngleRadIC(theta*degtorad); }
+  inline void SetThetaDegIC(double theta) { SetThetaRadIC(theta*degtorad); }
 
   /** Sets the roll angle initial condition in degrees.
       @param phi roll angle in degrees */
-  inline void SetRollAngleDegIC(double phi)  { SetRollAngleRadIC(phi*degtorad);}
+  inline void SetPhiDegIC(double phi)  { SetPhiRadIC(phi*degtorad);}
 
   /** Sets the heading angle initial condition in degrees.
       @param psi Heading angle in degrees */
-  inline void SetTrueHeadingDegIC(double psi){ SetTrueHeadingRadIC(psi*degtorad); }
+  inline void SetPsiDegIC(double psi){ SetPsiRadIC(psi*degtorad); }
 
   /** Sets the climb rate initial condition in feet/minute.
       @param roc Rate of Climb in feet/minute  */
@@ -316,15 +316,15 @@ public:
 
   /** Gets the initial pitch angle.
       @return Initial pitch angle in degrees */
-  inline double GetPitchAngleDegIC(void) const { return theta*radtodeg; }
+  inline double GetThetaDegIC(void) const { return theta*radtodeg; }
 
   /** Gets the initial roll angle.
       @return Initial phi in degrees */
-  inline double GetRollAngleDegIC(void) const { return phi*radtodeg; }
+  inline double GetPhiDegIC(void) const { return phi*radtodeg; }
 
   /** Gets the initial heading angle.
       @return Initial psi in degrees */
-  inline double GetHeadingDegIC(void) const { return psi*radtodeg; }
+  inline double GetPsiDegIC(void) const { return psi*radtodeg; }
 
   /** Gets the initial latitude.
       @return Initial geocentric latitude in degrees */
@@ -502,7 +502,7 @@ public:
 
   /** Sets the initial pitch angle.
       @param theta Initial pitch angle in radians */
-  void SetPitchAngleRadIC(double theta);
+  void SetThetaRadIC(double theta);
 
   /** Sets the initial sideslip angle.
       @param beta Initial angle of sideslip in radians. */
@@ -510,11 +510,11 @@ public:
 
   /** Sets the initial roll angle.
       @param phi Initial roll angle in radians */
-  void SetRollAngleRadIC(double phi);
+  void SetPhiRadIC(double phi);
 
   /** Sets the initial heading angle.
       @param psi Initial heading angle in radians */
-  void SetTrueHeadingRadIC(double psi);
+  void SetPsiRadIC(double psi);
 
   /** Sets the initial latitude.
       @param lat Initial latitude in radians */
@@ -532,21 +532,13 @@ public:
       @return Initial alpha in radians */
   inline double GetAlphaRadIC(void) const      { return alpha; }
 
-  /** Gets the initial pitch angle.
-      @return Initial pitch angle in radians */
-  inline double GetPitchAngleRadIC(void) const { return theta; }
-
   /** Gets the initial angle of sideslip.
       @return Initial sideslip angle in radians */
   inline double GetBetaRadIC(void) const       { return beta; }
 
   /** Gets the initial roll angle.
       @return Initial roll angle in radians */
-  inline double GetRollAngleRadIC(void) const  { return phi; }
-
-  /** Gets the initial heading angle.
-      @return Initial heading angle in radians */
-  inline double GetHeadingRadIC(void) const   { return psi; }
+  inline double GetPhiRadIC(void) const  { return phi; }
 
   /** Gets the initial latitude.
       @return Initial latitude in radians */
@@ -559,10 +551,6 @@ public:
   /** Gets the initial pitch angle.
       @return Initial pitch angle in radians */
   inline double GetThetaRadIC(void) const { return theta; }
-
-  /** Gets the initial roll angle.
-      @return Initial roll angle in radians */
-  inline double GetPhiRadIC(void)  const  { return phi; }
 
   /** Gets the initial heading angle.
       @return Initial heading angle in radians */
