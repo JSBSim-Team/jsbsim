@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.3 2005/06/18 02:02:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.4 2006/01/23 11:29:56 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -272,8 +272,7 @@ void FGState::ReportState(void)
 
 void FGState::bind(void)
 {
-  PropertyManager->Tie("sim-time-sec",this,
-                        &FGState::Getsim_time);
+  PropertyManager->Tie("sim-time-sec", this, &FGState::Getsim_time);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.4 2006/01/23 11:29:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,25 +73,28 @@ CLASS DOCUMENTATION
 /** Takes a set of initial conditions and provide a kinematically consistent set
     of body axis velocity components, euler angles, and altitude.  This class
     does not attempt to trim the model i.e. the sim will most likely start in a
-    very dynamic state (unless, of course, you have chosen your IC's wisely)
-    even after setting it up with this class.
+    very dynamic state (unless, of course, you have chosen your IC's wisely, or
+    started on the ground) even after setting it up with this class.
 
-   USAGE NOTES
+   <h2>Usage Notes</h2>
 
-   With a valid object of FGFDMExec and an aircraft model loaded
+   With a valid object of FGFDMExec and an aircraft model loaded:
+
+   @code
    FGInitialCondition fgic=new FGInitialCondition(FDMExec);
    fgic->SetVcalibratedKtsIC()
    fgic->SetAltitudeFtIC();
 
-   //to directly into Run
+   // directly into Run
    FDMExec->GetState()->Initialize(fgic)
    delete fgic;
    FDMExec->Run()
 
    //or to loop the sim w/o integrating
    FDMExec->RunIC(fgic)
+   @endcode
 
-   Speed:
+   <h2>Speed</h2>
 
    Since vc, ve, vt, and mach all represent speed, the remaining
    three are recalculated each time one of them is set (using the
@@ -101,7 +104,7 @@ CLASS DOCUMENTATION
    components forces a recalculation of vt and vt then becomes the
    most recent speed set.
 
-   Alpha,Gamma, and Theta:
+   <h2>Alpha,Gamma, and Theta</h2>
 
    This class assumes that it will be used to set up the sim for a
    steady, zero pitch rate condition. Since any two of those angles
@@ -120,31 +123,75 @@ CLASS DOCUMENTATION
 
    These are the items that can be set in an initialization file:
 
-   UBODY <velocity, ft/sec>
-   VBODY <velocity, ft/sec>
-   WBODY <velocity, ft/sec>
-   LATITUDE <position, degrees>
-   LONGITUDE <position, degrees>
-   PHI <orientation, degrees>
-   THETA <orientation, degrees>
-   PSI <orientation, degrees>
-   ALPHA <angle, degrees>
-   BETA <angle, degrees>
-   GAMMA <angle, degrees>
-   ROC <vertical velocity, ft/sec>
-   ALTITUDE <altitude, ft>
-   WINDDIR <wind from-angle, degrees>
-   VWIND <magnitude wind speed, ft/sec>
-   HWIND <headwind speed, knots>
-   XWIND <crosswind speed, knots>
-   VC <calibrated airspeed, ft/sec>
-   MACH <mach>
-   VGROUND <ground speed, ft/sec>
-   RUNNING <0 or 1>
+   - ubody (velocity, ft/sec)
+   - vbody (velocity, ft/sec)
+   - wbody (velocity, ft/sec)
+   - latitude (position, degrees)
+   - longitude (position, degrees)
+   - phi (orientation, degrees)
+   - theta (orientation, degrees)
+   - psi (orientation, degrees)
+   - alpha (angle, degrees)
+   - beta (angle, degrees)
+   - gamma (angle, degrees)
+   - roc (vertical velocity, ft/sec)
+   - altitude (altitude, ft)
+   - winddir (wind from-angle, degrees)
+   - vwind (magnitude wind speed, ft/sec)
+   - hwind (headwind speed, knots)
+   - xwind (crosswind speed, knots)
+   - vc (calibrated airspeed, ft/sec)
+   - mach (mach)
+   - vground (ground speed, ft/sec)
+   - running (0 or 1)
 
+   <h2>Properties</h2>
+   @property ic/vc-kts (read/write) Calibrated airspeed initial condition in knots
+   @property ic/ve-kts (read/write) Knots equivalent airspeed initial condition
+   @property ic/vg-kts (read/write) Ground speed initial condition in knots
+   @property ic/vt-kts (read/write) True airspeed initial condition in knots
+   @property ic/mach (read/write) Mach initial condition
+   @property ic/roc-fpm (read/write) Rate of climb initial condition in feet/minute
+   @property ic/gamma-deg (read/write) Flightpath angle initial condition in degrees
+   @property ic/alpha-deg (read/write) Angle of attack initial condition in degrees
+   @property ic/beta-deg (read/write) Angle of sideslip initial condition in degrees
+   @property ic/theta-deg (read/write) Pitch angle initial condition in degrees
+   @property ic/phi-deg (read/write) Roll angle initial condition in degrees
+   @property ic/psi-true-deg (read/write) Heading angle initial condition in degrees
+   @property ic/lat-gc-deg (read/write) Latitude initial condition in degrees
+   @property ic/long-gc-deg (read/write) Longitude initial condition in degrees
+   @property ic/h-sl-ft (read/write) Height above sea level initial condition in feet
+   @property ic/h-agl-ft (read/write) Height above ground level initial condition in feet
+   @property ic/sea-level-radius-ft (read/write) Radius of planet at sea level in feet
+   @property ic/terrain-altitude-ft (read/write) Terrain elevation above sea level in feet
+   @property ic/vg-fps (read/write) Ground speed initial condition in feet/second
+   @property ic/vt-fps (read/write) True airspeed initial condition in feet/second
+   @property ic/vw-bx-fps (read/write) Wind velocity initial condition in Body X frame in feet/second
+   @property ic/vw-by-fps (read/write) Wind velocity initial condition in Body Y frame in feet/second
+   @property ic/vw-bz-fps (read/write) Wind velocity initial condition in Body Z frame in feet/second
+   @property ic/vw-north-fps (read/write) Wind northward velocity initial condition in feet/second
+   @property ic/vw-east-fps (read/write) Wind eastward velocity initial condition in feet/second
+   @property ic/vw-down-fps (read/write) Wind downward velocity initial condition in feet/second
+   @property ic/vw-mag-fps (read/write) Wind velocity magnitude initial condition in feet/sec.
+   @property ic/vw-dir-deg (read/write) Wind direction initial condition, in degrees from north
+   @property ic/roc-fps (read/write) Rate of climb initial condition, in feet/second
+   @property ic/u-fps (read/write) Body frame x-axis velocity initial condition in feet/second
+   @property ic/v-fps (read/write) Body frame y-axis velocity initial condition in feet/second
+   @property ic/w-fps (read/write) Body frame z-axis velocity initial condition in feet/second
+   @property ic/gamma-rad (read/write) Flight path angle initial condition in radians
+   @property ic/alpha-rad (read/write) Angle of attack initial condition in radians
+   @property ic/theta-rad (read/write) Pitch angle initial condition in radians
+   @property ic/beta-rad (read/write) Angle of sideslip initial condition in radians
+   @property ic/phi-rad (read/write) Roll angle initial condition in radians
+   @property ic/psi-true-rad (read/write) Heading angle initial condition in radians
+   @property ic/lat-gc-rad (read/write) Geocentric latitude initial condition in radians
+   @property ic/long-gc-rad (read/write) Longitude initial condition in radians
+   @property ic/p-rad_sec (read/write) Roll rate initial condition in radians/second
+   @property ic/q-rad_sec (read/write) Pitch rate initial condition in radians/second
+   @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.3 2005/06/13 16:59:16 ehofman Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.4 2006/01/23 11:29:56 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,125 +206,381 @@ public:
   /// Destructor
   ~FGInitialCondition();
 
-  void SetVcalibratedKtsIC(double tt);
-  void SetVequivalentKtsIC(double tt);
-  inline void SetVtrueKtsIC(double tt)   { SetVtrueFpsIC(tt*ktstofps);   }
-  inline void SetVgroundKtsIC(double tt) { SetVgroundFpsIC(tt*ktstofps); }
-  void SetMachIC(double tt);
+  /** Set calibrated airspeed initial condition in knots.
+      @param vc Calibrated airspeed in knots  */
+  void SetVcalibratedKtsIC(double vc);
 
-  inline void SetAlphaDegIC(double tt)      { SetAlphaRadIC(tt*degtorad); }
-  inline void SetBetaDegIC(double tt)       { SetBetaRadIC(tt*degtorad);}
+  /** Set equivalent airspeed initial condition in knots.
+      @param ve Equivalent airspeed in knots  */
+  void SetVequivalentKtsIC(double ve);
 
-  inline void SetPitchAngleDegIC(double tt) { SetPitchAngleRadIC(tt*degtorad); }
-  inline void SetRollAngleDegIC(double tt)  { SetRollAngleRadIC(tt*degtorad);}
-  inline void SetTrueHeadingDegIC(double tt){ SetTrueHeadingRadIC(tt*degtorad); }
+  /** Set true airspeed initial condition in knots.
+      @param vt True airspeed in knots  */
+  inline void SetVtrueKtsIC(double vt)   { SetVtrueFpsIC(vt*ktstofps);   }
 
-  void SetClimbRateFpmIC(double tt);
-  inline void SetFlightPathAngleDegIC(double tt) { SetFlightPathAngleRadIC(tt*degtorad); }
+  /** Set ground speed initial condition in knots.
+      @param vg Ground speed in knots  */
+  inline void SetVgroundKtsIC(double vg) { SetVgroundFpsIC(vg*ktstofps); }
 
-  void SetAltitudeFtIC(double tt);
-  void SetAltitudeAGLFtIC(double tt);
+  /** Set mach initial condition.
+      @param mach Mach number  */
+  void SetMachIC(double mach);
 
-  void SetSeaLevelRadiusFtIC(double tt);
-  void SetTerrainAltitudeFtIC(double tt);
+  /** Sets angle of attack initial condition in degrees.
+      @param a Alpha in degrees */
+  inline void SetAlphaDegIC(double a)      { SetAlphaRadIC(a*degtorad); }
 
-  inline void SetLatitudeDegIC(double tt)  { latitude=tt*degtorad; }
-  inline void SetLongitudeDegIC(double tt) { longitude=tt*degtorad; }
+  /** Sets angle of sideslip initial condition in degrees.
+      @param B Beta in degrees */
+  inline void SetBetaDegIC(double B)       { SetBetaRadIC(B*degtorad);}
 
+  /** Sets pitch angle initial condition in degrees.
+      @param theta Theta (pitch) angle in degrees */
+  inline void SetPitchAngleDegIC(double theta) { SetPitchAngleRadIC(theta*degtorad); }
 
+  /** Sets the roll angle initial condition in degrees.
+      @param phi roll angle in degrees */
+  inline void SetRollAngleDegIC(double phi)  { SetRollAngleRadIC(phi*degtorad);}
+
+  /** Sets the heading angle initial condition in degrees.
+      @param psi Heading angle in degrees */
+  inline void SetTrueHeadingDegIC(double psi){ SetTrueHeadingRadIC(psi*degtorad); }
+
+  /** Sets the climb rate initial condition in feet/minute.
+      @param roc Rate of Climb in feet/minute  */
+  void SetClimbRateFpmIC(double roc);
+
+  /** Sets the flight path angle initial condition in degrees.
+      @param gamma Flight path angle in degrees  */
+  inline void SetFlightPathAngleDegIC(double gamma) { SetFlightPathAngleRadIC(gamma*degtorad); }
+
+  /** Sets the altitude initial condition in feet.
+      @param alt Altitude in feet */
+  void SetAltitudeFtIC(double alt);
+
+  /** Sets the initial Altitude above ground level.
+      @param agl Altitude above ground level in feet */
+  void SetAltitudeAGLFtIC(double agl);
+
+  /** Sets the initial sea level radius from planet center
+      @param sl_rad sea level radius in feet */
+  void SetSeaLevelRadiusFtIC(double sl_rad);
+
+  /** Sets the initial terrain elevation.
+      @param elev Initial terrain elevation in feet */
+  void SetTerrainAltitudeFtIC(double elev);
+
+  /** Sets the initial latitude.
+      @param lat Initial latitude in degrees */
+  inline void SetLatitudeDegIC(double lat)  { latitude=lat*degtorad; }
+
+  /** Sets the initial longitude.
+      @param lon Initial longitude in degrees */
+  inline void SetLongitudeDegIC(double lon) { longitude=lon*degtorad; }
+
+  /** Gets the initial calibrated airspeed.
+      @return Initial calibrated airspeed in knots */
   inline double GetVcalibratedKtsIC(void) const { return vc*fpstokts; }
+
+  /** Gets the initial equivalent airspeed.
+      @return Initial equivalent airspeed in knots */
   inline double GetVequivalentKtsIC(void) const { return ve*fpstokts; }
+
+  /** Gets the initial ground speed.
+      @return Initial ground speed in knots */
   inline double GetVgroundKtsIC(void) const { return vg*fpstokts; }
+
+  /** Gets the initial true velocity.
+      @return Initial true airspeed in knots. */
   inline double GetVtrueKtsIC(void) const { return vt*fpstokts; }
+
+  /** Gets the initial mach.
+      @return Initial mach number */
   inline double GetMachIC(void) const { return mach; }
 
+  /** Gets the initial climb rate.
+      @return Initial climb rate in feet/minute */
   inline double GetClimbRateFpmIC(void) const { return hdot*60; }
+
+  /** Gets the initial flight path angle.
+      @return Initial flight path angle in degrees */
   inline double GetFlightPathAngleDegIC(void)const  { return gamma*radtodeg; }
 
+  /** Gets the initial angle of attack.
+      @return Initial alpha in degrees */
   inline double GetAlphaDegIC(void) const { return alpha*radtodeg; }
+
+  /** Gets the initial sideslip angle.
+      @return Initial beta in degrees */
   inline double GetBetaDegIC(void) const  { return beta*radtodeg; }
 
+  /** Gets the initial pitch angle.
+      @return Initial pitch angle in degrees */
   inline double GetPitchAngleDegIC(void) const { return theta*radtodeg; }
+
+  /** Gets the initial roll angle.
+      @return Initial phi in degrees */
   inline double GetRollAngleDegIC(void) const { return phi*radtodeg; }
+
+  /** Gets the initial heading angle.
+      @return Initial psi in degrees */
   inline double GetHeadingDegIC(void) const { return psi*radtodeg; }
 
+  /** Gets the initial latitude.
+      @return Initial geocentric latitude in degrees */
   inline double GetLatitudeDegIC(void) const { return latitude*radtodeg; }
+
+  /** Gets the initial longitude.
+      @return Initial longitude in degrees */
   inline double GetLongitudeDegIC(void) const { return longitude*radtodeg; }
 
+  /** Gets the initial altitude.
+      @return Initial altitude in feet. */
   inline double GetAltitudeFtIC(void) const { return altitude; }
+
+  /** Gets the initial altitude above ground level.
+      @return Initial altitude AGL in feet */
   inline double GetAltitudeAGLFtIC(void) const { return altitude - terrain_altitude; }
 
+  /** Gets the initial sea level radius.
+      @return Initial sea level radius */
   inline double GetSeaLevelRadiusFtIC(void) const { return sea_level_radius; }
+
+  /** Gets the initial terrain elevation.
+      @return Initial terrain elevation in feet */
   inline double GetTerrainAltitudeFtIC(void) const { return terrain_altitude; }
 
-  void SetVgroundFpsIC(double tt);
-  void SetVtrueFpsIC(double tt);
-  void SetUBodyFpsIC(double tt);
-  void SetVBodyFpsIC(double tt);
-  void SetWBodyFpsIC(double tt);
-  void SetVnorthFpsIC(double tt);
-  void SetVeastFpsIC(double tt);
-  void SetVdownFpsIC(double tt);
-  void SetPRadpsIC(double tt)  { p = tt; }
-  void SetQRadpsIC(double tt) { q = tt; }
-  void SetRRadpsIC(double tt) { r = tt; }
+  /** Sets the initial ground speed.
+      @param vg Initial ground speed in feet/second */
+  void SetVgroundFpsIC(double vg);
 
+  /** Sets the initial true airspeed.
+      @param vt Initial true airspeed in feet/second */
+  void SetVtrueFpsIC(double vt);
+
+  /** Sets the initial body axis X velocity.
+      @param ubody Initial X velocity in feet/second */
+  void SetUBodyFpsIC(double ubody);
+
+  /** Sets the initial body axis Y velocity.
+      @param vbody Initial Y velocity in feet/second */
+  void SetVBodyFpsIC(double vbody);
+
+  /** Sets the initial body axis Z velocity.
+      @param wbody Initial Z velocity in feet/second */
+  void SetWBodyFpsIC(double wbody);
+
+  /** Sets the initial local axis north velocity.
+      @param vn Initial north velocity in feet/second */
+  void SetVnorthFpsIC(double vn);
+
+  /** Sets the initial local axis east velocity.
+      @param ve Initial east velocity in feet/second */
+  void SetVeastFpsIC(double ve);
+
+  /** Sets the initial local axis down velocity.
+      @param vd Initial down velocity in feet/second */
+  void SetVdownFpsIC(double vd);
+
+  /** Sets the initial roll rate.
+      @param P Initial roll rate in radians/second */
+  void SetPRadpsIC(double P)  { p = P; }
+
+  /** Sets the initial pitch rate.
+      @param Q Initial pitch rate in radians/second */
+  void SetQRadpsIC(double Q) { q = Q; }
+
+  /** Sets the initial yaw rate.
+      @param R initial yaw rate in radians/second */
+  void SetRRadpsIC(double R) { r = R; }
+
+  /** Sets the initial wind velocity.
+      @param wN Initial wind velocity in local north direction, feet/second
+      @param wE Initial wind velocity in local east direction, feet/second
+      @param wD Initial wind velocity in local down direction, feet/second   */
   void SetWindNEDFpsIC(double wN, double wE, double wD);
 
+  /** Sets the initial total wind speed.
+      @param mag Initial wind velocity magnitude in knots */
   void SetWindMagKtsIC(double mag);
+
+  /** Sets the initial wind direction.
+      @param dir Initial direction wind is coming from in degrees */
   void SetWindDirDegIC(double dir);
 
+  /** Sets the initial headwind velocity.
+      @param head Initial headwind speed in knots */
   void SetHeadWindKtsIC(double head);
-  void SetCrossWindKtsIC(double cross);// positive from left
 
+  /** Sets the initial crosswind speed.
+      @param cross Initial crosswind speed, positive from left to right */
+  void SetCrossWindKtsIC(double cross);
+
+  /** Sets the initial wind downward speed.
+      @param wD Initial downward wind speed in knots*/
   void SetWindDownKtsIC(double wD);
 
-  void SetClimbRateFpsIC(double tt);
+  /** Sets the initial climb rate.
+      @param roc Initial Rate of climb in feet/second */
+  void SetClimbRateFpsIC(double roc);
+
+  /** Gets the initial ground velocity.
+      @return Initial ground velocity in feet/second */
   inline double GetVgroundFpsIC(void) const  { return vg; }
+
+  /** Gets the initial true velocity.
+      @return Initial true velocity in feet/second */
   inline double GetVtrueFpsIC(void) const { return vt; }
+
+  /** Gets the initial body axis X wind velocity.
+      @return Initial body axis X wind velocity in feet/second */
   inline double GetWindUFpsIC(void) const { return uw; }
+
+  /** Gets the initial body axis Y wind velocity.
+      @return Initial body axis Y wind velocity in feet/second */
   inline double GetWindVFpsIC(void) const { return vw; }
+
+  /** Gets the initial body axis Z wind velocity.
+      @return Initial body axis Z wind velocity in feet/second */
   inline double GetWindWFpsIC(void) const { return ww; }
+
+  /** Gets the initial wind velocity in local frame.
+      @return Initial wind velocity toward north in feet/second */
   inline double GetWindNFpsIC(void) const { return wnorth; }
+
+  /** Gets the initial wind velocity in local frame.
+      @return Initial wind velocity toward north in feet/second */
   inline double GetWindEFpsIC(void) const { return weast; }
+
+  /** Gets the initial wind velocity in local frame.
+      @return Initial wind velocity toward north in feet/second */
   inline double GetWindDFpsIC(void) const { return wdown; }
+
+  /** Gets the initial total wind velocity in feet/sec.
+      @return Initial wind velocity in feet/second */
   inline double GetWindFpsIC(void)  const { return sqrt(wnorth*wnorth + weast*weast); }
-  double GetWindDirDegIC(void);
+
+  /** Gets the initial wind direction.
+      @return Initial wind direction in feet/second */
+  double GetWindDirDegIC(void) const;
+
+  /** Gets the initial climb rate.
+      @return Initial rate of climb in feet/second */
   inline double GetClimbRateFpsIC(void) const { return hdot; }
+
+  /** Gets the initial body axis X velocity.
+      @return Initial body axis X velocity in feet/second. */
   double GetUBodyFpsIC(void) const;
+
+  /** Gets the initial body axis Y velocity.
+      @return Initial body axis Y velocity in feet/second. */
   double GetVBodyFpsIC(void) const;
+
+  /** Gets the initial body axis Z velocity.
+      @return Initial body axis Z velocity in feet/second. */
   double GetWBodyFpsIC(void) const;
+
+  /** Gets the initial body axis roll rate.
+      @return Initial body axis roll rate in radians/second */
   double GetPRadpsIC() const { return p; }
+
+  /** Gets the initial body axis pitch rate.
+      @return Initial body axis pitch rate in radians/second */
   double GetQRadpsIC() const { return q; }
+
+  /** Gets the initial body axis yaw rate.
+      @return Initial body axis yaw rate in radians/second */
   double GetRRadpsIC() const { return r; }
-  void SetFlightPathAngleRadIC(double tt);
-  void SetAlphaRadIC(double tt);
-  void SetPitchAngleRadIC(double tt);
-  void SetBetaRadIC(double tt);
-  void SetRollAngleRadIC(double tt);
-  void SetTrueHeadingRadIC(double tt);
-  inline void SetLatitudeRadIC(double tt) { latitude=tt; }
-  inline void SetLongitudeRadIC(double tt) { longitude=tt; }
+
+  /** Sets the initial flight path angle.
+      @param gamma Initial flight path angle in radians */
+  void SetFlightPathAngleRadIC(double gamma);
+
+  /** Sets the initial angle of attack.
+      @param alpha Initial angle of attack in radians */
+  void SetAlphaRadIC(double alpha);
+
+  /** Sets the initial pitch angle.
+      @param theta Initial pitch angle in radians */
+  void SetPitchAngleRadIC(double theta);
+
+  /** Sets the initial sideslip angle.
+      @param beta Initial angle of sideslip in radians. */
+  void SetBetaRadIC(double beta);
+
+  /** Sets the initial roll angle.
+      @param phi Initial roll angle in radians */
+  void SetRollAngleRadIC(double phi);
+
+  /** Sets the initial heading angle.
+      @param psi Initial heading angle in radians */
+  void SetTrueHeadingRadIC(double psi);
+
+  /** Sets the initial latitude.
+      @param lat Initial latitude in radians */
+  inline void SetLatitudeRadIC(double lat) { latitude=lat; }
+
+  /** Sets the initial longitude.
+      @param lon Initial longitude in radians */
+  inline void SetLongitudeRadIC(double lon) { longitude=lon; }
+
+  /** Gets the initial flight path angle.
+      @return Initial flight path angle in radians */
   inline double GetFlightPathAngleRadIC(void) const { return gamma; }
+
+  /** Gets the initial angle of attack.
+      @return Initial alpha in radians */
   inline double GetAlphaRadIC(void) const      { return alpha; }
+
+  /** Gets the initial pitch angle.
+      @return Initial pitch angle in radians */
   inline double GetPitchAngleRadIC(void) const { return theta; }
+
+  /** Gets the initial angle of sideslip.
+      @return Initial sideslip angle in radians */
   inline double GetBetaRadIC(void) const       { return beta; }
+
+  /** Gets the initial roll angle.
+      @return Initial roll angle in radians */
   inline double GetRollAngleRadIC(void) const  { return phi; }
+
+  /** Gets the initial heading angle.
+      @return Initial heading angle in radians */
   inline double GetHeadingRadIC(void) const   { return psi; }
+
+  /** Gets the initial latitude.
+      @return Initial latitude in radians */
   inline double GetLatitudeRadIC(void) const { return latitude; }
+
+  /** Gets the initial longitude.
+      @return Initial longitude in radians */
   inline double GetLongitudeRadIC(void) const { return longitude; }
+
+  /** Gets the initial pitch angle.
+      @return Initial pitch angle in radians */
   inline double GetThetaRadIC(void) const { return theta; }
+
+  /** Gets the initial roll angle.
+      @return Initial roll angle in radians */
   inline double GetPhiRadIC(void)  const  { return phi; }
+
+  /** Gets the initial heading angle.
+      @return Initial heading angle in radians */
   inline double GetPsiRadIC(void) const   { return psi; }
 
+  /** Gets the initial speedset.
+      @return Initial speedset */
   inline speedset GetSpeedSet(void) { return lastSpeedSet; }
+
+  /** Gets the initial windset.
+      @return Initial windset */
   inline windset GetWindSet(void) { return lastWindSet; }
 
+  /** Loads the initial conditions.
+      @param rstname The name of an initial conditions file
+      @param useStoredPath true if the stored path to the IC file should be used
+      @return true if successful */
   bool Load(string rstname, bool useStoredPath = true );
-
-  void bind(void);
-  void unbind(void);
-
 
 private:
   double vt,vc,ve,vg;
@@ -321,6 +624,8 @@ private:
 
   bool findInterval(double x,double guess);
   bool solve(double *y, double x);
+  void bind(void);
+  void unbind(void);
   void Debug(int from);
 };
 }

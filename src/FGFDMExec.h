@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.16 2006/01/19 06:06:12 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.17 2006/01/23 11:29:56 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -158,13 +158,14 @@ CLASS DOCUMENTATION
        a message is printed out when they go out of bounds
 
     <h3>Properties</h3>
-    @property simulator/do_trim Can be set to the integer equivalent to one of
+    @property simulator/do_trim (write only) Can be set to the integer equivalent to one of
                                 tLongitudinal (0), tFull (1), tGround (2), tPullup (3),
                                 tCustom (4), tTurn (5). Setting this to a legal value
-                                (such as by a script) causes a trim to be performed.
+                                (such as by a script) causes a trim to be performed. This
+                                property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.16 $
+    @version $Revision: 1.17 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

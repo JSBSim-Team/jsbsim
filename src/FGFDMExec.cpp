@@ -75,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.15 2006/01/19 06:06:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.16 2006/01/23 11:29:56 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -723,8 +723,6 @@ void FGFDMExec::EnableOutput(void)
 void FGFDMExec::DoTrim(int mode)
 {
   double saved_time;
-
-cout << "DoTrim called" << endl;
 
   if (Constructing) return;
 

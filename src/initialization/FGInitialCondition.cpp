@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.3 2005/06/13 16:59:16 ehofman Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.4 2006/01/23 11:29:56 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -718,7 +718,7 @@ bool FGInitialCondition::solve(double *y,double x)
 
 //******************************************************************************
 
-double FGInitialCondition::GetWindDirDegIC(void) {
+double FGInitialCondition::GetWindDirDegIC(void) const {
   if(weast != 0.0)
     return atan2(weast,wnorth)*radtodeg;
   else if(wnorth > 0)
@@ -837,7 +837,7 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetVtrueKtsIC,
                        &FGInitialCondition::SetVtrueKtsIC,
                        true);
-  PropertyManager->Tie("ic/mach-norm", this,
+  PropertyManager->Tie("ic/mach", this,
                        &FGInitialCondition::GetMachIC,
                        &FGInitialCondition::SetMachIC,
                        true);
@@ -913,16 +913,16 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetWindDFpsIC);
   PropertyManager->Tie("ic/vw-mag-fps", this,
                        &FGInitialCondition::GetWindFpsIC);
- /*  PropertyManager->Tie("ic/vw-dir-deg", this,
+  PropertyManager->Tie("ic/vw-dir-deg", this,
                        &FGInitialCondition::GetWindDirDegIC,
                        &FGInitialCondition::SetWindDirDegIC,
-                       true); */
+                       true);
 
   PropertyManager->Tie("ic/roc-fps", this,
                        &FGInitialCondition::GetClimbRateFpsIC,
                        &FGInitialCondition::SetClimbRateFpsIC,
                        true);
-  /* PropertyManager->Tie("ic/u-fps", this,
+  PropertyManager->Tie("ic/u-fps", this,
                        &FGInitialCondition::GetUBodyFpsIC,
                        &FGInitialCondition::SetUBodyFpsIC,
                        true);
@@ -933,7 +933,7 @@ void FGInitialCondition::bind(void){
   PropertyManager->Tie("ic/w-fps", this,
                        &FGInitialCondition::GetWBodyFpsIC,
                        &FGInitialCondition::SetWBodyFpsIC,
-                       true); */
+                       true);
 
   PropertyManager->Tie("ic/gamma-rad", this,
                        &FGInitialCondition::GetFlightPathAngleRadIC,

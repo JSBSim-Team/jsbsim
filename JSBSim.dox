@@ -81,6 +81,7 @@ HIDE_UNDOC_CLASSES     = YES
 # Set to NO to disable this.
 
 BRIEF_MEMBER_DESC      = YES
+SORT_BRIEF_DOCS        = YES
 
 # If the REPEAT_BRIEF tag is set to YES (the default) Doxygen will prepend
 # the brief description of a member or function before the detailed description.
