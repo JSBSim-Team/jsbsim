@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.60 $ </version>
+        <version> $Revision: 1.61 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -210,6 +210,8 @@
             </orient>
             <feed>0</feed>
             <feed>1</feed>
+            <feed>2</feed>
+            <feed>3</feed>
             <thruster file="direct">
                 <location unit="IN">
                     <x> 0 </x>
@@ -230,7 +232,7 @@
                 <z> 4.3 </z>
             </location>
             <capacity unit="LBS"> 3486 </capacity>
-            <contents unit="LBS"> 500 </contents>
+            <contents unit="LBS"> 1500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -239,7 +241,25 @@
                 <z> 4.3 </z>
             </location>
             <capacity unit="LBS"> 3486 </capacity>
-            <contents unit="LBS"> 500 </contents>
+            <contents unit="LBS"> 1500 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- External Tank number 0  (station 4) -->
+            <location unit="IN">
+                <x> -419 </x>
+                <y> 88.2 </y>
+                <z> -0.5 </z>
+            </location>
+            <capacity unit="LBS"> 2991 </capacity>
+            <contents unit="LBS"> 0 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- External Tank number 1 (station 6) -->
+            <location unit="IN">
+                <x> -419 </x>
+                <y> -88.2 </y>
+                <z> -0.5 </z>
+            </location>
+            <capacity unit="LBS"> 2991 </capacity>
+            <contents unit="LBS"> 0 </contents>
         </tank>
     </propulsion>
     <flight_control name="F-16 FC">
