@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.9 2006/01/23 13:50:10 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.10 2006/01/30 03:42:53 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -850,7 +850,7 @@ bool FGJSBsim::copy_from_JSBsim()
     spoilers_pos_pct->setDoubleValue( FCS->GetDspPos(ofNorm) );
 
     // force a sim reset if crashed (altitude AGL < 0)
-    if (get_Altitude_AGL() < 0.0) {
+    if (get_Altitude_AGL() < 100.0) {
          fgSetBool("/sim/crashed", true);
          SGPropertyNode* node = fgGetNode("/sim/presets", true);
          globals->get_commands()->execute("old-reinit-dialog", node);
