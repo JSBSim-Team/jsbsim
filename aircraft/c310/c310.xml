@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.50 $ </version>
+        <version> $Revision: 1.51 $ </version>
         <description>
             Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -43,9 +43,9 @@
             <z> 38 </z>
         </location>
         <location name="VRP" unit="IN">
-            <x> 0 </x>
+            <x> 46 </x>
             <y> 0 </y>
-            <z> 0 </z>
+            <z> 8.6 </z>
         </location>
     </metrics>
 
@@ -347,6 +347,20 @@
                 <gain>0.01745</gain>
                 <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
+
+            <aerosurface_scale name="Elevator position normalized">
+  	         <input>fcs/elevator-pos-deg</input>
+  	         <domain>
+  	             <min>-25</min>
+  	             <max>35</max>
+  	         </domain>
+  	         <range>
+  	              <min>-1</min>
+  	              <max>1</max>
+  	         </range>
+  	         <output>fcs/elevator-pos-norm</output>
+  	     </aerosurface_scale>            
+            
         </channel>
 
         <channel name="Roll">
@@ -427,6 +441,20 @@
                 </range>
                 <output>fcs/rudder-pos-rad</output>
             </aerosurface_scale>
+            
+            <aerosurface_scale name="Rudder position normalized">
+                 <input>fcs/rudder-pos-deg</input>
+                 <domain>
+                      <min>-25</min>
+                      <max>25</max>
+                 </domain>
+                 <range>
+                      <min>-1</min>
+                      <max>1</max>
+                 </range>
+                 <output>fcs/rudder-pos-norm</output>
+            </aerosurface_scale>            
+            
         </channel>
         <channel name="Flaps">
             <kinematic name="Flaps Control">
@@ -451,6 +479,20 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
+            
+            <aerosurface_scale name="Flap position normalized">
+                 <input>fcs/flap-pos-deg</input>
+                 <domain>
+                    <min>0</min>
+                    <max>40</max>
+                 </domain>
+                 <range>
+                     <min>0</min>
+                     <max>1</max>
+                 </range>
+                 <output>fcs/flap-pos-norm</output>
+            </aerosurface_scale>            
+            
         </channel>
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
