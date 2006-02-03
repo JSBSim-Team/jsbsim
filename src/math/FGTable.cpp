@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.6 2006/01/13 09:47:07 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.7 2006/02/03 13:41:42 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,6 +157,12 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     while (axisElement) {
       property_string = axisElement->GetDataLine();
       node = PropertyManager->GetNode(property_string);
+
+      if (node == 0) {
+        cerr << "IndependenVar property, " << property_string
+             << " in Table definition is not defined." << endl;
+        abort();
+      }
 
       lookup_axis = axisElement->GetAttributeValue("lookup");
       if (lookup_axis == string("row")) {

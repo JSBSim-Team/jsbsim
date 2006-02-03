@@ -6,7 +6,7 @@
     <fileheader>
         <author>Tony Peden</author>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.52 $</version>
+        <version>$Revision: 1.53 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -370,7 +370,7 @@
                     <property>aero/function/ground-effect-factor-lift</property>
                     <property>aero/qbar-area</property>
                     <table>
-                        <independentVar lookup="row">aero/alpha-rad</independentVar>
+                        <independentVar lookup="row">aero/alpha-raddick</independentVar>
                         <independentVar lookup="column">aero/stall-hyst-norm</independentVar>
                         <tableData>
                                    0.0   1.0
