@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.7 2005/12/28 15:06:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.8 2006/02/03 00:51:44 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   Input = Output = clipmin = clipmax = 0.0;
   OutputNode = treenode = 0;
   ClipMinPropertyNode = ClipMaxPropertyNode = 0;
+  clipMinSign = clipMaxSign = 1.0;
   IsOutput   = clip = false;
   string input, clip_string;
 
@@ -121,12 +122,14 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   if (clip_el) {
     clip_string = clip_el->FindElementValue("min");
     if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+      if (clip_string[0] == '-') clipMinSign = -1.0;
       ClipMinPropertyNode = PropertyManager->GetNode( clip_string );
     } else {
       clipmin = clip_el->FindElementValueAsNumber("min");
     }
     clip_string = clip_el->FindElementValue("max");
     if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
+      if (clip_string[0] == '-') clipMaxSign = -1.0;
       ClipMaxPropertyNode = PropertyManager->GetNode( clip_string );
     } else {
       clipmax = clip_el->FindElementValueAsNumber("max");
@@ -166,8 +169,8 @@ bool FGFCSComponent::Run(void)
 void FGFCSComponent::Clip(void)
 {
   if (clip) {
-    if (ClipMinPropertyNode != 0) clipmin = ClipMinPropertyNode->getDoubleValue();
-    if (ClipMaxPropertyNode != 0) clipmax = ClipMaxPropertyNode->getDoubleValue();
+    if (ClipMinPropertyNode != 0) clipmin = clipMinSign*ClipMinPropertyNode->getDoubleValue();
+    if (ClipMaxPropertyNode != 0) clipmax = clipMaxSign*ClipMaxPropertyNode->getDoubleValue();
     if (Output > clipmax)      Output = clipmax;
     else if (Output < clipmin) Output = clipmin;
   }

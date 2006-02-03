@@ -18,7 +18,7 @@ DETAILS_AT_TOP         = YES
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = JSBSim Flight Dynamics Model
+PROJECT_NAME           = "JSBSim Flight Dynamics Model"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number.
 # This could be handy for archiving the generated documentation or
@@ -389,7 +389,7 @@ COLS_IN_ALPHA_INDEX    = 5
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          =
+IGNORE_PREFIX          = FG
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.6 2006/01/03 20:45:08 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.7 2006/02/03 00:51:44 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -223,7 +223,7 @@ double FGPropeller::GetPowerRequired(void)
     cPReq = cPower->GetValue(J);
   } else {                      // Variable pitch prop
 
-    if (MaxRPM != MinRPM) {   // fixed-speed prop
+    if (MaxRPM != MinRPM) {   // constant speed prop
 
       // do normal calculation when propeller is neither feathered nor reversed
       if (!Feathered) {

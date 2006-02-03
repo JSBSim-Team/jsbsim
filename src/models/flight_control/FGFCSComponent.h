@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.5 2006/02/03 00:51:44 jberndt Exp $"
 
 using std::string;
 
@@ -69,7 +69,7 @@ CLASS DOCUMENTATION
 
 /** Base class for JSBSim Flight Control System Components.
     The Flight Control System (FCS) for JSBSim consists of the FCS container
-    class (see \URL[FGFCS]{FGFCS.html}), the FGFCSComponent base class, and the
+    class (see FGFCS), the FGFCSComponent base class, and the
     component classes from which can be constructed a string, or channel. See:
 
     - FGSwitch
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
     - FGGradient
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.4 2005/06/18 14:50:01 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.5 2006/02/03 00:51:44 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -119,6 +119,7 @@ protected:
   double Input;
   double Output;
   double clipmax, clipmin;
+  float clipMinSign, clipMaxSign;
   bool IsOutput;
   bool clip;
 

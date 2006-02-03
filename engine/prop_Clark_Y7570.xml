@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<propeller  name="Simulated Clark Y Airfoil McCauley 7570 Propeller">
+<propeller name="Simulated Clark Y Airfoil McCauley 7570 Propeller">
   <ixx>       1.8 </ixx>
   <diameter unit="IN"> 75   </diameter>
   <numblades> 2   </numblades>

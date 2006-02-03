@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.8 2006/02/03 00:51:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,67 +81,110 @@ CLASS DOCUMENTATION
     which comprise the control laws for an axis are defined sequentially in
     the configuration file. For instance, for the X-15:
 
-    <pre>
-    \<flight_control name="X-15 SAS">
-      \<channel>
-        \<component name="Pitch Trim Sum" type="SUMMER">
+    @code
+    <flight_control name="X-15 SAS">
+      <channel>
+        <summer name="Pitch Trim Sum">
            <input> fcs/elevator-cmd-norm </input>
            <input> fcs/pitch-trim-cmd-norm </input>
            <clipto>
              <min>-1</min>
              <max>1</max>
            </clipto>
-        \</component>
+        </summer>
 
-        \<component name="Pitch Command Scale" TYPE="AEROSURFACE_SCALE">
+        <aerosurface_scale name="Pitch Command Scale">
           <input> fcs/pitch-trim-sum </input>
-          <limit>
+          <range>
             <min> -50 </min>
             <max>  50 </max>
-          </limit>
-        \</component>
+          </range>
+        </aerosurface_scale>
 
         ... etc.
-    </pre>
+    @endcode
 
     In the above case we can see the first few components of the pitch channel
-    defined. The input to the first component, as can be seen in the "Pitch trim
+    defined. The input to the first component (a summer), as can be seen in the "Pitch trim
     sum" component, is really the sum of two parameters: elevator command (from
-    the stick - a pilot input), and pitch trim. The type of this component is
-    "Summer".
+    the stick - a pilot input), and pitch trim.
     The next component created is an aerosurface scale component - a type of
     gain (see the LoadFCS() method for insight on how the various types of
     components map into the actual component classes).  This continues until the
     final component for an axis when the
-    \<output> element specifies where the output is supposed to go. See the
+    \<output> element is usually used to specify where the output is supposed to go. See the
     individual components for more information on how they are mechanized.
 
     Another option for the flight controls portion of the config file is that in
     addition to using the "NAME" attribute in,
 
-    <pre>
+    @code
     \<flight_control name="X-15 SAS">
-    </pre>
+    @endcode
 
     one can also supply a filename:
 
-    <pre>
+    @code
     \<flight_control name="X-15 SAS" file="X15.xml">
     \</flight_control>
-    </pre>
+    @endcode
 
     In this case, the FCS would be read in from another file.
 
+    <h2>Properties</h2>
+    @property fcs/aileron-cmd-norm normalized aileron command
+    @property fcs/elevator-cmd-norm normalized elevator command
+    @property fcs/rudder-cmd-norm
+    @property fcs/steer-cmd-norm
+    @property fcs/flap-cmd-norm
+    @property fcs/speedbrake-cmd-norm
+    @property fcs/spoiler-cmd-norm
+    @property fcs/pitch-trim-cmd-norm
+    @property fcs/roll-trim-cmd-norm
+    @property fcs/yaw-trim-cmd-norm
+    @property gear/gear-cmd-norm
+    @property fcs/left-aileron-pos-rad
+    @property fcs/left-aileron-pos-deg
+    @property fcs/left-aileron-pos-norm
+    @property fcs/mag-left-aileron-pos-rad
+    @property fcs/right-aileron-pos-rad
+    @property fcs/right-aileron-pos-deg
+    @property fcs/right-aileron-pos-norm
+    @property fcs/mag-right-aileron-pos-rad
+    @property fcs/elevator-pos-rad
+    @property fcs/elevator-pos-deg
+    @property fcs/elevator-pos-norm
+    @property fcs/mag-elevator-pos-rad
+    @property fcs/rudder-pos-rad
+    @property fcs/rudder-pos-deg
+    @property fcs/rudder-pos-norm
+    @property fcs/mag-rudder-pos-rad
+    @property fcs/flap-pos-rad
+    @property fcs/flap-pos-deg
+    @property fcs/flap-pos-norm
+    @property fcs/speedbrake-pos-rad
+    @property fcs/speedbrake-pos-deg
+    @property fcs/speedbrake-pos-norm
+    @property fcs/mag-speedbrake-pos-rad
+    @property fcs/spoiler-pos-rad
+    @property fcs/spoiler-pos-deg
+    @property fcs/spoiler-pos-norm
+    @property fcs/mag-spoiler-pos-rad
+    @property gear/gear-pos-norm
+
     @author Jon S. Berndt
-    @version $Id: FGFCS.h,v 1.7 2005/11/13 18:44:48 jberndt Exp $
+    @version $Revision: 1.8 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
     @see FGSummer
     @see FGSwitch
+    @see FGFCSFunction
+    @see FGCondition
     @see FGGradient
     @see FGFilter
     @see FGDeadBand
+    @see FGKinemat
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -461,9 +504,7 @@ public:
   //@}
 
   /** Loads the Flight Control System.
-      The FGAircraft instance is actually responsible for reading the config file
-      and calling the various Load() methods of the other systems, passing in
-      the XML Element instance pointer. Load() is called from FGAircraft.
+      Load() is called from FGFDMExec.
       @param el pointer to the Element instance
       @return true if succesful */
   bool Load(Element* el);

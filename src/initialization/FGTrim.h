@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.3 2006/02/03 00:51:44 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -108,7 +108,8 @@ CLASS DOCUMENTATION
     at those conditions?  Check the speed, altitude, configuration (flaps,
     gear, etc.), weight, cg, and anything else that may be relevant.
 
-    Example usage:<pre>
+    Example usage:
+    @code
     FGFDMExec* FDMExec = new FGFDMExec();
 
     FGInitialCondition* fgic = new FGInitialCondition(FDMExec);
@@ -119,9 +120,10 @@ CLASS DOCUMENTATION
     if( !fgt.DoTrim() ) {
       cout << "Trim Failed" << endl;
     }
-    fgt.Report(); </pre>
+    fgt.Report();
+    @endcode
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $"
+    @version "$Id: FGTrim.h,v 1.3 2006/02/03 00:51:44 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

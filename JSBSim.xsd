@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.15 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.16 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -183,7 +183,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.15 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.16 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -220,13 +220,14 @@
       <xs:sequence>
         <xs:element ref="wingarea"/>
         <xs:element ref="wingspan"/>
+        <xs:element ref="wing_incidence" minOccurs="0"/>
         <xs:element ref="chord"/>
-        <xs:element ref="htailarea"/>
-        <xs:element ref="htailarm"/>
-        <xs:element ref="vtailarea"/>
-        <xs:element ref="vtailarm"/>
-        <xs:element maxOccurs="unbounded" ref="location"/>
-      </xs:sequence>
+        <xs:element ref="htailarea" minOccurs="0"/>
+        <xs:element ref="htailarm" minOccurs="0"/>
+        <xs:element ref="vtailarea" minOccurs="0"/>
+        <xs:element ref="vtailarm" minOccurs="0"/>
+        <xs:element ref="location" minOccurs="1" maxOccurs="3"/>
+    </xs:sequence>
     </xs:complexType>
   </xs:element>
   
@@ -257,6 +258,22 @@
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
           <xs:attribute name="unit" use="optional" default="FT" type="LengthType"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- Wing Incidence -->
+  
+  <xs:element name="wing_incidence">
+    <xs:annotation>
+      <xs:documentation> The angle the wing makes with the fuselage centerline  for the vehicle being modeled. The default unit
+        is degrees (DEG). </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:double">
+          <xs:attribute name="unit" use="optional" default="DEG" type="AngleType"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
@@ -965,11 +982,11 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="location"/>
-        <xs:element ref="orient"/>
+        <xs:element ref="orient" minOccurs="0"/>
         <xs:element maxOccurs="unbounded" ref="feed"/>
         <xs:element ref="thruster"/>
       </xs:sequence>
-      <xs:attribute name="file" use="required" type="xs:NCName"/>
+      <xs:attribute name="file" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
 
@@ -977,13 +994,13 @@
 
   <xs:element name="thruster">
     <xs:complexType>
-      <xs:sequence>
+      <xs:all>
         <xs:element ref="location"/>
-        <xs:element ref="orient"/>
+        <xs:element ref="orient" minOccurs="0"/>
         <xs:element ref="sense" minOccurs="0"/>
         <xs:element ref="p_factor" minOccurs="0"/>
-      </xs:sequence>
-      <xs:attribute name="file" use="required" type="xs:NCName"/>
+      </xs:all>
+      <xs:attribute name="file" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
   
@@ -998,7 +1015,8 @@
         <xs:element ref="capacity" minOccurs="0"/>
         <xs:element ref="contents" minOccurs="0"/>
       </xs:all>
-      <xs:attribute name="type" use="required" type="xs:NCName"/>
+      <xs:attribute name="type" use="required" type="xs:string"/>
+      <xs:attribute name="number" use="optional" type="xs:integer"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="radius">
@@ -1247,11 +1265,11 @@
   
   <xs:element name="orient">
     <xs:complexType>
-      <xs:sequence>
-        <xs:element ref="roll"/>
-        <xs:element ref="pitch"/>
-        <xs:element ref="yaw"/>
-      </xs:sequence>
+      <xs:all>
+        <xs:element ref="roll" minOccurs="0"/>
+        <xs:element ref="pitch" minOccurs="0"/>
+        <xs:element ref="yaw" minOccurs="0"/>
+      </xs:all>
       <xs:attribute name="unit" use="required" type="xs:string"/>
     </xs:complexType>
   </xs:element>
