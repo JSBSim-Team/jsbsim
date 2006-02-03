@@ -6,7 +6,7 @@
     <fileheader>
         <author>Tony Peden</author>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.51 $</version>
+        <version>$Revision: 1.52 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -367,8 +367,7 @@
             <function name="aero/coefficient/CLwbh">
                 <description>Lift due to alpha</description>
                 <product>
-<!--                    <property>aero/function/ground-effect-factor-lift</property> -->
-                    <property>aero/function/foo</property>
+                    <property>aero/function/ground-effect-factor-lift</property>
                     <property>aero/qbar-area</property>
                     <table>
                         <independentVar lookup="row">aero/alpha-rad</independentVar>
