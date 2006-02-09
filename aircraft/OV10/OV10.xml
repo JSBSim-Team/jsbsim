@@ -7,7 +7,7 @@
     <fileheader>
         <author> Dave Culp, based on Aero-Matic </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.21 $ </version>
+        <version> $Revision: 1.22 $ </version>
         <description> OV-10 Bronco </description>
     </fileheader>
 
@@ -166,13 +166,14 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: OV10">
+
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <clipto>
                     <min>-1</min>
-                    <max>1</max>
+                    <max> 1</max>
                 </clipto>
             </summer>
 
@@ -180,18 +181,32 @@
                 <input>fcs/pitch-trim-sum</input>
                 <range>
                     <min>-0.35</min>
-                    <max>0.175</max>
+                    <max> 0.35</max>
+                </range>
+                <output>fcs/elevator-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Elevator Normalized">
+                <input>fcs/elevator-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
                 </range>
                 <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
         </channel>
+
         <channel name="Roll">
             <summer name="Roll Trim Sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
                     <min>-1</min>
-                    <max>1</max>
+                    <max> 1</max>
                 </clipto>
             </summer>
 
@@ -199,20 +214,47 @@
                 <input>fcs/roll-trim-sum</input>
                 <range>
                     <min>-0.35</min>
-                    <max>0.35</max>
+                    <max> 0.35</max>
                 </range>
-                <output>fcs/left-aileron-pos-norm</output>
+                <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
 
             <aerosurface_scale name="Right Aileron Control">
                 <input>-fcs/roll-trim-sum</input>
                 <range>
                     <min>-0.35</min>
-                    <max>0.35</max>
+                    <max> 0.35</max>
+                </range>
+                <output>fcs/right-aileron-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Left aileron Normalized">
+                <input>fcs/left-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
+                <output>fcs/left-aileron-pos-norm</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Right aileron Normalized">
+                <input>fcs/right-aileron-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
                 </range>
                 <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
         </channel>
+
         <channel name="Yaw">
             <summer name="Rudder Command Sum">
                 <input>fcs/rudder-cmd-norm</input>
@@ -229,9 +271,23 @@
                     <min>-0.35</min>
                     <max>0.35</max>
                 </range>
+                <output>fcs/rudder-pos-rad</output>
+            </aerosurface_scale>
+
+            <aerosurface_scale name="Rudder Normalized">
+                <input>fcs/rudder-pos-rad</input>
+                <domain>
+                    <min>-0.35</min>
+                    <max> 0.35</max>
+                </domain>
+                <range>
+                    <min>-1</min>
+                    <max> 1</max>
+                </range>
                 <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
         </channel>
+
         <channel name="Flaps">
             <kinematic name="Flaps Control">
                 <input>fcs/flap-cmd-norm</input>
@@ -252,6 +308,7 @@
                 <output>fcs/flap-pos-norm</output>
             </kinematic>
         </channel>
+
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
                 <input>gear/gear-cmd-norm</input>
@@ -268,7 +325,9 @@
                 <output>gear/gear-pos-norm</output>
             </kinematic>
         </channel>
+
     </flight_control>
+
     <aerodynamics>
 
         <axis name="DRAG">
@@ -359,7 +418,7 @@
                 </product>
             </function>
             <function name="aero/coefficient/dCDprop">
-                <description>Drag_due_to_prop_pitch</description>
+                <description>Drag_due_to_prop_beta</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -396,7 +455,7 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.2000	-0.7200
+                             -0.2000   -0.7200
                               0.0000	0.2400
                               0.2200	1.3000
                               0.6000	0.6640
@@ -409,14 +468,15 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flap-pos-deg</property>
-                    <value>0.01667</value>
+                    <property>fcs/flap-pos-norm</property>
+                    <value>0.66</value>
                 </product>
             </function>
             <function name="aero/coefficient/Lde">
                 <description>Lift_due_to_Elevator_Deflection</description>
                 <product>
                     <property>aero/qbar-psf</property>
+                    <property>fcs/elevator-pos-norm</property> 
                     <value>0.2000</value>
                 </product>
             </function>
