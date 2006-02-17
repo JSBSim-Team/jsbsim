@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.61 $ </version>
+        <version> $Revision: 1.62 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -227,36 +227,36 @@
         </engine>
         <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
-                <x> -163 </x>
-                <y> 88.2 </y>
-                <z> 4.3 </z>
+                <x> -174.4 </x>
+                <y> 65.0 </y>
+                <z> 5.0 </z>
             </location>
             <capacity unit="LBS"> 3486 </capacity>
             <contents unit="LBS"> 1500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
-                <x> -163 </x>
-                <y> -88.2 </y>
-                <z> 4.3 </z>
+                <x> -174.4 </x>
+                <y> -65.0 </y>
+                <z> 5.0 </z>
             </location>
             <capacity unit="LBS"> 3486 </capacity>
             <contents unit="LBS"> 1500 </contents>
         </tank>
         <tank type="FUEL">    <!-- External Tank number 0  (station 4) -->
             <location unit="IN">
-                <x> -419 </x>
-                <y> 88.2 </y>
-                <z> -0.5 </z>
+                <x> -174.4 </x>
+                <y> 65.0 </y>
+                <z> -15.0 </z>
             </location>
             <capacity unit="LBS"> 2991 </capacity>
             <contents unit="LBS"> 0 </contents>
         </tank>
         <tank type="FUEL">    <!-- External Tank number 1 (station 6) -->
             <location unit="IN">
-                <x> -419 </x>
-                <y> -88.2 </y>
-                <z> -0.5 </z>
+                <x> -174.4 </x>
+                <y> -65.0 </y>
+                <z> -15.0 </z>
             </location>
             <capacity unit="LBS"> 2991 </capacity>
             <contents unit="LBS"> 0 </contents>
@@ -284,9 +284,15 @@
                 <gain>0.125</gain>
             </pure_gain>
 
+            <pure_gain name="alpha limiter">
+                <input>aero/alpha-rad</input>
+                <gain>1.0472</gain>
+            </pure_gain>
+
             <summer name="g load error">
                 <input>fcs/elevator-cmd-limiter</input>
                 <input>fcs/g-load-norm</input>
+                <input>fcs/alpha-limiter</input>
             </summer>
 
             <pure_gain name="g load p">
@@ -302,6 +308,8 @@
             <lead_lag_filter name="g load d">
                 <input>fcs/g-load-error</input>
                 <c1>-0.000125</c1>
+                <c2>0.0</c2>
+                <c3>0.0</c3>
                 <c4>1</c4>
             </lead_lag_filter>
 
@@ -336,7 +344,7 @@
 
             <summer name="roll trim error">
                 <input>fcs/aileron-cmd-norm</input>
-                <input>fcs/roll-trim-cmd-norm</input>
+                <!-- input>fcs/roll-trim-cmd-norm</input -->
                 <input>-fcs/roll-rate-norm</input>
             </summer>
 
@@ -398,7 +406,7 @@
 
             <summer name="yaw trim error">
                 <input>fcs/rudder-cmd-norm</input>
-                <input>fcs/yaw-trim-cmd-norm</input>
+                <!-- input>fcs/yaw-trim-cmd-norm</input -->
                 <input>fcs/yaw-rate-norm</input>
             </summer>
 
@@ -415,6 +423,8 @@
             <lead_lag_filter name="yaw rate d">
                 <input>fcs/yaw-trim-error</input>
                 <c1>-0.00125</c1>
+                <c2>0.0</c2>
+                <c3>0.0</c3>
                 <c4>1</c4>
             </lead_lag_filter>
 
@@ -1500,14 +1510,4 @@
             </function>
         </axis>
     </aerodynamics>
-    <input port="1137"/>
-    <output name="localhost" type="SOCKET" port="1137" rate="5">
-      <property>propulsion/starter_cmd</property>
-      <property>propulsion/cutoff_cmd</property>
-      <property>fcs/throttle-pos-norm</property>
-      <property>propulsion/engine[0]/n1</property>
-      <property>propulsion/engine[0]/n2</property>
-      <property>propulsion/engine[0]/thrust</property>
-      <property>velocities/vc-kts</property>
-    </output>
 </fdm_config>
