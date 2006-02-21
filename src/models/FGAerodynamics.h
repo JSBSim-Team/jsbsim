@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.4 2006/02/21 12:25:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,20 +73,21 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates the aerodynamic calculations.
-    This class owns and contains the list of coefficients that define the
-    aerodynamic properties of this aircraft. Here also, such unique phenomena
+    This class owns and contains the list of force/coefficients that define the
+    aerodynamic properties of an aircraft. Here also, such unique phenomena
     as ground effect and maximum lift curve tailoff are handled.
-    @config
-    <pre>
-    \<AERODYNAMICS>
-       \<AXIS NAME="{LIFT|DRAG|SIDE|ROLL|PITCH|YAW}">
-         {Coefficient definitions}
-       \</AXIS>
-       {Additional axis definitions}
-    \</AERODYNAMICS> </pre>
+
+    @code
+    <aerodynamics>
+       <axis name="{LIFT|DRAG|SIDE|ROLL|PITCH|YAW}">
+         {force coefficient definitions}
+       </axis>
+       {additional axis definitions}
+    </aerodynamics>
+    @endcode
 
     @author Jon S. Berndt, Tony Peden
-    $Id: FGAerodynamics.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
+    @Id $Revision: 1.4 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +109,7 @@ public:
 
   /** Loads the Aerodynamics model.
       The Load function for this class expects the XML parser to
-      have found the AERODYNAMICS keyword in the configuration file.
+      have found the aerodynamics keyword in the configuration file.
       @param element pointer to the current XML element for aerodynamics parameters.
       @return true if successful */
   bool Load(Element* element);
@@ -164,9 +165,6 @@ public:
       coefficients */
   string GetCoefficientValues(string delimeter);
 
-  void bind(void);
-  void unbind(void);
-
 private:
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
@@ -185,6 +183,8 @@ private:
   double clsq, lod, qbar_area;
 
   typedef double (FGAerodynamics::*PMF)(int) const;
+  void bind(void);
+  void unbind(void);
 
   void Debug(int from);
 };

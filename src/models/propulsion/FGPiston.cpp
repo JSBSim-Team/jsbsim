@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.4 2006/02/21 12:25:04 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -298,6 +298,7 @@ double FGPiston::Calculate(void)
 
   if (Thruster->GetType() == FGThruster::ttPropeller) {
     ((FGPropeller*)Thruster)->SetAdvance(FCS->GetPropAdvance(EngineNumber));
+    ((FGPropeller*)Thruster)->SetFeather(FCS->GetPropFeather(EngineNumber));
   }
 
   PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
