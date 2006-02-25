@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.8 $ </version>
+        <version> $Revision: 1.9 $ </version>
         <description> PC-7 </description>
     </fileheader>
 
@@ -142,6 +142,9 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: pc7">
+
+        <property>fcs/flap-pos-norm</property>
+
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">
                 <input>fcs/elevator-cmd-norm</input>
@@ -150,6 +153,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/elevator-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -169,6 +173,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/left-aileron-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -197,6 +202,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/rudder-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
@@ -217,16 +223,21 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
+                        <position>0.5</position>
                         <time>4</time>
                     </setting>
                     <setting>
-                        <position>30</position>
+                        <position>1.0</position>
                         <time>3</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
+                <output>fcs/flap-pos-norm</output>
             </kinematic>
+            <pure_gain name="Flap Pos Scheduler">
+                <input>flap-pos-norm</input>
+                <gain>30.0</gain>
+                <output>fcs/flap-pos-deg</output>
+            </pure_gain>
         </channel>
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
