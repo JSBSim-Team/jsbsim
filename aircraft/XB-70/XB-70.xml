@@ -7,7 +7,7 @@
     <fileheader>
         <author> Jon Berndt/Aeromatic </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version>$Revision: 1.7 $ </version>
+        <version>$Revision: 1.8 $ </version>
         <description> XB-70 bomber flight model approximation </description>
         <reference
           refID="TM X-2933"
@@ -454,6 +454,18 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
+            <aerosurface_scale name="Flap Position Normalizer">
+              <input>fcs/flap-pos-deg</input>
+              <domain>
+                <min>0</min>  <!-- Flaps actual minimum position -->
+                <max>30</max>  <!-- Flaps actual maximum position -->
+              </domain>
+              <range>
+                <min>0</min>  <!-- Flaps normalized minimum position -->
+                <max>1</max>  <!-- Flaps normalized maximum position -->
+              </range>
+              <output>fcs/flap-pos-norm</output>
+            </aerosurface_scale>
         </channel>
         <channel name="Landing gear">
             <kinematic name="Gear Control">
@@ -538,7 +550,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.0550</value>
                 </product>
             </function>
@@ -622,7 +634,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>1.5000</value>
                 </product>
             </function>

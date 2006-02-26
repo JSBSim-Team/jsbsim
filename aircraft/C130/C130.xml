@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Id: C130.xml,v 1.9 2005/12/29 22:20:24 dpculp Exp $ </version>
+        <version> $Id: C130.xml,v 1.10 2006/02/26 17:26:35 jberndt Exp $ </version>
         <description> Models a Lockheed C-130 Hercules. </description>
     </fileheader>
 
@@ -328,6 +328,19 @@
             </traverse>
             <output>fcs/flap-pos-deg</output>
         </kinematic>
+
+        <aerosurface_scale name="Flap Position Normalizer">
+          <input>fcs/flap-pos-deg</input>
+          <domain>
+            <min>0</min>  <!-- Flaps actual minimum position -->
+            <max>30</max>  <!-- Flaps actual maximum position -->
+          </domain>
+          <range>
+            <min>0</min>  <!-- Flaps normalized minimum position -->
+            <max>1</max>  <!-- Flaps normalized maximum position -->
+          </range>
+          <output>fcs/flap-pos-norm</output>
+        </aerosurface_scale>
 
         <kinematic name="Gear Control">
             <input>gear/gear-cmd-norm</input>

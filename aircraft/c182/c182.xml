@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c182.xml,v 1.21 2006/02/01 13:31:29 jberndt Exp $ </version>
+        <version> $Id: c182.xml,v 1.22 2006/02/26 17:26:35 jberndt Exp $ </version>
         <description> Cessna C-182 </description>
     </fileheader>
 
@@ -216,7 +216,7 @@
                 </range>
                 <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
-            
+
             <aerosurface_scale name="Elevator position normalized">
   	         <input>fcs/elevator-pos-deg</input>
   	         <domain>
@@ -228,7 +228,7 @@
   	              <max>1</max>
   	         </range>
   	         <output>fcs/elevator-pos-norm</output>
-  	     </aerosurface_scale>            
+  	     </aerosurface_scale>
         </channel>
         <channel name="Roll">
             <summer name="Roll Trim Sum">
@@ -249,7 +249,7 @@
                 </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
-            
+
             <aerosurface_scale name="Left Aileron position normalized">
                <input>fcs/left-aileron-pos-deg</input>
                <domain>
@@ -261,8 +261,8 @@
                    <max>1</max>
                </range>
                <output>fcs/left-aileron-pos-norm</output>
-            </aerosurface_scale>                   
-            
+            </aerosurface_scale>
+
             <aerosurface_scale name="Right Aileron position normalized">
                <input>fcs/right-aileron-pos-deg</input>
                <domain>
@@ -274,8 +274,8 @@
                    <max>1</max>
                </range>
                <output>fcs/right-aileron-pos-norm</output>
-            </aerosurface_scale>                   
-            
+            </aerosurface_scale>
+
         </channel>
         <channel name="Yaw">
             <summer name="Yaw Trim Sum">
@@ -296,7 +296,7 @@
                 </range>
                 <output>fcs/rudder-pos-rad</output>
             </aerosurface_scale>
-            
+
             <aerosurface_scale name="Rudder position normalized">
                  <input>fcs/rudder-pos-deg</input>
                  <domain>
@@ -308,7 +308,7 @@
                       <max>1</max>
                  </range>
                  <output>fcs/rudder-pos-norm</output>
-            </aerosurface_scale>            
+            </aerosurface_scale>
         </channel>
         <channel name="Flaps">
             <kinematic name="Flaps Control">
@@ -333,19 +333,19 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
-            
+
             <aerosurface_scale name="Flap position normalized">
                  <input>fcs/flap-pos-deg</input>
                  <domain>
                     <min>0</min>
-                    <max>40</max>
+                    <max>30</max>
                  </domain>
                  <range>
                      <min>0</min>
                      <max>1</max>
                  </range>
                  <output>fcs/flap-pos-norm</output>
-            </aerosurface_scale>            
+            </aerosurface_scale>
         </channel>
     </flight_control>
     <aerodynamics>

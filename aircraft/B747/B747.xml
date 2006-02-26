@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: B747.xml,v 1.20 2005/12/30 04:32:48 jberndt Exp $ </version>
+        <version> $Id: B747.xml,v 1.21 2006/02/26 17:26:35 jberndt Exp $ </version>
         <description> Boeing 747 </description>
     </fileheader>
 
@@ -378,6 +378,20 @@
                 </setting>
             </traverse>
             <output>fcs/flap-pos-deg</output>
+
+            <aerosurface_scale name="Flap Position Normalizer">
+              <input>fcs/flap-pos-deg</input>
+              <domain>
+                <min>0</min>  <!-- Flaps actual minimum position -->
+                <max>30</max>  <!-- Flaps actual maximum position -->
+              </domain>
+              <range>
+                <min>0</min>  <!-- Flaps normalized minimum position -->
+                <max>1</max>  <!-- Flaps normalized maximum position -->
+              </range>
+              <output>fcs/flap-pos-norm</output>
+            </aerosurface_scale>
+
         </kinematic>
 
         <kinematic name="Gear Control">

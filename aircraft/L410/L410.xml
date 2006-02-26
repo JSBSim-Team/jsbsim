@@ -965,11 +965,18 @@
             <output>fcs/flap-pos-deg</output>
         </kinematic>
 
-        <pure_gain name="Flap Normalizer">
+        <aerosurface_scale name="Flap Position Normalizer">
           <input>fcs/flap-pos-deg</input>
-          <gain>0.0238</gain> <!-- 1/42 -->
+          <domain>
+            <min>0</min>  <!-- Flaps actual minimum position -->
+            <max>42</max>  <!-- Flaps actual maximum position -->
+          </domain>
+          <range>
+            <min>0</min>  <!-- Flaps normalized minimum position -->
+            <max>1</max>  <!-- Flaps normalized maximum position -->
+          </range>
           <output>fcs/flap-pos-norm</output>
-        </pure_gain>
+        </aerosurface_scale>
 
         <kinematic name="Gear Control">
             <input>/controls/gear/gear-down-cond</input>

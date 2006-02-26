@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.51 $ </version>
+        <version> $Revision: 1.52 $ </version>
         <description>
             Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -359,8 +359,8 @@
   	              <max>1</max>
   	         </range>
   	         <output>fcs/elevator-pos-norm</output>
-  	     </aerosurface_scale>            
-            
+  	     </aerosurface_scale>
+
         </channel>
 
         <channel name="Roll">
@@ -441,7 +441,7 @@
                 </range>
                 <output>fcs/rudder-pos-rad</output>
             </aerosurface_scale>
-            
+
             <aerosurface_scale name="Rudder position normalized">
                  <input>fcs/rudder-pos-deg</input>
                  <domain>
@@ -453,8 +453,8 @@
                       <max>1</max>
                  </range>
                  <output>fcs/rudder-pos-norm</output>
-            </aerosurface_scale>            
-            
+            </aerosurface_scale>
+
         </channel>
         <channel name="Flaps">
             <kinematic name="Flaps Control">
@@ -479,20 +479,20 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
-            
+
             <aerosurface_scale name="Flap position normalized">
                  <input>fcs/flap-pos-deg</input>
                  <domain>
                     <min>0</min>
-                    <max>40</max>
+                    <max>45</max>
                  </domain>
                  <range>
                      <min>0</min>
                      <max>1</max>
                  </range>
                  <output>fcs/flap-pos-norm</output>
-            </aerosurface_scale>            
-            
+            </aerosurface_scale>
+
         </channel>
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
@@ -538,7 +538,7 @@
         </function>
 
         <axis name="DRAG">
-	
+
             <function name="aero/coefficient/CDo">
                 <description>Drag_at_zero_lift</description>
                 <product>
@@ -547,7 +547,7 @@
                     <value>0.028</value>
                 </product>
             </function>
-	    
+
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
                 <product>
@@ -586,7 +586,7 @@
                       </table>
                 </product>
             </function>
-	    
+
             <function name="aero/coefficient/CDDf">
                 <description>Delta_drag_due_to_flap_deflection</description>
                 <product>

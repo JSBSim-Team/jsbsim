@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.9 $ </version>
+        <version> $Revision: 1.10 $ </version>
         <description> PC-7 </description>
     </fileheader>
 
@@ -142,8 +142,6 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: pc7">
-
-        <property>fcs/flap-pos-norm</property>
 
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">

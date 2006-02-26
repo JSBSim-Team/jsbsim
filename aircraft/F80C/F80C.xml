@@ -3,11 +3,11 @@
 <fdm_config name="F80C" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
-    
+
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2006-01-04</filecreationdate>
-     <version>$Revision: 1.2 $</version>
+     <version>$Revision: 1.3 $</version>
      <description>Models a Lockheed F-80C</description>
  </fileheader>
 
@@ -349,7 +349,6 @@
                 </traverse>
                 <output>fcs/flap-pos-norm</output>
             </kinematic>
-
         </channel>
 
         <channel name="Landing Gear">
@@ -542,7 +541,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>aero/beta-rad</property>
-                    <value> -0.1 </value>  
+                    <value> -0.1 </value>
                 </product>
             </function>
             <function name="aero/coefficient/Clp">

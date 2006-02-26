@@ -35,7 +35,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.24 $ </version>
+        <version> $Revision: 1.25 $ </version>
         <description> T-37 trainer </description>
     </fileheader>
 
@@ -283,20 +283,6 @@
                 <output>fcs/flap-pos-norm</output>
             </kinematic>
 
-<!--
-            <aerosurface_scale name="Flap Control Normalized">
-                <input>fcs/flap-pos-deg</input>
-                <domain>
-                    <min>0</min>
-                    <max>30</max>
-                </domain>
-                <range>
-                    <min>0</min>
-                    <max>1</max>
-                </range>
-                <output> fcs/flap-pos-norm </output>
-            </aerosurface_scale>
--->
         </channel>
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
