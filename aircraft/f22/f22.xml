@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Revision: 1.20 $ </version>
+        <version> $Revision: 1.21 $ </version>
         <description> Lockheed-Martin F-22 Raptor" </description>
     </fileheader>
 
@@ -394,7 +394,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>0.0750</value>
                 </product>
             </function>
@@ -535,7 +535,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>0.3500</value>
                 </product>
             </function>
@@ -740,6 +740,7 @@
         </axis>
 
         <axis name="YAW">
+<!--
             <function name="aero/coefficient/Cnb">
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
@@ -750,6 +751,7 @@
                     <value>0.1200</value>
                 </product>
             </function>
+-->
             <function name="aero/coefficient/Cnb">
                 <description>Yaw_moment_due_to_beta</description>
                 <product>
