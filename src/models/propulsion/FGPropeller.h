@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.5 2005/11/12 16:28:19 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.6 2006/02/26 14:10:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.5 2005/11/12 16:28:19 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.6 2006/02/26 14:10:57 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -161,6 +161,7 @@ public:
   bool   GetReverse (void) { return Reversed; }
   void   SetFeather (bool f) { Feathered = f; }
   bool   GetFeather (void) { return Feathered; }
+  double GetThrustCoefficient(void) const {return ThrustCoeff;}  
 
 private:
   int   numBlades;
