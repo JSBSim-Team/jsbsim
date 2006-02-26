@@ -199,7 +199,7 @@
                 </orient>
             </thruster>
         </engine>
-        <tank type="FUEL">    <!-- Tank number 0 --> 
+        <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x> 1580.79 </x>
                 <y> 200 </y>
@@ -208,7 +208,7 @@
             <capacity unit="LBS"> 100000 </capacity>
             <contents unit="LBS"> 12000 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 1 --> 
+        <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
                 <x> 1580.79 </x>
                 <y> -200 </y>
@@ -217,7 +217,7 @@
             <capacity unit="LBS"> 10000.3 </capacity>
             <contents unit="LBS"> 12000 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 2 --> 
+        <tank type="FUEL">    <!-- Tank number 2 -->
             <location unit="IN">
                 <x> 1580.79 </x>
                 <y> 0 </y>
@@ -226,7 +226,7 @@
             <capacity unit="LBS"> 100000 </capacity>
             <contents unit="LBS"> 12000.1 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 3 --> 
+        <tank type="FUEL">    <!-- Tank number 3 -->
             <location unit="IN">
                 <x> 1580.79 </x>
                 <y> 0 </y>
@@ -235,7 +235,7 @@
             <capacity unit="LBS"> 50000.3 </capacity>
             <contents unit="LBS"> 12000.1 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 4 --> 
+        <tank type="FUEL">    <!-- Tank number 4 -->
             <location unit="IN">
                 <x> 1580.79 </x>
                 <y> 0 </y>
@@ -307,8 +307,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    3.0000	0.0000	
-                    11.0000	2.0000	
+                    3.0000	0.0000
+                    11.0000	2.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -318,8 +318,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    3.0000	0.0000	
-                    11.0000	0.0000	
+                    3.0000	0.0000
+                    11.0000	0.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -338,8 +338,8 @@
             <table>
                 <independentVar>aero/qbar-psf</independentVar>
                 <tableData>
-                    2.9900	0.0000	
-                    3.0000	1.0000	
+                    2.9900	0.0000
+                    3.0000	1.0000
                 </tableData>
             </table>
         </scheduled_gain>
@@ -423,11 +423,11 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -1.5700	1.5000	
-                              -0.2600	0.0340	
-                              0.0000	0.0170	
-                              0.2600	0.0340	
-                              1.5700	1.5000	
+                              -1.5700	1.5000
+                              -0.2600	0.0340
+                              0.0000	0.0170
+                              0.2600	0.0340
+                              1.5700	1.5000
                           </tableData>
                       </table>
                 </product>
@@ -449,10 +449,10 @@
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
-                              0.0000	0.0000	
-                              0.7900	0.0000	
-                              1.1000	0.0230	
-                              1.8000	0.0150	
+                              0.0000	0.0000
+                              0.7900	0.0000
+                              1.1000	0.0230
+                              1.8000	0.0150
                           </tableData>
                       </table>
                 </product>
@@ -462,7 +462,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flaps-control</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>0.0550</value>
                 </product>
             </function>
@@ -492,11 +492,11 @@
                       <table>
                           <independentVar>aero/beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300	
-                              -0.2600	0.0500	
-                              0.0000	0.0000	
-                              0.2600	0.0500	
-                              1.5700	1.2300	
+                              -1.5700	1.2300
+                              -0.2600	0.0500
+                              0.0000	0.0000
+                              0.2600	0.0500
+                              1.5700	1.2300
                           </tableData>
                       </table>
                 </product>
@@ -533,10 +533,10 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.2000	-0.6800	
-                              0.0000	0.2000	
-                              0.2300	1.2000	
-                              0.6000	0.6000	
+                              -0.2000	-0.6800
+                              0.0000	0.2000
+                              0.2300	1.2000
+                              0.6000	0.6000
                           </tableData>
                       </table>
                 </product>
@@ -546,7 +546,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flaps-control</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>1.5000</value>
                 </product>
             </function>
@@ -613,8 +613,8 @@
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
-                              0.0000	0.1000	
-                              2.0000	0.0330	
+                              0.0000	0.1000
+                              2.0000	0.0330
                           </tableData>
                       </table>
                 </product>
@@ -652,8 +652,8 @@
                       <table>
                           <independentVar>velocities/mach</independentVar>
                           <tableData>
-                              0.0000	-1.3000	
-                              2.0000	-0.3250	
+                              0.0000	-1.3000
+                              2.0000	-0.3250
                           </tableData>
                       </table>
                 </product>
