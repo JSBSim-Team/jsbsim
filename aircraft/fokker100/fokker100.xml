@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Revision: 1.24 $ </version>
+        <version> $Revision: 1.25 $ </version>
         <description> Fokker 100 commercial airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
         <reference title="Butterworth-Heinemann - Civil Jet Aircraft Design (BH)
@@ -214,6 +214,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/elevator-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -233,6 +234,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/left-aileron-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -312,6 +314,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/rudder-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
