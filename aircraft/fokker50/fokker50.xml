@@ -7,8 +7,8 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2002-01-01</filecreationdate>
-        <version> $Revision: 1.15 $ </version>
-        <description> Fokker 50 commercial jet airliner </description>
+        <version> $Revision: 1.16 $ </version>
+        <description> Fokker 50 commercial turboprop airliner </description>
         <reference refID="None" author="n/a" title="n/a" date="n/a"/>
     </fileheader>
 
@@ -259,6 +259,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/elevator-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -279,6 +280,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/left-aileron-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -359,6 +361,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/rudder-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
@@ -380,15 +383,15 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
+                        <position>0.5</position>
                         <time>4</time>
                     </setting>
                     <setting>
-                        <position>30</position>
+                        <position>1.0</position>
                         <time>3</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
+                <output>fcs/flap-pos-norm</output>
             </kinematic>
         </channel>
 
@@ -527,7 +530,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCDge</property>
                     <value>0.0350</value>
                 </product>
@@ -613,7 +616,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <property>aero/function/kCLge</property>
                     <value>0.6000</value>
                 </product>
