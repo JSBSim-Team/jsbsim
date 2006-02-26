@@ -1,13 +1,41 @@
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
+<!--
+    Sources:
+
+      * http://www.wpafb.af.mil/museum/newold/t37.htm
+      SPECIFICATIONS
+        Span:   10.32 meters (33 ft. 10 in.)
+        Length:  8.92 meters (29 ft.  4 in.)
+        Height:  2.79 meters ( 9 ft.  5 in.)
+        Weight: 4,056 lbs. empty
+                6,580 lbs. max.
+        Armament: None
+        Engines: Two Continental J69-T-25s of 1,025 lbs. thrust ea.
+        Crew: Two
+
+      PERFORMANCE
+        Maximum speed:   425 mph (370 Kt)
+        Cruising speed:  350 mph.
+        Range:           650 miles
+        Service Ceiling: 35,000 ft.
+
+    * Jeff Scott
+      Cessna A-37/T-37, cruise configuration
+      small twin jet engine military trainer, data from:
+        Roskam, Jan. Airplane Flight Dynamics and Automatic Flight
+        Controls, Part I. Lawrence KS: DARcorporation, 1995,
+        pg 501-503
+
+-->
 <fdm_config name="T37" version="2.0" release="BETA"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Aeromatic / David Culp </author>
+        <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.23 $ </version>
+        <version> $Revision: 1.24 $ </version>
         <description> T-37 trainer </description>
     </fileheader>
 
@@ -174,6 +202,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/elevator-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Elevator Control">
@@ -193,6 +222,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/left-aileron-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Left Aileron Control">
@@ -221,6 +251,7 @@
                     <min>-1</min>
                     <max>1</max>
                 </clipto>
+                <output>fcs/rudder-pos-norm</output>
             </summer>
 
             <aerosurface_scale name="Rudder Control">
@@ -241,17 +272,18 @@
                         <time>0</time>
                     </setting>
                     <setting>
-                        <position>15</position>
+                        <position>0.5</position>
                         <time>4</time>
                     </setting>
                     <setting>
-                        <position>30</position>
+                        <position>1.0</position>
                         <time>3</time>
                     </setting>
                 </traverse>
-                <output>fcs/flap-pos-deg</output>
+                <output>fcs/flap-pos-norm</output>
             </kinematic>
 
+<!--
             <aerosurface_scale name="Flap Control Normalized">
                 <input>fcs/flap-pos-deg</input>
                 <domain>
@@ -264,6 +296,7 @@
                 </range>
                 <output> fcs/flap-pos-norm </output>
             </aerosurface_scale>
+-->
         </channel>
         <channel name="Landing Gear">
             <kinematic name="Gear Control">
