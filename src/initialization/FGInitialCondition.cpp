@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.5 2006/01/23 13:50:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.6 2006/02/27 16:45:39 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -982,12 +982,13 @@ void FGInitialCondition::bind(void){
 
 //******************************************************************************
 
-void FGInitialCondition::unbind(void){
+void FGInitialCondition::unbind(void)
+{
   PropertyManager->Untie("ic/vc-kts");
   PropertyManager->Untie("ic/ve-kts");
   PropertyManager->Untie("ic/vg-kts");
   PropertyManager->Untie("ic/vt-kts");
-  PropertyManager->Untie("ic/mach-norm");
+  PropertyManager->Untie("ic/mach");
   PropertyManager->Untie("ic/roc-fpm");
   PropertyManager->Untie("ic/gamma-deg");
   PropertyManager->Untie("ic/alpha-deg");
@@ -1010,13 +1011,13 @@ void FGInitialCondition::unbind(void){
   PropertyManager->Untie("ic/vw-east-fps");
   PropertyManager->Untie("ic/vw-down-fps");
   PropertyManager->Untie("ic/vw-mag-fps");
-  /* PropertyManager->Untie("ic/vw-dir-deg"); */
+  PropertyManager->Untie("ic/vw-dir-deg");
 
   PropertyManager->Untie("ic/roc-fps");
 
-  /*  PropertyManager->Untie("ic/u-fps");
+  PropertyManager->Untie("ic/u-fps");
   PropertyManager->Untie("ic/v-fps");
-  PropertyManager->Untie("ic/w-fps"); */
+  PropertyManager->Untie("ic/w-fps");
 
   PropertyManager->Untie("ic/gamma-rad");
   PropertyManager->Untie("ic/alpha-rad");
