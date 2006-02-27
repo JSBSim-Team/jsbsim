@@ -1,0 +1,2365 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="http://jsbsim.sourceforge.net/JSBSim.xsl" type="text/xsl"?>
+<fdm_config name="Concorde" version="2.0" release="BETA"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
+
+    <fileheader>
+        <author> Anon Y. Mous </author>
+        <filecreationdate> 11-15-2005 </filecreationdate>
+        <version> 0.8 </version>
+        <description>
+          Models a Concorde.
+
+          Model design data follows.
+          ------------------------
+
+          Vlo (landing gear operation)                 : 270 kt.
+          Vle (landing gear extended)                  : 270 kt.
+          Vmc (minimum control speed with engine inoperative)
+          Vmcl (approach)                              : 150 kt.
+          Vmc (takeoff)                                : 132 kt.
+          Vmcg (ground)                                : 116 kt.
+
+          Datum : the datum for center of gravity computation is a vertical
+          reference plane located 8.333 feet (2.540 m) forward of Fuselage
+          Station X.A.0. A reference rigging point "C" is provided on the
+          airframe 83.172 feet (25.351 m) aft of the datum at 13.66% C0.
+
+          M.A.C. : the "reference root choord" (C0) is 90.748 feet (27.660 m) in
+          length; its leading edge is located 70.771 feet (21.570 m) aft of the datum.
+
+          Fuel tank capacity (at density 6.68 lb / US Gallon) :
+
+          Tank      Usable weight     Total weight     Arm (% MAC)
+          ........................................................
+          1              9348            9361             39.80
+          2             10176           10207             76.10
+          3             10176           10207             76.10
+          4              9348            9361             39.80
+          5             16032           16072             49.40
+          5A             4956            4963             74.80
+          6             25803           25889             66.70
+          7             16490           16525             64.70
+          7A             4956            4963             74.80
+          8             28590           28645             46.70
+          9             24710           24747             16.90
+          10            26597           26618             30.50
+          11            23192           23218            113.90
+          Systems         827            1021             69.43
+          ........................................................
+          Totals       211200 lb       211797 lb          56.23
+
+          - http://perso.wanadoo.fr/hsors/FS_Soft/FAQ-FS2K2-Decode_Forum.txt/
+
+          Ron Freimuth (for MSFS) :
+
+          TYPE OF AIRCRAFT - ROLL,Rx PITCH,Ry YAW,Rz
+          Single Low Wing          .248 .338 .393
+          Single High Wing(C182R)  .242 .397 .393
+          Light Twin               .373 .269 .461
+          Biz Jet, Light           .293 .312 .420
+          Biz Jet, Heavy           .370 .356 .503
+          Twin Turbo- Prop         .235 .363 .416
+          Jet Airliner 4 eng.      .322 .339 .464
+          Jet Airliner 3 aft eng   .249 .375 .452
+          Jet Airliner 2 eng wing  .246 .382 .456
+          Prop Airliner 4 eng      .322 .324 .456
+          Prop Airliner 2 eng      .308 .345 .497
+          Jet Fighter              .266 .346 .400
+          Prop Fighter 1 eng       .268 .360 .420
+          Prop Fighter 2 eng       .330 .299 .447
+          Prop Bomber 2 eng        .270 .320 .410
+          Prop Bomber 4 eng        .316 .320 .376
+          Concorde Delta Wing      .255 .380 .390 (added, Ron Freimuth)
+
+          Note: Delta Wing adds more to Pitch MoI due to Long Root Chord.
+          Note: Yaw MoI ~ Pitch MoI + Roll MoI or a bit less.
+
+      ... Estimate Aircraft Moments of Inertia - from Jan Roskam ...
+
+          Roll  Ixx = (W/g)*(Rx*b/2)^2
+          Pitch Iyy = (W/g)*(Ry*d/2)^2
+          Yaw   Izz = (W/g)*(Rz*e/2)^2
+          Roll-Yaw Ixz <= 0.02 Iz, often 0.0 (added, Ron Freimuth)
+          g = 32.174 ft/s^2
+          W = gross wt. lb
+          b = span ft
+          d = length ft
+          e = (b+d)/2
+
+          Max TO  - 408,000 lb
+          No Fuel - 197,768 lb
+          Length - 204.5 ft  (.38*102)^2 = 1502
+          Span   -  84.25 ft (.253*42)^2
+                    = 113(Span+Length)/2 - 144.8 ft (.39*72.4)^2 = 797
+          Width  -  9.5 ft
+          Empty Mass - 197,768/32.174 = 6,142 slugs
+          Max Mass   - 408,000/32.174 = 12,670 slugs
+
+      .... Empty
+
+          Pitch: 1502 * 6142 = 9,227,000, Max: 19,034,000 slug ft^2
+          Roll:   113 * 6142 =   694,000, Max:  1,432,000
+          Yaw:    797 * 6142 = 4,897,000, Max: 10,100,000
+          Pitch is about 9,300,000, Yaw is 4,900,000, Roll is 696,000.
+
+
+          The moments of inertia had been changed, as an attempt to solve the autopilot roll.
+
+          - http://www.concordesst.com/ :
+
+          Length : overall 202'4", nose to cockpit 24'.
+          Height : fuselage max external 10'10".
+          Width : fuselage max external 9'5".
+          Gear : main track 25'4".
+          Wing : span 83 ft. 10 in., length (root chord) 90 ft. 9 in..
+          Area (sq. ft) : Wing 3856, Elevon (each side) 172.2, Tail 365, Rudder 112.
+          Weight (lbs) : max take off 408000, zero fuel 203000, operating empty 173500,
+                         max payload 29500, max taxing 412000, max landing 245000.
+
+          Fuel : max 26400 gallons.
+
+          TABLE A :
+
+          Fuel tanks          tank       liters         kg (density 0.792)
+          ..................................................
+          Engines supplies      1         5300         4198
+                                2         5770         4570
+                                3         5770         4570
+                                4         5300         4198
+          Main storages         5         9090         7200
+                                6        14630        11587
+                                7         9350         7405
+                                8        16210        12838
+          Auxiliary             5A        2810         2225
+                                7A        2810         2225
+          Transfer & reserve    9        14010        11096
+                                10       15080        11943
+                                11       13150        10415
+          ..................................................
+          Totals                        119280 l      94470 kg
+
+          Note that 1 US gal = 3.7854 liters.
+
+          Maximum operating altitude : 60000 ft.
+          Range : 4500 miles (3900 NM).
+          Speed : max operating Mach 2.04, average takeoff 250 mph (217 kt),
+                  average landing 185 mph (161 kt).
+
+          AOA : min -5.5deg (above Mach 1), max 16.5deg.
+          Vortex above the entire wing creates lift at low speed and high AOA.
+          Ground effect at landing : downwash of the air betweeen the wing and the ground.
+          Delta wing provides a great deal of lift at Mach speed, with very little drag.
+
+          Flight systems (range up and down) : inner elevons 9deg, middle and
+                                               outer elevons 23.5deg, rudder 30deg.
+          Actual travel limits are a little lower than these mechanical limits.
+
+          Turbulence mode reduces the trim rate.
+
+          Gear :
+          - main gear : track 7 ft. 72 in., brakes.
+          - nose : wheelbase to main gear 59 ft. 8 1/4 in., no brake, +/-60deg steering angle.
+          - tail : no brake.
+          - up process takes 12 s : door opening 2 s, gear retract 8 s, door closing 8 s.
+
+          Nose :
+          - from UP : visor transit 0deg 6-8 s.
+          - nose transit 5deg 4-6 s.
+          - to DOWN : nose transit 12.5deg 5.7 s.
+
+          Max total temperature (TMO) : 127degC (on nose).
+          Max oil temperature : start & takeoff 125degC, takeoff & 5 minutes
+                                transient 195degC, continuous operation 190degC,
+                                starting -35degC, adavance above idle -20degC.
+          Mas oil pressure : continued operation 5 PSI, takeoff 10 PSI.
+          Max fuel temperature : startup -40degC, advance above idle -40degC,
+                                 continued operation 50degC.
+
+          - http://www.alpa.org/alpa/DesktopModules/ViewDocument.aspx?DocumentID=814 :
+
+          Mass gross weight : takeoff lasts 45 s, V1 165 kt, VR 195 kt, V2 220.
+          Initial pitch at rotation is 13.5deg.
+          Cockpit is very noisy until nose is streamlined.
+          Climb rate is slowly increased from 1500 to 3000 ft/s.
+          Best lift-over-drag ratio over 300 kt.
+          At takeoff, center of gravity is 51-52%, 58% at Mach 2.04.
+          At Mach 1.3, inlet-guide ramps lower to slow down the intake air.
+          At Mach 1.7 the afterburners are turned off, and the non-bypass engines
+          are able to increase to Mach 2.04 (1150 kt)
+          with about half the fuel flow.
+          At cruise speed, the air entering the engines is reduced by intake
+          ramps to 500 kt. This drop in intakes provides 45% of thrust, the
+          engines 50%, and the convergent/divergent effect of the nozzle and
+          stowed thrust reversers, 5%.
+          At Mach 2.04, fuel flow is 45200 lb/h.
+          Heathrow to Kennedy : 3h50.
+          VREF is 162 kt at 275000 lb.
+
+          - http://www.concorde-jet.com/ :
+
+          Nose : Odeg visor up supersonic, 0deg visor down subsonic,
+                 5deg takeoff/subsonic, and 12.5deg approach/landing/taxi.
+          Takeoff : 175 kt, in 24 s, 1700-2100 ft/minute.
+          Landing : 162 kt, 1500-1700 ft/minute.
+          Subsonic cruise : Mach 0.93.
+          Fuel : capacity 95680 kg, 20500 kg/h, 10000 at arrival.
+          Aero reference point steps back of 2 m at Mach 2.
+
+          - http://www.club-concorde.org/ :
+
+          Min runway : takeoff 3600 m, landing : 2200 m..
+          Max wing loading : 488 kg/m2.
+          Max climbing rate : 1525 m/minute.
+          Takeoff speed : 214 kt.
+          Landing speed : 130 kt, max 162 kt.
+
+          - http://www.bea-fr.org/docspa/2000/f-sc000725/htm/f-sc000725.html/
+            (incident report, july 2000) :
+
+          Droop nose : 0.53 m.
+          Front gear from nose (without droop nose) : 18.7 m.
+          Main gear from front gear : 18.2 m.
+          Distance of twin engine join : 11 m.
+
+          Reheat provides 18% of additional thrust during take off.
+
+          TABLE A corresponds to an effective filling at 95% of tanks (94% for tank 5).
+          It is possible to surpass fuel gauges with 1660 additional liters.
+
+          - http://www.aoe.vt.edu/~mason/Mason_f/ConfigAeroSupersonicNotes.pdf/ (Willian H. Mason) :
+
+          From "Jean Rech and Clive S. Leyman, A Case Study by Aerospatiale and
+                British Aerospace on the Concorde, AIAA Professional studies series" :
+
+                    CG (without          CG (with          Aerodynamic
+          Mach     fuel transfer)     fuel transfer)     center location
+          ..............................................................
+          0.5          53.5                53.5                55.0
+          0.75                             53.5
+          0.9                              55.0                58.0
+          1.0                              55.0                64.5
+          1.2                                                  63.5
+          1.5                              57.5                62.5
+          2.0          53.5                58.5                62.0
+
+          (all positions in % of aerodynamic chord C0, 90.748 feet).
+
+          - http://www.titanic.com/story/159/Concorde/ :
+
+          Runway : 11200 ft takeoff, 7300 ft landing.
+          Max climb rate : 5000 ft/s.
+          Range : 3550 nm supersonic, 2760 nm subsonic (Mach 0.95 FL300).
+
+          Areas (sq ft) : wings (gross) 3856, elevons (total) 344.44, fin
+                          (excluding dorsal fin) 365, rudder 112.
+
+          - http://www.dft.gov.uk/stellent/groups/dft_avsafety/documents/page/dft_avsafety_029047.hcsp/
+            (incident report, 13 june 2003) :
+
+          The fuel tanks are arranged in 3 groups : the left main transfer group,
+          the right main transfer and the trim transfer. The left and right main
+          transfer groups store fuel in the wings and sections of the center fuselage,
+          and both groups are comprised of 3 main tanks, which supply 2 collector
+          tanks per group, from which the engines are fed.
+
+          The collector tanks on the right main transfer group are tanks 3 and 4,
+          which feed engines 3 and 4 respectively. The main fuel transfer system
+          transfers fuel from the main transfer tanks to the collector tanks at
+          a rate sufficiently high to ensure that the collectors tanks are always
+          maintained in a near full condition.
+        </description>
+
+        <note>Air intake effect included, which allows more drag at Mach 1.3-2.0.</note>
+        <note>Full tanks at maximum takeoff load.</note>
+        <note>Landing pitch is 10deg. (maximum landing load) and ground effect.</note>
+        <note>Climb pitch at 10deg (maximum landing load).</note>
+        <note>Climb Mach 0.95 to 1.7 in 10 minutes.</note>
+        <note>Can reach Mach 2.0, below the VMO.</note>
+        <note>Inside of center of gravity corridor.</note>
+        <note>London - New York : can land below max landing weight (aloft westerly at 39 kt).</note>
+        <limitation>Tail wheel can touch the runway on takeoff or autoland.</limitation>
+        <limitation>Model uses flaps as nose (temporary).</limitation>
+        <limitation>Without an additional PID, above Mach 1, autopilot heading hold would lock with a right roll.</limitation>
+        <limitation>Electrical system model is integrated in flight control section.</limitation>
+        <reference
+          refID="FAA certificate, A45eu"
+          author="FAA"
+          title="http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet"
+          date="January 1979"/>
+
+
+    </fileheader>
+
+    <metrics>
+        <wingarea unit="FT2"> 3856.0000 </wingarea>
+        <wingspan unit="FT"> 83.8300 </wingspan>
+        <chord unit="FT"> 90.7500 </chord>
+        <htailarea unit="FT2"> 0.0000 </htailarea>
+        <htailarm unit="FT"> 5.0000 </htailarm>
+        <vtailarea unit="FT2"> 365.0000 </vtailarea>
+        <vtailarm unit="FT"> 21.6800 </vtailarm>
+        <location name="AERORP" unit="IN">
+            <x> 1410.4000 </x>
+            <y> 0.0000 </y>
+            <z> -16.2500 </z>
+        </location>
+        <location name="EYEPOINT" unit="IN">
+            <x> 288.0000 </x>
+            <y> -28.2500 </y>
+            <z> 32.5000 </z>
+        </location>
+        <location name="VRP" unit="IN">
+            <x> 0.0000 </x>
+            <y> 0.0000 </y>
+            <z> 0.0000 </z>
+        </location>
+    </metrics>
+
+    <mass_balance>
+        <ixx unit="SLUG*FT2"> 1432000.0000 </ixx>
+        <iyy unit="SLUG*FT2"> 19034000.0000 </iyy>
+        <izz unit="SLUG*FT2"> 10100000.0000 </izz>
+        <ixy unit="SLUG*FT2"> 0.0000 </ixy>
+        <ixz unit="SLUG*FT2"> 0.0000 </ixz>
+        <iyz unit="SLUG*FT2"> 0.0000 </iyz>
+        <emptywt unit="LBS"> 203000.0000 </emptywt>
+        <location name="CG" unit="IN">
+            <x> 1299.4000 </x>
+            <y> 0.0000 </y>
+            <z> -32.5000 </z>
+        </location>
+    </mass_balance>
+
+    <ground_reactions>
+        <contact type="BOGEY" name="NOSE_LG">
+            <location unit="IN">
+                <x> 736.2000 </x>
+                <y> 0.0000 </y>
+                <z> -162.5000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 60.0000 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="LEFT_FWD">
+            <location unit="IN">
+                <x> 1427.2000 </x>
+                <y> -152.0000 </y>
+                <z> -162.5000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 408000.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 81600.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> LEFT </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="LEFT_REAR">
+            <location unit="IN">
+                <x> 1478.4000 </x>
+                <y> -152.0000 </y>
+                <z> -162.5000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 408000.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 81600.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> LEFT </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_FWD">
+            <location unit="IN">
+                <x> 1427.2000 </x>
+                <y> 152.0000 </y>
+                <z> -162.5000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 408000.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 81600.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> RIGHT </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_REAR">
+            <location unit="IN">
+                <x> 1478.4000 </x>
+                <y> 152.0000 </y>
+                <z> -162.5000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 408000.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 81600.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> RIGHT </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="TAIL">
+            <location unit="IN">
+                <x> 2081.0000 </x>
+                <y> 0.0000 </y>
+                <z> 20.0000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>1</retractable>
+        </contact>
+        <contact type="BOGEY" name="NOSE_TIP">
+            <location unit="IN">
+                <x> 0.0000 </x>
+                <y> 0.0000 </y>
+                <z> 0.0000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="LEFT_TIP">
+            <location unit="IN">
+                <x> 1825.2000 </x>
+                <y> -503.0000 </y>
+                <z> 0.0000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="RIGHT_TIP">
+            <location unit="IN">
+                <x> 1825.2000 </x>
+                <y> 503.0000 </y>
+                <z> 0.0000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+        <contact type="BOGEY" name="TAIL_TIP">
+            <location unit="IN">
+                <x> 2427.6000 </x>
+                <y> 0.0000 </y>
+                <z> 50.0000 </z>
+            </location>
+            <static_friction> 0.8000 </static_friction>
+            <dynamic_friction> 0.5000 </dynamic_friction>
+            <rolling_friction> 0.0200 </rolling_friction>
+            <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
+            <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
+            <max_steer unit="DEG"> 0.0 </max_steer>
+            <brake_group> NONE </brake_group>
+            <retractable>0</retractable>
+        </contact>
+    </ground_reactions>
+    <propulsion>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -249.4000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>0</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> -249.4000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>1</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> -184.5000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>2</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> 184.5000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 249.4000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>3</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> 249.4000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <tank type="FUEL">    <!-- Tank number 0 -->
+            <location unit="IN">
+                <x> 1170.0000 </x>
+                <y> -114.0000 </y>
+                <z> 0.0000 </z>
+            </location>
+            <capacity unit="LBS"> 9255.0100 </capacity>
+            <contents unit="LBS"> 9255.0100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 1 -->
+            <location unit="IN">
+                <x> 1565.0000 </x>
+                <y> -76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 10075.1300 </capacity>
+            <contents unit="LBS"> 10075.1300 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 2 -->
+            <location unit="IN">
+                <x> 1565.0000 </x>
+                <y> 76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 10075.1300 </capacity>
+            <contents unit="LBS"> 10075.1300 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 3 -->
+            <location unit="IN">
+                <x> 1170.0000 </x>
+                <y> 114.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 9255.0100 </capacity>
+            <contents unit="LBS"> 9255.0100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 4 -->
+            <location unit="IN">
+                <x> 1274.0000 </x>
+                <y> -152.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 16099.2600 </capacity>
+            <contents unit="LBS"> 16099.2600 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 5 -->
+            <location unit="IN">
+                <x> 1463.0000 </x>
+                <y> -76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 26923.9500 </capacity>
+            <contents unit="LBS"> 26923.9500 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 6 -->
+            <location unit="IN">
+                <x> 1441.0000 </x>
+                <y> 152.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 16099.2600 </capacity>
+            <contents unit="LBS"> 16099.2600 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 7 -->
+            <location unit="IN">
+                <x> 1245.0000 </x>
+                <y> 76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 26923.9500 </capacity>
+            <contents unit="LBS"> 26923.9500 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 8 -->
+            <location unit="IN">
+                <x> 920.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 24462.4900 </capacity>
+            <contents unit="LBS"> 24462.4900 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 9 -->
+            <location unit="IN">
+                <x> 1068.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 26329.8100 </capacity>
+            <contents unit="LBS"> 26329.8100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 10 -->
+            <location unit="IN">
+                <x> 1977.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 22961.1400 </capacity>
+            <contents unit="LBS"> 19735.3100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 11 -->
+            <location unit="IN">
+                <x> 1551.0000 </x>
+                <y> -380.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 4905.2900 </capacity>
+            <contents unit="LBS"> 4905.2900 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 12 -->
+            <location unit="IN">
+                <x> 1551.0000 </x>
+                <y> 380.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <capacity unit="LBS"> 4905.2900 </capacity>
+            <contents unit="LBS"> 4905.2900 </contents>
+        </tank>
+    </propulsion>
+    <flight_control name="FCS: Concorde">
+     <channel name="All">
+
+        <summer name="Pitch Trim Sum">
+            <input>fcs/elevator-cmd-norm</input>
+            <input>fcs/pitch-trim-cmd-norm</input>
+            <clipto>
+                <min>-1.0000</min>
+                <max>1.0000</max>
+            </clipto>
+        </summer>
+
+        <aerosurface_scale name="Elevator Control">
+            <input>fcs/pitch-trim-sum</input>
+            <gain>0.0175</gain>
+            <range>
+                <min>-22.5000</min>
+                <max>22.5000</max>
+            </range>
+            <output>fcs/elevator-pos-rad</output>
+        </aerosurface_scale>
+
+        <summer name="Roll Trim Sum">
+            <input>fcs/aileron-cmd-norm</input>
+            <input>fcs/roll-trim-cmd-norm</input>
+            <clipto>
+                <min>-1.0000</min>
+                <max>1.0000</max>
+            </clipto>
+        </summer>
+
+        <aerosurface_scale name="Left Aileron Control">
+            <input>fcs/roll-trim-sum</input>
+            <gain>0.0175</gain>
+            <range>
+                <min>-22.5000</min>
+                <max>22.5000</max>
+            </range>
+            <output>fcs/left-aileron-pos-rad</output>
+        </aerosurface_scale>
+
+        <aerosurface_scale name="Right Aileron Control">
+            <input>-fcs/roll-trim-sum</input>
+            <gain>0.0175</gain>
+            <range>
+                <min>-22.5000</min>
+                <max>22.5000</max>
+            </range>
+            <output>fcs/right-aileron-pos-rad</output>
+        </aerosurface_scale>
+
+        <summer name="Rudder Command Sum">
+            <input>fcs/rudder-cmd-norm</input>
+            <input>fcs/yaw-trim-cmd-norm</input>
+            <clipto>
+                <min>-1.0000</min>
+                <max>1.0000</max>
+            </clipto>
+        </summer>
+
+        <scheduled_gain name="Yaw Damper Rate">
+            <input>velocities/r-aero-rad_sec</input>
+            <table>
+                <independentVar>aero/qbar-psf</independentVar>
+                <tableData>
+                    3.0000	0.0000
+                    11.0000	2.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="Yaw Damper Beta">
+            <input>aero/beta-rad</input>
+            <table>
+                <independentVar>aero/qbar-psf</independentVar>
+                <tableData>
+                    3.0000	0.0000
+                    11.0000	0.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="Yaw Damper Sum">
+            <input>fcs/yaw-damper-beta</input>
+            <input>fcs/yaw-damper-rate</input>
+            <clipto>
+                <min>-0.2000</min>
+                <max>0.2000</max>
+            </clipto>
+        </summer>
+
+        <scheduled_gain name="Yaw Damper Final">
+            <input>fcs/yaw-damper-sum</input>
+            <table>
+                <independentVar>aero/qbar-psf</independentVar>
+                <tableData>
+                    2.9900	0.0000
+                    3.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="Rudder Sum">
+            <input>fcs/rudder-command-sum</input>
+            <input>fcs/yaw-damper-final</input>
+            <clipto>
+                <min>-1.0000</min>
+                <max>1.0000</max>
+            </clipto>
+        </summer>
+
+        <aerosurface_scale name="Rudder Control">
+            <input>fcs/rudder-sum</input>
+            <gain>0.0175</gain>
+            <range>
+                <min>-29.0000</min>
+                <max>29.0000</max>
+            </range>
+            <output>fcs/rudder-pos-rad</output>
+        </aerosurface_scale>
+
+        <kinematic name="Flaps Control">
+            <input>fcs/flap-cmd-norm</input>
+            <traverse>
+                <setting>
+                    <position>0.0000</position>
+                    <time>0.0000</time>
+                </setting>
+                <setting>
+                    <position>0.0000</position>
+                    <time>7.0000</time>
+                </setting>
+                <setting>
+                    <position>5.0000</position>
+                    <time>5.0000</time>
+                </setting>
+                <setting>
+                    <position>12.5000</position>
+                    <time>6.0000</time>
+                </setting>
+            </traverse>
+            <output>fcs/flap-pos-deg</output>
+        </kinematic>
+
+        <kinematic name="Gear Control">
+            <input>gear/gear-cmd-norm</input>
+            <traverse>
+                <setting>
+                    <position>0.0000</position>
+                    <time>0.0000</time>
+                </setting>
+                <setting>
+                    <position>1.0000</position>
+                    <time>12.0000</time>
+                </setting>
+            </traverse>
+            <output>gear/gear-pos-norm</output>
+        </kinematic>
+
+        <kinematic name="Speedbrake Control">
+            <input>fcs/speedbrake-cmd-norm</input>
+            <traverse>
+                <setting>
+                    <position>0.0000</position>
+                    <time>0.0000</time>
+                </setting>
+                <setting>
+                    <position>1.0000</position>
+                    <time>1.0000</time>
+                </setting>
+            </traverse>
+            <output>fcs/speedbrake-pos-norm</output>
+        </kinematic>
+
+        <pure_gain name="elec DC Battery A 5P">
+            <input>/systems/electrical/loads/battery</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/battery</output>
+        </pure_gain>
+
+        <pure_gain name="elec DC Battery B 6P">
+            <input>/systems/electrical/loads/battery[1]</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/battery[1]</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup engine1">
+            <input>/engines/engine/fuel-flow_pph</input>
+            <gain>0.1000</gain>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/engine</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup engine2">
+            <input>/engines/engine[1]/fuel-flow_pph</input>
+            <gain>0.1000</gain>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/engine[1]</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup engine3">
+            <input>/engines/engine[2]/fuel-flow_pph</input>
+            <gain>0.1000</gain>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/engine[2]</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup engine4">
+            <input>/engines/engine[3]/fuel-flow_pph</input>
+            <gain>0.1000</gain>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/engine[3]</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup hydraulic green">
+            <input>/systems/hydraulic/circuits/circuit/pressure-psi</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/emergency</output>
+        </pure_gain>
+
+        <pure_gain name="elec sup ground service">
+            <input>/systems/electrical/suppliers/ground-service</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/suppliers/external</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec out GPB">
+            <input>/systems/electrical/suppliers/external</input>
+            <table>
+                <independentVar>/controls/electric/ac/ground</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-gpb</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con GPB SSB">
+            <input>/systems/electrical/outputs/probe/ac-gpb</input>
+            <table>
+                <independentVar>/controls/electric/ac/gpb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con engine 1 CSD">
+            <input>/systems/electrical/suppliers/engine</input>
+            <table>
+                <independentVar>/engines/engine[0]/running</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-csd1</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con engine 2 CSD">
+            <input>/systems/electrical/suppliers/engine[1]</input>
+            <table>
+                <independentVar>/engines/engine[1]/running</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-csd2</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con engine 3 CSD">
+            <input>/systems/electrical/suppliers/engine[2]</input>
+            <table>
+                <independentVar>/engines/engine[2]/running</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-csd3</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con engine 4 CSD">
+            <input>/systems/electrical/suppliers/engine[3]</input>
+            <table>
+                <independentVar>/engines/engine[3]/running</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-csd4</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con CSD 1 generator">
+            <input>/systems/electrical/outputs/probe/ac-csd1</input>
+            <table>
+                <independentVar>/controls/engines/engine[0]/master-alt</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-generator1</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con CSD 2 generator">
+            <input>/systems/electrical/outputs/probe/ac-csd2</input>
+            <table>
+                <independentVar>/controls/engines/engine[1]/master-alt</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-generator2</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con CSD 3 generator">
+            <input>/systems/electrical/outputs/probe/ac-csd3</input>
+            <table>
+                <independentVar>/controls/engines/engine[2]/master-alt</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-generator3</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con CSD 4 generator">
+            <input>/systems/electrical/outputs/probe/ac-csd4</input>
+            <table>
+                <independentVar>/controls/engines/engine[3]/master-alt</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-generator4</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con generator 1 AC Main 1X">
+            <input>/systems/electrical/outputs/probe/ac-generator1</input>
+            <table>
+                <independentVar>/controls/electric/ac/generator1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con BTB AC Main 1X">
+            <input>/systems/electrical/outputs/probe/ac-btb-left</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con SSB AC Main 1X">
+            <input>/systems/electrical/outputs/probe/ac-ssb</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Main 1X">
+            <input>fcs/elec-con-generator-1-ac-main-1x</input>
+            <input>fcs/elec-con-btb-ac-main-1x</input>
+            <input>fcs/elec-con-ssb-ac-main-1x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-main1</output>
+        </summer>
+
+        <scheduled_gain name="elec con generator 2 AC Main 2X">
+            <input>/systems/electrical/outputs/probe/ac-generator2</input>
+            <table>
+                <independentVar>/controls/electric/ac/generator2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con BTB AC Main 2X">
+            <input>/systems/electrical/outputs/probe/ac-btb-left</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con SSB AC Main 2X">
+            <input>/systems/electrical/outputs/probe/ac-ssb</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Main 2X">
+            <input>fcs/elec-con-generator-2-ac-main-2x</input>
+            <input>fcs/elec-con-btb-ac-main-2x</input>
+            <input>fcs/elec-con-ssb-ac-main-2x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-main2</output>
+        </summer>
+
+        <scheduled_gain name="elec con generator 3 AC Main 3X">
+            <input>/systems/electrical/outputs/probe/ac-generator3</input>
+            <table>
+                <independentVar>/controls/electric/ac/generator3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con BTB AC Main 3X">
+            <input>/systems/electrical/outputs/probe/ac-btb-right</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con SSB AC Main 3X">
+            <input>/systems/electrical/outputs/probe/ac-ssb</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Main 3X">
+            <input>fcs/elec-con-generator-3-ac-main-3x</input>
+            <input>fcs/elec-con-btb-ac-main-3x</input>
+            <input>fcs/elec-con-ssb-ac-main-3x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-main3</output>
+        </summer>
+
+        <scheduled_gain name="elec con generator 4 AC Main 4X">
+            <input>/systems/electrical/outputs/probe/ac-generator4</input>
+            <table>
+                <independentVar>/controls/electric/ac/generator4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con BTB AC Main 4X">
+            <input>/systems/electrical/outputs/probe/ac-btb-right</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con SSB AC Main 4X">
+            <input>/systems/electrical/outputs/probe/ac-ssb</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Main 4X">
+            <input>fcs/elec-con-generator-4-ac-main-4x</input>
+            <input>fcs/elec-con-btb-ac-main-4x</input>
+            <input>fcs/elec-con-ssb-ac-main-4x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-main4</output>
+        </summer>
+
+        <scheduled_gain name="elec con green generator 5">
+            <input>/systems/electrical/suppliers/emergency</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/arm</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-generator5</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con generator 5 AC emergency 16X">
+            <input>/systems/electrical/outputs/probe/ac-generator5</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/generator</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-emergencya</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con battery A 5P DC Essential 3P">
+            <input>/systems/electrical/suppliers/battery</input>
+            <table>
+                <independentVar>/controls/engines/engine[0]/master-bat</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus DC Essential 3P">
+            <input>fcs/elec-con-battery-a-5p-dc-essential-3p</input>
+            <input>fcs/elec-con-ac-essential-5x-dc-essential-3p</input>
+            <input>fcs/elec-con-dc-main-1p-dc-essential-3p</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/dc-essentiala</output>
+        </summer>
+
+        <scheduled_gain name="elec con battery B 6P DC Essential 4P">
+            <input>/systems/electrical/suppliers/battery[1]</input>
+            <table>
+                <independentVar>/controls/electric/dc/master-bat</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus DC Essential 4P">
+            <input>fcs/elec-con-battery-b-6p-dc-essential-4p</input>
+            <input>fcs/elec-con-ac-essential-8x-dc-essential-4p</input>
+            <input>fcs/elec-con-dc-main-2p-dc-essential-4p</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/dc-essentialb</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 1X BTB">
+            <input>fcs/elec-con-generator-1-ac-main-1x</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Main 2X BTB">
+            <input>fcs/elec-con-generator-2-ac-main-2x</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec con BTB left">
+            <input>fcs/elec-con-ac-main-1x-btb</input>
+            <input>fcs/elec-con-ac-main-2x-btb</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-btb-left</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 3X BTB">
+            <input>fcs/elec-con-generator-3-ac-main-3x</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Main 4X BTB">
+            <input>fcs/elec-con-generator-4-ac-main-4x</input>
+            <table>
+                <independentVar>/controls/electric/ac/btb4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec con BTB right">
+            <input>fcs/elec-con-ac-main-3x-btb</input>
+            <input>fcs/elec-con-ac-main-4x-btb</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-btb-right</output>
+        </summer>
+
+        <scheduled_gain name="elec con BTB left SSB">
+            <input>/systems/electrical/outputs/probe/ac-btb-left</input>
+            <table>
+                <independentVar>/controls/electric/ac/ssb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con BTB right SSB">
+            <input>/systems/electrical/outputs/probe/ac-btb-right</input>
+            <table>
+                <independentVar>/controls/electric/ac/ssb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec con SSB">
+            <input>fcs/elec-con-btb-left-ssb</input>
+            <input>fcs/elec-con-btb-right-ssb</input>
+            <input>fcs/elec-con-gpb-ssb</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-ssb</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 1X AC Essential 5X">
+            <input>/systems/electrical/outputs/probe/ac-main1</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus emergency 5X">
+            <input>fcs/elec-con-ac-emergency-16x-ac-essential-5x</input>
+            <input>fcs/elec-con-ac-main-1x-ac-essential-5x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-essential1</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 2X AC Essential 6X">
+            <input>/systems/electrical/outputs/probe/ac-main2</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus emergency 6X">
+            <input>fcs/elec-con-ac-emergency-16x-ac-essential-6x</input>
+            <input>fcs/elec-con-ac-main-2x-ac-essential-6x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-essential2</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 3X AC Essential 7X">
+            <input>/systems/electrical/outputs/probe/ac-main3</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus emergency 7X">
+            <input>fcs/elec-con-ac-emergency-17x-ac-essential-7x</input>
+            <input>fcs/elec-con-ac-main-3x-ac-essential-7x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-essential3</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 4X AC Essential 8X">
+            <input>/systems/electrical/outputs/probe/ac-main4</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus emergency 8X">
+            <input>fcs/elec-con-ac-emergency-17x-ac-essential-8x</input>
+            <input>fcs/elec-con-ac-main-4x-ac-essential-8x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-essential4</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 2X AC Avionics 10X">
+            <input>/systems/electrical/outputs/probe/ac-main2</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/avionicsa</output>
+        </scheduled_gain>
+
+        <pure_gain name="elec bus Avionics 10X">
+            <input>/systems/electrical/outputs/avionicsa</input>
+            <output>/systems/electrical/outputs/autopilot1</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec con AC Main 3X AC Avionics 11X">
+            <input>/systems/electrical/outputs/probe/ac-main3</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/avionicsb</output>
+        </scheduled_gain>
+
+        <pure_gain name="elec bus Avionics 11X">
+            <input>/systems/electrical/outputs/avionicsb</input>
+            <output>/systems/electrical/outputs/autopilot2</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec con AC Essential 6X AC 26 V Main 12X">
+            <input>/systems/electrical/outputs/probe/ac-essential2</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/main-26a</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Essential 7X AC 26 V Main 13X">
+            <input>/systems/electrical/outputs/probe/ac-essential3</input>
+            <table>
+                <independentVar>/controls/electric/ac/essential3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/main-26b</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Essential 5X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/essential1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Essential 6X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/essential2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 17X AC Essential 7X">
+            <input>/systems/electrical/outputs/probe/ac-emergencyb</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/essential3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 17X AC Essential 8X">
+            <input>/systems/electrical/outputs/probe/ac-emergencyb</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/essential4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Emergency 17X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/asb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/probe/ac-emergencyb</output>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Main 1X AC Relight 24X">
+            <input>/systems/electrical/outputs/probe/ac-main1</input>
+            <table>
+                <independentVar>/controls/electric/ac/relight1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Relight 24X">
+            <input>fcs/elec-con-ac-main-1x-ac-relight-24x</input>
+            <input>fcs/elec-con-ac-emergency-16x-ac-relight-24x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-relight1</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 2X AC Relight 25X">
+            <input>/systems/electrical/outputs/probe/ac-main2</input>
+            <table>
+                <independentVar>/controls/electric/ac/relight2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Relight 25X">
+            <input>fcs/elec-con-ac-main-2x-ac-relight-25x</input>
+            <input>fcs/elec-con-ac-emergency-16x-ac-relight-25x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-relight2</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 3X AC Relight 26X">
+            <input>/systems/electrical/outputs/probe/ac-main3</input>
+            <table>
+                <independentVar>/controls/electric/ac/relight3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Relight 26X">
+            <input>fcs/elec-con-ac-main-3x-ac-relight-26x</input>
+            <input>fcs/elec-con-ac-emergency-16x-ac-relight-26x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-relight3</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 4X AC Relight 27X">
+            <input>/systems/electrical/outputs/probe/ac-main4</input>
+            <table>
+                <independentVar>/controls/electric/ac/relight4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Relight 27X">
+            <input>fcs/elec-con-ac-main-4x-ac-relight-27x</input>
+            <input>fcs/elec-con-ac-emergency-16x-ac-relight-27x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-relight4</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Relight 24X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/relight1</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Relight 25X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/relight2</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Relight 26X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/relight3</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Emergency 16X AC Relight 27X">
+            <input>/systems/electrical/outputs/probe/ac-emergencya</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/relight4</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Essential 5X AC Standby 32X">
+            <input>/systems/electrical/outputs/probe/ac-essential1</input>
+            <table>
+                <independentVar>/controls/electric/ac/standby</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Standby 32X">
+            <input>fcs/elec-con-ac-essential-5x-ac-standby-32x</input>
+            <input>fcs/elec-con-dc-essential-3p-ac-standby-32x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-standbya</output>
+        </summer>
+
+        <pure_gain name="elec out standby radio alt">
+            <input>/systems/electrical/outputs/probe/ac-standbya</input>
+            <output>/systems/electrical/outputs/standby-radio-alt</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec con AC Essential 5X AC Standby 33X">
+            <input>/systems/electrical/outputs/probe/ac-essential1</input>
+            <table>
+                <independentVar>/controls/electric/ac/standby</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus AC Standby 33X">
+            <input>fcs/elec-con-ac-essential-5x-ac-standby-33x</input>
+            <input>fcs/elec-con-dc-essential-3p-ac-standby-33x</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/ac-standbyb</output>
+        </summer>
+
+        <pure_gain name="elec out standby altimeter">
+            <input>/systems/electrical/outputs/probe/ac-standbyb</input>
+            <output>/systems/electrical/outputs/standby-alt</output>
+        </pure_gain>
+
+        <pure_gain name="elec out standby asi">
+            <input>/systems/electrical/outputs/probe/ac-standbyb</input>
+            <output>/systems/electrical/outputs/standby-asi</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec con DC Essential 3P AC Standby 32X">
+            <input>/systems/electrical/outputs/probe/dc-essentiala</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/standby</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con DC Essential 3P AC Standby 33X">
+            <input>/systems/electrical/outputs/probe/dc-essentiala</input>
+            <table>
+                <independentVar>/controls/electric/ac/emergency/standby</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Essential 5X DC Essential 3P">
+            <input>/systems/electrical/outputs/probe/ac-essential1</input>
+            <table>
+                <independentVar>/controls/electric/dc/essentiala</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con AC Main 2X DC Main 1P">
+            <input>/systems/electrical/outputs/probe/ac-main2</input>
+            <table>
+                <independentVar>/controls/electric/dc/maina</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus DC Main 1P">
+            <input>fcs/elec-con-ac-main-2x-dc-main-1p</input>
+            <input>fcs/elec-con-dc-main-2p-dc-main-1p</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/dc-maina</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Main 3X DC Main 2P">
+            <input>/systems/electrical/outputs/probe/ac-main3</input>
+            <table>
+                <independentVar>/controls/electric/dc/mainb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus DC Main 2P">
+            <input>fcs/elec-con-ac-main-3x-dc-main-2p</input>
+            <input>fcs/elec-con-dc-main-1p-dc-main-2p</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+            <output>/systems/electrical/outputs/probe/dc-mainb</output>
+        </summer>
+
+        <scheduled_gain name="elec con AC Essential 8X DC Essential 4P">
+            <input>/systems/electrical/outputs/probe/ac-essential4</input>
+            <table>
+                <independentVar>/controls/electric/dc/essentialb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con DC Main 1P DC Essential 3P">
+            <input>/systems/electrical/outputs/probe/dc-maina</input>
+            <table>
+                <independentVar>/controls/electric/dc/emsa</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <scheduled_gain name="elec con DC Main 2P DC Essential 4P">
+            <input>/systems/electrical/outputs/probe/dc-mainb</input>
+            <table>
+                <independentVar>/controls/electric/dc/emsb</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+        </scheduled_gain>
+
+        <summer name="elec bus instrument">
+            <input>/systems/electrical/outputs/probe/ac-essential1</input>
+            <input>/systems/electrical/outputs/probe/ac-essential2</input>
+            <input>/systems/electrical/outputs/probe/ac-essential3</input>
+            <input>/systems/electrical/outputs/probe/ac-essential4</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>115.0000</max>
+            </clipto>
+        </summer>
+
+        <pure_gain name="elec out bus">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/bus</output>
+        </pure_gain>
+
+        <pure_gain name="elec out adf">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/adf</output>
+        </pure_gain>
+
+        <pure_gain name="elec out audio panel 0">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/audio-panel</output>
+        </pure_gain>
+
+        <pure_gain name="elec out audio panel 1">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/audio-panel[1]</output>
+        </pure_gain>
+
+        <pure_gain name="elec out autopilot">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/autopilot</output>
+        </pure_gain>
+
+        <pure_gain name="elec out avionics fan">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/avionics-fan</output>
+        </pure_gain>
+
+        <pure_gain name="elec out DME">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/dme</output>
+        </pure_gain>
+
+        <pure_gain name="elec out GPS mfd">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/gps-mfd</output>
+        </pure_gain>
+
+        <pure_gain name="elec out GPS">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/gps</output>
+        </pure_gain>
+
+        <pure_gain name="elec out HSI">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/hsi</output>
+        </pure_gain>
+
+        <pure_gain name="elec out nav 0">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/nav</output>
+        </pure_gain>
+
+        <pure_gain name="elec out nav 1">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/nav[1]</output>
+        </pure_gain>
+
+        <pure_gain name="elec out transponder">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/transponder</output>
+        </pure_gain>
+
+        <pure_gain name="elec out specific">
+            <input>fcs/elec-bus-instrument</input>
+            <output>/systems/electrical/outputs/specific</output>
+        </pure_gain>
+
+        <summer name="elec bus light">
+            <input>/systems/electrical/outputs/probe/dc-maina</input>
+            <input>/systems/electrical/outputs/probe/dc-mainb</input>
+            <input>/systems/electrical/outputs/probe/dc-essentiala</input>
+            <input>/systems/electrical/outputs/probe/dc-essentialb</input>
+            <clipto>
+                <min>0.0000</min>
+                <max>26.0000</max>
+            </clipto>
+        </summer>
+
+        <pure_gain name="elec out bulb">
+            <input>fcs/elec-bus-light</input>
+            <output>/systems/electrical/outputs/bulb</output>
+        </pure_gain>
+
+        <pure_gain name="elec bus standby">
+            <input>/systems/electrical/outputs/probe/ac-standbya</input>
+            <output>/systems/electrical/outputs/standby</output>
+        </pure_gain>
+
+        <scheduled_gain name="elec out Instrument Lights Power">
+            <input>fcs/elec-bus-instrument</input>
+            <table>
+                <independentVar>/controls/circuit-breakers/instrument-lights</independentVar>
+                <tableData>
+                    0.0000	0.0000
+                    1.0000	1.0000
+                </tableData>
+            </table>
+            <output>/systems/electrical/outputs/instrument-lights</output>
+        </scheduled_gain>
+     </channel>
+    </flight_control>
+    <aerodynamics>
+
+        <function name="aero/function/kCLge">
+            <description>Change_in_lift_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	1.2000
+                          0.1000	1.1500
+                          0.1500	1.0900
+                          0.2000	1.0200
+                          1.1000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <axis name="DRAG">
+            <function name="aero/coefficient/CD0">
+                <description>Drag_at_zero_lift</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.0000	0.6000	0.8000	1.1000	1.4000
+                              -1.5700	1.5000	1.5000	1.5000	1.5000	1.5000
+                              -0.2600	0.0510	0.0510	0.0340	0.0340	0.0300
+                              0.0000	0.0260	0.0260	0.0170	0.0170	0.0100
+                              0.2600	0.0510	0.0510	0.0340	0.0340	0.0300
+                              1.5700	1.5000	1.5000	1.5000	1.5000	1.5000
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDi">
+                <description>Induced_drag</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/cl-squared-norm</property>
+                      <table>
+                          <independentVar>velocities/mach-norm</independentVar>
+                          <tableData>
+                              0.0000	0.0420
+                              1.1000	0.0420
+                              1.1500	0.0320
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDmach">
+                <description>Drag_due_to_mach</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                      <table>
+                          <independentVar>velocities/mach-norm</independentVar>
+                          <tableData>
+                              0.0000	0.0000
+                              0.7900	0.0000
+                              1.1000	0.0230
+                              1.1500	0.0140
+                              1.8000	0.0070
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDflap">
+                <description>Drag_due_to_flaps</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/components/flaps-control/output-norm</property>
+                    <value>0.0550</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDgear">
+                <description>Drag_due_to_gear</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>gear/gear-pos-norm</property>
+                    <value>0.0110</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDsb">
+                <description>Drag_due_to_speedbrakes</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/speedbrake-pos-norm</property>
+                    <value>0.0170</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDbeta">
+                <description>Drag_due_to_sideslip</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                      <table>
+                          <independentVar>aero/beta-rad</independentVar>
+                          <tableData>
+                              -1.5700	1.2300
+                              -0.2600	0.0500
+                              0.0000	0.0000
+                              0.2600	0.0500
+                              1.5700	1.2300
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/CDde">
+                <description>Drag_due_to_Elevator_Deflection</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/elevator-pos-norm</property>
+                    <value>0.0550</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="SIDE">
+            <function name="aero/coefficient/CYb">
+                <description>Side_force_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/beta-rad</property>
+                    <value>-1.0000</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="LIFT">
+            <function name="aero/coefficient/CLalpha">
+                <description>Lift_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>aero/function/kCLge</property>
+                      <table>
+                          <independentVar lookup="row">aero/alpha-rad</independentVar>
+                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <tableData>
+                              	0.0000	0.6000	0.8000
+                              -0.2000	-0.2270	-0.2270	-0.6800
+                              0.0000	0.0000	0.0670	0.2000
+                              0.2300	0.9000	0.9000	1.2000
+                              0.6000	0.2000	0.2000	0.6000
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/dCLflap">
+                <description>Delta_Lift_due_to_flaps</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/components/flaps-control/output-norm</property>
+                    <value>0.0000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/dCLsb">
+                <description>Delta_Lift_due_to_speedbrake</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/speedbrake-pos-norm</property>
+                    <value>-0.0800</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/CLde">
+                <description>Lift_due_to_Elevator_Deflection</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/elevator-pos-rad</property>
+                    <value>0.2000</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="ROLL">
+            <function name="aero/coefficient/Clb">
+                <description>Roll_moment_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/beta-rad</property>
+                    <value>-0.1000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clp">
+                <description>Roll_moment_due_to_roll_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/p-aero-rad_sec</property>
+                    <value>-0.4000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clr">
+                <description>Roll_moment_due_to_yaw_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/r-aero-rad_sec</property>
+                    <value>0.1500</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Clda">
+                <description>Roll_moment_due_to_aileron</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+                      <table>
+                          <independentVar>velocities/mach-norm</independentVar>
+                          <tableData>
+                              0.0000	0.1000
+                              2.0000	0.0330
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cldr">
+                <description>Roll_moment_due_to_rudder</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/rudder-pos-rad</property>
+                    <value>0.0100</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="PITCH">
+            <function name="aero/coefficient/Cmalpha">
+                <description>Pitch_moment_due_to_alpha</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/alpha-rad</property>
+                    <value>-0.7000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmde">
+                <description>Pitch_moment_due_to_elevator</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>fcs/elevator-pos-rad</property>
+                      <table>
+                          <independentVar>velocities/mach-norm</independentVar>
+                          <tableData>
+                              0.0000	-1.3000
+                              2.0000	-0.3250
+                          </tableData>
+                      </table>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmq">
+                <description>Pitch_moment_due_to_pitch_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>velocities/q-aero-rad_sec</property>
+                    <value>-21.0000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cmadot">
+                <description>Pitch_moment_due_to_alpha_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/cbarw-ft</property>
+                    <property>aero/ci2vel</property>
+                    <property>aero/alphadot-rad_sec</property>
+                    <value>-4.0000</value>
+                </product>
+            </function>
+        </axis>
+
+        <axis name="YAW">
+            <function name="aero/coefficient/Cnb">
+                <description>Yaw_moment_due_to_beta</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/beta-rad</property>
+                    <value>0.1200</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cnr">
+                <description>Yaw_moment_due_to_yaw_rate</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>aero/bi2vel</property>
+                    <property>velocities/r-aero-rad_sec</property>
+                    <value>-0.1500</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cndr">
+                <description>Yaw_moment_due_to_rudder</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/rudder-pos-rad</property>
+                    <value>-0.1000</value>
+                </product>
+            </function>
+            <function name="aero/coefficient/Cnda">
+                <description>Adverse_yaw</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>metrics/bw-ft</property>
+                    <property>fcs/left-aileron-pos-rad</property>
+                    <value>0.0000</value>
+                </product>
+            </function>
+        </axis>
+    </aerodynamics>
+</fdm_config>

@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.7 2006/02/03 13:41:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.8 2006/02/27 23:25:22 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,6 +156,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
 
     while (axisElement) {
       property_string = axisElement->GetDataLine();
+      // The property string passed into GetNode() must have no spaces or tabs.
       node = PropertyManager->GetNode(property_string);
 
       if (node == 0) {
