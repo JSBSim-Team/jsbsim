@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.8 2006/02/26 14:10:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.9 2006/02/27 16:46:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +144,8 @@ FGPropeller::~FGPropeller()
   snprintf(property_name, 80, "propulsion/engine[%d]/advance-ratio", EngineNum);
   PropertyManager->Untie( property_name );
   snprintf(property_name, 80, "propulsion/engine[%d]/blade-angle", EngineNum);
+  PropertyManager->Untie( property_name );
+  snprintf(property_name, 80, "propulsion/engine[%d]/thrust-coefficient", EngineNum);
   PropertyManager->Untie( property_name );
 
   Debug(1);
