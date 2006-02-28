@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="http://jsbsim.sourceforge.net/JSBSim.xsl" type="text/xsl"?>
-<fdm_config name="Concorde" version="2.0" release="BETA"
+<fdm_config name="Aerospatiale/BAC Concorde" version="2.0" release="BETA"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
@@ -8,9 +8,8 @@
         <author> Anon Y. Mous </author>
         <filecreationdate> 11-15-2005 </filecreationdate>
         <version> 0.8 </version>
-        <description>
-          Models a Concorde.
-
+        <description>Models an Aerospatiale/British Aerospace Concorde.</description>
+        <documentation>
           Model design data follows.
           ------------------------
 
@@ -81,7 +80,7 @@
           Roll  Ixx = (W/g)*(Rx*b/2)^2
           Pitch Iyy = (W/g)*(Ry*d/2)^2
           Yaw   Izz = (W/g)*(Rz*e/2)^2
-          Roll-Yaw Ixz <= 0.02 Iz, often 0.0 (added, Ron Freimuth)
+          Roll-Yaw Ixz less than or equal to 0.02 Iz, often 0.0 (added, Ron Freimuth)
           g = 32.174 ft/s^2
           W = gross wt. lb
           b = span ft
@@ -134,7 +133,7 @@
                                 8        16210        12838
           Auxiliary             5A        2810         2225
                                 7A        2810         2225
-          Transfer & reserve    9        14010        11096
+          Transfer and reserve  9        14010        11096
                                 10       15080        11943
                                 11       13150        10415
           ..................................................
@@ -170,7 +169,7 @@
           - to DOWN : nose transit 12.5deg 5.7 s.
 
           Max total temperature (TMO) : 127degC (on nose).
-          Max oil temperature : start & takeoff 125degC, takeoff & 5 minutes
+          Max oil temperature : start and takeoff 125degC, takeoff and 5 minutes
                                 transient 195degC, continuous operation 190degC,
                                 starting -35degC, adavance above idle -20degC.
           Mas oil pressure : continued operation 5 PSI, takeoff 10 PSI.
@@ -269,7 +268,7 @@
           transfers fuel from the main transfer tanks to the collector tanks at
           a rate sufficiently high to ensure that the collectors tanks are always
           maintained in a near full condition.
-        </description>
+        </documentation>
 
         <note>Air intake effect included, which allows more drag at Mach 1.3-2.0.</note>
         <note>Full tanks at maximum takeoff load.</note>
@@ -293,6 +292,31 @@
     </fileheader>
 
     <metrics>
+          <documentation>
+             Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+             X, Y, Z, in inches
+
+             ORIGIN (0,0,0) is at NOSE.
+
+             Center of gravity :
+             - level at wing level : -1/4 of max external fuselage height (130 in.).
+             - 51.7%, inside corridor of C0 (maximum takeoff load) => real C0 starts over front gear location (18.7 m).
+
+             Aero refence point :
+             - level at wing level : -1/8 of max external fuselage height (130 in.).
+             - back of center of gravity reduces autopilot roll (step back at supersonic cruise). It has been found that
+             200 inches behind CG reduces AUTOPILOT ROLL.
+             => real at Mach 2 is 62% of C0.
+
+             Eye point location : length from nose to cockpit (24 ft), 1/4 of max external fuselage width (113 in.),
+                                  1/4 of max fuselage height (113 in.).
+
+             Add ac_wingincidence : 1/20 of wing chord (C0).
+
+             Htailarm : distance from CG to horizontal tail tip, none (5 ft).
+             Vtailarm : distance from CG to vertical tail tip.
+        </documentation>
+
         <wingarea unit="FT2"> 3856.0000 </wingarea>
         <wingspan unit="FT"> 83.8300 </wingspan>
         <chord unit="FT"> 90.7500 </chord>
@@ -318,6 +342,11 @@
     </metrics>
 
     <mass_balance>
+        <documentation>
+             Center of gravity location, empty weight, in aircraft's own structural coord
+             system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+             right wing.
+        </documentation>
         <ixx unit="SLUG*FT2"> 1432000.0000 </ixx>
         <iyy unit="SLUG*FT2"> 19034000.0000 </iyy>
         <izz unit="SLUG*FT2"> 10100000.0000 </izz>
@@ -333,6 +362,13 @@
     </mass_balance>
 
     <ground_reactions>
+        <documentation>
+            - gear in length (2428 in.) : tail 6/7;
+            => real nose (18.7 m = 736.2 in.), wing (18.7 m + 18.2 m = 1452.8 in.).
+            - height at -5/4 of max fuselage height (130 in.).
+            - tyre diameter of main gears, at 3/42 of the length between the gears (18.2 m) = 51.2 in.
+            - additional contact points, for crash detection when gear retracted.
+        </documentation>
         <contact type="BOGEY" name="NOSE_LG">
             <location unit="IN">
                 <x> 736.2000 </x>
@@ -423,7 +459,7 @@
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
-        <contact type="BOGEY" name="NOSE_TIP">
+        <contact type="STRUCTURE" name="NOSE_TIP">
             <location unit="IN">
                 <x> 0.0000 </x>
                 <y> 0.0000 </y>
@@ -434,11 +470,8 @@
             <rolling_friction> 0.0200 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="LEFT_TIP">
+        <contact type="STRUCTURE" name="LEFT_TIP">
             <location unit="IN">
                 <x> 1825.2000 </x>
                 <y> -503.0000 </y>
@@ -449,11 +482,8 @@
             <rolling_friction> 0.0200 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_TIP">
+        <contact type="STRUCTURE" name="RIGHT_TIP">
             <location unit="IN">
                 <x> 1825.2000 </x>
                 <y> 503.0000 </y>
@@ -464,11 +494,8 @@
             <rolling_friction> 0.0200 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="TAIL_TIP">
+        <contact type="STRUCTURE" name="TAIL_TIP">
             <location unit="IN">
                 <x> 2427.6000 </x>
                 <y> 0.0000 </y>
@@ -479,12 +506,16 @@
             <rolling_friction> 0.0200 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 122400.0000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 40800.0000 </damping_coeff>
-            <max_steer unit="DEG"> 0.0 </max_steer>
-            <brake_group> NONE </brake_group>
-            <retractable>0</retractable>
         </contact>
     </ground_reactions>
+
     <propulsion>
+        <documentation>
+            - Engine center at 5/7 of length (2428 in.), -2/5 of fuselage height (130 in.).
+            - Border aligned with main gear track (304 in. / 2).
+            => real engine diameter is 1.65 m = (11 - 7.7) / 2.
+            - Thruster center 3/4 of length (2428 in.), aligned with engines.
+        </documentation>
         <engine file="Olympus593Mrk610">
             <location unit="IN">
                 <x> 1734.0000 </x>
@@ -585,7 +616,28 @@
                 </orient>
             </thruster>
         </engine>
+
+        <documentation>
+           - The parameters are gear track, and tank 5 radius;
+           -  to check against engine center.
+
+           => Real length is arm, % of MAC (see table above) : real MAC (C0 1089 in.)
+               starts at 18.7 m (736.2 in.).
+           => Real half gear track is 7.7 m / 2 (151.6 in.).
+
+           Configuration for take off with maximum weight :
+           - all tanks full, except tank 11 at 86%.
+           - average tanks 5/7 and 6/8, otherwise 1 ton more under the right wing,
+             which probably causes right bank of
+             autopilot (roll), which has difficulties to catch the heading.
+        </documentation>
+
         <tank type="FUEL">    <!-- Tank number 0 -->
+            <documentation>
+                Tank 1 : 1/2 radius of tank 5; align 3/4 of gear track.
+                => 39.80 % MAC
+            </documentation>
+
             <location unit="IN">
                 <x> 1170.0000 </x>
                 <y> -114.0000 </y>
@@ -595,6 +647,10 @@
             <contents unit="LBS"> 9255.0100 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
+            <documentation>
+                tank 2 : 1/2 radius of tank 5; align 1/2 of gear track; near engine center.
+                => 76.10 % MAC.
+            </documentation>
             <location unit="IN">
                 <x> 1565.0000 </x>
                 <y> -76.0000 </y>
@@ -604,6 +660,10 @@
             <contents unit="LBS"> 10075.1300 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 2 -->
+            <documentation>
+                tank 3 : 1/2 radius of tank 5; align 1/2 of gear track; near engine center.
+                => 76.10 % MAC.
+            </documentation>
             <location unit="IN">
                 <x> 1565.0000 </x>
                 <y> 76.0000 </y>
@@ -613,6 +673,10 @@
             <contents unit="LBS"> 10075.1300 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 3 -->
+            <documentation>
+                tank 4 : 1/2 radius of tank 5; align 3/4 of gear track.
+                => 39.80 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 1170.0000 </x>
                 <y> 114.0000 </y>
@@ -622,6 +686,11 @@
             <contents unit="LBS"> 9255.0100 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 4 -->
+            <documentation>
+                Tank 5 : center + radius = gear position.
+                => 49.40 % MAC
+                15873.28, if not balanced
+            </documentation>
             <location unit="IN">
                 <x> 1274.0000 </x>
                 <y> -152.0000 </y>
@@ -631,6 +700,11 @@
             <contents unit="LBS"> 16099.2600 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 5 -->
+            <documentation>
+                Tank 6 : 3/2 radius of tank 5; align 1/2 of gear track; before engine center.
+                => 66.70 % MAC.
+                25544.96, if not balanced
+            </documentation>
             <location unit="IN">
                 <x> 1463.0000 </x>
                 <y> -76.0000 </y>
@@ -640,6 +714,11 @@
             <contents unit="LBS"> 26923.9500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 6 -->
+            <documentation>
+                Tank 7 : radius of tank 5; before engine center.
+                => 64.70 % MAC
+                16325.23, if not balanced
+            </documentation>
             <location unit="IN">
                 <x> 1441.0000 </x>
                 <y> 152.0000 </y>
@@ -649,6 +728,11 @@
             <contents unit="LBS"> 16099.2600 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 7 -->
+            <documentation>
+                Tank 8 : 3/2 radius of tank 5; align 1/2 of gear track.
+                => 46.70 % MAC.
+                28302.95, if not balanced
+            </documentation>
             <location unit="IN">
                 <x> 1245.0000 </x>
                 <y> 76.0000 </y>
@@ -658,6 +742,10 @@
             <contents unit="LBS"> 26923.9500 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 8 -->
+            <documentation>
+                Tank 9 : 3/2 radius of tank 5; centred on plane axis.
+                => 16.90 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 920.0000 </x>
                 <y> 0.0000 </y>
@@ -667,6 +755,10 @@
             <contents unit="LBS"> 24462.4900 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 9 -->
+            <documentation>
+                Tank 10 : 1/2 radius of tank 5; centered on plane axis.
+                => 30.50 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 1068.0000 </x>
                 <y> 0.0000 </y>
@@ -676,6 +768,10 @@
             <contents unit="LBS"> 26329.8100 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 10 -->
+            <documentation>
+                Tank 11 : 1/2 radius of tank 5; centered on plane axis.
+               => 113.90 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 1977.0000 </x>
                 <y> 0.0000 </y>
@@ -685,6 +781,10 @@
             <contents unit="LBS"> 19735.3100 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 11 -->
+            <documentation>
+                Tank 5A : radius of tank 5; align 5/2 of gear track.
+                => 74.80 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 1551.0000 </x>
                 <y> -380.0000 </y>
@@ -694,6 +794,10 @@
             <contents unit="LBS"> 4905.2900 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 12 -->
+            <documentation>
+                Tank 7A : radius of tank 5; align 5/2 of gear track.
+                => 74.80 % MAC
+            </documentation>
             <location unit="IN">
                 <x> 1551.0000 </x>
                 <y> 380.0000 </y>
@@ -704,7 +808,7 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: Concorde">
-     <channel name="All">
+     <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
@@ -724,6 +828,9 @@
             </range>
             <output>fcs/elevator-pos-rad</output>
         </aerosurface_scale>
+
+     </channel>
+     <channel name="Roll">
 
         <summer name="Roll Trim Sum">
             <input>fcs/aileron-cmd-norm</input>
@@ -753,6 +860,9 @@
             </range>
             <output>fcs/right-aileron-pos-rad</output>
         </aerosurface_scale>
+
+     </channel>
+     <channel name="Yaw">
 
         <summer name="Rudder Command Sum">
             <input>fcs/rudder-cmd-norm</input>
@@ -824,6 +934,9 @@
             <output>fcs/rudder-pos-rad</output>
         </aerosurface_scale>
 
+     </channel>
+     <channel name="Aeromechanical">
+
         <kinematic name="Flaps Control">
             <input>fcs/flap-cmd-norm</input>
             <traverse>
@@ -876,6 +989,33 @@
             </traverse>
             <output>fcs/speedbrake-pos-norm</output>
         </kinematic>
+
+     </channel>
+
+     <documentation>
+         Concorde electrical system :
+
+         - each relight busbar needs AC to start its engine.
+         - all instruments are supposed to be AC (115 or 26 volts).
+         - all warning lights are supposed to be DC (26 volts).
+         - night lightning (reddish surrounding light) is DC.
+
+
+         Connection :
+         ==========
+         - AC Essential Bus 1-4 is connected to AC Main Bus 1-4, or all the buses in parallel.
+         - Transform Rectifier Unit 2-3 is connected to AC Main Bus 2-3, or all the buses in parallel.
+
+         Known problems :
+         ==============
+         - fuse between DC Main 1P and DC Main 2P is not implemented.
+         - GPB connected to BTB, even without SSB.
+         - /controls/engines/engine[0]/master-bat seems required by the electrical system.
+         - when no AC voltage, AC instruments are still visible at night (reddish), otherwise that also cuts the DC warning lights,
+         because of systems/electrical/outputs/instrument-lights.
+     </documentation>
+
+     <channel name="Suppliers">
 
         <pure_gain name="elec DC Battery A 5P">
             <input>/systems/electrical/loads/battery</input>
@@ -953,6 +1093,11 @@
             <output>/systems/electrical/suppliers/external</output>
         </pure_gain>
 
+     </channel>
+     <channel name="Power Source Connections">
+
+        <!-- ground power disconnected -->
+
         <scheduled_gain name="elec out GPB">
             <input>/systems/electrical/suppliers/external</input>
             <table>
@@ -975,6 +1120,8 @@
                 </tableData>
             </table>
         </scheduled_gain>
+
+        <!-- CSD connected to engine -->
 
         <scheduled_gain name="elec con engine 1 CSD">
             <input>/systems/electrical/suppliers/engine</input>
@@ -1024,6 +1171,8 @@
             <output>/systems/electrical/outputs/probe/ac-csd4</output>
         </scheduled_gain>
 
+        <!-- generator connected to CSD -->
+
         <scheduled_gain name="elec con CSD 1 generator">
             <input>/systems/electrical/outputs/probe/ac-csd1</input>
             <table>
@@ -1071,6 +1220,8 @@
             </table>
             <output>/systems/electrical/outputs/probe/ac-generator4</output>
         </scheduled_gain>
+
+        <!-- GCB connects generator to Main bus -->
 
         <scheduled_gain name="elec con generator 1 AC Main 1X">
             <input>/systems/electrical/outputs/probe/ac-generator1</input>
@@ -1248,6 +1399,8 @@
             <output>/systems/electrical/outputs/probe/ac-main4</output>
         </summer>
 
+        <!-- Emergency disabled -->
+
         <scheduled_gain name="elec con green generator 5">
             <input>/systems/electrical/suppliers/emergency</input>
             <table>
@@ -1271,6 +1424,10 @@
             </table>
             <output>/systems/electrical/outputs/probe/ac-emergencya</output>
         </scheduled_gain>
+
+        <!-- Batteries connected to Essential -->
+
+        <!-- master-bat is hard coded from FG ! -->
 
         <scheduled_gain name="elec con battery A 5P DC Essential 3P">
             <input>/systems/electrical/suppliers/battery</input>
@@ -1315,6 +1472,11 @@
             </clipto>
             <output>/systems/electrical/outputs/probe/dc-essentialb</output>
         </summer>
+
+     </channel>
+     <channel name="AC Bus Connections">
+
+        <!-- BTB makes parallel 2 generators -->
 
         <scheduled_gain name="elec con AC Main 1X BTB">
             <input>fcs/elec-con-generator-1-ac-main-1x</input>
@@ -1380,6 +1542,8 @@
             <output>/systems/electrical/outputs/probe/ac-btb-right</output>
         </summer>
 
+        <!-- SSB makes parallel 4 generators -->
+
         <scheduled_gain name="elec con BTB left SSB">
             <input>/systems/electrical/outputs/probe/ac-btb-left</input>
             <table>
@@ -1402,6 +1566,8 @@
             </table>
         </scheduled_gain>
 
+        <!-- GPB only if SSB ? -->
+
         <summer name="elec con SSB">
             <input>fcs/elec-con-btb-left-ssb</input>
             <input>fcs/elec-con-btb-right-ssb</input>
@@ -1412,6 +1578,8 @@
             </clipto>
             <output>/systems/electrical/outputs/probe/ac-ssb</output>
         </summer>
+
+        <!-- Essential connected to Main -->
 
         <scheduled_gain name="elec con AC Main 1X AC Essential 5X">
             <input>/systems/electrical/outputs/probe/ac-main1</input>
@@ -1497,6 +1665,8 @@
             <output>/systems/electrical/outputs/probe/ac-essential4</output>
         </summer>
 
+        <!-- Avionics to Main, except load shed -->
+
         <scheduled_gain name="elec con AC Main 2X AC Avionics 10X">
             <input>/systems/electrical/outputs/probe/ac-main2</input>
             <table>
@@ -1531,6 +1701,8 @@
             <output>/systems/electrical/outputs/autopilot2</output>
         </pure_gain>
 
+        <!-- 26 volts Main to Essential (via transformer), except load shed -->
+
         <scheduled_gain name="elec con AC Essential 6X AC 26 V Main 12X">
             <input>/systems/electrical/outputs/probe/ac-essential2</input>
             <table>
@@ -1554,6 +1726,8 @@
             </table>
             <output>/systems/electrical/outputs/main-26b</output>
         </scheduled_gain>
+
+        <!-- Emergency disconnected -->
 
         <scheduled_gain name="elec con AC Emergency 16X AC Essential 5X">
             <input>/systems/electrical/outputs/probe/ac-emergencya</input>
@@ -1599,6 +1773,8 @@
             </table>
         </scheduled_gain>
 
+        <!-- Auto Shed Breaker closed -->
+
         <scheduled_gain name="elec con AC Emergency 16X AC Emergency 17X">
             <input>/systems/electrical/outputs/probe/ac-emergencya</input>
             <table>
@@ -1610,6 +1786,8 @@
             </table>
             <output>/systems/electrical/outputs/probe/ac-emergencyb</output>
         </scheduled_gain>
+
+        <!-- Relight connected to Main -->
 
         <scheduled_gain name="elec con AC Main 1X AC Relight 24X">
             <input>/systems/electrical/outputs/probe/ac-main1</input>
@@ -1695,6 +1873,8 @@
             <output>/systems/electrical/outputs/probe/ac-relight4</output>
         </summer>
 
+        <!-- Relight disconnected from Emergency -->
+
         <scheduled_gain name="elec con AC Emergency 16X AC Relight 24X">
             <input>/systems/electrical/outputs/probe/ac-emergencya</input>
             <table>
@@ -1738,6 +1918,8 @@
                 </tableData>
             </table>
         </scheduled_gain>
+
+        <!-- Standby connected to Essential -->
 
         <scheduled_gain name="elec con AC Essential 5X AC Standby 32X">
             <input>/systems/electrical/outputs/probe/ac-essential1</input>
@@ -1796,6 +1978,8 @@
             <output>/systems/electrical/outputs/standby-asi</output>
         </pure_gain>
 
+        <!-- Standby disconnected from DC (via inverter), until RAT is deployed -->
+
         <scheduled_gain name="elec con DC Essential 3P AC Standby 32X">
             <input>/systems/electrical/outputs/probe/dc-essentiala</input>
             <table>
@@ -1817,6 +2001,11 @@
                 </tableData>
             </table>
         </scheduled_gain>
+
+     </channel>
+     <channel name="DC Bus Connections">
+
+        <!-- DC to AC, via TRU -->
 
         <scheduled_gain name="elec con AC Essential 5X DC Essential 3P">
             <input>/systems/electrical/outputs/probe/ac-essential1</input>
@@ -1882,6 +2071,8 @@
             </table>
         </scheduled_gain>
 
+        <!-- Essential / Main Split -->
+
         <scheduled_gain name="elec con DC Main 1P DC Essential 3P">
             <input>/systems/electrical/outputs/probe/dc-maina</input>
             <table>
@@ -1903,6 +2094,9 @@
                 </tableData>
             </table>
         </scheduled_gain>
+
+     </channel>
+     <channel name="FlightGear Instrument Connections">
 
         <summer name="elec bus instrument">
             <input>/systems/electrical/outputs/probe/ac-essential1</input>
@@ -1927,7 +2121,7 @@
 
         <pure_gain name="elec out audio panel 0">
             <input>fcs/elec-bus-instrument</input>
-            <output>/systems/electrical/outputs/audio-panel</output>
+            <output>/systems/electrical/outputs/audio-panel[0]</output>
         </pure_gain>
 
         <pure_gain name="elec out audio panel 1">
@@ -1980,6 +2174,8 @@
             <output>/systems/electrical/outputs/transponder</output>
         </pure_gain>
 
+        <!-- specific to Concorde -->
+
         <pure_gain name="elec out specific">
             <input>fcs/elec-bus-instrument</input>
             <output>/systems/electrical/outputs/specific</output>
@@ -2006,6 +2202,9 @@
             <output>/systems/electrical/outputs/standby</output>
         </pure_gain>
 
+     </channel>
+     <channel name="Master Bus Outputs">
+
         <scheduled_gain name="elec out Instrument Lights Power">
             <input>fcs/elec-bus-instrument</input>
             <table>
@@ -2017,8 +2216,10 @@
             </table>
             <output>/systems/electrical/outputs/instrument-lights</output>
         </scheduled_gain>
+
      </channel>
     </flight_control>
+
     <aerodynamics>
 
         <function name="aero/function/kCLge">
@@ -2045,7 +2246,7 @@
                     <property>metrics/Sw-sqft</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.0000	0.6000	0.8000	1.1000	1.4000
                               -1.5700	1.5000	1.5000	1.5000	1.5000	1.5000
@@ -2062,9 +2263,9 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0420
                               1.1000	0.0420
@@ -2079,7 +2280,7 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.0000
                               0.7900	0.0000
@@ -2095,7 +2296,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>0.0550</value>
                 </product>
             </function>
@@ -2166,7 +2367,7 @@
                     <property>aero/function/kCLge</property>
                       <table>
                           <independentVar lookup="row">aero/alpha-rad</independentVar>
-                          <independentVar lookup="column">velocities/mach-norm</independentVar>
+                          <independentVar lookup="column">velocities/mach</independentVar>
                           <tableData>
                               	0.0000	0.6000	0.8000
                               -0.2000	-0.2270	-0.2270	-0.6800
@@ -2182,7 +2383,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/components/flaps-control/output-norm</property>
+                    <property>fcs/flap-cmd-norm</property>
                     <value>0.0000</value>
                 </product>
             </function>
@@ -2247,7 +2448,7 @@
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	0.1000
                               2.0000	0.0330
@@ -2286,7 +2487,7 @@
                     <property>metrics/cbarw-ft</property>
                     <property>fcs/elevator-pos-rad</property>
                       <table>
-                          <independentVar>velocities/mach-norm</independentVar>
+                          <independentVar>velocities/mach</independentVar>
                           <tableData>
                               0.0000	-1.3000
                               2.0000	-0.3250
