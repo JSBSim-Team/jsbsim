@@ -40,16 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <FGFDMExec.h>
-#include <models/FGAtmosphere.h>
-#include <FGState.h>
-#include <models/FGFCS.h>
-#include <models/FGAircraft.h>
-#include <models/FGPropagate.h>
-#include <models/FGAuxiliary.h>
-#include <models/FGOutput.h>
 #include <input_output/FGScript.h>
-#include <FGJSBBase.h>
-#include <initialization/FGTrim.h>
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -67,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.10 2005/11/30 01:31:18 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.11 2006/03/02 12:22:08 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
