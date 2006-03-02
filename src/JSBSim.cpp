@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.11 2006/03/02 12:22:08 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.12 2006/03/02 12:34:01 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -186,7 +186,10 @@ IMPLEMENTATION
 
 int main(int argc, char* argv[])
 {
+  // *** DECLARATIONS *** //
+  JSBSim::FGScript* Script;
 
+  // *** INITIALIZATIONS *** //
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
@@ -196,19 +199,21 @@ int main(int argc, char* argv[])
   bool script_result = true;
   bool Scripted = false;
   double new_five_second_value = 0.0;
-  JSBSim::FGScript* Script;
 
   long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
   realtime = false;
   suspend = false;
 
+  // *** PARSE OPTIONS PASSED INTO THIS SPECIFIC APPLICATION: JSBSim *** //
   options(argc, argv);
 
+  // *** SET UP JSBSIM *** //
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetAircraftPath(RootDir + "aircraft");
   FDMExec->SetEnginePath(RootDir + "engine");
 
-  if (!ScriptName.empty()) { // SCRIPTED CASE
+  // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
+  if (!ScriptName.empty()) { 
 
     ScriptName = RootDir + ScriptName;
     Script = new JSBSim::FGScript(FDMExec);
@@ -222,7 +227,8 @@ int main(int argc, char* argv[])
 
     Scripted = true;
 
-  } else if (!AircraftName.empty() || !ResetName.empty()) {        // form jsbsim <acname> <resetfile>
+  // *** OPTION B: LOAD AN AIRCRAFT AND A SET OF INITIAL CONDITIONS *** //
+  } else if (!AircraftName.empty() || !ResetName.empty()) {
 
     AircraftName = RootDir + AircraftName;
     ResetName = RootDir + ResetName;
@@ -237,6 +243,7 @@ int main(int argc, char* argv[])
       exit(-1);
     }
 
+    // *** TRIM THE AIRCRAFT *** //
     JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
     if ( !fgt.DoTrim() ) {
       cout << "Trim Failed" << endl;
@@ -248,10 +255,6 @@ int main(int argc, char* argv[])
     exit(-1);
   }
 
-//
-// RUN loop. MESSAGES are read inside the Run() loop and output as necessary.
-//
-
   JSBSim::FGJSBBase::Message* msg;
   result = FDMExec->Run();
 
@@ -259,15 +262,14 @@ int main(int argc, char* argv[])
 
   clock_ticks = 0;
 
-// Print actual time at start
+  // Print actual time at start
   char s[100];
   time_t tod;
   time(&tod);
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
   cout << "Start: " << s << endl;
 
-  // Begin cyclic execution
-
+  // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** // 
   while (result && script_result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
