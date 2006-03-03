@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.17 2006/01/04 04:49:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.18 2006/03/03 13:18:54 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,6 +169,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   maxCompLen      = 0.0;
 
   WheelSlip = last_WheelSlip = 0.0;
+  slipIn = last_SlipIn = 0;
   TirePressureNorm = 1.0;
 
   Debug(0);
