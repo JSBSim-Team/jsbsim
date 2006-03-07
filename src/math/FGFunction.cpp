@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.5 2006/02/03 11:08:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.6 2006/03/07 11:39:35 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -162,7 +162,7 @@ double FGFunction::GetValue(void) const
     temp = pow(temp,Parameters[1]->GetValue());
     break;
   case eAbs:
-    temp = abs(temp);
+    temp = fabs(temp);
     break;
   case eSin:
     temp = sin(temp);
