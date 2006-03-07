@@ -1,6 +1,3 @@
-Failed to tie property propulsion/c-thrust[0] to a pointer
-Failed to tie property propulsion/c-thrust[0] to a pointer
-Failed to tie property propulsion/c-thrust[0] to a pointer
 <?xml version="1.0"?>
 <?xml-stylesheet href="http://jsbsim.sourceforge.net/JSBSim.xsl" type="text/xsl"?>
 <fdm_config name="Boeing314A" version="2.0" release="BETA"
@@ -255,7 +252,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                 </orient>
             </thruster>
         </engine>
-        <tank type="FUEL">    <!-- Tank number 0 --> 
+        <tank type="FUEL">    <!-- Tank number 0 -->
             <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
@@ -264,7 +261,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 3600 </capacity>
             <contents unit="LBS"> 3600 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 1 --> 
+        <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> -182.4 </y>
@@ -273,7 +270,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 3600 </capacity>
             <contents unit="LBS"> 3600 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 2 --> 
+        <tank type="FUEL">    <!-- Tank number 2 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> 182.4 </y>
@@ -282,7 +279,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 3600 </capacity>
             <contents unit="LBS"> 3600 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 3 --> 
+        <tank type="FUEL">    <!-- Tank number 3 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> 364.8 </y>
@@ -291,7 +288,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 3600 </capacity>
             <contents unit="LBS"> 3600 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 4 --> 
+        <tank type="FUEL">    <!-- Tank number 4 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> 0 </y>
@@ -300,7 +297,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 5760 </capacity>
             <contents unit="LBS"> 5760 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 5 --> 
+        <tank type="FUEL">    <!-- Tank number 5 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> -182.4 </y>
@@ -309,7 +306,7 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
             <capacity unit="LBS"> 6984 </capacity>
             <contents unit="LBS"> 6984 </contents>
         </tank>
-        <tank type="FUEL">    <!-- Tank number 6 --> 
+        <tank type="FUEL">    <!-- Tank number 6 -->
             <location unit="IN">
                 <x> 502 </x>
                 <y> 182.4 </y>
@@ -425,70 +422,190 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
         </kinematic>
      </channel>
     </flight_control>
+
     <aerodynamics>
+        <function name="aero/function/kHDhull">
+            <description>Hull_factor</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">velocities/vc-kts</independentVar>
+                      <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850">
+                            0.0450	0.0550	0.0650
+                          0.0000	0.0000	0.0000	0.0000
+                          3.7000	0.0678	0.0339	0.0000
+                          6.0000	0.1356	0.0678	0.0000
+                          8.3000	0.2288	0.1144	0.0000
+                          10.6000	0.3559	0.1780	0.0000
+                          12.5000	0.4576	0.2288	0.0000
+                          14.3000	0.5593	0.2797	0.0000
+                          15.9000	0.6186	0.3093	0.0000
+                          18.5000	0.7203	0.3602	0.0000
+                          21.1000	0.8051	0.4026	0.0000
+                          24.5000	0.8983	0.4492	0.0000
+                          26.4000	0.9322	0.4661	0.0000
+                          28.7000	0.9576	0.4788	0.0000
+                          31.3000	0.9915	0.4958	0.0000
+                          34.0000	1.0000	0.5000	0.0000
+                          36.2000	0.9915	0.4958	0.0000
+                          38.9000	0.9961	0.4981	0.0000
+                          41.5000	0.9068	0.4534	0.0000
+                          44.9000	0.7119	0.3560	0.0000
+                          48.7000	0.6186	0.3093	0.0000
+                          52.5000	0.4915	0.2458	0.0000
+                          57.4000	0.1949	0.0975	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                            0.0490	0.0590	0.0690
+                          0.0000	0.0000	0.0000	0.0000
+                          4.7000	0.0678	0.0339	0.0000
+                          7.5000	0.1356	0.0678	0.0000
+                          10.4000	0.2288	0.1144	0.0000
+                          13.2000	0.3559	0.1780	0.0000
+                          15.6000	0.4576	0.2288	0.0000
+                          17.9000	0.5593	0.2797	0.0000
+                          19.8000	0.6186	0.3093	0.0000
+                          23.1000	0.7203	0.3602	0.0000
+                          26.4000	0.8051	0.4026	0.0000
+                          30.7000	0.8983	0.4492	0.0000
+                          33.0000	0.9322	0.4661	0.0000
+                          35.8000	0.9576	0.4788	0.0000
+                          39.1000	0.9915	0.4958	0.0000
+                          42.0000	1.0000	0.5000	0.0000
+                          45.3000	0.9915	0.4958	0.0000
+                          48.6000	0.9961	0.4981	0.0000
+                          51.9000	0.9068	0.4534	0.0000
+                          56.1000	0.7119	0.3560	0.0000
+                          60.9000	0.6186	0.3093	0.0000
+                          65.6000	0.4915	0.2458	0.0000
+                          71.7000	0.1949	0.0975	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kCLge">
+            <description>Change_in_lift_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	1.2000
+                          0.1000	1.1500
+                          0.1500	1.0900
+                          0.2000	1.0200
+                          1.1000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kHLstep">
+            <description>Step_factor</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="column">velocities/vc-kts</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850.0000">
+                            0.0000	17.0000	34.0000
+                          0.0450	0.0000	0.0000	1.0000
+                          0.0550	0.0000	0.0000	0.8000
+                          0.0650	0.0000	0.0000	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                            0.0000	21.0000	42.0000
+                          0.0490	0.0000	0.0000	1.0000
+                          0.0590	0.0000	0.0000	0.8000
+                          0.0690	0.0000	0.0000	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kHmstep">
+            <description>Step_factor</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">velocities/vc-kts</independentVar>
+                      <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850.0000">
+                            0.0450	0.0550	0.0650
+                          0.0000	0.0000	0.0000	0.0000
+                          17.0000	-1.6000	-1.2800	0.0000
+                          34.0000	0.8000	0.6400	0.0000
+                          51.0000	0.0000	0.0000	0.0000
+                          57.0000	-0.1000	-0.0800	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                            0.0490	0.0590	0.0690
+                          0.0000	0.0000	0.0000	0.0000
+                          21.0000	-1.6000	-1.2800	0.0000
+                          42.0000	0.8000	0.6400	0.0000
+                          63.0000	0.0000	0.0000	0.0000
+                          72.0000	-0.1000	-0.0800	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kAmgear">
+            <description>Compression_factor</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">velocities/vc-kts</independentVar>
+                      <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850.0000">
+                            0.0450	0.0550	0.0650
+                          0.0000	0.0000	0.0000	0.0000
+                          17.0000	2.0000	1.6000	0.0000
+                          34.0000	1.0000	0.8000	0.0000
+                          51.0000	0.7000	0.5600	0.0000
+                          57.0000	0.7000	0.5600	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                            0.0490	0.0590	0.0690
+                          0.0000	0.0000	0.0000	0.0000
+                          21.0000	2.0000	1.6000	0.0000
+                          42.0000	3.0000	2.4000	0.0000
+                          63.0000	0.7000	0.5600	0.0000
+                          72.0000	0.7000	0.5600	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kHmkhi">
+            <description>Rebound_due_to_khi</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">flight-path/gamma-rad</independentVar>
+                      <independentVar lookup="column">attitude/pitch-rad</independentVar>
+                      <independentVar lookup="table">velocities/vc-kts</independentVar>
+                      <tableData breakPoint="42.0000">
+                            0.0500	0.2600
+                          0.0000	0.0000	0.0000
+                          0.3500	0.0000	0.0000
+                          0.7000	0.0000	0.0000
+                          1.0500	0.0000	0.0000
+                          1.4000	0.0000	0.0000
+                      </tableData>
+                      <tableData breakPoint="52.0000">
+                            0.0500	0.2600
+                          0.0000	15.0000	13.0000
+                          0.3500	0.3500	1.1000
+                          0.7000	0.2500	0.6000
+                          1.0500	0.1500	0.5000
+                          1.4000	0.0500	0.4000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
 
         <axis name="DRAG">
-            <function name="aero/function/kHDhull">
-                <description>Hull_factor</description>
-                <product>
-                      <table>
-                          <independentVar lookup="row">velocities/vc-kts</independentVar>
-                          <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
-                          <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                          <tableData breakPoint="47850">
-                              	0.0450	0.0550	0.0650	
-                              0.0000	0.0000	0.0000	0.0000	
-                              3.7000	0.0678	0.0339	0.0000	
-                              6.0000	0.1356	0.0678	0.0000	
-                              8.3000	0.2288	0.1144	0.0000	
-                              10.6000	0.3559	0.1780	0.0000	
-                              12.5000	0.4576	0.2288	0.0000	
-                              14.3000	0.5593	0.2797	0.0000	
-                              15.9000	0.6186	0.3093	0.0000	
-                              18.5000	0.7203	0.3602	0.0000	
-                              21.1000	0.8051	0.4026	0.0000	
-                              24.5000	0.8983	0.4492	0.0000	
-                              26.4000	0.9322	0.4661	0.0000	
-                              28.7000	0.9576	0.4788	0.0000	
-                              31.3000	0.9915	0.4958	0.0000	
-                              34.0000	1.0000	0.5000	0.0000	
-                              36.2000	0.9915	0.4958	0.0000	
-                              38.9000	0.9961	0.4981	0.0000	
-                              41.5000	0.9068	0.4534	0.0000	
-                              44.9000	0.7119	0.3560	0.0000	
-                              48.7000	0.6186	0.3093	0.0000	
-                              52.5000	0.4915	0.2458	0.0000	
-                              57.4000	0.1949	0.0975	0.0000	
-                          </tableData>
-                          <tableData breakPoint="84000.0000">
-                              	0.0490	0.0590	0.0690	
-                              0.0000	0.0000	0.0000	0.0000	
-                              4.7000	0.0678	0.0339	0.0000	
-                              7.5000	0.1356	0.0678	0.0000	
-                              10.4000	0.2288	0.1144	0.0000	
-                              13.2000	0.3559	0.1780	0.0000	
-                              15.6000	0.4576	0.2288	0.0000	
-                              17.9000	0.5593	0.2797	0.0000	
-                              19.8000	0.6186	0.3093	0.0000	
-                              23.1000	0.7203	0.3602	0.0000	
-                              26.4000	0.8051	0.4026	0.0000	
-                              30.7000	0.8983	0.4492	0.0000	
-                              33.0000	0.9322	0.4661	0.0000	
-                              35.8000	0.9576	0.4788	0.0000	
-                              39.1000	0.9915	0.4958	0.0000	
-                              42.0000	1.0000	0.5000	0.0000	
-                              45.3000	0.9915	0.4958	0.0000	
-                              48.6000	0.9961	0.4981	0.0000	
-                              51.9000	0.9068	0.4534	0.0000	
-                              56.1000	0.7119	0.3560	0.0000	
-                              60.9000	0.6186	0.3093	0.0000	
-                              65.6000	0.4915	0.2458	0.0000	
-                              71.7000	0.1949	0.0975	0.0000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kHDhull OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/HDhull0">
                 <description>Drag_at_hump</description>
                 <product>
@@ -514,11 +631,11 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -1.5700	1.4726	
-                              -0.2600	0.0286	
-                              0.0000	0.0006	
-                              0.2600	0.0286	
-                              1.5700	1.4726	
+                              -1.5700	1.4726
+                              -0.2600	0.0286
+                              0.0000	0.0006
+                              0.2600	0.0286
+                              1.5700	1.4726
                           </tableData>
                       </table>
                 </product>
@@ -540,10 +657,10 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>velocities/mach-norm</independentVar>
                           <tableData>
-                              0.0000	0.0000	
-                              0.7000	0.0000	
-                              1.1000	0.0230	
-                              1.8000	0.0150	
+                              0.0000	0.0000
+                              0.7000	0.0000
+                              1.1000	0.0230
+                              1.8000	0.0150
                           </tableData>
                       </table>
                 </product>
@@ -574,11 +691,11 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>aero/beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300	
-                              -0.2600	0.0500	
-                              0.0000	0.0000	
-                              0.2600	0.0500	
-                              1.5700	1.2300	
+                              -1.5700	1.2300
+                              -0.2600	0.0500
+                              0.0000	0.0000
+                              0.2600	0.0500
+                              1.5700	1.2300
                           </tableData>
                       </table>
                 </product>
@@ -607,29 +724,6 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
         </axis>
 
         <axis name="LIFT">
-            <function name="aero/function/kHLstep">
-                <description>Step_factor</description>
-                <product>
-                      <table>
-                          <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
-                          <independentVar lookup="column">velocities/vc-kts</independentVar>
-                          <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                          <tableData breakPoint="47850.0000">
-                              	0.0000	17.0000	34.0000	
-                              0.0450	0.0000	0.0000	1.0000	
-                              0.0550	0.0000	0.0000	0.8000	
-                              0.0650	0.0000	0.0000	0.0000	
-                          </tableData>
-                          <tableData breakPoint="84000.0000">
-                              	0.0000	21.0000	42.0000	
-                              0.0490	0.0000	0.0000	1.0000	
-                              0.0590	0.0000	0.0000	0.8000	
-                              0.0690	0.0000	0.0000	0.0000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kHLstep OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/HLstep0">
                 <description>Lift_at_step</description>
                 <product>
@@ -641,46 +735,30 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                           <independentVar lookup="column">velocities/vc-kts</independentVar>
                           <independentVar lookup="table">inertia/weight-lbs</independentVar>
                           <tableData breakPoint="47850.0000">
-                              	34.0000	44.0000	
-                              -0.0690	0.0000	0.0000	
-                              -0.0590	0.0000	0.5000	
-                              -0.0490	0.5000	1.0000	
-                              -0.0290	1.0000	1.0000	
-                              0.0290	1.0000	1.0000	
-                              0.0490	0.5000	1.0000	
-                              0.0590	0.0000	0.5000	
-                              0.0690	0.0000	0.0000	
+                              	34.0000	44.0000
+                              -0.0690	0.0000	0.0000
+                              -0.0590	0.0000	0.5000
+                              -0.0490	0.5000	1.0000
+                              -0.0290	1.0000	1.0000
+                              0.0290	1.0000	1.0000
+                              0.0490	0.5000	1.0000
+                              0.0590	0.0000	0.5000
+                              0.0690	0.0000	0.0000
                           </tableData>
                           <tableData breakPoint="84000.0000">
-                              	42.0000	52.0000	
-                              -0.0600	0.0000	0.0000	
-                              -0.0500	0.0000	0.5000	
-                              -0.0400	0.5000	1.0000	
-                              -0.0200	1.0000	1.0000	
-                              0.0200	1.0000	1.0000	
-                              0.0400	0.5000	1.0000	
-                              0.0500	0.0000	0.5000	
-                              0.0600	0.0000	0.0000	
+                              	42.0000	52.0000
+                              -0.0600	0.0000	0.0000
+                              -0.0500	0.0000	0.5000
+                              -0.0400	0.5000	1.0000
+                              -0.0200	1.0000	1.0000
+                              0.0200	1.0000	1.0000
+                              0.0400	0.5000	1.0000
+                              0.0500	0.0000	0.5000
+                              0.0600	0.0000	0.0000
                           </tableData>
                       </table>
                 </product>
             </function>
-            <function name="aero/function/kCLge">
-                <description>Change_in_lift_due_to_ground_effect</description>
-                <product>
-                      <table>
-                          <independentVar>aero/h_b-mac-ft</independentVar>
-                          <tableData>
-                              0.0000	1.2000	
-                              0.1000	1.1500	
-                              0.1500	1.0900	
-                              0.2000	1.0200	
-                              1.1000	1.0000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kCLge OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/CLo">
                 <description>Lift_at_zero_alpha</description>
                 <product>
@@ -699,10 +777,10 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.2000	-0.9800	
-                              0.0000	0.0000	
-                              0.2400	1.1600	
-                              0.6000	0.4640	
+                              -0.2000	-0.9800
+                              0.0000	0.0000
+                              0.2400	1.1600
+                              0.6000	0.4640
                           </tableData>
                       </table>
                 </product>
@@ -780,8 +858,8 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>velocities/mach-norm</independentVar>
                           <tableData>
-                              0.0000	0.1500	
-                              2.0000	0.0500	
+                              0.0000	0.1500
+                              2.0000	0.0500
                           </tableData>
                       </table>
                 </product>
@@ -799,33 +877,6 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
         </axis>
 
         <axis name="PITCH">
-            <function name="aero/function/kHmstep">
-                <description>Step_factor</description>
-                <product>
-                      <table>
-                          <independentVar lookup="row">velocities/vc-kts</independentVar>
-                          <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
-                          <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                          <tableData breakPoint="47850.0000">
-                              	0.0450	0.0550	0.0650	
-                              0.0000	0.0000	0.0000	0.0000	
-                              17.0000	-1.6000	-1.2800	0.0000	
-                              34.0000	0.8000	0.6400	0.0000	
-                              51.0000	0.0000	0.0000	0.0000	
-                              57.0000	-0.1000	-0.0800	0.0000	
-                          </tableData>
-                          <tableData breakPoint="84000.0000">
-                              	0.0490	0.0590	0.0690	
-                              0.0000	0.0000	0.0000	0.0000	
-                              21.0000	-1.6000	-1.2800	0.0000	
-                              42.0000	0.8000	0.6400	0.0000	
-                              63.0000	0.0000	0.0000	0.0000	
-                              72.0000	-0.1000	-0.0800	0.0000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kHmstep OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/Hmstep0">
                 <description>Trim_moment_at_step</description>
                 <product>
@@ -836,33 +887,6 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                     <value>1.0000</value>
                 </product>
             </function>
-            <function name="aero/function/kAmgear">
-                <description>Compression_factor</description>
-                <product>
-                      <table>
-                          <independentVar lookup="row">velocities/vc-kts</independentVar>
-                          <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
-                          <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                          <tableData breakPoint="47850.0000">
-                              	0.0450	0.0550	0.0650	
-                              0.0000	0.0000	0.0000	0.0000	
-                              17.0000	2.0000	1.6000	0.0000	
-                              34.0000	1.0000	0.8000	0.0000	
-                              51.0000	0.7000	0.5600	0.0000	
-                              57.0000	0.7000	0.5600	0.0000	
-                          </tableData>
-                          <tableData breakPoint="84000.0000">
-                              	0.0490	0.0590	0.0690	
-                              0.0000	0.0000	0.0000	0.0000	
-                              21.0000	2.0000	1.6000	0.0000	
-                              42.0000	3.0000	2.4000	0.0000	
-                              63.0000	0.7000	0.5600	0.0000	
-                              72.0000	0.7000	0.5600	0.0000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kAmgear OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/Amgear0">
                 <description>Compression</description>
                 <product>
@@ -873,33 +897,6 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                     <value>0.5000</value>
                 </product>
             </function>
-            <function name="aero/function/kHmkhi">
-                <description>Rebound_due_to_khi</description>
-                <product>
-                      <table>
-                          <independentVar lookup="row">flight-path/gamma-rad</independentVar>
-                          <independentVar lookup="column">attitude/pitch-rad</independentVar>
-                          <independentVar lookup="table">velocities/vc-kts</independentVar>
-                          <tableData breakPoint="42.0000">
-                              	0.0500	0.2600	
-                              0.0000	0.0000	0.0000	
-                              0.3500	0.0000	0.0000	
-                              0.7000	0.0000	0.0000	
-                              1.0500	0.0000	0.0000	
-                              1.4000	0.0000	0.0000	
-                          </tableData>
-                          <tableData breakPoint="52.0000">
-                              	0.0500	0.2600	
-                              0.0000	15.0000	13.0000	
-                              0.3500	0.3500	1.1000	
-                              0.7000	0.2500	0.6000	
-                              1.0500	0.1500	0.5000	
-                              1.4000	0.0500	0.4000	
-                          </tableData>
-                      </table>
-                </product>
-            </function>
- === MOVE THE ABOVE FACTOR kHmkhi OUTSIDE OF AND BEFORE ANY <AXIS> DEFINITION ===
             <function name="aero/coefficient/Hmrebound0">
                 <description>Rebound_due_to_vertical_speed</description>
                 <product>
@@ -912,14 +909,14 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                           <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
                           <independentVar lookup="table">inertia/weight-lbs</independentVar>
                           <tableData breakPoint="47850.0000">
-                              	0.0650	0.0700	0.0750	
-                              0.0000	0.0000	0.0000	0.0000	
-                              11.6700	0.0000	0.3000	0.0000	
+                              	0.0650	0.0700	0.0750
+                              0.0000	0.0000	0.0000	0.0000
+                              11.6700	0.0000	0.3000	0.0000
                           </tableData>
                           <tableData breakPoint="84000.0000">
-                              	0.0690	0.0740	0.0790	
-                              0.0000	0.0000	0.0000	0.0000	
-                              11.6700	0.0000	0.3000	0.0000	
+                              	0.0690	0.0740	0.0790
+                              0.0000	0.0000	0.0000	0.0000
+                              11.6700	0.0000	0.3000	0.0000
                           </tableData>
                       </table>
                 </product>
@@ -944,8 +941,8 @@ Failed to tie property propulsion/c-thrust[0] to a pointer
                       <table>
                           <independentVar>velocities/mach-norm</independentVar>
                           <tableData>
-                              0.0000	-1.0000	
-                              2.0000	-0.2500	
+                              0.0000	-1.0000
+                              2.0000	-0.2500
                           </tableData>
                       </table>
                 </product>
