@@ -4,39 +4,26 @@
 //
 // See props.html for documentation [replace with URL when available].
 //
-// $Id: props.cxx,v 1.2 2005/06/13 00:54:46 jberndt Exp $
+// $Id: props.cxx,v 1.3 2006/03/12 12:18:59 jberndt Exp $
 
 #include "props.hxx"
 
 #include <algorithm>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
 
 #if PROPS_STANDALONE
 
-#if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#include <iostream.h>
-
-#else
 #include <iostream>
-
+#include <ctype.h>
+#include <stdlib.h>
 using std::cerr;
 using std::endl;
-
-#ifdef _MSC_VER
-// MSVC is buggy, and needs something strange here
-using std::vector<SGPropertyNode_ptr>;
-using std::vector<SGPropertyChangeListener *>;
-using std::vector<SGPropertyNode *>;
-#endif
-
-#endif
-
 using std::find;
 using std::sort;
 using std::vector;
+using std::stringstream;
 
 #else
 
@@ -46,15 +33,18 @@ using std::vector;
 SG_USING_STD(sort);
 SG_USING_STD(find);
 SG_USING_STD(vector);
+SG_USING_STD(stringstream);
 
-#ifdef _MSC_VER
-// MSVC is buggy, and needs something strange here
+#if ( _MSC_VER == 1200 )
+// MSVC 6 is buggy, and needs something strange here
 SG_USING_STD(vector<SGPropertyNode_ptr>);
 SG_USING_STD(vector<SGPropertyChangeListener *>);
 SG_USING_STD(vector<SGPropertyNode *>);
 #endif
 
 #endif
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Local classes.
@@ -71,12 +61,16 @@ public:
   }
 };
 
+
+
 ////////////////////////////////////////////////////////////////////////
 // Convenience macros for value access.
 ////////////////////////////////////////////////////////////////////////
 
 #define TEST_READ(dflt) if (!getAttribute(READ)) return dflt
 #define TEST_WRITE if (!getAttribute(WRITE)) return false
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Default values for every type.
@@ -88,6 +82,8 @@ template<> const long SGRawValue<long>::DefaultValue = 0L;
 template<> const float SGRawValue<float>::DefaultValue = 0.0;
 template<> const double SGRawValue<double>::DefaultValue = 0.0L;
 template<> const char * const SGRawValue<const char *>::DefaultValue = "";
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Local path normalization code.
@@ -122,7 +118,7 @@ parse_name (const string &path, int &i)
       name = ".";
     }
     if (i < max && path[i] != '/')
-      throw string(string("Illegal character after ") + name);
+      throw string("Illegal character after " + name);
   }
 
   else if (isalpha(path[i]) || path[i] == '_') {
@@ -228,9 +224,12 @@ parse_path (const string &path, vector<PathComponent> &components)
   }
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////
 // Other static utility functions.
 ////////////////////////////////////////////////////////////////////////
+
 
 static char *
 copy_string (const char * s)
@@ -281,7 +280,7 @@ find_node (SGPropertyNode * current,
 
 				// Success! This is the one we want.
   else if (position >= (int)components.size()) {
-    return current;
+    return (current->getAttribute(SGPropertyNode::REMOVED) ? 0 : current);
   }
 
 				// Empty component means root.
@@ -312,6 +311,8 @@ find_node (SGPropertyNode * current,
     return find_node(child, components, position + 1, create);
   }
 }
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // Private methods from SGPropertyNode (may be inlined for speed).
@@ -475,7 +476,7 @@ SGPropertyNode::set_string (const char * val)
 }
 
 void
-SGPropertyNode::clear_value ()
+SGPropertyNode::clearValue ()
 {
   switch (_type) {
   case NONE:
@@ -552,17 +553,34 @@ SGPropertyNode::make_string () const
     else
       return "false";
   case INT:
-    sprintf(_buffer, "%d", get_int());
-    return _buffer;
+    {
+      stringstream sstr;
+      sstr << get_int();
+      _buffer = sstr.str();
+      return _buffer.c_str();
+    }
   case LONG:
-    sprintf(_buffer, "%ld", get_long());
-    return _buffer;
+    {
+      stringstream sstr;
+      sstr << get_long();
+      _buffer = sstr.str();
+      return _buffer.c_str();
+    }
   case FLOAT:
-    sprintf(_buffer, "%f", get_float());
-    return _buffer;
+    {
+      stringstream sstr;
+      sstr << get_float();
+      _buffer = sstr.str();
+      return _buffer.c_str();
+    }
   case DOUBLE:
-    sprintf(_buffer, "%f", get_double());
-    return _buffer;
+    {
+      stringstream sstr;
+      sstr.precision( 10 );
+      sstr << get_double();
+      _buffer = sstr.str();
+      return _buffer.c_str();
+    }
   case STRING:
   case UNSPECIFIED:
     return get_string();
@@ -602,23 +620,6 @@ SGPropertyNode::trace_read () const
 #endif
 }
 
-/**
- * Increment reference counter
- */
-void
-SGPropertyNode::incrementRef()
-{
-  ++_count;
-}
-
-/**
- * Decrement reference counter
- */
-int
-SGPropertyNode::decrementRef()
-{
-  return --_count;
-}
 
 ////////////////////////////////////////////////////////////////////////
 // Public methods from SGPropertyNode.
@@ -634,16 +635,12 @@ const int SGPropertyNode::LAST_USED_ATTRIBUTE = TRACE_WRITE;
  * Default constructor: always creates a root node.
  */
 SGPropertyNode::SGPropertyNode ()
-  : _name(copy_string("")),
-    _display_name(0),
-    _index(0),
+  : _index(0),
     _parent(0),
-    _path(0),
     _path_cache(0),
     _type(NONE),
     _tied(false),
     _attr(READ|WRITE),
-    _count(0),
     _listeners(0)
 {
   _local_val.string_val = 0;
@@ -654,18 +651,15 @@ SGPropertyNode::SGPropertyNode ()
  * Copy constructor.
  */
 SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
-  : _display_name(0),
-    _index(node._index),
+  : _index(node._index),
+    _name(node._name),
     _parent(0),			// don't copy the parent
-    _path(0),
     _path_cache(0),
     _type(node._type),
     _tied(node._tied),
     _attr(node._attr),
-    _count(0),
     _listeners(0)		// CHECK!!
 {
-  _name = copy_string(node._name);
   _local_val.string_val = 0;
   switch (_type) {
   case NONE:
@@ -739,18 +733,15 @@ SGPropertyNode::SGPropertyNode (const SGPropertyNode &node)
 SGPropertyNode::SGPropertyNode (const char * name,
 				int index,
 				SGPropertyNode * parent)
-  : _display_name(0),
-    _index(index),
+  : _index(index),
     _parent(parent),
-    _path(0),
     _path_cache(0),
     _type(NONE),
     _tied(false),
     _attr(READ|WRITE),
-    _count(0),
     _listeners(0)
 {
-  _name = copy_string(name);
+  _name = name;
   _local_val.string_val = 0;
 }
 
@@ -760,11 +751,8 @@ SGPropertyNode::SGPropertyNode (const char * name,
  */
 SGPropertyNode::~SGPropertyNode ()
 {
-  delete [] _name;
-  delete [] _display_name;
-  delete [] _path;
   delete _path_cache;
-  clear_value();
+  clearValue();
   delete _listeners;
 }
 
@@ -777,7 +765,7 @@ SGPropertyNode::alias (SGPropertyNode * target)
 {
   if (target == 0 || _type == ALIAS || _tied)
     return false;
-  clear_value();
+  clearValue();
   _value.alias = target;
   _type = ALIAS;
   return true;
@@ -914,60 +902,86 @@ SGPropertyNode::getChildren (const char * name) const
 
 
 /**
+ * Remove child by position.
+ */
+SGPropertyNode_ptr
+SGPropertyNode::removeChild (int pos, bool keep)
+{
+  SGPropertyNode_ptr node;
+  if (pos < 0 || pos >= _children.size())
+    return node;
+
+  vector<SGPropertyNode_ptr>::iterator it = _children.begin();
+  it += pos;
+  node = _children[pos];
+  _children.erase(it);
+  if (keep) {
+    _removedChildren.push_back(node);
+  }
+  if (_path_cache)
+     _path_cache->erase(node->getName()); // EMH - TODO: Take "index" into account!
+  node->setAttribute(REMOVED, true);
+  node->clearValue();
+  fireChildRemoved(node);
+  return node;
+}
+
+
+/**
  * Remove a child node
  */
-SGPropertyNode_ptr 
+SGPropertyNode_ptr
 SGPropertyNode::removeChild (const char * name, int index, bool keep)
 {
   SGPropertyNode_ptr ret;
   int pos = find_child(name, index, _children);
-  if (pos >= 0) {
-    vector<SGPropertyNode_ptr>::iterator it = _children.begin();
-    it += pos;
-    SGPropertyNode_ptr node = _children[pos];
-    _children.erase(it);
-    if (keep) {
-      _removedChildren.push_back(node);
-    }
-    node->setAttribute(REMOVED, true);
-    ret = node;
-    fireChildRemoved(node);
-  }
+  if (pos >= 0)
+    ret = removeChild(pos, keep);
   return ret;
+}
+
+
+/**
+  * Remove all children with the specified name.
+  */
+vector<SGPropertyNode_ptr>
+SGPropertyNode::removeChildren (const char * name, bool keep)
+{
+  vector<SGPropertyNode_ptr> children;
+
+  for (int pos = _children.size() - 1; pos >= 0; pos--)
+    if (compare_strings(_children[pos]->getName(), name))
+      children.push_back(removeChild(pos, keep));
+
+  sort(children.begin(), children.end(), CompareIndices());
+  return children;
 }
 
 
 const char *
 SGPropertyNode::getDisplayName (bool simplify) const
 {
-  string display = _name;
+  _display_name = _name;
   if (_index != 0 || !simplify) {
-    char buffer[64];
-    sprintf(buffer, "[%d]", _index);
-    display += buffer;
+    stringstream sstr;
+    sstr << '[' << _index << ']';
+    _display_name += sstr.str();
   }
-  _display_name = copy_string(display.c_str());
-  return _display_name;
+  return _display_name.c_str();
 }
 
 
 const char *
 SGPropertyNode::getPath (bool simplify) const
 {
-				// Calculate the complete path only once.
-  if (_path == 0) {
-    string path;
-    if (_parent == 0) {
-      path = "";
-    } else {
-      path = _parent->getPath(simplify);
-      path += '/';
-      path += getDisplayName(simplify);
-    }
-    _path = copy_string(path.c_str());
+  // Calculate the complete path only once.
+  if (_parent != 0 && _path.empty()) {
+    _path = _parent->getPath(simplify);
+    _path += '/';
+    _path += getDisplayName(simplify);
   }
 
-  return _path;
+  return _path.c_str();
 }
 
 SGPropertyNode::Type
@@ -980,7 +994,7 @@ SGPropertyNode::getType () const
 }
 
 
-bool 
+bool
 SGPropertyNode::getBoolValue () const
 {
 				// Shortcut for common case
@@ -1013,7 +1027,7 @@ SGPropertyNode::getBoolValue () const
   }
 }
 
-int 
+int
 SGPropertyNode::getIntValue () const
 {
 				// Shortcut for common case
@@ -1046,7 +1060,7 @@ SGPropertyNode::getIntValue () const
   }
 }
 
-long 
+long
 SGPropertyNode::getLongValue () const
 {
 				// Shortcut for common case
@@ -1079,7 +1093,7 @@ SGPropertyNode::getLongValue () const
   }
 }
 
-float 
+float
 SGPropertyNode::getFloatValue () const
 {
 				// Shortcut for common case
@@ -1112,7 +1126,7 @@ SGPropertyNode::getFloatValue () const
   }
 }
 
-double 
+double
 SGPropertyNode::getDoubleValue () const
 {
 				// Shortcut for common case
@@ -1170,7 +1184,7 @@ SGPropertyNode::setBoolValue (bool value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _tied = false;
     _type = BOOL;
   }
@@ -1218,7 +1232,7 @@ SGPropertyNode::setIntValue (int value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _type = INT;
     _local_val.int_val = 0;
   }
@@ -1269,7 +1283,7 @@ SGPropertyNode::setLongValue (long value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _type = LONG;
     _local_val.long_val = 0L;
   }
@@ -1320,7 +1334,7 @@ SGPropertyNode::setFloatValue (float value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _type = FLOAT;
     _local_val.float_val = 0;
   }
@@ -1371,7 +1385,7 @@ SGPropertyNode::setDoubleValue (double value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _local_val.double_val = value;
     _type = DOUBLE;
   }
@@ -1422,7 +1436,7 @@ SGPropertyNode::setStringValue (const char * value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE || _type == UNSPECIFIED) {
-    clear_value();
+    clearValue();
     _type = STRING;
   }
 
@@ -1466,7 +1480,7 @@ SGPropertyNode::setUnspecifiedValue (const char * value)
   bool result = false;
   TEST_WRITE;
   if (_type == NONE) {
-    clear_value();
+    clearValue();
     _type = UNSPECIFIED;
   }
 
@@ -1515,7 +1529,7 @@ SGPropertyNode::tie (const SGRawValue<bool> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getBoolValue();
 
-  clear_value();
+  clearValue();
   _type = BOOL;
   _tied = true;
   _value.bool_val = rawValue.clone();
@@ -1537,7 +1551,7 @@ SGPropertyNode::tie (const SGRawValue<int> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getIntValue();
 
-  clear_value();
+  clearValue();
   _type = INT;
   _tied = true;
   _value.int_val = rawValue.clone();
@@ -1559,7 +1573,7 @@ SGPropertyNode::tie (const SGRawValue<long> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getLongValue();
 
-  clear_value();
+  clearValue();
   _type = LONG;
   _tied = true;
   _value.long_val = rawValue.clone();
@@ -1581,7 +1595,7 @@ SGPropertyNode::tie (const SGRawValue<float> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getFloatValue();
 
-  clear_value();
+  clearValue();
   _type = FLOAT;
   _tied = true;
   _value.float_val = rawValue.clone();
@@ -1603,7 +1617,7 @@ SGPropertyNode::tie (const SGRawValue<double> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getDoubleValue();
 
-  clear_value();
+  clearValue();
   _type = DOUBLE;
   _tied = true;
   _value.double_val = rawValue.clone();
@@ -1626,7 +1640,7 @@ SGPropertyNode::tie (const SGRawValue<const char *> &rawValue, bool useDefault)
   if (useDefault)
     old_val = getStringValue();
 
-  clear_value();
+  clearValue();
   _type = STRING;
   _tied = true;
   _value.string_val = rawValue.clone();
@@ -1646,35 +1660,35 @@ SGPropertyNode::untie ()
   switch (_type) {
   case BOOL: {
     bool val = getBoolValue();
-    clear_value();
+    clearValue();
     _type = BOOL;
     _local_val.bool_val = val;
     break;
   }
   case INT: {
     int val = getIntValue();
-    clear_value();
+    clearValue();
     _type = INT;
     _local_val.int_val = val;
     break;
   }
   case LONG: {
     long val = getLongValue();
-    clear_value();
+    clearValue();
     _type = LONG;
     _local_val.long_val = val;
     break;
   }
   case FLOAT: {
     float val = getFloatValue();
-    clear_value();
+    clearValue();
     _type = FLOAT;
     _local_val.float_val = val;
     break;
   }
   case DOUBLE: {
     double val = getDoubleValue();
-    clear_value();
+    clearValue();
     _type = DOUBLE;
     _local_val.double_val = val;
     break;
@@ -1682,7 +1696,7 @@ SGPropertyNode::untie ()
   case STRING:
   case UNSPECIFIED: {
     string val = getStringValue();
-    clear_value();
+    clearValue();
     _type = STRING;
     _local_val.string_val = copy_string(val.c_str());
     break;
@@ -1728,7 +1742,7 @@ SGPropertyNode::getNode (const char * relative_path, bool create)
     if (result != 0)
       _path_cache->put(relative_path, result);
   }
-  
+
   return result;
 }
 
@@ -1738,7 +1752,7 @@ SGPropertyNode::getNode (const char * relative_path, int index, bool create)
   vector<PathComponent> components;
   parse_path(relative_path, components);
   if (components.size() > 0)
-    components[components.size()-1].index = index;
+    components.back().index = index;
   return find_node(this, components, 0, create);
 }
 
@@ -1754,9 +1768,11 @@ SGPropertyNode::getNode (const char * relative_path, int index) const
   return ((SGPropertyNode *)this)->getNode(relative_path, index, false);
 }
 
+
 ////////////////////////////////////////////////////////////////////////
 // Convenience methods using relative paths.
 ////////////////////////////////////////////////////////////////////////
+
 
 /**
  * Test whether another node has a value attached.
@@ -2017,24 +2033,27 @@ SGPropertyNode::untie (const char * relative_path)
 }
 
 void
-SGPropertyNode::addChangeListener (SGPropertyChangeListener * listener)
+SGPropertyNode::addChangeListener (SGPropertyChangeListener * listener,
+                                   bool initial)
 {
   if (_listeners == 0)
-    _listeners = new vector<SGPropertyChangeListener *>;
+    _listeners = new vector<SGPropertyChangeListener*>;
   _listeners->push_back(listener);
   listener->register_property(this);
+  if (initial)
+    listener->valueChanged(this);
 }
 
 void
 SGPropertyNode::removeChangeListener (SGPropertyChangeListener * listener)
 {
-  vector<SGPropertyChangeListener *>::iterator it =
+  vector<SGPropertyChangeListener*>::iterator it =
     find(_listeners->begin(), _listeners->end(), listener);
   if (it != _listeners->end()) {
     _listeners->erase(it);
     listener->unregister_property(this);
     if (_listeners->empty()) {
-      vector<SGPropertyChangeListener *> * tmp = _listeners;
+      vector<SGPropertyChangeListener*>* tmp = _listeners;
       _listeners = 0;
       delete tmp;
     }
@@ -2097,6 +2116,8 @@ SGPropertyNode::fireChildRemoved (SGPropertyNode * parent,
     _parent->fireChildRemoved(parent, child);
 }
 
+
+
 ////////////////////////////////////////////////////////////////////////
 // Simplified hash table for caching paths.
 ////////////////////////////////////////////////////////////////////////
@@ -2104,8 +2125,7 @@ SGPropertyNode::fireChildRemoved (SGPropertyNode * parent,
 #define HASH_TABLE_SIZE 199
 
 SGPropertyNode::hash_table::entry::entry ()
-  : _key(0),
-    _value(0)
+  : _value(0)
 {
 }
 
@@ -2113,13 +2133,12 @@ SGPropertyNode::hash_table::entry::~entry ()
 {
 				// Don't delete the value; we don't own
 				// the pointer.
-  delete [] _key;
 }
 
 void
 SGPropertyNode::hash_table::entry::set_key (const char * key)
 {
-  _key = copy_string(key);
+  _key = key;
 }
 
 void
@@ -2138,6 +2157,7 @@ SGPropertyNode::hash_table::bucket::~bucket ()
 {
   for (int i = 0; i < _length; i++)
     delete _entries[i];
+  delete [] _entries;
 }
 
 SGPropertyNode::hash_table::entry *
@@ -2164,6 +2184,23 @@ SGPropertyNode::hash_table::bucket::get_entry (const char * key, bool create)
   }
 }
 
+void
+SGPropertyNode::hash_table::bucket::erase (const char * key)
+{
+  int i;
+  for (i = 0; i < _length; i++) {
+    if (!strcmp(_entries[i]->get_key(), key))
+       break;
+  }
+
+  if (i < _length) {
+    for (++i; i < _length; i++) {
+      _entries[i-1] = _entries[i];
+    }
+     _length--;
+  }
+}
+
 
 SGPropertyNode::hash_table::hash_table ()
   : _data_length(0),
@@ -2175,6 +2212,7 @@ SGPropertyNode::hash_table::~hash_table ()
 {
   for (unsigned int i = 0; i < _data_length; i++)
     delete _data[i];
+  delete [] _data;
 }
 
 SGPropertyNode *
@@ -2209,6 +2247,17 @@ SGPropertyNode::hash_table::put (const char * key, SGPropertyNode * value)
   e->set_value(value);
 }
 
+void
+SGPropertyNode::hash_table::erase (const char * key)
+{
+   if (_data_length == 0)
+    return;
+  unsigned int index = hashcode(key) % _data_length;
+  if (_data[index] == 0)
+    return;
+  _data[index]->erase(key);
+}
+
 unsigned int
 SGPropertyNode::hash_table::hashcode (const char * key)
 {
@@ -2221,101 +2270,6 @@ SGPropertyNode::hash_table::hashcode (const char * key)
 }
 
 
-
-/**
- * Default constructor
- */
-SGPropertyNode_ptr::SGPropertyNode_ptr()
-{
-  _ptr = 0;
-}
-
-/**
- * Copy constructor
- */
-SGPropertyNode_ptr::SGPropertyNode_ptr( const SGPropertyNode_ptr &r )
-{
-  _ptr = r._ptr;
-  if (_ptr)
-     _ptr->incrementRef();
-}
-
-/**
- * Constructor from a pointer to a node
- */
-SGPropertyNode_ptr::SGPropertyNode_ptr( SGPropertyNode *p )
-{
-  _ptr = p;
-  if (_ptr)
-     _ptr->incrementRef();
-}
-
-/**
- * Destructor
- */
-SGPropertyNode_ptr::~SGPropertyNode_ptr()
-{
-  if (_ptr && _ptr->decrementRef() == 0)
-    delete _ptr;
-}
-
-/**
- * Assignement operator
- */
-SGPropertyNode_ptr &
-SGPropertyNode_ptr::operator=( const SGPropertyNode_ptr &r )
-{
-  if (_ptr && _ptr->decrementRef() == 0)
-    delete _ptr;
-  _ptr = r._ptr;
-  if (_ptr)
-     _ptr->incrementRef();
-
-  return *this;
-}
-
-/**
- * Pointer access operator
- */
-SGPropertyNode *
-SGPropertyNode_ptr::operator->()
-{
-  return _ptr;
-}
-
-/**
- * Pointer access operator (const)
- */
-const SGPropertyNode *
-SGPropertyNode_ptr::operator->() const
-{
-  return _ptr;
-}
-
-/**
- * Conversion to SGPropertyNode * operator
- */
-SGPropertyNode_ptr::operator SGPropertyNode *()
-{
-  return _ptr;
-}
-
-/**
- * Conversion to const SGPropertyNode * operator
- */
-SGPropertyNode_ptr::operator const SGPropertyNode *() const
-{
-  return _ptr;
-}
-
-/**
- * Validity test
- */
-bool 
-SGPropertyNode_ptr::valid() const
-{
-  return _ptr != 0;
-}
 
 ////////////////////////////////////////////////////////////////////////
 // Implementation of SGPropertyChangeListener.
@@ -2368,4 +2322,3 @@ SGPropertyChangeListener::unregister_property (SGPropertyNode * node)
 
 
 // end of props.cxx
-

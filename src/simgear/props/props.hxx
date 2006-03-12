@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.2 2005/06/13 00:54:46 jberndt Exp $
+ * $Id: props.hxx,v 1.3 2006/03/12 12:18:59 jberndt Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -22,34 +22,29 @@
 
 #if PROPS_STANDALONE
 
-#include <string>
+  #include <string>
+  #include <iostream>
 
-#if defined(sgi) && !defined(__GNUC__) && (_COMPILER_VERSION < 740)
-#include <iostream.h>
+  using std::string;
+  using std::vector;
+  using std::istream;
+  using std::ostream;
 
-#else
-#include <iostream>
-
-using std::istream;
-using std::ostream;
-#endif
-
-using std::string;
-using std::vector;
+  #include "SGReferenced.hxx"
+  #include "SGSharedPtr.hxx"
 
 #else
 
-#include <simgear/compiler.h>
-#include <simgear/debug/logstream.hxx>
-#include STL_STRING
-#include STL_IOSTREAM
-SG_USING_STD(string);
-SG_USING_STD(vector);
-#if !defined(SG_HAVE_NATIVE_SGI_COMPILERS)
-SG_USING_STD(istream);
-SG_USING_STD(ostream);
-#endif
-
+  #include <simgear/compiler.h>
+  #include <simgear/debug/logstream.hxx>
+  #include STL_STRING
+  #include STL_IOSTREAM
+  SG_USING_STD(string);
+  SG_USING_STD(vector);
+  SG_USING_STD(istream);
+  SG_USING_STD(ostream);
+  #include <simgear/structure/SGReferenced.hxx>
+  #include <simgear/structure/SGSharedPtr.hxx>
 #endif
 
 
@@ -97,6 +92,8 @@ SG_USING_STD(ostream);
 #pragma warn A sloppy coder has defined STRING as a macro!
 #undef STRING
 #endif
+
+
 
 ////////////////////////////////////////////////////////////////////////
 // A raw value.
@@ -456,73 +453,14 @@ private:
   setter_t _setter;
 };
 
+
 /**
  * The smart pointer that manage reference counting
  */
 class SGPropertyNode;
-class SGPropertyNode_ptr
-{
-public:
+typedef SGSharedPtr<SGPropertyNode> SGPropertyNode_ptr;
+typedef SGSharedPtr<const SGPropertyNode> SGConstPropertyNode_ptr;
 
-  /**
-   * Default constructor
-   */
-  SGPropertyNode_ptr();
-
-  /**
-   * Copy constructor
-   */
-  SGPropertyNode_ptr( const SGPropertyNode_ptr &r );
-
-  /**
-   * Constructor from a pointer to a node
-   */
-  SGPropertyNode_ptr( SGPropertyNode *p );
-
-  /**
-   * Destructor
-   */
-  ~SGPropertyNode_ptr();
-
-  /**
-   * Assignement operator
-   */
-  SGPropertyNode_ptr &operator=( const SGPropertyNode_ptr &r );
-
-  /**
-   * Pointer access operator
-   */
-  SGPropertyNode *operator->();
-
-  /**
-   * Pointer access operator (const)
-   */
-  const SGPropertyNode *operator->() const;
-
-  /**
-   * Conversion to SGPropertyNode * operator
-   */
-  operator SGPropertyNode *();
-
-  /**
-   * Conversion to const SGPropertyNode * operator
-   */
-  operator const SGPropertyNode *() const;
-
-  /**
-   * Return the pointer.
-   */
-  SGPropertyNode * ptr () { return _ptr; }
-
-  /**
-   * Validity test
-   */
-  bool valid() const;
-
-private:
-
-  SGPropertyNode *_ptr;
-};
 
 /**
  * The property change listener interface.
@@ -547,10 +485,12 @@ private:
   vector<SGPropertyNode *> _properties;
 };
 
+
+
 /**
  * A node in a property tree.
  */
-class SGPropertyNode
+class SGPropertyNode : public SGReferenced
 {
 public:
 
@@ -565,7 +505,7 @@ public:
    * Property value types.
    */
   enum Type {
-    NONE,
+    NONE = 0,
     ALIAS,
     BOOL,
     INT,
@@ -589,7 +529,8 @@ public:
     ARCHIVE = 4,
     REMOVED = 8,
     TRACE_READ = 16,
-    TRACE_WRITE = 32
+    TRACE_WRITE = 32,
+    USERARCHIVE = 64
   };
 
 
@@ -632,7 +573,7 @@ public:
   /**
    * Get the node's simple (XML) name.
    */
-  const char * getName () const { return _name; }
+  const char * getName () const { return _name.c_str(); }
 
 
   /**
@@ -711,10 +652,22 @@ public:
 
 
   /**
+   * Remove child by position.
+   */
+  SGPropertyNode_ptr removeChild (int pos, bool keep = true);
+
+
+  /**
    * Remove a child node
    */
   SGPropertyNode_ptr removeChild (const char * name, int index = 0,
                                   bool keep = true);
+
+  /**
+   * Remove all children with the specified name.
+   */
+  vector<SGPropertyNode_ptr> removeChildren (const char * name,
+                                             bool keep = true);
 
 
   //
@@ -845,7 +798,7 @@ public:
    * Set all of the mode attributes for the property node.
    */
   void setAttributes (int attr) { _attr = attr; }
-  
+
 
   //
   // Leaf Value (primitive).
@@ -1147,9 +1100,11 @@ public:
 
 
   /**
-   * Add a change listener to the property.
+   * Add a change listener to the property. If "initial" is set call the
+   * listener initially.
    */
-  void addChangeListener (SGPropertyChangeListener * listener);
+  void addChangeListener (SGPropertyChangeListener * listener,
+                          bool initial = false);
 
 
   /**
@@ -1174,6 +1129,12 @@ public:
    * Fire a child-removed event to all listeners.
    */
   void fireChildRemoved (SGPropertyNode * child);
+
+
+  /**
+   * Clear any existing value and set the type to NONE.
+   */
+  void clearValue ();
 
 
 protected:
@@ -1208,12 +1169,6 @@ private:
 
 
   /**
-   * Clear any existing value and set the type to NONE.
-   */
-  void clear_value ();
-
-
-  /**
    * Get the value as a string.
    */
   const char * make_string () const;
@@ -1231,35 +1186,22 @@ private:
   void trace_write () const;
 
 
-  /**
-   * Increment reference counter
-   */
-  void incrementRef();
-
-  /**
-   * Decrement reference counter
-   */
-  int decrementRef();
-
-  friend class SGPropertyNode_ptr;
-
-
-  mutable char _buffer[MAX_STRING_LEN+1];
-
   class hash_table;
 
-  char * _name;
-  mutable char * _display_name;
+  string _name;
+  mutable string _display_name;
   int _index;
+  /// To avoid cyclic reference counting loops this shall not be a reference
+  /// counted pointer
   SGPropertyNode * _parent;
   vector<SGPropertyNode_ptr> _children;
   vector<SGPropertyNode_ptr> _removedChildren;
-  mutable char * _path;
+  mutable string _path;
+  mutable string _buffer;
   hash_table * _path_cache;
   Type _type;
   bool _tied;
   int _attr;
-  int _count;
 
 				// The right kind of pointer...
   union {
@@ -1284,6 +1226,7 @@ private:
   vector <SGPropertyChangeListener *> * _listeners;
 
 
+
   /**
    * A very simple hash table with no remove functionality.
    */
@@ -1296,14 +1239,14 @@ private:
     class entry {
     public:
       entry ();
-      virtual ~entry ();
-      virtual const char * get_key () { return _key; }
-      virtual void set_key (const char * key);
-      virtual SGPropertyNode * get_value () { return _value; }
-      virtual void set_value (SGPropertyNode * value);
+      ~entry ();
+      const char * get_key () { return _key.c_str(); }
+      void set_key (const char * key);
+      SGPropertyNode * get_value () { return _value; }
+      void set_value (SGPropertyNode * value);
     private:
-      char * _key;
-      SGPropertyNode * _value;
+      string _key;
+      SGSharedPtr<SGPropertyNode>  _value;
     };
 
 
@@ -1313,8 +1256,9 @@ private:
     class bucket {
     public:
       bucket ();
-      virtual ~bucket ();
-      virtual entry * get_entry (const char * key, bool create = false);
+      ~bucket ();
+      entry * get_entry (const char * key, bool create = false);
+      void erase(const char * key);
     private:
       int _length;
       entry ** _entries;
@@ -1323,9 +1267,10 @@ private:
     friend class bucket;
 
     hash_table ();
-    virtual ~hash_table ();
-    virtual SGPropertyNode * get (const char * key);
-    virtual void put (const char * key, SGPropertyNode * value);
+    ~hash_table ();
+    SGPropertyNode * get (const char * key);
+    void put (const char * key, SGPropertyNode * value);
+    void erase(const char * key);
 
   private:
     unsigned int hashcode (const char * key);
@@ -1338,4 +1283,3 @@ private:
 #endif // __PROPS_HXX
 
 // end of props.hxx
-
