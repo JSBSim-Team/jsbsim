@@ -7,7 +7,7 @@
  <fileheader>
      <author>Aeromatic v 0.8, DPC</author>
      <filecreationdate>2004-01-01</filecreationdate>
-     <version>$Revision: 1.22 $</version>
+     <version>$Revision: 1.23 $</version>
      <description>Models a Northrop T-38</description>
  </fileheader>
 
@@ -216,8 +216,8 @@
             <aerosurface_scale name="Elevator Control">
                 <input>fcs/pitch-feel</input>
                 <range>
-                    <min>-0.3</min>
-                    <max>0.175</max>
+                    <min>-1.0</min>
+                    <max>0.583</max>
                 </range>
                 <output>fcs/elevator-pos-norm</output>
             </aerosurface_scale>
@@ -247,8 +247,8 @@
             <aerosurface_scale name="Left Aileron Control">
                 <input>fcs/roll-feel</input>
                 <range>
-                    <min>-0.35</min>
-                    <max>0.26</max>
+                    <min>-1.00</min>
+                    <max>0.75</max>
                 </range>
                 <output>fcs/left-aileron-pos-norm</output>
             </aerosurface_scale>
@@ -256,8 +256,8 @@
             <aerosurface_scale name="Right Aileron Control">
                 <input>-fcs/roll-feel</input>
                 <range>
-                    <min>-0.35</min>
-                    <max>0.26</max>
+                    <min>-1.00</min>
+                    <max>0.65</max>
                 </range>
                 <output>fcs/right-aileron-pos-norm</output>
             </aerosurface_scale>
@@ -316,8 +316,8 @@
             <aerosurface_scale name="Rudder Control">
                 <input>fcs/rudder-sum</input>
                 <range>
-                    <min>-0.35</min>
-                    <max>0.35</max>
+                    <min>-1.00</min>
+                    <max>1.00</max>
                 </range>
                 <output>fcs/rudder-pos-norm</output>
             </aerosurface_scale>
@@ -537,8 +537,8 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/elevator-pos-rad</property>
-                    <value>0.2000</value>
+                    <property>fcs/elevator-pos-norm</property>
+                    <value>0.0600</value>
                 </product>
             </function>
         </axis>
@@ -588,8 +588,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/left-aileron-pos-rad</property>
-                    <value>0.0550</value>
+                    <property>fcs/left-aileron-pos-norm</property>
+                    <value>0.0193</value>
                 </product>
             </function>
             <function name="aero/coefficient/CldaR">
@@ -598,8 +598,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/right-aileron-pos-rad</property>
-                    <value>-0.0550</value>
+                    <property>fcs/right-aileron-pos-norm</property>
+                    <value>-0.0193</value>
                 </product>
             </function>
             <function name="aero/coefficient/Cldr">
@@ -608,8 +608,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/rudder-pos-rad</property>
-                    <value>0.0060</value>
+                    <property>fcs/rudder-pos-norm</property>
+                    <value>0.0021</value>
                 </product>
             </function>
         </axis>
@@ -631,8 +631,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/cbarw-ft</property>
-                    <property>fcs/elevator-pos-rad</property>
-                    <value>-0.6500</value>
+                    <property>fcs/elevator-pos-norm</property>
+                    <value>-0.1950</value>
                 </product>
             </function>
             <function name="aero/coefficient/Cmq">
@@ -697,8 +697,8 @@
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
-                    <property>fcs/rudder-pos-rad</property>
-                    <value>-0.0200</value>
+                    <property>fcs/rudder-pos-norm</property>
+                    <value>-0.0070</value>
                 </product>
             </function>
         </axis>
