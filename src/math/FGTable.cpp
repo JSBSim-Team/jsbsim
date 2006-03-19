@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.8 2006/02/27 23:25:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.9 2006/03/19 13:55:56 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,10 +104,11 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   string lookup_axis;
   string call_type;
   string parent_type;
+  string brkpt_string;
   FGPropertyManager* node;
-  Element *tableData;
-  Element *parent_element;
-  Element *axisElement;
+  Element *tableData=0;
+  Element *parent_element=0;
+  Element *axisElement=0;
   string operation_types = "function, product, sum, difference, quotient,"
                            "pow, abs, sin, cos, asin, acos, tan, atan, table";
 
@@ -195,13 +196,23 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
       }
     }
 
-  } else { // no independentVars found, and table is not marked as internal
-    cerr << endl << fgred << "No independent variable found for table." << fgdef << endl << endl;
-    abort();
+  } else {
+    brkpt_string = el->GetAttributeValue("breakPoint");
+    if (brkpt_string.empty()) {
+     // no independentVars found, and table is not marked as internal, nor is it a 3D table
+      cerr << endl << fgred << "No independent variable found for table."  << fgdef << endl << endl;
+      abort();
+    }
   }
   // end lookup property code
 
-  tableData = el->FindElement("tableData");
+  if (brkpt_string.empty()) {                  // Not a 3D table "table element"
+    tableData = el->FindElement("tableData");
+  } else {                                     // This is a table in a 3D table
+    tableData = el;
+    dimension = 2;                             // Currently, infers 2D table
+  }
+
   for (i=0; i<tableData->GetNumDataLines(); i++) {
     buf << tableData->GetDataLine(i) << string(" ");
   }
@@ -241,6 +252,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     Type = tt3D;
     colCounter = 1;
     rowCounter = 1;
+    lastRowIndex = lastColumnIndex = 2;
 
     Data = Allocate(); // this data array will contain the keys for the associated tables
     Tables.reserve(nTables); // necessary?
