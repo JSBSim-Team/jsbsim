@@ -3,7 +3,7 @@
 <fdm_config name="737" release="BETA" version="2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
-
+    
     <fileheader>
         <author> Dave Culp </author>
         <author> Aeromatic </author>
@@ -405,9 +405,9 @@
             </kinematic>
 
         </channel>
-        <channel name="Speedbrake">
-
-            <kinematic name="Speedbrake Control">
+        <channel name="Flight Spoilers">
+          <!-- operated by the speedbrake handle and roll control -->
+            <kinematic name="Flight Spoilers Control">
                 <input>fcs/speedbrake-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -423,11 +423,102 @@
             </kinematic>
 
         </channel>
+        <channel name="Ground Spoilers">
+          <!-- these only operate on the ground -->
+            <kinematic name="Ground Spoilers Control">
+                <input>fcs/spoiler-cmd-norm</input>
+                <traverse>
+                    <setting>
+                        <position>0</position>
+                        <time>0</time>
+                    </setting>
+                    <setting>
+                        <position>1</position>
+                        <time>0.6</time>
+                    </setting>
+                </traverse>
+                <output>fcs/spoiler-pos-norm</output>
+            </kinematic>
+
+        </channel>
+
     </flight_control>
 
     <aerodynamics>
 
+        <function name="aero/function/kCDge">
+            <description>Change_in_drag_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	0.0480
+                          0.1000	0.5150
+                          0.1500	0.6290
+                          0.2000	0.7090
+                          0.3000	0.8150
+                          0.4000	0.8820
+                          0.5000	0.9280
+                          0.6000	0.9620
+                          0.7000	0.9880
+                          0.8000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kCLge">
+            <description>Change_in_lift_due_to_ground_effect</description>
+            <product>
+                  <table>
+                      <independentVar>aero/h_b-mac-ft</independentVar>
+                      <tableData>
+                          0.0000	1.2030
+                          0.1000	1.1270
+                          0.1500	1.0900
+                          0.2000	1.0730
+                          0.3000	1.0460
+                          0.4000	1.0550
+                          0.5000	1.0190
+                          0.6000	1.0130
+                          0.7000	1.0080
+                          0.8000	1.0060
+                          0.9000	1.0030
+                          1.0000	1.0020
+                          1.1000	1.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kCLsb">
+            <description>Change_in_lift_due_to_speed_brake</description>
+            <product>
+                  <table>
+                      <independentVar>fcs/speedbrake-pos-norm</independentVar>
+                      <tableData>
+                          0.0000	1.0
+                          0.1000	0.85
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <function name="aero/function/kCLsp">
+            <description>Change_in_lift_due_to_spoilers</description>
+            <product>
+                  <table>
+                      <independentVar>fcs/spoiler-pos-norm</independentVar>
+                      <tableData>
+                          0.0000	1.0
+                          0.1000	0.6
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
         <axis name="DRAG">
+
             <function name="aero/coefficient/CD0">
                 <description>Drag_at_zero_lift</description>
                 <product>
@@ -445,15 +536,18 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDi">
                 <description>Induced_drag</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>aero/cl-squared</property>
+                    <property>aero/function/kCDge</property>
                     <value>0.043</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDmach">
                 <description>Drag_due_to_mach</description>
                 <product>
@@ -470,6 +564,7 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDflap">
                 <description>Drag_due_to_flaps</description>
                 <product>
@@ -479,6 +574,7 @@
                     <value>0.059</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDgear">
                 <description>Drag_due_to_gear</description>
                 <product>
@@ -488,8 +584,9 @@
                     <value>0.015</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDsb">
-                <description>Drag_due_to_speedbrakes</description>
+                <description>Drag_due_to_flight_spoilers</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
@@ -497,6 +594,17 @@
                     <value>0.02</value>
                 </product>
             </function>
+
+            <function name="aero/coefficient/CDsp">
+                <description>Drag_due_to_ground_spoilers</description>
+                <product>
+                    <property>aero/qbar-psf</property>
+                    <property>metrics/Sw-sqft</property>
+                    <property>fcs/spoiler-pos-norm</property>
+                    <value>0.04</value>
+                </product>
+            </function>
+
             <function name="aero/coefficient/CDbeta">
                 <description>Drag_due_to_sideslip</description>
                 <product>
@@ -514,6 +622,7 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/CDde">
                 <description>Drag_due_to_Elevator_Deflection</description>
                 <product>
@@ -523,6 +632,7 @@
                     <value>0.059</value>
                 </product>
             </function>
+
         </axis>
 
         <axis name="SIDE">
@@ -538,40 +648,40 @@
         </axis>
 
         <axis name="LIFT">
+
             <function name="aero/coefficient/CLalpha">
                 <description>Lift_due_to_alpha</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
+                    <property>aero/function/kCLge</property>
+                    <property>aero/function/kCLsb</property>
+                    <property>aero/function/kCLsp</property>
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
                              -0.20     -0.68
                               0.00	0.20
                               0.23	1.20
-                              0.60	0.60
+                              0.46	0.20
                           </tableData>
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/dCLflap">
                 <description>Delta_Lift_due_to_flaps</description>
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
                     <property>fcs/flap-pos-norm</property>
+                    <property>aero/function/kCLge</property>
+                    <property>aero/function/kCLsb</property>
+                    <property>aero/function/kCLsp</property>
                     <value>0.9</value>
                 </product>
             </function>
-            <function name="aero/coefficient/dCLsb">
-                <description>Delta_Lift_due_to_speedbrake</description>
-                <product>
-                    <property>aero/qbar-psf</property>
-                    <property>metrics/Sw-sqft</property>
-                    <property>fcs/speedbrake-pos-norm</property>
-                    <value>-0.1</value>
-                </product>
-            </function>
+
             <function name="aero/coefficient/CLde">
                 <description>Lift_due_to_Elevator_Deflection</description>
                 <product>
@@ -581,9 +691,11 @@
                     <value>0.2</value>
                 </product>
             </function>
+
         </axis>
 
         <axis name="ROLL">
+
             <function name="aero/coefficient/Clb">
                 <description>Roll_moment_due_to_beta</description>
                 <product>
@@ -594,6 +706,7 @@
                     <value>-0.09</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/Clp">
                 <description>Roll_moment_due_to_roll_rate</description>
                 <product>
@@ -605,6 +718,7 @@
                     <value>-0.4</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/Clr">
                 <description>Roll_moment_due_to_yaw_rate</description>
                 <product>
@@ -616,6 +730,7 @@
                     <value>0.09</value>
                 </product>
             </function>
+
             <function name="aero/coefficient/Clda">
                 <description>Roll_moment_due_to_aileron</description>
                 <product>
@@ -632,6 +747,7 @@
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/Cldr">
                 <description>Roll_moment_due_to_rudder</description>
                 <product>
@@ -739,7 +855,7 @@
         <property> fcs/elevator-pos-norm </property>
         <rates> OFF </rates>
         <velocities> OFF </velocities>
-        <forces> ON </forces>
+        <forces> OFF </forces>
         <moments> OFF </moments>
         <position> OFF </position>
         <propulsion> OFF </propulsion>
@@ -749,3 +865,4 @@
     </output>
 
 </fdm_config>
+
