@@ -40,7 +40,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.9 2006/02/27 23:25:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.10 2006/03/22 12:31:12 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -407,12 +407,9 @@ void Element::AddAttribute(string name, string value)
 
 void Element::AddData(string d)
 {
-  int string_end=-1;
   int string_start = d.find_first_not_of(" \t");
   if (string_start > 0) {
     d.erase(0,string_start);
-    string_end = d.find_first_of(" \t");
-    if (string_end > 0) d.erase(string_end,d.size()-string_end);
   }
   data_lines.push_back(d);
 }

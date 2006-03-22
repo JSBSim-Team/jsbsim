@@ -248,12 +248,14 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
     if (!input.good()) {
       XML_ParserFree(parser);
       cerr << "Problem reading input file" << endl;
+      abort();
     }
 
     input.read(buf,16384);
     if (!XML_Parse(parser, buf, input.gcount(), false)) {
       XML_ParserFree(parser);
       cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
+      abort();
     }
 
   }
@@ -262,6 +264,7 @@ void readXML (istream &input, XMLVisitor &visitor, const string &path)
   if (!XML_Parse(parser, buf, 0, true)) {
     XML_ParserFree(parser);
     cerr << "XML parse error: " << XML_ErrorString(XML_GetErrorCode(parser)) << endl;
+    abort();
   }
 
   XML_ParserFree(parser);
@@ -278,9 +281,11 @@ void readXML (const string &path, XMLVisitor &visitor)
     } catch (...) {
       input.close();
       cerr << "Failed to open file" << endl;
+      abort();
     }
   } else {
     cerr << "Failed to open file" << endl;
+    abort();
   }
   input.close();
 }
