@@ -1,0 +1,207 @@
+<?xml version="1.0" ?>
+<!--
+  File:     Olympus593Mrk610.xml
+  Author:   Aero-Matic v 0.7
+  Version:  1.03
+  Date:     21 february 2005
+
+  Inputs:
+    name:           Olympus593Mrk610
+    type:           turbine
+    thrust:         31350 lb
+    augmented?      yes
+    injected?       no
+
+
+  References :
+  ==========
+    - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+    (FAA certificate, E20eu - 15 january 1981, Olympus).
+
+    - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+    (FAA certificate, A45eu - 9 january 1979, Concorde) :
+
+                               Static         N1 (low       N2 (high                  Time
+    Condition                thrust (lb)    compressor)    compressor)      EGT       limit
+    .........................................................................................
+    Start and relight             -              -              -          550�C      2 s
+    Contingency                 38130           102%          106.8%       883�C      2.5 s
+    Takeoff (with reheat)       37080           102%          105.7%       806�C      5 minutes
+    Takeoff (without reheat)    31350           102%          105.7%       806�C      5 minutes
+    Reheated climb              32800           102%          105.1%       755�C      15 minutes
+    Maximum continuous          28800           102%          105.3%       736�C      unrestricted
+    Idle                          -              -             60% (min)              unrestricted
+    Maximum overspeed                           108.5%        110.0%         -        20 s
+    Reverse (ground)              -              -             98.0%         -        30 s
+    Reverse (flight)              -         (as obtained at reversed idle)   -        4 minutes
+
+    - http://www.concordesst.com :
+    Olympus 593 Mrk 610 turbojet (RollsRoyce / SNECMA).
+    Maximum thurst at take off (with afterburner reheat) : 38050 lbs (170 KN).
+    Maximum thrust produced during supersonic cruise : 10000 lbs.
+    Reheat contribution to performance : 20% at full thrust during take off.
+    Fuel type : A1 jet fuel.
+    Fuel capacity : 26400 gallons, 119500 l, 95680 kg.
+    Fuel consumption (at idle power) : 1100 kg/h (302 gallons/h).
+    Fuel consumption (at full power) : 10500 kg/h (2885 gallons/h).
+    Fuel consumption (at full reheat power) : 22500 kg/h (6180 gallons/h).
+
+    As air intakes move at Mach 1.3, a shockwave forms.
+    Takeoff and cruise : 82% of thrust by engine, 6% from nozzle and 12% by intakes.
+    Supersonic cruise : 8% of thrust by engine, 29% from nozzle and 63% by intakes.
+
+    - http://www.aircraftenginedesign.com :
+    Takeoff : Thrust 38000 lb, Bypass Ratio 0, Overall Pressure Ratio 11.3 (cruise), Airflow : 410 lb/s.
+    Cruise  : Altitude : 53000 ft, Mach 2.00, Thrust 10030 lb, TSFC : 1.190.
+
+    - http://www.alpa.org/alpa/DesktopModules/ViewDocument.aspx?DocumentID=814 :
+    At Mach 1.3, inlet-guide ramps lower to slow down the intake air.
+    At Mach 1.7 the afterburners are turned off, and the non-bypass engines are able to increase to Mach 2.04 (1150 kt)
+    with about half the fuel flow.
+    At cruise speed, the air entering the engines is reduced by intake ramps to 500 kt. This drop in intakes provides
+    45% of thrust, the engines 50%, and the convergent/divergent effect of the nozzle and stowed thrust reversers, 5%.
+    At Mach 2.04, fuel flow is 45200 lb/h.
+
+-->
+<turbine_engine name="Olympus593Mrk610">
+  <!--
+     MILTHRUST     max static thrust (without afterburner) at S.L. (installed), lbf
+     MAXTHRUST     max static thrust with afterburner at S.L. (installed), lbf
+     BYPASSRATIO   bypass ratio
+     TSFC          thrust-specific fuel consumption (lbm/hr/lbf)
+     ATSFC         augmented TSFC (lbm/hr/lbf)
+     IDLEN1        idle percent rpm of fan spool
+     IDLEN2        idle percent rpm of inner spool
+     MAXN1         N1 at 100% throttle
+     MAXN2         N2 at 100% throttle
+     AUGMENTED     = 1 if augmentation installed, else = 0
+     AUGMETHOD     = 0 if using property /engine[n]/augmentation
+                   = 1 if using last 1% of throttle movement
+     INJECTED      = 1 if water injection installed
+
+     TABLE(0)      idle thrust vs. altitude and mach
+     TABLE(1)      maximum un-augmented thrust vs. altitude and mach
+     TABLE(2)      augmented thrust multiplier vs. altitude and mach
+     TABLE(3)      water-injection multiplier vs. altitude and mach
+  -->
+
+  <!-- - TSFC 10500 kg/h / 31350 lbs :
+       Get the right consumption at max thrust (sea level).
+       Depends strongly of center of gravity and aero reference point.
+       - ATSFC 22500 kg/h / 37080 lbs :
+       Get the right consumption at afterburner (sea level).
+
+       Adjust the TSFC to get 20500 kg/h on average, at Mach 2.02 between 50000-57800 ft (60 ft/min during 2h10).
+  -->
+
+  <milthrust> 31350 </milthrust>
+  <maxthrust> 37080 </maxthrust>
+  <bypassratio> 0.0 </bypassratio>
+  <tsfc> 1.144 </tsfc>                       <!-- 0.738 x 1.55 -->
+  <atsfc> 1.338 </atsfc>
+  <idlen1> 30.0 </idlen1>
+  <idlen2> 60.0 </idlen2>
+  <maxn1> 102.0 </maxn1>
+  <maxn2> 106.0 </maxn2>
+  <augmented> 1 </augmented>
+  <augmethod> 0 </augmethod>
+  <injected> 0 </injected>
+
+  <!-- At takeoff and subsonic cruise : 12% of thrust by intake, 6% by secondary nozzles -> x 1.1360.
+       Air intakes starts at Mach 1.3 : 63 % of thrust in supersonic cruise, 29% secondary nozzles -> x 2.7030.
+
+       One supposes secondary nozzles included in the engine thrust.
+       Simplification : no air intake effect below Mach 1.3.
+  -->
+
+ <function name="IdleThrust">
+  <table>
+   <independentVar lookup="row">velocities/mach</independentVar>
+   <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+   <tableData>
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   0.0430 0.0488 0.0528 0.0694 0.0899 0.1183 0.1467 0.0792
+    0.2   0.0500 0.0501 0.0335 0.0544 0.0797 0.1049 0.1342 0.0725
+    0.4   0.0040 0.0047 0.0020 0.0272 0.0595 0.0891 0.1203 0.0650
+    0.6   0.0    0.0    0.0    0.0    0.0276 0.0718 0.1073 0.0579
+    0.8   0.0    0.0    0.0    0.0    0.0474 0.0868 0.0900 0.0486
+    1.0   0.0    0.0    0.0    0.0    0.0    0.0552 0.0800 0.0432
+    1.2   0.0    0.0    0.0    0.0    0.0    0.0530 0.0768 0.0415
+    1.4   0.0    0.0    0.0    0.0    0.0    0.0519 0.0753 0.0407
+    1.6   0.0    0.0    0.0    0.0    0.0    0.0    0.0745 0.0403
+    1.8   0.0    0.0    0.0    0.0    0.0    0.0    0.0723 0.0391
+    2.0   0.0    0.0    0.0    0.0    0.0    0.0    0.0680 0.0368
+    2.2   0.0    0.0    0.0    0.0    0.0    0.0    0.0605 0.0328
+   </tableData>
+  </table>
+ </function>
+
+    <!-- Add average (without X factor) at Mach 1.3.
+
+         Above Mach 1.3 :
+         - x 1.2 at Mach 1.4.
+         - x 1.4 at Mach 1.6.
+         - x 1.8 at Mach 1.8.
+         - x 2.7 at Mach 2.0.
+         - x 2.7 at Mach 2.2.
+    -->
+
+ <function name="MilThrust">
+  <table>
+   <independentVar lookup="row">velocities/mach</independentVar>
+   <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+   <tableData>
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   1.2600 1.0000 0.7400 0.5340 0.3720 0.2410 0.1490 0.0805
+    0.2   1.1710 0.9340 0.6970 0.5060 0.3550 0.2310 0.1430 0.0772
+    0.4   1.1500 0.9210 0.6920 0.5060 0.3570 0.2330 0.1450 0.0783
+    0.6   1.1810 0.9510 0.7210 0.5320 0.3780 0.2480 0.1540 0.0832
+    0.8   1.2580 1.0200 0.7820 0.5820 0.4170 0.2750 0.1700 0.0918
+    1.0   1.3690 1.1200 0.8710 0.6510 0.4750 0.3150 0.1950 0.1053
+    1.2   1.4850 1.2300 0.9750 0.7440 0.5450 0.3640 0.2250 0.1215
+    1.3   1.5396 1.2850 1.0305 0.7945 0.5865 0.3940 0.2440 0.1318
+    1.4   1.9129 1.6080 1.3032 1.0140 0.7536 0.5088 0.3156 0.1704
+    1.6   2.0895 1.7636 1.4377 1.1571 0.9142 0.6464 0.4004 0.2202
+    1.8   2.6159 2.2043 1.7928 1.4382 1.1333 0.7997 0.4955 0.2725
+    2.0   3.6096 3.0945 2.5793 2.0644 1.6192 1.1405 0.7066 0.3888
+    2.2   3.4042 2.9203 2.4365 2.1427 1.5725 1.0989 0.6809 0.3745
+   </tableData>
+  </table>
+ </function>
+
+    <!-- Add average (without X factor ) at Mach 1.3.
+
+         Above Mach 1.3 :
+         - x 1.2 at Mach 1.4.
+         - x 1.4 at Mach 1.6.
+         - x 1.8 at Mach 1.8.
+         - x 2.7 at Mach 2.0.
+         - x 2.5 at Mach 2.2.
+         - burn fuel to match consumption London-New York.
+         - avoid overspeed until Mach 1.7.
+    -->
+
+  <function name="AugThrust">
+   <table>
+    <independentVar lookup="row">velocities/mach</independentVar>
+    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
+    <tableData>
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   1.1816 1.0000 0.8184 0.6627 0.5280 0.3756 0.2327 0.1280
+    0.2   1.1308 0.9599 0.7890 0.6406 0.5116 0.3645 0.2258 0.1242
+    0.4   1.1150 0.9474 0.7798 0.6340 0.5070 0.3615 0.2240 0.1232
+    0.6   1.1284 0.9589 0.7894 0.6420 0.5134 0.3661 0.2268 0.1247
+    0.8   1.1707 0.9942 0.8177 0.6647 0.5309 0.3784 0.2345 0.1290
+    1.0   1.2411 1.0529 0.8648 0.7017 0.5596 0.3983 0.2467 0.1357
+    1.2   1.3287 1.1254 0.9221 0.7462 0.5936 0.4219 0.2614 0.1438
+    1.3   1.3826 1.1702 0.9577 0.7742 0.6148 0.4364 0.2704 0.1488
+    1.4   1.7238 1.4579 1.1920 0.9625 0.7632 0.5411 0.3353 0.1846
+    1.6   2.1995 1.8564 1.5132 1.2180 0.9224 0.6804 0.4215 0.2318
+    1.8   3.1142 2.6242 2.1343 1.7122 1.3491 0.9520 0.5899 0.3244
+    2.0   4.9945 4.2390 3.5332 2.8280 2.2183 1.5622 0.9680 0.5324
+    2.2   4.9250 4.2250 3.5250 3.1000 2.2750 1.5898 0.9850 0.5418
+   </tableData>
+  </table>
+ </function>
+
+</turbine_engine>
