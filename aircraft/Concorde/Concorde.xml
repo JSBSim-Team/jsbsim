@@ -807,7 +807,7 @@
             <contents unit="LBS"> 4905.2900 </contents>
         </tank>
     </propulsion>
-    <flight_control name="FCS: Concorde">
+    <flight_control name="Concorde">
      <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
