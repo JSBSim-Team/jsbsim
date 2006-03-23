@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.52 $ </version>
+        <version> $Revision: 1.53 $ </version>
         <description>
             Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -323,9 +323,9 @@
             <contents unit="LBS"> 95 </contents>
         </tank>
     </propulsion>
-
+<!--
     <autopilot file="c310ap"/>
-
+-->
     <flight_control name="Cessna 310">
         <channel name="Pitch">
             <summer name="Pitch Trim Sum">
