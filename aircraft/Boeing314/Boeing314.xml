@@ -5,10 +5,231 @@
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Author Name </author>
-        <filecreationdate> Creation Date </filecreationdate>
-        <version> Version </version>
+        <author> Anon Y. Mous </author>
+        <filecreationdate> 03-26-2006 </filecreationdate>
+        <version> 1.02 </version>
         <description> Models a Boeing314A </description>
+        <note>314A model, 14.5 ft propeller, 1600 hp, 5200 miles range (314 model has smaller propeller, 1500 hp and 3500 miles range).</note>
+        <note>CG in range, between 26 and 29 % MAC.</note>
+        <note>takeoff flaps 2/3.</note>
+        <note>real gear ratio 16:9.</note>
+        <note>economic speed 110 kt.</note>
+        <note>tilt at rest.</note>
+        <note>hull drag.</note>
+        <note>step lift and triming moment.</note>
+        <note>rebound at landing.</note>
+        <note>skipping at landing (empty weight).</note>
+
+        <limitation>the gear tilt reduces brakes efficiency (empty at idle 700 RPM) : increasing the static friction brings vibrations at rest.</limitation>
+        <limitation>no waterloop when turns by cross-wind (wing diging water).</limitation>
+        <limitation>weathervaning doesn't result of the real causes.</limitation>
+        <limitation>no weathervaning at rest.</limitation>
+        <limitation>no propoising at takeoff.</limitation>
+        <limitation>no fuel selector.</limitation>
+        <limitation>heading autopilot can hang in a roll : the ball of the turn indicator experiences of a centrifugal force, in the direction of the roll.</limitation>
+
+        <documentation>
+  File:     Boeing314A.xml
+  Author:   Aero-Matic v 0.71
+
+  Inputs:
+    name:          Boeing314A
+    type:          multi-engine prop transport
+    max weight:    84000.0 lb
+    wing span:     152.0 ft
+    length:        106.0 ft
+    wing area:     2867.0 sq-ft
+    gear type:     tricycle
+    retractable?:  no
+    # engines:     4
+    engine type:   piston
+    engine layout: wings
+    yaw damper?    no
+
+  Outputs:
+    wing loading:  29.30 lb/sq-ft
+    CL-alpha:      4.9 per radian
+    CL-0:          0.24
+    CL-max:        1.4
+    CD-0:          0.028
+    K:             0.039
+
+
+
+  Notation :
+  ========
+  Hydrodynamic coefficients starts by H.
+  Artificial coefficients starts by A.
+
+
+  Not possible :
+  ============
+  - buoyancy by weak spring, because that can rear up at rest (and speed makes water as hard as concrete). 
+  - rebound by hard spring, because static can be unstable with empty weight.
+
+
+  References :
+  ==========
+  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+  (FAA certificate, TC704 - 25 january 1939, B-314) :
+
+  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 33.2 in. hg. 2100 rpm (1200 hp)
+                  at 5400 ft, 35.0 in. hg. 2100 rpm (1200 hp) at sea level.
+                  * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
+  Airspeed limits : * level flight or climb 178 mph (155 kt) true, glide or dive 212 mph (184 kt) true.
+                    * flaps extended (40 or less) 121 mph (105 kt) true.
+                    * flaps extended (more than 40) 105 mph (91 kt) true. 
+  Weight limits : landing 80000 lb, take-off 84000 lb.
+  Fuel capacity : 5448 gallons (32688 lb). 2 tanks at 600 gallons (3600 lb) each, in wing stubs; 1 tank 960 gallons
+                  (5760 lb) inboard; and 1 tank at 1164 gallons (6984 lb) outboard, in each hydro-stabilizer.
+
+  Note that :
+  - 1 gallon = 6 lb !
+  - this is the most recent content (314A), the real content of 314 could be lower.
+
+  Datum : nose of hull.
+  MAC : 258.79 in., leading edge of MAC at 398.66 in.
+  CG range (flight)   : * at 80000 lb or more, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
+                        * at less than 80000 lb, 444.3 in. (17.65% MAC) to 478.2 in. (30.7% MAC).
+           (landing)  : * at 70330 lb or more, 463.4 in. (25% MAC) to 478.2 in. (30.7% MAC).
+                        * at less than 70330 lb, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
+
+  Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
+                                     pressure     (kt)     blade    opening    installed
+  ======================================================================================
+     8900         80000       2100   Full         100     6159A-0     ...         ...
+                                     throttle
+     7500         84000       2100   Full         102     6159A-0     ...         ...
+                                     throttle
+    10000         80000       2100   Full         100     6243A-3   5 degrees     yes
+                                     throttle
+     9000         84000       2100   Full         102     6243A-3   5 degrees     yes
+                                     throttle
+
+  Propeller : * Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive, diameter 14'9-3/8" maximum
+              14'5-5/8" minimum (1928 lb).
+              * Hamilton standard 3 blade constant speed, 6159A-0 to 6159A-3 inclusive, diameter 14'3/8" maximum
+              13'8-3/4" minimum (1819 lb).
+
+  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
+  (FAA certificate, TC704 - 2 may 1941 B-314A) :
+
+  Same model as B-314, except for engine, powerplane installation, engine mount, and inner structural details.
+
+  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 35.8 in. hg. 2300 rpm (1350 hp)
+                  at 6200 ft, 37.5 in. hg. 2300 rpm (1350 hp) at sea level.
+                  * take-off (2 minutes), 43.5 in. hg. 2400 rpm (1600 hp).
+
+  Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
+                                     pressure     (kt)     blade    opening    installed
+  ======================================================================================
+    10000         80000       2300   Full         100     6243A-3   5 degrees     yes
+                                     throttle
+     9000         84000       2300   Full         102     6243A-3   5 degrees     yes
+                                     throttle
+
+  Propeller : Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive, diameter 14'9-3/8" maximum
+              14'5-5/8" minimum (1928 lb).
+
+  - http://case.pr.erau.edu/reports/US_reports/1940/1943.02.22_PanAmericanAirways_Boeing-314.pdf
+  (crash - 22 february 1943 Lisbon, Portugal) :
+
+  Elevator range : +/-25 deg (20 + 5).
+
+  - http://case.pr.erau.edu/reports/US_reports/1940/1941.08.16_PanAmericanAirways_Boeing-314.pdf
+  (crash - 16 august 1941 Apra Harbor, Guam) :
+
+  Takeoff : in less than 6000 ft (full load).
+
+  - http://www.hq.nasa.gov/office/pao/History/SP-468/app-a2.htm/
+
+  Maximum power (sea level) : 1600 hp per engine, power loading 13.1 lb / hp.
+  Weights : gross 84000 lb, empty 48400 lb.
+  Lengths : wing span 152.0 ft, length 106.0 ft.
+  Areas : wing 2867 sq ft, wind loading 29.3 lb / sq ft, drag area (CD0 x wing area) 78.56 sq ft.
+  Speeds : Vmax 201 mph at 6200 ft, Vcruise 184 mph at 11000 ft, Vstall 70 mph.
+  Drag : CD0 (zero-lift) 0.0274, wing aspect ratio 8.06, maximum lift/drag ratio 13.0.
+
+  - http://www.hq.nasa.gov/office/pao/History/SP-468/ch8-2.htm/
+
+  Curve of a hull drag.
+
+  - http://www.aviation-history.com/boeing/314.html/
+
+  4 Wright GR-2600 Twin Cyclone, 1600 hp (1192 kw), 14 cylinder, air-cooled, radial engines.
+  Weights : gross 82500 lb, empty 50268 lb.
+  Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
+  Wing area : 2867 sq ft.
+  Speeds : maximum level 199 mph, cruise 183 mph.
+  Service ceiling : 13400 ft.
+  Normal range : 3500 miles.
+
+  - http://www.daveswarbirds.com/usplanes/aircraft/b-314.htm/
+
+  4 Wright GR-2600 Cyclone, 1600 hp, 14 radial.
+  Weights : gross 82500 lb, empty 50268 lb.
+  Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
+  Wing area : 2867 sq ft.
+  Speeds : maximum 193 mph at 10000 ft, cruise 183 mph.
+  Service ceiling : 13400 ft.
+  Normal range : 3500 miles.
+
+  - http://www.flyingclippers.com/B314.html/
+  
+  Ceiling : cruise 13400 ft, maximum 19600 ft, climb 562 ft/min.
+  Crew : 6-10.
+  Payload : 40-74 (36 night) passengers.
+
+  - http://www.boeing.com/history/boeing/m314.html/
+
+  (B314-A)
+
+  4 1600 hp Wright GR-2600 Twin Cyclone.
+  Weights : gross 84000 lb.
+  Lengths : wing span 152.0 ft, length 106.0 ft.
+  Speeds : maximum 199 mph, cruise 184 mph.
+  Ceiling : 19600 ft.
+  Range : 5200 miles.
+  Accommodation : 10 crew, 74 passengers.
+
+  - http://www.southernoregonwarbirds.org/fa3.html/
+    (Franck Varnum flew during WWII).
+ 
+  The sponsons (the short fins sticking out of the sides of the fuselage) provide lateral stability on the water. They
+  were filled with gasoline and as a result were not at all that buoyant.
+  If you had to taxi to downwind, on the turn to downwind the wind could get under the upwind wing and tip the plane until
+  the downwind wing dug into the water. In that condition a lot of water could flow into the wing, and once there could
+  flow through the wings and into the fuselage, dousing everyone and everything. That never happened to me but I did hear
+  of such cases.
+  When we faced that situation we would have several of the crew walk into the upwind wing out to the outer nacelle, to
+  provide balance during the turn. The wing at the fuselage was about 11 feet thick and contained a catwalk that led all
+  the way out to the outboard engine. Flight engineers could actually work on the engines in flight.
+
+  Set up the cruise at 117 mph (102 kt), until 135 mph (117 kt) as one burns off gas.
+  They were never anywhere near the advertised max cruise of 193 mph (168 kt) : KSFO - PHNL (2080 nmi) at an average
+  speed of 126 mph (109 kt), 16 hours depending of wind.
+  During "Amber Alerts", they leaned out the mixture and slowed the engine rpms to 100 mph (87 kt) : 23-24 hours till
+  Honolulu.
+
+  Landing : 70-75 mph (61-65 kt).
+
+  - TV documentary (Panam films) :
+
+  At rest, B314 tilted on one of its lateral sponsons.
+
+  - http://www.pilotfriend.com/flight_training/frames2/seaplane_main_frame.htm/ :
+  How to fly seaplanes and amphibians.
+
+  - http://naca.larc.nasa.gov/reports/1938/naca-tn-512/ :
+  A complete tank test of the hull of the Sikorsky S-40 flying-boat - American clipper class,
+  John R. Dawson, December 1934.
+
+  - http://naca.larc.nasa.gov/reports/1952/naca-report-1103/ :
+  Generalized theory for seaplane impact, Benjamin Milwitzky, October 1952.
+
+  - http://www.nwlink.com/~orion/Documents/Hull.pdf/ :
+  Stepped hull development for amphibious aircraft, Orion Technologies.
+        </documentation>
     </fileheader>
 
     <metrics>
@@ -317,7 +538,7 @@
         </tank>
     </propulsion>
     <flight_control name="FCS: Boeing314A">
-     <channel name="All">
+     <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
             <input>fcs/elevator-cmd-norm</input>
@@ -337,6 +558,17 @@
             </range>
             <output>fcs/elevator-pos-rad</output>
         </aerosurface_scale>
+        <aerosurface_scale name="Elevator Position Normalizer">
+            <input>fcs/pitch-trim-sum</input>
+            <range>
+                <min>-1</min>
+                <max>1</max>
+            </range>
+            <output>fcs/elevator-pos-norm</output>
+        </aerosurface_scale>
+
+     </channel>
+     <channel name="Roll">
 
         <summer name="Roll Trim Sum">
             <input>fcs/aileron-cmd-norm</input>
@@ -355,6 +587,14 @@
             </range>
             <output>fcs/left-aileron-pos-rad</output>
         </aerosurface_scale>
+        <aerosurface_scale name="Left Aileron Position Normalizer">
+            <input>fcs/roll-trim-sum</input>
+            <range>
+                <min>-1</min>
+                <max>1</max>
+            </range>
+            <output>fcs/left-aileron-pos-norm</output>
+        </aerosurface_scale>
 
         <aerosurface_scale name="Right Aileron Control">
             <input>-fcs/roll-trim-sum</input>
@@ -364,6 +604,17 @@
             </range>
             <output>fcs/right-aileron-pos-rad</output>
         </aerosurface_scale>
+        <aerosurface_scale name="Right Aileron Position Normalizer">
+            <input>fcs/roll-trim-sum</input>
+            <range>
+                <min>-1</min>
+                <max>1</max>
+            </range>
+            <output>fcs/right-aileron-pos-norm</output>
+        </aerosurface_scale>
+
+     </channel>
+     <channel name="Yaw">
 
         <summer name="Rudder Command Sum">
             <input>fcs/rudder-cmd-norm</input>
@@ -382,6 +633,17 @@
             </range>
             <output>fcs/rudder-pos-rad</output>
         </aerosurface_scale>
+        <aerosurface_scale name="Rudder Position Normalizer">
+            <input>fcs/rudder-command-sum</input>
+            <range>
+                <min>-1</min>
+                <max>1</max>
+            </range>
+            <output>fcs/rudder-pos-norm</output>
+        </aerosurface_scale>
+
+     </channel>
+     <channel name="Aeromechanical">
 
         <kinematic name="Flaps Control">
             <input>fcs/flap-cmd-norm</input>
@@ -405,6 +667,18 @@
             </traverse>
             <output>fcs/flap-pos-deg</output>
         </kinematic>
+        <aerosurface_scale name="Flap Position Normalizer">
+          <input>fcs/flap-pos-deg</input>
+          <domain>
+            <min>0</min>
+            <max>55</max>
+          </domain>
+          <range>
+            <min>0</min>
+            <max>1</max>
+          </range>
+          <output>fcs/flap-pos-norm</output>
+        </aerosurface_scale>
 
         <kinematic name="Speedbrake Control">
             <input>fcs/speedbrake-cmd-norm</input>
