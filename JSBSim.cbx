@@ -35,7 +35,7 @@
   <property category="build.platform" name="win32.gnuc++.enabled" value="0"/>
   <property category="build.platform" name="win32.mswin32.enabled" value="0"/>
   <property category="build.platform" name="win32.win32b.enabled" value="1"/>
-  <property category="cbproject" name="lastnodeid" value="658"/>
+  <property category="cbproject" name="lastnodeid" value="662"/>
   <property category="cbproject" name="version" value="X.1.0"/>
   <property category="classbrowser" name="GroupByVisibility" value="1"/>
   <property category="classbrowser" name="SeparateByKind" value="1"/>
@@ -54,7 +54,7 @@
   <property category="makefiletarget" name="makefile.1.target.list.1" value="all"/>
   <property category="makefiletarget" name="makefile.1.target.list.2" value="clean"/>
   <property category="makefiletarget" name="makefile.1.toolsetkey" value="MinGW"/>
-  <property category="runtime" name="ConfigurationCount" value="9"/>
+  <property category="runtime" name="ConfigurationCount" value="12"/>
   <property category="runtime.0" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.0" name="ConfigurationName" value="JSBSim Runtime Configuration1"/>
   <property category="runtime.0" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
@@ -69,6 +69,27 @@
   <property category="runtime.1" name="native.exec.path" value="D:\jon\JSBSim\JSBSim.exe"/>
   <property category="runtime.1" name="native.startdir.path" value="D:\jon\JSBSim"/>
   <property category="runtime.1" name="native.target.override" value="1"/>
+  <property category="runtime.10" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.10" name="ConfigurationName" value="ares"/>
+  <property category="runtime.10" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
+  <property category="runtime.10" name="native.exec.args" value="--aircraft=ares --initfile=reset00"/>
+  <property category="runtime.10" name="native.exec.path" value="D:\jon\JSBSim\JSBSim.exe"/>
+  <property category="runtime.10" name="native.startdir.path" value="D:\jon\JSBSim"/>
+  <property category="runtime.10" name="native.target.override" value="1"/>
+  <property category="runtime.11" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.11" name="ConfigurationName" value="lightning"/>
+  <property category="runtime.11" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
+  <property category="runtime.11" name="native.exec.args" value="--aircraft=lightning --initfile=reset00"/>
+  <property category="runtime.11" name="native.exec.path" value="D:\jon\JSBSim\JSBSim.exe"/>
+  <property category="runtime.11" name="native.startdir.path" value="D:\jon\JSBSim"/>
+  <property category="runtime.11" name="native.target.override" value="1"/>
+  <property category="runtime.12" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.12" name="ConfigurationName" value="Boeing314"/>
+  <property category="runtime.12" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
+  <property category="runtime.12" name="native.exec.args" value="--aircraft=Boeing314 --initfile=reset00"/>
+  <property category="runtime.12" name="native.exec.path" value="D:\jon\JSBSim\JSBSim.exe"/>
+  <property category="runtime.12" name="native.startdir.path" value="D:\jon\JSBSim"/>
+  <property category="runtime.12" name="native.target.override" value="1"/>
   <property category="runtime.2" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.2" name="ConfigurationName" value="Ball"/>
   <property category="runtime.2" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
@@ -206,7 +227,7 @@
   <property category="team" name="ignorePath.8" value="filtersjb/FGFilter.o"/>
   <property category="team" name="ignorePath.80" value="StellarJ_DataLog.csv"/>
   <property category="team" name="ignorePath.9" value="filtersjb/FGGain.o"/>
-  <property category="unique" name="id" value="658"/>
+  <property category="unique" name="id" value="662"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="container.SelectedWarnings.option.winl.enabled" value="0"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.arg.1" value="_DEBUG"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.enabled" value="1"/>
@@ -745,6 +766,12 @@
         <file path="src/simgear/props/props.hxx">
           <property category="build.win32.Release_Build.win32b" name="exclude" value="1"/>
           <property category="unique" name="id" value="623"/>
+        </file>
+        <file path="src/simgear/props/SGReferenced.hxx">
+          <property category="unique" name="id" value="659"/>
+        </file>
+        <file path="src/simgear/props/SGSharedPtr.hxx">
+          <property category="unique" name="id" value="661"/>
         </file>
       </node>
       <node name="xml" type="Folder">

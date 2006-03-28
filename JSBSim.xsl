@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html" encoding="UTF-8"/>
-    
+
     <xsl:template match="/fdm_config">
         <html>
             <head>
@@ -23,7 +23,7 @@
                 <xsl:if test="aerodynamics">[<a href="#aerodynamics">Aerodynamics</a>] </xsl:if>
                 <xsl:if test="input">[<a href="#input">Input</a>] </xsl:if>
                 <xsl:if test="output">[<a href="#output">Output</a>]</xsl:if></font><p/>
-                
+
                 <table width="100%">
 <xsl:if test="fileheader">
                     <!-- FILEHEADER -->
@@ -34,10 +34,10 @@
                             <tr><td colspan="4" height="3"><hr size="1"/></td></tr>
                             <tr><td valign="top"><b>Author[s]</b></td><td valign="top" colspan="3" align="left">
                             <xsl:for-each select="fileheader/author" >
-                                <xsl:value-of select="."/>, 
+                                <xsl:value-of select="."/>,
                             </xsl:for-each>
                             </td></tr>
-                                <tr><td valign="top" width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr> 
+                                <tr><td valign="top" width="150"><b>File created</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/filecreationdate"/></td></tr>
                                 <tr><td valign="top" width="150"><b>Description</b></td><td colspan="3" align="left"><xsl:value-of select="fileheader/description"/></td></tr>
                                 <tr><td valign="top" width="150"><b>Model version</b></td><td colspan="3"><xsl:value-of select="fileheader/version"/></td></tr>
                                 <xsl:if test="fileheader/reference"><tr><td width="150"><b>References:</b><br/></td><td></td><td></td><td></td></tr>
@@ -127,12 +127,12 @@
                             </xsl:for-each>
                             </table>
                         </tr>
-                    
+
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="mass_balance">
-                    
+
                     <!-- MASS and BALANCE -->
                     <a name="massbalance"/>
                     <tr bgcolor="DDEEFF">
@@ -172,18 +172,18 @@
                                 <tr><td width="300"><b>Center of Gravity (CG) Location: </b>
                                     <xsl:if test="mass_balance/location/@unit">(<xsl:value-of select="mass_balance/location/@unit"/>)</xsl:if></td>
                                     <td>
-                                        <xsl:value-of select="mass_balance/location/x"/>, 
-                                        <xsl:value-of select="mass_balance/location/y"/>, 
-                                        <xsl:value-of select="mass_balance/location/z"/> 
+                                        <xsl:value-of select="mass_balance/location/x"/>,
+                                        <xsl:value-of select="mass_balance/location/y"/>,
+                                        <xsl:value-of select="mass_balance/location/z"/>
                                     </td></tr>
                             </xsl:if>
                             <xsl:for-each select="mass_balance/pointmass">
                                 <tr><td width="300" valign="top"><b><xsl:value-of select="@name"/></b></td>
                                     <td valign="top"><u>Weight<xsl:if test="weight/@unit"> (<xsl:value-of select="weight/@unit"/>)</xsl:if></u>: <xsl:value-of select="weight"/><br/>
-                                        <u>Position <xsl:if test="location/@unit">(<xsl:value-of select="location/@unit"/>)</xsl:if></u>: 
-                                        <xsl:value-of select="location/x"/>, 
-                                        <xsl:value-of select="location/y"/>, 
-                                        <xsl:value-of select="location/z"/> 
+                                        <u>Position <xsl:if test="location/@unit">(<xsl:value-of select="location/@unit"/>)</xsl:if></u>:
+                                        <xsl:value-of select="location/x"/>,
+                                        <xsl:value-of select="location/y"/>,
+                                        <xsl:value-of select="location/z"/>
                                     </td></tr>
                             </xsl:for-each>
                         </table>
@@ -204,9 +204,9 @@
 				    <xsl:if test="@type='BOGEY'">
 				        <tr><td valign="top">Bogey: <xsl:value-of select="@name"/>
 					</td><td>
-                                          <u>Position <xsl:if test="location/@unit">(<xsl:value-of select="location/@unit"/>)</xsl:if></u>: 
-                                          <xsl:value-of select="location/x"/>, 
-                                          <xsl:value-of select="location/y"/>, 
+                                          <u>Position <xsl:if test="location/@unit">(<xsl:value-of select="location/@unit"/>)</xsl:if></u>:
+                                          <xsl:value-of select="location/x"/>,
+                                          <xsl:value-of select="location/y"/>,
                                           <xsl:value-of select="location/z"/><br/>
 					  <u>Static friction coefficient</u>: <xsl:value-of select="static_friction"/><br/>
 					  <u>Dynamic friction coefficient</u>: <xsl:value-of select="dynamic_friction"/><br/>
@@ -224,12 +224,12 @@
 				</xsl:for-each>
                             </table>
                     </tr>
-                    
+
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="propulsion">
-                    
+
                     <!-- PROPULSION -->
                     <a name="propulsion"/>
                     <tr bgcolor="DDEEFF">
@@ -238,12 +238,12 @@
                                 <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
                             </table>
                     </tr>
-                    
+
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="autopilot">
-                    
+
                     <!-- AUTOPILOT -->
                     <a name="autopilot"/>
                     <tr bgcolor="FFDDDD">
@@ -251,13 +251,13 @@
                                 <tr><td colspan="2"><b>AUTOPILOT</b></td></tr>
                                 <tr><td colspan="2" height="3"><hr size="1"/></td></tr>
                             </table>
-                    </tr>                    
+                    </tr>
 
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="flight_control">
-                    
+
                     <!-- FLIGHT CONTROL -->
                     <a name="flightcontrol"/>
                     <tr bgcolor="FFDDDD">
@@ -267,10 +267,10 @@
                             <xsl:for-each select="flight_control/channel"><tr><td valign="top"><font face="Arial" size="2"><b>Channel </b><xsl:value-of select="@name"/></font></td>
                                 <xsl:variable name="ucletters">ABCDEFGHIJKLMNOPQRSTUVWXYZ </xsl:variable>
                                 <xsl:variable name="lcletters">abcdefghijklmnopqrstuvwxyz-</xsl:variable>
-                                
+
                                 <td><xsl:for-each select="child::*">
                                         <font face="Arial" size="2">
-                                            <p><b>Component: </b><xsl:value-of select="@name"/>, Type: 
+                                            <p><b>Component: </b><xsl:value-of select="@name"/>, Type:
                                             <xsl:choose>
                                                 <xsl:when test="name() = 'lag_filter'">
                                                     <i>Lag filter</i><br/>
@@ -406,7 +406,7 @@
                                             </xsl:choose>
                                             <xsl:if test="clipto">
                                                 <xsl:if test="clipto/min">Minimum limit: <xsl:value-of select="clipto/min"/><br/></xsl:if>
-                                                <xsl:if test="clipto/max">Maximum limit: <xsl:value-of select="clipto/max"/></xsl:if>
+                                                <xsl:if test="clipto/max">Maximum limit: <xsl:value-of select="clipto/max"/><br/></xsl:if>
                                             </xsl:if>
                                             <xsl:if test="output">Output to: <i><xsl:value-of select="output"/></i></xsl:if>
 
@@ -421,7 +421,7 @@
 
 </xsl:if>
 <xsl:if test="aerodynamics">
-                    
+
                     <!-- AERODYNAMICS -->
                     <a name="aerodynamics"/>
                     <tr bgcolor="CCCCCC">
@@ -445,12 +445,12 @@
                                 </xsl:for-each>
                             </table>
                     </tr>
-                    
+
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="input">
-                    
+
                     <!-- INPUT -->
                     <a name="input"/>
                     <tr bgcolor="BBBBBB">
@@ -460,12 +460,12 @@
                                 <tr><td>Input accepted on port <xsl:value-of select="input/@port"/>.</td></tr>
                             </table>
                     </tr>
-                    
+
 <tr><br/><font face="Arial" size="2">[<a href="#top">Top</a>]</font><p/></tr>
 
 </xsl:if>
 <xsl:if test="output">
-                    
+
                     <!-- OUTPUT -->
                     <a name="output"/>
                     <tr bgcolor="BBBBBB">
@@ -483,9 +483,9 @@
             </body>
         </html>
     </xsl:template>
-    
+
 <!-- Process Functions -->
-    
+
     <xsl:template name="process_function">
         <xsl:for-each select="product">
             <xsl:call-template name="process_products"/>
@@ -499,10 +499,10 @@
         <xsl:for-each select="property">
             <xsl:call-template name="parse_property">
                 <xsl:with-param name="property_string" select="."/>
-            </xsl:call-template> 
+            </xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="value">
-            (<xsl:value-of select="."/>) 
+            (<xsl:value-of select="."/>)
         </xsl:for-each>
         <xsl:for-each select="table">
             <xsl:choose>
@@ -519,31 +519,31 @@
             <xsl:when test="contains($property_string,'/')=0">
                 <xsl:choose>
                     <xsl:when test="$property_string = 'beta-rad'">
-                        (&#x3B2;<sub>rad</sub>) 
+                        (&#x3B2;<sub>rad</sub>)
                     </xsl:when>
                     <xsl:when test="$property_string = 'alpha-rad'">
-                        (&#x3B1;<sub>rad</sub>) 
+                        (&#x3B1;<sub>rad</sub>)
                     </xsl:when>
                     <xsl:when test="$property_string = 'Sw-sqft'">
-                        (S<sub>w</sub>) 
+                        (S<sub>w</sub>)
                     </xsl:when>
                     <xsl:when test="$property_string = 'bw-ft'">
-                        (b<sub>w</sub>) 
+                        (b<sub>w</sub>)
                     </xsl:when>
                     <xsl:when test="$property_string = 'qbar-psf'">
-                        (qbar) 
+                        (qbar)
                     </xsl:when>
                     <xsl:when test="$property_string = 'cl-squared-norm'">
-                        (C<sub>L</sub><sup>2</sup>) 
+                        (C<sub>L</sub><sup>2</sup>)
                     </xsl:when>
                     <xsl:when test="$property_string = 'mach-norm'">
-                        (M) 
+                        (M)
                     </xsl:when>
                     <xsl:when test="$property_string = 'bi2vel'">
-                        [b<sub>w</sub>/(2V)] 
+                        [b<sub>w</sub>/(2V)]
                     </xsl:when>
                     <xsl:otherwise>
-                        (<xsl:value-of select="$property_string"/>) 
+                        (<xsl:value-of select="$property_string"/>)
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
