@@ -75,7 +75,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.16 2006/01/23 11:29:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.17 2006/03/29 03:41:34 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -792,7 +792,7 @@ void FGFDMExec::Debug(int from)
     if (from == 0) { // Constructor
       cout << "\n\n     " << highint << underon << "JSBSim Flight Dynamics Model v"
                                      << JSBSim_version << underoff << normint << endl;
-      cout << halfint << "            [cfg file spec v" << needed_cfg_version << "]\n\n";
+      cout << halfint << "            [JSBSim-ML v" << needed_cfg_version << "]\n\n";
       cout << normint << "JSBSim startup beginning ...\n\n";
     } else if (from == 3) {
       cout << "\n\nJSBSim startup complete\n\n";
