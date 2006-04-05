@@ -57,13 +57,15 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.17 2006/01/23 11:29:56 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.18 2006/04/05 13:00:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGScript;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -121,11 +123,9 @@ CLASS DOCUMENTATION
 
     @code
     FDMExec = new JSBSim::FGFDMExec();
-    Script = new JSBSim::FGScript( … );
     Script->LoadScript( ScriptName ); // the script loads the aircraft and ICs
     result = FDMExec->Run();
     while (result) { // cyclic execution
-      if (Scripted) if (!Script->RunScript()) break; // execute script
       result = FDMExec->Run(); // execute JSBSim
     }
     @endcode
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.17 $
+    @version $Revision: 1.18 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,6 +235,11 @@ public:
       @return true if successful*/
   bool LoadModel(string model, bool addModelToPath = true);
 
+  /** Loads a script
+      @param Script the full path name and file name for the script to be loaded.
+      @return true if successfully loadsd; false otherwise. */
+  bool LoadScript(string Script);
+
   /** Sets the path to the engine config file directories.
       @param path path to the directory under which engine config
       files are kept, for instance "engine"  */
@@ -287,6 +292,9 @@ public:
 
   /// Returns the model name.
   string GetModelName(void) { return modelName; }
+
+  /// Returns the current time.
+  double GetSimTime(void);
 
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
@@ -361,6 +369,7 @@ private:
   static FGPropertyManager *master;
   FGPropertyManager *instance;
   vector <string> PropertyCatalog;
+  FGScript *Script;
 
   struct slaveData {
     FGFDMExec* exec;
@@ -418,4 +427,3 @@ private:
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
-

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.5 2006/02/26 14:10:57 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.6 2006/04/05 13:00:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.5 2006/02/26 14:10:57 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.6 2006/04/05 13:00:13 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,6 +104,7 @@ protected:
   double deltaT;
   double GearRatio;
   double ThrustCoeff;
+  double ReverserAngle;
   int EngineNum;
   FGPropertyManager* PropertyManager;
   virtual void Debug(int from);

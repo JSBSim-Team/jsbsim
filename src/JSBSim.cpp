@@ -40,7 +40,6 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <FGFDMExec.h>
-#include <input_output/FGScript.h>
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -58,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.12 2006/03/02 12:34:01 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.13 2006/04/05 13:00:13 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -186,9 +185,6 @@ IMPLEMENTATION
 
 int main(int argc, char* argv[])
 {
-  // *** DECLARATIONS *** //
-  JSBSim::FGScript* Script;
-
   // *** INITIALIZATIONS *** //
   ScriptName = "";
   AircraftName = "";
@@ -196,8 +192,6 @@ int main(int argc, char* argv[])
   LogOutputName = "";
   LogDirectiveName = "";
   bool result = false;
-  bool script_result = true;
-  bool Scripted = false;
   double new_five_second_value = 0.0;
 
   long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
@@ -213,19 +207,16 @@ int main(int argc, char* argv[])
   FDMExec->SetEnginePath(RootDir + "engine");
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
-  if (!ScriptName.empty()) { 
+  if (!ScriptName.empty()) {
 
     ScriptName = RootDir + ScriptName;
-    Script = new JSBSim::FGScript(FDMExec);
-    result = Script->LoadScript(ScriptName);
+    result = FDMExec->LoadScript(ScriptName);
 
     if (!result) {
       cerr << "Script file " << ScriptName << " was not successfully loaded" << endl;
       if (FDMExec) delete FDMExec;
       exit(-1);
     }
-
-    Scripted = true;
 
   // *** OPTION B: LOAD AN AIRCRAFT AND A SET OF INITIAL CONDITIONS *** //
   } else if (!AircraftName.empty() || !ResetName.empty()) {
@@ -269,8 +260,8 @@ int main(int argc, char* argv[])
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
   cout << "Start: " << s << endl;
 
-  // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** // 
-  while (result && script_result) {
+  // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
+  while (result) {
     while (FDMExec->ReadMessage()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
@@ -304,30 +295,18 @@ int main(int argc, char* argv[])
           pause_ticks = 0;
         }
 
-        while ((clock_ticks-total_pause_ticks)/CLOCKS_PER_SEC  >= FDMExec->GetState()->Getsim_time()) {
-          if (Scripted) {
-            if (!Script->RunScript()) {
-              script_result = false;
-              break;
-            }
-          }
+        while ((clock_ticks-total_pause_ticks)/CLOCKS_PER_SEC  >= FDMExec->GetSimTime()) {
           result = FDMExec->Run();
 
           // print out status every five seconds
-          if (FDMExec->GetState()->Getsim_time() >= new_five_second_value) {
-            cout << "Simulation elapsed time: " << FDMExec->GetState()->Getsim_time() << endl;
+          if (FDMExec->GetSimTime() >= new_five_second_value) {
+            cout << "Simulation elapsed time: " << FDMExec->GetSimTime() << endl;
             new_five_second_value += 5.0;
           }
           if (FDMExec->Holding()) break;
         }
 
       } else { // batch mode
-        if (Scripted) {
-          if (!Script->RunScript()) {
-            script_result = false;
-            break;
-          }
-        }
         result = FDMExec->Run();
       }
     } else { // Suspended

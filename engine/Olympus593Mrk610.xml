@@ -24,12 +24,12 @@
                                Static         N1 (low       N2 (high                  Time
     Condition                thrust (lb)    compressor)    compressor)      EGT       limit
     .........................................................................................
-    Start and relight             -              -              -          550�C      2 s
-    Contingency                 38130           102%          106.8%       883�C      2.5 s
-    Takeoff (with reheat)       37080           102%          105.7%       806�C      5 minutes
-    Takeoff (without reheat)    31350           102%          105.7%       806�C      5 minutes
-    Reheated climb              32800           102%          105.1%       755�C      15 minutes
-    Maximum continuous          28800           102%          105.3%       736�C      unrestricted
+    Start and relight             -              -              -          550°C      2 s
+    Contingency                 38130           102%          106.8%       883°C      2.5 s
+    Takeoff (with reheat)       37080           102%          105.7%       806°C      5 minutes
+    Takeoff (without reheat)    31350           102%          105.7%       806°C      5 minutes
+    Reheated climb              32800           102%          105.1%       755°C      15 minutes
+    Maximum continuous          28800           102%          105.3%       736°C      unrestricted
     Idle                          -              -             60% (min)              unrestricted
     Maximum overspeed                           108.5%        110.0%         -        20 s
     Reverse (ground)              -              -             98.0%         -        30 s

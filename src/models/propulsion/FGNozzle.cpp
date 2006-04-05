@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.4 2006/04/05 13:00:13 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,14 +79,9 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num) : FGThr
   }
 
   Thrust = 0;
-  ReverserAngle = 0.0;
   Type = ttNozzle;
   Area2 = (Diameter*Diameter/4.0)*M_PI;
   AreaT = Area2/ExpR;
-
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Tie( property_name, &ThrustCoeff );
 
   Debug(0);
 }
@@ -95,10 +90,6 @@ FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num) : FGThr
 
 FGNozzle::~FGNozzle()
 {
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Untie( property_name );
-
   Debug(1);
 }
 

@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.4 2006/04/05 13:00:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGForce.h,v 1.4 2006/04/05 13:00:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,6 +304,12 @@ public:
   inline void  SetAnglesToBody(FGColumnVector3 vv) {
     SetAnglesToBody(vv(eRoll), vv(ePitch), vv(eYaw));
   }
+
+  void SetPitch(double pitch) {vOrient(ePitch) = pitch;}
+  void SetYaw(double yaw) {vOrient(eYaw) = yaw;}
+
+  double GetPitch(void) const {return vOrient(ePitch);}
+  double GetYaw(void) const {return vOrient(eYaw);}
 
   inline void SetSense(double x, double y, double z) { vSense(eX)=x, vSense(eY)=y, vSense(eZ)=z; }
   inline void SetSense(FGColumnVector3 vv) { vSense=vv; }

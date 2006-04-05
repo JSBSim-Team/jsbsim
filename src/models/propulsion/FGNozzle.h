@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_NOZZLE "$Id: FGNozzle.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+#define ID_NOZZLE "$Id: FGNozzle.h,v 1.3 2006/04/05 13:00:13 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,7 +58,7 @@ CLASS DOCUMENTATION
 
 /** Models a rocket nozzle.
     @author Jon S. Berndt
-    @version $Id: FGNozzle.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $
+    @version $Id: FGNozzle.h,v 1.3 2006/04/05 13:00:13 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -79,7 +79,6 @@ public:
   string GetThrusterValues(int id, string delimeter);
 
 private:
-  double ReverserAngle;
   double PE;
   double ExpR;
   double nzlEff;

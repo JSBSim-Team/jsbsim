@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.2 2005/06/13 00:54:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.3 2006/04/05 13:00:13 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,9 +74,8 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   Name = el->GetName();
 
   GearRatio = 1.0;
-
+  ReverserAngle = 0.0;
   EngineNum = num;
-  ThrustCoeff = 0.0;
   PropertyManager = FDMExec->GetPropertyManager();
 
 // Determine the initial location and orientation of this thruster and load the
@@ -93,9 +92,11 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
   SetLocation(location);
   SetAnglesToBody(orientation);
 
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Tie( property_name, &ThrustCoeff );
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/engine[%d]/pitch-angle-rad", EngineNum);
+  PropertyManager->Tie( property_name, (FGForce *)this, &FGForce::GetPitch, &FGForce::SetPitch);
+  snprintf(property_name, 80, "propulsion/engine[%d]/yaw-angle-rad", EngineNum);
+  PropertyManager->Tie( property_name, (FGForce *)this, &FGForce::GetYaw, &FGForce::SetYaw);
 
   Debug(0);
 }
@@ -104,9 +105,11 @@ FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMEx
 
 FGThruster::~FGThruster()
 {
-//  char property_name[80];
-//  snprintf(property_name, 80, "propulsion/c-thrust[%u]", EngineNum);
-//  PropertyManager->Untie( property_name );
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/engine[%d]/pitch-angle-rad", EngineNum);
+  PropertyManager->Untie( property_name);
+  snprintf(property_name, 80, "propulsion/engine[%d]/yaw-angle-rad", EngineNum);
+  PropertyManager->Untie( property_name);
 
   Debug(1);
 }

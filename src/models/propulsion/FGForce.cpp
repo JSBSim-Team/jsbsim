@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.3 2005/06/13 16:59:19 ehofman Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.4 2006/04/05 13:00:13 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +62,7 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
   mT(2,2) = 1;
   mT(3,3) = 1;
   vSense.InitMatrix(1);
+
   Debug(0);
 }
 

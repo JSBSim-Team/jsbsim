@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.6 2005/12/29 21:56:14 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.7 2006/04/05 13:00:13 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,7 +107,8 @@ bool FGAuxiliary::Run()
   const FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
   const FGColumnVector3& vVel = Propagate->GetVel();
 
-  if (FGModel::Run()) return true;
+  if (FGModel::Run()) return true; // return true if error returned from base class
+
   if (FDMExec->Holding()) return false;
 
   p = Atmosphere->GetPressure();

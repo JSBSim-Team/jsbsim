@@ -72,10 +72,11 @@ INCLUDES
 #include <models/FGOutput.h>
 #include <initialization/FGInitialCondition.h>
 #include <input_output/FGPropertyManager.h>
+#include <input_output/FGScript.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.17 2006/03/29 03:41:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.18 2006/04/05 13:00:13 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,6 +129,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Input           = 0;
   IC              = 0;
   Trim            = 0;
+  Script          = 0;
 
   terminate = false;
   modelLoaded = false;
@@ -354,6 +356,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
 
 bool FGFDMExec::Run(void)
 {
+  bool error, success;
   FGModel* model_iterator;
 
   model_iterator = FirstModel;
@@ -366,6 +369,8 @@ bool FGFDMExec::Run(void)
 //    SlaveFDMList[i]->exec->Run();
   }
 
+  if (Script != 0) success = Script->RunScript(); // returns true if success
+                                                  // false if complete
   while (model_iterator != 0L) {
     model_iterator->Run();
     model_iterator = model_iterator->NextModel;
@@ -373,7 +378,7 @@ bool FGFDMExec::Run(void)
 
   frame = Frame++;
   if (!Holding()) State->IncrTime();
-  return true;
+  return (success);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -400,6 +405,13 @@ void FGFDMExec::SetGroundCallback(FGGroundCallback* p)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGFDMExec::GetSimTime(void)
+{
+  return (State->Getsim_time());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 vector <string> FGFDMExec::EnumerateFDMs(void)
 {
   vector <string> FDMList;
@@ -411,6 +423,18 @@ vector <string> FGFDMExec::EnumerateFDMs(void)
   }
 
   return FDMList;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::LoadScript(string script)
+{
+  bool result;
+
+  Script = new FGScript(this);
+  result = Script->LoadScript(script);
+
+  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
