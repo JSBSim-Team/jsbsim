@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.4 2005/07/24 21:00:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.5 2006/04/11 09:13:09 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -188,19 +188,14 @@ void FGMassBalance::AddPointMass(Element* el)
 {
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
-  if (!el) {
-    cerr << "Pointmass " << pointmass_name << "has no location." << endl;
+  if (!loc_element) {
+    cerr << "Pointmass " << pointmass_name << " has no location." << endl;
     exit(-1);
   }
-  string loc_unit = loc_element->GetAttributeValue("unit");
-  double w, x, y, z;
 
-  w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
-  x = loc_element->FindElementValueAsNumberConvertTo("x", loc_unit);
-  y = loc_element->FindElementValueAsNumberConvertTo("y", loc_unit);
-  z = loc_element->FindElementValueAsNumberConvertTo("z", loc_unit);
-
-  PointMasses.push_back(PointMass(w, x, y, z));
+  double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
+  FGColumnVector3 vXYZ = loc_element->FindElementTripletConvertTo("IN");
+  PointMasses.push_back(PointMass(w, vXYZ));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

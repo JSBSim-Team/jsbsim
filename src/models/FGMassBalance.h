@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.4 2006/04/11 09:13:09 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -146,9 +146,9 @@ private:
   FGMatrix33& CalculatePMInertias(void);
 
   struct PointMass {
-    PointMass(double w, double x, double y, double z) {
+    PointMass(double w, FGColumnVector3& vXYZ) {
       Weight = w;
-      Location.InitMatrix(x, y, z);
+      Location = vXYZ;
     }
     FGColumnVector3 Location;
     double Weight;
