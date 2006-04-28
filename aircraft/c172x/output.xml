@@ -1,16 +1,18 @@
-    RATE_IN_HZ       20
-    SIMULATION       OFF
-    ATMOSPHERE       ON
-    MASSPROPS        ON
-    AEROSURFACES     ON
-    RATES            ON
-    VELOCITIES       ON
-    FORCES           ON
-    MOMENTS          ON
-    POSITION         ON
-    COEFFICIENTS     ON
-    GROUND_REACTIONS ON
-    FCS              ON
-    PROPULSION       ON
-    PROPERTY         moments/l-total-lbsft
- 
+<?xml version="1.0"?>
+<output name="JSBout172B.csv" type="CSV" rate="10">
+    <property> aero/qbar-psf </property>
+    <property> attitude/phi-rad </property>
+    <property> fcs/attitude/sensor/phi-rad </property>
+    <property> position/h-sl-ft </property>
+    <property> velocities/vc-kts </property>
+    <property> fcs/throttle-cmd-norm </property>
+    <rates> ON </rates>
+    <velocities> ON </velocities>
+    <forces> ON </forces>
+    <moments> ON </moments>
+    <position> ON </position>
+    <propulsion> ON </propulsion>
+    <aerosurfaces> OFF </aerosurfaces>
+    <fcs> OFF </fcs>
+    <ground_reactions> ON </ground_reactions>
+</output>
