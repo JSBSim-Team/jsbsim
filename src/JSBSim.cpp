@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.13 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.14 2006/04/28 12:49:34 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -206,6 +206,15 @@ int main(int argc, char* argv[])
   FDMExec->SetAircraftPath(RootDir + "aircraft");
   FDMExec->SetEnginePath(RootDir + "engine");
 
+  // Load output directives file, if given
+  if (!LogDirectiveName.empty()) {
+    if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
+      cout << "Output directives not properly set" << endl;
+      delete FDMExec;
+      exit(0);
+    }
+  }
+
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
 
@@ -244,6 +253,17 @@ int main(int argc, char* argv[])
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);
+  }
+
+  if (!LogOutputName.empty()) {
+    string old_filename = FDMExec->GetOutputFileName();
+    if (!FDMExec->SetOutputFileName(LogOutputName)) {
+      cout << "Output filename could not be set" << endl;
+    } else {
+      cout << "Output filename change from " << old_filename << " from aircraft"
+              " configuration file to " << LogOutputName << " specified on"
+              " command line" << endl;
+    }
   }
 
   JSBSim::FGJSBBase::Message* msg;
@@ -342,8 +362,8 @@ void options(int count, char **arg)
     cout << "  options:" << endl;
       cout << "    --help  returns this message" << endl;
       cout << "    --version  returns the version number" << endl;
-      cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
-      cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
+      cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
+      cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
       cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
@@ -352,6 +372,7 @@ void options(int count, char **arg)
       cout << "    --initfile=<filename>  specifies an initilization file" << endl << endl;
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
     cout << "        an option is followed by a filename" << endl << endl;
+    exit(0);
   }
 
   for (i=1; i<count; i++) {
@@ -363,8 +384,8 @@ void options(int count, char **arg)
       cout << "  options:" << endl;
       cout << "    --help  returns this message" << endl;
       cout << "    --version  returns the version number" << endl;
-      cout << "    --outputlogfile=<filename>  sets the name of the data output file" << endl;
-      cout << "    --logdirectivefile=<filename>  specifies the name of the data logging directives file" << endl;
+      cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
+      cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
       cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
       cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
       cout << "    --script=<filename>  specifies a script to run" << endl;
@@ -387,14 +408,14 @@ void options(int count, char **arg)
         LogOutputName = argument.substr(argument.find("=")+1);
       } else {
         LogOutputName = "JSBout.csv";
-        cerr << "  Output log file name not valid or not understood. Using JSBout.csv as default";
+        cerr << "  Output log file name must be specified with an = sign. Using JSBout.csv as default";
       }
     } else if (argument.find("--logdirectivefile") != string::npos) {
       n = argument.find("=")+1;
       if (n > 0) {
         LogDirectiveName = argument.substr(argument.find("=")+1);
       } else {
-        cerr << "  Log directives file not valid or not understood." << endl << endl;
+        cerr << "  Log directives file must be specified after an = sign." << endl << endl;
         exit(1);
       }
     } else if (argument.find("--root") != string::npos) {
