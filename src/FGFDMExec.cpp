@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.18 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.19 2006/04/28 12:49:01 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,11 +131,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Trim            = 0;
   Script          = 0;
 
-  terminate = false;
   modelLoaded = false;
   IsSlave = false;
   holding = false;
-
 
   // Multiple FDM's are stopped for now.  We need to ensure that
   // the "user" instance always gets the zeroeth instance number,
@@ -740,6 +738,24 @@ void FGFDMExec::EnableOutput(void)
   for (int i=0; i<Outputs.size(); i++) {
     Outputs[i]->Enable();
   }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGFDMExec::SetOutputDirectives(string fname)
+{
+  bool result;
+
+  if (Outputs.size() == 0) {
+    FGOutput* Output = new FGOutput(this);
+    Output->InitModel();
+    Schedule(Output,       1);
+    Outputs.push_back(Output);
+  } else { // Outputs > 1
+    cerr << "First output file being overridden" << endl;
+  }
+  Outputs[0]->SetDirectivesFile(fname);
+  return result;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

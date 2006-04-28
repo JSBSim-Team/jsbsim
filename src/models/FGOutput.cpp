@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.7 2005/08/03 13:47:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.8 2006/04/28 12:47:57 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +73,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   enabled = true;
   delimeter = ", ";
   Filename = "";
+  DirectivesFile = "";
 
   Debug(0);
 }
@@ -583,14 +584,29 @@ bool FGOutput::Load(Element* element)
   separator = ";";
 # endif
 
-  fname = element->GetAttributeValue("file");
-  if (!fname.empty()) {
-    output_file_name = FDMExec->GetAircraftPath() + separator
-                        + FDMExec->GetModelName() + separator + fname + ".xml";
+  if (!DirectivesFile.empty()) { // A directives filename from the command line overrides
+    fname = DirectivesFile;      // one found in the config file.
+  } else {
+    fname = element->GetAttributeValue("file");
+  }
 
+  if (!fname.empty()) {
+    int len = fname.size();
+    if (fname.find(".xml") != string::npos) {
+      output_file_name = fname; // Use supplied name if last four letters are ".xml"
+    } else {
+      output_file_name = FDMExec->GetAircraftPath() + separator
+                         + FDMExec->GetModelName() + separator + fname + ".xml";
+    }
     output_file->open(output_file_name.c_str());
-    readXML(*output_file, output_file_parser);
-    delete output_file;
+    if (output_file->is_open()) {
+      readXML(*output_file, output_file_parser);
+      delete output_file;
+    } else {
+      delete output_file;
+      cerr << "Could not open directives file: " << output_file_name << endl;
+      return false;
+    }
     document = output_file_parser.GetDocument();
   } else {
     document = element;

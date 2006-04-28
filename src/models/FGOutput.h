@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.4 2006/04/28 12:47:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,7 +116,7 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.3 2005/06/13 16:59:18 ehofman Exp $
+    @version $Id: FGOutput.h,v 1.4 2006/04/28 12:47:57 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,6 +140,9 @@ public:
   inline void Disable(void) { enabled = false; }
   inline bool Toggle(void) {enabled = !enabled; return enabled;}
   bool Load(Element* el);
+  bool SetOutputFileName(string fname) {Filename = fname;}
+  bool SetDirectivesFile(string fname) {DirectivesFile = fname;}
+  string GetOutputFileName(void) const {return Filename;}
 
   /// Subsystem types for specifying which will be output in the FDM data logging
   enum  eSubSystems {
@@ -159,13 +162,14 @@ public:
   } subsystems;
 
 private:
+  enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
   bool sFirstPass, dFirstPass, enabled;
   int SubSystems;
-  string output_file_name, delimeter, Filename;
-  enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
+  string output_file_name, delimeter, Filename, DirectivesFile;
   ofstream datafile;
   FGfdmSocket* socket;
   vector <FGPropertyManager*> OutputProperties;
+
   void Debug(int from);
 };
 }

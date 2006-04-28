@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.18 2006/04/05 13:00:13 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.19 2006/04/28 12:49:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.18 $
+    @version $Revision: 1.19 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -303,6 +303,33 @@ public:
   /// Marks this instance of the Exec object as a "slave" object.
   void SetSlave(void) {IsSlave = true;}
 
+  /** Sets the output (logging) mechanism for this run.
+      Calling this function passes the name of an output directives file to
+      the FGOutput object associated with this run. The call to this function
+      should be made prior to loading an aircraft model. This call results in an
+      FGOutput object being built as the first Output object in the FDMExec-managed
+      list of Output objects that may be created for an aircraft model. If this call
+      is made after an aircraft model is loaded, there is no effect. Any Output
+      objects added by the aircraft model itself (in an &lt;output> element) will be
+      added after this one. Care should be taken not to refer to the same file
+      name.
+      An output directives file contains an &lt;output> &lt;/output> element, within
+      which should be specified the parameters or parameter groups that should
+      be logged.
+      @param fname the filename of an output directives file.
+    */
+  bool SetOutputDirectives(string fname);
+
+  bool SetOutputFileName(string fname) {
+    if (Outputs.size() > 0) Outputs[0]->SetOutputFileName(fname);
+    else return false;
+    return true;
+  }
+  string GetOutputFileName(void) {
+    if (Outputs.size() > 0) return Outputs[0]->GetOutputFileName();
+    else return string("");
+  }
+
   /** Executes trimming in the selected mode.
   *   @param mode Specifies how to trim:
   * - tLongitudinal=0
@@ -353,23 +380,19 @@ public:
   void UseAtmosphereMars(void);
 
 private:
-  FGModel* FirstModel;
-
-  bool terminate;
-  bool holding;
-  bool Constructing;
-  int  Error;
+  static unsigned int FDMctr;
+  int Error;
   unsigned int Frame;
   unsigned int IdFDM;
-  FGPropertyManager* Root;
-  static unsigned int FDMctr;
+  bool holding;
+  bool Constructing;
   bool modelLoaded;
-  string modelName;
   bool IsSlave;
-  static FGPropertyManager *master;
-  FGPropertyManager *instance;
-  vector <string> PropertyCatalog;
-  FGScript *Script;
+  string modelName;
+  string AircraftPath;
+  string EnginePath;
+  string CFGVersion;
+  string Release;
 
   struct slaveData {
     FGFDMExec* exec;
@@ -390,12 +413,9 @@ private:
     }
   };
 
-  string AircraftPath;
-  string EnginePath;
+  static FGPropertyManager *master;
 
-  string CFGVersion;
-  string Release;
-
+  FGModel*           FirstModel;
   FGGroundCallback*  GroundCallback;
   FGState*           State;
   FGAtmosphere*      Atmosphere;
@@ -409,19 +429,23 @@ private:
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;
   FGInput*           Input;
-  vector <FGOutput*> Outputs;
-
+  FGScript *Script;
   FGInitialCondition* IC;
   FGTrim *Trim;
 
+  FGPropertyManager* Root;
+  FGPropertyManager *instance;
+
+  vector <string> PropertyCatalog;
+  vector <FGOutput*> Outputs;
   vector <slaveData*> SlaveFDMList;
 
   bool ReadFileHeader(Element*);
   bool ReadSlave(Element*);
   bool ReadPrologue(Element*);
-
   bool Allocate(void);
   bool DeAllocate(void);
+
   void Debug(int from);
 };
 }
