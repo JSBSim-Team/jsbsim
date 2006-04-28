@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.9 2006/01/11 13:11:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.10 2006/04/28 12:50:02 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
   if ( element->FindElement("gain") ) {
     gain_string = element->FindElementValue("gain");
+    //ToDo allow for negative sign here for property
     if (gain_string.find_first_not_of("+-.0123456789") != string::npos) { // property
       GainPropertyNode = PropertyManager->GetNode(gain_string);
     } else {
@@ -98,6 +99,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     }
     ZeroCentered = true;
     zero_centered = element->FindElement("zero_centered");
+    //ToDo if zero centered, then mins must be <0 and max's must be >0
     if (zero_centered) {
       sZeroCentered = zero_centered->FindElementValue("zero_centered");
       if (sZeroCentered == string("0") || sZeroCentered == string("false")) {
