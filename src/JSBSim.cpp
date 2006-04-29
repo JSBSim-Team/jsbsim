@@ -47,23 +47,17 @@ INCLUDES
 #  include <time.h>
 #endif
 
-#ifndef ROOTDIR
-# define ROOT_DIR ""
-#else
-# define ROOT_DIR "src/"ROOTDIR"/"
-#endif
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.15 2006/04/29 04:53:58 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.16 2006/04/29 13:20:59 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-string RootDir = ROOT_DIR;
+string RootDir = "";
 string ScriptName;
 string AircraftName;
 string ResetName;
@@ -236,8 +230,6 @@ int main(int argc, char* argv[])
 
     if (catalog) FDMExec->SetDebugLevel(0);
 
-    AircraftName = RootDir + AircraftName;
-    ResetName = RootDir + ResetName;
     if ( ! FDMExec->LoadModel(RootDir + "aircraft", RootDir + "engine", AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
