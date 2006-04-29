@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.14 2006/04/28 12:49:34 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.15 2006/04/29 04:53:58 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -72,6 +72,7 @@ string LogDirectiveName;
 JSBSim::FGFDMExec* FDMExec;
 bool realtime;
 bool suspend;
+bool catalog;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -197,6 +198,7 @@ int main(int argc, char* argv[])
   long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
   realtime = false;
   suspend = false;
+  catalog=false;
 
   // *** PARSE OPTIONS PASSED INTO THIS SPECIFIC APPLICATION: JSBSim *** //
   options(argc, argv);
@@ -207,6 +209,8 @@ int main(int argc, char* argv[])
   FDMExec->SetEnginePath(RootDir + "engine");
 
   // Load output directives file, if given
+  // This overrides the first output file defined in an aircraft config file
+  // (if any).
   if (!LogDirectiveName.empty()) {
     if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
       cout << "Output directives not properly set" << endl;
@@ -230,11 +234,18 @@ int main(int argc, char* argv[])
   // *** OPTION B: LOAD AN AIRCRAFT AND A SET OF INITIAL CONDITIONS *** //
   } else if (!AircraftName.empty() || !ResetName.empty()) {
 
+    if (catalog) FDMExec->SetDebugLevel(0);
+
     AircraftName = RootDir + AircraftName;
     ResetName = RootDir + ResetName;
     if ( ! FDMExec->LoadModel(RootDir + "aircraft", RootDir + "engine", AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       exit(-1);
+    }
+
+    if (catalog) {
+      FDMExec->PrintPropertyCatalog();
+      goto end;
     }
 
     JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
@@ -255,6 +266,10 @@ int main(int argc, char* argv[])
     exit(-1);
   }
 
+  // OVERRIDE OUTPUT FILE NAME. THIS IS USEFUL FOR CASES WHERE MULTIPLE
+  // RUNS ARE BEING MADE (SUCH AS IN A MONTE CARLO STUDY) AND THE OUTPUT FILE
+  // NAME MUST BE SET EACH TIME TO AVOID THE PREVIOUS RUN DATA FROM BEING OVER-
+  // WRITTEN
   if (!LogOutputName.empty()) {
     string old_filename = FDMExec->GetOutputFileName();
     if (!FDMExec->SetOutputFileName(LogOutputName)) {
@@ -266,12 +281,13 @@ int main(int argc, char* argv[])
     }
   }
 
-  JSBSim::FGJSBBase::Message* msg;
-  result = FDMExec->Run();
+  result = FDMExec->Run();  // MAKE AN INITIAL RUN
 
   if (suspend) FDMExec->Hold();
 
   clock_ticks = 0;
+
+  JSBSim::FGJSBBase::Message* msg;
 
   // Print actual time at start
   char s[100];
@@ -307,7 +323,11 @@ int main(int argc, char* argv[])
     // if suspended, then don't increment realtime counter
 
     if ( ! FDMExec->Holding()) {
-      if (realtime) { // realtime mode
+      if ( ! realtime ) { // IF THIS IS NOT REALTIME MODE, IT IS BATCH
+
+        result = FDMExec->Run();
+
+      } else { // REALTIME MODE IS ACTIVE
 
         // track times when simulation is suspended
         if (pause_ticks != 0) {
@@ -325,9 +345,6 @@ int main(int argc, char* argv[])
           }
           if (FDMExec->Holding()) break;
         }
-
-      } else { // batch mode
-        result = FDMExec->Run();
       }
     } else { // Suspended
       if (pause_ticks == 0) {
@@ -336,14 +353,19 @@ int main(int argc, char* argv[])
       }
       result = FDMExec->Run();
     }
+
     clock_ticks = clock();
 
   }
 
+  // PRINT ENDING CLOCK TIME
   time(&tod);
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
   cout << "End: " << s << endl;
 
+end:
+
+  // CLEAN UP
   delete FDMExec;
   cout << endl << "Seconds processor time used: " << (clock_ticks - total_pause_ticks)/CLOCKS_PER_SEC << " seconds" << endl;
 
@@ -369,7 +391,8 @@ void options(int count, char **arg)
       cout << "    --script=<filename>  specifies a script to run" << endl;
       cout << "    --realtime  specifies to run in actual real world time" << endl;
       cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-      cout << "    --initfile=<filename>  specifies an initilization file" << endl << endl;
+      cout << "    --initfile=<filename>  specifies an initilization file" << endl;
+      cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
     cout << "  NOTE: There can be no spaces around the = sign when" << endl;
     cout << "        an option is followed by a filename" << endl << endl;
     exit(0);
@@ -391,7 +414,8 @@ void options(int count, char **arg)
       cout << "    --script=<filename>  specifies a script to run" << endl;
       cout << "    --realtime  specifies to run in actual real world time" << endl;
       cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-      cout << "    --initfile=<filename>  specifies an initilization file" << endl << endl;
+      cout << "    --initfile=<filename>  specifies an initilization file" << endl;
+      cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
       cout << "  NOTE: There can be no spaces around the = sign when" << endl;
       cout << "        an option is followed by a filename" << endl << endl;
       exit(0);
@@ -450,8 +474,18 @@ void options(int count, char **arg)
         cerr << "  Reset name not valid or not understood." << endl << endl;
         exit(1);
       }
+    } else if (argument.find("--catalog") != string::npos) {
+        catalog = true;
     } else {
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
     }
   }
+
+  // Post-processing for script options. check for incompatible options.
+
+  if (catalog && !ScriptName.empty()) {
+    cerr << "Cannot specify catalog with script option" << endl << endl;
+    exit(1);
+  }
+
 }

@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.19 2006/04/28 12:49:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.20 2006/04/29 04:53:58 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,6 +187,8 @@ FGFDMExec::~FGFDMExec()
 
   for (unsigned int i=1; i<SlaveFDMList.size(); i++) delete SlaveFDMList[i]->exec;
   SlaveFDMList.clear();
+
+  //ToDo remove property catalog.
 
   Debug(1);
 }
@@ -572,6 +574,18 @@ string FGFDMExec::QueryPropertyCatalog(string in)
   }
   if (results.empty()) return "No matches found\n";
   return results;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::PrintPropertyCatalog(void)
+{
+  cout << endl;
+  cout << "  " << fgblue << highint << underon << "Property Catalog for "
+       << modelName << reset << endl << endl;
+  for (int i=0; i<PropertyCatalog.size(); i++) {
+    cout << "    " << PropertyCatalog[i] << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

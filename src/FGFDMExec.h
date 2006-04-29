@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.19 2006/04/28 12:49:01 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.20 2006/04/29 04:53:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.19 $
+    @version $Revision: 1.20 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -351,6 +351,8 @@ public:
   void Resume(void) {holding = false;}
   /// Returns true if the simulation is Holding (i.e. simulation time is not moving).
   bool Holding(void) {return holding;}
+  /// Sets the debug level.
+  void SetDebugLevel(int level) {debug_lvl = level;}
 
   struct PropertyCatalogStructure {
     /// Name of the property.
@@ -372,6 +374,9 @@ public:
   *   @return the carriage-return-delimited string containing all matching strings
   *               in the catalog.  */
   string QueryPropertyCatalog(string check);
+
+  // Print the contents of the property catalog for the loaded aircraft.
+  void PrintPropertyCatalog(void);
 
   /// Use the MSIS atmosphere model.
   void UseAtmosphereMSIS(void);
