@@ -39,7 +39,7 @@
 
 <!-- SENSOR -->
 
-  <sensor name="attitude/sensor/phi-rad">
+  <sensor name="fcs/attitude/sensor/phi-rad">
     <input> attitude/phi-rad </input>
     <lag> 0.5 </lag>
     <noise variation="PERCENT"> 0.05 </noise>
@@ -200,14 +200,14 @@ PITCH CHANNEL
      is given in the right column.
 -->
 
-<channel name="AP Pitch Altitude hold">
+<channel name="fcs/ap-pitch-altitude-hold">
 
   <!--
   The difference between the desired altitude and the actual altitude
   is determined, and limited to 100. The output from this component is
   the desired climb rate in percent of maximum.
   -->
-  <summer name="Altitude Error">
+  <summer name="fcs/altitude-error">
     <input> ap/altitude_setpoint </input>
     <input> -position/h-sl-ft </input>
     <clipto>
@@ -219,7 +219,7 @@ PITCH CHANNEL
   <!--
   The desired climb rate is lagged slightly for stability.
   -->
-  <lag_filter name="Alt Error Lag">
+  <lag_filter name="fcs/alt-error-lag">
     <input> fcs/altitude-error </input>
     <c1> 1 </c1>
   </lag_filter>
@@ -231,7 +231,7 @@ PITCH CHANNEL
   climb rate is 100 percent of maximum and the current altitude is 1000.0 ft., then
   the output from this component would be 11 ft. sec.
   -->
-  <scheduled_gain name="HDot Command">
+  <scheduled_gain name="fcs/hdot-command">
     <input> fcs/alt-error-lag </input>
     <table>
       <independentVar>position/h-sl-ft</independentVar>
@@ -258,7 +258,7 @@ PITCH CHANNEL
   the commanded climb rate (from the previous component) and actual climb rate
   in ft./sec.
   -->
-  <summer name="HDot Error">
+  <summer name="fcs/hdot-error">
     <input> fcs/hdot-command </input>
     <input> -velocities/h-dot-fps </input>
   </summer>
@@ -268,7 +268,7 @@ PITCH CHANNEL
   pass through the climb rate error (from the previous component). Otherwise, it
   will pass zero.
   -->
-  <switch name="AP Alt Hold Switch">
+  <switch name="fcs/ap-alt-hold-switch">
     <default value="0.0"/>
     <test logic="AND" value="fcs/hdot-error">
       ap/altitude_hold == 1
@@ -280,7 +280,7 @@ PITCH CHANNEL
   elevator, however, does not travel symmetrically. This will need to be addressed
   in a fix to the deadband component.
   -->
-  <deadband name="Windup Trigger">
+  <deadband name="fcs/windup-trigger">
     <input> fcs/elevator-pos-deg </input>
     <width>46.0</width>
   </deadband>
@@ -295,26 +295,27 @@ PITCH CHANNEL
   degrees) then the deadband passes a non-zero value, triggering the anti-windup
   logic in the integrator.
   -->
-  <integrator name="Integral">
+  <integrator name="fcs/integral">
     <input> fcs/ap-alt-hold-switch </input>
     <trigger> fcs/windup-trigger </trigger>
-    <c1> 0.00000 </c1>
+    <c1> 0.000028 </c1>
   </integrator>
 
   <!--
   The proportional component multiplies the error signal by a constant, providing
   the proportional control action of this PI altitude hold controller.
   -->
-  <pure_gain name="Proportional">
+  <pure_gain name="fcs/proportional">
     <input> fcs/ap-alt-hold-switch </input>
-    <gain> 0.027 </gain>
+    <gain> 0.031 </gain>
+    <!--   0.031 -->
   </pure_gain>
 
   <!--
   The control summer component sums the proprortional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
-  <summer name="Control Summer">
+  <summer name="fcs/control-summer">
     <input> fcs/integral </input>
     <input> fcs/proportional </input>
     <clipto>
@@ -327,7 +328,7 @@ PITCH CHANNEL
   The elevator component flips the sign on the output of the control summer
   above and sets the ap/elevator_command property.
   -->
-  <pure_gain name="Elevator">
+  <pure_gain name="fcs/elevator">
     <input> fcs/control-summer </input>
     <gain> -1.0 </gain>
     <output> ap/elevator_cmd </output>

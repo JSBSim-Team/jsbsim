@@ -26,4 +26,4 @@ JSBSim_LDADD = \
 	$(top_builddir)/src/simgear/xml/libExpat.a \
 	-lm
 
-INCLUDES = -I$(top_srcdir)/src -DROOTDIR=\"$(top_srcdir)\"
+INCLUDES = -I$(top_srcdir)/src 

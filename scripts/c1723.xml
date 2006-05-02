@@ -6,7 +6,7 @@
 
   <use aircraft="c172x"/>
   <use initialize="reset00"/>
-  <run start="0.0" end="1500" dt="0.0083333">
+  <run start="0.0" end="1600" dt="0.0083333">
 <!--
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="0.10"/>
@@ -37,9 +37,9 @@
       <set name="fcs/flap-cmd-norm" value=".33"/>
     </when>
 
-    <when> <!-- Set Autopilot for 8000 ft -->
+    <when> <!-- Set Autopilot for 6000 ft -->
       <parameter name="aero/qbar-psf" comparison="ge" value="5.0"/>
-      <set name="ap/altitude_setpoint" value="8000.0"/>
+      <set name="ap/altitude_setpoint" value="6000.0"/>
       <set name="ap/altitude_hold" value="1"/>
     </when>
 

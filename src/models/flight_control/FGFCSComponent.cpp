@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.8 2006/02/03 00:51:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.9 2006/05/02 04:02:25 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -192,10 +192,21 @@ FGPropertyManager* FGFCSComponent::resolveSymbol(string token)
 
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// The old way of naming FCS components allowed upper or lower case, spaces, etc.
+// but then the names were modified to fit into a property name heirarchy. This
+// was confusing (it wasn't done intentionally - it was a carryover from the early
+// design). We now support the direct naming of properties in the FCS component
+// name attribute. The old way is supported in code at this time, but deprecated.
 
 void FGFCSComponent::bind(void)
 {
-  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  string tmp;
+  if (Name.find("/") == string::npos) {
+    tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  } else {
+    tmp = Name;
+  }
   PropertyManager->Tie( tmp, this, &FGFCSComponent::GetOutput);
 }
 
