@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.5 2006/02/03 00:51:44 jberndt Exp $"
+#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.6 2006/05/03 03:56:47 jberndt Exp $"
 
 using std::string;
 
@@ -81,7 +81,7 @@ CLASS DOCUMENTATION
     - FGGradient
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.5 2006/02/03 00:51:44 jberndt Exp $
+    @version $Id: FGFCSComponent.h,v 1.6 2006/05/03 03:56:47 jberndt Exp $
     @see Documentation for the FGFCS class, and for the configuration file class
 */
 
@@ -125,8 +125,6 @@ protected:
 
   void Clip(void);
   virtual void bind();
-  FGPropertyManager* resolveSymbol(string token);
-
   virtual void Debug(int from);
 };
 

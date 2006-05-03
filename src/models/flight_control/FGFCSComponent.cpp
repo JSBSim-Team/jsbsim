@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.9 2006/05/02 04:02:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.10 2006/05/03 03:56:47 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -59,42 +59,41 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
   string input, clip_string;
 
   PropertyManager = fcs->GetPropertyManager();
-  Type = element->GetAttributeValue("type"); // Old, deprecated format
-  if (Type.empty()) {
-    if        (element->GetName() == string("lag_filter")) {
-      Type = "LAG_FILTER";
-    } else if (element->GetName() == string("lead_lag_filter")) {
-      Type = "LEAD_LAG_FILTER";
-    } else if (element->GetName() == string("washout_filter")) {
-      Type = "WASHOUT_FILTER";
-    } else if (element->GetName() == string("second_order_filter")) {
-      Type = "SECOND_ORDER_FILTER";
-    } else if (element->GetName() == string("integrator")) {
-      Type = "INTEGRATOR";
-    } else if (element->GetName() == string("summer")) {
-      Type = "SUMMER";
-    } else if (element->GetName() == string("pure_gain")) {
-      Type = "PURE_GAIN";
-    } else if (element->GetName() == string("scheduled_gain")) {
-      Type = "SCHEDULED_GAIN";
-    } else if (element->GetName() == string("aerosurface_scale")) {
-      Type = "AEROSURFACE_SCALE";
-    } else if (element->GetName() == string("switch")) {
-      Type = "SWITCH";
-    } else if (element->GetName() == string("kinematic")) {
-      Type = "KINEMATIC";
-    } else if (element->GetName() == string("deadband")) {
-      Type = "DEADBAND";
-    } else if (element->GetName() == string("fcs_function")) {
-      Type = "FCS_FUNCTION";
-    } else if (element->GetName() == string("sensor")) {
-      Type = "SENSOR";
-    } else { // illegal component in this channel
-      Type = "UNKNOWN";
-    }
+  if        (element->GetName() == string("lag_filter")) {
+    Type = "LAG_FILTER";
+  } else if (element->GetName() == string("lead_lag_filter")) {
+    Type = "LEAD_LAG_FILTER";
+  } else if (element->GetName() == string("washout_filter")) {
+    Type = "WASHOUT_FILTER";
+  } else if (element->GetName() == string("second_order_filter")) {
+    Type = "SECOND_ORDER_FILTER";
+  } else if (element->GetName() == string("integrator")) {
+    Type = "INTEGRATOR";
+  } else if (element->GetName() == string("summer")) {
+    Type = "SUMMER";
+  } else if (element->GetName() == string("pure_gain")) {
+    Type = "PURE_GAIN";
+  } else if (element->GetName() == string("scheduled_gain")) {
+    Type = "SCHEDULED_GAIN";
+  } else if (element->GetName() == string("aerosurface_scale")) {
+    Type = "AEROSURFACE_SCALE";
+  } else if (element->GetName() == string("switch")) {
+    Type = "SWITCH";
+  } else if (element->GetName() == string("kinematic")) {
+    Type = "KINEMATIC";
+  } else if (element->GetName() == string("deadband")) {
+    Type = "DEADBAND";
+  } else if (element->GetName() == string("fcs_function")) {
+    Type = "FCS_FUNCTION";
+  } else if (element->GetName() == string("sensor")) {
+    Type = "SENSOR";
+  } else { // illegal component in this channel
+    Type = "UNKNOWN";
   }
 
   Name = element->GetAttributeValue("name");
+
+  FGPropertyManager *tmp=0;
 
   input_element = element->FindElement("input");
   while (input_element) {
@@ -105,7 +104,14 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     } else {
       InputSigns.push_back( 1.0);
     }
-    InputNodes.push_back( resolveSymbol(input) );
+    tmp = PropertyManager->GetNode(input);
+    if (tmp) {
+      InputNodes.push_back( tmp );
+    } else {
+      cerr << fgred << "  In component: " << Name << " unknown property "
+           << input << " referenced. Aborting" << endl;
+      exit(-1);
+    }
     input_element = element->FindNextElement("input");
   }
 
@@ -144,9 +150,6 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
 
 FGFCSComponent::~FGFCSComponent()
 {
-//  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
-//  PropertyManager->Untie( tmp);
-
   Debug(1);
 }
 
@@ -175,21 +178,6 @@ void FGFCSComponent::Clip(void)
     else if (Output < clipmin) Output = clipmin;
   }
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGPropertyManager* FGFCSComponent::resolveSymbol(string token)
-{
-  string prop;
-  FGPropertyManager* tmp = PropertyManager->GetNode(token,false);
-  if (!tmp) {
-    if (token.find("/") == token.npos) prop = "model/" + token;
-    cerr << "Creating new property " << prop << endl;
-    tmp = PropertyManager->GetNode(token,true);
-  }
-  return tmp;
-}
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //

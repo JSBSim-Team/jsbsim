@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.20 2006/04/29 04:53:58 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.21 2006/05/03 03:56:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.20 $
+    @version $Revision: 1.21 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,6 +290,19 @@ public:
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
 
+
+  /** Retrieves the value of a property.
+      @param property the name of the property
+      @result the value of the specified property */
+  inline double GetPropertyValue(string property) {return instance->GetDouble(property);}
+
+  /** Sets a property value.
+      @param property the property to be set
+      @param value the value to set the property to */
+  inline void SetPropertyValue(string property, double value) {
+    instance->SetDouble(property, value);
+  }
+
   /// Returns the model name.
   string GetModelName(void) { return modelName; }
 
@@ -320,11 +333,18 @@ public:
     */
   bool SetOutputDirectives(string fname);
 
+  /** Sets (or overrides) the output filename
+      @param fname the name of the file to output data to
+      @return true if successful, false if there is no output specified for the flight model */
   bool SetOutputFileName(string fname) {
     if (Outputs.size() > 0) Outputs[0]->SetOutputFileName(fname);
     else return false;
     return true;
   }
+
+  /** Retrieves the current output filename.
+      @return the name of the output file for the first output specified by the flight model.
+              If none is specified, the empty string is returned. */
   string GetOutputFileName(void) {
     if (Outputs.size() > 0) return Outputs[0]->GetOutputFileName();
     else return string("");

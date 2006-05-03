@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.12 2005/12/28 15:06:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.13 2006/05/03 03:56:47 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -453,7 +453,7 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 
 bool FGFCS::Load(Element* el)
 {
-  string name, file, fname, comp_name, interface_property_string;
+  string name, file, fname, interface_property_string;
   unsigned i;
   vector <FGFCSComponent*> *Components;
   Element *FCS_cfg, *document, *component_element, *property_element, *sensor_element;
@@ -527,60 +527,40 @@ bool FGFCS::Load(Element* el)
 
   channel_element = document->FindElement("channel");
   while (channel_element) {
-    component_element = channel_element->FindElement("component");
-    if (component_element) {
-      cout << "This form of the component specification is being deprecated" << endl;
-    } else {
-      component_element = channel_element->GetElement();
-    }
+    component_element = channel_element->GetElement();
     while (component_element) {
-      comp_name = component_element->GetAttributeValue("type");
       try {
-        if ((comp_name == "LAG_FILTER") ||
-            (comp_name == "LEAD_LAG_FILTER") ||
-            (comp_name == "SECOND_ORDER_FILTER") ||
-            (comp_name == "WASHOUT_FILTER") ||
-            (comp_name == "INTEGRATOR") ||
-            (component_element->GetName() == string("lag_filter")) ||
+        if ((component_element->GetName() == string("lag_filter")) ||
             (component_element->GetName() == string("lead_lag_filter")) ||
             (component_element->GetName() == string("washout_filter")) ||
             (component_element->GetName() == string("second_order_filter")) ||
             (component_element->GetName() == string("integrator")) )
         {
           Components->push_back(new FGFilter(this, component_element));
-        } else if ((comp_name == "PURE_GAIN") ||
-                   (comp_name == "SCHEDULED_GAIN") ||
-                   (comp_name == "AEROSURFACE_SCALE") ||
-                   (component_element->GetName() == string("pure_gain")) ||
+        } else if ((component_element->GetName() == string("pure_gain")) ||
                    (component_element->GetName() == string("scheduled_gain")) ||
                    (component_element->GetName() == string("aerosurface_scale")))
         {
           Components->push_back(new FGGain(this, component_element));
-        } else if ((comp_name == "SUMMER") || (component_element->GetName() == string("summer"))) {
+        } else if (component_element->GetName() == string("summer")) {
           Components->push_back(new FGSummer(this, component_element));
-        } else if ((comp_name == "DEADBAND") || (component_element->GetName() == string("deadband"))) {
+        } else if (component_element->GetName() == string("deadband")) {
           Components->push_back(new FGDeadBand(this, component_element));
-        } else if (comp_name == "GRADIENT") {
-          Components->push_back(new FGGradient(this, component_element));
-        } else if ((comp_name == "SWITCH") || (component_element->GetName() == string("switch"))) {
+        } else if (component_element->GetName() == string("switch")) {
           Components->push_back(new FGSwitch(this, component_element));
-        } else if ((comp_name == "KINEMAT") || (component_element->GetName() == string("kinematic"))) {
+        } else if (component_element->GetName() == string("kinematic")) {
           Components->push_back(new FGKinemat(this, component_element));
-        } else if ((comp_name == "FUNCTION") || (component_element->GetName() == string("fcs_function"))) {
+        } else if (component_element->GetName() == string("fcs_function")) {
           Components->push_back(new FGFCSFunction(this, component_element));
         } else {
-          cerr << "Unknown FCS component: " << comp_name << endl;
+          cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }
       } catch(string s) {
         cerr << highint << fgred << endl << "  " << s << endl;
         cerr << reset << endl;
         return false;
       }
-      if (comp_name.empty()) { // comp_name will be empty if using new format
-        component_element = channel_element->GetNextElement();
-      } else {
-        component_element = channel_element->FindNextElement("component");
-      }
+      component_element = channel_element->GetNextElement();
     }
     channel_element = document->FindNextElement("channel");
   }

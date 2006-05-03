@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.3 2005/10/03 03:12:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.4 2006/05/03 03:56:47 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,7 +71,7 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if (element->FindElement("c5")) C5 = element->FindElementValueAsNumber("c5");
   if (element->FindElement("c6")) C6 = element->FindElementValueAsNumber("c6");
   if (element->FindElement("trigger")) {
-    Trigger =  resolveSymbol(element->FindElementValue("trigger"));
+    Trigger =  PropertyManager->GetNode(element->FindElementValue("trigger"));
   }
 
   Initialize = true;

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.16 2006/04/29 13:20:59 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.17 2006/05/03 03:56:47 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -72,7 +72,8 @@ bool catalog;
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-void options(int, char**);
+bool options(int, char**);
+void PrintHelp(void);
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -186,7 +187,7 @@ int main(int argc, char* argv[])
   ResetName = "";
   LogOutputName = "";
   LogDirectiveName = "";
-  bool result = false;
+  bool result = false, success;
   double new_five_second_value = 0.0;
 
   long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
@@ -195,7 +196,11 @@ int main(int argc, char* argv[])
   catalog=false;
 
   // *** PARSE OPTIONS PASSED INTO THIS SPECIFIC APPLICATION: JSBSim *** //
-  options(argc, argv);
+  success = options(argc, argv);
+  if (!success) {
+    PrintHelp();
+    exit(-1);
+  }
 
   // *** SET UP JSBSIM *** //
   FDMExec = new JSBSim::FGFDMExec();
@@ -286,7 +291,7 @@ int main(int argc, char* argv[])
   time_t tod;
   time(&tod);
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
-  cout << "Start: " << s << endl;
+  cout << "Start: " << s << " (HH:MM:SS)" << endl;
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
@@ -353,7 +358,7 @@ int main(int argc, char* argv[])
   // PRINT ENDING CLOCK TIME
   time(&tod);
   strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
-  cout << "End: " << s << endl;
+  cout << "End: " << s << " (HH:MM:SS)" << endl;
 
 end:
 
@@ -366,27 +371,13 @@ end:
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void options(int count, char **arg)
+bool options(int count, char **arg)
 {
   int i;
+  bool result = true;
 
   if (count == 1) {
-    cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
-    cout << "  Usage: jsbsim <options>" << endl << endl;
-    cout << "  options:" << endl;
-      cout << "    --help  returns this message" << endl;
-      cout << "    --version  returns the version number" << endl;
-      cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
-      cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
-      cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
-      cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
-      cout << "    --script=<filename>  specifies a script to run" << endl;
-      cout << "    --realtime  specifies to run in actual real world time" << endl;
-      cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-      cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-      cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
-    cout << "  NOTE: There can be no spaces around the = sign when" << endl;
-    cout << "        an option is followed by a filename" << endl << endl;
+    PrintHelp();
     exit(0);
   }
 
@@ -394,22 +385,7 @@ void options(int count, char **arg)
     string argument = string(arg[i]);
     int n=0;
     if (argument.find("--help") != string::npos) {
-      cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
-      cout << "  Usage: jsbsim <options>" << endl << endl;
-      cout << "  options:" << endl;
-      cout << "    --help  returns this message" << endl;
-      cout << "    --version  returns the version number" << endl;
-      cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
-      cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
-      cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
-      cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
-      cout << "    --script=<filename>  specifies a script to run" << endl;
-      cout << "    --realtime  specifies to run in actual real world time" << endl;
-      cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
-      cout << "    --initfile=<filename>  specifies an initilization file" << endl;
-      cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
-      cout << "  NOTE: There can be no spaces around the = sign when" << endl;
-      cout << "        an option is followed by a filename" << endl << endl;
+      PrintHelp();
       exit(0);
     } else if (argument.find("--version") != string::npos) {
       cout << endl << "  JSBSim Version: " << FDMExec->GetVersion() << endl << endl;
@@ -470,6 +446,7 @@ void options(int count, char **arg)
         catalog = true;
     } else {
       cerr << endl << "  Parameter: " << argument << " not understood" << endl;
+      result = false;
     }
   }
 
@@ -477,7 +454,29 @@ void options(int count, char **arg)
 
   if (catalog && !ScriptName.empty()) {
     cerr << "Cannot specify catalog with script option" << endl << endl;
-    exit(1);
+    result = false;
   }
+  return result;
 
 }
+
+void PrintHelp(void)
+{
+  cout << endl << "  JSBSim version " << FDMExec->GetVersion() << endl << endl;
+  cout << "  Usage: jsbsim <options>" << endl << endl;
+  cout << "  options:" << endl;
+    cout << "    --help  returns this message" << endl;
+    cout << "    --version  returns the version number" << endl;
+    cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
+    cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
+    cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
+    cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
+    cout << "    --script=<filename>  specifies a script to run" << endl;
+    cout << "    --realtime  specifies to run in actual real world time" << endl;
+    cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
+    cout << "    --initfile=<filename>  specifies an initilization file" << endl;
+    cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
+  cout << "  NOTE: There can be no spaces around the = sign when" << endl;
+  cout << "        an option is followed by a filename" << endl << endl;
+}
+
