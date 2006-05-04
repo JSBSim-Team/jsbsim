@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_DEADBAND "$Id: FGDeadBand.h,v 1.4 2006/05/04 12:40:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,22 +59,27 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Models a deadband object.
-    Here is the format of the deadband control specification:
-    <pre>
-    \<COMPONENT NAME="Deadbeat1" TYPE="DEADBAND">
-       INPUT {input}
-       WIDTH {deadband width}
-       MIN {minimum value}
-       MAX {maximum value}
-       [GAIN {optional deadband gain}]
-       [OUTPUT {optional output parameter to set}]
-    \</COMPONENT>
-    </pre>
-    The WIDTH value is the total deadband region within which an input will
-    produce no output. For example, say that the WIDTH value is 2.0.  If the
-    input is between -1.0 and +1.0, the output will be zero.
+    This is a component that allows for some “play” in a control path, in the
+    form of a dead zone, or deadband. The form of the deadband component
+    specification is:
+
+    @code
+    <deadband name="Windup Trigger">
+      <input> [-]property </input>
+      <width> number </width>
+      [<clipto>
+        <min> {[-]property name | value} </min>
+        <max> {[-]property name | value} </max>
+      </clipto>]
+      [<output> {property} </output>]
+    </deadband>
+    @endcode
+
+    The width value is the total deadband region within which an input will
+    produce no output. For example, say that the width value is 2.0. If the
+    input is between –1.0 and +1.0, the output will be zero.
     @author Jon S. Berndt
-    @version $Id: FGDeadBand.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+    @version $Id: FGDeadBand.h,v 1.4 2006/05/04 12:40:52 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

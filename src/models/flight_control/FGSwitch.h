@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.4 2006/05/03 03:56:47 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.5 2006/05/04 12:40:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,35 +85,34 @@ complex groupings of logical comparisons. Each test contains
 additional conditions, as well as possibly additional tests.
 
 @code
-\<switch name="switch1">
-  \<default value="{property|value}"/>
-  \<test logic="{and|or|default}" value="{property|value}">
+<switch name="switch1">
+  <default value="{property|value}"/>
+  <test logic="{AND|OR}" value="{property|value}">
     {property} {conditional} {property|value}
-    \<test logic="{and|or}">
+    <test logic="{AND|OR}">
       {property} {conditional} {property|value}
       ...
-    \</test>
+    </test>
     ...
-  \</test>
-  \<test logic="{and|or}" value="{property|value}">
+  </test>
+  <test logic="{AND|OR}" value="{property|value}">
     {property} {conditional} {property|value}
     ...
-  \</test>
+  </test>
   ...
-  [\<output> {property} \</output>]
-\</switch>
+  [<output> {property} </output>]
+</switch>
 @endcode
 
 Here's an example:
 
 @code
-\<switch name="roll a/p autoswitch">
-  \<test logic="default" value="0.0">
-  \</test>
-  \<test logic="and" value="fcs/roll-ap-error-summer">
+<switch name="roll a/p autoswitch">
+  <default value="0.0"/>
+  <test logic="and" value="fcs/roll-ap-error-summer">
     ap/attitude_hold == 1
-  \</test>
-\</switch>
+  </test>
+</switch>
 @endcode
 
 The above example specifies that the default value of the component (i.e. the
@@ -122,7 +121,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.4 2006/05/03 03:56:47 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.5 2006/05/04 12:40:52 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,9 +131,17 @@ CLASS DECLARATION
 class FGSwitch  : public FGFCSComponent
 {
 public:
+  /** Constructor
+      @param fcs a pointer to the parent FGFCS class
+      @param element a pointer to the Element (from the config file XML tree)
+             that represents this switch component */
   FGSwitch(FGFCS* fcs, Element* element);
+
+  /// Destructor
   ~FGSwitch();
 
+  /** Executes the switch logic.
+      @return true - always*/
   bool Run(void);
 
   enum eLogic {elUndef=0, eAND, eOR, eDefault};
