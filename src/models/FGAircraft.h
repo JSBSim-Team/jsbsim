@@ -1,32 +1,32 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- 
+
  Header:       FGAircraft.h
  Author:       Jon S. Berndt
  Date started: 12/12/98
- 
+
  ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
- 
+
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
  Foundation; either version 2 of the License, or (at your option) any later
  version.
- 
+
  This program is distributed in the hope that it will be useful, but WITHOUT
  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  details.
- 
+
  You should have received a copy of the GNU General Public License along with
  this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  Place - Suite 330, Boston, MA  02111-1307, USA.
 
  Further information about the GNU General Public License can also be found on
  the world wide web at http://www.gnu.org.
- 
+
 HISTORY
 --------------------------------------------------------------------------------
 12/12/98   JSB   Created
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.4 2006/05/05 06:38:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.3 2005/06/13 16:59:17 ehofman Exp $
+    @version $Id: FGAircraft.h,v 1.4 2006/05/05 06:38:25 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -102,7 +102,7 @@ public:
   /** Constructor
       @param Executive a pointer to the parent executive object */
   FGAircraft(FGFDMExec *Executive);
-  
+
   /// Destructor
   ~FGAircraft();
 
@@ -110,17 +110,17 @@ public:
       @see JSBSim.cpp documentation
       @return false if no error */
   bool Run(void);
-  
+
   /** Loads the aircraft.
       The executive calls this method to load the aircraft into JSBSim.
       @param el a pointer to the element tree
       @return true if successful */
   bool Load(Element* el);
-  
+
   /** Gets the aircraft name
       @return the name of the aircraft as a string type */
   inline string GetAircraftName(void) { return AircraftName; }
-  
+
   /// Gets the wing area
   double GetWingArea(void) const { return WingArea; }
   /// Gets the wing span
@@ -151,6 +151,8 @@ public:
   inline double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
   inline double GetXYZep(int idx) const { return vXYZep(idx); }
   inline void SetAircraftName(string name) {AircraftName = name;}
+
+  void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
 
   double GetNlf(void);
 
