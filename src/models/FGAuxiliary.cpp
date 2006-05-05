@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.7 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.8 2006/05/05 12:16:43 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -276,14 +276,14 @@ void FGAuxiliary::bind(void)
 {
   typedef double (FGAuxiliary::*PMF)(int) const;
   typedef double (FGAuxiliary::*PF)(void) const;
+  PropertyManager->Tie("propulsion/tat-r", this, &FGAuxiliary::GetTotalTemperature);
+  PropertyManager->Tie("propulsion/tat-c", this, &FGAuxiliary::GetTAT_C);
+  PropertyManager->Tie("propulsion/pt-lbs_sqft", this, &FGAuxiliary::GetTotalPressure);
   PropertyManager->Tie("velocities/vc-fps", this, &FGAuxiliary::GetVcalibratedFPS);
   PropertyManager->Tie("velocities/vc-kts", this, &FGAuxiliary::GetVcalibratedKTS);
   PropertyManager->Tie("velocities/ve-fps", this, &FGAuxiliary::GetVequivalentFPS);
   PropertyManager->Tie("velocities/ve-kts", this, &FGAuxiliary::GetVequivalentKTS);
   PropertyManager->Tie("velocities/machU", this, &FGAuxiliary::GetMachU);
-  PropertyManager->Tie("velocities/tat-r", this, &FGAuxiliary::GetTotalTemperature);
-  PropertyManager->Tie("velocities/tat-c", this, &FGAuxiliary::GetTAT_C);
-  PropertyManager->Tie("velocities/pt-lbs_sqft", this, &FGAuxiliary::GetTotalPressure);
   PropertyManager->Tie("velocities/p-aero-rad_sec", this, eX, (PMF)&FGAuxiliary::GetAeroPQR);
   PropertyManager->Tie("velocities/q-aero-rad_sec", this, eY, (PMF)&FGAuxiliary::GetAeroPQR);
   PropertyManager->Tie("velocities/r-aero-rad_sec", this, eZ, (PMF)&FGAuxiliary::GetAeroPQR);
@@ -328,17 +328,18 @@ void FGAuxiliary::bind(void)
 
 void FGAuxiliary::unbind(void)
 {
+  PropertyManager->Untie("propulsion/tat-r");
+  PropertyManager->Untie("propulsion/tat-c");
+  PropertyManager->Untie("propulsion/pt-lbs_sqft");
+
   PropertyManager->Untie("velocities/vc-fps");
   PropertyManager->Untie("velocities/vc-kts");
   PropertyManager->Untie("velocities/ve-fps");
   PropertyManager->Untie("velocities/ve-kts");
   PropertyManager->Untie("velocities/machU");
-  PropertyManager->Untie("velocities/tat-r");
-  PropertyManager->Untie("velocities/tat-c");
   PropertyManager->Untie("velocities/p-aero-rad_sec");
   PropertyManager->Untie("velocities/q-aero-rad_sec");
   PropertyManager->Untie("velocities/r-aero-rad_sec");
-  PropertyManager->Untie("velocities/pt-lbs_sqft");
   PropertyManager->Untie("velocities/phidot-rad_sec");
   PropertyManager->Untie("velocities/thetadot-rad_sec");
   PropertyManager->Untie("velocities/psidot-rad_sec");
