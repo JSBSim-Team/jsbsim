@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.5 2006/05/04 12:40:52 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.6 2006/05/05 14:30:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -121,7 +121,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.5 2006/05/04 12:40:52 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.6 2006/05/05 14:30:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,7 +148,6 @@ public:
   enum eComparison {ecUndef=0, eEQ, eNE, eGT, eGE, eLT, eLE};
 
 private:
-  FGFCS* fcs;
 
   struct test {
     vector <FGCondition> conditions;
