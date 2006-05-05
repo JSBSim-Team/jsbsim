@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.17 2006/05/03 03:56:47 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.18 2006/05/05 06:41:55 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -88,7 +88,8 @@ CLASS DOCUMENTATION
  * model (FDM) framework written in the C++ programming language.  It is
  * designed to support simulation modeling of any aerospace craft without the
  * need for specific compiled and linked program code, instead relying on a
- * relatively simple model specification written in a pseudo-XML format.
+ * relatively simple model specification written in a XML format. The format is
+ * formally known as JSBSim-ML (JSBSim Markup Language).
  *
  * JSBSim (www.jsbsim.org) was created initially for the open source FlightGear
  * flight simulator (www.flightgear.org), where it replaced LaRCSim (Langley
@@ -469,7 +470,7 @@ void PrintHelp(void)
     cout << "    --version  returns the version number" << endl;
     cout << "    --outputlogfile=<filename>  sets (overrides) the name of the data output file" << endl;
     cout << "    --logdirectivefile=<filename>  specifies (overrides) the name of the data logging directives file" << endl;
-    cout << "    --root=<path>  specifies the root of the configuration file directory" << endl;
+    cout << "    --root=<path>  specifies the JSBSim root directory (where aircraft/, engine/, etc. reside)" << endl;
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
