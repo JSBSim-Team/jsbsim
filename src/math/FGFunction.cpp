@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.6 2006/03/07 11:39:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.7 2006/05/05 06:40:06 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eAbs;
   } else if (operation == string("sin")) {
     Type = eSin;
+  } else if (operation == string("exp")) {
+    Type = eExp;
   } else if (operation == string("cos")) {
     Type = eCos;
   } else if (operation == string("tan")) {
@@ -94,6 +96,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("sum") ||
                operation == string("quotient") ||
                operation == string("pow") ||
+               operation == string("exp") ||
                operation == string("abs") ||
                operation == string("sin") ||
                operation == string("cos") ||
@@ -160,6 +163,9 @@ double FGFunction::GetValue(void) const
     break;
   case ePow:
     temp = pow(temp,Parameters[1]->GetValue());
+    break;
+  case eExp:
+    temp = exp(temp);
     break;
   case eAbs:
     temp = fabs(temp);

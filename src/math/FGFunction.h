@@ -25,7 +25,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.4 2006/01/11 13:10:29 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.5 2006/05/05 06:40:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -37,9 +37,82 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-  /** Represents various types of parameters.
-      @author Jon Berndt
-  */
+/** Represents a mathematical function.
+The FGFunction class is a powerful and versatile resource that allows
+algebraic functions to be defined in a JSBSim configuration file. It is
+similar in concept to MathML (Mathematical Markup Language, www.w3.org/Math/),
+but simpler and more terse.
+A function definition consists of an operation, a value, a table, or a property
+(which evaluates to a value). The currently supported operations are:
+- sum (takes n args)
+- difference (takes n args)
+- product (takes n args)
+- quotient (takes 2 args)
+- pow (takes 2 args)
+- exp (takes 2 args)
+- abs (takes n args)
+- sin (takes 1 arg)
+- cos (takes 1 arg)
+- tan (takes 1 arg)
+- asin (takes 1 arg)
+- acos (takes 1 arg)
+- atan (takes 1 arg)
+- atan2 (takes 2 args)
+
+An operation is defined in the configuration file as in the following example:
+
+@code
+  <sum>
+    <value> 3.14159 </value>
+    <property> velocities/qbar </property>
+    <product>
+      <value> 0.125 </value>
+      <property> metrics/wingarea </property>
+    </product>
+  </sum>
+@endcode
+
+A full function definition, such as is used in the aerodynamics section of a
+configuration file includes the function element, and other elements. It should
+be noted that there can be only one non-optional (non-documentation) element -
+that is, one operation element - in the top-level function definition.
+Multiple value and/or property elements cannot be immediate child
+members of the function element. Almost always, the first operation within the
+function element will be a product or sum. For example:
+
+@code
+<function name="aero/coefficient/Clr">
+    <description>Roll moment due to yaw rate</description>
+    <product>
+        <property>aero/qbar-area</property>
+        <property>metrics/bw-ft</property>
+        <property>aero/bi2vel</property>
+        <property>velocities/r-aero-rad_sec</property>
+        <table>
+            <independentVar>aero/alpha-rad</independentVar>
+            <tableData>
+                 0.000  0.08
+                 0.094  0.19
+            </tableData>
+        </table>
+    </product>
+</function>
+@endcode
+
+The "lowest level" in a function is always a value or a property, which cannot
+itself contain another element. As shown, operations can contain values,
+properties, tables, or other operations. In the first above example, the sum
+element contains all three. What is evaluated is written algebraically as:
+
+@code 3.14159 + qbar + (0.125 * wingarea) @endcode
+
+Some operations can take only a single argument. That argument, however, can be
+an operation (such as sum) which can contain other items. The point to keep in
+mind is that it evaluates to a single value - which is just what the trigonometric
+functions require (except atan2, which takes two arguments).
+
+@author Jon Berndt
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DECLARATION: FGFunction
@@ -49,13 +122,43 @@ class FGFunction : public FGParameter
 {
 public:
 
-  FGFunction(FGPropertyManager* propMan, Element* el, string prefix="");
+/** Constructor.
+    When this constructor is called, the XML element pointed to in memory by the
+    element argument is traversed. If other FGParameter-derived objects (values,
+    functions, properties, or tables) are encountered, this instance of the
+    FGFunction object will store a pointer to the found object and pass the relevant
+    Element pointer to the constructor for the new object. In other words, each
+    FGFunction object maintains a list of "child" FGParameter-derived objects which
+    in turn may each contain its own list, and so on. At runtime, each object
+    evaluates its child parameters, which each may have its own child parameters to
+    evaluate.
+    @param PropertyManager a pointer to the property manager instance.
+    @param element a pointer to the Element object containing the function definition.
+    @param prefix an optional prefix to prepend to the name given to the property
+           that represents this function (if given).
+*/
+  FGFunction(FGPropertyManager* PropertyManager, Element* element, string prefix="");
+  /// Destructor.
   ~FGFunction();
 
+/** Retrieves the value of the function object.
+    @return the total value of the function. */
   double GetValue(void) const;
+
+/** The value that the function evaluates to, as a string.
+  @return the value of the function as a string. */
   string GetValueAsString(void) const;
+
+/// Retrieves the name of the function.
   string GetName(void) const {return Name;}
-  void cacheValue(bool);
+
+/** Specifies whether to cache the value of the function, so it is calculated only
+    once per frame.
+    If shouldCache is true, then the value of the function is calculated, and
+    a flag is set so further calculations done this frame will use the cached value.
+    In order to turn off caching, cacheValue must be called with a false argument.
+    @param shouldCache specifies whether the function should cache the computed value. */
+  void cacheValue(bool shouldCache);
 
 private:
   vector <FGParameter*> Parameters;
@@ -64,7 +167,7 @@ private:
   string Prefix;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
-                     eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2} Type;
+                     eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2} Type;
   string Name;
   void bind(void);
   void Debug(int from);
