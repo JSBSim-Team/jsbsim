@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FLAPS "$Id: FGKinemat.h,v 1.4 2006/05/04 12:40:52 jberndt Exp $"
+#define ID_FLAPS "$Id: FGKinemat.h,v 1.5 2006/05/05 06:42:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -127,8 +127,8 @@ public:
       @param AC_cfg reference to the current aircraft configuration file.
       Initializes the FGKinemat object from the given configuration
       file. The Configuration file is expected to be at the stream
-      position where the KINEMAT object starts. Also it is expected to
-      be past the end of the current KINEMAT configuration on exit.
+      position where the kinematic object starts. Also it is expected to
+      be past the end of the current kinematic configuration on exit.
    */
   FGKinemat(FGFCS* fcs, Element* element);
 
@@ -136,7 +136,7 @@ public:
   ~FGKinemat();
 
   /** Kinematic component output value.
-      @return the current output of the kinemat object on the range of [0,1]. */
+      @return the current output of the kinematic object on the range of [0,1]. */
   double GetOutputPct() const { return OutputPct; }
 
   /** Run method, overrides FGModel::Run().

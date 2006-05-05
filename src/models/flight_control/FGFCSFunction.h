@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $"
+#define ID_FCSFUNCTION "$Id: FGFCSFunction.h,v 1.4 2006/05/05 06:42:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,7 +61,49 @@ CLASS DOCUMENTATION
 
 /** Models a FCSFunction object.
     @author Jon S. Berndt
-    @version $Id: FGFCSFunction.h,v 1.3 2005/06/13 16:59:19 ehofman Exp $
+
+One of the most recent additions to the FCS component set is the FCS Function
+component. This component allows a function to be created when no other component
+is suitable. The function component is defined as follows:
+
+@code
+<fcs_function name="Windup Trigger">
+  [<input> [-]property </input>]
+  <function>
+    …
+  </function>
+  [<clipto>
+    <min> {[-]property name | value} </min>
+    <max> {[-]property name | value} </max>
+  </clipto>]
+  [<output> {property} </output>]
+</ fcs_function >
+@endcode
+
+The function definition itself can include a nested series of products, sums,
+quotients, etc. as well as trig and other math functions. Here’s an example of
+a function (from an aero specification):
+
+@code
+<function name="aero/coefficient/CDo">
+    <description>Drag_at_zero_lift</description>
+    <product>
+        <property>aero/qbar-psf</property>
+        <property>metrics/Sw-sqft</property>
+        <table>
+            <independentVar>velocities/mach</independentVar>
+            <tableData>
+                0.0000	0.0220
+                0.2000	0.0200
+                0.6500	0.0220
+                0.9000	0.0240
+                0.9700	0.0500
+            </tableData>
+        </table>
+    </product>
+</function>
+@endcode
+    @version $Id: FGFCSFunction.h,v 1.4 2006/05/05 06:42:45 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

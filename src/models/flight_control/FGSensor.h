@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.6 2006/02/03 00:51:44 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.7 2006/05/05 06:42:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,6 +62,7 @@ CLASS DOCUMENTATION
 
 Syntax:
 
+@code
 <sensor name=”name” rate_group=”name”>
   <input> property </input>
   <lag> number </lag>
@@ -74,9 +75,11 @@ Syntax:
   <drift_rate> number </drift_rate>
   <bias> number </bias>
 </sensor>
+@endcode
 
 Example:
 
+@code
 <sensor name=”aero/sensor/qbar” rate_group=”HFCS”>
   <input> aero/qbar </input>
   <lag> 0.5 </lag>
@@ -88,6 +91,7 @@ Example:
   </quantization>
   <bias> 0.5 </bias>
 </sensor>
+@endcode
 
 The only required element in the sensor definition is the input element. In that
 case, no degradation would be modeled, and the output would simply be the input.
@@ -100,8 +104,8 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.6 $
-  */
+@version $Revision: 1.7 $
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
