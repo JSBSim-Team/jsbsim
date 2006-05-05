@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.21 2006/05/03 03:56:47 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.22 2006/05/05 12:18:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,7 +123,7 @@ CLASS DOCUMENTATION
 
     @code
     FDMExec = new JSBSim::FGFDMExec();
-    Script->LoadScript( ScriptName ); // the script loads the aircraft and ICs
+    FDMExec->LoadScript( ScriptName ); // the script loads the aircraft and ICs
     result = FDMExec->Run();
     while (result) { // cyclic execution
       result = FDMExec->Run(); // execute JSBSim
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.21 $
+    @version $Revision: 1.22 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
