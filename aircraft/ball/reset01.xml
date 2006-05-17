@@ -4,17 +4,16 @@
     This file sets up the cannonball
     to fire north to check coriolis acceleration.
   -->
-  
-  UBODY     5000.0
-  VBODY        0.0
-  WBODY        0.0
-  LATITUDE     0.0
-  LONGITUDE   90.0
-  PHI          0.0
-  THETA       40.0
-  PSI          0.0
-  ALTITUDE     0.0    
-  WINDDIR      0.0
-  VWIND        0.0
+  <ubody unit="FT/SEC"> 5000.0  </ubody>
+  <vbody unit="FT/SEC">    0.0  </vbody>
+  <wbody unit="FT/SEC">    0.0  </wbody>
+  <latitude unit="DEG">    0.0  </latitude>
+  <longitude unit="DEG">  90.0  </longitude>
+  <phi unit="DEG">         0.0  </phi>
+  <theta unit="DEG">      40.0  </theta>
+  <psi unit="DEG">         0.0  </psi>
+  <altitude unit="FT">     0.0  </altitude>
+  <winddir unit="DEG">     0.0  </winddir>
+  <vwind unit="FT/SEC">    0.0  </vwind>
 </initialize>
 

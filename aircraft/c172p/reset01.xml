@@ -4,17 +4,17 @@
     This file sets up the aircraft to start off
     from the runway in preparation for takeoff.
   -->
-  UBODY        0.0
-  VBODY        0.0
-  WBODY        0.0
-  LATITUDE    47.5299892 
-  LONGITUDE -122.3019561
-  PHI          0.0
-  THETA        0.0
-  PSI          0.0
-  ALTITUDE    2000.00
-  HWIND        0.0
-  XWIND        0.0
-  VC          90.0
-  GAMMA        3.0
+  <ubody>       0.0 </ubody>
+  <vbody>       0.0 </vbody>
+  <wbody>       0.0 </wbody>
+  <latitude>   47.0 </latitude>
+  <longitude> 122.0 </longitude>
+  <phi>         0.0 </phi>
+  <theta>       0.0 </theta>
+  <psi>       150.0 </psi>
+  <altitude>    2000.00 </altitude>
+  <hwind>        0.0 </hwind>
+  <xwind>        0.0 </xwind>
+  <vc>          90.0 </vc>
+  <gamma>        3.0 </gamma>
 </initialize>
