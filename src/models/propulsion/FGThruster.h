@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.6 2006/04/05 13:00:13 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.7 2006/05/18 11:53:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.6 2006/04/05 13:00:13 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.7 2006/05/18 11:53:35 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +73,6 @@ class FGThruster : public FGForce {
 
 public:
   /// Constructor
-  FGThruster(FGFDMExec *FDMExec);
   FGThruster(FGFDMExec *FDMExec, Element *el, int num );
   /// Destructor
   virtual ~FGThruster();

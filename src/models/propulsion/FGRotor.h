@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROTOR "$Id: FGRotor.h,v 1.2 2005/06/13 00:54:45 jberndt Exp $"
+#define ID_ROTOR "$Id: FGRotor.h,v 1.3 2006/05/18 11:53:35 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,7 +66,9 @@ CLASS DECLARATION
 class FGRotor : public FGThruster {
 
 public:
-  FGRotor(FGFDMExec *FDMExec);
+  /// Constructor
+  FGRotor(FGFDMExec *FDMExec, Element* rotor_element, int num);
+  /// Destructor
   ~FGRotor();
 
   double Calculate(double);

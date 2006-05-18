@@ -41,26 +41,13 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGThruster.cpp,v 1.3 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGThruster.cpp,v 1.4 2006/05/18 11:53:35 jberndt Exp $";
 static const char *IdHdr = ID_THRUSTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-
-FGThruster::FGThruster(FGFDMExec *FDMExec) : FGForce(FDMExec)
-{
-  Type = ttDirect;
-  SetTransformType(FGForce::tCustom);
-
-  EngineNum = 0;
-  PropertyManager = FDMExec->GetPropertyManager();
-
-  Debug(0);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGThruster::FGThruster(FGFDMExec *FDMExec, Element *el, int num ): FGForce(FDMExec)
 {

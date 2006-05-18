@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.4 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.5 2006/05/18 11:53:35 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,7 +50,8 @@ CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num) : FGThruster(FDMExec)
+FGNozzle::FGNozzle(FGFDMExec* FDMExec, Element* nozzle_element, int num)
+                    : FGThruster(FDMExec, nozzle_element, num)
 {
 
   if (nozzle_element->FindElement("pe"))

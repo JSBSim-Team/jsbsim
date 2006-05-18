@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2004-01-01 </filecreationdate>
-        <version> $Id: C130.xml,v 1.10 2006/02/26 17:26:35 jberndt Exp $ </version>
+        <version> $Id: C130.xml,v 1.11 2006/05/18 11:53:35 jberndt Exp $ </version>
         <description> Models a Lockheed C-130 Hercules. </description>
     </fileheader>
 
@@ -398,7 +398,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>aero/cl-squared-norm</property>
+                    <property>aero/cl-squared</property>
                     <value>0.0390</value>
                 </product>
             </function>
