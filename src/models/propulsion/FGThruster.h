@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.7 2006/05/18 11:53:35 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.8 2006/05/18 12:28:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.7 2006/05/18 11:53:35 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.8 2006/05/18 12:28:07 jberndt Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,8 @@ public:
   enum eType {ttNozzle, ttRotor, ttPropeller, ttDirect};
 
   virtual double Calculate(double tt) {
-       Thrust = tt; vFn(1) = Thrust;
+       Thrust = cos(ReverserAngle)*tt;
+       vFn(1) = Thrust;
        return Thrust;
   }
   void SetName(string name) {Name = name;}
@@ -90,6 +91,8 @@ public:
   double GetThrust(void) {return Thrust;}
   eType GetType(void) {return Type;}
   string GetName(void) {return Name;}
+  void SetReverserAngle(double angle) {ReverserAngle = angle;}
+  double GetReverserAngle(void) const {return ReverserAngle;}
   virtual double GetRPM(void) { return 0.0; };
   double GetGearRatio(void) {return GearRatio; }
   virtual string GetThrusterLabels(int id, string delimeter);
