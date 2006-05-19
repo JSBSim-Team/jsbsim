@@ -6,7 +6,7 @@
     <fileheader>
         <author>Tony Peden</author>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.57 $</version>
+        <version>$Revision: 1.58 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -825,6 +825,7 @@
         <property> velocities/vc-kts </property>
         <property> fcs/throttle-cmd-norm </property>
         <property> propulsion/total-fuel-lbs </property>
+        <property> flight-path/gamma-rad </property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>

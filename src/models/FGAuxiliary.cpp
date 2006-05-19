@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.8 2006/05/05 12:16:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.9 2006/05/19 12:35:28 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,11 +186,12 @@ bool FGAuxiliary::Run()
 
   if (psigt < 0.0) psigt += 2*M_PI;
 
-  if (Vt != 0) {
-    hdot_Vt = -vVel(eDown)/Vt;
-    if (fabs(hdot_Vt) <= 1) gamma = asin(hdot_Vt);
+  if (Vground == 0.0) {
+    if (vVel(eDown) == 0.0) gamma = 0.0;
+    else if (vVel(eDown) < 0.0) gamma = 90.0*degtorad;
+    else gamma = -90.0*degtorad;
   } else {
-    gamma = 0.0;
+    gamma = atan2(-vVel(eDown), Vground);
   }
 
   tat = sat*(1 + 0.2*Mach*Mach); // Total Temperature, isentropic flow
