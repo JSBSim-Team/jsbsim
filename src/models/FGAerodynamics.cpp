@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.5 2005/12/29 21:56:14 dpculp Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.6 2006/05/20 12:02:09 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -76,6 +76,9 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
   clsq = lod = 0.0;
   alphaw = 0.0;
   bi2vel = ci2vel = 0.0;
+  AeroRPShift = 0;
+  vDeltaRP.InitMatrix();
+
   bind();
 
   Debug(0);
@@ -97,6 +100,8 @@ FGAerodynamics::~FGAerodynamics()
 
   for (i=0; i<variables.size(); i++)
     delete variables[i];
+
+  if (AeroRPShift) delete AeroRPShift;
 
   Debug(1);
 }
@@ -153,6 +158,11 @@ bool FGAerodynamics::Run(void)
     }
   }
 
+  // Calculate aerodynamic reference point shift, if any
+  if (AeroRPShift) {
+    vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar();
+  }
+
   // calculate lift coefficient squared
   if ( Auxiliary->Getqbar() > 0) {
     clsq = vFs(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
@@ -170,7 +180,7 @@ bool FGAerodynamics::Run(void)
   // transform stability axis forces into body axes
   vForces = State->GetTs2b()*vFs;
 
-  vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp());
+  vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp() + vDeltaRP);
 
   vMoments = vDXYZcg*vForces; // M = r X F
 
@@ -200,6 +210,11 @@ bool FGAerodynamics::Load(Element *element)
   if (temp_element = element->FindElement("hysteresis_limits")) {
     alphahystmin = temp_element->FindElementValueAsNumberConvertTo("min", "DEG");
     alphahystmax = temp_element->FindElementValueAsNumberConvertTo("max", "DEG");
+  }
+
+  if (temp_element = element->FindElement("aero_ref_pt_shift_x")) {
+    function_element = temp_element->FindElement("function");
+    AeroRPShift = new FGFunction(PropertyManager, function_element);
   }
 
   function_element = element->FindElement("function");
