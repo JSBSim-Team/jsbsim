@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.9 2006/03/19 13:55:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.10 2006/06/10 13:55:50 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,6 +80,7 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
   nTables = t.nTables;
   dimension = t.dimension;
   internal = t.internal;
+  Name = t.Name;
 
   Tables = t.Tables;
   Data = Allocate();
@@ -117,6 +118,7 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
   // Is this an internal lookup table?
 
   internal = false;
+  Name = el->GetAttributeValue("name"); // Allow this table to be named with a property
   call_type = el->GetAttributeValue("type");
   if (call_type == string("internal")) {
     parent_element = el->GetParent();
@@ -271,6 +273,9 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
     cout << "No dimension given" << endl;
     break;
   }
+
+  bind();
+
   if (debug_lvl & 1) Print();
 }
 
@@ -292,8 +297,12 @@ double** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
+  if (!Name.empty()) {
+    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper case
+    PropertyManager->Untie(tmp);
+  }
+
   if (nTables > 0) {
-cout << "nTables = " << nTables << endl;
     for (int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();
   }
@@ -562,6 +571,15 @@ void FGTable::Print(void)
   cout.setf(flags); // reset
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGTable::bind(void)
+{
+  if ( !Name.empty() ) {
+    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper case
+    PropertyManager->Tie( tmp, this, &FGTable::GetValue);
+  }
+}
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:
 //    unset: In this case (the default) JSBSim would only print

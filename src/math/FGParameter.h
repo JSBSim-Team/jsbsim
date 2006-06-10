@@ -21,7 +21,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PARAMETER "$Id: FGParameter.h,v 1.2 2005/06/13 00:54:43 jberndt Exp $"
+#define ID_PARAMETER "$Id: FGParameter.h,v 1.3 2006/06/10 13:55:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -44,7 +44,7 @@ DECLARATION: FGParameter
 class FGParameter : public FGJSBBase
 {
 public:
-
+  virtual ~FGParameter(void) {};
   virtual double GetValue(void) const = 0;
 
 protected:

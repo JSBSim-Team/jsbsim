@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.7 2006/05/05 06:40:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.8 2006/06/10 13:55:50 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -37,9 +37,9 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
 
   Name = el->GetAttributeValue("name");
   operation = el->GetName();
+
   if (operation == string("function")) {
     Type = eTopLevel;
-    bind();
   } else if (operation == string("product")) {
     Type = eProduct;
   } else if (operation == string("difference")) {
@@ -113,6 +113,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     element = el->GetNextElement();
   }
 
+  bind(); // Allow any function to save its value
+
   Debug(0);
 }
 
@@ -120,8 +122,14 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
 
 FGFunction::~FGFunction(void)
 {
-  string tmp = PropertyManager->mkPropertyName(Prefix + Name, false); // Allow upper case
-  PropertyManager->Untie(tmp);
+  if (!Name.empty()) {
+    string tmp = PropertyManager->mkPropertyName(Prefix + Name, false); // Allow upper case
+    PropertyManager->Untie(tmp);
+  }
+
+  for (int i=0; i<Parameters.size(); i++) {
+    delete Parameters[i];
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

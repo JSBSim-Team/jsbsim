@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.4 2005/11/12 13:36:10 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.5 2006/06/10 13:55:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
     combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
 
     @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.4 2005/11/12 13:36:10 jberndt Exp $
+    @version $Id: FGTable.h,v 1.5 2006/06/10 13:55:50 jberndt Exp $
     @see FGCoefficient
     @see FGPropeller
 */
@@ -266,6 +266,8 @@ private:
   mutable int lastRowIndex, lastColumnIndex, lastTableIndex;
   double** Allocate(void);
   FGPropertyManager* const PropertyManager;
+  string Name;
+  void bind(void);
 
   void Debug(int from);
 };

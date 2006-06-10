@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
   <xs:annotation>
-    <xs:documentation> The JSBSim v2.0 configuration file format is the medium for describing an
+    <xs:documentation> The JSBSim v2.0 configuration file format (JSBSim-ML) is the medium for describing 
       aircraft flight characteristics to the JSBSim code. For more information about JSBSim, see the
       web site at: www.jsbsim.org.
     </xs:documentation>
     <xs:documentation>
       The config file format stores and conveys the characteristics of any unique aircraft to the JSBSim
-      executable. The information that is specified in the configuration file are:
+      executable. The information that is specified in the configuration file includes:
     </xs:documentation>
     <xs:documentation>
       - Administrative
@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.17 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.18 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -183,7 +183,7 @@
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.17 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.18 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>

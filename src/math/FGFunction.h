@@ -25,7 +25,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.5 2006/05/05 06:40:06 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.6 2006/06/10 13:55:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -139,7 +139,7 @@ public:
 */
   FGFunction(FGPropertyManager* PropertyManager, Element* element, string prefix="");
   /// Destructor.
-  ~FGFunction();
+  virtual ~FGFunction();
 
 /** Retrieves the value of the function object.
     @return the total value of the function. */
