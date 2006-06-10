@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.5 2006/05/20 12:02:09 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.6 2006/06/10 13:54:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -75,7 +75,8 @@ CLASS DOCUMENTATION
 /** Encapsulates the aerodynamic calculations.
     This class owns and contains the list of force/coefficients that define the
     aerodynamic properties of an aircraft. Here also, such unique phenomena
-    as ground effect and maximum lift curve tailoff are handled.
+    as ground effect, aerodynamic reference point shift, and maximum lift curve
+    tailoff are handled.
 
     @code
     <aerodynamics>
@@ -87,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.5 $
+    @Id $Revision: 1.6 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,17 +134,24 @@ public:
               similar call to GetForces(int n).*/
   double GetMoments(int n) const {return vMoments(n);}
 
-  FGColumnVector3& GetvLastFs(void) { return vLastFs; }
-  double GetvLastFs(int axis) const { return vLastFs(axis); }
+  /** Retrieves the aerodynamic forces in the stability axes.
+      @return a reference to a column vector containing the stability axis forces. */
   FGColumnVector3& GetvFs(void) { return vFs; }
+
+  /** Retrieves the aerodynamic forces in the stability axes, given an axis.
+      @param axis the axis to return the force for (eX, eY, eZ).
+      @return a reference to a column vector containing the requested stability
+      axis force. */
   double GetvFs(int axis) const { return vFs(axis); }
+
+  /** Retrieves the lift over drag ratio */
   inline double GetLoD(void) const { return lod; }
+
+  /** Retrieves the square of the lift coefficient. */
   inline double GetClSquared(void) const { return clsq; }
   inline double GetAlphaCLMax(void) const { return alphaclmax; }
   inline double GetAlphaCLMin(void) const { return alphaclmin; }
 
-  inline double GetAlphaHystMax(void) const { return alphahystmax; }
-  inline double GetAlphaHystMin(void) const { return alphahystmin; }
   inline double GetHysteresisParm(void) const { return stall_hyst; }
   inline double GetStallWarn(void) const { return impending_stall; }
   double GetAlphaW(void) const { return alphaw; }

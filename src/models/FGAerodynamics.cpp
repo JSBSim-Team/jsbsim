@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.6 2006/05/20 12:02:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.7 2006/06/10 13:54:57 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -90,8 +90,6 @@ FGAerodynamics::~FGAerodynamics()
 {
   unsigned int i,j;
 
-  unbind();
-
   for (i=0; i<6; i++)
     for (j=0; j<Coeff[i].size(); j++)
       delete Coeff[i][j];
@@ -102,6 +100,8 @@ FGAerodynamics::~FGAerodynamics()
     delete variables[i];
 
   if (AeroRPShift) delete AeroRPShift;
+
+  unbind();
 
   Debug(1);
 }
@@ -160,7 +160,7 @@ bool FGAerodynamics::Run(void)
 
   // Calculate aerodynamic reference point shift, if any
   if (AeroRPShift) {
-    vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar();
+    vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar()*12.0;
   }
 
   // calculate lift coefficient squared
