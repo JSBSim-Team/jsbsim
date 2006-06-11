@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TABLE "$Id: FGTable.h,v 1.5 2006/06/10 13:55:50 jberndt Exp $"
+#define ID_TABLE "$Id: FGTable.h,v 1.6 2006/06/11 19:30:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,138 +64,177 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Lookup table class.
-    Models a one, two, or three dimensional lookup table for use in FGCoefficient,
-    FGPropeller, etc.  A one-dimensional table is called a "VECTOR" in a coefficient
-    definition. For example:
-<pre>
-    \<COEFFICIENT NAME="{short name}" TYPE="VECTOR">
-      {name}
-      {number of rows}
-      {row lookup property}
-      {non-dimensionalizing properties}
-      {row_1_key} {col_1_data}
-      {row_2_key} {...       }
-      { ...     } {...       }
-      {row_n_key} {...       }
-    \</COEFFICIENT>
-</pre>
-    A "real life" example is as shown here:
-<pre>
-    \<COEFFICIENT NAME="CLDf" TYPE="VECTOR">
-      Delta_lift_due_to_flap_deflection
-      4
-      fcs/flap-pos-deg
-      aero/qbar-psf | metrics/Sw-sqft
-      0   0
-      10  0.20
-      20  0.30
-      30  0.35
-    \</COEFFICIENT>
-</pre>
-    The first column in the data table represents the lookup index (or "key").  In
-    this case, the lookup index is fcs/flap-pos-deg (flap extension in degrees).
-    If the flap position is 10 degrees, the value returned from the lookup table
-    would be 0.20.  This value would be multiplied by qbar (aero/qbar-psf) and wing
-    area (metrics/Sw-sqft) to get the total lift force that is a result of flap
-    deflection (measured in pounds force).  If the value of the flap-pos-deg property
-    was 15 (degrees), the value output by the table routine would be 0.25 - an
-    interpolation.  If the flap position in degrees ever went below 0.0, or above
-    30 (degrees), the output from the table routine would be 0 and 0.35, respectively.
-    That is, there is no _extrapolation_ to values outside the range of the lookup
-    index.  This is why it is important to chose the data for the table wisely.
+Models a one, two, or three dimensional lookup table for use in aerodynamics
+and function definitions.
 
-    The definition for a 2D table - referred to simply as a TABLE, is as follows:
-<pre>
-    \<COEFFICIENT NAME="{short name}" TYPE="TABLE">
-      {name}
-      {number of rows}
-      {number of columns}
-      {row lookup property}
-      {column lookup property}
-      {non-dimensionalizing}
-                  {col_1_key   col_2_key   ...  col_n_key }
-      {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
-      {row_2_key} {...         ...         ...  ...       }
-      { ...     } {...         ...         ...  ...       }
-      {row_n_key} {...         ...         ...  ...       }
-    \</COEFFICIENT>
-</pre>
-    A "real life" example is as shown here:
-<pre>
-    \<COEFFICIENT NAME="CYb" TYPE="TABLE">
-      Side_force_due_to_beta
-      3
-      2
-      aero/beta-rad
-      fcs/flap-pos-deg
-      aero/qbar-psf | metrics/Sw-sqft
-               0     30
-      -0.349   0.137  0.106
-       0       0      0
-       0.349  -0.137 -0.106
-    \</COEFFICIENT>
-</pre>
-    The definition for a 3D table in a coefficient would be (for example):
-<pre>
-    \<COEFFICIENT NAME="{short name}" TYPE="TABLE3D">
-      {name}
-      {number of rows}
-      {number of columns}
-      {number of tables}
-      {row lookup property}
-      {column lookup property}
-      {table lookup property}
-      {non-dimensionalizing}
-      {first table key}
-                  {col_1_key   col_2_key   ...  col_n_key }
-      {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
-      {row_2_key} {...         ...         ...  ...       }
-      { ...     } {...         ...         ...  ...       }
-      {row_n_key} {...         ...         ...  ...       }
+For a single "vector" lookup table, the format is as follows:
 
-      {second table key}
-                  {col_1_key   col_2_key   ...  col_n_key }
-      {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
-      {row_2_key} {...         ...         ...  ...       }
-      { ...     } {...         ...         ...  ...       }
-      {row_n_key} {...         ...         ...  ...       }
+@code
+<table name="property_name">
+  <independentVar lookup="row"> property_name </independentVar>
+  <tableData>
+    key_1 value_1
+    key_2 value_2
+    ...  ...
+    key_n value_n
+  </tableData>
+</table>
+@endcode
 
-      ...
+The lookup="row" attribute in the independentVar element is option in this case;
+it is assumed that the independentVar is a row variable.
 
-    \</COEFFICIENT>
-</pre>
-    [At the present time, all rows and columns for each table must have the
-    same dimension.]
+A "real life" example is as shown here:
 
-    In addition to using a Table for something like a coefficient, where all the
-    row and column elements are read in from a file, a Table could be created
-    and populated completely within program code:
-<pre>
-    // First column is thi, second is neta (combustion efficiency)
-    Lookup_Combustion_Efficiency = new FGTable(12);
-    *Lookup_Combustion_Efficiency << 0.00 << 0.980;
-    *Lookup_Combustion_Efficiency << 0.90 << 0.980;
-    *Lookup_Combustion_Efficiency << 1.00 << 0.970;
-    *Lookup_Combustion_Efficiency << 1.05 << 0.950;
-    *Lookup_Combustion_Efficiency << 1.10 << 0.900;
-    *Lookup_Combustion_Efficiency << 1.15 << 0.850;
-    *Lookup_Combustion_Efficiency << 1.20 << 0.790;
-    *Lookup_Combustion_Efficiency << 1.30 << 0.700;
-    *Lookup_Combustion_Efficiency << 1.40 << 0.630;
-    *Lookup_Combustion_Efficiency << 1.50 << 0.570;
-    *Lookup_Combustion_Efficiency << 1.60 << 0.525;
-    *Lookup_Combustion_Efficiency << 2.00 << 0.345;
-</pre>
-    The first column in the table, above, is thi (the lookup index, or key). The
-    second column is the output data - in this case, "neta" (the Greek letter
-    referring to combustion efficiency). Later on, the table is used like this:
+@code
+<table>
+  <independentVar lookup="row"> aero/alpha-rad </independentVar>
+  <tableData>
+   -1.57  1.500
+   -0.26  0.033
+    0.00  0.025
+    0.26  0.033
+    1.57  1.500
+  </tableData>
+</table>
+@endcode
 
-    combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
+The first column in the data table represents the lookup index (or "key").  In
+this case, the lookup index is aero/alpha-rad (angle of attack in radians).
+If alpha is 0.26 radians, the value returned from the lookup table
+would be 0.033.
 
-    @author Jon S. Berndt
-    @version $Id: FGTable.h,v 1.5 2006/06/10 13:55:50 jberndt Exp $
-    @see FGCoefficient
-    @see FGPropeller
+The definition for a 2D table, is as follows:
+
+@code
+<table name="property_name">
+  <independentVar lookup="row"> property_name </independentVar>
+  <independentVar lookup="column"> property_name </independentVar>
+  <tableData>
+                {col_1_key   col_2_key   ...  col_n_key }
+    {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
+    {row_2_key} {...         ...         ...  ...       }
+    { ...     } {...         ...         ...  ...       }
+    {row_n_key} {...         ...         ...  ...       }
+  </tableData>
+</table>
+@endcode
+
+The data is in a gridded format.
+
+A "real life" example is as shown below. Alpha in radians is the row lookup (alpha
+breakpoints are arranged in the first column) and flap position in degrees is
+
+@code
+<table>
+  <independentVar lookup="row">aero/alpha-rad</independentVar>
+  <independentVar lookup="column">fcs/flap-pos-deg</independentVar>
+  <tableData>
+                0.0         10.0        20.0         30.0
+    -0.0523599  8.96747e-05 0.00231942  0.0059252    0.00835082
+    -0.0349066  0.000313268 0.00567451  0.0108461    0.0140545
+    -0.0174533  0.00201318  0.0105059   0.0172432    0.0212346
+     0.0        0.0051894   0.0168137   0.0251167    0.0298909
+     0.0174533  0.00993967  0.0247521   0.0346492    0.0402205
+     0.0349066  0.0162201   0.0342207   0.0457119    0.0520802
+     0.0523599  0.0240308   0.0452195   0.0583047    0.0654701
+     0.0698132  0.0333717   0.0577485   0.0724278    0.0803902
+     0.0872664  0.0442427   0.0718077   0.088081     0.0968405
+  </tableData>
+</table>
+@endcode
+
+The definition for a 3D table in a coefficient would be (for example):
+
+@code
+<table name="property_name">
+  <independentVar lookup="row"> property_name </independentVar>
+  <independentVar lookup="column"> property_name </independentVar>
+  <tableData breakpoint="table_1_key">
+                {col_1_key   col_2_key   ...  col_n_key }
+    {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
+    {row_2_key} {...         ...         ...  ...       }
+    { ...     } {...         ...         ...  ...       }
+    {row_n_key} {...         ...         ...  ...       }
+  </tableData>
+  <tableData breakpoint="table_2_key">
+                {col_1_key   col_2_key   ...  col_n_key }
+    {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
+    {row_2_key} {...         ...         ...  ...       }
+    { ...     } {...         ...         ...  ...       }
+    {row_n_key} {...         ...         ...  ...       }
+  </tableData>
+  ...
+  <tableData breakpoint="table_n_key">
+                {col_1_key   col_2_key   ...  col_n_key }
+    {row_1_key} {col_1_data  col_2_data  ...  col_n_data}
+    {row_2_key} {...         ...         ...  ...       }
+    { ...     } {...         ...         ...  ...       }
+    {row_n_key} {...         ...         ...  ...       }
+  </tableData>
+</table>
+@endcode
+
+[Note the "breakpoint" attribute in the tableData element, above.]
+
+Here's an example:
+
+@code
+<table>
+  <independentVar lookup="row">fcs/row-value</independentVar>
+  <independentVar lookup="column">fcs/column-value</independentVar>
+  <independentVar lookup="table">fcs/table-value</independentVar>
+  <tableData breakPoint="-1.0">
+           -1.0     1.0
+    0.0     1.0000  2.0000
+    1.0     3.0000  4.0000
+  </tableData>
+  <tableData breakPoint="0.0000">
+            0.0     10.0
+    2.0     1.0000  2.0000
+    3.0     3.0000  4.0000
+  </tableData>
+  <tableData breakPoint="1.0">
+           0.0     10.0     20.0
+     2.0   1.0000   2.0000   3.0000
+     3.0   4.0000   5.0000   6.0000
+    10.0   7.0000   8.0000   9.0000
+  </tableData>
+</table>
+@endcode
+
+In addition to using a Table for something like a coefficient, where all the
+row and column elements are read in from a file, a Table could be created
+and populated completely within program code:
+
+@code
+// First column is thi, second is neta (combustion efficiency)
+Lookup_Combustion_Efficiency = new FGTable(12);
+
+*Lookup_Combustion_Efficiency << 0.00 << 0.980;
+*Lookup_Combustion_Efficiency << 0.90 << 0.980;
+*Lookup_Combustion_Efficiency << 1.00 << 0.970;
+*Lookup_Combustion_Efficiency << 1.05 << 0.950;
+*Lookup_Combustion_Efficiency << 1.10 << 0.900;
+*Lookup_Combustion_Efficiency << 1.15 << 0.850;
+*Lookup_Combustion_Efficiency << 1.20 << 0.790;
+*Lookup_Combustion_Efficiency << 1.30 << 0.700;
+*Lookup_Combustion_Efficiency << 1.40 << 0.630;
+*Lookup_Combustion_Efficiency << 1.50 << 0.570;
+*Lookup_Combustion_Efficiency << 1.60 << 0.525;
+*Lookup_Combustion_Efficiency << 2.00 << 0.345;
+@endcode
+
+The first column in the table, above, is thi (the lookup index, or key). The
+second column is the output data - in this case, "neta" (the Greek letter
+referring to combustion efficiency). Later on, the table is used like this:
+
+@code
+combustion_efficiency = Lookup_Combustion_Efficiency->GetValue(equivalence_ratio);
+@endcode
+
+@author Jon S. Berndt
+@version $Id: FGTable.h,v 1.6 2006/06/11 19:30:22 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
