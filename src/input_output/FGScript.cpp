@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.4 2005/09/06 19:51:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.5 2006/06/16 14:23:37 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,10 +247,17 @@ bool FGScript::RunScript(void)
       else
               cerr << "Bad comparison" << endl;
 
-      if (i == 0) WholeTruth = truth;
-      else        WholeTruth = WholeTruth && truth;
+      if (i == 0) {
+        WholeTruth = truth;
+      } else {
+        unsigned j = 0;
+        WholeTruth = WholeTruth && truth;
+        for( j = 0; j<iC->SetValue.size(); j++)
+        {
+          if (!truth && iC->Persistent[j] && iC->Triggered[j]) iC->Triggered[j] = false;
+        }
+      }
 
-      if (!truth && iC->Persistent[i] && iC->Triggered[i]) iC->Triggered[i] = false;
     }
 
     // if the conditions are true, do the setting of the desired parameters
