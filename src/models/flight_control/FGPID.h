@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGFCSComponent.h
- Author:       Jon S. Berndt
- Date started: 05/01/2000
+ Header:       FGPID.h
+ Author:       Jon Berndt
+ Date started: 6/17/2006
 
- ------------- Copyright (C)  -------------
+ ------------- Copyright (C) 2006 by Jon S. Berndt, jsb@hal-pc.org -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU General Public License as published by the Free Software
@@ -25,13 +25,14 @@
 
 HISTORY
 --------------------------------------------------------------------------------
+Initial Code 6/17/2006 JSB
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGFCSCOMPONENT_H
-#define FGFCSCOMPONENT_H
+#ifndef FGPID_H
+#define FGPID_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -39,21 +40,20 @@ INCLUDES
 
 #ifdef FGFS
 #  include <simgear/compiler.h>
+#  include STL_STRING
+   SG_USING_STD(string);
+#else
+#  include <string>
 #endif
 
-#include <string>
-#include <vector>
-#include <FGJSBBase.h>
-#include <input_output/FGPropertyManager.h>
+#include "FGFCSComponent.h"
 #include <input_output/FGXMLElement.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCSCOMPONENT "$Id: FGFCSComponent.h,v 1.8 2006/06/17 17:03:00 jberndt Exp $"
-
-using std::string;
+#define ID_PID "$Id: FGPID.h,v 1.1 2006/06/17 17:03:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -67,72 +67,32 @@ class FGFCS;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Base class for JSBSim Flight Control System Components.
-    The Flight Control System (FCS) for JSBSim consists of the FCS container
-    class (see FGFCS), the FGFCSComponent base class, and the
-    component classes from which can be constructed a string, or channel. See:
-
-    - FGSwitch
-    - FGGain
-    - FGKinemat
-    - FGFilter
-    - FGDeadBand
-    - FGSummer
-    - FGSensor
-    - FGFCSFunction
-    - FGPID
+/** Encapsulates a PID control component for the flight control system.
 
     @author Jon S. Berndt
-    @version $Id: FGFCSComponent.h,v 1.8 2006/06/17 17:03:00 jberndt Exp $
-    @see Documentation for the FGFCS class, and for the configuration file class
+    @version $Revision: 1.1 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFCSComponent : public FGJSBBase
+class FGPID  : public FGFCSComponent
 {
 public:
-  /// Constructor
-  FGFCSComponent(FGFCS* fcs, Element* el);
-  /// Destructor
-  virtual ~FGFCSComponent();
+  FGPID(FGFCS* fcs, Element* element);
+  ~FGPID();
 
-  virtual bool Run(void);
-  virtual void SetOutput(void);
-  inline double GetOutput (void) const {return Output;}
-  inline FGPropertyManager* GetOutputNode(void) { return OutputNode; }
-  inline string GetName(void) const {return Name;}
-  inline string GetType(void) const { return Type; }
-  virtual double GetOutputPct(void) const { return 0; }
+  bool Run (void);
 
-protected:
-  FGFCS* fcs;
-  FGPropertyManager* PropertyManager;
-  FGPropertyManager* treenode;
-  FGPropertyManager* OutputNode;
-  FGPropertyManager* ClipMinPropertyNode;
-  FGPropertyManager* ClipMaxPropertyNode;
-  vector <FGPropertyManager*> InputNodes;
-  vector <float> InputSigns;
-  string Type;
-  string Name;
-  double Input;
-  double Output;
-  double clipmax, clipmin;
-  float clipMinSign, clipMaxSign;
-  bool IsOutput;
-  bool clip;
+private:
+  double dt;
+  FGPropertyManager *Trigger;
+  double Kp, Ki, Kd;
+  double P_out, D_out, I_out;
+  double Input_prev, Input_prev2;
 
-  void Clip(void);
-  virtual void bind();
-  virtual void Debug(int from);
+  void Debug(int from);
 };
-
-} //namespace JSBSim
-
-#include "../FGFCS.h"
-
+}
 #endif
-

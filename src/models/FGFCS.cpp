@@ -45,6 +45,7 @@ INCLUDES
 #include <models/flight_control/FGFilter.h>
 #include <models/flight_control/FGDeadBand.h>
 #include <models/flight_control/FGGain.h>
+#include <models/flight_control/FGPID.h>
 #include <models/flight_control/FGGradient.h>
 #include <models/flight_control/FGSwitch.h>
 #include <models/flight_control/FGSummer.h>
@@ -54,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.13 2006/05/03 03:56:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.14 2006/06/17 17:03:00 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -552,6 +553,8 @@ bool FGFCS::Load(Element* el)
           Components->push_back(new FGKinemat(this, component_element));
         } else if (component_element->GetName() == string("fcs_function")) {
           Components->push_back(new FGFCSFunction(this, component_element));
+        } else if (component_element->GetName() == string("pid")) {
+          Components->push_back(new FGPID(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }

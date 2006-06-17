@@ -170,12 +170,19 @@ ROLL CHANNEL
     </clipto>
   </summer>
 
+  <pid name="Heading PID Controller">
+    <input> fcs/heading-roll-error-switch </input>
+    <kp> 1.0 </kp>
+    <ki> 0.10 </ki>
+  </pid>
+
   <switch name="Roll Command Selector">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/heading-error-summer">
+<!--    <test value="fcs/heading-error-summer"> -->
+    <test value="fcs/heading-pid-controller">
       ap/heading_hold == 1
     </test>
-    <test logic="AND" value="fcs/roll-ap-aileron-command-normalizer">
+    <test value="fcs/roll-ap-aileron-command-normalizer">
       ap/attitude_hold == 1
     </test>
     <output>ap/aileron_cmd</output>
@@ -294,42 +301,28 @@ PITCH CHANNEL
   elevator position falls outside the range +/- 23 degrees - a deadband of 46
   degrees) then the deadband passes a non-zero value, triggering the anti-windup
   logic in the integrator.
-  -->
-  <integrator name="fcs/integral">
-    <input> fcs/ap-alt-hold-switch </input>
-    <trigger> fcs/windup-trigger </trigger>
-    <c1> 0.000028 </c1>
-  </integrator>
 
-  <!--
   The proportional component multiplies the error signal by a constant, providing
   the proportional control action of this PI altitude hold controller.
-  -->
-  <pure_gain name="fcs/proportional">
-    <input> fcs/ap-alt-hold-switch </input>
-    <gain> 0.031 </gain>
-    <!--   0.031 -->
-  </pure_gain>
 
-  <!--
-  The control summer component sums the proprortional and integral control
+  The pid component sums the proprortional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
-  <summer name="fcs/control-summer">
-    <input> fcs/integral </input>
-    <input> fcs/proportional </input>
-    <clipto>
-      <min>-1.0</min>
-      <max> 1.0</max>
-    </clipto>
-  </summer>
+  <pid name="fcs/altitude-hold-pid">
+    <input> fcs/ap-alt-hold-switch </input>
+    <kp> 0.031 </kp>
+    <ki> 0.000028 </ki>
+    <trigger> fcs/windup-trigger </trigger>
+    <clipto> <min>-1.0</min>
+             <max> 1.0</max> </clipto>
+  </pid>
 
   <!--
   The elevator component flips the sign on the output of the control summer
   above and sets the ap/elevator_command property.
   -->
   <pure_gain name="fcs/elevator">
-    <input> fcs/control-summer </input>
+    <input> fcs/altitude-hold-pid </input>
     <gain> -1.0 </gain>
     <output> ap/elevator_cmd </output>
   </pure_gain>
