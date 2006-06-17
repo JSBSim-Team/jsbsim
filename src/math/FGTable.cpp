@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.10 2006/06/10 13:55:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.11 2006/06/17 12:26:48 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,6 +81,9 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
   dimension = t.dimension;
   internal = t.internal;
   Name = t.Name;
+  lookupProperty[0] = t.lookupProperty[0];
+  lookupProperty[1] = t.lookupProperty[1];
+  lookupProperty[2] = t.lookupProperty[2];
 
   Tables = t.Tables;
   Data = Allocate();
@@ -297,7 +300,7 @@ double** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
-  if (!Name.empty()) {
+  if (!Name.empty() && !internal) {
     string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper case
     PropertyManager->Untie(tmp);
   }
@@ -575,9 +578,10 @@ void FGTable::Print(void)
 
 void FGTable::bind(void)
 {
-  if ( !Name.empty() ) {
-    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper case
-    PropertyManager->Tie( tmp, this, &FGTable::GetValue);
+  typedef double (FGTable::*PMF)(void) const;
+  if ( !Name.empty() && !internal) {
+    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper
+    PropertyManager->Tie( tmp, this, (PMF)&FGTable::GetValue);
   }
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
