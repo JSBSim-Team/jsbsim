@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.20 2006/03/07 11:43:20 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.21 2006/06/18 18:48:34 jberndt Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -360,6 +360,16 @@
         </channel>
     </flight_control>
     <aerodynamics>
+
+        <alphalimits>
+            <min unit="RAD">-0.087</min>
+            <max unit="RAD">0.28</max>
+        </alphalimits>
+
+        <hysteresis_limits>
+            <min unit="RAD">0.09</min>
+            <max unit="RAD">0.36</max>
+        </hysteresis_limits>
 
         <function name="aero/function/kCDge">
             <description>Change_in_drag_due_to_ground_effect</description>
