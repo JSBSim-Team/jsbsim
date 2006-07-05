@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.11 2006/06/17 12:26:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.12 2006/07/05 13:51:28 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,8 +309,9 @@ FGTable::~FGTable()
     for (int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();
   }
-  for (int r=0; r<=nRows; r++) if (Data[r]) delete[] Data[r];
-  if (Data) delete[] Data;
+  for (int r=0; r<=nRows; r++) delete[] Data[r];
+  delete[] Data;
+
   Debug(1);
 }
 

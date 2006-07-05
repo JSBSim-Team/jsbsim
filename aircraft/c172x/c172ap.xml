@@ -305,13 +305,14 @@ PITCH CHANNEL
   The proportional component multiplies the error signal by a constant, providing
   the proportional control action of this PI altitude hold controller.
 
-  The pid component sums the proprortional and integral control
+  The pid component combines the proportional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
   <pid name="fcs/altitude-hold-pid">
     <input> fcs/ap-alt-hold-switch </input>
     <kp> 0.031 </kp>
     <ki> 0.000028 </ki>
+    <!-- <kd> 0.00005 </kd> -->
     <trigger> fcs/windup-trigger </trigger>
     <clipto> <min>-1.0</min>
              <max> 1.0</max> </clipto>

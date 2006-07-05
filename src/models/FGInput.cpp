@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.7 2006/04/05 13:00:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.8 2006/07/05 13:51:28 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,8 +69,7 @@ FGInput::FGInput(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGInput::~FGInput()
 {
-  if (socket) delete socket;
-
+  delete socket;
   Debug(1);
 }
 

@@ -15,7 +15,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.4 2006/01/20 06:52:33 frohlich Exp $";
+static const char *IdSrc = "$Id: FGXMLParse.cpp,v 1.5 2006/07/05 13:51:28 jberndt Exp $";
 static const char *IdHdr = ID_XMLPARSE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,7 +36,7 @@ FGXMLParse::FGXMLParse(void)
 
 FGXMLParse::~FGXMLParse(void)
 {
-  if (document) delete document;
+  delete document;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,7 +49,7 @@ void FGXMLParse::startXML(void)
 
 void FGXMLParse::reset(void)
 {
-  if (document) delete document;
+  delete document;
   first_element_read = false;
   current_element = document = 0L;
 }

@@ -119,7 +119,7 @@ if (!chdir "src") {
     $PLIB   = 1;
   }
   chdir; # go back to $HOME
-  if (!chdir "src/simgear/CVS") {
+  if (!chdir "src/simgear/source/CVS") {
     print "\nYou have not yet installed the simgear package. SimGear will be installed\n";
     $UPDATE  = 1;
     $BUILD   = 1;
@@ -148,8 +148,8 @@ if ($UPDATE) { #start update code
       print "Checking out plib from cvs\n\n";
       print "Hit enter key when requested for password\n";
       print "--------------------------------\n";
-      system("cvs -d:pserver:anonymous\@cvs.sourceforge.net:/cvsroot/plib login");
-      system("cvs -z3 -d:pserver:anonymous\@cvs.sourceforge.net:/cvsroot/plib co -P plib");
+      system("cvs -d:pserver:anonymous\@plib.cvs.sourceforge.net:/cvsroot/plib login");
+      system("cvs -z3 -d:pserver:anonymous\@plib.cvs.sourceforge.net:/cvsroot/plib co -P plib");
     } else {
       print "\n\n--------------------------------\n\n";
       print "Updating plib from cvs\n\n";
@@ -163,10 +163,10 @@ if ($UPDATE) { #start update code
 
   if ($SIMGEAR) {
     if (!chdir "") {die "Cannot chdir to ~\n";}
-    $result = open (SGFILE, "src/simgear/CVS/root" ) ;
+    $result = open (SGFILE, "src/simgear/source/CVS/Root" ) ;
     close(SGFILE);
     if (!$result) {
-      if (!chdir "src/simgear") {die "Cannot chdir to ~src/simgear\n";}
+      if (!chdir "src/simgear/source") {die "Cannot chdir to ~src/simgear/source\n";}
       print "\n\n--------------------------------\n\n";
       print "Checking out simgear from cvs\n\n";
       print "Enter 'guest' when requested for password\n";
@@ -174,7 +174,7 @@ if ($UPDATE) { #start update code
       system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 login");
       system("cvs -d :pserver:cvsguest\@cvs.simgear.org:/var/cvs/SimGear-0.3 co source");
     } else {
-      if (!chdir "src/simgear/") {die "Cannot chdir to ~/src/simgear/\n";}
+      if (!chdir "src/simgear/source") {die "Cannot chdir to ~/src/simgear/source\n";}
       print "\n\n--------------------------------\n\n";
       print "Updating simgear from cvs\n\n";
       print "--------------------------------\n";
@@ -276,7 +276,7 @@ if ($SIMGEAR) { #make simgear
     print "\n\n   --- autoconf ---\n\n";
     system("autoconf");
     print "\n\n   --- configure ---\n\n";
-    system('CFLAGS="" CXXFLAGS="" ./configure --with-logging');
+    system('CFLAGS="" CXXFLAGS="" CPPFLAGS="-DNOMINMAX" ./configure --with-logging');
   }
   print "\n\n MAKING SIMGEAR ***";
   print "\n\n   --- make ---\n\n";
@@ -305,7 +305,7 @@ if ($FGFS) { #make flightgear
     print "\n\n   --- autoconf ---\n\n";
     system("autoconf");
     print "\n\n   --- configure ---\n\n";
-    system('CFLAGS="" CXXFLAGS="" ./configure --with-logging');
+    system('CFLAGS="" CXXFLAGS="" CPPFLAGS="-DNOMINMAX" ./configure --with-logging');
   }
   print "\n\n MAKING FLIGHTGEAR***";
   print "\n\n   --- make ---\n\n";

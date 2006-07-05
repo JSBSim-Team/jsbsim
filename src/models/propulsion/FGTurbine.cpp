@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.6 2005/12/04 02:48:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.7 2006/07/05 13:51:28 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,10 +67,10 @@ FGTurbine::FGTurbine(FGFDMExec* exec, Element *el, int engine_number)
 
 FGTurbine::~FGTurbine()
 {
-  if (IdleThrustLookup) delete IdleThrustLookup;
-  if (MilThrustLookup) delete MilThrustLookup;
-  if (MaxThrustLookup) delete MaxThrustLookup;
-  if (InjectionLookup) delete InjectionLookup;
+  delete IdleThrustLookup;
+  delete MilThrustLookup;
+  delete MaxThrustLookup;
+  delete InjectionLookup;
   unbind();
   Debug(1);
 }
