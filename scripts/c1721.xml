@@ -4,33 +4,33 @@
     This run is for testing C172 runs
   -->
 
-  <use aircraft="c172r">
-  <use initialize="reset00">
+  <use aircraft="c172r"/>
+  <use initialize="reset00"/>
   <run start="0.0" end="4.5" dt="0.008333">
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25">
-      <parameter name="sim-time-sec" comparison="le" value="0.50">
-      <set name="fcs/aileron-cmd-norm" type="FG_VALUE" value="0.25" action="FG_STEP" persistent="false" tc ="0.25">
+      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
+      <parameter name="sim-time-sec" comparison="le" value="0.50"/>
+      <set name="fcs/aileron-cmd-norm" type="FG_VALUE" value="0.25" action="FG_STEP" persistent="false" tc ="0.25"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.5">
-      <parameter name="sim-time-sec" comparison="le" value="1.5">
-      <set name="fcs/aileron-cmd-norm" type="FG_DELTA" value="0.5" action="FG_EXP" persistent="false" tc ="0.5">
+      <parameter name="sim-time-sec" comparison="ge" value="0.5"/>
+      <parameter name="sim-time-sec" comparison="le" value="1.5"/>
+      <set name="fcs/aileron-cmd-norm" type="FG_DELTA" value="0.5" action="FG_EXP" persistent="false" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="1.5">
-      <parameter name="sim-time-sec" comparison="le" value="2.5">
-      <set name="fcs/rudder-cmd-norm" type="FG_DELTA" value="0.5" action="FG_RAMP" persistent="false" tc ="0.5">
+      <parameter name="sim-time-sec" comparison="ge" value="1.5"/>
+      <parameter name="sim-time-sec" comparison="le" value="2.5"/>
+      <set name="fcs/rudder-cmd-norm" type="FG_DELTA" value="0.5" action="FG_RAMP" persistent="false" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="1.5">
-      <parameter name="sim-time-sec" comparison="le" value="2.5">
-      <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="0.25" action="FG_RAMP" persistent="false" tc ="0.5">
+      <parameter name="sim-time-sec" comparison="ge" value="1.5"/>
+      <parameter name="sim-time-sec" comparison="le" value="2.5"/>
+      <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="0.25" action="FG_RAMP" persistent="false" tc ="0.5"/>
     </when>
     <when>
-      <parameter name="sim-time-sec" comparison="ge" value="2.5">
-      <parameter name="sim-time-sec" comparison="le" value="3.5">
-      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.5" action="FG_EXP" persistent="false" tc ="0.5">
+      <parameter name="sim-time-sec" comparison="ge" value="2.5"/>
+      <parameter name="sim-time-sec" comparison="le" value="3.5"/>
+      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.5" action="FG_EXP" persistent="false" tc ="0.5"/>
     </when>
   </run>
 
