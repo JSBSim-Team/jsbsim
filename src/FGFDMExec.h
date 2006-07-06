@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.22 2006/05/05 12:18:13 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.23 2006/07/06 03:25:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.22 $
+    @version $Revision: 1.23 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +289,8 @@ public:
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
-
+  /// Retrieves the full aircraft path name.
+  inline string GetFullAircraftPath(void)    {return FullAircraftPath;}
 
   /** Retrieves the value of a property.
       @param property the name of the property
@@ -415,6 +416,7 @@ private:
   bool IsSlave;
   string modelName;
   string AircraftPath;
+  string FullAircraftPath;
   string EnginePath;
   string CFGVersion;
   string Release;

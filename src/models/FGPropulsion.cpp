@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.11 2006/04/28 12:46:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.12 2006/07/06 03:25:21 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -282,7 +282,7 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
 {
   string fullpath, localpath;
   string enginePath = FDMExec->GetEnginePath();
-  string aircraftPath = FDMExec->GetAircraftPath();
+  string aircraftPath = FDMExec->GetFullAircraftPath();
   ifstream* engine_file = new ifstream();
 
   string separator = "/";
@@ -291,7 +291,7 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
 # endif
 
   fullpath = enginePath + separator;
-  localpath = aircraftPath + separator + "Engines" + separator;
+  localpath = aircraftPath + "Engines" + separator;
 
   engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
   if ( !engine_file->is_open()) {
@@ -313,7 +313,7 @@ ifstream* FGPropulsion::FindEngineFile(string engine_filename)
 {
   string fullpath, localpath;
   string enginePath = FDMExec->GetEnginePath();
-  string aircraftPath = FDMExec->GetAircraftPath();
+  string aircraftPath = FDMExec->GetFullAircraftPath();
   ifstream* engine_file = new ifstream();
 
   string separator = "/";
@@ -322,7 +322,7 @@ ifstream* FGPropulsion::FindEngineFile(string engine_filename)
 # endif
 
   fullpath = enginePath + separator;
-  localpath = aircraftPath + separator + "Engines" + separator;
+  localpath = aircraftPath + "Engines" + separator;
 
   engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
   if ( !engine_file->is_open()) {
