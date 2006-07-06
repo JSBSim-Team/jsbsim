@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.6 2006/02/27 16:45:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.7 2006/07/06 02:42:56 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -773,20 +773,6 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
   if (document->FindElement("longitude"))
     SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
-  if (document->FindElement("phi"))
-    SetPhiDegIC(document->FindElementValueAsNumberConvertTo("phi", "DEG"));
-  if (document->FindElement("theta"))
-    SetThetaDegIC(document->FindElementValueAsNumberConvertTo("theta", "DEG"));
-  if (document->FindElement("psi"))
-    SetPsiDegIC(document->FindElementValueAsNumberConvertTo("psi", "DEG"));
-  if (document->FindElement("alpha"))
-    SetAlphaDegIC(document->FindElementValueAsNumberConvertTo("alpha", "DEG"));
-  if (document->FindElement("beta"))
-    SetBetaDegIC(document->FindElementValueAsNumberConvertTo("beta", "DEG"));
-  if (document->FindElement("gamma"))
-    SetFlightPathAngleDegIC(document->FindElementValueAsNumberConvertTo("gamma", "DEG"));
-  if (document->FindElement("roc"))
-    SetClimbRateFpmIC(document->FindElementValueAsNumberConvertTo("roc", "FT/SEC"));
   if (document->FindElement("altitude"))
     SetAltitudeFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   if (document->FindElement("winddir"))
@@ -801,6 +787,20 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetVcalibratedKtsIC(document->FindElementValueAsNumberConvertTo("vc", "FT/SEC"));
   if (document->FindElement("mach"))
     SetMachIC(document->FindElementValueAsNumber("mach"));
+  if (document->FindElement("phi"))
+    SetPhiDegIC(document->FindElementValueAsNumberConvertTo("phi", "DEG"));
+  if (document->FindElement("theta"))
+    SetThetaDegIC(document->FindElementValueAsNumberConvertTo("theta", "DEG"));
+  if (document->FindElement("psi"))
+    SetPsiDegIC(document->FindElementValueAsNumberConvertTo("psi", "DEG"));
+  if (document->FindElement("alpha"))
+    SetAlphaDegIC(document->FindElementValueAsNumberConvertTo("alpha", "DEG"));
+  if (document->FindElement("beta"))
+    SetBetaDegIC(document->FindElementValueAsNumberConvertTo("beta", "DEG"));
+  if (document->FindElement("gamma"))
+    SetFlightPathAngleDegIC(document->FindElementValueAsNumberConvertTo("gamma", "DEG"));
+  if (document->FindElement("roc"))
+    SetClimbRateFpsIC(document->FindElementValueAsNumberConvertTo("roc", "FT/SEC"));
   if (document->FindElement("vground"))
     SetVgroundKtsIC(document->FindElementValueAsNumberConvertTo("vground", "FT/SEC"));
   if (document->FindElement("running")) {
