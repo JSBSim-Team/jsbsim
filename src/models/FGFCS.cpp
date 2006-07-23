@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.15 2006/07/06 03:25:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.16 2006/07/23 20:52:52 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -618,7 +618,7 @@ string FGFCS::GetComponentValues(string delimeter)
 {
   unsigned int comp;
   string CompValues = "";
-  char buffer[12];
+  char buffer[17];
   bool firstime = true;
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
@@ -634,6 +634,7 @@ string FGFCS::GetComponentValues(string delimeter)
     CompValues += string(buffer);
   }
 
+  CompValues += "\0";
   return CompValues;
 }
 

@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.18 2006/05/05 06:41:55 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.19 2006/07/23 20:52:52 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -291,7 +291,7 @@ int main(int argc, char* argv[])
   char s[100];
   time_t tod;
   time(&tod);
-  strftime(s, 99, "%A %B %D %Y %X", localtime(&tod));
+  strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
   cout << "Start: " << s << " (HH:MM:SS)" << endl;
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //

@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.4 2006/04/28 12:47:57 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.5 2006/07/23 20:52:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,7 +116,7 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.4 2006/04/28 12:47:57 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.5 2006/07/23 20:52:52 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,8 +140,8 @@ public:
   inline void Disable(void) { enabled = false; }
   inline bool Toggle(void) {enabled = !enabled; return enabled;}
   bool Load(Element* el);
-  bool SetOutputFileName(string fname) {Filename = fname;}
-  bool SetDirectivesFile(string fname) {DirectivesFile = fname;}
+  void SetOutputFileName(string fname) {Filename = fname;}
+  void SetDirectivesFile(string fname) {DirectivesFile = fname;}
   string GetOutputFileName(void) const {return Filename;}
 
   /// Subsystem types for specifying which will be output in the FDM data logging
