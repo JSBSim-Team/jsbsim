@@ -785,26 +785,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\aircraft\c172x\c172x.html"
-			>
-		</File>
-		<File
-			RelativePath=".\aircraft\c310\c310.html"
-			>
-		</File>
-		<File
-			RelativePath=".\aircraft\l410\L410.html"
-			>
-		</File>
-		<File
-			RelativePath=".\aircraft\lightning\lightning.html"
-			>
-		</File>
-		<File
-			RelativePath=".\aircraft\xb-70\XB-70.html"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

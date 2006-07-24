@@ -4,13 +4,13 @@
     This file sets up the mk82 to start off
     from altitude.
   -->
-  <ubody unit="FT/SEC">   400.0  </ubody>
-  <vbody unit="FT/SEC">   120.0  </vbody>
-  <wbody unit="FT/SEC">     0.0  </wbody>
-  <latitude unit="DEG">    47.0  </latitude>
-  <longitude unit="DEG"> -110.0  </longitude>
-  <phi unit="DEG">          0.0  </phi>
-  <theta unit="DEG">        0.0  </theta>
-  <psi unit="DEG">        270.0  </psi>
-  <altitude unit="FT">  10000.0  </altitude>
+  <ubody unit="FT/SEC">   560.88 </ubody>
+  <vbody unit="FT/SEC">   0.000 </vbody>
+  <wbody unit="FT/SEC">   -190.000 </wbody>
+  <latitude unit="DEG">   0.0000  </latitude>
+  <longitude unit="DEG">   0.0000  </longitude>
+  <phi unit="DEG">         0.0000  </phi>
+  <theta unit="DEG">       90.0000  </theta>
+  <psi unit="DEG">         0.0000  </psi>
+  <altitude unit="M">  2010.00 </altitude>
 </initialize>

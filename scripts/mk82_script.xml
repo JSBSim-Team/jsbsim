@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<runscript name="MK-82-01A">
+
+  <!--
+  This run is for testing X-15 high altitude,
+  high speed pitch pulses in the simulator.
+  -->
+
+  <use aircraft="mk82"/>
+  <use initialize="reset00"/>
+
+  <run start="0.00" end="500.00" dt="0.020">
+  </run>
+
+</runscript>
