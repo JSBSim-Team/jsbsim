@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <initialize name="reset01">
   <!--
-    This file sets up the aircraft to start off
-    from the runway in preparation for takeoff.
+    This file sets up the aircraft at 8000
+	feet on a heading of 200 degrees.
   -->
   <ubody unit="FT/SEC">   160.0  </ubody>
   <latitude unit="DEG">   47.0  </latitude>
