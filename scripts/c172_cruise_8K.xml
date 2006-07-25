@@ -10,11 +10,17 @@
     <!-- Start the engine -->
     <when>
       <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
+      <parameter name="sim-time-sec" comparison="le" value="0.50"/>
       <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.05"/>
       <set name="fcs/mixture-cmd-norm" value="0.85" action="FG_RAMP" tc ="0.05"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
+    </when>
+
+    <when>
+      <parameter name="sim-time-sec" comparison="gt" value="0.50"/>
+      <parameter name="sim-time-sec" comparison="lt" value="0.51"/>
+      <set name="simulation/do_trim" value="0"/>
     </when>
 
     <when> <!-- Set Heading to 200 degrees and set the altitude hold set point to 8000 ft, and throttle to 80% -->

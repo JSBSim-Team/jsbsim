@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<initialize name="reset00">
+<initialize name="reset01">
   <!--
     This file sets up the aircraft to start off
     from the runway in preparation for takeoff.
   -->
-  <ubody unit="FT/SEC">   120.0  </ubody>
+  <ubody unit="FT/SEC">   160.0  </ubody>
   <latitude unit="DEG">   47.0  </latitude>
   <longitude unit="DEG"> 122.0  </longitude>
   <psi unit="DEG">       200.0  </psi>
