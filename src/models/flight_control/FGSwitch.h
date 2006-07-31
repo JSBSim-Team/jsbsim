@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.6 2006/05/05 14:30:49 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.7 2006/07/31 13:54:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,11 +109,13 @@ Here's an example:
 @code
 <switch name="roll a/p autoswitch">
   <default value="0.0"/>
-  <test logic="and" value="fcs/roll-ap-error-summer">
+  <test value="fcs/roll-ap-error-summer">
     ap/attitude_hold == 1
   </test>
 </switch>
 @endcode
+
+Note: In the "logic" attribute, "AND" is the default logic, if none is supplied.
 
 The above example specifies that the default value of the component (i.e. the
 output property of the component, addressed by the property, ap/roll-ap-autoswitch)
@@ -121,7 +123,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.6 2006/05/05 14:30:49 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.7 2006/07/31 13:54:39 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

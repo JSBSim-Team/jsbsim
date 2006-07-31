@@ -18,7 +18,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.8 2006/06/10 13:55:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.9 2006/07/31 13:54:38 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,8 +259,8 @@ void FGFunction::Debug(int from)
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGGroundReactions" << endl;
-    if (from == 1) cout << "Destroyed:    FGGroundReactions" << endl;
+    if (from == 0) cout << "Instantiated: FGFunction" << endl;
+    if (from == 1) cout << "Destroyed:    FGFunction" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }

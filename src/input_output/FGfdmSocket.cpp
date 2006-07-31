@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.12 2005/10/03 03:12:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.13 2006/07/31 13:54:38 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,13 +82,13 @@ FGfdmSocket::FGfdmSocket(string address, int port)
       memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
       int len = sizeof(struct sockaddr_in);
       if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-        cout << "Successfully connected to socket ..." << endl;
+        cout << "Successfully connected to socket for output ..." << endl;
         connected = true;
       } else {                // unsuccessful
-        cout << "Could not connect to socket ..." << endl;
+        cout << "Could not connect to socket for output ..." << endl;
       }
     } else {          // unsuccessful
-      cout << "Could not create socket for FDM, error = " << errno << endl;
+      cout << "Could not create socket for FDM output, error = " << errno << endl;
     }
   }
   Debug(0);
@@ -116,10 +116,9 @@ FGfdmSocket::FGfdmSocket(int port)
     memset(&scktName, 0, sizeof(struct sockaddr_in));
     scktName.sin_family = AF_INET;
     scktName.sin_port = htons(port);
-//    memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
     int len = sizeof(struct sockaddr_in);
     if (bind(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
-      cout << "Successfully bound to socket ..." << endl;
+      cout << "Successfully bound to socket for input on port " << port << endl;
       if (listen(sckt, 5) >= 0) { // successful listen()
         #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
           ioctlsocket(sckt, FIONBIO, &NoBlock);
@@ -133,10 +132,10 @@ FGfdmSocket::FGfdmSocket(int port)
       }
       connected = true;
     } else {                // unsuccessful
-      cerr << "Could not bind to socket ..." << endl;
+      cerr << "Could not bind to socket for input ..." << endl;
     }
   } else {          // unsuccessful
-    cerr << "Could not create socket for FDM, error = " << errno << endl;
+    cerr << "Could not create socket for FDM input, error = " << errno << endl;
   }
 
   Debug(0);

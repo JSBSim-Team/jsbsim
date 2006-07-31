@@ -33,24 +33,27 @@ HISTORY
 COMMENTS, REFERENCES,  and NOTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The SWITCH component is defined as follows (see the API documentation for more
+The switch component is defined as follows (see the API documentation for more
 information):
 
-<COMPONENT NAME="switch1" TYPE="SWITCH">
-  <TEST LOGIC="{AND|OR|DEFAULT}" OUTPUT="{property|value}">
+@code
+<switch name="switch1">
+  <default value="{property|value}"/>
+  <test logic="{AND|OR}" value="{property|value}">
     {property} {conditional} {property|value}
-    <CONDITION_GROUP LOGIC="{AND|OR}">
+    <test logic="{AND|OR}">
       {property} {conditional} {property|value}
       ...
-    </CONDITION_GROUP>
+    </test>
     ...
-  </TEST>
-  <TEST LOGIC="{AND|OR}" OUTPUT="{property|value}">
+  </test>
+  <test logic="{AND|OR}" value="{property|value}">
     {property} {conditional} {property|value}
     ...
-  </TEST>
+  </test>
   ...
-</COMPONENT>
+</switch>
+@endcode
 
 Also, see the header file (FGSwitch.h) for further details.
 
@@ -62,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.4 2006/01/13 05:22:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.5 2006/07/31 13:54:39 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
