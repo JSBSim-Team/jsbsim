@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.11 2006/01/30 03:54:57 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.12 2006/08/01 17:02:12 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -261,6 +261,8 @@ FGJSBsim::FGJSBsim( double dt )
     wind_from_north= fgGetNode("/environment/wind-from-north-fps",true);
     wind_from_east = fgGetNode("/environment/wind-from-east-fps" ,true);
     wind_from_down = fgGetNode("/environment/wind-from-down-fps" ,true);
+
+    slaved = fgGetNode("/sim/slaved/enabled", true);
 
     for (unsigned int i = 0; i < Propulsion->GetNumEngines(); i++) {
       SGPropertyNode * node = fgGetNode("engines/engine", i, true);
@@ -601,6 +603,7 @@ bool FGJSBsim::copy_to_JSBsim()
     SGPropertyNode* node = fgGetNode("/systems/refuel", true);
     Propulsion->SetRefuel(node->getDoubleValue("contact"));
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
+    fdmex->SetSlave(slaved->getBoolValue());
 
     return true;
 }
