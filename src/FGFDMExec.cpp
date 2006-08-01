@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.23 2006/07/07 01:05:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.24 2006/08/01 16:59:32 dpculp Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -681,7 +681,7 @@ bool FGFDMExec::ReadSlave(Element* el)
 
   SlaveFDMList.push_back(new slaveData);
   SlaveFDMList.back()->exec = new FGFDMExec();
-  SlaveFDMList.back()->exec->SetSlave();
+  SlaveFDMList.back()->exec->SetSlave(true);
 /*
   string AircraftName = AC_cfg->GetValue("file");
 
