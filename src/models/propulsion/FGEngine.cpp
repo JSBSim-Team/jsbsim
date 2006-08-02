@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.9 2006/07/06 03:25:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.10 2006/08/02 11:47:06 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,15 +255,14 @@ bool FGEngine::LoadThruster(Element *thruster_element)
   Element *document, *element;
   ifstream thruster_file;
   FGColumnVector3 location, orientation;
-
-# ifndef macintosh
   string separator = "/";
-# else
-  string separator = ";";
+
+# ifdef macintosh
+    separator = ";";
 # endif
 
   fullpath = enginePath + separator;
-  localpath = aircraftPath + "Engines" + separator;
+  localpath = aircraftPath + separator + "Engines" + separator;
 
   thruster_filename = thruster_element->GetAttributeValue("file");
   if ( !thruster_filename.empty()) {

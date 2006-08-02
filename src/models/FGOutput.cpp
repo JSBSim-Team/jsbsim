@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.10 2006/07/06 03:25:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.11 2006/08/02 11:47:06 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -594,7 +594,7 @@ bool FGOutput::Load(Element* element)
     if (fname.find(".xml") != string::npos) {
       output_file_name = fname; // Use supplied name if last four letters are ".xml"
     } else {
-      output_file_name = FDMExec->GetFullAircraftPath() + fname + ".xml";
+      output_file_name = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
     }
     output_file->open(output_file_name.c_str());
     if (output_file->is_open()) {

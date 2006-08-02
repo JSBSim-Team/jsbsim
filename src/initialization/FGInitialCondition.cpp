@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.8 2006/07/06 03:25:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.9 2006/08/02 11:47:05 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -739,11 +739,11 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 
   string sep = "/";
 # ifdef macintosh
-   string sep = ";";
+   sep = ";";
 # endif
 
   if( useStoredPath ) {
-    resetDef = fdmex->GetFullAircraftPath() + rstfile + ".xml";
+    resetDef = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
   } else {
     resetDef = rstfile;
   }

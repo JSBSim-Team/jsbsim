@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.24 2006/08/01 16:59:32 dpculp Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.25 2006/08/02 11:47:05 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -463,8 +463,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   }
 
   FullAircraftPath = AircraftPath;
-  if (addModelToPath) FullAircraftPath += separator + model + separator;
-  aircraftCfgFileName = FullAircraftPath + model + ".xml";
+  if (addModelToPath) FullAircraftPath += separator + model;
+  aircraftCfgFileName = FullAircraftPath + separator + model + ".xml";
 
   FGXMLParse *XMLParse = new FGXMLParse();
   Element* element = 0L;

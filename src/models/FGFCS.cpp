@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.16 2006/07/23 20:52:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.17 2006/08/02 11:47:06 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -475,7 +475,7 @@ bool FGFCS::Load(Element* el)
 
   if (name.empty()) {
     fname = el->GetAttributeValue("file");
-    file = FDMExec->GetFullAircraftPath() + fname + ".xml";
+    file = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
     if (fname.empty()) {
       cerr << "FCS/Autopilot does not appear to be defined inline nor in a file" << endl;
       return false;
