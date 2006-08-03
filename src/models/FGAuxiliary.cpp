@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.9 2006/05/19 12:35:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.10 2006/08/03 12:40:13 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,13 +119,14 @@ bool FGAuxiliary::Run()
 // Rotation
 
   double cTht = Propagate->GetCosEuler(eTht);
+  double sTht = Propagate->GetSinEuler(eTht);
   double cPhi = Propagate->GetCosEuler(ePhi);
   double sPhi = Propagate->GetSinEuler(ePhi);
 
   vEulerRates(eTht) = vPQR(eQ)*cPhi - vPQR(eR)*sPhi;
   if (cTht != 0.0) {
     vEulerRates(ePsi) = (vPQR(eQ)*sPhi + vPQR(eR)*cPhi)/cTht;
-    vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sPhi;
+    vEulerRates(ePhi) = vPQR(eP) + vEulerRates(ePsi)*sTht;
   }
 
 // 12/16/2005, JSB: For ground handling purposes, at this time, let's ramp
