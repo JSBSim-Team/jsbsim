@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.62 $ </version>
+        <version> $Revision: 1.63 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -269,68 +269,56 @@
         <property>fcs/alpha-norm</property>
 
         <channel name="Pitch">
+        
             <summer name="elevator cmd limiter">
-                <input>fcs/elevator-cmd-norm</input>
-                <input>fcs/pitch-trim-cmd-norm</input>
-                <bias>-0.1</bias>
-                <clipto>
-                    <min>-1</min>
-                    <max>0.44</max>
-                </clipto>
+              <input>fcs/elevator-cmd-norm</input>
+              <input>fcs/pitch-trim-cmd-norm</input>
+              <clipto>
+                <min>-1</min>
+                <max>0.44</max>
+              </clipto>
+            </summer>
+
+            <summer name="bias-to-zero">
+              <input>accelerations/n-pilot-z-norm</input>
+              <bias> -1 </bias>
             </summer>
 
             <pure_gain name="g load norm">
-                <input>-accelerations/n-pilot-z-norm</input>
-                <gain>0.125</gain>
+              <input>-fcs/bias-to-zero</input>
+              <gain>0.125</gain>
             </pure_gain>
 
             <pure_gain name="alpha limiter">
-                <input>aero/alpha-rad</input>
-                <gain>1.0472</gain>
+              <input>aero/alpha-rad</input>
+              <gain>1.0472</gain>
             </pure_gain>
 
             <summer name="g load error">
-                <input>fcs/elevator-cmd-limiter</input>
-                <input>fcs/g-load-norm</input>
-                <input>fcs/alpha-limiter</input>
+              <input>fcs/elevator-cmd-limiter</input>
+              <input>fcs/g-load-norm</input>
+              <input>fcs/alpha-limiter</input>
             </summer>
 
-            <pure_gain name="g load p">
-                <input>fcs/g-load-error</input>
-                <gain>0.66</gain>
-            </pure_gain>
-
-            <integrator name="g load i">
-                <input>fcs/g-load-error</input>
-                <c1>0.005</c1>
-            </integrator>
-
-            <lead_lag_filter name="g load d">
-                <input>fcs/g-load-error</input>
-                <c1>-0.000125</c1>
-                <c2>0.0</c2>
-                <c3>0.0</c3>
-                <c4>1</c4>
-            </lead_lag_filter>
-
-            <summer name="g load command">
-                <input>fcs/g-load-p</input>
-                <input>fcs/g-load-i</input>
-                <input>fcs/g-load-d</input>
-                <clipto>
-                    <min>-1</min>
-                    <max>1</max>
-                </clipto>
-                <output>fcs/elevator-pos-norm</output>
-            </summer>
+            <pid name="g-load-pid">
+              <input>fcs/g-load-error</input>
+              <kp> 0.660000 </kp>
+              <ki> 0.005000 </ki>
+              <kd> 0.000 </kd>
+              <clipto>
+                <min>-1</min>
+                <max>1</max>
+              </clipto>
+              <output>fcs/elevator-pos-norm</output>
+            </pid>
 
             <aerosurface_scale name="Elevator Control">
-                <input>fcs/g-load-command</input>
-                <range>
-                    <min>-0.436</min>
-                    <max>0.436</max>
-                </range>
-                <output>fcs/elevator-pos-rad</output>
+              <input>fcs/g-load-pid</input>
+              <range>
+                <min>-0.436</min>
+                <max>0.436</max>
+              </range>
+              <output>fcs/elevator-pos-rad</output>
             </aerosurface_scale>
 
         </channel>
@@ -1510,4 +1498,26 @@
             </function>
         </axis>
     </aerodynamics>
+  <output name="f16_datalog.csv" type="CSV" rate="1">
+    <property> aero/qbar-psf </property>
+    <property> attitude/phi-rad </property>
+    <property> position/h-sl-ft </property>
+    <property> velocities/vc-kts </property>
+    <property> fcs/throttle-cmd-norm </property>
+    <property> fcs/elevator-cmd-norm </property>
+    <property> fcs/pitch-trim-cmd-norm </property>
+    <property> propulsion/total-fuel-lbs </property>
+    <property> flight-path/gamma-rad </property>
+    <property> accelerations/n-pilot-z-norm </property>
+    <rates> ON </rates>
+    <velocities> ON </velocities>
+    <forces> ON </forces>
+    <moments> ON </moments>
+    <position> ON </position>
+    <fcs> ON </fcs>
+    <propulsion> OFF </propulsion>
+    <aerosurfaces> ON </aerosurfaces>
+    <fcs> ON </fcs>
+    <ground_reactions> ON </ground_reactions>
+  </output>
 </fdm_config>
