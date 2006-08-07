@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<runscript name="F-16 aircraft runway test">
+  <!--
+    This run is for testing an F-16 just sitting on the runway
+  -->
+
+  <use aircraft="f16"/>
+  <use initialize="reset00"/>
+  <run start="0.0" end="700" dt="0.00833333">
+  </run>
+</runscript>
