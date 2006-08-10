@@ -14,4 +14,5 @@ EXTRA_DIST = \
   cannonball.xml \
   plotfile.xml \
   x151.xml \
-  x152.xml
+  x152.xml \
+  f16_runway_test.xml

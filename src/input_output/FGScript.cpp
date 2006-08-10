@@ -55,12 +55,12 @@ INCLUDES
 #endif
 
 #include "FGScript.h"
-#include "FGXMLParse.h"
+#include <input_output/FGXMLParse.h>
 #include <initialization/FGTrim.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.5 2006/06/16 14:23:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.6 2006/08/10 12:52:53 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,12 +92,15 @@ FGScript::~FGScript()
 bool FGScript::LoadScript( string script )
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
-  Element *document=0, *element=0, *run_element=0, *when_element=0;
-  Element *parameter_element=0, *set_element=0;
+  string notifyPropertyName="";
+  Element *document=0, *element=0, *run_element=0, *event_element=0;
+  Element *condition_element=0, *set_element=0, *delay_element=0;
+  Element *notify_element = 0L, *notify_property_element = 0L;
   bool result = false;
   double dt = 0.0, value = 0.0;
   FGXMLParse script_file_parser;
-  struct condition *newCondition;
+  struct event *newEvent;
+  FGCondition *newCondition;
   ifstream script_file(script.c_str());
 
   if ( !script_file ) return false;
@@ -109,6 +112,8 @@ bool FGScript::LoadScript( string script )
     cerr << "File: " << script << " is not a script file" << endl;
     return false;
   }
+
+  ScriptName = document->GetAttributeValue("name");
 
   // read aircraft and initialization files
 
@@ -146,61 +151,83 @@ bool FGScript::LoadScript( string script )
   dt        = run_element->GetAttributeValueAsNumber("dt");
   State->Setdt(dt);
 
-  // read "when" tests from script
+  // Read "events" from script
 
-  when_element = run_element->FindElement("when");
-  while (when_element) { // "when" processing
-    newCondition = new struct condition();
+  event_element = run_element->FindElement("event");
+  while (event_element) { // event processing
 
-    // read parameters
-    parameter_element = when_element->FindElement("parameter");
-    while (parameter_element) {
-      prop_name = parameter_element->GetAttributeValue("name");
-      newCondition->TestParam.push_back( PropertyManager->GetNode(prop_name) );
-      value = parameter_element->GetAttributeValueAsNumber("value");
-      newCondition->TestValue.push_back(value);
-      comparison = parameter_element->GetAttributeValue("comparison");
-      newCondition->Comparison.push_back(comparison);
-      parameter_element = when_element->FindNextElement("parameter");
+    // Create the event structure
+    newEvent = new struct event();
+    
+    // Retrieve the event name if given
+    newEvent->Name = event_element->GetAttributeValue("name");
+
+    // Is this event persistent? That is, does it execute repeatedly as long as the
+    // condition is true, or does it execute as a one-shot event, only?
+    if (event_element->GetAttributeValue("persistent") == string("true")) {
+      newEvent->Persistent = true;
     }
 
-    // read set definitions
-    set_element = when_element->FindElement("set");
+    // Process the conditions
+    condition_element = event_element->FindElement("condition");
+    if (condition_element != 0) {
+      newCondition = new FGCondition(condition_element, PropertyManager);
+      newEvent->Condition = newCondition;
+    } else {
+      cerr << "No condition specified in script event " << newEvent->Name << endl;
+      return false;
+    }
+
+    // Is there a delay between the time this event is triggered, and when the event
+    // actions are executed?
+
+    delay_element = event_element->FindElement("delay");
+    if (delay_element) newEvent->Delay = event_element->FindElementValueAsNumber("delay");
+    else newEvent->Delay = 0.0;
+
+    // Notify about when this event is triggered?
+    if ((notify_element = event_element->FindElement("notify")) != 0) {
+      newEvent->Notify = true;
+      notify_property_element = notify_element->FindElement("property");
+      while (notify_property_element) {
+        notifyPropertyName = notify_property_element->GetDataLine();
+        newEvent->NotifyProperties.push_back( PropertyManager->GetNode(notifyPropertyName) );
+        notify_property_element = notify_element->FindNextElement("property");
+      }
+    }
+    
+    // Read set definitions (these define the actions to be taken when the event is triggered).
+    set_element = event_element->FindElement("set");
     while (set_element) {
       prop_name = set_element->GetAttributeValue("name");
-      newCondition->SetParam.push_back( PropertyManager->GetNode(prop_name) );
+      newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
       value = set_element->GetAttributeValueAsNumber("value");
-      newCondition->SetValue.push_back(value);
-      newCondition->Triggered.push_back(false);
-      newCondition->OriginalValue.push_back(0.0);
-      newCondition->newValue.push_back(0.0);
-      newCondition->StartTime.push_back(0.0);
-      newCondition->EndTime.push_back(0.0);
+      newEvent->SetValue.push_back(value);
+      newEvent->OriginalValue.push_back(0.0);
+      newEvent->newValue.push_back(0.0);
+      newEvent->ValueSpan.push_back(0.0);
       string tempCompare = set_element->GetAttributeValue("type");
-      if      (tempCompare == "FG_DELTA") newCondition->Type.push_back(FG_DELTA);
-      else if (tempCompare == "FG_BOOL")  newCondition->Type.push_back(FG_BOOL);
-      else if (tempCompare == "FG_VALUE") newCondition->Type.push_back(FG_VALUE);
-      else                                newCondition->Type.push_back(FG_VALUE); // DEFAULT
+      if      (tempCompare == "FG_DELTA") newEvent->Type.push_back(FG_DELTA);
+      else if (tempCompare == "FG_BOOL")  newEvent->Type.push_back(FG_BOOL);
+      else if (tempCompare == "FG_VALUE") newEvent->Type.push_back(FG_VALUE);
+      else                                newEvent->Type.push_back(FG_VALUE); // DEFAULT
       tempCompare = set_element->GetAttributeValue("action");
-      if      (tempCompare == "FG_RAMP") newCondition->Action.push_back(FG_RAMP);
-      else if (tempCompare == "FG_STEP") newCondition->Action.push_back(FG_STEP);
-      else if (tempCompare == "FG_EXP")  newCondition->Action.push_back(FG_EXP);
-      else                               newCondition->Action.push_back(FG_STEP); // DEFAULT
-
-      if (set_element->GetAttributeValue("persistent") == "true")
-        newCondition->Persistent.push_back(true);
-      else
-        newCondition->Persistent.push_back(false); // DEFAULT
+      if      (tempCompare == "FG_RAMP") newEvent->Action.push_back(FG_RAMP);
+      else if (tempCompare == "FG_STEP") newEvent->Action.push_back(FG_STEP);
+      else if (tempCompare == "FG_EXP")  newEvent->Action.push_back(FG_EXP);
+      else                               newEvent->Action.push_back(FG_STEP); // DEFAULT
 
       if (!set_element->GetAttributeValue("tc").empty())
-        newCondition->TC.push_back(set_element->GetAttributeValueAsNumber("tc"));
+        newEvent->TC.push_back(set_element->GetAttributeValueAsNumber("tc"));
       else
-        newCondition->TC.push_back(1.0); // DEFAULT
+        newEvent->TC.push_back(1.0); // DEFAULT
 
-      set_element = when_element->FindNextElement("set");
+      newEvent->Transiting.push_back(false);
+
+      set_element = event_element->FindNextElement("set");
     }
-    Conditions.push_back(*newCondition);
-    when_element = run_element->FindNextElement("when");
+    Events.push_back(*newEvent);
+    event_element = run_element->FindNextElement("event");
   }
 
   Debug(4);
@@ -218,96 +245,93 @@ bool FGScript::LoadScript( string script )
 
 bool FGScript::RunScript(void)
 {
-  vector <struct condition>::iterator iC = Conditions.begin();
-  bool truth = false;
-  bool WholeTruth = false;
+  vector <struct event>::iterator iEvent = Events.begin();
+  bool execute_event = false;
   unsigned i;
+  unsigned event_ctr = 0;
 
   double currentTime = State->Getsim_time();
   double newSetValue = 0;
 
-  if (currentTime > EndTime) return false;
+  if (currentTime > EndTime) return false; //Script done!
 
-  while (iC < Conditions.end()) {
-    // determine whether the set of conditional tests for this condition equate
-    // to true
-    for (i=0; i<iC->TestValue.size(); i++) {
-           if (iC->Comparison[i] == "lt")
-              truth = iC->TestParam[i]->getDoubleValue() <  iC->TestValue[i];
-      else if (iC->Comparison[i] == "le")
-              truth = iC->TestParam[i]->getDoubleValue() <= iC->TestValue[i];
-      else if (iC->Comparison[i] == "eq")
-              truth = iC->TestParam[i]->getDoubleValue() == iC->TestValue[i];
-      else if (iC->Comparison[i] == "ge")
-              truth = iC->TestParam[i]->getDoubleValue() >= iC->TestValue[i];
-      else if (iC->Comparison[i] == "gt")
-              truth = iC->TestParam[i]->getDoubleValue() >  iC->TestValue[i];
-      else if (iC->Comparison[i] == "ne")
-              truth = iC->TestParam[i]->getDoubleValue() != iC->TestValue[i];
-      else
-              cerr << "Bad comparison" << endl;
+  // Iterate over all events.
+  while (iEvent < Events.end()) {
 
-      if (i == 0) {
-        WholeTruth = truth;
-      } else {
-        unsigned j = 0;
-        WholeTruth = WholeTruth && truth;
-        for( j = 0; j<iC->SetValue.size(); j++)
-        {
-          if (!truth && iC->Persistent[j] && iC->Triggered[j]) iC->Triggered[j] = false;
+    // Determine whether the set of conditional tests for this condition equate
+    // to true and should cause the event to execute.
+    execute_event = false;
+    if (iEvent->Condition->Evaluate()) {
+      if (iEvent->Persistent || !iEvent->Triggered) {
+        execute_event = true;
+        if (iEvent->Notify) {
+          cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
+               << " has been triggered at time: " << currentTime << endl;
+          for (i=0; i<iEvent->NotifyProperties.size();i++) {
+            cout << "    " << iEvent->NotifyProperties[i]->GetName()
+                 << " = " << iEvent->NotifyProperties[i]->getDoubleValue() << endl;
+          }
+          cout << endl;
+          iEvent->Notify = false; // Turn off notification so it won't repeat
         }
       }
-
+      iEvent->Triggered = true;
     }
 
-    // if the conditions are true, do the setting of the desired parameters
+    // If the conditions are true, do the setting of the desired Event parameters
 
-    if (WholeTruth) {
-      for (i=0; i<iC->SetValue.size(); i++) {
-        if ( ! iC->Triggered[i]) {
-          iC->OriginalValue[i] = iC->SetParam[i]->getDoubleValue();
-          switch (iC->Type[i]) {
-          case FG_VALUE:
-            iC->newValue[i] = iC->SetValue[i];
-            break;
-          case FG_DELTA:
-            iC->newValue[i] = iC->OriginalValue[i] + iC->SetValue[i];
-            break;
-          case FG_BOOL:
-            iC->newValue[i] = iC->SetValue[i];
-            break;
-          default:
-            cerr << "Invalid Type specified" << endl;
-            break;
-          }
-          iC->Triggered[i] = true;
-          iC->StartTime[i] = currentTime;
+    if (execute_event) {
+      for (i=0; i<iEvent->SetValue.size(); i++) {
+        iEvent->OriginalValue[i] = iEvent->SetParam[i]->getDoubleValue();
+        switch (iEvent->Type[i]) {
+        case FG_VALUE:
+        case FG_BOOL:
+          iEvent->newValue[i] = iEvent->SetValue[i];
+          break;
+        case FG_DELTA:
+          iEvent->newValue[i] = iEvent->OriginalValue[i] + iEvent->SetValue[i];
+          break;
+        default:
+          cerr << "Invalid Type specified" << endl;
+          break;
         }
+        iEvent->StartTime = currentTime + iEvent->Delay;
 
-        double time_span = currentTime - iC->StartTime[i];
-        double value_span = iC->newValue[i] - iC->OriginalValue[i];
+        iEvent->ValueSpan[i] = iEvent->newValue[i] - iEvent->OriginalValue[i];
+        
+        iEvent->Transiting[i] = true;
+      }
+    }
 
-        switch (iC->Action[i]) {
+    for (i=0; i<iEvent->SetValue.size(); i++) {
+      if (iEvent->Transiting[i] && currentTime >= iEvent->StartTime) {
+        iEvent->TimeSpan = currentTime - iEvent->StartTime;
+        switch (iEvent->Action[i]) {
         case FG_RAMP:
-          if (time_span <= iC->TC[i])
-            newSetValue = time_span/iC->TC[i] * value_span + iC->OriginalValue[i];
-          else
-            newSetValue = iC->newValue[i];
+          if (iEvent->TimeSpan <= iEvent->TC[i]) {
+            newSetValue = iEvent->TimeSpan/iEvent->TC[i] * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
+          } else {
+            newSetValue = iEvent->newValue[i];
+            iEvent->Transiting[i] = false;
+          }
           break;
         case FG_STEP:
-          newSetValue = iC->newValue[i];
+          newSetValue = iEvent->newValue[i];
+          iEvent->Transiting[i] = false;
           break;
         case FG_EXP:
-          newSetValue = (1 - exp( -time_span/iC->TC[i] )) * value_span + iC->OriginalValue[i];
+          newSetValue = (1 - exp( -iEvent->TimeSpan/iEvent->TC[i] )) * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
           break;
         default:
           cerr << "Invalid Action specified" << endl;
           break;
         }
-        iC->SetParam[i]->setDoubleValue(newSetValue);
+        iEvent->SetParam[i]->setDoubleValue(newSetValue);
       }
     }
-    iC++;
+
+    iEvent++;
+    event_ctr++;
   }
   return true;
 }
@@ -333,80 +357,67 @@ bool FGScript::RunScript(void)
 
 void FGScript::Debug(int from)
 {
-  unsigned int i;
-
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
     } else if (from == 3) {
     } else if (from == 4)  { // print out script data
-      vector <struct condition>::iterator iterConditions = Conditions.begin();
-      int count=0;
+      cout << endl;
+      cout << "Script: \"" << ScriptName << "\"" << endl;
+      cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
+           << " seconds with dt = " << State->Getdt() << endl;
+      cout << endl;
+      
+      for (int i=0; i<Events.size(); i++) {
+        cout << "Event " << i;
+        if (!Events[i].Name.empty()) cout << " (" << Events[i].Name << ")";
+        cout << ":" << endl;
 
-      cout << "\n  Script goes from " << StartTime << " to " << EndTime
-           << " with dt = " << State->Getdt() << endl << endl;
+        if (Events[i].Persistent)
+          cout << "  " << "Always executes";
+        else
+          cout << "  " << "Executes once";
 
-      while (iterConditions < Conditions.end()) {
-        cout << "  Condition: " << count++ << endl;
-        cout << "    if (";
+        Events[i].Condition->PrintCondition();
 
-        for (i=0; i<iterConditions->TestValue.size(); i++) {
-          if (i>0) cout << " and" << endl << "        ";
-          cout << "(" << iterConditions->TestParam[i]->GetName()
-                      << " " << iterConditions->Comparison[i] << " "
-                      << iterConditions->TestValue[i] << ")";
-        }
-        cout << ") then {";
+        cout << endl << "  Actions taken:" << endl << "    {";
+        for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
+          cout << endl << "      set " << Events[i].SetParam[j]->GetName()
+               << " to " << Events[i].SetValue[j];
 
-        for (i=0; i<iterConditions->SetValue.size(); i++) {
-          cout << endl << "      set " << iterConditions->SetParam[i]->GetName()
-               << " to " << iterConditions->SetValue[i];
-
-          switch (iterConditions->Type[i]) {
+          switch (Events[i].Type[j]) {
           case FG_VALUE:
+          case FG_BOOL:
             cout << " (constant";
             break;
           case FG_DELTA:
             cout << " (delta";
             break;
-          case FG_BOOL:
-            cout << " (boolean";
-            break;
           default:
             cout << " (unspecified type";
           }
 
-          switch (iterConditions->Action[i]) {
+          switch (Events[i].Action[j]) {
           case FG_RAMP:
             cout << " via ramp";
             break;
           case FG_STEP:
-            cout << " via step";
+            cout << " via step)";
             break;
           case FG_EXP:
             cout << " via exponential approach";
             break;
           default:
-            cout << " via unspecified action";
+            cout << " via unspecified action)";
           }
 
-          if (!iterConditions->Persistent[i]) cout << endl
-                             << "                              once";
-          else cout << endl
-                             << "                              repeatedly";
-
-          if (iterConditions->Action[i] == FG_RAMP ||
-              iterConditions->Action[i] == FG_EXP) cout << endl
-                             << "                              with time constant "
-                             << iterConditions->TC[i];
+          if (Events[i].Action[j] == FG_RAMP || Events[i].Action[j] == FG_EXP)
+            cout << " with time constant " << Events[i].TC[j] << ")";
         }
-        cout << ")" << endl << "    }" << endl << endl;
+        cout << endl << "    }" << endl << endl;
 
-        iterConditions++;
       }
-
-      cout << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

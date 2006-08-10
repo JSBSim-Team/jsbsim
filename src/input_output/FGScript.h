@@ -40,13 +40,14 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
+#include <math/FGCondition.h>
 #include <vector>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.3 2006/08/10 12:52:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,65 +62,100 @@ CLASS DOCUMENTATION
 /** Encapsulates the JSBSim scripting capability.
     <h4>Scripting support provided via FGScript.</h4>
 
-    <p>There is simple scripting support provided in the FGScript
-    class. Commands are specified using the <em>Simple Scripting
-    Directives for JSBSim</em> (SSDJ). The script file is in XML
-    format. A test condition (or conditions) can be set up in the
+    <p>There is support for scripting provided in the FGScript
+    class. Commands are specified using the <em>Scripting
+    Directives for JSBSim</em>. The script file is in XML
+    format. A test condition (or conditions) can be set up in an event in a
     script and when the condition evaluates to true, the specified
-    action[s] is/are taken. A test condition can be <em>persistent</em>,
-    meaning that if a test condition evaluates to true, then passes
-    and evaluates to false, the condition is reset and may again be
-    triggered. When the set of tests evaluates to true for a given
-    condition, an item may be set to another value. This value might
-    be a boolean, a value, or a delta value, and the change from the
+    action[s] is/are taken. An event can be <em>persistent</em>,
+    meaning that at all times when the test condition evaluates to true
+    the specified <em>set</em> actions take place. When the set of
+    tests evaluates to true for a given
+    condition, an item may be set to another value. This value may
+    be a value, or a delta value, and the change from the
     current value to the new value can be either via a step function,
     a ramp, or an exponential approach. The speed of a ramp or
-    approach is specified via the time constant. Here is the format
-    of the script file:</p>
+    approach is specified via the time constant. Here is an example
+    illustrating the format of the script file:
 
-    <pre><strong>&lt;?xml version=&quot;1.0&quot;?&gt;
-    &lt;runscript name=&quot;C172-01A&quot;&gt;
+    @code
+<?xml version="1.0"?>
+<runscript name="C172-01A takeoff run">
+  <!--
+    This run is for testing the C172 altitude hold autopilot
+  -->
 
-    &lt;!--
-    This run is for testing C172 runs
-    --&gt;
+  <use aircraft="c172x"/>
+  <use initialize="reset00"/>
+  <run start="0.0" end="3000" dt="0.0083333">
 
-    &lt;use aircraft=&quot;c172&quot;&gt;
-    &lt;use initialize=&quot;reset00&quot;&gt;
+    <event name="engine start">
+      <notify/>
+      <condition>
+        sim-time-sec >= 0.25
+      </condition>
+      <set name="fcs/throttle-cmd-norm" value="1.0" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+    </event>
 
-    &lt;run start=&quot;0.0&quot; end=&quot;4.5&quot; dt=&quot;0.05&quot;&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.25&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;0.50&quot;&gt;
-        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_VALUE&quot; value=&quot;0.25&quot;
-        action=&quot;FG_STEP&quot; persistent=&quot;false&quot; tc =&quot;0.25&quot;&gt;
-      &lt;/when&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;0.5&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;1.5&quot;&gt;
-        &lt;set name=&quot;FG_AILERON_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot;
-        action=&quot;FG_EXP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &lt;/when&gt;
-      &lt;when&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;ge&quot; value=&quot;1.5&quot;&gt;
-        &lt;parameter name=&quot;FG_TIME&quot; comparison=&quot;le&quot; value=&quot;2.5&quot;&gt;
-        &lt;set name=&quot;FG_RUDDER_CMD&quot; type=&quot;FG_DELTA&quot; value=&quot;0.5&quot;
-        action=&quot;FG_RAMP&quot; persistent=&quot;false&quot; tc =&quot;0.5&quot;&gt;
-      &lt;/when&gt;
-    &lt;/run&gt;
+    <event name="set heading hold">
+      <!-- Set Heading when reach 5 ft -->
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 5
+      </condition>
+      <set name="ap/heading_setpoint" value="200"/>
+      <set name="ap/attitude_hold" value="0"/>
+      <set name="ap/heading_hold" value="1"/>
+    </event>
 
-    &lt;/runscript&gt;</strong></pre>
+    <event name="set autopilot">
+      <!-- Set Autopilot for 20 ft -->
+      <notify/>
+      <condition>
+        aero/qbar-psf >= 4
+      </condition>
+      <set name="ap/altitude_setpoint" value="100.0" action="FG_EXP" tc ="2.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="fcs/flap-cmd-norm" value=".33"/>
+    </event>
 
-    <p>The first line must always be present. The second line
+    <event name="set autopilot 2" persistent="true">
+      <!-- Set Autopilot for 6000 ft -->
+      <notify/>
+      <condition>
+        aero/qbar-psf > 5
+      </condition>
+      <set name="ap/altitude_setpoint" value="6000.0"/>
+    </event>
+
+    <event name="Time Notify">
+      <notify/>
+      <condition> sim-time-sec >= 500 </condition>
+    </event>
+
+    <event name="Time Notify">
+      <notify/>
+      <condition> sim-time-sec >= 1000 </condition>
+    </event>
+
+  </run>
+
+</runscript>
+    @endcode
+
+    The first line must always be present - it identifies the file
+    as an XML format file. The second line
     identifies this file as a script file, and gives a descriptive
     name to the script file. Comments are next, delineated by the
     &lt;!-- and --&gt; symbols. The aircraft and initialization files
     to be used are specified in the &quot;use&quot; lines. Next,
     comes the &quot;run&quot; section, where the conditions are
-    described in &quot;when&quot; clauses.</p>
+    described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.2 2005/06/13 00:54:42 jberndt Exp $"
-
+    @version "$Id: FGScript.h,v 1.3 2006/08/10 12:52:53 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,7 +172,7 @@ public:
   ~FGScript();
 
   /** Loads a script to drive JSBSim (usually in standalone mode).
-      The language is the Simple Script Directives for JSBSim (SSDJ).
+      The language is the Script Directives for JSBSim.
       @param script the filename (including path name, if any) for the script.
       @return true if successful */
   bool LoadScript( string script );
@@ -159,23 +195,34 @@ private:
     FG_BOOL  = 3
   };
 
-  struct condition {
-    vector <FGPropertyManager*>  TestParam;
+  struct event {
+    FGCondition     *Condition;
+    bool             Persistent;
+    bool             Triggered;
+    bool             Notify;
+    double           Delay;
+    double           StartTime;
+    double           TimeSpan;
+    string           Name;
     vector <FGPropertyManager*>  SetParam;
-    vector <double>  TestValue;
-    vector <double>  SetValue;
-    vector <string>  Comparison;
-    vector <double>  TC;
-    vector <bool>    Persistent;
+    vector <FGPropertyManager*>  NotifyProperties;
     vector <eAction> Action;
     vector <eType>   Type;
-    vector <bool>    Triggered;
+    vector <double>  SetValue;
+    vector <double>  TC;
     vector <double>  newValue;
     vector <double>  OriginalValue;
-    vector <double>  StartTime;
-    vector <double>  EndTime;
+    vector <double>  ValueSpan;
+    vector <bool>    Transiting;
 
-    condition() {
+    event() {
+      Triggered = false;
+      Persistent = false;
+      Delay = 0.0;
+      Notify = false;
+      Name = "";
+      StartTime = 0.0;
+      TimeSpan = 0.0;
     }
   };
 
@@ -184,7 +231,7 @@ private:
   string  ScriptName;
   double  StartTime;
   double  EndTime;
-  vector <struct condition> Conditions;
+  vector <struct event> Events;
 
   FGFDMExec* FDMExec;
   FGState* State;

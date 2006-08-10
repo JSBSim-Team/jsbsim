@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.2 2005/06/13 00:54:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.1 2006/08/10 12:52:53 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -63,18 +63,24 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
   conditions.clear();
 
   logic = element->GetAttributeValue("logic");
-  if (logic == "OR") Logic = eOR;
-  else if (logic == "AND") Logic = eAND;
-  else { // error
-    cerr << "Unrecognized LOGIC token " << logic << " in switch component: " << logic << endl;
+  if (!logic.empty()) {
+    if (logic == "OR") Logic = eOR;
+    else if (logic == "AND") Logic = eAND;
+    else { // error
+      cerr << "Unrecognized LOGIC token " << logic << endl;
+    }
+  } else {
+    Logic = eAND; // default
   }
+  
   condition_element = element->GetElement();
   while (condition_element) {
     conditions.push_back(FGCondition(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
   for (int i=0; i<element->GetNumDataLines(); i++) {
-    conditions.push_back(FGCondition(element->GetDataLine(i), PropertyManager));
+    string data = element->GetDataLine(i);
+    conditions.push_back(FGCondition(data, PropertyManager));
   }
 
   Debug(0);
@@ -155,21 +161,25 @@ bool FGCondition::Evaluate(void )
   bool pass = false;
   double compareValue;
 
-  if (Logic == eAND) {
+  if (TestParam1 == 0L) {
 
-    iConditions = conditions.begin();
-    pass = true;
-    while (iConditions < conditions.end()) {
-      if (!iConditions->Evaluate()) pass = false;
-      *iConditions++;
-    }
+    if (Logic == eAND) {
 
-  } else if (Logic == eOR) {
+      iConditions = conditions.begin();
+      pass = true;
+      while (iConditions < conditions.end()) {
+        if (!iConditions->Evaluate()) pass = false;
+        *iConditions++;
+      }
 
-    pass = false;
-    while (iConditions < conditions.end()) {
-      if (iConditions->Evaluate()) pass = true;
-      *iConditions++;
+    } else { // Logic must be eOR
+
+      pass = false;
+      while (iConditions < conditions.end()) {
+        if (iConditions->Evaluate()) pass = true;
+        *iConditions++;
+      }
+
     }
 
   } else {
@@ -221,7 +231,7 @@ void FGCondition::PrintCondition(void )
       cerr << "unset logic for test condition" << endl;
       break;
     case (eAND):
-      scratch = " if all of the following are true";
+      scratch = " if all of the following are true:";
       break;
     case (eOR):
       scratch = " if any of the following are true:";
@@ -239,9 +249,9 @@ void FGCondition::PrintCondition(void )
     }
   } else {
     if (TestParam2 != 0L)
-      cout << TestParam1->GetName() << " " << conditional << " " << TestParam2->GetName();
+      cout << "    " << TestParam1->GetName() << " " << conditional << " " << TestParam2->GetName();
     else
-      cout << TestParam1->GetName() << " " << conditional << " " << TestValue;
+      cout << "    " << TestParam1->GetName() << " " << conditional << " " << TestValue;
   }
 }
 

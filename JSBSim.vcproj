@@ -225,7 +225,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\models\flight_control\FGCondition.h"
+				RelativePath=".\src\math\FGCondition.h"
 				>
 			</File>
 			<File
@@ -541,7 +541,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\models\flight_control\FGCondition.cpp"
+				RelativePath=".\src\math\FGCondition.cpp"
 				>
 			</File>
 			<File

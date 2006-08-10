@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.25 2006/08/02 11:47:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.26 2006/08/10 12:52:53 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,7 +294,7 @@ bool FGFDMExec::DeAllocate(void)
   delete Auxiliary;
   delete State;
 
-  for (int i=0; i<Outputs.size(); i++) delete Outputs[i];
+  for (unsigned i=0; i<Outputs.size(); i++) delete Outputs[i];
   Outputs.clear();
 
   delete IC;
@@ -353,7 +353,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
 
 bool FGFDMExec::Run(void)
 {
-  bool error, success;
+  bool success;
   FGModel* model_iterator;
 
   model_iterator = FirstModel;
@@ -565,7 +565,7 @@ void FGFDMExec::BuildPropertyCatalog(struct PropertyCatalogStructure* pcs)
 string FGFDMExec::QueryPropertyCatalog(string in)
 {
   string results="";
-  for (int i=0; i<PropertyCatalog.size(); i++) {
+  for (unsigned i=0; i<PropertyCatalog.size(); i++) {
     if (PropertyCatalog[i].find(in) != string::npos) results += PropertyCatalog[i] + "\n";
   }
   if (results.empty()) return "No matches found\n";
@@ -579,7 +579,7 @@ void FGFDMExec::PrintPropertyCatalog(void)
   cout << endl;
   cout << "  " << fgblue << highint << underon << "Property Catalog for "
        << modelName << reset << endl << endl;
-  for (int i=0; i<PropertyCatalog.size(); i++) {
+  for (unsigned i=0; i<PropertyCatalog.size(); i++) {
     cout << "    " << PropertyCatalog[i] << endl;
   }
 }
@@ -736,7 +736,7 @@ FGTrim* FGFDMExec::GetTrim(void)
 
 void FGFDMExec::DisableOutput(void)
 {
-  for (int i=0; i<Outputs.size(); i++) {
+  for (unsigned i=0; i<Outputs.size(); i++) {
     Outputs[i]->Disable();
   }
 }
@@ -745,7 +745,7 @@ void FGFDMExec::DisableOutput(void)
 
 void FGFDMExec::EnableOutput(void)
 {
-  for (int i=0; i<Outputs.size(); i++) {
+  for (unsigned i=0; i<Outputs.size(); i++) {
     Outputs[i]->Enable();
   }
 }
@@ -754,7 +754,7 @@ void FGFDMExec::EnableOutput(void)
 
 bool FGFDMExec::SetOutputDirectives(string fname)
 {
-  bool result;
+  bool result=true; // for now always return true
 
   if (Outputs.size() == 0) {
     FGOutput* Output = new FGOutput(this);

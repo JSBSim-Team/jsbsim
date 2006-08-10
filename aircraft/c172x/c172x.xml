@@ -6,7 +6,7 @@
     <fileheader>
         <author>Tony Peden</author>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.59 $</version>
+        <version>$Revision: 1.60 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -826,6 +826,11 @@
         <property> fcs/throttle-cmd-norm </property>
         <property> propulsion/total-fuel-lbs </property>
         <property> flight-path/gamma-rad </property>
+        <property> fcs/mixture-cmd-norm </property>
+        <property>ap/heading_setpoint</property>
+        <property>ap/heading_hold</property>
+        <property>ap/altitude_setpoint</property>
+        <property>ap/altitude_hold</property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
@@ -835,7 +840,7 @@
         <propulsion> ON </propulsion>
         <aerosurfaces> OFF </aerosurfaces>
         <fcs> OFF </fcs>
-        <ground_reactions> OFF </ground_reactions>
+        <ground_reactions> ON </ground_reactions>
     </output>
     <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>

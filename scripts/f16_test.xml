@@ -6,20 +6,28 @@
 
   <use aircraft="f16"/>
   <use initialize="reset00"/>
-  <run start="0.0" end="100" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="0.29"/>
+  <run start="0.0" end="700" dt="0.00833333">
+    <event name="starter">
+      <notify/>
+      <condition>
+        sim-time-sec >= 0.25
+      </condition>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-    <when>
-      <parameter name="propulsion/engine[0]/n2" comparison="ge" value="15.0"/>
+    </event>
+    <event>
+      <notify/>
+      <condition>
+        propulsion/engine[0]/n2 >= 15
+      </condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
       <set name="fcs/throttle-cmd-norm[0]" value="0.5" action="FG_RAMP" tc ="2"/>
-    </when>
-    <when>
-      <parameter name="propulsion/engine[0]/n2" comparison="ge" value="50.0"/>
+    </event>
+    <event>
+      <notify/>
+      <condition>
+        propulsion/engine[0]/n2 >= 50
+      </condition>
       <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="2"/>
-    </when>
+    </event>
   </run>
 </runscript>
