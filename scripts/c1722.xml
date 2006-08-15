@@ -1,20 +1,13 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="C172-01A takeoff run">
-  <!--
-    This run is for testing C172 runs
-  -->
-
-  <use aircraft="c172x"/>
-  <use initialize="reset01"/>
+  <use aircraft="c172x" initialize="reset01"/>
   <run start="0.0" end="10" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
-      <set name="fcs/throttle-cmd-norm" value="0.3" action="FG_RAMP" tc ="0.05"/>
-      <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.05"/>
+    <event name="event name">
+      <condition>sim-time-sec  ge  0.25</condition>
+      <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.3" tc="0.05"/>
+      <set name="fcs/mixture-cmd-norm" action="FG_RAMP" value="0.87" tc="0.05"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
+    </event>
   </run>
-
 </runscript>

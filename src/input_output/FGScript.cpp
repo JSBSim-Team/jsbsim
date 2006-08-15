@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.6 2006/08/10 12:52:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.7 2006/08/15 23:50:42 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,12 +124,15 @@ bool FGScript::LoadScript( string script )
       result = FDMExec->LoadModel(aircraft);
       if (!result) return false;
     } else {
-      cerr << "Aircraft must be specified first in script file." << endl;
+      cerr << "Aircraft must be specified in use element." << endl;
       return false;
     }
 
-    element = document->FindNextElement("use");
     initialize = element->GetAttributeValue("initialize");
+    if (initialize.empty()) {
+      cerr << "Initialization file must be specified in use element." << endl;
+      return false;
+    }
 
   } else {
     cerr << "No \"use\" directives in the script file." << endl;

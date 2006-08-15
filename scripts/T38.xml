@@ -1,29 +1,29 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="T38 aircraft taxi run">
-  <!--
-    This run is for testing a T38 aircraft for taxiing behaviour
-  -->
-
-  <use aircraft="T38"/>
-  <use initialize="reset00"/>
+  <description>This run is for testing a T38 aircraft for taxiing behaviour</description>
+  <use aircraft="T38" initialize="reset00"/>
   <run start="0.0" end="100" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="7.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="10"/>
+    <event name="Test steering">
+      <condition>sim-time-sec  ge  5.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
+      <notify/>
+    </event>
+    <event name="Test steering">
+      <condition>sim-time-sec  ge  7.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
+      <notify/>
+    </event>
+    <event name="Engine starter">
+      <condition>sim-time-sec  ge  10</condition>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="15.0"/>
+      <notify/>
+    </event>
+    <event name="Start engine">
+      <condition>sim-time-sec  ge  15.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
-      <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="0.5"/>
-      <set name="fcs/throttle-cmd-norm[1]" value="1.0" action="FG_RAMP" tc ="0.5"/>
-    </when>
+      <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="1.0" tc="0.5"/>
+      <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="1.0" tc="0.5"/>
+      <notify/>
+    </event>
   </run>
 </runscript>

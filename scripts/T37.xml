@@ -1,27 +1,27 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="T37 aircraft taxi run">
-  <!--
-    This run is for testing a T37 aircraft for taxiing behaviour
-  -->
-
-  <use aircraft="T37"/>
-  <use initialize="reset00"/>
+  <description>This run is for testing a T37 aircraft for taxiing behaviour</description>
+  <use aircraft="T37" initialize="reset00"/>
   <run start="0.0" end="100" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
+    <event name="Starter">
+      <condition>sim-time-sec  ge  0.25</condition>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
+      <notify/>
+    </event>
+    <event name="Flow fuel">
+      <condition>sim-time-sec  ge  5.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
-      <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="0.5"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
-      <set name="fcs/throttle-cmd-norm[1]" value="1.0" action="FG_RAMP" tc ="0.5"/>
-    </when>
+      <notify/>
+    </event>
+    <event name="Set throttle 0">
+      <condition>sim-time-sec  ge  6.0</condition>
+      <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="1.0" tc="0.5"/>
+      <notify/>
+    </event>
+    <event name="Set Throttle 1">
+      <condition>sim-time-sec  ge  6.0</condition>
+      <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="1.0" tc="0.5"/>
+      <notify/>
+    </event>
   </run>
 </runscript>

@@ -1,22 +1,12 @@
-<?xml version="1.0"?> 
-<runscript name="X-15-01A"> 
-
-  <!--
-  This run is for testing X-15 
-  --> 
-
-  <use aircraft="X15"/> 
-
-  <use initialize="reset02"/> 
-
-  <run start="0.0" end="10.0" dt="0.01"> 
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.0"/>
-      <parameter name="sim-time-sec" comparison="le" value="0.8"/>
-      <set name="fcs/elevator-cmd-norm" type="FG_VALUE" value="-1.0" action="FG_STEP" persistent="false" tc ="0.5"/>
-    </when>
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript name="X-15-01A">
+  <description>Testing the X-15</description>
+  <use aircraft="X15" initialize="reset02"/>
+  <run start="0.0" end="10.0" dt="0.01">
+    <event name="Set elevator">
+      <condition>sim-time-sec  ge  0.0</condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_STEP" type="FG_VALUE" value="-1.0" tc="0.5"/>
+      <notify/>
+    </event>
   </run>
-
-</runscript> 
-
-
+</runscript>

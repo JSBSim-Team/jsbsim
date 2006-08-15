@@ -1,35 +1,31 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="StellarJ">
-
-  <use aircraft="StellarJ"/>
-  <use initialize="reset00"/>
+  <use aircraft="StellarJ" initialize="reset00"/>
   <run start="0.0" end="400" dt="0.00833333">
-
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
-      <set name="propulsion/active_engine" type="FG_VALUE" value="-1" action="FG_STEP" persistent="false"/>
-      <set name="fcs/throttle-cmd-norm[0]" type="FG_VALUE" value="0.3" action="FG_RAMP" persistent="false" tc ="2.0"/>
-      <set name="fcs/throttle-cmd-norm[1]" type="FG_VALUE" value="0.3" action="FG_RAMP" persistent="false" tc ="2.0"/>
-      <set name="fcs/throttle-cmd-norm[2]" type="FG_VALUE" value="0.3" action="FG_RAMP" persistent="false" tc ="2.0"/>
-      <set name="fcs/throttle-cmd-norm[3]" type="FG_VALUE" value="0.3" action="FG_RAMP" persistent="false" tc ="2.0"/>
-      <set name="propulsion/starter_cmd" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="1.00"/>
-    </when>
-
-    <when>
-      <parameter name="propulsion/n2[1]" comparison="ge" value="15"/>
-      <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[1]" value="1.0" action="FG_RAMP" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[2]" value="1.0" action="FG_RAMP" tc ="0.05"/>
-      <set name="fcs/throttle-cmd-norm[3]" value="1.0" action="FG_RAMP" tc ="0.05"/>
+    <event name="Prepare engine">
+      <condition>sim-time-sec  ge  0.25</condition>
+      <set name="propulsion/active_engine" value="-1"/>
+      <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="0.3" tc="2.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="0.3" tc="2.0"/>
+      <set name="fcs/throttle-cmd-norm[2]" action="FG_RAMP" value="0.3" tc="2.0"/>
+      <set name="fcs/throttle-cmd-norm[3]" action="FG_RAMP" value="0.3" tc="2.0"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify/>
+    </event>
+    <event name="Start engine">
+      <condition>propulsion/n2[1]  ge  15</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
-    </when>
-
-    <when> <!-- Set Autopilot for 50000 ft -->
-      <parameter name="aero/qbar-psf" comparison="ge" value="25.0"/>
-      <set name="ap/altitude_setpoint" value="50000.0" action="FG_EXP" tc ="3.0"/>
+      <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="1.0" tc="0.05"/>
+      <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="1.0" tc="0.05"/>
+      <set name="fcs/throttle-cmd-norm[2]" action="FG_RAMP" value="1.0" tc="0.05"/>
+      <set name="fcs/throttle-cmd-norm[3]" action="FG_RAMP" value="1.0" tc="0.05"/>
+      <notify/>
+    </event>
+    <event name="Set altitude target">
+      <condition>aero/qbar-psf  ge  25.0</condition>
+      <set name="ap/altitude_setpoint" action="FG_EXP" value="50000.0" tc="3.0"/>
       <set name="ap/altitude_hold" value="1"/>
-    </when>
-
+      <notify/>
+    </event>
   </run>
 </runscript>

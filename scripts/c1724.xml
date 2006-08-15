@@ -1,23 +1,12 @@
-<?xml version="1.0"?>
-<runscript name="C172-01A takeoff run">
-  <!--
-    This run is for testing the C172 landing gear at rest.
-  -->
-
-  <use aircraft="c172x"/>
-  <use initialize="reset00"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../JSBSimScript.xsd" name="C172-01A takeoff run">
+  <description>This run is for testing the C172 landing gear at rest</description>
+  <use aircraft="c172x" initialize="reset00"/>
   <run start="0.0" end="20" dt="0.0083333">
-<!--
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.10"/>
-      <parameter name="sim-time-sec" comparison="le" value="0.11"/>
-      <set name="simulation/do_trim" value="2"/>
-    </when>
--->
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
-    </when>
+    <event name="event name">
+      <condition>sim-time-sec  ge  5.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
+    </event>
   </run>
-
 </runscript>

@@ -1,21 +1,16 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="C310-01A takeoff run">
-  <!--
-    This run is for testing C310 runs
-  -->
-
-  <use aircraft="c310"/>
-  <use initialize="reset00"/>
+  <description>For testing autopilot capability</description>
+  <use aircraft="c310" initialize="reset00"/>
   <run start="0.0" end="200" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="eq" value="0.00"/>
-      <set name="ap/wp_latitude_rad" value="0.5236"/> <!-- 30 degrees north -->
-      <set name="ap/wp_longitude_rad" value="1.3090"/> <!-- 75 degrees west -->
-    </when>
-  
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
+    <event name="Set waypoints">
+      <condition>sim-time-sec  eq  0.00</condition>
+      <set name="ap/wp_latitude_rad" value="0.5236"/>
+      <set name="ap/wp_longitude_rad" value="1.3090"/>
+      <notify/>
+    </event>
+    <event name="Start engine">
+      <condition>sim-time-sec  ge  0.25</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
       <set name="fcs/mixture-cmd-norm[1]" value="0.87"/>
       <set name="fcs/advance-cmd-norm[0]" value="1.0"/>
@@ -24,33 +19,31 @@
       <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-
-    <when> <!-- Set Attitude Hold mode when reach 3.5 ft -->
-      <parameter name="position/h-agl-ft" comparison="ge" value="3.5"/>
+      <notify/>
+    </event>
+    <event name="Set attitude hold">
+      <condition>position/h-agl-ft  ge  3.5</condition>
       <set name="ap/attitude_hold" value="1"/>
       <set name="ap/heading_hold" value="0"/>
-    </when>
-
-    <!-- Set altitude target when reach 10 ft -->
-    <when>
-      <parameter name="position/h-agl-ft" comparison="ge" value="10.0"/>
-      <set name="ap/altitude_setpoint" value="1000.0" action="FG_EXP" tc ="10.0"/>
+      <notify/>
+    </event>
+    <event name="Set altitude for 1,000 ft.">
+      <condition>position/h-agl-ft  ge  10.0</condition>
+      <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
       <set name="ap/altitude_hold" value="1"/>
-    </when>
-
-    <when> <!-- Raise gear when reach 20 ft -->
-      <parameter name="position/h-agl-ft" comparison="ge" value="20"/>
+      <notify/>
+    </event>
+    <event name="Raise landing gear">
+      <condition>position/h-agl-ft  ge  20</condition>
       <set name="gear/gear-cmd-norm" value="0"/>
-    </when>
-
-    <when> <!-- Set Heading Seek & Hold mode when reach 500 ft -->
-      <parameter name="position/h-agl-ft" comparison="ge" value="500"/>
+      <notify/>
+    </event>
+    <event name="Set heading to 300 degrees and acquire/hold heading">
+      <condition>position/h-agl-ft  ge  500</condition>
       <set name="ap/heading_setpoint" value="300"/>
       <set name="ap/attitude_hold" value="0"/>
       <set name="ap/heading_hold" value="1"/>
-    </when>
-
+      <notify/>
+    </event>
   </run>
-
 </runscript>

@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="runscript">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="description" minOccurs="0" maxOccurs="1"/>
+        <xs:element ref="use"/>
+        <xs:element ref="run" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="run">
+    <xs:annotation>
+      <xs:documentation>Contains the events.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="event" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="start" type="xs:decimal" use="required"/>
+      <xs:attribute name="end" type="xs:decimal" use="required"/>
+      <xs:attribute name="dt" type="xs:decimal" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="event">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element ref="condition" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="set" maxOccurs="unbounded" minOccurs="0"/>
+          <xs:element ref="notify" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="description" type="xs:string"/>
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="optional"/>
+      <xs:attribute name="persistent" use="optional">
+        <xs:annotation><xs:documentation>
+          [Documentation for persistent attribute.]
+        </xs:documentation></xs:annotation>
+        <xs:simpleType><xs:restriction base="xs:string"><xs:pattern value="true|false"/></xs:restriction></xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="condition">
+    <xs:complexType mixed="true">
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="test" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="logic">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="AND|OR"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="notify">
+    <xs:annotation><xs:documentation>
+      
+    </xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="property"></xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="property" type="xs:string"/>
+  
+  <xs:element name="set">
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="action" type="xs:string" use="optional"/>
+      <xs:attribute name="value" type="xs:decimal" use="required"/>
+      <xs:attribute name="tc" type="xs:decimal" use="optional"/>
+      <xs:attribute name="type" type="xs:string" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="test">
+    <xs:complexType mixed="true">
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="test"/>
+      </xs:sequence>
+      <xs:attribute name="logic" default="AND">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="AND|OR"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="description" type="xs:string">
+    <xs:annotation id="test">
+      <xs:documentation>Documents the runscript purpose.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="use">
+    <xs:complexType>
+      <xs:attribute name="aircraft" type="xs:string" use="required"/>
+      <xs:attribute name="initialize" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

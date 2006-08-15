@@ -1,40 +1,41 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="B737 Runway test">
-  <!--
-    This run is for testing the 737 model on the runway
-  -->
-
-  <use aircraft="737"/>
-  <use initialize="reset00"/>
+  <description>This run is for testing the 737 model on the runway.</description>
+  <use aircraft="737" initialize="reset00"/>
   <run start="0.0" end="60" dt="0.0083333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
-      <set name="fcs/elevator-cmd-norm" value="0.5" action="FG_RAMP" tc ="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="7.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
-      <set name="fcs/elevator-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="15.0"/>
+    <event name="Steering and Elevator Command Test">
+      <condition>sim-time-sec  ge  5.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
+      <set name="fcs/elevator-cmd-norm" action="FG_RAMP" value="0.5" tc="1"/>
+      <notify/>
+    </event>
+    <event name="Steering and Elevator Command to 0">
+      <condition>sim-time-sec  ge  7.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
+      <notify/>
+    </event>
+    <event name="Start Engines">
+      <condition>sim-time-sec  ge  15.0</condition>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="20.0"/>
+      <notify/>
+    </event>
+    <event name="Advance Throttle">
+      <condition>sim-time-sec  ge  20.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
-      <set name="fcs/throttle-cmd-norm[0]" value="0.6" action="FG_RAMP" tc ="1.0"/>
-      <set name="fcs/throttle-cmd-norm[1]" value="0.6" action="FG_RAMP" tc ="1.0"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="50.0"/>
-      <set name="fcs/steer-cmd-norm" value="1.0" action="FG_RAMP" tc ="1"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="55.0"/>
-      <set name="fcs/steer-cmd-norm" value="0.0" action="FG_EXP" tc ="1"/>
-    </when>
+      <set name="fcs/throttle-cmd-norm[0]" action="FG_RAMP" value="0.6" tc="1.0"/>
+      <set name="fcs/throttle-cmd-norm[1]" action="FG_RAMP" value="0.6" tc="1.0"/>
+      <notify/>
+    </event>
+    <event name="Test Steer Command">
+      <condition>sim-time-sec  ge  50.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_RAMP" value="1.0" tc="1"/>
+      <notify/>
+    </event>
+    <event name="Zero Steer Command">
+      <condition>sim-time-sec  ge  55.0</condition>
+      <set name="fcs/steer-cmd-norm" action="FG_EXP" value="0.0" tc="1"/>
+      <notify/>
+    </event>
   </run>
-
 </runscript>

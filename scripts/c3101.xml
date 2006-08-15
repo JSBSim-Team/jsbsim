@@ -1,46 +1,44 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="C310-01A takeoff run">
-  <!--
-    This run is for testing C310 runs
-  -->
-
-  <use aircraft="c310"/>
-  <use initialize="reset00"/>
+  <use aircraft="c310" initialize="reset00"/>
   <run start="0.0" end="140" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.00"/>
+    <event name="Start engine">
+      <condition>sim-time-sec  ge  0.25</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
       <set name="fcs/mixture-cmd-norm[1]" value="0.87"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
       <set name="propulsion/starter_cmd" value="1"/>
-    </when>
-
-    <when> <!-- Set the Elevator to takeoff -->
-      <parameter name="aero/qbar-psf" comparison="ge" value="17.0"/>
-      <parameter name="position/h-sl-ft" comparison="le" value="2000"/>
-      <set name="fcs/elevator-cmd-norm" value="-0.5" action="FG_EXP" tc ="2.0"/>
-    </when>
-
-    <when>
-      <parameter name="position/h-sl-ft" comparison="ge" value="2000"/>
-      <parameter name="attitude/theta-rad" comparison="ge" value="0.30"/>
-      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.06" action="FG_EXP" tc ="12.0"/>
-    </when>
-
-    <when>
-      <parameter name="position/h-sl-ft" comparison="le" value="2000"/>
-      <parameter name="attitude/theta-rad" comparison="le" value="0.25"/>
-      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="-0.06" action="FG_EXP" tc ="12.0"/>
-    </when>
-
-    <when>
-      <parameter name="position/h-sl-ft" comparison="ge" value="2000"/>
-      <set name="fcs/elevator-cmd-norm" value="0.00" action="FG_EXP" tc ="1.0"/>
-    </when>
-
+      <notify/>
+    </event>
+    <event name="Climb">
+      <condition>
+        aero/qbar-psf  ge  17.0
+        position/h-sl-ft  le  2000
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="-0.5" tc="2.0"/>
+      <notify/>
+    </event>
+    <event name="Adjust altitude">
+      <condition>
+        position/h-sl-ft  ge  2000
+        attitude/theta-rad  ge  0.30
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.06" tc="12.0"/>
+    </event>
+    <event name="Adjust altitude">
+      <condition>
+        position/h-sl-ft  le  2000
+        attitude/theta-rad  le  0.25
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="-0.06" tc="12.0"/>
+    </event>
+    <event name="Maintain Altitude">
+      <condition>
+        position/h-sl-ft  ge  2000
+      </condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" value="0.00" tc="1.0"/>
+    </event>
   </run>
-
 </runscript>

@@ -1,23 +1,19 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="blank aircraft taxi run">
-  <!--
-    This run is for testing a null aircraft for taxiing behaviour
-  -->
-
-  <use aircraft="blank"/>
-  <use initialize="reset00"/>
+  <description>This run is for testing a null aircraft for taxiing behaviour</description>
+  <use aircraft="blank" initialize="reset00"/>
   <run start="0.0" end="100" dt="0.00833333">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.25"/>
-      <set name="propulsion/starter_cmd" type="FG_VALUE" value="1" action="FG_STEP" persistent="false" tc ="0.05"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="5.0"/>
-      <set name="propulsion/cutoff_cmd" type="FG_VALUE" value="0" action="FG_STEP" persistent="false" tc ="0.05"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="6.0"/>
-      <set name="fcs/throttle-cmd-norm" type="FG_VALUE" value="1.0" action="FG_RAMP" persistent="false" tc ="0.5"/>
-    </when>
+    <event name="event name">
+      <condition>sim-time-sec  ge  0.25</condition>
+      <set name="propulsion/starter_cmd" action="FG_STEP" type="FG_VALUE" value="1" tc="0.05"/>
+    </event>
+    <event name="event name">
+      <condition>sim-time-sec  ge  5.0</condition>
+      <set name="propulsion/cutoff_cmd" action="FG_STEP" type="FG_VALUE" value="0" tc="0.05"/>
+    </event>
+    <event name="event name">
+      <condition>sim-time-sec  ge  6.0</condition>
+      <set name="fcs/throttle-cmd-norm" action="FG_RAMP" type="FG_VALUE" value="1.0" tc="0.5"/>
+    </event>
   </run>
 </runscript>

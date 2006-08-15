@@ -1,33 +1,26 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <runscript name="X-15-01A">
-
-  <!--
-  This run is for testing X-15 high altitude,
-  high speed pitch pulses in the simulator.
-  -->
-
-  <use aircraft="X15"/>
-  <use initialize="reset00"/>
-
+  <description>
+    This run is for testing X-15 high altitude,
+    high speed pitch pulses in the simulator.
+  </description>
+  <use aircraft="X15" initialize="reset00"/>
   <run start="0.0" end="10.0" dt="0.01">
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="0.5"/>
-      <parameter name="sim-time-sec" comparison="le" value="1.5"/>
-      <set name="fcs/aileron-cmd-norm" type="FG_DELTA" value="0.1" action="FG_EXP" tc ="0.5"/>
-      <set name="fcs/throttle-cmd-norm" value="0.9" action="FG_RAMP" tc ="0.5"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="1.5"/>
-      <parameter name="sim-time-sec" comparison="le" value="2.5"/>
-      <set name="fcs/rudder-cmd-norm" type="FG_DELTA" value="0.2" action="FG_RAMP" tc ="0.5"/>
-    </when>
-    <when>
-      <parameter name="sim-time-sec" comparison="ge" value="2.5"/>
-      <parameter name="sim-time-sec" comparison="le" value="3.5"/>
-      <set name="fcs/elevator-cmd-norm" type="FG_DELTA" value="0.1" action="FG_EXP" tc ="0.5"/>
-    </when>
+    <event name="Test throttle, aileron">
+      <condition>sim-time-sec  ge  0.5</condition>
+      <set name="fcs/aileron-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.1" tc="0.5"/>
+      <set name="fcs/throttle-cmd-norm" action="FG_RAMP" value="0.9" tc="0.5"/>
+      <notify/>
+    </event>
+    <event name="Test rudder">
+      <condition>sim-time-sec  ge  1.5</condition>
+      <set name="fcs/rudder-cmd-norm" action="FG_RAMP" type="FG_DELTA" value="0.2" tc="0.5"/>
+      <notify/>
+    </event>
+    <event name="Test elevator">
+      <condition>sim-time-sec  ge  2.5</condition>
+      <set name="fcs/elevator-cmd-norm" action="FG_EXP" type="FG_DELTA" value="0.1" tc="0.5"/>
+      <notify/>
+    </event>
   </run>
-
 </runscript>
-
-

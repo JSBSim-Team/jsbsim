@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <runscript name="F-16 aircraft test run">
-  <!--
-    This run is for testing an F-16
-  -->
-
-  <use aircraft="f16"/>
-  <use initialize="reset00"/>
+  <description>This run is for testing an F-16</description>
+  <use aircraft="f16" initialize="reset00"/>
   <run start="0.0" end="700" dt="0.00833333">
     <event name="starter">
       <notify/>
