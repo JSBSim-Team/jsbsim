@@ -79,7 +79,7 @@
                                         <!-- Actions -->
                                         <xsl:if test="notify"> When this event is triggered, a
                                             notification message will be shown <xsl:if
-                                                test="notify/property"> and the values of following
+                                                test="notify/property"> and the values of the following
                                                 property or properties will be displayed: <ul>
                                                   <xsl:for-each select="notify/property">
                                                   <li>

@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:annotation><xs:documentation>
+  This schema specifies the format that a JSBSim (www.jsbsim.org) must take to be
+  valid. The JSBSim scripting language provides for specification of which aircraft
+  and initialization file will be used for a "batch" run, as well as how long it will run,
+  and at what time-step size it will be integrated at. Also, "Events" may be defined
+  that can direct the simulation to set parameter values when specific conditions
+  have been reached. The script author may also specify that some notifications
+  should take place when an event is reached.
+</xs:documentation>
+</xs:annotation>
+
   <xs:element name="runscript">
     <xs:complexType>
       <xs:sequence>
