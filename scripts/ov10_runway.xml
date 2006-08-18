@@ -23,7 +23,7 @@
 
     <event name="Start engine: Cutoff">
       <description>Cutoff is turned off, allowing fuel to flow.</description>
-      <condition>propulsion/engine[0]/n2 ge 0.15</condition>
+      <condition>propulsion/engine[0]/n2 ge 15.0</condition>
       <set name="propulsion/cutoff_cmd" value="0"/>
       <set name="fcs/throttle-cmd-norm[0]" value="0.4"/>
       <set name="fcs/throttle-cmd-norm[1]" value="0.4"/>
@@ -34,11 +34,11 @@
         <property>propulsion/engine[0]/thrust</property>
         <property>propulsion/engine[1]/thrust</property>
       </notify>
-      </event>
+    </event>
 
     <event name="Throttle-up">
       <description>Move throttle to full for take-off.</description>
-      <condition>propulsion/engine[0]/n2 ge 0.15</condition>
+      <condition>propulsion/engine[0]/n2 ge 15.0</condition>
       <delay>5.0</delay>
       <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
@@ -54,8 +54,6 @@
     <event name="Notify Velocity">
       <description>Notify when velocity goes above 10 kts.</description>
       <condition>velocities/vc-kts ge 10.0</condition>
-      <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
-      <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
       <notify>
         <property>propulsion/engine[0]/n2</property>
         <property>propulsion/engine[1]/n2</property>

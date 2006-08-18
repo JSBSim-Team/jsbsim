@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.7 2006/08/15 23:50:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.8 2006/08/18 14:09:43 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,8 +249,7 @@ bool FGScript::LoadScript( string script )
 bool FGScript::RunScript(void)
 {
   vector <struct event>::iterator iEvent = Events.begin();
-  bool execute_event = false;
-  unsigned i;
+  unsigned i, j;
   unsigned event_ctr = 0;
 
   double currentTime = State->Getsim_time();
@@ -263,73 +262,71 @@ bool FGScript::RunScript(void)
 
     // Determine whether the set of conditional tests for this condition equate
     // to true and should cause the event to execute.
-    execute_event = false;
     if (iEvent->Condition->Evaluate()) {
       if (iEvent->Persistent || !iEvent->Triggered) {
-        execute_event = true;
-        if (iEvent->Notify) {
-          cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
-               << " has been triggered at time: " << currentTime << endl;
-          for (i=0; i<iEvent->NotifyProperties.size();i++) {
-            cout << "    " << iEvent->NotifyProperties[i]->GetName()
-                 << " = " << iEvent->NotifyProperties[i]->getDoubleValue() << endl;
+
+	// The conditions are true, do the setting of the desired Event parameters
+	for (i=0; i<iEvent->SetValue.size(); i++) {
+          iEvent->OriginalValue[i] = iEvent->SetParam[i]->getDoubleValue();
+          switch (iEvent->Type[i]) {
+          case FG_VALUE:
+          case FG_BOOL:
+            iEvent->newValue[i] = iEvent->SetValue[i];
+            break;
+          case FG_DELTA:
+            iEvent->newValue[i] = iEvent->OriginalValue[i] + iEvent->SetValue[i];
+            break;
+          default:
+            cerr << "Invalid Type specified" << endl;
+            break;
           }
-          cout << endl;
-          iEvent->Notify = false; // Turn off notification so it won't repeat
-        }
+          iEvent->StartTime = currentTime + iEvent->Delay;
+          iEvent->ValueSpan[i] = iEvent->newValue[i] - iEvent->OriginalValue[i];
+          iEvent->Transiting[i] = true;
+	}
+
       }
       iEvent->Triggered = true;
     }
 
-    // If the conditions are true, do the setting of the desired Event parameters
+    if ((currentTime >= iEvent->StartTime) && iEvent->Triggered) {
 
-    if (execute_event) {
-      for (i=0; i<iEvent->SetValue.size(); i++) {
-        iEvent->OriginalValue[i] = iEvent->SetParam[i]->getDoubleValue();
-        switch (iEvent->Type[i]) {
-        case FG_VALUE:
-        case FG_BOOL:
-          iEvent->newValue[i] = iEvent->SetValue[i];
-          break;
-        case FG_DELTA:
-          iEvent->newValue[i] = iEvent->OriginalValue[i] + iEvent->SetValue[i];
-          break;
-        default:
-          cerr << "Invalid Type specified" << endl;
-          break;
+      if (iEvent->Notify) {
+        cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
+             << " executed at time: " << currentTime << endl;
+        for (j=0; j<iEvent->NotifyProperties.size();j++) {
+          cout << "    " << iEvent->NotifyProperties[j]->GetName()
+               << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
         }
-        iEvent->StartTime = currentTime + iEvent->Delay;
-
-        iEvent->ValueSpan[i] = iEvent->newValue[i] - iEvent->OriginalValue[i];
-        
-        iEvent->Transiting[i] = true;
+        cout << endl;
+        iEvent->Notify = false; // Turn off notification so it won't repeat
       }
-    }
 
-    for (i=0; i<iEvent->SetValue.size(); i++) {
-      if (iEvent->Transiting[i] && currentTime >= iEvent->StartTime) {
-        iEvent->TimeSpan = currentTime - iEvent->StartTime;
-        switch (iEvent->Action[i]) {
-        case FG_RAMP:
-          if (iEvent->TimeSpan <= iEvent->TC[i]) {
-            newSetValue = iEvent->TimeSpan/iEvent->TC[i] * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
-          } else {
+      for (i=0; i<iEvent->SetValue.size(); i++) {
+	if (iEvent->Transiting[i]) {
+          iEvent->TimeSpan = currentTime - iEvent->StartTime;
+          switch (iEvent->Action[i]) {
+          case FG_RAMP:
+            if (iEvent->TimeSpan <= iEvent->TC[i]) {
+              newSetValue = iEvent->TimeSpan/iEvent->TC[i] * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
+            } else {
+              newSetValue = iEvent->newValue[i];
+              iEvent->Transiting[i] = false;
+            }
+            break;
+          case FG_STEP:
             newSetValue = iEvent->newValue[i];
             iEvent->Transiting[i] = false;
+            break;
+          case FG_EXP:
+            newSetValue = (1 - exp( -iEvent->TimeSpan/iEvent->TC[i] )) * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
+            break;
+          default:
+            cerr << "Invalid Action specified" << endl;
+            break;
           }
-          break;
-        case FG_STEP:
-          newSetValue = iEvent->newValue[i];
-          iEvent->Transiting[i] = false;
-          break;
-        case FG_EXP:
-          newSetValue = (1 - exp( -iEvent->TimeSpan/iEvent->TC[i] )) * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
-          break;
-        default:
-          cerr << "Invalid Action specified" << endl;
-          break;
-        }
-        iEvent->SetParam[i]->setDoubleValue(newSetValue);
+          iEvent->SetParam[i]->setDoubleValue(newSetValue);
+	}
       }
     }
 
