@@ -2,9 +2,9 @@
 <?xml-stylesheet type="text/xsl" href="http://www.jsbsim.org/JSBSimScript.xsl"?>
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://www.jsbsim.org/JSBSimScript.xsd"
-    name="OV-10 runway test">
+    name="B737 runway test">
   <description>For testing OV-10 ground reactions</description>
-  <use aircraft="ov10" initialize="reset00"/>
+  <use aircraft="737" initialize="reset00"/>
   <run start="0.0" end="90" dt="0.00833333">
 
     <event name="On-ground trim">
@@ -127,7 +127,7 @@
       <description>Slowed to stop</description>
       <condition>
         velocities/vc-kts le 1.0
-        fcs/throttle-cmd-norm[0] eq 0.3
+	fcs/throttle-cmd-norm[0] eq 0.3
       </condition>
       <notify/>
     </event>
