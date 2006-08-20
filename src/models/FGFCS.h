@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.8 2006/02/03 00:51:44 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.9 2006/08/20 13:11:46 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.8 $
+    @version $Revision: 1.9 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -501,6 +501,18 @@ public:
       @param bg which brakegroup to retrieve the command for
       @return the brake setting for the supplied brake group argument */
   double GetBrake(FGLGear::BrakeGroup bg);
+
+  /** Gets the left brake.
+      @return the left brake setting. */
+  double GetLBrake(void) const {return LeftBrake;}
+
+  /** Gets the right brake.
+      @return the right brake setting. */
+  double GetRBrake(void) const {return RightBrake;}
+
+  /** Gets the center brake.
+      @return the center brake setting. */
+  double GetCBrake(void) const {return CenterBrake;}
   //@}
 
   /** Loads the Flight Control System.
