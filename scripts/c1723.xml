@@ -43,7 +43,7 @@
       <set name="fcs/flap-cmd-norm" value=".33"/>
     </event>
 
-    <event name="set autopilot 2" persistent="true">
+    <event name="set autopilot 2">
       <!-- Set Autopilot for 6000 ft -->
       <notify/>
       <condition>
@@ -62,7 +62,7 @@
       <set name="fcs/flap-cmd-norm" value="0"/>
     </event>
 
-    <event name="set autopilot 3" persistent="true">
+    <event name="set autopilot 3">
       <!-- Set Autopilot for 4000 ft -->
       <notify/>
       <condition>
@@ -71,7 +71,7 @@
       <set name="ap/altitude_setpoint" value="4000.0"/>
     </event>
 
-    <event name="set autopilot for 7000 ft." persistent="true">
+    <event name="set autopilot for 7000 ft.">
       <!-- Set Autopilot for 7000 ft -->
       <notify/>
       <condition>
