@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<runscript name="MK-82-01A">
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="MK-82-01A">
   <use aircraft="mk82" initialize="reset00"/>
   <run start="0.00" end="500.00" dt="0.020"/>
 </runscript>

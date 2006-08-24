@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.8 2006/08/18 14:09:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.9 2006/08/24 13:38:17 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +161,7 @@ bool FGScript::LoadScript( string script )
 
     // Create the event structure
     newEvent = new struct event();
-    
+
     // Retrieve the event name if given
     newEvent->Name = event_element->GetAttributeValue("name");
 
@@ -198,7 +198,7 @@ bool FGScript::LoadScript( string script )
         notify_property_element = notify_element->FindNextElement("property");
       }
     }
-    
+
     // Read set definitions (these define the actions to be taken when the event is triggered).
     set_element = event_element->FindElement("set");
     while (set_element) {
@@ -265,8 +265,8 @@ bool FGScript::RunScript(void)
     if (iEvent->Condition->Evaluate()) {
       if (iEvent->Persistent || !iEvent->Triggered) {
 
-	// The conditions are true, do the setting of the desired Event parameters
-	for (i=0; i<iEvent->SetValue.size(); i++) {
+        // The conditions are true, do the setting of the desired Event parameters
+        for (i=0; i<iEvent->SetValue.size(); i++) {
           iEvent->OriginalValue[i] = iEvent->SetParam[i]->getDoubleValue();
           switch (iEvent->Type[i]) {
           case FG_VALUE:
@@ -283,8 +283,7 @@ bool FGScript::RunScript(void)
           iEvent->StartTime = currentTime + iEvent->Delay;
           iEvent->ValueSpan[i] = iEvent->newValue[i] - iEvent->OriginalValue[i];
           iEvent->Transiting[i] = true;
-	}
-
+        }
       }
       iEvent->Triggered = true;
     }
@@ -303,7 +302,7 @@ bool FGScript::RunScript(void)
       }
 
       for (i=0; i<iEvent->SetValue.size(); i++) {
-	if (iEvent->Transiting[i]) {
+        if (iEvent->Transiting[i]) {
           iEvent->TimeSpan = currentTime - iEvent->StartTime;
           switch (iEvent->Action[i]) {
           case FG_RAMP:
@@ -326,7 +325,7 @@ bool FGScript::RunScript(void)
             break;
           }
           iEvent->SetParam[i]->setDoubleValue(newSetValue);
-	}
+        }
       }
     }
 
@@ -368,8 +367,8 @@ void FGScript::Debug(int from)
       cout << "  begins at " << StartTime << " seconds and runs to " << EndTime
            << " seconds with dt = " << State->Getdt() << endl;
       cout << endl;
-      
-      for (int i=0; i<Events.size(); i++) {
+
+      for (unsigned i=0; i<Events.size(); i++) {
         cout << "Event " << i;
         if (!Events[i].Name.empty()) cout << " (" << Events[i].Name << ")";
         cout << ":" << endl;

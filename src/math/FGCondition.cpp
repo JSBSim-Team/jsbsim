@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.1 2006/08/10 12:52:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.2 2006/08/24 13:38:17 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,7 +47,7 @@ CLASS IMPLEMENTATION
 
 string FGCondition::indent = "        ";
 
-
+// This constructor is called when tests are inside an element
 FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
   PropertyManager(PropertyManager), isGroup(true)
 {
@@ -72,7 +72,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
   } else {
     Logic = eAND; // default
   }
-  
+
   condition_element = element->GetElement();
   while (condition_element) {
     conditions.push_back(FGCondition(condition_element, PropertyManager));
@@ -87,6 +87,8 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//This constructor is called when there are no nested test groups inside the
+// condition
 
 FGCondition::FGCondition(string test, FGPropertyManager* PropertyManager) :
   PropertyManager(PropertyManager), isGroup(false)

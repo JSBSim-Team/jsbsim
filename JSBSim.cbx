@@ -35,7 +35,7 @@
   <property category="build.platform" name="win32.gnuc++.enabled" value="0"/>
   <property category="build.platform" name="win32.mswin32.enabled" value="0"/>
   <property category="build.platform" name="win32.win32b.enabled" value="1"/>
-  <property category="cbproject" name="lastnodeid" value="666"/>
+  <property category="cbproject" name="lastnodeid" value="670"/>
   <property category="cbproject" name="version" value="X.1.0"/>
   <property category="classbrowser" name="GroupByVisibility" value="1"/>
   <property category="classbrowser" name="SeparateByKind" value="1"/>
@@ -54,7 +54,7 @@
   <property category="makefiletarget" name="makefile.1.target.list.1" value="all"/>
   <property category="makefiletarget" name="makefile.1.target.list.2" value="clean"/>
   <property category="makefiletarget" name="makefile.1.toolsetkey" value="MinGW"/>
-  <property category="runtime" name="ConfigurationCount" value="14"/>
+  <property category="runtime" name="ConfigurationCount" value="15"/>
   <property category="runtime.0" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.0" name="ConfigurationName" value="JSBSim Runtime Configuration1"/>
   <property category="runtime.0" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
@@ -104,6 +104,13 @@
   <property category="runtime.14" name="native.exec.path" value="D:\jon\JSBSim\JSBSim.exe"/>
   <property category="runtime.14" name="native.startdir.path" value="D:\jon\JSBSim"/>
   <property category="runtime.14" name="native.target.override" value="1"/>
+  <property category="runtime.15" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
+  <property category="runtime.15" name="ConfigurationName" value="c172 cruise"/>
+  <property category="runtime.15" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
+  <property category="runtime.15" name="native.exec.args" value="--script=scripts/c172_cruise_8K.xml"/>
+  <property category="runtime.15" name="native.exec.path" value="C:\cygwin\home\Jon Berndt\jsbsim\$(HOME)\JSBSim.exe"/>
+  <property category="runtime.15" name="native.startdir.path" value="C:\cygwin\home\Jon Berndt\jsbsim\$(HOME)"/>
+  <property category="runtime.15" name="native.target.override" value="1"/>
   <property category="runtime.2" name="BuildTargetOnRun" value="com.borland.cbuilder.build.CBProjectBuilder$ProjectBuildAction;make"/>
   <property category="runtime.2" name="ConfigurationName" value="Ball"/>
   <property category="runtime.2" name="RunnableType" value="com.borland.cbuilder.runtime.ExecutableRunner"/>
@@ -241,7 +248,7 @@
   <property category="team" name="ignorePath.8" value="filtersjb/FGFilter.o"/>
   <property category="team" name="ignorePath.80" value="StellarJ_DataLog.csv"/>
   <property category="team" name="ignorePath.9" value="filtersjb/FGGain.o"/>
-  <property category="unique" name="id" value="666"/>
+  <property category="unique" name="id" value="670"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="container.SelectedWarnings.option.winl.enabled" value="0"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.arg.1" value="_DEBUG"/>
   <property category="win32.Debug_Build.win32b.bcc32" name="option.D.enabled" value="1"/>
@@ -427,6 +434,12 @@
     </node>
     <node name="input_output" type="Folder">
       <property category="unique" name="id" value="381"/>
+      <file path="src/math/FGCondition.cpp">
+        <property category="unique" name="id" value="667"/>
+      </file>
+      <file path="src/math/FGCondition.h">
+        <property category="unique" name="id" value="669"/>
+      </file>
       <file path="src/input_output/FGfdmSocket.cpp">
         <property category="unique" name="id" value="383"/>
         <property category="win32.Debug_Build.win32b.bcc32" name="option.w.enabled" value="1"/>
@@ -541,12 +554,6 @@
       </node>
       <node name="flight_control" type="Folder">
         <property category="unique" name="id" value="409"/>
-        <file path="src/models/flight_control/FGCondition.cpp">
-          <property category="unique" name="id" value="477"/>
-        </file>
-        <file path="src/models/flight_control/FGCondition.h">
-          <property category="unique" name="id" value="479"/>
-        </file>
         <file path="src/models/flight_control/FGDeadBand.cpp">
           <property category="unique" name="id" value="481"/>
         </file>

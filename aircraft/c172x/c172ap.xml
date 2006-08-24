@@ -59,8 +59,8 @@ ROLL CHANNEL
 
 <!-- Wing leveler -->
 
-<channel name="AP Roll Wing Leveler">
-  <pure_gain name="Roll AP Wing Leveler">
+<channel name="fcs/ap-roll-wing-leveler">
+  <pure_gain name="fcs/roll-ap-wing-leveler">
     <input>fcs/attitude/sensor/phi-rad</input>
     <gain>2.0</gain>
     <clipto>
@@ -69,12 +69,12 @@ ROLL CHANNEL
     </clipto>
   </pure_gain>
 
-  <integrator name="Roll AP Error Integrator">
+  <integrator name="fcs/roll-ap-error-integrator">
     <input> attitude/phi-rad </input>
     <c1> 0.125 </c1>
   </integrator>
 
-  <summer name="Roll AP Error summer">
+  <summer name="fcs/roll-ap-error-summer">
      <input> velocities/p-rad_sec</input>
      <input> fcs/roll-ap-wing-leveler</input>
      <input> fcs/roll-ap-error-integrator</input>
@@ -84,14 +84,14 @@ ROLL CHANNEL
      </clipto>
   </summer>
 
-  <switch name="Roll AP Autoswitch">
+  <switch name="fcs/roll-ap-autoswitch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/roll-ap-error-summer">
+    <test value="fcs/roll-ap-error-summer">
       ap/attitude_hold == 1
     </test>
   </switch>
 
-  <pure_gain name="Roll AP Aileron Command Normalizer">
+  <pure_gain name="fcs/roll-ap-aileron-command-normalizer">
      <input>fcs/roll-ap-autoswitch</input>
      <gain>-1</gain>
   </pure_gain>
@@ -99,28 +99,28 @@ ROLL CHANNEL
 
 <!-- Heading hold -->
 
-<channel name="AP Roll Heading Hold">
-  <pure_gain name="Heading True Degrees">
+<channel name="fcs/ap-roll-heading-hold">
+  <pure_gain name="fcs/heading-true-degrees">
     <input>attitude/heading-true-rad</input>
     <gain>57.3</gain> <!-- convert to degrees -->
   </pure_gain>
 
-  <summer name="Heading Error">
+  <summer name="fcs/heading-error">
     <input> -fcs/heading-true-degrees</input>
     <input> ap/heading_setpoint </input>
   </summer>
 
-  <switch name="Heading Error Bias Switch">
+  <switch name="fcs/heading-error-bias-switch">
     <default value="0.0"/>
-    <test logic="AND" value="360.0">
+    <test value="360.0">
       fcs/heading-error lt -180
     </test>
-    <test logic="AND" value="-360.0">
+    <test value="-360.0">
       fcs/heading-error gt 180
     </test>
   </switch>
 
-  <summer name="Heading Corrected">
+  <summer name="fcs/heading-corrected">
     <input> fcs/heading-error-bias-switch </input>
     <input> fcs/heading-error </input>
     <clipto>
@@ -129,57 +129,52 @@ ROLL CHANNEL
     </clipto>
   </summer>
 
-  <pure_gain name="Heading Command">
+  <pure_gain name="fcs/heading-command">
     <input> fcs/heading-corrected </input>
     <gain> 0.01745 </gain>
   </pure_gain>
 
-  <lag_filter name="Heading Roll Error Lag">
+  <lag_filter name="fcs/heading-roll-error-lag">
     <input> fcs/heading-command </input>
     <c1> 0.50 </c1>
   </lag_filter>
 
-  <summer name="Heading Roll Error">
+  <summer name="fcs/heading-roll-error">
     <input> fcs/heading-roll-error-lag </input>
     <input> -attitude/phi-rad </input>
   </summer>
 
-  <switch name="Heading Roll Error Switch">
+  <switch name="fcs/heading-roll-error-switch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/heading-roll-error">
+    <test value="fcs/heading-roll-error">
       ap/heading_hold == 1
     </test>
   </switch>
 
-  <pure_gain name="Heading Proportional">
+  <pid name="fcs/roll-pi-controller">
     <input> fcs/heading-roll-error-switch </input>
-    <gain> 1.0 </gain>
-  </pure_gain>
+    <kp> 1.0 </kp>
+    <ki> 0.10 </ki>
+  </pid>
 
-  <integrator name="Heading Integral">
-    <input> fcs/heading-roll-error-switch </input>
-    <c1> 0.10 </c1>
-  </integrator>
-
-  <summer name="Heading Error Summer">
-    <input> fcs/heading-integral </input>
-    <input> fcs/heading-proportional </input>
+  <summer name="fcs/heading-error-summer">
+    <input> fcs/roll-pi-controller </input>
     <clipto>
       <min>-1.0</min>
       <max> 1.0</max>
     </clipto>
   </summer>
 
-  <pid name="Heading PID Controller">
+  <pid name="fcs/heading-pi-controller">
     <input> fcs/heading-roll-error-switch </input>
     <kp> 1.0 </kp>
     <ki> 0.10 </ki>
   </pid>
 
-  <switch name="Roll Command Selector">
+  <switch name="fcs/roll-command-selector">
     <default value="0.0"/>
 <!--    <test value="fcs/heading-error-summer"> -->
-    <test value="fcs/heading-pid-controller">
+    <test value="fcs/heading-pi-controller">
       ap/heading_hold == 1
     </test>
     <test value="fcs/roll-ap-aileron-command-normalizer">
@@ -277,7 +272,7 @@ PITCH CHANNEL
   -->
   <switch name="fcs/ap-alt-hold-switch">
     <default value="0.0"/>
-    <test logic="AND" value="fcs/hdot-error">
+    <test value="fcs/hdot-error">
       ap/altitude_hold == 1
     </test>
   </switch>
@@ -308,6 +303,7 @@ PITCH CHANNEL
   The pid component combines the proportional and integral control
   signals. It clips the sum to +/- 1.0.
   -->
+
   <pid name="fcs/altitude-hold-pid">
     <input> fcs/ap-alt-hold-switch </input>
     <kp> 0.031 </kp>

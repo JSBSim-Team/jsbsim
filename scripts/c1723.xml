@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="http://www.jsbsim.org/JSBSimScript.xsl"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sf.net/JSBSimScript.xsl"?>
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jsbsim.org/JSBSimScript.xsd" name="C172-01A takeoff run">
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A takeoff run">
   <!--
     This run is for testing the C172 altitude hold autopilot
   -->
 
   <use aircraft="c172x" initialize="reset00"/>
-  <run start="0.0" end="3000" dt="0.0083333">
+  <run start="0.0" end="1000" dt="0.0083333">
 
     <event name="engine start">
       <notify/>
