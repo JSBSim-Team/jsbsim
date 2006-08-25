@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.9 2006/08/24 13:38:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.10 2006/08/25 21:46:15 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,10 +92,11 @@ FGScript::~FGScript()
 bool FGScript::LoadScript( string script )
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
-  string notifyPropertyName="";
+  string notifyPropertyName="", local_property_string = "";
   Element *document=0, *element=0, *run_element=0, *event_element=0;
   Element *condition_element=0, *set_element=0, *delay_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
+  Element *property_element = 0L;
   bool result = false;
   double dt = 0.0, value = 0.0;
   FGXMLParse script_file_parser;
@@ -153,6 +154,14 @@ bool FGScript::LoadScript( string script )
   EndTime   = run_element->GetAttributeValueAsNumber("end");
   dt        = run_element->GetAttributeValueAsNumber("dt");
   State->Setdt(dt);
+
+  property_element = run_element->FindElement("property");
+  while (property_element) {
+    local_properties.push_back(new double(0));
+    local_property_string = property_element->GetDataLine();
+    PropertyManager->Tie(local_property_string, local_properties.back());
+    property_element = run_element->FindNextElement("property");
+  }
 
   // Read "events" from script
 
@@ -259,11 +268,11 @@ bool FGScript::RunScript(void)
 
   // Iterate over all events.
   while (iEvent < Events.end()) {
-
+    iEvent->PrevTriggered = iEvent->Triggered;
     // Determine whether the set of conditional tests for this condition equate
     // to true and should cause the event to execute.
     if (iEvent->Condition->Evaluate()) {
-      if (iEvent->Persistent || !iEvent->Triggered) {
+      if (!iEvent->Triggered) {
 
         // The conditions are true, do the setting of the desired Event parameters
         for (i=0; i<iEvent->SetValue.size(); i++) {
@@ -286,11 +295,13 @@ bool FGScript::RunScript(void)
         }
       }
       iEvent->Triggered = true;
+    } else if (iEvent->Persistent) {
+      iEvent->Triggered = false; // Reset the trigger for persistent events
     }
 
     if ((currentTime >= iEvent->StartTime) && iEvent->Triggered) {
 
-      if (iEvent->Notify) {
+      if (iEvent->Notify && iEvent->PrevTriggered != iEvent->Triggered) {
         cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
              << " executed at time: " << currentTime << endl;
         for (j=0; j<iEvent->NotifyProperties.size();j++) {
@@ -298,7 +309,7 @@ bool FGScript::RunScript(void)
                << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
-        iEvent->Notify = false; // Turn off notification so it won't repeat
+//        iEvent->Notify = false; // Turn off notification so it won't repeat
       }
 
       for (i=0; i<iEvent->SetValue.size(); i++) {

@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.3 2006/08/10 12:52:53 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.4 2006/08/25 21:46:15 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -155,7 +155,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.3 2006/08/10 12:52:53 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.4 2006/08/25 21:46:15 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +178,7 @@ public:
   bool LoadScript( string script );
 
   /** This function is called each pass through the executive Run() method IF
-      scripting is enabled. 
+      scripting is enabled.
       @return false if script should exit (i.e. if time limits are violated */
   bool RunScript(void);
 
@@ -199,6 +199,7 @@ private:
     FGCondition     *Condition;
     bool             Persistent;
     bool             Triggered;
+    bool             PrevTriggered;
     bool             Notify;
     double           Delay;
     double           StartTime;
@@ -217,6 +218,7 @@ private:
 
     event() {
       Triggered = false;
+      PrevTriggered = false;
       Persistent = false;
       Delay = 0.0;
       Notify = false;
@@ -226,12 +228,11 @@ private:
     }
   };
 
-  bool Scripted;
-
   string  ScriptName;
   double  StartTime;
   double  EndTime;
   vector <struct event> Events;
+  vector <double*> local_properties;
 
   FGFDMExec* FDMExec;
   FGState* State;
