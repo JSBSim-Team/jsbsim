@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.24 2006/08/01 16:59:32 dpculp Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.25 2006/08/27 18:40:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -165,7 +165,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.24 $
+    @version $Revision: 1.25 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -442,26 +442,26 @@ private:
 
   static FGPropertyManager *master;
 
-  FGModel*           FirstModel;
-  FGGroundCallback*  GroundCallback;
-  FGState*           State;
-  FGAtmosphere*      Atmosphere;
-  FGFCS*             FCS;
-  FGPropulsion*      Propulsion;
-  FGMassBalance*     MassBalance;
-  FGAerodynamics*    Aerodynamics;
-  FGInertial*        Inertial;
-  FGGroundReactions* GroundReactions;
-  FGAircraft*        Aircraft;
-  FGPropagate*       Propagate;
-  FGAuxiliary*       Auxiliary;
-  FGInput*           Input;
-  FGScript *Script;
+  FGModel*            FirstModel;
+  FGGroundCallback*   GroundCallback;
+  FGState*            State;
+  FGAtmosphere*       Atmosphere;
+  FGFCS*              FCS;
+  FGPropulsion*       Propulsion;
+  FGMassBalance*      MassBalance;
+  FGAerodynamics*     Aerodynamics;
+  FGInertial*         Inertial;
+  FGGroundReactions*  GroundReactions;
+  FGAircraft*         Aircraft;
+  FGPropagate*        Propagate;
+  FGAuxiliary*        Auxiliary;
+  FGInput*            Input;
+  FGScript*           Script;
   FGInitialCondition* IC;
-  FGTrim *Trim;
+  FGTrim*             Trim;
 
   FGPropertyManager* Root;
-  FGPropertyManager *instance;
+  FGPropertyManager* instance;
 
   vector <string> PropertyCatalog;
   vector <FGOutput*> Outputs;

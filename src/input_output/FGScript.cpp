@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.10 2006/08/25 21:46:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.11 2006/08/27 18:40:29 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,6 +84,14 @@ FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
 
 FGScript::~FGScript()
 {
+  int i;
+  for (i=0; i<local_properties.size(); i++)
+    PropertyManager->Untie(local_properties[i]->title);
+  
+  for (i=0; i<local_properties.size(); i++)
+    delete local_properties[i];
+
+  local_properties.clear();
   Debug(1);
 }
 
@@ -92,7 +100,7 @@ FGScript::~FGScript()
 bool FGScript::LoadScript( string script )
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
-  string notifyPropertyName="", local_property_string = "";
+  string notifyPropertyName="";
   Element *document=0, *element=0, *run_element=0, *event_element=0;
   Element *condition_element=0, *set_element=0, *delay_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
@@ -155,11 +163,13 @@ bool FGScript::LoadScript( string script )
   dt        = run_element->GetAttributeValueAsNumber("dt");
   State->Setdt(dt);
 
+  // Read local property declarations
   property_element = run_element->FindElement("property");
   while (property_element) {
-    local_properties.push_back(new double(0));
-    local_property_string = property_element->GetDataLine();
-    PropertyManager->Tie(local_property_string, local_properties.back());
+    LocalProps *localProp = new LocalProps();
+    localProp->title = property_element->GetDataLine();
+    local_properties.push_back(localProp);
+    PropertyManager->Tie(localProp->title, (local_properties.back())->value);
     property_element = run_element->FindNextElement("property");
   }
 
@@ -309,7 +319,6 @@ bool FGScript::RunScript(void)
                << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
-//        iEvent->Notify = false; // Turn off notification so it won't repeat
       }
 
       for (i=0; i<iEvent->SetValue.size(); i++) {

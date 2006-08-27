@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.4 2006/08/25 21:46:15 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.5 2006/08/27 18:40:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -155,7 +155,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.4 2006/08/25 21:46:15 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.5 2006/08/27 18:40:29 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,11 +228,20 @@ private:
     }
   };
 
+  struct LocalProps {
+    double *value;
+    string title;
+    LocalProps() {
+      value = new double(0.0);
+      title = "";
+    }
+  };
+
   string  ScriptName;
   double  StartTime;
   double  EndTime;
   vector <struct event> Events;
-  vector <double*> local_properties;
+  vector <LocalProps*> local_properties;
 
   FGFDMExec* FDMExec;
   FGState* State;
