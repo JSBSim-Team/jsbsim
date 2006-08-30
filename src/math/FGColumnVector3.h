@@ -4,6 +4,25 @@ Header: FGColumnVector3.h
 Author: Originally by Tony Peden [formatted and adapted here by Jon Berndt]
 Date started: Unknown
 
+ ------------- Copyright (C) 2001 by Tony Peden and Jon S. Berndt (jsb@hal-pc.org)
+
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU Lesser General Public License as published by the Free Software
+ Foundation; either version 2 of the License, or (at your option) any later
+ version.
+
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ details.
+
+ You should have received a copy of the GNU Lesser General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ Place - Suite 330, Boston, MA  02111-1307, USA.
+
+ Further information about the GNU Lesser General Public License can also be found on
+ the world wide web at http://www.gnu.org.
+
 HISTORY
 --------------------------------------------------------------------------------
 ??/??/???? ??   Initial version and more.
@@ -65,7 +84,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +98,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.3 2005/09/12 11:58:49 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
