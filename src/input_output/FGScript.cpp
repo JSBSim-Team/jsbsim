@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.12 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.13 2006/09/10 14:06:59 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,23 @@ bool FGScript::LoadScript( string script )
 
   ScriptName = document->GetAttributeValue("name");
 
+ // First, find "run" element and set delta T
+
+  run_element = document->FindElement("run");
+
+  if (!run_element) {
+    cerr << "No \"run\" element found in script." << endl;
+    return false;
+  }
+
+  // Set sim timing
+
+  StartTime = run_element->GetAttributeValueAsNumber("start");
+  State->Setsim_time(StartTime);
+  EndTime   = run_element->GetAttributeValueAsNumber("end");
+  dt        = run_element->GetAttributeValueAsNumber("dt");
+  State->Setdt(dt);
+
   // read aircraft and initialization files
 
   element = document->FindElement("use");
@@ -147,21 +164,6 @@ bool FGScript::LoadScript( string script )
     cerr << "No \"use\" directives in the script file." << endl;
     return false;
   }
-
-  run_element = document->FindElement("run");
-
-  if (!run_element) {
-    cerr << "No \"run\" element found in script." << endl;
-    return false;
-  }
-
-  // Set sim timing
-
-  StartTime = run_element->GetAttributeValueAsNumber("start");
-  State->Setsim_time(StartTime);
-  EndTime   = run_element->GetAttributeValueAsNumber("end");
-  dt        = run_element->GetAttributeValueAsNumber("dt");
-  State->Setdt(dt);
 
   // Read local property declarations
   property_element = run_element->FindElement("property");

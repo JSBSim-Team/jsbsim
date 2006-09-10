@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.12 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.13 2006/09/10 14:06:59 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -658,7 +658,7 @@ bool FGOutput::Load(Element* element)
     property_element = document->FindNextElement("property");
   }
 
-  OutRate = OutRate>120?120:(OutRate<0?0:OutRate);
+  OutRate = OutRate>1000?1000:(OutRate<0?0:OutRate);
   rate = (int)(0.5 + 1.0/(State->Getdt()*OutRate));
 
   Debug(2);
@@ -708,7 +708,7 @@ void FGOutput::Debug(int from)
       }
       switch (Type) {
       case otCSV:
-        cout << scratch << " in CSV format output at rate " << 120/rate << " Hz" << endl;
+        cout << scratch << " in CSV format output at rate " << 1/(State->Getdt()*rate) << " Hz" << endl;
         break;
       case otNone:
         cout << "  No log output" << endl;
