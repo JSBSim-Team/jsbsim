@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.8 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.9 2006/09/10 14:55:55 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -258,7 +258,11 @@ string FGAerodynamics::GetCoefficientStrings(string delimeter)
 
   for (axis = 0; axis < 6; axis++) {
     for (sd = 0; sd < Coeff[axis].size(); sd++) {
-      CoeffStrings += delimeter;
+      if (firstime) {
+        firstime = false;
+      } else {
+        CoeffStrings += delimeter;
+      }
       CoeffStrings += Coeff[axis][sd]->GetName();
     }
   }
@@ -284,7 +288,11 @@ string FGAerodynamics::GetCoefficientValues(string delimeter)
 
   for (unsigned int axis = 0; axis < 6; axis++) {
     for (unsigned int sd = 0; sd < Coeff[axis].size(); sd++) {
-      SDValues += delimeter;
+      if (firstime) {
+        firstime = false;
+      } else {
+        SDValues += delimeter;
+      }
       SDValues += Coeff[axis][sd]->GetValueAsString();
     }
   }
