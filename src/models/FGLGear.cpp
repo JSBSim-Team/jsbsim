@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.19 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.20 2006/09/13 12:48:38 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,8 +315,8 @@ FGColumnVector3& FGLGear::Force(void)
     double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
     In = vForce;
-    vForce(eX) = (0.25)*(In(eX) + prevIn(eX)) + (0.50)*prevOut(eX);
-    vForce(eY) = (0.15)*(In(eY) + prevIn(eY)) + (0.70)*prevOut(eY);
+//    vForce(eX) = (0.25)*(In(eX) + prevIn(eX)) + (0.50)*prevOut(eX);
+//    vForce(eY) = (0.15)*(In(eY) + prevIn(eY)) + (0.70)*prevOut(eY);
     prevOut = vForce;
     prevIn = In;
 
