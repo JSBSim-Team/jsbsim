@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.5 2006/09/13 03:56:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.5 2006/09/13 03:56:27 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,7 +156,9 @@ private:
   FGColumnVector3 vVel;
   FGColumnVector3 vPQRdot;
   FGColumnVector3 vUVWdot;
-
+  FGColumnVector3 vLocationDot;
+  FGQuaternion vQtrndot;
+  
   double RunwayRadius, SeaLevelRadius;
 
   void Debug(int from);

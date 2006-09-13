@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.7 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.8 2006/09/13 03:56:27 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,7 @@ CLASS IMPLEMENTATION
 FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPropagate";
+//  vQtrndot.zero();
 
   bind();
   Debug(0);
@@ -211,9 +212,11 @@ bool FGPropagate::Run(void)
   // First compute the time derivatives of the vehicle state values:
 
   // Compute body frame rotational accelerations based on the current body moments
+  FGColumnVector3 last_vPQRdot = vPQRdot;
   vPQRdot = Jinv*(vMoments - pqri*(J*pqri));
 
   // Compute body frame accelerations based on the current body forces
+  FGColumnVector3 last_vUVWdot = vUVWdot; // new
   vUVWdot = VState.vUVW*VState.vPQR + vForces/mass;
 
   // Coriolis acceleration.
@@ -231,21 +234,25 @@ bool FGPropagate::Run(void)
   vUVWdot += Tl2b*gAccel;
 
   // Compute vehicle velocity wrt EC frame, expressed in EC frame
-  FGColumnVector3 vLocationDot = Tl2ec * vVel;
+  FGColumnVector3 last_vLocationDot = vLocationDot;
+  vLocationDot = Tl2ec * vVel;
 
   FGColumnVector3 omegaLocal( rInv*vVel(eEast),
                               -rInv*vVel(eNorth),
                               -rInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
   // Compute quaternion orientation derivative on current body rates
-  FGQuaternion vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*omegaLocal );
+  FGQuaternion last_vQtrndot = vQtrndot; // New
+  vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*omegaLocal );
 
   // Propagate velocities
-  VState.vPQR += dt*vPQRdot;
+  VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot);
+//  VState.vPQR += dt*vPQRdot;
   VState.vUVW += dt*vUVWdot;
 
   // Propagate positions
-  VState.vQtrn += dt*vQtrndot;
+  VState.vQtrn     += dt*(1.5*vQtrndot - 0.5*last_vQtrndot);
+//  VState.vQtrn     += dt*vQtrndot;
   VState.vLocation += dt*vLocationDot;
 
   return false;
