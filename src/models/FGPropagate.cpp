@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.9 2006/09/13 12:48:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.10 2006/09/14 03:35:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,24 +248,28 @@ bool FGPropagate::Run(void)
   // Integrate to propagate the state
 
   // Propagate rotational velocity
+
   VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot); // Adams-Bashforth
-//  VState.vPQR += dt*vPQRdot; // Rectangular Euler
-//  VState.vPQR += 0.5*dt*(vPQRdot + last_vPQRdot); // Trapezoidal
+  // VState.vPQR += dt*vPQRdot;                          // Rectangular Euler
+  // VState.vPQR += 0.5*dt*(vPQRdot + last_vPQRdot);     // Trapezoidal
 
   // Propagate translational velocity
+
   VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot); // Adams Bashforth
-//  VState.vUVW += dt*vUVWdot; // Rectangular Euler
-//  VState.vUVW += 0.5*dt*(vUVWdot + last_vUVWdot); // Trapezoidal
+  // VState.vUVW += dt*vUVWdot;                         // Rectangular Euler
+  // VState.vUVW += 0.5*dt*(vUVWdot + last_vUVWdot);    // Trapezoidal
 
   // Propagate angular position
+
   VState.vQtrn += dt*(1.5*vQtrndot - 0.5*last_vQtrndot); // Adams Bashforth
-//  VState.vQtrn += dt*vQtrndot; // Rectangular Euler
-//  VState.vQtrn += 0.5*dt*(vQtrndot + last_vQtrndot); // Trapezoidal
+  // VState.vQtrn += dt*vQtrndot;                           // Rectangular Euler
+  // VState.vQtrn += 0.5*dt*(vQtrndot + last_vQtrndot);     // Trapezoidal
 
   // Propagate translational position
-//  VState.vLocation += dt*(1.5*vLocationDot + 0.5*last_vLocationDot); // Adams Bashforth
-//  VState.vLocation += dt*vLocationDot; // Rectangular Euler
-  VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot); // Trapezoidal
+
+  VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot); // Adams Bashforth
+  // VState.vLocation += dt*vLocationDot;                               // Rectangular Euler
+  // VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);     // Trapezoidal
 
   return false;
 }
