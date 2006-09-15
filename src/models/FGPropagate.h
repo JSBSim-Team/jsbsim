@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.5 2006/09/13 03:56:27 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.6 2006/09/15 12:01:26 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.5 2006/09/13 03:56:27 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.6 2006/09/15 12:01:26 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,10 +154,10 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
-  FGColumnVector3 vPQRdot;
-  FGColumnVector3 vUVWdot;
-  FGColumnVector3 vLocationDot;
-  FGQuaternion vQtrndot;
+  FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot;
+  FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
+  FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;
+  FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
   
   double RunwayRadius, SeaLevelRadius;
 

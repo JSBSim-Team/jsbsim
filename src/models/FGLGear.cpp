@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.20 2006/09/13 12:48:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.21 2006/09/15 12:01:26 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,13 +310,16 @@ FGColumnVector3& FGLGear::Force(void)
 
     // Lag and attenuate the XY-plane forces dependent on velocity
 
-    double RFRV = 0.015; // Rolling force relaxation velocity
+//    double RFRV = 0.015; // Rolling force relaxation velocity
+    double RFRV = 0.25; // Rolling force relaxation velocity
     double SFRV = 0.25;  // Side force relaxation velocity
     double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
     In = vForce;
 //    vForce(eX) = (0.25)*(In(eX) + prevIn(eX)) + (0.50)*prevOut(eX);
 //    vForce(eY) = (0.15)*(In(eY) + prevIn(eY)) + (0.70)*prevOut(eY);
+    vForce(eX) = (0.40)*In(eX) + (0.60)*prevOut(eX);
+    vForce(eY) = (0.30)*In(eY) + (0.70)*prevOut(eY);
     prevOut = vForce;
     prevIn = In;
 
@@ -377,7 +380,8 @@ void FGLGear::ComputeSlipAngle(void)
     WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
   }
   slipIn = WheelSlip;
-  WheelSlip = (0.46)*(slipIn + last_SlipIn) + (0.08)*last_WheelSlip;
+  WheelSlip = (0.50)*slipIn + (0.50)*last_WheelSlip;
+//  WheelSlip = (0.46)*(slipIn + last_SlipIn) + (0.08)*last_WheelSlip;
   last_WheelSlip = WheelSlip;
   last_SlipIn = slipIn;
 }

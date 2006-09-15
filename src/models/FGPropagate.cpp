@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.10 2006/09/14 03:35:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.11 2006/09/15 12:01:26 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,11 +212,9 @@ bool FGPropagate::Run(void)
   // First compute the time derivatives of the vehicle state values:
 
   // Compute body frame rotational accelerations based on the current body moments
-  FGColumnVector3 last_vPQRdot = vPQRdot;
   vPQRdot = Jinv*(vMoments - pqri*(J*pqri));
 
   // Compute body frame accelerations based on the current body forces
-  FGColumnVector3 last_vUVWdot = vUVWdot; // new
   vUVWdot = VState.vUVW*VState.vPQR + vForces/mass;
 
   // Coriolis acceleration.
@@ -234,7 +232,6 @@ bool FGPropagate::Run(void)
   vUVWdot += Tl2b*gAccel;
 
   // Compute vehicle velocity wrt EC frame, expressed in EC frame
-  FGColumnVector3 last_vLocationDot = vLocationDot;
   vLocationDot = Tl2ec * vVel;
 
   FGColumnVector3 omegaLocal( rInv*vVel(eEast),
@@ -242,34 +239,51 @@ bool FGPropagate::Run(void)
                               -rInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
   // Compute quaternion orientation derivative on current body rates
-  FGQuaternion last_vQtrndot = vQtrndot;
   vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*omegaLocal );
 
   // Integrate to propagate the state
 
   // Propagate rotational velocity
 
-  VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot); // Adams-Bashforth
+  // VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot); // Adams-Bashforth
+  VState.vPQR += (1/12.0)*dt*(23.0*vPQRdot - 16.0*last_vPQRdot + 5.0*last2_vPQRdot); // Adams-Bashforth 3
   // VState.vPQR += dt*vPQRdot;                          // Rectangular Euler
   // VState.vPQR += 0.5*dt*(vPQRdot + last_vPQRdot);     // Trapezoidal
 
   // Propagate translational velocity
 
-  VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot); // Adams Bashforth
+  // VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot); // Adams Bashforth
+  VState.vUVW += (1/12.0)*dt*(23.0*vUVWdot - 16.0*last_vUVWdot + 5.0*last2_vUVWdot); // Adams-Bashforth 3
   // VState.vUVW += dt*vUVWdot;                         // Rectangular Euler
   // VState.vUVW += 0.5*dt*(vUVWdot + last_vUVWdot);    // Trapezoidal
 
   // Propagate angular position
 
-  VState.vQtrn += dt*(1.5*vQtrndot - 0.5*last_vQtrndot); // Adams Bashforth
+  // VState.vQtrn += dt*(1.5*vQtrndot - 0.5*last_vQtrndot); // Adams Bashforth
+  VState.vQtrn += (1/12.0)*dt*(23.0*vQtrndot - 16.0*last_vQtrndot + 5.0*last2_vQtrndot); // Adams-Bashforth 3
   // VState.vQtrn += dt*vQtrndot;                           // Rectangular Euler
   // VState.vQtrn += 0.5*dt*(vQtrndot + last_vQtrndot);     // Trapezoidal
 
   // Propagate translational position
 
-  VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot); // Adams Bashforth
+  // VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot); // Adams Bashforth
+  VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot); // Adams-Bashforth 3
   // VState.vLocation += dt*vLocationDot;                               // Rectangular Euler
   // VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);     // Trapezoidal
+
+  // Set past values
+  
+  last2_vPQRdot = last_vPQRdot;
+  last_vPQRdot = vPQRdot;
+  
+  last2_vUVWdot = last_vUVWdot;
+  last_vUVWdot = vUVWdot;
+  
+  last2_vQtrndot = last_vQtrndot;
+  last_vQtrndot = vQtrndot;
+
+  last2_vLocationDot = last_vLocationDot;
+  last_vLocationDot = vLocationDot;
 
   return false;
 }
