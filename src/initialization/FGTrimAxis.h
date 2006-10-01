@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.3 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_TRIMAXIS "$Id: FGTrimAxis.h,v 1.4 2006/10/01 22:47:47 jberndt Exp $"
 
 #define DEFAULT_TOLERANCE 0.001
 
@@ -89,12 +89,20 @@ enum Control { tThrottle, tBeta, tAlpha, tElevator, tAileron, tRudder, tAltAGL,
 class FGTrimAxis : public FGJSBBase
 {
 public:
+  /**  Constructor for Trim Axis class.
+       @param fdmex FGFDMExec pointer
+       @param IC pointer to initial conditions instance
+       @param state a State type (enum)
+       @param control a Control type (enum) */
   FGTrimAxis(FGFDMExec* fdmex, 
-             FGInitialCondition *ic, 
-             State st,
-             Control ctrl );
+             FGInitialCondition *IC, 
+             State state,
+             Control control );
+  /// Destructor
   ~FGTrimAxis();
 
+  /** This function iterates through a call to the FGFDMExec::RunIC() 
+      function until the desired trimming condition falls inside a tolerance.*/
   void Run(void);
  
   double GetState(void) { getState(); return state_value; }
