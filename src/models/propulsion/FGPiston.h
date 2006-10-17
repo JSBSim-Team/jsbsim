@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.5 2006/10/17 01:44:57 dpculp Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $
+    @version $Id: FGPiston.h,v 1.5 2006/10/17 01:44:57 dpculp Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,6 +210,7 @@ private:
   double MaxHP;                    // horsepower
   double Cycles;                   // cycles/power stroke
   double IdleRPM;                  // revolutions per minute
+  double StarterHP;                // initial horsepower of starter motor 
   int BoostSpeeds;	// Number of super/turbocharger boost speeds - zero implies no turbo/supercharging.
   int BoostSpeed;	// The current boost-speed (zero-based).
   bool Boosted;		// Set true for boosted engine.

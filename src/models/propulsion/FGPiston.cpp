@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.6 2006/08/30 12:04:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.7 2006/10/17 01:44:57 dpculp Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,6 +198,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   }
   minMAP = MinManifoldPressure_inHg * 3386.38;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * 3386.38;
+  StarterHP = sqrt(MaxHP) * 0.2;
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -576,14 +577,12 @@ void FGPiston::doEnginePower(void)
     // Power output when the engine is not running
     if (Cranking) {
       if (RPM < 10) {
-        HP = 3.0;   // This is a hack to prevent overshooting the idle rpm in
-                    // the first time step. It may possibly need to be changed
-                    // if the prop model is changed.
+        HP = StarterHP;
       } else if (RPM < 480) {
-        HP = 3.0 + ((480 - RPM) / 10.0);
+        HP = StarterHP + ((480 - RPM) / 10.0);
         // This is a guess - would be nice to find a proper starter moter torque curve
       } else {
-        HP = 3.0;
+        HP = StarterHP;
       }
     } else {
       // Quick hack until we port the FMEP stuff
