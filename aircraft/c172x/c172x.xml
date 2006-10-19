@@ -5,8 +5,12 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
     <fileheader>
         <author>Tony Peden</author>
+        <license>
+            <licenseName>GPL</licenseName>
+            <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
+        </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.60 $</version>
+        <version>$Revision: 1.61 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
