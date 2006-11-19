@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.18 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.19 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -182,8 +182,15 @@
           <xs:element name="email" type="xs:string"><xs:annotation><xs:documentation>The contact email address for an author (optional).</xs:documentation></xs:annotation></xs:element>
           <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
         </xs:choice>
-        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initialy created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.18 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="license" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This is an optional field for a license name and URL.</xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:attribute name="licenseName" type="xs:string"><xs:annotation><xs:documentation>The name of the license, e.g. "GPL".</xs:documentation></xs:annotation></xs:attribute>
+            <xs:attribute name="licenseURL" type="xs:anyURI"><xs:annotation><xs:documentation>The URL where the license can be found.</xs:documentation></xs:annotation></xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="sensitivity" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This field stores the sensitivity classification, such as "classified", "secret", "proprietary", etc.</xs:documentation></xs:annotation></xs:element>        
+        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initially created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.19 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -951,7 +958,19 @@
         <xs:element ref="brake_group" minOccurs="0"/>
         <xs:element ref="retractable" minOccurs="0"/>
 
+        <xs:element name="relaxation_velocity" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:sequence>
+                <xs:element name="rolling"><xs:complexType><xs:attribute name="unit" default="FT/SEC" use="optional"/></xs:complexType></xs:element>
+                <xs:element name="side"><xs:complexType><xs:attribute name="unit" default="FT/SEC" use="optional"/></xs:complexType></xs:element>
+              </xs:sequence>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        
       </xs:all>
+
       <xs:attribute name="name" use="required" type="xs:string"/>
       <xs:attribute  name="type" use="required">
         <xs:simpleType>

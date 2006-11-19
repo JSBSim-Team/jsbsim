@@ -11,6 +11,16 @@
                 <font face="Arial" size="3" color="224488"><b><xsl:value-of select="@name"/></b></font><br/>
                 <font face="Arial" size="2">Configuration File Version: <xsl:value-of select="@version"/></font><br/>
                 <font face="Arial" size="2">Release level: <xsl:value-of select="@release"/></font><br/>
+                <xsl:if test="fileheader/license/licenseName">
+                    <xsl:if test="fileheader/license/licenseURL">
+                        <xsl:variable name="licenseURL" select="fileheader/license/licenseURL"/>
+                        <font face="Arial" size="2">License: 
+                        <a href="{$licenseURL}">
+                        <xsl:value-of select="fileheader/license/licenseName"/>
+                        </a>
+                        </font><br/>
+                     </xsl:if>   
+                </xsl:if>
                 <hr width="100%"/><font face="Arial" size="2">
                 <xsl:if test="fileheader">[<a href="#fileheader">File Information</a>] </xsl:if>
                 <xsl:if test="metrics">[<a href="#metrics">Metrics</a>] </xsl:if>
