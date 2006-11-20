@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.19 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.20 2006/11/20 13:59:49 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -455,9 +455,8 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 bool FGFCS::Load(Element* el)
 {
   string name, file, fname, interface_property_string;
-  unsigned i;
   vector <FGFCSComponent*> *Components;
-  Element *FCS_cfg, *document, *component_element, *property_element, *sensor_element;
+  Element *document, *component_element, *property_element, *sensor_element;
   Element *channel_element;
   ifstream* controls_file = new ifstream();
   FGXMLParse controls_file_parser;
@@ -651,7 +650,7 @@ void FGFCS::AddThrottle(void)
   PropFeatherCmd.push_back(false);
   PropFeather.push_back(false);
 
-  unsigned int num = ThrottleCmd.size()-1;
+  unsigned int num = (unsigned int)ThrottleCmd.size()-1;
   bindThrottle(num);
 }
 

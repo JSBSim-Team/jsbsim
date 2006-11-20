@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.12 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.13 2006/11/20 13:59:49 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,7 +134,7 @@ Element::Element(string nm)
 
 Element::~Element(void)
 {
-  for (int i=0; i<children.size(); i++) delete children[i];
+  for (unsigned int i=0; i<children.size(); i++) delete children[i];
   data_lines.clear();
   attributes.clear();
   attribute_key.clear();
@@ -145,7 +145,7 @@ Element::~Element(void)
 string Element::GetAttributeValue(string attr)
 {
   int select=-1;
-  for (int i=0; i<attribute_key.size(); i++) {
+  for (unsigned int i=0; i<attribute_key.size(); i++) {
     if (attribute_key[i] == attr) select = i;
   }
   if (select < 0) return string("");
@@ -164,7 +164,7 @@ double Element::GetAttributeValueAsNumber(string attr)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Element* Element::GetElement(int el)
+Element* Element::GetElement(unsigned int el)
 {
   if (children.size() > el) {
     element_index = el;
@@ -191,7 +191,7 @@ Element* Element::GetNextElement(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string Element::GetDataLine(int i)
+string Element::GetDataLine(unsigned int i)
 {
   if (data_lines.size() > 0) return data_lines[i];
   else return string("");
@@ -204,15 +204,16 @@ double Element::GetDataAsNumber(void)
   if (data_lines.size() == 1) {
     return atof(data_lines[0].c_str());
   } else {
-    return 99e99;
+    cerr << "Attempting to get single data value from multiple lines" << endl;
+    return 0;
   }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int Element::GetNumElements(string element_name)
+unsigned int Element::GetNumElements(string element_name)
 {
-  int number_of_elements=0;
+  unsigned int number_of_elements=0;
   Element* el=FindElement(element_name);
   while (el) {
     number_of_elements++;
@@ -229,7 +230,7 @@ Element* Element::FindElement(string el)
     element_index = 1;
     return children[0];
   }
-  for (int i=0; i<children.size(); i++) {
+  for (unsigned int i=0; i<children.size(); i++) {
     if (el == children[i]->GetName()) {
       element_index = i+1;
       return children[i];
@@ -251,7 +252,7 @@ Element* Element::FindNextElement(string el)
       return 0L;
     }
   }
-  for (int i=element_index; i<children.size(); i++) {
+  for (unsigned int i=element_index; i<children.size(); i++) {
     if (el == children[i]->GetName()) {
       element_index = i+1;
       return children[i];
@@ -269,7 +270,8 @@ double Element::FindElementValueAsNumber(string el)
   if (element) {
     return element->GetDataAsNumber();
   } else {
-    return 99e99;
+    cerr << "Attempting to get single data value from multiple lines" << endl;
+    return 0;
   }
 }
 
@@ -312,7 +314,8 @@ double Element::FindElementValueAsNumberConvertTo(string el, string target_units
        }
      }
   } else {
-    return 99e99;
+    cerr << "Attempting to get get non-existent element " << el << endl;
+    return 0;
   }
   return value;
 }
@@ -344,7 +347,8 @@ double Element::FindElementValueAsNumberConvertFromTo( string el,
        }
      }
   } else {
-    return 99e99;
+    cerr << "Attempting to get get non-existent element " << el << endl;
+    return 0;
   }
   return value;
 }
@@ -396,9 +400,9 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void Element::Print(int level)
+void Element::Print(unsigned int level)
 {
-  int i, spaces;
+  unsigned int i, spaces;
 
   level+=2;
   for (spaces=0; spaces<=level; spaces++) cout << " "; // format output
@@ -428,7 +432,7 @@ void Element::AddAttribute(string name, string value)
 
 void Element::AddData(string d)
 {
-  int string_start = d.find_first_not_of(" \t");
+  unsigned int string_start = (unsigned int)d.find_first_not_of(" \t");
   if (string_start > 0) {
     d.erase(0,string_start);
   }

@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.6 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.7 2006/11/20 13:59:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,8 @@ typedef enum { setwned, setwmd, setwhc } windset;
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Takes a set of initial conditions and provide a kinematically consistent set
+/** Initializes the simulation run.
+    Takes a set of initial conditions (IC) and provide a kinematically consistent set
     of body axis velocity components, euler angles, and altitude.  This class
     does not attempt to trim the model i.e. the sim will most likely start in a
     very dynamic state (unless, of course, you have chosen your IC's wisely, or
@@ -191,7 +192,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.6 2006/08/30 12:04:33 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.7 2006/11/20 13:59:49 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

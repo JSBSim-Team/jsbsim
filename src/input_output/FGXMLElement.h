@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.7 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.8 2006/11/20 13:59:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -147,7 +147,7 @@ CLASS DOCUMENTATION
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.7 2006/08/30 12:04:33 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.8 2006/11/20 13:59:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,16 +183,16 @@ public:
       @param i the index of the data line to return (0 by default).
       @return a string representing the data line requested, or the empty string
               if none exists.*/
-  string GetDataLine(int i=0);
+  string GetDataLine(unsigned int i=0);
 
   /// Returns the number of lines of data stored
-  int GetNumDataLines(void) {return data_lines.size();}
+  unsigned int GetNumDataLines(void) {return (unsigned int)data_lines.size();}
 
   /// Returns the number of child elements for this element.
-  int GetNumElements(void) {return children.size();}
+  unsigned int GetNumElements(void) {return (unsigned int)children.size();}
 
   /// Returns the number of named child elements for this element.
-  int GetNumElements(string);
+  unsigned int GetNumElements(string);
 
   /** Converts the element data to a number.
       This function attempts to convert the first (and presumably only) line of
@@ -208,7 +208,7 @@ public:
       GetNextElement() will return NULL.
       @param el the index of the requested element (0 by default)
       @return a pointer to the Element, or 0 if no valid element exists. */
-  Element* GetElement(int el=0);
+  Element* GetElement(unsigned int el=0);
 
   /** Returns a pointer to the next element in the list.
       The function GetElement() must be called first to be sure that this
@@ -333,7 +333,7 @@ public:
   /** Prints the element.
   *   Prints this element and calls the Print routine for child elements.
   *   @param d The tab level. A level corresponds to a single space. */
-  void Print(int level=0);
+  void Print(unsigned int level=0);
 
 private:
   string name;
@@ -342,7 +342,7 @@ private:
   vector <Element*> children;
   vector <string> attribute_key;
   Element *parent;
-  int element_index;
+  unsigned int element_index;
   typedef map <string, map <string, double> > tMapConvert;
   tMapConvert convert;
 };

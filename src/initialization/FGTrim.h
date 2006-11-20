@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TRIM "$Id: FGTrim.h,v 1.4 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_TRIM "$Id: FGTrim.h,v 1.5 2006/11/20 13:59:49 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -79,7 +79,7 @@ typedef enum { tLongitudinal=0, tFull, tGround, tPullup,
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** FGTrim -- the trimming routine for JSBSim.
+/** The trimming routine for JSBSim.
     FGTrim finds the aircraft attitude and control settings needed to maintain
     the steady state described by the FGInitialCondition object .  It does this
     iteratively by assigning a control to each state and adjusting that control
@@ -122,8 +122,9 @@ CLASS DOCUMENTATION
     }
     fgt.Report();
     @endcode
+    
     @author Tony Peden
-    @version "$Id: FGTrim.h,v 1.4 2006/08/30 12:04:33 jberndt Exp $"
+    @version "$Id: FGTrim.h,v 1.5 2006/11/20 13:59:49 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

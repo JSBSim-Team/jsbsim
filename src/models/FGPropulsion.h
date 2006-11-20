@@ -65,7 +65,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.9 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.10 2006/11/20 13:59:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.9 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.10 2006/11/20 13:59:49 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -119,7 +119,7 @@ public:
   bool Load(Element* el);
 
   /// Retrieves the number of engines defined for the aircraft.
-  inline unsigned int GetNumEngines(void) const {return Engines.size();}
+  inline unsigned int GetNumEngines(void) const {return (unsigned int)Engines.size();}
 
   /** Retrieves an engine object pointer from the list of engines.
       @param index the engine index within the vector container
@@ -130,7 +130,7 @@ public:
                       else                           return 0L;      }
 
   /// Retrieves the number of tanks defined for the aircraft.
-  inline unsigned int GetNumTanks(void) const {return Tanks.size();}
+  inline unsigned int GetNumTanks(void) const {return (unsigned int)Tanks.size();}
 
   /** Retrieves a tank object pointer from the list of tanks.
       @param index the tank index within the vector container

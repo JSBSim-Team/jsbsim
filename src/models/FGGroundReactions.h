@@ -54,7 +54,7 @@ INCLUDES
 #include <math/FGColumnVector3.h>
 #include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.6 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.7 2006/11/20 13:59:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ public:
   string GetGroundReactionValues(string delimeter);
   bool GetWOW(void);
 
-  inline int GetNumGearUnits(void) const { return lGear.size(); }
+  int GetNumGearUnits(void) const { return lGear.size(); }
 
   /** Gets a gear instance
       @param gear index of gear instance
@@ -103,8 +103,6 @@ private:
   vector <FGLGear> lGear;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
-  FGColumnVector3 vMaxStaticGrip;
-  FGColumnVector3 vMaxMomentResist;
 
   void Debug(int from);
 };

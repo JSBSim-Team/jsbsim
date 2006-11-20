@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.3 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.4 2006/11/20 13:59:49 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -78,7 +78,7 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
     conditions.push_back(FGCondition(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
-  for (int i=0; i<element->GetNumDataLines(); i++) {
+  for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
     conditions.push_back(FGCondition(data, PropertyManager));
   }
@@ -94,7 +94,6 @@ FGCondition::FGCondition(string test, FGPropertyManager* PropertyManager) :
   PropertyManager(PropertyManager), isGroup(false)
 {
   string property1, property2, compare_string;
-  Element* condition_element;
 
   InitializeConditionals();
 
@@ -104,7 +103,7 @@ FGCondition::FGCondition(string test, FGPropertyManager* PropertyManager) :
   Logic       = elUndef;
   conditions.clear();
 
-  int start = 0, end = 0;
+  unsigned int start = 0, end = 0;
   start = test.find_first_not_of(" ");
   end = test.find_first_of(" ", start+1);
   property1 = test.substr(start,end-start);

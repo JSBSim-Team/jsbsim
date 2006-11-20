@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.3 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.4 2006/11/20 13:59:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
     /// Constructor
     FGPropertyManager(void) {suppress_warning = false;}
     /// Destructor
-    ~FGPropertyManager(void) {}
+    virtual ~FGPropertyManager(void) {}
 
     /** Property-ify a name
      *  replaces spaces with '-' and, optionally, makes name all lower case
