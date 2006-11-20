@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.21 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.22 2006/11/20 14:06:11 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -80,7 +80,7 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** \mainpage JSBSim
- * The Open Source, Object-Oriented, Cross-Platform Flight Dynamics Model in C++
+ * An Open Source, Object-Oriented, Cross-Platform Flight Dynamics Model in C++
 
  * \section intro Introduction
  *
@@ -169,7 +169,7 @@ CLASS DOCUMENTATION
  *
  * \section license Licensing
  *
- * JSBSim is licensed under the terms of the GPL
+ * JSBSim is licensed under the terms of the Lesser GPL (LGPL)
  *
  * \section website Website
  *
@@ -207,17 +207,6 @@ int main(int argc, char* argv[])
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetAircraftPath(RootDir + "aircraft");
   FDMExec->SetEnginePath(RootDir + "engine");
-
-  // Load output directives file, if given
-  // This overrides the first output file defined in an aircraft config file
-  // (if any).
-  if (!LogDirectiveName.empty()) {
-    if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
-      cout << "Output directives not properly set" << endl;
-      delete FDMExec;
-      exit(0);
-    }
-  }
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
@@ -262,6 +251,17 @@ int main(int argc, char* argv[])
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     exit(-1);
+  }
+
+  // Load output directives file, if given
+  // This overrides the first output file defined in an aircraft config file
+  // (if any).
+  if (!LogDirectiveName.empty()) {
+    if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
+      cout << "Output directives not properly set" << endl;
+      delete FDMExec;
+      exit(0);
+    }
   }
 
   // OVERRIDE OUTPUT FILE NAME. THIS IS USEFUL FOR CASES WHERE MULTIPLE

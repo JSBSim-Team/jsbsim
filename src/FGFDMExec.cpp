@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.28 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.29 2006/11/20 14:06:11 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -761,11 +761,13 @@ bool FGFDMExec::SetOutputDirectives(string fname)
     FGOutput* Output = new FGOutput(this);
     Output->InitModel();
     Schedule(Output,       1);
+    Output->SetDirectivesFile(fname);
+    Output->Load(0);
     Outputs.push_back(Output);
   } else { // Outputs > 1
     cerr << "First output file being overridden" << endl;
+    Outputs[0]->SetDirectivesFile(fname);
   }
-  Outputs[0]->SetDirectivesFile(fname);
   return result;
 }
 
