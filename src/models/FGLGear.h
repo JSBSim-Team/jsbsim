@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.12 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.13 2006/11/20 14:07:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.12 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.13 2006/11/20 14:07:00 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -264,10 +264,9 @@ private:
   FGColumnVector3 last_vForce; // remove this
   FGColumnVector3 vLocalForce;
   FGColumnVector3 vWhlVelVec;     // Velocity of this wheel (Local)
-  FGColumnVector3 In;
-  FGColumnVector3 prevIn;
   FGColumnVector3 prevOut;
   FGTable *ForceY_Table;
+  double dT;
   double SteerAngle;
   double kSpring;
   double bDamp;
@@ -289,8 +288,6 @@ private:
   double RollingForce, SideForce, FCoeff;
   double WheelSlip;
   double last_WheelSlip;
-  double slipIn;
-  double last_SlipIn;
   double TirePressureNorm;
   double SinWheel, CosWheel;
   bool WOW;
@@ -312,6 +309,11 @@ private:
   BrakeGroup eBrakeGrp;
   SteerType  eSteerType;
   double  maxSteerAngle;
+  double RFRV;  // Rolling force relaxation velocity
+  double SFRV;  // Side force relaxation velocity
+  double LongForceLagFilterCoeff; // Longitudinal Force Lag Filter Coefficient
+  double LatForceLagFilterCoeff; // Lateral Force Lag Filter Coefficient
+  double WheelSlipLagFilterCoeff; // Wheel slip angle lag filter coefficient
 
   FGFDMExec*     Exec;
   FGState*       State;

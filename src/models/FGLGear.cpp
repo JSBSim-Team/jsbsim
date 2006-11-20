@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.21 2006/09/15 12:01:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.22 2006/11/20 14:07:00 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,6 +135,39 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
          << sSteerType << " is undefined." << endl;
   }
 
+  RFRV = 0.25;  // Rolling force relaxation velocity, default value
+  SFRV = 0.25;  // Side force relaxation velocity, default value
+
+  Element* relax_vel = el->FindElement("relaxation_velocity");
+  if (relax_vel) {
+    if (relax_vel->FindElement("rolling")) {
+      RFRV = relax_vel->FindElementValueAsNumberConvertTo("rolling", "FT/SEC");
+    }
+    if (relax_vel->FindElement("side")) {
+      SFRV = relax_vel->FindElementValueAsNumberConvertTo("side", "FT/SEC");
+    }
+  }
+  
+  LongForceLagFilterCoeff = 48; // default longitudinal force filter coefficient
+  LatForceLagFilterCoeff  = 36; // default lateral force filter coefficient
+
+  Element* force_lag_filter_elem = el->FindElement("force_lag_filter");
+  if (force_lag_filter_elem) {
+    if (force_lag_filter_elem->FindElement("rolling")) {
+      LongForceLagFilterCoeff = force_lag_filter_elem->FindElementValueAsNumber("rolling");
+    }
+    if (force_lag_filter_elem->FindElement("side")) {
+      LatForceLagFilterCoeff = force_lag_filter_elem->FindElementValueAsNumber("side");
+    }
+  }
+
+  WheelSlipLagFilterCoeff = 60;
+
+  Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
+  if (wheel_slip_angle_lag_elem) {
+    WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->FindElementValueAsNumber("wheel_slip_filter");
+  }
+  
   GearUp = false;
   GearDown = true;
   Servicable = true;
@@ -169,7 +202,6 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   maxCompLen      = 0.0;
 
   WheelSlip = last_WheelSlip = 0.0;
-  slipIn = last_SlipIn = 0;
   TirePressureNorm = 1.0;
 
   Debug(0);
@@ -232,17 +264,18 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
   WheelSlip       = lgear.WheelSlip;
+  last_WheelSlip  = lgear.last_WheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
   ForceY_Table    = lgear.ForceY_Table;
   CosWheel        = lgear.CosWheel;
   SinWheel        = lgear.SinWheel;
-  In              = lgear.In;
-  prevIn          = lgear.prevIn;
   prevOut         = lgear.prevOut;
-  slipIn          = lgear.slipIn;
-  last_SlipIn     = lgear.last_SlipIn;
-  last_WheelSlip  = lgear.last_WheelSlip;
+  RFRV            = lgear.RFRV;
+  SFRV            = lgear.SFRV;
+  LongForceLagFilterCoeff = lgear.LongForceLagFilterCoeff;
+  LatForceLagFilterCoeff = lgear.LatForceLagFilterCoeff;
+  WheelSlipLagFilterCoeff = lgear.WheelSlipLagFilterCoeff;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,6 +292,7 @@ FGColumnVector3& FGLGear::Force(void)
   FGColumnVector3 normal, cvel;
   FGLocation contact, gearLoc;
   double t = Exec->GetState()->Getsim_time();
+  dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
   vForce.InitMatrix();
   vMoment.InitMatrix();
@@ -310,18 +344,15 @@ FGColumnVector3& FGLGear::Force(void)
 
     // Lag and attenuate the XY-plane forces dependent on velocity
 
-//    double RFRV = 0.015; // Rolling force relaxation velocity
-    double RFRV = 0.25; // Rolling force relaxation velocity
-    double SFRV = 0.25;  // Side force relaxation velocity
-    double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
+    double ca = dT*LongForceLagFilterCoeff;
+    double cb = 1 - ca;
+    vForce(eX) = ca*vForce(eX) + cb*prevOut(eX);
 
-    In = vForce;
-//    vForce(eX) = (0.25)*(In(eX) + prevIn(eX)) + (0.50)*prevOut(eX);
-//    vForce(eY) = (0.15)*(In(eY) + prevIn(eY)) + (0.70)*prevOut(eY);
-    vForce(eX) = (0.40)*In(eX) + (0.60)*prevOut(eX);
-    vForce(eY) = (0.30)*In(eY) + (0.70)*prevOut(eY);
+    ca = dT*LatForceLagFilterCoeff;
+    cb = 1 - ca;
+    vForce(eY) = ca*vForce(eY) + cb*prevOut(eY);
+
     prevOut = vForce;
-    prevIn = In;
 
     if (fabs(RollingWhlVel) <= RFRV) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
     if (fabs(SideWhlVel) <= SFRV) vForce(eY) *= fabs(SideWhlVel)/SFRV;
@@ -365,25 +396,23 @@ void FGLGear::ComputeRetractionState(void)
 
 void FGLGear::ComputeSlipAngle(void)
 {
-  double dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
-
   // Transform the wheel velocities from the local axis system to the wheel axis system.
-
   RollingWhlVel = vWhlVelVec(eX)*CosWheel + vWhlVelVec(eY)*SinWheel;
   SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
   // Calculate tire slip angle.
-
   if (fabs(RollingWhlVel) < 0.1 && fabs(SideWhlVel) < 0.01) {
     WheelSlip = -SteerAngle*radtodeg;
   } else {
     WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
   }
-  slipIn = WheelSlip;
-  WheelSlip = (0.50)*slipIn + (0.50)*last_WheelSlip;
-//  WheelSlip = (0.46)*(slipIn + last_SlipIn) + (0.08)*last_WheelSlip;
+
+  // Filter the wheel slip angle
+  
+  double ca = dT*WheelSlipLagFilterCoeff;
+  double cb = 1 - ca;
+  WheelSlip = ca*WheelSlip + cb*last_WheelSlip;
   last_WheelSlip = WheelSlip;
-  last_SlipIn = slipIn;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -674,6 +703,9 @@ void FGLGear::Debug(int from)
         cout << "      Grouping:         " << sBrakeGroup   << endl;
         cout << "      Max Steer Angle:  " << maxSteerAngle << endl;
         cout << "      Retractable:      " << isRetractable  << endl;
+        cout << "      Relaxation Velocities:" << endl;
+        cout << "        Rolling:          " << RFRV << endl;
+        cout << "        Side:             " << SFRV << endl;
       }
     }
   }
