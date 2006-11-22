@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.22 2006/11/20 14:07:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.23 2006/11/22 14:38:45 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,7 +165,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
 
   Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
   if (wheel_slip_angle_lag_elem) {
-    WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->FindElementValueAsNumber("wheel_slip_filter");
+    WheelSlipLagFilterCoeff = wheel_slip_angle_lag_elem->GetDataAsNumber();
   }
   
   GearUp = false;
