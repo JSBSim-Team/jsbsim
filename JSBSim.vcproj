@@ -785,6 +785,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\aircraft\F4N\F4N.xml"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
