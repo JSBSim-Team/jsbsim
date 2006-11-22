@@ -44,7 +44,6 @@ OUTPUT_DIRECTORY       = documentation
 OUTPUT_LANGUAGE        = English
 
 # If the EXTRACT_ALL tag is set to YES doxygen will assume all entities in
-# documentation are documented, even if no documentation was available.
 # Private class members and static file members will be hidden unless
 # the EXTRACT_PRIVATE and EXTRACT_STATIC tags are set to YES
 
@@ -66,14 +65,14 @@ EXTRACT_STATIC         = NO
 # various overviews, but no documentation section is generated.
 # This option has no effect if EXTRACT_ALL is enabled.
 
-HIDE_UNDOC_MEMBERS     = YES
+HIDE_UNDOC_MEMBERS     = NO
 
 # If the HIDE_UNDOC_CLASSES tag is set to YES, Doxygen will hide all
 # undocumented classes that are normally visible in the class hierarchy.
 # If set to NO (the default) these class will be included in the various
 # overviews. This option has no effect if EXTRACT_ALL is enabled.
 
-HIDE_UNDOC_CLASSES     = YES
+HIDE_UNDOC_CLASSES     = NO
 
 # If the BRIEF_MEMBER_DESC tag is set to YES (the default) Doxygen will
 # include brief member descriptions after the members that are listed in
@@ -88,7 +87,7 @@ SORT_BRIEF_DOCS        = YES
 # Note: if both HIDE_UNDOC_MEMBERS and BRIEF_MEMBER_DESC are set to NO, the
 # brief descriptions will be completely suppressed.
 
-REPEAT_BRIEF           = YES
+REPEAT_BRIEF           = NO
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # Doxygen will generate a detailed section even if there is only a brief
@@ -120,7 +119,7 @@ INTERNAL_DOCS          = NO
 # generate a class diagram (in Html and LaTeX) for classes with base or
 # super classes. Setting the tag to NO turns the diagrams off.
 
-CLASS_DIAGRAMS         = YES
+CLASS_DIAGRAMS         = NO
 
 # If the SOURCE_BROWSER tag is set to YES then a list of source files will
 # be generated. Documented entities will be cross-referenced with these sources.
@@ -150,7 +149,7 @@ CASE_SENSE_NAMES       = YES
 # will show members with their full class and namespace scopes in the
 # documentation. If set to YES the scope will be hidden.
 
-HIDE_SCOPE_NAMES       = NO
+HIDE_SCOPE_NAMES       = YES
 
 # If the VERBATIM_HEADERS tag is set to YES (the default) then Doxygen
 # will generate a verbatim copy of the header file for each class for
@@ -200,7 +199,7 @@ DISTRIBUTE_GROUP_DOC   = NO
 # The TAB_SIZE tag can be used to set the number of spaces in a tab.
 # Doxygen uses this value to replace tabs by spaces in code fragments.
 
-TAB_SIZE               = 8
+TAB_SIZE               = 2 
 
 # The ENABLE_SECTIONS tag can be used to enable conditional
 # documentation sections, marked by \if sectionname ... \endif.
@@ -382,7 +381,7 @@ ALPHABETICAL_INDEX     = YES
 # the COLS_IN_ALPHA_INDEX tag can be used to specify the number of columns
 # in which this list will be split (can be a number in the range [1..20])
 
-COLS_IN_ALPHA_INDEX    = 5
+COLS_IN_ALPHA_INDEX    = 4
 
 # In case all classes in a project start with a common prefix, all
 # classes will be put under the same header in the alphabetical index.
@@ -692,32 +691,32 @@ HAVE_DOT               = YES
 # indirect inheritance relations. Setting this tag to YES will force the
 # the CLASS_DIAGRAMS tag to NO.
 
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 
 # If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen
 # will generate a graph for each documented class showing the direct and
 # indirect implementation dependencies (inheritance, containment, and
 # class references variables) of the class with other documented classes.
 
-COLLABORATION_GRAPH    = YES
+COLLABORATION_GRAPH    = NO
 
 # If the ENABLE_PREPROCESSING, INCLUDE_GRAPH, and HAVE_DOT tags are set to
 # YES then doxygen will generate a graph for each documented file showing
 # the direct and indirect include dependencies of the file with other
 # documented files.
 
-INCLUDE_GRAPH          = YES
+INCLUDE_GRAPH          = NO
 
 # If the ENABLE_PREPROCESSING, INCLUDED_BY_GRAPH, and HAVE_DOT tags are set to
 # YES then doxygen will generate a graph for each documented header file showing
 # the documented files that directly or indirectly include this file
 
-INCLUDED_BY_GRAPH      = YES
+INCLUDED_BY_GRAPH      = NO
 
 # If the GRAPHICAL_HIERARCHY and HAVE_DOT tags are set to YES then doxygen
 # will graphical hierarchy of all classes instead of a textual one.
 
-GRAPHICAL_HIERARCHY    = YES
+GRAPHICAL_HIERARCHY    = NO
 
 # The tag DOT_PATH can be used to specify the path where the dot tool can be
 # found. If left blank, it is assumed the dot tool can be found on the path.
@@ -744,7 +743,7 @@ MAX_DOT_GRAPH_HEIGHT   = 600
 # generate a legend page explaining the meaning of the various boxes and
 # arrows in the dot generated graphs.
 
-GENERATE_LEGEND        = YES
+GENERATE_LEGEND        = NO
 
 # If the DOT_CLEANUP tag is set to YES (the default) Doxygen will
 # remove the intermedate dot files that are used to generate
