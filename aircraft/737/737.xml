@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="../../JSBSim.xsl"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSim.xsl"?>
 <fdm_config name="737" release="BETA" version="2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
@@ -67,6 +67,10 @@
             <max_steer unit="DEG"> 35 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">1.05</rolling>
+                <side unit="FT/SEC">1.05</side>
+            </relaxation_velocity>
         </contact>
         <contact name="LEFT_MLG" type="BOGEY">
             <location unit="IN">
@@ -82,6 +86,10 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">1.05</rolling>
+                <side unit="FT/SEC">1.05</side>
+            </relaxation_velocity>
         </contact>
         <contact name="RIGHT_MLG" type="BOGEY">
             <location unit="IN">
@@ -97,6 +105,10 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">1.05</rolling>
+                <side unit="FT/SEC">1.05</side>
+            </relaxation_velocity>
         </contact>
     </ground_reactions>
     <propulsion>

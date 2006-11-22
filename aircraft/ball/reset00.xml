@@ -4,18 +4,7 @@
     This file sets up the mk82 to start off
     from altitude.
   -->
-  UBODY    23976.6
-  VBODY        0.0
-  WBODY        0.0
-  LATITUDE     28.6
-  LONGITUDE  -80.5
-  PHI          0.0
-  THETA        0.0
-  PSI         90.0
-  ALTITUDE   918720.0
-  WINDDIR      0.0
-  VWIND        0.0
-  <ubody unit="FT/SEC"> 23976.6  </ubody>
+  <ubody unit="FT/SEC"> 24050.0  </ubody>
   <vbody unit="FT/SEC">     0.0  </vbody>
   <wbody unit="FT/SEC">     0.0  </wbody>
   <latitude unit="DEG">    28.6  </latitude>

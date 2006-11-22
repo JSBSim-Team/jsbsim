@@ -85,4 +85,11 @@
             </function>
         </axis>
     </aerodynamics>
+    <output name="JSBBallOut.csv" type="CSV" rate="1">
+        <rates> ON </rates>
+        <velocities> ON </velocities>
+        <forces> ON </forces>
+        <moments> ON </moments>
+        <position> ON </position>
+    </output>
 </fdm_config>
