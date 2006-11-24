@@ -110,37 +110,37 @@ int main(int argc, char **argv)
         cout << "set xlabel \"\"" << endl;
         cout << "set ylabel \"" << names[i] << "\" font \"Helvetica,10\"" << endl;
         cout << "set timestamp \"\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\",\\" << endl;
+        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": 1" << "\",\\" << endl;
         for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\",\\" << endl;
+          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << f+1 << "\",\\" << endl;
         }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\"" << endl;
+        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << files.size() << "\"" << endl;
 
         // Plot 2 (middle) Y
         cout << "set origin 0.0,0.33" << endl;
         cout << "set title \"\"" << endl;
         cout << "set ylabel \"" << names[i+1] << "\" font \"Helvetica,10\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << "\",\\" << endl;
+        cout << "plot \"" << files[0] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": 1" << "\",\\" << endl;
         for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << "\",\\" << endl;
+          cout << "\"" << files[f] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": " << f+1 << "\",\\" << endl;
         }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << "\"" << endl;
+        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": " << files.size() << "\"" << endl;
 
         // Plot 3 (bottom) Z
         cout << "set origin 0.0,0.034" << endl;
         cout << "set xlabel \"Time (sec)\" font \"Helvetica,10\"" << endl;
         cout << "set ylabel \"" << names[i+2] << "\" font \"Helvetica,10\"" << endl;
         cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \"Helvetica,8\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << "\",\\" << endl;
+        cout << "plot \"" << files[0] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": 1" << "\",\\" << endl;
         for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << "\",\\" << endl;
+          cout << "\"" << files[f] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": " << f+1 << "\",\\" << endl;
         }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << "\"" << endl;
+        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": " << files.size() << "\"" << endl;
       }
       i += 3;
       cout << "unset multiplot" << endl;
-      cout << "set size -1.0,-1.0" << endl;
-      cout << "set offset -0.0,-0.0" << endl;
+      cout << "set size 1.0,1.0" << endl;
+      cout << "set offset 0.0,0.0" << endl;
 
     } else { // Straight single value to plot
 
@@ -158,11 +158,11 @@ int main(int argc, char **argv)
 
       } else { // Multiple files
 
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\",\\" << endl;
+        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": 1" << "\",\\" << endl;
         for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\",\\" << endl;
+          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << f+1 << "\",\\" << endl;
         }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\"" << endl;
+        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << files.size() << "\"" << endl;
       }
     }
   }
