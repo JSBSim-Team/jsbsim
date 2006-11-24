@@ -1,3 +1,92 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ Module:       prep_plot.cpp
+ Author:       Jon S. Berndt
+ Date started: 11/24/2006
+ Purpose:      CSV -> gnuplot prepping tool
+ 
+ ------------- Copyright (C) 2006  Jon S. Berndt (jsb@hal-pc.org) -------------
+
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU General Public License as published by the Free Software
+ Foundation; either version 2 of the License, or (at your option) any later
+ version.
+
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ details.
+
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ Place - Suite 330, Boston, MA  02111-1307, USA.
+
+ Further information about the GNU General Public License can also be found on
+ the world wide web at http://www.gnu.org.
+
+FUNCTIONAL DESCRIPTION
+--------------------------------------------------------------------------------
+
+prep_plot
+---------
+
+Input:
+
+A data file in comma-separated value (CSV) format, with time in the first
+column. The data file is expected to be all numeric. That is, NaN will
+mess it up, I think.
+
+Multiple files (currently up to 10) can be input to prep_plot provided
+the names of the files are all the same except for a digit. The digit
+is substituted for on the command line to prep_plot using the "#" character.
+
+For example:
+
+./prep_plot F4NOutput#.csv
+
+will look for all input files named F4NOutput0.csv, F4NOutput1.csv,
+F4NOutput2.csv, etc. up to F4NOutput9.csv. This will probably be modified
+in the future to accept a larger number of plots.
+
+Output:
+
+The output is to standard out (the console, stdout). The output consists of
+commands to gnuplot. This file is used as input to gnuplot. Gnuplot then
+produces a postscript format file consisting of all plots generated. This
+postscript file can easily be converted to PDF format using the ps2pdf utility
+that is part of Ghostscript.
+
+Compiling:
+
+g++ prep_plot.cpp -o prep_plot
+
+Usage:
+(note that an argument with embedded spaces needs to be surrounded by quotes)
+
+prep_plot <filename> <optional title>
+
+I have used this utility as follows:
+
+./prep_plot.exe F4NOutput#.csv "F4N Ground Reactions Testing (0.3, 0.2)" > gpfile.txt
+gnuplot gpfile.txt
+ps2pdf14 F4NOutput0.ps F4NOutput0.pdf
+
+Special Notes:
+
+When a set of 3 subsequent data terms is encountered in the .csv data file that
+have as part of their names the "subscripts" "_X", "_Y", and "_Z" (at the end
+of the variable name) the variables will be plotted on the same page.
+Otherwise, all items are plotted individually. This capability will be extended
+eventually to include _P, _Q, and _R and perhaps other aeronautically relevant
+parameters.
+
+The names of data items as output by JSBSim (as part of FGOutput.cpp) will
+likely be modified to work better with this utility.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+INCLUDES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
 #include <iostream>
 #include <string>
 #include <fstream>
