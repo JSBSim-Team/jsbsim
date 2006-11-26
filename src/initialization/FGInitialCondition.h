@@ -55,7 +55,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.7 2006/11/20 13:59:49 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.8 2006/11/26 04:59:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -192,7 +192,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.7 2006/11/20 13:59:49 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.8 2006/11/26 04:59:29 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -450,11 +450,11 @@ public:
   inline double GetWindNFpsIC(void) const { return wnorth; }
 
   /** Gets the initial wind velocity in local frame.
-      @return Initial wind velocity toward north in feet/second */
+      @return Initial wind velocity eastwards in feet/second */
   inline double GetWindEFpsIC(void) const { return weast; }
 
   /** Gets the initial wind velocity in local frame.
-      @return Initial wind velocity toward north in feet/second */
+      @return Initial wind velocity downwards in feet/second */
   inline double GetWindDFpsIC(void) const { return wdown; }
 
   /** Gets the initial total wind velocity in feet/sec.
