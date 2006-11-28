@@ -92,7 +92,26 @@ INCLUDES
 #include <fstream>
 #include <vector>
 
+#define DEFAULT_FONT "Helvetica,10"
+#define TITLE_FONT "Helvetica,12"
+#define LABEL_FONT "Helvetica,12"
+#define AXIS_FONT "Helvetica,12"
+#define TIMESTAMP_FONT "Helvetica,8"
+#define TICS_FONT "Helvetica,8"
+
 using namespace std;
+
+string HaveTerm(vector <string>&, string); 
+int GetTermIndex(vector <string>&, string);
+void EmitComparisonPlot(vector <string>&, int, string);
+void EmitSinglePlot(string, int, string);
+void MakeArbitraryPlot(
+  vector <string>& files,
+  vector <string>& names,
+  string XAxisName,
+  vector <string>& LeftYAxisNames,
+  vector <string>& RightYAxisNames,
+  string Title);
 
 int main(int argc, char **argv)
 {
@@ -101,7 +120,7 @@ int main(int argc, char **argv)
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
   vector <string> files;
   ifstream infile2;
-  string filename(argv[1]), new_filename;
+  string filename(argv[1]), new_filename, Title;
   char num[4];
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
@@ -126,12 +145,14 @@ int main(int argc, char **argv)
   }
   getline(infile, in_string, '\n');
   
-  cout << "set terminal postscript color \"Helvetica,12\"" << endl;
+  cout << "set terminal postscript color \""DEFAULT_FONT"\"" << endl;
   if (argc >= 3) {
-    cout << "set title \"" << argv[2] << "\" font \"Helvetica,12\"" << endl;
+    cout << "set title \"" << argv[2] << "\" font \""TITLE_FONT"\"" << endl;
   }
   cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".ps'" << endl;
   
+  cout << "set size 1.0,1.0" << endl;
+  cout << "set origin 0.0,0.0" << endl;
   cout << "set lmargin  6" << endl;
   cout << "set rmargin  4" << endl;
   cout << "set tmargin  1" << endl;
@@ -139,9 +160,9 @@ int main(int argc, char **argv)
   
   cout << "set datafile separator \",\"" << endl;
   cout << "set grid xtics ytics" << endl;
-  cout << "set xtics font \"Helvetica,8\"" << endl;
-  cout << "set ytics font \"Helvetica,8\"" << endl;
-  cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \"Helvetica,8\"" << endl;
+  cout << "set xtics font \""TICS_FONT"\"" << endl;
+  cout << "set ytics font \""TICS_FONT"\"" << endl;
+  cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
 
   while(next_comma != string::npos) {
     next_comma=in_string.find_first_of(",",start);
@@ -158,7 +179,7 @@ int main(int argc, char **argv)
   }
   
   unsigned int num_names=names.size();
-  for (int i=1;i<num_names;i++) {
+  for (unsigned int i=1;i<num_names;i++) {
   
     if (    i <= num_names-3
          && names[i].find("_X") != string::npos
@@ -169,91 +190,247 @@ int main(int argc, char **argv)
 
       if (argc >= 3) {
         cout << "set title \"" << argv[2]
-             << "\\n" << names[i] << " vs. Time\" font \"Helvetica,12\"" << endl;
+             << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
       }
 
+      cout << "set size 1.0,1.0" << endl;
+      cout << "set origin 0.0,0.0" << endl;
       cout << "set multiplot" << endl;
-      cout << "set size 1.0,0.3" << endl;
+      cout << "set size 1.0,0.35" << endl;
       if (files.size()==1) { // Single file
-        cout << "set origin 0.0,0.66" << endl;
+        cout << "set origin 0.0,0.65" << endl;
         cout << "set xlabel \"\"" << endl;
-        cout << "set ylabel \"" << names[i] << "\" font \"Helvetica,10\"" << endl;
-        cout << "set timestamp \"\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\"" << endl;
+        cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set format x \"\"" << endl;
+        cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        EmitSinglePlot(files[0], i+1, names[i]);
 
-        cout << "set origin 0.0,0.33" << endl;
+        cout << "set origin 0.0,0.325" << endl;
         cout << "set title \"\"" << endl;
-        cout << "set ylabel \"" << names[i+1] << "\" font \"Helvetica,10\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << "\"" << endl;
+        cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
+        EmitSinglePlot(files[0], i+2, names[i+1]);
 
-        cout << "set origin 0.0,0.034" << endl;
-        cout << "set xlabel \"Time (sec)\" font \"Helvetica,10\"" << endl;
-        cout << "set ylabel \"" << names[i+2] << "\" font \"Helvetica,10\"" << endl;
-        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \"Helvetica,8\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << "\"" << endl;
+        cout << "set origin 0.0,0.0" << endl;
+        cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
+        cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set format x" << endl;
+        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        EmitSinglePlot(files[0], i+3, names[i+2]);
 
       } else { // Multiple files, multiple plots per page
 
         // Plot 1 (top) X
         cout << "set origin 0.0,0.66" << endl;
         cout << "set xlabel \"\"" << endl;
-        cout << "set ylabel \"" << names[i] << "\" font \"Helvetica,10\"" << endl;
-        cout << "set timestamp \"\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": 1" << "\",\\" << endl;
-        for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << f+1 << "\",\\" << endl;
-        }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << files.size() << "\"" << endl;
+        cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set format x \"\"" << endl;
+        cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        EmitComparisonPlot(files, i+1, names[i]);
 
         // Plot 2 (middle) Y
         cout << "set origin 0.0,0.33" << endl;
         cout << "set title \"\"" << endl;
-        cout << "set ylabel \"" << names[i+1] << "\" font \"Helvetica,10\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": 1" << "\",\\" << endl;
-        for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": " << f+1 << "\",\\" << endl;
-        }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+2 << " with lines" << " title " << "\"" << names[i+1] << ": " << files.size() << "\"" << endl;
+        cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
+        EmitComparisonPlot(files, i+2, names[i+1]);
 
         // Plot 3 (bottom) Z
         cout << "set origin 0.0,0.034" << endl;
-        cout << "set xlabel \"Time (sec)\" font \"Helvetica,10\"" << endl;
-        cout << "set ylabel \"" << names[i+2] << "\" font \"Helvetica,10\"" << endl;
-        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \"Helvetica,8\"" << endl;
-        cout << "plot \"" << files[0] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": 1" << "\",\\" << endl;
-        for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": " << f+1 << "\",\\" << endl;
-        }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+3 << " with lines" << " title " << "\"" << names[i+2] << ": " << files.size() << "\"" << endl;
+        cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
+        cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
+        cout << "set format x" << endl;
+        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+        EmitComparisonPlot(files, i+3, names[i+2]);
       }
       i += 3;
       cout << "unset multiplot" << endl;
       cout << "set size 1.0,1.0" << endl;
-      cout << "set offset 0.0,0.0" << endl;
+      cout << "set origin 0.0,0.0" << endl;
 
     } else { // Straight single value to plot
 
       if (argc >= 3) { // title added
-
         cout << "set title \"" << argv[2] 
-             << "\\n" << names[i] << " vs. Time\" font \"Helvetica,12\"" << endl;
+             << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
       }
-      cout << "set xlabel \"Time (sec)\" font \"Helvetica,10\"" << endl;
-      cout << "set ylabel \"" << names[i] << "\" font \"Helvetica,10\"" << endl;
+      cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
+      cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
 
       if (files.size()==1) { // Single file
-
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << "\"" << endl;
-
+        EmitSinglePlot(files[0], i+1, names[i]);
       } else { // Multiple files
-
-        cout << "plot \"" << files[0] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": 1" << "\",\\" << endl;
-        for (int f=1;f<files.size()-2;f++){
-          cout << "\"" << files[f] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << f+1 << "\",\\" << endl;
-        }
-        cout << "\"" << files[files.size()-1] << "\" using 1:" << i+1 << " with lines" << " title " << "\"" << names[i] << ": " << files.size() << "\"" << endl;
+        EmitComparisonPlot(files, i+1, names[i]);
       }
     }
   }
 
+  // special plots
+
+  vector <string> LeftYAxisNames;
+  vector <string> RightYAxisNames;
+  string title;
+
+  LeftYAxisNames.clear();
+  LeftYAxisNames.push_back("Latitude (Deg)");
+  RightYAxisNames.clear();
+  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  else Title.clear();
+  Title += "Ground Track";
+  MakeArbitraryPlot(files, names, "Longitude (Deg)", LeftYAxisNames, RightYAxisNames, Title);
+
+  LeftYAxisNames.clear();
+  LeftYAxisNames.push_back("P");
+  LeftYAxisNames.push_back("Q");
+  LeftYAxisNames.push_back("R");
+  RightYAxisNames.clear();
+  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  else Title.clear();
+  Title += "Body Rates";
+  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
+
+  LeftYAxisNames.clear();
+  LeftYAxisNames.push_back("Q");
+  RightYAxisNames.clear();
+  RightYAxisNames.push_back("M");
+  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  else Title.clear();
+  Title += "Pitch Response";
+  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
+}
+
+string HaveTerm(vector <string>& names, string parameter)
+{
+  for (unsigned int i=0; i<names.size(); i++) {
+    if (names[i] == parameter) return names[i];
+  }
+  return string("");
+}
+
+int GetTermIndex(vector <string>& names, string parameter)
+{
+  for (unsigned int i=0; i<names.size(); i++) {
+    if (names[i] == parameter) return i+1;
+  }
+  return -1;
+}
+
+void MakeArbitraryPlot(
+  vector <string>& files,
+  vector <string>& names,
+  string XAxisName,
+  vector <string>& LeftYAxisNames,
+  vector <string>& RightYAxisNames,
+  string Title)
+{
+  bool have_all_terms=true;
+  int i;
+  int numLeftYAxisNames = LeftYAxisNames.size();
+  int numRightYAxisNames = RightYAxisNames.size();
+  
+  have_all_terms = have_all_terms && !HaveTerm(names, XAxisName).empty();
+  for (i=0; i<numLeftYAxisNames; i++) have_all_terms = have_all_terms && !HaveTerm(names, LeftYAxisNames[i]).empty();
+  for (i=0; i<numRightYAxisNames; i++) have_all_terms = have_all_terms && !HaveTerm(names, RightYAxisNames[i]).empty();
+
+  if (have_all_terms) {
+    if (!Title.empty()) {
+      cout << "set title \"" << Title << "\" font \""TITLE_FONT"\"" << endl;
+    }
+    cout << "set xlabel \"" << XAxisName << "\" font \""LABEL_FONT"\"" << endl;
+
+    cout << "set ylabel \"";
+    for (i=0; i<numLeftYAxisNames-1; i++) {
+      cout << LeftYAxisNames[i] << ", ";
+    }
+    cout << LeftYAxisNames[numLeftYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
+
+    if (numRightYAxisNames > 0) {
+      cout << "set y2label \"";
+      for (i=0; i<numRightYAxisNames-1; i++) {
+        cout << RightYAxisNames[i] << ", ";
+      }
+      cout << RightYAxisNames[numRightYAxisNames-1] << "\" font \""LABEL_FONT"\"" << endl;
+    }
+
+    cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+
+    if (files.size() == 1) { // Single file
+    
+      cout << "plot \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+           << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
+           << LeftYAxisNames[0] << "\"";
+      if (numLeftYAxisNames > 1) {
+        cout << ",\\" << endl;
+        for (i=0; i<numLeftYAxisNames-2; i++) {
+          cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+               << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
+               << LeftYAxisNames[numLeftYAxisNames-i] << "\",\\";
+        }
+        cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
+             << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
+             << LeftYAxisNames[1] << "\"";
+      }
+      if (numRightYAxisNames > 0) {
+        cout << ",\\" << endl;
+        for (i=0; i<numRightYAxisNames-2; i++) {
+          cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+               << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
+               << RightYAxisNames[i] << "\",\\";
+        }
+        cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
+             << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
+             << RightYAxisNames[numRightYAxisNames-1] << "\"";
+      }
+
+    } else { // Multiple file comparison plot
+
+      for (int f=0;f<files.size();f++){
+      
+        if (f==0) cout << "plot ";
+        else      {
+          cout << ",\\" << endl;
+          cout << "     ";
+        }
+
+        cout << "\"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+             << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
+             << LeftYAxisNames[0] << ": " << f << "\"";
+        if (numLeftYAxisNames > 1) {
+          cout << ",\\" << endl;
+          for (i=0; i<numLeftYAxisNames-2; i++) {
+            cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+                 << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
+                 << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\",\\" << endl;
+          }
+          cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
+               << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
+               << LeftYAxisNames[1] << ": " << f << "\"";
+        }
+        if (numRightYAxisNames > 0) {
+          cout << ",\\" << endl;
+          for (i=0; i<numRightYAxisNames-2; i++) {
+            cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+                 << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
+                 << RightYAxisNames[i] << ": " << f << "\",\\" << endl;
+          }
+          cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
+               << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
+               << RightYAxisNames[numRightYAxisNames-1] << ": " << f << "\"";
+        }
+      }
+      cout << endl;
+    }
+  }
+}
+
+void EmitSinglePlot(string filename, int index, string linetitle )
+{
+  cout << "plot \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
+}
+
+void EmitComparisonPlot(vector <string>& filenames, int index, string linetitle)
+{
+  cout << "plot \"" << filenames[0] << "\" using 1:" << index << " with lines title \"" << linetitle << ": 1" << "\",\\" << endl;
+  for (unsigned int f=1;f<filenames.size()-1;f++){
+    cout << "\"" << filenames[f] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << f+1 << "\",\\" << endl;
+  }
+  cout << "\"" << filenames[filenames.size()-1] << "\" using 1:" << index << " with lines title \"" << linetitle << ": " << filenames.size() << "\"" << endl;
 }
