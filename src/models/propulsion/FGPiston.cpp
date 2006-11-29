@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.7 2006/10/17 01:44:57 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.8 2006/11/29 13:41:05 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,15 +80,15 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   // These are internal program variables
 
   crank_counter = 0;
-  OilTemp_degK = 298;
+  OilTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
   ManifoldPressure_inHg = Atmosphere->GetPressure() * psftoinhg; // psf to in Hg
   minMAP = 21950;
   maxMAP = 96250;
   MAP = Atmosphere->GetPressure() * psftopa;
-  CylinderHeadTemp_degK = 0.0;
+  CylinderHeadTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
   Magnetos = 0;
-  ExhaustGasTemp_degK = 0.0;
-  EGT_degC = 0.0;
+  ExhaustGasTemp_degK = RankineToKelvin(Atmosphere->GetTemperature());
+  EGT_degC = ExhaustGasTemp_degK - 273;
 
   dt = State->Getdt();
 
@@ -272,7 +272,7 @@ double FGPiston::Calculate(void)
 
   p_amb = Atmosphere->GetPressure() * psftopa;
   p_amb_sea_level = Atmosphere->GetPressureSL() * psftopa;
-  T_amb = Atmosphere->GetTemperature() * (5.0 / 9.0);  // convert from Rankine to Kelvin
+  T_amb = RankineToKelvin(Atmosphere->GetTemperature());
 
   RPM = Thruster->GetRPM() * Thruster->GetGearRatio();
 
@@ -556,7 +556,8 @@ void FGPiston::doEnginePower(void)
     } else {
       ManXRPM = ManifoldPressure_inHg * RPM; // Note that inHg must be used for the following correlation.
       Percentage_Power = (6e-9 * ManXRPM * ManXRPM) + (8e-4 * ManXRPM) - 1.0;
-      Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+//      Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 /120);
+      Percentage_Power += ((T_amb_sea_lev_degF - T_amb_degF) * 7 * dt);
       if (Percentage_Power < 0.0) Percentage_Power = 0.0;
       else if (Percentage_Power > 100.0) Percentage_Power = 100.0;
     }
@@ -621,7 +622,8 @@ void FGPiston::doEGT(void)
     ExhaustGasTemp_degK = T_amb + delta_T_exhaust;
     ExhaustGasTemp_degK *= 0.444 + ((0.544 - 0.444) * Percentage_Power / 100.0);
   } else {  // Drop towards ambient - guess an appropriate time constant for now
-    dEGTdt = (298.0 - ExhaustGasTemp_degK) / 100.0;
+    combustion_efficiency = 0;
+    dEGTdt = (RankineToKelvin(Atmosphere->GetTemperature()) - ExhaustGasTemp_degK) / 100.0;
     delta_T_exhaust = dEGTdt * dt;
     ExhaustGasTemp_degK += delta_T_exhaust;
   }
@@ -686,7 +688,7 @@ void FGPiston::doOilTemperature(void)
       time_constant /= ((Percentage_Power / idle_percentage_power) / 10.0); // adjust for power
     }
   } else {
-    target_oil_temp = 298;
+    target_oil_temp = RankineToKelvin(Atmosphere->GetTemperature());
     time_constant = 1000;  // Time constant for engine-off; reflects the fact
                            // that oil is no longer getting circulated
   }
