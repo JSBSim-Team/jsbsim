@@ -220,7 +220,7 @@ int main(int argc, char **argv)
       } else { // Multiple files, multiple plots per page
 
         // Plot 1 (top) X
-        cout << "set origin 0.0,0.66" << endl;
+        cout << "set origin 0.0,0.65" << endl;
         cout << "set xlabel \"\"" << endl;
         cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
         cout << "set format x \"\"" << endl;
@@ -228,13 +228,13 @@ int main(int argc, char **argv)
         EmitComparisonPlot(files, i+1, names[i]);
 
         // Plot 2 (middle) Y
-        cout << "set origin 0.0,0.33" << endl;
+        cout << "set origin 0.0,0.325" << endl;
         cout << "set title \"\"" << endl;
         cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
         EmitComparisonPlot(files, i+2, names[i+1]);
 
         // Plot 3 (bottom) Z
-        cout << "set origin 0.0,0.034" << endl;
+        cout << "set origin 0.0,0.00" << endl;
         cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
         cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
         cout << "set format x" << endl;
@@ -278,6 +278,15 @@ int main(int argc, char **argv)
   MakeArbitraryPlot(files, names, "Longitude (Deg)", LeftYAxisNames, RightYAxisNames, Title);
 
   LeftYAxisNames.clear();
+  LeftYAxisNames.push_back("Q");
+  RightYAxisNames.clear();
+  RightYAxisNames.push_back("M");
+  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  else Title.clear();
+  Title += "Pitch Response";
+  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
+
+  LeftYAxisNames.clear();
   LeftYAxisNames.push_back("P");
   LeftYAxisNames.push_back("Q");
   LeftYAxisNames.push_back("R");
@@ -285,15 +294,6 @@ int main(int argc, char **argv)
   if (argc >= 3) Title = string(argv[2]) + string("\\n");
   else Title.clear();
   Title += "Body Rates";
-  MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
-
-  LeftYAxisNames.clear();
-  LeftYAxisNames.push_back("Q");
-  RightYAxisNames.clear();
-  RightYAxisNames.push_back("M");
-  if (argc >= 3) Title = string(argv[2]) + string("\\n");
-  else Title.clear();
-  Title += "Pitch Response";
   MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
 }
 
@@ -382,6 +382,11 @@ void MakeArbitraryPlot(
 
     } else { // Multiple file comparison plot
 
+      if (numRightYAxisNames > 0) {
+        cout << "set rmargin 9" << endl;
+        cout << "set y2tics font \""TICS_FONT"\"" << endl;
+      }
+
       for (int f=0;f<files.size();f++){
       
         if (f==0) cout << "plot ";
@@ -417,6 +422,11 @@ void MakeArbitraryPlot(
         }
       }
       cout << endl;
+      if (numRightYAxisNames > 0) {
+        cout << "set rmargin 4" << endl;
+        cout << "unset y2tics" << endl;
+        cout << "set y2label" << endl;
+      }
     }
   }
 }
