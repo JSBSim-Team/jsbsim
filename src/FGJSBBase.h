@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.8 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.9 2006/11/29 13:52:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.8 2006/08/30 12:04:33 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.9 2006/11/29 13:52:49 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -216,6 +216,13 @@ public:
   *   @return The temperature in Celsius. */
   static double RankineToCelsius (double rankine) {
     return (rankine - 491.67)/1.8;
+  }
+
+  /** Converts from degrees Rankine to degrees Kelvin.
+  *   @param rankine The temperature in degrees Rankine.
+  *   @return The temperature in Kelvin. */
+  static double RankineToKelvin (double rankine) {
+    return rankine/1.8;
   }
 
   /** Converts from degrees Fahrenheit to degrees Celsius.

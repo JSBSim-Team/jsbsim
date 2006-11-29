@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.9 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.10 2006/11/29 13:52:49 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,18 +142,20 @@ string FGGroundReactions::GetGroundReactionStrings(string delimeter)
   std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
-    string name = lGear[i].GetName();
-    buf << name << "_WOW" << delimeter
-        << name << "_stroke" << delimeter
-        << name << "_strokeVel" << delimeter
-        << name << "_CompressForce" << delimeter
-        << name << "_WhlSideForce" << delimeter
-        << name << "_WhlVelVecX" << delimeter
-        << name << "_WhlVelVecY" << delimeter
-        << name << "_WhlRollForce" << delimeter
-        << name << "_BodyXForce" << delimeter
-        << name << "_BodyYForce" << delimeter
-        << name << "_WhlSlipDegrees" << delimeter;
+    if (lGear[i].IsBogey()) {
+      string name = lGear[i].GetName();
+      buf << name << "_WOW" << delimeter
+          << name << "_stroke" << delimeter
+          << name << "_strokeVel" << delimeter
+          << name << "_CompressForce" << delimeter
+          << name << "_WhlSideForce" << delimeter
+          << name << "_WhlVelVecX" << delimeter
+          << name << "_WhlVelVecY" << delimeter
+          << name << "_WhlRollForce" << delimeter
+          << name << "_BodyXForce" << delimeter
+          << name << "_BodyYForce" << delimeter
+          << name << "_WhlSlipDegrees" << delimeter;
+    }
   }
 
   buf << "TotalGearForce_X" << delimeter
@@ -173,18 +175,20 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter)
   std::ostringstream buf;
 
   for (unsigned int i=0;i<lGear.size();i++) {
-    FGLGear& gear = lGear[i];
-    buf << (gear.GetWOW() ? "1, " : "0, ")
-        << setprecision(5) << gear.GetCompLen() << delimeter
-        << setprecision(6) << gear.GetCompVel() << delimeter
-        << setprecision(10) << gear.GetCompForce() << delimeter
-        << setprecision(6) << gear.GetWheelVel(eX) << delimeter
-        << gear.GetWheelVel(eY) << delimeter
-        << gear.GetWheelSideForce() << delimeter
-        << gear.GetWheelRollForce() << delimeter
-        << gear.GetBodyXForce() << delimeter
-        << gear.GetBodyYForce() << delimeter
-        << gear.GetWheelSlipAngle() << delimeter;
+    if (lGear[i].IsBogey()) {
+      FGLGear& gear = lGear[i];
+      buf << (gear.GetWOW() ? "1, " : "0, ")
+          << setprecision(5) << gear.GetCompLen() << delimeter
+          << setprecision(6) << gear.GetCompVel() << delimeter
+          << setprecision(10) << gear.GetCompForce() << delimeter
+          << setprecision(6) << gear.GetWheelVel(eX) << delimeter
+          << gear.GetWheelVel(eY) << delimeter
+          << gear.GetWheelSideForce() << delimeter
+          << gear.GetWheelRollForce() << delimeter
+          << gear.GetBodyXForce() << delimeter
+          << gear.GetBodyYForce() << delimeter
+          << gear.GetWheelSlipAngle() << delimeter;
+    }
   }
 
   buf << vForces(eX) << delimeter
