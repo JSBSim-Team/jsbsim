@@ -354,6 +354,11 @@ void MakeArbitraryPlot(
 
     if (files.size() == 1) { // Single file
     
+      if (numRightYAxisNames > 0) {
+        cout << "set rmargin 9" << endl;
+        cout << "set y2tics font \""TICS_FONT"\"" << endl;
+      }
+
       cout << "plot \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
            << ":" << GetTermIndex(names, LeftYAxisNames[0]) << " with lines title \""
            << LeftYAxisNames[0] << "\"";
@@ -362,7 +367,7 @@ void MakeArbitraryPlot(
         for (i=0; i<numLeftYAxisNames-2; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
-               << LeftYAxisNames[numLeftYAxisNames-i] << "\",\\";
+               << LeftYAxisNames[numLeftYAxisNames-1] << "\",\\" << endl;
         }
         cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
              << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
@@ -373,11 +378,17 @@ void MakeArbitraryPlot(
         for (i=0; i<numRightYAxisNames-2; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
-               << RightYAxisNames[i] << "\",\\";
+               << RightYAxisNames[i] << "\",\\" << endl;
         }
         cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
              << ":" << GetTermIndex(names, RightYAxisNames[numRightYAxisNames-1]) << " with lines axes x1y2 title \""
              << RightYAxisNames[numRightYAxisNames-1] << "\"";
+      }
+      cout << endl;
+      if (numRightYAxisNames > 0) {
+        cout << "set rmargin 4" << endl;
+        cout << "unset y2tics" << endl;
+        cout << "set y2label" << endl;
       }
 
     } else { // Multiple file comparison plot
@@ -387,7 +398,7 @@ void MakeArbitraryPlot(
         cout << "set y2tics font \""TICS_FONT"\"" << endl;
       }
 
-      for (int f=0;f<files.size();f++){
+      for (int f=0;f<files.size();f++) {
       
         if (f==0) cout << "plot ";
         else      {
