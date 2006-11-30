@@ -297,6 +297,8 @@ int main(int argc, char **argv)
   MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
 }
 
+// ############################################################################
+
 string HaveTerm(vector <string>& names, string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
@@ -305,6 +307,8 @@ string HaveTerm(vector <string>& names, string parameter)
   return string("");
 }
 
+// ############################################################################
+
 int GetTermIndex(vector <string>& names, string parameter)
 {
   for (unsigned int i=0; i<names.size(); i++) {
@@ -312,6 +316,8 @@ int GetTermIndex(vector <string>& names, string parameter)
   }
   return -1;
 }
+
+// ############################################################################
 
 void MakeArbitraryPlot(
   vector <string>& files,
@@ -364,18 +370,18 @@ void MakeArbitraryPlot(
            << LeftYAxisNames[0] << "\"";
       if (numLeftYAxisNames > 1) {
         cout << ",\\" << endl;
-        for (i=0; i<numLeftYAxisNames-2; i++) {
+        for (i=1; i<numLeftYAxisNames-1; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
-               << LeftYAxisNames[numLeftYAxisNames-1] << "\",\\" << endl;
+               << LeftYAxisNames[i] << "\",\\" << endl;
         }
         cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
              << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
-             << LeftYAxisNames[1] << "\"";
+             << LeftYAxisNames[numLeftYAxisNames-1] << "\"";
       }
       if (numRightYAxisNames > 0) {
         cout << ",\\" << endl;
-        for (i=0; i<numRightYAxisNames-2; i++) {
+        for (i=0; i<numRightYAxisNames-1; i++) {
           cout << "     \"" << files[0] << "\" using " << GetTermIndex(names, XAxisName)
                << ":" << GetTermIndex(names, RightYAxisNames[i]) << " with lines axes x1y2 title \""
                << RightYAxisNames[i] << "\",\\" << endl;
@@ -411,14 +417,14 @@ void MakeArbitraryPlot(
              << LeftYAxisNames[0] << ": " << f << "\"";
         if (numLeftYAxisNames > 1) {
           cout << ",\\" << endl;
-          for (i=0; i<numLeftYAxisNames-2; i++) {
+          for (i=1; i<numLeftYAxisNames-1; i++) {
             cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)
                  << ":" << GetTermIndex(names, LeftYAxisNames[i]) << " with lines title \"" 
-                 << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\",\\" << endl;
+                 << LeftYAxisNames[i] << ": " << f << "\",\\" << endl;
           }
           cout << "     \"" << files[f] << "\" using " << GetTermIndex(names, XAxisName)<< ":" 
                << GetTermIndex(names, LeftYAxisNames[numLeftYAxisNames-1]) << " with lines title \"" 
-               << LeftYAxisNames[1] << ": " << f << "\"";
+               << LeftYAxisNames[numLeftYAxisNames-1] << ": " << f << "\"";
         }
         if (numRightYAxisNames > 0) {
           cout << ",\\" << endl;
@@ -442,10 +448,14 @@ void MakeArbitraryPlot(
   }
 }
 
+// ############################################################################
+
 void EmitSinglePlot(string filename, int index, string linetitle )
 {
   cout << "plot \"" << filename << "\" using 1:" << index << " with lines title \"" << linetitle << "\"" << endl;
 }
+
+// ############################################################################
 
 void EmitComparisonPlot(vector <string>& filenames, int index, string linetitle)
 {
