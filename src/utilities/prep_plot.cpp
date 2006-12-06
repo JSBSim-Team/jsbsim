@@ -60,12 +60,16 @@ Compiling:
 
 g++ prep_plot.cpp -o prep_plot
 
+new:
+
+g++ prep_plot.cpp plotXMLVisitor.cpp ../simgear/xml/easyxml.cxx -L ../simgear/xml/ -lExpat -o prep_plot.exe
+
 Usage:
 (note that an argument with embedded spaces needs to be surrounded by quotes)
 
-prep_plot <filename> <optional title>
+prep_plot <filename> <optional title> <optional plot script in XML format>
 
-I have used this utility as follows:
+I have used this utility as follows to produce a PDF file:
 
 ./prep_plot.exe F4NOutput#.csv "F4N Ground Reactions Testing (0.3, 0.2)" > gpfile.txt
 gnuplot gpfile.txt
@@ -91,6 +95,7 @@ INCLUDES
 #include <string>
 #include <fstream>
 #include <vector>
+#include "plotXMLVisitor.h"
 
 #define DEFAULT_FONT "Helvetica,10"
 #define TITLE_FONT "Helvetica,12"
@@ -145,7 +150,19 @@ int main(int argc, char **argv)
   }
   getline(infile, in_string, '\n');
   
-  cout << "set terminal postscript color \""DEFAULT_FONT"\"" << endl;
+  // Read plot directives file
+  
+  plotXMLVisitor myVisitor;
+  if (argc > 3) {
+    ifstream plotDirectivesFile(argv[3]);
+    if (!plotDirectivesFile) {
+      cerr << "Could not open autoplot file " << argv[3] << endl << endl;
+      exit(-1);
+    }
+    readXML (plotDirectivesFile, myVisitor);
+  }
+
+  cout << "set terminal postscript enhanced color \""DEFAULT_FONT"\"" << endl;
   if (argc >= 3) {
     cout << "set title \"" << argv[2] << "\" font \""TITLE_FONT"\"" << endl;
   }
@@ -268,6 +285,19 @@ int main(int argc, char **argv)
   vector <string> LeftYAxisNames;
   vector <string> RightYAxisNames;
   string title;
+
+  for (int i=0; i<myVisitor.vPlots.size();i++) {
+    struct Plots& myPlot = myVisitor.vPlots[i];
+    LeftYAxisNames.clear();
+    for (int y=0;y<myPlot.Y_Variables.size();y++) {
+      LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
+    }
+    RightYAxisNames.clear();
+    if (argc >= 3) Title = string(argv[2]) + string("\\n");
+    else Title.clear();
+    Title += myPlot.Title;
+    MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
+  }
 
   LeftYAxisNames.clear();
   LeftYAxisNames.push_back("Latitude (Deg)");

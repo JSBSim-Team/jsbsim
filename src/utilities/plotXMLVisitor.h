@@ -1,4 +1,4 @@
-#include "simgear/xml/easyxml.hxx"
+#include "../simgear/xml/easyxml.hxx"
 #include <string>
 #include <vector>
 

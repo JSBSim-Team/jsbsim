@@ -14,12 +14,12 @@ plotXMLVisitor::~plotXMLVisitor(void)
 
 void plotXMLVisitor::startXML(void)
 {
-  cout << "Starting XML parse ..." << endl;
+//  cout << "Starting XML parse ..." << endl;
 }
 
 void plotXMLVisitor::endXML(void)
 {
-  cout << "Finished XML parse." << endl;
+//  cout << "Finished XML parse." << endl;
 }
 
 void plotXMLVisitor::startElement (const char * name, const XMLAttributes &atts)
@@ -85,20 +85,20 @@ void plotXMLVisitor::endElement (const char * name)
       exit(-1);
     }
   } else if (string(name) == string("plotset")) {
-    cout << "End of plot set." << endl;
+//    cout << "End of plot set." << endl;
   } else if (string(name) == string("plot")) {
-    cout << endl << "Title: " << vPlots.back().Title << endl;
-    cout << "X Axis title: " << vPlots.back().Axis_Caption[eX] << endl;
-    cout << "Y Axis title: " << vPlots.back().Axis_Caption[eY] << endl;
-    cout << "Autoscale: " << vPlots.back().Autoscale << endl;
-    cout << "Minimum X axis value: " << vPlots.back().Min[eX] << endl;
-    cout << "Maximum X axis value: " << vPlots.back().Max[eX] << endl;
-    cout << "Minimum Y axis value: " << vPlots.back().Min[eY] << endl;
-    cout << "Maximum Y axis value: " << vPlots.back().Max[eY] << endl;
-    cout << "X Parameter: " << vPlots.back().X_Variable << endl;
-    cout << vPlots.back().Y_Variables.size() << " Y parameters:" << endl;
+//    cout << endl << "Title: " << vPlots.back().Title << endl;
+//    cout << "X Axis title: " << vPlots.back().Axis_Caption[eX] << endl;
+//    cout << "Y Axis title: " << vPlots.back().Axis_Caption[eY] << endl;
+//    cout << "Autoscale: " << vPlots.back().Autoscale << endl;
+//    cout << "Minimum X axis value: " << vPlots.back().Min[eX] << endl;
+//    cout << "Maximum X axis value: " << vPlots.back().Max[eX] << endl;
+//    cout << "Minimum Y axis value: " << vPlots.back().Min[eY] << endl;
+//    cout << "Maximum Y axis value: " << vPlots.back().Max[eY] << endl;
+//    cout << "X Parameter: " << vPlots.back().X_Variable << endl;
+//    cout << vPlots.back().Y_Variables.size() << " Y parameters:" << endl;
     for (int i=0; i<vPlots.back().Y_Variables.size(); i++) {
-      cout << vPlots.back().Y_Variables[i] << endl;
+//      cout << vPlots.back().Y_Variables[i] << endl;
     }
   } else {
     cerr << "Unknown data element." << endl;
