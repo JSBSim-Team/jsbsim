@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
   float sf, ef;
   char scratch;
 
-  if (argc == 1 || argc > 5) {
-    cout << endl << "Usage: SimPlot <input_datafile_name.csv> --plot=<autoplot file>" << endl;
+  if (argc > 3 || argc == 1 ) {
+    cout << endl << "Usage: SimPlot <data_file_name.csv> [<autoplot file>]" << endl << endl;
     exit(-1);
   }
 
