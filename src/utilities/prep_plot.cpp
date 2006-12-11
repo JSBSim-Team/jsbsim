@@ -67,11 +67,11 @@ g++ prep_plot.cpp plotXMLVisitor.cpp ../simgear/xml/easyxml.cxx -L ../simgear/xm
 Usage:
 (note that an argument with embedded spaces needs to be surrounded by quotes)
 
-prep_plot <filename> <optional title> <optional plot script in XML format>
+prep_plot <filename.csv> [--title="my title"] [--plot=<plotfile.xml> --comprehensive]
 
 I have used this utility as follows to produce a PDF file:
 
-./prep_plot.exe F4NOutput#.csv "F4N Ground Reactions Testing (0.3, 0.2)" > gpfile.txt
+./prep_plot.exe F4NOutput#.csv --title="F4N Ground Reactions Testing (0.3, 0.2)" > gpfile.txt
 gnuplot gpfile.txt
 ps2pdf14 F4NOutput0.ps F4NOutput0.pdf
 
@@ -120,13 +120,14 @@ void MakeArbitraryPlot(
 
 int main(int argc, char **argv)
 {
-  string in_string, var_name;
+  string in_string, var_name, input_arg, plotspecfile="", supplied_title="";
   vector <string> names;
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
   vector <string> files;
   ifstream infile2;
   string filename(argv[1]), new_filename, Title;
   char num[4];
+  bool comprehensive=false;
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
     while (file_ctr<10) {
@@ -150,21 +151,35 @@ int main(int argc, char **argv)
   }
   getline(infile, in_string, '\n');
   
-  // Read plot directives file
+  // Read command line args
   
+  for (int i=2; i<argc; i++) {
+    input_arg = string(argv[i]);
+    if (input_arg.substr(0,6) == "--plot") {
+      plotspecfile=input_arg.erase(0,7);
+    } else if (input_arg.substr(0,6) == "--comp") {
+      comprehensive=true;
+    } else if (input_arg.substr(0,7) == "--title") {
+      supplied_title=input_arg.erase(0,8);
+    } else {
+      cerr << endl << "Unknown argument " << input_arg << endl;
+      exit(-1);
+    }
+  }
+
   plotXMLVisitor myVisitor;
-  if (argc > 3) {
-    ifstream plotDirectivesFile(argv[3]);
+  if (!plotspecfile.empty()) {
+    ifstream plotDirectivesFile(plotspecfile.c_str());
     if (!plotDirectivesFile) {
-      cerr << "Could not open autoplot file " << argv[3] << endl << endl;
+      cerr << "Could not open autoplot file " << plotspecfile << endl << endl;
       exit(-1);
     }
     readXML (plotDirectivesFile, myVisitor);
   }
 
   cout << "set terminal postscript enhanced color \""DEFAULT_FONT"\"" << endl;
-  if (argc >= 3) {
-    cout << "set title \"" << argv[2] << "\" font \""TITLE_FONT"\"" << endl;
+  if (!supplied_title.empty()) {
+    cout << "set title \"" << supplied_title << "\" font \""TITLE_FONT"\"" << endl;
   }
   cout << "set output '" << files[0].substr(0,files[0].size()-4) << ".ps'" << endl;
   
@@ -196,89 +211,93 @@ int main(int argc, char **argv)
   }
   
   unsigned int num_names=names.size();
-  for (unsigned int i=1;i<num_names;i++) {
   
-    if (    i <= num_names-3
-         && names[i].find("_X") != string::npos
-         && names[i+1].find("_Y") != string::npos
-         && names[i+2].find("_Z") != string::npos )
+  if (comprehensive) {
+  
+    for (unsigned int i=1;i<num_names;i++) {
+    
+      if (    i <= num_names-3
+           && names[i].find("_X") != string::npos
+           && names[i+1].find("_Y") != string::npos
+           && names[i+2].find("_Z") != string::npos )
 
-    { // XYZ value
+      { // XYZ value
 
-      if (argc >= 3) {
-        cout << "set title \"" << argv[2]
-             << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
-      }
+        if (!supplied_title.empty()) {
+          cout << "set title \"" << supplied_title
+               << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
+        }
 
-      cout << "set size 1.0,1.0" << endl;
-      cout << "set origin 0.0,0.0" << endl;
-      cout << "set multiplot" << endl;
-      cout << "set size 1.0,0.35" << endl;
-      if (files.size()==1) { // Single file
-        cout << "set origin 0.0,0.65" << endl;
-        cout << "set xlabel \"\"" << endl;
-        cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
-        cout << "set format x \"\"" << endl;
-        cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-        EmitSinglePlot(files[0], i+1, names[i]);
-
-        cout << "set origin 0.0,0.325" << endl;
-        cout << "set title \"\"" << endl;
-        cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
-        EmitSinglePlot(files[0], i+2, names[i+1]);
-
+        cout << "set size 1.0,1.0" << endl;
         cout << "set origin 0.0,0.0" << endl;
+        cout << "set multiplot" << endl;
+        cout << "set size 1.0,0.35" << endl;
+        if (files.size()==1) { // Single file
+          cout << "set origin 0.0,0.65" << endl;
+          cout << "set xlabel \"\"" << endl;
+          cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+          cout << "set format x \"\"" << endl;
+          cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+          EmitSinglePlot(files[0], i+1, names[i]);
+
+          cout << "set origin 0.0,0.325" << endl;
+          cout << "set title \"\"" << endl;
+          cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
+          EmitSinglePlot(files[0], i+2, names[i+1]);
+
+          cout << "set origin 0.0,0.0" << endl;
+          cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
+          cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
+          cout << "set format x" << endl;
+          cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+          EmitSinglePlot(files[0], i+3, names[i+2]);
+
+        } else { // Multiple files, multiple plots per page
+
+          // Plot 1 (top) X
+          cout << "set origin 0.0,0.65" << endl;
+          cout << "set xlabel \"\"" << endl;
+          cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
+          cout << "set format x \"\"" << endl;
+          cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+          EmitComparisonPlot(files, i+1, names[i]);
+
+          // Plot 2 (middle) Y
+          cout << "set origin 0.0,0.325" << endl;
+          cout << "set title \"\"" << endl;
+          cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
+          EmitComparisonPlot(files, i+2, names[i+1]);
+
+          // Plot 3 (bottom) Z
+          cout << "set origin 0.0,0.00" << endl;
+          cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
+          cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
+          cout << "set format x" << endl;
+          cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
+          EmitComparisonPlot(files, i+3, names[i+2]);
+        }
+        i += 3;
+        cout << "unset multiplot" << endl;
+        cout << "set size 1.0,1.0" << endl;
+        cout << "set origin 0.0,0.0" << endl;
+
+      } else { // Straight single value to plot
+
+        if (!supplied_title.empty()) { // title added
+          cout << "set title \"" << supplied_title 
+               << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
+        }
         cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
-        cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
-        cout << "set format x" << endl;
-        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-        EmitSinglePlot(files[0], i+3, names[i+2]);
-
-      } else { // Multiple files, multiple plots per page
-
-        // Plot 1 (top) X
-        cout << "set origin 0.0,0.65" << endl;
-        cout << "set xlabel \"\"" << endl;
         cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
-        cout << "set format x \"\"" << endl;
-        cout << "set timestamp \"\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-        EmitComparisonPlot(files, i+1, names[i]);
 
-        // Plot 2 (middle) Y
-        cout << "set origin 0.0,0.325" << endl;
-        cout << "set title \"\"" << endl;
-        cout << "set ylabel \"" << names[i+1] << "\" font \""LABEL_FONT"\"" << endl;
-        EmitComparisonPlot(files, i+2, names[i+1]);
-
-        // Plot 3 (bottom) Z
-        cout << "set origin 0.0,0.00" << endl;
-        cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
-        cout << "set ylabel \"" << names[i+2] << "\" font \""LABEL_FONT"\"" << endl;
-        cout << "set format x" << endl;
-        cout << "set timestamp \"%d/%m/%y %H:%M\" 0,0 \""TIMESTAMP_FONT"\"" << endl;
-        EmitComparisonPlot(files, i+3, names[i+2]);
-      }
-      i += 3;
-      cout << "unset multiplot" << endl;
-      cout << "set size 1.0,1.0" << endl;
-      cout << "set origin 0.0,0.0" << endl;
-
-    } else { // Straight single value to plot
-
-      if (argc >= 3) { // title added
-        cout << "set title \"" << argv[2] 
-             << "\\n" << names[i] << " vs. Time\" font \""TITLE_FONT"\"" << endl;
-      }
-      cout << "set xlabel \"Time (sec)\" font \""LABEL_FONT"\"" << endl;
-      cout << "set ylabel \"" << names[i] << "\" font \""LABEL_FONT"\"" << endl;
-
-      if (files.size()==1) { // Single file
-        EmitSinglePlot(files[0], i+1, names[i]);
-      } else { // Multiple files
-        EmitComparisonPlot(files, i+1, names[i]);
+        if (files.size()==1) { // Single file
+          EmitSinglePlot(files[0], i+1, names[i]);
+        } else { // Multiple files
+          EmitComparisonPlot(files, i+1, names[i]);
+        }
       }
     }
-  }
+  } // end if comprehensive
 
   // special plots
 
@@ -293,16 +312,17 @@ int main(int argc, char **argv)
       LeftYAxisNames.push_back(myPlot.Y_Variables[y]);
     }
     RightYAxisNames.clear();
-    if (argc >= 3) Title = string(argv[2]) + string("\\n");
+    if (!supplied_title.empty()) Title = supplied_title + string("\\n");
     else Title.clear();
     Title += myPlot.Title;
     MakeArbitraryPlot(files, names, myPlot.X_Variable, LeftYAxisNames, RightYAxisNames, Title);
   }
 
+/*
   LeftYAxisNames.clear();
   LeftYAxisNames.push_back("Latitude (Deg)");
   RightYAxisNames.clear();
-  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
   else Title.clear();
   Title += "Ground Track";
   MakeArbitraryPlot(files, names, "Longitude (Deg)", LeftYAxisNames, RightYAxisNames, Title);
@@ -311,7 +331,7 @@ int main(int argc, char **argv)
   LeftYAxisNames.push_back("Q");
   RightYAxisNames.clear();
   RightYAxisNames.push_back("M");
-  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
   else Title.clear();
   Title += "Pitch Response";
   MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
@@ -321,10 +341,11 @@ int main(int argc, char **argv)
   LeftYAxisNames.push_back("Q");
   LeftYAxisNames.push_back("R");
   RightYAxisNames.clear();
-  if (argc >= 3) Title = string(argv[2]) + string("\\n");
+  if (!supplied_title.empty()) Title = supplied_title + string("\\n");
   else Title.clear();
   Title += "Body Rates";
   MakeArbitraryPlot(files, names, "Time", LeftYAxisNames, RightYAxisNames, Title);
+*/
 }
 
 // ############################################################################

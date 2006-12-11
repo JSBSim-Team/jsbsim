@@ -43,7 +43,7 @@ ofstream outfile;
 
 int main(int argc, char *argv[])
 {
-  string commands_str, digits = "0123456789", displaytype="CONS", next;
+  string commands_str, digits = "0123456789", displaytype="CONS", next, input_arg;
   string savefile="", pngFName_str="JSBSim", time_str, float_digits=".0123456789";
   vector <int> commands_vec;
   size_t start = 0, end = 0, namelen;
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
   float sf, ef;
   char scratch;
 
-  if (argc > 3 || argc == 1 ) {
-    cout << endl << "Usage: SimPlot <data_file_name.csv> [<autoplot file>]" << endl << endl;
+  if (argc == 1 || argc > 5) {
+    cout << endl << "Usage: SimPlot <input_datafile_name.csv> --plot=<autoplot file>" << endl;
     exit(-1);
   }
 
