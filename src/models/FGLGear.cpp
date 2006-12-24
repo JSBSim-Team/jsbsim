@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.23 2006/11/22 14:38:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.24 2006/12/24 13:13:16 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,8 +135,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
          << sSteerType << " is undefined." << endl;
   }
 
-  RFRV = 0.25;  // Rolling force relaxation velocity, default value
-  SFRV = 0.25;  // Side force relaxation velocity, default value
+  RFRV = 0.7;  // Rolling force relaxation velocity, default value
+  SFRV = 0.7;  // Side force relaxation velocity, default value
 
   Element* relax_vel = el->FindElement("relaxation_velocity");
   if (relax_vel) {
@@ -147,9 +147,9 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
       SFRV = relax_vel->FindElementValueAsNumberConvertTo("side", "FT/SEC");
     }
   }
-  
-  LongForceLagFilterCoeff = 48; // default longitudinal force filter coefficient
-  LatForceLagFilterCoeff  = 36; // default lateral force filter coefficient
+
+  LongForceLagFilterCoeff = 1/State->Getdt(); // default longitudinal force filter coefficient
+  LatForceLagFilterCoeff  = 1/State->Getdt(); // default lateral force filter coefficient
 
   Element* force_lag_filter_elem = el->FindElement("force_lag_filter");
   if (force_lag_filter_elem) {
@@ -161,7 +161,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
     }
   }
 
-  WheelSlipLagFilterCoeff = 60;
+  WheelSlipLagFilterCoeff = 1/State->Getdt();
 
   Element *wheel_slip_angle_lag_elem = el->FindElement("wheel_slip_filter");
   if (wheel_slip_angle_lag_elem) {
@@ -201,7 +201,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   brakePct        = 0.0;
   maxCompLen      = 0.0;
 
-  WheelSlip = last_WheelSlip = 0.0;
+  WheelSlip = 0.0;
   TirePressureNorm = 1.0;
 
   Debug(0);
@@ -264,13 +264,15 @@ FGLGear::FGLGear(const FGLGear& lgear)
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
   WheelSlip       = lgear.WheelSlip;
-  last_WheelSlip  = lgear.last_WheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
   ForceY_Table    = lgear.ForceY_Table;
   CosWheel        = lgear.CosWheel;
   SinWheel        = lgear.SinWheel;
   prevOut         = lgear.prevOut;
+  prevIn          = lgear.prevIn;
+  prevSlipIn      = lgear.prevSlipIn;
+  prevSlipOut     = lgear.prevSlipOut;
   RFRV            = lgear.RFRV;
   SFRV            = lgear.SFRV;
   LongForceLagFilterCoeff = lgear.LongForceLagFilterCoeff;
@@ -342,20 +344,42 @@ FGColumnVector3& FGLGear::Force(void)
 
     vForce  = Propagate->GetTl2b() * vLocalForce;
 
-    // Lag and attenuate the XY-plane forces dependent on velocity
+// Start experimental section for gear jitter reduction
+//
+// Lag and attenuate the XY-plane forces dependent on velocity
 
-    double ca = dT*LongForceLagFilterCoeff;
-    double cb = 1 - ca;
-    vForce(eX) = ca*vForce(eX) + cb*prevOut(eX);
+    double ca, cb, denom;
+    FGColumnVector3 Output;
 
-    ca = dT*LatForceLagFilterCoeff;
-    cb = 1 - ca;
-    vForce(eY) = ca*vForce(eY) + cb*prevOut(eY);
+// This code implements a lag filter, C/(s + C) where
+// "C" is the filter coefficient. When "C" is chosen at the 
+// frame rate (in Hz), the jittering is significantly reduced. This is because
+// the jitter is present *at* the execution rate.
+// If a coefficient is set to something equal to or less than zero, the filter
+// is bypassed.
 
-    prevOut = vForce;
+    if (LongForceLagFilterCoeff > 0) { 
+      denom = 2.00 + dT*LongForceLagFilterCoeff;
+      ca = dT*LongForceLagFilterCoeff / denom;
+      cb = (2.00 - dT*LongForceLagFilterCoeff) / denom;
+      Output(eX) = vForce(eX) * ca + prevIn(eX) * ca + prevOut(eX) * cb;
+      vForce(eX) = Output(eX);
+    }
+    if (LatForceLagFilterCoeff > 0) { 
+      denom = 2.00 + dT*LatForceLagFilterCoeff;
+      ca = dT*LatForceLagFilterCoeff / denom;
+      cb = (2.00 - dT*LatForceLagFilterCoeff) / denom;
+      Output(eY) = vForce(eY) * ca + prevIn(eY) * ca + prevOut(eY) * cb;
+      vForce(eY) = Output(eY);
+    }
 
-    if (fabs(RollingWhlVel) <= RFRV) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
-    if (fabs(SideWhlVel) <= SFRV) vForce(eY) *= fabs(SideWhlVel)/SFRV;
+    prevIn = vForce;
+    prevOut = Output;
+
+    if ((fabs(RollingWhlVel) <= RFRV) && RFRV > 0) vForce(eX) *= fabs(RollingWhlVel)/RFRV;
+    if ((fabs(SideWhlVel) <= SFRV) && SFRV > 0) vForce(eY) *= fabs(SideWhlVel)/SFRV;
+
+// End experimental section for attentuating gear jitter
 
     vMoment = vWhlBodyVec * vForce;
 
@@ -401,18 +425,26 @@ void FGLGear::ComputeSlipAngle(void)
   SideWhlVel    = vWhlVelVec(eY)*CosWheel - vWhlVelVec(eX)*SinWheel;
 
   // Calculate tire slip angle.
-  if (fabs(RollingWhlVel) < 0.1 && fabs(SideWhlVel) < 0.01) {
+  if (fabs(RollingWhlVel) < 0.02 && fabs(SideWhlVel) < 0.02) {
     WheelSlip = -SteerAngle*radtodeg;
   } else {
     WheelSlip = atan2(SideWhlVel, fabs(RollingWhlVel))*radtodeg;
   }
 
-  // Filter the wheel slip angle
-  
-  double ca = dT*WheelSlipLagFilterCoeff;
-  double cb = 1 - ca;
-  WheelSlip = ca*WheelSlip + cb*last_WheelSlip;
-  last_WheelSlip = WheelSlip;
+// Filter the wheel slip angle
+
+  double SlipOutput, ca, cb, denom;
+
+  if (WheelSlipLagFilterCoeff > 0) {
+    denom = 2.00 + dT*WheelSlipLagFilterCoeff;
+    ca = dT*WheelSlipLagFilterCoeff / denom;
+    cb = (2.00 - dT*WheelSlipLagFilterCoeff) / denom;
+
+    SlipOutput = ca * (WheelSlip + prevSlipIn) + cb * prevSlipOut;
+
+    prevSlipIn = WheelSlip;
+    WheelSlip = prevSlipOut = SlipOutput;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -517,10 +549,10 @@ void FGLGear::ReportTakeoffOrLanding(void)
 
 void FGLGear::CrashDetect(void)
 {
-  if (compressLength > 500.0 ||
+  if ( (compressLength > 500.0 ||
       vForce.Magnitude() > 100000000.0 ||
       vMoment.Magnitude() > 5000000000.0 ||
-      SinkRate > 1.4666*30)
+      SinkRate > 1.4666*30 ) && !State->IntegrationSuspended())
   {
     PutMessage("Crash Detected: Simulation FREEZE.");
     State->SuspendIntegration();
