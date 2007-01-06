@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Revision: 1.8 $ </version>
+        <version> $Revision: 1.9 $ </version>
         <description> McDonnell Douglas MD-11 </description>
     </fileheader>
 
@@ -441,7 +441,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flaps-pos-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>0.0570</value>
                 </product>
             </function>
@@ -525,7 +525,7 @@
                 <product>
                     <property>aero/qbar-psf</property>
                     <property>metrics/Sw-sqft</property>
-                    <property>fcs/flaps-pos-norm</property>
+                    <property>fcs/flap-pos-norm</property>
                     <value>1.5000</value>
                 </product>
             </function>

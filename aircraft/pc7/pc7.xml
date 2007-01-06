@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.10 $ </version>
+        <version> $Revision: 1.11 $ </version>
         <description> PC-7 </description>
     </fileheader>
 
@@ -232,7 +232,7 @@
                 <output>fcs/flap-pos-norm</output>
             </kinematic>
             <pure_gain name="Flap Pos Scheduler">
-                <input>flap-pos-norm</input>
+                <input>fcs/flap-pos-norm</input>
                 <gain>30.0</gain>
                 <output>fcs/flap-pos-deg</output>
             </pure_gain>
