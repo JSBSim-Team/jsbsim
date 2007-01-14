@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.27 2006/11/20 13:59:50 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.28 2007/01/14 13:58:25 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,7 +166,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.27 $
+    @version $Revision: 1.28 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,6 +310,9 @@ public:
 
   /// Returns the current time.
   double GetSimTime(void);
+
+  /// Returns the current frame time (delta T).
+  double GetDeltaT(void);
 
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);

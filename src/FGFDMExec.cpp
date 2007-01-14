@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.29 2006/11/20 14:06:11 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.30 2007/01/14 13:58:25 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -405,6 +405,13 @@ void FGFDMExec::SetGroundCallback(FGGroundCallback* p)
 double FGFDMExec::GetSimTime(void)
 {
   return (State->Getsim_time());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFDMExec::GetDeltaT(void)
+{
+  return (State->Getdt());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -47,11 +47,20 @@ INCLUDES
 #  include <time.h>
 #endif
 
+#if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#  include <mmsystem.h>
+#  include <regstr.h>
+#else
+#  include <sys/time.h>
+#endif
+
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.22 2006/11/20 14:06:11 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.23 2007/01/14 13:58:25 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -65,6 +74,7 @@ string LogOutputName;
 string LogDirectiveName;
 JSBSim::FGFDMExec* FDMExec;
 bool realtime;
+bool play_nice;
 bool suspend;
 bool catalog;
 
@@ -74,6 +84,14 @@ FORWARD DECLARATIONS
 
 bool options(int, char**);
 void PrintHelp(void);
+
+double getcurrentseconds(
+  struct timeval *tval,
+  struct timezone *tz)
+{
+  gettimeofday(tval, tz);
+  return (tval->tv_sec + tval->tv_usec/1e6);
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -189,10 +207,24 @@ int main(int argc, char* argv[])
   LogOutputName = "";
   LogDirectiveName = "";
   bool result = false, success;
-  double new_five_second_value = 0.0;
+  bool was_paused = false;
+  
+  struct timeval tval;
+  struct timezone tz;
+  struct timespec ts;
+  struct timespec ts1;
+  double frame_duration;
 
-  long clock_ticks = 0, total_pause_ticks = 0, pause_ticks = 0;
+  double new_five_second_value = 0.0;
+  double actual_elapsed_time = 0;
+  double initial_seconds = 0;
+  double current_seconds = 0.0;
+  double paused_seconds = 0.0;
+  double sim_time = 0.0;
+  double sim_lag_time = 0;
+
   realtime = false;
+  play_nice = false;
   suspend = false;
   catalog=false;
 
@@ -232,7 +264,8 @@ int main(int argc, char* argv[])
 
     if (catalog) {
       FDMExec->PrintPropertyCatalog();
-      goto end;
+      delete FDMExec;
+      return 0;
     }
 
     JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
@@ -283,8 +316,6 @@ int main(int argc, char* argv[])
 
   if (suspend) FDMExec->Hold();
 
-  clock_ticks = 0;
-
   JSBSim::FGJSBBase::Message* msg;
 
   // Print actual time at start
@@ -293,6 +324,17 @@ int main(int argc, char* argv[])
   time(&tod);
   strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
   cout << "Start: " << s << " (HH:MM:SS)" << endl;
+
+  frame_duration = FDMExec->GetDeltaT();
+  ts.tv_sec = 0;
+  if (realtime) {
+    ts.tv_nsec = (long)(frame_duration*1e9);
+  } else {
+    ts.tv_nsec = (long)(10000000);
+  }
+
+  tzset(); 
+  current_seconds = initial_seconds = getcurrentseconds(&tval, &tz);
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
@@ -318,41 +360,44 @@ int main(int argc, char* argv[])
     }
 
     // if running realtime, throttle the execution, else just run flat-out fast
-    // if suspended, then don't increment realtime counter
+    // unless "playing nice", in which case sleep for a while (0.01 seconds) each frame.
+    // If suspended, then don't increment cumulative realtime "stopwatch".
 
     if ( ! FDMExec->Holding()) {
-      if ( ! realtime ) { // IF THIS IS NOT REALTIME MODE, IT IS BATCH
+      if ( ! realtime ) {         // ------------ RUNNING IN BATCH MODE
 
         result = FDMExec->Run();
+        if (play_nice) nanosleep(&ts, &ts1);
 
-      } else { // REALTIME MODE IS ACTIVE
+      } else {                    // ------------ RUNNING IN REALTIME MODE
 
-        // track times when simulation is suspended
-        if (pause_ticks != 0) {
-          total_pause_ticks += clock_ticks - pause_ticks;
-          pause_ticks = 0;
+        // "was_paused" will be true if entering this "run" loop from a paused state.
+        if (was_paused) {
+          initial_seconds += paused_seconds;
+          was_paused = false;
+        }
+        current_seconds = getcurrentseconds(&tval, &tz);            // Seconds since 1 Jan 1970 (usually)
+        actual_elapsed_time = current_seconds - initial_seconds;    // Real world elapsed seconds since start
+        sim_lag_time = actual_elapsed_time - FDMExec->GetSimTime(); // How far behind sim-time is from actual
+                                                                    // elapsed time.
+        for (int i=0; i<(int)(sim_lag_time/frame_duration); i++) {  // catch up sim time to actual elapsed time.
+          result = FDMExec->Run();
+          if (FDMExec->Holding()) break;
         }
 
-        while ((clock_ticks-total_pause_ticks)/CLOCKS_PER_SEC  >= FDMExec->GetSimTime()) {
-          result = FDMExec->Run();
+        if (play_nice) nanosleep(&ts, &ts1);
 
-          // print out status every five seconds
-          if (FDMExec->GetSimTime() >= new_five_second_value) {
-            cout << "Simulation elapsed time: " << FDMExec->GetSimTime() << endl;
-            new_five_second_value += 5.0;
-          }
-          if (FDMExec->Holding()) break;
+        if (FDMExec->GetSimTime() >= new_five_second_value) { // Print out elapsed time every five seconds.
+          cout << "Simulation elapsed time: " << FDMExec->GetSimTime() << endl;
+          new_five_second_value += 5.0;
         }
       }
     } else { // Suspended
-      if (pause_ticks == 0) {
-        pause_ticks = clock(); // remember start of pause
-        cout << endl << "  ... Holding ..." << endl << endl;
-      }
+      was_paused = true;
+      paused_seconds = getcurrentseconds(&tval, &tz) - current_seconds;
+      nanosleep(&ts, &ts1);
       result = FDMExec->Run();
     }
-
-    clock_ticks = clock();
 
   }
 
@@ -361,11 +406,8 @@ int main(int argc, char* argv[])
   strftime(s, 99, "%A %B %d %Y %X", localtime(&tod));
   cout << "End: " << s << " (HH:MM:SS)" << endl;
 
-end:
-
   // CLEAN UP
   delete FDMExec;
-  cout << endl << "Seconds processor time used: " << (clock_ticks - total_pause_ticks)/CLOCKS_PER_SEC << " seconds" << endl;
 
   return 0;
 }
@@ -393,6 +435,8 @@ bool options(int count, char **arg)
       exit (0);
     } else if (argument.find("--realtime") != string::npos) {
       realtime = true;
+    } else if (argument.find("--nice") != string::npos) {
+      play_nice = true;
     } else if (argument.find("--suspend") != string::npos) {
       suspend = true;
     } else if (argument.find("--outputlogfile") != string::npos) {
@@ -474,6 +518,7 @@ void PrintHelp(void)
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
+    cout << "    --nice  specifies to run in real-time but at lower CPU usage" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
