@@ -10,7 +10,7 @@
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.62 $</version>
+        <version>$Revision: 1.63 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -74,7 +74,7 @@
         </pointmass>
     </mass_balance>
     <ground_reactions>
-        <contact type="BOGEY" name="NOSE">
+        <contact type="BOGEY" name="Nose Gear">
             <location unit="IN">
                 <x> -6.8 </x>
                 <y> 0.0 </y>
@@ -85,11 +85,22 @@
             <rolling_friction>0.02</rolling_friction>
             <spring_coeff unit="LBS/FT">1800</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">600</damping_coeff>
+
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.75</rolling>
+              <side unit="FT/SEC">0.75</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120 </rolling>
+              <side> 120 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120 </wheel_slip_filter>
+
             <max_steer unit="DEG">10</max_steer>
             <brake_group>NONE</brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="LEFT_MAIN">
+        <contact type="BOGEY" name="Left Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
                 <y> -43.0 </y>
@@ -101,11 +112,22 @@
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">1600</damping_coeff>
 <!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
-            <max_steer unit="DEG">0</max_steer>
+
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.55</rolling>
+              <side unit="FT/SEC">0.55</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120 </rolling>
+              <side> 120 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120 </wheel_slip_filter>
+
+          <max_steer unit="DEG">0</max_steer>
             <brake_group>LEFT</brake_group>
             <retractable>0</retractable>
         </contact>
-        <contact type="BOGEY" name="RIGHT_MAIN">
+        <contact type="BOGEY" name="Right Main Gear">
             <location unit="IN">
                 <x> 58.2 </x>
                 <y> 43.0 </y>
@@ -117,7 +139,18 @@
             <spring_coeff unit="LBS/FT">5400</spring_coeff>
             <damping_coeff unit="LBS/FT/SEC">1600</damping_coeff>
 <!--            <damping_coeff_rebound unit="LBS/FT/SEC">3200</damping_coeff_rebound> -->
-            <max_steer unit="DEG">0</max_steer>
+
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.55</rolling>
+              <side unit="FT/SEC">0.55</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120 </rolling>
+              <side> 120 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120 </wheel_slip_filter>
+
+          <max_steer unit="DEG">0</max_steer>
             <brake_group>RIGHT</brake_group>
             <retractable>0</retractable>
         </contact>
@@ -820,7 +853,7 @@
     </aerodynamics>
 
     <input port="1137"/>
-    <output name="JSBout172B.csv" type="CSV" rate="1">
+    <output name="JSBout172B.csv" type="CSV" rate="20">
         <property> aero/qbar-psf </property>
 <!--        <property> fcs/aero/sensor/qbar-psf </property> -->
         <property> attitude/phi-rad </property>
@@ -846,7 +879,7 @@
         <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>
     </output>
-    <output name="localhost" type="SOCKET" port="1138" rate="2">
+    <output name="localhost" type="SOCKET" port="1138" rate="20">
         <simulation> OFF </simulation>
         <atmosphere> OFF </atmosphere>
         <massprops> OFF</massprops>

@@ -53,7 +53,7 @@
     </mass_balance>
 
     <ground_reactions>
-        <contact name="NOSE_LG" type="BOGEY">
+        <contact name="Nose Gear" type="BOGEY">
             <location unit="IN">
                 <x> 158 </x>
                 <y>   0 </y>
@@ -64,15 +64,21 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 90000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 4000 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">8000</damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.7</rolling>
+              <side unit="FT/SEC">0.7</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120.0 </rolling>
+              <side>120.0 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120.0 </wheel_slip_filter>
             <max_steer unit="DEG"> 35 </max_steer>
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">1.05</rolling>
-                <side unit="FT/SEC">1.05</side>
-            </relaxation_velocity>
         </contact>
-        <contact name="LEFT_MLG" type="BOGEY">
+        <contact name="Left Main Gear" type="BOGEY">
             <location unit="IN">
                 <x>  648 </x>
                 <y> -100 </y>
@@ -83,15 +89,21 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">20000</damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.7</rolling>
+              <side unit="FT/SEC">0.7</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120.0 </rolling>
+              <side> 120.0 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120.0 </wheel_slip_filter>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">1.05</rolling>
-                <side unit="FT/SEC">1.05</side>
-            </relaxation_velocity>
         </contact>
-        <contact name="RIGHT_MLG" type="BOGEY">
+        <contact name="Right Main Gear" type="BOGEY">
             <location unit="IN">
                 <x> 648 </x>
                 <y> 100 </y>
@@ -102,13 +114,19 @@
             <rolling_friction> 0.02 </rolling_friction>
             <spring_coeff unit="LBS/FT"> 120000 </spring_coeff>
             <damping_coeff unit="LBS/FT/SEC"> 10000 </damping_coeff>
+            <damping_coeff_rebound unit="LBS/FT/SEC">20000</damping_coeff_rebound>
+            <relaxation_velocity>
+              <rolling unit="FT/SEC">0.7</rolling>
+              <side unit="FT/SEC">0.7</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+              <rolling> 120.0 </rolling>
+              <side> 120.0 </side>
+            </force_lag_filter>
+            <wheel_slip_filter> 120.0 </wheel_slip_filter>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
             <retractable>1</retractable>
-            <relaxation_velocity>
-                <rolling unit="FT/SEC">1.05</rolling>
-                <side unit="FT/SEC">1.05</side>
-            </relaxation_velocity>
         </contact>
     </ground_reactions>
     <propulsion>
@@ -858,7 +876,7 @@
         </axis>
     </aerodynamics>
 
-    <output name="B737_datalog.csv" rate="10" type="CSV">
+    <output name="B737_datalog.csv" rate="20" type="CSV">
         <property> aero/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> position/h-sl-ft </property>
