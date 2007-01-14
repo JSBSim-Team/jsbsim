@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.13 2006/09/10 14:06:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.14 2007/01/14 13:55:39 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,70 +152,70 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (SubSystems & ssAerosurfaces) {
       outstream << delimeter;
-      outstream << "Aileron Cmd" + delimeter;
-      outstream << "Elevator Cmd" + delimeter;
-      outstream << "Rudder Cmd" + delimeter;
-      outstream << "Flap Cmd" + delimeter;
-      outstream << "Left Aileron Pos" + delimeter;
-      outstream << "Right Aileron Pos" + delimeter;
-      outstream << "Elevator Pos" + delimeter;
-      outstream << "Rudder Pos" + delimeter;
-      outstream << "Flap Pos";
+      outstream << "Aileron Command (norm)" + delimeter;
+      outstream << "Elevator Command (norm)" + delimeter;
+      outstream << "Rudder Command (norm)" + delimeter;
+      outstream << "Flap Command (norm)" + delimeter;
+      outstream << "Left Aileron Position (deg)" + delimeter;
+      outstream << "Right Aileron Position (deg)" + delimeter;
+      outstream << "Elevator Position (deg)" + delimeter;
+      outstream << "Rudder Position (deg)" + delimeter;
+      outstream << "Flap Position (deg)";
     }
     if (SubSystems & ssRates) {
       outstream << delimeter;
-      outstream << "P" + delimeter + "Q" + delimeter + "R" + delimeter;
-      outstream << "Pdot" + delimeter + "Qdot" + delimeter + "Rdot";
+      outstream << "P (deg/s)" + delimeter + "Q (deg/s)" + delimeter + "R (deg/s)" + delimeter;
+      outstream << "P dot (deg/s^2)" + delimeter + "Q dot (deg/s^2)" + delimeter + "R dot (deg/s^2)";
     }
     if (SubSystems & ssVelocities) {
       outstream << delimeter;
-      outstream << "QBar" + delimeter;
-      outstream << "Vtotal" + delimeter;
+      outstream << "q bar (psf)" + delimeter;
+      outstream << "V_{Total} (ft/s)" + delimeter;
       outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
-      outstream << "UAero" + delimeter + "VAero" + delimeter + "WAero" + delimeter;
-      outstream << "Vn" + delimeter + "Ve" + delimeter + "Vd";
+      outstream << "Aero V_{X Body} (ft/s)" + delimeter + "Aero V_{Y Body} (ft/s)" + delimeter + "Aero V_{Z Body} (ft/s)" + delimeter;
+      outstream << "V_{North} (ft/s)" + delimeter + "V_{East} (ft/s)" + delimeter + "V_{Down} (ft/s)";
     }
     if (SubSystems & ssForces) {
       outstream << delimeter;
-      outstream << "Drag" + delimeter + "Side" + delimeter + "Lift" + delimeter;
+      outstream << "F_{Drag} (lbs)" + delimeter + "F_{Side} (lbs)" + delimeter + "F_{Lift} (lbs)" + delimeter;
       outstream << "L/D" + delimeter;
-      outstream << "Xforce" + delimeter + "Yforce" + delimeter + "Zforce";
+      outstream << "F_X (lbs)" + delimeter + "F_Y (lbs)" + delimeter + "F_Z (lbs)";
     }
     if (SubSystems & ssMoments) {
       outstream << delimeter;
-      outstream << "L" + delimeter + "M" + delimeter + "N";
+      outstream << "L (ft-lbs)" + delimeter + "M (ft-lbs)" + delimeter + "N (ft-lbs)";
     }
     if (SubSystems & ssAtmosphere) {
       outstream << delimeter;
-      outstream << "Rho" + delimeter;
-      outstream << "SL pressure" + delimeter;
-      outstream << "Ambient pressure" + delimeter;
-      outstream << "NWind" + delimeter + "EWind" + delimeter + "DWind";
+      outstream << "Rho (slugs/ft^3)" + delimeter;
+      outstream << "P_{SL} (psf)" + delimeter;
+      outstream << "P_{Ambient} (psf)" + delimeter;
+      outstream << "Wind V_{North} (ft/s)" + delimeter + "Wind V_{East} (ft/s)" + delimeter + "Wind V_{Down} (ft/s)";
     }
     if (SubSystems & ssMassProps) {
       outstream << delimeter;
-      outstream << "Ixx" + delimeter;
-      outstream << "Ixy" + delimeter;
-      outstream << "Ixz" + delimeter;
-      outstream << "Iyx" + delimeter;
-      outstream << "Iyy" + delimeter;
-      outstream << "Iyz" + delimeter;
-      outstream << "Izx" + delimeter;
-      outstream << "Izy" + delimeter;
-      outstream << "Izz" + delimeter;
+      outstream << "I_xx" + delimeter;
+      outstream << "I_xy" + delimeter;
+      outstream << "I_xz" + delimeter;
+      outstream << "I_yx" + delimeter;
+      outstream << "I_yy" + delimeter;
+      outstream << "I_yz" + delimeter;
+      outstream << "I_zx" + delimeter;
+      outstream << "I_zy" + delimeter;
+      outstream << "I_zz" + delimeter;
       outstream << "Mass" + delimeter;
-      outstream << "Xcg" + delimeter + "Ycg" + delimeter + "Zcg";
+      outstream << "X_cg" + delimeter + "Y_cg" + delimeter + "Z_cg";
     }
     if (SubSystems & ssPropagate) {
       outstream << delimeter;
-      outstream << "Altitude" + delimeter;
-      outstream << "Phi" + delimeter + "Tht" + delimeter + "Psi" + delimeter;
-      outstream << "Alpha" + delimeter;
-      outstream << "Beta" + delimeter;
-      outstream << "Latitude (Deg)" + delimeter;
-      outstream << "Longitude (Deg)" + delimeter;
-      outstream << "Distance AGL" + delimeter;
-      outstream << "Runway Radius";
+      outstream << "Altitude (ft)" + delimeter;
+      outstream << "Phi (deg)" + delimeter + "Theta (deg)" + delimeter + "Psi (deg)" + delimeter;
+      outstream << "Alpha (deg)" + delimeter;
+      outstream << "Beta (deg)" + delimeter;
+      outstream << "Latitude (deg)" + delimeter;
+      outstream << "Longitude (deg)" + delimeter;
+      outstream << "Distance AGL (ft)" + delimeter;
+      outstream << "Runway Radius (ft)";
     }
     if (SubSystems & ssCoefficients) {
       scratch = Aerodynamics->GetCoefficientStrings(delimeter);
@@ -252,11 +252,11 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << FCS->GetDeCmd() << delimeter;
     outstream << FCS->GetDrCmd() << delimeter;
     outstream << FCS->GetDfCmd() << delimeter;
-    outstream << FCS->GetDaLPos() << delimeter;
-    outstream << FCS->GetDaRPos() << delimeter;
-    outstream << FCS->GetDePos() << delimeter;
-    outstream << FCS->GetDrPos() << delimeter;
-    outstream << FCS->GetDfPos();
+    outstream << FCS->GetDaLPos(ofDeg) << delimeter;
+    outstream << FCS->GetDaRPos(ofDeg) << delimeter;
+    outstream << FCS->GetDePos(ofDeg) << delimeter;
+    outstream << FCS->GetDrPos(ofDeg) << delimeter;
+    outstream << FCS->GetDfPos(ofDeg);
   }
   if (SubSystems & ssRates) {
     outstream << delimeter;

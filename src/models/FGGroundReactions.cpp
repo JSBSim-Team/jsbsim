@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.10 2006/11/29 13:52:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.11 2007/01/14 13:55:39 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,26 +144,26 @@ string FGGroundReactions::GetGroundReactionStrings(string delimeter)
   for (unsigned int i=0;i<lGear.size();i++) {
     if (lGear[i].IsBogey()) {
       string name = lGear[i].GetName();
-      buf << name << "_WOW" << delimeter
-          << name << "_stroke" << delimeter
-          << name << "_strokeVel" << delimeter
-          << name << "_CompressForce" << delimeter
-          << name << "_WhlSideForce" << delimeter
-          << name << "_WhlVelVecX" << delimeter
-          << name << "_WhlVelVecY" << delimeter
-          << name << "_WhlRollForce" << delimeter
-          << name << "_BodyXForce" << delimeter
-          << name << "_BodyYForce" << delimeter
-          << name << "_WhlSlipDegrees" << delimeter;
+      buf << name << " WOW" << delimeter
+          << name << " stroke (ft)" << delimeter
+          << name << " stroke velocity (ft/sec)" << delimeter
+          << name << " compress force (lbs)" << delimeter
+          << name << " wheel side force (lbs)" << delimeter
+          << name << " wheel velocity vec X (ft/sec)" << delimeter
+          << name << " wheel velocity vec Y (ft/sec)" << delimeter
+          << name << " wheel roll force (lbs)" << delimeter
+          << name << " body X force (lbs)" << delimeter
+          << name << " body Y force (lbs)" << delimeter
+          << name << " wheel slip (deg)" << delimeter;
     }
   }
 
-  buf << "TotalGearForce_X" << delimeter
-      << "TotalGearForce_Y" << delimeter
-      << "TotalGearForce_Z" << delimeter
-      << "TotalGearMoment_L" << delimeter
-      << "TotalGearMoment_M" << delimeter
-      << "TotalGearMoment_N";
+  buf << " Total Gear Force_X (lbs)" << delimeter
+      << " Total Gear Force_Y (lbs)" << delimeter
+      << " Total Gear Force_Z (lbs)" << delimeter
+      << " Total Gear Moment_L (ft-lbs)" << delimeter
+      << " Total Gear Moment_M (ft-lbs)" << delimeter
+      << " Total Gear Moment_N (ft-lbs)";
 
   return buf.str();
 }
