@@ -125,9 +125,17 @@ int main(int argc, char **argv)
   int ctr=1, next_comma=0, len=0, start=0, file_ctr=0;
   vector <string> files;
   ifstream infile2;
-  string filename(argv[1]), new_filename, Title;
   char num[4];
   bool comprehensive=false;
+
+  if (argc == 1 || argc > 5) {
+    cout << endl << "Usage: " << endl << endl;
+    cout << "  prep_plot <datafile.csv> [--plot=<plot_directives.csv> --comp[rehensive]] [--title=<title>]"
+         << endl << endl;
+    exit(-1);
+  }
+
+  string filename(argv[1]), new_filename, Title;
 
   if (filename.find("#") != string::npos) { // if plotting multiple files
     while (file_ctr<10) {
