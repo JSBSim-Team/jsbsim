@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.26 2007/01/15 23:13:49 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.25 2007/01/15 23:11:14 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -407,8 +407,8 @@ int main(int argc, char* argv[])
                                                                     // elapsed time.
         for (int i=0; i<(int)(sim_lag_time/frame_duration); i++) {  // catch up sim time to actual elapsed time.
           result = FDMExec->Run();
-          cycle_duration = getcurrentseconds() - current_seconds;   // Calculate cycle duration
-          current_seconds = getcurrentseconds();                    // Get new current_seconds
+          cycle_duration = getcurrentseconds() - current_seconds;
+          current_seconds = getcurrentseconds();
           if (FDMExec->Holding()) break;
         }
 
