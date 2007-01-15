@@ -10,7 +10,7 @@
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.64 $</version>
+        <version>$Revision: 1.65 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -897,7 +897,9 @@
         <property> velocities/vc-kts </property>
         <property> attitude/phi-rad </property>
         <property> fcs/attitude/sensor/phi-rad </property>
+        <!-- Use the cycle_duration property for standalone only.
         <property> simulation/cycle_duration </property>
+        -->
     </output>
     <output name="localhost" type="SOCKET" port="1139" rate="1">
         <simulation> OFF </simulation>
