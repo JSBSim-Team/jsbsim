@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.24 2006/12/24 13:13:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.25 2007/01/15 00:41:25 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
     }
   }
 
+  State = Exec->GetState();
   LongForceLagFilterCoeff = 1/State->Getdt(); // default longitudinal force filter coefficient
   LatForceLagFilterCoeff  = 1/State->Getdt(); // default lateral force filter coefficient
 

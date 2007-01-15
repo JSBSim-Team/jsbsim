@@ -52,6 +52,8 @@ INCLUDES
 #  include <windows.h>
 #  include <mmsystem.h>
 #  include <regstr.h>
+#  include <sys/types.h>
+#  include <sys/timeb.h>
 #else
 #  include <sys/time.h>
 #endif
@@ -60,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.23 2007/01/14 13:58:25 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.24 2007/01/15 00:41:25 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -85,13 +87,39 @@ FORWARD DECLARATIONS
 bool options(int, char**);
 void PrintHelp(void);
 
-double getcurrentseconds(
-  struct timeval *tval,
-  struct timezone *tz)
-{
-  gettimeofday(tval, tz);
-  return (tval->tv_sec + tval->tv_usec/1e6);
-}
+#if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  double getcurrentseconds(void)
+  {
+    struct timeb tm_ptr;
+    ftime(&tm_ptr);
+    return tm_ptr.time + tm_ptr.millitm*0.001;
+  }
+#else
+  double getcurrentseconds(void)
+  {
+    struct timeval tval;
+    struct timezone tz;
+
+    gettimeofday(&tval, &tz);
+    return (tval.tv_sec + tval.tv_usec*1e-6);
+  }
+#endif
+
+#if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+  void sim_nsleep(long nanosec)
+  {
+    Sleep(nanosec*1e-6); // convert nanoseconds (passed in) to milliseconds for Win32.
+  }
+#else
+  void sim_nsleep(long nanosec)
+  {
+    struct timespec ts, ts1;
+
+    ts.tv_sec = 0;
+    ts.tv_nsec = nanosec;
+    nanosleep(&ts, &ts1);
+  }
+#endif
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -209,10 +237,6 @@ int main(int argc, char* argv[])
   bool result = false, success;
   bool was_paused = false;
   
-  struct timeval tval;
-  struct timezone tz;
-  struct timespec ts;
-  struct timespec ts1;
   double frame_duration;
 
   double new_five_second_value = 0.0;
@@ -222,6 +246,7 @@ int main(int argc, char* argv[])
   double paused_seconds = 0.0;
   double sim_time = 0.0;
   double sim_lag_time = 0;
+  long sleep_nseconds = 0;
 
   realtime = false;
   play_nice = false;
@@ -326,15 +351,11 @@ int main(int argc, char* argv[])
   cout << "Start: " << s << " (HH:MM:SS)" << endl;
 
   frame_duration = FDMExec->GetDeltaT();
-  ts.tv_sec = 0;
-  if (realtime) {
-    ts.tv_nsec = (long)(frame_duration*1e9);
-  } else {
-    ts.tv_nsec = (long)(10000000);
-  }
+  if (realtime) sleep_nseconds = (long)(frame_duration*1e9);
+  else          sleep_nseconds = (10000000);           // 0.01 seconds
 
   tzset(); 
-  current_seconds = initial_seconds = getcurrentseconds(&tval, &tz);
+  current_seconds = initial_seconds = getcurrentseconds();
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
@@ -367,7 +388,7 @@ int main(int argc, char* argv[])
       if ( ! realtime ) {         // ------------ RUNNING IN BATCH MODE
 
         result = FDMExec->Run();
-        if (play_nice) nanosleep(&ts, &ts1);
+        if (play_nice) sim_nsleep(sleep_nseconds);
 
       } else {                    // ------------ RUNNING IN REALTIME MODE
 
@@ -376,7 +397,7 @@ int main(int argc, char* argv[])
           initial_seconds += paused_seconds;
           was_paused = false;
         }
-        current_seconds = getcurrentseconds(&tval, &tz);            // Seconds since 1 Jan 1970 (usually)
+        current_seconds = getcurrentseconds();                      // Seconds since 1 Jan 1970 (usually)
         actual_elapsed_time = current_seconds - initial_seconds;    // Real world elapsed seconds since start
         sim_lag_time = actual_elapsed_time - FDMExec->GetSimTime(); // How far behind sim-time is from actual
                                                                     // elapsed time.
@@ -385,7 +406,7 @@ int main(int argc, char* argv[])
           if (FDMExec->Holding()) break;
         }
 
-        if (play_nice) nanosleep(&ts, &ts1);
+        if (play_nice) sim_nsleep(sleep_nseconds);
 
         if (FDMExec->GetSimTime() >= new_five_second_value) { // Print out elapsed time every five seconds.
           cout << "Simulation elapsed time: " << FDMExec->GetSimTime() << endl;
@@ -394,8 +415,8 @@ int main(int argc, char* argv[])
       }
     } else { // Suspended
       was_paused = true;
-      paused_seconds = getcurrentseconds(&tval, &tz) - current_seconds;
-      nanosleep(&ts, &ts1);
+      paused_seconds = getcurrentseconds() - current_seconds;
+      sim_nsleep(sleep_nseconds);
       result = FDMExec->Run();
     }
 
@@ -518,7 +539,7 @@ void PrintHelp(void)
     cout << "    --aircraft=<filename>  specifies the name of the aircraft to be modeled" << endl;
     cout << "    --script=<filename>  specifies a script to run" << endl;
     cout << "    --realtime  specifies to run in actual real world time" << endl;
-    cout << "    --nice  specifies to run in real-time but at lower CPU usage" << endl;
+    cout << "    --nice  specifies to run at lower CPU usage" << endl;
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
