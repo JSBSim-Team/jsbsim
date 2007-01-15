@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.11 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.12 2007/01/15 23:11:14 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,6 +89,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
   T_dev_sl = T_dev = delta_T = 0.0;
   StandardTempOnly = false;
+  first_pass = true;
 
   bind();
   Debug(0);
@@ -543,13 +544,15 @@ void FGAtmosphere::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
   }
   if (debug_lvl & 128) { // Turbulence
-    if (frame == 0 && from == 2) {
+    if (first_pass && from == 2) {
+      first_pass = false;
       cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
            << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
            << "vDirection(X), vDirection(Y), vDirection(Z), "
            << "Magnitude, "
            << "vTurbPQR(P), vTurbPQR(Q), vTurbPQR(R), " << endl;
-    } else if (from == 2) {
+    } 
+    if (from == 2) {
       cout << vTurbulence << ", " << vTurbulenceGrad << ", " << vDirection << ", " << Magnitude << ", " << vTurbPQR << endl;
     }
   }

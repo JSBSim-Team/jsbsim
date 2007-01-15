@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.4 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.5 2007/01/15 23:11:14 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,7 +310,7 @@ void FGMars::Debug(int from)
   if (debug_lvl & 16) { // Sanity checking
   }
   if (debug_lvl & 32) { // Turbulence
-    if (frame == 0 && from == 2) {
+    if (first_pass && from == 2) {
       cout << "vTurbulence(X), vTurbulence(Y), vTurbulence(Z), "
            << "vTurbulenceGrad(X), vTurbulenceGrad(Y), vTurbulenceGrad(Z), "
            << "vDirection(X), vDirection(Y), vDirection(Z), "

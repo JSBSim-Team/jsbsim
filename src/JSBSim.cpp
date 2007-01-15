@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.24 2007/01/15 00:41:25 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.26 2007/01/15 23:13:49 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -246,6 +246,7 @@ int main(int argc, char* argv[])
   double paused_seconds = 0.0;
   double sim_time = 0.0;
   double sim_lag_time = 0;
+  double cycle_duration = 0.0;
   long sleep_nseconds = 0;
 
   realtime = false;
@@ -264,6 +265,9 @@ int main(int argc, char* argv[])
   FDMExec = new JSBSim::FGFDMExec();
   FDMExec->SetAircraftPath(RootDir + "aircraft");
   FDMExec->SetEnginePath(RootDir + "engine");
+
+  FDMExec->GetPropertyManager()->Tie("simulation/frame_start_time", &actual_elapsed_time);
+  FDMExec->GetPropertyManager()->Tie("simulation/cycle_duration", &cycle_duration);
 
   // *** OPTION A: LOAD A SCRIPT, WHICH LOADS EVERYTHING ELSE *** //
   if (!ScriptName.empty()) {
@@ -397,12 +401,14 @@ int main(int argc, char* argv[])
           initial_seconds += paused_seconds;
           was_paused = false;
         }
-        current_seconds = getcurrentseconds();                      // Seconds since 1 Jan 1970 (usually)
+        current_seconds = getcurrentseconds();                      // Seconds since 1 Jan 1970
         actual_elapsed_time = current_seconds - initial_seconds;    // Real world elapsed seconds since start
         sim_lag_time = actual_elapsed_time - FDMExec->GetSimTime(); // How far behind sim-time is from actual
                                                                     // elapsed time.
         for (int i=0; i<(int)(sim_lag_time/frame_duration); i++) {  // catch up sim time to actual elapsed time.
           result = FDMExec->Run();
+          cycle_duration = getcurrentseconds() - current_seconds;   // Calculate cycle duration
+          current_seconds = getcurrentseconds();                    // Get new current_seconds
           if (FDMExec->Holding()) break;
         }
 

@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.8 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.9 2007/01/15 23:11:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.8 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.9 2007/01/15 23:11:14 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -185,6 +185,7 @@ protected:
   double T_dev_sl, T_dev, delta_T, density_altitude;
   atmType atmosphere;
   bool StandardTempOnly;
+  bool first_pass;
 
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
