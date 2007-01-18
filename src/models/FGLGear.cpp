@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.25 2007/01/15 00:41:25 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.26 2007/01/18 04:48:09 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,7 +183,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   FCS         = Exec->GetFCS();
   MassBalance = Exec->GetMassBalance();
 
-  WOW = lastWOW = true; // should the value be initialized to true?
+  WOW = lastWOW = false;
   ReportEnable = true;
   FirstContact = false;
   StartedGroundRun = false;
