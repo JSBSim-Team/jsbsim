@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.31 2007/01/15 23:11:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.32 2007/01/31 20:48:41 frohlich Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,7 +354,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
 
 bool FGFDMExec::Run(void)
 {
-  bool success;
+  bool success = false;
   FGModel* model_iterator;
 
   model_iterator = FirstModel;
