@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.20 2006/11/20 13:59:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.21 2007/02/05 13:23:40 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -456,10 +456,8 @@ bool FGFCS::Load(Element* el)
 {
   string name, file, fname, interface_property_string;
   vector <FGFCSComponent*> *Components;
-  Element *document, *component_element, *property_element, *sensor_element;
+  Element *component_element, *property_element, *sensor_element;
   Element *channel_element;
-  ifstream* controls_file = new ifstream();
-  FGXMLParse controls_file_parser;
 
   Components=0;
   // Determine if the FCS/Autopilot is defined inline in the aircraft configuration
@@ -479,10 +477,7 @@ bool FGFCS::Load(Element* el)
       cerr << "FCS/Autopilot does not appear to be defined inline nor in a file" << endl;
       return false;
     } else {
-      controls_file->open(file.c_str());
-      readXML(*controls_file, controls_file_parser);
-      delete controls_file;
-      document = controls_file_parser.GetDocument();
+      document = LoadXMLDocument(file);
     }
   } else {
     document = el;

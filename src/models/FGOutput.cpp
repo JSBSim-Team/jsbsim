@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.14 2007/01/14 13:55:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.15 2007/02/05 13:23:40 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -574,9 +574,7 @@ bool FGOutput::Load(Element* element)
   int OutRate = 0;
   string property;
   unsigned int port;
-  FGXMLParse output_file_parser;
-  Element *document, *property_element;
-  ifstream* output_file = new ifstream();
+  Element *property_element;
 
   string separator = "/";
 # ifdef macintosh
@@ -596,16 +594,7 @@ bool FGOutput::Load(Element* element)
     } else {
       output_file_name = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
     }
-    output_file->open(output_file_name.c_str());
-    if (output_file->is_open()) {
-      readXML(*output_file, output_file_parser);
-      delete output_file;
-    } else {
-      delete output_file;
-      cerr << "Could not open directives file: " << output_file_name << endl;
-      return false;
-    }
-    document = output_file_parser.GetDocument();
+    document = LoadXMLDocument(output_file_name);
   } else {
     document = element;
   }

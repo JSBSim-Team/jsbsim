@@ -53,13 +53,13 @@ INCLUDES
 #include <models/flight_control/FGFCSComponent.h>
 #include <models/FGModel.h>
 #include <models/FGLGear.h>
-#include <input_output/FGXMLElement.h>
+#include <input_output/FGXMLFileRead.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.10 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.11 2007/02/05 13:23:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.10 $
+    @version $Revision: 1.11 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -191,7 +191,8 @@ CLASS DOCUMENTATION
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFCS : public FGModel {
+class FGFCS : public FGModel, public FGXMLFileRead
+{
 
 public:
   /** Constructor

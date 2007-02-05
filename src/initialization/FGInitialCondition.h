@@ -50,12 +50,13 @@ INCLUDES
 #include <FGFDMExec.h>
 #include <FGJSBBase.h>
 #include <math/FGColumnVector3.h>
+#include <input_output/FGXMLFileRead.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.8 2006/11/26 04:59:29 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.9 2007/02/05 13:23:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -192,14 +193,14 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.8 2006/11/26 04:59:29 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.9 2007/02/05 13:23:39 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGInitialCondition : public FGJSBBase
+class FGInitialCondition : public FGJSBBase, public FGXMLFileRead
 {
 public:
   /// Constructor

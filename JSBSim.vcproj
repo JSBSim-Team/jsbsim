@@ -61,7 +61,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="1"
-				Version="0.9.12"
+				Version="0.9.13"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;"
 				GenerateDebugInformation="true"
@@ -116,8 +116,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="2"
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)src&quot;;&quot;$(ProjectDir)src\simgear\xml&quot;;&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;HAVE_EXPAT_CONFIG_H"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -136,10 +138,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="1"
-				Version="0.9.12"
-				LinkIncremental="2"
+				Version="0.9.13"
+				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -445,6 +447,10 @@
 			</File>
 			<File
 				RelativePath=".\src\input_output\FGXMLElement.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\input_output\FGXMLFileRead.h"
 				>
 			</File>
 			<File

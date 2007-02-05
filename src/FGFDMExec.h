@@ -48,8 +48,8 @@ INCLUDES
 #include <initialization/FGInitialCondition.h>
 #include <FGJSBBase.h>
 #include <input_output/FGPropertyManager.h>
-#include <input_output/FGXMLParse.h>
 #include <input_output/FGGroundCallback.h>
+#include <input_output/FGXMLFileRead.h>
 #include <models/FGPropagate.h>
 
 #include <vector>
@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.28 2007/01/14 13:58:25 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.29 2007/02/05 13:23:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,14 +166,14 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.28 $
+    @version $Revision: 1.29 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGFDMExec : public FGJSBBase
+class FGFDMExec : public FGJSBBase, public FGXMLFileRead
 {
 public:
 

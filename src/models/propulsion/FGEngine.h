@@ -60,12 +60,13 @@ INCLUDES
 #include <FGJSBBase.h>
 #include "FGThruster.h"
 #include <input_output/FGPropertyManager.h>
+#include <input_output/FGXMLFileRead.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.6 2006/08/30 12:04:38 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -95,14 +96,14 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.6 2006/08/30 12:04:38 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGEngine : public FGJSBBase
+class FGEngine : public FGJSBBase, public FGXMLFileRead
 {
 public:
   FGEngine(FGFDMExec* exec, Element* el, int engine_number);

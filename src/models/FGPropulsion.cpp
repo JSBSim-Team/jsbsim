@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.14 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.15 2007/02/05 13:23:40 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -201,9 +201,6 @@ bool FGPropulsion::Load(Element* el)
   string type, engine_filename;
   int Feed;
   bool ThrottleAdded = false;
-  Element* document;
-  FGXMLParse engine_file_parser;
-  ifstream* engine_file;
 
   Debug(2);
 
@@ -217,8 +214,7 @@ bool FGPropulsion::Load(Element* el)
     }
 
     engine_filename = FindEngineFullPathname(engine_filename);
-    readXML(engine_filename, engine_file_parser);
-    document = engine_file_parser.GetDocument(); // document holds the engine description
+    document = LoadXMLDocument(engine_filename);
     document->SetParent(engine_element);
 
     type = document->GetName();
@@ -253,7 +249,7 @@ bool FGPropulsion::Load(Element* el)
     numEngines++;
 
     engine_element = el->FindNextElement("engine");
-    engine_file_parser.reset();
+    ResetParser();
   }
 
   // Process tank definitions

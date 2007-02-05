@@ -55,13 +55,13 @@ INCLUDES
 #endif
 
 #include <input_output/FGfdmSocket.h>
-#include <input_output/FGXMLElement.h>
+#include <input_output/FGXMLFileRead.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.6 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,14 +116,14 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.6 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGOutput : public FGModel
+class FGOutput : public FGModel, public FGXMLFileRead
 {
 public:
   FGOutput(FGFDMExec*);

@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.11 2006/08/30 12:04:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.12 2007/02/05 13:23:40 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,8 +251,7 @@ bool FGEngine::LoadThruster(Element *thruster_element)
   double P_Factor = 0, Sense = 0.0;
   string enginePath = FDMExec->GetEnginePath();
   string aircraftPath = FDMExec->GetFullAircraftPath();
-  FGXMLParse thruster_file_parser;
-  Element *document, *element;
+  Element *element;
   ifstream thruster_file;
   FGColumnVector3 location, orientation;
   string separator = "/";
@@ -285,8 +284,7 @@ bool FGEngine::LoadThruster(Element *thruster_element)
     return false;
   }
 
-  readXML(thruster_fullpathname, thruster_file_parser);
-  document = thruster_file_parser.GetDocument(); // document holds the thruster description
+  document = LoadXMLDocument(thruster_fullpathname);
   document->SetParent(thruster_element);
 
   thrType = document->GetName();

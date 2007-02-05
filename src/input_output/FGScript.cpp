@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.13 2006/09/10 14:06:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.14 2007/02/05 13:23:39 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,21 +101,16 @@ bool FGScript::LoadScript( string script )
 {
   string aircraft="", initialize="", comparison = "", prop_name="";
   string notifyPropertyName="";
-  Element *document=0, *element=0, *run_element=0, *event_element=0;
+  Element *element=0, *run_element=0, *event_element=0;
   Element *condition_element=0, *set_element=0, *delay_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
   Element *property_element = 0L;
   bool result = false;
   double dt = 0.0, value = 0.0;
-  FGXMLParse script_file_parser;
   struct event *newEvent;
   FGCondition *newCondition;
-  ifstream script_file(script.c_str());
 
-  if ( !script_file ) return false;
-
-  readXML(script_file, script_file_parser);
-  document = script_file_parser.GetDocument();
+  document = LoadXMLDocument(script);
 
   if (document->GetName() != string("runscript")) {
     cerr << "File: " << script << " is not a script file" << endl;

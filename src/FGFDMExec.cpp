@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.32 2007/01/31 20:48:41 frohlich Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.33 2007/02/05 13:23:39 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,7 +354,7 @@ int FGFDMExec::Schedule(FGModel* model, int rate)
 
 bool FGFDMExec::Run(void)
 {
-  bool success = false;
+  bool success=false;
   FGModel* model_iterator;
 
   model_iterator = FirstModel;
@@ -459,6 +459,9 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   string token;
   string aircraftCfgFileName;
   string separator = "/";
+  Element* element = 0L;
+
+  modelName = model; // Set the class modelName attribute
 
 # ifdef macintosh
     separator = ";";
@@ -474,27 +477,12 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   if (addModelToPath) FullAircraftPath += separator + model;
   aircraftCfgFileName = FullAircraftPath + separator + model + ".xml";
 
-  FGXMLParse *XMLParse = new FGXMLParse();
-  Element* element = 0L;
-  Element* document;
-
-  ifstream input_file(aircraftCfgFileName.c_str());
-
-  if (!input_file.is_open()) { // file open failed
-    cerr << "Could not open file " << aircraftCfgFileName.c_str() << endl;
-    return false;
-  }
-
-  readXML(input_file, *XMLParse);
-  document = XMLParse->GetDocument();
-
-  modelName = model;
-
   if (modelLoaded) {
     DeAllocate();
     Allocate();
   }
 
+  document = LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
   ReadPrologue(document);
   element = document->GetElement();
 
