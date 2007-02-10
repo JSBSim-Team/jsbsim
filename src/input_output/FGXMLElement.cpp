@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.13 2006/11/20 13:59:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.14 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,31 +292,32 @@ string Element::FindElementValue(string el)
 double Element::FindElementValueAsNumberConvertTo(string el, string target_units)
 {
   Element* element = FindElement(el);
-  double value;
-  string supplied_units="";
 
-  if (element) {
-     value = element->GetDataAsNumber();
-     supplied_units = element->GetAttributeValue("unit");
-     if (!supplied_units.empty()) {
-       if (convert.find(supplied_units) != convert.end()) {
-         if (convert[supplied_units].find(target_units) != convert[supplied_units].end()) {
-           value *= convert[supplied_units][target_units];
-         } else {
-           cerr << endl << "Target unit: \"" << target_units << "\" does not exist (typo?). Add new unit"
-                << " conversion in FGXMLElement.cpp." << endl;
-           exit(-1);
-         }
-       } else {
-         cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
-              << " conversion in FGXMLElement.cpp." << endl;
-         exit(-1);
-       }
-     }
-  } else {
-    cerr << "Attempting to get get non-existent element " << el << endl;
-    return 0;
+  if (!element) {
+    cerr << "Attempting to get non-existent element " << el << endl;
+    exit(0);
   }
+
+  string supplied_units = element->GetAttributeValue("unit");
+
+  if (!supplied_units.empty()) {
+    if (convert.find(supplied_units) == convert.end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
+           << " conversion in FGXMLElement.cpp." << endl;
+      exit(-1);
+    }
+    if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" cannot be converted to "
+                   << target_units << ". Add new unit conversion in FGXMLElement.cpp or fix typo" << endl;
+      exit(-1);
+    }
+  }
+
+  double value = element->GetDataAsNumber();
+  if (!supplied_units.empty()) {
+    value *= convert[supplied_units][target_units];
+  }
+
   return value;
 }
 
@@ -327,29 +328,30 @@ double Element::FindElementValueAsNumberConvertFromTo( string el,
                                                        string target_units)
 {
   Element* element = FindElement(el);
-  double value;
-
-  if (element) {
-     value = element->GetDataAsNumber();
-     if (!supplied_units.empty()) {
-       if (convert.find(supplied_units) != convert.end()) {
-         if (convert[supplied_units].find(target_units) != convert[supplied_units].end()) {
-           value *= convert[supplied_units][target_units];
-         } else {
-           cerr << endl << "Target unit: \"" << target_units << "\" does not exist (typo?). Add new unit"
-                << " conversion in FGXMLElement.cpp." << endl;
-           exit(-1);
-         }
-       } else {
-         cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
-              << " conversion in FGXMLElement.cpp." << endl;
-         exit(-1);
-       }
-     }
-  } else {
-    cerr << "Attempting to get get non-existent element " << el << endl;
-    return 0;
+  
+  if (!element) {
+    cerr << "Attempting to get non-existent element " << el << endl;
+    exit(0);
   }
+  
+  if (!supplied_units.empty()) {
+    if (convert.find(supplied_units) == convert.end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
+           << " conversion in FGXMLElement.cpp." << endl;
+      exit(-1);
+    }
+    if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" cannot be converted to "
+                   << target_units << ". Add new unit conversion in FGXMLElement.cpp or fix typo" << endl;
+      exit(-1);
+    }
+  }
+
+  double value = element->GetDataAsNumber();
+  if (!supplied_units.empty()) {
+    value *= convert[supplied_units][target_units];
+  }
+
   return value;
 }
 
@@ -361,6 +363,19 @@ FGColumnVector3 Element::FindElementTripletConvertTo( string target_units)
   Element* item;
   double value=0.0;
   string supplied_units = GetAttributeValue("unit");
+
+  if (!supplied_units.empty()) {
+    if (convert.find(supplied_units) == convert.end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" does not exist (typo?). Add new unit"
+           << " conversion in FGXMLElement.cpp." << endl;
+      exit(-1);
+    }
+    if (convert[supplied_units].find(target_units) == convert[supplied_units].end()) {
+      cerr << endl << "Supplied unit: \"" << supplied_units << "\" cannot be converted to "
+                   << target_units << ". Add new unit conversion in FGXMLElement.cpp or fix typo" << endl;
+      exit(-1);
+    }
+  }
 
   item = FindElement("x");
   if (!item) item = FindElement("roll");

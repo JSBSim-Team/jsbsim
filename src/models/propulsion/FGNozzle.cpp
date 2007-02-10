@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.6 2006/08/30 12:04:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGNozzle.cpp,v 1.7 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_NOZZLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +99,11 @@ FGNozzle::~FGNozzle()
 double FGNozzle::Calculate(double CfPc)
 {
   double pAtm = fdmex->GetAtmosphere()->GetPressure();
-  Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
+  if (CfPc > 0)
+    Thrust = max((double)0.0, (CfPc * AreaT + (PE - pAtm)*Area2) * nzlEff);
+  else
+    Thrust = 0.0;
+
   vFn(1) = Thrust * cos(ReverserAngle);
 
   ThrustCoeff = max((double)0.0, CfPc / ((pAtm - PE) * Area2));
@@ -120,7 +124,7 @@ string FGNozzle::GetThrusterLabels(int id, string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_Thrust[" << id << ']';
+  buf << Name << " Thrust (engine " << id << " in lbs)";
 
   return buf.str();
 }

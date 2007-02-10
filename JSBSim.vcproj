@@ -61,7 +61,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				ShowProgress="1"
-				Version="0.9.13"
+				Version="1.0"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;"
 				GenerateDebugInformation="true"

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.4 2006/08/30 12:04:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.5 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,8 @@ CLASS IMPLEMENTATION
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   : FGEngine(exec, el, engine_number)
 {
+   Variance = 0.0;
+
   if (el->FindElement("shr"))
     SHR = el->FindElementValueAsNumber("shr");
   if (el->FindElement("max_pc"))
@@ -122,7 +124,7 @@ string FGRocket::GetEngineLabels(string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_ChamberPress[" << EngineNumber << "]" << delimeter
+  buf << Name << " Chamber Pressure (engine " << EngineNumber << " in psf)" << delimeter
       << Thruster->GetThrusterLabels(EngineNumber, delimeter);
 
   return buf.str();

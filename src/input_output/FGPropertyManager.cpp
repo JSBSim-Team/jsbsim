@@ -104,8 +104,30 @@ bool FGPropertyManager::HasNode (const string &path)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string FGPropertyManager::GetName( void ) {
+string FGPropertyManager::GetName( void )
+{
   return string( getName() );
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGPropertyManager::GetPrintableName( void )
+{
+  string temp_string(getName());
+  size_t initial_location=0;
+  size_t found_location;
+
+  found_location = temp_string.rfind("/");
+  if (found_location != string::npos)
+  temp_string = temp_string.substr(found_location);
+
+  found_location = temp_string.find('_',initial_location);
+  while (found_location != string::npos) {
+    temp_string.replace(found_location,1," ");
+    initial_location = found_location+1;
+    found_location = temp_string.find('_',initial_location);
+  }
+  return temp_string;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

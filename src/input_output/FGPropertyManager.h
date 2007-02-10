@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.4 2006/11/20 13:59:49 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.5 2007/02/10 13:54:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -114,6 +114,11 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * Get the name of a node
      */
     string GetName( void );
+
+    /**
+     * Get the name of a node without underscores, etc.
+     */
+    string GetPrintableName( void );
 
     /**
      * Get the fully qualified name of a node

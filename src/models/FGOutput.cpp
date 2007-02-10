@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.15 2007/02/05 13:23:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.16 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,7 +235,7 @@ void FGOutput::DelimitedOutput(string fname)
     }
     if (OutputProperties.size() > 0) {
       for (unsigned int i=0;i<OutputProperties.size();i++) {
-        outstream << delimeter << OutputProperties[i]->GetName();
+        outstream << delimeter << OutputProperties[i]->GetPrintableName();
       }
     }
 
@@ -260,8 +260,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssRates) {
     outstream << delimeter;
-    outstream << Propagate->GetPQR().Dump(delimeter) << delimeter;
-    outstream << Propagate->GetPQRdot().Dump(delimeter);
+    outstream << (radtodeg*Propagate->GetPQR()).Dump(delimeter) << delimeter;
+    outstream << (radtodeg*Propagate->GetPQRdot()).Dump(delimeter);
   }
   if (SubSystems & ssVelocities) {
     outstream << delimeter;
@@ -297,7 +297,7 @@ void FGOutput::DelimitedOutput(string fname)
   if (SubSystems & ssPropagate) {
     outstream << delimeter;
     outstream << Propagate->Geth() << delimeter;
-    outstream << Propagate->GetEuler().Dump(delimeter) << delimeter;
+    outstream << (radtodeg*Propagate->GetEuler()).Dump(delimeter) << delimeter;
     outstream << Auxiliary->Getalpha(inDegrees) << delimeter;
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
@@ -417,13 +417,13 @@ void FGOutput::SocketOutput(void)
     }
     if (SubSystems & ssPropagate) {
         socket->Append("Altitude");
-        socket->Append("Phi");
-        socket->Append("Tht");
-        socket->Append("Psi");
-        socket->Append("Alpha");
-        socket->Append("Beta");
-        socket->Append("Latitude (Deg)");
-        socket->Append("Longitude (Deg)");
+        socket->Append("Phi (deg)");
+        socket->Append("Tht (deg)");
+        socket->Append("Psi (deg)");
+        socket->Append("Alpha (deg)");
+        socket->Append("Beta (deg)");
+        socket->Append("Latitude (deg)");
+        socket->Append("Longitude (deg)");
     }
     if (SubSystems & ssCoefficients) {
       scratch = Aerodynamics->GetCoefficientStrings(",");
@@ -441,7 +441,7 @@ void FGOutput::SocketOutput(void)
     }
     if (OutputProperties.size() > 0) {
       for (unsigned int i=0;i<OutputProperties.size();i++) {
-        socket->Append(OutputProperties[i]->GetName());
+        socket->Append(OutputProperties[i]->GetPrintableName());
       }
     }
 
@@ -464,12 +464,12 @@ void FGOutput::SocketOutput(void)
     socket->Append(FCS->GetDfPos());
   }
   if (SubSystems & ssRates) {
-    socket->Append(Propagate->GetPQR(eP));
-    socket->Append(Propagate->GetPQR(eQ));
-    socket->Append(Propagate->GetPQR(eR));
-    socket->Append(Propagate->GetPQRdot(eP));
-    socket->Append(Propagate->GetPQRdot(eQ));
-    socket->Append(Propagate->GetPQRdot(eR));
+    socket->Append(radtodeg*Propagate->GetPQR(eP));
+    socket->Append(radtodeg*Propagate->GetPQR(eQ));
+    socket->Append(radtodeg*Propagate->GetPQR(eR));
+    socket->Append(radtodeg*Propagate->GetPQRdot(eP));
+    socket->Append(radtodeg*Propagate->GetPQRdot(eQ));
+    socket->Append(radtodeg*Propagate->GetPQRdot(eR));
   }
   if (SubSystems & ssVelocities) {
     socket->Append(Auxiliary->Getqbar());
@@ -521,9 +521,9 @@ void FGOutput::SocketOutput(void)
   }
   if (SubSystems & ssPropagate) {
     socket->Append(Propagate->Geth());
-    socket->Append(Propagate->GetEuler(ePhi));
-    socket->Append(Propagate->GetEuler(eTht));
-    socket->Append(Propagate->GetEuler(ePsi));
+    socket->Append(radtodeg*Propagate->GetEuler(ePhi));
+    socket->Append(radtodeg*Propagate->GetEuler(eTht));
+    socket->Append(radtodeg*Propagate->GetEuler(ePsi));
     socket->Append(Auxiliary->Getalpha(inDegrees));
     socket->Append(Auxiliary->Getbeta(inDegrees));
     socket->Append(Propagate->GetLocation().GetLatitudeDeg());

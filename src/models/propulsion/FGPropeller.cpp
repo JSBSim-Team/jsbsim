@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.11 2006/08/30 12:04:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.12 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -297,13 +297,13 @@ string FGPropeller::GetThrusterLabels(int id, string delimeter)
 {
   std::ostringstream buf;
 
-  buf << Name << "_Torque[" << id << "]" << delimeter
-      << Name << "_PFactor_Pitch[" << id << "]" << delimeter
-      << Name << "_PFactor_Yaw[" << id << "]" << delimeter
-      << Name << "_Thrust[" << id << "]" << delimeter;
+  buf << Name << " Torque (engine " << id << ")" << delimeter
+      << Name << " PFactor Pitch (engine " << id << ")" << delimeter
+      << Name << " PFactor Yaw (engine " << id << ")" << delimeter
+      << Name << " Thrust (engine " << id << " in lbs)" << delimeter;
   if (IsVPitch())
-    buf << Name << "_Pitch[" << id << "]" << delimeter;
-  buf << Name << "_RPM[" << id << "]";
+    buf << Name << " Pitch (engine " << id << ")" << delimeter;
+  buf << Name << " RPM (engine " << id << ")";
 
   return buf.str();
 }

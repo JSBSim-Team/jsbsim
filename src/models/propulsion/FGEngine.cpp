@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.12 2007/02/05 13:23:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.13 2007/02/10 13:54:30 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
   else      cerr << "No engine location found for this engine." << endl;
 
   local_element = engine_element->GetParent()->FindElement("orient");
-  if (local_element)  orientation = local_element->FindElementTripletConvertTo("IN");
+  if (local_element)  orientation = local_element->FindElementTripletConvertTo("DEG");
   else          cerr << "No engine orientation found for this engine." << endl;
 
   SetPlacement(location, orientation);
@@ -334,8 +334,8 @@ void FGEngine::Debug(int from)
       cout << "      X = " << Thruster->GetLocationX() << endl;
       cout << "      Y = " << Thruster->GetLocationY() << endl;
       cout << "      Z = " << Thruster->GetLocationZ() << endl;
-      cout << "      Pitch = " << Thruster->GetAnglesToBody(ePitch) << endl;
-      cout << "      Yaw = " << Thruster->GetAnglesToBody(eYaw) << endl;
+      cout << "      Pitch = " << radtodeg*Thruster->GetAnglesToBody(ePitch) << " degrees" << endl;
+      cout << "      Yaw = " << radtodeg*Thruster->GetAnglesToBody(eYaw) << " degrees" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
