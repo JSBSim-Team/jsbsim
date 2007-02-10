@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.3 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.4 2007/02/10 23:25:59 jberndt Exp $";
 static const char *IdHdr = ID_FCSFUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,12 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element) : FGFCSComponent(fcs,
 {
   Element *function_element = element->FindElement("function");
 
-  function = new FGFunction(PropertyManager, function_element);
+  if (function_element)
+    function = new FGFunction(PropertyManager, function_element);
+  else {
+    cerr << "FCS Function should contain a \"function\" element" << endl;
+    exit(-1);
+  }
 
   FGFCSComponent::bind();
   Debug(0);

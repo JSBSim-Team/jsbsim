@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.5 2006/08/30 12:04:38 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.6 2007/02/10 23:25:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.5 2006/08/30 12:04:38 jberndt Exp $
+    @version $Id: FGForce.h,v 1.6 2007/02/10 23:25:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -230,7 +230,7 @@ public:
   /// Destructor
   ~FGForce();
 
-  enum TransformType { tNone, tWindBody, tLocalBody, tCustom } ttype;
+  enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
 
   inline void SetNativeForces(double Fnx, double Fny, double Fnz) {
     vFn(1)=Fnx;
@@ -305,6 +305,7 @@ public:
     SetAnglesToBody(vv(eRoll), vv(ePitch), vv(eYaw));
   }
 
+  void UpdateTransformMatrix(void);
   void SetPitch(double pitch) {vOrient(ePitch) = pitch;}
   void SetYaw(double yaw) {vOrient(eYaw) = yaw;}
 
@@ -329,6 +330,7 @@ protected:
   FGColumnVector3 vMn;
   FGColumnVector3 vH;
   FGColumnVector3 vOrient;
+  TransformType ttype;
 
 private:
   FGColumnVector3 vFb;
