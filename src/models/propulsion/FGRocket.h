@@ -39,13 +39,14 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGEngine.h"
+#include <math/FGTable.h>
 #include <input_output/FGXMLElement.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.5 2007/02/13 06:19:00 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,9 +84,48 @@ CLASS DOCUMENTATION
     coefficient is multiplied by the chamber pressure and then passed
     to the nozzle Calculate() routine, where the thrust force is
     determined.
+    
+    One can model the thrust of a solid rocket by providing a normalized thrust table
+    as a function of time. For instance, the space shuttle solid rocket booster
+    normalized thrust value looks roughly like this:
+
+<pre>    
+  <thrust_table name="propulsion/thrust_time" type="internal">
+    <tableData>
+      0.0   0.00
+      0.2   0.91
+      8.0   0.97
+     16.0   0.99
+     20.0   1.00
+     21.0   1.00
+     24.0   0.95
+     32.0   0.85
+     40.0   0.78
+     48.0   0.72
+     50.0   0.71
+     52.0   0.71
+     56.0   0.73
+     64.0   0.78
+     72.0   0.82
+     80.0   0.81
+     88.0   0.73
+     96.0   0.69
+    104.0   0.59
+    112.0   0.46
+    120.0   0.09
+    132.0   0.00
+    </tableData>
+  </thrust_table>
+</pre>
+
+The left column is time, the right column is normalized thrust. Inside the
+FGRocket class code, the maximum thrust is calculated, and multiplied by this
+table. The Rocket class also tracks burn time. All that needs to be done is
+for the rocket engine to be throttle up to 1. At that time, the solid rocket
+fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $
+    $Id: FGRocket.h,v 1.5 2007/02/13 06:19:00 jberndt Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,
@@ -133,7 +173,9 @@ private:
   double kFactor;
   double Variance;
   double PC;
+  double BurnTime;
   bool Flameout;
+  FGTable* ThrustTable;
 
   void Debug(int from);
 };

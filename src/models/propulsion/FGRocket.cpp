@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGRocket.cpp,v 1.5 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGRocket.cpp,v 1.6 2007/02/13 06:19:00 jberndt Exp $";
 static const char *IdHdr = ID_ROCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,7 +54,14 @@ CLASS IMPLEMENTATION
 FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
   : FGEngine(exec, el, engine_number)
 {
+  Element* thrust_table_element = 0;
+  ThrustTable = 0L;
+  BurnTime = 0.0;
+
+  // Defaults
    Variance = 0.0;
+   MinThrottle = 0.0;
+   MaxThrottle = 1.0;
 
   if (el->FindElement("shr"))
     SHR = el->FindElementValueAsNumber("shr");
@@ -72,6 +79,11 @@ FGRocket::FGRocket(FGFDMExec* exec, Element *el, int engine_number)
     SLOxiFlowMax = el->FindElementValueAsNumberConvertTo("sloxiflowmax", "LBS/SEC");
   if (el->FindElement("variance"))
     Variance = el->FindElementValueAsNumber("variance");
+
+  thrust_table_element = el->FindElement("thrust_table");
+  if (thrust_table_element) {
+    ThrustTable = new FGTable(PropertyManager, thrust_table_element);
+  }
 
   Debug(0);
 
@@ -98,6 +110,18 @@ double FGRocket::Calculate(void)
   if (!Flameout && !Starved) ConsumeFuel();
 
   Throttle = FCS->GetThrottlePos(EngineNumber);
+
+  // If there is a thrust table, it is a function of elapsed burn time. The engine
+  // is started when the throttle is advanced to 1.0. After that, it burns
+  // without regard to throttle setting. The table returns a value between zero
+  // and one, representing the percentage of maximum vacuum thrust being applied.
+
+  if (ThrustTable != 0L) {
+    if (Throttle == 1 || BurnTime > 0.0) {
+      BurnTime += State->Getdt();
+    }
+    Throttle = ThrustTable->GetValue(BurnTime);
+  }
 
   if (Throttle < MinThrottle || Starved) {
     PctPower = Thrust = 0.0; // desired thrust
