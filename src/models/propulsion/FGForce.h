@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.6 2007/02/10 23:25:59 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.7 2007/02/13 00:45:17 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -151,7 +151,7 @@ can now be retrieved by calling:</p>
 
 <p>This method is where the bulk of the work gets done so calling it more than
 once for the same set of native forces and moments should probably be avoided.
-Note that the moment calculations are done here as well so they should not be
+Note that the moment calculations are done here as well so they should be
 retrieved after calling the GetBodyForces() method:</p>
 
 <p><tt>vM=fgf.GetMoments();</tt> </p>
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.6 2007/02/10 23:25:59 jberndt Exp $
+    @version $Id: FGForce.h,v 1.7 2007/02/13 00:45:17 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,8 +306,8 @@ public:
   }
 
   void UpdateTransformMatrix(void);
-  void SetPitch(double pitch) {vOrient(ePitch) = pitch;}
-  void SetYaw(double yaw) {vOrient(eYaw) = yaw;}
+  void SetPitch(double pitch) {vOrient(ePitch) = pitch; UpdateTransformMatrix();}
+  void SetYaw(double yaw) {vOrient(eYaw) = yaw; UpdateTransformMatrix();}
 
   double GetPitch(void) const {return vOrient(ePitch);}
   double GetYaw(void) const {return vOrient(eYaw);}

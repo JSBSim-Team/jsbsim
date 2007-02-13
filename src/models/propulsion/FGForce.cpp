@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.6 2007/02/10 23:25:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.7 2007/02/13 00:45:17 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,6 @@ FGMatrix33 FGForce::Transform(void)
     return fdmex->GetPropagate()->GetTl2b();
   case tCustom:
   case tNone:
-    UpdateTransformMatrix();
     return mT;
   default:
     cout << "Unrecognized tranform requested from FGForce::Transform()" << endl;
@@ -119,17 +118,18 @@ void FGForce::UpdateTransformMatrix(void)
   cr=cos(vOrient(eRoll));  sr=sin(vOrient(eRoll));
   cy=cos(vOrient(eYaw));   sy=sin(vOrient(eYaw));
 
-  mT(1,1)=cp*cy;
-  mT(1,2)=cp*sy;
-  mT(1,3)=-1*sp;
+  mT(1,1) =  cp*cy;
+  mT(1,2) =  cp*sy;
+  mT(1,3) = -sp;
 
-  mT(2,1)=sr*sp*cy-cr*sy;
-  mT(2,2)=sr*sp*sy+cr*cy;
-  mT(2,3)=sr*cp;
+  mT(2,1) = sr*sp*cy - cr*sy;
+  mT(2,2) = sr*sp*sy + cr*cy;
+  mT(2,3) = sr*cp;
 
-  mT(3,1)=cr*sp*cy+sr*sy;
-  mT(3,2)=cr*sp*sy-sr*cy;
-  mT(3,3)=cr*cp;
+  mT(3,1) = cr*sp*cy + sr*sy;
+  mT(3,2) = cr*sp*sy - sr*cy;
+  mT(3,3) = cr*cp;
+  mT = mT.Inverse();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,26 +137,11 @@ void FGForce::UpdateTransformMatrix(void)
 void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw)
 {
   if (ttype == tCustom) {
-    double cp,sp,cr,sr,cy,sy;
     vOrient(ePitch) = bpitch;
     vOrient(eRoll) = broll;
     vOrient(eYaw) = byaw;
 
-    cp=cos(bpitch); sp=sin(bpitch);
-    cr=cos(broll);  sr=sin(broll);
-    cy=cos(byaw);   sy=sin(byaw);
-
-    mT(1,1)=cp*cy;
-    mT(1,2)=cp*sy;
-    mT(1,3)=-1*sp;
-
-    mT(2,1)=sr*sp*cy-cr*sy;
-    mT(2,2)=sr*sp*sy+cr*cy;
-    mT(2,3)=sr*cp;
-
-    mT(3,1)=cr*sp*cy+sr*sy;
-    mT(3,2)=cr*sp*sy-sr*cy;
-    mT(3,3)=cr*cp;
+    UpdateTransformMatrix();
   }
 }
 
