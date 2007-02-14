@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.27 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.28 2007/02/14 00:53:01 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -293,6 +293,8 @@ int main(int argc, char* argv[])
 
     if (catalog) {
       FDMExec->PrintPropertyCatalog();
+      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
       delete FDMExec;
       return 0;
     }

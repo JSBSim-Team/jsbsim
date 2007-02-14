@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.5 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.6 2007/02/14 00:53:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +79,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.5 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.6 2007/02/14 00:53:01 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -151,6 +151,8 @@ public:
   inline double GetXYZvrp(int idx) const { return vXYZvrp(idx); }
   inline double GetXYZep(int idx) const { return vXYZep(idx); }
   inline void SetAircraftName(string name) {AircraftName = name;}
+  inline void SetHoldDown(int hd) {HoldDown = hd;}
+  inline int GetHoldDown(void) const {return HoldDown;}
 
   void SetXYZrp(int idx, double value) {vXYZrp(idx) = value;}
 
@@ -175,6 +177,7 @@ private:
   double WingArea, WingSpan, cbar, WingIncidence;
   double HTailArea, VTailArea, HTailArm, VTailArm;
   double lbarh,lbarv,vbarh,vbarv;
+  int HoldDown;
   string AircraftName;
 
   void Debug(int from);
