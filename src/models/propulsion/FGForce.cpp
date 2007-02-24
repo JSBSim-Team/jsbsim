@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.7 2007/02/13 00:45:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.8 2007/02/24 18:52:44 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -61,7 +61,6 @@ FGForce::FGForce(FGFDMExec *FDMExec) :
   mT(1,1) = 1; //identity matrix
   mT(2,2) = 1;
   mT(3,3) = 1;
-  vSense.InitMatrix(1);
 
   Debug(0);
 }
@@ -77,7 +76,7 @@ FGForce::~FGForce()
 
 FGColumnVector3& FGForce::GetBodyForces(void)
 {
-  vFb = Transform()*(vFn.multElementWise(vSense));
+  vFb = Transform()*vFn;
 
   // Find the distance from this vector's acting location to the cg; this
   // needs to be done like this to convert from structural to body coords.
@@ -110,7 +109,7 @@ FGMatrix33 FGForce::Transform(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void FGForce::UpdateTransformMatrix(void)
+void FGForce::UpdateCustomTransformMatrix(void)
 {
   double cp,sp,cr,sr,cy,sy;
 
@@ -141,7 +140,7 @@ void FGForce::SetAnglesToBody(double broll, double bpitch, double byaw)
     vOrient(eRoll) = broll;
     vOrient(eYaw) = byaw;
 
-    UpdateTransformMatrix();
+    UpdateCustomTransformMatrix();
   }
 }
 

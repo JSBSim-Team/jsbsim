@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.7 2007/02/13 00:45:17 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.8 2007/02/24 18:52:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.7 2007/02/13 00:45:17 jberndt Exp $
+    @version $Id: FGForce.h,v 1.8 2007/02/24 18:52:44 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -231,23 +231,6 @@ public:
   ~FGForce();
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
-
-  inline void SetNativeForces(double Fnx, double Fny, double Fnz) {
-    vFn(1)=Fnx;
-    vFn(2)=Fny;
-    vFn(3)=Fnz;
-  }
-  inline void SetNativeForces(FGColumnVector3 vv) { vFn = vv; };
-
-  inline void SetNativeMoments(double Ln,double Mn, double Nn) {
-    vMn(1)=Ln;
-    vMn(2)=Mn;
-    vMn(3)=Nn;
-  }
-  inline void SetNativeMoments(FGColumnVector3 vv) { vMn = vv; }
-
-  inline FGColumnVector3& GetNativeForces(void) { return vFn; }
-  inline FGColumnVector3& GetNativeMoments(void) { return vMn; }
 
   FGColumnVector3& GetBodyForces(void);
 
@@ -305,19 +288,15 @@ public:
     SetAnglesToBody(vv(eRoll), vv(ePitch), vv(eYaw));
   }
 
-  void UpdateTransformMatrix(void);
-  void SetPitch(double pitch) {vOrient(ePitch) = pitch; UpdateTransformMatrix();}
-  void SetYaw(double yaw) {vOrient(eYaw) = yaw; UpdateTransformMatrix();}
+  void UpdateCustomTransformMatrix(void);
+  void SetPitch(double pitch) {vOrient(ePitch) = pitch; UpdateCustomTransformMatrix();}
+  void SetYaw(double yaw) {vOrient(eYaw) = yaw; UpdateCustomTransformMatrix();}
 
   double GetPitch(void) const {return vOrient(ePitch);}
   double GetYaw(void) const {return vOrient(eYaw);}
 
-  inline void SetSense(double x, double y, double z) { vSense(eX)=x, vSense(eY)=y, vSense(eZ)=z; }
-  inline void SetSense(FGColumnVector3 vv) { vSense=vv; }
-
   inline FGColumnVector3& GetAnglesToBody(void) {return vOrient;}
   inline double GetAnglesToBody(int axis) {return vOrient(axis);}
-  inline FGColumnVector3& GetSense(void) { return vSense; }
 
   inline void SetTransformType(TransformType ii) { ttype=ii; }
   inline TransformType GetTransformType(void) { return ttype; }
@@ -331,14 +310,13 @@ protected:
   FGColumnVector3 vH;
   FGColumnVector3 vOrient;
   TransformType ttype;
+  FGColumnVector3 vXYZn;
+  FGColumnVector3 vActingXYZn;
 
 private:
   FGColumnVector3 vFb;
   FGColumnVector3 vM;
-  FGColumnVector3 vXYZn;
-  FGColumnVector3 vActingXYZn;
   FGColumnVector3 vDXYZ;
-  FGColumnVector3 vSense;
 
   FGMatrix33 mT;
 

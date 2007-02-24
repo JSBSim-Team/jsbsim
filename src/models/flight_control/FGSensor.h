@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.8 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.9 2007/02/24 18:52:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @code
-<sensor name=”name” rate_group=”name”>
+<sensor name=”name”>
   <input> property </input>
   <lag> number </lag>
   <noise variation=”PERCENT|ABSOLUTE”> number </noise>
@@ -80,7 +80,7 @@ Syntax:
 Example:
 
 @code
-<sensor name=”aero/sensor/qbar” rate_group=”HFCS”>
+<sensor name=”aero/sensor/qbar”>
   <input> aero/qbar </input>
   <lag> 0.5 </lag>
   <noise variation=”PERCENT”> 2 </noise>
@@ -104,7 +104,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.8 $
+@version $Revision: 1.9 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,6 +124,7 @@ public:
   inline double GetFailLow(void) const {if (fail_low) return 1.0; else return 0.0;}
   inline double GetFailHigh(void) const {if (fail_high) return 1.0; else return 0.0;}
   inline double GetFailStuck(void) const {if (fail_stuck) return 1.0; else return 0.0;}
+  inline int    GetQuantized(void) const {return quantized;}
 
   bool Run (void);
 
@@ -149,6 +150,7 @@ private:
   bool fail_low;
   bool fail_high;
   bool fail_stuck;
+  string quant_property;
 
   void Noise(void);
   void Bias(void);

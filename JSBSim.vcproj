@@ -246,6 +246,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\FGExternalForce.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalReactions.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\models\FGFCS.h"
 				>
 			</File>
@@ -563,6 +571,14 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalForce.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalReactions.cpp"
 				>
 			</File>
 			<File

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.6 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.7 2007/02/24 18:52:44 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,7 @@ FGSensor::FGSensor(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if ( quantization_element->FindElement("max") ) {
       max = quantization_element->FindElementValueAsNumber("max");
     }
+    quant_property = quantization_element->GetAttributeValue("name");
     span = max - min;
     granularity = span/divisions;
   }
@@ -214,6 +215,14 @@ void FGSensor::bind(void)
   PropertyManager->Tie( tmp_low, this, &FGSensor::GetFailLow, &FGSensor::SetFailLow);
   PropertyManager->Tie( tmp_high, this, &FGSensor::GetFailHigh, &FGSensor::SetFailHigh);
   PropertyManager->Tie( tmp_stuck, this, &FGSensor::GetFailStuck, &FGSensor::SetFailStuck);
+  
+  if (!quant_property.empty()) {
+    if (quant_property.find("/") == string::npos) { // not found
+      string qprop = "fcs/" + PropertyManager->mkPropertyName(quant_property, true);
+      PropertyManager->Tie(qprop, this, &FGSensor::GetQuantized);
+    }
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
