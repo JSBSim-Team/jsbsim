@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.11 2007/02/05 13:23:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.12 2007/02/24 18:52:14 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -794,7 +794,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   if (document->FindElement("vground"))
     SetVgroundKtsIC(document->FindElementValueAsNumberConvertTo("vground", "FT/SEC"));
   if (document->FindElement("running")) {
-    n = document->FindElementValueAsNumber("running");
+    n = int(document->FindElementValueAsNumber("running"));
     if (n != 0) {
       FGPropulsion* propulsion = fdmex->GetPropulsion();
       for(int i=0; i<propulsion->GetNumEngines(); i++) {

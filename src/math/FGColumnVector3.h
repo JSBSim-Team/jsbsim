@@ -84,7 +84,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.5 2007/02/24 18:52:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.5 2007/02/24 18:52:02 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -281,9 +281,6 @@ public:
       Normalize the vector to have the Magnitude() == 1.0. If the vector
       is equal to zero it is left untouched.   */
   FGColumnVector3& Normalize(void);
-
-  // ??? Is this something sensible ??
-  FGColumnVector3 multElementWise(const FGColumnVector3& V) const;
 
   // little trick here.
   struct AssignRef {

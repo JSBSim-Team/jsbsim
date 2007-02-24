@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.3 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGColumnVector3.cpp,v 1.4 2007/02/24 18:52:02 jberndt Exp $";
 static const char *IdHdr = ID_COLUMNVECTOR3;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,13 +119,6 @@ FGColumnVector3& FGColumnVector3::Normalize(void)
     operator*=( 1.0/Mag );
 
   return *this;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-FGColumnVector3 FGColumnVector3::multElementWise(const FGColumnVector3& V) const
-{
-  return FGColumnVector3(Entry(1) * V(1), Entry(2) * V(2), Entry(3) * V(3));
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

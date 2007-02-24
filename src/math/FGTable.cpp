@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.13 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.14 2007/02/24 18:52:02 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,14 +374,12 @@ double FGTable::GetValue(double key) const
   }
 
   // the key is somewhere in the middle, search for the right breakpoint
-  // assume the correct breakpoint has not changed since last frame or
+  // The search is particularly efficient if 
+  // the correct breakpoint has not changed since last frame or
   // has only changed very little
 
-  if ( r > 2 && Data[r-1][0] > key ) {
-    while( Data[r-1][0] > key && r > 2) { r--; }
-  } else if ( Data[r][0] < key ) {
-    while( Data[r][0] <= key && r <= nRows) { r++; }
-  }
+  while(r > 2     && Data[r-1][0] > key) { r--; }
+  while(r < nRows && Data[r][0]   < key) { r++; }
 
   lastRowIndex=r;
   // make sure denominator below does not go to zero.
@@ -407,19 +405,11 @@ double FGTable::GetValue(double rowKey, double colKey) const
   int r=lastRowIndex;
   int c=lastColumnIndex;
 
-  if ( r > 2 && Data[r-1][0] > rowKey ) {
-    while ( Data[r-1][0] > rowKey && r > 2) { r--; }
-  } else if ( Data[r][0] < rowKey ) {
-    while ( r <= nRows && Data[r][0] <= rowKey ) { r++; }
-    if ( r > nRows ) r = nRows;
-  }
+  while(r > 2     && Data[r-1][0] > rowKey) { r--; }
+  while(r < nRows && Data[r]  [0] < rowKey) { r++; }
 
-  if ( c > 2 && Data[0][c-1] > colKey ) {
-    while( Data[0][c-1] > colKey && c > 2) { c--; }
-  } else if ( Data[0][c] < colKey ) {
-    while( Data[0][c] <= colKey && c <= nCols) { c++; }
-    if ( c > nCols ) c = nCols;
-  }
+  while(c > 2     && Data[0][c-1] > colKey) { c--; }
+  while(c < nCols && Data[0][c]   < colKey) { c++; }
 
   lastRowIndex=r;
   lastColumnIndex=c;
@@ -460,14 +450,12 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
   }
 
   // the key is somewhere in the middle, search for the right breakpoint
-  // assume the correct breakpoint has not changed since last frame or
+  // The search is particularly efficient if 
+  // the correct breakpoint has not changed since last frame or
   // has only changed very little
 
-  if ( r > 2 && Data[r-1][1] > tableKey ) {
-    while( Data[r-1][1] > tableKey && r > 2) { r--; }
-  } else if ( Data[r][1] < tableKey ) {
-    while( Data[r][1] <= tableKey && r <= nRows) { r++; }
-  }
+  while(r > 2     && Data[r-1][1] > tableKey) { r--; }
+  while(r < nRows && Data[r]  [1] < tableKey) { r++; }
 
   lastRowIndex=r;
   // make sure denominator below does not go to zero.
@@ -488,13 +476,23 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+#include <signal.h>
+
 void FGTable::operator<<(stringstream& in_stream)
 {
   int startRow=0;
   int startCol=0;
 
-  if (Type == tt1D || Type == tt3D) startRow = 1;
-  if (Type == tt3D) startCol = 1;
+// In 1D table, no pseudo-row of column-headers (i.e. keys):
+  if (Type == tt1D) startRow = 1;
+
+  if (Type == tt3D) {
+    raise (SIGUSR1);	// This code is never called, 
+    startCol = 1;	// which is good, because
+    startRow = 1;	// it cannot possibly work.
+// Note: 3D tables are implemented as a stack of 2D tables,
+// and this operator<< is applied just to each 2D table.
+  }
 
   for (int r=startRow; r<=nRows; r++) {
     for (int c=startCol; c<=nCols; c++) {
