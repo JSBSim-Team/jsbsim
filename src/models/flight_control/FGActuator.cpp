@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.1 2007/02/25 01:05:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.2 2007/02/25 13:52:57 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,9 +97,13 @@ FGActuator::~FGActuator()
 
 bool FGActuator::Run(void )
 {
+  dt = fcs->GetState()->Getdt();
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  Output = Input; // perfect actuator
+  Output = Input; // perfect actuator - this isn't right code
+
+  if (fail_zero) Input = 0;
+  if (fail_hardover) Input =  max;
 
   if (fail_stuck) {
     Output = PreviousOutput;
@@ -108,9 +112,6 @@ bool FGActuator::Run(void )
 
   if (lag != 0.0)  Lag();       // models actuator lag
   if (bias != 0.0) Bias();      // models a finite bias
-
-  if (fail_zero) Output = 0; // actually, set the input to zero and let it fade there
-  if (fail_hardover) Output =  max;
 
   return true;
 }

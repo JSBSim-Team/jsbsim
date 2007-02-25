@@ -210,6 +210,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\flight_control\FGActuator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\models\FGAerodynamics.h"
 				>
 			</File>
@@ -243,14 +247,6 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGEngine.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\FGExternalForce.h"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\FGExternalReactions.h"
 				>
 			</File>
 			<File
@@ -538,6 +534,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\flight_control\FGActuator.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\models\FGAerodynamics.cpp"
 				>
 			</File>
@@ -571,14 +571,6 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGEngine.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\FGExternalForce.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\models\FGExternalReactions.cpp"
 				>
 			</File>
 			<File

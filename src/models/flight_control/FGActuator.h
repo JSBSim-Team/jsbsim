@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.1 2007/02/25 01:05:18 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.2 2007/02/25 13:52:57 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,14 +61,6 @@ CLASS DOCUMENTATION
 /** Encapsulates an Actuator component for the flight control system.
 
 Syntax:
-
-- 1st order filter response? 
-- 2nd order filter response? 
-- deadband 
-- hysteresis 
-- bias 
-- rate limit 
-- position limit 
 
 @code
 <actuator name=”name”>
@@ -103,9 +95,8 @@ Example:
 </actuator>
 @endcode
 
-
 @author Jon S. Berndt
-@version $Revision: 1.1 $
+@version $Revision: 1.2 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,6 +109,14 @@ public:
   FGActuator(FGFCS* fcs, Element* element);
   ~FGActuator();
 
+  inline void Hysteresis(void);
+  inline void Lag(void);
+  inline void RateLimit(void);
+  inline void Deadband(void);
+  inline void Bias(void);
+
+  bool Run (void);
+
   // these may need to have the bool argument replaced with a double
   inline void SetFailZero(bool set) {fail_zero = set;}
   inline void SetFailHardover(bool set) {fail_hardover = set;}
@@ -127,14 +126,6 @@ public:
   inline bool GetFailHardover(void) const {return fail_hardover;}
   inline bool GetFailStuck(void) const {return fail_stuck;}
   
-  inline void Hysteresis(void);
-  inline void Lag(void);
-  inline void RateLimit(void);
-  inline void Deadband(void);
-  inline void Bias(void);
-
-  bool Run (void);
-
 private:
   enum eNoiseType {ePercent=0, eAbsolute} NoiseType;
   double dt;

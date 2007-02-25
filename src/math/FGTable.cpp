@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.14 2007/02/24 18:52:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.15 2007/02/25 13:52:57 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,8 +87,8 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
   Tables = t.Tables;
   Data = Allocate();
-  for (int r=0; r<=nRows; r++) {
-    for (int c=0; c<=nCols; c++) {
+  for (unsigned int r=0; r<=nRows; r++) {
+    for (unsigned int c=0; c<=nCols; c++) {
       Data[r][c] = t.Data[r][c];
     }
   }
@@ -101,7 +101,7 @@ FGTable::FGTable(const FGTable& t) : PropertyManager(t.PropertyManager)
 
 FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(propMan)
 {
-  int i;
+  unsigned int i;
 
   stringstream buf;
   string property_string;
@@ -287,9 +287,9 @@ FGTable::FGTable(FGPropertyManager* propMan, Element* el) : PropertyManager(prop
 double** FGTable::Allocate(void)
 {
   Data = new double*[nRows+1];
-  for (int r=0; r<=nRows; r++) {
+  for (unsigned int r=0; r<=nRows; r++) {
     Data[r] = new double[nCols+1];
-    for (int c=0; c<=nCols; c++) {
+    for (unsigned int c=0; c<=nCols; c++) {
       Data[r][c] = 0.0;
     }
   }
@@ -306,10 +306,10 @@ FGTable::~FGTable()
   }
 
   if (nTables > 0) {
-    for (int i=0; i<nTables; i++) delete Tables[i];
+    for (unsigned int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();
   }
-  for (int r=0; r<=nRows; r++) delete[] Data[r];
+  for (unsigned int r=0; r<=nRows; r++) delete[] Data[r];
   delete[] Data;
 
   Debug(1);
@@ -317,11 +317,11 @@ FGTable::~FGTable()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int FGTable::FindNumColumns(string test_line)
+unsigned int FGTable::FindNumColumns(string test_line)
 {
   // determine number of data columns in table (first column is row lookup - don't count)
-  int position=0;
-  int nCols=0;
+  size_t position=0;
+  unsigned int nCols=0;
   while ((position = test_line.find_first_not_of(" \t", position)) != string::npos) {
     nCols++;
     position = test_line.find_first_of(" \t", position);
@@ -359,7 +359,7 @@ double FGTable::GetValue(void) const
 double FGTable::GetValue(double key) const
 {
   double Factor, Value, Span;
-  int r=lastRowIndex;
+  unsigned int r = lastRowIndex;
 
   //if the key is off the end of the table, just return the
   //end-of-table value, do not extrapolate
@@ -378,8 +378,8 @@ double FGTable::GetValue(double key) const
   // the correct breakpoint has not changed since last frame or
   // has only changed very little
 
-  while(r > 2     && Data[r-1][0] > key) { r--; }
-  while(r < nRows && Data[r][0]   < key) { r++; }
+  while (r > 2     && Data[r-1][0] > key) { r--; }
+  while (r < nRows && Data[r][0]   < key) { r++; }
 
   lastRowIndex=r;
   // make sure denominator below does not go to zero.
@@ -402,8 +402,8 @@ double FGTable::GetValue(double key) const
 double FGTable::GetValue(double rowKey, double colKey) const
 {
   double rFactor, cFactor, col1temp, col2temp, Value;
-  int r=lastRowIndex;
-  int c=lastColumnIndex;
+  unsigned int r = lastRowIndex;
+  unsigned int c = lastColumnIndex;
 
   while(r > 2     && Data[r-1][0] > rowKey) { r--; }
   while(r < nRows && Data[r]  [0] < rowKey) { r++; }
@@ -436,7 +436,7 @@ double FGTable::GetValue(double rowKey, double colKey) const
 double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 {
   double Factor, Value, Span;
-  int r=lastRowIndex;
+  unsigned int r = lastRowIndex;
 
   //if the key is off the end  (or before the beginning) of the table,
   // just return the boundary-table value, do not extrapolate
@@ -476,8 +476,6 @@ double FGTable::GetValue(double rowKey, double colKey, double tableKey) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-#include <signal.h>
-
 void FGTable::operator<<(stringstream& in_stream)
 {
   int startRow=0;
@@ -486,16 +484,8 @@ void FGTable::operator<<(stringstream& in_stream)
 // In 1D table, no pseudo-row of column-headers (i.e. keys):
   if (Type == tt1D) startRow = 1;
 
-  if (Type == tt3D) {
-    raise (SIGUSR1);	// This code is never called, 
-    startCol = 1;	// which is good, because
-    startRow = 1;	// it cannot possibly work.
-// Note: 3D tables are implemented as a stack of 2D tables,
-// and this operator<< is applied just to each 2D table.
-  }
-
-  for (int r=startRow; r<=nRows; r++) {
-    for (int c=startCol; c<=nCols; c++) {
+  for (unsigned int r=startRow; r<=nRows; r++) {
+    for (unsigned int c=startCol; c<=nCols; c++) {
       if (r != 0 || c != 0) {
         in_stream >> Data[r][c];
       }
@@ -555,9 +545,9 @@ void FGTable::Print(void)
       break;
   }
   cout.precision(4);
-  for (int r=startRow; r<=nRows; r++) {
+  for (unsigned int r=startRow; r<=nRows; r++) {
     cout << "	";
-    for (int c=startCol; c<=nCols; c++) {
+    for (unsigned int c=startCol; c<=nCols; c++) {
       if (r == 0 && c == 0) {
         cout << "	";
       } else {
