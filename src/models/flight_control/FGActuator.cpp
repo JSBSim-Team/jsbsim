@@ -1,0 +1,213 @@
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ Module:       FGActuator.cpp
+ Author:       Jon Berndt
+ Date started: 21 February 2006
+
+ ------------- Copyright (C) 2007 Jon S. Berndt (jsb@hal-pc.org) -------------
+
+ This program is free software; you can redistribute it and/or modify it under
+ the terms of the GNU Lesser General Public License as published by the Free Software
+ Foundation; either version 2 of the License, or (at your option) any later
+ version.
+
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ details.
+
+ You should have received a copy of the GNU Lesser General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ Place - Suite 330, Boston, MA  02111-1307, USA.
+
+ Further information about the GNU Lesser General Public License can also be found on
+ the world wide web at http://www.gnu.org.
+
+FUNCTIONAL DESCRIPTION
+--------------------------------------------------------------------------------
+
+HISTORY
+--------------------------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+COMMENTS, REFERENCES,  and NOTES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+INCLUDES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#include "FGActuator.h"
+
+namespace JSBSim {
+
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.1 2007/02/25 01:05:09 jberndt Exp $";
+static const char *IdHdr = ID_ACTUATOR;
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CLASS IMPLEMENTATION
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+
+FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
+{
+  double denom;
+  dt = fcs->GetState()->Getdt();
+
+  // inputs are read from the base class constructor
+
+  PreviousInput = PreviousOutput = 0.0;
+  min = max = bias = lag = hysteresis_width = deadband_width = 0.0;
+  rate_limit = 9E99; // no limit
+  fail_zero = fail_hardover = fail_stuck = false;
+
+  if ( element->FindElement("deadband_width") ) {
+    deadband_width = element->FindElementValueAsNumber("deadband_width");
+  }
+  if ( element->FindElement("hysteresis_width") ) {
+    hysteresis_width = element->FindElementValueAsNumber("hysteresis_width");
+  }
+  if ( element->FindElement("rate_limit") ) {
+    rate_limit = element->FindElementValueAsNumber("rate_limit");
+  }
+  if ( element->FindElement("bias") ) {
+    bias = element->FindElementValueAsNumber("bias");
+  }
+  if ( element->FindElement("lag") ) {
+    lag = element->FindElementValueAsNumber("lag");
+    denom = 2.00 + dt*lag;
+    ca = dt*lag / denom;
+    cb = (2.00 - dt*lag) / denom;
+  }
+
+  FGFCSComponent::bind();
+  bind();
+
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGActuator::~FGActuator()
+{
+  Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGActuator::Run(void )
+{
+  Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+
+  Output = Input; // perfect actuator
+
+  if (fail_stuck) {
+    Output = PreviousOutput;
+    return true;
+  }
+
+  if (lag != 0.0)  Lag();       // models actuator lag
+  if (bias != 0.0) Bias();      // models a finite bias
+
+  if (fail_zero) Output = 0; // actually, set the input to zero and let it fade there
+  if (fail_hardover) Output =  max;
+
+  return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::Bias(void)
+{
+  Output += bias;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::Lag(void)
+{
+  // "Output" on the right side of the "=" is the current frame input
+  Output = ca * (Output + PreviousInput) + PreviousOutput * cb;
+
+  PreviousOutput = Output;
+  PreviousInput  = Input;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::Hysteresis(void)
+{
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::RateLimit(void)
+{
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::Deadband(void)
+{
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGActuator::bind(void)
+{
+  string tmp = "fcs/" + PropertyManager->mkPropertyName(Name, true);
+  const string tmp_zero = tmp + "/malfunction/fail_zero";
+  const string tmp_hardover = tmp + "/malfunction/fail_hardover";
+  const string tmp_stuck = tmp + "/malfunction/fail_stuck";
+
+  PropertyManager->Tie( tmp_zero, this, &FGActuator::GetFailZero, &FGActuator::SetFailZero);
+  PropertyManager->Tie( tmp_hardover, this, &FGActuator::GetFailHardover, &FGActuator::SetFailHardover);
+  PropertyManager->Tie( tmp_stuck, this, &FGActuator::GetFailStuck, &FGActuator::SetFailStuck);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//    The bitmasked value choices are as follows:
+//    unset: In this case (the default) JSBSim would only print
+//       out the normally expected messages, essentially echoing
+//       the config files as they are read. If the environment
+//       variable is not set, debug_lvl is set to 1 internally
+//    0: This requests JSBSim not to output any messages
+//       whatsoever.
+//    1: This value explicity requests the normal JSBSim
+//       startup messages
+//    2: This value asks for a message to be printed out when
+//       a class is instantiated
+//    4: When this value is set, a message is displayed when a
+//       FGModel object executes its Run() method
+//    8: When this value is set, various runtime state variables
+//       are printed out periodically
+//    16: When set various parameters are sanity checked and
+//       a message is printed out when they go out of bounds
+
+void FGActuator::Debug(int from)
+{
+  if (debug_lvl <= 0) return;
+
+  if (debug_lvl & 1) { // Standard console startup message output
+    if (from == 0) { // Constructor
+
+    }
+  }
+  if (debug_lvl & 2 ) { // Instantiation/Destruction notification
+    if (from == 0) cout << "Instantiated: FGActuator" << endl;
+    if (from == 1) cout << "Destroyed:    FGActuator" << endl;
+  }
+  if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
+  }
+  if (debug_lvl & 8 ) { // Runtime state variables
+  }
+  if (debug_lvl & 16) { // Sanity checking
+  }
+  if (debug_lvl & 64) {
+    if (from == 0) { // Constructor
+      cout << IdSrc << endl;
+      cout << IdHdr << endl;
+    }
+  }
+}
+}
