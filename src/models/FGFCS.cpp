@@ -52,10 +52,11 @@ INCLUDES
 #include <models/flight_control/FGKinemat.h>
 #include <models/flight_control/FGFCSFunction.h>
 #include <models/flight_control/FGSensor.h>
+#include <models/flight_control/FGActuator.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.22 2007/02/10 23:25:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.23 2007/02/26 13:44:16 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -549,6 +550,8 @@ bool FGFCS::Load(Element* el)
           Components->push_back(new FGFCSFunction(this, component_element));
         } else if (component_element->GetName() == string("pid")) {
           Components->push_back(new FGPID(this, component_element));
+        } else if (component_element->GetName() == string("actuator")) {
+          Components->push_back(new FGActuator(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }

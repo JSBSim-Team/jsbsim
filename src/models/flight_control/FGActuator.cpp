@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.2 2007/02/25 13:52:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.3 2007/02/26 13:44:16 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,18 +100,19 @@ bool FGActuator::Run(void )
   dt = fcs->GetState()->Getdt();
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  Output = Input; // perfect actuator - this isn't right code
-
   if (fail_zero) Input = 0;
-  if (fail_hardover) Input =  max;
+  if (fail_hardover) Input =  max*fabs(Input)/Input;
 
-  if (fail_stuck) {
-    Output = PreviousOutput;
-    return true;
-  }
+  if (lag != 0.0)  Lag();           // models actuator lag
+  if (rate_limit != 0) RateLimit(); // limit the actuator rate
+  if (bias != 0.0) Bias();          // models a finite bias
 
-  if (lag != 0.0)  Lag();       // models actuator lag
-  if (bias != 0.0) Bias();      // models a finite bias
+  if (fail_stuck) Output = PreviousOutput;
+
+  PreviousOutput = Output; // previous values needed for lag and rate limiting
+  PreviousInput  = Input;
+
+  if (IsOutput) SetOutput();
 
   return true;
 }
@@ -129,9 +130,6 @@ void FGActuator::Lag(void)
 {
   // "Output" on the right side of the "=" is the current frame input
   Output = ca * (Output + PreviousInput) + PreviousOutput * cb;
-
-  PreviousOutput = Output;
-  PreviousInput  = Input;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +142,12 @@ void FGActuator::Hysteresis(void)
 
 void FGActuator::RateLimit(void)
 {
+  if (dt > 0.0) {
+    double rate = (Output - PreviousOutput)/dt;
+    if (fabs(rate) > rate_limit) {
+      Output = PreviousOutput + rate_limit*fabs(rate)/rate;
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
