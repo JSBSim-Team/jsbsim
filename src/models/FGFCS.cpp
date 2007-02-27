@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.23 2007/02/26 13:44:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.24 2007/02/27 13:15:58 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -662,6 +662,13 @@ void FGFCS::AddThrottle(void)
 void FGFCS::AddGear(void)
 {
   SteerPosDeg.push_back(0.0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFCS::GetDt(void)
+{
+  return FDMExec->GetDeltaT()*rate;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.11 2007/02/05 13:23:40 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.12 2007/02/27 13:15:58 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.11 $
+    @version $Revision: 1.12 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -524,6 +524,7 @@ public:
 
   void AddThrottle(void);
   void AddGear(void);
+  double GetDt(void);
 
   FGPropertyManager* GetPropertyManager(void) { return PropertyManager; }
 

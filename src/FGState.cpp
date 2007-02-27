@@ -47,15 +47,11 @@ INCLUDES
 #  endif
 #endif
 
-#ifdef _WIN32
-//#define snprintf _snprintf
-#endif
-
 #include "FGState.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.5 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.6 2007/02/27 13:15:58 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -186,86 +182,6 @@ FGMatrix33& FGState::GetTb2s(void)
   mTb2s(3,3) = ca;
 
   return mTb2s;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::ReportState(void)
-{
-#if 0
-#if !defined(__BORLANDCPP__)
-  char out[80], flap[10], gear[12];
-
-  cout << endl << "  JSBSim State" << endl;
-  snprintf(out,80,"    Weight: %7.0f lbs.  CG: %5.1f, %5.1f, %5.1f inches\n",
-                   FDMExec->GetMassBalance()->GetWeight(),
-                   FDMExec->GetMassBalance()->GetXYZcg(1),
-                   FDMExec->GetMassBalance()->GetXYZcg(2),
-                   FDMExec->GetMassBalance()->GetXYZcg(3));
-  cout << out;
-  if ( FCS->GetDfPos() <= 0.01)
-    snprintf(flap,10,"Up");
-  else
-    snprintf(flap,10,"%2.0f",FCS->GetDfPos());
-
-  if (FCS->GetGearPos() < 0.01)
-    snprintf(gear,12,"Up");
-  else if (FCS->GetGearPos() > 0.99)
-    snprintf(gear,12,"Down");
-  else
-    snprintf(gear,12,"In Transit");
-
-  snprintf(out,80, "    Flaps: %3s  Gear: %12s\n",flap,gear);
-  cout << out;
-  snprintf(out,80, "    Speed: %4.0f KCAS  Mach: %5.2f\n",
-                    Auxiliary->GetVcalibratedKTS(),
-                    Auxiliary->GetMach() );
-  cout << out;
-  snprintf(out,80, "    Altitude: %7.0f ft.  AGL Altitude: %7.0f ft.\n",
-                    Propagate->Geth(),
-                    Propagate->GetDistanceAGL() );
-  cout << out;
-  snprintf(out,80, "    Angle of Attack: %6.2f deg  Pitch Angle: %6.2f deg\n",
-                    Auxiliary->Getalpha()*radtodeg,
-                    Propagate->Gettht()*radtodeg );
-  cout << out;
-  snprintf(out,80, "    Flight Path Angle: %6.2f deg  Climb Rate: %5.0f ft/min\n",
-                    Auxiliary->GetGamma()*radtodeg,
-                    Propagate->Gethdot()*60 );
-  cout << out;
-  snprintf(out,80, "    Normal Load Factor: %4.2f g's  Pitch Rate: %5.2f deg/s\n",
-                    Aircraft->GetNlf(),
-                    Propagate->GetPQR(2)*radtodeg );
-  cout << out;
-  snprintf(out,80, "    Heading: %3.0f deg true  Sideslip: %5.2f deg  Yaw Rate: %5.2f deg/s\n",
-                    Propagate->Getpsi()*radtodeg,
-                    Auxiliary->Getbeta()*radtodeg,
-                    Propagate->GetPQR(3)*radtodeg  );
-  cout << out;
-  snprintf(out,80, "    Bank Angle: %5.2f deg  Roll Rate: %5.2f deg/s\n",
-                    Propagate->Getphi()*radtodeg,
-                    Propagate->GetPQR(1)*radtodeg );
-  cout << out;
-  snprintf(out,80, "    Elevator: %5.2f deg  Left Aileron: %5.2f deg  Rudder: %5.2f deg\n",
-                    FCS->GetDePos(ofRad)*radtodeg,
-                    FCS->GetDaLPos(ofRad)*radtodeg,
-                    FCS->GetDrPos(ofRad)*radtodeg );
-  cout << out;
-  snprintf(out,80, "    Throttle: %5.2f%c\n",
-                    FCS->GetThrottlePos(0)*100,'%' );
-  cout << out;
-
-  snprintf(out,80, "    Wind Components: %5.2f kts head wind, %5.2f kts cross wind\n",
-                    Auxiliary->GetHeadWind()*fpstokts,
-                    Auxiliary->GetCrossWind()*fpstokts );
-  cout << out;
-
-  snprintf(out,80, "    Ground Speed: %4.0f knots , Ground Track: %3.0f deg true\n",
-                    Auxiliary->GetVground()*fpstokts,
-                    Auxiliary->GetGroundTrack()*radtodeg );
-  cout << out;
-#endif
-#endif
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

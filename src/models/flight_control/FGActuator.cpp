@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.3 2007/02/26 13:44:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.4 2007/02/27 13:15:58 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,7 +52,7 @@ CLASS IMPLEMENTATION
 FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
   double denom;
-  dt = fcs->GetState()->Getdt();
+  dt = fcs->GetDt();
 
   // inputs are read from the base class constructor
 
@@ -97,7 +97,7 @@ FGActuator::~FGActuator()
 
 bool FGActuator::Run(void )
 {
-  dt = fcs->GetState()->Getdt();
+  dt = fcs->GetDt();
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
   if (fail_zero) Input = 0;
