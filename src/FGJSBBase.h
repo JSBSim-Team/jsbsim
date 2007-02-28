@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.10 2007/01/15 23:11:14 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.11 2007/02/28 03:15:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.10 2007/01/15 23:11:14 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.11 2007/02/28 03:15:44 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,8 @@ public:
   ~FGJSBBase() {};
 
   /// JSBSim Message structure
-  typedef struct Msg {
+  class Message {
+  public:
     unsigned int fdmId;
     unsigned int messageId;
     string text;
@@ -134,7 +135,7 @@ public:
     bool bVal;
     int  iVal;
     double dVal;
-  } Message;
+  };
 
   ///@name JSBSim console output highlighting terms.
   //@{
@@ -167,29 +168,29 @@ public:
   /** Places a Message structure on the Message queue.
       @param msg pointer to a Message structure
       @return pointer to a Message structure */
-  Message* PutMessage(Message* msg);
+void PutMessage(const Message& msg);
   /** Creates a message with the given text and places it on the queue.
       @param text message text
       @return pointer to a Message structure */
-  Message* PutMessage(const string& text);
+  void PutMessage(const string& text);
   /** Creates a message with the given text and boolean value and places it on the queue.
       @param text message text
       @param bVal boolean value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(const string& text, bool bVal);
+void PutMessage(const string& text, bool bVal);
   /** Creates a message with the given text and integer value and places it on the queue.
       @param text message text
       @param iVal integer value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(const string& text, int iVal);
+void PutMessage(const string& text, int iVal);
   /** Creates a message with the given text and double value and places it on the queue.
       @param text message text
       @param dVal double value associated with the message
       @return pointer to a Message structure */
-  Message* PutMessage(const string& text, double dVal);
+void PutMessage(const string& text, double dVal);
   /** Reads the message on the queue (but does not delete it).
-      @return pointer to a Message structure (or NULL if no mesage) */
-  Message* ReadMessage(void);
+      @return 1 if some messages */
+  int SomeMessages(void);
   /** Reads the message on the queue and removes it from the queue.
       @return pointer to a Message structure (or NULL if no mesage) */
   Message* ProcessMessage(void);
@@ -276,7 +277,7 @@ public:
 protected:
   static Message localMsg;
 
-  static std::queue <Message*> Messages;
+  static std::queue <Message> Messages;
 
   void Debug(int from) {};
 

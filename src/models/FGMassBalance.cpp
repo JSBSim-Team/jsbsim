@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.6 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.7 2007/02/28 03:15:44 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,11 +104,11 @@ bool FGMassBalance::Load(Element* el)
   EmptyWeight = el->FindElementValueAsNumberConvertTo("emptywt", "LBS");
 
   element = el->FindElement("location");
-   while (element) {
-     element_name = element->GetAttributeValue("name");
-     if (element_name == "CG") vbaseXYZcg = element->FindElementTripletConvertTo("IN");
-     element = el->FindNextElement("location");
-   }
+  while (element) {
+    element_name = element->GetAttributeValue("name");
+    if (element_name == "CG") vbaseXYZcg = element->FindElementTripletConvertTo("IN");
+    element = el->FindNextElement("location");
+  }
 
 // Find all POINTMASS elements that descend from this METRICS branch of the
 // config file.
@@ -281,11 +281,11 @@ void FGMassBalance::bind(void)
                        &FGMassBalance::GetMass);
   PropertyManager->Tie("inertia/weight-lbs", this,
                        &FGMassBalance::GetWeight);
-  PropertyManager->Tie("inertia/cg-x-ft", this,1,
+  PropertyManager->Tie("inertia/cg-x-in", this,1,
                        (PMF)&FGMassBalance::GetXYZcg);
-  PropertyManager->Tie("inertia/cg-y-ft", this,2,
+  PropertyManager->Tie("inertia/cg-y-in", this,2,
                        (PMF)&FGMassBalance::GetXYZcg);
-  PropertyManager->Tie("inertia/cg-z-ft", this,3,
+  PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
 }
 
@@ -295,9 +295,9 @@ void FGMassBalance::unbind(void)
 {
   PropertyManager->Untie("inertia/mass-slugs");
   PropertyManager->Untie("inertia/weight-lbs");
-  PropertyManager->Untie("inertia/cg-x-ft");
-  PropertyManager->Untie("inertia/cg-y-ft");
-  PropertyManager->Untie("inertia/cg-z-ft");
+  PropertyManager->Untie("inertia/cg-x-in");
+  PropertyManager->Untie("inertia/cg-y-in");
+  PropertyManager->Untie("inertia/cg-z-in");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

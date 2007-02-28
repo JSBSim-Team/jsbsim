@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.28 2007/02/14 00:53:01 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.29 2007/02/28 03:15:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -365,7 +365,7 @@ int main(int argc, char* argv[])
 
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
-    while (FDMExec->ReadMessage()) {
+    while (FDMExec->SomeMessages()) {
       msg = FDMExec->ProcessMessage();
       switch (msg->type) {
       case JSBSim::FGJSBBase::Message::eText:
