@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.2 2007/02/25 13:52:57 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.3 2007/03/01 03:29:37 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -96,7 +96,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.2 $
+@version $Revision: 1.3 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,6 @@ public:
 private:
   enum eNoiseType {ePercent=0, eAbsolute} NoiseType;
   double dt;
-  double min, max;
   double span;
   double bias;
   double rate_limit;
@@ -140,6 +139,8 @@ private:
   double cb; /// lag filter coefficient "b"
   double PreviousOutput;
   double PreviousInput;
+  double PreviousHystInput;
+  double PreviousHystOutput;
   bool fail_zero;
   bool fail_hardover;
   bool fail_stuck;

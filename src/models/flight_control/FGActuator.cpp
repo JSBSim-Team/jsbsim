@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.4 2007/02/27 13:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.5 2007/03/01 03:29:37 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,8 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
   // inputs are read from the base class constructor
 
   PreviousInput = PreviousOutput = 0.0;
-  min = max = bias = lag = hysteresis_width = deadband_width = 0.0;
+  PreviousHystInput = PreviousHystOutput = 0.0;
+  bias = lag = hysteresis_width = deadband_width = 0.0;
   rate_limit = 9E99; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
 
@@ -101,11 +102,13 @@ bool FGActuator::Run(void )
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
   if (fail_zero) Input = 0;
-  if (fail_hardover) Input =  max*fabs(Input)/Input;
+  if (fail_hardover) Input =  clipmax*fabs(Input)/Input;
 
-  if (lag != 0.0)  Lag();           // models actuator lag
-  if (rate_limit != 0) RateLimit(); // limit the actuator rate
-  if (bias != 0.0) Bias();          // models a finite bias
+  if (lag != 0.0)  Lag();                    // models actuator lag
+  if (rate_limit != 0) RateLimit();          // limit the actuator rate
+  if (deadband_width != 0.0) Deadband();
+  if (hysteresis_width != 0.0) Hysteresis();
+  if (bias != 0.0) Bias();                   // models a finite bias
 
   if (fail_stuck) Output = PreviousOutput;
 
@@ -136,6 +139,18 @@ void FGActuator::Lag(void)
 
 void FGActuator::Hysteresis(void)
 {
+  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
+  // is - for the purposes of this Hysteresis method - really the input to the
+  // method.
+  double input = Output;
+  
+  if (input > PreviousHystOutput) {
+    Output = max(PreviousHystOutput, input-0.5*hysteresis_width);
+  } else if (input < PreviousHystOutput) {
+    Output = min(PreviousHystOutput, input+0.5*hysteresis_width);
+  }
+
+  PreviousHystOutput = Output;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
