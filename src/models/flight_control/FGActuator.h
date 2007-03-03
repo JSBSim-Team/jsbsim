@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.3 2007/03/01 03:29:37 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.4 2007/03/03 03:39:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -59,6 +59,21 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates an Actuator component for the flight control system.
+    The actuator can be modeled as a "perfect actuator", with the Output
+    being set directly to the input. The actuator can be made more "real"
+    by specifying any/all of the following additional effects that can be
+    applied to the actuator. In order of application to the input signal,
+    these are:
+    
+    -System lag (input lag, really)
+    -Rate limiting
+    -Deadband
+    -Hysteresis (mechanical hysteresis)
+    -Bias (mechanical bias)
+    -Position limiting ("hard stops")
+    
+    There are also several malfunctions that can be applied to the actuator
+    by setting a property to true or false (or 1 or 0).
 
 Syntax:
 
@@ -96,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.3 $
+@version $Revision: 1.4 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,12 +150,13 @@ private:
   double hysteresis_width;
   double deadband_width;
   double lag;
-  double ca; /// lag filter coefficient "a"
-  double cb; /// lag filter coefficient "b"
+  double ca; // lag filter coefficient "a"
+  double cb; // lag filter coefficient "b"
   double PreviousOutput;
-  double PreviousInput;
-  double PreviousHystInput;
   double PreviousHystOutput;
+  double PreviousRateLimOutput;
+  double PreviousLagInput;
+  double PreviousLagOutput;
   bool fail_zero;
   bool fail_hardover;
   bool fail_stuck;

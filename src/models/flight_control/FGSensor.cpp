@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.8 2007/02/27 13:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.9 2007/03/03 03:39:59 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -248,7 +248,35 @@ void FGSensor::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      if (InputSigns[0] < 0)
+        cout << "      INPUT: -" << InputNodes[0]->getName() << endl;
+      else
+        cout << "      INPUT: " << InputNodes[0]->getName() << endl;
 
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (bits != 0) {
+        if (quant_property.empty())
+          cout << "      Quantized output" << endl;
+        else
+          cout << "      Quantized output (property: " << quant_property << ")" << endl;
+
+        cout << "        Bits: " << bits << endl;
+        cout << "        Min value: " << min << endl;
+        cout << "        Max value: " << max << endl;
+        cout << "          (span: " << span << ", granularity: " << granularity << ")" << endl;
+      }
+      if (bias != 0.0) cout << "      Bias: " << bias << endl;
+      if (drift_rate != 0) cout << "      Sensor drift rate: " << drift_rate << endl;
+      if (lag != 0) cout << "      Sensor lag: " << lag << endl;
+      if (noise_variance != 0) {
+        if (NoiseType == eAbsolute) {
+          cout << "      Noise variance (absolute): " << noise_variance << endl;
+        } else if (NoiseType == ePercent) {
+          cout << "      Noise variance (percent): " << noise_variance << endl;
+        } else {
+          cout << "      Noise variance type is invalid" << endl;
+        }
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

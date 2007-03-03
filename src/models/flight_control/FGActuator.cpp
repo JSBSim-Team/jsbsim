@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.5 2007/03/01 03:29:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.6 2007/03/03 03:39:59 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,11 +56,14 @@ FGActuator::FGActuator(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, eleme
 
   // inputs are read from the base class constructor
 
-  PreviousInput = PreviousOutput = 0.0;
-  PreviousHystInput = PreviousHystOutput = 0.0;
+  PreviousOutput = 0.0;
+  PreviousHystOutput = 0.0;
+  PreviousRateLimOutput = 0.0;
+  PreviousLagInput = PreviousLagOutput = 0.0;
   bias = lag = hysteresis_width = deadband_width = 0.0;
-  rate_limit = 9E99; // no limit
+  rate_limit = 0.0; // no limit
   fail_zero = fail_hardover = fail_stuck = false;
+  ca = cb = 0.0;
 
   if ( element->FindElement("deadband_width") ) {
     deadband_width = element->FindElementValueAsNumber("deadband_width");
@@ -99,22 +102,23 @@ FGActuator::~FGActuator()
 bool FGActuator::Run(void )
 {
   dt = fcs->GetDt();
+
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+  Output = Input; // perfect actuator
 
   if (fail_zero) Input = 0;
   if (fail_hardover) Input =  clipmax*fabs(Input)/Input;
 
-  if (lag != 0.0)  Lag();                    // models actuator lag
-  if (rate_limit != 0) RateLimit();          // limit the actuator rate
-  if (deadband_width != 0.0) Deadband();
+  if (lag != 0.0)              Lag();        // models actuator lag
+  if (rate_limit != 0)         RateLimit();  // limit the actuator rate
+  if (deadband_width != 0.0)   Deadband();
   if (hysteresis_width != 0.0) Hysteresis();
-  if (bias != 0.0) Bias();                   // models a finite bias
+  if (bias != 0.0)             Bias();       // models a finite bias
 
   if (fail_stuck) Output = PreviousOutput;
+  PreviousOutput = Output; // previous value needed for "stuck" malfunction
 
-  PreviousOutput = Output; // previous values needed for lag and rate limiting
-  PreviousInput  = Input;
-
+  Clip();
   if (IsOutput) SetOutput();
 
   return true;
@@ -132,7 +136,11 @@ void FGActuator::Bias(void)
 void FGActuator::Lag(void)
 {
   // "Output" on the right side of the "=" is the current frame input
-  Output = ca * (Output + PreviousInput) + PreviousOutput * cb;
+  // for this Lag filter
+  double input = Output;
+  Output = ca * (input + PreviousLagInput) + PreviousLagOutput * cb;
+  PreviousLagInput = input;
+  PreviousLagOutput = Output;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -157,12 +165,17 @@ void FGActuator::Hysteresis(void)
 
 void FGActuator::RateLimit(void)
 {
+  // Note: this function acts cumulatively on the "Output" parameter. So, "Output"
+  // is - for the purposes of this RateLimit method - really the input to the
+  // method.
+  double input = Output;
   if (dt > 0.0) {
-    double rate = (Output - PreviousOutput)/dt;
+    double rate = (input - PreviousRateLimOutput)/dt;
     if (fabs(rate) > rate_limit) {
-      Output = PreviousOutput + rate_limit*fabs(rate)/rate;
+      Output = PreviousRateLimOutput + (rate_limit*fabs(rate)/rate)*dt;
     }
   }
+  PreviousRateLimOutput = Output;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -210,7 +223,17 @@ void FGActuator::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
+      if (InputSigns[0] < 0)
+        cout << "      INPUT: -" << InputNodes[0]->getName() << endl;
+      else
+        cout << "      INPUT: " << InputNodes[0]->getName() << endl;
 
+      if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
+      if (bias != 0.0) cout << "      Bias: " << bias << endl;
+      if (rate_limit != 0) cout << "      Rate limit: " << rate_limit << endl;
+      if (lag != 0) cout << "      Actuator lag: " << lag << endl;
+      if (hysteresis_width != 0) cout << "      Hysteresis width: " << hysteresis_width << endl;
+      if (deadband_width != 0) cout << "      Deadband width: " << deadband_width << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
