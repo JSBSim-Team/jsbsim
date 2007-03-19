@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.12 2006/08/01 17:02:12 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.13 2007/03/19 15:26:41 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -886,7 +886,7 @@ bool FGJSBsim::ToggleDataLogging(bool state)
 //Positions
 void FGJSBsim::set_Latitude(double lat)
 {
-    static const SGPropertyNode *altitude = fgGetNode("/position/altitude-ft");
+    static SGConstPropertyNode_ptr altitude = fgGetNode("/position/altitude-ft");
     double alt;
     double sea_level_radius_meters, lat_geoc;
 
@@ -926,7 +926,7 @@ void FGJSBsim::set_Longitude(double lon)
 
 void FGJSBsim::set_Altitude(double alt)
 {
-    static const SGPropertyNode *latitude = fgGetNode("/position/latitude-deg");
+    static SGConstPropertyNode_ptr latitude = fgGetNode("/position/latitude-deg");
 
     double sea_level_radius_meters,lat_geoc;
 

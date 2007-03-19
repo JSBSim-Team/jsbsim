@@ -48,6 +48,8 @@ COMMENTS, REFERENCES, and NOTES [use "class documentation" below for API docs]
 
 namespace JSBSim {
 
+bool FGPropertyManager::suppress_warning = true;
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 string FGPropertyManager::mkPropertyName(string name, bool lowercase) {

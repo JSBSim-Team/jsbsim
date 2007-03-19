@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.4 2006/08/01 17:02:12 dpculp Exp $
+    @version $Id: JSBSim.hxx,v 1.5 2007/03/19 15:26:41 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -226,42 +226,42 @@ private:
     double trim_elev;
     double trim_throttle;
 
-    SGPropertyNode *startup_trim;
-    SGPropertyNode *trimmed;
-    SGPropertyNode *pitch_trim;
-    SGPropertyNode *throttle_trim;
-    SGPropertyNode *aileron_trim;
-    SGPropertyNode *rudder_trim;
-    SGPropertyNode *stall_warning;
+    SGPropertyNode_ptr startup_trim;
+    SGPropertyNode_ptr trimmed;
+    SGPropertyNode_ptr pitch_trim;
+    SGPropertyNode_ptr throttle_trim;
+    SGPropertyNode_ptr aileron_trim;
+    SGPropertyNode_ptr rudder_trim;
+    SGPropertyNode_ptr stall_warning;
 
-    /* SGPropertyNode *elevator_pos_deg;
-    SGPropertyNode *left_aileron_pos_deg;
-    SGPropertyNode *right_aileron_pos_deg;
-    SGPropertyNode *rudder_pos_deg;
-    SGPropertyNode *flap_pos_deg; */
+    /* SGPropertyNode_ptr elevator_pos_deg;
+    SGPropertyNode_ptr left_aileron_pos_deg;
+    SGPropertyNode_ptr right_aileron_pos_deg;
+    SGPropertyNode_ptr rudder_pos_deg;
+    SGPropertyNode_ptr flap_pos_deg; */
 
 
-    SGPropertyNode *elevator_pos_pct;
-    SGPropertyNode *left_aileron_pos_pct;
-    SGPropertyNode *right_aileron_pos_pct;
-    SGPropertyNode *rudder_pos_pct;
-    SGPropertyNode *flap_pos_pct;
-    SGPropertyNode *speedbrake_pos_pct;
-    SGPropertyNode *spoilers_pos_pct;
+    SGPropertyNode_ptr elevator_pos_pct;
+    SGPropertyNode_ptr left_aileron_pos_pct;
+    SGPropertyNode_ptr right_aileron_pos_pct;
+    SGPropertyNode_ptr rudder_pos_pct;
+    SGPropertyNode_ptr flap_pos_pct;
+    SGPropertyNode_ptr speedbrake_pos_pct;
+    SGPropertyNode_ptr spoilers_pos_pct;
 
-    SGPropertyNode *gear_pos_pct;
+    SGPropertyNode_ptr gear_pos_pct;
 
-    SGPropertyNode *temperature;
-    SGPropertyNode *pressure;
-    SGPropertyNode *density;
-    SGPropertyNode *turbulence_gain;
-    SGPropertyNode *turbulence_rate;
+    SGPropertyNode_ptr temperature;
+    SGPropertyNode_ptr pressure;
+    SGPropertyNode_ptr density;
+    SGPropertyNode_ptr turbulence_gain;
+    SGPropertyNode_ptr turbulence_rate;
 
-    SGPropertyNode *wind_from_north;
-    SGPropertyNode *wind_from_east;
-    SGPropertyNode *wind_from_down;
+    SGPropertyNode_ptr wind_from_north;
+    SGPropertyNode_ptr wind_from_east;
+    SGPropertyNode_ptr wind_from_down;
 
-    SGPropertyNode *slaved;
+    SGPropertyNode_ptr slaved;
 
     void init_gear(void);
     void update_gear(void);
