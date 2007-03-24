@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.4 2007/03/03 03:39:59 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.5 2007/03/24 23:56:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.4 $
+@version $Revision: 1.5 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,18 +121,20 @@ CLASS DECLARATION
 class FGActuator  : public FGFCSComponent
 {
 public:
+  /// Constructor
   FGActuator(FGFCS* fcs, Element* element);
+  /// Destructor
   ~FGActuator();
 
-  inline void Hysteresis(void);
-  inline void Lag(void);
-  inline void RateLimit(void);
-  inline void Deadband(void);
-  inline void Bias(void);
-
+  /** This function processes the input.
+      It calls private functions if needed to perform the hysteresis, lag,
+      limiting, etc. functions. */
   bool Run (void);
 
   // these may need to have the bool argument replaced with a double
+  /** This function fails the actuator to zero. The motion to zero
+      will flow through the lag, hysteresis, and rate limiting
+      functions if those are activated. */
   inline void SetFailZero(bool set) {fail_zero = set;}
   inline void SetFailHardover(bool set) {fail_hardover = set;}
   inline void SetFailStuck(bool set) {fail_stuck = set;}
@@ -160,6 +162,12 @@ private:
   bool fail_zero;
   bool fail_hardover;
   bool fail_stuck;
+
+  void Hysteresis(void);
+  void Lag(void);
+  void RateLimit(void);
+  void Deadband(void);
+  void Bias(void);
 
   void bind(void);
 
