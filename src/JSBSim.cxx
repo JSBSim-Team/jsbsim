@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.13 2007/03/19 15:26:41 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.14 2007/04/01 12:09:27 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -425,10 +425,14 @@ void FGJSBsim::update( double dt )
     if (!cache_ok) {
       SG_LOG(SG_FLIGHT, SG_WARN,
              "FGInterface is being called without scenery below the aircraft!");
-      cout << "altitude         = " << alt << endl;
-      cout << "sea level radius = " << slr << endl;
-      cout << "latitude         = " << lat << endl;
-      cout << "longitude        = " << lon << endl;
+      SG_LOG(SG_FLIGHT, SG_WARN,
+             "altitude         = " << alt);
+      SG_LOG(SG_FLIGHT, SG_WARN,
+            "sea level radius = " << slr);
+      SG_LOG(SG_FLIGHT, SG_WARN,
+            "latitude         = " << lat);
+      SG_LOG(SG_FLIGHT, SG_WARN,
+            "longitude        = " << lon);
       //return;
     }
 
