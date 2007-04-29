@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.10 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.11 2007/04/29 03:54:15 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -177,13 +177,19 @@ double FGFunction::GetValue(void) const
   case eTopLevel:
     break;
   case eProduct:
-    for (i=1;i<Parameters.size();i++) temp *= Parameters[i]->GetValue();
+    for (i=1;i<Parameters.size();i++) {
+      temp *= Parameters[i]->GetValue();
+    }
     break;
   case eDifference:
-    for (i=1;i<Parameters.size();i++) temp -= Parameters[i]->GetValue();
+    for (i=1;i<Parameters.size();i++) {
+      temp -= Parameters[i]->GetValue();
+    }
     break;
   case eSum:
-    for (i=1;i<Parameters.size();i++) temp += Parameters[i]->GetValue();
+    for (i=1;i<Parameters.size();i++) {
+      temp += Parameters[i]->GetValue();
+    }
     break;
   case eQuotient:
     temp /= Parameters[1]->GetValue();

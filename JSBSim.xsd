@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.19 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.20 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -190,7 +190,7 @@
         </xs:element>
         <xs:element name="sensitivity" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This field stores the sensitivity classification, such as "classified", "secret", "proprietary", etc.</xs:documentation></xs:annotation></xs:element>        
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initially created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.19 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.20 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -614,6 +614,7 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="property"/>
         <!--        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/> -->
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/>
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string"/>
     </xs:complexType>
@@ -823,6 +824,17 @@
     </xs:complexType>
   </xs:element>
   
+  <xs:element name="sensor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="input" type="xs:string" minOccurs="0"/>
+        <xs:element ref="clipto" minOccurs="0"/>
+        <xs:element name="output" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
   <!--
 
   <xs:group name="functionGroup">

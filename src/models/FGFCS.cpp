@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.24 2007/02/27 13:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.25 2007/04/29 03:54:15 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -148,7 +148,9 @@ bool FGFCS::Run(void)
 
   // Cycle through the sensor, autopilot, and flight control components
   for (i=0; i<sensors.size(); i++) sensors[i]->Run();
-  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run();
+  for (i=0; i<APComponents.size(); i++) {
+    APComponents[i]->Run();
+  }
   for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run();
 
   return false;
