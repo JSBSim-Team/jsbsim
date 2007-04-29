@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.9 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.10 2007/04/29 03:53:08 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -198,7 +198,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   }
   minMAP = MinManifoldPressure_inHg * 3386.38;  // inHg to Pa
   maxMAP = MaxManifoldPressure_inHg * 3386.38;
-  StarterHP = sqrt(MaxHP) * 0.2;
+  StarterHP = sqrt(MaxHP) * 0.4;
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
   if (TakeoffBoost > RatedBoost[0]) bTakeoffBoost = true;
@@ -580,7 +580,7 @@ void FGPiston::doEnginePower(void)
       if (RPM < 10) {
         HP = StarterHP;
       } else if (RPM < 480) {
-        HP = StarterHP + ((480 - RPM) / 10.0);
+        HP = StarterHP + ((480 - RPM) / 8.0);
         // This is a guess - would be nice to find a proper starter moter torque curve
       } else {
         HP = StarterHP;
@@ -593,7 +593,7 @@ void FGPiston::doEnginePower(void)
         HP = 0.0;
     }
   }
-  //cout << "Power = " << HP << '\n';
+//  cout << "Power = " << HP << "  RPM = " << RPM << "  Running = " << Running << "  Cranking = " << Cranking << endl;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
