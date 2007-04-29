@@ -31,6 +31,7 @@
   <property>ap/wp_longitude_rad</property>
   <property>ap/altitude_setpoint</property>
   <property>ap/heading_setpoint</property>
+  <property>ap/heading-setpoint-select</property>
   <property>ap/aileron_cmd</property>
   <property>ap/elevator_cmd</property>
   <property>ap/airspeed_setpoint</property>
@@ -108,43 +109,96 @@ ROLL CHANNEL
 
 <channel name="AP Waypoint Heading Director">
 
-  <fcs_function name="Heading to Waypoint">
+  <fcs_function name="fcs/delta-lat-rad">
+    <function>
+      <difference>
+        <property>ap/wp_latitude_rad</property>
+        <property>position/lat-gc-rad</property>
+      </difference>
+    </function>
+  </fcs_function>
+
+  <fcs_function name="fcs/delta-lon-rad">
+    <function>
+      <difference>
+        <property>ap/wp_longitude_rad</property>
+        <property>position/long-gc-rad</property>
+      </difference>
+    </function>
+  </fcs_function>
+
+  <fcs_function name="Heading to Waypoint Rad">
     <function>
       <atan2> <!-- atan2 (deltaY, deltaX )-->
-        <difference>
-          <property>ap/wp_latitude_rad</property>
-          <property>position/lat-gc-rad</property>
-        </difference>
         <product>
-          <difference>
-            <property>ap/wp_longitude_rad</property>
-            <property>position/long-gc-rad</property>
-          </difference>
+          <sin>
+            <property>fcs/delta-lon-rad</property>
+          </sin>
           <cos>
             <property>ap/wp_latitude_rad</property>
           </cos>
         </product>
+        <difference>
+          <product>
+            <cos>
+              <property>position/lat-gc-rad</property>
+            </cos>
+            <sin>
+              <property>ap/wp_latitude_rad</property>
+            </sin>
+          </product>
+          <product>
+            <sin>
+              <property>position/lat-gc-rad</property>
+            </sin>
+            <cos>
+              <property>ap/wp_latitude_rad</property>
+            </cos>
+            <cos>
+              <property>fcs/delta-lon-rad</property>
+            </cos>
+          </product>
+        </difference>
       </atan2>
     </function>
   </fcs_function>
 
-  <summer name="Heading to Waypoint360">
-    <input> -fcs/heading-to-waypoint </input>
-    <bias> 360.0 </bias>
+  <summer name="Heading to Waypoint Positive">
+    <input> fcs/heading-to-waypoint-rad </input>
+    <bias> 6.283 </bias>
   </summer>
 
   <switch name="WP Heading Corrector">
-    <default value="-fcs/heading-to-waypoint"/>
-    <test value="fcs/heading-to-waypoint360">
-      fcs/heading-to-waypoint gt 0.0
+    <default value="fcs/heading-to-waypoint-positive"/>
+    <test value="fcs/heading-to-waypoint-rad">
+      fcs/heading-to-waypoint-rad gt 0.0
     </test>
   </switch>
+  
+  <pure_gain name="WP Heading Deg">
+    <input> fcs/wp-heading-corrector </input>
+    <gain> 57.3 </gain>
+  </pure_gain>
 
 </channel>
 
 <!-- Heading hold -->
 
 <channel name="AP Roll Heading Hold">
+
+  <!-- The heading setpoint selector selects the heading
+       command (setpoint), which can either be set directly, or
+       calculated by the specification of waypoint. If the 
+       heading setpoint selector is 0, then the heading setpoint
+       is used, if the selector is 1, then the heading calculated
+       from the waypoint is used. -->
+  <switch name="Heading Setpoint Selector">
+    <default value="ap/heading_setpoint"/>
+    <test value="fcs/wp-heading-deg">
+      ap/heading-setpoint-select == 1
+    </test>
+  </switch>
+
   <pure_gain name="Heading True Degrees">
     <input>attitude/heading-true-rad</input>
     <gain>57.3</gain> <!-- convert to degrees -->
@@ -152,7 +206,7 @@ ROLL CHANNEL
 
   <summer name="Heading Error">
     <input> -fcs/heading-true-degrees</input>
-    <input> ap/heading_setpoint </input>
+    <input> fcs/heading-setpoint-selector </input>
   </summer>
 
   <switch name="Heading Error Bias Switch">

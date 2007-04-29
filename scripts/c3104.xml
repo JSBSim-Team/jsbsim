@@ -3,15 +3,19 @@
 <runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
     name="C310-01A takeoff run">
+    
   <description>For testing autopilot capability</description>
   <use aircraft="c310" initialize="reset00"/>
-  <run start="0.0" end="200" dt="0.00833333">
+  
+  <run start="0.0" end="300" dt="0.00833333">
+  
     <event name="Set waypoints">
       <condition>sim-time-sec  eq  0.00</condition>
-      <set name="ap/wp_latitude_rad" value="0.5236"/>
-      <set name="ap/wp_longitude_rad" value="1.3090"/>
+      <set name="ap/wp_latitude_rad" value="0.5236"/> <!-- 30 deg -->
+      <set name="ap/wp_longitude_rad" value="1.3090"/> <!-- 75 deg -->
       <notify/>
     </event>
+    
     <event name="Start engine">
       <condition>sim-time-sec  ge  0.25</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
@@ -24,29 +28,48 @@
       <set name="propulsion/starter_cmd" value="1"/>
       <notify/>
     </event>
+    
     <event name="Set attitude hold">
       <condition>position/h-agl-ft  ge  3.5</condition>
       <set name="ap/attitude_hold" value="1"/>
-      <set name="ap/heading_hold" value="0"/>
       <notify/>
     </event>
+
+    <event name="Set heading hold">
+      <condition>position/h-agl-ft  ge  30</condition>
+      <set name="ap/attitude_hold" value="0"/>
+      <set name="ap/heading_setpoint" value="300"/>
+      <set name="ap/heading-setpoint-select" value="0"/>
+      <set name="ap/heading_hold" value="1"/>
+      <notify/>
+    </event>
+    
     <event name="Set altitude for 1,000 ft.">
       <condition>position/h-agl-ft  ge  10.0</condition>
       <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
       <set name="ap/altitude_hold" value="1"/>
       <notify/>
     </event>
+    
     <event name="Raise landing gear">
       <condition>position/h-agl-ft  ge  20</condition>
       <set name="gear/gear-cmd-norm" value="0"/>
       <notify/>
     </event>
+    
     <event name="Set heading to 300 degrees and acquire/hold heading">
-      <condition>position/h-agl-ft  ge  500</condition>
-      <set name="ap/heading_setpoint" value="300"/>
-      <set name="ap/attitude_hold" value="0"/>
-      <set name="ap/heading_hold" value="1"/>
+      <condition>position/h-agl-ft  ge  800</condition>
+      <set name="ap/heading-setpoint-select" value="1"/>
       <notify/>
     </event>
+    
+    <event name="Set waypoints again">
+      <condition>position/h-agl-ft  ge  800</condition>
+      <delay> 50 </delay>
+      <set name="ap/wp_latitude_rad" value="1.04712"/> <!-- 60 deg -->
+      <set name="ap/wp_longitude_rad" value="1.3090"/> <!-- 75 deg -->
+      <notify/>
+    </event>
+    
   </run>
 </runscript>
