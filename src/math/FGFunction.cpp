@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.11 2007/04/29 03:54:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.12 2007/04/29 13:52:28 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,16 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
   }
 
   element = el->GetElement();
+  if (!element) {
+    cerr << fgred << highint << endl;
+    cerr << "  No element was specified as an argument to the \"" << operation << "\" operation" << endl;
+    cerr << "  This can happen when, for instance, a cos operation is specified and a " << endl;
+    cerr << "  property name is given explicitly, but is not placed within a" << endl;
+    cerr << "  <property></property> element tag pair." << endl;
+    cerr << reset;
+    exit(-2);
+  }
+  
   while (element) {
     operation = element->GetName();
 
