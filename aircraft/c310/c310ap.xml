@@ -109,7 +109,26 @@ ROLL CHANNEL
 
 <channel name="AP Waypoint Heading Director">
 
+  <!--
+  The calculations, below, implement the Haversine formulas to calculate
+  heading and distance to a set of lat/long coordinates from the current
+  position. The latitude and longitude are expected to be in radian units
+  and are measured from the 0 meridian and the equator, with positive 
+  longitude being east from there, and positive latitude being north.
+  
+  The basic equations are:
+  
+  R = earth’s radius
+  Δlat = lat2 − lat1
+  Δlong = long2 − long1
+  a = sin²(Δlat/2) + cos(lat1)∙cos(lat2)∙sin²(Δlong/2)
+  c = 2∙atan2(√a, √(1−a))
+  d = R∙c
+  θ = atan2(sin(Δlong)∙cos(lat2), cos(lat1)∙sin(lat2) − sin(lat1) ∙cos(lat2)∙cos(Δlong) )
+  -->
+
   <fcs_function name="fcs/delta-lat-rad">
+    <!-- Delta latitude in radians -->
     <function>
       <difference>
         <property>ap/wp_latitude_rad</property>
@@ -119,6 +138,7 @@ ROLL CHANNEL
   </fcs_function>
 
   <fcs_function name="fcs/delta-lon-rad">
+    <!-- Delta longitude in radians -->
     <function>
       <difference>
         <property>ap/wp_longitude_rad</property>
@@ -128,40 +148,97 @@ ROLL CHANNEL
   </fcs_function>
 
   <fcs_function name="Heading to Waypoint Rad">
+    <!--
+    The heading in radians to a specified waypoint, given the
+    current position.
+    -->
     <function>
       <atan2> <!-- atan2 (deltaY, deltaX )-->
         <product>
-          <sin>
-            <property>fcs/delta-lon-rad</property>
-          </sin>
-          <cos>
-            <property>ap/wp_latitude_rad</property>
-          </cos>
+          <sin><property>fcs/delta-lon-rad</property></sin>
+          <cos><property>ap/wp_latitude_rad</property></cos>
         </product>
         <difference>
           <product>
-            <cos>
-              <property>position/lat-gc-rad</property>
-            </cos>
-            <sin>
-              <property>ap/wp_latitude_rad</property>
-            </sin>
+            <cos><property>position/lat-gc-rad</property></cos>
+            <sin><property>ap/wp_latitude_rad</property></sin>
           </product>
           <product>
-            <sin>
-              <property>position/lat-gc-rad</property>
-            </sin>
-            <cos>
-              <property>ap/wp_latitude_rad</property>
-            </cos>
-            <cos>
-              <property>fcs/delta-lon-rad</property>
-            </cos>
+            <sin><property>position/lat-gc-rad</property></sin>
+            <cos><property>ap/wp_latitude_rad</property></cos>
+            <cos><property>fcs/delta-lon-rad</property></cos>
           </product>
         </difference>
       </atan2>
     </function>
   </fcs_function>
+
+  <fcs_function name="WP Distance A">
+    <!--
+    This is an intermediate distance calculation between
+    the current location and the specified waypoint.
+    -->
+    <function>
+      <sum>
+        <pow>
+          <sin>
+            <quotient>
+              <property>fcs/delta-lon-rad</property>
+              <value>2.0</value>
+            </quotient>
+          </sin>
+          <value>2</value>
+        </pow>
+        <product>
+          <cos>
+            <property>position/lat-gc-rad</property>
+          </cos>
+          <cos>
+            <property>ap/wp_latitude_rad</property>
+          </cos>
+          <pow>
+            <sin>
+              <quotient>
+                <property>fcs/delta-lon-rad</property>
+                <value>2.0</value>
+              </quotient>
+            </sin>
+            <value>2.0</value>
+          </pow>
+        </product>
+      </sum>
+    </function>
+  </fcs_function> 
+
+  <fcs_function name="WP Distance">
+    <!--
+    This is the final distance calculation between
+    the current location and the specified waypoint.
+    If you want this calculation to output in units
+    other than feet, changed the notated value below
+    to the radius of the Earth given in your units
+    of choice.
+    -->
+    <function>
+      <product>
+        <value>2.0</value>
+        <atan2>
+          <pow>
+            <property>fcs/wp-distance-a</property>
+            <value>0.5</value>
+          </pow>
+          <pow>
+            <difference>
+              <value>1.0</value>
+              <property>fcs/wp-distance-a</property>
+            </difference>
+            <value>0.5</value>
+          </pow>
+        </atan2>
+        <value>21144000</value> <!-- radius of the Earth in feet -->
+      </product>
+    </function>
+  </fcs_function> 
 
   <summer name="Heading to Waypoint Positive">
     <input> fcs/heading-to-waypoint-rad </input>
