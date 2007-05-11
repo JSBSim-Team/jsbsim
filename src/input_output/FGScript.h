@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.7 2007/02/05 13:23:39 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.8 2007/05/11 00:23:45 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -156,7 +156,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.7 2007/02/05 13:23:39 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.8 2007/05/11 00:23:45 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,6 +202,7 @@ private:
     bool             Triggered;
     bool             PrevTriggered;
     bool             Notify;
+    bool             Notified;
     double           Delay;
     double           StartTime;
     double           TimeSpan;
@@ -222,7 +223,7 @@ private:
       PrevTriggered = false;
       Persistent = false;
       Delay = 0.0;
-      Notify = false;
+      Notify = Notified = false;
       Name = "";
       StartTime = 0.0;
       TimeSpan = 0.0;

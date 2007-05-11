@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.14 2007/02/05 13:23:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.15 2007/05/11 00:23:45 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -304,11 +304,12 @@ bool FGScript::RunScript(void)
       iEvent->Triggered = true;
     } else if (iEvent->Persistent) {
       iEvent->Triggered = false; // Reset the trigger for persistent events
+      iEvent->Notified = false;  // Also reset the notification flag
     }
 
     if ((currentTime >= iEvent->StartTime) && iEvent->Triggered) {
 
-      if (iEvent->Notify && iEvent->PrevTriggered != iEvent->Triggered) {
+      if (iEvent->Notify && !iEvent->Notified) {
         cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
              << " executed at time: " << currentTime << endl;
         for (j=0; j<iEvent->NotifyProperties.size();j++) {
@@ -316,6 +317,7 @@ bool FGScript::RunScript(void)
                << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
+	iEvent->Notified = true;
       }
 
       for (i=0; i<iEvent->SetValue.size(); i++) {
