@@ -5,18 +5,14 @@
     name="C310-01A takeoff run">
     
   <description>For testing autopilot capability</description>
-  <use aircraft="c310" initialize="reset00"/>
+  <use aircraft="c310" initialize="Ellington"/>
   
-  <run start="0.0" end="300" dt="0.00833333">
+  <run start="0.0" end="3600" dt="0.00833333">
   
-    <event name="Set waypoints">
-      <condition>sim-time-sec  eq  0.00</condition>
-      <set name="ap/wp_latitude_rad" value="0.5236"/> <!-- 30 deg -->
-      <set name="ap/wp_longitude_rad" value="1.3090"/> <!-- 75 deg -->
-      <notify/>
-    </event>
-    
     <event name="Start engine">
+      <description>
+        Start engine and set initial heading and waypoints, turn on heading-hold mode.
+      </description>
       <condition>sim-time-sec  ge  0.25</condition>
       <set name="fcs/mixture-cmd-norm[0]" value="0.87"/>
       <set name="fcs/mixture-cmd-norm[1]" value="0.87"/>
@@ -26,27 +22,19 @@
       <set name="fcs/throttle-cmd-norm[0]" value="1.0"/>
       <set name="fcs/throttle-cmd-norm[1]" value="1.0"/>
       <set name="propulsion/starter_cmd" value="1"/>
-      <notify/>
-    </event>
-    
-    <event name="Set attitude hold">
-      <condition>position/h-agl-ft  ge  3.5</condition>
-      <set name="ap/attitude_hold" value="1"/>
-      <notify/>
-    </event>
-
-    <event name="Set heading hold">
-      <condition>position/h-agl-ft  ge  30</condition>
+      <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
       <set name="ap/attitude_hold" value="0"/>
-      <set name="ap/heading_setpoint" value="300"/>
+      <set name="ap/wp_latitude_rad" value="0.517238"/>
+      <set name="ap/wp_longitude_rad" value="-1.662727"/>
+      <set name="ap/heading_setpoint" value="350"/>
       <set name="ap/heading-setpoint-select" value="0"/>
       <set name="ap/heading_hold" value="1"/>
+      <set name="ap/active-waypoint" value="0"/>
       <notify/>
     </event>
     
     <event name="Set altitude for 1,000 ft.">
-      <condition>position/h-agl-ft  ge  10.0</condition>
-      <set name="ap/altitude_setpoint" action="FG_EXP" value="1000.0" tc="10.0"/>
+      <condition>velocities/vc-fps ge 135.0</condition>
       <set name="ap/altitude_hold" value="1"/>
       <notify/>
     </event>
@@ -57,18 +45,100 @@
       <notify/>
     </event>
     
-    <event name="Set heading to 300 degrees and acquire/hold heading">
+    <event name="Head to first waypoint">
+      <description>
+        Set heading hold to selected waypoint (setpoint) instead of
+        previously specified heading when altitude surpasses 800 feet.
+      </description>
       <condition>position/h-agl-ft  ge  800</condition>
       <set name="ap/heading-setpoint-select" value="1"/>
-      <notify/>
+      <set name="ap/active-waypoint" value="1"/>
+      <notify>
+        <property>fcs/wp-distance</property>
+      </notify>
     </event>
     
-    <event name="Set waypoints again">
-      <condition>position/h-agl-ft  ge  800</condition>
-      <delay> 50 </delay>
-      <set name="ap/wp_latitude_rad" value="1.04712"/> <!-- 60 deg -->
-      <set name="ap/wp_longitude_rad" value="1.3090"/> <!-- 75 deg -->
+    <event name="Terminate">
+      <description>
+        When the aircraft arrives back at Ellington Field (fifth waypoint)
+	then terminate the simulation.
+      </description>
+      <condition>
+        fcs/wp-distance lt 100
+        ap/active-waypoint eq 5
+      </condition>
+      <set name="simulation/terminate" value="1"/>
       <notify/>
+    </event>
+
+    <event name="Set last waypoint">
+      <description>
+        When the distance to the fourth waypoint (northeast end of Galveston
+	Island) is less than 100 feet, then set the last waypoint
+	(back to Ellington Field).
+      </description>
+      <condition>
+        fcs/wp-distance lt 100
+        ap/active-waypoint eq 4
+      </condition>
+      <set name="ap/wp_latitude_rad" value="0.516512"/>
+      <set name="ap/wp_longitude_rad" value="-1.660922"/>
+      <set name="ap/active-waypoint" value="5"/>
+      <notify>
+        <property>fcs/wp-distance</property>
+      </notify>
+    </event>
+
+    <event name="Set fourth waypoint">
+      <description>
+        When the distance to the third waypoint (southwest end of Galveston
+	Island) is less than 800 feet, then set the fourth waypoint
+	(northeast end of Galveston Island).
+      </description>
+      <condition>
+        fcs/wp-distance lt 800
+        ap/active-waypoint eq 3
+      </condition>
+      <set name="ap/wp_latitude_rad" value="0.511661"/>
+      <set name="ap/wp_longitude_rad" value="-1.653510"/>
+      <set name="ap/active-waypoint" value="4"/>
+      <notify>
+        <property>fcs/wp-distance</property>
+      </notify>
+    </event>
+
+    <event name="Set third waypoint">
+      <description>
+        When the distance to the second waypoint (Hobby Airport) is less than
+	100 feet, then set the third waypoint.
+      </description>
+      <condition>
+        fcs/wp-distance lt 100
+        ap/active-waypoint eq 2
+      </condition>
+      <set name="ap/wp_latitude_rad" value="0.507481"/>
+      <set name="ap/wp_longitude_rad" value="-1.660062"/>
+      <set name="ap/active-waypoint" value="3"/>
+      <notify>
+        <property>fcs/wp-distance</property>
+      </notify>
+    </event>
+    
+    <event name="Set second waypoint">
+      <description>
+        When the distance to the first waypoint (Hobby Airport threshold) is less than
+	800 feet, then set the second waypoint.
+      </description>
+      <condition>
+        fcs/wp-distance lt 500
+        ap/active-waypoint eq 1
+      </condition>
+      <set name="ap/wp_latitude_rad" value="0.517533"/>
+      <set name="ap/wp_longitude_rad" value="-1.663076"/>
+      <set name="ap/active-waypoint" value="2"/>
+      <notify>
+        <property>fcs/wp-distance</property>
+      </notify>
     </event>
     
   </run>
