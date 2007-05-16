@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.15 2007/05/11 00:23:45 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.16 2007/05/16 23:56:44 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -309,17 +309,6 @@ bool FGScript::RunScript(void)
 
     if ((currentTime >= iEvent->StartTime) && iEvent->Triggered) {
 
-      if (iEvent->Notify && !iEvent->Notified) {
-        cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
-             << " executed at time: " << currentTime << endl;
-        for (j=0; j<iEvent->NotifyProperties.size();j++) {
-          cout << "    " << iEvent->NotifyProperties[j]->GetName()
-               << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
-        }
-        cout << endl;
-	iEvent->Notified = true;
-      }
-
       for (i=0; i<iEvent->SetValue.size(); i++) {
         if (iEvent->Transiting[i]) {
           iEvent->TimeSpan = currentTime - iEvent->StartTime;
@@ -346,6 +335,19 @@ bool FGScript::RunScript(void)
           iEvent->SetParam[i]->setDoubleValue(newSetValue);
         }
       }
+
+      // Print notification values after setting them
+      if (iEvent->Notify && !iEvent->Notified) {
+        cout << endl << "  Event " << event_ctr << " (" << iEvent->Name << ")"
+             << " executed at time: " << currentTime << endl;
+        for (j=0; j<iEvent->NotifyProperties.size();j++) {
+          cout << "    " << iEvent->NotifyProperties[j]->GetName()
+               << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
+        }
+        cout << endl;
+	iEvent->Notified = true;
+      }
+
     }
 
     iEvent++;
