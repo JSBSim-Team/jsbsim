@@ -27,6 +27,7 @@
   <property>ap/attitude_hold</property>
   <property>ap/altitude_hold</property>
   <property>ap/heading_hold</property>
+  <property>ap/active-waypoint</property>
   <property>ap/wp_latitude_rad</property>
   <property>ap/wp_longitude_rad</property>
   <property>ap/altitude_setpoint</property>
