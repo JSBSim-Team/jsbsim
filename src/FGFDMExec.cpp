@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.33 2007/02/05 13:23:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.34 2007/05/16 23:53:40 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,6 +134,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   modelLoaded = false;
   IsSlave = false;
   holding = false;
+  Terminate = false;
 
   // Multiple FDM's are stopped for now.  We need to ensure that
   // the "user" instance always gets the zeroeth instance number,
@@ -168,6 +169,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
   instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/terminate", (int *)&Terminate);
   Constructing = false;
 }
 
@@ -176,6 +178,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 FGFDMExec::~FGFDMExec()
 {
   instance->Untie("simulation/do_trim");
+  instance->Untie("simulation/terminate");
 
   try {
     DeAllocate();
@@ -376,6 +379,7 @@ bool FGFDMExec::Run(void)
 
   Frame++;
   if (!Holding()) State->IncrTime();
+  if (Terminate) success = false;
   return (success);
 }
 
