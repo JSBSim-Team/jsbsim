@@ -65,7 +65,7 @@
       <set name="fcs/flap-cmd-norm" value="0"/>
     </event>
 
-    <event name="Time Notify" type="FG_DELTA" persistent="true">
+    <event name="Time Notify" persistent="true">
       <description>Output message at 100 second intervals</description>
       <notify>
         <property>velocities/vc-kts</property>
