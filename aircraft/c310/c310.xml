@@ -9,7 +9,7 @@
         <author> Tony Peden </author>
         <author> Jon Berndt </author>
         <filecreationdate> 2001-11-24 </filecreationdate>
-        <version> $Revision: 1.56 $ </version>
+        <version> $Revision: 1.57 $ </version>
         <description>
             Models a Cessna 310 light twin. The airplane has a wingspan of 35.98 feet, wing area of 178 square feet,
             an aspect ratio of 7.3, and an M.A.C. of 5 feet based on projection of the outboard leading edge
@@ -979,17 +979,19 @@
         <simulation> OFF </simulation>
         <atmosphere> OFF </atmosphere>
         <massprops> OFF</massprops>
-        <aerosurfaces> ON </aerosurfaces>
-        <rates> ON </rates>
-        <velocities> ON </velocities>
+        <aerosurfaces> OFF </aerosurfaces>
+        <rates> OFF </rates>
+        <velocities> OFF </velocities>
         <forces> OFF </forces>
         <moments> OFF </moments>
-        <position> ON </position>
+        <position> OFF </position>
         <propulsion> OFF </propulsion>
-        <fcs> ON </fcs>
+        <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
-        <property> velocities/h-dot-fps </property>
+        <property> position/long-gc-rad </property>
+        <property> position/lat-gc-rad </property>
+        <property> position/h-agl-ft </property>
     </output>
     <output name="localhost" type="SOCKET" port="1138" rate="2">
         <simulation> OFF </simulation>

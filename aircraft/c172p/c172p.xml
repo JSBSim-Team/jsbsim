@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.21 2006/06/18 18:48:34 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.22 2007/05/16 23:59:34 jberndt Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -862,4 +862,26 @@
             </function>
         </axis>
     </aerodynamics>
+    <output name="JSBout172C.csv" type="CSV" rate="60">
+      <property> aero/qbar-psf </property>
+      <property> accelerations/udot-fps </property>
+      <property> accelerations/vdot-fps </property>
+      <property> accelerations/wdot-fps </property>
+      <property> accelerations/a-pilot-x-ft_sec2 </property>
+      <property> accelerations/a-pilot-y-ft_sec2 </property>
+      <property> accelerations/a-pilot-z-ft_sec2 </property>
+      <property> accelerations/n-pilot-x-norm    </property>
+      <property> accelerations/n-pilot-y-norm    </property>
+      <property> accelerations/n-pilot-z-norm    </property>
+      <rates> ON </rates>
+      <velocities> ON </velocities>
+      <forces> ON </forces>
+      <moments> ON </moments>
+      <position> ON </position>
+      <fcs> OFF </fcs>
+      <propulsion> OFF </propulsion>
+      <aerosurfaces> OFF </aerosurfaces>
+      <fcs> OFF </fcs>
+      <ground_reactions> OFF </ground_reactions>
+    </output>
 </fdm_config>

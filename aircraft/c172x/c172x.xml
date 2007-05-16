@@ -10,7 +10,7 @@
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.67 $</version>
+        <version>$Revision: 1.68 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -868,7 +868,7 @@
     </aerodynamics>
 
     <input port="1137"/>
-    <output name="JSBout172B.csv" type="CSV" rate="10">
+    <output name="JSBout172B.csv" type="NONE" rate="60">
         <property> aero/qbar-psf </property>
 <!--        <property> fcs/aero/sensor/qbar-psf </property>
         <property> attitude/phi-rad </property>

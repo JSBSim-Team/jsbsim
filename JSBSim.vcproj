@@ -803,6 +803,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\scripts\c172pbrake.xml"
+			>
+		</File>
+		<File
 			RelativePath=".\aircraft\F4N\F4N.xml"
 			>
 		</File>
