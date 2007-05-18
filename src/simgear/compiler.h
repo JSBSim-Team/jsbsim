@@ -10,7 +10,7 @@ code without any dependencies on simgear
 #ifdef _MSC_VER
 
 #define M_PI 3.14159265358979323846
-#define max(a,b) (((a)>(b))?(a):(b))
+//#define max(a,b) (((a)>(b))?(a):(b))
 
 #define SG_HAVE_STD_INCLUDES
 

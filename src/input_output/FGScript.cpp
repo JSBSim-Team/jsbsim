@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.16 2007/05/16 23:56:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.17 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ FGScript::FGScript(FGFDMExec* fgex) : FDMExec(fgex)
 
 FGScript::~FGScript()
 {
-  int i;
+  unsigned int i;
   for (i=0; i<local_properties.size(); i++)
     PropertyManager->Untie(local_properties[i]->title);
   

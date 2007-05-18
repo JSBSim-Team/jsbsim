@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.12 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.13 2007/05/18 03:17:41 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,7 +60,6 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
                        : FGThruster(exec, prop_element, num)
 {
   string token;
-  int rows, cols;
   Element *table_element, *local_element;
   string name="";
   FGPropertyManager* PropertyManager = exec->GetPropertyManager();

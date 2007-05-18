@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.6 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.7 2007/05/18 03:17:41 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -94,7 +94,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       else { // error
         cerr << "Unrecognized LOGIC token " << logic << " in switch component: " << Name << endl;
       }
-      for (int i=0; i<test_element->GetNumDataLines(); i++)
+      for (unsigned int i=0; i<test_element->GetNumDataLines(); i++)
         current_test->conditions.push_back(FGCondition(test_element->GetDataLine(i), PropertyManager));
 
       condition_element = test_element->GetElement(); // retrieve condition groups

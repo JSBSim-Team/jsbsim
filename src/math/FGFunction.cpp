@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.12 2007/04/29 13:52:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.13 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,7 +47,6 @@ CLASS IMPLEMENTATION
 FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                                       : PropertyManager(propMan), Prefix(prefix)
 {
-  int i;
   Element* element;
   string operation, property_name;
   int size = el->GetNumElements();
@@ -156,7 +155,7 @@ FGFunction::~FGFunction(void)
     PropertyManager->Untie(tmp);
   }
 
-  for (int i=0; i<Parameters.size(); i++) {
+  for (unsigned int i=0; i<Parameters.size(); i++) {
     delete Parameters[i];
   }
 }
@@ -177,7 +176,7 @@ void FGFunction::cacheValue(bool cache)
 
 double FGFunction::GetValue(void) const
 {
-  int i;
+  unsigned int i;
 
   if (cached) return cachedValue;
 

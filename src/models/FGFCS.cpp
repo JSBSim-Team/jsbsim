@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.25 2007/04/29 03:54:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.26 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -78,7 +78,7 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
   LeftBrake = RightBrake = CenterBrake = 0.0;
 
   bind();
-  for (i=0;i<=NForms;i++) {
+  for (i=0;i<NForms;i++) {
     DePos[i] = DaLPos[i] = DaRPos[i] = DrPos[i] = 0.0;
     DfPos[i] = DsbPos[i] = DspPos[i] = 0.0;
   }

@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.7 2007/02/28 03:15:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.8 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -335,7 +335,7 @@ void FGMassBalance::Debug(int from)
       cout << "    EmptyWeight: " << EmptyWeight << " lbm" << endl;
       cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
       // ToDo: Need to add point mass outputs here
-      for (int i=0; i<PointMasses.size(); i++) {
+      for (unsigned int i=0; i<PointMasses.size(); i++) {
         cout << "    Point Mass Object: " << PointMasses[i].Weight << " lbs. at "
                    << "X, Y, Z (in.): " << PointMasses[i].Location(eX) << "  "
                    << PointMasses[i].Location(eY) << "  "

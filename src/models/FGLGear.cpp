@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.26 2007/01/18 04:48:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.27 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   if (el->FindElement("max_steer"))
     maxSteerAngle = el->FindElementValueAsNumberConvertTo("max_steer", "DEG");
   if (el->FindElement("retractable"))
-    isRetractable = (int)el->FindElementValueAsNumber("retractable");
+    isRetractable = ((unsigned int)el->FindElementValueAsNumber("retractable"))>0.0?true:false;
 
   ForceY_Table = 0;
   force_table = el->FindElement("table");

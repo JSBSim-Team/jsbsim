@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.11 2007/01/14 13:55:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.12 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,7 +64,7 @@ FGGroundReactions::FGGroundReactions(FGFDMExec* fgex) : FGModel(fgex)
 
 FGGroundReactions::~FGGroundReactions(void)
 {
-  for (int i=0; i<lGear.size();i++) lGear[i].unbind();
+  for (unsigned int i=0; i<lGear.size();i++) lGear[i].unbind();
   lGear.clear();
 
   unbind();
@@ -106,7 +106,7 @@ bool FGGroundReactions::Run(void)
 bool FGGroundReactions::GetWOW(void)
 {
   bool result = false;
-  for (int i=0; i<lGear.size(); i++) {
+  for (unsigned int i=0; i<lGear.size(); i++) {
     if (lGear[i].IsBogey() && lGear[i].GetWOW()) {
       result = true;
       break;
@@ -130,7 +130,7 @@ bool FGGroundReactions::Load(Element* el)
     contact_element = el->FindNextElement("contact");
   }
 
-  for (int i=0; i<lGear.size();i++) lGear[i].bind();
+  for (unsigned int i=0; i<lGear.size();i++) lGear[i].bind();
 
   return true;
 }

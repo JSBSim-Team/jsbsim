@@ -6,7 +6,7 @@
  *
  * See props.html for documentation [replace with URL when available].
  *
- * $Id: props.hxx,v 1.3 2006/03/12 12:18:59 jberndt Exp $
+ * $Id: props.hxx,v 1.4 2007/05/18 03:17:41 jberndt Exp $
  */
 
 #ifndef __PROPS_HXX
@@ -608,7 +608,7 @@ public:
   /**
    * Get the number of child nodes.
    */
-  int nChildren () const { return _children.size(); }
+  unsigned int nChildren () const { return _children.size(); }
 
 
   /**

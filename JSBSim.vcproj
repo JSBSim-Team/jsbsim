@@ -45,9 +45,11 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
+				GenerateXMLDocumentationFiles="false"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
+				DisableSpecificWarnings="4996;4267"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

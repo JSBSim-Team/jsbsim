@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.15 2007/05/16 23:59:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.16 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,7 +101,7 @@ FGAuxiliary::~FGAuxiliary()
 
 bool FGAuxiliary::Run()
 {
-  double A,B,D, hdot_Vt;
+  double A,B,D;
 
   if (FGModel::Run()) return true; // return true if error returned from base class
   if (FDMExec->Holding()) return false;

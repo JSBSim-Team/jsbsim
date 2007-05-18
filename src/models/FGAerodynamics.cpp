@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.9 2006/09/10 14:55:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.10 2007/05/18 03:17:40 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -353,8 +353,6 @@ void FGAerodynamics::bind(void)
 
 void FGAerodynamics::unbind(void)
 {
-  unsigned i,j;
-
   PropertyManager->Untie("forces/fbx-aero-lbs");
   PropertyManager->Untie("forces/fby-aero-lbs");
   PropertyManager->Untie("forces/fbz-aero-lbs");
@@ -374,7 +372,6 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("aero/alpha-wing-rad");
   PropertyManager->Untie("aero/stall-hyst-norm");
   PropertyManager->Untie("systems/stall-warn-norm");
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
