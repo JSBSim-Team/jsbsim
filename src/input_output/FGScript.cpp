@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.17 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.18 2007/05/20 15:02:05 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -345,7 +345,7 @@ bool FGScript::RunScript(void)
                << " = " << iEvent->NotifyProperties[j]->getDoubleValue() << endl;
         }
         cout << endl;
-	iEvent->Notified = true;
+        iEvent->Notified = true;
       }
 
     }
