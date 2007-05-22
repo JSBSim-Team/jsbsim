@@ -184,7 +184,7 @@ ROLL CHANNEL
         <pow>
           <sin>
             <quotient>
-              <property>fcs/delta-lon-rad</property>
+              <property>fcs/delta-lat-rad</property>
               <value>2.0</value>
             </quotient>
           </sin>
