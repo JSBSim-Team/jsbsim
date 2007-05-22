@@ -26,7 +26,7 @@
       <set name="ap/attitude_hold" value="0"/>
       <set name="ap/wp_latitude_rad" value="0.517238"/>
       <set name="ap/wp_longitude_rad" value="-1.662727"/>
-      <set name="ap/heading_setpoint" value="350"/>
+      <set name="ap/heading_setpoint" value="355"/>
       <set name="ap/heading-setpoint-select" value="0"/>
       <set name="ap/heading_hold" value="1"/>
       <set name="ap/active-waypoint" value="0"/>
@@ -61,7 +61,7 @@
     <event name="Terminate">
       <description>
         When the aircraft arrives back at Ellington Field (fifth waypoint)
-	then terminate the simulation.
+        then terminate the simulation.
       </description>
       <condition>
         fcs/wp-distance lt 100
@@ -74,8 +74,8 @@
     <event name="Set last waypoint">
       <description>
         When the distance to the fourth waypoint (northeast end of Galveston
-	Island) is less than 100 feet, then set the last waypoint
-	(back to Ellington Field).
+        Island) is less than 100 feet, then set the last waypoint
+        (back to Ellington Field).
       </description>
       <condition>
         fcs/wp-distance lt 100
@@ -92,8 +92,8 @@
     <event name="Set fourth waypoint">
       <description>
         When the distance to the third waypoint (southwest end of Galveston
-	Island) is less than 800 feet, then set the fourth waypoint
-	(northeast end of Galveston Island).
+        Island) is less than 800 feet, then set the fourth waypoint
+        (northeast end of Galveston Island).
       </description>
       <condition>
         fcs/wp-distance lt 800
@@ -110,10 +110,10 @@
     <event name="Set third waypoint">
       <description>
         When the distance to the second waypoint (Hobby Airport) is less than
-	100 feet, then set the third waypoint.
+        300 feet, then set the third waypoint.
       </description>
       <condition>
-        fcs/wp-distance lt 100
+        fcs/wp-distance lt 300
         ap/active-waypoint eq 2
       </condition>
       <set name="ap/wp_latitude_rad" value="0.507481"/>
@@ -127,10 +127,10 @@
     <event name="Set second waypoint">
       <description>
         When the distance to the first waypoint (Hobby Airport threshold) is less than
-	800 feet, then set the second waypoint.
+        700 feet, then set the second waypoint.
       </description>
       <condition>
-        fcs/wp-distance lt 500
+        fcs/wp-distance lt 700
         ap/active-waypoint eq 1
       </condition>
       <set name="ap/wp_latitude_rad" value="0.517533"/>
