@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.16 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.17 2007/05/22 12:44:48 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +144,8 @@ void FGOutput::DelimitedOutput(string fname)
   }
 
   ostream outstream(buffer);
+
+  outstream.precision(10);
 
   if (dFirstPass) {
     outstream << "Time";
