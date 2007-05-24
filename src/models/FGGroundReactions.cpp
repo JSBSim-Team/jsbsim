@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.12 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.13 2007/05/24 12:17:42 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,11 +149,11 @@ string FGGroundReactions::GetGroundReactionStrings(string delimeter)
           << name << " stroke velocity (ft/sec)" << delimeter
           << name << " compress force (lbs)" << delimeter
           << name << " wheel side force (lbs)" << delimeter
-          << name << " wheel velocity vec X (ft/sec)" << delimeter
-          << name << " wheel velocity vec Y (ft/sec)" << delimeter
           << name << " wheel roll force (lbs)" << delimeter
           << name << " body X force (lbs)" << delimeter
           << name << " body Y force (lbs)" << delimeter
+          << name << " wheel velocity vec X (ft/sec)" << delimeter
+          << name << " wheel velocity vec Y (ft/sec)" << delimeter
           << name << " wheel slip (deg)" << delimeter;
     }
   }
@@ -181,12 +181,12 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter)
           << setprecision(5) << gear.GetCompLen() << delimeter
           << setprecision(6) << gear.GetCompVel() << delimeter
           << setprecision(10) << gear.GetCompForce() << delimeter
-          << setprecision(6) << gear.GetWheelVel(eX) << delimeter
-          << gear.GetWheelVel(eY) << delimeter
           << gear.GetWheelSideForce() << delimeter
           << gear.GetWheelRollForce() << delimeter
           << gear.GetBodyXForce() << delimeter
           << gear.GetBodyYForce() << delimeter
+          << setprecision(6) << gear.GetWheelVel(eX) << delimeter
+          << gear.GetWheelVel(eY) << delimeter
           << gear.GetWheelSlipAngle() << delimeter;
     }
   }
