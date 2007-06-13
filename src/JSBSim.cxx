@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.14 2007/04/01 12:09:27 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.15 2007/06/13 11:17:27 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1105,8 +1105,8 @@ void FGJSBsim::do_trim(void)
   } else {
     trimmed->setBoolValue(true);
   }
-  if (FGJSBBase::debug_lvl > 0)
-      State->ReportState();
+//  if (FGJSBBase::debug_lvl > 0)
+//      State->ReportState();
 
   delete fgtrim;
 
