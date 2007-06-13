@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GAIN "$Id: FGGain.h,v 1.9 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_GAIN "$Id: FGGain.h,v 1.10 2007/06/13 11:16:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,7 +216,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt
-    @version $Revision: 1.9 $
+    @version $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,6 +234,7 @@ public:
 private:
   FGTable* Table;
   FGPropertyManager* GainPropertyNode;
+  double GainPropertySign;
   double Gain;
   double InMin, InMax, OutMin, OutMax;
   int Rows;

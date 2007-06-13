@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.11 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.12 2007/06/13 11:16:54 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -54,6 +54,7 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   string strScheduledBy, gain_string, sZeroCentered;
 
   GainPropertyNode = 0;
+  GainPropertySign = 1.0;
   Gain = 1.000;
   Rows = 0;
   Table = 0;
@@ -70,7 +71,11 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   if ( element->FindElement("gain") ) {
     gain_string = element->FindElementValue("gain");
     //ToDo allow for negative sign here for property
-    if (gain_string.find_first_not_of("+-.0123456789") != string::npos) { // property
+    if (gain_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+      if (gain_string[0] == '-') {
+       GainPropertySign = -1.0;
+       gain_string.erase(0,1);
+      }
       GainPropertyNode = PropertyManager->GetNode(gain_string);
     } else {
       Gain = element->FindElementValueAsNumber("gain");
@@ -137,7 +142,7 @@ bool FGGain::Run(void )
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  if (GainPropertyNode != 0) Gain = GainPropertyNode->getDoubleValue();
+  if (GainPropertyNode != 0) Gain = GainPropertyNode->getDoubleValue() * GainPropertySign;
 
   if (Type == "PURE_GAIN") {                       // PURE_GAIN
 
