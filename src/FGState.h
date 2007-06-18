@@ -77,7 +77,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.8 2006/08/30 12:04:33 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.9 2007/06/18 02:57:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     <h3>Properties</h3>
     @property sim-time-sec (read only) cumulative simulation in seconds.
     @author Jon S. Berndt
-    @version $Revision: 1.8 $
+    @version $Revision: 1.9 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -161,7 +161,7 @@ public:
 
   /** Prints a summary of simulator state (speed, altitude,
       configuration, etc.)  */
-  void ReportState(void);
+//  void ReportState(void);
 
 private:
   double sim_time, dt;
