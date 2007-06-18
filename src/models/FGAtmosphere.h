@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.9 2007/01/15 23:11:14 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.10 2007/06/18 11:52:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.9 2007/01/15 23:11:14 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.10 2007/06/18 11:52:20 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -94,9 +94,9 @@ public:
   /// Returns the standard pressure at a specified altitude
   double GetPressure(double altitude);
   /// Returns the standard temperature at a specified altitude
-  inline double GetTemperature(double altitude);
+  double GetTemperature(double altitude);
   /// Returns the standard density at a specified altitude
-  inline double GetDensity(double altitude);
+  double GetDensity(double altitude);
   /// Returns the speed of sound in ft/sec.
   inline double GetSoundSpeed(void) const {return soundspeed;}
 

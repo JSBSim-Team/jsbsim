@@ -58,7 +58,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.30 2007/05/16 23:53:40 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.31 2007/06/18 11:52:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,7 +166,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.30 $
+    @version $Revision: 1.31 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,7 +283,7 @@ public:
   // Returns a pointer to the FGInitialCondition object
   inline FGInitialCondition* GetIC(void)      {return IC;}
   // Returns a pointer to the FGTrim object
-  inline FGTrim* GetTrim(void);
+  FGTrim* GetTrim(void);
   //@}
 
   /// Retrieves the engine path.
