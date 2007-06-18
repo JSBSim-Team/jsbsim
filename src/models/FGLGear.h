@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.14 2006/12/24 13:13:26 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.15 2007/06/18 02:56:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.14 2006/12/24 13:13:26 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.15 2007/06/18 02:56:39 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -244,6 +244,8 @@ public:
   inline bool GetGearUnitDown(void)        { return GearDown;        }
   inline double GetWheelSideForce(void)    { return SideForce;       }
   inline double GetWheelRollForce(void)    { return RollingForce;    }
+  inline double GetWheelSideVel(void)      { return SideWhlVel;      }
+  inline double GetWheelRollVel(void)      { return RollingWhlVel;   }
   inline double GetBodyXForce(void)        { return vLocalForce(eX); }
   inline double GetBodyYForce(void)        { return vLocalForce(eY); }
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }

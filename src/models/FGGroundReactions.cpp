@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.13 2007/05/24 12:17:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.14 2007/06/18 02:56:39 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,6 +154,8 @@ string FGGroundReactions::GetGroundReactionStrings(string delimeter)
           << name << " body Y force (lbs)" << delimeter
           << name << " wheel velocity vec X (ft/sec)" << delimeter
           << name << " wheel velocity vec Y (ft/sec)" << delimeter
+          << name << " wheel rolling velocity (ft/sec)" << delimeter
+          << name << " wheel side velocity (ft/sec)" << delimeter
           << name << " wheel slip (deg)" << delimeter;
     }
   }
@@ -187,6 +189,8 @@ string FGGroundReactions::GetGroundReactionValues(string delimeter)
           << gear.GetBodyYForce() << delimeter
           << setprecision(6) << gear.GetWheelVel(eX) << delimeter
           << gear.GetWheelVel(eY) << delimeter
+          << gear.GetWheelRollVel() << delimeter
+          << gear.GetWheelSideVel() << delimeter
           << gear.GetWheelSlipAngle() << delimeter;
     }
   }
