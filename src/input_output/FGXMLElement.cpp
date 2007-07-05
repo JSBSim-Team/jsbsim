@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.14 2007/02/10 13:54:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.15 2007/07/05 13:40:50 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,61 +73,112 @@ Element::Element(string nm)
   element_index = 0;
 
   // convert ["from"]["to"] = factor, so: from * factor = to
+  // Length
   convert["M"]["FT"] = 3.2808399;
   convert["FT"]["M"] = 1.0/convert["M"]["FT"];
-  convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
-  convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
   convert["FT"]["IN"] = 12.0;
   convert["IN"]["FT"] = 1.0/convert["FT"]["IN"];
-  convert["LBS"]["KG"] = 0.45359237;
-  convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
-  convert["SLUG*FT2"]["KG*M2"] = 1.35594;
-  convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
-  convert["RAD"]["DEG"] = 360.0/(2.0*3.1415926);
-  convert["DEG"]["RAD"] = 1.0/convert["RAD"]["DEG"];
-  convert["LBS/FT"]["N/M"] = 14.5939;
-  convert["LBS/FT/SEC"]["N/M/SEC"] = 14.5939;
-  convert["N/M"]["LBS/FT"] = 1.0/convert["LBS/FT"]["N/M"];
-  convert["N/M/SEC"]["LBS/FT/SEC"] = 1.0/convert["LBS/FT/SEC"]["N/M/SEC"];
-  convert["WATTS"]["HP"] = 0.001341022;
-  convert["HP"]["WATTS"] = 1.0/convert["WATTS"]["HP"];
-  convert["N"]["LBS"] = 0.22482;
-  convert["LBS"]["N"] = 1.0/convert["N"]["LBS"];
-  convert["KTS"]["FT/SEC"] = 1.68781;
-  convert["FT/SEC"]["KTS"] = 1.0/convert["KTS"]["FT/SEC"];
-  convert["FT*LBS"]["N*M"] = 1.35581795;
-  convert["N*M"]["FT*LBS"] = 1/convert["FT*LBS"]["N*M"];
   convert["IN"]["M"] = convert["IN"]["FT"] * convert["FT"]["M"];
   convert["M"]["IN"] = convert["M"]["FT"] * convert["FT"]["IN"];
+  // Area
+  convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
+  convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
+  // Volume
+  convert["IN3"]["CC"] = 16.387064;
+  convert["CC"]["IN3"] = 1.0/convert["IN3"]["CC"];
+  convert["FT3"]["IN3"] = 1728.0;
+  convert["IN3"]["FT3"] = 1.0/convert["FT3"]["IN3"];
+  convert["M3"]["FT3"] = 35.3146667;
+  convert["FT3"]["M3"] = 1.0/convert["M3"]["FT3"];
+  convert["LTR"]["IN3"] = 61.0237441;
+  convert["IN3"]["LTR"] = 1.0/convert["LTR"]["IN3"];
+  // Mass & Weight
+  convert["LBS"]["KG"] = 0.45359237;
+  convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
+  // Moments of Inertia
+  convert["SLUG*FT2"]["KG*M2"] = 1.35594;
+  convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
+  // Angles
+  convert["RAD"]["DEG"] = 360.0/(2.0*3.1415926);
+  convert["DEG"]["RAD"] = 1.0/convert["RAD"]["DEG"];
+  // Spring force
+  convert["LBS/FT"]["N/M"] = 14.5939;
+  convert["N/M"]["LBS/FT"] = 1.0/convert["LBS/FT"]["N/M"];
+  // Damping force
+  convert["LBS/FT/SEC"]["N/M/SEC"] = 14.5939;
+  convert["N/M/SEC"]["LBS/FT/SEC"] = 1.0/convert["LBS/FT/SEC"]["N/M/SEC"];
+  // Power
+  convert["WATTS"]["HP"] = 0.001341022;
+  convert["HP"]["WATTS"] = 1.0/convert["WATTS"]["HP"];
+  // Force
+  convert["N"]["LBS"] = 0.22482;
+  convert["LBS"]["N"] = 1.0/convert["N"]["LBS"];
+  // Velocity
+  convert["KTS"]["FT/SEC"] = 1.68781;
+  convert["FT/SEC"]["KTS"] = 1.0/convert["KTS"]["FT/SEC"];
+  convert["M/S"]["FT/S"] = 3.2808399;
+  convert["FT/S"]["M/S"] = 1.0/convert["M/S"]["FT/S"];
+  // Torque
+  convert["FT*LBS"]["N*M"] = 1.35581795;
+  convert["N*M"]["FT*LBS"] = 1/convert["FT*LBS"]["N*M"];
+  // Pressure
+  convert["INHG"]["PSF"] = 70.7180803;
+  convert["PSF"]["INHG"] = 1.0/convert["INHG"]["PSF"];
+  convert["ATM"]["INHG"] = 29.9246899;
+  convert["INHG"]["ATM"] = 1.0/convert["ATM"]["INHG"];
+  convert["PSI"]["INHG"] = 2.03625437;
+  convert["INHG"]["PSI"] = 1.0/convert["PSI"]["INHG"];
+  convert["INHG"]["PA"] = 3386.0; // inches Mercury to pascals
+  convert["PA"]["INHG"] = 1.0/convert["INHG"]["PA"];
 
+  // Length
   convert["M"]["M"] = 1.00;
   convert["FT"]["FT"] = 1.00;
   convert["IN"]["IN"] = 1.00;
-  convert["IN3"]["IN3"] = 1.00;
-  convert["DEG"]["DEG"] = 1.00;
-  convert["RAD"]["RAD"] = 1.00;
+  // Area
   convert["M2"]["M2"] = 1.00;
   convert["FT2"]["FT2"] = 1.00;
-  convert["KG*M2"]["KG*M2"] = 1.00;
-  convert["SLUG*FT2"]["SLUG*FT2"] = 1.00;
+  // Volume
+  convert["IN3"]["IN3"] = 1.00;
+  convert["CC"]["CC"] = 1.0;
+  convert["M3"]["M3"] = 1.0;
+  convert["FT3"]["FT3"] = 1.0;
+  convert["LTR"]["LTR"] = 1.0;
+  // Mass & Weight
   convert["KG"]["KG"] = 1.00;
   convert["LBS"]["LBS"] = 1.00;
+  // Moments of Inertia
+  convert["KG*M2"]["KG*M2"] = 1.00;
+  convert["SLUG*FT2"]["SLUG*FT2"] = 1.00;
+  // Angles
+  convert["DEG"]["DEG"] = 1.00;
+  convert["RAD"]["RAD"] = 1.00;
+  // Spring force
   convert["LBS/FT"]["LBS/FT"] = 1.00;
-  convert["LBS/SEC"]["LBS/SEC"] = 1.00;
-  convert["LBS/FT/SEC"]["LBS/FT/SEC"] = 1.00;
   convert["N/M"]["N/M"] = 1.00;
+  // Damping force
+  convert["LBS/FT/SEC"]["LBS/FT/SEC"] = 1.00;
   convert["N/M/SEC"]["N/M/SEC"] = 1.00;
+  // Power
+  convert["HP"]["HP"] = 1.00;
+  convert["WATTS"]["WATTS"] = 1.00;
+  // Force
+  convert["N"]["N"] = 1.00;
+  // Velocity
+  convert["FT/SEC"]["FT/SEC"] = 1.00;
+  convert["KTS"]["KTS"] = 1.00;
+  convert["M/S"]["M/S"] = 1.0;
+  // Torque
+  convert["FT*LBS"]["FT*LBS"] = 1.00;
+  convert["N*M"]["N*M"] = 1.00;
+  // Pressure
   convert["PSI"]["PSI"] = 1.00;
   convert["PSF"]["PSF"] = 1.00;
   convert["INHG"]["INHG"] = 1.00;
-  convert["HP"]["HP"] = 1.00;
-  convert["N"]["N"] = 1.00;
-  convert["WATTS"]["WATTS"] = 1.00;
+  convert["ATM"]["ATM"] = 1.0;
+  convert["PA"]["PA"] = 1.0;
+  // Flow rate
   convert["LBS/SEC"]["LBS/SEC"] = 1.00;
-  convert["FT/SEC"]["FT/SEC"] = 1.00;
-  convert["KTS"]["KTS"] = 1.00;
-  convert["FT*LBS"]["FT*LBS"] = 1.00;
-  convert["N*M"]["N*M"] = 1.00;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
