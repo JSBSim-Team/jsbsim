@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.8 2006/08/30 12:04:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.9 2007/07/15 23:48:50 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,6 +148,7 @@ double FGTurbine::Off(void)
   NozzlePosition = Seek(&NozzlePosition, 1.0, 0.8, 0.8);
   EPR = Seek(&EPR, 1.0, 0.2, 0.2);
   Augmentation = false;
+  ConsumeFuel();  
   return 0.0;
 }
 
