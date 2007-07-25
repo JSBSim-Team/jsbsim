@@ -289,7 +289,7 @@
 
       <!-- END of Interface Properties -->
 
-      <channel name="All">
+      <channel name="Electrical">
 
         <!-- battery status -->
 
@@ -865,8 +865,11 @@
             <input>/controls/engines/aileron-abc-norm</input>
             <gain>1</gain>
         </pure_gain>
+      </channel>
 
-        <!-- Standard flight control components -->
+          <!-- Standard flight control components -->
+
+      <channel name="Pitch">
 
         <pure_gain name="pitch-trim-uprava-nase">
             <input>fcs/pitch-trim-cmd-norm</input>
@@ -890,7 +893,9 @@
             </range>
             <output>fcs/elevator-pos-rad</output>
         </aerosurface_scale>
+      </channel>
 
+      <channel name="Roll">
         <pure_gain name="roll-trim-uprava-nase">
             <input>fcs/roll-trim-cmd-norm</input>
             <gain>0.3333</gain>
@@ -922,7 +927,9 @@
             </range>
             <output>fcs/right-aileron-pos-rad</output>
         </aerosurface_scale>
+      </channel>
 
+      <channel name="Yaw">
         <pure_gain name="yaw-trim-uprava-nase">
             <input>fcs/yaw-trim-cmd-norm</input>
             <gain>0.4000</gain>
@@ -945,7 +952,9 @@
             </range>
             <output>fcs/rudder-pos-rad</output>
         </aerosurface_scale>
+      </channel>
 
+      <channel name="Flaps">
         <kinematic name="Flaps Control">
             <input>/controls/flight/flaps-cond</input>
             <traverse>
@@ -977,7 +986,9 @@
           </range>
           <output>fcs/flap-pos-norm</output>
         </aerosurface_scale>
+      </channel>
 
+      <channel name="Gear">
         <kinematic name="Gear Control">
             <input>/controls/gear/gear-down-cond</input>
             <traverse>
@@ -992,7 +1003,9 @@
             </traverse>
             <output>gear/gear-pos-norm</output>
         </kinematic>
+      </channel>
 
+      <channel name="Speedbrake">
         <kinematic name="Speedbrake Control">
             <input>fcs/speedbrake-cmd-norm</input>
             <traverse>
@@ -1007,7 +1020,9 @@
             </traverse>
             <output>fcs/speedbrake-pos-norm</output>
         </kinematic>
+      </channel>
 
+      <channel name="Spoiler">
         <kinematic name="Spoiler Control">
             <input>/controls/flight/spoilers-cond</input>
             <traverse>
@@ -1028,7 +1043,9 @@
             <gain>72.0000</gain>
             <output>fcs/spoiler-pos-rad</output>
         </pure_gain>
+      </channel>
 
+      <channel name="Steering">
         <scheduled_gain name="Scheduled Steer Pos Deg">
             <input>fcs/steer-cmd-norm</input>
             <table>

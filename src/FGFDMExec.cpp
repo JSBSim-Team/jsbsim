@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.35 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.36 2007/07/25 04:30:01 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -464,6 +464,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   string aircraftCfgFileName;
   string separator = "/";
   Element* element = 0L;
+  bool result = false; // initialize result to false, indicating input file not yet read
 
   modelName = model; // Set the class modelName attribute
 
@@ -487,35 +488,42 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
   }
 
   document = LoadXMLDocument(aircraftCfgFileName); // "document" is a class member
-  ReadPrologue(document);
-  element = document->GetElement();
+  if (document) {
+    ReadPrologue(document);
+    element = document->GetElement();
 
-  bool result = true;
-  while (element && result) {
-    string element_name = element->GetName();
-    if (element_name == "fileheader" )           result = ReadFileHeader(element);
-    else if (element_name == "slave")            result = ReadSlave(element);
-    else if (element_name == "metrics")          result = Aircraft->Load(element);
-    else if (element_name == "mass_balance")     result = MassBalance->Load(element);
-    else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
-    else if (element_name == "propulsion")       result = Propulsion->Load(element);
-    else if (element_name == "autopilot")        result = FCS->Load(element);
-    else if (element_name == "flight_control")   result = FCS->Load(element);
-    else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
-    else if (element_name == "input")            result = Input->Load(element);
-    else if (element_name == "output")           {
-        FGOutput* Output = new FGOutput(this);
-        Output->InitModel();
-        Schedule(Output,       1);
-        Outputs.push_back(Output);
-        result = Output->Load(element);
+    result = true;
+    while (element && result) {
+      string element_name = element->GetName();
+      if (element_name == "fileheader" )           result = ReadFileHeader(element);
+      else if (element_name == "slave")            result = ReadSlave(element);
+      else if (element_name == "metrics")          result = Aircraft->Load(element);
+      else if (element_name == "mass_balance")     result = MassBalance->Load(element);
+      else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
+      else if (element_name == "propulsion")       result = Propulsion->Load(element);
+      else if (element_name == "autopilot")        result = FCS->Load(element);
+      else if (element_name == "flight_control")   result = FCS->Load(element);
+      else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
+      else if (element_name == "input")            result = Input->Load(element);
+      else if (element_name == "output")           {
+          FGOutput* Output = new FGOutput(this);
+          Output->InitModel();
+          Schedule(Output,       1);
+          Outputs.push_back(Output);
+          result = Output->Load(element);
+      }
+      else {
+        cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
+        result = false;
+        break;
+      }
+      element = document->GetNextElement();
     }
-    else {
-      cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
-      result = false;
-      break;
-    }
-    element = document->GetNextElement();
+  } else {
+    cerr << fgred
+         << "  JSBSim failed to load aircraft model."
+         << fgdef << endl;
+    return false;
   }
 
   if (result) {
@@ -523,7 +531,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     Debug(3);
   } else {
     cerr << fgred
-         << "  JSBSim failed to load aircraft and/or engine model"
+         << "  JSBSim failed to load properly."
          << fgdef << endl;
     return false;
   }

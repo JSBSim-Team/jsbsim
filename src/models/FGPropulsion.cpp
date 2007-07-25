@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.16 2007/05/18 03:17:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.17 2007/07/25 04:30:02 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -278,7 +278,7 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
   string fullpath, localpath;
   string enginePath = FDMExec->GetEnginePath();
   string aircraftPath = FDMExec->GetFullAircraftPath();
-  ifstream* engine_file = new ifstream();
+  ifstream engine_file;
 
   string separator = "/";
 # ifdef macintosh
@@ -288,10 +288,10 @@ string FGPropulsion::FindEngineFullPathname(string engine_filename)
   fullpath = enginePath + separator;
   localpath = aircraftPath + separator + "Engines" + separator;
 
-  engine_file->open(string(fullpath + engine_filename + ".xml").c_str());
-  if ( !engine_file->is_open()) {
-    engine_file->open(string(localpath + engine_filename + ".xml").c_str());
-      if ( !engine_file->is_open()) {
+  engine_file.open(string(fullpath + engine_filename + ".xml").c_str());
+  if ( !engine_file.is_open()) {
+    engine_file.open(string(localpath + engine_filename + ".xml").c_str());
+      if ( !engine_file.is_open()) {
         cerr << " Could not open engine file: " << engine_filename << " in path "
              << fullpath << " or " << localpath << endl;
         return string("");

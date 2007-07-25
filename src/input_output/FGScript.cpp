@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.18 2007/05/20 15:02:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.19 2007/07/25 04:30:01 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,6 +111,11 @@ bool FGScript::LoadScript( string script )
   FGCondition *newCondition;
 
   document = LoadXMLDocument(script);
+
+  if (!document) {
+    cerr << "File: " << script << " could not be loaded." << endl;
+    return false;
+  }
 
   if (document->GetName() != string("runscript")) {
     cerr << "File: " << script << " is not a script file" << endl;

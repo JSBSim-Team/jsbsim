@@ -4,9 +4,9 @@
     This file sets up the aircraft at 8000
 	feet on a heading of 200 degrees.
   -->
-  <ubody unit="FT/SEC">   160.0  </ubody>
+  <ubody unit="FT/SEC">    0.0  </ubody>
   <latitude unit="DEG">   47.0  </latitude>
   <longitude unit="DEG"> 122.0  </longitude>
   <psi unit="DEG">       200.0  </psi>
-  <altitude unit="FT">  8000.0  </altitude>
+  <altitude unit="FT">     4.0  </altitude>
 </initialize>

@@ -69,7 +69,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.13 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.14 2007/07/25 04:30:01 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -747,8 +747,14 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 
   document = LoadXMLDocument(resetDef);
 
+  // Make sure that the document is valid
+  if (!document) {
+    cerr << "File: " << resetDef << " could not be read." << endl;
+    exit(-1);
+  }
+
   if (document->GetName() != string("initialize")) {
-    cerr << "File: " << resetDef << " is not a reset file" << endl;
+    cerr << "File: " << resetDef << " is not a reset file." << endl;
     exit(-1);
   }
 

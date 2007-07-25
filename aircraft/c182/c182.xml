@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c182.xml,v 1.22 2006/02/26 17:26:35 jberndt Exp $ </version>
+        <version> $Id: c182.xml,v 1.23 2007/07/25 04:30:00 jberndt Exp $ </version>
         <description> Cessna C-182 </description>
     </fileheader>
 
@@ -691,7 +691,7 @@
                     <property>metrics/Sw-sqft</property>
                     <property>metrics/bw-ft</property>
                     <property>fcs/left-aileron-pos-rad</property>
-                    <value>0.2290</value>
+                    <value>0.15</value>
                 </product>
             </function>
             <function name="aero/coefficient/ClDr">
@@ -787,8 +787,8 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              0.0000	-1.1220
-                              0.0943	-1.3690
+                              0.0000	-0.6220
+                              0.0943	-0.8690
                           </tableData>
                       </table>
                 </product>

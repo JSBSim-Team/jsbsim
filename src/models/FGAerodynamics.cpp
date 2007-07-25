@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.10 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.11 2007/07/25 04:30:01 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -99,7 +99,7 @@ FGAerodynamics::~FGAerodynamics()
   for (i=0; i<variables.size(); i++)
     delete variables[i];
 
-  if (AeroRPShift) delete AeroRPShift;
+  delete AeroRPShift;
 
   unbind();
 

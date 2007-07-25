@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.29 2007/02/28 03:15:44 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.30 2007/07/25 04:30:01 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -277,7 +277,7 @@ int main(int argc, char* argv[])
 
     if (!result) {
       cerr << "Script file " << ScriptName << " was not successfully loaded" << endl;
-      if (FDMExec) delete FDMExec;
+      delete FDMExec;
       exit(-1);
     }
 
@@ -288,6 +288,9 @@ int main(int argc, char* argv[])
 
     if ( ! FDMExec->LoadModel(RootDir + "aircraft", RootDir + "engine", AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
+      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      delete FDMExec;
       exit(-1);
     }
 
@@ -301,6 +304,9 @@ int main(int argc, char* argv[])
 
     JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
+      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      delete FDMExec;
       cerr << "Initialization unsuccessful" << endl;
       exit(-1);
     }
@@ -308,12 +314,15 @@ int main(int argc, char* argv[])
     // *** TRIM THE AIRCRAFT *** //
     JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
     if ( !fgt.DoTrim() ) {
-      cout << "Trim Failed" << endl;
+      cout << "Trim failed, continuing ..." << endl;
     }
     fgt.Report();
 
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
+    FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+    FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+    delete FDMExec;
     exit(-1);
   }
 
@@ -323,8 +332,10 @@ int main(int argc, char* argv[])
   if (!LogDirectiveName.empty()) {
     if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
       cout << "Output directives not properly set" << endl;
+      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
       delete FDMExec;
-      exit(0);
+      exit(-1);
     }
   }
 
@@ -531,6 +542,14 @@ bool options(int count, char **arg)
 
   if (catalog && !ScriptName.empty()) {
     cerr << "Cannot specify catalog with script option" << endl << endl;
+    result = false;
+  }
+  if (AircraftName.size() > 0 && ResetName.size() == 0 && !catalog) {
+    cerr << "You must specify an initialization file with the aircraft name." << endl << endl;
+    result = false;
+  }
+  if ((ScriptName.size() > 0 && AircraftName.size() > 0) || (ScriptName.size() > 0 && ResetName.size() > 0)) {
+    cerr << "You cannot specify an aircraft or initialization file with a script." << endl;
     result = false;
   }
   return result;
