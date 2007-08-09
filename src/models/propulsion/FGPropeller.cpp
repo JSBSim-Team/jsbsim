@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.13 2007/05/18 03:17:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.14 2007/08/09 03:37:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,7 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   if (RPM < 1.0) RPM = 0; // Engine friction stops rotation arbitrarily at 1 RPM.
 
-  vMn = fdmex->GetPropagate()->GetPQR()*vH + vTorque*Sense;
+  vMn = fdmex->GetPropagate()->GetPQR()*vH + vTorque;
 
   return Thrust; // return thrust in pounds
 }
