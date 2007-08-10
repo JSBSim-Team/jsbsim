@@ -78,7 +78,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.9 2007/05/20 15:02:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.10 2007/08/10 22:34:09 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -191,7 +191,7 @@ bool FGAircraft::Load(Element* el)
     lbarv = VTailArm/cbar;
     if (WingArea != 0.0) {
       vbarh = HTailArm*HTailArea / (cbar*WingArea);
-      vbarv = VTailArm*VTailArea / (cbar*WingArea);
+      vbarv = VTailArm*VTailArea / (WingSpan*WingArea);
     }
   }
 
