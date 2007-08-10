@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.8 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.9 2007/08/10 22:33:12 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,9 +98,9 @@ bool FGMassBalance::Load(Element* el)
     bixz = el->FindElementValueAsNumberConvertTo("ixz", "SLUG*FT2");
   if (el->FindElement("iyz"))
     biyz = el->FindElementValueAsNumberConvertTo("iyz", "SLUG*FT2");
-  SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  -bixz,
+  SetAircraftBaseInertias(FGMatrix33(  bixx,  -bixy,  bixz,
                                       -bixy,  biyy,  -biyz,
-                                      -bixz,  -biyz,  bizz ));
+                                       bixz,  -biyz,  bizz ));
   EmptyWeight = el->FindElementValueAsNumberConvertTo("emptywt", "LBS");
 
   element = el->FindElement("location");
