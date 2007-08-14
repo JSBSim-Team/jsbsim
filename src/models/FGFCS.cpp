@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.26 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.27 2007/08/14 13:08:51 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -105,15 +105,19 @@ FGFCS::~FGFCS()
   PropFeatherCmd.clear();
   PropFeather.clear();
 
-  unsigned int i;
+  unsigned int i, j;
 
-  for (i=0;i<APComponents.size();i++) delete APComponents[i];
-  for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
   for (i=0;i<sensors.size();i++) delete sensors[i];
-
-  APComponents.clear();
-  FCSComponents.clear();
   sensors.clear();
+  for (i=0;i<APComponents.size();i++) delete APComponents[i];
+  APComponents.clear();
+  for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
+  FCSComponents.clear();
+  for (i=0;i<Systems.size();i++) {
+    for (j=0;j<Systems[i].size();j++) delete Systems[i][j];
+    Systems[i].clear();
+  }
+
   interface_properties.clear();
 
   Debug(1);
@@ -129,7 +133,7 @@ FGFCS::~FGFCS()
 
 bool FGFCS::Run(void)
 {
-  unsigned int i;
+  unsigned int i, j;
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
   if (FDMExec->Holding()) return false;
@@ -139,7 +143,6 @@ bool FGFCS::Run(void)
   for (i=0; i<PropAdvance.size(); i++) PropAdvance[i] = PropAdvanceCmd[i];
   for (i=0; i<PropFeather.size(); i++) PropFeather[i] = PropFeatherCmd[i];
 
-
   // Set the default steering angle
   for (i=0; i<SteerPosDeg.size(); i++) {
     FGLGear* gear = GroundReactions->GetGearUnit(i);
@@ -147,10 +150,18 @@ bool FGFCS::Run(void)
   }
 
   // Cycle through the sensor, autopilot, and flight control components
+  // Execute Sensors
   for (i=0; i<sensors.size(); i++) sensors[i]->Run();
-  for (i=0; i<APComponents.size(); i++) {
-    APComponents[i]->Run();
+
+  // Execute Systems in order
+  for (i=0; i<Systems.size(); i++) {
+    for (j=0; j<Systems[i].size(); j++) Systems[i][j]->Run();
   }
+
+  // Execute Autopilot
+  for (i=0; i<APComponents.size(); i++) APComponents[i]->Run();
+
+  // Execute Flight Control System
   for (i=0; i<FCSComponents.size(); i++) FCSComponents[i]->Run();
 
   return false;
@@ -492,8 +503,10 @@ bool FGFCS::Load(Element* el)
   } else if (document->GetName() == "flight_control") {
     Components = &FCSComponents;
     Name = "FCS: " + document->GetAttributeValue("name");
+  } else if (document->GetName() == "system") {
+    Components = new FCSCompVec();
+    Name = "System: " + document->GetAttributeValue("name");
   }
-
   Debug(2);
 
   // ToDo: How do these get untied?
@@ -504,6 +517,9 @@ bool FGFCS::Load(Element* el)
 
   if (document->GetName() == "flight_control") bindModel();
 
+  // Interface properties from any autopilot, flight control, or other system are
+  // all stored in the interface properties array.
+
   property_element = document->FindElement("property");
   while (property_element) {
     interface_properties.push_back(new double(0));
@@ -511,6 +527,11 @@ bool FGFCS::Load(Element* el)
     PropertyManager->Tie(interface_property_string, interface_properties.back());
     property_element = document->FindNextElement("property");
   }
+
+  // Any sensor elements that are outside of a channel (in either the autopilot
+  // or the flight_control, or even any possible "system") are placed into the global
+  // "sensors" array, and are executed prior to any autopilot, flight control, or
+  // system.
 
   sensor_element = document->FindElement("sensor");
   while (sensor_element) {
@@ -554,6 +575,8 @@ bool FGFCS::Load(Element* el)
           Components->push_back(new FGPID(this, component_element));
         } else if (component_element->GetName() == string("actuator")) {
           Components->push_back(new FGActuator(this, component_element));
+        } else if (component_element->GetName() == string("sensor")) {
+          Components->push_back(new FGSensor(this, component_element));
         } else {
           cerr << "Unknown FCS component: " << component_element->GetName() << endl;
         }

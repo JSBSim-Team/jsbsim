@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.12 2007/02/27 13:15:58 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.13 2007/08/14 13:08:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.12 $
+    @version $Revision: 1.13 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -545,10 +545,12 @@ private:
   double LeftBrake, RightBrake, CenterBrake; // Brake settings
   double GearCmd,GearPos;
 
-  vector <FGFCSComponent*> FCSComponents;
-  vector <FGFCSComponent*> APComponents;
+  typedef vector <FGFCSComponent*> FCSCompVec;
+  FCSCompVec FCSComponents;
+  FCSCompVec APComponents;
+  FCSCompVec sensors;
+  vector <FCSCompVec> Systems;
   vector <double*> interface_properties;
-  vector <FGFCSComponent*> sensors;
   void bind(void);
   void bindModel(void);
   void bindThrottle(unsigned int);
