@@ -67,9 +67,11 @@ INCLUDES
 #include <models/FGPropulsion.h>
 #include <input_output/FGXMLParse.h>
 
+#include <math/FGQuaternion.h>
+
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.14 2007/07/25 04:30:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.15 2007/08/15 03:26:24 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -95,6 +97,8 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
   radius_to_vehicle = FDMExec->GetInertial()->RefRadius();
   terrain_altitude = 0;
 
+  targetNlfIC = 1.0;
+
   salpha=sbeta=stheta=sphi=spsi=sgamma=0;
   calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
 
@@ -117,6 +121,36 @@ FGInitialCondition::~FGInitialCondition()
 {
   unbind();
   Debug(1);
+}
+
+//******************************************************************************
+
+void FGInitialCondition::ResetIC(double u0, double v0, double w0, double p0, double q0, double r0,
+                                 double alpha0, double beta0, double phi0, double theta0, double psi0, double gamma0)
+{
+
+  u=u0; v=v0; w=w0;
+  p=p0; q=q0; r=r0;
+  alpha=alpha0; beta=beta0; gamma=gamma0;
+  theta=theta0; phi=phi0; psi=psi0;
+
+  cphi   = cos(phi);   sphi   = sin(phi);   // phi, rad
+  ctheta = cos(theta); stheta = sin(theta); // theta, rad
+  cpsi   = cos(psi);   spsi   = sin(psi);   // psi, rad
+
+  FGQuaternion Quat( phi, theta, psi );
+  Quat.Normalize();
+
+  const FGMatrix33& _Tl2b  = Quat.GetT();     // local to body frame
+  const FGMatrix33& _Tb2l  = Quat.GetTInv();  // body to local
+
+  FGColumnVector3 _vUVW_BODY(u,v,w);
+  FGColumnVector3 _vUVW_NED = _Tb2l * _vUVW_BODY;
+  FGColumnVector3 _vWIND_NED(wnorth,weast,wdown);
+  FGColumnVector3 _vUVWAero = _Tl2b * ( _vUVW_NED + _vWIND_NED );
+
+  uw=_vWIND_NED(1); vw=_vWIND_NED(2); ww=_vWIND_NED(3);
+
 }
 
 //******************************************************************************
@@ -773,13 +807,13 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   if (document->FindElement("winddir"))
     SetWindDirDegIC(document->FindElementValueAsNumberConvertTo("winddir", "DEG"));
   if (document->FindElement("vwind"))
-    SetWindMagKtsIC(document->FindElementValueAsNumberConvertTo("vwind", "FT/SEC"));
+    SetWindMagKtsIC(document->FindElementValueAsNumberConvertTo("vwind", "KTS"));
   if (document->FindElement("hwind"))
     SetHeadWindKtsIC(document->FindElementValueAsNumberConvertTo("hwind", "KTS"));
   if (document->FindElement("xwind"))
     SetCrossWindKtsIC(document->FindElementValueAsNumberConvertTo("xwind", "KTS"));
   if (document->FindElement("vc"))
-    SetVcalibratedKtsIC(document->FindElementValueAsNumberConvertTo("vc", "FT/SEC"));
+    SetVcalibratedKtsIC(document->FindElementValueAsNumberConvertTo("vc", "KTS"));
   if (document->FindElement("mach"))
     SetMachIC(document->FindElementValueAsNumber("mach"));
   if (document->FindElement("phi"))
@@ -797,12 +831,17 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
   if (document->FindElement("roc"))
     SetClimbRateFpsIC(document->FindElementValueAsNumberConvertTo("roc", "FT/SEC"));
   if (document->FindElement("vground"))
-    SetVgroundKtsIC(document->FindElementValueAsNumberConvertTo("vground", "FT/SEC"));
+    SetVgroundKtsIC(document->FindElementValueAsNumberConvertTo("vground", "KTS"));
+  if (document->FindElement("targetNlf"))
+  {
+    SetTargetNlfIC(document->FindElementValueAsNumber("targetNlf"));
+  }
+
   if (document->FindElement("running")) {
     n = int(document->FindElementValueAsNumber("running"));
     if (n != 0) {
       FGPropulsion* propulsion = fdmex->GetPropulsion();
-      for(unsigned int i=0; i<propulsion->GetNumEngines(); i++) {
+      for(int i=0; i<propulsion->GetNumEngines(); i++) {
          propulsion->GetEngine(i)->SetRunning(true);
       }
     }

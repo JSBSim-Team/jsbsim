@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.9 2007/02/05 13:23:39 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.10 2007/08/15 03:26:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.9 2007/02/05 13:23:39 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.10 2007/08/15 03:26:24 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,6 +239,11 @@ public:
   /** Sets pitch angle initial condition in degrees.
       @param theta Theta (pitch) angle in degrees */
   inline void SetThetaDegIC(double theta) { SetThetaRadIC(theta*degtorad); }
+
+  /** Resets the IC data structure to new values
+      @param u, v, w, ... **/
+  void ResetIC(double u0, double v0, double w0, double p0, double q0, double r0,
+               double alpha0, double beta0, double phi0, double theta0, double psi0, double gamma0);
 
   /** Sets the roll angle initial condition in degrees.
       @param phi roll angle in degrees */
@@ -526,6 +531,10 @@ public:
       @param lon Initial longitude in radians */
   inline void SetLongitudeRadIC(double lon) { longitude=lon; }
 
+  /** Sets the target normal load factor.
+      @param nlf Normal load factor*/
+  inline void SetTargetNlfIC(double nlf) { targetNlfIC=nlf; }
+
   /** Gets the initial flight path angle.
       @return Initial flight path angle in radians */
   inline double GetFlightPathAngleRadIC(void) const { return gamma; }
@@ -566,11 +575,22 @@ public:
       @return Initial windset */
   inline windset GetWindSet(void) { return lastWindSet; }
 
+  /** Gets the target normal load factor set from IC.
+      @return target normal load factor set from IC*/
+  inline double GetTargetNlfIC(void) { return targetNlfIC; }
+
   /** Loads the initial conditions.
       @param rstname The name of an initial conditions file
       @param useStoredPath true if the stored path to the IC file should be used
       @return true if successful */
   bool Load(string rstname, bool useStoredPath = true );
+
+  /** Get init-file name
+  */
+  string GetInitFile(void) {return init_file_name;}
+  /** Set init-file name
+  */
+  void SetInitFile(string f) { init_file_name = f;}
 
 private:
   double vt,vc,ve,vg;
@@ -586,6 +606,7 @@ private:
   double sea_level_radius;
   double terrain_altitude;
   double radius_to_vehicle;
+  double targetNlfIC;
 
   double  alpha, beta, theta, phi, psi, gamma;
   double salpha,sbeta,stheta,sphi,spsi,sgamma;
@@ -617,6 +638,9 @@ private:
   void bind(void);
   void unbind(void);
   void Debug(int from);
+
+  string init_file_name;
+
 };
 }
 #endif
