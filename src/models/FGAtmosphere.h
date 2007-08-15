@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.10 2007/06/18 11:52:20 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.11 2007/08/15 03:41:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.10 2007/06/18 11:52:20 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.11 2007/08/15 03:41:22 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -151,6 +151,15 @@ public:
   /// Retrieves the wind components in NED frame.
   inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
 
+  /// Sets gust components in NED frame.
+  inline void SetGustNED(int idx, double gust) { vGustNED(idx)=gust; cout << vGustNED(idx) << endl; }
+
+  /// Retrieves the gust components in NED frame.
+  inline double GetGustNED(int idx) const {return vGustNED(idx);}
+
+  /// Retrieves the gust components in NED frame.
+  inline FGColumnVector3& GetGustNED(void) {return vGustNED;}
+
   /** Retrieves the wind direction. The direction is defined as north=0 and
       increases counterclockwise. The wind heading is returned in radians.*/
   inline double GetWindPsi(void) const { return psiw; }
@@ -200,6 +209,9 @@ protected:
 
   FGColumnVector3 vWindNED;
   double psiw;
+
+  FGColumnVector3 vGustNED;
+  bool bgustSet;
 
   /// Calculate the atmosphere for the given altitude, including effects of temperature deviation.
   void Calculate(double altitude);

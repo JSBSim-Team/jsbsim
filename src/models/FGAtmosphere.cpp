@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.12 2007/01/15 23:11:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.13 2007/08/15 03:41:22 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,6 +90,7 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   T_dev_sl = T_dev = delta_T = 0.0;
   StandardTempOnly = false;
   first_pass = true;
+  vGustNED(1) = vGustNED(2) = vGustNED(3) = 0.0; bgustSet = false;
 
   bind();
   Debug(0);
@@ -460,6 +461,7 @@ void FGAtmosphere::bind(void)
 {
   typedef double (FGAtmosphere::*PMF)(int) const;
   typedef double (FGAtmosphere::*PMFv)(void) const;
+  typedef void   (FGAtmosphere::*PMFd)(int,double);
   PropertyManager->Tie("atmosphere/T-R", this, (PMFv)&FGAtmosphere::GetTemperature);
   PropertyManager->Tie("atmosphere/rho-slugs_ft3", this, (PMFv)&FGAtmosphere::GetDensity);
   PropertyManager->Tie("atmosphere/P-psf", this, (PMFv)&FGAtmosphere::GetPressure);
@@ -479,6 +481,13 @@ void FGAtmosphere::bind(void)
   PropertyManager->Tie("atmosphere/p-turb-rad_sec", this,1, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/q-turb-rad_sec", this,2, (PMF)&FGAtmosphere::GetTurbPQR);
   PropertyManager->Tie("atmosphere/r-turb-rad_sec", this,3, (PMF)&FGAtmosphere::GetTurbPQR);
+
+  PropertyManager->Tie("atmosphere/gust-north-fps", this,1, (PMF)&FGAtmosphere::GetGustNED,
+                                                            (PMFd)&FGAtmosphere::SetGustNED);
+  PropertyManager->Tie("atmosphere/gust-east-fps",  this,2, (PMF)&FGAtmosphere::GetGustNED,
+                                                            (PMFd)&FGAtmosphere::SetGustNED);
+  PropertyManager->Tie("atmosphere/gust-down-fps",  this,3, (PMF)&FGAtmosphere::GetGustNED,
+                                                            (PMFd)&FGAtmosphere::SetGustNED);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -504,6 +513,10 @@ void FGAtmosphere::unbind(void)
   PropertyManager->Untie("atmosphere/p-turb-rad_sec");
   PropertyManager->Untie("atmosphere/q-turb-rad_sec");
   PropertyManager->Untie("atmosphere/r-turb-rad_sec");
+
+  PropertyManager->Untie("atmosphere/gust-north-fps");
+  PropertyManager->Untie("atmosphere/gust-east-fps");
+  PropertyManager->Untie("atmosphere/gust-down-fps");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
