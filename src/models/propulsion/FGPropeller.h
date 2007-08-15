@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.8 2006/08/30 12:04:38 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.9 2007/08/15 03:54:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -73,7 +73,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.8 2006/08/30 12:04:38 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.9 2007/08/15 03:54:01 jberndt Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -132,6 +132,14 @@ public:
 
   /// Retrieves the propeller moment of inertia
   double GetIxx(void)           { return Ixx;           }
+
+  /// Retrieves the propeller diameter
+  double GetDiameter(void)      { return Diameter;      }
+
+  /// Retrieves propeller thrust table
+  FGTable* GetCThrustTable(void) const { return cThrust;}
+  /// Retrieves propeller power table
+  FGTable* GetCPowerTable(void)  const { return cPower; }
 
   /// Retrieves the Torque in foot-pounds (Don't you love the English system?)
   double GetTorque(void)        { return vTorque(eX);    }
