@@ -76,7 +76,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.37 2007/08/01 01:51:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.38 2007/08/15 03:28:48 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -501,6 +501,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
       else if (element_name == "mass_balance")     result = MassBalance->Load(element);
       else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
       else if (element_name == "propulsion")       result = Propulsion->Load(element);
+      else if (element_name == "system")           result = FCS->Load(element);
       else if (element_name == "autopilot")        result = FCS->Load(element);
       else if (element_name == "flight_control")   result = FCS->Load(element);
       else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
