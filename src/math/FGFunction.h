@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.7 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.8 2007/08/17 03:20:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,6 +77,9 @@ A function definition consists of an operation, a value, a table, or a property
 - acos (takes 1 arg)
 - atan (takes 1 arg)
 - atan2 (takes 2 args)
+- min (takes n args)
+- max (takes n args)
+- avg (takes n args)
 
 An operation is defined in the configuration file as in the following example:
 
@@ -186,7 +189,8 @@ private:
   string Prefix;
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
-                     eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2} Type;
+                     eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
+                     eMin, eMax, eAvg} Type;
   string Name;
   void bind(void);
   void Debug(int from);

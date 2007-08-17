@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.13 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.14 2007/08/17 03:20:49 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,12 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eATan;
   } else if (operation == string("atan2")) {
     Type = eATan2;
+  } else if (operation == string("min")) {
+    Type = eMin;
+  } else if (operation == string("max")) {
+    Type = eMax;
+  } else if (operation == string("avg")) {
+    Type = eAvg;
   } else if (operation != string("description")) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -132,7 +138,10 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("asin") ||
                operation == string("acos") ||
                operation == string("atan") ||
-               operation == string("atan2"))
+               operation == string("atan2") ||
+               operation == string("min") ||
+               operation == string("max") ||
+               operation == string("avg") )
     {
       Parameters.push_back(new FGFunction(PropertyManager, element));
     } else if (operation != string("description")) {
@@ -232,6 +241,22 @@ double FGFunction::GetValue(void) const
     break;
   case eATan2:
     temp = atan2(temp, Parameters[1]->GetValue());
+    break;
+  case eMin:
+    for (i=1;i<Parameters.size();i++) {
+      if (Parameters[i]->GetValue() < temp) temp = Parameters[i]->GetValue();
+    }    
+    break;
+  case eMax:
+    for (i=1;i<Parameters.size();i++) {
+      if (Parameters[i]->GetValue() > temp) temp = Parameters[i]->GetValue();
+    }    
+    break;
+  case eAvg:
+    for (i=1;i<Parameters.size();i++) {
+      temp += Parameters[i]->GetValue();
+    }
+    temp /= Parameters.size();
     break;
   default:
     cerr << "Unknown function operation type" << endl;
