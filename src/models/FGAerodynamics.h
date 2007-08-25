@@ -60,7 +60,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.7 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.8 2007/08/25 17:50:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.7 $
+    @Id $Revision: 1.8 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,6 +172,8 @@ public:
       @return a string containing the numeric values for the current set of
       coefficients */
   string GetCoefficientValues(string delimeter);
+
+  vector <FGFunction*> * GetCoeff(void) const { return Coeff; }
 
 private:
   typedef map<string,int> AxisIndex;

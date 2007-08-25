@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.8 2007/08/17 03:20:49 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.9 2007/08/25 17:50:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,7 +190,7 @@ private:
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger} Type;
   string Name;
   void bind(void);
   void Debug(int from);

@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.14 2007/08/17 03:20:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.15 2007/08/25 17:50:47 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,10 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eMax;
   } else if (operation == string("avg")) {
     Type = eAvg;
+  } else if (operation == string("fraction")) {
+    Type = eFrac;
+  } else if (operation == string("integer")) {
+    Type = eInteger;
   } else if (operation != string("description")) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -141,6 +145,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("atan2") ||
                operation == string("min") ||
                operation == string("max") ||
+               operation == string("fraction") ||
+               operation == string("integer") ||
                operation == string("avg") )
     {
       Parameters.push_back(new FGFunction(PropertyManager, element));
@@ -186,6 +192,7 @@ void FGFunction::cacheValue(bool cache)
 double FGFunction::GetValue(void) const
 {
   unsigned int i;
+  double scratch;
 
   if (cached) return cachedValue;
 
@@ -257,6 +264,13 @@ double FGFunction::GetValue(void) const
       temp += Parameters[i]->GetValue();
     }
     temp /= Parameters.size();
+    break;
+  case eFrac:
+    temp = modf(temp, &scratch);
+    break;
+  case eInteger:
+    modf(temp, &scratch);
+    temp = scratch;
     break;
   default:
     cerr << "Unknown function operation type" << endl;
