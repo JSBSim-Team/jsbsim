@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.19 2007/07/25 04:30:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.20 2007/08/31 09:24:12 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -225,7 +225,15 @@ bool FGScript::LoadScript( string script )
     while (set_element) {
       prop_name = set_element->GetAttributeValue("name");
       newEvent->SetParam.push_back( PropertyManager->GetNode(prop_name) );
-      value = set_element->GetAttributeValueAsNumber("value");
+      //Todo - should probably do some safety checking here to make sure one or the other
+      //of value or function is specified.
+      if (!set_element->GetAttributeValue("value").empty()) {
+        value = set_element->GetAttributeValueAsNumber("value");
+        newEvent->Functions.push_back((FGFunction*)0L);
+      } else if (set_element->FindElement("function")) {
+        value = 0.0;
+        newEvent->Functions.push_back(new FGFunction(PropertyManager, set_element->FindElement("function")));
+      }
       newEvent->SetValue.push_back(value);
       newEvent->OriginalValue.push_back(0.0);
       newEvent->newValue.push_back(0.0);
@@ -289,6 +297,9 @@ bool FGScript::RunScript(void)
         // The conditions are true, do the setting of the desired Event parameters
         for (i=0; i<iEvent->SetValue.size(); i++) {
           iEvent->OriginalValue[i] = iEvent->SetParam[i]->getDoubleValue();
+          if (iEvent->Functions[i] != 0) { // Parameter should be set to a function value
+            iEvent->SetValue[i] = iEvent->Functions[i]->GetValue();
+          }
           switch (iEvent->Type[i]) {
           case FG_VALUE:
           case FG_BOOL:

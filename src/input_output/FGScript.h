@@ -40,6 +40,7 @@ INCLUDES
 #include "FGJSBBase.h"
 #include "FGState.h"
 #include "FGFDMExec.h"
+#include <math/FGFunction.h>
 #include <math/FGCondition.h>
 #include <vector>
 #include <input_output/FGXMLFileRead.h>
@@ -48,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.8 2007/05/11 00:23:45 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.9 2007/08/31 09:24:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -156,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.8 2007/05/11 00:23:45 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.9 2007/08/31 09:24:12 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -217,6 +218,7 @@ private:
     vector <double>  OriginalValue;
     vector <double>  ValueSpan;
     vector <bool>    Transiting;
+    vector <FGFunction*> Functions;
 
     event() {
       Triggered = false;

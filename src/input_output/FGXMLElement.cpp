@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.15 2007/07/05 13:40:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.16 2007/08/31 09:24:12 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -255,7 +255,7 @@ double Element::GetDataAsNumber(void)
   if (data_lines.size() == 1) {
     return atof(data_lines[0].c_str());
   } else {
-    cerr << "Attempting to get single data value from multiple lines" << endl;
+    cerr << "Attempting to get single data value from multiple lines in element " << name << endl;
     return 0;
   }
 }
