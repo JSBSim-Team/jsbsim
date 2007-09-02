@@ -1,0 +1,4 @@
+This directory contains the DirectSearch library functions needed to support
+the trim analysis capability added by Agostino De Marco. This library is
+needed and included by the FGTrimAnalysis and FGTrimAnalysisControl classes
+located in the src/initialization/ directory.
