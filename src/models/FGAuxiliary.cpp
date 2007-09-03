@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.16 2007/05/18 03:17:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.17 2007/09/03 03:48:08 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -139,10 +139,10 @@ bool FGAuxiliary::Run()
   } else if (GroundReactions->GetWOW() && vUVW(eU) < 30) {
     double factor = (vUVW(eU) - 10.0)/20.0;
     vAeroPQR = vPQR + factor*Atmosphere->GetTurbPQR();
-    vAeroUVW = vUVW + factor*Propagate->GetTl2b()*Atmosphere->GetWindNED();
+    vAeroUVW = vUVW + factor*Propagate->GetTl2b()*(Atmosphere->GetWindNED()+Atmosphere->GetGustNED());
   } else {
     vAeroPQR = vPQR + Atmosphere->GetTurbPQR();
-    vAeroUVW = vUVW + Propagate->GetTl2b()*Atmosphere->GetWindNED();
+    vAeroUVW = vUVW + Propagate->GetTl2b()*(Atmosphere->GetWindNED()+Atmosphere->GetGustNED());
   }
 
   Vt = vAeroUVW.Magnitude();
@@ -242,6 +242,11 @@ bool FGAuxiliary::Run()
   FGColumnVector3 vMac = Propagate->GetTb2l()*MassBalance->StructuralToBody(Aircraft->GetXYZrp());
   hoverbmac = (Propagate->GetDistanceAGL() + vMac(3)) / Aircraft->GetWingSpan();
 
+  // when all model are executed, 
+  // please calculate the distance from the initial point
+
+  CalculateRelativePosition();
+
   return false;
 }
 
@@ -321,6 +326,10 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("aero/h_b-mac-ft", this, &FGAuxiliary::GetHOverBMAC);
   PropertyManager->Tie("flight-path/gamma-rad", this, &FGAuxiliary::GetGamma, &FGAuxiliary::SetGamma);
   PropertyManager->Tie("flight-path/psi-gt-rad", this, &FGAuxiliary::GetGroundTrack);
+
+  PropertyManager->Tie("position/distance-from-start-lon-mt", this, &FGAuxiliary::GetLongitudeRelativePosition);
+  PropertyManager->Tie("position/distance-from-start-lat-mt", this, &FGAuxiliary::GetLatitudeRelativePosition);
+  PropertyManager->Tie("position/distance-from-start-mag-mt", this, &FGAuxiliary::GetDistanceRelativePosition);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -374,7 +383,21 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("aero/h_b-mac-ft");
   PropertyManager->Untie("flight-path/gamma-rad");
   PropertyManager->Untie("flight-path/psi-gt-rad");
+
+  PropertyManager->Untie("position/distance-from-start-lat-mt");
+  PropertyManager->Untie("position/distance-from-start-lon-mt");
+  PropertyManager->Untie("position/distance-from-start-mag-mt");
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGAuxiliary::CalculateRelativePosition(void)
+{ 
+  const double earth_radius_mt=6371000.0;
+  lat_relative_position=(FDMExec->GetPropagate()->GetLatitude()  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
+  lon_relative_position=(FDMExec->GetPropagate()->GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
+  relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);
+};
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

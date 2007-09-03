@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.15 2007/08/15 03:26:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.16 2007/09/03 03:48:07 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -841,7 +841,7 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     n = int(document->FindElementValueAsNumber("running"));
     if (n != 0) {
       FGPropulsion* propulsion = fdmex->GetPropulsion();
-      for(int i=0; i<propulsion->GetNumEngines(); i++) {
+      for(unsigned int i=0; i<propulsion->GetNumEngines(); i++) {
          propulsion->GetEngine(i)->SetRunning(true);
       }
     }

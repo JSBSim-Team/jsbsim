@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.5 2007/09/03 03:48:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.5 2007/09/03 03:48:08 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,6 +208,12 @@ public:
   int    GetDayOfYear    (void) const { return day_of_year;    }
   double GetSecondsInDay (void) const { return seconds_in_day; }
 
+  double GetLongitudeRelativePosition (void) const { return lon_relative_position; }
+  double GetLatitudeRelativePosition  (void) const { return lat_relative_position; }
+  double GetDistanceRelativePosition  (void) const { return relative_position; }
+
+  void SetAeroPQR(FGColumnVector3 tt) { vAeroPQR = tt; }
+
   void bind(void);
   void unbind(void);
 
@@ -235,6 +241,14 @@ private:
 
   double earthPosAngle;
   double hoverbcg, hoverbmac;
+
+  // helper data, calculation of distance from initial position
+
+  double lon_relative_position;
+  double lat_relative_position;
+  double relative_position;
+
+  void CalculateRelativePosition(void);
 
   void Debug(int from);
 };

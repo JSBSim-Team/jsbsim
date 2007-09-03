@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.6 2006/09/15 12:01:26 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.7 2007/09/03 03:48:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.6 2006/09/15 12:01:26 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.7 2007/09/03 03:48:08 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,6 +131,27 @@ public:
   /** Retrieves the body-to-local transformation matrix.
       @return a reference to the body-to-local matrix.  */
   const FGMatrix33& GetTb2l(void) const { return VState.vQtrn.GetTInv(); }
+
+  const VehicleState GetVState(void) const { return VState; }
+
+  void SetVState(VehicleState vstate) {
+      VState.vLocation = vstate.vLocation;
+      VState.vUVW = vstate.vUVW;
+      VState.vPQR = vstate.vPQR;
+      VState.vQtrn = vstate.vQtrn; // ... mmh
+  }
+
+  const FGQuaternion GetQuaternion(void) const { return VState.vQtrn; }
+
+  void SetPQR(unsigned int i, double val) {
+      if ((i>=1) && (i<=3) )
+          VState.vPQR(i) = val;
+  }
+
+  void SetUVW(unsigned int i, double val) {
+      if ((i>=1) && (i<=3) )
+          VState.vUVW(i) = val;
+  }
 
 // SET functions
 

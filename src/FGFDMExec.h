@@ -53,12 +53,13 @@ INCLUDES
 #include <models/FGPropagate.h>
 
 #include <vector>
+#include <string>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.31 2007/06/18 11:52:20 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.32 2007/09/03 03:48:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -166,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.31 $
+    @version $Revision: 1.32 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -251,7 +252,7 @@ public:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
   bool SetAircraftPath(string path) { AircraftPath = path; return true; }
-
+  
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
   /// Returns the FGAtmosphere pointer.
@@ -313,7 +314,7 @@ public:
 
   /// Returns the current frame time (delta T).
   double GetDeltaT(void);
-
+  
   /// Returns a pointer to the property manager object.
   FGPropertyManager* GetPropertyManager(void);
   /// Returns a vector of strings representing the names of all loaded models (future)
@@ -425,6 +426,7 @@ private:
   string EnginePath;
   string CFGVersion;
   string Release;
+  string simID;
 
   struct slaveData {
     FGFDMExec* exec;
