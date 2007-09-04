@@ -22,6 +22,7 @@ JSBSim_LDADD = \
 	$(top_builddir)/src/models/propulsion/libPropulsion.a \
 	$(top_builddir)/src/input_output/libInputOutput.a \
 	$(top_builddir)/src/math/libMath.a \
+	$(top_builddir)/src/math/direct_search/libdirect_search.a \
 	$(top_builddir)/src/simgear/props/libProperties.a \
 	$(top_builddir)/src/simgear/xml/libExpat.a \
 	-lm

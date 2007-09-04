@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.32 2007/09/03 03:48:07 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.33 2007/09/04 04:24:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.32 $
+    @version $Revision: 1.33 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,6 +366,7 @@ public:
   * - tTurn
   * - tNone  */
   void DoTrim(int mode);
+  void DoTrimAnalysis(int mode);
 
   /// Disables data logging to all outputs.
   void DisableOutput(void);
@@ -410,6 +411,11 @@ public:
   /// Use the Mars atmosphere model. (Not operative yet.)
   void UseAtmosphereMars(void);
 
+  void SetTrimStatus(bool status){ trim_status = status; }
+  bool GetTrimStatus(void) const { return trim_status; }
+  void SetTrimMode(int mode){ ta_mode = mode; }
+  int GetTrimMode(void) const { return ta_mode; }
+
 private:
   static unsigned int FDMctr;
   int Error;
@@ -426,7 +432,10 @@ private:
   string EnginePath;
   string CFGVersion;
   string Release;
-  string simID;
+
+  bool trim_status;
+  int ta_mode;
+
 
   struct slaveData {
     FGFDMExec* exec;

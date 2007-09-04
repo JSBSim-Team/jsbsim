@@ -71,12 +71,13 @@ INCLUDES
 #include <models/FGInput.h>
 #include <models/FGOutput.h>
 #include <initialization/FGInitialCondition.h>
+#include <initialization/FGTrimAnalysis.h>
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGScript.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.38 2007/08/15 03:28:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.39 2007/09/04 04:24:03 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,9 +167,13 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
     exit(1);
   }
 
+  trim_status = false;
+  ta_mode     = 99;
+
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-  instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
+  instance->Tie("simulation/do_old_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   Constructing = false;
 }
@@ -177,6 +182,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 
 FGFDMExec::~FGFDMExec()
 {
+  instance->Untie("simulation/do_old_trim");
   instance->Untie("simulation/do_trim");
   instance->Untie("simulation/terminate");
 
@@ -796,6 +802,41 @@ void FGFDMExec::DoTrim(int mode)
   if ( !trim.DoTrim() ) cerr << endl << "Trim Failed" << endl << endl;
   trim.Report();
   State->Setsim_time(saved_time);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFDMExec::DoTrimAnalysis(int mode)
+{
+  double saved_time;
+  if (Constructing) return;
+
+  if (mode < 0 || mode > JSBSim::taNone) {
+    cerr << endl << "Illegal trimming mode!" << endl << endl;
+    return;
+  }
+  saved_time = State->Getsim_time();
+
+  FGTrimAnalysis trimAnalysis(this, (JSBSim::TrimAnalysisMode)mode);
+
+  // TODO: in future file trim01.xml in the selected aircraft path should be replaced
+  //       with an appropriate tag in the initialization file
+
+  if ( !trimAnalysis.Load(IC->GetInitFile()) ) {
+    cerr << "A problem occurred with trim configuration file " << trimAnalysis.Load(IC->GetInitFile()) << endl;
+    exit(-1);
+  }
+
+  bool result = trimAnalysis.DoTrim();
+
+  if ( !result ) cerr << endl << "Trim Failed" << endl << endl;
+
+  trimAnalysis.Report();
+  State->Setsim_time(saved_time);
+
+  EnableOutput();
+  cout << "\n\n\n\n\n\nOutput::\n\n" << GetOutputFileName() << endl;
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

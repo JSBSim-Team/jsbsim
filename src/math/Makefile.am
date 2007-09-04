@@ -1,3 +1,5 @@
+SUBDIRS = direct_search
+
 noinst_LIBRARIES = libMath.a
 
 libMath_a_SOURCES = FGColumnVector3.cpp FGFunction.cpp FGLocation.cpp FGMatrix33.cpp \

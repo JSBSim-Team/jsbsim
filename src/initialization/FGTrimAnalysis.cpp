@@ -23,11 +23,9 @@
  Further information about the GNU Lesser General Public License can also be found on
  the world wide web at http://www.gnu.org.
 
-
  HISTORY
 --------------------------------------------------------------------------------
 12/14/06   ADM   Created
-
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
@@ -84,8 +82,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.2 2007/09/03 03:48:07 jberndt Exp $";
-static const char *IdHdr = ID_FGTRIMANAlYSIS;
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.3 2007/09/04 04:24:04 jberndt Exp $";
+static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //public:
@@ -256,7 +254,7 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
   _psidot=_thetadot=0.;
   _psiWdot = _phiWdot = _gammadot = 0.;
 
-  _C1 = _C2 = _C3 = 1.;
+  C1 = C2 = C3 = 1.0;
   _cbeta = cos(_beta);
   _sbeta = sin(_beta);
   _sphi = sin(_phi);
@@ -795,14 +793,14 @@ void FGTrimAnalysis::setupTurn(void){
      // target Nlf is given
      // set _phiW according to given Nlf
      _phiW = atan2( sqrt(_targetNlf*_targetNlf-cos(_gamma)*cos(_gamma)), cos(_gamma) );
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);
      _phi = asin(_sphi);
@@ -818,14 +816,14 @@ void FGTrimAnalysis::setupTurn(void){
   }
   if ( mode == taTurnFull ) {
      // target Nlf is given
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);
      _phi = asin(_sphi);
@@ -844,14 +842,14 @@ void FGTrimAnalysis::setupTurn(double phiW){
      // recalculate target Nlf
      _targetNlf =  sqrt( cos(_gamma)*cos(_gamma)*tan(_phiW)*tan(_phiW) + cos(_gamma)*cos(_gamma) );
 
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);
      _phi = asin(_sphi);
@@ -872,14 +870,14 @@ void FGTrimAnalysis::setupTurn(double phiW){
      // recalculate target Nlf
      _targetNlf =  sqrt( cos(_gamma)*cos(_gamma)*tan(_phiW)*tan(_phiW) + cos(_gamma)*cos(_gamma) );
 
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);
      _phi = asin(_sphi);
@@ -904,14 +902,14 @@ void FGTrimAnalysis::setupTurnPhi(double psi, double theta){
      _psi   = psi;   _cpsi   = cos(_psi);   _spsi   = sin(_psi);
      _theta = theta; _ctheta = cos(_theta); _stheta = sin(_theta);
 
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
 
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);
@@ -922,14 +920,14 @@ void FGTrimAnalysis::setupTurnPhi(double psi, double theta){
      _psi   = psi;   _cpsi   = cos(_psi);   _spsi   = sin(_psi);
      _theta = theta; _ctheta = cos(_theta); _stheta = sin(_theta);
 
-     _C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
+     C1 = cos(_phiW)*sin(_gamma)*cos(_theta)*sin(_psi)+
                    sin(_phiW)            *cos(_theta)*cos(_psi)    ;
-     _C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
+     C2 = cos(_phiW)*cos(_gamma)*cos(_theta)*cos(_psi)+
                   cos(_phiW)*sin(_gamma)*sin(_theta)              ;
-     _C3 = sin(_phiW)            *sin(_theta)+
+     C3 = sin(_phiW)            *sin(_theta)+
                   cos(_phiW)*cos(_gamma)*cos(_theta)*sin(_psi)    ;
-     _cbeta = ( _C1*sin(_phiW)*cos(_gamma)+_C2*cos(_phiW) + _C3*sin(_phiW)*sin(_gamma) )
-                    /( sqrt(_C1*_C1 + _C2*_C2 + _C3*_C3) );
+     _cbeta = ( C1*sin(_phiW)*cos(_gamma)+C2*cos(_phiW) + C3*sin(_phiW)*sin(_gamma) )
+                    /( sqrt(C1*C1 + C2*C2 + C3*C3) );
      _sbeta = sqrt(1.-_cbeta*_cbeta );
 
      _sphi = ( _cbeta*sin(_phiW) * cos(_gamma) - _sbeta*sin(_gamma) )/cos(_theta);

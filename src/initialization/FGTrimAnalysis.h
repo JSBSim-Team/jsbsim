@@ -69,12 +69,11 @@ INCLUDES
 
 #include <math/direct_search/vec.h>
 
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANAlYSIS "$Id: FGTrimAnalysis.h,v 1.2 2007/09/03 03:48:08 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.3 2007/09/04 04:24:04 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -135,7 +134,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.2 2007/09/03 03:48:08 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.3 2007/09/04 04:24:04 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -431,7 +430,7 @@ private:
   double _targetNlf;
   double _psiWdot, _phiWdot, _gammadot, _psidot, _thetadot;
 
-  double _C1, _C2, _C3, _calpha, _salpha, _cbeta, _sbeta;
+  double C1, C2, C3, _calpha, _salpha, _cbeta, _sbeta;
 
   void setupPullup(void);
   void setupTurn(void);
