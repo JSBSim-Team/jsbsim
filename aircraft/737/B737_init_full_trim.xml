@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<initialize name="reset00">
+  <!--
+    This file sets up the aircraft to start off
+    from the runway in preparation for takeoff.
+    Milano Linate:
+    Codice ICAO=LIMl
+    Codice IATA=LIN
+    Altezza slm: 107 m
+    Posizione: 7 km da Milano
+    Coordinate geografiche: 47deg 26primes 45seconds Nord, 09deg 16primes 28seconds Est
+    Piste:
+    Orientamento (QFU)	Lunghezza	Note
+    18L/36R			2.440 m.	ILS - PAPI
+    18R/36L			600 m.		ILS
+    -->
+  <!-- 
+  <ubody unit="FT/SEC">   250.0 </ubody>
+  <vbody unit="FT/SEC">    0.0  </vbody>
+  <wbody unit="FT/SEC">    0.0  </wbody>
+  -->
+
+  <latitude unit="DEG">    0.0  </latitude>
+  <longitude unit="DEG">   0.0  </longitude>
+  <altitude unit="FT">  5500.0  </altitude>
+  <psi unit="DEG">         0.0  </psi>
+  <vc    unit="KTS">     175.0  </vc>
+  <!--<roc   unit="FT/SEC">    0.0  </roc> --><!-- 11 FT/SEC -->
+  <gamma unit="DEG">       0.0  </gamma> <!-- -3 DEGF -->
+  <!-- theta unit="DEG">       3.0  </theta -->
+  <theta unit="DEG">       10.0  </theta>
+  <alpha unit="DEG">       10.0  </alpha>
+  <phi unit="DEG">         0.0  </phi>
+  <targetNlf>              1.0  </targetNlf>
+  <running>                1.0  </running>
+  <trim_config name="trim01" type="FULL">
+    <!--
+      This tag sets up the trim parameters.
+    -->
+    <search type="Nelder-Mead">
+	  <sigma_nm> 0.5 </sigma_nm>
+	  <alpha_nm> 1.0 </alpha_nm>
+	  <beta_nm>  0.5 </beta_nm>
+	  <gamma_nm> 2.0 </gamma_nm>
+	  <tolerance value="0.000000001"/>
+	  <max_iterations value="4000"/>
+	  <stop_criterion type="Stop-On-Delta"/> <!-- "Stop-On-Delta", "Stop-On-Std" -->
+    </search>
+
+    <!-- action=From-IC takes the corrensponding value from the initialization file 
+         (the tag content is ignored) 
+    -->
+    <initial_values>
+	  <phi action="From-IC"/>
+	  <theta action="From-IC" unit="DEG"> 6.0 </theta>
+	  <psi action="From-IC"/>
+	  <throttle_cmd>  0.4  </throttle_cmd>
+	  <elevator_cmd> -0.5  </elevator_cmd>
+	  <rudder_cmd>   0.0  </rudder_cmd>
+	  <aileron_cmd>  0.0  </aileron_cmd>
+	  <gamma action="From-IC" unit="DEG"> -3.0 </gamma>
+    </initial_values>
+    <steps>
+	  <phi   unit="DEG"> 0.3 </phi>
+	  <theta unit="DEG"> 0.3 </theta>
+	  <psi   unit="DEG"> 0.3 </psi>
+	  <throttle_cmd> 0.2 </throttle_cmd>
+	  <elevator_cmd> 0.2 </elevator_cmd>
+	  <rudder_cmd>   0.2 </rudder_cmd>
+	  <aileron_cmd>  0.2 </aileron_cmd>
+    </steps>
+    <output_file name="trim_data.txt"/>
+  </trim_config>
+</initialize>
