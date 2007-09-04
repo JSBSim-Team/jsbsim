@@ -82,7 +82,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.3 2007/09/04 04:24:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.4 2007/09/04 11:45:15 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,7 +337,6 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
     FGXMLParse trim_file_parser;
     Element *document=0, *element=0, *trimCfg=0,
             *search_element=0, *steps_element=0, *initial_values_element=0, *output_element=0;
-    int n;
 
     string sep = "/";
 # ifdef macintosh
@@ -405,7 +404,7 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
             tolerance = 0.00000001;
         }
         if ( search_element->FindElement("max_iterations") ) {
-            max_iterations = search_element->FindElement("max_iterations")->GetAttributeValueAsNumber("value");
+            max_iterations = (unsigned int)search_element->FindElement("max_iterations")->GetAttributeValueAsNumber("value");
         }
         if ( search_element->FindElement("stop_criterion") ) {
             stop_criterion = search_element->FindElement("stop_criterion")->GetAttributeValue("type");
@@ -627,7 +626,6 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrimAnalysis::TrimStats() {
-  char out[80];
   int run_sum=0;
   cout << endl << "  Trim Statistics: " << endl;
   cout << "    Total Iterations: " << total_its << endl;
@@ -1212,8 +1210,6 @@ bool FGTrimAnalysis::runForAWhile(int nruns)
 
   int counter = 0;
 
-  FGJSBBase::Message* msg;
-
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while ( counter < nruns ) { // (result && (counter < nruns))
     counter++;
@@ -1526,11 +1522,11 @@ bool FGTrimAnalysis::DoTrim(void) {
   stringstream ss (stringstream::in | stringstream::out);
 
   // first feed the trial minimizer, zeroth point of the simplex
-  for(int k=0; k<vTrimAnalysisControls.size();k++)
+  for (unsigned int k=0; k<vTrimAnalysisControls.size();k++)
       ss << vTrimAnalysisControls[k]->GetControlInitialValue() << " ";
 
   // then the rest of n-ples
-  for(int k=0; k<vTrimAnalysisControls.size();k++)
+  for (unsigned int k=0; k<vTrimAnalysisControls.size();k++)
   {
     for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
         vi!=vTrimAnalysisControls.end();vi++) {
@@ -1794,7 +1790,7 @@ bool FGTrimAnalysis::DoTrim(void) {
   }
 
 
-  for(unsigned int i=0;i < fdmex->GetGroundReactions()->GetNumGearUnits();i++){
+  for (unsigned int i=0; i<(unsigned int)fdmex->GetGroundReactions()->GetNumGearUnits();i++){
     fdmex->GetGroundReactions()->GetGearUnit(i)->SetReport(true);
   }
 
@@ -1887,7 +1883,7 @@ double Objective::myCostFunctionFull(Vector<double> & x) // x variations come fr
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2051,7 +2047,7 @@ double Objective::myCostFunctionFullWingsLevel(Vector<double> & x) // x variatio
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2210,7 +2206,7 @@ double Objective::myCostFunctionLongitudinal(Vector<double> & x)
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2379,7 +2375,7 @@ double Objective::myCostFunctionFullCoordinatedTurn(Vector<double> & x)
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2391,7 +2387,7 @@ double Objective::myCostFunctionFullCoordinatedTurn(Vector<double> & x)
       +       vDot*vDot
       + 1.000*wDot*wDot
       + 0.010*pDot*pDot
-      + 0.010*qDot*qDot;
+      + 0.010*qDot*qDot
       + 0.010*rDot*rDot;
 
     static int count = 0;
@@ -2547,7 +2543,7 @@ double Objective::myCostFunctionFullTurn(Vector<double> & x)
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2559,7 +2555,7 @@ double Objective::myCostFunctionFullTurn(Vector<double> & x)
       +       vDot*vDot
       + 1.000*wDot*wDot
       + 0.010*pDot*pDot
-      + 0.010*qDot*qDot;
+      + 0.010*qDot*qDot
       + 0.010*rDot*rDot;
 
     static int count = 0;
@@ -2707,7 +2703,7 @@ double Objective::myCostFunctionPullUp(Vector<double> & x)
 
     double u   , v   , w   ,
            p   , q   , r   ,
-           uDot, vDot, wDot, VTDot,
+           uDot, vDot, wDot,
            pDot, qDot, rDot;
     u     = VState.vUVW   (1);  v     = VState.vUVW   (2);  w     = VState.vUVW   (3);
     p     = VState.vPQR   (1);  q     = VState.vPQR   (2);  r     = VState.vPQR   (3);
@@ -2719,7 +2715,7 @@ double Objective::myCostFunctionPullUp(Vector<double> & x)
       +       vDot*vDot
       + 1.000*wDot*wDot
       + 0.010*pDot*pDot
-      + 0.010*qDot*qDot;
+      + 0.010*qDot*qDot
       + 0.010*rDot*rDot;
 
     static int count = 0;
@@ -2814,7 +2810,7 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
 
     // make sure the engines are running
     FGPropulsion* propulsion = FDMExec->GetPropulsion();
-    for(int i=0; i<propulsion->GetNumEngines(); i++) {
+    for (unsigned int i=0; i<propulsion->GetNumEngines(); i++) {
        propulsion->GetEngine(i)->SetRunning(true);
     }
 

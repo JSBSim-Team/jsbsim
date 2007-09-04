@@ -40,6 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <FGFDMExec.h>
+#include <initialization/FGTrimAnalysis.h>
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -62,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.30 2007/07/25 04:30:01 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.31 2007/09/04 11:45:15 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -79,6 +80,10 @@ bool realtime;
 bool play_nice;
 bool suspend;
 bool catalog;
+
+bool trim_analysis;
+unsigned int trim_type=0;
+double end_time = -1.0;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -229,6 +234,9 @@ IMPLEMENTATION
 int main(int argc, char* argv[])
 {
   // *** INITIALIZATIONS *** //
+
+  trim_analysis = false;
+
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
@@ -312,11 +320,31 @@ int main(int argc, char* argv[])
     }
 
     // *** TRIM THE AIRCRAFT *** //
+/*
     JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
     if ( !fgt.DoTrim() ) {
       cout << "Trim failed, continuing ..." << endl;
     }
     fgt.Report();
+*/
+
+    if ( trim_analysis ) {
+
+            JSBSim::FGTrimAnalysis myfgta(FDMExec, (JSBSim::TrimAnalysisMode)trim_type);
+
+            if ( !myfgta.Load(ResetName) ) {
+                cerr << "A problem occurred with configuration file \"" << ResetName << "\"" << endl;
+                exit(-1);
+            }
+
+            FDMExec->GetState()->Setdt(0.00833333);
+            FDMExec->GetState()->SuspendIntegration();
+
+            if ( !myfgta.DoTrim() ) {
+              cout << "Trim Failed" << endl;
+            }
+            myfgta.Report();
+   }
 
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
@@ -374,6 +402,16 @@ int main(int argc, char* argv[])
   tzset(); 
   current_seconds = initial_seconds = getcurrentseconds();
 
+  if (( end_time != -1.0 )) {
+      result=true;
+      FDMExec->GetState()->ResumeIntegration();
+      FDMExec->GetState()->Setdt(0.00833333);
+      cout << "Enforcing time integration after trim... " << endl
+           << "Time: " << FDMExec->GetState()->Getsim_time() << ", dt: " << FDMExec->GetState()->Getdt()
+           << endl;
+      cout << "Integrating until time: " << end_time << " (sec)" << endl;
+  }
+
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
     while (FDMExec->SomeMessages()) {
@@ -405,6 +443,13 @@ int main(int argc, char* argv[])
       if ( ! realtime ) {         // ------------ RUNNING IN BATCH MODE
 
         result = FDMExec->Run();
+
+        if ( trim_analysis ) {
+            if ( FDMExec->GetSimTime() > end_time ) break;
+
+            result = 1; // enforce the loop [FDMExec->Run() might return 0]
+        }
+
         if (play_nice) sim_nsleep(sleep_nseconds);
 
       } else {                    // ------------ RUNNING IN REALTIME MODE
@@ -530,6 +575,28 @@ bool options(int count, char **arg)
         cerr << "  Reset name not valid or not understood." << endl << endl;
         exit(1);
       }
+
+    } else if (argument.find("--trim-analysis") != string::npos) {
+      trim_analysis = true;
+      n = argument.find("=")+1;
+      if (n > 0) {
+        string s = argument.substr(argument.find("=")+1);
+        trim_type = atoi(s.c_str());
+      } else {
+        cerr << "  Trim type not valid or not understood." << endl << endl;
+        exit(1);
+      }
+
+    } else if (argument.find("--end-time") != string::npos) {
+      n = argument.find("=")+1;
+      if (n > 0) {
+        string s = argument.substr(argument.find("=")+1);
+        end_time = atof( s.c_str() );
+      } else {
+        cerr << "  End time not valid or not understood." << endl << endl;
+        exit(1);
+      }
+
     } else if (argument.find("--catalog") != string::npos) {
         catalog = true;
     } else {
@@ -573,6 +640,10 @@ void PrintHelp(void)
     cout << "    --suspend  specifies to suspend the simulation after initialization" << endl;
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
+
+    cout << "    --trim-analysis=<type (int)> specifies the kind of trim" << endl;
+    cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
+
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;
   cout << "        an option is followed by a filename" << endl << endl;
 }
