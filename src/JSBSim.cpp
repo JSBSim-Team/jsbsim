@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.31 2007/09/04 11:45:15 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.32 2007/09/05 11:54:57 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -330,20 +330,20 @@ int main(int argc, char* argv[])
 
     if ( trim_analysis ) {
 
-            JSBSim::FGTrimAnalysis myfgta(FDMExec, (JSBSim::TrimAnalysisMode)trim_type);
+      JSBSim::FGTrimAnalysis myfgta(FDMExec, (JSBSim::TrimAnalysisMode)trim_type);
 
-            if ( !myfgta.Load(ResetName) ) {
-                cerr << "A problem occurred with configuration file \"" << ResetName << "\"" << endl;
-                exit(-1);
-            }
+      if ( !myfgta.Load(ResetName) ) {
+        cerr << "A problem occurred with configuration file \"" << ResetName << "\"" << endl;
+        exit(-1);
+      }
 
-            FDMExec->GetState()->Setdt(0.00833333);
-            FDMExec->GetState()->SuspendIntegration();
+      FDMExec->GetState()->Setdt(0.00833333);
+      FDMExec->GetState()->SuspendIntegration();
 
-            if ( !myfgta.DoTrim() ) {
-              cout << "Trim Failed" << endl;
-            }
-            myfgta.Report();
+      if ( !myfgta.DoTrim() ) {
+        cout << "Trim Failed" << endl;
+      }
+      myfgta.Report();
    }
 
   } else {
