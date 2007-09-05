@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.20 2007/08/31 09:24:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.21 2007/09/05 11:53:31 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,8 +419,13 @@ void FGScript::Debug(int from)
 
         cout << endl << "  Actions taken:" << endl << "    {";
         for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
-          cout << endl << "      set " << Events[i].SetParam[j]->GetName()
-               << " to " << Events[i].SetValue[j];
+          if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
+            cout << endl << "      set " << Events[i].SetParam[j]->GetName()
+                 << " to function value";
+          } else {
+            cout << endl << "      set " << Events[i].SetParam[j]->GetName()
+                 << " to " << Events[i].SetValue[j];
+          }
 
           switch (Events[i].Type[j]) {
           case FG_VALUE:
