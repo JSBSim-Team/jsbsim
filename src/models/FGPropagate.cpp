@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.12 2007/04/29 03:52:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.13 2007/09/05 11:56:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,6 +315,20 @@ void FGPropagate::RecomputeRunwayRadius(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropagate::SetTerrainElevationASL(double tt)
+{
+  FDMExec->GetGroundCallback()->SetTerrainGeoCentRadius(tt+SeaLevelRadius);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPropagate::GetTerrainElevationASL(void) const
+{
+  return FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius()-SeaLevelRadius;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropagate::Seth(double tt)
 {
   VState.vLocation.SetRadius( tt + SeaLevelRadius );
@@ -346,6 +360,7 @@ void FGPropagate::SetDistanceAGL(double tt)
 void FGPropagate::bind(void)
 {
   typedef double (FGPropagate::*PMF)(int) const;
+//  typedef double (FGPropagate::*dPMF)() const;
   PropertyManager->Tie("velocities/h-dot-fps", this, &FGPropagate::Gethdot);
 
   PropertyManager->Tie("velocities/v-north-fps", this, eNorth, (PMF)&FGPropagate::GetVel);
@@ -373,6 +388,9 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
+  PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
+                          &FGPropagate::GetTerrainElevationASL,
+                          &FGPropagate::SetTerrainElevationASL);
 
   PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius);
 
@@ -417,6 +435,7 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("attitude/roll-rad");
   PropertyManager->Untie("attitude/pitch-rad");
   PropertyManager->Untie("attitude/heading-true-rad");
+  PropertyManager->Untie("position/terrain-elevation-asl-ft");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

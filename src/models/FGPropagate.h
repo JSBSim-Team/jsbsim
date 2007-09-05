@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.7 2007/09/03 03:48:08 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.8 2007/09/05 11:56:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.7 2007/09/03 03:48:08 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.8 2007/09/05 11:56:13 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,6 +118,7 @@ public:
       @units feet */
   double GetRunwayRadius(void) const;
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
+  double GetTerrainElevationASL(void) const;
   double GetDistanceAGL(void)  const;
   double GetRadius(void) const { return VState.vLocation.GetRadius(); }
   double GetLongitude(void) const { return VState.vLocation.GetLongitude(); }
@@ -161,6 +162,7 @@ public:
   void SetLocation(const FGLocation& l) { VState.vLocation = l; }
   void Seth(double tt);
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
+  void SetTerrainElevationASL(double tt);
   void SetDistanceAGL(double tt);
   void SetInitialState(const FGInitialCondition *);
   void RecomputeRunwayRadius(void);
