@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.32 2007/09/05 11:54:57 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.33 2007/09/07 12:41:48 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -355,8 +355,6 @@ int main(int argc, char* argv[])
   }
 
   // Load output directives file, if given
-  // This overrides the first output file defined in an aircraft config file
-  // (if any).
   if (!LogDirectiveName.empty()) {
     if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
       cout << "Output directives not properly set" << endl;
@@ -370,7 +368,7 @@ int main(int argc, char* argv[])
   // OVERRIDE OUTPUT FILE NAME. THIS IS USEFUL FOR CASES WHERE MULTIPLE
   // RUNS ARE BEING MADE (SUCH AS IN A MONTE CARLO STUDY) AND THE OUTPUT FILE
   // NAME MUST BE SET EACH TIME TO AVOID THE PREVIOUS RUN DATA FROM BEING OVER-
-  // WRITTEN
+  // WRITTEN. THIS OVERRIDES ONLY THE FILENAME FOR THE FIRST FILE.
   if (!LogOutputName.empty()) {
     string old_filename = FDMExec->GetOutputFileName();
     if (!FDMExec->SetOutputFileName(LogOutputName)) {

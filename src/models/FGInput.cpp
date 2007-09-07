@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInput.cpp,v 1.10 2007/02/24 18:52:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInput.cpp,v 1.11 2007/09/07 12:41:48 jberndt Exp $";
 static const char *IdHdr = ID_INPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,6 +205,12 @@ bool FGInput::Load(Element* element)
   string type="", parameter="";
   string name="", fname="";
   string property;
+
+  // if the input has already been set up, print a warning message and return
+  if (port > 0) {
+    cerr << "An input port has already been assigned for this run" << endl;
+    return false;
+  }
 
   port = int(element->GetAttributeValueAsNumber("port"));
   if (port == 0) {

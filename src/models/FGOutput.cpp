@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.17 2007/05/22 12:44:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.18 2007/09/07 12:41:48 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,6 +74,7 @@ FGOutput::FGOutput(FGFDMExec* fdmex) : FGModel(fdmex)
   delimeter = ", ";
   Filename = "";
   DirectivesFile = "";
+  output_file_name = "";
 
   Debug(0);
 }
@@ -572,7 +573,7 @@ void FGOutput::SocketStatusOutput(string out_str)
 bool FGOutput::Load(Element* element)
 {
   string type="", parameter="";
-  string name="", fname="";
+  string name="";
   int OutRate = 0;
   string property;
   unsigned int port;
@@ -584,18 +585,10 @@ bool FGOutput::Load(Element* element)
 # endif
 
   if (!DirectivesFile.empty()) { // A directives filename from the command line overrides
-    fname = DirectivesFile;      // one found in the config file.
-  } else {
-    fname = element->GetAttributeValue("file");
-  }
-
-  if (!fname.empty()) {
-    int len = fname.size();
-    if (fname.find(".xml") != string::npos) {
-      output_file_name = fname; // Use supplied name if last four letters are ".xml"
-    } else {
-      output_file_name = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
-    }
+    output_file_name = DirectivesFile;      // one found in the config file.
+    document = LoadXMLDocument(output_file_name);
+  } else if (!element->GetAttributeValue("file").empty()) {
+    output_file_name = element->GetAttributeValue("file");
     document = LoadXMLDocument(output_file_name);
   } else {
     document = element;

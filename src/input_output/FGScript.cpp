@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.21 2007/09/05 11:53:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.22 2007/09/07 12:41:48 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,6 +105,8 @@ bool FGScript::LoadScript( string script )
   Element *condition_element=0, *set_element=0, *delay_element=0;
   Element *notify_element = 0L, *notify_property_element = 0L;
   Element *property_element = 0L;
+  Element *output_element = 0L;
+  Element *input_element = 0L;
   bool result = false;
   double dt = 0.0, value = 0.0;
   struct event *newEvent;
@@ -116,6 +118,11 @@ bool FGScript::LoadScript( string script )
     cerr << "File: " << script << " could not be loaded." << endl;
     return false;
   }
+
+  // Set up input and output files if specified
+  
+  output_element = document->FindElement("output");
+  input_element = document->FindElement("input");
 
   if (document->GetName() != string("runscript")) {
     cerr << "File: " << script << " is not a script file" << endl;
@@ -140,7 +147,7 @@ bool FGScript::LoadScript( string script )
   EndTime   = run_element->GetAttributeValueAsNumber("end");
   dt        = run_element->GetAttributeValueAsNumber("dt");
   State->Setdt(dt);
-
+  
   // read aircraft and initialization files
 
   element = document->FindElement("use");
@@ -163,6 +170,21 @@ bool FGScript::LoadScript( string script )
   } else {
     cerr << "No \"use\" directives in the script file." << endl;
     return false;
+  }
+
+  // Now, read input spec if given.
+  if (input_element > 0) {
+    FDMExec->GetInput()->Load(input_element);
+  }
+
+  // Now, read output spec if given.
+  if (output_element > 0) {
+    string output_file = output_element->GetAttributeValue("file");
+    if (output_file.empty()) {
+      cerr << "No logging directives file was specified." << endl;
+    } else {
+      FDMExec->SetOutputDirectives(output_file);
+    }
   }
 
   // Read local property declarations

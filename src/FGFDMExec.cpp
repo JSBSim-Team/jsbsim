@@ -77,7 +77,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.39 2007/09/04 04:24:03 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.40 2007/09/07 12:41:48 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,41 +227,17 @@ bool FGFDMExec::Allocate(void)
 
   // Initialize models so they can communicate with each other
 
-  if (!Atmosphere->InitModel()) {
-    cerr << fgred << "Atmosphere model init failed" << fgdef << endl;
-    Error+=1;}
-  if (!FCS->InitModel())        {
-    cerr << fgred << "FCS model init failed" << fgdef << endl;
-    Error+=2;}
-  if (!Propulsion->InitModel()) {
-    cerr << fgred << "FGPropulsion model init failed" << fgdef << endl;
-    Error+=4;}
-  if (!MassBalance->InitModel()) {
-    cerr << fgred << "FGMassBalance model init failed" << fgdef << endl;
-    Error+=8;}
-  if (!Aerodynamics->InitModel()) {
-    cerr << fgred << "FGAerodynamics model init failed" << fgdef << endl;
-    Error+=16;}
-  if (!Inertial->InitModel()) {
-    cerr << fgred << "FGInertial model init failed" << fgdef << endl;
-    Error+=32;}
-  if (!GroundReactions->InitModel())   {
-    cerr << fgred << "Ground Reactions model init failed" << fgdef << endl;
-    Error+=64;}
-  if (!Aircraft->InitModel())   {
-    cerr << fgred << "Aircraft model init failed" << fgdef << endl;
-    Error+=128;}
-  if (!Propagate->InitModel())   {
-    cerr << fgred << "Propagate model init failed" << fgdef << endl;
-    Error+=256;}
-  if (!Auxiliary->InitModel())  {
-    cerr << fgred << "Auxiliary model init failed" << fgdef << endl;
-    Error+=512;}
-  if (!Input->InitModel())  {
-    cerr << fgred << "Input model init failed" << fgdef << endl;
-    Error+=1024;}
-
-  if (Error > 0) result = false;
+  Atmosphere->InitModel();
+  FCS->InitModel();
+  Propulsion->InitModel();
+  MassBalance->InitModel();
+  Aerodynamics->InitModel();
+  Inertial->InitModel();
+  GroundReactions->InitModel();
+  Aircraft->InitModel();
+  Propagate->InitModel();
+  Auxiliary->InitModel();
+  Input->InitModel();
 
   IC = new FGInitialCondition(this);
 
@@ -516,8 +492,8 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
           FGOutput* Output = new FGOutput(this);
           Output->InitModel();
           Schedule(Output,       1);
-          Outputs.push_back(Output);
           result = Output->Load(element);
+          Outputs.push_back(Output);
       }
       else {
         cerr << "Found unexpected subsystem: " << element_name << ", exiting." << endl;
@@ -769,19 +745,15 @@ void FGFDMExec::EnableOutput(void)
 
 bool FGFDMExec::SetOutputDirectives(string fname)
 {
-  bool result=true; // for now always return true
+  bool result;
 
-  if (Outputs.size() == 0) {
-    FGOutput* Output = new FGOutput(this);
-    Output->InitModel();
-    Schedule(Output,       1);
-    Output->SetDirectivesFile(fname);
-    Output->Load(0);
-    Outputs.push_back(Output);
-  } else { // Outputs > 1
-    cerr << "First output file being overridden" << endl;
-    Outputs[0]->SetDirectivesFile(fname);
-  }
+  FGOutput* Output = new FGOutput(this);
+  Output->SetDirectivesFile(fname);
+  Output->InitModel();
+  Schedule(Output,       1);
+  result = Output->Load(0);
+  Outputs.push_back(Output);
+
   return result;
 }
 
