@@ -96,7 +96,7 @@ class CompassSearch: public PatternSearch
   /** Overloaded assignment operator 
        @param A the search to be assigned to *this.
        @return  CompassSearch& */
-  CompassSearch& CompassSearch::operator=(const CompassSearch &A);
+  CompassSearch& operator=(const CompassSearch &A);
 
   /** BeginSearch() will call the methods that implement the actual 
      compass search algorithm. 

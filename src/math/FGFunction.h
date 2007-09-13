@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.9 2007/08/25 17:50:47 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.10 2007/09/13 02:59:51 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,6 +80,8 @@ A function definition consists of an operation, a value, a table, or a property
 - min (takes n args)
 - max (takes n args)
 - avg (takes n args)
+- fraction
+- integer
 
 An operation is defined in the configuration file as in the following example:
 
