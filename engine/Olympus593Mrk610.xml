@@ -2,8 +2,8 @@
 <!--
   File:     Olympus593Mrk610.xml
   Author:   Aero-Matic v 0.7
-  Version:  1.03
-  Date:     21 february 2005
+  Version:  1.04
+  Date:     30 March 2007
 
   Inputs:
     name:           Olympus593Mrk610
@@ -56,10 +56,11 @@
 
     - http://www.alpa.org/alpa/DesktopModules/ViewDocument.aspx?DocumentID=814 :
     At Mach 1.3, inlet-guide ramps lower to slow down the intake air.
-    At Mach 1.7 the afterburners are turned off, and the non-bypass engines are able to increase to Mach 2.04 (1150 kt)
-    with about half the fuel flow.
-    At cruise speed, the air entering the engines is reduced by intake ramps to 500 kt. This drop in intakes provides
-    45% of thrust, the engines 50%, and the convergent/divergent effect of the nozzle and stowed thrust reversers, 5%.
+    At Mach 1.7 the afterburners are turned off, and the non-bypass engines are able to increase
+    to Mach 2.04 (1150 kt) with about half the fuel flow.
+    At cruise speed, the air entering the engines is reduced by intake ramps to 500 kt.
+    This drop in intakes provides 45% of thrust, the engines 50%, and the convergent/divergent effect
+    of the nozzle and stowed thrust reversers, 5%.
     At Mach 2.04, fuel flow is 45200 lb/h.
 
 -->
@@ -85,13 +86,14 @@
      TABLE(3)      water-injection multiplier vs. altitude and mach
   -->
 
-  <!-- - TSFC 10500 kg/h / 31350 lbs :
+  <!-- - TSFC 10500 kg/h / 31350 lbs = 0.738 :
        Get the right consumption at max thrust (sea level).
        Depends strongly of center of gravity and aero reference point.
-       - ATSFC 22500 kg/h / 37080 lbs :
+       - ATSFC 22500 kg/h / 37080 lbs = 1.338 :
        Get the right consumption at afterburner (sea level).
 
-       Adjust the TSFC to get 20500 kg/h on average, at Mach 2.02 between 50000-57800 ft (60 ft/min during 2h10).
+       Adjust the TSFC to get 20500 kg/h on average, at Mach 2.02 between 50000-57800 ft
+      (60 ft/min during 2h10).
   -->
 
   <milthrust> 31350 </milthrust>
@@ -107,11 +109,13 @@
   <augmethod> 0 </augmethod>
   <injected> 0 </injected>
 
-  <!-- At takeoff and subsonic cruise : 12% of thrust by intake, 6% by secondary nozzles -> x 1.1360.
-       Air intakes starts at Mach 1.3 : 63 % of thrust in supersonic cruise, 29% secondary nozzles -> x 2.7030.
+  <!-- At takeoff and subsonic cruise : 12% of thrust by intake, 6% by secondary nozzles
+                                        = x 1.1360.
+       Air intakes starts at Mach 1.3 : 63 % of thrust in supersonic cruise, 29% secondary nozzles
+                                        = x 2.7030.
 
        One supposes secondary nozzles included in the engine thrust.
-       Simplification : no air intake effect below Mach 1.3.
+       Simplification : no air intake effect above Mach 1.3.
   -->
 
  <function name="IdleThrust">
@@ -150,7 +154,8 @@
   <table>
    <independentVar lookup="row">velocities/mach</independentVar>
    <independentVar lookup="column">atmosphere/density-altitude</independentVar>
-   <tableData>
+   <independentVar lookup="table">fcs/intake-subsonic-pos</independentVar>
+   <tableData breakPoint="0">
           -10000      0  10000  20000  30000  40000  50000  60000
     0.0   1.2600 1.0000 0.7400 0.5340 0.3720 0.2410 0.1490 0.0805
     0.2   1.1710 0.9340 0.6970 0.5060 0.3550 0.2310 0.1430 0.0772
@@ -165,6 +170,21 @@
     1.8   2.6159 2.2043 1.7928 1.4382 1.1333 0.7997 0.4955 0.2725
     2.0   3.6096 3.0945 2.5793 2.0644 1.6192 1.1405 0.7066 0.3888
     2.2   3.4042 2.9203 2.4365 2.1427 1.5725 1.0989 0.6809 0.3745
+   </tableData>
+   <tableData breakPoint="1">
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   1.2600 1.0000 0.7400 0.5340 0.3720 0.2410 0.1490 0.0805
+    0.2   1.1710 0.9340 0.6970 0.5060 0.3550 0.2310 0.1430 0.0772
+    0.4   1.1500 0.9210 0.6920 0.5060 0.3570 0.2330 0.1450 0.0783
+    0.6   1.1810 0.9510 0.7210 0.5320 0.3780 0.2480 0.1540 0.0832
+    0.8   1.2580 1.0200 0.7820 0.5820 0.4170 0.2750 0.1700 0.0918
+    1.0   1.3690 1.1200 0.8710 0.6510 0.4750 0.3150 0.1950 0.1053
+    1.2   1.4850 1.2300 0.9750 0.7440 0.5450 0.3640 0.2250 0.1215
+    1.4   1.5941 1.3400 1.0860 0.8450 0.6280 0.4240 0.2630 0.1420
+    1.6   1.4925 1.2597 1.0269 0.8265 0.6530 0.4617 0.2860 0.1573
+    1.8   1.4533 1.2246 0.9960 0.7990 0.6296 0.4443 0.2753 0.1514
+    2.0   1.3369 1.1461 0.9553 0.7646 0.5997 0.4224 0.2617 0.1440
+    2.2   1.2608 1.0816 0.9024 0.7936 0.5824 0.4070 0.2522 0.1387
    </tableData>
   </table>
  </function>
@@ -185,7 +205,8 @@
    <table>
     <independentVar lookup="row">velocities/mach</independentVar>
     <independentVar lookup="column">atmosphere/density-altitude</independentVar>
-    <tableData>
+    <independentVar lookup="table">fcs/intake-subsonic-pos</independentVar>
+    <tableData breakPoint="0">
           -10000      0  10000  20000  30000  40000  50000  60000
     0.0   1.1816 1.0000 0.8184 0.6627 0.5280 0.3756 0.2327 0.1280
     0.2   1.1308 0.9599 0.7890 0.6406 0.5116 0.3645 0.2258 0.1242
@@ -201,6 +222,23 @@
     2.0   4.9945 4.2390 3.5332 2.8280 2.2183 1.5622 0.9680 0.5324
     2.2   4.9250 4.2250 3.5250 3.1000 2.2750 1.5898 0.9850 0.5418
    </tableData>
+    <tableData breakPoint="1">
+          -10000      0  10000  20000  30000  40000  50000  60000
+    0.0   1.1816 1.0000 0.8184 0.6627 0.5280 0.3756 0.2327 0.1280
+    0.2   1.1308 0.9599 0.7890 0.6406 0.5116 0.3645 0.2258 0.1242
+    0.4   1.1150 0.9474 0.7798 0.6340 0.5070 0.3615 0.2240 0.1232
+    0.6   1.1284 0.9589 0.7894 0.6420 0.5134 0.3661 0.2268 0.1247
+    0.8   1.1707 0.9942 0.8177 0.6647 0.5309 0.3784 0.2345 0.1290
+    1.0   1.2411 1.0529 0.8648 0.7017 0.5596 0.3983 0.2467 0.1357
+    1.2   1.3287 1.1254 0.9221 0.7462 0.5936 0.4219 0.2614 0.1438
+    1.4   1.4365 1.2149 0.9933 0.8021 0.6360 0.4509 0.2794 0.1538
+    1.6   1.5711 1.3260 1.0809 0.8700 0.6874 0.4860 0.3011 0.1656
+    1.8   1.7301 1.4579 1.1857 0.9512 0.7495 0.5289 0.3277 0.1802
+    2.0   1.8314 1.5700 1.3086 1.0474 0.8216 0.5786 0.3585 0.1972
+    2.2   1.9700 1.6900 1.4100 1.2400 0.9100 0.6359 0.3940 0.2167
+    2.4   2.0700 1.8000 1.5300 1.3400 1.0000 0.7200 0.4600 0.2530
+    2.6   2.2000 1.9200 1.6400 1.4400 1.1000 0.8000 0.5200 0.2860
+    </tableData>
   </table>
  </function>
 
