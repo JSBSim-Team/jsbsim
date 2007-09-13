@@ -1,34 +1,47 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="http://jsbsim.sourceforge.net/JSBSim.xsl" type="text/xsl"?>
-<fdm_config name="Boeing314A" version="2.0" release="BETA"
+<fdm_config name="Boeing314A" version="2.0" release="PRODUCTION"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
     <fileheader>
-        <author> Anon Y. Mous </author>
-        <filecreationdate> 03-26-2006 </filecreationdate>
-        <version> 1.02 </version>
-        <description> Models a Boeing314A </description>
-        <note>314A model, 14.5 ft propeller, 1600 hp, 5200 miles range (314 model has smaller propeller, 1500 hp and 3500 miles range).</note>
-        <note>CG in range, between 26 and 29 % MAC.</note>
-        <note>takeoff flaps 2/3.</note>
+        <author> </author>
+        <note>Credits : J. Berndt for NACA 1103</note>
+        <filecreationdate> 8 March 2007 </filecreationdate>
+        <version> 1.04 </version>
+        <description> Boeing314A </description>
+
+        <note>314A model, 14.5 ft propeller, 1600 hp, 5200 miles range
+              (314 model has smaller propeller, 1500 hp and 3500 miles range).</note>
+        <note>center of gravity in range.</note>
+        <note>takeoff flaps 1/3.</note>
         <note>real gear ratio 16:9.</note>
         <note>economic speed 110 kt.</note>
+
+        <limitation>heading autopilot can hang in a roll : the ball of the turn indicator
+                    experiences a centrifugal force, in the direction of the roll.</limitation>
+
         <note>tilt at rest.</note>
         <note>hull drag.</note>
         <note>step lift and triming moment.</note>
         <note>rebound at landing.</note>
         <note>skipping at landing (empty weight).</note>
+        <note>gear height adjusted by 3D model, supposed accurate.</note>
+        <note>black paint visible only at empty fuel (buoyancy).</note>
 
-        <limitation>the gear tilt reduces brakes efficiency (empty at idle 700 RPM) : increasing the static friction brings vibrations at rest.</limitation>
+        <limitation>buoyancy by normal (equivalent to ground) gear spring.</limitation>
+        <limitation>gear tilt loses brakes efficiency :
+                    - rest with empty fuel 700 RPM, or full throttle.
+                    - more static friction brings vibrations at rest.
+                    - softer gear spring restores brakes, but loses the tilt (buoyancy).
+                    - disabling all gear filters restores brakes.</limitation>
         <limitation>no waterloop when turns by cross-wind (wing diging water).</limitation>
-        <limitation>weathervaning doesn't result of the real causes.</limitation>
+        <limitation>weathervaning by wing, instead of the sponsons.</limitation>
         <limitation>no weathervaning at rest.</limitation>
         <limitation>no propoising at takeoff.</limitation>
-        <limitation>no fuel selector.</limitation>
-        <limitation>heading autopilot can hang in a roll : the ball of the turn indicator experiences of a centrifugal force, in the direction of the roll.</limitation>
+        <limitation>skipping is obtained undirectly.</limitation>
 
-        <documentation>
+<!--
   File:     Boeing314A.xml
   Author:   Aero-Matic v 0.71
 
@@ -53,195 +66,233 @@
     CL-max:        1.4
     CD-0:          0.028
     K:             0.039
+-->
 
+        <note>
+         Notation :
+         - Hydrodynamic coefficients start by H.
+         - Artificial coefficients start by A.
+        </note>
 
-
-  Notation :
-  ========
-  Hydrodynamic coefficients starts by H.
-  Artificial coefficients starts by A.
-
-
-  Not possible :
-  ============
-  - buoyancy by weak spring, because that can rear up at rest (and speed makes water as hard as concrete). 
-  - rebound by hard spring, because static can be unstable with empty weight.
-
-
-  References :
-  ==========
-  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
-  (FAA certificate, TC704 - 25 january 1939, B-314) :
-
-  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 33.2 in. hg. 2100 rpm (1200 hp)
-                  at 5400 ft, 35.0 in. hg. 2100 rpm (1200 hp) at sea level.
-                  * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
-  Airspeed limits : * level flight or climb 178 mph (155 kt) true, glide or dive 212 mph (184 kt) true.
-                    * flaps extended (40 or less) 121 mph (105 kt) true.
-                    * flaps extended (more than 40) 105 mph (91 kt) true. 
-  Weight limits : landing 80000 lb, take-off 84000 lb.
-  Fuel capacity : 5448 gallons (32688 lb). 2 tanks at 600 gallons (3600 lb) each, in wing stubs; 1 tank 960 gallons
-                  (5760 lb) inboard; and 1 tank at 1164 gallons (6984 lb) outboard, in each hydro-stabilizer.
-
-  Note that :
-  - 1 gallon = 6 lb !
-  - this is the most recent content (314A), the real content of 314 could be lower.
-
-  Datum : nose of hull.
-  MAC : 258.79 in., leading edge of MAC at 398.66 in.
-  CG range (flight)   : * at 80000 lb or more, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
-                        * at less than 80000 lb, 444.3 in. (17.65% MAC) to 478.2 in. (30.7% MAC).
-           (landing)  : * at 70330 lb or more, 463.4 in. (25% MAC) to 478.2 in. (30.7% MAC).
-                        * at less than 70330 lb, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
-
-  Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
-                                     pressure     (kt)     blade    opening    installed
-  ======================================================================================
-     8900         80000       2100   Full         100     6159A-0     ...         ...
-                                     throttle
-     7500         84000       2100   Full         102     6159A-0     ...         ...
-                                     throttle
-    10000         80000       2100   Full         100     6243A-3   5 degrees     yes
-                                     throttle
-     9000         84000       2100   Full         102     6243A-3   5 degrees     yes
-                                     throttle
-
-  Propeller : * Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive, diameter 14'9-3/8" maximum
-              14'5-5/8" minimum (1928 lb).
-              * Hamilton standard 3 blade constant speed, 6159A-0 to 6159A-3 inclusive, diameter 14'3/8" maximum
-              13'8-3/4" minimum (1819 lb).
-
-  - http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet
-  (FAA certificate, TC704 - 2 may 1941 B-314A) :
-
-  Same model as B-314, except for engine, powerplane installation, engine mount, and inner structural details.
-
-  Engine limits : * maximum except take-off (straight line manifold pressure variation) : 35.8 in. hg. 2300 rpm (1350 hp)
-                  at 6200 ft, 37.5 in. hg. 2300 rpm (1350 hp) at sea level.
-                  * take-off (2 minutes), 43.5 in. hg. 2400 rpm (1600 hp).
-
-  Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
-                                     pressure     (kt)     blade    opening    installed
-  ======================================================================================
-    10000         80000       2300   Full         100     6243A-3   5 degrees     yes
-                                     throttle
-     9000         84000       2300   Full         102     6243A-3   5 degrees     yes
-                                     throttle
-
-  Propeller : Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive, diameter 14'9-3/8" maximum
-              14'5-5/8" minimum (1928 lb).
-
-  - http://case.pr.erau.edu/reports/US_reports/1940/1943.02.22_PanAmericanAirways_Boeing-314.pdf
-  (crash - 22 february 1943 Lisbon, Portugal) :
-
-  Elevator range : +/-25 deg (20 + 5).
-
-  - http://case.pr.erau.edu/reports/US_reports/1940/1941.08.16_PanAmericanAirways_Boeing-314.pdf
-  (crash - 16 august 1941 Apra Harbor, Guam) :
-
-  Takeoff : in less than 6000 ft (full load).
-
-  - http://www.hq.nasa.gov/office/pao/History/SP-468/app-a2.htm/
-
-  Maximum power (sea level) : 1600 hp per engine, power loading 13.1 lb / hp.
-  Weights : gross 84000 lb, empty 48400 lb.
-  Lengths : wing span 152.0 ft, length 106.0 ft.
-  Areas : wing 2867 sq ft, wind loading 29.3 lb / sq ft, drag area (CD0 x wing area) 78.56 sq ft.
-  Speeds : Vmax 201 mph at 6200 ft, Vcruise 184 mph at 11000 ft, Vstall 70 mph.
-  Drag : CD0 (zero-lift) 0.0274, wing aspect ratio 8.06, maximum lift/drag ratio 13.0.
-
-  - http://www.hq.nasa.gov/office/pao/History/SP-468/ch8-2.htm/
-
-  Curve of a hull drag.
-
-  - http://www.aviation-history.com/boeing/314.html/
-
-  4 Wright GR-2600 Twin Cyclone, 1600 hp (1192 kw), 14 cylinder, air-cooled, radial engines.
-  Weights : gross 82500 lb, empty 50268 lb.
-  Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
-  Wing area : 2867 sq ft.
-  Speeds : maximum level 199 mph, cruise 183 mph.
-  Service ceiling : 13400 ft.
-  Normal range : 3500 miles.
-
-  - http://www.daveswarbirds.com/usplanes/aircraft/b-314.htm/
-
-  4 Wright GR-2600 Cyclone, 1600 hp, 14 radial.
-  Weights : gross 82500 lb, empty 50268 lb.
-  Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
-  Wing area : 2867 sq ft.
-  Speeds : maximum 193 mph at 10000 ft, cruise 183 mph.
-  Service ceiling : 13400 ft.
-  Normal range : 3500 miles.
-
-  - http://www.flyingclippers.com/B314.html/
-  
-  Ceiling : cruise 13400 ft, maximum 19600 ft, climb 562 ft/min.
-  Crew : 6-10.
-  Payload : 40-74 (36 night) passengers.
-
-  - http://www.boeing.com/history/boeing/m314.html/
-
-  (B314-A)
-
-  4 1600 hp Wright GR-2600 Twin Cyclone.
-  Weights : gross 84000 lb.
-  Lengths : wing span 152.0 ft, length 106.0 ft.
-  Speeds : maximum 199 mph, cruise 184 mph.
-  Ceiling : 19600 ft.
-  Range : 5200 miles.
-  Accommodation : 10 crew, 74 passengers.
-
-  - http://www.southernoregonwarbirds.org/fa3.html/
-    (Franck Varnum flew during WWII).
- 
-  The sponsons (the short fins sticking out of the sides of the fuselage) provide lateral stability on the water. They
-  were filled with gasoline and as a result were not at all that buoyant.
-  If you had to taxi to downwind, on the turn to downwind the wind could get under the upwind wing and tip the plane until
-  the downwind wing dug into the water. In that condition a lot of water could flow into the wing, and once there could
-  flow through the wings and into the fuselage, dousing everyone and everything. That never happened to me but I did hear
-  of such cases.
-  When we faced that situation we would have several of the crew walk into the upwind wing out to the outer nacelle, to
-  provide balance during the turn. The wing at the fuselage was about 11 feet thick and contained a catwalk that led all
-  the way out to the outboard engine. Flight engineers could actually work on the engines in flight.
-
-  Set up the cruise at 117 mph (102 kt), until 135 mph (117 kt) as one burns off gas.
-  They were never anywhere near the advertised max cruise of 193 mph (168 kt) : KSFO - PHNL (2080 nmi) at an average
-  speed of 126 mph (109 kt), 16 hours depending of wind.
-  During "Amber Alerts", they leaned out the mixture and slowed the engine rpms to 100 mph (87 kt) : 23-24 hours till
-  Honolulu.
-
-  Landing : 70-75 mph (61-65 kt).
-
-  - TV documentary (Panam films) :
-
-  At rest, B314 tilted on one of its lateral sponsons.
-
-  - http://www.pilotfriend.com/flight_training/frames2/seaplane_main_frame.htm/ :
-  How to fly seaplanes and amphibians.
-
-  - http://naca.larc.nasa.gov/reports/1938/naca-tn-512/ :
-  A complete tank test of the hull of the Sikorsky S-40 flying-boat - American clipper class,
-  John R. Dawson, December 1934.
-
-  - http://naca.larc.nasa.gov/reports/1952/naca-report-1103/ :
-  Generalized theory for seaplane impact, Benjamin Milwitzky, October 1952.
-
-  - http://www.nwlink.com/~orion/Documents/Hull.pdf/ :
-  Stepped hull development for amphibious aircraft, Orion Technologies.
+        <documentation>
+         Not possible :
+         - buoyancy by weak spring, because that can rear up at rest
+           (and speed makes water as hard as concrete). 
+         - rebound by hard spring, because static can be unstable with empty weight.
         </documentation>
+
+        <reference
+          refID="FAA certificate, TC704, B-314"
+          author="FAA"
+          title="http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet"
+          date="25 January 1939"/>
+        <documentation>
+         Engine limits :   * maximum except take-off (straight line manifold pressure variation) :
+                             33.2 in. hg. 2100 rpm (1200 hp) at 5400 ft,
+                             35.0 in. hg. 2100 rpm (1200 hp) at sea level.
+                           * take-off (2 minutes), 42.5 in. hg. 2400 rpm (1550 hp).
+         Airspeed limits : * level flight or climb 178 mph (155 kt) true, glide or dive 212 mph (184 kt) true.
+                           * flaps extended (40 or less) 121 mph (105 kt) true.
+                           * flaps extended (more than 40) 105 mph (91 kt) true. 
+         Weight limits :   landing 80000 lb, take-off 84000 lb.
+         Fuel capacity :   5448 gallons (32688 lb) :
+                             2 tanks at 600 gallons (3600 lb) each, in wing stubs;
+                             1 tank 960 gallons (5760 lb) inboard;
+                             and 1 tank at 1164 gallons (6984 lb) outboard, in each hydro-stabilizer.
+
+         Note that :
+         - 1 gallon = 6 lb !
+         - this is the most recent content (314A), the real content of 314 could be lower.
+
+         Datum : nose of hull.
+         MAC : 258.79 in., leading edge of MAC at 398.66 in.
+         CG range (flight)   : * at 80000 lb or more, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
+                               * at less than 80000 lb, 444.3 in. (17.65% MAC) to 478.2 in. (30.7% MAC).
+                  (landing)  : * at 70330 lb or more, 463.4 in. (25% MAC) to 478.2 in. (30.7% MAC).
+                               * at less than 70330 lb, 455.6 in. (22% MAC) to 478.2 in. (30.7% MAC).
+
+         Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
+                                            pressure     (kt)     blade    opening    installed
+         ======================================================================================
+            8900         80000       2100   Full         100     6159A-0     ...         ...
+                                            throttle
+            7500         84000       2100   Full         102     6159A-0     ...         ...
+                                            throttle
+           10000         80000       2100   Full         100     6243A-3   5 degrees     yes
+                                            throttle
+            9000         84000       2100   Full         102     6243A-3   5 degrees     yes
+                                            throttle
+
+         Propeller : * Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive,
+                       diameter 14'9-3/8" maximum 14'5-5/8" minimum (1928 lb).
+                     * Hamilton standard 3 blade constant speed, 6159A-0 to 6159A-3 inclusive,
+                       diameter 14'3/8" maximum 13'8-3/4" minimum (1819 lb).
+        </documentation>
+        <reference
+          refID="FAA certificate, TC704, B-314A"
+          author="FAA"
+          title="http://www.airweb.faa.gov/Regulatory_and_Guidance_Library/rgMakeModel.nsf/MainFrame?OpenFrameSet"
+          date="2 May 1941"/>
+        <documentation>
+         Same model as B-314, except for engine, powerplane installation, engine mount,
+         and inner structural details.
+
+         Engine limits : * maximum except take-off (straight line manifold pressure variation) :
+                           35.8 in. hg. 2300 rpm (1350 hp) at 6200 ft,
+                           37.5 in. hg. 2300 rpm (1350 hp) at sea level.
+                         * take-off (2 minutes), 43.5 in. hg. 2400 rpm (1600 hp).
+
+         Ceiling (ft)   Weight (lb)   RPM   Manifold   True IAS   Prop.   Cowl flap   De-icers
+                                            pressure     (kt)     blade    opening    installed
+         ======================================================================================
+           10000         80000       2300   Full         100     6243A-3   5 degrees     yes
+                                            throttle
+            9000         84000       2300   Full         102     6243A-3   5 degrees     yes
+                                            throttle
+
+         Propeller : Hamilton standard 3 blade constant speed, 6243A-3 to 6243A-6 inclusive,
+                     diameter 14'9-3/8" maximum 14'5-5/8" minimum (1928 lb).
+        </documentation>
+        <documentation>
+         - http://case.pr.erau.edu/reports/US_reports/1940/1943.02.22_PanAmericanAirways_Boeing-314.pdf
+           (crash - 22 february 1943 Lisbon, Portugal) :
+
+         Elevator range : +/-25 deg (20 + 5).
+
+         - http://case.pr.erau.edu/reports/US_reports/1940/1941.08.16_PanAmericanAirways_Boeing-314.pdf
+         (crash - 16 august 1941 Apra Harbor, Guam) :
+
+         Takeoff : in less than 6000 ft (full load).
+
+         - http://www.hq.nasa.gov/office/pao/History/SP-468/app-a2.htm/
+
+         Maximum power (sea level) : 1600 hp per engine, power loading 13.1 lb / hp.
+         Weights : gross 84000 lb, empty 48400 lb.
+         Lengths : wing span 152.0 ft, length 106.0 ft.
+         Areas : wing 2867 sq ft, wind loading 29.3 lb / sq ft, drag area (CD0 x wing area) 78.56 sq ft.
+         Speeds : Vmax 201 mph at 6200 ft, Vcruise 184 mph at 11000 ft, Vstall 70 mph.
+         Drag : CD0 (zero-lift) 0.0274, wing aspect ratio 8.06, maximum lift/drag ratio 13.0.
+
+         - http://www.hq.nasa.gov/office/pao/History/SP-468/ch8-2.htm/
+
+         Curve of a hull drag.
+
+         - http://www.aviation-history.com/boeing/314.html/
+
+         4 Wright GR-2600 Twin Cyclone, 1600 hp (1192 kw), 14 cylinder, air-cooled, radial engines.
+         Weights : gross 82500 lb, empty 50268 lb.
+         Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
+         Wing area : 2867 sq ft.
+         Speeds : maximum level 199 mph, cruise 183 mph.
+         Service ceiling : 13400 ft.
+         Normal range : 3500 miles.
+
+         - http://www.daveswarbirds.com/usplanes/aircraft/b-314.htm/
+
+         4 Wright GR-2600 Cyclone, 1600 hp, 14 radial.
+         Weights : gross 82500 lb, empty 50268 lb.
+         Lengths : wing span 152.0 ft, length 106.0 ft, height 27.7 ft.
+         Wing area : 2867 sq ft.
+         Speeds : maximum 193 mph at 10000 ft, cruise 183 mph.
+         Service ceiling : 13400 ft.
+         Normal range : 3500 miles.
+
+         - http://www.flyingclippers.com/B314.html/
+  
+         Ceiling : cruise 13400 ft, maximum 19600 ft, climb 562 ft/min.
+         Crew : 6-10.
+         Payload : 40-74 (36 night) passengers.
+
+         - http://www.boeing.com/history/boeing/m314.html/
+
+         (B314-A)
+
+         4 1600 hp Wright GR-2600 Twin Cyclone.
+         Weights : gross 84000 lb.
+         Lengths : wing span 152.0 ft, length 106.0 ft.
+         Speeds : maximum 199 mph, cruise 184 mph.
+         Ceiling : 19600 ft.
+         Range : 5200 miles.
+         Accommodation : 10 crew, 74 passengers.
+
+         - http://www.southernoregonwarbirds.org/fa3.html/
+         (Franck Varnum flew during WWII).
+ 
+         The sponsons (the short fins sticking out of the sides of the fuselage) provide lateral stability
+         on the water. They were filled with gasoline and as a result were not at all that buoyant.
+         If you had to taxi to downwind, on the turn to downwind the wind could get under the upwind wing
+         and tip the plane until the downwind wing dug into the water. In that condition a lot of water
+         could flow into the wing, and once there could flow through the wings and into the fuselage,
+         dousing everyone and everything. That never happened to me but I did hear of such cases.
+         When we faced that situation we would have several of the crew walk into the upwind wing out
+         to the outer nacelle, to provide balance during the turn. The wing at the fuselage was about
+         11 feet thick and contained a catwalk that led all the way out to the outboard engine.
+         Flight engineers could actually work on the engines in flight.
+
+         Set up the cruise at 117 mph (102 kt), until 135 mph (117 kt) as one burns off gas.
+         They were never anywhere near the advertised max cruise of 193 mph (168 kt) :
+         KSFO - PHNL (2080 nmi) at an average speed of 126 mph (109 kt), 16 hours depending of wind.
+         During "Amber Alerts", they leaned out the mixture and slowed the engine rpms to 100 mph (87 kt) :
+         23-24 hours till Honolulu.
+
+         Landing : 70-75 mph (61-65 kt).
+
+         - TV documentary (Panam films) :
+
+         At rest, B314 tilted on one of its lateral sponsons.
+
+         - http://www.pilotfriend.com/flight_training/frames2/seaplane_main_frame.htm/ :
+         How to fly seaplanes and amphibians.
+        </documentation>
+        <reference
+          refID="A complete tank test of the hull of the Sikorsky S-40 flying-boat - American clipper class"
+          author="John R. Dawson"
+          title="http://naca.larc.nasa.gov/reports/1938/naca-tn-512/"
+          date="December 1934"/>
+        <reference
+          refID="Generalized theory for seaplane impact"
+          author="Benjamin Milwitzky"
+          title="http://naca.larc.nasa.gov/reports/1952/naca-report-1103/"
+          date="October 1952"/>
+        <reference
+          refID="Stepped hull development for amphibious aircraft"
+          author="Orion Technologies"
+          title="http://www.nwlink.com/~orion/Documents/Hull.pdf"
+          date=""/>
+        <reference
+          refID="A preliminary correlation of the behavior of water rudders on seaplanes and flying boats"
+          author="F. W. S. Locke Jr."
+          title="http://naca.larc.nasa.gov/reports/1947/naca-tn-1387/"
+          date="August 1947"/>
     </fileheader>
 
     <metrics>
+        <documentation>
+         Pilot's eyepoint location, in aircraft's own coord system, FROM cg.
+         X, Y, Z, in inches
+
+         ORIGIN (0,0,0) is at NOSE.
+
+         CG : empty load at 24.1 % of MAC, full load at 30.1 % of MAC.
+         Aero reference point at 30.7 % of MAC.
+
+         Chord at MAC.
+
+         Add ac_wingincidence : 1/20 of wing chord.
+
+         Htailarm : distance from CG to horizontal tail tip.
+        </documentation>
         <wingarea unit="FT2"> 2867 </wingarea>
         <wingspan unit="FT"> 152 </wingspan>
-        <chord unit="FT"> 21.57 </chord>
+        <chord unit="FT"> 21.57 </chord>                                                 <!-- aeromatic 18.86 -->
+        <wing_incidence unit="DEG"> 2.86 </wing_incidence>                               <!-- added to help the take-off -->
         <htailarea unit="FT2"> 458.72 </htailarea>
-        <htailarm unit="FT"> 22.91 </htailarm>
+        <htailarm unit="FT"> 22.91 </htailarm>                                           <!-- aeromatic 53.00 -->
         <vtailarea unit="FT2"> 516.06 </vtailarea>
-        <vtailarm unit="FT"> 17.17 </vtailarm>
+        <vtailarm unit="FT"> 17.17 </vtailarm>                                           <!-- added (turbulence) -->
+        <!-- AC_LV        53.00                       -->
         <location name="AERORP" unit="IN">
-            <x> 477.7 </x>
+            <x> 478.1 </x>
             <y> 0 </y>
             <z> 0 </z>
         </location>
@@ -258,26 +309,56 @@
     </metrics>
 
     <mass_balance>
+        <documentation>
+         Center of gravity location, empty weight, in aircraft's own structural coord
+         system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
+         right wing.
+
+         Put in comment payload, to test at empty weight.
+        </documentation>
         <ixx unit="SLUG*FT2"> 2.31442e+06 </ixx>
         <iyy unit="SLUG*FT2"> 1.34649e+06 </iyy>
         <izz unit="SLUG*FT2"> 3.59608e+06 </izz>
         <ixy unit="SLUG*FT2"> 0 </ixy>
         <ixz unit="SLUG*FT2"> 0 </ixz>
         <iyz unit="SLUG*FT2"> 0 </iyz>
-        <emptywt unit="LBS"> 49872 </emptywt>
+        <emptywt unit="LBS"> 48400 </emptywt>                               <!-- aeromatic 50400 -->
         <location name="CG" unit="IN">
-            <x> 477.7 </x>
+            <x> 459.2 </x>
             <y> 0 </y>
             <z> -31.8 </z>
         </location>
+        <pointmass name="payload">
+            <weight unit="LBS"> 1500 </weight>
+            <location name="POINTMASS" unit="IN">
+                <x> 460.0 </x>
+                <y> 0 </y>
+                <z> -31.8 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
+        <documentation>
+         Left/right sponsons at 70% MAC and 1/4 wing : higher at 3/4 hull height (tilt at rest).
+
+         The hump and step gears replaces the nose and rear gears, when the hull raises on the step.
+
+         The black painting of the hull should be visible, only if empty fuel.
+
+         NACA 1387 : no steering, as the 314 has no water rudder; turns by differential power on engines.
+
+         All gears have identical coefficients (hull in water).
+
+         Disabling the filters restores the brakes.
+
+         CAUTION : changing gear height or spring affects rest h_b-mac-ft !
+        </documentation>
         <contact type="BOGEY" name="HUMP_LG">
             <location unit="IN">
                 <x> 66.4 </x>
                 <y> 0 </y>
-                <z> -125.6 </z>
+                <z> -100.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -287,42 +368,69 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NOSE </brake_group>
             <retractable>0</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="NOSE_LG">
             <location unit="IN">
                 <x> 395.4 </x>
                 <y> 0 </y>
-                <z> -145.6 </z>
+                <z> -120.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 84000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 84000 </spring_coeff>                       <!-- aeromatic 25200 -->
+            <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>                 <!-- aeromatic 8400 -->
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> NOSE </brake_group>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
             <retractable>0</retractable>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="LEFT_MLG">
             <location unit="IN">
                 <x> 495.4 </x>
                 <y> -228 </y>
-                <z> -135.6 </z>
+                <z> -110.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
             <rolling_friction> 0.02 </rolling_friction>
-            <spring_coeff unit="LBS/FT"> 84000 </spring_coeff>
-            <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>
+            <spring_coeff unit="LBS/FT"> 84000 </spring_coeff>                       <!-- aeromatic 84000 -->
+            <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>                 <!-- aeromatic 16800 -->
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> LEFT </brake_group>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
             <retractable>0</retractable>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="RIGHT_MLG">
             <location unit="IN">
                 <x> 495.4 </x>
                 <y> 228 </y>
-                <z> -135.6 </z>
+                <z> -110.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -331,13 +439,22 @@
             <damping_coeff unit="LBS/FT/SEC"> 16800 </damping_coeff>
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> RIGHT </brake_group>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
             <retractable>0</retractable>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="STEP_MLG">
             <location unit="IN">
                 <x> 535.4 </x>
                 <y> 0 </y>
-                <z> -125.6 </z>
+                <z> -100.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -347,12 +464,21 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> TAIL </brake_group>
             <retractable>0</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
         <contact type="BOGEY" name="REAR_MLG">
             <location unit="IN">
                 <x> 803.4 </x>
                 <y> 0 </y>
-                <z> -145.6 </z>
+                <z> -120.6 </z>
             </location>
             <static_friction> 0.8 </static_friction>
             <dynamic_friction> 0.5 </dynamic_friction>
@@ -362,14 +488,29 @@
             <max_steer unit="DEG"> 0.0 </max_steer>
             <brake_group> TAIL </brake_group>
             <retractable>0</retractable>
+            <relaxation_velocity>
+                <rolling unit="FT/SEC">0</rolling>
+                <side unit="FT/SEC">0</side>
+            </relaxation_velocity>
+            <force_lag_filter>
+                <rolling>0</rolling>
+                <side>0</side>
+            </force_lag_filter>
+            <wheel_slip_filter>0</wheel_slip_filter>
         </contact>
     </ground_reactions>
+
     <propulsion>
+        <documentation>
+         propeller at 1/5 of length, 1/10 and 2/10 of wing span.
+
+         1 tank feeds 1 engine, plus floor and sponson (left or right).
+        </documentation>
         <engine file="WrightGR-2600">
             <location unit="IN">
-                <x> 254.4 </x>
-                <y> -364.8 </y>
-                <z> 40 </z>
+                <x> 254.4 </x>                                                    <!-- aeromatic 636 -->
+                <y> -364.8 </y>                                                   <!-- aeromatic -304 -->
+                <z> 40 </z>                                                       <!-- aeromatic -40 -->
             </location>
             <orient unit="DEG">
                 <roll> 0.0 </roll>
@@ -395,7 +536,7 @@
         <engine file="WrightGR-2600">
             <location unit="IN">
                 <x> 254.4 </x>
-                <y> -182.4 </y>
+                <y> -182.4 </y>                                                   <!-- aeromatic -304 -->
                 <z> 40 </z>
             </location>
             <orient unit="DEG">
@@ -473,12 +614,21 @@
                 </orient>
             </thruster>
         </engine>
+        <documentation>
+         radius : lb => kg => divide by 0.792 (depends of fuel density) => liter => radius of sphere.
+
+         all tanks are 40 % of MAC.
+        </documentation>
         <tank type="FUEL">    <!-- Tank number 0 -->
+            <documentation>
+              wing tanks behind the engines.
+            </documentation>
             <location unit="IN">
-                <x> 0 </x>
-                <y> 0 </y>
-                <z> 0 </z>
+                <x> 502 </x>                                                              <!-- aeromatic 636 -->
+                <y> -364.8 </y>                                                           <!-- aeromatic 0 -->
+                <z> 30 </z>                                                               <!-- aeromatic -31.8 -->
             </location>
+            <radius unit="IN"> 311 </radius>                                              <!-- aeromatic 1 -->
             <capacity unit="LBS"> 3600 </capacity>
             <contents unit="LBS"> 3600 </contents>
         </tank>
@@ -510,6 +660,9 @@
             <contents unit="LBS"> 3600 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 4 -->
+            <documentation>
+              inboard tank (floor).
+            </documentation>
             <location unit="IN">
                 <x> 502 </x>
                 <y> 0 </y>
@@ -519,6 +672,9 @@
             <contents unit="LBS"> 5760 </contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 5 -->
+            <documentation>
+              ouboard tanks (hydro-stabilizer).
+            </documentation>
             <location unit="IN">
                 <x> 502 </x>
                 <y> -182.4 </y>
@@ -537,6 +693,7 @@
             <contents unit="LBS"> 6984 </contents>
         </tank>
     </propulsion>
+
     <flight_control name="FCS: Boeing314A">
      <channel name="Pitch">
 
@@ -553,6 +710,9 @@
             <input>fcs/pitch-trim-sum</input>
             <gain>0.01745</gain>
             <range>
+                <documentation>
+                  replaced -0.35/0.30 by real -25/25 deg.
+                </documentation>
                 <min>-25</min>
                 <max>25</max>
             </range>
@@ -648,6 +808,9 @@
         <kinematic name="Flaps Control">
             <input>fcs/flap-cmd-norm</input>
             <traverse>
+                <documentation>
+                  changed 15/30 deg to 15/40/55 (real is above 40).
+                </documentation>
                 <setting>
                     <position>0</position>
                     <time>0</time>
@@ -698,15 +861,69 @@
     </flight_control>
 
     <aerodynamics>
+        <documentation>
+             Hydrodynamics depends of 4 coefficients, related to gear height and spring.
+
+             h_b-mac-ft at rest (with the 84000 lbs/ft spring) :
+             - 0.0450 empty fuel.
+             - 0.0490 full load.
+
+             h_b-mac-ft at rotation speed (find with logging), with hydrodynamic lift :
+             - 0.0650 empty fuel.
+             - 0.0690 full load.
+
+             0.0690 is also 0.0490 + 0.020,
+             where 3.04' (from the keel to step) / wing span (152') = 0.020;
+        </documentation>
+
+        <documentation>
+             Hull resistance in water until the step :
+             - maximum at 42 % of takeoff speed : hump at 42 kt full load (100 kt) and
+               34 kt empty load (80 kt).
+             - reduced by hydrodynamic lift.
+             - constant above 70 kt.
+             - 50 % of drag when hull is going out of water, and then none.
+             - below ground effect.
+
+             similar to NACA TN 512, figure 11.
+
+           % of takeoff speed, % of hump drag :
+           -   0.0/106,  0.0/59. (dock)
+           -   5.0/106,  4.0/59.
+           -   8.0/106,  8.0/59.
+           -  11.0/106, 13.5/59.
+           -  14.0/106, 21.0/59.
+           -  16.5/106, 27.0/59.
+           -  19.0/106, 33.0/59.
+           -  21.0/106, 36.5/59.
+           -  24.5/106, 42.5/59.
+           -  28.0/106, 47.5/59.
+           -  32.5/106, 53.0/59.
+           -  35.0/106, 55.0/59.
+           -  38.0/106, 56.5/59.
+           -  41.5/106, 58.5/59.
+           -  45.0/106, 59.0/59. (hump)
+           -  48.0/106, 58.5/59.
+           -  51.5/106, 57.0/59.
+           -  55.0/106, 53.5/59.
+           -  59.5/106, 48.5/59.
+           -  64.5/106, 42.0/59.
+           -  69.5/106, 36.5/59.
+           -  76.0/106, 29.0/59.
+           -  92.0/106, 11.5/59.
+           -  96.0/106,  7.0/59.
+           -  99.5/106,  5.0/59.
+           - 106.0/106,  0.0/59. (lift-off)
+        </documentation>
         <function name="aero/function/kHDhull">
-            <description>Hull_factor</description>
+            <description>Hull_resistance</description>
             <product>
                   <table>
                       <independentVar lookup="row">velocities/vc-kts</independentVar>
                       <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
                       <independentVar lookup="table">inertia/weight-lbs</independentVar>
                       <tableData breakPoint="47850">
-                            0.0450	0.0550	0.0650
+                                        0.0450	0.0550	0.0650
                           0.0000	0.0000	0.0000	0.0000
                           3.7000	0.0678	0.0339	0.0000
                           6.0000	0.1356	0.0678	0.0000
@@ -731,7 +948,7 @@
                           57.4000	0.1949	0.0975	0.0000
                       </tableData>
                       <tableData breakPoint="84000.0000">
-                            0.0490	0.0590	0.0690
+                                        0.0490	0.0590	0.0690
                           0.0000	0.0000	0.0000	0.0000
                           4.7000	0.0678	0.0339	0.0000
                           7.5000	0.1356	0.0678	0.0000
@@ -759,6 +976,83 @@
             </product>
         </function>
 
+        <documentation>
+             The hull goes on its step :
+             - hydrodynamic lift.
+             - 80 % when going out of water.
+             - 1st altitude = h_b-mac-ft at rest.
+             - 2nd altitude : in the middle.
+             - 3rd altitude : 3.04' (from the keel) / wing span (152') = 0.020;
+             the planing layer is thin.
+
+             Not implemented :
+             - drag when the bow plunges into a wave hump (nose down).
+             - drag when after body digs the water (nose up).
+        </documentation>
+        <function name="aero/function/kHLstep">
+            <description>Step_lift</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="column">velocities/vc-kts</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850.0000">
+                                        0.0000	17.0000	34.0000
+                          0.0450	0.0000	0.0000	1.0000
+                          0.0550	0.0000	0.0000	0.8000
+                          0.0650	0.0000	0.0000	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                                        0.0000	21.0000	42.0000
+                          0.0490	0.0000	0.0000	1.0000
+                          0.0590	0.0000	0.0000	0.8000
+                          0.0690	0.0000	0.0000	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <documentation>
+             The bow climbs over the wave hump :
+             - strong pitch (positiv moment) until the hump (nose up on the hump),
+             then light nose down (negativ moment).
+             - the center of buoyancy shifts with speed :
+             near center of gravity (step) at rest, then aft the step (afterbody)
+             when ploughing the wave hump; finally forwards the step (forebody), once planing on the step.
+             - 80 % when going out of water.
+
+             similar to  NACA TN 512, figure 13.
+        </documentation>
+        <function name="aero/function/kHmstep">
+            <description>Step_moment</description>
+            <product>
+                  <table>
+                      <independentVar lookup="row">velocities/vc-kts</independentVar>
+                      <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
+                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
+                      <tableData breakPoint="47850.0000">
+                                        0.0450	0.0550	0.0650
+                          0.0000	0.0000	0.0000	0.0000
+                          17.0000      -1.6000 -1.2800	0.0000
+                          34.0000	0.8000	0.6400	0.0000
+                          51.0000	0.0000	0.0000	0.0000
+                          57.000       -0.1000 -0.0800	0.0000
+                      </tableData>
+                      <tableData breakPoint="84000.0000">
+                                        0.0490	0.0590	0.0690
+                          0.0000	0.0000	0.0000	0.0000
+                          21.0000      -1.6000 -1.2800	0.0000
+                          42.0000	0.8000	0.6400	0.0000
+                          63.0000	0.0000	0.0000	0.0000
+                          72.0000      -0.1000 -0.0800	0.0000
+                      </tableData>
+                  </table>
+            </product>
+        </function>
+
+        <documentation>
+            created to help the takeoff at full load.
+        </documentation>
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
             <product>
@@ -775,65 +1069,24 @@
             </product>
         </function>
 
-        <function name="aero/function/kHLstep">
-            <description>Step_factor</description>
-            <product>
-                  <table>
-                      <independentVar lookup="row">aero/h_b-mac-ft</independentVar>
-                      <independentVar lookup="column">velocities/vc-kts</independentVar>
-                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                      <tableData breakPoint="47850.0000">
-                            0.0000	17.0000	34.0000
-                          0.0450	0.0000	0.0000	1.0000
-                          0.0550	0.0000	0.0000	0.8000
-                          0.0650	0.0000	0.0000	0.0000
-                      </tableData>
-                      <tableData breakPoint="84000.0000">
-                            0.0000	21.0000	42.0000
-                          0.0490	0.0000	0.0000	1.0000
-                          0.0590	0.0000	0.0000	0.8000
-                          0.0690	0.0000	0.0000	0.0000
-                      </tableData>
-                  </table>
-            </product>
-        </function>
-
-        <function name="aero/function/kHmstep">
-            <description>Step_factor</description>
-            <product>
-                  <table>
-                      <independentVar lookup="row">velocities/vc-kts</independentVar>
-                      <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
-                      <independentVar lookup="table">inertia/weight-lbs</independentVar>
-                      <tableData breakPoint="47850.0000">
-                            0.0450	0.0550	0.0650
-                          0.0000	0.0000	0.0000	0.0000
-                          17.0000	-1.6000	-1.2800	0.0000
-                          34.0000	0.8000	0.6400	0.0000
-                          51.0000	0.0000	0.0000	0.0000
-                          57.0000	-0.1000	-0.0800	0.0000
-                      </tableData>
-                      <tableData breakPoint="84000.0000">
-                            0.0490	0.0590	0.0690
-                          0.0000	0.0000	0.0000	0.0000
-                          21.0000	-1.6000	-1.2800	0.0000
-                          42.0000	0.8000	0.6400	0.0000
-                          63.0000	0.0000	0.0000	0.0000
-                          72.0000	-0.1000	-0.0800	0.0000
-                      </tableData>
-                  </table>
-            </product>
-        </function>
-
+        <documentation>
+             Compensates compression of nose gear by speed :
+             - enough strong to make rise the bow, and have an effect on flight commands.
+             - 80 % when going out of water.
+             - hydrodynamic lift indirectly provides weathervaning if wing has enough alpha.
+             In reality, cross wind applied on the center of gravity (CG), is opposed by the water acting on a sinking float.
+             Hence a momment around the center of buoyancy (CB).
+             - gear reaction code seems not appropriate in this case.
+        </documentation>
         <function name="aero/function/kAmgear">
-            <description>Compression_factor</description>
+            <description>Compression_correction</description>
             <product>
                   <table>
                       <independentVar lookup="row">velocities/vc-kts</independentVar>
                       <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
                       <independentVar lookup="table">inertia/weight-lbs</independentVar>
                       <tableData breakPoint="47850.0000">
-                            0.0450	0.0550	0.0650
+                                        0.0450	0.0550	0.0650
                           0.0000	0.0000	0.0000	0.0000
                           17.0000	2.0000	1.6000	0.0000
                           34.0000	1.0000	0.8000	0.0000
@@ -841,7 +1094,7 @@
                           57.0000	0.7000	0.5600	0.0000
                       </tableData>
                       <tableData breakPoint="84000.0000">
-                            0.0490	0.0590	0.0690
+                                        0.0490	0.0590	0.0690
                           0.0000	0.0000	0.0000	0.0000
                           21.0000	2.0000	1.6000	0.0000
                           42.0000	3.0000	2.4000	0.0000
@@ -852,6 +1105,18 @@
             </product>
         </function>
 
+        <documentation>
+              NACA report 1103 (rebound on touch-down ) :
+              - figure 2, khi 3 and 15 deg.
+              gamma, velocity angle over water : 0 - 80 deg, horizontal is 0. 
+              - figure 6, tau 6 deg (used as 3 deg) and tau 12 deg (used as 15 deg). 
+              tau, bow pitch over water : 3 - 15 deg, horizontal is 0.
+
+              khi = (sin(tau) / sin(gamma)) x cos(tau + gamma) :
+              - no rebound when flight path near vertical (energy absorbed by water).
+              - maximum near planing condition.
+              - favoured by bow pitch.
+        </documentation>
         <function name="aero/function/kHmkhi">
             <description>Rebound_due_to_khi</description>
             <product>
@@ -860,7 +1125,7 @@
                       <independentVar lookup="column">attitude/pitch-rad</independentVar>
                       <independentVar lookup="table">velocities/vc-kts</independentVar>
                       <tableData breakPoint="42.0000">
-                            0.0500	0.2600
+                                        0.0500	0.2600
                           0.0000	0.0000	0.0000
                           0.3500	0.0000	0.0000
                           0.7000	0.0000	0.0000
@@ -868,8 +1133,8 @@
                           1.4000	0.0000	0.0000
                       </tableData>
                       <tableData breakPoint="52.0000">
-                            0.0500	0.2600
-                          0.0000	15.0000	13.0000
+                                        0.0500	0.2600
+                          0.0000       15.0000 13.0000
                           0.3500	0.3500	1.1000
                           0.7000	0.2500	0.6000
                           1.0500	0.1500	0.5000
@@ -880,6 +1145,11 @@
         </function>
 
         <axis name="DRAG">
+            <documentation>
+              - more drag inside water than air (ratio 7/1).
+              - increases the takeoff distance.
+              - could depend of weight.
+            </documentation>
             <function name="aero/coefficient/HDhull0">
                 <description>Drag_at_hump</description>
                 <product>
@@ -889,6 +1159,10 @@
                     <value>0.1200</value>
                 </product>
             </function>
+
+            <documentation>
+               added.
+            </documentation>
             <function name="aero/coefficient/CDo">
                 <description>Drag_at_zero_lift</description>
                 <product>
@@ -897,6 +1171,10 @@
                     <value>0.0274</value>
                 </product>
             </function>
+            <documentation>
+              - renamed from CDo.
+              - substracted Cdo 0.0274.
+            </documentation>
             <function name="aero/coefficient/CDalpha">
                 <description>Drag_due_to_alpha</description>
                 <product>
@@ -905,8 +1183,8 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -1.5700	1.4726
-                              -0.2600	0.0286
+                             -1.5700	1.4726
+                             -0.2600	0.0286
                               0.0000	0.0006
                               0.2600	0.0286
                               1.5700	1.4726
@@ -965,8 +1243,8 @@
                       <table>
                           <independentVar>aero/beta-rad</independentVar>
                           <tableData>
-                              -1.5700	1.2300
-                              -0.2600	0.0500
+                             -1.5700	1.2300
+                             -0.2600	0.0500
                               0.0000	0.0000
                               0.2600	0.0500
                               1.5700	1.2300
@@ -998,6 +1276,12 @@
         </axis>
 
         <axis name="LIFT">
+            <documentation>
+              - and missing lift for flaps.
+              - introducing roll quickly reduces lift at landing.
+              - sponson in water reduces lift : 0.02/0.029 rad at rest.
+              - on step, the possible roll is higher (sponson touching water).
+            </documentation>
             <function name="aero/coefficient/HLstep0">
                 <description>Lift_at_step</description>
                 <product>
@@ -1009,30 +1293,34 @@
                           <independentVar lookup="column">velocities/vc-kts</independentVar>
                           <independentVar lookup="table">inertia/weight-lbs</independentVar>
                           <tableData breakPoint="47850.0000">
-                              	34.0000	44.0000
-                              -0.0690	0.0000	0.0000
-                              -0.0590	0.0000	0.5000
-                              -0.0490	0.5000	1.0000
-                              -0.0290	1.0000	1.0000
-                              0.0290	1.0000	1.0000
-                              0.0490	0.5000	1.0000
-                              0.0590	0.0000	0.5000
-                              0.0690	0.0000	0.0000
+                              	        34.0000  44.0000
+                             -0.0690	0.0000 	 0.0000
+                             -0.0590	0.0000	 0.5000
+                             -0.0490	0.5000	 1.0000
+                             -0.0290	1.0000	 1.0000
+                              0.0290	1.0000	 1.0000
+                              0.0490	0.5000	 1.0000
+                              0.0590	0.0000	 0.5000
+                              0.0690	0.0000	 0.0000
                           </tableData>
                           <tableData breakPoint="84000.0000">
-                              	42.0000	52.0000
-                              -0.0600	0.0000	0.0000
-                              -0.0500	0.0000	0.5000
-                              -0.0400	0.5000	1.0000
-                              -0.0200	1.0000	1.0000
-                              0.0200	1.0000	1.0000
-                              0.0400	0.5000	1.0000
-                              0.0500	0.0000	0.5000
-                              0.0600	0.0000	0.0000
+                              	        42.0000  52.0000
+                             -0.0600	0.0000 	 0.0000
+                             -0.0500	0.0000 	 0.5000
+                             -0.0400	0.5000	 1.0000
+                             -0.0200	1.0000	 1.0000
+                              0.0200	1.0000	 1.0000
+                              0.0400	0.5000	 1.0000
+                              0.0500	0.0000	 0.5000
+                              0.0600	0.0000	 0.0000
                           </tableData>
                       </table>
                 </product>
             </function>
+
+            <documentation>
+               created.
+            </documentation>
             <function name="aero/coefficient/CLo">
                 <description>Lift_at_zero_alpha</description>
                 <product>
@@ -1042,6 +1330,9 @@
                     <value>0.2400</value>
                 </product>
             </function>
+            <documentation>
+               substracted CLo 0.240.
+            </documentation>
             <function name="aero/coefficient/CLalpha">
                 <description>Lift_due_to_alpha</description>
                 <product>
@@ -1051,7 +1342,7 @@
                       <table>
                           <independentVar>aero/alpha-rad</independentVar>
                           <tableData>
-                              -0.2000	-0.9800
+                             -0.2000   -0.9800
                               0.0000	0.0000
                               0.2400	1.1600
                               0.6000	0.4640
@@ -1059,6 +1350,10 @@
                       </table>
                 </product>
             </function>
+            <documentation>
+              - unchanged.
+              - 0.9 is the value to takeoff at 2/3 full load; water provides the missing lift.
+            </documentation>
             <function name="aero/coefficient/dCLflap">
                 <description>Delta_Lift_due_to_flaps</description>
                 <product>
@@ -1161,6 +1456,10 @@
                     <value>1.0000</value>
                 </product>
             </function>
+
+            <documentation>
+               could depend of weight.
+            </documentation>
             <function name="aero/coefficient/Amgear0">
                 <description>Compression</description>
                 <product>
@@ -1171,6 +1470,12 @@
                     <value>0.5000</value>
                 </product>
             </function>
+
+            <documentation>
+             - rest 0 ft/min.
+             - maximum 700 ft/min.
+             - before hydrodynamic lift.
+            </documentation>
             <function name="aero/coefficient/Hmrebound0">
                 <description>Rebound_due_to_vertical_speed</description>
                 <product>
@@ -1183,18 +1488,19 @@
                           <independentVar lookup="column">aero/h_b-mac-ft</independentVar>
                           <independentVar lookup="table">inertia/weight-lbs</independentVar>
                           <tableData breakPoint="47850.0000">
-                              	0.0650	0.0700	0.0750
-                              0.0000	0.0000	0.0000	0.0000
+                              	        0.0650	0.0700	0.0750
+                               0.0000	0.0000	0.0000	0.0000
                               11.6700	0.0000	0.3000	0.0000
                           </tableData>
                           <tableData breakPoint="84000.0000">
-                              	0.0690	0.0740	0.0790
-                              0.0000	0.0000	0.0000	0.0000
+                              	        0.0690	0.0740	0.0790
+                               0.0000	0.0000	0.0000	0.0000
                               11.6700	0.0000	0.3000	0.0000
                           </tableData>
                       </table>
                 </product>
             </function>
+
             <function name="aero/coefficient/Cmalpha">
                 <description>Pitch_moment_due_to_alpha</description>
                 <product>
@@ -1290,3 +1596,5 @@
         </axis>
     </aerodynamics>
 </fdm_config>
+
+
