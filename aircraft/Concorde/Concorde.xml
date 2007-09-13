@@ -6,12 +6,12 @@
 
     <fileheader>
         <author> </author>
-        <filecreationdate> 31 December 2006 </filecreationdate>
-        <version> 1.07 </version>
+        <filecreationdate> 20 May 2007 </filecreationdate>
+        <version> 1.08 </version>
         <description>Aerospatiale/British Aerospace Concorde</description>
 
         <note>Nose gear is longer.</note>
-        <note>Air intake effect included, which allows more drag at Mach 1.3-2.0.</note>
+        <note>Air intake effect, which allows more drag at Mach 1.3-2.0.</note>
         <note>Full tanks at maximum takeoff load.</note>
         <note>Tanks with dissymmetry.</note>
         <note>Landing pitch is 10 deg (maximum landing load) and ground effect.</note>
@@ -19,12 +19,16 @@
         <note>Climb Mach 0.95 to 1.7 in 10 minutes.</note>
         <note>Can reach Mach 2.0, below the VMO.</note>
         <note>Inside of center of gravity corridor.</note>
-        <note>London - New York : can land below max landing weight (aloft westerly at 39 kt).</note>
-        <note>gear height adjusted by 3D model, supposed accurate.</note>
+        <note>Shift of center of pressure.</note>
+        <note>London - New York : lands below max landing weight (aloft westerly at 39 kt).</note>
+        <note>Gear height adjusted by 3D model, supposed accurate.</note>
 
-        <limitation>Tail wheel can touch the runway on takeoff or autoland.</limitation>
         <limitation>Model uses flaps as nose.</limitation>
-        <limitation>Without an additional PID, above Mach 1, autopilot heading hold would lock with a right roll.</limitation>
+        <limitation>Cross feed by additional tanks :
+                    engine may run out of fuel above X 3 speed-up.</limitation>
+        <limitation>Without an additional PID, above Mach 1,
+                    autopilot heading hold would lock with a right roll.</limitation>
+        <limitation>Air intake failure only on the 4 engines at once.</limitation>
 
 <!--
   File:     Concorde.xml
@@ -195,41 +199,41 @@
           Speed : max operating Mach 2.04, average takeoff 250 mph (217 kt),
                   average landing 185 mph (161 kt).
 
-          AOA : min -5.5deg (above Mach 1), max 16.5deg.
+          AOA : min -5.5 deg (above Mach 1), max 16.5 deg.
           Vortex above the entire wing creates lift at low speed and high AOA.
           Ground effect at landing : downwash of the air betweeen the wing and the ground.
           Delta wing provides a great deal of lift at Mach speed, with very little drag.
 
-          Flight systems (range up and down) : inner elevons 9deg, middle and
-                                               outer elevons 23.5deg, rudder 30deg.
+          Flight systems (range up and down) : inner elevons 9 deg, middle and
+                                               outer elevons 23.5 deg, rudder 30 deg.
           Actual travel limits are a little lower than these mechanical limits.
 
           Turbulence mode reduces the trim rate.
 
           Gear :
           - main gear : track 7 ft. 72 in., brakes.
-          - nose : wheelbase to main gear 59 ft. 8 1/4 in., no brake, +/-60deg steering angle.
+          - nose : wheelbase to main gear 59 ft. 8 1/4 in., no brake, +/-60 deg steering angle.
           - tail : no brake.
           - up process takes 12 s : door opening 2 s, gear retract 8 s, door closing 8 s.
 
           Nose :
-          - from UP : visor transit 0deg 6-8 s.
-          - nose transit 5deg 4-6 s.
-          - to DOWN : nose transit 12.5deg 5.7 s.
+          - from UP : visor transit 0 deg 6-8 s.
+          - nose transit 5 deg 4-6 s.
+          - to DOWN : nose transit 12.5 deg 5.7 s.
 
-          Max total temperature (TMO) : 127degC (on nose).
-          Max oil temperature : start and takeoff 125degC, takeoff and 5 minutes
-                                transient 195degC, continuous operation 190degC,
-                                starting -35degC, adavance above idle -20degC.
+          Max total temperature (TMO) : 127 degC (on nose).
+          Max oil temperature : start and takeoff 125 degC, takeoff and 5 minutes
+                                transient 195 degC, continuous operation 190 degC,
+                                starting -35 degC, adavance above idle -20 degC.
           Mas oil pressure : continued operation 5 PSI, takeoff 10 PSI.
-          Max fuel temperature : startup -40degC, advance above idle -40degC,
-                                 continued operation 50degC.
+          Max fuel temperature : startup -40 degC, advance above idle -40 degC,
+                                 continued operation 50 degC.
         </documentation>
         <documentation>
           - http://www.alpa.org/alpa/DesktopModules/ViewDocument.aspx?DocumentID=814 :
 
           Mass gross weight : takeoff lasts 45 s, V1 165 kt, VR 195 kt, V2 220.
-          Initial pitch at rotation is 13.5deg.
+          Initial pitch at rotation is 13.5 deg.
           Cockpit is very noisy until nose is streamlined.
           Climb rate is slowly increased from 1500 to 3000 ft/s.
           Best lift-over-drag ratio over 300 kt.
@@ -249,8 +253,8 @@
         <documentation>
           - http://www.concorde-jet.com/ :
 
-          Nose : Odeg visor up supersonic, 0deg visor down subsonic,
-                 5deg takeoff/subsonic, and 12.5deg approach/landing/taxi.
+          Nose : O deg visor up supersonic, 0 deg visor down subsonic,
+                 5 deg takeoff/subsonic, and 12.5 deg approach/landing/taxi.
           Takeoff : 175 kt, in 24 s, 1700-2100 ft/minute.
           Landing : 162 kt, 1500-1700 ft/minute.
           Subsonic cruise : Mach 0.93.
@@ -345,15 +349,17 @@
 
              Center of gravity :
              - level at wing level : -1/4 of max external fuselage height (130 in.).
-             - 51.7%, inside corridor of C0 (maximum takeoff load) => real C0 starts over front gear location (18.7 m).
+             - 51.7%, inside corridor of C0 (maximum takeoff load)
+               => real C0 starts over front gear location (18.7 m).
 
              Aero refence point :
              - level at wing level : -1/8 of max external fuselage height (130 in.).
-             - back of center of gravity reduces autopilot roll (step back at supersonic cruise). It has been found that
-             200 inches behind CG reduces AUTOPILOT ROLL.
-             => real at Mach 2 is 62% of C0.
+             - back of center of gravity reduces autopilot roll (step back at supersonic cruise).
+               It has been found that 200 inches behind CG reduces AUTOPILOT ROLL.
+               => real at Mach 2 is 62% of C0.
 
-             Eye point location : length from nose to cockpit (24 ft), 1/4 of max external fuselage width (113 in.),
+             Eye point location : length from nose to cockpit (24 ft),
+                                  1/4 of max external fuselage width (113 in.),
                                   1/4 of max fuselage height (113 in.).
 
              Add ac_wingincidence : 1/20 of wing chord (C0).
@@ -372,7 +378,7 @@
         <wing_incidence unit="DEG"> 2.86 </wing_incidence>                               <!-- aeromatic none (0.0) -->
         <!-- AC_LV        91.05                                      unit ? -->
         <location name="AERORP" unit="IN">                                               <!-- aeromatic 1335.4, 0.0, 0.0 -->
-            <x> 1410.4000 </x>
+            <x> 736.22 </x>
             <y> 0.0000 </y>
             <z> -16.2500 </z>
         </location>
@@ -394,30 +400,39 @@
              system. X, Y, Z, in inches; X is positive out the tail, Y positive out the
              right wing.
         </documentation>
+
         <ixx unit="SLUG*FT2"> 1432000.0000 </ixx>                                        <!-- aeromatic 3419278 -->
         <iyy unit="SLUG*FT2"> 19034000.0000 </iyy>                                       <!-- aeromatic 22486091 -->
         <izz unit="SLUG*FT2"> 10100000.0000 </izz>                                       <!-- aeromatic 21487661 -->
         <ixy unit="SLUG*FT2"> 0.0000 </ixy>
         <ixz unit="SLUG*FT2"> 0.0000 </ixz>
         <iyz unit="SLUG*FT2"> 0.0000 </iyz>
-        <emptywt unit="LBS"> 203000.0000 </emptywt>                                      <!-- aeromatic 244800 -->
+        <emptywt unit="LBS"> 173500.0000 </emptywt>                                      <!-- aeromatic 244800 -->
         <location name="CG" unit="IN">                                                   <!-- aeromatic 1335.4, 0.0, -60.7 -->
             <x> 1299.4000 </x>
             <y> 0.0000 </y>
             <z> -32.5000 </z>
         </location>
+        <pointmass name="payload">
+            <weight unit="LBS"> 29500 </weight>
+            <location name="payload" unit="IN">
+                <x> 1299.4 </x>
+                <y> 0 </y>
+                <z> -32.5 </z>
+            </location>
+        </pointmass>
     </mass_balance>
 
     <ground_reactions>
         <documentation>
-            - gear in length (2428 in.) : tail 6/7;
-            => real nose (18.7 m = 736.2 in.), wing (18.7 m + 18.2 m = 1452.8 in.).
+            - => real nose (18.7 m = 736.2 in.), wing (18.7 m + 18.2 m = 1452.8 in.).
             - gear height determined by 3D model, supposed at scale.
+
             - tyre diameter of main gears, at 3/42 of the length between the gears (18.2 m) = 51.2 in.
-            - additional contact points, for crash detection when gear retracted.
 
             - adjust the front spring, to be horizontal at full load.
         </documentation>
+
         <contact type="BOGEY" name="NOSE_LG">
             <location unit="IN">
                 <x> 736.2000 </x>
@@ -508,6 +523,11 @@
             <brake_group> NONE </brake_group>
             <retractable>1</retractable>
         </contact>
+
+        <documentation>
+            additional contact points, for crash detection when gear retracted.
+        </documentation>
+
         <contact type="STRUCTURE" name="NOSE_TIP">
             <location unit="IN">
                 <x> 0.0000 </x>
@@ -558,314 +578,8 @@
         </contact>
     </ground_reactions>
 
-    <propulsion>
-        <documentation>
-            - Engine center at 5/7 of length (2428 in.), -2/5 of fuselage height (130 in.).
-            - Border aligned with main gear track (304 in. / 2).
-            => real engine diameter is 1.65 m = (11 - 7.7) / 2.
-            - Thruster center 3/4 of length (2428 in.), aligned with engines.
-        </documentation>
-        <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> -249.4000 </y>
-                <z> -52.0000 </z>                                                      <!-- aeromatic -40 -->
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
-            <feed>0</feed>
-            <thruster file="direct">
-                <location unit="IN">
-                    <x> 1821.0000 </x>
-                    <y> -249.4000 </y>
-                    <z> -52.0000 </z>
-                </location>
-                <orient unit="DEG">
-                    <roll> 0.0 </roll>
-                    <pitch> 0.0 </pitch>
-                    <yaw> 0.0 </yaw>
-                </orient>
-            </thruster>
-        </engine>
-        <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> -184.5000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
-            <feed>1</feed>
-            <thruster file="direct">
-                <location unit="IN">
-                    <x> 1821.0000 </x>
-                    <y> -184.5000 </y>
-                    <z> -52.0000 </z>
-                </location>
-                <orient unit="DEG">
-                    <roll> 0.0 </roll>
-                    <pitch> 0.0 </pitch>
-                    <yaw> 0.0 </yaw>
-                </orient>
-            </thruster>
-        </engine>
-        <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> 184.5000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
-            <feed>2</feed>
-            <thruster file="direct">
-                <location unit="IN">
-                    <x> 1821.0000 </x>
-                    <y> 184.5000 </y>
-                    <z> -52.0000 </z>
-                </location>
-                <orient unit="DEG">
-                    <roll> 0.0 </roll>
-                    <pitch> 0.0 </pitch>
-                    <yaw> 0.0 </yaw>
-                </orient>
-            </thruster>
-        </engine>
-        <engine file="Olympus593Mrk610">
-            <location unit="IN">
-                <x> 1734.0000 </x>
-                <y> 249.4000 </y>
-                <z> -52.0000 </z>
-            </location>
-            <orient unit="DEG">
-                <roll> 0.0 </roll>
-                <pitch> 0.0000 </pitch>
-                <yaw> 0.0000 </yaw>
-            </orient>
-            <feed>3</feed>
-            <thruster file="direct">
-                <location unit="IN">
-                    <x> 1821.0000 </x>
-                    <y> 249.4000 </y>
-                    <z> -52.0000 </z>
-                </location>
-                <orient unit="DEG">
-                    <roll> 0.0 </roll>
-                    <pitch> 0.0 </pitch>
-                    <yaw> 0.0 </yaw>
-                </orient>
-            </thruster>
-        </engine>
-
-        <documentation>
-           - The parameters are gear track, and tank 5 radius;
-           -  to check against engine center.
-
-           => Real length is arm, % of MAC (see table above) : real MAC (C0 1089 in.)
-               starts at 18.7 m (736.2 in.).
-           => Real half gear track is 7.7 m / 2 (151.6 in.).
-
-           Configuration for take off with maximum weight :
-           - all tanks full, except tank 11 at 86%.
-           - average tanks 5/7 and 6/8, otherwise 1 ton more under the right wing,
-             which probably causes right bank of
-             autopilot (roll), which has difficulties to catch the heading.
-        </documentation>
-
-        <tank type="FUEL">    <!-- Tank number 0 -->
-            <documentation>
-                Tank 1 : 1/2 radius of tank 5; align 3/4 of gear track.
-                => 39.80 % MAC
-            </documentation>
-
-            <location unit="IN">
-                <x> 1170.0000 </x>
-                <y> -114.0000 </y>
-                <z>  -12.0000 </z>                                                    <!-- aeromatic -12 -->
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 9255.0100 </capacity>
-            <contents unit="LBS"> 9255.0100 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 1 -->
-            <documentation>
-                tank 2 : 1/2 radius of tank 5; align 1/2 of gear track; near engine center.
-                => 76.10 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1565.0000 </x>
-                <y> -76.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 10075.1300 </capacity>
-            <contents unit="LBS"> 10075.1300 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 2 -->
-            <documentation>
-                tank 3 : 1/2 radius of tank 5; align 1/2 of gear track; near engine center.
-                => 76.10 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1565.0000 </x>
-                <y> 76.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 10075.1300 </capacity>
-            <contents unit="LBS"> 10075.1300 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 3 -->
-            <documentation>
-                tank 4 : 1/2 radius of tank 5; align 3/4 of gear track.
-                => 39.80 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 1170.0000 </x>
-                <y> 114.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 9255.0100 </capacity>
-            <contents unit="LBS"> 9255.0100 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 4 -->
-            <documentation>
-                Tank 5 : center + radius = gear position.
-                => 49.40 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1274.0000 </x>
-                <y> -152.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 100 </radius>
-            <capacity unit="LBS"> 15873.2800 </capacity>
-            <contents unit="LBS"> 15873.2800 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 5 -->
-            <documentation>
-                Tank 6 : 3/2 radius of tank 5; align 1/2 of gear track; before engine center.
-                => 66.70 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1463.0000 </x>
-                <y> -76.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 150 </radius>
-            <capacity unit="LBS"> 25544.9600 </capacity>
-            <contents unit="LBS"> 25544.9600 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 6 -->
-            <documentation>
-                Tank 7 : radius of tank 5; before engine center.
-                => 64.70 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1441.0000 </x>
-                <y> 152.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 100 </radius>
-            <capacity unit="LBS"> 16325.2300 </capacity>
-            <contents unit="LBS"> 16325.2300 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 7 -->
-            <documentation>
-                Tank 8 : 3/2 radius of tank 5; align 1/2 of gear track.
-                => 46.70 % MAC.
-            </documentation>
-            <location unit="IN">
-                <x> 1245.0000 </x>
-                <y> 76.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 150 </radius>
-            <capacity unit="LBS"> 28302.9500 </capacity>
-            <contents unit="LBS"> 28302.9500 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 8 -->
-            <documentation>
-                Tank 9 : 3/2 radius of tank 5; centred on plane axis.
-                => 16.90 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 920.0000 </x>
-                <y> 0.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 150 </radius>
-            <capacity unit="LBS"> 24462.4900 </capacity>
-            <contents unit="LBS"> 24462.4900 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 9 -->
-            <documentation>
-                Tank 10 : 1/2 radius of tank 5; centered on plane axis.
-                => 30.50 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 1068.0000 </x>
-                <y> 0.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 26329.8100 </capacity>
-            <contents unit="LBS"> 26329.8100 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 10 -->
-            <documentation>
-                Tank 11 : 1/2 radius of tank 5; centered on plane axis.
-               => 113.90 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 1977.0000 </x>
-                <y> 0.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 50 </radius>
-            <capacity unit="LBS"> 22961.1400 </capacity>
-            <contents unit="LBS"> 19735.3100 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 11 -->
-            <documentation>
-                Tank 5A : radius of tank 5; align 5/2 of gear track.
-                => 74.80 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 1551.0000 </x>
-                <y> -380.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 100 </radius>
-            <capacity unit="LBS"> 4905.2900 </capacity>
-            <contents unit="LBS"> 4905.2900 </contents>
-        </tank>
-        <tank type="FUEL">    <!-- Tank number 12 -->
-            <documentation>
-                Tank 7A : radius of tank 5; align 5/2 of gear track.
-                => 74.80 % MAC
-            </documentation>
-            <location unit="IN">
-                <x> 1551.0000 </x>
-                <y> 380.0000 </y>
-                <z> -12.0000 </z>
-            </location>
-            <radius unit="IN"> 100 </radius>
-            <capacity unit="LBS"> 4905.2900 </capacity>
-            <contents unit="LBS"> 4905.2900 </contents>
-        </tank>
-    </propulsion>
     <flight_control name="Concorde">
+
      <channel name="Pitch">
 
         <summer name="Pitch Trim Sum">
@@ -1081,7 +795,7 @@
             <input>gear/gear-cmd-norm</input>
             <traverse>
                 <documentation>
-                   changed 5 s => up in 12 s.
+                   => up in 12 s.
                 </documentation>
                 <setting>
                     <position>0.0000</position>
@@ -1111,7 +825,394 @@
         </kinematic>
 
      </channel>
+
+     <property>fcs/intake-subsonic-pos</property>
+
     </flight_control>
+
+    <propulsion>
+        <documentation>
+            - after FCS, which creates the intake command variable.
+            - air intake on (supersonic) by default.
+        </documentation>
+
+        <documentation>
+            - Engine center at 5/7 of length (2428 in.), -2/5 of fuselage height (130 in.).
+            - Border aligned with main gear track (304 in. / 2).
+              => real engine diameter is 1.65 m = (11 - 7.7) / 2.
+            - Thruster center 3/4 of length (2428 in.), aligned with engines.
+        </documentation>
+
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -249.4000 </y>
+                <z> -52.0000 </z>                                                      <!-- aeromatic -40 -->
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>13</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> -249.4000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> -184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>14</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> -184.5000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 184.5000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>15</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> 184.5000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+        <engine file="Olympus593Mrk610">
+            <location unit="IN">
+                <x> 1734.0000 </x>
+                <y> 249.4000 </y>
+                <z> -52.0000 </z>
+            </location>
+            <orient unit="DEG">
+                <roll> 0.0 </roll>
+                <pitch> 0.0000 </pitch>
+                <yaw> 0.0000 </yaw>
+            </orient>
+            <feed>16</feed>
+            <thruster file="direct">
+                <location unit="IN">
+                    <x> 1821.0000 </x>
+                    <y> 249.4000 </y>
+                    <z> -52.0000 </z>
+                </location>
+                <orient unit="DEG">
+                    <roll> 0.0 </roll>
+                    <pitch> 0.0 </pitch>
+                    <yaw> 0.0 </yaw>
+                </orient>
+            </thruster>
+        </engine>
+
+        <documentation>
+           The parameters are gear track, and tank 5 radius;
+           to check against engine center.
+
+           => Real length is arm, % of MAC (see table above) : real MAC (C0 1089 in.)
+              starts at 18.7 m (736.2 in.).
+           => Real half gear track is 7.7 m / 2 (151.6 in.).
+
+           Configuration for take off with maximum weight :
+           all tanks full, except tank 11 at 86%.
+        </documentation>
+
+        <tank type="FUEL">    <!-- Tank number 0 -->
+            <documentation>
+                Tank 1 :
+                - 1/2 radius of tank 5.
+                - align 3/4 of gear track.
+                - => 39.80 % MAC.
+            </documentation>
+
+            <location unit="IN">
+                <x> 1170.0000 </x>
+                <y> -114.0000 </y>
+                <z>  -12.0000 </z>                                                    <!-- aeromatic -12 -->
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 9255.0100 </capacity>
+            <contents unit="LBS"> 9255.0100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 1 -->
+            <documentation>
+                tank 2 :
+                - 1/2 radius of tank 5.
+                - align 1/2 of gear track.
+                - near engine center.
+                - => 76.10 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1565.0000 </x>
+                <y> -76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 10075.1300 </capacity>
+            <contents unit="LBS"> 10075.1300 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 2 -->
+            <documentation>
+                tank 3 :
+                - 1/2 radius of tank 5.
+                - align 1/2 of gear track.
+                - near engine center.
+                - => 76.10 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1565.0000 </x>
+                <y> 76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 10075.1300 </capacity>
+            <contents unit="LBS"> 10075.1300 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 3 -->
+            <documentation>
+                tank 4 :
+                - 1/2 radius of tank 5.
+                - align 3/4 of gear track.
+                - => 39.80 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 1170.0000 </x>
+                <y> 114.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 9255.0100 </capacity>
+            <contents unit="LBS"> 9255.0100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 4 -->
+            <documentation>
+                Tank 5 :
+                - center + radius = gear position.
+                - => 49.40 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1274.0000 </x>
+                <y> -152.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 100 </radius>
+            <capacity unit="LBS"> 15873.2800 </capacity>
+            <contents unit="LBS"> 15873.2800 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 5 -->
+            <documentation>
+                Tank 6 :
+                - 3/2 radius of tank 5.
+                - align 1/2 of gear track.
+                - before engine center.
+                - => 66.70 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1463.0000 </x>
+                <y> -76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 150 </radius>
+            <capacity unit="LBS"> 25544.9600 </capacity>
+            <contents unit="LBS"> 25544.9600 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 6 -->
+            <documentation>
+                Tank 7 :
+                - radius of tank 5.
+                - before engine center.
+                - => 64.70 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1441.0000 </x>
+                <y> 152.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 100 </radius>
+            <capacity unit="LBS"> 16325.2300 </capacity>
+            <contents unit="LBS"> 16325.2300 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 7 -->
+            <documentation>
+                Tank 8 :
+                - 3/2 radius of tank 5.
+                - align 1/2 of gear track.
+                - => 46.70 % MAC.
+            </documentation>
+            <location unit="IN">
+                <x> 1245.0000 </x>
+                <y> 76.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 150 </radius>
+            <capacity unit="LBS"> 28302.9500 </capacity>
+            <contents unit="LBS"> 28302.9500 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 8 -->
+            <documentation>
+                Tank 9 :
+                - 3/2 radius of tank 5.
+                - centred on plane axis.
+                - => 16.90 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 920.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 150 </radius>
+            <capacity unit="LBS"> 24462.4900 </capacity>
+            <contents unit="LBS"> 24462.4900 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 9 -->
+            <documentation>
+                Tank 10 :
+                - 1/2 radius of tank 5.
+                - centered on plane axis.
+                - => 30.50 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 1068.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 26329.8100 </capacity>
+            <contents unit="LBS"> 26329.8100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 10 -->
+            <documentation>
+                Tank 11 :
+                - 1/2 radius of tank 5.
+                - centered on plane axis.
+                - => 113.90 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 1977.0000 </x>
+                <y> 0.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 50 </radius>
+            <capacity unit="LBS"> 22961.1400 </capacity>
+            <contents unit="LBS"> 19735.3100 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 11 -->
+            <documentation>
+                Tank 5A :
+                - radius of tank 5.
+                - align 5/2 of gear track.
+                - => 74.80 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 1551.0000 </x>
+                <y> -380.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 100 </radius>
+            <capacity unit="LBS"> 4905.2900 </capacity>
+            <contents unit="LBS"> 4905.2900 </contents>
+        </tank>
+        <tank type="FUEL">    <!-- Tank number 12 -->
+            <documentation>
+                Tank 7A :
+                - radius of tank 5.
+                - align 5/2 of gear track.
+                - => 74.80 % MAC
+            </documentation>
+            <location unit="IN">
+                <x> 1551.0000 </x>
+                <y> 380.0000 </y>
+                <z> -12.0000 </z>
+            </location>
+            <radius unit="IN"> 100 </radius>
+            <capacity unit="LBS"> 4905.2900 </capacity>
+            <contents unit="LBS"> 4905.2900 </contents>
+        </tank>
+
+        <documentation>
+            LP valve to emulate cross feed of engine :
+            - position like the engine tank.
+            - not empty, to avoid stop at launch.
+            - can feed 75000 kg/h per engine (takeoff with reheat X 3 speed up) :
+              25000 x 3 / 3600 = 46 lb content, if supplied every 1 s from other tanks.
+        </documentation>
+
+        <tank type="FUEL">
+            <location unit="IN">
+                <x> 1170.0 </x>
+                <y> -114.0 </y>
+                <z>  -12.0 </z>
+            </location>
+            <capacity unit="LBS"> 46 </capacity>
+            <contents unit="LBS"> 46 </contents>
+        </tank>
+        <tank type="FUEL">
+            <location unit="IN">
+                <x> 1565.0 </x>
+                <y> -76.0 </y>
+                <z> -12.0 </z>
+            </location>
+            <capacity unit="LBS"> 46 </capacity>
+            <contents unit="LBS"> 46 </contents>
+        </tank>
+        <tank type="FUEL">
+            <location unit="IN">
+                <x> 1565.0 </x>
+                <y> 76.0 </y>
+                <z> -12.0 </z>
+            </location>
+            <capacity unit="LBS"> 46 </capacity>
+            <contents unit="LBS"> 46 </contents>
+        </tank>
+        <tank type="FUEL">
+            <location unit="IN">
+                <x> 1170.0 </x>
+                <y> 114.0 </y>
+                <z>  -12.0 </z>
+            </location>
+            <capacity unit="LBS"> 46 </capacity>
+            <contents unit="LBS"> 46 </contents>
+        </tank>
+    </propulsion>
 
     <aerodynamics>
 
@@ -1123,10 +1224,30 @@
             <max unit="DEG">16.5</max>
         </alphalimits>
 
+        <aero_ref_pt_shift_x>
+          <function name="aero/function/kC0">
+            <description>Shift_of_center_of_pressure</description>
+            <product>
+                  <table>
+                      <independentVar>velocities/mach</independentVar>
+                      <tableData>
+                          0.5   	0.550
+                          0.9   	0.580
+                          1.0   	0.645
+                          1.2   	0.635
+                          1.5   	0.625
+                          2.0   	0.620
+                      </tableData>
+                  </table>
+            </product>
+          </function>
+        </aero_ref_pt_shift_x>
+
         <documentation>
-         Created :
-         - additional lift on takeoff, otherwise tail touches the ground.
-         - downwash of the air between the wing and the ground creates a cushion, making the landing smooth.
+           Added :
+           - additional lift on takeoff, otherwise tail touches the ground.
+           - downwash of the air between the wing and the ground creates a cushion,
+             making the landing smooth.
         </documentation>
         <function name="aero/function/kCLge">
             <description>Change_in_lift_due_to_ground_effect</description>
@@ -1506,5 +1627,4 @@
         </axis>
     </aerodynamics>
 </fdm_config>
-
 
