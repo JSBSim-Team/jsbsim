@@ -65,15 +65,15 @@ INCLUDES
 #      include <math.h>
 #    else
 #      include <cmath>
+#      if !(defined(_MSC_VER) && _MSC_VER <= 1200)
+          using std::sqrt;
+#      endif
 #    endif
      using std::ostream;
      using std::istream;
      using std::cerr;
      using std::cout;
      using std::endl;
-#    if !(defined(_MSC_VER) && _MSC_VER <= 1200)
-       using std::sqrt;
-#    endif
 #  endif
    using std::string;
 #endif
@@ -84,7 +84,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.5 2007/02/24 18:52:02 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.6 2007/09/15 09:04:18 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 dimensional vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.5 2007/02/24 18:52:02 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.6 2007/09/15 09:04:18 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

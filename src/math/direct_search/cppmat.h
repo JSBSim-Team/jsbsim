@@ -83,8 +83,13 @@
 #endif
 
 #include <math/direct_search/vec.h>
-#include <cstdlib>
-#include <cassert>
+#if defined(sgi) && !defined(__GNUC__)
+# include <stdlib.h>
+# include <assert.h>
+#else
+# include <cstdlib>
+# include <cassert>
+#endif
 
 #include <iostream>
 #ifdef TNT_USE_REGIONS

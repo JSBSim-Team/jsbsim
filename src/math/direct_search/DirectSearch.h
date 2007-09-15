@@ -5,8 +5,13 @@
 #include <fstream>
 //#include <istream>
 #include <sstream>
-#include <cmath>
-#include <cstdlib>
+#if defined(sgi) && !defined(__GNUC__)
+# include <math.h>
+# include <stdlib.h>
+#else
+# include <cmath>
+# include <cstdlib>
+#endif
 #include <math/direct_search/objective.h>  // user's file
 #include <math/direct_search/vec.h>        // vector and matrix classes
 #include <math/direct_search/cppmat.h>

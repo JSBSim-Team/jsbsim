@@ -11,7 +11,11 @@
 
 
 #include <math/direct_search/vec.h>
-#include <cmath>
+#if defined(sgi) && !defined(__GNUC__)
+# include <math.h>
+#else
+# include <cmath>
+#endif
 #include <iostream>
 
 #if defined(_MSC_VER)

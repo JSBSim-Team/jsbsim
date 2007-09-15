@@ -68,7 +68,11 @@ INCLUDES
 
 #include <math/FGTable.h>
 
-#include <cmath>
+#if defined(sgi) && !defined(__GNUC__)
+# include <math.h>
+#else
+# include <cmath>
+#endif
 #include <sstream>
 #include <map>
 
@@ -82,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.4 2007/09/04 11:45:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.5 2007/09/15 09:04:18 ehofman Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

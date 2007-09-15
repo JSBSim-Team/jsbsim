@@ -61,6 +61,7 @@ SG_USING_STD(string);
 #    include <math.h>
 #  else
 #    include <cmath>
+     using std::fabs;
 #  endif
 
 using std::string;
@@ -75,7 +76,6 @@ using std::string;
 #    endif
 #  else
 
-using std::fabs;
 
 #  endif
 
@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.11 2007/02/28 03:15:44 jberndt Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.12 2007/09/15 09:04:18 ehofman Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.11 2007/02/28 03:15:44 jberndt Exp $
+    @version $Id: FGJSBBase.h,v 1.12 2007/09/15 09:04:18 ehofman Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -51,9 +51,15 @@
 #endif
 
 //#include "subscrpt.h"
-#include <cmath> /*for l2norms*/
-#include <cstdlib>
-#include <cassert>
+#if defined(sgi) && !defined(__GNUC__)
+# include <math.h>
+# include <stdlib.h>
+# include <assert.h>
+#else
+# include <cmath> /*for l2norms*/
+# include <cstdlib>
+# include <cassert>
+#endif
 #include <iostream>
 #include <sstream>
 #include <iomanip>
