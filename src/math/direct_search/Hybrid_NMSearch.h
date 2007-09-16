@@ -15,8 +15,13 @@
 #include <math/direct_search/EdHJSearch.h>
 #include <iostream>
 #include <fstream>
-#include <cmath>
-#include <cstdlib>
+#if defined(sgi) && !defined(__GNUC__)
+# include <math.h>
+# include <stdlib.h>
+#else
+# include <cmath>
+# include <cstdlib>
+#endif
 
 #ifndef DEBUG
 #define DEBUG 0
