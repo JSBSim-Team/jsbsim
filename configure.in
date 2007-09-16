@@ -32,12 +32,16 @@ case "${host}" in
     if test "$CXX" = "CC"; then
         AR="CC -ar"
         ARFLAGS="-o"
+        CXXFLAGS="$CXXFLAGS -LANG:libc_in_namespace_std=off"
     else
         AR="ar"
         ARFLAGS="cru"
     fi
     ;;
 *)
+    if test "$CXX" = "g++"; then
+       CXXFLAGS="$CXXFLAGS -Wno-non-template-friend"
+    fi
     AR="ar"
     ARFLAGS="cru"
     ;;
