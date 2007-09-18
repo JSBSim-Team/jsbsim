@@ -1,3 +1,4 @@
+AM_CPPFLAGS = -DOLD_LIBC -DAGO_DIRECTSEARCH -Wno-non-template-friend
 
 noinst_LIBRARIES = libInit.a
 
