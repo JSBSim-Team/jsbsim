@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.27 2007/08/14 13:08:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.28 2007/09/18 11:38:18 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -474,8 +474,6 @@ bool FGFCS::Load(Element* el)
   Element *channel_element;
 
   Components=0;
-  // Determine if the FCS/Autopilot is defined inline in the aircraft configuration
-  // file or in a separate file. Set up the Element pointer as appropriate.
 
   string separator = "/";
 #ifdef macintosh
@@ -488,7 +486,7 @@ bool FGFCS::Load(Element* el)
     fname = el->GetAttributeValue("file");
     file = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
     if (fname.empty()) {
-      cerr << "FCS/Autopilot does not appear to be defined inline nor in a file" << endl;
+      cerr << "FCS, Autopilot, or system does not appear to be defined inline nor in a file" << endl;
       return false;
     } else {
       document = LoadXMLDocument(file);
@@ -522,7 +520,10 @@ bool FGFCS::Load(Element* el)
 
   property_element = document->FindElement("property");
   while (property_element) {
-    interface_properties.push_back(new double(0));
+    double value=0.0;
+    if ( ! property_element->GetAttributeValue("value").empty())
+      value = property_element->GetAttributeValueAsNumber("value");
+    interface_properties.push_back(new double(value));
     interface_property_string = property_element->GetDataLine();
     PropertyManager->Tie(interface_property_string, interface_properties.back());
     property_element = document->FindNextElement("property");
