@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.5 2006/08/30 12:04:35 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.6 2007/09/18 03:19:04 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,12 +50,12 @@ CLASS IMPLEMENTATION
 
 FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 {
-  double denom;
-
   dt = fcs->GetState()->Getdt();
   Trigger = 0;
+  DynamicFilter = false;
 
-  C1 = C2 = C3 = C4 = C5 = C6 = 0.0;
+  C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = 0.0;
+  for (int i=0; i<7; i++) PropertyNode[i] = 0L;
 
   if      (Type == "LAG_FILTER")          FilterType = eLag        ;
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;
@@ -64,50 +64,21 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   else if (Type == "INTEGRATOR")          FilterType = eIntegrator ;
   else                                    FilterType = eUnknown    ;
 
-  if (element->FindElement("c1")) C1 = element->FindElementValueAsNumber("c1");
-  if (element->FindElement("c2")) C2 = element->FindElementValueAsNumber("c2");
-  if (element->FindElement("c3")) C3 = element->FindElementValueAsNumber("c3");
-  if (element->FindElement("c4")) C4 = element->FindElementValueAsNumber("c4");
-  if (element->FindElement("c5")) C5 = element->FindElementValueAsNumber("c5");
-  if (element->FindElement("c6")) C6 = element->FindElementValueAsNumber("c6");
+  ReadFilterCoefficients(element, 1);
+  ReadFilterCoefficients(element, 2);
+  ReadFilterCoefficients(element, 3);
+  ReadFilterCoefficients(element, 4);
+  ReadFilterCoefficients(element, 5);
+  ReadFilterCoefficients(element, 6);
+
   if (element->FindElement("trigger")) {
     Trigger =  PropertyManager->GetNode(element->FindElementValue("trigger"));
   }
 
   Initialize = true;
 
-  switch (FilterType) {
-    case eLag:
-      denom = 2.00 + dt*C1;
-      ca = dt*C1 / denom;
-      cb = (2.00 - dt*C1) / denom;
-      break;
-    case eLeadLag:
-      denom = 2.00*C3 + dt*C4;
-      ca = (2.00*C1 + dt*C2) / denom;
-      cb = (dt*C2 - 2.00*C1) / denom;
-      cc = (2.00*C3 - dt*C4) / denom;
-      break;
-    case eOrder2:
-      denom = 4.0*C4 + 2.0*C5*dt + C6*dt*dt;
-      ca = (4.0*C1 + 2.0*C2*dt + C3*dt*dt) / denom;
-      cb = (2.0*C3*dt*dt - 8.0*C1) / denom;
-      cc = (4.0*C1 - 2.0*C2*dt + C3*dt*dt) / denom;
-      cd = (2.0*C6*dt*dt - 8.0*C4) / denom;
-      ce = (4.0*C4 - 2.0*C5*dt + C6*dt*dt) / denom;
-      break;
-    case eWashout:
-      denom = 2.00 + dt*C1;
-      ca = 2.00 / denom;
-      cb = (2.00 - dt*C1) / denom;
-      break;
-    case eIntegrator:
-      ca = dt*C1 / 2.00;
-      break;
-    case eUnknown:
-      cerr << "Unknown filter type" << endl;
-    break;
-  }
+  CalculateDynamicFilters();
+
   FGFCSComponent::bind();
 
   Debug(0);
@@ -118,6 +89,84 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 FGFilter::~FGFilter()
 {
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFilter::ReadFilterCoefficients(Element* element, int index)
+{
+  char buf[3];
+  sprintf(buf, "c%d", index);
+  string coefficient = string(buf);
+  string property_string="";
+
+  if ( element->FindElement(coefficient) ) {
+    property_string = element->FindElementValue(coefficient);
+    if (property_string.find_first_not_of("+-.0123456789Ee") != string::npos) { // property
+      if (property_string[0] == '-') {
+       PropertySign[index] = -1.0;
+       property_string.erase(0,1);
+      }
+      PropertyNode[index] = PropertyManager->GetNode(property_string);
+      DynamicFilter = true;
+    } else {
+      C[index] = element->FindElementValueAsNumber(coefficient);
+    }
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGFilter::CalculateDynamicFilters(void)
+{
+  double denom;
+
+  switch (FilterType) {
+    case eLag:
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      denom = 2.00 + dt*C[1];
+      ca = dt*C[1] / denom;
+      cb = (2.00 - dt*C[1]) / denom;
+      break;
+    case eLeadLag:
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue();
+      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue();
+      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue();
+      denom = 2.00*C[3] + dt*C[4];
+      ca = (2.00*C[1] + dt*C[2]) / denom;
+      cb = (dt*C[2] - 2.00*C[1]) / denom;
+      cc = (2.00*C[3] - dt*C[4]) / denom;
+      break;
+    case eOrder2:
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue();
+      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue();
+      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue();
+      if (PropertyNode[5] != 0L) C[5] = PropertyNode[5]->getDoubleValue();
+      if (PropertyNode[6] != 0L) C[6] = PropertyNode[6]->getDoubleValue();
+      denom = 4.0*C[4] + 2.0*C[5]*dt + C[6]*dt*dt;
+      ca = (4.0*C[1] + 2.0*C[2]*dt + C[3]*dt*dt) / denom;
+      cb = (2.0*C[3]*dt*dt - 8.0*C[1]) / denom;
+      cc = (4.0*C[1] - 2.0*C[2]*dt + C[3]*dt*dt) / denom;
+      cd = (2.0*C[6]*dt*dt - 8.0*C[4]) / denom;
+      ce = (4.0*C[4] - 2.0*C[5]*dt + C[6]*dt*dt) / denom;
+      break;
+    case eWashout:
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      denom = 2.00 + dt*C[1];
+      ca = 2.00 / denom;
+      cb = (2.00 - dt*C[1]) / denom;
+      break;
+    case eIntegrator:
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      ca = dt*C[1] / 2.00;
+      break;
+    case eUnknown:
+      cerr << "Unknown filter type" << endl;
+    break;
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -134,6 +183,9 @@ bool FGFilter::Run(void)
   } else {
 
     Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
+    
+    if (DynamicFilter) CalculateDynamicFilters();
+    
     switch (FilterType) {
       case eLag:
         Output = Input * ca + PreviousInput1 * ca + PreviousOutput1 * cb;
@@ -200,12 +252,44 @@ void FGFilter::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "      INPUT: " << InputNodes[0]->getName() << endl;
-      cout << "      C1: " << C1 << endl;
-      cout << "      C2: " << C2 << endl;
-      cout << "      C3: " << C3 << endl;
-      cout << "      C4: " << C4 << endl;
-      cout << "      C5: " << C5 << endl;
-      cout << "      C6: " << C6 << endl;
+        switch (FilterType) {
+        case eLag:
+          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
+          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          break;
+        case eLeadLag:
+          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
+          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
+          else cout << "      C[2] is the value of property: " << PropertyNode[2]->GetName() << endl;
+          if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
+          else cout << "      C[3] is the value of property: " << PropertyNode[3]->GetName() << endl;
+          if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
+          else cout << "      C[4] is the value of property: " << PropertyNode[4]->GetName() << endl;
+          break;
+        case eOrder2:
+          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
+          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
+          else cout << "      C[2] is the value of property: " << PropertyNode[2]->GetName() << endl;
+          if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
+          else cout << "      C[3] is the value of property: " << PropertyNode[3]->GetName() << endl;
+          if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
+          else cout << "      C[4] is the value of property: " << PropertyNode[4]->GetName() << endl;
+          if (PropertyNode[5] == 0L) cout << "      C[5]: " << C[5] << endl;
+          else cout << "      C[5] is the value of property: " << PropertyNode[5]->GetName() << endl;
+          if (PropertyNode[6] == 0L) cout << "      C[6]: " << C[6] << endl;
+          else cout << "      C[6] is the value of property: " << PropertyNode[6]->GetName() << endl;
+          break;
+        case eWashout:
+          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
+          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          break;
+        case eIntegrator:
+          if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
+          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          break;
+       } 
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
   }

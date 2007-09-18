@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FILTER "$Id: FGFilter.h,v 1.6 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_FILTER "$Id: FGFilter.h,v 1.7 2007/09/18 03:19:04 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -64,12 +64,12 @@ time domain. The general format for a filter specification is:
 @code
 <typename name="name">
   <input> property </input>
-  <c1> value </c1>
-  [<c2> value </c2>]
-  [<c3> value </c3>]
-  [<c4> value </c4>]
-  [<c5> value </c5>]
-  [<c6> value </c6>]
+  <c1> value|property </c1>
+  [<c2> value|property </c2>]
+  [<c3> value|property </c3>]
+  [<c4> value|property </c4>]
+  [<c5> value|property </c5>]
+  [<c6> value|property </c6>]
   [<clipto>
     <min> {[-]property name | value} </min>
     <max> {[-]property name | value} </max>
@@ -91,7 +91,7 @@ the corresponding filter definition is:
 @code
 <lag_filter name="name">
   <input> property </input>
-  <c1> value </c1>
+  <c1> value|property </c1>
   [<clipto>
     <min> {[-]property name | value} </min>
     <max> {[-]property name | value} </max>
@@ -130,10 +130,10 @@ The corresponding filter definition is:
 @code
 <lead_lag_filter name="name">
   <input> property </input>
-  <c1> value <c/1>
-  <c2> value <c/2>
-  <c3> value <c/3>
-  <c4> value <c/4>
+  <c1> value|property <c/1>
+  <c2> value|property <c/2>
+  <c3> value|property <c/3>
+  <c4> value|property <c/4>
   [<clipto>
     <min> {[-]property name | value} </min>
     <max> {[-]property name | value} </max>
@@ -177,12 +177,12 @@ The corresponding filter definition is:
 @code
 <second_order_filter name="name">
   <input> property </input>
-  <c1> value </c1>
-  <c2> value </c2>
-  <c3> value </c3>
-  <c4> value </c4>
-  <c5> value </c5>
-  <c6> value </c6>
+  <c1> value|property </c1>
+  <c2> value|property </c2>
+  <c3> value|property </c3>
+  <c4> value|property </c4>
+  <c5> value|property </c5>
+  <c6> value|property </c6>
   [<clipto>
     <min> {[-]property name | value} </min>
     <max> {[-]property name | value} </max>
@@ -204,7 +204,7 @@ The corresponding filter definition is:
 @code
 <integrator name="name">
   <input> property </input>
-  <c1> value </c1>
+  <c1> value|property </c1>
   [<trigger> property </trigger>]
   [<clipto>
     <min> {[-]property name | value} </min>
@@ -225,7 +225,7 @@ is so that the last component in a "string" can copy its value to the appropriat
 output, such as the elevator, or speedbrake, etc.
 
 @author Jon S. Berndt
-@version $Revision: 1.6 $
+@version $Revision: 1.7 $
 
 */
 
@@ -254,17 +254,17 @@ private:
   double cc;
   double cd;
   double ce;
-  double C1;
-  double C2;
-  double C3;
-  double C4;
-  double C5;
-  double C6;
+  double C[7]; // There are 6 coefficients, indexing is "1" based.
+  double PropertySign[7];
   double PreviousInput1;
   double PreviousInput2;
   double PreviousOutput1;
   double PreviousOutput2;
   FGPropertyManager* Trigger;
+  FGPropertyManager* PropertyNode[7];
+  void CalculateDynamicFilters(void);
+  void ReadFilterCoefficients(Element* el, int index);
+  bool DynamicFilter;
   void Debug(int from);
 };
 }
