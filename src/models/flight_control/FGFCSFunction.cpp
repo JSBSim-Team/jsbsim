@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.4 2007/02/10 23:25:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.5 2007/09/19 01:33:46 jberndt Exp $";
 static const char *IdHdr = ID_FCSFUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,8 +118,6 @@ void FGFCSFunction::Debug(int from)
       if (InputNodes.size()>0)
         cout << "      INPUT: " << InputNodes[0]->getName() << endl;
 //    cout << "      Function: " << endl;
-      if (clip) cout << "      CLIPTO: " << clipmin
-                                  << ", " << clipmax << endl;
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }
   }

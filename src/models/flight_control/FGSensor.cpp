@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSensor.cpp,v 1.9 2007/03/03 03:39:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSensor.cpp,v 1.10 2007/09/19 01:33:46 jberndt Exp $";
 static const char *IdHdr = ID_SENSOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,6 +144,7 @@ bool FGSensor::Run(void )
   if (bits != 0)             Quantize();  // models quantization degradation
 //  if (delay != 0.0)          Delay();     // models system signal transport latencies
 
+  Clip(); // Is it right to clip a sensor?
   return true;
 }
 

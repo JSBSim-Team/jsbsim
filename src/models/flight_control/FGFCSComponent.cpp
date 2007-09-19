@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.13 2007/03/03 03:39:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.14 2007/09/19 01:33:46 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,6 +133,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     clip_string = clip_el->FindElementValue("min");
     if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
       if (clip_string[0] == '-') clipMinSign = -1.0;
+      clip_string.erase(0,1);
       ClipMinPropertyNode = PropertyManager->GetNode( clip_string );
     } else {
       clipmin = clip_el->FindElementValueAsNumber("min");
@@ -140,6 +141,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
     clip_string = clip_el->FindElementValue("max");
     if (clip_string.find_first_not_of("+-.0123456789") != string::npos) { // it's a property
       if (clip_string[0] == '-') clipMaxSign = -1.0;
+      clip_string.erase(0,1);
       ClipMaxPropertyNode = PropertyManager->GetNode( clip_string );
     } else {
       clipmax = clip_el->FindElementValueAsNumber("max");
@@ -223,12 +225,31 @@ void FGFCSComponent::bind(void)
 
 void FGFCSComponent::Debug(int from)
 {
+  string propsign="";
+
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) {
       cout << endl << "    Loading Component \"" << Name
                    << "\" of type: " << Type << endl;
+
+      if (clip) {
+        if (ClipMinPropertyNode != 0L) {
+          if (clipMinSign < 0.0) propsign="-";
+          cout << "      Minimum limit: " << propsign << ClipMinPropertyNode->GetName() << endl;
+          propsign="";
+        } else {
+          cout << "      Minimum limit: " << clipmin << endl;
+        }
+        if (ClipMaxPropertyNode != 0L) {
+          if (clipMaxSign < 0.0) propsign="-";
+          cout << "      Maximum limit: " << propsign << ClipMaxPropertyNode->GetName() << endl;
+          propsign="";
+        } else {
+          cout << "      Maximum limit: " << clipmax << endl;
+        }
+      }  
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

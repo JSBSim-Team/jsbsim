@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.6 2007/09/18 03:19:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.7 2007/09/19 01:33:46 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,28 +123,28 @@ void FGFilter::CalculateDynamicFilters(void)
 
   switch (FilterType) {
     case eLag:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
       denom = 2.00 + dt*C[1];
       ca = dt*C[1] / denom;
       cb = (2.00 - dt*C[1]) / denom;
       break;
     case eLeadLag:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
-      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue();
-      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue();
-      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue();
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
+      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue()*PropertySign[2];
+      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue()*PropertySign[3];
+      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue()*PropertySign[4];
       denom = 2.00*C[3] + dt*C[4];
       ca = (2.00*C[1] + dt*C[2]) / denom;
       cb = (dt*C[2] - 2.00*C[1]) / denom;
       cc = (2.00*C[3] - dt*C[4]) / denom;
       break;
     case eOrder2:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
-      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue();
-      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue();
-      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue();
-      if (PropertyNode[5] != 0L) C[5] = PropertyNode[5]->getDoubleValue();
-      if (PropertyNode[6] != 0L) C[6] = PropertyNode[6]->getDoubleValue();
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
+      if (PropertyNode[2] != 0L) C[2] = PropertyNode[2]->getDoubleValue()*PropertySign[2];
+      if (PropertyNode[3] != 0L) C[3] = PropertyNode[3]->getDoubleValue()*PropertySign[3];
+      if (PropertyNode[4] != 0L) C[4] = PropertyNode[4]->getDoubleValue()*PropertySign[4];
+      if (PropertyNode[5] != 0L) C[5] = PropertyNode[5]->getDoubleValue()*PropertySign[5];
+      if (PropertyNode[6] != 0L) C[6] = PropertyNode[6]->getDoubleValue()*PropertySign[6];
       denom = 4.0*C[4] + 2.0*C[5]*dt + C[6]*dt*dt;
       ca = (4.0*C[1] + 2.0*C[2]*dt + C[3]*dt*dt) / denom;
       cb = (2.0*C[3]*dt*dt - 8.0*C[1]) / denom;
@@ -153,13 +153,13 @@ void FGFilter::CalculateDynamicFilters(void)
       ce = (4.0*C[4] - 2.0*C[5]*dt + C[6]*dt*dt) / denom;
       break;
     case eWashout:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
       denom = 2.00 + dt*C[1];
       ca = 2.00 / denom;
       cb = (2.00 - dt*C[1]) / denom;
       break;
     case eIntegrator:
-      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue();
+      if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
       ca = dt*C[1] / 2.00;
       break;
     case eUnknown:
