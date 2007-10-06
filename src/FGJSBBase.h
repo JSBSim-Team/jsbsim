@@ -93,7 +93,7 @@ using std::max;
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.12 2007/09/15 09:04:18 ehofman Exp $"
+#define ID_JSBBASE "$Id: FGJSBBase.h,v 1.13 2007/10/06 18:40:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -109,7 +109,7 @@ CLASS DOCUMENTATION
 *   This class provides universal constants, utility functions, messaging
 *   functions, and enumerated constants to JSBSim.
     @author Jon S. Berndt
-    @version $Id: FGJSBBase.h,v 1.12 2007/09/15 09:04:18 ehofman Exp $
+    @version $Id: FGJSBBase.h,v 1.13 2007/10/06 18:40:41 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -272,6 +272,12 @@ void PutMessage(const string& text, double dVal);
       @return if the two values can be considered equal up to roundoff */
   static bool EqualToRoundoff(double a, float b) {
     return EqualToRoundoff((float)a, b);
+  }
+  
+  /** Constrain a value between a minimum and a maximum value.
+  */
+  static double Constrain(double min, double value, double max) {
+    return value<min?(min):(value>max?(max):(value));
   }
 
 protected:

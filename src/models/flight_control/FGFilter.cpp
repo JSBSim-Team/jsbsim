@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.7 2007/09/19 01:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.8 2007/10/06 18:40:41 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,6 +247,8 @@ bool FGFilter::Run(void)
 
 void FGFilter::Debug(int from)
 {
+  string sgn="";
+
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
@@ -254,40 +256,66 @@ void FGFilter::Debug(int from)
       cout << "      INPUT: " << InputNodes[0]->getName() << endl;
         switch (FilterType) {
         case eLag:
+          if (PropertySign[1] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
           break;
         case eLeadLag:
+          if (PropertySign[1] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
+          if (PropertySign[2] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
-          else cout << "      C[2] is the value of property: " << PropertyNode[2]->GetName() << endl;
+          else cout << "      C[2] is the value of property: " << sgn << PropertyNode[2]->GetName() << endl;
+          if (PropertySign[3] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
-          else cout << "      C[3] is the value of property: " << PropertyNode[3]->GetName() << endl;
+          else cout << "      C[3] is the value of property: " << sgn << PropertyNode[3]->GetName() << endl;
+          if (PropertySign[4] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
-          else cout << "      C[4] is the value of property: " << PropertyNode[4]->GetName() << endl;
+          else cout << "      C[4] is the value of property: " << sgn << PropertyNode[4]->GetName() << endl;
           break;
         case eOrder2:
+          if (PropertySign[1] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
+          if (PropertySign[2] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[2] == 0L) cout << "      C[2]: " << C[2] << endl;
-          else cout << "      C[2] is the value of property: " << PropertyNode[2]->GetName() << endl;
+          else cout << "      C[2] is the value of property: " << sgn << PropertyNode[2]->GetName() << endl;
+          if (PropertySign[3] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[3] == 0L) cout << "      C[3]: " << C[3] << endl;
-          else cout << "      C[3] is the value of property: " << PropertyNode[3]->GetName() << endl;
+          else cout << "      C[3] is the value of property: " << sgn << PropertyNode[3]->GetName() << endl;
+          if (PropertySign[4] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[4] == 0L) cout << "      C[4]: " << C[4] << endl;
-          else cout << "      C[4] is the value of property: " << PropertyNode[4]->GetName() << endl;
+          else cout << "      C[4] is the value of property: " << sgn << PropertyNode[4]->GetName() << endl;
+          if (PropertySign[5] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[5] == 0L) cout << "      C[5]: " << C[5] << endl;
-          else cout << "      C[5] is the value of property: " << PropertyNode[5]->GetName() << endl;
+          else cout << "      C[5] is the value of property: " << sgn << PropertyNode[5]->GetName() << endl;
+          if (PropertySign[6] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[6] == 0L) cout << "      C[6]: " << C[6] << endl;
-          else cout << "      C[6] is the value of property: " << PropertyNode[6]->GetName() << endl;
+          else cout << "      C[6] is the value of property: " << sgn << PropertyNode[6]->GetName() << endl;
           break;
         case eWashout:
+          if (PropertySign[1] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
           break;
         case eIntegrator:
+          if (PropertySign[1] < 0.0) sgn="-";
+          else sgn = "";
           if (PropertyNode[1] == 0L) cout << "      C[1]: " << C[1] << endl;
-          else cout << "      C[1] is the value of property: " << PropertyNode[1]->GetName() << endl;
+          else cout << "      C[1] is the value of property: " << sgn << PropertyNode[1]->GetName() << endl;
           break;
        } 
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
