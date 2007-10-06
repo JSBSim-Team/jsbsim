@@ -47,7 +47,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PISTON "$Id: FGPiston.h,v 1.5 2006/10/17 01:44:57 dpculp Exp $";
+#define ID_PISTON "$Id: FGPiston.h,v 1.6 2007/10/06 04:09:37 jberndt Exp $";
 #define FG_MAX_BOOST_SPEEDS 3
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -131,7 +131,7 @@ CLASS DOCUMENTATION
     @author Jon S. Berndt (Engine framework code and framework-related mods)
     @author Dave Luff (engine operational code)
     @author David Megginson (initial porting and additional code)
-    @version $Id: FGPiston.h,v 1.5 2006/10/17 01:44:57 dpculp Exp $
+    @version $Id: FGPiston.h,v 1.6 2007/10/06 04:09:37 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -208,6 +208,7 @@ private:
   double MaxManifoldPressure_inHg; // Inches Hg
   double Displacement;             // cubic inches
   double MaxHP;                    // horsepower
+  double SparkFailDrop;            // drop of power due to spark failure
   double Cycles;                   // cycles/power stroke
   double IdleRPM;                  // revolutions per minute
   double StarterHP;                // initial horsepower of starter motor 

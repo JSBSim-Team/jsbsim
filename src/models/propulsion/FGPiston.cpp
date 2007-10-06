@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.10 2007/04/29 03:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.11 2007/10/06 04:09:37 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +73,7 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
   Cycles = 2;
   IdleRPM = 600;
   Displacement = 360;
+  SparkFailDrop = 1.0;
   MaxHP = 200;
   MinManifoldPressure_inHg = 6.5;
   MaxManifoldPressure_inHg = 28.5;
@@ -157,6 +158,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     Displacement = el->FindElementValueAsNumberConvertTo("displacement","IN3");
   if (el->FindElement("maxhp"))
     MaxHP = el->FindElementValueAsNumberConvertTo("maxhp","HP");
+  if (el->FindElement("sparkfaildrop"))
+    SparkFailDrop = Constrain(0, 1 - el->FindElementValueAsNumber("sparkfaildrop"), 1);
   if (el->FindElement("cycles"))
     Cycles = el->FindElementValueAsNumber("cycles");
   if (el->FindElement("idlerpm"))
@@ -566,6 +569,9 @@ void FGPiston::doEnginePower(void)
       Power_Mixture_Correlation->GetValue(14.7 / equivalence_ratio);
 
     Percentage_Power *= Percentage_of_best_power_mixture_power / 100.0;
+
+    if( Magnetos != 3 )
+      Percentage_Power *= SparkFailDrop;
 
     if (Boosted) {
       HP = Percentage_Power * RatedPower[BoostSpeed] / 100.0;
