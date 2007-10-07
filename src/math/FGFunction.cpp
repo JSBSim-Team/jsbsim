@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.15 2007/08/25 17:50:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.16 2007/10/07 06:58:21 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,6 +96,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eFrac;
   } else if (operation == string("integer")) {
     Type = eInteger;
+  } else if (operation == string("mod")) {
+    Type = eMod;
   } else if (operation != string("description")) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -147,6 +149,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("max") ||
                operation == string("fraction") ||
                operation == string("integer") ||
+               operation == string("mod") ||
                operation == string("avg") )
     {
       Parameters.push_back(new FGFunction(PropertyManager, element));
@@ -248,6 +251,9 @@ double FGFunction::GetValue(void) const
     break;
   case eATan2:
     temp = atan2(temp, Parameters[1]->GetValue());
+    break;
+  case eMod:
+    temp = (int)temp%(int) Parameters[1]->GetValue();
     break;
   case eMin:
     for (i=1;i<Parameters.size();i++) {
