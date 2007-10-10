@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.8 2007/09/05 11:56:13 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.9 2007/10/10 03:10:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.8 2007/09/05 11:56:13 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.9 2007/10/10 03:10:53 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,8 @@ public:
 
   /// Destructor
   ~FGPropagate();
+  
+  enum eIntegrateType {eRectEuler=0, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
 
   bool InitModel(void);
 
@@ -183,6 +185,10 @@ private:
   FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
   
   double RunwayRadius, SeaLevelRadius;
+  int integrator_rotational_rate;
+  int integrator_translational_rate;
+  int integrator_rotational_position;
+  int integrator_translational_position;
 
   void Debug(int from);
 };

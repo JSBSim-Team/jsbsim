@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.13 2007/09/05 11:56:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.14 2007/10/10 03:10:53 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -109,6 +109,11 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   last2_vLocationDot.InitMatrix();
   last_vLocationDot.InitMatrix();
   vLocationDot.InitMatrix();
+
+  integrator_rotational_rate = eAdamsBashforth2;
+  integrator_translational_rate = eAdamsBashforth2;
+  integrator_rotational_position = eTrapezoidal;
+  integrator_translational_position = eTrapezoidal;
 
   bind();
   Debug(0);
@@ -257,31 +262,54 @@ bool FGPropagate::Run(void)
 
   // Propagate rotational velocity
 
-  // VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot); // Adams-Bashforth
-  VState.vPQR += (1/12.0)*dt*(23.0*vPQRdot - 16.0*last_vPQRdot + 5.0*last2_vPQRdot); // Adams-Bashforth 3
-  // VState.vPQR += dt*vPQRdot;                          // Rectangular Euler
-  // VState.vPQR += 0.5*dt*(vPQRdot + last_vPQRdot);     // Trapezoidal
-
+  switch(integrator_rotational_rate) {
+  case eRectEuler:       VState.vPQR += dt*vPQRdot;
+    break;
+  case eTrapezoidal:     VState.vPQR += 0.5*dt*(vPQRdot + last_vPQRdot);
+    break;
+  case eAdamsBashforth2: VState.vPQR += dt*(1.5*vPQRdot - 0.5*last_vPQRdot);
+    break;
+  case eAdamsBashforth3: VState.vPQR += (1/12.0)*dt*(23.0*vPQRdot - 16.0*last_vPQRdot + 5.0*last2_vPQRdot);
+    break;
+  }
+  
   // Propagate translational velocity
 
-  // VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot); // Adams Bashforth
-  VState.vUVW += (1/12.0)*dt*(23.0*vUVWdot - 16.0*last_vUVWdot + 5.0*last2_vUVWdot); // Adams-Bashforth 3
-  // VState.vUVW += dt*vUVWdot;                         // Rectangular Euler
-  // VState.vUVW += 0.5*dt*(vUVWdot + last_vUVWdot);    // Trapezoidal
+  switch(integrator_translational_rate) {
+  case eRectEuler:       VState.vUVW += dt*vUVWdot;
+    break;
+  case eTrapezoidal:     VState.vUVW += 0.5*dt*(vUVWdot + last_vUVWdot);
+    break;
+  case eAdamsBashforth2: VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot);
+    break;
+  case eAdamsBashforth3: VState.vUVW += (1/12.0)*dt*(23.0*vUVWdot - 16.0*last_vUVWdot + 5.0*last2_vUVWdot);
+  }
 
   // Propagate angular position
 
-  // VState.vQtrn += dt*(1.5*vQtrndot - 0.5*last_vQtrndot); // Adams Bashforth
-  VState.vQtrn += (1/12.0)*dt*(23.0*vQtrndot - 16.0*last_vQtrndot + 5.0*last2_vQtrndot); // Adams-Bashforth 3
-  // VState.vQtrn += dt*vQtrndot;                           // Rectangular Euler
-  // VState.vQtrn += 0.5*dt*(vQtrndot + last_vQtrndot);     // Trapezoidal
+  switch(integrator_rotational_position) {
+  case eRectEuler:       VState.vQtrn += dt*vQtrndot;
+    break;
+  case eTrapezoidal:     VState.vQtrn += 0.5*dt*(vQtrndot + last_vQtrndot);
+    break;
+  case eAdamsBashforth2: VState.vQtrn += dt*(1.5*vQtrndot - 0.5*last_vQtrndot);
+    break;
+  case eAdamsBashforth3: VState.vQtrn += (1/12.0)*dt*(23.0*vQtrndot - 16.0*last_vQtrndot + 5.0*last2_vQtrndot);
+    break;
+  }
 
   // Propagate translational position
 
-  // VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot); // Adams Bashforth
-  VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot); // Adams-Bashforth 3
-  // VState.vLocation += dt*vLocationDot;                               // Rectangular Euler
-  // VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);     // Trapezoidal
+  switch(integrator_translational_position) {
+  case eRectEuler:       VState.vLocation += dt*vLocationDot;
+    break;
+  case eTrapezoidal:     VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);
+    break;
+  case eAdamsBashforth2: VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
+    break;
+  case eAdamsBashforth3: VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
+    break;
+  }
 
   // Set past values
   
@@ -401,6 +429,11 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("attitude/roll-rad", this, (int)ePhi, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/pitch-rad", this, (int)eTht, (PMF)&FGPropagate::GetEuler);
   PropertyManager->Tie("attitude/heading-true-rad", this, (int)ePsi, (PMF)&FGPropagate::GetEuler);
+  
+  PropertyManager->Tie("simulation/integrator/rate/rotational", &integrator_rotational_rate);
+  PropertyManager->Tie("simulation/integrator/rate/translational", &integrator_translational_rate);
+  PropertyManager->Tie("simulation/integrator/position/rotational", &integrator_rotational_position);
+  PropertyManager->Tie("simulation/integrator/position/translational", &integrator_translational_position);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,6 +469,10 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("attitude/pitch-rad");
   PropertyManager->Untie("attitude/heading-true-rad");
   PropertyManager->Untie("position/terrain-elevation-asl-ft");
+  PropertyManager->Untie("simulation/integrator/rate/rotational");
+  PropertyManager->Untie("simulation/integrator/rate/translational");
+  PropertyManager->Untie("simulation/integrator/position/rotational");
+  PropertyManager->Untie("simulation/integrator/position/translational");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
