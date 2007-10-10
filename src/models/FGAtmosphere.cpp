@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.13 2007/08/15 03:41:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.14 2007/10/10 01:05:19 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,8 +84,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 //   turbType = ttNone;
   turbType = ttStandard;
 //   turbType = ttBerndt;
-  TurbGain = 0.0;
-  TurbRate = 1.0;
+  TurbGain = 50.0;
+  TurbRate = 0.25;
 
   T_dev_sl = T_dev = delta_T = 0.0;
   StandardTempOnly = false;
@@ -342,6 +342,7 @@ void FGAtmosphere::Turbulence(void)
                          (1 + fabs(Magnitude)));
     MagnitudeAccel    += MagnitudedAccelDt*rate*TurbRate*State->Getdt();
     Magnitude         += MagnitudeAccel*rate*State->Getdt();
+    Magnitude          = fabs(Magnitude);
 
     vDirectiondAccelDt.Normalize();
 
@@ -362,8 +363,15 @@ void FGAtmosphere::Turbulence(void)
     if (HOverBMAC < 3.0)
         vTurbulence *= (HOverBMAC / 3.0) * (HOverBMAC / 3.0);
 
-    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
+    // I don't believe these next two statements calculate the proper gradient over
+    // the aircraft body. One reason is because this has no relationship with the
+    // orientation or velocity of the aircraft, which it must have. What is vTurbulenceGrad
+    // supposed to represent? And the direction and magnitude of the turbulence can change,
+    // so both accelerations need to be accounted for, no?
 
+    // Need to determine the turbulence change in body axes between two time points.
+
+    vTurbulenceGrad = TurbGain*MagnitudeAccel * vDirection;
     vBodyTurbGrad = Propagate->GetTl2b()*vTurbulenceGrad;
 
     if (Aircraft->GetWingSpan() > 0) {
@@ -385,12 +393,14 @@ void FGAtmosphere::Turbulence(void)
                                 // actually felt by the plane, now
                                 // that we've used them to calculate
                                 // moments.
-    vTurbulence(eX) = 0.0;
-    vTurbulence(eY) = 0.0;
+                                // Why? (JSB)
+//    vTurbulence(eX) = 0.0;
+//    vTurbulence(eY) = 0.0;
 
     break;
   }
-  case ttBerndt: {
+  case ttBerndt: { // This is very experimental and incomplete at the moment.
+  
     vDirectiondAccelDt(eX) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eY) = 1 - 2.0*(double(rand())/double(RAND_MAX));
     vDirectiondAccelDt(eZ) = 1 - 2.0*(double(rand())/double(RAND_MAX));

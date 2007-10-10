@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.18 2007/09/07 12:41:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.19 2007/10/10 01:06:51 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -193,6 +193,8 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Rho (slugs/ft^3)" + delimeter;
       outstream << "P_{SL} (psf)" + delimeter;
       outstream << "P_{Ambient} (psf)" + delimeter;
+      outstream << "Turbulence Magnitude (ft/sec)" + delimeter;
+      outstream << "Turbulence X Direction (rad)" + delimeter + "Turbulence Y Direction (rad)" + delimeter + "Turbulence Z Direction (rad)" + delimeter;
       outstream << "Wind V_{North} (ft/s)" + delimeter + "Wind V_{East} (ft/s)" + delimeter + "Wind V_{Down} (ft/s)";
     }
     if (SubSystems & ssMassProps) {
@@ -289,6 +291,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Atmosphere->GetDensity() << delimeter;
     outstream << Atmosphere->GetPressureSL() << delimeter;
     outstream << Atmosphere->GetPressure() << delimeter;
+    outstream << Atmosphere->GetTurbMagnitude() << delimeter;
+    outstream << Atmosphere->GetTurbDirection().Dump(delimeter) << delimeter;
     outstream << Atmosphere->GetWindNED().Dump(delimeter);
   }
   if (SubSystems & ssMassProps) {
@@ -399,6 +403,10 @@ void FGOutput::SocketOutput(void)
       socket->Append("Rho");
       socket->Append("SL pressure");
       socket->Append("Ambient pressure");
+      socket->Append("Turbulence Magnitude");
+      socket->Append("Turbulence Direction X");
+      socket->Append("Turbulence Direction Y");
+      socket->Append("Turbulence Direction Z");
       socket->Append("NWind");
       socket->Append("EWind");
       socket->Append("DWind");
@@ -505,6 +513,8 @@ void FGOutput::SocketOutput(void)
     socket->Append(Atmosphere->GetDensity());
     socket->Append(Atmosphere->GetPressureSL());
     socket->Append(Atmosphere->GetPressure());
+    socket->Append(Atmosphere->GetTurbMagnitude());
+    socket->Append(Atmosphere->GetTurbDirection().Dump(","));
     socket->Append(Atmosphere->GetWindNED().Dump(","));
   }
   if (SubSystems & ssMassProps) {

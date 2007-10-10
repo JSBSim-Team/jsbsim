@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.11 2007/08/15 03:41:22 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.12 2007/10/10 01:06:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.11 2007/08/15 03:41:22 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.12 2007/10/10 01:06:11 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -168,6 +168,8 @@ public:
   inline void SetTurbRate(double tt) {TurbRate = tt;}
 
   inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
+  double GetTurbMagnitude(void) const {return Magnitude;}
+  FGColumnVector3& GetTurbDirection(void) {return vDirection;}
   inline FGColumnVector3& GetTurbPQR(void) {return vTurbPQR;}
 
   void bind(void);
