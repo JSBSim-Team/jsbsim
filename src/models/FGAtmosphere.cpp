@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.14 2007/10/10 01:05:19 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.15 2007/10/10 02:02:25 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,8 +81,8 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
   htab[7]=259186.352; //ft.
 
   MagnitudedAccelDt = MagnitudeAccel = Magnitude = 0.0;
-//   turbType = ttNone;
-  turbType = ttStandard;
+   turbType = ttNone;
+//  turbType = ttStandard;
 //   turbType = ttBerndt;
   TurbGain = 50.0;
   TurbRate = 0.25;
