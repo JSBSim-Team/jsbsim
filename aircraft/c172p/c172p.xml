@@ -7,7 +7,7 @@
     <fileheader>
         <author> Unknown </author>
         <filecreationdate> 2002-01-01 </filecreationdate>
-        <version> $Id: c172p.xml,v 1.22 2007/05/16 23:59:34 jberndt Exp $ </version>
+        <version> $Id: c172p.xml,v 1.23 2007/10/17 01:09:24 jberndt Exp $ </version>
         <description> Cessna C-172 </description>
     </fileheader>
 
@@ -361,14 +361,14 @@
     </flight_control>
     <aerodynamics>
 
-        <alphalimits>
-            <min unit="RAD">-0.087</min>
-            <max unit="RAD">0.28</max>
+        <alphalimits unit="RAD">
+            <min>-0.087</min>
+            <max>0.28</max>
         </alphalimits>
 
-        <hysteresis_limits>
-            <min unit="RAD">0.09</min>
-            <max unit="RAD">0.36</max>
+        <hysteresis_limits unit="RAD">
+            <min>0.09</min>
+            <max>0.36</max>
         </hysteresis_limits>
 
         <function name="aero/function/kCDge">

@@ -10,7 +10,7 @@
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.69 $</version>
+        <version>$Revision: 1.70 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -368,12 +368,12 @@
 
     <aerodynamics>
 
-        <alphalimits unit="DEG">
+        <alphalimits unit="RAD">
             <min>-0.087</min>
             <max>0.28</max>
         </alphalimits>
 
-        <hysteresis_limits>
+        <hysteresis_limits unit="RAD">
             <min>0.09</min>
             <max>0.36</max>
         </hysteresis_limits>
@@ -513,10 +513,13 @@
             <!-- Drag axis coefficient functions -->
 
             <function name="aero/coefficient/CDo">
-                <description>Drag at zero lift</description>
+                <description>
+                  Drag at zero lift.
+                  Source: http://www.hq.nasa.gov/pao/History/SP-468/ch6-3.htm
+                </description>
                 <product>
                     <property>aero/qbar-area</property>
-                    <value>0.026</value>
+                    <value>0.032</value>
                 </product>
             </function>
 
@@ -528,10 +531,10 @@
                     <table>
                         <independentVar>fcs/flap-pos-deg</independentVar>
                         <tableData>
-                             0.0  0.0
-                            10.0  0.007
-                            20.0  0.012
-                            30.0  0.018
+                          0.0  0.0
+                          10.0  0.007
+                          20.0  0.012
+                          30.0  0.018
                         </tableData>
                     </table>
                 </product>
@@ -749,10 +752,14 @@
                     <table>
                         <independentVar>fcs/flap-pos-deg</independentVar>
                         <tableData>
-                             0.0   0.0
-                            10.0  -0.0654
-                            20.0  -0.0981
-                            30.0  -0.1140
+<!--                          0.0   0.0
+                          10.0  -0.0654
+                          20.0  -0.0981
+                          30.0  -0.1140 -->
+                          0.0   0.0
+                          10.0  -0.03
+                          20.0  -0.05
+                          30.0  -0.06
                         </tableData>
                     </table>
                 </product>
@@ -867,10 +874,10 @@
 
     </aerodynamics>
 
-    <input port="1137"/>
-    <output name="JSBout172B.csv" type="CSV" rate="40">
+    <!--<input port="1137"/>-->
+<!--    <output name="JSBout172B.csv" type="CSV" rate="40">
         <property> aero/qbar-psf </property>
-<!--        <property> fcs/aero/sensor/qbar-psf </property>
+        <property> fcs/aero/sensor/qbar-psf </property>
         <property> attitude/phi-rad </property>
         <property> fcs/attitude/sensor/phi-rad </property>
         <property> position/h-sl-ft </property>
@@ -882,7 +889,7 @@
         <property>ap/heading_setpoint</property>
         <property>ap/heading_hold</property>
         <property>ap/altitude_setpoint</property>
-        <property>ap/altitude_hold</property> -->
+        <property>ap/altitude_hold</property>
         <property> accelerations/udot-fps </property>
         <property> accelerations/vdot-fps </property>
         <property> accelerations/wdot-fps </property>
@@ -892,6 +899,10 @@
         <property> accelerations/n-pilot-x-norm    </property>
         <property> accelerations/n-pilot-y-norm    </property>
         <property> accelerations/n-pilot-z-norm    </property>
+        <property> aero/coefficient/CLDf           </property>
+        <property> aero/coefficient/CDDf           </property>
+        <property> aero/coefficient/CmDf           </property>
+        <property> fcs/elevator-pos-rad            </property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
@@ -902,7 +913,6 @@
         <aerosurfaces> OFF </aerosurfaces>
         <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>
-        <!-- Use the cycle_duration property for standalone only. -->
         <property> simulation/cycle_duration </property>
     </output>
 
@@ -940,5 +950,5 @@
         <fcs> OFF </fcs>
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
-    </output>
+    </output> -->
 </fdm_config>
