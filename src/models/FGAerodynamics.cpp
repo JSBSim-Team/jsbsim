@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.11 2007/07/25 04:30:01 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.12 2007/10/17 01:33:02 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -198,18 +198,23 @@ bool FGAerodynamics::Run(void)
 bool FGAerodynamics::Load(Element *element)
 {
   string parameter, axis, scratch;
+  string scratch_unit="";
   Element *temp_element, *axis_element, *function_element;
 
   Debug(2);
 
   if (temp_element = element->FindElement("alphalimits")) {
-    alphaclmin = temp_element->FindElementValueAsNumberConvertTo("min", "DEG");
-    alphaclmax = temp_element->FindElementValueAsNumberConvertTo("max", "DEG");
+    scratch_unit = temp_element->GetAttributeValue("unit");
+    if (scratch_unit.empty()) scratch_unit = "DEG";
+    alphaclmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
+    alphaclmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
   }
 
   if (temp_element = element->FindElement("hysteresis_limits")) {
-    alphahystmin = temp_element->FindElementValueAsNumberConvertTo("min", "DEG");
-    alphahystmax = temp_element->FindElementValueAsNumberConvertTo("max", "DEG");
+    scratch_unit = temp_element->GetAttributeValue("unit");
+    if (scratch_unit.empty()) scratch_unit = "DEG";
+    alphahystmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
+    alphahystmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
   }
 
   if (temp_element = element->FindElement("aero_ref_pt_shift_x")) {
