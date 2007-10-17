@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.12 2007/10/17 01:33:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.13 2007/10/17 01:59:32 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -199,36 +199,50 @@ bool FGAerodynamics::Load(Element *element)
 {
   string parameter, axis, scratch;
   string scratch_unit="";
+  string fname="", file="";
   Element *temp_element, *axis_element, *function_element;
 
   Debug(2);
 
-  if (temp_element = element->FindElement("alphalimits")) {
+  string separator = "/";
+#ifdef macintosh
+  separator = ";";
+#endif
+
+  fname = element->GetAttributeValue("file");
+  if (!fname.empty()) {
+    file = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
+    document = LoadXMLDocument(file);
+  } else {
+    document = element;
+  }
+
+  if (temp_element = document->FindElement("alphalimits")) {
     scratch_unit = temp_element->GetAttributeValue("unit");
     if (scratch_unit.empty()) scratch_unit = "DEG";
     alphaclmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
     alphaclmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
   }
 
-  if (temp_element = element->FindElement("hysteresis_limits")) {
+  if (temp_element = document->FindElement("hysteresis_limits")) {
     scratch_unit = temp_element->GetAttributeValue("unit");
     if (scratch_unit.empty()) scratch_unit = "DEG";
     alphahystmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
     alphahystmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
   }
 
-  if (temp_element = element->FindElement("aero_ref_pt_shift_x")) {
+  if (temp_element = document->FindElement("aero_ref_pt_shift_x")) {
     function_element = temp_element->FindElement("function");
     AeroRPShift = new FGFunction(PropertyManager, function_element);
   }
 
-  function_element = element->FindElement("function");
+  function_element = document->FindElement("function");
   while (function_element) {
     variables.push_back( new FGFunction(PropertyManager, function_element) );
-    function_element = element->FindNextElement("function");
+    function_element = document->FindNextElement("function");
   }
 
-  axis_element = element->FindElement("axis");
+  axis_element = document->FindElement("axis");
   while (axis_element) {
     CoeffArray ca;
     axis = axis_element->GetAttributeValue("name");
@@ -238,7 +252,7 @@ bool FGAerodynamics::Load(Element *element)
       function_element = axis_element->FindNextElement("function");
     }
     Coeff[AxisIdx[axis]] = ca;
-    axis_element = element->FindNextElement("axis");
+    axis_element = document->FindNextElement("axis");
   }
 
   return true;
