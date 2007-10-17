@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.11 2007/10/06 04:09:37 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.12 2007/10/17 01:07:16 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -199,8 +199,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
     if (el->FindElement("ratedaltitude3"))
       RatedAltitude[2] = el->FindElementValueAsNumberConvertTo("ratedaltitude3", "FT");
   }
-  minMAP = MinManifoldPressure_inHg * 3386.38;  // inHg to Pa
-  maxMAP = MaxManifoldPressure_inHg * 3386.38;
+  minMAP = MinManifoldPressure_inHg * inhgtopa;  // inHg to Pa
+  maxMAP = MaxManifoldPressure_inHg * inhgtopa;
   StarterHP = sqrt(MaxHP) * 0.4;
 
   // Set up and sanity-check the turbo/supercharging configuration based on the input values.
@@ -472,7 +472,7 @@ void FGPiston::doMAP(void)
   }
 
   // And set the value in American units as well
-  ManifoldPressure_inHg = MAP / 3386.38;
+  ManifoldPressure_inHg = MAP / inhgtopa;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
