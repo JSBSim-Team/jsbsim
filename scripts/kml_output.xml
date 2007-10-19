@@ -13,7 +13,7 @@
   cut -d, -f2- GroundTrack.kml.csv  > GroundTrack2.kml
 
   The first row containing the column headers should be removed, too, for
-  use in Google Earth (edit GroundTrack2.csv in the above example).
+  use in Google Earth (edit GroundTrack2.kml in the above example).
   
   Then, you can concatenate the Pre- and Post-fix files to make a complete
   KML file you can drop into Google Earth:

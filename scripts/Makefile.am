@@ -13,6 +13,9 @@ EXTRA_DIST = \
   c3101.xml \
   cannonball.xml \
   plotfile.xml \
+  kml_output.xml \
+  Prefix.kml \
+  Postfix.kml \
   x151.xml \
   x152.xml \
   f16_runway_test.xml
