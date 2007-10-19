@@ -11,10 +11,16 @@
   <run start="0.0" end="2000" dt="0.0083333">
 
     <property> simulation/notify-time-trigger </property>
+    <property> simulation/run_id </property>
+
+    <event>
+      <description> initialize the run id </description>
+      <condition> sim-time-sec >= 0.00 </condition>
+      <set name="simulation/run_id" value="1"/>
+    </event>
 
     <event name="engine start">
       <description>Start the engine</description>
-      <notify/>
       <condition>
         sim-time-sec >= 0.25
       </condition>
@@ -22,6 +28,10 @@
       <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd" value="3"/>
       <set name="propulsion/starter_cmd" value="1"/>
+      <notify>
+        <property>simulation/run_id</property>
+        <property>ap/heading-roll-error-lag-c1</property>
+      </notify>
     </event>
 
     <event name="Set heading hold">

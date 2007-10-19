@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<output name="GroundTrack.kml.csv" type="CSV" rate="10">
+<description>
+  This is an output file that can be used to get a data file that
+  is almost in Google Earth "KML" file format.  To run JSBSim in standalone
+  mode and using this file, type (for example):
+
+  src/jsbsim --script=scripts/c1723.xml --logdirectivefile=kml_output
+
+  The first column of data must be removed (it is the elapsed simulation time
+  in seconds). Removing the first column of data can be done as follows:
+
+  cut -d, -f2- GroundTrack.kml.csv  > GroundTrack2.kml
+
+  The first row containing the column headers should be removed, too, for
+  use in Google Earth (edit GroundTrack2.csv in the above example).
+  
+  Then, you can concatenate the Pre- and Post-fix files to make a complete
+  KML file you can drop into Google Earth:
+  
+  cat Prefix.kml GroundTrack2.kml Postfix.kml > FinalGroundTrack.kml
+
+
+</description>
+  <property> position/long-gc-deg </property>
+  <property> position/lat-gc-deg </property>
+  <property> position/h-sl-meters </property>
+</output>
