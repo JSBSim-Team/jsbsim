@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.9 2007/10/10 03:10:53 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.10 2007/10/19 03:49:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -62,7 +62,7 @@ CLASS DOCUMENTATION
 
 /** Models the EOM and integration/propagation of state
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.9 2007/10/10 03:10:53 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.10 2007/10/19 03:49:24 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,6 +106,7 @@ public:
   double GetUVWdot(int idx) const { return vUVWdot(idx); }
   double GetVel(int idx) const { return vVel(idx); }
   double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
+  double Gethmeters(void) const { return Geth()*fttom;}
   double GetPQR(int axis) const {return VState.vPQR(axis);}
   double GetPQRdot(int idx) const {return vPQRdot(idx);}
   double GetEuler(int axis) const { return VState.vQtrn.GetEuler(axis); }
@@ -125,6 +126,8 @@ public:
   double GetRadius(void) const { return VState.vLocation.GetRadius(); }
   double GetLongitude(void) const { return VState.vLocation.GetLongitude(); }
   double GetLatitude(void) const { return VState.vLocation.GetLatitude(); }
+  double GetLongitudeDeg(void) const { return VState.vLocation.GetLongitudeDeg(); }
+  double GetLatitudeDeg(void) const { return VState.vLocation.GetLatitudeDeg(); }
   const FGLocation& GetLocation(void) const { return VState.vLocation; }
 
   /** Retrieves the local-to-body transformation matrix.
@@ -159,10 +162,13 @@ public:
 // SET functions
 
   void SetLongitude(double lon) { VState.vLocation.SetLongitude(lon); }
+  void SetLongitudeDeg(double lon) {SetLongitude(lon*degtorad);}
   void SetLatitude(double lat) { VState.vLocation.SetLatitude(lat); }
+  void SetLatitudeDeg(double lat) {SetLatitude(lat*degtorad);}
   void SetRadius(double r) { VState.vLocation.SetRadius(r); }
   void SetLocation(const FGLocation& l) { VState.vLocation = l; }
   void Seth(double tt);
+  void Sethmeters(double tt) {Seth(tt/fttom);}
   void SetSeaLevelRadius(double tt) { SeaLevelRadius = tt; }
   void SetTerrainElevationASL(double tt);
   void SetDistanceAGL(double tt);

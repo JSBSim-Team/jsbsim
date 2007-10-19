@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.14 2007/10/10 03:10:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.15 2007/10/19 03:49:24 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -412,8 +412,11 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("accelerations/wdot-fps", this, eW, (PMF)&FGPropagate::GetUVWdot);
 
   PropertyManager->Tie("position/h-sl-ft", this, &FGPropagate::Geth, &FGPropagate::Seth, true);
+  PropertyManager->Tie("position/h-sl-meters", this, &FGPropagate::Gethmeters, &FGPropagate::Sethmeters, true);
   PropertyManager->Tie("position/lat-gc-rad", this, &FGPropagate::GetLatitude, &FGPropagate::SetLatitude);
   PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
+  PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg);
+  PropertyManager->Tie("position/long-gc-deg", this, &FGPropagate::GetLongitudeDeg, &FGPropagate::SetLongitudeDeg);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
@@ -457,8 +460,11 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("accelerations/qdot-rad_sec");
   PropertyManager->Untie("accelerations/rdot-rad_sec");
   PropertyManager->Untie("position/h-sl-ft");
+  PropertyManager->Untie("position/h-sl-meters");
   PropertyManager->Untie("position/lat-gc-rad");
   PropertyManager->Untie("position/long-gc-rad");
+  PropertyManager->Untie("position/lat-gc-deg");
+  PropertyManager->Untie("position/long-gc-deg");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");
