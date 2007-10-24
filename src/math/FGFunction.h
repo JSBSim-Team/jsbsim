@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FUNCTION "$Id: FGFunction.h,v 1.11 2007/10/07 06:58:21 jberndt Exp $"
+#define ID_FUNCTION "$Id: FGFunction.h,v 1.12 2007/10/24 13:00:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,6 +81,8 @@ A function definition consists of an operation, a value, a table, or a property
 - max (takes n args)
 - avg (takes n args)
 - fraction
+- mod
+- random (Gaussian random number)
 - integer
 
 An operation is defined in the configuration file as in the following example:
@@ -192,8 +194,9 @@ private:
   double cachedValue;
   enum functionType {eTopLevel=0, eProduct, eDifference, eSum, eQuotient, ePow,
                      eExp, eAbs, eSin, eCos, eTan, eASin, eACos, eATan, eATan2,
-                     eMin, eMax, eAvg, eFrac, eInteger, eMod} Type;
+                     eMin, eMax, eAvg, eFrac, eInteger, eMod, eRandom} Type;
   string Name;
+  double GaussianRandomNumber(void);
   void bind(void);
   void Debug(int from);
 };

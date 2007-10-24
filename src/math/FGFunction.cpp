@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.16 2007/10/07 06:58:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.17 2007/10/24 13:00:22 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,6 +98,8 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
     Type = eInteger;
   } else if (operation == string("mod")) {
     Type = eMod;
+  } else if (operation == string("random")) {
+    Type = eRandom;
   } else if (operation != string("description")) {
     cerr << "Bad operation " << operation << " detected in configuration file" << endl;
   }
@@ -150,6 +152,7 @@ FGFunction::FGFunction(FGPropertyManager* propMan, Element* el, string prefix)
                operation == string("fraction") ||
                operation == string("integer") ||
                operation == string("mod") ||
+               operation == string("random") ||
                operation == string("avg") )
     {
       Parameters.push_back(new FGFunction(PropertyManager, element));
@@ -278,6 +281,9 @@ double FGFunction::GetValue(void) const
     modf(temp, &scratch);
     temp = scratch;
     break;
+  case eRandom:
+    temp = GaussianRandomNumber();
+    break;
   default:
     cerr << "Unknown function operation type" << endl;
     break;
@@ -296,6 +302,33 @@ string FGFunction::GetValueAsString(void) const
   sprintf(buffer,"%9.6f",GetValue());
   value = string(buffer);
   return value;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGFunction::GaussianRandomNumber(void)
+{
+  static double V1, V2, S;
+  static int phase = 0;
+  double X;
+
+  if (phase == 0) {
+    do {
+      double U1 = (double)rand() / RAND_MAX;
+      double U2 = (double)rand() / RAND_MAX;
+
+      V1 = 2 * U1 - 1;
+      V2 = 2 * U2 - 1;
+      S = V1 * V1 + V2 * V2;
+    } while(S >= 1 || S == 0);
+
+      X = V1 * sqrt(-2 * log(S) / S);
+  } else
+    X = V2 * sqrt(-2 * log(S) / S);
+
+  phase = 1 - phase;
+
+  return X;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
