@@ -37,7 +37,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFunction.cpp,v 1.17 2007/10/24 13:00:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFunction.cpp,v 1.18 2007/10/25 11:40:09 jberndt Exp $";
 static const char *IdHdr = ID_FUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -306,7 +306,7 @@ string FGFunction::GetValueAsString(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGFunction::GaussianRandomNumber(void)
+double FGFunction::GaussianRandomNumber(void) const
 {
   static double V1, V2, S;
   static int phase = 0;
