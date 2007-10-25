@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.9 2007/08/31 09:24:12 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.10 2007/10/25 11:41:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.9 2007/08/31 09:24:12 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.10 2007/10/25 11:41:22 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,8 +235,8 @@ private:
   struct LocalProps {
     double *value;
     string title;
-    LocalProps() {
-      value = new double(0.0);
+    LocalProps(double initial_value=0) {
+      value = new double(initial_value);
       title = "";
     }
   };

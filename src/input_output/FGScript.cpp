@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.22 2007/09/07 12:41:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.23 2007/10/25 11:41:22 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,12 +187,18 @@ bool FGScript::LoadScript( string script )
     }
   }
 
-  // Read local property declarations
+  // Read local property/value declarations
   property_element = run_element->FindElement("property");
   while (property_element) {
-    LocalProps *localProp = new LocalProps();
+
+    double value=0.0;
+    if ( ! property_element->GetAttributeValue("value").empty())
+      value = property_element->GetAttributeValueAsNumber("value");
+
+    LocalProps *localProp = new LocalProps(value);
     localProp->title = property_element->GetDataLine();
     local_properties.push_back(localProp);
+
     PropertyManager->Tie(localProp->title, (local_properties.back())->value);
     property_element = run_element->FindNextElement("property");
   }
