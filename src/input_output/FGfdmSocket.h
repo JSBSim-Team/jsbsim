@@ -86,7 +86,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.12 2007/11/12 04:25:53 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.13 2007/11/12 13:13:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -114,6 +114,7 @@ class FGfdmSocket : public FGJSBBase
 {
 public:
   FGfdmSocket(string, int);
+  FGfdmSocket(string, int, int);
   FGfdmSocket(int);
   ~FGfdmSocket();
   void Send(void);
@@ -129,6 +130,8 @@ public:
   void Clear(string s);
   void Close(void);
   bool GetConnectStatus(void) {return connected;}
+
+  enum {ptUDP, ptTCP};
 
 private:
   int sckt;

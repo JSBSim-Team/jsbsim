@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.20 2007/11/12 04:25:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.21 2007/11/12 13:13:34 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -439,11 +439,6 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
     net->v_wind_body_down = Propagate->GetVel(eDown); // down vel in NED relative to airmass, fps
 
 
-cout << "Lat == " << net->latitude*radtodeg 
-     << ", Long == " << net->longitude*radtodeg 
-     << ", hAGL == " << net->agl*3.28 
-     << ", VCAS == " << net->vcas 
-     << endl;
 
     // Accelerations
     net->A_X_pilot   = Auxiliary->GetPilotAccel(1);    // X body accel, ft/s/s
@@ -872,6 +867,7 @@ bool FGOutput::Load(Element* element)
 {
   string type="", parameter="";
   string name="";
+  string protocol="tcp";
   int OutRate = 0;
   string property;
   unsigned int port;
@@ -900,7 +896,12 @@ bool FGOutput::Load(Element* element)
     socket = new FGfdmSocket(name, port);
   } else if (!document->GetAttributeValue("port").empty() && type == string("FLIGHTGEAR")) {
     port = atoi(document->GetAttributeValue("port").c_str());
-    flightGearSocket = new FGfdmSocket(name, port);
+    if (!document->GetAttributeValue("protocol").empty())
+       protocol = document->GetAttributeValue("protocol");
+    if (protocol == "udp")
+       flightGearSocket = new FGfdmSocket(name, port, FGfdmSocket::ptUDP);  // create udp socket
+    else
+       flightGearSocket = new FGfdmSocket(name, port, FGfdmSocket::ptTCP);  // create tcp socket (default)
   } else {
     Filename = name;
   }

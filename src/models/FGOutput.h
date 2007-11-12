@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.8 2007/11/12 04:25:53 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.9 2007/11/12 13:13:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -91,10 +91,11 @@ CLASS DOCUMENTATION
       SOCKET    Will eventually send data to a socket output, where NAME
                   would then be the IP address of the machine the data should
                   be sent to. DON'T USE THIS YET!
-      FLIGHTGEAR  A TCP socket is created for sending binary data packets to
-                  an external instance of FlightGear for visuals.
+      FLIGHTGEAR  A socket is created for sending binary data packets to
+                  an external instance of FlightGear for visuals.  Parameters
+                  defining the socket are given on the <output> line.
 
-      e.g. -   <output name="localhost" type="FLIGHTGEAR" port="5500" rate="10"></output>
+  e.g. -   <output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"></output>
 
       TABULAR   Columnar data. NOT IMPLEMENTED YET!
       TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
@@ -124,7 +125,7 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.8 2007/11/12 04:25:53 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.9 2007/11/12 13:13:34 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

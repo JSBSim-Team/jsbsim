@@ -42,12 +42,66 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.15 2007/11/12 04:25:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.16 2007/11/12 13:13:34 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+FGfdmSocket::FGfdmSocket(string address, int port, int protocol)
+{
+  sckt = sckt_in = size = 0;
+  connected = false;
+
+  #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
+    WSADATA wsaData;
+    int wsaReturnCode;
+    wsaReturnCode = WSAStartup(MAKEWORD(1,1), &wsaData);
+    if (wsaReturnCode == 0) cout << "Winsock DLL loaded ..." << endl;
+    else cout << "Winsock DLL not initialized ..." << endl;
+  #endif
+
+  if (address.find_first_not_of("0123456789.",0) != address.npos) {
+    if ((host = gethostbyname(address.c_str())) == NULL) {
+      cout << "Could not get host net address by name..." << endl;
+    }
+  } else {
+    if ((host = gethostbyaddr(address.c_str(), address.size(), PF_INET)) == NULL) {
+      cout << "Could not get host net address by number..." << endl;
+    }
+  }
+
+  if (host != NULL) {
+    if (protocol == ptUDP) {  //use udp protocol
+       sckt = socket(AF_INET, SOCK_DGRAM, 0);
+       cout << "Creating UDP socket on port " << port << endl;
+    }
+    else { //use tcp protocol
+       sckt = socket(AF_INET, SOCK_STREAM, 0);
+       cout << "Creating TCP socket on port " << port << endl;
+    }
+
+    if (sckt >= 0) {  // successful
+      memset(&scktName, 0, sizeof(struct sockaddr_in));
+      scktName.sin_family = AF_INET;
+      scktName.sin_port = htons(port);
+      memcpy(&scktName.sin_addr, host->h_addr_list[0], host->h_length);
+      int len = sizeof(struct sockaddr_in);
+      if (connect(sckt, (struct sockaddr*)&scktName, len) == 0) {   // successful
+        cout << "Successfully connected to socket for output ..." << endl;
+        connected = true;
+      } else {                // unsuccessful
+        cout << "Could not connect to socket for output ..." << endl;
+      }
+    } else {          // unsuccessful
+      cout << "Could not create socket for FDM output, error = " << errno << endl;
+    }
+  }
+  Debug(0);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGfdmSocket::FGfdmSocket(string address, int port)
 {
