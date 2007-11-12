@@ -32,6 +32,7 @@ This class excapsulates a socket for simple data writing
 HISTORY
 --------------------------------------------------------------------------------
 11/08/99   JSB   Created
+11/08/07   HDW   Added Generic Socket Send
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
@@ -41,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.14 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGfdmSocket.cpp,v 1.15 2007/11/12 04:25:53 jberndt Exp $";
 static const char *IdHdr = ID_FDMSOCKET;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -60,6 +61,10 @@ FGfdmSocket::FGfdmSocket(string address, int port)
     if (wsaReturnCode == 0) cout << "Winsock DLL loaded ..." << endl;
     else cout << "Winsock DLL not initialized ..." << endl;
   #endif
+
+  cout << "... Socket Configuration Sanity Check ..." << endl;
+  cout << "Host name...   " << address << ",  Port...  " << port << "." << endl;
+  cout << "Host name... (char)  " << address.c_str() << "." << endl;
 
   if (address.find_first_not_of("0123456789.",0) != address.npos) {
     if ((host = gethostbyname(address.c_str())) == NULL) {
@@ -287,6 +292,16 @@ void FGfdmSocket::Send(void)
 {
   buffer += string("\n");
   if ((send(sckt,buffer.c_str(),buffer.size(),0)) <= 0) {
+    perror("send");
+  } else {
+  }
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGfdmSocket::Send(char *data, int length)
+{
+  if ((send(sckt,data,length,0)) <= 0) {
     perror("send");
   } else {
   }

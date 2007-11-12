@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 11/08/99   JSB   Created
+11/08/07   HDW   Added Generic Socket Send
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -85,7 +86,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.11 2006/11/20 13:59:49 jberndt Exp $"
+#define ID_FDMSOCKET "$Id: FGfdmSocket.h,v 1.12 2007/11/12 04:25:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -116,6 +117,8 @@ public:
   FGfdmSocket(int);
   ~FGfdmSocket();
   void Send(void);
+  void Send(char *data, int length);
+
   string Receive(void);
   int Reply(string text);
   void Append(const string s) {Append(s.c_str());}

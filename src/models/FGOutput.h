@@ -26,6 +26,7 @@
 HISTORY
 --------------------------------------------------------------------------------
 12/02/98   JSB   Created
+11/09/07   HDW   Added FlightGear Socket Interface
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
@@ -54,14 +55,16 @@ INCLUDES
 #  endif
 #endif
 
-#include <input_output/FGfdmSocket.h>
-#include <input_output/FGXMLFileRead.h>
+#include "input_output/FGfdmSocket.h"
+#include "input_output/FGXMLFileRead.h"
+#include "input_output/net_fdm.hxx"
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.8 2007/11/12 04:25:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -81,13 +84,18 @@ CLASS DOCUMENTATION
     NAME is the filename you want the output to go to
 
     TYPE can be:
-      CSV       Comma separated data. If a filename is supplied then the data
-                goes to that file. If COUT or cout is specified, the data goes
-                to stdout. If the filename is a null filename the data goes to
-                stdout, as well.
+      CSV         Comma separated data. If a filename is supplied then the
+                  data goes to that file. If COUT or cout is specified, the
+                  data goes to stdout. If the filename is a null filename the
+                  data goes to stdout, as well.
       SOCKET    Will eventually send data to a socket output, where NAME
-                would then be the IP address of the machine the data should be
-                sent to. DON'T USE THIS YET!
+                  would then be the IP address of the machine the data should
+                  be sent to. DON'T USE THIS YET!
+      FLIGHTGEAR  A TCP socket is created for sending binary data packets to
+                  an external instance of FlightGear for visuals.
+
+      e.g. -   <output name="localhost" type="FLIGHTGEAR" port="5500" rate="10"></output>
+
       TABULAR   Columnar data. NOT IMPLEMENTED YET!
       TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
       NONE      Specifies to do nothing. THis setting makes it easy to turn on and
@@ -116,7 +124,7 @@ CLASS DOCUMENTATION
     PROPULSION       ON|OFF
 
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.8 2007/11/12 04:25:53 jberndt Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -133,7 +141,11 @@ public:
 
   void DelimitedOutput(string);
   void SocketOutput(void);
+  void FlightGearSocketOutput(void);
   void SocketStatusOutput(string);
+  void SocketDataFill(FGNetFDM* net);
+
+
   void SetType(string);
   void SetSubsystems(int tt) {SubSystems = tt;}
   inline void Enable(void) { enabled = true; }
@@ -161,13 +173,17 @@ public:
     /** Subsystem: Propulsion (= 4096)       */ ssPropulsion      = 4096
   } subsystems;
 
+
+  FGNetFDM fgSockBuf;
+
 private:
-  enum {otNone, otCSV, otTab, otSocket, otTerminal, otUnknown} Type;
+  enum {otNone, otCSV, otTab, otSocket, otTerminal, otFlightGear, otUnknown} Type;
   bool sFirstPass, dFirstPass, enabled;
   int SubSystems;
   string output_file_name, delimeter, Filename, DirectivesFile;
   ofstream datafile;
   FGfdmSocket* socket;
+  FGfdmSocket* flightGearSocket;
   vector <FGPropertyManager*> OutputProperties;
 
   void Debug(int from);
