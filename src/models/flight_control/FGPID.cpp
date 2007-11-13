@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.3 2007/03/24 23:56:06 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.4 2007/11/13 12:35:55 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +51,7 @@ FGPID::FGPID(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   dt = fcs->GetState()->Getdt();
 
   Kp = Ki = Kd = 0.0;
-  P_out = D_out = I_out = 0.0;
+  I_out_total = 0.0;
   Input_prev = Input_prev2 = 0.0;
   Trigger = 0;
 
@@ -78,6 +78,9 @@ FGPID::~FGPID()
 
 bool FGPID::Run(void )
 {
+  double I_out_delta = 0.0;
+  double P_out, D_out;
+
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
   P_out = Kp * (Input - Input_prev);
@@ -89,17 +92,18 @@ bool FGPID::Run(void )
 
   if (Trigger != 0) {
     double test = Trigger->getDoubleValue();
-    if (fabs(test) < 0.000001) {
-      I_out = Ki * dt * Input;
-    }
+    if (fabs(test) < 0.000001) I_out_delta = Ki * dt * Input;  // Normal
+    if (test < -0.000001)      I_out_total = 0.0;  // Reset integrator to 0.0
   } else { // no anti-wind-up trigger defined
-    I_out = Ki * dt * Input;
+    I_out_delta = Ki * dt * Input;
   }
+  
+  I_out_total += I_out_delta;
+
+  Output = P_out + I_out_total + D_out;
 
   Input_prev = Input;
   Input_prev2 = Input_prev;
-
-  Output += P_out + I_out + D_out;
 
   Clip();
   if (IsOutput) SetOutput();

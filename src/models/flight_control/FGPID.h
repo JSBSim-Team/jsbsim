@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.2 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.3 2007/11/13 12:35:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,7 +70,7 @@ CLASS DOCUMENTATION
 /** Encapsulates a PID control component for the flight control system.
 
     @author Jon S. Berndt
-    @version $Revision: 1.2 $
+    @version $Revision: 1.3 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -89,7 +89,7 @@ private:
   double dt;
   FGPropertyManager *Trigger;
   double Kp, Ki, Kd;
-  double P_out, D_out, I_out;
+  double I_out_total;
   double Input_prev, Input_prev2;
 
   void Debug(int from);
