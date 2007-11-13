@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.4 2007/11/13 12:35:55 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.5 2007/11/13 12:57:48 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,12 +88,13 @@ bool FGPID::Run(void )
 
   // Do not continue to integrate the input to the integrator if a wind-up
   // condition is sensed - that is, if the property pointed to by the trigger
-  // element is non-zero.
+  // element is non-zero. Reset the integrator to 0.0 if the Trigger value
+  // is negative.
 
   if (Trigger != 0) {
     double test = Trigger->getDoubleValue();
     if (fabs(test) < 0.000001) I_out_delta = Ki * dt * Input;  // Normal
-    if (test < -0.000001)      I_out_total = 0.0;  // Reset integrator to 0.0
+    if (test < 0.0)            I_out_total = 0.0;  // Reset integrator to 0.0
   } else { // no anti-wind-up trigger defined
     I_out_delta = Ki * dt * Input;
   }
