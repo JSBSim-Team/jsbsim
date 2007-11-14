@@ -39,7 +39,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPID.cpp,v 1.6 2007/11/13 13:00:56 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPID.cpp,v 1.7 2007/11/14 04:15:17 jberndt Exp $";
 static const char *IdHdr = ID_PID;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,8 +83,8 @@ bool FGPID::Run(void )
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
 
-  P_out = Kp * (Input - Input_prev);
-  D_out = (Kd / dt) * (Input - 2*Input_prev + Input_prev2);
+  P_out = Kp * Input;
+  D_out = (Kd / dt) * (Input - Input_prev);
 
   // Do not continue to integrate the input to the integrator if a wind-up
   // condition is sensed - that is, if the property pointed to by the trigger
@@ -102,7 +102,7 @@ bool FGPID::Run(void )
   I_out_total += I_out_delta;
 
   Output = P_out + I_out_total + D_out;
-
+  
   Input_prev = Input;
   Input_prev2 = Input_prev;
 

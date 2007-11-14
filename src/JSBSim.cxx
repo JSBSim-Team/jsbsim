@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.15 2007/06/13 11:17:27 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.16 2007/11/14 04:15:17 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -27,7 +27,7 @@
 
 #include <simgear/compiler.h>
 
-#include <stdio.h>	//	size_t
+#include <stdio.h>    //    size_t
 #ifdef SG_MATH_EXCEPTION_CLASH
 #  include <math.h>
 #endif
@@ -562,8 +562,8 @@ bool FGJSBsim::copy_to_JSBsim()
         eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
         eng->SetIgnition( globals->get_controls()->get_ignition(i) );
 
-		eng->SetGeneratorPower( globals->get_controls()->get_generator_breaker(i) );
-		eng->SetCondition( globals->get_controls()->get_condition(i) );
+        eng->SetGeneratorPower( globals->get_controls()->get_generator_breaker(i) );
+        eng->SetCondition( globals->get_controls()->get_condition(i) );
         break;
         } // end FGTurboProp code block
       }

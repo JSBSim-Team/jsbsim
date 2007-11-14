@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.8 2007/10/06 18:40:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.9 2007/11/14 04:15:17 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,6 +106,8 @@ void FGFilter::ReadFilterCoefficients(Element* element, int index)
       if (property_string[0] == '-') {
        PropertySign[index] = -1.0;
        property_string.erase(0,1);
+      } else {
+       PropertySign[index] = 1.0;
       }
       PropertyNode[index] = PropertyManager->GetNode(property_string);
       DynamicFilter = true;
@@ -127,6 +129,7 @@ void FGFilter::CalculateDynamicFilters(void)
       denom = 2.00 + dt*C[1];
       ca = dt*C[1] / denom;
       cb = (2.00 - dt*C[1]) / denom;
+
       break;
     case eLeadLag:
       if (PropertyNode[1] != 0L) C[1] = PropertyNode[1]->getDoubleValue()*PropertySign[1];
