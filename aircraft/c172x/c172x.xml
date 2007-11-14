@@ -10,7 +10,7 @@
             <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.70 $</version>
+        <version>$Revision: 1.71 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -49,7 +49,7 @@
             <z> 36.5 </z>
         </location>
         <pointmass name="PILOT">
-            <weight unit="LBS">180.0</weight>
+            <weight unit="LBS">170.0</weight>
             <location name="POINTMASS" unit="IN">
                 <x> 36.0 </x>
                 <y> -14.0 </y>
@@ -57,7 +57,7 @@
             </location>
         </pointmass>
         <pointmass name="CO-PILOT">
-            <weight unit="LBS">180.0</weight>
+            <weight unit="LBS">110.0</weight>
             <location name="POINTMASS" unit="IN">
                 <x> 36.0 </x>
                 <y> 14.0 </y>
@@ -65,7 +65,7 @@
             </location>
         </pointmass>
         <pointmass name="LUGGAGE">
-            <weight unit="LBS">120.0</weight>
+            <weight unit="LBS">80.0</weight>
             <location name="POINTMASS" unit="IN">
                 <x> 95.0 </x>
                 <y>  0.0 </y>
@@ -225,7 +225,7 @@
             </location>
             <radius unit="IN">29.4</radius>
             <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">168</contents>
+            <contents unit="LBS">150</contents>
         </tank>
         <tank type="FUEL">    <!-- Tank number 1 -->
             <location unit="IN">
@@ -235,13 +235,13 @@
             </location>
             <radius unit="IN">29.4</radius>
             <capacity unit="LBS">168</capacity>
-            <contents unit="LBS">168</contents>
+            <contents unit="LBS">150</contents>
         </tank>
     </propulsion>
     <autopilot file="c172ap"/>
     <flight_control name="c172">
         <channel name="Pitch">
-            <summer name="Pitch Trim Sum">
+            <summer name="fcs/pitch-trim-sum">
                 <input>ap/elevator_cmd</input>
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
@@ -280,7 +280,7 @@
         </channel>
 
         <channel name="Roll">
-            <summer name="Roll Trim Sum">
+            <summer name="fcs/roll-trim-sum">
                 <input>ap/aileron_cmd</input>
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
@@ -289,7 +289,7 @@
                     <max>1</max>
                 </clipto>
             </summer>
-            <aerosurface_scale name="Left Aileron Control">
+            <aerosurface_scale name="fcs/left-aileron-control">
                 <input>fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -298,7 +298,7 @@
                 </range>
                 <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
-            <aerosurface_scale name="Right Aileron Control">
+            <aerosurface_scale name="fcs/right-aileron-control">
                 <input>-fcs/roll-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -310,7 +310,7 @@
         </channel>
 
         <channel name="Yaw">
-            <summer name="Yaw Trim Sum">
+            <summer name="fcs/yaw-trim-sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
                 <clipto>
@@ -318,7 +318,7 @@
                     <max>1</max>
                 </clipto>
             </summer>
-            <aerosurface_scale name="Rudder Control">
+            <aerosurface_scale name="fcs/rudder-control">
                 <input>fcs/yaw-trim-sum</input>
                 <gain>0.01745</gain>
                 <range>
@@ -329,7 +329,7 @@
             </aerosurface_scale>
         </channel>
         <channel name="Flaps">
-            <kinematic name="Flaps Control">
+            <kinematic name="fcs/flaps-control">
                 <input>fcs/flap-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -351,7 +351,7 @@
                 </traverse>
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
-            <aerosurface_scale name="Flap Position Normalizer">
+            <aerosurface_scale name="fcs/flap-position-normalizer">
               <input>fcs/flap-pos-deg</input>
               <domain>
                 <min>0</min>  <!-- Flaps actual minimum position -->

@@ -35,6 +35,8 @@
   <property>ap/airspeed_hold</property>
   <property>ap/throttle-cmd-norm</property>
 
+  <property value="0.5"> ap/heading-roll-error-lag-c1 </property>
+
 <!--  <property>attitude/sensor/phi-rad</property> -->
 
 <!-- SENSOR -->
@@ -59,13 +61,13 @@ ROLL CHANNEL
 
 <!-- Wing leveler -->
 
-<channel name="fcs/ap-roll-wing-leveler">
+<channel name="Roll wing leveler">
 
   <pid name="fcs/roll-ap-error-pid">
-    <input>fcs/attitude/sensor/phi-rad</input>
-    <kp> 2.0 </kp>
-    <ki> 0.2</ki>
-    <kd> 1 </kd>
+    <input>attitude/phi-rad</input>
+    <kp> 1.0 </kp>
+    <ki> 0.01</ki>
+    <kd> 0.1 </kd>
   </pid>
 
   <switch name="fcs/roll-ap-autoswitch">
@@ -84,7 +86,7 @@ ROLL CHANNEL
 
 <!-- Heading hold -->
 
-<channel name="fcs/ap-roll-heading-hold">
+<channel name="Roll heading hold">
   <pure_gain name="fcs/heading-true-degrees">
     <input>attitude/heading-true-rad</input>
     <gain>57.3</gain> <!-- convert to degrees -->
@@ -110,7 +112,7 @@ ROLL CHANNEL
     <input> fcs/heading-error </input>
     <clipto>
       <min>-30</min>
-      <max> 30</max>
+      <max>30</max>
     </clipto>
   </summer>
 
@@ -121,7 +123,7 @@ ROLL CHANNEL
 
   <lag_filter name="fcs/heading-roll-error-lag">
     <input> fcs/heading-command </input>
-    <c1> 0.50 </c1>
+    <c1> ap/heading-roll-error-lag-c1 </c1>
   </lag_filter>
 
   <summer name="fcs/heading-roll-error">
@@ -138,9 +140,9 @@ ROLL CHANNEL
 
   <pid name="fcs/roll-pi-controller">
     <input> fcs/heading-roll-error-switch </input>
-    <kp> 1.0 </kp>
-    <ki> 0.10 </ki>
-    <kd> 0 </kd>
+    <kp> 1.0  </kp>
+    <ki> 0.01  </ki>
+    <kd> 0.01 </kd>
   </pid>
 
   <summer name="fcs/heading-error-summer">
@@ -154,8 +156,8 @@ ROLL CHANNEL
   <pid name="fcs/heading-pi-controller">
     <input> fcs/heading-roll-error-switch </input>
     <kp> 1 </kp>
-    <ki> 1 </ki>
-    <kd> 1 </kd>
+    <ki> 0.01 </ki>
+    <kd> 0.01 </kd>
   </pid>
 
   <switch name="fcs/roll-command-selector">
@@ -189,7 +191,7 @@ PITCH CHANNEL
      is given in the right column.
 -->
 
-<channel name="fcs/ap-pitch-altitude-hold">
+<channel name="Pitch altitude hold">
 
   <!--
   The difference between the desired altitude and the actual altitude
@@ -293,11 +295,9 @@ PITCH CHANNEL
 
   <pid name="fcs/altitude-hold-pid">
     <input> fcs/ap-alt-hold-switch </input>
-<!--    <kp> 0.031 </kp>
-    <ki> 0.000028 </ki> -->
-    <kp> 0.032 </kp>
-    <ki> 0.00001 </ki>
-    <kd> 0.00006 </kd>
+    <kp> 0.013 </kp>
+    <ki> 0.00015 </ki>
+    <kd> 0.0003 </kd>
     <trigger> fcs/windup-trigger </trigger>
     <clipto> <min>-1.0</min>
              <max> 1.0</max> </clipto>
