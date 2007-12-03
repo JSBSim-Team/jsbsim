@@ -6,7 +6,7 @@
 //
 // This file is in the Public Domain, and comes with no warranty.
 //
-// $Id: net_fdm.hxx,v 1.1 2007/11/12 04:25:53 jberndt Exp $
+// $Id: net_fdm.hxx,v 1.2 2007/12/03 09:21:47 jberndt Exp $
 
 
 #ifndef _NET_FDM_HXX
@@ -14,6 +14,12 @@
 
 
 #include <time.h> // time_t
+
+#ifdef _MSC_VER
+typedef unsigned long uint32_t;
+typedef long int32_t;
+#endif
+
 //--->>>#include <simgear/misc/stdint.hxx> //not required for JSBSim
 
 
