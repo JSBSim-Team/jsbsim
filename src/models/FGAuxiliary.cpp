@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.18 2007/12/08 18:38:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.19 2007/12/08 19:17:32 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,6 +110,7 @@ bool FGAuxiliary::Run()
   const FGColumnVector3& vUVW = Propagate->GetUVW();
   const FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
   const FGColumnVector3& vVel = Propagate->GetVel();
+  FGColumnVector3 vAircraftAccel;
 
   p = Atmosphere->GetPressure();
   rhosl = Atmosphere->GetDensitySL();
@@ -208,13 +209,13 @@ bool FGAuxiliary::Run()
 
   vPilotAccel.InitMatrix();
   if ( Vt > 1.0 ) {
-     vPilotAccel =  Aerodynamics->GetForces()
+     vAircraftAccel =  Aerodynamics->GetForces()
                     +  Propulsion->GetForces()
                     +  GroundReactions->GetForces();
-     vPilotAccel /= MassBalance->GetMass();
-     Nz = -vPilotAccel(eZ)/Inertial->gravity();
+     vAircraftAccel /= MassBalance->GetMass();
+     Nz = -vAircraftAccel(eZ)/Inertial->gravity();
      vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
-     vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
+     vPilotAccel = vAircraftAccel + Propagate->GetPQRdot() * vToEyePt;
      vPilotAccel += vPQR * (vPQR * vToEyePt);
   } else {
      // The line below handles low velocity (and on-ground) cases, basically
