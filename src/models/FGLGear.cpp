@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.29 2007/10/10 01:08:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.30 2007/12/08 18:38:53 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -661,8 +661,12 @@ void FGLGear::ComputeVerticalStrutForce(void)
 void FGLGear::bind(void)
 {
   char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-  Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
+  if (sContactType == "BOGEY") {
+    snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+    Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
+    snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
+    Exec->GetPropertyManager()->Tie( property_name, &WOW );
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -670,8 +674,12 @@ void FGLGear::bind(void)
 void FGLGear::unbind(void)
 {
   char property_name[80];
-  snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-  Exec->GetPropertyManager()->Untie( property_name );
+  if (sContactType == "BOGEY") {
+    snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
+    Exec->GetPropertyManager()->Untie( property_name );
+    snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
+    Exec->GetPropertyManager()->Untie( property_name );
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

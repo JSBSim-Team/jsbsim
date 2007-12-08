@@ -52,7 +52,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.17 2007/09/03 03:48:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.18 2007/12/08 18:38:53 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,6 +212,7 @@ bool FGAuxiliary::Run()
                     +  Propulsion->GetForces()
                     +  GroundReactions->GetForces();
      vPilotAccel /= MassBalance->GetMass();
+     Nz = -vPilotAccel(eZ)/Inertial->gravity();
      vToEyePt = MassBalance->StructuralToBody(Aircraft->GetXYZep());
      vPilotAccel += Propagate->GetPQRdot() * vToEyePt;
      vPilotAccel += vPQR * (vPQR * vToEyePt);
@@ -223,6 +224,7 @@ bool FGAuxiliary::Run()
      // this branch could be eliminated, with a penalty of having a short
      // transient at startup (lasting only a fraction of a second).
      vPilotAccel = Propagate->GetTl2b() * FGColumnVector3( 0.0, 0.0, -Inertial->gravity() );
+     Nz = -vPilotAccel(eZ)/Inertial->gravity();
   }
 
   vPilotAccelN = vPilotAccel/Inertial->gravity();
@@ -306,6 +308,7 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-x-norm", this, eX, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
+  PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
   PropertyManager->Tie("position/epa-rad", this, &FGAuxiliary::GetEarthPositionAngle);
   /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
   PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */
@@ -339,7 +342,6 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("propulsion/tat-r");
   PropertyManager->Untie("propulsion/tat-c");
   PropertyManager->Untie("propulsion/pt-lbs_sqft");
-
   PropertyManager->Untie("velocities/vc-fps");
   PropertyManager->Untie("velocities/vc-kts");
   PropertyManager->Untie("velocities/ve-fps");
@@ -363,6 +365,7 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("accelerations/n-pilot-x-norm");
   PropertyManager->Untie("accelerations/n-pilot-y-norm");
   PropertyManager->Untie("accelerations/n-pilot-z-norm");
+  PropertyManager->Untie("accelerations/Nz");
   PropertyManager->Untie("position/epa-rad");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */

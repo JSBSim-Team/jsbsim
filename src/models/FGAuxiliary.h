@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.5 2007/09/03 03:48:08 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.6 2007/12/08 18:38:53 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.5 2007/09/03 03:48:08 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.6 2007/12/08 18:38:53 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -172,6 +172,7 @@ public:
   double GetVground (void) const { return Vground;    }
   double GetMach    (void) const { return Mach;       }
   double GetMachU   (void) const { return MachU;      }
+  double GetNz      (void) const { return Nz;         }
 
   double GetHOverBCG(void) const { return hoverbcg; }
   double GetHOverBMAC(void) const { return hoverbmac; }
@@ -236,6 +237,7 @@ private:
   double alpha, beta;
   double adot,bdot;
   double psigt, gamma;
+  double Nz;
   double seconds_in_day;  // seconds since current GMT day began
   int    day_of_year;     // GMT day, 1 .. 366
 
