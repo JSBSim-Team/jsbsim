@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.7 2007/05/18 03:17:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.8 2007/12/30 15:31:31 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,12 +81,10 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   test_element = element->GetElement();
   while (test_element) {
     if (test_element->GetName() == "default") {
-      tests.push_back(test());
-      current_test = &tests.back();
+      current_test = new struct test;
       current_test->Logic = eDefault;
     } else if (test_element->GetName() == "test") { // here's a test
-      tests.push_back(test());
-      current_test = &tests.back();
+      current_test = new struct test;
       logic = test_element->GetAttributeValue("logic");
       if (logic == "OR") current_test->Logic = eOR;
       else if (logic == "AND") current_test->Logic = eAND;
@@ -94,12 +92,13 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
       else { // error
         cerr << "Unrecognized LOGIC token " << logic << " in switch component: " << Name << endl;
       }
-      for (unsigned int i=0; i<test_element->GetNumDataLines(); i++)
-        current_test->conditions.push_back(FGCondition(test_element->GetDataLine(i), PropertyManager));
+      for (unsigned int i=0; i<test_element->GetNumDataLines(); i++) {
+        current_test->conditions.push_back(new FGCondition(test_element->GetDataLine(i), PropertyManager));
+      }
 
       condition_element = test_element->GetElement(); // retrieve condition groups
       while (condition_element) {
-        current_test->conditions.push_back(FGCondition(condition_element, PropertyManager));
+        current_test->conditions.push_back(new FGCondition(condition_element, PropertyManager));
         condition_element = test_element->GetNextElement();
       }
 
@@ -125,7 +124,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
         }
       }
     }
-
+    tests.push_back(current_test);
     test_element = element->GetNextElement();
   }
 
@@ -138,6 +137,11 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGSwitch::~FGSwitch()
 {
+  for (int i=0; i<tests.size(); i++) {
+    for (int j=0; j<tests[i]->conditions.size(); j++) delete tests[i]->conditions[j];
+    delete tests[i];
+  }
+
   Debug(1);
 }
 
@@ -145,36 +149,29 @@ FGSwitch::~FGSwitch()
 
 bool FGSwitch::Run(void )
 {
-  vector <test>::iterator iTests = tests.begin();
-  vector <FGCondition>::iterator iConditions;
   bool pass = false;
 
-  while (iTests < tests.end()) {
-    iConditions = iTests->conditions.begin();
-
-    if (iTests->Logic == eDefault) {
-      Output = iTests->GetValue();
-    } else if (iTests->Logic == eAND) {
+  for (int i=0; i<tests.size(); i++) {
+    if (tests[i]->Logic == eDefault) {
+      Output = tests[i]->GetValue();
+    } else if (tests[i]->Logic == eAND) {
       pass = true;
-      while (iConditions < iTests->conditions.end()) {
-        if (!iConditions->Evaluate()) pass = false;
-        *iConditions++;
+      for (int j=0; j<tests[i]->conditions.size(); j++) {
+        if (!tests[i]->conditions[j]->Evaluate()) pass = false;
       }
-    } else if (iTests->Logic == eOR) {
+    } else if (tests[i]->Logic == eOR) {
       pass = false;
-      while (iConditions < iTests->conditions.end()) {
-        if (iConditions->Evaluate()) pass = true;
-        *iConditions++;
+      for (int j=0; j<tests[i]->conditions.size(); j++) {
+        if (tests[i]->conditions[j]->Evaluate()) pass = true;
       }
     } else {
       cerr << "Invalid logic test" << endl;
     }
 
     if (pass) {
-      Output = iTests->GetValue();
+      Output = tests[i]->GetValue();
       break;
     }
-    *iTests++;
   }
 
   Clip();
@@ -204,8 +201,6 @@ bool FGSwitch::Run(void )
 
 void FGSwitch::Debug(int from)
 {
-  vector <test>::iterator iTests = tests.begin();
-  vector <FGCondition>::iterator iConditions;
   string comp, scratch;
   string indent = "        ";
   bool first = false;
@@ -214,11 +209,11 @@ void FGSwitch::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      while (iTests < tests.end()) {
+      for (int i=0; i<tests.size(); i++) {
 
         scratch = " if ";
 
-        switch(iTests->Logic) {
+        switch(tests[i]->Logic) {
         case (elUndef):
           comp = " UNSET ";
           cerr << "Unset logic for test condition" << endl;
@@ -237,26 +232,23 @@ void FGSwitch::Debug(int from)
           cerr << "Unknown logic for test condition" << endl;
         }
 
-        if (iTests->OutputProp != 0L)
-          if (iTests->sign < 0)
-            cout << indent << "Switch VALUE is - " << iTests->OutputProp->GetName() << scratch << endl;
+        if (tests[i]->OutputProp != 0L)
+          if (tests[i]->sign < 0)
+            cout << indent << "Switch VALUE is - " << tests[i]->OutputProp->GetName() << scratch << endl;
           else
-            cout << indent << "Switch VALUE is " << iTests->OutputProp->GetName() << scratch << endl;
+            cout << indent << "Switch VALUE is " << tests[i]->OutputProp->GetName() << scratch << endl;
         else
-          cout << indent << "Switch VALUE is " << iTests->OutputVal << scratch << endl;
+          cout << indent << "Switch VALUE is " << tests[i]->OutputVal << scratch << endl;
 
-        iConditions = iTests->conditions.begin();
         first = true;
-        while (iConditions < iTests->conditions.end()) {
+        for (int j=0; j<tests[i]->conditions.size(); j++) {
           if (!first) cout << indent << comp << " ";
           else cout << indent << " ";
           first = false;
-          iConditions->PrintCondition();
+          tests[i]->conditions[j]->PrintCondition();
           cout << endl;
-          *iConditions++;
         }
         cout << endl;
-        *iTests++;
       }
       if (IsOutput) cout << "      OUTPUT: " << OutputNode->getName() << endl;
     }

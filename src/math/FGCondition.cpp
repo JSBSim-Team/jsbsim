@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.4 2006/11/20 13:59:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.5 2007/12/30 15:31:30 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,12 +75,12 @@ FGCondition::FGCondition(Element* element, FGPropertyManager* PropertyManager) :
 
   condition_element = element->GetElement();
   while (condition_element) {
-    conditions.push_back(FGCondition(condition_element, PropertyManager));
+    conditions.push_back(new FGCondition(condition_element, PropertyManager));
     condition_element = element->GetNextElement();
   }
   for (unsigned int i=0; i<element->GetNumDataLines(); i++) {
     string data = element->GetDataLine(i);
-    conditions.push_back(FGCondition(data, PropertyManager));
+    conditions.push_back(new FGCondition(data, PropertyManager));
   }
 
   Debug(0);
@@ -151,6 +151,8 @@ void FGCondition::InitializeConditionals(void)
 
 FGCondition::~FGCondition(void)
 {
+  for (int i=0; i<conditions.size(); i++) delete conditions[i];
+
   Debug(1);
 }
 
@@ -158,7 +160,6 @@ FGCondition::~FGCondition(void)
 
 bool FGCondition::Evaluate(void )
 {
-  vector <FGCondition>::iterator iConditions;
   bool pass = false;
   double compareValue;
 
@@ -166,19 +167,16 @@ bool FGCondition::Evaluate(void )
 
     if (Logic == eAND) {
 
-      iConditions = conditions.begin();
       pass = true;
-      while (iConditions < conditions.end()) {
-        if (!iConditions->Evaluate()) pass = false;
-        *iConditions++;
+      for (int i=0; i<conditions.size(); i++) {
+        if (!conditions[i]->Evaluate()) pass = false;
       }
 
     } else { // Logic must be eOR
 
       pass = false;
-      while (iConditions < conditions.end()) {
-        if (iConditions->Evaluate()) pass = true;
-        *iConditions++;
+      for (int i=0; i<conditions.size(); i++) {
+        if (conditions[i]->Evaluate()) pass = true;
       }
 
     }
@@ -222,7 +220,6 @@ bool FGCondition::Evaluate(void )
 
 void FGCondition::PrintCondition(void )
 {
-  vector <FGCondition>::iterator iConditions;
   string scratch;
 
   if (isGroup) {
@@ -242,12 +239,9 @@ void FGCondition::PrintCondition(void )
       cerr << "Unknown logic for test condition" << endl;
     }
 
-    iConditions = conditions.begin();
     cout << scratch << endl;
-    while (iConditions < conditions.end()) {
-      iConditions->PrintCondition();
-      *iConditions++;
-    }
+    for (int i=0; i<conditions.size(); i++) conditions[i]->PrintCondition();
+
   } else {
     if (TestParam2 != 0L)
       cout << "    " << TestParam1->GetName() << " " << conditional << " " << TestParam2->GetName();

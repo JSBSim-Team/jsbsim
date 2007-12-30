@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.9 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.10 2007/12/30 15:31:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -123,7 +123,7 @@ is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.9 2006/08/30 12:04:35 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.10 2007/12/30 15:31:31 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +152,7 @@ public:
 private:
 
   struct test {
-    vector <FGCondition> conditions;
+    vector <FGCondition*> conditions;
     eLogic Logic;
     double OutputVal;
     FGPropertyManager *OutputProp;
@@ -172,7 +172,7 @@ private:
 
   };
 
-  vector <test> tests;
+  vector <test*> tests;
 
   void Debug(int from);
 };

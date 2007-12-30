@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_CONDITION "$Id: FGCondition.h,v 1.2 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_CONDITION "$Id: FGCondition.h,v 1.3 2007/12/30 15:31:30 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ private:
 
   static string indent;
 
-  vector <FGCondition> conditions;
+  vector <FGCondition*> conditions;
   void InitializeConditionals(void);
 
   void Debug(int from);
