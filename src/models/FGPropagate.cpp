@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.15 2007/10/19 03:49:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.16 2007/12/30 23:18:51 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -271,6 +271,8 @@ bool FGPropagate::Run(void)
     break;
   case eAdamsBashforth3: VState.vPQR += (1/12.0)*dt*(23.0*vPQRdot - 16.0*last_vPQRdot + 5.0*last2_vPQRdot);
     break;
+  case eNone: // do nothing, freeze angular rate
+    break;
   }
   
   // Propagate translational velocity
@@ -283,6 +285,9 @@ bool FGPropagate::Run(void)
   case eAdamsBashforth2: VState.vUVW += dt*(1.5*vUVWdot - 0.5*last_vUVWdot);
     break;
   case eAdamsBashforth3: VState.vUVW += (1/12.0)*dt*(23.0*vUVWdot - 16.0*last_vUVWdot + 5.0*last2_vUVWdot);
+    break;
+  case eNone: // do nothing, freeze translational rate
+    break;
   }
 
   // Propagate angular position
@@ -296,6 +301,8 @@ bool FGPropagate::Run(void)
     break;
   case eAdamsBashforth3: VState.vQtrn += (1/12.0)*dt*(23.0*vQtrndot - 16.0*last_vQtrndot + 5.0*last2_vQtrndot);
     break;
+  case eNone: // do nothing, freeze angular position
+    break;
   }
 
   // Propagate translational position
@@ -308,6 +315,8 @@ bool FGPropagate::Run(void)
   case eAdamsBashforth2: VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
     break;
   case eAdamsBashforth3: VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
+    break;
+  case eNone: // do nothing, freeze translational position
     break;
   }
 
