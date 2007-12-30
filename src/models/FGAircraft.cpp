@@ -62,6 +62,7 @@ INCLUDES
 #include "FGMassBalance.h"
 #include "FGInertial.h"
 #include "FGGroundReactions.h"
+#include "FGExternalReactions.h"
 #include "FGAerodynamics.h"
 #include <FGState.h>
 #include <FGFDMExec.h>
@@ -78,7 +79,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.10 2007/08/10 22:34:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.11 2007/12/30 14:53:08 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,6 +122,7 @@ bool FGAircraft::Run(void)
     vForces += Aerodynamics->GetForces();
     vForces += Propulsion->GetForces();
     vForces += GroundReactions->GetForces();
+    vForces += ExternalReactions->GetForces();
   }
 
   vMoments.InitMatrix();
@@ -128,6 +130,7 @@ bool FGAircraft::Run(void)
     vMoments += Aerodynamics->GetMoments();
     vMoments += Propulsion->GetMoments();
     vMoments += GroundReactions->GetMoments();
+    vMoments += ExternalReactions->GetMoments();
   }
 
   vBodyAccel = vForces/MassBalance->GetMass();

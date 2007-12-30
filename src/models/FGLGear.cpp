@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.30 2007/12/08 18:38:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.31 2007/12/30 14:53:08 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,6 +294,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
 
 FGLGear::~FGLGear()
 {
+  unbind();
   Debug(1);
 }
 

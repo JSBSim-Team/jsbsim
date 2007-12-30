@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MODEL "$Id: FGModel.h,v 1.5 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_MODEL "$Id: FGModel.h,v 1.6 2007/12/30 14:53:08 jberndt Exp $"
 
 using namespace std;
 
@@ -82,6 +82,7 @@ class FGMassBalance;
 class FGAerodynamics;
 class FGInertial;
 class FGGroundReactions;
+class FGExternalReactions;
 class FGAircraft;
 class FGPropagate;
 class FGAuxiliary;
@@ -140,6 +141,7 @@ protected:
   FGAerodynamics*    Aerodynamics;
   FGInertial*        Inertial;
   FGGroundReactions* GroundReactions;
+  FGExternalReactions* ExternalReactions;
   FGAircraft*        Aircraft;
   FGPropagate*       Propagate;
   FGAuxiliary*       Auxiliary;

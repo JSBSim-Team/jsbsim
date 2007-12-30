@@ -1,10 +1,10 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Header:       FGGroundReactions.h
- Author:       Jon S. Berndt
- Date started: 09/13/00
+ Header:       FGExternalForce.h
+ Author:       Jon Berndt, Dave Culp
+ Date started: 9/21/07
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2007  Jon S. Berndt (jsb@hal-pc.org) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -23,38 +23,34 @@
  Further information about the GNU Lesser General Public License can also be found on
  the world wide web at http://www.gnu.org.
 
-HISTORY
+
+ HISTORY
 --------------------------------------------------------------------------------
-09/13/00   JSB   Created
+9/21/07  JB   Created
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SENTRY
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifndef FGGROUNDREACTIONS_H
-#define FGGROUNDREACTIONS_H
+#ifndef FGEXTERNALFORCE_H
+#define FGEXTERNALFORCE_H
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#ifdef FGFS
-#  include <simgear/compiler.h>
-#  ifdef SG_HAVE_STD_INCLUDES
-#    include <vector>
-#  else
-#    include <vector.h>
-#  endif
-#else
-#  include <vector>
-#endif
-
-#include "FGModel.h"
-#include "FGLGear.h"
+#include <FGFDMExec.h>
+#include <FGJSBBase.h>
+#include <models/propulsion/FGForce.h>
+#include <string>
+#include <input_output/FGPropertyManager.h>
 #include <math/FGColumnVector3.h>
-#include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $"
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.1 2007/12/30 14:53:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,47 +62,54 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Manages ground reactions modeling.
-  */
+/** 
+*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-class FGGroundReactions : public FGModel
+class FGExternalForce : public FGForce
 {
 public:
-  FGGroundReactions(FGFDMExec*);
-  ~FGGroundReactions(void);
+  /// Constructor
+  FGExternalForce(FGFDMExec *FDMExec);
+  FGExternalForce(FGFDMExec *FDMExec, Element *el, int index);
+  /** Constructor
+      @param lgear a reference to an existing FGLGear object     */
+  FGExternalForce(const FGExternalForce& extForce);
 
-  bool Run(void);
-  bool Load(Element* el);
-  FGColumnVector3& GetForces(void) {return vForces;}
-  double GetForces(int idx) const {return vForces(idx);}
-  FGColumnVector3& GetMoments(void) {return vMoments;}
-  double GetMoments(int idx) const {return vMoments(idx);}
-  string GetGroundReactionStrings(string delimeter);
-  string GetGroundReactionValues(string delimeter);
-  bool GetWOW(void);
+  /// Destructor
+  ~FGExternalForce();
 
-  int GetNumGearUnits(void) const { return (int)lGear.size(); }
+  void SetMagnitude(double mag) {
+	  magnitude = mag;
+	  vFn = vDirection*mag;
+  }
 
-  /** Gets a gear instance
-      @param gear index of gear instance
-      @return a pointer to the FGLGear instance of the gear unit requested */
-  inline FGLGear* GetGearUnit(int gear) { return lGear[gear]; }
-
-  void bind(void);
-  void unbind(void);
-
+  void SetAzimuth(double az) {azimuth = az;}
+  double GetMagnitude(void) const {return magnitude;}
+  double GetAzimuth(void) const {return azimuth;}
+  double GetX(void) const {return vDirection(0);}
+  double GetY(void) const {return vDirection(1);}
+  double GetZ(void) const {return vDirection(2);}
+  void SetX(double x) {vDirection(0) = x;}
+  void SetY(double y) {vDirection(1) = y;}
+  void SetZ(double z) {vDirection(2) = z;}
+  
 private:
-  vector <FGLGear*> lGear;
-  FGColumnVector3 vForces;
-  FGColumnVector3 vMoments;
 
+  string Frame;
+  string Name;
+  FGPropertyManager* PropertyManager;
+  FGPropertyManager* Magnitude_Node;
+  string BasePropertyName;
+  FGColumnVector3 vDirection;
+  double magnitude;
+  double azimuth;
+  void unbind(FGPropertyManager *node);
   void Debug(int from);
 };
 }
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #endif
 

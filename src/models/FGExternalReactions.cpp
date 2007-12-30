@@ -1,12 +1,12 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Module:       FGModel.cpp
- Author:       Jon Berndt
- Date started: 11/11/98
- Purpose:      Base class for all models
- Called by:    FGSimExec, et. al.
+ Module:       FGExternalReactions.cpp
+ Author:       David P. Culp
+ Date started: 17/11/06
+ Purpose:      Manages the External Forces
+ Called by:    FGAircraft
 
- ------------- Copyright (C) 1999  Jon S. Berndt (jsb@hal-pc.org) -------------
+ ------------- Copyright (C) 2006  David P. Culp (davidculp2@comcast.net) -------------
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -27,123 +27,84 @@
 
 FUNCTIONAL DESCRIPTION
 --------------------------------------------------------------------------------
-This base class for the FGAerodynamics, FGPropagate, etc. classes defines methods
-common to all models.
 
 HISTORY
 --------------------------------------------------------------------------------
-11/11/98   JSB   Created
+17/11/06   DC   Created
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#include "FGModel.h"
-#include "FGState.h"
-#include "FGFDMExec.h"
-#include "FGAtmosphere.h"
-#include "FGFCS.h"
-#include "FGPropulsion.h"
-#include "FGMassBalance.h"
-#include "FGAerodynamics.h"
-#include "FGInertial.h"
-#include "FGGroundReactions.h"
 #include "FGExternalReactions.h"
-#include "FGAircraft.h"
-#include "FGPropagate.h"
-#include "FGAuxiliary.h"
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.6 2007/12/30 14:53:08 jberndt Exp $";
-static const char *IdHdr = ID_MODEL;
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GLOBAL DECLARATIONS
+GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+
+static const char *IdSrc = "";
+static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGModel::FGModel(FGFDMExec* fdmex)
+FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 {
-  FDMExec     = fdmex;
-  NextModel   = 0L;
-
-  State           = 0;
-  Atmosphere      = 0;
-  FCS             = 0;
-  Propulsion      = 0;
-  MassBalance     = 0;
-  Aerodynamics    = 0;
-  Inertial        = 0;
-  GroundReactions = 0;
-  ExternalReactions = 0;
-  Aircraft        = 0;
-  Propagate       = 0;
-  Auxiliary       = 0;
-
-  //in order for FGModel derived classes to self-bind (that is, call
-  //their bind function in the constructor, the PropertyManager pointer
-  //must be brought up now.
-  PropertyManager = FDMExec->GetPropertyManager();
-
-  exe_ctr     = 1;
-  rate        = 1;
-
-  if (debug_lvl & 2) cout << "              FGModel Base Class" << endl;
+  NoneDefined = true;
+  Debug(0);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGModel::~FGModel()
+bool FGExternalReactions::Load(Element* el)
 {
-  if (debug_lvl & 2) cout << "Destroyed:    FGModel" << endl;
+  int index=0;
+
+  Element* force_element = el->FindElement("force");
+
+  Debug(2);
+
+  while (force_element) {
+    Forces.push_back( new FGExternalForce(FDMExec, force_element, index) );
+    NoneDefined = false;
+    index++; 
+    force_element = el->FindNextElement("force");
+  }
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModel::InitModel(void)
+FGExternalReactions::~FGExternalReactions()
 {
-  State           = FDMExec->GetState();
-  Atmosphere      = FDMExec->GetAtmosphere();
-  FCS             = FDMExec->GetFCS();
-  Propulsion      = FDMExec->GetPropulsion();
-  MassBalance     = FDMExec->GetMassBalance();
-  Aerodynamics    = FDMExec->GetAerodynamics();
-  Inertial        = FDMExec->GetInertial();
-  GroundReactions = FDMExec->GetGroundReactions();
-  ExternalReactions = FDMExec->GetExternalReactions();
-  Aircraft        = FDMExec->GetAircraft();
-  Propagate       = FDMExec->GetPropagate();
-  Auxiliary       = FDMExec->GetAuxiliary();
-
-  if (!State ||
-      !Atmosphere ||
-      !FCS ||
-      !Propulsion ||
-      !MassBalance ||
-      !Aerodynamics ||
-      !Inertial ||
-      !GroundReactions ||
-      !ExternalReactions ||
-      !Aircraft ||
-      !Propagate ||
-      !Auxiliary) return(false);
-  else return(true);
+  for (int i=0; i<Forces.size(); i++) delete Forces[i];
+  Forces.clear();
+  Debug(1);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGModel::Run()
+bool FGExternalReactions::Run()
 {
-  if (debug_lvl & 4) cout << "Entering Run() for model " << Name << endl;
+  if (NoneDefined) return true;
 
-  if (exe_ctr++ >= rate) exe_ctr = 1;
+  vTotalForces.InitMatrix();
+  vTotalMoments.InitMatrix();
 
-  if (exe_ctr == 1) return false;
-  else              return true;
+  for (int i=0; i<Forces.size(); i++) {
+    vTotalForces  += Forces[i]->GetBodyForces();
+    vTotalMoments += Forces[i]->GetMoments();
+  }
+
+  return true;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,18 +126,20 @@ bool FGModel::Run()
 //    16: When set various parameters are sanity checked and
 //       a message is printed out when they go out of bounds
 
-void FGModel::Debug(int from)
+void FGExternalReactions::Debug(int from)
 {
   if (debug_lvl <= 0) return;
 
   if (debug_lvl & 1) { // Standard console startup message output
-    if (from == 0) { // Constructor
-
+    if (from == 0) { // Constructor - loading and initialization
+    }
+    if (from == 2) { // Loading
+      cout << endl << "  External Reactions: " << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification
-    if (from == 0) cout << "Instantiated: FGModel" << endl;
-    if (from == 1) cout << "Destroyed:    FGModel" << endl;
+    if (from == 0) cout << "Instantiated: FGExternalReactions" << endl;
+    if (from == 1) cout << "Destroyed:    FGExternalReactions" << endl;
   }
   if (debug_lvl & 4 ) { // Run() method entry print for FGModel-derived objects
   }
@@ -191,4 +154,6 @@ void FGModel::Debug(int from)
     }
   }
 }
-}
+
+} // namespace JSBSim
+

@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.33 2007/09/04 04:24:03 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.34 2007/12/30 14:53:07 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.33 $
+    @version $Revision: 1.34 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,6 +269,8 @@ public:
   inline FGInertial* GetInertial(void)        {return Inertial;}
   /// Returns the FGGroundReactions pointer.
   inline FGGroundReactions* GetGroundReactions(void) {return GroundReactions;}
+  /// Returns the FGExternalReactions pointer.
+  inline FGExternalReactions* GetExternalReactions(void) {return ExternalReactions;}
   /// Returns the FGAircraft pointer.
   inline FGAircraft* GetAircraft(void)        {return Aircraft;}
   /// Returns the FGPropagate pointer.
@@ -468,6 +470,7 @@ private:
   FGAerodynamics*     Aerodynamics;
   FGInertial*         Inertial;
   FGGroundReactions*  GroundReactions;
+  FGExternalReactions* ExternalReactions;
   FGAircraft*         Aircraft;
   FGPropagate*        Propagate;
   FGAuxiliary*        Auxiliary;

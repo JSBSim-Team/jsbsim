@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.8 2007/02/24 18:52:44 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.8 2007/02/24 18:52:44 jberndt Exp $
+    @version $Id: FGForce.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,6 +227,12 @@ class FGForce : public FGJSBBase
 public:
   /// Constructor
   FGForce(FGFDMExec *FDMExec);
+  FGForce(const FGForce& force) {
+    vFn = force.vFn;
+    vXYZn = force.vXYZn;
+    ttype = force.ttype;
+    fdmex = force.fdmex;
+  }
   /// Destructor
   ~FGForce();
 
