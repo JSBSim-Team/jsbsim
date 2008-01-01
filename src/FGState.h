@@ -77,7 +77,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.9 2007/06/18 02:57:21 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.10 2008/01/01 15:52:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +93,7 @@ CLASS DOCUMENTATION
     <h3>Properties</h3>
     @property sim-time-sec (read only) cumulative simulation in seconds.
     @author Jon S. Berndt
-    @version $Revision: 1.9 $
+    @version $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,15 +149,15 @@ public:
     return sim_time;
   }
 
-  /** Calculates and returns the stability-to-body axis transformation matrix.
-      @return a reference to the stability-to-body transformation matrix.
+  /** Calculates and returns the wind-to-body axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
       */
-  FGMatrix33& GetTs2b(void);
+  FGMatrix33& GetTw2b(void);
 
-  /** Calculates and returns the body-to-stability axis transformation matrix.
-      @return a reference to the stability-to-body transformation matrix.
+  /** Calculates and returns the body-to-wind axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
       */
-  FGMatrix33& GetTb2s(void);
+  FGMatrix33& GetTb2w(void);
 
   /** Prints a summary of simulator state (speed, altitude,
       configuration, etc.)  */
@@ -168,8 +168,8 @@ private:
   double saved_dt;
 
   FGFDMExec* FDMExec;
-  FGMatrix33 mTs2b;
-  FGMatrix33 mTb2s;
+  FGMatrix33 mTw2b;
+  FGMatrix33 mTb2w;
 
   FGAircraft* Aircraft;
   FGPropagate* Propagate;

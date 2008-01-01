@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.21 2007/11/12 13:13:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.22 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -343,7 +343,7 @@ void FGOutput::DelimitedOutput(string fname)
   }
   if (SubSystems & ssForces) {
     outstream << delimeter;
-    outstream << Aerodynamics->GetvFs() << delimeter;
+    outstream << Aerodynamics->GetvFw() << delimeter;
     outstream << Aerodynamics->GetLoD() << delimeter;
     outstream << Aircraft->GetForces().Dump(delimeter);
   }
@@ -415,41 +415,37 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
     net->longitude = Propagate->GetLocation().GetLongitude(); // geodetic (radians)
     net->latitude  = Propagate->GetLocation().GetLatitude(); // geodetic (radians)
     net->altitude  = Propagate->Geth()*0.3048; // altitude, above sea level (meters)
-    net->agl       = Propagate->GetDistanceAGL()*0.3048; // altitude, above ground level (meters)
+    net->agl       = (float)(Propagate->GetDistanceAGL()*0.3048); // altitude, above ground level (meters)
 
-    net->phi       = Propagate->GetEuler(ePhi); // roll (radians)
-    net->theta     = Propagate->GetEuler(eTht); // pitch (radians)
-    net->psi       = Propagate->GetEuler(ePsi); // yaw or true heading (radians)
+    net->phi       = (float)(Propagate->GetEuler(ePhi)); // roll (radians)
+    net->theta     = (float)(Propagate->GetEuler(eTht)); // pitch (radians)
+    net->psi       = (float)(Propagate->GetEuler(ePsi)); // yaw or true heading (radians)
 
-    net->alpha     = Auxiliary->Getalpha(); // angle of attack (radians)
-    net->beta      = Auxiliary->Getbeta(); // side slip angle (radians)
+    net->alpha     = (float)(Auxiliary->Getalpha()); // angle of attack (radians)
+    net->beta      = (float)(Auxiliary->Getbeta()); // side slip angle (radians)
 
     // Velocities
-    net->phidot     = Auxiliary->GetEulerRates(ePhi); // roll rate (radians/sec)
-    net->thetadot   = Auxiliary->GetEulerRates(eTht); // pitch rate (radians/sec)
-    net->psidot     = Auxiliary->GetEulerRates(ePsi); // yaw rate (radians/sec)
-    net->vcas       = Auxiliary->GetVcalibratedFPS(); // VCAS, ft/sec
-    net->climb_rate = Propagate->Gethdot();           // altitude rate, ft/sec
-    net->v_north    = Propagate->GetVel(eNorth);      // north vel in NED frame, fps
-    net->v_east     = Propagate->GetVel(eEast);       // east vel in NED frame, fps
-    net->v_down     = Propagate->GetVel(eDown);       // down vel in NED frame, fps
+    net->phidot     = (float)(Auxiliary->GetEulerRates(ePhi)); // roll rate (radians/sec)
+    net->thetadot   = (float)(Auxiliary->GetEulerRates(eTht)); // pitch rate (radians/sec)
+    net->psidot     = (float)(Auxiliary->GetEulerRates(ePsi)); // yaw rate (radians/sec)
+    net->vcas       = (float)(Auxiliary->GetVcalibratedFPS()); // VCAS, ft/sec
+    net->climb_rate = (float)(Propagate->Gethdot());           // altitude rate, ft/sec
+    net->v_north    = (float)(Propagate->GetVel(eNorth));      // north vel in NED frame, fps
+    net->v_east     = (float)(Propagate->GetVel(eEast));       // east vel in NED frame, fps
+    net->v_down     = (float)(Propagate->GetVel(eDown));       // down vel in NED frame, fps
 //---ADD METHOD TO CALCULATE THESE TERMS---
-    net->v_wind_body_north = Propagate->GetVel(eNorth); // north vel in NED relative to airmass, fps
-    net->v_wind_body_east = Propagate->GetVel(eEast); // east vel in NED relative to airmass, fps
-    net->v_wind_body_down = Propagate->GetVel(eDown); // down vel in NED relative to airmass, fps
-
-
+    net->v_wind_body_north = (float)(Propagate->GetVel(eNorth)); // north vel in NED relative to airmass, fps
+    net->v_wind_body_east = (float)(Propagate->GetVel(eEast)); // east vel in NED relative to airmass, fps
+    net->v_wind_body_down = (float)(Propagate->GetVel(eDown)); // down vel in NED relative to airmass, fps
 
     // Accelerations
-    net->A_X_pilot   = Auxiliary->GetPilotAccel(1);    // X body accel, ft/s/s
-    net->A_Y_pilot   = Auxiliary->GetPilotAccel(2);    // Y body accel, ft/s/s
-    net->A_Z_pilot   = Auxiliary->GetPilotAccel(3);    // Z body accel, ft/s/s
-
+    net->A_X_pilot   = (float)(Auxiliary->GetPilotAccel(1));    // X body accel, ft/s/s
+    net->A_Y_pilot   = (float)(Auxiliary->GetPilotAccel(2));    // Y body accel, ft/s/s
+    net->A_Z_pilot   = (float)(Auxiliary->GetPilotAccel(3));    // Z body accel, ft/s/s
 
     // Stall
     net->stall_warning = 0.0;  // 0.0 - 1.0 indicating the amount of stall
-    net->slip_deg    = Auxiliary->Getbeta(inDegrees);  // slip ball deflection, deg
-
+    net->slip_deg    = (float)(Auxiliary->Getbeta(inDegrees));  // slip ball deflection, deg
 
     // Engine status
     net->num_engines = Propulsion->GetNumEngines(); // Number of valid engines
@@ -466,14 +462,14 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
        case (FGEngine::etRocket):
        break;
        case (FGEngine::etPiston):
-          net->rpm[i]       = ((FGPiston *)Propulsion->GetEngine(i))->getRPM();
-          net->fuel_flow[i] = ((FGPiston *)Propulsion->GetEngine(i))->getFuelFlow_gph();
+          net->rpm[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->getRPM());
+          net->fuel_flow[i] = (float)(((FGPiston *)Propulsion->GetEngine(i))->getFuelFlow_gph());
           net->fuel_px[i]   = 0; // Fuel pressure, psi  (N/A in current model)
-          net->egt[i]       = ((FGPiston *)Propulsion->GetEngine(i))->GetEGT();
-          net->cht[i]       = ((FGPiston *)Propulsion->GetEngine(i))->getCylinderHeadTemp_degF();
-          net->mp_osi[i]    = ((FGPiston *)Propulsion->GetEngine(i))->getManifoldPressure_inHg();
-          net->oil_temp[i]  = ((FGPiston *)Propulsion->GetEngine(i))->getOilTemp_degF();
-          net->oil_px[i]    = ((FGPiston *)Propulsion->GetEngine(i))->getOilPressure_psi();
+          net->egt[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->GetEGT());
+          net->cht[i]       = (float)(((FGPiston *)Propulsion->GetEngine(i))->getCylinderHeadTemp_degF());
+          net->mp_osi[i]    = (float)(((FGPiston *)Propulsion->GetEngine(i))->getManifoldPressure_inHg());
+          net->oil_temp[i]  = (float)(((FGPiston *)Propulsion->GetEngine(i))->getOilTemp_degF());
+          net->oil_px[i]    = (float)(((FGPiston *)Propulsion->GetEngine(i))->getOilPressure_psi());
           net->tit[i]       = 0; // Turbine Inlet Temperature  (N/A for piston)
        break;
        case (FGEngine::etTurbine):
@@ -492,7 +488,7 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
     net->num_tanks = Propulsion->GetNumTanks();   // Max number of fuel tanks
 
     for (i=0; i<net->num_tanks; i++) {
-       net->fuel_quantity[i] = ((FGTank *)Propulsion->GetTank(i))->GetContents();
+       net->fuel_quantity[i] = (float)(((FGTank *)Propulsion->GetTank(i))->GetContents());
     }
 
 
@@ -505,8 +501,8 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
           net->gear_pos[i]      = 1;  //gear down, using FCS convention
        else
           net->gear_pos[i]      = 0;  //gear up, using FCS convention
-       net->gear_steer[i]       = GroundReactions->GetGearUnit(i)->GetSteerNorm();
-       net->gear_compression[i] = GroundReactions->GetGearUnit(i)->GetCompLen();
+       net->gear_steer[i]       = (float)(GroundReactions->GetGearUnit(i)->GetSteerNorm());
+       net->gear_compression[i] = (float)(GroundReactions->GetGearUnit(i)->GetCompLen());
     }
 
 
@@ -517,16 +513,16 @@ void FGOutput::SocketDataFill(FGNetFDM* net)
 
 
     // Control surface positions (normalized values)
-    net->elevator          = FCS->GetDePos(ofNorm);    // Norm Elevator Pos, --
-    net->elevator_trim_tab = FCS->GetPitchTrimCmd();   // Norm Elev Trim Tab Pos, --
-    net->left_flap         = FCS->GetDfPos(ofNorm);    // Norm Flap Pos, --
-    net->right_flap        = FCS->GetDfPos(ofNorm);    // Norm Flap Pos, --
-    net->left_aileron      = FCS->GetDaLPos(ofNorm);   // Norm L Aileron Pos, --
-    net->right_aileron     = FCS->GetDaRPos(ofNorm);   // Norm R Aileron Pos, --
-    net->rudder            = FCS->GetDrPos(ofNorm);    // Norm Rudder Pos, --
-    net->nose_wheel        = FCS->GetDrPos(ofNorm);    // *** FIX ***  Using Rudder Pos for NWS, --
-    net->speedbrake        = FCS->GetDsbPos(ofNorm);   // Norm Speedbrake Pos, --
-    net->spoilers          = FCS->GetDspPos(ofNorm);   // Norm Spoiler Pos, --
+    net->elevator          = (float)(FCS->GetDePos(ofNorm));    // Norm Elevator Pos, --
+    net->elevator_trim_tab = (float)(FCS->GetPitchTrimCmd());   // Norm Elev Trim Tab Pos, --
+    net->left_flap         = (float)(FCS->GetDfPos(ofNorm));    // Norm Flap Pos, --
+    net->right_flap        = (float)(FCS->GetDfPos(ofNorm));    // Norm Flap Pos, --
+    net->left_aileron      = (float)(FCS->GetDaLPos(ofNorm));   // Norm L Aileron Pos, --
+    net->right_aileron     = (float)(FCS->GetDaRPos(ofNorm));   // Norm R Aileron Pos, --
+    net->rudder            = (float)(FCS->GetDrPos(ofNorm));    // Norm Rudder Pos, --
+    net->nose_wheel        = (float)(FCS->GetDrPos(ofNorm));    // *** FIX ***  Using Rudder Pos for NWS, --
+    net->speedbrake        = (float)(FCS->GetDsbPos(ofNorm));   // Norm Speedbrake Pos, --
+    net->spoilers          = (float)(FCS->GetDspPos(ofNorm));   // Norm Spoiler Pos, --
 
 
     // Convert the net buffer to network format
@@ -779,9 +775,9 @@ void FGOutput::SocketOutput(void)
     socket->Append(Propagate->GetVel(eDown));
   }
   if (SubSystems & ssForces) {
-    socket->Append(Aerodynamics->GetvFs()(eDrag));
-    socket->Append(Aerodynamics->GetvFs()(eSide));
-    socket->Append(Aerodynamics->GetvFs()(eLift));
+    socket->Append(Aerodynamics->GetvFw()(eDrag));
+    socket->Append(Aerodynamics->GetvFw()(eSide));
+    socket->Append(Aerodynamics->GetvFw()(eLift));
     socket->Append(Aerodynamics->GetLoD());
     socket->Append(Aircraft->GetForces(eX));
     socket->Append(Aircraft->GetForces(eY));

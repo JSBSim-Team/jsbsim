@@ -29,7 +29,7 @@
 
 <external_reactions>
 
-    <force name="name" frame="BODY|LOCAL|STABILITY" unit="unit">
+    <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
       <location unit="units"> <!-- location -->
         <x> value </x>
         <y> value </y>
@@ -50,7 +50,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.1 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.2 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,7 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FG
   } else if (sFrame == "LOCAL") {
     ttype = tLocalBody;
     PropertyManager->Tie( BasePropertyName + "/azimuth", (FGExternalForce*)this, &FGExternalForce::GetAzimuth, &FGExternalForce::SetAzimuth);
-  } else if (sFrame == "STABILITY") {
+  } else if (sFrame == "WIND") {
     ttype = tWindBody;
   } else {
     cerr << "Invalid frame specified for external force, \"" << Name << "\"." << endl;

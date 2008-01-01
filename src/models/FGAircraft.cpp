@@ -79,7 +79,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.11 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.12 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,7 +137,7 @@ bool FGAircraft::Run(void)
 
   vNcg = vBodyAccel/Inertial->gravity();
 
-  vNwcg = State->GetTb2s() * vNcg;
+  vNwcg = State->GetTb2w() * vNcg;
   vNwcg(3) = -1*vNwcg(3) + 1;
 
   return false;
@@ -147,7 +147,7 @@ bool FGAircraft::Run(void)
 
 double FGAircraft::GetNlf(void)
 {
-  return -1*Aerodynamics->GetvFs(3)/MassBalance->GetWeight();
+  return -1*Aerodynamics->GetvFw(3)/MassBalance->GetWeight();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

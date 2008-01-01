@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.8 2007/12/30 15:31:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.9 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,8 +137,8 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGSwitch::~FGSwitch()
 {
-  for (int i=0; i<tests.size(); i++) {
-    for (int j=0; j<tests[i]->conditions.size(); j++) delete tests[i]->conditions[j];
+  for (unsigned int i=0; i<tests.size(); i++) {
+    for (unsigned int j=0; j<tests[i]->conditions.size(); j++) delete tests[i]->conditions[j];
     delete tests[i];
   }
 
@@ -151,17 +151,17 @@ bool FGSwitch::Run(void )
 {
   bool pass = false;
 
-  for (int i=0; i<tests.size(); i++) {
+  for (unsigned int i=0; i<tests.size(); i++) {
     if (tests[i]->Logic == eDefault) {
       Output = tests[i]->GetValue();
     } else if (tests[i]->Logic == eAND) {
       pass = true;
-      for (int j=0; j<tests[i]->conditions.size(); j++) {
+      for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
         if (!tests[i]->conditions[j]->Evaluate()) pass = false;
       }
     } else if (tests[i]->Logic == eOR) {
       pass = false;
-      for (int j=0; j<tests[i]->conditions.size(); j++) {
+      for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
         if (tests[i]->conditions[j]->Evaluate()) pass = true;
       }
     } else {
@@ -209,7 +209,7 @@ void FGSwitch::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
-      for (int i=0; i<tests.size(); i++) {
+      for (unsigned int i=0; i<tests.size(); i++) {
 
         scratch = " if ";
 
@@ -241,7 +241,7 @@ void FGSwitch::Debug(int from)
           cout << indent << "Switch VALUE is " << tests[i]->OutputVal << scratch << endl;
 
         first = true;
-        for (int j=0; j<tests[i]->conditions.size(); j++) {
+        for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
           if (!first) cout << indent << comp << " ";
           else cout << indent << " ";
           first = false;

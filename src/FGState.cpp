@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.6 2007/02/27 13:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.7 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,8 +130,22 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// From Stevens and Lewis, "Aircraft Control and Simulation", 3rd Ed., the
+// transformation from body to wind axes is defined (where "a" is alpha and "B"
+// is beta):
+//
+//   cos(a)*cos(B)     sin(B)    sin(a)*cos(B)
+//  -cos(a)*sin(B)     cos(B)   -sin(a)*sin(B)
+//  -sin(a)              0       cos(a)
+//
+// The transform from wind to body axes is then,
+//
+//   cos(a)*cos(B)  -cos(a)*sin(B)  -sin(a)
+//          sin(B)          cos(B)     0
+//   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
 
-FGMatrix33& FGState::GetTs2b(void)
+FGMatrix33& FGState::GetTw2b(void)
 {
   double ca, cb, sa, sb;
 
@@ -143,22 +157,22 @@ FGMatrix33& FGState::GetTs2b(void)
   cb = cos(beta);
   sb = sin(beta);
 
-  mTs2b(1,1) = ca*cb;
-  mTs2b(1,2) = -ca*sb;
-  mTs2b(1,3) = -sa;
-  mTs2b(2,1) = sb;
-  mTs2b(2,2) = cb;
-  mTs2b(2,3) = 0.0;
-  mTs2b(3,1) = sa*cb;
-  mTs2b(3,2) = -sa*sb;
-  mTs2b(3,3) = ca;
+  mTw2b(1,1) = ca*cb;
+  mTw2b(1,2) = -ca*sb;
+  mTw2b(1,3) = -sa;
+  mTw2b(2,1) = sb;
+  mTw2b(2,2) = cb;
+  mTw2b(2,3) = 0.0;
+  mTw2b(3,1) = sa*cb;
+  mTw2b(3,2) = -sa*sb;
+  mTw2b(3,3) = ca;
 
-  return mTs2b;
+  return mTw2b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGMatrix33& FGState::GetTb2s(void)
+FGMatrix33& FGState::GetTb2w(void)
 {
   double alpha,beta;
   double ca, cb, sa, sb;
@@ -171,17 +185,17 @@ FGMatrix33& FGState::GetTb2s(void)
   cb = cos(beta);
   sb = sin(beta);
 
-  mTb2s(1,1) = ca*cb;
-  mTb2s(1,2) = sb;
-  mTb2s(1,3) = sa*cb;
-  mTb2s(2,1) = -ca*sb;
-  mTb2s(2,2) = cb;
-  mTb2s(2,3) = -sa*sb;
-  mTb2s(3,1) = -sa;
-  mTb2s(3,2) = 0.0;
-  mTb2s(3,3) = ca;
+  mTb2w(1,1) = ca*cb;
+  mTb2w(1,2) = sb;
+  mTb2w(1,3) = sa*cb;
+  mTb2w(2,1) = -ca*sb;
+  mTb2w(2,2) = cb;
+  mTb2w(2,3) = -sa*sb;
+  mTb2w(3,1) = -sa;
+  mTb2w(3,2) = 0.0;
+  mTb2w(3,3) = ca;
 
-  return mTb2s;
+  return mTb2w;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

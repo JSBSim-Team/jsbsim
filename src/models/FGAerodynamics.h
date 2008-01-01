@@ -61,7 +61,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.9 2007/10/17 01:59:32 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.10 2008/01/01 15:52:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +89,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.9 $
+    @Id $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -136,15 +136,15 @@ public:
               similar call to GetForces(int n).*/
   double GetMoments(int n) const {return vMoments(n);}
 
-  /** Retrieves the aerodynamic forces in the stability axes.
-      @return a reference to a column vector containing the stability axis forces. */
-  FGColumnVector3& GetvFs(void) { return vFs; }
+  /** Retrieves the aerodynamic forces in the wind axes.
+      @return a reference to a column vector containing the wind axis forces. */
+  FGColumnVector3& GetvFw(void) { return vFw; }
 
-  /** Retrieves the aerodynamic forces in the stability axes, given an axis.
+  /** Retrieves the aerodynamic forces in the wind axes, given an axis.
       @param axis the axis to return the force for (eX, eY, eZ).
-      @return a reference to a column vector containing the requested stability
+      @return a reference to a column vector containing the requested wind
       axis force. */
-  double GetvFs(int axis) const { return vFs(axis); }
+  double GetvFw(int axis) const { return vFw(axis); }
 
   /** Retrieves the lift over drag ratio */
   inline double GetLoD(void) const { return lod; }
@@ -184,10 +184,10 @@ private:
   vector <FGFunction*> variables;
   typedef vector <FGFunction*> CoeffArray;
   CoeffArray* Coeff;
-  FGColumnVector3 vFs;
+  FGColumnVector3 vFw;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
-  FGColumnVector3 vLastFs;
+  FGColumnVector3 vLastFw;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vDeltaRP;
   double alphaclmax, alphaclmin;

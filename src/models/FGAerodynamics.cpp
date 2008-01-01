@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.14 2007/10/22 11:57:51 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.15 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -143,8 +143,8 @@ bool FGAerodynamics::Run(void)
     }
   }
 
-  vLastFs = vFs;
-  vFs.InitMatrix();
+  vLastFw = vFw;
+  vFw.InitMatrix();
 
   // Tell the variable functions to cache their values, so while the aerodynamic
   // functions are being calculated for each axis, these functions do not get
@@ -154,7 +154,7 @@ bool FGAerodynamics::Run(void)
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-      vFs(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
+      vFw(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
     }
   }
 
@@ -165,20 +165,20 @@ bool FGAerodynamics::Run(void)
 
   // calculate lift coefficient squared
   if ( Auxiliary->Getqbar() > 0) {
-    clsq = vFs(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
+    clsq = vFw(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
     clsq *= clsq;
   }
 
-  if ( vFs(eDrag)  > 0) {
-    lod = vFs(eLift) / vFs(eDrag);
+  if ( vFw(eDrag)  > 0) {
+    lod = vFw(eLift) / vFw(eDrag);
   }
 
   //correct signs of drag and lift to wind axes convention
   //positive forward, right, down
-  vFs(eDrag)*=-1; vFs(eLift)*=-1;
+  vFw(eDrag)*=-1; vFw(eLift)*=-1;
 
-  // transform stability axis forces into body axes
-  vForces = State->GetTs2b()*vFs;
+  // transform wind axis forces into body axes
+  vForces = State->GetTw2b()*vFw;
 
   vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp() + vDeltaRP);
 
@@ -338,11 +338,11 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("moments/n-aero-lbsft", this,3,
                        (PMF)&FGAerodynamics::GetMoments);
   PropertyManager->Tie("forces/fwx-aero-lbs", this,1,
-                       (PMF)&FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwy-aero-lbs", this,2,
-                       (PMF)&FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/fwz-aero-lbs", this,3,
-                       (PMF)&FGAerodynamics::GetvFs);
+                       (PMF)&FGAerodynamics::GetvFw);
   PropertyManager->Tie("forces/lod-norm", this,
                        &FGAerodynamics::GetLoD);
   PropertyManager->Tie("aero/cl-squared", this,

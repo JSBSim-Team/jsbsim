@@ -49,7 +49,7 @@ and the cg.
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGForce.cpp,v 1.8 2007/02/24 18:52:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGForce.cpp,v 1.9 2008/01/01 15:52:23 jberndt Exp $";
 static const char *IdHdr = ID_FORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,7 @@ FGMatrix33 FGForce::Transform(void)
 {
   switch(ttype) {
   case tWindBody:
-    return fdmex->GetState()->GetTs2b();
+    return fdmex->GetState()->GetTw2b();
   case tLocalBody:
     return fdmex->GetPropagate()->GetTl2b();
   case tCustom:
