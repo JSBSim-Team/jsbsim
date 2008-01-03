@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.15 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.16 2008/01/03 06:28:47 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -87,7 +87,7 @@ bool FGGroundReactions::Run(void)
     // Perhaps there is some commonality for things which only need to be
     // calculated once.
   if ( Propagate->GetDistanceAGL() < 300.0 ) { // Only execute gear code below 300 feet
-    for (int i=0; i<lGear.size(); i++) {
+    for (unsigned int i=0; i<lGear.size(); i++) {
       vForces  += lGear[i]->Force();
       vMoments += lGear[i]->Moment();
     }

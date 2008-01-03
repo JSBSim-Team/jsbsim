@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.5 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.6 2008/01/03 06:28:47 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -122,6 +122,14 @@ public:
 
   void AddPointMass(Element* el);
   double GetPointMassWeight(void);
+  double GetPointMassWeight(int idx) const {return(PointMasses[idx]->Weight);}
+
+  void SetPointMassWeight(int idx, double pmw) {
+    if (idx < (int)PointMasses.size()) {
+      PointMasses[idx]->Weight = pmw;
+    }
+  }
+
   FGColumnVector3& GetPointMassMoment(void);
   FGMatrix33& GetJ(void) {return mJ;}
   FGMatrix33& GetJinv(void) {return mJinv;}
@@ -154,7 +162,7 @@ private:
     double Weight;
   };
 
-  vector <struct PointMass> PointMasses;
+  vector <struct PointMass*> PointMasses;
 
   void Debug(int from);
 };

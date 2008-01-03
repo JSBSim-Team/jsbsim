@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.9 2007/08/10 22:33:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.10 2008/01/03 06:28:47 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,7 +72,14 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance()
 {
+  char tmp[80];
   unbind();
+  for (unsigned int i=0; i<PointMasses.size(); i++) {
+    snprintf(tmp, 80, "inertia/pointmass-weight[%u]", i);
+    PropertyManager->Untie(tmp);
+  }
+
+  for (unsigned int i=0; i<PointMasses.size(); i++) delete PointMasses[i];
   PointMasses.clear();
   Debug(1);
 }
@@ -186,6 +193,8 @@ bool FGMassBalance::Run(void)
 
 void FGMassBalance::AddPointMass(Element* el)
 {
+  char tmp[80];
+
   Element* loc_element = el->FindElement("location");
   string pointmass_name = el->GetAttributeValue("name");
   if (!loc_element) {
@@ -195,7 +204,13 @@ void FGMassBalance::AddPointMass(Element* el)
 
   double w = el->FindElementValueAsNumberConvertTo("weight", "LBS");
   FGColumnVector3 vXYZ = loc_element->FindElementTripletConvertTo("IN");
-  PointMasses.push_back(PointMass(w, vXYZ));
+  PointMasses.push_back(new PointMass(w, vXYZ));
+
+  int num = PointMasses.size()-1;
+
+  snprintf(tmp, 80, "inertia/pointmass-weight[%u]", num);
+  PropertyManager->Tie( tmp, this, num, &FGMassBalance::GetPointMassWeight,
+                                        &FGMassBalance::SetPointMassWeight);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +220,7 @@ double FGMassBalance::GetPointMassWeight(void)
   double PM_total_weight = 0.0;
 
   for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PM_total_weight += PointMasses[i].Weight;
+    PM_total_weight += PointMasses[i]->Weight;
   }
   return PM_total_weight;
 }
@@ -217,7 +232,7 @@ FGColumnVector3& FGMassBalance::GetPointMassMoment(void)
   PointMassCG.InitMatrix();
 
   for (unsigned int i=0; i<PointMasses.size(); i++) {
-    PointMassCG += PointMasses[i].Weight*PointMasses[i].Location;
+    PointMassCG += PointMasses[i]->Weight*PointMasses[i]->Location;
   }
   return PointMassCG;
 }
@@ -234,7 +249,7 @@ FGMatrix33& FGMassBalance::CalculatePMInertias(void)
   pmJ = FGMatrix33();
 
   for (unsigned int i=0; i<size; i++)
-    pmJ += GetPointmassInertia( lbtoslug * PointMasses[i].Weight, PointMasses[i].Location );
+    pmJ += GetPointmassInertia( lbtoslug * PointMasses[i]->Weight, PointMasses[i]->Location );
 
   return pmJ;
 }
@@ -336,10 +351,10 @@ void FGMassBalance::Debug(int from)
       cout << "    CG (x, y, z): " << vbaseXYZcg << endl;
       // ToDo: Need to add point mass outputs here
       for (unsigned int i=0; i<PointMasses.size(); i++) {
-        cout << "    Point Mass Object: " << PointMasses[i].Weight << " lbs. at "
-                   << "X, Y, Z (in.): " << PointMasses[i].Location(eX) << "  "
-                   << PointMasses[i].Location(eY) << "  "
-                   << PointMasses[i].Location(eZ) << endl;
+        cout << "    Point Mass Object: " << PointMasses[i]->Weight << " lbs. at "
+                   << "X, Y, Z (in.): " << PointMasses[i]->Location(eX) << "  "
+                   << PointMasses[i]->Location(eY) << "  "
+                   << PointMasses[i]->Location(eZ) << endl;
       }
     }
   }
