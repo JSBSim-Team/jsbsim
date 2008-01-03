@@ -50,7 +50,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.2 2008/01/01 15:52:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.3 2008/01/03 01:25:23 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -119,6 +119,7 @@ FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FG
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Copy constructor
 
 FGExternalForce::FGExternalForce(const FGExternalForce& extForce) : FGForce(extForce)
 {

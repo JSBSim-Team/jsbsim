@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.9 2008/01/01 15:52:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.10 2008/01/03 01:25:24 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -77,6 +77,9 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   string value, logic;
   struct test *current_test;
   Element *test_element, *condition_element;
+
+  FGFCSComponent::bind(); // Bind() this component here in case it is used
+                          // in its own definition for a sample-and-hold
 
   test_element = element->GetElement();
   while (test_element) {
@@ -128,8 +131,6 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     test_element = element->GetNextElement();
   }
 
-  FGFCSComponent::bind();
-
   Debug(0);
 }
 
@@ -150,10 +151,11 @@ FGSwitch::~FGSwitch()
 bool FGSwitch::Run(void )
 {
   bool pass = false;
+  double default_output=0.0;
 
   for (unsigned int i=0; i<tests.size(); i++) {
     if (tests[i]->Logic == eDefault) {
-      Output = tests[i]->GetValue();
+      default_output = tests[i]->GetValue();
     } else if (tests[i]->Logic == eAND) {
       pass = true;
       for (unsigned int j=0; j<tests[i]->conditions.size(); j++) {
@@ -173,6 +175,8 @@ bool FGSwitch::Run(void )
       break;
     }
   }
+  
+  if (!pass) Output = default_output;
 
   Clip();
   if (IsOutput) SetOutput();
