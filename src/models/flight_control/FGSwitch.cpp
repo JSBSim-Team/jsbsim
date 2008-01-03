@@ -65,7 +65,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.10 2008/01/03 01:25:24 jberndt Exp $";
+static const char *IdSrc = "$Id: FGSwitch.cpp,v 1.11 2008/01/03 06:27:40 jberndt Exp $";
 static const char *IdHdr = ID_SWITCH;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -86,6 +86,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
     if (test_element->GetName() == "default") {
       current_test = new struct test;
       current_test->Logic = eDefault;
+      tests.push_back(current_test);
     } else if (test_element->GetName() == "test") { // here's a test
       current_test = new struct test;
       logic = test_element->GetAttributeValue("logic");
@@ -105,6 +106,7 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
         condition_element = test_element->GetNextElement();
       }
 
+      tests.push_back(current_test);
     }
 
     if (test_element->GetName() != "output") { // this is not an output element
@@ -127,7 +129,6 @@ FGSwitch::FGSwitch(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
         }
       }
     }
-    tests.push_back(current_test);
     test_element = element->GetNextElement();
   }
 
