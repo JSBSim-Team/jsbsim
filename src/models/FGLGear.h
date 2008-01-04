@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.15 2007/06/18 02:56:39 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.16 2008/01/04 01:54:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.15 2007/06/18 02:56:39 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.16 2008/01/04 01:54:23 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -242,6 +242,7 @@ public:
   inline bool GetRetractable(void)         { return isRetractable;   }
   inline bool GetGearUnitUp(void)          { return GearUp;          }
   inline bool GetGearUnitDown(void)        { return GearDown;        }
+  double GetGearUnitPos(void);
   inline double GetWheelSideForce(void)    { return SideForce;       }
   inline double GetWheelRollForce(void)    { return RollingForce;    }
   inline double GetWheelSideVel(void)      { return SideWhlVel;      }
@@ -293,6 +294,8 @@ private:
   double prevSlipOut;
   double TirePressureNorm;
   double SinWheel, CosWheel;
+  double GearPos;
+  bool   useFCSGearPos;
   bool WOW;
   bool lastWOW;
   bool FirstContact;

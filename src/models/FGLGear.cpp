@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.31 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.32 2008/01/04 01:54:23 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -171,6 +171,8 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
   
   GearUp = false;
   GearDown = true;
+  GearPos  = 1.0;
+  useFCSGearPos = false;
   Servicable = true;
 
 // Add some AI here to determine if gear is located properly according to its
@@ -273,6 +275,8 @@ FGLGear::FGLGear(const FGLGear& lgear)
   isRetractable   = lgear.isRetractable;
   GearUp          = lgear.GearUp;
   GearDown        = lgear.GearDown;
+  GearPos         = lgear.GearPos;
+  useFCSGearPos   = lgear.useFCSGearPos;
   WheelSlip       = lgear.WheelSlip;
   TirePressureNorm = lgear.TirePressureNorm;
   Servicable      = lgear.Servicable;
@@ -400,7 +404,7 @@ FGColumnVector3& FGLGear::Force(void)
     compressLength = 0.0;
 
     // Return to neutral position between 1.0 and 0.8 gear pos.
-    SteerAngle *= max(FCS->GetGearPos()-0.8, 0.0)/0.2;
+    SteerAngle *= max(GetGearUnitPos()-0.8, 0.0)/0.2;
 
     ResetReporting();
   }
@@ -415,10 +419,11 @@ FGColumnVector3& FGLGear::Force(void)
 
 void FGLGear::ComputeRetractionState(void)
 {
-  if (FCS->GetGearPos() < 0.01) {
+  double gearPos = GetGearUnitPos();
+  if (gearPos < 0.01) {
     GearUp   = true;
     GearDown = false;
-  } else if (FCS->GetGearPos() > 0.99) {
+  } else if (gearPos > 0.99) {
     GearDown = true;
     GearUp   = false;
   } else {
@@ -659,6 +664,18 @@ void FGLGear::ComputeVerticalStrutForce(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+double FGLGear::GetGearUnitPos(void)
+{
+  // hack to provide backward compatibility to gear/gear-pos-norm property
+  if( useFCSGearPos || FCS->GetGearPos() != 1.0 ) {
+    useFCSGearPos = true;
+    return FCS->GetGearPos();
+  }
+  return GearPos;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGLGear::bind(void)
 {
   char property_name[80];
@@ -668,6 +685,12 @@ void FGLGear::bind(void)
     snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
     Exec->GetPropertyManager()->Tie( property_name, &WOW );
   }
+
+  if( isRetractable ) {
+    snprintf(property_name, 80, "gear/unit[%d]/pos-norm", GearNumber);
+    Exec->GetPropertyManager()->Tie( property_name, &GearPos );
+  }
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

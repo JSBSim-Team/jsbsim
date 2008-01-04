@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.16 2007/11/14 04:15:17 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.17 2008/01/04 01:54:23 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -1063,7 +1063,7 @@ void FGJSBsim::init_gear(void )
       node->setDoubleValue("zoffset-in", gear->GetBodyLocation()(3));
       node->setBoolValue("wow", gear->GetWOW());
       node->setBoolValue("has-brake", gear->GetBrakeGroup() > 0);
-      node->setDoubleValue("position-norm", FCS->GetGearPos());
+      node->setDoubleValue("position-norm", gear->GetGearUnitPos());
       node->setDoubleValue("tire-pressure-norm", gear->GetTirePressure());
       node->setDoubleValue("compression-norm", gear->GetCompLen());
       if ( gear->GetSteerable() )
@@ -1079,7 +1079,7 @@ void FGJSBsim::update_gear(void)
       FGLGear *gear = gr->GetGearUnit(i);
       SGPropertyNode * node = fgGetNode("gear/gear", i, true);
       node->getChild("wow", 0, true)->setBoolValue( gear->GetWOW());
-      node->getChild("position-norm", 0, true)->setDoubleValue(FCS->GetGearPos());
+      node->getChild("position-norm", 0, true)->setDoubleValue(gear->GetGearUnitPos());
       gear->SetTirePressure(node->getDoubleValue("tire-pressure-norm"));
       node->setDoubleValue("compression-norm", gear->GetCompLen());
       if ( gear->GetSteerable() )
