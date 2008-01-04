@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.6 2008/01/03 06:28:47 jberndt Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.7 2008/01/04 01:53:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -122,7 +122,10 @@ public:
 
   void AddPointMass(Element* el);
   double GetPointMassWeight(void);
-  double GetPointMassWeight(int idx) const {return(PointMasses[idx]->Weight);}
+  double GetPointMassWeight(int idx) const {
+    if (idx < (int)PointMasses.size()) return(PointMasses[idx]->Weight);
+    else return 0.0;
+  }
 
   void SetPointMassWeight(int idx, double pmw) {
     if (idx < (int)PointMasses.size()) {
