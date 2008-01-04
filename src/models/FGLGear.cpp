@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.33 2008/01/04 04:38:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.34 2008/01/04 14:48:40 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -702,6 +702,11 @@ void FGLGear::unbind(void)
     snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
     Exec->GetPropertyManager()->Untie( property_name );
     snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
+    Exec->GetPropertyManager()->Untie( property_name );
+  }
+
+  if( isRetractable ) {
+    snprintf(property_name, 80, "gear/unit[%d]/pos-norm", GearNumber);
     Exec->GetPropertyManager()->Untie( property_name );
   }
 }
