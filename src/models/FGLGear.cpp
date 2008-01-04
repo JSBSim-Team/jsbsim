@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.32 2008/01/04 01:54:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.33 2008/01/04 04:38:17 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -316,7 +316,7 @@ FGColumnVector3& FGLGear::Force(void)
 
   if (isRetractable) ComputeRetractionState();
 
-  if (GearUp) return vForce;
+  if (!GearDown) return vForce; // return the null vForce column vector
 
   vWhlBodyVec = MassBalance->StructuralToBody(vXYZ); // Get wheel in body frame
   vLocalGear = Propagate->GetTb2l() * vWhlBodyVec; // Get local frame wheel location
