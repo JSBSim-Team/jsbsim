@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.29 2008/01/05 21:28:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.30 2008/01/05 21:50:23 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -623,11 +623,14 @@ string FGFCS::GetComponentStrings(string delimeter)
   string CompStrings = "";
   bool firstime = true;
 
-  for (comp = 0; comp < FCSComponents.size(); comp++) {
-    if (firstime) firstime = false;
-    else          CompStrings += delimeter;
+  for (unsigned int i=0; i<Systems.size(); i++) {
+    for (comp = 0; comp < Systems[i].size(); comp++)
+    {
+      if (firstime) firstime = false;
+      else          CompStrings += delimeter;
 
-    CompStrings += FCSComponents[comp]->GetName();
+      CompStrings += Systems[i][comp]->GetName();
+    }
   }
 
   for (comp = 0; comp < APComponents.size(); comp++)
@@ -636,6 +639,13 @@ string FGFCS::GetComponentStrings(string delimeter)
     else          CompStrings += delimeter;
 
     CompStrings += APComponents[comp]->GetName();
+  }
+
+  for (comp = 0; comp < FCSComponents.size(); comp++) {
+    if (firstime) firstime = false;
+    else          CompStrings += delimeter;
+
+    CompStrings += FCSComponents[comp]->GetName();
   }
 
   return CompStrings;
@@ -650,12 +660,14 @@ string FGFCS::GetComponentValues(string delimeter)
   char buffer[17];
   bool firstime = true;
 
-  for (comp = 0; comp < FCSComponents.size(); comp++) {
-    if (firstime) firstime = false;
-    else          CompValues += delimeter;
+  for (unsigned int i=0; i<Systems.size(); i++) {
+    for (comp = 0; comp < Systems[i].size(); comp++) {
+      if (firstime) firstime = false;
+      else          CompValues += delimeter;
 
-    sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
-    CompValues += string(buffer);
+      sprintf(buffer, "%9.6f", Systems[i][comp]->GetOutput());
+      CompValues += string(buffer);
+    }
   }
 
   for (comp = 0; comp < APComponents.size(); comp++) {
@@ -663,6 +675,14 @@ string FGFCS::GetComponentValues(string delimeter)
     else          CompValues += delimeter;
 
     sprintf(buffer, "%9.6f", APComponents[comp]->GetOutput());
+    CompValues += string(buffer);
+  }
+
+  for (comp = 0; comp < FCSComponents.size(); comp++) {
+    if (firstime) firstime = false;
+    else          CompValues += delimeter;
+
+    sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
     CompValues += string(buffer);
   }
 
