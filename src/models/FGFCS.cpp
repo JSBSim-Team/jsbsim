@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.28 2007/09/18 11:38:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.29 2008/01/05 21:28:58 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -472,6 +472,7 @@ bool FGFCS::Load(Element* el)
   vector <FGFCSComponent*> *Components;
   Element *component_element, *property_element, *sensor_element;
   Element *channel_element;
+  bool isSystem = false;
 
   Components=0;
 
@@ -502,6 +503,7 @@ bool FGFCS::Load(Element* el)
     Components = &FCSComponents;
     Name = "FCS: " + document->GetAttributeValue("name");
   } else if (document->GetName() == "system") {
+    isSystem = true;
     Components = new FCSCompVec();
     Name = "System: " + document->GetAttributeValue("name");
   }
@@ -590,6 +592,8 @@ bool FGFCS::Load(Element* el)
     }
     channel_element = document->FindNextElement("channel");
   }
+
+  if (isSystem)  Systems.push_back(*Components);
 
   return true;
 }
