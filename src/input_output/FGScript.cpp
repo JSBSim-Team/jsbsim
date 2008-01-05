@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.23 2007/10/25 11:41:22 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.24 2008/01/05 19:53:52 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -448,9 +448,23 @@ void FGScript::Debug(int from)
         cout << endl << "  Actions taken:" << endl << "    {";
         for (unsigned j=0; j<Events[i].SetValue.size(); j++) {
           if (Events[i].SetValue[j] == 0.0 && Events[i].Functions[j] != 0L) {
+            if (Events[i].SetParam[j] == 0) {
+              cerr << fgred << highint << endl
+                   << "  An attempt has been made to access a non-existent property" << endl
+                   << "  in this event. Please check the property names used, spelling, etc."
+                   << reset << endl;
+              exit(-1);
+            }
             cout << endl << "      set " << Events[i].SetParam[j]->GetName()
                  << " to function value";
           } else {
+            if (Events[i].SetParam[j] == 0) {
+              cerr << fgred << highint << endl
+                   << "  An attempt has been made to access a non-existent property" << endl
+                   << "  in this event. Please check the property names used, spelling, etc."
+                   << reset << endl;
+              exit(-1);
+            }
             cout << endl << "      set " << Events[i].SetParam[j]->GetName()
                  << " to " << Events[i].SetValue[j];
           }
