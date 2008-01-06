@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.13 2007/08/14 13:08:51 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.14 2008/01/06 17:06:22 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.13 $
+    @version $Revision: 1.14 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -546,10 +546,10 @@ private:
   double GearCmd,GearPos;
 
   typedef vector <FGFCSComponent*> FCSCompVec;
+  FCSCompVec Systems;
   FCSCompVec FCSComponents;
   FCSCompVec APComponents;
   FCSCompVec sensors;
-  vector <FCSCompVec> Systems;
   vector <double*> interface_properties;
   void bind(void);
   void bindModel(void);

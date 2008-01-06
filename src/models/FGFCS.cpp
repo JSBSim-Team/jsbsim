@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.31 2008/01/06 02:52:15 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.32 2008/01/06 17:06:21 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -105,7 +105,7 @@ FGFCS::~FGFCS()
   PropFeatherCmd.clear();
   PropFeather.clear();
 
-  unsigned int i, j;
+  unsigned int i;
 
   for (i=0;i<sensors.size();i++) delete sensors[i];
   sensors.clear();
@@ -114,8 +114,8 @@ FGFCS::~FGFCS()
   for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
   FCSComponents.clear();
   for (i=0;i<Systems.size();i++) {
-    for (j=0;j<Systems[i].size();j++) delete Systems[i][j];
-    Systems[i].clear();
+    delete Systems[i];
+    Systems.clear();
   }
 
   interface_properties.clear();
@@ -133,7 +133,7 @@ FGFCS::~FGFCS()
 
 bool FGFCS::Run(void)
 {
-  unsigned int i, j;
+  unsigned int i;
 
   if (FGModel::Run()) return true; // fast exit if nothing to do
   if (FDMExec->Holding()) return false;
@@ -149,14 +149,12 @@ bool FGFCS::Run(void)
     SteerPosDeg[i] = gear->GetDefaultSteerAngle( GetDsCmd() );
   }
 
-  // Cycle through the sensor, autopilot, and flight control components
+  // Cycle through the sensor, systems, autopilot, and flight control components
   // Execute Sensors
   for (i=0; i<sensors.size(); i++) sensors[i]->Run();
 
   // Execute Systems in order
-  for (i=0; i<Systems.size(); i++) {
-    for (j=0; j<Systems[i].size(); j++) Systems[i][j]->Run();
-  }
+  for (i=0; i<Systems.size(); i++) Systems[i]->Run();
 
   // Execute Autopilot
   for (i=0; i<APComponents.size(); i++) APComponents[i]->Run();
@@ -472,7 +470,6 @@ bool FGFCS::Load(Element* el)
   vector <FGFCSComponent*> *Components;
   Element *component_element, *property_element, *sensor_element;
   Element *channel_element;
-  bool isSystem = false;
 
   Components=0;
 
@@ -503,8 +500,7 @@ bool FGFCS::Load(Element* el)
     Components = &FCSComponents;
     Name = "FCS: " + document->GetAttributeValue("name");
   } else if (document->GetName() == "system") {
-    isSystem = true;
-    Components = new FCSCompVec();
+    Components = &Systems;
     Name = "System: " + document->GetAttributeValue("name");
   }
   Debug(2);
@@ -593,8 +589,6 @@ bool FGFCS::Load(Element* el)
     channel_element = document->FindNextElement("channel");
   }
 
-  if (isSystem)  Systems.push_back(*Components);
-
   return true;
 }
 
@@ -625,14 +619,11 @@ string FGFCS::GetComponentStrings(string delimeter)
   int total_count=0;
 
   for (unsigned int i=0; i<Systems.size(); i++) {
-    for (comp = 0; comp < Systems[i].size(); comp++)
-    {
-      if (firstime) firstime = false;
-      else          CompStrings += delimeter;
+    if (firstime) firstime = false;
+    else          CompStrings += delimeter;
 
-      CompStrings += Systems[i][comp]->GetName();
-      total_count++;
-    }
+    CompStrings += Systems[i]->GetName();
+    total_count++;
   }
 
   for (comp = 0; comp < APComponents.size(); comp++)
@@ -666,14 +657,12 @@ string FGFCS::GetComponentValues(string delimeter)
   int total_count=0;
 
   for (unsigned int i=0; i<Systems.size(); i++) {
-    for (comp = 0; comp < Systems[i].size(); comp++) {
-      if (firstime) firstime = false;
-      else          CompValues += delimeter;
+    if (firstime) firstime = false;
+    else          CompValues += delimeter;
 
-      sprintf(buffer, "%9.6f", Systems[i][comp]->GetOutput());
-      CompValues += string(buffer);
-      total_count++;
-    }
+    sprintf(buffer, "%9.6f", Systems[i]->GetOutput());
+    CompValues += string(buffer);
+    total_count++;
   }
 
   for (comp = 0; comp < APComponents.size(); comp++) {
