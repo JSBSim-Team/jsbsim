@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.30 2008/01/05 21:50:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.31 2008/01/06 02:52:15 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -622,6 +622,7 @@ string FGFCS::GetComponentStrings(string delimeter)
   unsigned int comp;
   string CompStrings = "";
   bool firstime = true;
+  int total_count=0;
 
   for (unsigned int i=0; i<Systems.size(); i++) {
     for (comp = 0; comp < Systems[i].size(); comp++)
@@ -630,6 +631,7 @@ string FGFCS::GetComponentStrings(string delimeter)
       else          CompStrings += delimeter;
 
       CompStrings += Systems[i][comp]->GetName();
+      total_count++;
     }
   }
 
@@ -639,6 +641,7 @@ string FGFCS::GetComponentStrings(string delimeter)
     else          CompStrings += delimeter;
 
     CompStrings += APComponents[comp]->GetName();
+    total_count++;
   }
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
@@ -646,6 +649,7 @@ string FGFCS::GetComponentStrings(string delimeter)
     else          CompStrings += delimeter;
 
     CompStrings += FCSComponents[comp]->GetName();
+    total_count++;
   }
 
   return CompStrings;
@@ -657,8 +661,9 @@ string FGFCS::GetComponentValues(string delimeter)
 {
   unsigned int comp;
   string CompValues = "";
-  char buffer[17];
+  char buffer[20];
   bool firstime = true;
+  int total_count=0;
 
   for (unsigned int i=0; i<Systems.size(); i++) {
     for (comp = 0; comp < Systems[i].size(); comp++) {
@@ -667,6 +672,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
       sprintf(buffer, "%9.6f", Systems[i][comp]->GetOutput());
       CompValues += string(buffer);
+      total_count++;
     }
   }
 
@@ -676,6 +682,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
     sprintf(buffer, "%9.6f", APComponents[comp]->GetOutput());
     CompValues += string(buffer);
+    total_count++;
   }
 
   for (comp = 0; comp < FCSComponents.size(); comp++) {
@@ -684,6 +691,7 @@ string FGFCS::GetComponentValues(string delimeter)
 
     sprintf(buffer, "%9.6f", FCSComponents[comp]->GetOutput());
     CompValues += string(buffer);
+    total_count++;
   }
 
   CompValues += "\0";
