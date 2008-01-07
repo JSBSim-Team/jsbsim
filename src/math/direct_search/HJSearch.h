@@ -21,6 +21,17 @@
  *
  *  DirectSearch version, modified by Anne Shepherd,
  *  College of William and Mary, 2000-2001                          
+ 
+    References:
+
+    Torczon, V.; Dolan, L.; Gurson, A.; Shepherd, A.; Siefert, C., Yates, 
+    A.: C++ > DirectSearch Classes. Software available at 
+    http://www.cs.wm.edu/~va/software/DirectSearch/
+
+    Shepherd, P. L.: Class Documentation for DirectSearch and its derived 
+    classes.
+    Available at http://www.cs.wm.edu/~plshep/
+
  */                                                                 
    
 

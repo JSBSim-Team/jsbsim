@@ -5,6 +5,18 @@
 //
 // Modified by Agostino De Marco (many functions deleted)
 //
+/* 
+    References:
+
+    Torczon, V.; Dolan, L.; Gurson, A.; Shepherd, A.; Siefert, C., Yates, 
+    A.: C++ > DirectSearch Classes. Software available at 
+    http://www.cs.wm.edu/~va/software/DirectSearch/
+
+    Shepherd, P. L.: Class Documentation for DirectSearch and its derived 
+    classes.
+    Available at http://www.cs.wm.edu/~plshep/
+
+*/
 
 #if !defined _userfile_
 #define _userfile_
