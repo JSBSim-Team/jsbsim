@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.32 2008/01/06 17:06:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.33 2008/01/07 04:42:37 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -113,10 +113,8 @@ FGFCS::~FGFCS()
   APComponents.clear();
   for (i=0;i<FCSComponents.size();i++) delete FCSComponents[i];
   FCSComponents.clear();
-  for (i=0;i<Systems.size();i++) {
-    delete Systems[i];
-    Systems.clear();
-  }
+  for (i=0;i<Systems.size();i++) delete Systems[i];
+  Systems.clear();
 
   interface_properties.clear();
 
