@@ -29,7 +29,13 @@
 
 <external_reactions>
 
+    <!-- Interface properties, a.k.a. property declarations -->
+    <property> ... <property>
+      
     <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
+      
+      <function> ... </function>
+
       <location unit="units"> <!-- location -->
         <x> value </x>
         <y> value </y>
@@ -50,32 +56,40 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.3 2008/01/03 01:25:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.4 2008/01/08 12:57:02 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 FGExternalForce::FGExternalForce(FGFDMExec *FDMExec, Element *el, int index): FGForce(FDMExec)
 {
-  Element* location_element;
-  Element* direction_element;
+  Element* location_element=0;
+  Element* direction_element=0;
+  Element* function_element=0;
   string sFrame;
   string BasePropertyName;
   FGColumnVector3 location;
+  Magnitude_Function = 0;
+  magnitude = 0.0;
+  azimuth = 0.0;
 
   PropertyManager = fdmex->GetPropertyManager();
+  Name = el->GetAttributeValue("name");
+  BasePropertyName = "external_reactions/" + Name;
 
   // The value sent to the sim through the external_forces/{force name}/magnitude
   // property will be multiplied against the unit vector, which can come in
   // initially in the direction vector. The frame in which the vector is defined
   // is specified with the frame attribute. The vector is normalized to magnitude 1.
 
-  Name = el->GetAttributeValue("name");
-  BasePropertyName = "external_reactions/" + Name;
-  PropertyManager->Tie( BasePropertyName + "/magnitude",(FGExternalForce*)this, &FGExternalForce::GetMagnitude, &FGExternalForce::SetMagnitude);
-  Magnitude_Node = PropertyManager->GetNode(BasePropertyName + "/magnitude");
-  magnitude = 0.0;
-  azimuth = 0.0;
+  function_element = el->FindElement("function");
+  if (function_element) {
+    Magnitude_Function = new FGFunction(PropertyManager, function_element);
+  } else {
+    PropertyManager->Tie( BasePropertyName + "/magnitude",(FGExternalForce*)this, &FGExternalForce::GetMagnitude, &FGExternalForce::SetMagnitude);
+    Magnitude_Node = PropertyManager->GetNode(BasePropertyName + "/magnitude");
+  }
+
 
   // Set frame (from FGForce).
   sFrame = el->GetAttributeValue("frame");
@@ -138,6 +152,26 @@ FGExternalForce::~FGExternalForce()
   unbind( PropertyManager->GetNode("external_reactions"));
 
   Debug(1);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGExternalForce::SetMagnitude(double mag)
+{
+  magnitude = mag;
+  vFn = vDirection*mag;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGExternalForce::GetBodyForces(void)
+{
+  if (Magnitude_Function) {
+    double mag = Magnitude_Function->GetValue();
+    SetMagnitude(mag);
+  }
+  
+  return FGForce::GetBodyForces();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

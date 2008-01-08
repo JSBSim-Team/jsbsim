@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.10 2008/01/08 12:57:03 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $
+    @version $Id: FGForce.h,v 1.10 2008/01/08 12:57:03 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -238,7 +238,7 @@ public:
 
   enum TransformType { tNone, tWindBody, tLocalBody, tCustom };
 
-  FGColumnVector3& GetBodyForces(void);
+  virtual FGColumnVector3& GetBodyForces(void);
 
   inline FGColumnVector3& GetMoments(void) { return vM; }
 

@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.22 2008/01/01 15:52:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.23 2008/01/08 12:57:02 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -935,8 +935,16 @@ bool FGOutput::Load(Element* element)
     SubSystems += ssPropulsion;
   property_element = document->FindElement("property");
   while (property_element) {
-    string property = property_element->GetDataLine();
-    OutputProperties.push_back(PropertyManager->GetNode(property));
+    string property_str = property_element->GetDataLine();
+    FGPropertyManager* node = PropertyManager->GetNode(property_str);
+    if (!node) {
+      cerr << fgred << highint << endl << "  No property by the name "
+           << property_str << " has been defined. This property will " << endl
+           << "  not be logged. You should check your configuration file."
+           << reset << endl;
+    } else {
+      OutputProperties.push_back(node);
+    }
     property_element = document->FindNextElement("property");
   }
 

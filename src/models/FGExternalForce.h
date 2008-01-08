@@ -45,12 +45,13 @@ INCLUDES
 #include <string>
 #include <input_output/FGPropertyManager.h>
 #include <math/FGColumnVector3.h>
+#include <math/FGFunction.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.1 2007/12/30 14:53:08 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.2 2008/01/08 12:57:02 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,12 +83,10 @@ public:
   /// Destructor
   ~FGExternalForce();
 
-  void SetMagnitude(double mag) {
-	  magnitude = mag;
-	  vFn = vDirection*mag;
-  }
-
+  void SetMagnitude(double mag);
   void SetAzimuth(double az) {azimuth = az;}
+
+  FGColumnVector3& GetBodyForces(void);
   double GetMagnitude(void) const {return magnitude;}
   double GetAzimuth(void) const {return azimuth;}
   double GetX(void) const {return vDirection(0);}
@@ -103,6 +102,7 @@ private:
   string Name;
   FGPropertyManager* PropertyManager;
   FGPropertyManager* Magnitude_Node;
+  FGFunction* Magnitude_Function;
   string BasePropertyName;
   FGColumnVector3 vDirection;
   double magnitude;

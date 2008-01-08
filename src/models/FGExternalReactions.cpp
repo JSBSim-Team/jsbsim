@@ -37,6 +37,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGExternalReactions.h"
+#include <string>
 
 namespace JSBSim {
 
@@ -48,7 +49,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.2 2008/01/08 12:57:02 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,12 +66,26 @@ FGExternalReactions::FGExternalReactions(FGFDMExec* fdmex) : FGModel(fdmex)
 
 bool FGExternalReactions::Load(Element* el)
 {
-  int index=0;
-
-  Element* force_element = el->FindElement("force");
-
   Debug(2);
 
+  // Interface properties are all stored in the interface properties array.
+
+  Element* property_element;
+  property_element = el->FindElement("property");
+  while (property_element) {
+    double value=0.0;
+    if ( ! property_element->GetAttributeValue("value").empty())
+      value = property_element->GetAttributeValueAsNumber("value");
+    interface_properties.push_back(new double(value));
+    string interface_property_string = property_element->GetDataLine();
+    PropertyManager->Tie(interface_property_string, interface_properties.back());
+    property_element = el->FindNextElement("property");
+  }
+
+  // Parse force elements
+
+  int index=0;
+  Element* force_element = el->FindElement("force");
   while (force_element) {
     Forces.push_back( new FGExternalForce(FDMExec, force_element, index) );
     NoneDefined = false;
@@ -87,6 +102,8 @@ FGExternalReactions::~FGExternalReactions()
 {
   for (int i=0; i<Forces.size(); i++) delete Forces[i];
   Forces.clear();
+  for (int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
+  interface_properties.clear();
   Debug(1);
 }
 
