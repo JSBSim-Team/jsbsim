@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.34 2008/01/04 14:48:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.35 2008/01/09 12:37:41 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -520,7 +520,7 @@ void FGLGear::InitializeReporting(void)
   if ((Propagate->GetVel().Magnitude() > 0.1) &&
       (FCS->GetBrake(bgLeft) == 0) &&
       (FCS->GetBrake(bgRight) == 0) &&
-      (FCS->GetThrottlePos(0) == 1) && !StartedGroundRun)
+      (FCS->GetThrottlePos(0) > 0.90) && !StartedGroundRun)
   {
     TakeoffDistanceTraveled = 0;
     TakeoffDistanceTraveled50ft = 0;
