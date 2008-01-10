@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.17 2008/01/04 01:54:23 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.18 2008/01/10 12:57:35 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -466,7 +466,7 @@ void FGJSBsim::update( double dt )
     }
 
     FGJSBBase::Message* msg;
-    while (fdmex->ReadMessage()) {
+    while (fdmex->SomeMessages()) {
       msg = fdmex->ProcessMessage();
       switch (msg->type) {
       case FGJSBBase::Message::eText:
