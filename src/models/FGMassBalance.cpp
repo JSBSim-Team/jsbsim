@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.10 2008/01/03 06:28:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.11 2008/01/10 12:52:48 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,7 +75,7 @@ FGMassBalance::~FGMassBalance()
   char tmp[80];
   unbind();
   for (unsigned int i=0; i<PointMasses.size(); i++) {
-    snprintf(tmp, 80, "inertia/pointmass-weight[%u]", i);
+    snprintf(tmp, 80, "inertia/pointmass-weight-lbs[%u]", i);
     PropertyManager->Untie(tmp);
   }
 
@@ -208,7 +208,7 @@ void FGMassBalance::AddPointMass(Element* el)
 
   int num = PointMasses.size()-1;
 
-  snprintf(tmp, 80, "inertia/pointmass-weight[%u]", num);
+  snprintf(tmp, 80, "inertia/pointmass-weight-lbs[%u]", num);
   PropertyManager->Tie( tmp, this, num, &FGMassBalance::GetPointMassWeight,
                                         &FGMassBalance::SetPointMassWeight);
 }
