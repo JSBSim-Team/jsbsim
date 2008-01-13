@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.5 2008/01/13 18:56:31 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -174,9 +174,10 @@ public:
 
   /** Retrieves the Euler angles.
       @param i the euler angle index.
+      @units radians.
       @return a reference to the i-th euler angles corresponding
       to this quaternion rotation.
-      @units radians */
+   */
   double GetEuler(int i) const {
     ComputeDerived();
     return mEulerAngles(i);

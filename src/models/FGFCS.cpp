@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.34 2008/01/08 12:57:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.35 2008/01/13 18:56:32 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -477,6 +477,9 @@ bool FGFCS::Load(Element* el)
   separator = ";";
 #endif
 
+// ToDo: The handling of name and file attributes could be improved, here,
+//       considering that a name can be in the external file, as well.
+
   name = el->GetAttributeValue("name");
 
   if (name.empty()) {
@@ -487,6 +490,7 @@ bool FGFCS::Load(Element* el)
       return false;
     } else {
       document = LoadXMLDocument(file);
+      name = document->GetAttributeValue("name");
     }
   } else {
     document = el;
@@ -587,6 +591,8 @@ bool FGFCS::Load(Element* el)
     }
     channel_element = document->FindNextElement("channel");
   }
+
+  ResetParser();
 
   return true;
 }

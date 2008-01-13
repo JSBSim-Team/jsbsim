@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.11 2007/12/30 23:18:51 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.12 2008/01/13 18:56:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -60,23 +60,39 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the EOM and integration/propagation of state
+/** Models the EOM and integration/propagation of state.
+    The Equations of Motion (EOM) for JSBSim are integrated to propagate the
+    state of the vehicle given the forces and moments that act on it. The
+    integration accounts for a rotating Earth.
+    Integration of rotational and translation position and rate can be 
+    customized as needed or frozen by the selection of no integrator. The
+    selection of which integrator to use is done through the setting of 
+    the associated property. There are four properties which can be set:
+    
+    @code
+    simulation/integrator/rate/rotational
+    simulation/integrator/rate/translational
+    simulation/integrator/position/rotational
+    simulation/integrator/position/translational
+    @endcode
+    
+    Each of the integrators listed above can be set to one of the following values:
+
+    @code
+    0: No integrator (Freeze)
+    1: Rectangular Euler
+    2: Trapezoidal
+    3: Adams Bashforth 2
+    4: Adams Bashforth 3
+    @endcode
+
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.11 2007/12/30 23:18:51 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.12 2008/01/13 18:56:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
-// state vector
-
-struct VehicleState {
-  FGLocation vLocation;
-  FGColumnVector3 vUVW;
-  FGColumnVector3 vPQR;
-  FGQuaternion vQtrn;
-};
 
 class FGPropagate : public FGModel {
 public:
@@ -87,19 +103,78 @@ public:
   /// Destructor
   ~FGPropagate();
   
+  /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
 
+/// State vector structure.
+struct VehicleState {
+  /// Represents the current location of the vehicle.
+  FGLocation vLocation;
+  /// The velocity vector of the vehicle in body frame.
+  FGColumnVector3 vUVW;
+  /// The angular velocity vector for the vehicle in body frame.
+  FGColumnVector3 vPQR;
+  /// Represents the current orientation of the vehicle.
+  FGQuaternion vQtrn;
+};
+
+  /** Initializes the FGPropagate class after instantiation and prior to first execution.
+      The base class FGModel::InitModel is called first, initializing pointers to the 
+      other FGModel objects (and others).
+  */
   bool InitModel(void);
 
-  /** Runs the Propagate model; called by the Executive
+  /** Runs the Propagate model; called by the Executive.
       @return false if no error */
   bool Run(void);
 
+  /** Retrieves the velocity vector.
+      @units ft/sec
+      @return The vehicle velocity vector with respect to the Earth centered frame,
+              expressed in Local horizontal frame.
+  */
   const FGColumnVector3& GetVel(void) const { return vVel; }
+  
+  /** Retrieves the body frame vehicle velocity vector.
+      @units ft/sec
+      @return The body frame vehicle velocity vector in ft/sec.
+  */
   const FGColumnVector3& GetUVW(void) const { return VState.vUVW; }
+  
+  /** Retrieves the body axis acceleration.
+      Retrieves the computed body axis accelerations based on the
+      applied forces and accounting for a rotating body frame.
+      @units ft/sec^2
+      @return Body axis translational acceleration in ft/sec^2.
+  */
   const FGColumnVector3& GetUVWdot(void) const { return vUVWdot; }
+  
+  /** Retrieves the body angular rates vector.
+      Retrieves the body angular rates (p, q, r), which are calculated by integration
+      of the angular acceleration.
+      @units rad/sec
+      @return The body frame angular rates in rad/sec.
+  */
   const FGColumnVector3& GetPQR(void) const {return VState.vPQR;}
+  
+  /** Retrieves the body axis angular acceleration vector.
+      Retrieves the body axis angular acceleration vector in rad/sec^2. The
+      angular acceleration vector is determined from the applied forces and
+      accounts for a rotating frame.
+      @units rad/sec^2
+      @return The angular acceleration vector.
+  */
   const FGColumnVector3& GetPQRdot(void) const {return vPQRdot;}
+  
+  /** Retrieves the Euler angles that define the vehicle orientation.
+      Retrieves the Euler angles that define the vehicle orientation in
+      the Local frame. The order of rotation used is Yaw-Pitch-Roll.
+      @units radians
+      @return The Euler angle vector, where the first item in the
+              vector is the angle about the X axis, the second is the
+              angle about the Y axis, and the third item is the angle
+              about the Z axis.
+  */
   const FGColumnVector3& GetEuler(void) const { return VState.vQtrn.GetEuler(); }
 
   double GetUVW   (int idx) const { return VState.vUVW(idx); }
@@ -117,8 +192,9 @@ public:
   /** Returns the "constant" RunwayRadius.
       The RunwayRadius parameter is set by the calling application or set to
       zero if JSBSim is running in standalone mode.
+      @units feet
       @return distance of the runway from the center of the earth.
-      @units feet */
+      */
   double GetRunwayRadius(void) const;
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
   double GetTerrainElevationASL(void) const;

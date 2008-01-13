@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.10 2007/08/15 03:26:24 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.11 2008/01/13 18:56:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
     very dynamic state (unless, of course, you have chosen your IC's wisely, or
     started on the ground) even after setting it up with this class.
 
-   <h2>Usage Notes</h2>
+   <h3>Usage Notes</h3>
 
    With a valid object of FGFDMExec and an aircraft model loaded:
 
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
    FDMExec->RunIC(fgic)
    @endcode
 
-   <h2>Speed</h2>
+   <h3>Speed</h3>
 
    Since vc, ve, vt, and mach all represent speed, the remaining
    three are recalculated each time one of them is set (using the
@@ -106,7 +106,7 @@ CLASS DOCUMENTATION
    components forces a recalculation of vt and vt then becomes the
    most recent speed set.
 
-   <h2>Alpha,Gamma, and Theta</h2>
+   <h3>Alpha,Gamma, and Theta</h3>
 
    This class assumes that it will be used to set up the sim for a
    steady, zero pitch rate condition. Since any two of those angles
@@ -147,7 +147,7 @@ CLASS DOCUMENTATION
    - vground (ground speed, ft/sec)
    - running (0 or 1)
 
-   <h2>Properties</h2>
+   <h3>Properties</h3>
    @property ic/vc-kts (read/write) Calibrated airspeed initial condition in knots
    @property ic/ve-kts (read/write) Knots equivalent airspeed initial condition
    @property ic/vg-kts (read/write) Ground speed initial condition in knots
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.10 2007/08/15 03:26:24 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.11 2008/01/13 18:56:31 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

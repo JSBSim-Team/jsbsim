@@ -49,7 +49,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.2 2008/01/08 12:57:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.3 2008/01/13 18:56:32 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,11 @@ bool FGExternalReactions::Load(Element* el)
   Debug(2);
 
   // Interface properties are all stored in the interface properties array.
+  // ToDo: Interface properties should not be created if they already exist.
+  // A check should be done prior to creation. This ought to make it easier 
+  // to work with FlightGear, where some properties used in definitions may 
+  // already have been created, but would not be seen when JSBSim is run
+  // in standalone mode.
 
   Element* property_element;
   property_element = el->FindElement("property");

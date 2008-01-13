@@ -30,7 +30,7 @@
 <external_reactions>
 
     <!-- Interface properties, a.k.a. property declarations -->
-    <property> ... <property>
+    <property> ... </property>
       
     <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
       
@@ -56,7 +56,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.4 2008/01/08 12:57:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.5 2008/01/13 18:56:32 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

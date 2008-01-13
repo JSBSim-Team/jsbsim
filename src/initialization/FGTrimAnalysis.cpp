@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.5 2007/09/15 09:04:18 ehofman Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.6 2008/01/13 18:56:31 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1609,7 +1609,7 @@ bool FGTrimAnalysis::DoTrim(void) {
 
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
-      VehicleState vstate = fdmex->GetPropagate()->GetVState();
+      FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
       fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
@@ -1649,7 +1649,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       //       which means that we populate IC private variables with our set of values
       //fdmex->RunIC();
 
-      VehicleState vstate = fdmex->GetPropagate()->GetVState();
+      FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
       fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
@@ -1689,7 +1689,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       //       which means that we populate IC private variables with our set of values
       //fdmex->RunIC();
 
-      VehicleState vstate = fdmex->GetPropagate()->GetVState();
+      FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
       fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
@@ -1728,7 +1728,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       //       which means that we populate IC private variables with our set of values
       //fdmex->RunIC();
 
-      VehicleState vstate = fdmex->GetPropagate()->GetVState();
+      FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
       fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
@@ -1768,7 +1768,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       //       which means that we populate IC private variables with our set of values
       //fdmex->RunIC();
 
-      VehicleState vstate = fdmex->GetPropagate()->GetVState();
+      FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
       fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
@@ -1828,7 +1828,7 @@ double Objective::myCostFunctionFull(Vector<double> & x) // x variations come fr
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -1991,7 +1991,7 @@ double Objective::myCostFunctionFullWingsLevel(Vector<double> & x) // x variatio
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -2155,7 +2155,7 @@ double Objective::myCostFunctionLongitudinal(Vector<double> & x)
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -2313,7 +2313,7 @@ double Objective::myCostFunctionFullCoordinatedTurn(Vector<double> & x)
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -2483,7 +2483,7 @@ double Objective::myCostFunctionFullTurn(Vector<double> & x)
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -2648,7 +2648,7 @@ double Objective::myCostFunctionPullUp(Vector<double> & x)
     FGQuaternion Quat;
     FGColumnVector3 vPQRdot(0.0,0.0,0.0), vUVWdot(0.0,0.0,0.0);
 
-    VehicleState VState;
+    FGPropagate::VehicleState VState;
     VState.vLocation = FGColumnVector3(0.0,0.0,0.0);
     VState.vUVW      = FGColumnVector3(0.0,0.0,0.0);
     VState.vPQR      = FGColumnVector3(0.0,0.0,0.0);
@@ -2788,7 +2788,7 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
                                       double phi, double theta, double psi,
                                       TrimAnalysisMode trimMode,
                                       double& alpha, double& beta, double& gamma,
-                                      VehicleState& VState,
+                                      FGPropagate::VehicleState& VState,
                                       FGColumnVector3& vUVWdot, FGColumnVector3& vPQRdot )
 {
     double stheta,sphi,spsi;

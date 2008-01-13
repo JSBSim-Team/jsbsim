@@ -73,7 +73,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.3 2007/09/04 04:24:04 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.4 2008/01/13 18:56:31 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -134,7 +134,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.3 2007/09/04 04:24:04 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.4 2008/01/13 18:56:31 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -333,7 +333,7 @@ private:
                                TrimAnalysisMode trimMode,
                                double& alpha, double& beta, double& gamma,
                                //FGColumnVector3& vUVW, FGColumnVector3& vPQR,
-                               VehicleState& VState,
+                               FGPropagate::VehicleState& VState,
                                FGColumnVector3& vUVWdot, FGColumnVector3& vPQRdot );
 
     /** Calculate cost function for Full Trim
