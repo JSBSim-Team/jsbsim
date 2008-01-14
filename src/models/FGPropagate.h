@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.12 2008/01/13 18:56:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.13 2008/01/14 13:45:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.12 2008/01/13 18:56:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.13 2008/01/14 13:45:12 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,6 +129,12 @@ struct VehicleState {
   bool Run(void);
 
   /** Retrieves the velocity vector.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the velocity in Local frame is organized (Vnorth, Veast, Vdown). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vVel(1) is Vnorth. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eNorth=1, eEast=2, eDown=3.
       @units ft/sec
       @return The vehicle velocity vector with respect to the Earth centered frame,
               expressed in Local horizontal frame.
@@ -136,6 +142,12 @@ struct VehicleState {
   const FGColumnVector3& GetVel(void) const { return vVel; }
   
   /** Retrieves the body frame vehicle velocity vector.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the velocity in Body frame is organized (Vx, Vy, Vz). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vUVW(1) is Vx. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eX=1, eY=2, eZ=3.
       @units ft/sec
       @return The body frame vehicle velocity vector in ft/sec.
   */
@@ -144,6 +156,12 @@ struct VehicleState {
   /** Retrieves the body axis acceleration.
       Retrieves the computed body axis accelerations based on the
       applied forces and accounting for a rotating body frame.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the acceleration in Body frame is organized (Ax, Ay, Az). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vUVWdot(1) is Ax. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eX=1, eY=2, eZ=3.
       @units ft/sec^2
       @return Body axis translational acceleration in ft/sec^2.
   */
@@ -152,6 +170,12 @@ struct VehicleState {
   /** Retrieves the body angular rates vector.
       Retrieves the body angular rates (p, q, r), which are calculated by integration
       of the angular acceleration.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the angular velocity in Body frame is organized (P, Q, R). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vPQR(1) is P. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eP=1, eQ=2, eR=3.
       @units rad/sec
       @return The body frame angular rates in rad/sec.
   */
@@ -161,6 +185,12 @@ struct VehicleState {
       Retrieves the body axis angular acceleration vector in rad/sec^2. The
       angular acceleration vector is determined from the applied forces and
       accounts for a rotating frame.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the angular acceleration in Body frame is organized (Pdot, Qdot, Rdot). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, vPQRdot(1) is Pdot. Various convenience enumerators are defined
+      in FGJSBBase. The relevant enumerators for the vector returned by this call are,
+      eP=1, eQ=2, eR=3.
       @units rad/sec^2
       @return The angular acceleration vector.
   */
@@ -169,20 +199,77 @@ struct VehicleState {
   /** Retrieves the Euler angles that define the vehicle orientation.
       Retrieves the Euler angles that define the vehicle orientation in
       the Local frame. The order of rotation used is Yaw-Pitch-Roll.
+      The vector returned is represented by an FGColumnVector reference. The vector
+      for the Euler angles is organized (Phi, Theta, Psi). The vector
+      is 1-based, so that the first element can be retrieved using the "()" operator.
+      In other words, the returned vector item with subscript (1) is Phi.
+      Various convenience enumerators are defined in FGJSBBase. The relevant
+      enumerators for the vector returned by this call are, ePhi=1, eTht=2, ePsi=3.
       @units radians
       @return The Euler angle vector, where the first item in the
               vector is the angle about the X axis, the second is the
               angle about the Y axis, and the third item is the angle
-              about the Z axis.
+              about the Z axis (Phi, Theta, Psi).
   */
   const FGColumnVector3& GetEuler(void) const { return VState.vQtrn.GetEuler(); }
 
+  /** Retrieves a body frame velocity component.
+      Retrieves a body frame velocity component. The velocity returned is
+      extracted from the vUVW vector (an FGColumnVector). The vector for the
+      velocity in Body frame is organized (Vx, Vy, Vz). The vector is 1-based.
+      In other words, GetUVW(1) returns Vx. Various convenience enumerators
+      are defined in FGJSBBase. The relevant enumerators for the velocity
+      returned by this call are, eX=1, eY=2, eZ=3.
+      @units ft/sec
+      @param idx the index of the velocity component desired (1-based).
+      @return The body frame velocity component.
+  */
   double GetUVW   (int idx) const { return VState.vUVW(idx); }
+
+  /** Retrieves a body frame acceleration component.
+      Retrieves a body frame acceleration component. The acceleration returned
+      is extracted from the vUVWdot vector (an FGColumnVector). The vector for
+      the acceleration in Body frame is organized (Ax, Ay, Az). The vector is
+      1-based. In other words, GetUVWdot(1) returns Ax. Various convenience
+      enumerators are defined in FGJSBBase. The relevant enumerators for the
+      acceleration returned by this call are, eX=1, eY=2, eZ=3.
+      @units ft/sec^2
+      @param idx the index of the acceleration component desired (1-based).
+      @return The body frame acceleration component.
+  */
   double GetUVWdot(int idx) const { return vUVWdot(idx); }
+
+  /** Retrieves a Local frame velocity component.
+      Retrieves a Local frame velocity component. The velocity returned is
+      extracted from the vVel vector (an FGColumnVector). The vector for the
+      velocity in Local frame is organized (Vnorth, Veast, Vdown). The vector
+      is 1-based. In other words, GetVel(1) returns Vnorth. Various convenience
+      enumerators are defined in FGJSBBase. The relevant enumerators for the
+      velocity returned by this call are, eNorth=1, eEast=2, eDown=3.
+      @units ft/sec
+      @param idx the index of the velocity component desired (1-based).
+      @return The body frame velocity component.
+  */
   double GetVel(int idx) const { return vVel(idx); }
+
+  /** Returns the current altitude.
+      Returns the curren altitude. Specifically, this function returns the
+      difference between the distance to the center of the Earth, and sea level.
+      @units ft
+      @return The current altitude above sea level in feet.
+  */
   double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
+
+  /** Returns the current altitude.
+      Returns the curren altitude. Specifically, this function returns the
+      difference between the distance to the center of the Earth, and sea level.
+      @units meters
+      @return The current altitude above sea level in meters.
+  */
   double Gethmeters(void) const { return Geth()*fttom;}
+
   double GetPQR(int axis) const {return VState.vPQR(axis);}
+
   double GetPQRdot(int idx) const {return vPQRdot(idx);}
   double GetEuler(int axis) const { return VState.vQtrn.GetEuler(axis); }
   double GetCosEuler(int idx) const { return VState.vQtrn.GetCosEuler(idx); }

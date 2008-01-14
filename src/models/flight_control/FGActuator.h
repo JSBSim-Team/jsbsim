@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.6 2007/04/29 03:53:39 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.7 2008/01/14 13:45:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -65,12 +65,12 @@ CLASS DOCUMENTATION
     applied to the actuator. In order of application to the input signal,
     these are:
     
-    -System lag (input lag, really)
-    -Rate limiting
-    -Deadband
-    -Hysteresis (mechanical hysteresis)
-    -Bias (mechanical bias)
-    -Position limiting ("hard stops")
+    - System lag (input lag, really)
+    - Rate limiting
+    - Deadband
+    - Hysteresis (mechanical hysteresis)
+    - Bias (mechanical bias)
+    - Position limiting ("hard stops")
     
     There are also several malfunctions that can be applied to the actuator
     by setting a property to true or false (or 1 or 0).
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.6 $
+@version $Revision: 1.7 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
