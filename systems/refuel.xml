@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+
+<system name="refuel">
+
+  <property>systems/refuel/probe-cmd</property>
+  <property value="0">systems/refuel/transfer-rate</property>
+
+  <channel name="Refuel">
+
+     <kinematic name="systems/refuel/probe-control">
+       <input>systems/refuel/probe-cmd</input>
+       <traverse>
+        <setting>
+          <position> 0 </position>
+          <time>     0 </time>
+        </setting>
+        <setting>
+          <position> 1 </position>
+          <time>     2.5 </time>
+        </setting>
+       </traverse>
+       <output>systems/refuel/probe-pos-norm</output>
+     </kinematic>
+
+     <switch name="systems/refuel/arming">
+          <default value="0"/>
+          <test value="2500">
+                systems/refuel/probe-pos-norm gt 0.99
+          </test>
+          <output>systems/refuel/transfer-rate</output>
+     </switch>
+
+
+  </channel>
+
+</system>

@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+
+<system name="FCS-yaw">
+
+  <channel name="Yaw">
+
+   <summer name="Rudder Command Sum">
+      <input>fcs/rudder-cmd-norm</input>
+      <input>fcs/yaw-trim-cmd-norm</input>
+      <limit>
+        <min> -1.0 </min>
+        <max>  1.0 </max>
+      </limit>
+   </summer>
+
+   <scheduled_gain name="Yaw Damper Rate">
+      <input>velocities/r-aero-rad_sec</input>
+      <table>
+        <independentVar lookup="row">velocities/ve-kts</independentVar>
+         <tableData>
+            30     0.00
+            60     2.00
+         </tableData>
+      </table>
+   </scheduled_gain>
+
+   <scheduled_gain name="Yaw Damper Beta">
+      <input>aero/beta-rad</input>
+      <table>
+        <independentVar lookup="row">velocities/ve-kts</independentVar>
+        <tableData>
+           30     0.00
+           60     0.00
+        </tableData>
+      </table>
+   </scheduled_gain>
+
+   <summer name="Yaw Damper Sum">
+      <input>fcs/yaw-damper-beta</input>
+      <input>fcs/yaw-damper-rate</input>
+      <limit>
+        <min> -0.1 </min>
+        <max>  0.1 </max>
+      </limit>
+   </summer>
+
+   <scheduled_gain name="Yaw Damper Final">
+      <input>fcs/yaw-damper-sum</input>
+      <table>
+        <independentVar lookup="row">velocities/ve-kts</independentVar>
+        <tableData>
+           30         0.0
+           31         1.0
+        </tableData>
+      </table>
+   </scheduled_gain>
+
+   <summer name="Rudder Sum">
+      <input>fcs/rudder-command-sum</input>
+      <input>fcs/yaw-damper-final</input>
+      <limit>
+        <min> -1 </min>
+        <max>  1 </max>
+      </limit>
+   </summer>
+
+   <aerosurface_scale name="Rudder Control">
+      <input>fcs/rudder-sum</input>
+      <domain>
+        <min>-1.0</min>
+        <max> 1.0</max>
+      </domain>
+      <range>
+        <min> -0.25 </min>
+        <max>  0.25 </max>
+      </range>
+      <output>fcs/rudder-pos-rad</output>
+   </aerosurface_scale>
+
+   <aerosurface_scale name="rudder normalized">
+      <input>fcs/rudder-pos-rad</input>
+      <domain>
+        <min>-0.25</min>
+        <max> 0.25</max>
+      </domain>
+      <range>
+        <min>-1</min>
+        <max> 1</max>
+      </range>
+      <output>fcs/rudder-pos-norm</output>
+   </aerosurface_scale>
+
+  </channel>
+
+</system>

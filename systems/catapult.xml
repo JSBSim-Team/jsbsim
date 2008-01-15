@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+
+<system name="catapult">
+
+  <channel name="Catapult">
+
+       <switch name="systems/catapult/cat-cmd-norm">
+          <default value="0"/>
+          <test  logic="AND" value="0">
+               systems/catapult/cat-pos-norm gt 0.999
+          </test>
+          <test  logic="AND" value="1">
+               systems/catapult/cat-launch-cmd == 1
+          </test>
+          <output>systems/catapult/cat-launch-cmd</output>
+       </switch>
+
+       <kinematic name="systems/catapult/cat-timer">
+          <input>systems/catapult/cat-cmd-norm</input>
+          <traverse>
+              <setting>
+                 <position>0.0</position>
+                 <time>0.0</time>
+              </setting>
+              <setting>
+                 <position>1.0</position>
+                 <time>2.7</time>
+              </setting>
+          </traverse>
+          <output>systems/catapult/cat-pos-norm</output>
+       </kinematic>
+
+       <pure_gain name="systems/catapult/cat-force">
+          <input>inertia/weight-lbs</input>
+          <gain>2.0</gain>
+       </pure_gain>
+
+       <switch name="systems/catapult/cat-final">
+           <default value="0"/>
+           <test  logic="AND" value="systems/catapult/cat-force">
+                systems/catapult/cat-launch-cmd == 1
+                systems/catapult/cat-pos-norm lt 0.999
+                systems/catapult/cat-pos-norm gt 0.0
+           </test>
+           <output>external_reactions/catapult/magnitude</output>
+       </switch>
+
+  </channel>
+
+</system>

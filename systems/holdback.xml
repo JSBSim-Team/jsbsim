@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<system name="holdback">
+
+  <channel name="Holdback_Launchbar">
+
+     <summer name="systems/holdback/total_thrust">
+        <input>propulsion/engine/thrust</input>
+        <input>propulsion/engine[1]/thrust</input>
+     </summer>
+
+     <switch name="systems/holdback/switch">
+          <default value="0"/>
+          <test  logic="AND" value="systems/holdback/total_thrust">
+                systems/holdback/holdback-cmd == 1
+          </test>
+          <output>external_reactions/holdback/magnitude</output>
+     </switch>
+
+  </channel>
+
+</system>

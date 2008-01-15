@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<system name="hook">
+
+  <property>systems/hook/tailhook-cmd-norm</property>
+
+  <channel name="Hook">
+
+     <kinematic name="systems/hook/tailhook-control">
+       <input>systems/hook/tailhook-cmd-norm</input>
+       <traverse>
+        <setting>
+          <position> 0 </position>
+          <time>     0 </time>
+        </setting>
+        <setting>
+          <position> 1 </position>
+          <time>     1.5 </time>
+        </setting>
+       </traverse>
+       <output>systems/hook/tailhook-pos-norm</output>
+     </kinematic>
+
+     <switch name="systems/hook/ready">
+          <default value="0"/>
+          <test  logic="AND" value="1">
+                systems/hook/tailhook-pos-norm gt 0.99
+          </test>
+     </switch>
+
+     <scheduled_gain name="systems/hook/hook-decel-multiplier">
+      <input>systems/hook/ready</input>
+      <table>
+        <independentVar lookup="row">gear/unit[1]/wheel-speed-fps</independentVar>
+         <tableData>
+            0     0.00
+            1     0.00
+            60    4.50
+         </tableData>
+      </table>
+     </scheduled_gain>
+
+     <pure_gain name="systems/hook/hook-decel-force">
+        <input>systems/hook/hook-decel-multiplier</input>
+        <gain>inertia/weight-lbs</gain>
+     </pure_gain>
+
+     <summer name="systems/hook/force">
+        <input>systems/hook/hook-decel-force</input>
+        <input>systems/holdback/total_thrust</input>
+     </summer>
+
+     <switch name="systems/hook/wire-engaged">
+          <default value="0"/>
+          <test  logic="AND" value="systems/hook/force">
+                gear/unit[1]/WOW == 1
+                velocities/ve-kts gt 3.0
+                systems/hook/ready == 1 
+          </test>
+          <output>external_reactions/hook/magnitude</output>
+     </switch>
+
+  </channel>
+
+</system>

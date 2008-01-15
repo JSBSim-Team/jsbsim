@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<system name="flaps">
+
+  <channel name="Flaps">
+
+   <kinematic name="Flaps Control">
+     <input>fcs/flap-cmd-norm</input>
+     <traverse>
+       <setting>
+          <position>  0 </position>
+          <time>      0 </time>
+       </setting>
+       <setting>
+          <position> 0.5</position>
+          <time>      4 </time>
+       </setting>
+       <setting>
+          <position>  1</position>
+          <time>      5 </time>
+       </setting>
+     </traverse>
+     <output>fcs/flap-pos-norm</output>
+   </kinematic>
+
+  </channel>
+
+</system>

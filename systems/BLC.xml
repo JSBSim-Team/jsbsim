@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<!-- This system determines the state of the Boundary Layer Control (BLC)
+     system.  The aerodynamic effects of BLC are set in the aircraft
+     configuration file <aerodynamics> section, not here.  In order for
+     the switch to work properly the number of engine rpm tests should
+     match the number of engines installed!
+--> 
+
+<system name="BLC">
+
+  <property>systems/BLC/active</property>
+
+  <channel name="Boundary Layer Control">
+
+       <switch name="systems/BLC/switch">
+          <default value="0"/>
+          <test  logic="AND" value="1">
+               fcs/flap-pos-norm gt 0.51
+               propulsion/engine[0]/n2 gt 70.0
+               propulsion/engine[1]/n2 gt 70.0
+          </test>
+          <output>systems/BLC/active</output>
+       </switch>
+
+  </channel>
+
+</system>
