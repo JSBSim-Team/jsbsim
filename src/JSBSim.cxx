@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.18 2008/01/10 12:57:35 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.19 2008/01/15 20:25:18 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -509,8 +509,6 @@ bool FGJSBsim::copy_to_JSBsim()
     FCS->SetPitchTrimCmd( globals->get_controls()->get_elevator_trim() );
     FCS->SetDrCmd( -globals->get_controls()->get_rudder() );
     FCS->SetYawTrimCmd( -globals->get_controls()->get_rudder_trim() );
-    // FIXME: make that get_steering work
-//     FCS->SetDsCmd( globals->get_controls()->get_steering()/80.0 );
     FCS->SetDsCmd( globals->get_controls()->get_rudder() );
     FCS->SetDfCmd( globals->get_controls()->get_flaps() );
     FCS->SetDsbCmd( globals->get_controls()->get_speedbrake() );
@@ -1093,7 +1091,6 @@ void FGJSBsim::do_trim(void)
 
   if ( fgGetBool("/sim/presets/onground") )
   {
-    fgic->SetVcalibratedKtsIC(0.0);
     fgtrim = new FGTrim(fdmex,tGround);
   } else {
     fgtrim = new FGTrim(fdmex,tLongitudinal);
