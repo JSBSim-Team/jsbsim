@@ -24,7 +24,7 @@ PROJECT_NAME           = "JSBSim Flight Dynamics Model"
 # This could be handy for archiving the generated documentation or
 # if some version control system is used.
 
-PROJECT_NUMBER         = 0.9.12
+PROJECT_NUMBER         = 1.0
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute)
 # base path where the generated documentation will be put.
@@ -231,8 +231,8 @@ GENERATE_BUGLIST       = YES
 # will result in a user defined paragraph with heading "Side Effects:".
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = "units=\par Units: \n"
-ALIASES                = "property=\li\b"
+ALIASES               += "units=\par<H3>Units:</H3>\n"
+ALIASES               += "property=\li\b"
 
 # The MAX_INITIALIZER_LINES tag determines the maximum number of lines
 # the initial value of a variable or define consist of for it to appear in
