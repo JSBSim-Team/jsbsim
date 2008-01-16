@@ -83,5 +83,6 @@ src/simgear/props/Makefile \
 src/simgear/xml/Makefile \
 aircraft/Makefile \
 engine/Makefile \
+systems/Makefile \
 scripts/Makefile \
 )
