@@ -90,6 +90,8 @@
 			/>
 			<Tool
 				Name="VCWebDeploymentTool"
+				ExcludedFromBuild="true"
+				ApplicationProtection="1"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -273,6 +275,14 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGEngine.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalForce.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalReactions.h"
 				>
 			</File>
 			<File
@@ -524,6 +534,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\input_output\net_fdm.hxx"
+				>
+			</File>
+			<File
 				RelativePath=".\src\math\direct_search\NLessSearch.h"
 				>
 			</File>
@@ -661,6 +675,14 @@
 			</File>
 			<File
 				RelativePath=".\src\models\propulsion\FGEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalForce.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGExternalReactions.cpp"
 				>
 			</File>
 			<File
@@ -936,6 +958,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\aircraft\aa1\aa1.xml"
+			>
+		</File>
 		<File
 			RelativePath=".\scripts\c172pbrake.xml"
 			>
