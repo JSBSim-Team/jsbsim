@@ -97,7 +97,7 @@
 
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.20 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.21 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -190,7 +190,7 @@
         </xs:element>
         <xs:element name="sensitivity" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This field stores the sensitivity classification, such as "classified", "secret", "proprietary", etc.</xs:documentation></xs:annotation></xs:element>        
         <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initially created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.20 $".</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.21 $".</xs:documentation></xs:annotation></xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
           <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
@@ -1149,6 +1149,11 @@
       <xs:element ref="acos"/>
       <xs:element ref="atan"/>
       <xs:element ref="atan2"/>
+      <xs:element ref="min"/>
+      <xs:element ref="max"/>
+      <xs:element ref="avg"/>
+      <xs:element ref="fraction"/>
+      <xs:element ref="integer"/>
     </xs:choice>
   </xs:group>
   
