@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.13 2008/01/14 13:45:12 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.14 2008/01/16 03:48:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.13 2008/01/14 13:45:12 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.14 2008/01/16 03:48:44 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -197,9 +197,9 @@ struct VehicleState {
   const FGColumnVector3& GetPQRdot(void) const {return vPQRdot;}
   
   /** Retrieves the Euler angles that define the vehicle orientation.
-      Retrieves the Euler angles that define the vehicle orientation in
-      the Local frame. The order of rotation used is Yaw-Pitch-Roll.
-      The vector returned is represented by an FGColumnVector reference. The vector
+      Extracts the Euler angles from the quaternion that stores the orientation
+      in the Local frame. The order of rotation used is Yaw-Pitch-Roll. The
+      vector returned is represented by an FGColumnVector reference. The vector
       for the Euler angles is organized (Phi, Theta, Psi). The vector
       is 1-based, so that the first element can be retrieved using the "()" operator.
       In other words, the returned vector item with subscript (1) is Phi.
@@ -253,7 +253,7 @@ struct VehicleState {
   double GetVel(int idx) const { return vVel(idx); }
 
   /** Returns the current altitude.
-      Returns the curren altitude. Specifically, this function returns the
+      Returns the current altitude. Specifically, this function returns the
       difference between the distance to the center of the Earth, and sea level.
       @units ft
       @return The current altitude above sea level in feet.
@@ -268,21 +268,84 @@ struct VehicleState {
   */
   double Gethmeters(void) const { return Geth()*fttom;}
 
+  /** Retrieves a body frame angular velocity component.
+      Retrieves a body frame angular velocity component. The angular velocity
+      returned is extracted from the vPQR vector (an FGColumnVector). The vector
+      for the angular velocity in Body frame is organized (P, Q, R). The vector
+      is 1-based. In other words, GetPQR(1) returns P (roll rate). Various
+      convenience enumerators are defined in FGJSBBase. The relevant enumerators
+      for the angular velocity returned by this call are, eP=1, eQ=2, eR=3.
+      @units rad/sec
+      @param axis the index of the angular velocity component desired (1-based).
+      @return The body frame angular velocity component.
+  */
   double GetPQR(int axis) const {return VState.vPQR(axis);}
 
-  double GetPQRdot(int idx) const {return vPQRdot(idx);}
+  /** Retrieves a body frame angular acceleration component.
+      Retrieves a body frame angular acceleration component. The angular
+      acceleration returned is extracted from the vPQRdot vector (an
+      FGColumnVector). The vector for the angular acceleration in Body frame
+      is organized (Pdot, Qdot, Rdot). The vector is 1-based. In other words,
+      GetPQRdot(1) returns Pdot (roll acceleration). Various convenience
+      enumerators are defined in FGJSBBase. The relevant enumerators for the
+      angular acceleration returned by this call are, eP=1, eQ=2, eR=3.
+      @units rad/sec^2
+      @param axis the index of the angular acceleration component desired (1-based).
+      @return The body frame angular acceleration component.
+  */
+  double GetPQRdot(int axis) const {return vPQRdot(axis);}
+
+  /** Retrieves a vehicle Euler angle component.
+      Retrieves an Euler angle (Phi, Theta, or Psi) from the quaternion that
+      stores the vehicle orientation relative to the Local frame. The order of
+      rotations used is Yaw-Pitch-Roll. The Euler angle with subscript (1) is
+      Phi. Various convenience enumerators are defined in FGJSBBase. The
+      relevant enumerators for the Euler angle returned by this call are,
+      ePhi=1, eTht=2, ePsi=3 (e.g. GetEuler(eTht) returns Theta).
+      @units radians
+      @return An Euler angle.
+  */
   double GetEuler(int axis) const { return VState.vQtrn.GetEuler(axis); }
+
+  /** Retrieves the cosine of a vehicle Euler angle component.
+      Retrieves the cosine of an Euler angle (Phi, Theta, or Psi) from the
+      quaternion that stores the vehicle orientation relative to the Local frame.
+      The order of rotations used is Yaw-Pitch-Roll. The Euler angle
+      with subscript (1) is Phi. Various convenience enumerators are defined in
+      FGJSBBase. The relevant enumerators for the Euler angle referred to in this
+      call are, ePhi=1, eTht=2, ePsi=3 (e.g. GetCosEuler(eTht) returns cos(theta)).
+      @units none
+      @return The cosine of an Euler angle.
+  */
   double GetCosEuler(int idx) const { return VState.vQtrn.GetCosEuler(idx); }
+
+  /** Retrieves the sine of a vehicle Euler angle component.
+      Retrieves the sine of an Euler angle (Phi, Theta, or Psi) from the
+      quaternion that stores the vehicle orientation relative to the Local frame.
+      The order of rotations used is Yaw-Pitch-Roll. The Euler angle
+      with subscript (1) is Phi. Various convenience enumerators are defined in
+      FGJSBBase. The relevant enumerators for the Euler angle referred to in this
+      call are, ePhi=1, eTht=2, ePsi=3 (e.g. GetSinEuler(eTht) returns sin(theta)).
+      @units none
+      @return The sine of an Euler angle.
+  */
   double GetSinEuler(int idx) const { return VState.vQtrn.GetSinEuler(idx); }
+
+  /** Returns the current altitude rate.
+      Returns the current altitude rate (rate of climb).
+      @units ft/sec
+      @return The current rate of change in altitude.
+  */
   double Gethdot(void) const { return -vVel(eDown); }
 
   /** Returns the "constant" RunwayRadius.
       The RunwayRadius parameter is set by the calling application or set to
-      zero if JSBSim is running in standalone mode.
+      sea level if JSBSim is running in standalone mode.
       @units feet
       @return distance of the runway from the center of the earth.
       */
   double GetRunwayRadius(void) const;
+
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
   double GetTerrainElevationASL(void) const;
   double GetDistanceAGL(void)  const;

@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.33 2007/09/07 12:41:48 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.34 2008/01/16 03:48:23 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -294,7 +294,10 @@ int main(int argc, char* argv[])
 
     if (catalog) FDMExec->SetDebugLevel(0);
 
-    if ( ! FDMExec->LoadModel(RootDir + "aircraft", RootDir + "engine", AircraftName)) {
+    if ( ! FDMExec->LoadModel( RootDir + "aircraft",
+                               RootDir + "engine",
+                               RootDir + "systems",
+                               AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
       FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
       FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");

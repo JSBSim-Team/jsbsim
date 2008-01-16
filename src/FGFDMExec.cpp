@@ -78,7 +78,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.41 2007/12/30 14:53:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.42 2008/01/16 03:48:23 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,11 +436,12 @@ bool FGFDMExec::LoadScript(string script)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string model,
-                bool addModelToPath)
+bool FGFDMExec::LoadModel(string AircraftPath, string EnginePath, string SystemsPath,
+                string model, bool addModelToPath)
 {
   FGFDMExec::AircraftPath = AircraftPath;
   FGFDMExec::EnginePath = EnginePath;
+  FGFDMExec::SystemsPath = SystemsPath;
 
   return LoadModel(model, addModelToPath);
 }
@@ -491,9 +492,12 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
       else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
       else if (element_name == "external_reactions") result = ExternalReactions->Load(element);
       else if (element_name == "propulsion")       result = Propulsion->Load(element);
-      else if (element_name == "system")           result = FCS->Load(element);
-      else if (element_name == "autopilot")        result = FCS->Load(element);
-      else if (element_name == "flight_control")   result = FCS->Load(element);
+      else if (element_name == "system")           result = FCS->Load(element,
+                                                            FGFCS::stSystem);
+      else if (element_name == "autopilot")        result = FCS->Load(element,
+                                                            FGFCS::stAutoPilot);
+      else if (element_name == "flight_control")   result = FCS->Load(element,
+                                                            FGFCS::stFCS);
       else if (element_name == "aerodynamics")     result = Aerodynamics->Load(element);
       else if (element_name == "input")            result = Input->Load(element);
       else if (element_name == "output")           {
@@ -688,6 +692,7 @@ bool FGFDMExec::ReadSlave(Element* el)
 
   SlaveFDMList.back()->exec->SetAircraftPath( AircraftPath );
   SlaveFDMList.back()->exec->SetEnginePath( EnginePath );
+  SlaveFDMList.back()->exec->SetSystemsPath( SystemsPath );
   SlaveFDMList.back()->exec->LoadModel(AircraftName);
   debug_lvl = saved_debug_lvl;   // turn debug output back on for master vehicle
 

@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.35 2008/01/13 18:56:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.36 2008/01/16 03:48:44 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -463,9 +463,9 @@ void FGFCS::SetPropFeather(int engineNum, bool setting)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGFCS::Load(Element* el)
+bool FGFCS::Load(Element* el, SystemType systype)
 {
-  string name, file, fname, interface_property_string;
+  string name, file, fname, interface_property_string, parent_name;
   vector <FGFCSComponent*> *Components;
   Element *component_element, *property_element, *sensor_element;
   Element *channel_element;
@@ -484,7 +484,11 @@ bool FGFCS::Load(Element* el)
 
   if (name.empty()) {
     fname = el->GetAttributeValue("file");
+    if (systype == stSystem) {
+      file = FindSystemFullPathname(fname);
+    } else { 
     file = FDMExec->GetFullAircraftPath() + separator + fname + ".xml";
+    }
     if (fname.empty()) {
       cerr << "FCS, Autopilot, or system does not appear to be defined inline nor in a file" << endl;
       return false;
@@ -612,6 +616,65 @@ double FGFCS::GetBrake(FGLGear::BrakeGroup bg)
     cerr << "GetBrake asked to return a bogus brake value" << endl;
   }
   return 0.0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+string FGFCS::FindSystemFullPathname(string system_filename)
+{
+  string fullpath, localpath;
+  string systemPath = FDMExec->GetSystemsPath();
+  string aircraftPath = FDMExec->GetFullAircraftPath();
+  ifstream system_file;
+
+  string separator = "/";
+# ifdef macintosh
+  separator = ";";
+# endif
+
+  fullpath = systemPath + separator;
+  localpath = aircraftPath + separator + "Systems" + separator;
+
+  system_file.open(string(fullpath + system_filename + ".xml").c_str());
+  if ( !system_file.is_open()) {
+    system_file.open(string(localpath + system_filename + ".xml").c_str());
+      if ( !system_file.is_open()) {
+        cerr << " Could not open system file: " << system_filename << " in path "
+             << fullpath << " or " << localpath << endl;
+        return string("");
+      } else {
+        return string(localpath + system_filename + ".xml");
+      }
+  }
+  return string(fullpath + system_filename + ".xml");
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ifstream* FGFCS::FindSystemFile(string system_filename)
+{
+  string fullpath, localpath;
+  string systemPath = FDMExec->GetSystemsPath();
+  string aircraftPath = FDMExec->GetFullAircraftPath();
+  ifstream* system_file = new ifstream();
+
+  string separator = "/";
+# ifdef macintosh
+  separator = ";";
+# endif
+
+  fullpath = systemPath + separator;
+  localpath = aircraftPath + separator + "Systems" + separator;
+
+  system_file->open(string(fullpath + system_filename + ".xml").c_str());
+  if ( !system_file->is_open()) {
+    system_file->open(string(localpath + system_filename + ".xml").c_str());
+      if ( !system_file->is_open()) {
+        cerr << " Could not open system file: " << system_filename << " in path "
+             << fullpath << " or " << localpath << endl;
+      }
+  }
+  return system_file;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

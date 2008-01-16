@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.14 2008/01/06 17:06:22 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.15 2008/01/16 03:48:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -173,7 +173,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.14 $
+    @version $Revision: 1.15 $
     @see FGFCSComponent
     @see FGXMLElement
     @see FGGain
@@ -516,11 +516,17 @@ public:
   double GetCBrake(void) const {return CenterBrake;}
   //@}
 
+  enum SystemType { stFCS, stSystem, stAutoPilot }; 
+
   /** Loads the Flight Control System.
       Load() is called from FGFDMExec.
       @param el pointer to the Element instance
+      @param systype type of system (FCS, Autopilot, System) 
       @return true if succesful */
-  bool Load(Element* el);
+  bool Load(Element* el, SystemType systype);
+
+  ifstream* FindSystemFile(string system_filename);
+  string FindSystemFullPathname(string system_filename);
 
   void AddThrottle(void);
   void AddGear(void);

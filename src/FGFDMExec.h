@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.34 2007/12/30 14:53:07 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.35 2008/01/16 03:48:23 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.34 $
+    @version $Revision: 1.35 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,6 +215,8 @@ public:
       modeled aircraft such as C172/, x15/, etc.
       @param EnginePath path to the directory under which engine config
       files are kept, for instance "engine"
+      @param SystemsPath path to the directory under which systems config
+      files are kept, for instance "systems"
       @param model the name of the aircraft model itself. This file will
       be looked for in the directory specified in the AircraftPath variable,
       and in turn under the directory with the same name as the model. For
@@ -222,8 +224,8 @@ public:
       @param addModelToPath set to true to add the model name to the
       AircraftPath, defaults to true
       @return true if successful */
-  bool LoadModel(string AircraftPath, string EnginePath, string model,
-                 bool addModelToPath = true);
+  bool LoadModel(string AircraftPath, string EnginePath, string SystemsPath,
+                 string model, bool addModelToPath = true);
 
   /** Loads an aircraft model.  The paths to the aircraft and engine
       config file directories must be set prior to calling this.  See
@@ -252,6 +254,11 @@ public:
       "aircraft". Under aircraft, then, would be directories for various
       modeled aircraft such as C172/, x15/, etc.  */
   bool SetAircraftPath(string path) { AircraftPath = path; return true; }
+  
+  /** Sets the path to the systems config file directories.
+      @param path path to the directory under which systems config
+      files are kept, for instance "systems"  */
+  bool SetSystemsPath(string path)   { SystemsPath = path; return true; }
   
   /// @name Top-level executive State and Model retrieval mechanism
   //@{
@@ -293,6 +300,8 @@ public:
   inline string GetEnginePath(void)          {return EnginePath;}
   /// Retrieves the aircraft path.
   inline string GetAircraftPath(void)        {return AircraftPath;}
+  /// Retrieves the systems path.
+  inline string GetSystemsPath(void)         {return SystemsPath;}
   /// Retrieves the full aircraft path name.
   inline string GetFullAircraftPath(void)    {return FullAircraftPath;}
 
@@ -432,6 +441,7 @@ private:
   string AircraftPath;
   string FullAircraftPath;
   string EnginePath;
+  string SystemsPath;
   string CFGVersion;
   string Release;
 

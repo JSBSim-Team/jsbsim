@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.19 2008/01/15 20:25:18 dpculp Exp $
+// $Id: JSBSim.cxx,v 1.20 2008/01/16 03:48:23 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -170,10 +170,15 @@ FGJSBsim::FGJSBsim( double dt )
 
     SGPath engine_path( fgGetString("/sim/aircraft-dir") );
     engine_path.append( "Engine" );
+
+    SGPath systems_path( fgGetString("/sim/aircraft-dir") );
+    systems_path.append( "Systems" );
+
     State->Setdt( dt );
 
     result = fdmex->LoadModel( aircraft_path.str(),
                                engine_path.str(),
+                               systems_path.str(),
                                fgGetString("/sim/aero"), false );
 
     if (result) {
