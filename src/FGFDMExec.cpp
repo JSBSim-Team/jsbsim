@@ -78,7 +78,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.42 2008/01/16 03:48:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.43 2008/01/17 04:33:26 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -462,9 +462,9 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
     separator = ";";
 # endif
 
-  if( AircraftPath.empty() || EnginePath.empty() ) {
+  if( AircraftPath.empty() || EnginePath.empty() || SystemsPath.empty()) {
     cerr << "Error: attempted to load aircraft with undefined ";
-    cerr << "aircraft and engine paths" << endl;
+    cerr << "aircraft, engine, and system paths" << endl;
     return false;
   }
 
