@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.15 2008/01/16 03:48:44 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.16 2008/01/17 03:56:06 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,14 +119,14 @@ CLASS DOCUMENTATION
     addition to using the "NAME" attribute in,
 
     @code
-    \<flight_control name="X-15 SAS">
+    <flight_control name="X-15 SAS">
     @endcode
 
     one can also supply a filename:
 
     @code
-    \<flight_control name="X-15 SAS" file="X15.xml">
-    \</flight_control>
+    <flight_control name="X-15 SAS" file="X15.xml">
+    </flight_control>
     @endcode
 
     In this case, the FCS would be read in from another file.
@@ -173,9 +173,9 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.15 $
+    @version $Revision: 1.16 $
     @see FGFCSComponent
-    @see FGXMLElement
+    @see Element
     @see FGGain
     @see FGSummer
     @see FGSwitch
