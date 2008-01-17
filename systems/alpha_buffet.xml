@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<system name="alpha_buffet">
+
+  <property>aero/alpha_buffet/hertz</property>
+  <property>aero/alpha_buffet/sine_wave</property>
+
+  <channel name="Alpha_Buffet">
+
+       <switch name="enable">
+          <default value="0"/>
+          <test value="1">
+               velocities/ve-kts gt 50
+          </test>
+          <output>systems/alpha_buffet/enabled</output>
+       </switch>
+
+   <scheduled_gain name="Buffet Frequency">
+      <input>systems/alpha_buffet/enabled</input>
+      <table>
+        <independentVar lookup="row">aero/alpha-rad</independentVar>
+        <tableData>
+           0         0.0
+           0.1599    0.0
+           0.1600   10.0
+           0.26      4.0
+        </tableData>
+      </table>
+      <output>systems/alpha_buffet/hertz</output>
+   </scheduled_gain>
+
+   <scheduled_gain name="Buffet Strength">
+      <input>systems/alpha_buffet/enabled</input>
+      <table>
+        <independentVar lookup="row">aero/alpha-rad</independentVar>
+        <tableData>
+           0           0.0
+           0.1599      0.0
+           0.1600   1000.0
+           0.26     5000.0
+        </tableData>
+      </table>
+      <output>aero/alpha_buffet/strength</output>
+   </scheduled_gain>
+
+   <fcs_function name="Sine Wave Generator">
+     <function>
+       <sin>
+         <product>
+           <property>systems/alpha_buffet/hertz</property>
+           <property>sim-time-sec</property>
+           <value>6.283185307</value>
+         </product>
+       </sin>
+     </function>
+     <output>aero/alpha_buffet/sine_wave</output>
+   </fcs_function>
+
+  </channel>
+
+
+</system>
