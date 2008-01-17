@@ -103,7 +103,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.23 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.24 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -218,7 +218,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.23 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.24 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -584,7 +584,8 @@
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string" />
+      <xs:attribute name="name" use="optional" type="xs:string"/>
+      <xs:attribute name="file" use="optional" type="xs:string"/>
     </xs:complexType>
   </xs:element>
 
@@ -668,11 +669,14 @@
         <xs:element ref="second_order_filter" />
         <xs:element ref="integrator" />
         <xs:element ref="pure_gain" />
-        <xs:element ref="scheduled_gain" minOccurs="0" maxOccurs="unbounded" />
-        <xs:element ref="switch" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="scheduled_gain"/>
+        <xs:element ref="switch"/>
         <!--
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="deadband"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="fcs_function"/> -->
+        <xs:element ref="actuator"/>
+        <xs:element ref="sensor"/>
+        <xs:element ref="deadband"/>
+        <xs:element ref="fcs_function"/>
+        -->
       </xs:choice>
       <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
