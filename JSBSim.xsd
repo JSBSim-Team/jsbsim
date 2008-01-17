@@ -22,7 +22,13 @@
       - Ground contact
     </xs:documentation>
     <xs:documentation>
+      - External reactions
+    </xs:documentation>
+    <xs:documentation>
       - Propulsion
+    </xs:documentation>
+    <xs:documentation>
+      - Systems
     </xs:documentation>
     <xs:documentation>
       - Autopilot
@@ -50,34 +56,36 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="fileheader"/>
+        <xs:element ref="fileheader" />
         <!--The file creation information. -->
-        <xs:element ref="metrics"/>
+        <xs:element ref="metrics" />
         <!--The geometric information for the aircraft model. -->
-        <xs:element ref="mass_balance"/>
+        <xs:element ref="mass_balance" />
         <!-- The weight and balance information for the aircraft model.</xs:annotation -->
-        <xs:element ref="ground_reactions" minOccurs="0"/>
+        <xs:element ref="ground_reactions" minOccurs="0" />
         <!--The landing gear and/or structural contact point information for the aircraft model. -->
-        <xs:element ref="propulsion" minOccurs="0"/>
+        <xs:element ref="external_reactions" minOccurs="0" />
+        <!--The external reactions information for the aircraft model. -->
+        <xs:element ref="propulsion" minOccurs="0" />
         <!-- The propulsion system information for the aircraft model. -->
-        <xs:element ref="autopilot" minOccurs="0"/>
+        <xs:element ref="system" minOccurs="0" maxOccurs="unbounded"/>
+        <!-- The systems reference -->
+        <xs:element ref="autopilot" minOccurs="0" />
         <!-- The autopilot definition for the aircraft model. -->
-        <xs:element ref="flight_control" minOccurs="0"/>
+        <xs:element ref="flight_control" minOccurs="0" />
         <!-- The flight control system for the aircraft model. -->
-        <xs:element ref="aerodynamics" minOccurs="0"/>
+        <xs:element ref="aerodynamics" minOccurs="0" />
         <!-- The aerodynamics definition for the aircraft model. -->
-        <xs:element ref="input" minOccurs="0"/>
+        <xs:element ref="input" minOccurs="0" />
         <!-- The input definition for the aircraft model. -->
-        <xs:element ref="output" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="output" minOccurs="0" maxOccurs="unbounded" />
         <!--The output specification for the aircraft model. -->
       </xs:sequence>
-
       <xs:attribute name="name" use="required" type="xs:string">
         <xs:annotation>
           <xs:documentation> The name of the aircraft this model represents. </xs:documentation>
         </xs:annotation>
       </xs:attribute>
-
       <xs:attribute name="release" use="optional" default="PRODUCTION">
         <xs:annotation>
           <xs:documentation>
@@ -85,90 +93,77 @@
             that this preproduction release may not be of high quality.
           </xs:documentation>
         </xs:annotation>
-
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="PRODUCTION"/>
-            <xs:enumeration value="ALPHA"/>
-            <xs:enumeration value="BETA"/>
+            <xs:enumeration value="PRODUCTION" />
+            <xs:enumeration value="ALPHA" />
+            <xs:enumeration value="BETA" />
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.21 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.22 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:pattern value="[0-9](.[0-9])*"/>
+            <xs:pattern value="[0-9](.[0-9])*" />
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  
   <!-- Global Types for this file -->
-  
   <xs:simpleType name="AreaType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="M2"/>
-      <xs:enumeration value="FT2"/>
+      <xs:enumeration value="M2" />
+      <xs:enumeration value="FT2" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="LengthType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="M"/>
-      <xs:enumeration value="FT"/>
-      <xs:enumeration value="IN"/>
+      <xs:enumeration value="M" />
+      <xs:enumeration value="FT" />
+      <xs:enumeration value="IN" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="InertiaType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="KG*M2"/>
-      <xs:enumeration value="SLUG*FT2"/>
+      <xs:enumeration value="KG*M2" />
+      <xs:enumeration value="SLUG*FT2" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="WeightType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="KG"/>
-      <xs:enumeration value="LBS"/>
+      <xs:enumeration value="KG" />
+      <xs:enumeration value="LBS" />
     </xs:restriction>
   </xs:simpleType>
-
   <xs:simpleType name="SpringCoeffType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="LBS/FT"/>
-      <xs:enumeration value="N/M"/>
+      <xs:enumeration value="LBS/FT" />
+      <xs:enumeration value="N/M" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="DampingCoeffType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="LBS/FT/SEC"/>
-      <xs:enumeration value="N/M/SEC"/>
+      <xs:enumeration value="LBS/FT/SEC" />
+      <xs:enumeration value="N/M/SEC" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="AngleType">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="DEG"/>
-      <xs:enumeration value="RAD"/>
+      <xs:enumeration value="DEG" />
+      <xs:enumeration value="RAD" />
     </xs:restriction>
   </xs:simpleType>
-  
   <xs:simpleType name="PositiveNumber">
     <xs:restriction base="xs:double">
-      <xs:minInclusive value="0"/>
+      <xs:minInclusive value="0" />
     </xs:restriction>
   </xs:simpleType>
-  
   <!-- FILEHEADER ELEMENT -->
-  
   <xs:element name="fileheader">
     <xs:annotation>
       <xs:documentation>The fileheader section is where important information about the model is recorded. The authors, their contact information
@@ -178,42 +173,92 @@
     <xs:complexType>
       <xs:sequence>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="author" type="xs:string"><xs:annotation><xs:documentation>The name of the model author[s].</xs:documentation></xs:annotation></xs:element>
-          <xs:element name="email" type="xs:string"><xs:annotation><xs:documentation>The contact email address for an author (optional).</xs:documentation></xs:annotation></xs:element>
-          <xs:element name="organization" type="xs:string"><xs:annotation><xs:documentation>The organization that the author[s] belongs to.</xs:documentation></xs:annotation></xs:element>
+          <xs:element name="author" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>The name of the model author[s].</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="email" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>The contact email address for an author (optional).</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="organization" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>The organization that the author[s] belongs to.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:choice>
-        <xs:element name="license" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This is an optional field for a license name and URL.</xs:documentation></xs:annotation>
+        <xs:element name="license" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>This is an optional field for a license name and URL.</xs:documentation>
+          </xs:annotation>
           <xs:complexType>
-            <xs:attribute name="licenseName" type="xs:string"><xs:annotation><xs:documentation>The name of the license, e.g. "GPL".</xs:documentation></xs:annotation></xs:attribute>
-            <xs:attribute name="licenseURL" type="xs:anyURI"><xs:annotation><xs:documentation>The URL where the license can be found.</xs:documentation></xs:annotation></xs:attribute>
+            <xs:attribute name="licenseName" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>The name of the license, e.g. "GPL".</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="licenseURL" type="xs:anyURI">
+              <xs:annotation>
+                <xs:documentation>The URL where the license can be found.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
           </xs:complexType>
         </xs:element>
-        <xs:element name="sensitivity" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>This field stores the sensitivity classification, such as "classified", "secret", "proprietary", etc.</xs:documentation></xs:annotation></xs:element>        
-        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The date that the model was initially created in the form yyyy-mm-dd</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.21 $".</xs:documentation></xs:annotation></xs:element>
-        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"><xs:annotation><xs:documentation>A simple text description of the aircraft model.</xs:documentation></xs:annotation></xs:element>
+        <xs:element name="sensitivity" type="xs:string" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>This field stores the sensitivity classification, such as "classified", "secret", "proprietary", etc.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="filecreationdate" type="xs:date" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>The date that the model was initially created in the form yyyy-mm-dd</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.22 $".</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>A simple text description of the aircraft model.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
         <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="note" type="xs:string"><xs:annotation><xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation></xs:annotation></xs:element>
-          <xs:element name="limitation" type="xs:string"><xs:annotation><xs:documentation>Limitations for this model should be noted. For instance, if gear is not aerodynamically modeled.</xs:documentation></xs:annotation></xs:element>
-          <xs:element ref="reference"><xs:annotation><xs:documentation>All references used in creating this model should be included.</xs:documentation></xs:annotation></xs:element>
+          <xs:element name="note" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Notes are general notes about the model, perhaps such as special information helpful in flying it.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="limitation" type="xs:string">
+            <xs:annotation>
+              <xs:documentation>Limitations for this model should be noted. For instance, if gear is not aerodynamically modeled.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element ref="reference">
+            <xs:annotation>
+              <xs:documentation>All references used in creating this model should be included.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:choice>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-
   <xs:element name="reference">
-    <xs:annotation><xs:documentation>A reference consists of an author, a publication date, a reference ID (document ID, etc.),
-    and of course a title. The title is the only item in a reference that is required.</xs:documentation></xs:annotation>
+    <xs:annotation>
+      <xs:documentation>A reference consists of an author, a publication date, a reference ID (document ID, etc.),
+    and of course a title. The title is the only item in a reference that is required.</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
-      <xs:attribute name="author" use="optional"/>
-      <xs:attribute name="date" use="optional"/>
-      <xs:attribute name="refID" use="optional" type="xs:string"/>
-      <xs:attribute name="title" use="required"/>
+      <xs:attribute name="author" use="optional" />
+      <xs:attribute name="date" use="optional" />
+      <xs:attribute name="refID" use="optional" type="xs:string" />
+      <xs:attribute name="title" use="required" />
     </xs:complexType>
   </xs:element>
-  
   <!-- METRICS SECTION -->
-  
   <xs:element name="metrics">
     <xs:annotation>
       <xs:documentation>
@@ -225,21 +270,19 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="wingarea"/>
-        <xs:element ref="wingspan"/>
-        <xs:element ref="wing_incidence" minOccurs="0"/>
-        <xs:element ref="chord"/>
-        <xs:element ref="htailarea" minOccurs="0"/>
-        <xs:element ref="htailarm" minOccurs="0"/>
-        <xs:element ref="vtailarea" minOccurs="0"/>
-        <xs:element ref="vtailarm" minOccurs="0"/>
-        <xs:element ref="location" minOccurs="1" maxOccurs="3"/>
-    </xs:sequence>
+        <xs:element ref="wingarea" />
+        <xs:element ref="wingspan" />
+        <xs:element ref="wing_incidence" minOccurs="0" />
+        <xs:element ref="chord" />
+        <xs:element ref="htailarea" minOccurs="0" />
+        <xs:element ref="htailarm" minOccurs="0" />
+        <xs:element ref="vtailarea" minOccurs="0" />
+        <xs:element ref="vtailarm" minOccurs="0" />
+        <xs:element ref="location" minOccurs="1" maxOccurs="3" />
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
-  
   <!-- Wing Area -->
-  
   <xs:element name="wingarea">
     <xs:annotation>
       <xs:documentation> Wing area (reference area) for the vehicle being modeled. The default unit
@@ -248,14 +291,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType"/>
+          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Wing Span -->
-  
   <xs:element name="wingspan">
     <xs:annotation>
       <xs:documentation> Wingspan (lateral reference length) for the vehicle being modeled. The
@@ -264,14 +305,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT" type="LengthType"/>
+          <xs:attribute name="unit" use="optional" default="FT" type="LengthType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Wing Incidence -->
-  
   <xs:element name="wing_incidence">
     <xs:annotation>
       <xs:documentation> The angle the wing makes with the fuselage centerline  for the vehicle being modeled. The default unit
@@ -280,14 +319,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:double">
-          <xs:attribute name="unit" use="optional" default="DEG" type="AngleType"/>
+          <xs:attribute name="unit" use="optional" default="DEG" type="AngleType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Wing Chord -->
-  
   <xs:element name="chord">
     <xs:annotation>
       <xs:documentation> Chord (longitudinal reference length) for the vehicle being modeled. The default
@@ -296,14 +333,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT" type="LengthType"/>
+          <xs:attribute name="unit" use="optional" default="FT" type="LengthType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Horizontal tail area -->
-  
   <xs:element name="htailarea">
     <xs:annotation>
       <xs:documentation> Horizontal tail area. The default unit is square feet (FT2).</xs:documentation>
@@ -311,14 +346,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType"/>
+          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Horizontal tail arm -->
-  
   <xs:element name="htailarm">
     <xs:annotation>
       <xs:documentation> Horizontal tail arm. This is the distance from the center of gravity
@@ -327,14 +360,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT" type="LengthType"/>
+          <xs:attribute name="unit" use="optional" default="FT" type="LengthType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Vertical tail area -->
-  
   <xs:element name="vtailarea">
     <xs:annotation>
       <xs:documentation> Vertical tail area. The default unit is square feet (FT2).
@@ -343,14 +374,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType"/>
+          <xs:attribute name="unit" use="optional" default="FT2" type="AreaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Vertical tail arm -->
-  
   <xs:element name="vtailarm">
     <xs:annotation>
       <xs:documentation> Vertical tail arm. The default unit is feet (FT). </xs:documentation>
@@ -358,14 +387,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="FT" type="LengthType"/>
+          <xs:attribute name="unit" use="optional" default="FT" type="LengthType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- MASS BALANCE ELEMENT -->
-  
   <xs:element name="mass_balance">
     <xs:annotation>
       <xs:documentation>Mass properties are specified in this section. The moments of inertia
@@ -375,22 +402,20 @@
       can be specified.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
-        <xs:sequence>
-        <xs:element ref="ixx" minOccurs="1"/>
-        <xs:element ref="iyy" minOccurs="1"/>
-        <xs:element ref="izz" minOccurs="1"/>
-        <xs:element ref="ixy" minOccurs="0"/>
-        <xs:element ref="ixz" minOccurs="0"/>
-        <xs:element ref="iyz" minOccurs="0"/>
-        <xs:element ref="emptywt" minOccurs="1"/>
-        <xs:element ref="location" minOccurs="1"/>
-        <xs:element ref="pointmass" minOccurs="0" maxOccurs="1000"/>
-        </xs:sequence>
+      <xs:sequence>
+        <xs:element ref="ixx" minOccurs="1" />
+        <xs:element ref="iyy" minOccurs="1" />
+        <xs:element ref="izz" minOccurs="1" />
+        <xs:element ref="ixy" minOccurs="0" />
+        <xs:element ref="ixz" minOccurs="0" />
+        <xs:element ref="iyz" minOccurs="0" />
+        <xs:element ref="emptywt" minOccurs="1" />
+        <xs:element ref="location" minOccurs="1" />
+        <xs:element ref="pointmass" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
     </xs:complexType>
   </xs:element>
-  
   <!-- IXX -->
-  
   <xs:element name="ixx">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Ixx </xs:documentation>
@@ -398,14 +423,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- IYY -->
-  
   <xs:element name="iyy">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Iyy </xs:documentation>
@@ -413,14 +436,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- IZZ -->
-  
   <xs:element name="izz">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Izz </xs:documentation>
@@ -428,14 +449,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- IXY -->
-  
   <xs:element name="ixy">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Ixy </xs:documentation>
@@ -443,14 +462,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:decimal">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- IXZ -->
-  
   <xs:element name="ixz">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Ixz </xs:documentation>
@@ -458,14 +475,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:decimal">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- IYZ -->
-  
   <xs:element name="iyz">
     <xs:annotation>
       <xs:documentation> Moment of Inertia, Iyz </xs:documentation>
@@ -473,14 +488,12 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:decimal">
-          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType"/>
+          <xs:attribute name="unit" use="optional" default="SLUG*FT2" type="InertiaType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Empty Weight -->
-  
   <xs:element name="emptywt">
     <xs:annotation>
       <xs:documentation> Empty weight of vehicle. </xs:documentation>
@@ -488,33 +501,30 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="LBS" type="WeightType"/>
+          <xs:attribute name="unit" use="optional" default="LBS" type="WeightType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- Point Mass -->
-  
   <xs:element name="pointmass">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="weight"/>
-        <xs:element ref="location"/>
+        <xs:element ref="weight" />
+        <xs:element ref="location" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
   <xs:element name="weight">
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="PositiveNumber">
-          <xs:attribute name="unit" use="optional" default="LBS" type="WeightType"/>
+          <xs:attribute name="unit" use="optional" default="LBS" type="WeightType" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-
   <xs:element name="location">
     <xs:annotation>
       <xs:documentation>A location is a vector, containing an x, Y, and Z, element. The default unit is inches (IN). The unit is specifed
@@ -522,28 +532,40 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="x"/>
-        <xs:element ref="y"/>
-        <xs:element ref="z"/>
+        <xs:element ref="x" />
+        <xs:element ref="y" />
+        <xs:element ref="z" />
       </xs:sequence>
-      <xs:attribute name="name" type="xs:string"/>
+      <xs:attribute name="name" type="xs:string" />
       <xs:attribute name="unit" use="optional" default="IN">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="M"/>
-            <xs:enumeration value="FT"/>
-            <xs:enumeration value="IN"/>
+            <xs:enumeration value="M" />
+            <xs:enumeration value="FT" />
+            <xs:enumeration value="IN" />
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  <xs:element name="x" type="xs:double"/>
-  <xs:element name="y" type="xs:double"/>
-  <xs:element name="z" type="xs:double"/>
-  
+  <xs:element name="x" type="xs:double" />
+  <xs:element name="y" type="xs:double" />
+  <xs:element name="z" type="xs:double" />
+
+  <!-- The systems definition -->
+  <xs:element name="system">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
+        <!--        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/> -->
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor" />
+      </xs:sequence>
+      <xs:attribute name="name" use="required" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+
   <!-- AUTOPILOT SECTION -->
-  
   <xs:element name="autopilot">
     <xs:annotation>
       <xs:documentation> The autopilot section is not required for many uses, including for use within Flightgear.
@@ -552,17 +574,14 @@
     </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
       </xs:sequence>
-      <xs:attribute name="file" type="xs:string" use="optional"/>
-      <xs:attribute name="name" type="xs:string" use="optional"/>
+      <xs:attribute name="file" type="xs:string" use="optional" />
+      <xs:attribute name="name" type="xs:string" use="optional" />
     </xs:complexType>
   </xs:element>
-  
   <!-- FLIGHT CONTROL SECTION -->
-
   <!-- flight control types -->
-
   <xs:element name="clipto">
     <xs:annotation>
       <xs:documentation>This element specifies a minimum and/or a maximum limit that the associated component will be allowed
@@ -570,102 +589,93 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:double"/>
-        <xs:element name="max" type="xs:double"/>
+        <xs:element name="min" type="xs:double" />
+        <xs:element name="max" type="xs:double" />
       </xs:all>
     </xs:complexType>
   </xs:element>
-
   <xs:element name="domain">
     <xs:annotation>
       <xs:documentation>The domain defines the minimum and maximum input value allowed.</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:float" default="-1"/>
-        <xs:element name="max" type="xs:float" default="1"/>
+        <xs:element name="min" type="xs:float" default="-1" />
+        <xs:element name="max" type="xs:float" default="1" />
       </xs:all>
     </xs:complexType>
   </xs:element>
-
   <xs:element name="range">
     <xs:annotation>
       <xs:documentation>The range defines the minimum and maximum output value mapped..</xs:documentation>
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="min" type="xs:float" default="0"/>
-        <xs:element name="max" type="xs:float" default="0"/>
+        <xs:element name="min" type="xs:float" default="0" />
+        <xs:element name="max" type="xs:float" default="0" />
       </xs:all>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="default">
     <xs:complexType>
-      <xs:attribute name="value" type="xs:string"/>
+      <xs:attribute name="value" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <!-- End flight control types -->
-  
   <xs:element name="flight_control">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="property"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
         <!--        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/> -->
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel"/>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="channel">
     <xs:complexType>
-      <xs:choice  minOccurs="1" maxOccurs="unbounded">
-        <xs:element ref="lag_filter"/>
-        <xs:element ref="summer"/>
-        <xs:element ref="aerosurface_scale"/>
-        <xs:element ref="kinematic"/>
-        <xs:element ref="lead_lag_filter"/>
-        <xs:element ref="washout_filter"/>
-        <xs:element ref="second_order_filter"/>
-        <xs:element ref="integrator"/>
-        <xs:element ref="pure_gain"/>
-        <xs:element ref="scheduled_gain" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="switch" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element ref="lag_filter" />
+        <xs:element ref="summer" />
+        <xs:element ref="aerosurface_scale" />
+        <xs:element ref="kinematic" />
+        <xs:element ref="lead_lag_filter" />
+        <xs:element ref="washout_filter" />
+        <xs:element ref="second_order_filter" />
+        <xs:element ref="integrator" />
+        <xs:element ref="pure_gain" />
+        <xs:element ref="scheduled_gain" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="switch" minOccurs="0" maxOccurs="unbounded" />
         <!--
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="deadband"/>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="fcs_function"/> -->
       </xs:choice>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
   <xs:element name="lag_filter">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
-        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      </xs:all> 
-      <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
+        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1" />
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="summer">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="input" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-        <xs:element name="bias" type="xs:float" minOccurs="0" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="input" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+        <xs:element name="bias" type="xs:float" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="aerosurface_scale">
     <xs:annotation>
       <xs:documentation>
@@ -677,164 +687,152 @@
     </xs:annotation>
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
-        <xs:element ref="range" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="domain" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="range" minOccurs="1" maxOccurs="1" />
         <xs:element name="gain" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
-      </xs:all> 
-      <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="kinematic">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="traverse"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
-      </xs:all> 
-      <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="traverse" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="traverse">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="setting" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element ref="setting" minOccurs="1" maxOccurs="unbounded" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="setting">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="position" type="xs:double"/>
-        <xs:element name="time" type="xs:double"/>
+        <xs:element name="position" type="xs:double" />
+        <xs:element name="time" type="xs:double" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="lead_lag_filter">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element name="c1" type="xs:double"/>
-        <xs:element name="c2" type="xs:double" minOccurs="0"/>
-        <xs:element name="c3" type="xs:double" minOccurs="0"/>
-        <xs:element name="c4" type="xs:double"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element name="c1" type="xs:double" />
+        <xs:element name="c2" type="xs:double" minOccurs="0" />
+        <xs:element name="c3" type="xs:double" minOccurs="0" />
+        <xs:element name="c4" type="xs:double" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
       </xs:all>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="washout_filter"> 
+  <xs:element name="washout_filter">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
-        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      </xs:all> 
-      <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
+        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1" />
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
   <xs:element name="integrator">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1"/>
-        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="trigger" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      </xs:all> 
-      <xs:attribute name="name" use="required" type="xs:string"/>
+        <xs:element name="input" type="xs:string" maxOccurs="1" minOccurs="1" />
+        <xs:element name="c1" type="xs:double" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" type="xs:string" minOccurs="0" maxOccurs="1" />
+        <xs:element name="trigger" type="xs:string" minOccurs="0" maxOccurs="1" />
+      </xs:all>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="second_order_filter">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element name="c1" type="xs:double"/>
-        <xs:element name="c2" type="xs:double"/>
-        <xs:element name="c3" type="xs:double"/>
-        <xs:element name="c4" type="xs:double"/>
-        <xs:element name="c5" type="xs:double"/>
-        <xs:element name="c6" type="xs:double"/>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element name="c1" type="xs:double" />
+        <xs:element name="c2" type="xs:double" />
+        <xs:element name="c3" type="xs:double" />
+        <xs:element name="c4" type="xs:double" />
+        <xs:element name="c5" type="xs:double" />
+        <xs:element name="c6" type="xs:double" />
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
       </xs:all>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
   <xs:element name="pure_gain">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element name="gain" type="xs:string"  minOccurs="1" maxOccurs="1">
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element name="gain" type="xs:string" minOccurs="1" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element ref="clipto" minOccurs="0" maxOccurs="1"/>
-        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string"/>
+        <xs:element ref="clipto" minOccurs="0" maxOccurs="1" />
+        <xs:element name="output" minOccurs="0" maxOccurs="1" type="xs:string" />
       </xs:all>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="scheduled_gain">
     <xs:complexType>
       <xs:all>
-        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        <xs:element ref="table" minOccurs="1" maxOccurs="1"/>
-        <xs:element name="gain" type="xs:string"  minOccurs="0" maxOccurs="1">
+        <xs:element name="input" type="xs:string" minOccurs="1" maxOccurs="1" />
+        <xs:element ref="table" minOccurs="1" maxOccurs="1" />
+        <xs:element name="gain" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
             <xs:documentation>The Gain element may contain a fixed numeric value, or it may be a property name.</xs:documentation>
           </xs:annotation>
         </xs:element>
-        <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0"/>
+        <xs:element ref="clipto" minOccurs="0" />
+        <xs:element name="output" minOccurs="0" />
       </xs:all>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
   <xs:element name="switch">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="input" type="xs:string" minOccurs="0"/>
-        <xs:element ref="default" minOccurs="0"/>
-        <xs:element ref="test" minOccurs="1" maxOccurs="unbounded"/>
-        <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0"/>
+        <xs:element name="input" type="xs:string" minOccurs="0" />
+        <xs:element ref="default" minOccurs="0" />
+        <xs:element ref="test" minOccurs="1" maxOccurs="unbounded" />
+        <xs:element ref="clipto" minOccurs="0" />
+        <xs:element name="output" minOccurs="0" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="sensor">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="input" type="xs:string" minOccurs="0"/>
-        <xs:element ref="clipto" minOccurs="0"/>
-        <xs:element name="output" minOccurs="0"/>
+        <xs:element name="input" type="xs:string" minOccurs="0" />
+        <xs:element ref="clipto" minOccurs="0" />
+        <xs:element name="output" minOccurs="0" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
   <!--
 
   <xs:group name="functionGroup">
@@ -859,202 +857,208 @@
           <xs:attribute name="logic" default="AND" use="optional">
             <xs:simpleType>
               <xs:restriction base="xs:string">
-                <xs:enumeration value="OR"/>
-                <xs:enumeration value="AND"/>
+                <xs:enumeration value="OR" />
+                <xs:enumeration value="AND" />
               </xs:restriction>
             </xs:simpleType>
           </xs:attribute>
-          <xs:attribute name="value" use="required" type="xs:string"/>
+          <xs:attribute name="value" use="required" type="xs:string" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="width" type="PositiveNumber">
     <xs:annotation>
       <xs:documentation>The width value specifies the width of the deadband - i.e. 
         the total span about zero where the input will be mapped to zero output.</xs:documentation>
     </xs:annotation>
   </xs:element>
-  
-  
   <!-- AERODYNAMICS SECTION -->
-  
   <xs:element name="aerodynamics">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="alphalimits" minOccurs="0"/>
-        <xs:element ref="hysteresis_limits" minOccurs="0"/>
-        <xs:element ref="function" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:element ref="axis" minOccurs="0" maxOccurs="6"/>
+        <xs:element ref="alphalimits" minOccurs="0" />
+        <xs:element ref="hysteresis_limits" minOccurs="0" />
+        <xs:element ref="function" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element ref="axis" minOccurs="0" maxOccurs="6" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="alphalimits">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="min" type="xs:double"/>
-        <xs:element name="max" type="xs:double"/>
+        <xs:element name="min" type="xs:double" />
+        <xs:element name="max" type="xs:double" />
       </xs:sequence>
-      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG"/>
+      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="hysteresis_limits">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="min" type="xs:double"/>
-        <xs:element name="max" type="xs:double"/>
+        <xs:element name="min" type="xs:double" />
+        <xs:element name="max" type="xs:double" />
       </xs:sequence>
-      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG"/>
+      <xs:attribute name="unit" use="optional" type="AngleType" default="DEG" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="axis">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="function"/>
+        <xs:element maxOccurs="unbounded" ref="function" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" type="xs:string"/>
+      <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="description" type="xs:string"/>
-  
-  <!--GROUND REACTIONS SECTION -->
-  
-  <xs:element name="ground_reactions">
+  <xs:element name="description" type="xs:string" />
+
+  <!--EXTERNAL REACTIONS SECTION -->
+  <xs:element name="external_reactions">
     <xs:complexType mixed="true">
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="contact"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="force" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="force">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="function" minOccurs="0"/>
+        <xs:element ref="location"/>
+        <xs:element name="direction" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+  <!--GROUND REACTIONS SECTION -->
+  <xs:element name="ground_reactions">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="contact" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="contact">
     <xs:complexType>
       <xs:all>
-        <xs:element ref="location"/>
-        <xs:element name="static_friction" type="xs:double"/>
-        <xs:element name="dynamic_friction" type="xs:double"/>
-        <xs:element name="rolling_friction" type="xs:double" minOccurs="0"/>
+        <xs:element ref="location" />
+        <xs:element name="static_friction" type="xs:double" />
+        <xs:element name="dynamic_friction" type="xs:double" />
+        <xs:element name="rolling_friction" type="xs:double" minOccurs="0" />
         <xs:element name="spring_coeff">
           <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="PositiveNumber">
-                <xs:attribute name="unit" use="optional" default="LBS/FT" type="SpringCoeffType"/>
+                <xs:attribute name="unit" use="optional" default="LBS/FT" type="SpringCoeffType" />
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-
         <xs:element name="damping_coeff">
           <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="PositiveNumber">
-                <xs:attribute name="unit" use="optional" default="LBS/FT/SEC" type="DampingCoeffType"/>
+                <xs:attribute name="unit" use="optional" default="LBS/FT/SEC" type="DampingCoeffType" />
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-        
         <xs:element name="max_steer" minOccurs="0">
           <xs:complexType>
             <xs:simpleContent>
               <xs:extension base="PositiveNumber">
-                <xs:attribute name="unit" use="optional" default="DEG" type="AngleType"/>
+                <xs:attribute name="unit" use="optional" default="DEG" type="AngleType" />
               </xs:extension>
             </xs:simpleContent>
           </xs:complexType>
         </xs:element>
-        <xs:element ref="brake_group" minOccurs="0"/>
-        <xs:element ref="retractable" minOccurs="0"/>
-
+        <xs:element ref="brake_group" minOccurs="0" />
+        <xs:element ref="retractable" minOccurs="0" />
         <xs:element name="relaxation_velocity" minOccurs="0">
           <xs:complexType>
             <xs:sequence>
               <xs:sequence>
-                <xs:element name="rolling"><xs:complexType><xs:attribute name="unit" default="FT/SEC" use="optional"/></xs:complexType></xs:element>
-                <xs:element name="side"><xs:complexType><xs:attribute name="unit" default="FT/SEC" use="optional"/></xs:complexType></xs:element>
+                <xs:element name="rolling">
+                  <xs:complexType>
+                    <xs:attribute name="unit" default="FT/SEC" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="side">
+                  <xs:complexType>
+                    <xs:attribute name="unit" default="FT/SEC" use="optional" />
+                  </xs:complexType>
+                </xs:element>
               </xs:sequence>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        
       </xs:all>
-
-      <xs:attribute name="name" use="required" type="xs:string"/>
-      <xs:attribute  name="type" use="required">
+      <xs:attribute name="name" use="required" type="xs:string" />
+      <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="BOGEY"/>
-            <xs:enumeration value="STRUCTURE"/>
+            <xs:enumeration value="BOGEY" />
+            <xs:enumeration value="STRUCTURE" />
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  
-  <xs:element name="brake_group" type="xs:NCName"/>
-  <xs:element name="retractable" type="xs:integer"/>
-
+  <xs:element name="brake_group" type="xs:NCName" />
+  <xs:element name="retractable" type="xs:integer" />
   <!-- PROPULSION SECTION -->
- 
   <xs:element name="propulsion">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element ref="engine"/>
-        <xs:element ref="tank"/>
+        <xs:element ref="engine" />
+        <xs:element ref="tank" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-
   <xs:element name="engine">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="location"/>
-        <xs:element ref="orient" minOccurs="0"/>
-        <xs:element maxOccurs="unbounded" ref="feed"/>
-        <xs:element ref="thruster"/>
+        <xs:element ref="location" />
+        <xs:element ref="orient" minOccurs="0" />
+        <xs:element maxOccurs="unbounded" ref="feed" />
+        <xs:element ref="thruster" />
       </xs:sequence>
-      <xs:attribute name="file" use="required" type="xs:string"/>
+      <xs:attribute name="file" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-
-  <xs:element name="feed" type="xs:integer"/>
-
+  <xs:element name="feed" type="xs:integer" />
   <xs:element name="thruster">
     <xs:complexType>
       <xs:all>
-        <xs:element ref="location"/>
-        <xs:element ref="orient" minOccurs="0"/>
-        <xs:element ref="sense" minOccurs="0"/>
-        <xs:element ref="p_factor" minOccurs="0"/>
+        <xs:element ref="location" />
+        <xs:element ref="orient" minOccurs="0" />
+        <xs:element ref="sense" minOccurs="0" />
+        <xs:element ref="p_factor" minOccurs="0" />
       </xs:all>
-      <xs:attribute name="file" use="required" type="xs:string"/>
+      <xs:attribute name="file" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
-  <xs:element name="sense" type="xs:integer"/>
-  <xs:element name="p_factor" type="xs:decimal"/>
+  <xs:element name="sense" type="xs:integer" />
+  <xs:element name="p_factor" type="xs:decimal" />
   <xs:element name="tank">
     <xs:complexType>
       <xs:all>
-        <xs:element name="temperature" type="xs:double" minOccurs="0"/>
-        <xs:element ref="location" minOccurs="1"/>
-        <xs:element ref="radius" minOccurs="0"/>
-        <xs:element ref="capacity" minOccurs="0"/>
-        <xs:element ref="contents" minOccurs="0"/>
+        <xs:element name="temperature" type="xs:double" minOccurs="0" />
+        <xs:element ref="location" minOccurs="1" />
+        <xs:element ref="radius" minOccurs="0" />
+        <xs:element ref="capacity" minOccurs="0" />
+        <xs:element ref="contents" minOccurs="0" />
       </xs:all>
-      <xs:attribute name="type" use="required" type="xs:string"/>
-      <xs:attribute name="number" use="optional" type="xs:integer"/>
+      <xs:attribute name="type" use="required" type="xs:string" />
+      <xs:attribute name="number" use="optional" type="xs:integer" />
     </xs:complexType>
   </xs:element>
   <xs:element name="radius">
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:double">
-          <xs:attribute name="unit" use="required" type="xs:NCName"/>
+          <xs:attribute name="unit" use="required" type="xs:NCName" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
@@ -1063,7 +1067,7 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:double">
-          <xs:attribute name="unit" use="required" type="xs:NCName"/>
+          <xs:attribute name="unit" use="required" type="xs:NCName" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
@@ -1072,272 +1076,290 @@
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:double">
-          <xs:attribute name="unit" use="required" type="xs:string"/>
+          <xs:attribute name="unit" use="required" type="xs:string" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
-  
   <!-- INPUT SECTION -->
   <xs:element name="input">
     <xs:complexType mixed="true">
-      <xs:attribute name="port" type="xs:integer"/>
+      <xs:attribute name="port" type="xs:integer" />
     </xs:complexType>
   </xs:element>
-
-
-<!--
+  <!--
   <xs:element name="min" type="xs:decimal"/>
   <xs:element name="max" type="xs:decimal"/>
 -->
-  
   <!-- OUTPUT SECTION -->
-
   <xs:element name="output">
     <xs:complexType>
       <xs:choice maxOccurs="3">
         <xs:sequence minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="property" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:sequence minOccurs="0">
-          <xs:element name="simulation" type="xs:string" minOccurs="0"/>
-          <xs:element name="atmosphere" type="xs:string" minOccurs="0"/>
-          <xs:element name="massprops" type="xs:string" minOccurs="0"/>
-          <xs:element name="rates" type="xs:string" minOccurs="0"/>
-          <xs:element name="velocities" type="xs:string" minOccurs="0"/>
-          <xs:element name="forces" type="xs:string" minOccurs="0"/>
-          <xs:element name="moments" type="xs:string" minOccurs="0"/>
-          <xs:element name="position" type="xs:string" minOccurs="0"/>
-          <xs:element name="propulsion" type="xs:string" minOccurs="0"/>
-          <xs:element name="aerosurfaces" type="xs:string" minOccurs="0"/>
-          <xs:element name="fcs" type="xs:string" minOccurs="0"/>
-          <xs:element name="ground_reactions" type="xs:string" minOccurs="0"/>
-          <xs:element name="coefficients" type="xs:string" minOccurs="0"/>
+          <xs:element name="simulation" type="xs:string" minOccurs="0" />
+          <xs:element name="atmosphere" type="xs:string" minOccurs="0" />
+          <xs:element name="massprops" type="xs:string" minOccurs="0" />
+          <xs:element name="rates" type="xs:string" minOccurs="0" />
+          <xs:element name="velocities" type="xs:string" minOccurs="0" />
+          <xs:element name="forces" type="xs:string" minOccurs="0" />
+          <xs:element name="moments" type="xs:string" minOccurs="0" />
+          <xs:element name="position" type="xs:string" minOccurs="0" />
+          <xs:element name="propulsion" type="xs:string" minOccurs="0" />
+          <xs:element name="aerosurfaces" type="xs:string" minOccurs="0" />
+          <xs:element name="fcs" type="xs:string" minOccurs="0" />
+          <xs:element name="ground_reactions" type="xs:string" minOccurs="0" />
+          <xs:element name="coefficients" type="xs:string" minOccurs="0" />
         </xs:sequence>
-      </xs:choice> 
-      <xs:attribute name="name" type="xs:string"/>
-      <xs:attribute name="port" type="xs:integer"/>
-      <xs:attribute name="rate" type="xs:integer"/>
+      </xs:choice>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="port" type="xs:integer" />
+      <xs:attribute name="rate" type="xs:integer" />
       <xs:attribute name="type">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="CSV"/>
-            <xs:enumeration value="TABULAR"/>
-            <xs:enumeration value="SOCKET"/>
-            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="CSV" />
+            <xs:enumeration value="TABULAR" />
+            <xs:enumeration value="SOCKET" />
+            <xs:enumeration value="NONE" />
           </xs:restriction>
-        </xs:simpleType>        
+        </xs:simpleType>
       </xs:attribute>
     </xs:complexType>
   </xs:element>
-  
   <!-- Functions -->
-
   <xs:group name="func_group">
     <xs:choice>
-      <xs:element ref="table"/>
-      <xs:element ref="product"/>
-      <xs:element ref="difference"/>
-      <xs:element ref="sum"/>
-      <xs:element ref="quotient"/>
-      <xs:element ref="pow"/>
-      <xs:element ref="abs"/>
-      <xs:element ref="sin"/>
-      <xs:element ref="cos"/>
-      <xs:element ref="tan"/>
-      <xs:element ref="asin"/>
-      <xs:element ref="acos"/>
-      <xs:element ref="atan"/>
-      <xs:element ref="atan2"/>
-      <xs:element ref="min"/>
-      <xs:element ref="max"/>
-      <xs:element ref="avg"/>
-      <xs:element ref="fraction"/>
-      <xs:element ref="integer"/>
+      <xs:element ref="table" />
+      <xs:element ref="product" />
+      <xs:element ref="difference" />
+      <xs:element ref="sum" />
+      <xs:element ref="quotient" />
+      <xs:element ref="pow" />
+      <xs:element ref="abs" />
+      <xs:element ref="sin" />
+      <xs:element ref="cos" />
+      <xs:element ref="tan" />
+      <xs:element ref="asin" />
+      <xs:element ref="acos" />
+      <xs:element ref="atan" />
+      <xs:element ref="atan2" />
+      <xs:element ref="min" />
+      <xs:element ref="max" />
+      <xs:element ref="avg" />
+      <xs:element ref="fraction" />
+      <xs:element ref="integer" />
     </xs:choice>
   </xs:group>
-  
   <xs:element name="function">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="description"/>
-        <xs:group ref="func_group"/>
+        <xs:element ref="description" />
+        <xs:group ref="func_group" />
       </xs:sequence>
-      <xs:attribute name="name" use="required"/>
+      <xs:attribute name="name" use="required" />
     </xs:complexType>
   </xs:element>
-
   <xs:element name="product">
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="difference">
     <xs:complexType>
       <xs:choice maxOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="sum">
     <xs:complexType>
       <xs:choice maxOccurs="unbounded">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="quotient">
     <xs:complexType>
       <xs:choice maxOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="abs">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="pow">
     <xs:complexType>
       <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="sin">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="cos">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="tan">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="asin">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="acos">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="atan">
     <xs:complexType>
       <xs:choice maxOccurs="1" minOccurs="1">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="atan2">
     <xs:complexType>
       <xs:choice maxOccurs="2" minOccurs="2">
-        <xs:group ref="func_group"/>
-        <xs:element ref="value"/>
-        <xs:element ref="property"/>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
       </xs:choice>
     </xs:complexType>
   </xs:element>
-  
-  <xs:element name="value" type="xs:double"/>
-  
+  <xs:element name="min">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="max">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="avg">
+    <xs:complexType>
+      <xs:choice minOccurs="2" maxOccurs="unbounded">
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fraction">
+    <xs:complexType>
+      <xs:choice>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="integer">
+    <xs:complexType>
+      <xs:choice>
+        <xs:group ref="func_group" />
+        <xs:element ref="value" />
+        <xs:element ref="property" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="value" type="xs:double" />
   <xs:element name="orient">
     <xs:complexType>
       <xs:all>
-        <xs:element ref="roll" minOccurs="0"/>
-        <xs:element ref="pitch" minOccurs="0"/>
-        <xs:element ref="yaw" minOccurs="0"/>
+        <xs:element ref="roll" minOccurs="0" />
+        <xs:element ref="pitch" minOccurs="0" />
+        <xs:element ref="yaw" minOccurs="0" />
       </xs:all>
-      <xs:attribute name="unit" use="required" type="xs:string"/>
+      <xs:attribute name="unit" use="required" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  <xs:element name="roll" type="xs:double"/>
-  <xs:element name="pitch" type="xs:double"/>
-  <xs:element name="yaw" type="xs:double"/>
-  <xs:element name="property" type="xs:string"/>
-  
+  <xs:element name="roll" type="xs:double" />
+  <xs:element name="pitch" type="xs:double" />
+  <xs:element name="yaw" type="xs:double" />
+  <xs:element name="property" type="xs:string" />
   <xs:element name="table">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="independentVar"/>
-        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded"/>
+        <xs:element maxOccurs="unbounded" ref="independentVar" />
+        <xs:element ref="tableData" minOccurs="1" maxOccurs="unbounded" />
       </xs:sequence>
-      <xs:attribute name="name" use="optional" type="xs:string"/>
+      <xs:attribute name="name" use="optional" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="independentVar">
     <xs:complexType mixed="true">
-      <xs:attribute name="lookup" type="xs:string"/>
+      <xs:attribute name="lookup" type="xs:string" />
     </xs:complexType>
   </xs:element>
-  
   <xs:element name="tableData">
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="xs:string">
-          <xs:attribute name="breakPoint" type="xs:double" use="optional"/>
+          <xs:attribute name="breakPoint" type="xs:double" use="optional" />
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType>
   </xs:element>
 </xs:schema>
-
