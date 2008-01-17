@@ -103,7 +103,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.22 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.23 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -218,7 +218,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.22 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.23 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -548,6 +548,29 @@
       </xs:attribute>
     </xs:complexType>
   </xs:element>
+  <xs:element name="direction">
+    <xs:annotation>
+      <xs:documentation>A direction is a unit vector, containing an x, Y, and Z element which defines
+        a direction in a specified frame. </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="x" />
+        <xs:element ref="y" />
+        <xs:element ref="z" />
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" />
+      <xs:attribute name="unit" use="optional" default="IN">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="M" />
+            <xs:enumeration value="FT" />
+            <xs:enumeration value="IN" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
   <xs:element name="x" type="xs:double" />
   <xs:element name="y" type="xs:double" />
   <xs:element name="z" type="xs:double" />
@@ -627,8 +650,8 @@
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
         <!--        <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor"/> -->
-        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
       </xs:sequence>
       <xs:attribute name="name" use="required" type="xs:string" />
     </xs:complexType>
@@ -916,6 +939,7 @@
   <xs:element name="external_reactions">
     <xs:complexType mixed="true">
       <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
         <xs:element minOccurs="0" maxOccurs="unbounded" ref="force" />
       </xs:sequence>
     </xs:complexType>
@@ -924,10 +948,20 @@
   <xs:element name="force">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="function" minOccurs="0"/>
+        <xs:element ref="function" minOccurs="0"/>
         <xs:element ref="location"/>
-        <xs:element name="direction" minOccurs="0"/>
+        <xs:element ref="direction" minOccurs="0"/>
       </xs:sequence>
+      <xs:attribute name="name" type="xs:string"/>      
+      <xs:attribute name="frame">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="BODY"/>
+              <xs:enumeration value="LOCAL"/>
+              <xs:enumeration value="WIND"/>
+            </xs:restriction>
+          </xs:simpleType>
+      </xs:attribute>
     </xs:complexType>
   </xs:element>
   
@@ -1156,10 +1190,10 @@
   <xs:element name="function">
     <xs:complexType>
       <xs:sequence>
-        <xs:element ref="description" />
+        <xs:element ref="description" minOccurs="0"/>
         <xs:group ref="func_group" />
       </xs:sequence>
-      <xs:attribute name="name" use="required" />
+      <xs:attribute name="name" use="optional" />
     </xs:complexType>
   </xs:element>
   <xs:element name="product">
