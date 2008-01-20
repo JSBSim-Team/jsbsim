@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.17 2007/07/25 04:30:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.18 2008/01/20 19:10:05 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -76,7 +76,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   numOxiTanks = numFuelTanks = 0;
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
-  refuel = false;
+  refuel = dump = false;
   fuel_freeze = false;
   TotalFuelQuantity = 0.0;
   IsBound =
@@ -128,6 +128,7 @@ bool FGPropulsion::Run(void)
   }
 
   if (refuel) DoRefuel( dt * rate );
+  if (dump) DumpFuel( dt * rate );
 
   return false;
 }
@@ -531,6 +532,14 @@ void FGPropulsion::DoRefuel(double time_slice)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGPropulsion::DumpFuel(double time_slice)
+{
+  double dump_rate = 41.67 * time_slice;   // 41.67 lbs/sec = 2500 lbs/min
+  Transfer(0, -1, dump_rate);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGPropulsion::SetFuelFreeze(bool f)
 {
   fuel_freeze = f;
@@ -561,6 +570,11 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("propulsion/active_engine", this, (iPMF)&FGPropulsion::GetActiveEngine,
                         &FGPropulsion::SetActiveEngine, true);
   PropertyManager->Tie("propulsion/total-fuel-lbs", this, &FGPropulsion::GetTotalFuelQuantity);
+  PropertyManager->Tie("propulsion/refuel", this, &FGPropulsion::GetRefuel,
+                        &FGPropulsion::SetRefuel, true);
+  PropertyManager->Tie("propulsion/fuel_dump", this, &FGPropulsion::GetFuelDump,
+                        &FGPropulsion::SetFuelDump, true);
+
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -579,6 +593,8 @@ void FGPropulsion::unbind(void)
   }
   PropertyManager->Untie("propulsion/active_engine");
   PropertyManager->Untie("propulsion/total-fuel-lbs");
+  PropertyManager->Untie("propulsion/refuel");
+  PropertyManager->Untie("propulsion/fuel_dump");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.21 2008/01/20 17:46:49 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.22 2008/01/20 19:10:04 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -605,8 +605,7 @@ bool FGJSBsim::copy_to_JSBsim()
       tank->SetContents(node->getDoubleValue("level-gal_us") * 6.6);
 //       tank->SetContents(node->getDoubleValue("level-lb"));
     }
-    SGPropertyNode* node = fgGetNode("/systems/refuel", true);
-    Propulsion->SetRefuel(node->getDoubleValue("contact"));
+
     Propulsion->SetFuelFreeze((fgGetNode("/sim/freeze/fuel",true))->getBoolValue());
     fdmex->SetSlave(slaved->getBoolValue());
 
