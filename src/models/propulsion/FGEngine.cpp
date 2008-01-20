@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.14 2007/05/18 03:17:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.15 2008/01/20 17:46:49 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,7 +114,8 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
 
   local_element = engine_element->GetParent()->FindElement("orient");
   if (local_element)  orientation = local_element->FindElementTripletConvertTo("DEG");
-  else          cerr << "No engine orientation found for this engine." << endl;
+//  else          cerr << "No engine orientation found for this engine." << endl;
+// Jon: The engine orientation has a default and is not normally used.
 
   SetPlacement(location, orientation);
 

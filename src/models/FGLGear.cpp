@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.36 2008/01/14 23:01:11 dpculp Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.37 2008/01/20 17:46:49 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -686,6 +686,9 @@ void FGLGear::bind(void)
     Exec->GetPropertyManager()->Tie( property_name, &WOW );
     snprintf(property_name, 80, "gear/unit[%d]/wheel-speed-fps", GearNumber);
     Exec->GetPropertyManager()->Tie( property_name, &RollingWhlVel );
+    snprintf(property_name, 80, "gear/unit[%d]/z-position", GearNumber);
+    Exec->GetPropertyManager()->Tie( property_name, (FGLGear*)this,
+                          &FGLGear::GetZPosition, &FGLGear::SetZPosition);
   }
 
   if( isRetractable ) {
@@ -706,6 +709,8 @@ void FGLGear::unbind(void)
     snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
     Exec->GetPropertyManager()->Untie( property_name );
     snprintf(property_name, 80, "gear/unit[%d]/wheel-speed-fps", GearNumber);
+    Exec->GetPropertyManager()->Untie( property_name );
+    snprintf(property_name, 80, "gear/unit[%d]/z-position", GearNumber);
     Exec->GetPropertyManager()->Untie( property_name );
   }
 

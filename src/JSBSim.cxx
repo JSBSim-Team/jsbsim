@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.20 2008/01/16 03:48:23 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.21 2008/01/20 17:46:49 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -302,12 +302,8 @@ void FGJSBsim::init()
                   9.0/5.0*(temperature->getDoubleValue()+273.15) );
       Atmosphere->SetExPressure(pressure->getDoubleValue()*70.726566);
       Atmosphere->SetExDensity(density->getDoubleValue());
-
-      tmp = turbulence_gain->getDoubleValue();
-      Atmosphere->SetTurbGain(tmp * tmp * 100.0);
-
-      tmp = turbulence_rate->getDoubleValue();
-      Atmosphere->SetTurbRate(tmp);
+      Atmosphere->SetTurbGain(turbulence_gain->getDoubleValue());
+      Atmosphere->SetTurbRate(turbulence_rate->getDoubleValue());
 
     } else {
       Atmosphere->UseInternal();
@@ -331,6 +327,8 @@ void FGJSBsim::init()
             Propulsion->GetEngine(i)->SetRunning(true);
           }
     }
+
+    FCS->SetDfPos( ofNorm, globals->get_controls()->get_flaps() );
 
     common_init();
 
@@ -588,10 +586,10 @@ bool FGJSBsim::copy_to_JSBsim()
     Atmosphere->SetExDensity(density->getDoubleValue());
 
     tmp = turbulence_gain->getDoubleValue();
-    Atmosphere->SetTurbGain(tmp * tmp * 100.0);
+    //Atmosphere->SetTurbGain(tmp * tmp * 100.0);
 
     tmp = turbulence_rate->getDoubleValue();
-    Atmosphere->SetTurbRate(tmp);
+    //Atmosphere->SetTurbRate(tmp);
 
     Atmosphere->SetWindNED( wind_from_north->getDoubleValue(),
                             wind_from_east->getDoubleValue(),

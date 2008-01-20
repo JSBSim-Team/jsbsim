@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.16 2008/01/04 01:54:23 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.17 2008/01/20 17:46:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.16 2008/01/04 01:54:23 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.17 2008/01/20 17:46:49 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -237,6 +237,9 @@ public:
 
   inline int GetBrakeGroup(void) { return (int)eBrakeGrp; }
   inline int GetSteerType(void)  { return (int)eSteerType; }
+
+  inline double GetZPosition(void) const { return vXYZ(3); }
+  inline void SetZPosition(double z) { vXYZ(3) = z; }
 
   bool GetSteerable(void) const { return eSteerType != stFixed; }
   inline bool GetRetractable(void)         { return isRetractable;   }

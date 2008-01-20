@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.12 2007/10/10 01:06:11 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.13 2008/01/20 17:46:49 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the standard atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.12 2007/10/10 01:06:11 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.13 2008/01/20 17:46:49 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -83,6 +83,7 @@ public:
       @return false if no error */
   bool Run(void);
   bool InitModel(void);
+  enum tType {ttStandard, ttBerndt, ttCulp, ttNone} turbType;
 
   /// Returns the temperature in degrees Rankine.
   inline double GetTemperature(void) const {return *temperature;}
@@ -164,8 +165,22 @@ public:
       increases counterclockwise. The wind heading is returned in radians.*/
   inline double GetWindPsi(void) const { return psiw; }
 
-  inline void SetTurbGain(double tt) {TurbGain = tt;}
-  inline void SetTurbRate(double tt) {TurbRate = tt;}
+  inline void   SetTurbType(tType tt) {turbType = tt;}
+  inline tType  GetTurbType() const {return turbType;}
+
+  inline void   SetTurbGain(double tg) {TurbGain = tg;}
+  inline double GetTurbGain() const {return TurbGain;}
+
+  inline void   SetTurbRate(double tr) {TurbRate = tr;}
+  inline double GetTurbRate() const {return TurbRate;}
+
+  inline void   SetRhythmicity(double r) {Rhythmicity=r;}
+  inline double GetRhythmicity() const {return Rhythmicity;}
+
+  /** Sets wind vortex, clockwise as seen from a point in front of aircraft,
+      looking aft. Units are radians/second. */
+  inline void   SetWindFromClockwise(double wC) { wind_from_clockwise=wC; }
+  inline double GetWindFromClockwise(void) const {return wind_from_clockwise;}
 
   inline double GetTurbPQR(int idx) const {return vTurbPQR(idx);}
   double GetTurbMagnitude(void) const {return Magnitude;}
@@ -179,9 +194,7 @@ public:
 protected:
   double rho;
 
-  enum tType {ttStandard, ttBerndt, ttNone} turbType;
   struct atmType {double Temperature; double Pressure; double Density;};
-
   int lastIndex;
   double h;
   double htab[8];
@@ -201,6 +214,9 @@ protected:
   double MagnitudedAccelDt, MagnitudeAccel, Magnitude;
   double TurbGain;
   double TurbRate;
+  double Rhythmicity;
+  double wind_from_clockwise;
+  double spike, target_time, strength;
   FGColumnVector3 vDirectiondAccelDt;
   FGColumnVector3 vDirectionAccel;
   FGColumnVector3 vDirection;
