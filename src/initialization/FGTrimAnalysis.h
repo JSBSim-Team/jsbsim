@@ -73,7 +73,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.4 2008/01/13 18:56:31 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.5 2008/01/21 23:13:32 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -82,29 +82,11 @@ DEFINITIONS
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-/*
-const double radtodeg = 57.29578;
-const double degtorad = 1.745329E-2;
-const double fttomt = 0.3048;
-const double mttoft = 1./0.3048;
-const double hptoftlbssec = 550.0;
-const double psftoinhg = 0.014138;
-const double psftopa = 47.88;
-const double fpstokts = 0.592484;
-const double ktstofps = 1.68781;
-const double inchtoft = 0.08333333;
-const double in3tom3 = 1.638706E-5;
-const double Reng = 1716.0; // Specific Gas Constant,ft^2/(sec^2*R)
-const double SHRatio = 1.40;
-const double slugtolb = 32.174049;
-const double lbtoslug = 1.0/slugtolb;
-*/
 
 namespace JSBSim {
 
 typedef enum { taLongitudinal=0, taFull, taFullWingsLevel, taTurn, taPullup, taTurnFull,
-                taGround, taCustom, taNone }
-               TrimAnalysisMode;
+                taGround, taCustom, taNone } TrimAnalysisMode;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -134,7 +116,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.4 2008/01/13 18:56:31 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.5 2008/01/21 23:13:32 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -215,11 +197,8 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionFull(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionFull(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
 
     /** Wrapping function for the effective Wings Level Trim cost function, to be called by optimization method
         @param vars number ofcontrol varables
@@ -234,11 +213,8 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionFullWingsLevel(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionFullWingsLevel(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
 
     /** Wrapping function for the effective Longitudinal Trim cost function, to be called by optimization method
         @param vars number ofcontrol varables
@@ -253,11 +229,8 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionLongitudinal(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionLongitudinal(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
 
     /** Wrapping function for the effective Steady Turn Trim cost function, to be called by optimization method
         @param vars number ofcontrol varables
@@ -272,11 +245,9 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionFullCoordinatedTurn(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionFullCoordinatedTurn(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
+
     /** Wrapping function for the effective Steady Turn Trim cost function, to be called by optimization method
         @param vars number ofcontrol varables
         @param v reference to a vector containing controls variables
@@ -290,11 +261,8 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionFullTurn(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionFullTurn(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
 
     /** Wrapping function for the effective Pullup Trim cost function, to be called by optimization method
         @param vars number ofcontrol varables
@@ -309,11 +277,8 @@ public:
      * should be cast to a pointer of the class type.
      */
     friend void find_CostFunctionPullUp(long vars, Vector<double> &v, double & f,
-                    bool & success, void* t_ptr)
-    {
-        (*(Objective*)t_ptr).CostFunctionPullUp(vars, v, f);
-        success = true;
-    }
+                    bool & success, void* t_ptr);
+    /* function definiation moved outside of class declaration */
 
     void Set_x_val(double new_x);
     double Get_x_val() const {return _x;}

@@ -86,9 +86,124 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.6 2008/01/13 18:56:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.7 2008/01/21 23:13:32 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
+
+    /** Wrapping function for the effective Full Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //friend void find_CostFunctionFull(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionFull(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionFull(vars, v, f);
+        success = true;
+    }
+    /** Wrapping function for the effective Wings Level Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //friend void find_CostFunctionFullWingsLevel(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionFullWingsLevel(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionFullWingsLevel(vars, v, f);
+        success = true;
+    }
+    /** Wrapping function for the effective Longitudinal Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //friend void find_CostFunctionLongitudinal(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionLongitudinal(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionLongitudinal(vars, v, f);
+        success = true;
+    }
+    /** Wrapping function for the effective Steady Turn Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //friend void find_CostFunctionFullCoordinatedTurn(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionFullCoordinatedTurn(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionFullCoordinatedTurn(vars, v, f);
+        success = true;
+    }
+    /** Wrapping function for the effective Steady Turn Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //fryyiend void find_CostFunctionFullTurn(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionFullTurn(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionFullTurn(vars, v, f);
+        success = true;
+    }
+    /** Wrapping function for the effective Pullup Trim cost function, to be called by optimization method
+        @param vars number ofcontrol varables
+        @param v reference to a vector containing controls variables
+        @param f function value
+        @param success
+        @param t_ptr
+     * the following method is friend rather then member of FGTrimAnalysis because
+     * we want our FGTrimAnalysis::DoTrim() to be able to pass pointers to it.
+     *
+     * Note that in the call masked by this methods, the void pointer
+     * should be cast to a pointer of the class type.
+     */
+    //friend void find_CostFunctionPullUp(long vars, Vector<double> &v, double & f,
+    void find_CostFunctionPullUp(long vars, Vector<double> &v, double & f,
+                    bool & success, void* t_ptr)
+    {
+        (*(Objective*)t_ptr).CostFunctionPullUp(vars, v, f);
+        success = true;
+    }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //public:
 
