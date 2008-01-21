@@ -42,14 +42,11 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
-#    include <iterator>
 #  else
 #    include <vector.h>
-#    include <iterator.h>
 #  endif
 #else
 #  include <vector>
-#  include <iterator>
 #endif
 
 #include "FGModel.h"
@@ -60,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.6 2007/02/14 00:53:01 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.7 2008/01/21 13:48:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -79,7 +76,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.6 2007/02/14 00:53:01 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.7 2008/01/21 13:48:40 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994

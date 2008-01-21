@@ -42,16 +42,13 @@ INCLUDES
 #  include <simgear/compiler.h>
 #  ifdef SG_HAVE_STD_INCLUDES
 #    include <vector>
-#    include <iterator>
 #    include <fstream>
 #  else
 #    include <vector.h>
-#    include <iterator.h>
 #    include <fstream.h>
 #  endif
 #else
 #  include <vector>
-#  include <iterator>
 #  include <fstream>
 #endif
 
@@ -65,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.12 2008/01/20 19:10:05 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.13 2008/01/21 13:48:40 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +84,7 @@ CLASS DOCUMENTATION
 
     At Run time each engines Calculate() method is called.
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.12 2008/01/20 19:10:05 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.13 2008/01/21 13:48:40 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -191,7 +188,6 @@ public:
 private:
   vector <FGEngine*>   Engines;
   vector <FGTank*>     Tanks;
-  vector <FGTank*>::iterator iTank;
   unsigned int numSelectedFuelTanks;
   unsigned int numSelectedOxiTanks;
   unsigned int numFuelTanks;

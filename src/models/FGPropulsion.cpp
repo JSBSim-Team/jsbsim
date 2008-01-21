@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.18 2008/01/20 19:10:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.19 2008/01/21 13:48:40 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -95,6 +95,8 @@ FGPropulsion::~FGPropulsion()
 {
   for (unsigned int i=0; i<Engines.size(); i++) delete Engines[i];
   Engines.clear();
+  for (unsigned int i=0; i<Tanks.size(); i++) delete Tanks[i];
+  Tanks.clear();
   unbind();
   Debug(1);
 }
@@ -383,13 +385,11 @@ string FGPropulsion::GetPropulsionValues(string delimeter)
 
 FGColumnVector3& FGPropulsion::GetTanksMoment(void)
 {
-  iTank = Tanks.begin();
   vXYZtank_arm.InitMatrix();
-  while (iTank < Tanks.end()) {
-    vXYZtank_arm(eX) += (*iTank)->GetXYZ(eX)*(*iTank)->GetContents();
-    vXYZtank_arm(eY) += (*iTank)->GetXYZ(eY)*(*iTank)->GetContents();
-    vXYZtank_arm(eZ) += (*iTank)->GetXYZ(eZ)*(*iTank)->GetContents();
-    iTank++;
+  for (unsigned int i=0; i<Tanks.size(); i++) {
+    vXYZtank_arm(eX) += Tanks[i]->GetXYZ(eX) * Tanks[i]->GetContents();
+    vXYZtank_arm(eY) += Tanks[i]->GetXYZ(eY) * Tanks[i]->GetContents();
+    vXYZtank_arm(eZ) += Tanks[i]->GetXYZ(eZ) * Tanks[i]->GetContents();
   }
   return vXYZtank_arm;
 }
@@ -400,11 +400,8 @@ double FGPropulsion::GetTanksWeight(void)
 {
   double Tw = 0.0;
 
-  iTank = Tanks.begin();
-  while (iTank < Tanks.end()) {
-    Tw += (*iTank)->GetContents();
-    iTank++;
-  }
+  for (unsigned int i=0; i<Tanks.size(); i++) Tw += Tanks[i]->GetContents();
+
   return Tw;
 }
 
