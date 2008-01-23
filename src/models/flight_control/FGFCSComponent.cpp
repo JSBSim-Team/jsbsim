@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.16 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSComponent.cpp,v 1.17 2008/01/23 13:27:14 jberndt Exp $";
 static const char *IdHdr = ID_FCSCOMPONENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -113,7 +113,7 @@ FGFCSComponent::FGFCSComponent(FGFCS* _fcs, Element* element) : fcs(_fcs)
       InputNodes.push_back( tmp );
     } else {
       cerr << fgred << "  In component: " << Name << " unknown property "
-           << input << " referenced. Aborting" << endl;
+           << input << " referenced. Aborting" << reset << endl;
       exit(-1);
     }
     input_element = element->FindNextElement("input");
