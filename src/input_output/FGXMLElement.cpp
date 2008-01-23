@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.16 2007/08/31 09:24:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.17 2008/01/23 23:54:47 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -83,6 +83,8 @@ Element::Element(string nm)
   // Area
   convert["M2"]["FT2"] = convert["M"]["FT"]*convert["M"]["FT"];
   convert["FT2"]["M2"] = 1.0/convert["M2"]["FT2"];
+  convert["M2"]["IN2"] = convert["M"]["IN"]*convert["M"]["IN"];
+  convert["IN2"]["M2"] = 1.0/convert["M2"]["IN2"];
   // Volume
   convert["IN3"]["CC"] = 16.387064;
   convert["CC"]["IN3"] = 1.0/convert["IN3"]["CC"];
@@ -95,6 +97,8 @@ Element::Element(string nm)
   // Mass & Weight
   convert["LBS"]["KG"] = 0.45359237;
   convert["KG"]["LBS"] = 1.0/convert["LBS"]["KG"];
+  convert["SLUG"]["KG"] = 14.59390;
+  convert["KG"]["SLUG"] = 1.0/convert["SLUG"]["KG"];
   // Moments of Inertia
   convert["SLUG*FT2"]["KG*M2"] = 1.35594;
   convert["KG*M2"]["SLUG*FT2"] = 1.0/convert["SLUG*FT2"]["KG*M2"];
@@ -121,6 +125,11 @@ Element::Element(string nm)
   // Torque
   convert["FT*LBS"]["N*M"] = 1.35581795;
   convert["N*M"]["FT*LBS"] = 1/convert["FT*LBS"]["N*M"];
+  // Valve
+  convert["M4*SEC/KG"]["FT4*SEC/SLUG"] = convert["M"]["FT"]*convert["M"]["FT"]*
+    convert["M"]["FT"]*convert["M"]["FT"]/convert["KG"]["SLUG"];
+  convert["FT4*SEC/SLUG"]["M4*SEC/KG"] =
+    1.0/convert["M4*SEC/KG"]["FT4*SEC/SLUG"];
   // Pressure
   convert["INHG"]["PSF"] = 70.7180803;
   convert["PSF"]["INHG"] = 1.0/convert["INHG"]["PSF"];
@@ -130,6 +139,10 @@ Element::Element(string nm)
   convert["INHG"]["PSI"] = 1.0/convert["PSI"]["INHG"];
   convert["INHG"]["PA"] = 3386.0; // inches Mercury to pascals
   convert["PA"]["INHG"] = 1.0/convert["INHG"]["PA"];
+  convert["LBS/FT2"]["N/M2"] = 14.5939/convert["FT"]["M"];
+  convert["N/M2"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["N/M2"];
+  convert["LBS/FT2"]["PA"] = convert["LBS/FT2"]["N/M2"];
+  convert["PA"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["PA"];
 
   // Length
   convert["M"]["M"] = 1.00;
@@ -171,12 +184,17 @@ Element::Element(string nm)
   // Torque
   convert["FT*LBS"]["FT*LBS"] = 1.00;
   convert["N*M"]["N*M"] = 1.00;
+  // Valve
+  convert["M4*SEC/KG"]["M4*SEC/KG"] = 1.0;
+  convert["FT4*SEC/SLUG"]["FT4*SEC/SLUG"] = 1.0;
   // Pressure
   convert["PSI"]["PSI"] = 1.00;
   convert["PSF"]["PSF"] = 1.00;
   convert["INHG"]["INHG"] = 1.00;
   convert["ATM"]["ATM"] = 1.0;
   convert["PA"]["PA"] = 1.0;
+  convert["N/M2"]["N/M2"] = 1.00;
+  convert["LBS/FT2"]["LBS/FT2"] = 1.00;
   // Flow rate
   convert["LBS/SEC"]["LBS/SEC"] = 1.00;
 }

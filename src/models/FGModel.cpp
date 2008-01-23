@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGModel.cpp,v 1.6 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGModel.cpp,v 1.7 2008/01/23 23:54:47 jberndt Exp $";
 static const char *IdHdr = ID_MODEL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -115,6 +115,7 @@ bool FGModel::InitModel(void)
   Inertial        = FDMExec->GetInertial();
   GroundReactions = FDMExec->GetGroundReactions();
   ExternalReactions = FDMExec->GetExternalReactions();
+  BuoyantForces   = FDMExec->GetBuoyantForces();
   Aircraft        = FDMExec->GetAircraft();
   Propagate       = FDMExec->GetPropagate();
   Auxiliary       = FDMExec->GetAuxiliary();

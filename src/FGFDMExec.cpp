@@ -64,6 +64,7 @@ INCLUDES
 #include <models/FGMassBalance.h>
 #include <models/FGGroundReactions.h>
 #include <models/FGExternalReactions.h>
+#include <models/FGBuoyantForces.h>
 #include <models/FGAerodynamics.h>
 #include <models/FGInertial.h>
 #include <models/FGAircraft.h>
@@ -78,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.43 2008/01/17 04:33:26 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.44 2008/01/23 23:54:47 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +127,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
   Inertial        = 0;
   GroundReactions = 0;
   ExternalReactions = 0;
+  BuoyantForces   = 0;
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
@@ -218,6 +220,7 @@ bool FGFDMExec::Allocate(void)
   Inertial        = new FGInertial(this);
   GroundReactions = new FGGroundReactions(this);
   ExternalReactions = new FGExternalReactions(this);
+  BuoyantForces   = new FGBuoyantForces(this);
   Aircraft        = new FGAircraft(this);
   Propagate       = new FGPropagate(this);
   Auxiliary       = new FGAuxiliary(this);
@@ -238,6 +241,7 @@ bool FGFDMExec::Allocate(void)
   Inertial->InitModel();
   GroundReactions->InitModel();
   ExternalReactions->InitModel();
+  BuoyantForces->InitModel();
   Aircraft->InitModel();
   Propagate->InitModel();
   Auxiliary->InitModel();
@@ -258,6 +262,7 @@ bool FGFDMExec::Allocate(void)
   Schedule(Inertial,        1);
   Schedule(GroundReactions, 1);
   Schedule(ExternalReactions, 1);
+  Schedule(BuoyantForces,   1);
   Schedule(Aircraft,        1);
   Schedule(Propagate,       1);
   Schedule(Auxiliary,       1);
@@ -280,6 +285,7 @@ bool FGFDMExec::DeAllocate(void)
   delete Inertial;
   delete GroundReactions;
   delete ExternalReactions;
+  delete BuoyantForces;
   delete Aircraft;
   delete Propagate;
   delete Auxiliary;
@@ -307,9 +313,11 @@ bool FGFDMExec::DeAllocate(void)
   Inertial        = 0;
   GroundReactions = 0;
   ExternalReactions = 0;
+  BuoyantForces   = 0;
   Aircraft        = 0;
   Propagate       = 0;
   Auxiliary       = 0;
+  Script          = 0;
 
   modelLoaded = false;
   return modelLoaded;
@@ -491,6 +499,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
       else if (element_name == "mass_balance")     result = MassBalance->Load(element);
       else if (element_name == "ground_reactions") result = GroundReactions->Load(element);
       else if (element_name == "external_reactions") result = ExternalReactions->Load(element);
+      else if (element_name == "buoyant_forces")   result = BuoyantForces->Load(element);
       else if (element_name == "propulsion")       result = Propulsion->Load(element);
       else if (element_name == "system")           result = FCS->Load(element,
                                                             FGFCS::stSystem);

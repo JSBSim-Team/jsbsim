@@ -48,11 +48,13 @@ INCLUDES
 #include <FGFDMExec.h>
 #include "FGAircraft.h"
 #include "FGInertial.h"
+#include "FGExternalReactions.h"
+#include "FGBuoyantForces.h"
 #include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.20 2007/12/30 14:53:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.21 2008/01/23 23:54:47 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,9 +211,12 @@ bool FGAuxiliary::Run()
 
   vPilotAccel.InitMatrix();
   if ( Vt > 1.0 ) {
-     vAircraftAccel =  Aerodynamics->GetForces()
-                    +  Propulsion->GetForces()
-                    +  GroundReactions->GetForces();
+     vAircraftAccel = Aerodynamics->GetForces()
+                    + Propulsion->GetForces()
+                    + GroundReactions->GetForces()
+                    + ExternalReactions->GetForces()
+                    + BuoyantForces->GetForces();
+
      vAircraftAccel /= MassBalance->GetMass();
      // Nz is Acceleration in "g's", along normal axis (-Z body axis)
      Nz = -vAircraftAccel(eZ)/Inertial->gravity();

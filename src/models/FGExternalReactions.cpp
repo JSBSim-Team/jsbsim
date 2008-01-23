@@ -49,7 +49,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.3 2008/01/13 18:56:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalReactions.cpp,v 1.4 2008/01/23 23:54:47 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,9 +105,9 @@ bool FGExternalReactions::Load(Element* el)
 
 FGExternalReactions::~FGExternalReactions()
 {
-  for (int i=0; i<Forces.size(); i++) delete Forces[i];
+  for (unsigned int i=0; i<Forces.size(); i++) delete Forces[i];
   Forces.clear();
-  for (int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
+  for (unsigned int i=0; i<interface_properties.size(); i++) delete interface_properties[i];
   interface_properties.clear();
   Debug(1);
 }
@@ -116,17 +116,19 @@ FGExternalReactions::~FGExternalReactions()
 
 bool FGExternalReactions::Run()
 {
+  if (FGModel::Run()) return true;
+  if (FDMExec->Holding()) return false; // if paused don't execute
   if (NoneDefined) return true;
 
   vTotalForces.InitMatrix();
   vTotalMoments.InitMatrix();
 
-  for (int i=0; i<Forces.size(); i++) {
+  for (unsigned int i=0; i<Forces.size(); i++) {
     vTotalForces  += Forces[i]->GetBodyForces();
     vTotalMoments += Forces[i]->GetMoments();
   }
 
-  return true;
+  return false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
