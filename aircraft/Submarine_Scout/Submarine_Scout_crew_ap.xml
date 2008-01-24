@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!-- $Id: Submarine_Scout_crew_ap.xml,v 1.1 2008/01/24 00:55:45 jberndt Exp $ -->
+<!--
+
+  Submarine Scout airship flight model for JSBSim with my LTA patch.
+
+    Copyright (C) 2007  Anders Gidenstam  (anders(at)gidenstam.org)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
+-->
+
+<autopilot name="Submarine Scout Crew Autopilot">
+
+  <!-- INTERFACE PROPERTIES -->
+  <property>ap/yaw-damper-active</property>
+  <property>ap/rudder-cmd-norm</property>
+  <property>ap/pitch-hold-active</property>
+  <property>ap/pitch-setpoint-degrees</property>
+  <property>ap/elevator-cmd-norm</property>
+
+  <!-- SENSORS -->
+
+  <!-- CHANNELS -->
+
+  <channel name="fcs/ap-yaw-damper">
+
+    <pid name="Yaw damper PID"> 
+      <input> aero/beta-deg </input>
+      <kp>   -2.000 </kp>
+      <ki>    0.000 </ki>
+      <kd>    0.000 </kd>
+      <clipto>
+        <min>-1.0</min>
+        <max> 1.0</max>
+      </clipto> 
+    </pid>
+
+    <summer name="fcs/heading-ap-sum">
+      <input> fcs/yaw-damper-pid </input>
+    </summer>
+
+    <switch name="Heading AP Autoswitch">
+      <default value="0.0"/>
+      <test logic="AND" value="fcs/heading-ap-sum">
+            ap/yaw-damper-active == 1
+            fcs/rudder-cmd-norm gt -0.1
+            fcs/rudder-cmd-norm lt 0.1
+      </test>
+    </switch>
+
+    <pure_gain name="Heading AP Rudder Command Normalizer">
+      <input>fcs/heading-ap-autoswitch</input>
+      <gain>1</gain>
+      <output>ap/rudder-cmd-norm</output>
+    </pure_gain>
+
+  </channel>
+
+  <channel name="fcs/ap-pitch-hold">
+
+    <pure_gain name="fcs/ap-pitch-setpoint-rad">
+      <input> ap/pitch-setpoint-degrees </input>
+      <gain> 0.017453 </gain>
+    </pure_gain>
+
+    <summer name="fcs/pitch-error">
+      <input> -attitude/theta-rad</input>
+      <input> fcs/ap-pitch-setpoint-rad </input>
+    </summer>
+
+    <pid name="Pitch AP PID"> 
+      <input> fcs/pitch-error </input>
+      <kp>  10.00 </kp>
+      <ki>   0.00 </ki>
+      <kd>   0.01 </kd>
+      <clipto>
+        <min>-1.0</min>
+        <max> 1.0</max>
+      </clipto> 
+    </pid>
+
+    <switch name="Pitch AP Autoswitch">
+      <default value="0.0"/>
+      <test logic="AND" value="fcs/pitch-ap-pid">
+            ap/pitch-hold-active == 1
+      </test>
+    </switch>
+
+    <pure_gain name="Pitch AP Elevator Command Normalizer">
+      <input>fcs/pitch-ap-autoswitch</input>
+      <gain>1</gain>
+      <output>ap/elevator-cmd-norm</output>
+    </pure_gain>
+
+  </channel>
+
+</autopilot>

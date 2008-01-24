@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<runscript name="take-off test">
+  <!--
+    This run is for testing lighter-than-air aircraft.
+  -->
+
+  <use aircraft="Submarine_Scout" initialize="reset00"/>
+  <run start="0.0" end="2600" dt="0.00833333">
+
+   <event name="Trim">
+      <notify/>
+      <condition>
+        sim-time-sec >= 10.0
+      </condition>
+      <set name="fcs/static-trim-cmd-norm"
+           value="0.68"
+           action="FG_RAMP" tc ="55.0"/>
+    </event>
+
+   <event name="Drop ballast">
+      <notify/>
+      <condition>
+        sim-time-sec >= 100.0
+      </condition>
+      <set name="inertia/pointmass-weight-lbs"
+           value="1126.0"
+           action="FG_RAMP" tc ="965.0"/>
+    </event>
+
+    <event name="engine start">
+      <description>Start the engine</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 60
+      </condition>
+      <set name="fcs/throttle-cmd-norm"
+           value="0.3" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm"
+           value="0.87" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd"    value="3"/>
+      <set name="propulsion/starter_cmd"    value="1"/>
+    </event>
+
+    <event name="yaw damper">
+      <description>Rudder yaw damper</description>
+      <notify/>
+      <condition>
+        sim-time-sec >= 200
+      </condition>
+      <set name="ap/yaw-damper-active"      value="1"/>
+      <set name="fcs/elevator-cmd-norm"     value="-0.4"/>
+    </event>
+
+    <event name="pitch hold">
+      <description>Pitch hold</description>
+      <notify/>
+      <condition>
+        sim-time-sec >= 200
+      </condition>
+      <set name="ap/pitch-hold-active"      value="0"/>
+      <set name="ap/pitch-setpoint-degrees" value="2"/>
+    </event>
+
+    <event name="level out">
+      <description>Level out</description>
+      <notify/>
+      <condition>
+        sim-time-sec >= 1500
+      </condition>
+      <set name="fcs/elevator-cmd-norm"
+           value="0.635"
+           action="FG_RAMP" tc ="30.0"/>
+    </event>
+
+    <event name="Start turn">
+      <notify/>
+      <condition>
+        sim-time-sec >= 1695.0
+      </condition>
+      <set name="fcs/rudder-cmd-norm"
+           value="0.3"/>
+      <set name="ap/yaw-damper-active"
+           value="0"/>
+    </event>
+
+    <event name="Neutral rudder">
+      <notify/>
+      <condition>
+        sim-time-sec >= 1700.0
+      </condition>
+      <set name="fcs/rudder-cmd-norm"
+           value="-0.2"/>
+       <set name="fcs/elevator-cmd-norm"
+           value="0.2"
+           action="FG_RAMP" tc ="30.0"/>
+   </event>
+
+    <event name="Opposite rudder">
+      <notify/>
+      <condition>
+        sim-time-sec >= 1770.0
+      </condition>
+      <set name="fcs/rudder-cmd-norm"
+           value="-1.0"/>
+    </event>
+
+    <event name="Neutral rudder">
+      <notify/>
+      <condition>
+        sim-time-sec >= 1810.0
+      </condition>
+      <set name="fcs/rudder-cmd-norm"
+           value="0.0"/>
+      <set name="ap/yaw-damper-active"
+           value="1"/>
+       <set name="fcs/elevator-cmd-norm"
+           value="0.45"
+           action="FG_RAMP" tc ="60.0"/>
+    </event>
+
+    <event name="Time Notify" type="FG_DELTA" persistent="true">
+      <description>Output message at 100 second intervals</description>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+        <property>inertia/pointmass-weight-lbs</property>
+      </notify>
+      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+  </run>
+</runscript>
