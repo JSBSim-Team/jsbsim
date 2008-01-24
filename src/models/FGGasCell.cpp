@@ -49,7 +49,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.2 2008/01/24 19:55:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.3 2008/01/24 19:56:12 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -204,27 +204,21 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/temp-R",
            CellNum);
   PropertyManager->Tie( property_name, &Temperature );
-  //PropertyManager->SetWritable( property_name, false );
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/pressure-psf",
            CellNum);
   PropertyManager->Tie( property_name, &Pressure );
-  //PropertyManager->SetWritable( property_name, false );
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/volume-ft3",
            CellNum);
   PropertyManager->Tie( property_name, &Volume );
-  //PropertyManager->SetWritable( property_name, false );
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/buoyancy-lbs",
            CellNum);
   PropertyManager->Tie( property_name, &Buoyancy );
-  //PropertyManager->SetWritable( property_name, false );
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/contents-mol",
            CellNum);
   PropertyManager->Tie( property_name, &Contents );
-  //PropertyManager->SetWritable( property_name, false );
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/valve_open",
            CellNum);
   PropertyManager->Tie( property_name, &ValveOpen );
-  //PropertyManager->SetWritable( property_name, false );
 
   Debug(0);
 
