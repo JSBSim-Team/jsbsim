@@ -40,11 +40,12 @@ INCLUDES
 
 #include "FGMassBalance.h"
 #include "FGPropulsion.h"
+#include "FGBuoyantForces.h"
 #include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.11 2008/01/10 12:52:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.12 2008/01/24 19:55:05 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,14 +141,16 @@ bool FGMassBalance::Run(void)
   if (FGModel::Run()) return true;
   if (FDMExec->Holding()) return false;
 
-  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight();
+  Weight = EmptyWeight + Propulsion->GetTanksWeight() + GetPointMassWeight()
+    + BuoyantForces->GetGasMass()*slugtolb;
 
   Mass = lbtoslug*Weight;
 
 // Calculate new CG
 
   vXYZcg = (Propulsion->GetTanksMoment() + EmptyWeight*vbaseXYZcg
-                                     + GetPointMassMoment() ) / Weight;
+            + GetPointMassMoment()
+            + BuoyantForces->GetGasMassMoment()) / Weight;
 
 // Calculate new total moments of inertia
 
@@ -158,6 +161,7 @@ bool FGMassBalance::Run(void)
   // Then add the contributions from the additional pointmasses.
   mJ += CalculatePMInertias();
   mJ += Propulsion->CalculateTankInertias();
+  mJ += BuoyantForces->GetGasMassInertia();
 
   Ixx = mJ(1,1);
   Iyy = mJ(2,2);

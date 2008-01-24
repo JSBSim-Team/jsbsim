@@ -13,7 +13,7 @@
         sim-time-sec >= 10.0
       </condition>
       <set name="fcs/static-trim-cmd-norm"
-           value="0.68"
+           value="0.70"
            action="FG_RAMP" tc ="55.0"/>
     </event>
 
@@ -23,15 +23,15 @@
         sim-time-sec >= 100.0
       </condition>
       <set name="inertia/pointmass-weight-lbs"
-           value="1126.0"
-           action="FG_RAMP" tc ="965.0"/>
+           value="1000.0"
+           action="FG_RAMP" tc ="20.0"/>
     </event>
 
     <event name="engine start">
       <description>Start the engine</description>
       <notify/>
       <condition>
-        position/h-agl-ft >= 60
+        position/h-agl-ft >= 100
       </condition>
       <set name="fcs/throttle-cmd-norm"
            value="0.3" action="FG_RAMP" tc ="0.5"/>
@@ -45,7 +45,7 @@
       <description>Rudder yaw damper</description>
       <notify/>
       <condition>
-        sim-time-sec >= 200
+        sim-time-sec >= 750
       </condition>
       <set name="ap/yaw-damper-active"      value="1"/>
       <set name="fcs/elevator-cmd-norm"     value="-0.4"/>
@@ -55,13 +55,13 @@
       <description>Pitch hold</description>
       <notify/>
       <condition>
-        sim-time-sec >= 200
+        sim-time-sec >= 800
       </condition>
       <set name="ap/pitch-hold-active"      value="0"/>
       <set name="ap/pitch-setpoint-degrees" value="2"/>
     </event>
 
-    <event name="level out">
+    <!-- event name="level out">
       <description>Level out</description>
       <notify/>
       <condition>
@@ -70,7 +70,7 @@
       <set name="fcs/elevator-cmd-norm"
            value="0.635"
            action="FG_RAMP" tc ="30.0"/>
-    </event>
+    </event -->
 
     <event name="Start turn">
       <notify/>
@@ -124,6 +124,7 @@
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
         <property>inertia/pointmass-weight-lbs</property>
+        <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>

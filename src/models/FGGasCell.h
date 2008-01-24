@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.1 2008/01/23 23:54:47 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.2 2008/01/24 19:55:05 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,8 +83,8 @@ CLASS DOCUMENTATION
 <P>
 Configuration File Format
 <pre>
- \<mass_balance>
-  \<gas_cell type="\<HYDROGEN | HELIUM>">
+ \<buoyant_forces>
+  \<gas_cell type="\<HYDROGEN | HELIUM | AIR>">
    \<location unit="M">
     \<x> ... \</x>
     \<y> ... \</y>
@@ -102,11 +102,11 @@ Configuration File Format
      {heat transfer coefficients} [lb ft / (s R)]
    \</heat>
   \</gas_cell>
- \</mass_balance>
+ \</buoyant_forces>
 </pre>
 Definition of the gas cell configuration file parameters:
 <pre>
-<b>type</b> - One of HYDROGEN or HELIUM.
+<b>type</b> - One of HYDROGEN, HELIUM or AIR.
 <b>location</b> - Location of cell center in the aircraft's structural frame.
                   Currently this is were the forces of the cell is applied.
 <b>{x|y|z}_radius</b> - Radius along in the respective direction (both ends).
@@ -174,10 +174,10 @@ private:
   void Debug(int from);
 
   /* Constants. */
-  const double R;          // [lbs ft/(mol Rankine)]
-  const double M_air;      // [slug/mol]
-  const double M_hydrogen; // [slug/mol]
-  const double M_helium;   // [slug/mol]
+  const static double R;          // [lbs ft/(mol Rankine)]
+  const static double M_air;      // [slug/mol]
+  const static double M_hydrogen; // [slug/mol]
+  const static double M_helium;   // [slug/mol]
 
   double M_gas() {                // [slug/mol]
     switch (Type) {

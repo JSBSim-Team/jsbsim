@@ -37,11 +37,12 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include "FGBuoyantForces.h"
+#include "FGMassBalance.h"
 #include <input_output/FGPropertyManager.h>  // Need?
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.1 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.2 2008/01/24 19:55:04 jberndt Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,6 +57,8 @@ FGBuoyantForces::FGBuoyantForces(FGFDMExec* FDMExec) : FGModel(FDMExec)
 
   vTotalForces.InitMatrix();
   vTotalMoments.InitMatrix();
+
+  gasCellJ.InitMatrix();
 
   bind();
 
@@ -124,6 +127,61 @@ bool FGBuoyantForces::Load(Element *element)
   }
   
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGBuoyantForces::GetGasMass(void)
+{
+  double Gw = 0.0;
+
+  for (unsigned int i = 0; i < Cells.size(); i++) {
+    Gw += Cells[i]->GetMass();
+  }
+
+  return Gw;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
+{
+  vXYZgasCell_arm.InitMatrix();
+  for (unsigned int i = 0; i < Cells.size(); i++) {
+    vXYZgasCell_arm(eX) +=
+      Cells[i]->GetXYZ(eX) * Cells[i]->GetMass()*slugtolb;
+    vXYZgasCell_arm(eY) +=
+      Cells[i]->GetXYZ(eY) * Cells[i]->GetMass()*slugtolb;
+    vXYZgasCell_arm(eZ) +=
+      Cells[i]->GetXYZ(eZ) * Cells[i]->GetMass()*slugtolb;
+  }
+  return vXYZgasCell_arm;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGMatrix33& FGBuoyantForces::GetGasMassInertia(void)
+{
+  const unsigned int size = Cells.size();
+  
+  if (size == 0) return gasCellJ;
+
+  gasCellJ = FGMatrix33();
+
+  for (unsigned int i=0; i < size; i++) {
+    FGColumnVector3 v = MassBalance->StructuralToBody( Cells[i]->GetXYZ() );
+    // Body basis is in FT. 
+    const double mass = Cells[i]->GetMass();
+    
+    // FIXME: Verify that this is the correct way to change between the
+    //        coordinate frames.
+    gasCellJ += Cells[i]->GetInertia() + 
+      FGMatrix33( 0,                - mass*v(1)*v(2), - mass*v(1)*v(3),
+                  - mass*v(2)*v(1), 0,                - mass*v(2)*v(3),
+                  - mass*v(3)*v(1), - mass*v(3)*v(2), 0 );
+  }
+  
+  return gasCellJ;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

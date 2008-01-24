@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.1 2008/01/24 00:55:45 jberndt Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.2 2008/01/24 19:55:03 jberndt Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim with my LTA extension.
@@ -26,1644 +26,1620 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
 
-  <fileheader>
+ <fileheader>
 
-    <author> Anders Gidenstam </author>
-    <filecreationdate> 2007-02-11 </filecreationdate>
-    <version>
-      $Id: Submarine_Scout.xml,v 1.1 2008/01/24 00:55:45 jberndt Exp $
-    </version>
-    <description>
-      JSBSim model of a Submarine Scout Zero class airship.
-    </description>
+  <author> Anders Gidenstam </author>
+  <filecreationdate> 2007-02-11 </filecreationdate>
+  <version>
+   $Id: Submarine_Scout.xml,v 1.2 2008/01/24 19:55:03 jberndt Exp $
+  </version>
+  <description>
+   JSBSim model of a Submarine Scout Zero class airship.
+  </description>
 
-    <reference refID="Freeman:1932:Akron"
-               author="Hugh B. Freeman"
-               title="Force Measurements on a 1/40-scale Model of the U.S. Airship ``Akron'';  NACA Report #432"
-               date="1932"/>
-    <reference refID="VentryKo:1982:AS"
-               author="Lord Ventry and Eugene M. Kolesnik"
-               title="Airship Saga;  ISBN 0 7137 1001 2"
-               date="1982"/>
-    <reference refID="WD:1941:AATM"
-               author="War Department"
-               title="Airship Aerodynamics  Technical Manual; TM 1-310;  ISBN 1-4102-0614-9"
-               date="1941"/>
-    <reference refID="Whale:1919:BA"
-               author="George Whale"
-               title="British Airships: Past, Present and Future;  http://www.gutenberg.org"
-               date="1919"/>
-  </fileheader>
+  <reference refID="Freeman:1932:Akron"
+             author="Hugh B. Freeman"
+             title="Force Measurements on a 1/40-scale Model of the U.S. Airship ``Akron'';  NACA Report #432"
+             date="1932"/>  
+  <reference refID="VentryKo:1982:AS"
+             author="Lord Ventry and Eugene M. Kolesnik"
+             title="Airship Saga;  ISBN 0 7137 1001 2"
+             date="1982"/>
+  <reference refID="WD:1941:AATM"
+             author="War Department"
+             title="Airship Aerodynamics  Technical Manual; TM 1-310;  ISBN 1-4102-0614-9"
+             date="1941"/>
+  <reference refID="Whale:1919:BA"
+             author="George Whale"
+             title="British Airships: Past, Present and Future;  http://www.gutenberg.org"
+             date="1919"/>
+ </fileheader>
 
-  <!--
+ <!--
  ==== Metrics ===============================================================
  -->
 
-  <metrics>
+ <metrics>
 
-    <documentation>
-      NOTE: The center of the bow of the envelope is the origo of
-      the body coordinate system.
-      x/y/z = back/right/up
-    </documentation>
+  <documentation>
+   NOTE: The center of the bow of the envelope is the origo of
+         the body coordinate system.
+ 	x/y/z = back/right/up
+  </documentation>
 
-    <documentation>
-      According to [Whale:1919:BA] the horizontal and vertical fins of a
-      S.S. B.E.2C ship were of the same size and measured 16' by 8'6" and
-      the rudder/elevators measured 4' by 8'6" each.
-      The vertical fin of a S.S. Zero might be longer.
+  <documentation>
+   According to [Whale:1919:BA] the horizontal and vertical fins of a
+   S.S. B.E.2C ship were of the same size and measured 16' by 8'6" and 
+   the rudder/elevators measured 4' by 8'6" each.
+   The vertical fin of a S.S. Zero might be longer.
 
-      Total gas volume vol = 70000 ft^3 = 1982.2 m^3.
+   Total gas volume vol = 70000 ft^3 = 1982.2 m^3.
 
-      Performance numbers from [Whale:1919:BA]:
-      - Max speed
+   Performance numbers from [Whale:1919:BA]:
+    - Max speed
       - S.S. B.E.2C:            40 - 50.5 mph
       - S.S. Maurice Farman:    "slightly slower"
       - S.S. Zero               45 mph
-      - Endurance
+    - Endurance
       - S.S. Zero:              expected 17 hours. Record: 50:55
-    </documentation>
+  </documentation>
 
-    <wingarea unit="M2">  210.0 </wingarea>
-    <!-- Guess. -->
-    <wingspan unit="FT">   30.0 </wingspan>
-    <!-- Guess. -->
-    <chord unit="M">        0.0 </chord>
-    <!-- Totally off! -->
-    <htailarea unit="M2"> 25.270 </htailarea>
-    <htailarm unit="M">   34.1 </htailarm>
-    <!-- From where?! -->
-    <vtailarea unit="M2"> 12.635 </vtailarea>
-    <vtailarm unit="M">    0.0 </vtailarm>
-    <!-- From where?! -->
-    <!-- Total gas volume vol = 70000 ft^3 = 1982.2 m^3 -->
+  <wingarea unit="M2">  210.0 </wingarea>            <!-- Guess. -->
+  <wingspan unit="FT">   30.0 </wingspan>            <!-- Guess. -->
+  <chord unit="M">        0.0 </chord>               <!-- Totally off! -->
+  <htailarea unit="M2"> 25.270 </htailarea>
+  <htailarm unit="M">   34.1 </htailarm>             <!-- From where?! -->
+  <vtailarea unit="M2"> 12.635 </vtailarea>
+  <vtailarm unit="M">    0.0 </vtailarm>             <!-- From where?! -->
+  <!-- Total gas volume vol = 70000 ft^3 = 1982.2 m^3 -->
 
-    <!-- Aerodynamic Reference Point. -->
-    <location name="AERORP" unit="M">
-      <x> 20.0 </x>
-      <y> 0.0 </y>
-      <z> 0.0 </z>
-    </location>
+  <!-- Aerodynamic Reference Point. -->
+  <location name="AERORP" unit="M">
+   <x> 20.0 </x>
+   <y> 0.0 </y>
+   <z> 0.0 </z>
+  </location>
 
-    <location name="EYEPOINT" unit="M">
-      <x> 16.1 </x>
-      <y>  0.0 </y>
-      <z> -6.4 </z>
-    </location>
+  <location name="EYEPOINT" unit="M">
+   <x> 16.1 </x>
+   <y>  0.0 </y>
+   <z> -6.4 </z>
+  </location>
 
-    <!-- Visual Reference Point -->
-    <location name="VRP" unit="M">
-      <x> 13.7  </x>
-      <y>  0.0  </y>
-      <z> -6.85 </z>
-    </location>
+  <!-- Visual Reference Point -->
+  <location name="VRP" unit="M">
+   <x> 13.7  </x>
+   <y>  0.0  </y>
+   <z> -6.85 </z>
+  </location>
 
-  </metrics>
+ </metrics>
 
-  <!--
+ <!--
  ==== External properties ===================================================
  -->
-  <system name="External properties">
-    <property> fcs/sun-angle-rad </property>
-  </system>
+ <system name="External properties">
+  <property> fcs/sun-angle-rad </property>
+ </system>
 
-  <!--
+ <!--
  ==== Mass balance ==========================================================
  -->
 
-  <mass_balance>
+ <mass_balance>
 
-    <documentation>
+  <documentation>
 
-      According to [VentryKo:1982:AS] the SS Zero class had a useful lift
-      of 1344lbs (~610kg). Considering that the lift of 1 m^3 hydrogen
-      approximately is 1 kg that leaves 1370kg of lift for the structure
-      itself.
+   According to [VentryKo:1982:AS] the SS Zero class had a useful lift
+   of 1344lbs (~610kg). Considering that the lift of 1 m^3 hydrogen
+   approximately is 1 kg that leaves 1370kg of lift for the structure
+   itself.
 
-    </documentation>
+  </documentation>
 
-    <emptywt unit="KG"> 300 </emptywt>
+  <emptywt unit="KG"> 300 </emptywt>
 
-    <documentation>
-      The empty weight is estimated to consist of:
-      - The weight of the envelope, guesstimated to 300 kg.
+  <documentation>
+   The empty weight is estimated to consist of:
+    - The weight of the envelope, guesstimated to 300 kg.
 
-      The car and engine will be added as point masses.
-    </documentation>
+   The car and engine will be added as point masses.
+  </documentation>
 
-    <documentation>
-      % Very rough estimation model of the empty weight CG and inertia tensor.
-      % Assume the empty weight of is to 100% a cylindrical shell.
+  <documentation>
+   % Very rough estimation model of the empty weight CG and inertia tensor.
+   % Assume the empty weight of is to 100% a cylindrical shell.
 
-      m = 300.0   % KG
-      r = 4.5     % meter
-      l = 43.7    % meter
+   m = 300.0   % KG
+   r = 4.5     % meter
+   l = 43.7    % meter
 
-      % Very rough estimate of center of gravity (based on the inertial estimate):
-      CGx = 0
-      CGy = 0
-      CGz = 0
+   % Very rough estimate of center of gravity (based on the inertial estimate):
+   CGx = 0
+   CGy = 0
+   CGz = 0
 
-      % Steiners theorem:
-      % Ixx = \bar{Ixx} + m sqrt(\bar{y}^2 + \bar{z}^2)
-      % Ixy = \bar{Ixy} + m \bar{x} \bar{y}
+   % Steiners theorem:
+   % Ixx = \bar{Ixx} + m sqrt(\bar{y}^2 + \bar{z}^2)
+   % Ixy = \bar{Ixy} + m \bar{x} \bar{y}
 
-      % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
-      Ixx = m * r^2
+   % Very rough estimation model of Ixx, Iyy and Izz relative the CG.
+   Ixx = m * r^2
+         
+   Iyy = 1/2*m * r^2 + 1/12*m*l^2
 
-      Iyy = 1/2*m * r^2 + 1/12*m*l^2
+   Izz = 1/2*m * r^2 + 1/12*m*l^2
 
-      Izz = 1/2*m * r^2 + 1/12*m*l^2
+   Ixy = 0
+   Ixz = 0
+   Iyz = 0
 
-      Ixy = 0
-      Ixz = 0
-      Iyz = 0
+  </documentation>
 
-    </documentation>
+  <ixx unit="KG*M2">  6075.0 </ixx>
+  <iyy unit="KG*M2"> 50780.0 </iyy>
+  <izz unit="KG*M2"> 50780.0 </izz>
+  <ixy unit="KG*M2">     0.0 </ixy>
+  <ixz unit="KG*M2">     0.0 </ixz>
+  <iyz unit="KG*M2">     0.0 </iyz>
 
-    <ixx unit="KG*M2">  6075.0 </ixx>
-    <iyy unit="KG*M2"> 50780.0 </iyy>
-    <izz unit="KG*M2"> 50780.0 </izz>
-    <ixy unit="KG*M2">     0.0 </ixy>
-    <ixz unit="KG*M2">     0.0 </ixz>
-    <iyz unit="KG*M2">     0.0 </iyz>
+  <location name="CG" unit="M">
+   <x> 21.850 </x>
+   <y>  0.000 </y>
+   <z>  0.000 </z>
+  </location>
 
-    <location name="CG" unit="M">
-      <x> 21.850 </x>
-      <y>  0.000 </y>
-      <z>  0.000 </z>
-    </location>
-
-    <!--
+  <!--
   === Ballast ================================================
   -->
-    <documentation>
-      Ballast for a S.S. b.E.2C according to [Whale:1919:BA]:
-      - Water ballast tank
+  <documentation>
+   Ballast for a S.S. b.E.2C according to [Whale:1919:BA]:
+    - Water ballast tank
       - Located immediatly behind pilot
       - Capacity 14 gallons.
-    </documentation>
+  </documentation>
 
-    <!-- Experimental ballast setup. -->
-    <!-- Center ballast -->
-    <pointmass name="Ballast_Center">
-      <!-- According to the AHT this should be max 100 kg -->
-      <location unit="M">
-        <x> 17.22 </x>
-        <y>  0.0  </y>
-        <z> -7.20 </z>
-      </location>
-      <weight unit="KG">  750 </weight>
-    </pointmass>
+  <!-- Experimental ballast setup. -->
+  <!-- Center ballast -->
+  <pointmass name="Ballast_Center">
+   <!-- According to the AHT this should be max 100 kg -->
+   <location unit="M">
+    <x> 17.22 </x>
+    <y>  0.0  </y>
+    <z> -7.20 </z>
+   </location>
+   <weight unit="KG">  750 </weight>
+  </pointmass>
 
-    <!--
+  <!--
        Ballast tanks for trim, since the ballonets are not implemented.
        These are controlled by the FCS.
-   -->
-    <!-- Forward ballast -->
-    <pointmass name="Ballast_Forward">
-      <location unit="M">
-        <x> 0.0 </x>
-        <y> 0.0 </y>
-        <z> -1.0 </z>
-      </location>
-      <weight unit="KG">  70 </weight>
-    </pointmass>
-    <!-- Aft ballast -->
-    <pointmass type="Ballast_Aft">
-      <location unit="M">
-        <x> 43.7 </x>
-        <y> 0.0 </y>
-        <z> -1.0 </z>
-      </location>
-      <weight unit="KG">  70 </weight>
-    </pointmass>
+   --> 
+  <!-- Forward ballast -->
+  <pointmass name="Ballast_Forward">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> -1.0 </z>
+   </location>
+   <weight unit="KG">  70 </weight>
+  </pointmass>
+  <!-- Aft ballast -->
+  <pointmass type="Ballast_Aft">
+   <location unit="M">
+    <x> 43.7 </x>
+    <y> 0.0 </y>
+    <z> -1.0 </z>
+   </location>
+   <weight unit="KG">  70 </weight>
+  </pointmass>
 
-    <!-- 
+  <!-- 
   === Engine =================================================
   -->
-    <documentation>
-      According to [Whale:1919:BA] the engine of a S.S. B.E.2C
-      (also 75h.p. but air cooled) weighed 438lb.
-    </documentation>
-    <documentation>
-      According to [VentryKo:1982:AS] the engine was a 75h.p.
-      Rolls Royce engine.
-      Guesstimated weight: 250 kg.
-    </documentation>
+  <documentation>
+   According to [Whale:1919:BA] the engine of a S.S. B.E.2C
+   (also 75h.p. but air cooled) weighed 438lb. 
+  </documentation>
+  <documentation>
+   According to [VentryKo:1982:AS] the engine was a 75h.p.
+   Rolls Royce engine.
+   Guesstimated weight: 250 kg.
+  </documentation>
 
-    <pointmass name="Engine">
-      <weight unit="KG"> 250.0 </weight>
-      <location name="POINTMASS" unit="M">
-        <x> 18.555 </x>
-        <y>  0.0   </y>
-        <z> -5.90  </z>
-      </location>
-    </pointmass>
+  <pointmass name="Engine">
+   <weight unit="KG"> 250.0 </weight>
+   <location name="POINTMASS" unit="M">
+    <x> 18.555 </x>
+    <y>  0.0   </y>
+    <z> -5.90  </z>
+   </location>
+  </pointmass>
 
-    <!-- 
+  <!-- 
   === Other point masses =====================================
   -->
 
-    <pointmass name="Crew 1 Observer">
-      <weight unit="KG"> 75.0 </weight>
-      <location name="POINTMASS" unit="M">
-        <x> 14.9  </x>
-        <y>  0.0  </y>
-        <z> -6.85 </z>
-      </location>
-    </pointmass>
-    <pointmass name="Crew 2 Pilot">
-      <weight unit="KG"> 75.0 </weight>
-      <location name="POINTMASS" unit="M">
-        <x> 16.17 </x>
-        <y>  0.0  </y>
-        <z> -6.85 </z>
-      </location>
-    </pointmass>
-    <pointmass name="Crew 3 Mechanic">
-      <weight unit="KG"> 75.0 </weight>
-      <location name="POINTMASS" unit="M">
-        <x> 17.22 </x>
-        <y>  0.0  </y>
-        <z> -6.85 </z>
-      </location>
-    </pointmass>
+  <pointmass name="Crew 1 Observer">
+   <weight unit="KG"> 75.0 </weight>
+   <location name="POINTMASS" unit="M">
+    <x> 14.9  </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Crew 2 Pilot">
+   <weight unit="KG"> 75.0 </weight>
+   <location name="POINTMASS" unit="M">
+    <x> 16.17 </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
+  <pointmass name="Crew 3 Mechanic">
+   <weight unit="KG"> 75.0 </weight>
+   <location name="POINTMASS" unit="M">
+    <x> 17.22 </x>
+    <y>  0.0  </y>
+    <z> -6.85 </z>
+   </location>
+  </pointmass>
 
-    <pointmass name="Car">
-      <!-- Pure guess. More of the weight should be in the engine. -->
-      <weight unit="KG"> 400.0 </weight>
-      <location name="POINTMASS" unit="M">
-        <x> 16.72 </x>
-        <y>  0.0  </y>
-        <z> -7.20 </z>
-      </location>
-    </pointmass>
-
-    <!--
-  === Gas cell ===============================================
-  -->
-
-    <documentation>
-      NOTE: The for a blimp so necessary ballonets to keep the envelope
-      at the right pressure are not yet modelled.
-      The cell is placed based on the envelope centroid location
-      as computed by BRLCAD.
-
-      The maximum overpressure is estimated from the normal pressure
-      for a North Sea class airship, which was 25-30 mm water according
-      to [VentryKo:1982:AS].
-    </documentation>
-    <documentation>
-      Envelope and gas control for a S.S. b.E.2C according to [Whale:1919:BA]:
-      - Ripping panel at the top of the envelope towards the front
-      - 14'5" by 8'
-      - Nose stiffeners: 24
-      - 2 Ballonets
-      - capacity 6,375 feet^2 each
-      - automatic spring valves set to open at 25 - 28mm (water I presume)
-      - 2 gas valves one at the bottom and one at the top of the envelope
-      - Bottom valve automatically opens at 30 - 35mm pressure.
-      - Top valve is manual only
-      (")
-    </documentation>
-
-  </mass_balance>
+  <pointmass name="Car">
+   <!-- Pure guess. More of the weight should be in the engine. -->
+   <weight unit="KG"> 400.0 </weight>
+   <location name="POINTMASS" unit="M">
+    <x> 16.72 </x>
+    <y>  0.0  </y>
+    <z> -7.20 </z>
+   </location>
+  </pointmass>
+ </mass_balance>
 
   <!--
+  === Gas cell ===============================================
+  -->
+ <buoyant_forces>
+
+  <documentation>
+   NOTE: The for a blimp so necessary ballonets to keep the envelope
+         at the right pressure are not yet modelled.
+	 The cell is placed based on the envelope centroid location
+         as computed by BRLCAD.
+
+         The maximum overpressure is estimated from the normal pressure
+         for a North Sea class airship, which was 25-30 mm water according
+         to [VentryKo:1982:AS].
+  </documentation>
+  <documentation>
+   Envelope and gas control for a S.S. b.E.2C according to [Whale:1919:BA]:
+    - Ripping panel at the top of the envelope towards the front
+      - 14'5" by 8'
+    - Nose stiffeners: 24
+    - 2 Ballonets
+      - capacity 6,375 feet^2 each
+      - automatic spring valves set to open at 25 - 28mm (water I presume)
+    - 2 gas valves one at the bottom and one at the top of the envelope
+      - Bottom valve automatically opens at 30 - 35mm pressure.
+      - Top valve is manual only
+    (")
+  </documentation>
+  
+  <gas_cell type="HYDROGEN">
+   <location unit="M">
+    <x> 18.8 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <x_radius unit="M"> 22.86 </x_radius>
+   <y_radius unit="M">  4.55 </y_radius>
+   <z_radius unit="M">  4.55 </z_radius>
+   <max_overpressure unit="PA"> 340.0 </max_overpressure> 
+   <valve_coefficient unit="M4*SEC/KG"> 0.015 </valve_coefficient>
+
+   <!-- heat exchange with the environment. [lb ft / s] -->
+   <heat>
+    <!-- Heat transfer due to temperature difference. -->
+    <!-- Sould this be split into black body, convection, etc? -->
+    <function name="dU_due_to_dT">
+     <product>
+      <value> 11186.0 </value> <!-- Surface area [ft2] -->
+      <value>    0.05 </value> <!-- Guess -->
+      <difference>
+       <property> atmosphere/T-R </property>
+       <property> buoyant_forces/gas-cell/temp-R </property>
+      </difference>
+     </product>
+    </function>
+    <!-- Heat due to solar radiation. Pure guess work. -->
+    <function name="dU_due_to_Sun">
+     <product>
+      <value>   7.2330 </value> <!-- Conversion to [lb ft / s] -->
+      <value>   326.80 </value> <!-- Estimated projected surface area [m2] -->
+      <value>  1300.00 </value> <!-- Solar energy flow [W/m2] -->
+      <value>     0.01 </value> <!-- Guess -->
+      <max>
+       <value> 0.0 </value>
+       <difference>
+        <value> 1.5708 </value>
+        <property> fcs/sun-angle-rad </property>
+       </difference>
+      </max>
+     </product>
+    </function>    
+
+   </heat>
+
+  </gas_cell>
+
+ </buoyant_forces>
+
+ <!--
  ==== Ground reactions ======================================================
  -->
 
-  <ground_reactions>
+ <ground_reactions>
 
-    <!--
+  <!--
   === Landing gears ===================================================
   -->
-    <contact type="BOGEY" name="CAR_KEEL_FRONT">
-      <location unit="M">
-        <x>  14.7 </x>
-        <y>   0.0 </y>
-        <z>  -8.2 </z>
-      </location>
-      <static_friction>  1.0 </static_friction>
-      <dynamic_friction> 2.0 </dynamic_friction>
-      <rolling_friction> 0.8 </rolling_friction>
-      <spring_coeff unit="N/M"> 50000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <contact type="BOGEY" name="CAR_KEEL_FRONT">
+   <location unit="M">
+    <x>  14.7 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-    <contact type="BOGEY" name="CAR_KEEL_MIDDLE">
-      <location unit="M">
-        <x>  16.6 </x>
-        <y>   0.0 </y>
-        <z>  -8.2 </z>
-      </location>
-      <static_friction>  1.0 </static_friction>
-      <dynamic_friction> 2.0 </dynamic_friction>
-      <rolling_friction> 0.8 </rolling_friction>
-      <spring_coeff unit="N/M"> 50000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <contact type="BOGEY" name="CAR_KEEL_MIDDLE">
+   <location unit="M">
+    <x>  16.6 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-    <contact type="BOGEY" name="CAR_KEEL_AFT">
-      <location unit="M">
-        <x>  18.4 </x>
-        <y>   0.0 </y>
-        <z>  -8.2 </z>
-      </location>
-      <static_friction>  1.0 </static_friction>
-      <dynamic_friction> 2.0 </dynamic_friction>
-      <rolling_friction> 0.8 </rolling_friction>
-      <spring_coeff unit="N/M"> 50000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <contact type="BOGEY" name="CAR_KEEL_AFT">
+   <location unit="M">
+    <x>  18.4 </x>
+    <y>   0.0 </y>
+    <z>  -8.2 </z>
+   </location>
+   <static_friction>  1.0 </static_friction>
+   <dynamic_friction> 2.0 </dynamic_friction>
+   <rolling_friction> 0.8 </rolling_friction>
+   <spring_coeff unit="N/M"> 50000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC"> 10000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-    <!--
+  <!--
   === Other contact points ============================================
   -->
-    <!-- These should induce structural failure. -->
-    <contact type="STRUCTURE" name="NOSE">
-      <location unit="M">
-        <x> 0.0 </x>
-        <y> 0.0 </y>
-        <z> 0.0 </z>
-      </location>
-      <static_friction>  0.2 </static_friction>
-      <dynamic_friction> 0.2 </dynamic_friction>
-      <rolling_friction> 0.2 </rolling_friction>
-      <spring_coeff unit="N/M">      100000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <!-- These should induce structural failure. -->
+  <contact type="STRUCTURE" name="NOSE">
+   <location unit="M">
+    <x> 0.0 </x>
+    <y> 0.0 </y>
+    <z> 0.0 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-    <contact type="STRUCTURE" name="TAIL">
-      <location unit="M">
-        <x> 43.7 </x>
-        <y>  0.0 </y>
-        <z>  0.0 </z>
-      </location>
-      <static_friction>  0.2 </static_friction>
-      <dynamic_friction> 0.2 </dynamic_friction>
-      <rolling_friction> 0.2 </rolling_friction>
-      <spring_coeff unit="N/M">      100000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <contact type="STRUCTURE" name="TAIL">
+   <location unit="M">
+    <x> 43.7 </x>
+    <y>  0.0 </y>
+    <z>  0.0 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-    <contact type="STRUCTURE" name="TAIL_FIN">
-      <location unit="M">
-        <x> 35.6 </x>
-        <y>  0.0 </y>
-        <z> -5.6 </z>
-      </location>
-      <static_friction>  0.2 </static_friction>
-      <dynamic_friction> 0.2 </dynamic_friction>
-      <rolling_friction> 0.2 </rolling_friction>
-      <spring_coeff unit="N/M">      100000 </spring_coeff>
-      <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
-      <max_steer unit="DEG"> 0.0 </max_steer>
-      <brake_group> NONE </brake_group>
-      <retractable>0</retractable>
-    </contact>
+  <contact type="STRUCTURE" name="TAIL_FIN">
+   <location unit="M">
+    <x> 35.6 </x>
+    <y>  0.0 </y>
+    <z> -5.6 </z>
+   </location>
+   <static_friction>  0.2 </static_friction>
+   <dynamic_friction> 0.2 </dynamic_friction>
+   <rolling_friction> 0.2 </rolling_friction>
+   <spring_coeff unit="N/M">      100000 </spring_coeff>
+   <damping_coeff unit="N/M/SEC">  20000 </damping_coeff>
+   <max_steer unit="DEG"> 0.0 </max_steer>
+   <brake_group> NONE </brake_group>
+   <retractable>0</retractable>
+  </contact>
 
-  </ground_reactions>
+ </ground_reactions>
 
-  <buoyant_forces>
-
-    <gas_cell type="HYDROGEN">
-      <location unit="M">
-        <x> 18.8 </x>
-        <y> 0.0 </y>
-        <z> 0.0 </z>
-      </location>
-      <x_radius unit="M"> 22.86 </x_radius>
-      <y_radius unit="M">  4.55 </y_radius>
-      <z_radius unit="M">  4.55 </z_radius>
-      <max_overpressure unit="PA"> 340.0 </max_overpressure>
-      <valve_coefficient unit="M4*SEC/KG"> 0.015 </valve_coefficient>
-
-      <!-- heat exchange with the environment. [lb ft / s] -->
-      <heat>
-        <!-- Heat transfer due to temperature difference. -->
-        <!-- Sould this be split into black body, convection, etc? -->
-        <function name="dU_due_to_dT">
-          <product>
-            <value> 11186.0 </value>
-            <!-- Surface area [ft2] -->
-            <value>    0.05 </value>
-            <!-- Guess -->
-            <difference>
-              <property> atmosphere/T-R </property>
-              <property> inertia/gas-cell/temp-R </property>
-            </difference>
-          </product>
-        </function>
-        <!-- Heat due to solar radiation. Pure guess work. -->
-        <function name="dU_due_to_Sun">
-          <product>
-            <value>   7.2330 </value>
-            <!-- Conversion to [lb ft / s] -->
-            <value>   326.80 </value>
-            <!-- Estimated projected surface area [m2] -->
-            <value>  1300.00 </value>
-            <!-- Solar energy flow [W/m2] -->
-            <value>     0.01 </value>
-            <!-- Guess -->
-            <max>
-              <value> 0.0 </value>
-              <difference>
-                <value> 1.5708 </value>
-                <property> fcs/sun-angle-rad </property>
-              </difference>
-            </max>
-          </product>
-        </function>
-
-      </heat>
-
-    </gas_cell>
-
-  </buoyant_forces>
-  <!--
+ <!--
  ==== Propulsion ============================================================
  -->
 
-  <propulsion>
-
-    <!--
+ <propulsion>
+ 
+  <!--
   === Engine ================================================
   -->
-
-    <documentation>
-      Propulsion installation information for S.S. Zero from [Whale:1919:BA]:
-      - Water-cooled Rolls Royce
+  
+  <documentation>
+   Propulsion installation information for S.S. Zero from [Whale:1919:BA]:
+    - Water-cooled Rolls Royce
       - 75hp
       - 4 bladed pusher propeller
       - Weight?   S.S. B.E.2C: 438 lb.
-      - Petrol tanks carried immediately below the center of the envelope.
+    - Petrol tanks carried immediately below the center of the envelope.
       - Capacity? S.S. B.E.2C: 60 gallons.
-    </documentation>
+  </documentation>
 
-    <documentation>
-      According to [VentryKo:1982:AS] the engine was a 75h.p.
-      Rolls Royce engine.
-    </documentation>
-    <!--
+  <documentation>  
+    According to [VentryKo:1982:AS] the engine was a 75h.p.
+    Rolls Royce engine.
+  </documentation>
+  <!--
        NOTE: This engine is too powerful! I don't have enough
              data on the real one.
   -->
 
-    <!-- Engine -->
-    <engine file="eng_io320">
-      <location unit="M">
-        <x> 19.2 </x>
-        <y>  0.0 </y>
-        <z> -6.0 </z>
-      </location>
-      <orient unit="DEG">
-        <roll> 0.0 </roll>
-        <pitch> 0 </pitch>
-        <yaw> 0 </yaw>
-      </orient>
-      <feed>0</feed>
-      <thruster file="prop_75in2f">
-        <location unit="M">
-          <x> 19.2 </x>
-          <y>  0.0 </y>
-          <z> -6.0 </z>
-        </location>
-        <orient unit="DEG">
-          <roll> 0.0 </roll>
-          <pitch> 0.0 </pitch>
-          <yaw> 0.0 </yaw>
-        </orient>
-      </thruster>
-    </engine>
+  <!-- Engine -->
+  <engine file="eng_io320">
+   <location unit="M">
+    <x> 19.2 </x>
+    <y>  0.0 </y>
+    <z> -6.0 </z>
+   </location>
+   <orient unit="DEG">
+    <roll> 0.0 </roll>
+    <pitch> 0 </pitch>
+    <yaw> 0 </yaw>
+   </orient>
+   <feed>0</feed>
+   <thruster file="prop_75in2f">
+    <location unit="M">
+     <x> 19.2 </x>
+     <y>  0.0 </y>
+     <z> -6.0 </z>
+    </location>
+    <orient unit="DEG">
+     <roll> 0.0 </roll>
+     <pitch> 0.0 </pitch>
+     <yaw> 0.0 </yaw>
+    </orient>
+   </thruster>
+  </engine>
 
-    <!--
+  <!--
   === Fuel tanks ============================================
   -->
-
-    <!--
+  
+  <!--
        NOTE: The capacity numbers should be in liters
              Assumption: 1 liter (= 0.001 m^3) = 1 kg
   -->
 
-    <tank type="FUEL">
-      <location unit="M">
-        <x> 17.22 </x>
-        <y>  0.0  </y>
-        <z> -4.50 </z>
-      </location>
-      <capacity unit="KG"> 450 </capacity>
-      <contents unit="KG"> 400 </contents>
-    </tank>
+  <tank type="FUEL">
+   <location unit="M">
+    <x> 17.22 </x>
+    <y>  0.0  </y>
+    <z> -4.50 </z>
+   </location>
+   <capacity unit="KG"> 450 </capacity>
+   <contents unit="KG"> 400 </contents>
+  </tank>
 
-  </propulsion>
+ </propulsion>
 
-  <!--
+ <!--
  ==== Flight control system =================================================
  -->
 
-  <autopilot file="Submarine_Scout_crew_ap"/>
+ <autopilot file="Submarine_Scout_crew_ap"/>
 
-  <flight_control name="FGFCS">
+ <flight_control name="FGFCS">
 
-    <documentation>
-      Instrumentation for a S.S. b.E.2C according to [Whale:1919:BA]:
-      Pilot:
-      - watch
-      - air-speed indicator graduated in knots
-      - aneroid (pressure altimeter?) reading to 10,000 feet.
-      - Elliot revolution counter (tachometer?)
-      - Clift inclinometer reading up to 20 degrees depression or elevation.
-      - map case
-      - oil pressure gauge
-      - petrol pressure gauge
-      - glass petrol level
-      - two concentric glass pressure gauges for gas pressure
-      - Compass mounted on a small wooden pedestal in front of the pilot.
-      - Controls:
+  <documentation>
+   Instrumentation for a S.S. b.E.2C according to [Whale:1919:BA]:
+   Pilot:
+    - watch
+    - air-speed indicator graduated in knots
+    - aneroid (pressure altimeter?) reading to 10,000 feet.
+    - Elliot revolution counter (tachometer?)
+    - Clift inclinometer reading up to 20 degrees depression or elevation.
+    - map case
+    - oil pressure gauge
+    - petrol pressure gauge
+    - glass petrol level
+    - two concentric glass pressure gauges for gas pressure
+    - Compass mounted on a small wooden pedestal in front of the pilot.
+    - Controls:
       - rudder pedals
       - elevator wheel mounted in a fore-aft direction across the seat (?)
       - Valve cord to top (and bottom?) gas valve valve(s)
       - Rip cord
 
-      Observer/Wireless operator:
-      - radio w. range up to 50-60 miles.
-      - Lewis machine gun
-    </documentation>
+   Observer/Wireless operator:
+    - radio w. range up to 50-60 miles.
+    - Lewis machine gun 
+  </documentation>
 
-    <!--
+  <!--
   === Pitch ==================================================
   -->
-    <channel name="Pitch">
-      <summer name="fcs/pitch-trim-sum">
-        <input>fcs/elevator-cmd-norm</input>
-        <input>fcs/pitch-trim-cmd-norm</input>
-        <input>ap/elevator-cmd-norm</input>
-        <clipto>
-          <min>-1</min>
-          <max>1</max>
-        </clipto>
-      </summer>
+  <channel name="Pitch">
+   <summer name="fcs/pitch-trim-sum">
+    <input>fcs/elevator-cmd-norm</input>
+    <input>fcs/pitch-trim-cmd-norm</input>
+    <input>ap/elevator-cmd-norm</input>
+    <clipto>
+     <min>-1</min>
+     <max>1</max>
+    </clipto>
+   </summer>
 
-      <aerosurface_scale name="Elevator Control">
-        <input>fcs/pitch-trim-sum</input>
-        <gain>0.5236</gain>
-        <domain>
-          <min>-1</min>
-          <max>1</max>
-        </domain>
-        <range>
-          <min>-0.5236</min>
-          <max>0.5236</max>
-        </range>
-        <output>fcs/elevator-pos-rad</output>
-      </aerosurface_scale>
+   <aerosurface_scale name="Elevator Control">
+    <input>fcs/pitch-trim-sum</input>
+    <gain>0.5236</gain>
+    <domain>
+     <min>-1</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>-0.5236</min>
+     <max>0.5236</max>
+    </range>
+    <output>fcs/elevator-pos-rad</output>
+   </aerosurface_scale>
 
-      <aerosurface_scale name="Elevator Position Normalized">
-        <input>fcs/elevator-pos-rad</input>
-        <gain>1.9099</gain>
-        <domain>
-          <min>-0.5236</min>
-          <max>0.5236</max>
-        </domain>
-        <range>
-          <min>-1</min>
-          <max>1</max>
-        </range>
-        <output>fcs/elevator-pos-norm</output>
-      </aerosurface_scale>
-    </channel>
+   <aerosurface_scale name="Elevator Position Normalized">
+    <input>fcs/elevator-pos-rad</input>
+    <gain>1.9099</gain>
+    <domain>
+     <min>-0.5236</min>
+     <max>0.5236</max>
+    </domain>
+    <range>
+     <min>-1</min>
+     <max>1</max>
+    </range>
+    <output>fcs/elevator-pos-norm</output>
+   </aerosurface_scale>
+  </channel>
 
-    <!--
+  <!--
   === Yaw ====================================================
   -->
-    <channel name="Yaw">
+  <channel name="Yaw">
 
-      <summer name="fcs/yaw-trim-sum">
-        <input>fcs/rudder-cmd-norm</input>
-        <input>fcs/yaw-trim-cmd-norm</input>
-        <input>ap/rudder-cmd-norm</input>
-        <clipto>
-          <min>-1</min>
-          <max>1</max>
-        </clipto>
-      </summer>
+   <summer name="fcs/yaw-trim-sum">
+    <input>fcs/rudder-cmd-norm</input>
+    <input>fcs/yaw-trim-cmd-norm</input>
+    <input>ap/rudder-cmd-norm</input>
+    <clipto>
+     <min>-1</min>
+     <max>1</max>
+    </clipto>
+   </summer>
 
-      <aerosurface_scale name="Rudder Control">
-        <input>fcs/yaw-trim-sum</input>
-        <gain>0.5236</gain>
-        <domain>
-          <min>-1</min>
-          <max>1</max>
-        </domain>
-        <range>
-          <min>-0.5236</min>
-          <max>0.5236</max>
-        </range>
-        <output>fcs/rudder-pos-rad</output>
-      </aerosurface_scale>
+   <aerosurface_scale name="Rudder Control">
+    <input>fcs/yaw-trim-sum</input>
+    <gain>0.5236</gain>
+    <domain>
+     <min>-1</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>-0.5236</min>
+     <max>0.5236</max>
+    </range>
+    <output>fcs/rudder-pos-rad</output>
+   </aerosurface_scale>
 
-      <aerosurface_scale name="Rudder Position Normalized">
-        <input>fcs/rudder-pos-rad</input>
-        <gain>1.9099</gain>
-        <domain>
-          <min>-0.5236</min>
-          <max>0.5236</max>
-        </domain>
-        <range>
-          <min>-1</min>
-          <max>1</max>
-        </range>
-        <output>fcs/rudder-pos-norm</output>
-      </aerosurface_scale>
+   <aerosurface_scale name="Rudder Position Normalized">
+    <input>fcs/rudder-pos-rad</input>
+    <gain>1.9099</gain>
+    <domain>
+     <min>-0.5236</min>
+     <max>0.5236</max>
+    </domain>
+    <range>
+     <min>-1</min>
+     <max>1</max>
+    </range>
+    <output>fcs/rudder-pos-norm</output>
+   </aerosurface_scale>
 
-    </channel>
+  </channel>
 
-    <!--
+  <!--
   === Static Trim ============================================
   -->
-    <property>fcs/static-trim-cmd-norm</property>
+  <property>fcs/static-trim-cmd-norm</property>
 
-    <channel name="StaticTrim">
-      <!--
+  <channel name="StaticTrim">
+   <!--
     This is a temoprary replacement for triming by using the ballonets.
    -->
 
-      <summer name="fcs/static-trim-norm">
-        <input>fcs/static-trim-cmd-norm</input>
-        <clipto>
-          <min>0</min>
-          <max>1</max>
-        </clipto>
-      </summer>
+   <summer name="fcs/static-trim-norm">
+    <input>fcs/static-trim-cmd-norm</input>
+    <clipto>
+     <min>0</min>
+     <max>1</max>
+    </clipto>
+   </summer>
 
-      <summer name="fcs/inverse-static-trim-norm">
-        <input>-fcs/static-trim-norm</input>
-        <bias>1</bias>
-        <clipto>
-          <min>0</min>
-          <max>1</max>
-        </clipto>
-      </summer>
+   <summer name="fcs/inverse-static-trim-norm">
+    <input>-fcs/static-trim-norm</input>
+    <bias>1</bias>
+    <clipto>
+     <min>0</min>
+     <max>1</max>
+    </clipto>
+   </summer>
 
-      <aerosurface_scale name="Ballast Trim Fore">
-        <input>fcs/inverse-static-trim-norm</input>
-        <domain>
-          <min>0</min>
-          <max>1</max>
-        </domain>
-        <range>
-          <min>0</min>
-          <max>320</max>
-        </range>
-        <output>inertia/pointmass-weight-lbs[1]</output>
-      </aerosurface_scale>
+   <aerosurface_scale name="Ballast Trim Fore">
+    <input>fcs/inverse-static-trim-norm</input>
+     <domain>
+     <min>0</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>0</min>
+     <max>320</max>
+    </range>
+    <output>inertia/pointmass-weight-lbs[1]</output>
+   </aerosurface_scale>
 
-      <aerosurface_scale name="Ballast Trim Aft">
-        <input>fcs/static-trim-norm</input>
-        <domain>
-          <min>0</min>
-          <max>1</max>
-        </domain>
-        <range>
-          <min>0</min>
-          <max>320</max>
-        </range>
-        <output>inertia/pointmass-weight-lbs[2]</output>
-      </aerosurface_scale>
+   <aerosurface_scale name="Ballast Trim Aft">
+    <input>fcs/static-trim-norm</input>
+    <domain>
+     <min>0</min>
+     <max>1</max>
+    </domain>
+    <range>
+     <min>0</min>
+     <max>320</max>
+    </range>
+    <output>inertia/pointmass-weight-lbs[2]</output>
+   </aerosurface_scale>
 
-    </channel>
-
-    <!--
-  === Auxiliary functions ====================================
-  -->
-    <channel name="Aux">
-
-      <summer name="fcs/superheat-R">
-        <input> inertia/gas-cell/temp-R </input>
-        <input>-atmosphere/T-R </input>
-      </summer>
-
-    </channel>
-
-  </flight_control>
+  </channel>
 
   <!--
+  === Auxiliary functions ====================================
+  -->
+  <channel name="Aux">
+
+   <summer name="fcs/superheat-R">
+    <input> buoyant_forces/gas-cell/temp-R </input>
+    <input>-atmosphere/T-R </input>
+   </summer>
+
+  </channel>
+
+ </flight_control>
+
+ <!--
  ==== Aerodynamics ==========================================================
  -->
 
-  <aerodynamics>
+ <aerodynamics>
 
-    <!-- The envelope can be rigged at an angle to the car. -->
-    <function name="aero/envelope-alpha-deg">
-      <sum>
-        <value> 1.25 </value>
-        <!-- Envelope pitch offset w.r.t. car. -->
-        <property>aero/alpha-deg</property>
-      </sum>
-    </function>
+  <!-- The envelope can be rigged at an angle to the car. -->
+  <function name="aero/envelope-alpha-deg">
+   <sum>
+    <value> 1.25 </value> <!-- Envelope pitch offset w.r.t. car. -->
+    <property>aero/alpha-deg</property>
+   </sum>
+  </function>
 
-    <!--
+  <!--
   === Forces =================================================
   -->
 
-    <!-- ================================================== -->
-    <axis name="DRAG">
+  <!-- ================================================== -->
+  <axis name="DRAG">
 
-      <function name="aero/coefficient/CDenv_alpha">
-        <description>Drag_from_envelope_due_to_alpha</description>
-        <!-- 
+   <function name="aero/coefficient/CDenv_alpha">
+    <description>Drag_from_envelope_due_to_alpha</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!-- Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180  0.0018604
-              -165  0.0042752
-              -150  0.0154610
-              -135  0.0561820
-              -120  0.0342520
-              -105  0.0866310
-              -90   0.0999370
-              -75   0.0766400
-              -60   0.0506840
-              -45   0.0325350
-              -30   0.0178950
-              -20   0.0088926
-              -10   0.0084486
-              0     0.0059211
-              10    0.0084486
-              20    0.0088926
-              30    0.0178950
-              45    0.0325350
-              60    0.0506840
-              75    0.0766400
-              90    0.0999370
-              105   0.0866310
-              120   0.0561820
-              135   0.0342520
-              150   0.0154610
-              165   0.0042752
-              180   0.0018604
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <table>  
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!-- Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180  0.0018604
+       -165  0.0042752
+       -150  0.0154610
+       -135  0.0561820
+       -120  0.0342520
+       -105  0.0866310
+       -90   0.0999370
+       -75   0.0766400
+       -60   0.0506840
+       -45   0.0325350
+       -30   0.0178950
+       -20   0.0088926
+       -10   0.0084486
+       0     0.0059211
+       10    0.0084486
+       20    0.0088926
+       30    0.0178950
+       45    0.0325350
+       60    0.0506840
+       75    0.0766400
+       90    0.0999370
+       105   0.0866310
+       120   0.0561820
+       135   0.0342520
+       150   0.0154610
+       165   0.0042752
+       180   0.0018604
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDhfin_alpha">
-        <description>Drag_from_horizontal_fin_due_to_alpha</description>
-        <!-- 
+   <function name="aero/coefficient/CDhfin_alpha">
+    <description>Drag_from_horizontal_fin_due_to_alpha</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!-- Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.0016346
-              -165   0.0135650
-              -150   0.0745610
-              -135   0.1331500
-              -120   0.1771500
-              -105   0.2169500
-              -90    0.1910000
-              -75    0.2154000
-              -60    0.17049
-              -45    0.14314
-              -30    0.072847
-              -20    0.027739
-              -10    0.0089855
-              0      0.0010200
-              10     0.0089855
-              20     0.027739
-              30     0.072847
-              45     0.14314
-              60     0.17049
-              75     0.2154000
-              90     0.1910000
-              105    0.2169500
-              120    0.1771500
-              135    0.1331500
-              150    0.0745610
-              165    0.0135650
-              180    0.0016346
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <table>  
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!-- Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.0016346
+       -165   0.0135650
+       -150   0.0745610
+       -135   0.1331500
+       -120   0.1771500
+       -105   0.2169500
+       -90    0.1910000
+       -75    0.2154000
+       -60    0.17049
+       -45    0.14314
+       -30    0.072847
+       -20    0.027739
+       -10    0.0089855
+       0      0.0010200
+       10     0.0089855
+       20     0.027739
+       30     0.072847
+       45     0.14314
+       60     0.17049
+       75     0.2154000
+       90     0.1910000
+       105    0.2169500
+       120    0.1771500
+       135    0.1331500
+       150    0.0745610
+       165    0.0135650
+       180    0.0016346
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDde">
-        <description>Drag_due_to_elevator_deflection</description>
-        <!-- 
+   <function name="aero/coefficient/CDde">
+    <description>Drag_due_to_elevator_deflection</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <value> 1.0 </value>
-          <table>
-            <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  0.020407
-              0    0
-              30   0.020407
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <value> 1.0 </value>
+     <table>
+      <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  0.020407
+       0    0
+       30   0.020407
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDenv_beta">
-        <description>Drag_from_envelope_due_to_side_slip</description>
-        <!-- 
+   <function name="aero/coefficient/CDenv_beta">
+    <description>Drag_from_envelope_due_to_side_slip</description>
+    <!-- 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
            CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!-- Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180  0.0018604
-              -165  0.0042752
-              -150  0.0154610
-              -135  0.0561820
-              -120  0.0342520
-              -105  0.0866310
-              -90   0.0999370
-              -75   0.0766400
-              -60   0.0506840
-              -45   0.0325350
-              -30   0.0178950
-              -20   0.0088926
-              -10   0.0084486
-              0     0.0059211
-              10    0.0084486
-              20    0.0088926
-              30    0.0178950
-              45    0.0325350
-              60    0.0506840
-              75    0.0766400
-              90    0.0999370
-              105   0.0866310
-              120   0.0561820
-              135   0.0342520
-              150   0.0154610
-              165   0.0042752
-              180   0.0018604
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <table>  
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!-- Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180  0.0018604
+       -165  0.0042752
+       -150  0.0154610
+       -135  0.0561820
+       -120  0.0342520
+       -105  0.0866310
+       -90   0.0999370
+       -75   0.0766400
+       -60   0.0506840
+       -45   0.0325350
+       -30   0.0178950
+       -20   0.0088926
+       -10   0.0084486
+       0     0.0059211
+       10    0.0084486
+       20    0.0088926
+       30    0.0178950
+       45    0.0325350
+       60    0.0506840
+       75    0.0766400
+       90    0.0999370
+       105   0.0866310
+       120   0.0561820
+       135   0.0342520
+       150   0.0154610
+       165   0.0042752
+       180   0.0018604
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDvfin_beta">
-        <description>Drag_from_vertical_fin_due_to_beta</description>
-        <!-- 
+   <function name="aero/coefficient/CDvfin_beta">
+    <description>Drag_from_vertical_fin_due_to_beta</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <value> 0.5 </value>
-          <!-- There is only one vertical fin as opposed to
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <value> 0.5 </value>  <!-- There is only one vertical fin as opposed to
                                 two horizontal ones.
                            -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!-- Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.0016346
-              -165   0.0135650
-              -150   0.0745610
-              -135   0.1331500
-              -120   0.1771500
-              -105   0.2169500
-              -90    0.1910000
-              -75    0.2154000
-              -60    0.17049
-              -45    0.14314
-              -30    0.072847
-              -20    0.027739
-              -10    0.0089855
-              0      0.0010200
-              10     0.0089855
-              20     0.027739
-              30     0.072847
-              45     0.14314
-              60     0.17049
-              75     0.2154000
-              90     0.1910000
-              105    0.2169500
-              120    0.1771500
-              135    0.1331500
-              150    0.0745610
-              165    0.0135650
-              180    0.0016346
-            </tableData>
-          </table>
-        </product>
-      </function>
+     <table>  
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!-- Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.0016346
+       -165   0.0135650
+       -150   0.0745610
+       -135   0.1331500
+       -120   0.1771500
+       -105   0.2169500
+       -90    0.1910000
+       -75    0.2154000
+       -60    0.17049
+       -45    0.14314
+       -30    0.072847
+       -20    0.027739
+       -10    0.0089855
+       0      0.0010200
+       10     0.0089855
+       20     0.027739
+       30     0.072847
+       45     0.14314
+       60     0.17049
+       75     0.2154000
+       90     0.1910000
+       105    0.2169500
+       120    0.1771500
+       135    0.1331500
+       150    0.0745610
+       165    0.0135650
+       180    0.0016346
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDdr">
-        <description>Drag_due_to_rudder_deflection</description>
-        <!-- 
+   <function name="aero/coefficient/CDdr">
+    <description>Drag_due_to_rudder_deflection</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <value> 1.0 </value>
-          <table>
-            <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  0.020407
-              0    0
-              30   0.020407
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <value> 1.0 </value>
+     <table>
+      <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  0.020407
+       0    0
+       30   0.020407
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CDcar">
-        <description>Drag_from_car_and_rigging</description>
-        <!-- 
+   <function name="aero/coefficient/CDcar">
+    <description>Drag_from_car_and_rigging</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CD = D / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CD -->
-          <!-- According to [WD:1941:AATM]
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CD -->
+     <!-- According to [WD:1941:AATM]
           the envelope on a small non-rigid contributes approximately
           35% to the total air resistance.
           I think they mean 'at zero alpha and beta'.
-     -->
-          <value> 1.6 </value>
-          <value> 0.0059211 </value>
-        </product>
-      </function>
+     -->  
+     <value> 1.6 </value>
+     <value> 0.0059211 </value>
+    </product>
+   </function>
 
-    </axis>
+  </axis>
 
-    <!-- ================================================== -->
-    <axis name="SIDE">
+  <!-- ================================================== -->
+  <axis name="SIDE">
 
-      <function name="aero/coefficient/CYenv_beta">
-        <description>Side_force_from_envelope_due_to_beta</description>
-        <!-- 	 
+   <function name="aero/coefficient/CYenv_beta">
+    <description>Side_force_from_envelope_due_to_beta</description>
+    <!-- 	 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
 	    CY = Y / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CY -->
-          <value> -1.0 </value>
-          <!-- Note the sign! -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180  0.000000
-              -165  0.002132
-              -150  0.009168
-              -135  0.011184
-              -120  0.008625
-              -105  0.010199
-              -90   -0.017636
-              -75   -0.028148
-              -60   -0.028917
-              -45   -0.016276
-              -30   -0.013047
-              -20   -0.007450
-              -10   -0.002911
-              0     0.000000
-              10    0.002911
-              20    0.007450
-              30    0.013047
-              45    0.016276
-              60    0.028917
-              75    0.028148
-              90    0.017636
-              105   -0.010199
-              120   -0.008625
-              135   -0.011184
-              150   -0.009168
-              165   -0.002132
-              180   0.000000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CY -->
+     <value> -1.0 </value>  <!-- Note the sign! --> 
+     <table>
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180  0.000000
+       -165  0.002132
+       -150  0.009168
+       -135  0.011184
+       -120  0.008625
+       -105  0.010199
+       -90   -0.017636
+       -75   -0.028148
+       -60   -0.028917
+       -45   -0.016276
+       -30   -0.013047
+       -20   -0.007450
+       -10   -0.002911
+       0     0.000000
+       10    0.002911
+       20    0.007450
+       30    0.013047
+       45    0.016276
+       60    0.028917
+       75    0.028148
+       90    0.017636
+       105   -0.010199
+       120   -0.008625
+       135   -0.011184
+       150   -0.009168
+       165   -0.002132
+       180   0.000000
+      </tableData>
+     </table>
+    </product>
+   </function>  
 
-      <function name="aero/coefficient/CYvfin_beta">
-        <description>Side_force_from_vertical_fin_due_to_beta</description>
-        <!-- 	 
+   <function name="aero/coefficient/CYvfin_beta">
+    <description>Side_force_from_vertical_fin_due_to_beta</description>
+    <!-- 	 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
 	    CY = Y / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CY -->
-          <value> -0.5 </value>
-          <!-- There is only one vertical fin as opposed to
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CY -->
+     <value> -0.5 </value>  <!-- There is only one vertical fin as opposed to
                                  two horizontal ones.
 				 Tweaking needed. Note the sign!
                             -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.05372
-              -150   0.12950
-              -135   0.13525
-              -120   0.10292
-              -105   0.05388
-              -90    -0.00000
-              -75    -0.05502
-              -60    -0.098868
-              -45    -0.14402
-              -30    -0.12832
-              -20    -0.082526
-              -10    -0.035474
-              0      0.000000
-              10     0.035474
-              20     0.082526
-              30     0.12832
-              45     0.14402
-              60     0.098868
-              75     0.05502
-              90     0.00000
-              105    -0.05388
-              120    -0.10292
-              135    -0.13525
-              150    -0.12950
-              165    -0.05372
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+     <table>
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.00000
+       -165   0.05372
+       -150   0.12950
+       -135   0.13525
+       -120   0.10292
+       -105   0.05388
+       -90    -0.00000
+       -75    -0.05502
+       -60    -0.098868
+       -45    -0.14402
+       -30    -0.12832
+       -20    -0.082526
+       -10    -0.035474
+       0      0.000000
+       10     0.035474
+       20     0.082526
+       30     0.12832
+       45     0.14402
+       60     0.098868
+       75     0.05502
+       90     0.00000
+       105    -0.05388
+       120    -0.10292
+       135    -0.13525
+       150    -0.12950
+       165    -0.05372
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function>  
 
-      <function name="aero/coefficient/CYdr">
-        <description>Side_force_due_to_rudder</description>
-        <!-- 
+   <function name="aero/coefficient/CYdr">
+    <description>Side_force_due_to_rudder</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CL = L / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CL -->
-          <value> 0.5 </value>
-          <!-- The rudder is not adjusted yet. -->
-          <table>
-            <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  -0.066622
-              0    0
-              30   0.066622
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CL -->
+     <value> 0.5 </value> <!-- The rudder is not adjusted yet. -->
+     <table>
+      <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  -0.066622
+       0    0
+       30   0.066622
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-    </axis>
+  </axis>
 
-    <!-- ================================================== -->
-    <axis name="LIFT">
+  <!-- ================================================== -->
+  <axis name="LIFT">
 
-      <function name="aero/coefficient/CLenv_alpha">
-        <description>Lift_from_envelope_due_to_alpha</description>
-        <!--	 
+   <function name="aero/coefficient/CLenv_alpha">
+    <description>Lift_from_envelope_due_to_alpha</description>
+    <!--	 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
 	    CL = L / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CL -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180  0.000000
-              -165  0.002132
-              -150  0.009168
-              -135  0.011184
-              -120  0.008625
-              -105  0.010199
-              -90   -0.017636
-              -75   -0.028148
-              -60   -0.028917
-              -45   -0.016276
-              -30   -0.013047
-              -20   -0.007450
-              -10   -0.002911
-              0     0.000000
-              10    0.002911
-              20    0.007450
-              30    0.013047
-              45    0.016276
-              60    0.028917
-              75    0.028148
-              90    0.017636
-              105   -0.010199
-              120   -0.008625
-              135   -0.011184
-              150   -0.009168
-              165   -0.002132
-              180   0.000000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CL -->
+     <table>
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180  0.000000
+       -165  0.002132
+       -150  0.009168
+       -135  0.011184
+       -120  0.008625
+       -105  0.010199
+       -90   -0.017636
+       -75   -0.028148
+       -60   -0.028917
+       -45   -0.016276
+       -30   -0.013047
+       -20   -0.007450
+       -10   -0.002911
+       0     0.000000
+       10    0.002911
+       20    0.007450
+       30    0.013047
+       45    0.016276
+       60    0.028917
+       75    0.028148
+       90    0.017636
+       105   -0.010199
+       120   -0.008625
+       135   -0.011184
+       150   -0.009168
+       165   -0.002132
+       180   0.000000
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CLhfin_alpha">
-        <description>Lift_from_horizontal_fin_due_to_alpha</description>
-        <!--	 
+   <function name="aero/coefficient/CLhfin_alpha">
+    <description>Lift_from_horizontal_fin_due_to_alpha</description>
+    <!--	 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
 	    CL = L / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CL -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.05372
-              -150   0.12950
-              -135   0.13525
-              -120   0.10292
-              -105   0.05388
-              -90    -0.00000
-              -75    -0.05502
-              -60    -0.098868
-              -45    -0.14402
-              -30    -0.12832
-              -20    -0.082526
-              -10    -0.035474
-              0      0.000000
-              10     0.035474
-              20     0.082526
-              30     0.12832
-              45     0.14402
-              60     0.098868
-              75     0.05502
-              90     0.00000
-              105    -0.05388
-              120    -0.10292
-              135    -0.13525
-              150    -0.12950
-              165    -0.05372
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CL -->
+     <table>
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.00000
+       -165   0.05372
+       -150   0.12950
+       -135   0.13525
+       -120   0.10292
+       -105   0.05388
+       -90    -0.00000
+       -75    -0.05502
+       -60    -0.098868
+       -45    -0.14402
+       -30    -0.12832
+       -20    -0.082526
+       -10    -0.035474
+       0      0.000000
+       10     0.035474
+       20     0.082526
+       30     0.12832
+       45     0.14402
+       60     0.098868
+       75     0.05502
+       90     0.00000
+       105    -0.05388
+       120    -0.10292
+       135    -0.13525
+       150    -0.12950
+       165    -0.05372
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/CLdr">
-        <description>Lift_due_to_elevator</description>
-        <!-- 
+   <function name="aero/coefficient/CLdr">
+    <description>Lift_due_to_elevator</description>
+    <!-- 
          Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             CL = L / (q * (vol)^(2/3))
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 1698.5 </value>
-          <!-- Start CL -->
-          <value> 1.0 </value>
-          <table>
-            <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  -0.066622
-              0    0
-              30   0.066622
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 1698.5 </value>
+     <!-- Start CL -->
+     <value> 1.0 </value>
+     <table>
+      <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  -0.066622
+       0    0
+       30   0.066622
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-    </axis>
+  </axis>
 
-    <!-- Moments =============================================== -->
+  <!-- Moments =============================================== -->
 
-    <!-- ================================================== -->
-    <axis name="ROLL">
+  <!-- ================================================== -->  
+  <axis name="ROLL">
 
-      <function name="aero/coefficient/Clp">
-        <!-- Totally off! -->
-        <description>Roll_moment_due_to_roll_rate_(damping)</description>
-        <!-- The current version is just a hack to make the craft stable. -->
-        <product>
-          <!-- property>aero/qbar-psf</property -->
-          <!-- property>aero/bi2vel</property -->
-          <property>velocities/p-aero-rad_sec</property>
-          <value> -50000.0 </value>
-        </product>
-      </function>
+   <function name="aero/coefficient/Clp">  <!-- Totally off! -->
+    <description>Roll_moment_due_to_roll_rate_(damping)</description>
+    <!-- The current version is just a hack to make the craft stable. -->
+    <product>
+     <!-- property>aero/qbar-psf</property -->
+     <!-- property>aero/bi2vel</property -->
+     <property>velocities/p-aero-rad_sec</property>
+     <value> -50000.0 </value>
+    </product>
+   </function>
 
-    </axis>
+  </axis>
 
-    <!-- ================================================== -->
-    <axis name="PITCH">
+  <!-- ================================================== -->
+  <axis name="PITCH">
 
-      <function name="aero/coefficient/Cmq">
-        <!-- Totally off! -->
-        <description>Pitch_moment_due_to_pitch_rate_(damping)</description>
-        <!-- The current version is just a hack to make the craft stable. -->
-        <product>
-          <!-- property>aero/qbar-psf</property -->
-          <!-- property>aero/ci2vel</property -->
-          <property>velocities/q-aero-rad_sec</property>
-          <value> -1000000.0 </value>
-        </product>
-      </function>
+   <function name="aero/coefficient/Cmq"> <!-- Totally off! -->
+    <description>Pitch_moment_due_to_pitch_rate_(damping)</description>
+    <!-- The current version is just a hack to make the craft stable. -->
+    <product>
+     <!-- property>aero/qbar-psf</property -->
+     <!-- property>aero/ci2vel</property -->
+     <property>velocities/q-aero-rad_sec</property>
+     <value> -1000000.0 </value>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/Cm_env_alpha">
-        <description>Pitch_moment_from_envelope_due_to_alpha</description>
-        <!--	 
+   <function name="aero/coefficient/Cm_env_alpha">
+    <description>Pitch_moment_from_envelope_due_to_alpha</description>
+    <!--	 
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cm -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.38522
-              -150   0.66775
-              -135   0.77532
-              -120   0.67203
-              -105   0.40902
-              -90    0.01611
-              -75   -0.36527
-              -60   -0.65462
-              -45   -0.76844
-              -30   -0.66063
-              -20   -0.48736
-              -10   -0.26542
-              0      0.00000
-              10     0.26542
-              20     0.48736
-              30     0.66063
-              45     0.76844
-              60     0.65462
-              75     0.36527
-              90    -0.01611
-              105   -0.40902
-              120   -0.67203
-              135   -0.77532
-              150   -0.66775
-              165   -0.38522
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cm -->
+     <table>
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData> 
+       -180   0.00000
+       -165   0.38522
+       -150   0.66775
+       -135   0.77532
+       -120   0.67203
+       -105   0.40902
+       -90    0.01611
+       -75   -0.36527
+       -60   -0.65462
+       -45   -0.76844
+       -30   -0.66063
+       -20   -0.48736
+       -10   -0.26542
+       0      0.00000
+       10     0.26542
+       20     0.48736
+       30     0.66063
+       45     0.76844
+       60     0.65462
+       75     0.36527
+       90    -0.01611
+       105   -0.40902
+       120   -0.67203
+       135   -0.77532
+       150   -0.66775
+       165   -0.38522
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/Cm_fin_alpha">
-        <description>Pitch_moment_from_horizontal_fin_due_to_alpha</description>
-        <!--
+   <function name="aero/coefficient/Cm_fin_alpha">
+    <description>Pitch_moment_from_horizontal_fin_due_to_alpha</description>
+    <!--
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cm -->
-          <table>
-            <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.06884
-              -150   0.18569
-              -135   0.23584
-              -120   0.25459
-              -105   0.27774
-              -90    0.23735
-              -75    0.27625
-              -60    0.24490
-              -45    0.25233
-              -30    0.18336
-              -20    0.10816
-              -10    0.045351
-              0      0
-              10     -0.045351
-              20     -0.10816
-              30     -0.18336
-              45     -0.25233
-              60     -0.24490
-              75     -0.27625
-              90     -0.23735
-              105    -0.27774
-              120    -0.25459
-              135    -0.23584
-              150    -0.18569
-              165    -0.06884
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cm -->
+     <table>
+      <independentVar lookup="row">aero/envelope-alpha-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.00000
+       -165   0.06884
+       -150   0.18569
+       -135   0.23584
+       -120   0.25459
+       -105   0.27774
+       -90    0.23735
+       -75    0.27625
+       -60    0.24490
+       -45    0.25233
+       -30    0.18336
+       -20    0.10816
+       -10    0.045351
+       0      0
+       10     -0.045351
+       20     -0.10816
+       30     -0.18336
+       45     -0.25233
+       60     -0.24490
+       75     -0.27625
+       90     -0.23735
+       105    -0.27774
+       120    -0.25459
+       135    -0.23584
+       150    -0.18569
+       165    -0.06884
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/Cmde">
-        <description>Pitch_moment_due_to_elevator</description>
-        <!--
+   <function name="aero/coefficient/Cmde">
+    <description>Pitch_moment_due_to_elevator</description>
+    <!--
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cmdr = -->
-          <value> 1.0 </value>
-          <!-- The elevators are not adjusted yet. -->
-          <table>
-            <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  0.082789
-              0    0
-              30   -0.082789
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cmdr = -->
+     <value> 1.0 </value> <!-- The elevators are not adjusted yet. -->
+     <table>
+      <independentVar lookup="row">fcs/elevator-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  0.082789
+       0    0
+       30   -0.082789
+      </tableData>
+     </table>
+    </product>
+   </function> 
 
-    </axis>
+  </axis>
 
-    <!-- ================================================== -->
-    <axis name="YAW">
+  <!-- ================================================== -->
+  <axis name="YAW">
 
-      <function name="aero/coefficient/Cnr">
-        <!-- Totally off! -->
-        <description>Yaw_moment_due_to_yaw_rate_(damping)</description>
-        <!-- The current version is just a hack to make the craft stable. -->
-        <product>
-          <!-- property>aero/qbar-psf</property -->
-          <!-- property>aero/ai2vel</property -->
-          <property>velocities/r-aero-rad_sec</property>
-          <value> -1000000.0 </value>
-        </product>
-      </function>
+   <function name="aero/coefficient/Cnr"> <!-- Totally off! -->
+    <description>Yaw_moment_due_to_yaw_rate_(damping)</description>
+    <!-- The current version is just a hack to make the craft stable. -->
+    <product>
+     <!-- property>aero/qbar-psf</property -->
+     <!-- property>aero/ai2vel</property -->
+     <property>velocities/r-aero-rad_sec</property>
+     <value> -1000000.0 </value>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/Cndr">
-        <description>Yaw_moment_due_to_rudder</description>
-        <!--
+   <function name="aero/coefficient/Cndr">
+    <description>Yaw_moment_due_to_rudder</description>
+    <!--
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cm = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cmdr = -->
-          <value> 10.0 </value>
-          <!-- The rudder is not adjusted yet. -->
-          <table>
-            <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -30  0.082789
-              0    0
-              30   -0.082789
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cmdr = -->
+     <value> 10.0 </value> <!-- The rudder is not adjusted yet. -->
+     <table>
+      <independentVar lookup="row">fcs/rudder-pos-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -30  0.082789
+       0    0
+       30   -0.082789
+      </tableData>
+     </table>
+    </product>
+   </function>
 
-      <function name="aero/coefficient/Cn_env_beta">
-        <description>Yaw_moment_from_envelope_due_to_beta</description>
-        <!--
+   <function name="aero/coefficient/Cn_env_beta">
+    <description>Yaw_moment_from_envelope_due_to_beta</description>
+    <!--
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cn = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cn -->
-          <value> -1 </value>
-          <!-- NOTE: sign. -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.38522
-              -150   0.66775
-              -135   0.77532
-              -120   0.67203
-              -105   0.40902
-              -90    0.01611
-              -75   -0.36527
-              -60   -0.65462
-              -45   -0.76844
-              -30   -0.66063
-              -20   -0.48736
-              -10   -0.26542
-              0      0.00000
-              10     0.26542
-              20     0.48736
-              30     0.66063
-              45     0.76844
-              60     0.65462
-              75     0.36527
-              90    -0.01611
-              105   -0.40902
-              120   -0.67203
-              135   -0.77532
-              150   -0.66775
-              165   -0.38522
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cn -->
+     <value> -1 </value> <!-- NOTE: sign. -->
+     <table>
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData> 
+       -180   0.00000
+       -165   0.38522
+       -150   0.66775
+       -135   0.77532
+       -120   0.67203
+       -105   0.40902
+       -90    0.01611
+       -75   -0.36527
+       -60   -0.65462
+       -45   -0.76844
+       -30   -0.66063
+       -20   -0.48736
+       -10   -0.26542
+       0      0.00000
+       10     0.26542
+       20     0.48736
+       30     0.66063
+       45     0.76844
+       60     0.65462
+       75     0.36527
+       90    -0.01611
+       105   -0.40902
+       120   -0.67203
+       135   -0.77532
+       150   -0.66775
+       165   -0.38522
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function> 
 
-      <function name="aero/coefficient/Cn_fin_beta">
-        <description>Yaw_moment_from_vertical_fin_due_to_beta</description>
-        <!--
+   <function name="aero/coefficient/Cn_fin_beta">
+    <description>Yaw_moment_from_vertical_fin_due_to_beta</description>
+    <!--
 	 Formulation based on NACA report 432 "Force measurements on a
          1/40-scale model of the U.S. Airship Akron" by Hugh B. Freeman.
 
             Cn = M / (q * vol)
 
     -->
-        <product>
-          <property>aero/qbar-psf</property>
-          <value> 70000 </value>
-          <!-- Start Cn -->
-          <value> -1.0 </value>
-          <!-- There is only one vertical fin as opposed to
+    <product>
+     <property>aero/qbar-psf</property>
+     <value> 70000 </value>
+     <!-- Start Cn -->
+     <value> -1.0 </value> <!-- There is only one vertical fin as opposed to
                                 two horizontal ones, but it might be bigger.
                                 NOTE: sign.
 				Tweaking needed.
                            -->
-          <table>
-            <independentVar lookup="row">aero/beta-deg</independentVar>
-            <!--  Virtual wind-tunnel data computed with Gerris. -->
-            <tableData>
-              -180   0.00000
-              -165   0.06884
-              -150   0.18569
-              -135   0.23584
-              -120   0.25459
-              -105   0.27774
-              -90    0.23735
-              -75    0.27625
-              -60    0.24490
-              -45    0.25233
-              -30    0.18336
-              -20    0.10816
-              -10    0.045351
-              0      0
-              10     -0.045351
-              20     -0.10816
-              30     -0.18336
-              45     -0.25233
-              60     -0.24490
-              75     -0.27625
-              90     -0.23735
-              105    -0.27774
-              120    -0.25459
-              135    -0.23584
-              150    -0.18569
-              165    -0.06884
-              180    0.00000
-            </tableData>
-          </table>
-        </product>
-      </function>
+     <table>
+      <independentVar lookup="row">aero/beta-deg</independentVar>
+      <!--  Virtual wind-tunnel data computed with Gerris. -->
+      <tableData>
+       -180   0.00000
+       -165   0.06884
+       -150   0.18569
+       -135   0.23584
+       -120   0.25459
+       -105   0.27774
+       -90    0.23735
+       -75    0.27625
+       -60    0.24490
+       -45    0.25233
+       -30    0.18336
+       -20    0.10816
+       -10    0.045351
+       0      0
+       10     -0.045351
+       20     -0.10816
+       30     -0.18336
+       45     -0.25233
+       60     -0.24490
+       75     -0.27625
+       90     -0.23735
+       105    -0.27774
+       120    -0.25459
+       135    -0.23584
+       150    -0.18569
+       165    -0.06884
+       180    0.00000
+      </tableData>
+     </table>
+    </product>
+   </function>
+ 
+  </axis>
 
-    </axis>
+ </aerodynamics>
 
-  </aerodynamics>
+ <output name="datalog.csv" type="CSV" rate="1">
 
-  <output name="datalog.csv" type="CSV" rate="1">
+  <rates> ON </rates>
+  <velocities> ON </velocities>
+  <forces> ON </forces>
+  <moments> ON </moments>
+  <position> ON </position>
+  <propulsion> ON </propulsion>
+  <aerosurfaces> ON </aerosurfaces>
+  <fcs> ON </fcs>
+  <ground_reactions> ON </ground_reactions>
+  <property> position/h-sl-ft </property>
+  <property> velocities/vc-kts </property>
+  <property> fcs/throttle-cmd-norm </property>
+  <property> fcs/elevator-cmd-norm </property>
+  <property> fcs/pitch-trim-cmd-norm </property>
+  <property> propulsion/total-fuel-lbs </property>
+  <property> flight-path/gamma-rad </property>
+  <property> buoyant_forces/gas-cell/temp-R </property>
+  <property> atmosphere/T-R </property>
+  <property> fcs/superheat-R </property>
 
-    <rates> ON </rates>
-    <velocities> ON </velocities>
-    <forces> ON </forces>
-    <moments> ON </moments>
-    <position> ON </position>
-    <propulsion> ON </propulsion>
-    <aerosurfaces> ON </aerosurfaces>
-    <fcs> ON </fcs>
-    <ground_reactions> ON </ground_reactions>
-    <property> position/h-sl-ft </property>
-    <property> velocities/vc-kts </property>
-    <property> fcs/throttle-cmd-norm </property>
-    <property> fcs/elevator-cmd-norm </property>
-    <property> fcs/pitch-trim-cmd-norm </property>
-    <property> propulsion/total-fuel-lbs </property>
-    <property> flight-path/gamma-rad </property>
-    <property> inertia/gas-cell/temp-R </property>
-    <property> atmosphere/T-R </property>
-    <property> fcs/superheat-R </property>
-
-  </output>
+ </output>
 
 </fdm_config>

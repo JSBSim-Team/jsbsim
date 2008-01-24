@@ -49,18 +49,19 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.1 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.2 2008/01/24 19:55:05 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/* Constants. */
+const double FGGasCell::R = 3.4071;              // [lbs ft/(mol Rankine)]
+const double FGGasCell::M_air = 0.0019186;       // [slug/mol]
+const double FGGasCell::M_hydrogen = 0.00013841; // [slug/mol]
+const double FGGasCell::M_helium = 0.00027409;   // [slug/mol]
 
-FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec),
-     R(3.4071),              // [lbs ft/(mol Rankine)]
-     M_air(0.0019186),       // [slug/mol]
-     M_hydrogen(0.00013841), // [slug/mol]
-     M_helium(0.00027409)    // [slug/mol]
+FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
 {
   string token;
   Element* element;
@@ -122,24 +123,24 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec),
     // However, currently only a few combinations of radius and width are
     // fully supported.
     if ((Xradius != 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
-	(Xwidth  == 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
+        (Xwidth  == 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
       // Ellipsoid volume.
       MaxVolume = 4.0  * M_PI * Xradius * Yradius * Zradius / 3.0;
     } else if  ((Xradius == 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
-		(Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
+                (Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
       // Cylindrical volume.
       MaxVolume = M_PI * Yradius * Zradius * Xwidth;
     } else {
       cerr << "Warning: Unsupported gas cell shape." << endl;
       MaxVolume = 
-	(4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
-	 M_PI * Yradius * Zradius * Xwidth +
-	 M_PI * Xradius * Zradius * Ywidth +
-	 M_PI * Xradius * Yradius * Zwidth +
-	 2.0  * Xradius * Ywidth * Zwidth +
-	 2.0  * Yradius * Xwidth * Zwidth +
-	 2.0  * Zradius * Xwidth * Ywidth +
-	 Xwidth * Ywidth * Zwidth);
+        (4.0  * M_PI * Xradius * Yradius * Zradius / 3.0 +
+         M_PI * Yradius * Zradius * Xwidth +
+         M_PI * Xradius * Zradius * Ywidth +
+         M_PI * Xradius * Yradius * Zwidth +
+         2.0  * Xradius * Ywidth * Zwidth +
+         2.0  * Yradius * Xwidth * Zwidth +
+         2.0  * Zradius * Xwidth * Ywidth +
+         Xwidth * Ywidth * Zwidth);
     }
   } else {
     cerr << "Fatal Error: Gas cell shape must be given." << endl;
@@ -147,7 +148,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec),
   }
   if (el->FindElement("max_overpressure")) {
     MaxOverpressure = el->FindElementValueAsNumberConvertTo("max_overpressure",
-							    "LBS/FT2");
+                                                            "LBS/FT2");
   }
   if (el->FindElement("fullness")) {
     const double Fullness = el->FindElementValueAsNumber("fullness");
@@ -160,7 +161,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec),
   if (el->FindElement("valve_coefficient")) {
     ValveCoefficient =
       el->FindElementValueAsNumberConvertTo("valve_coefficient",
-					    "FT4*SEC/SLUG");
+                                            "FT4*SEC/SLUG");
     ValveCoefficient = max(ValveCoefficient, 0.0);
   }
 
@@ -196,26 +197,32 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec),
 
   // Bind relevant properties
   char property_name[80];
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/max_volume-ft3",
-	   CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/max_volume-ft3",
+           CellNum);
   PropertyManager->Tie( property_name, &MaxVolume );
   PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/temp-R", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/temp-R",
+           CellNum);
   PropertyManager->Tie( property_name, &Temperature );
   //PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/pressure-psf", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/pressure-psf",
+           CellNum);
   PropertyManager->Tie( property_name, &Pressure );
   //PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/volume-ft3", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/volume-ft3",
+           CellNum);
   PropertyManager->Tie( property_name, &Volume );
   //PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/buoyancy-lbs", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/buoyancy-lbs",
+           CellNum);
   PropertyManager->Tie( property_name, &Buoyancy );
   //PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/contents-mol", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/contents-mol",
+           CellNum);
   PropertyManager->Tie( property_name, &Contents );
   //PropertyManager->SetWritable( property_name, false );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/valve_open", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/valve_open",
+           CellNum);
   PropertyManager->Tie( property_name, &ValveOpen );
   //PropertyManager->SetWritable( property_name, false );
 
@@ -245,20 +252,26 @@ FGGasCell::~FGGasCell()
 
   // Release relevant properties
   char property_name[80];
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/max_volume-ft3",
-	   CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/max_volume-ft3",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/temp-R", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/temp-R",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/pressure-psf", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/pressure-psf",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/volume-ft3", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/volume-ft3",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/buoyancy-lbs", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/buoyancy-lbs",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/contents-mol", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/contents-mol",
+           CellNum);
   PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "inertia/gas-cell[%d]/valve_open", CellNum);
+  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/valve_open",
+           CellNum);
   PropertyManager->Untie( property_name );
 
   Debug(1);
@@ -288,6 +301,8 @@ void FGGasCell::Calculate(double dt)
     Temperature += dU * dt / (Cv_gas() * Contents * R);
   } else {
     // No simulation of slow temperature changes.
+    // Note: Making the gas cell behave adiabatically might be a better
+    // option.
     Temperature = AirTemperature;
   }
 
@@ -328,6 +343,8 @@ void FGGasCell::Calculate(double dt)
   Volume   = Contents * R * Temperature / Pressure;
   Buoyancy = Volume * AirDensity * g;
   
+  // Note: This is gross buoyancy. The weight of the gas itself is not deducted
+  //       here as the effects of the gas mass is handled by FGMassBalance.
   vFn = FGColumnVector3(0.0, 0.0, - Buoyancy);
 
   // Compute the inertia of the gas cell.
@@ -343,7 +360,7 @@ void FGGasCell::Calculate(double dt)
     Iyy = (1.0 / 5.0) * mass * (Xradius*Xradius + Zradius*Zradius);
     Izz = (1.0 / 5.0) * mass * (Xradius*Xradius + Yradius*Yradius);     
   } else if  ((Xradius == 0.0) && (Yradius != 0.0) && (Zradius != 0.0) &&
-	      (Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
+              (Xwidth  != 0.0) && (Ywidth  == 0.0) && (Zwidth  == 0.0)) {
     // Cylindrical volume (might not be valid with an elliptical cross-section).
     Ixx = (1.0 / 2.0) * mass * Yradius * Zradius;
     Iyy =
