@@ -258,6 +258,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\FGBuoyantForces.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\math\FGColumnVector3.h"
 				>
 			</File>
@@ -319,6 +323,10 @@
 			</File>
 			<File
 				RelativePath=".\src\models\flight_control\FGGain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGGasCell.h"
 				>
 			</File>
 			<File
@@ -658,6 +666,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\models\FGBuoyantForces.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\math\FGColumnVector3.cpp"
 				>
 			</File>
@@ -719,6 +731,10 @@
 			</File>
 			<File
 				RelativePath=".\src\models\flight_control\FGGain.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\models\FGGasCell.cpp"
 				>
 			</File>
 			<File
