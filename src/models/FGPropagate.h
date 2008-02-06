@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.14 2008/01/16 03:48:44 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.15 2008/02/06 02:52:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.14 2008/01/16 03:48:44 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.15 2008/02/06 02:52:50 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -400,6 +400,11 @@ struct VehicleState {
   void SetDistanceAGL(double tt);
   void SetInitialState(const FGInitialCondition *);
   void RecomputeRunwayRadius(void);
+
+  void CalculatePQRdot(void);
+  void CalculateQuatdot(void);
+  void CalculateLocationdot(void);
+  void CalculateUVWdot(void);
 
   void bind(void);
   void unbind(void);

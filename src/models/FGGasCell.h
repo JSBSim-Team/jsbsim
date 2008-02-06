@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.2 2008/01/24 19:55:05 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.3 2008/02/06 02:52:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,47 +80,45 @@ CLASS DOCUMENTATION
 
 /** Models a gas cell.
     @author Anders Gidenstam
-<P>
+
 Configuration File Format
-<pre>
- \<buoyant_forces>
-  \<gas_cell type="\<HYDROGEN | HELIUM | AIR>">
-   \<location unit="M">
-    \<x> ... \</x>
-    \<y> ... \</y>
-    \<z> ... \</z>
-   \</location>
+@code
+<buoyant_forces>
+  <gas_cell type="{HYDROGEN | HELIUM | AIR}">
+    <location unit="M">
+      <x> ... </x>
+      <y> ... </y>
+      <z> ... </z>
+    </location>
 
-   \<x_width unit="M"> ... \</x_width>
-   \<y_radius unit="M"> ... \</y_radius>
-   \<z_radius unit="M"> ... \</z_radius>
-   \<max_overpressure unit="Pa"> 0.0 \</max_overpressure>
-   \<valve_coefficient unit="M4*SEC/KG"> ... \</valve_coefficient>
+    <x_width unit="M"> ... </x_width>
+    <y_radius unit="M"> ... </y_radius>
+    <z_radius unit="M"> ... </z_radius>
+    <max_overpressure unit="Pa"> 0.0 </max_overpressure>
+    <valve_coefficient unit="M4*SEC/KG"> ... </valve_coefficient>
 
-   \<fullness> ... \</fullness>  
-   \<heat>
-     {heat transfer coefficients} [lb ft / (s R)]
-   \</heat>
-  \</gas_cell>
- \</buoyant_forces>
-</pre>
+    <fullness> ... </fullness>  
+    <heat>
+      {heat transfer coefficients} [lb ft / (s R)]
+    </heat>
+  </gas_cell>
+</buoyant_forces>
+@endcode
 Definition of the gas cell configuration file parameters:
-<pre>
-<b>type</b> - One of HYDROGEN, HELIUM or AIR.
-<b>location</b> - Location of cell center in the aircraft's structural frame.
+- <b>type</b> - One of HYDROGEN, HELIUM or AIR.
+- <b>location</b> - Location of cell center in the aircraft's structural frame.
                   Currently this is were the forces of the cell is applied.
-<b>{x|y|z}_radius</b> - Radius along in the respective direction (both ends).
-<b>{x|y|z}_width</b> - Width in the respective direction.
-<b>NOTE:</b> A 'x', 'y', 'z'-radius/width combination must be specified.
-<b>fullness</b> - Initial fullness of the cell, normally [0,1],
+- <b>{x|y|z}_radius</b> - Radius along in the respective direction (both ends).
+- <b>{x|y|z}_width</b> - Width in the respective direction.
+- <b>NOTE:</b> A 'x', 'y', 'z'-radius/width combination must be specified.
+- <b>fullness</b> - Initial fullness of the cell, normally [0,1],
                   values >1 initialize the cell at pressure.
-<b>max_overpressure</b> - Maximum cell overpressure (excess is automatically
+- <b>max_overpressure</b> - Maximum cell overpressure (excess is automatically
                           valved off).
-<b>valve_coefficient</b> - Capacity of the manual valve. The valve is
+- <b>valve_coefficient</b> - Capacity of the manual valve. The valve is
                            considered to be located at the top of the cell. 
-<b>NOTE:</b> The valve coefficient determine the gas flow out of the cell
+- <b>NOTE:</b> The valve coefficient determine the gas flow out of the cell
 according to: dVolume/dt = ValveCoefficient * DeltaPressure;
-</pre>
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

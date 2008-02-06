@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.5 2008/02/06 02:52:50 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,10 +128,11 @@ CLASS DOCUMENTATION
     converts latitude to a geodetic value and uses that. In order to get best
     matching relative to a map, geocentric latitude must be converted to geodetic.
 
+    @see Stevens and Lewis, "Aircraft Control and Simulation", Second edition
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.5 2008/02/06 02:52:50 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

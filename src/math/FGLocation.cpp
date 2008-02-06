@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.4 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.5 2008/02/06 02:52:50 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -178,7 +178,8 @@ void FGLocation::ComputeDerivedUnconditional(void) const
     mLat = atan2( mECLoc(eZ), rxy );
 
   // Compute the transform matrices from and to the earth centered frame.
-  // see Durham Chapter 4, problem 1, page 52
+  // See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
+  // Eqn. 1.4-13, page 40. 
   mTec2l = FGMatrix33( -cosLon*sinLat, -sinLon*sinLat,  cosLat,
                            -sinLon   ,     cosLon    ,    0.0 ,
                        -cosLon*cosLat, -sinLon*cosLat, -sinLat  );
