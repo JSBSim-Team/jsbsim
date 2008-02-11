@@ -74,7 +74,7 @@ SENTRY
 
 namespace JSBSim {
   
-static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.4 2008/02/06 02:52:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGQuaternion.cpp,v 1.5 2008/02/11 14:27:59 jberndt Exp $";
 static const char *IdHdr = ID_QUATERNION;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +129,6 @@ FGQuaternion::FGQuaternion(double phi, double tht, double psi)
     angular velocities PQR.
     See Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
     Equation 1.3-36. 
-    See Durham, Equation 4.6
 */
 FGQuaternion FGQuaternion::GetQDot(const FGColumnVector3& PQR) const {
   double norm = Magnitude();

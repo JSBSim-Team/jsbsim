@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.17 2008/02/06 02:52:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.18 2008/02/11 14:27:59 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -137,6 +137,7 @@ bool FGPropagate::InitModel(void)
   RunwayRadius   = SeaLevelRadius;
 
   VState.vLocation.SetRadius( SeaLevelRadius + 4.0 );
+  vOmega = FGColumnVector3( 0.0, 0.0, Inertial->omega() ); // Earth rotation vector
 
   return true;
 }
@@ -147,6 +148,10 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
   SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
   RunwayRadius = SeaLevelRadius;
+  VehicleRadius = GetRadius();
+  if (VehicleRadius == 0.0)
+    {cerr << "radius = 0 !" << endl; VehicleRadius = 1e-16;} // radius check
+  double radInv = 1.0/VehicleRadius;
 
   // Set the position lat/lon/radius
   VState.vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
@@ -168,8 +173,8 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
                           FGIC->GetQRadpsIC(),
                           FGIC->GetRRadpsIC() );
 
-  // Compute some derived values.
-  vVel = VState.vQtrn.GetTInv()*VState.vUVW;
+  // Compute the local frame ECEF velocity
+  vVel = GetTb2l()*VState.vUVW;
 
   // Finally, make sure that the quaternion stays normalized.
   VState.vQtrn.Normalize();
@@ -204,6 +209,22 @@ bool FGPropagate::Run(void)
   if (FDMExec->Holding()) return false;
 
   RecomputeRunwayRadius();
+  
+  // These local copies of the transformation matrices are for use this
+  // pass through Run() only.
+
+  Tl2b = GetTl2b();           // local to body frame transform
+  Tb2l = Tl2b.Transposed();   // body to local frame transform
+  Tl2ec = GetTl2ec();         // local to ECEF transform
+  Tec2l = Tl2ec.Transposed(); // ECEF to local frame transform
+  Tec2b = Tl2b * Tec2l;       // ECEF to body frame transform
+  Tb2ec = Tec2b.Transposed(); // body to ECEF frame tranform
+
+  // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
+  vVel = Tb2l * VState.vUVW;
+
+  // Inertial angular velocity measured in the body frame.
+  vPQRi = VState.vPQR + Tec2b*vOmega;
 
   // Calculate state derivatives
   CalculatePQRdot();      // Angular rate derivative
@@ -301,25 +322,20 @@ bool FGPropagate::Run(void)
 // J is the inertia matrix
 // Jinv is the inverse inertia matrix
 // vMoments is the moment vector in the body frame
-// vPQRi is the total inertial angular velocity of the vehicle in the body frame.
-// NOTE: I SUSPECT THAT vPQRi SHOULD BE ONLY THE ANGULAR VELOCITY OF THE
-// EARTH IN THE BODY FRAME.
+// vPQRi is the total inertial angular velocity of the vehicle
+// expressed in the body frame.
 // Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
 //            Second edition (2004), eqn 1.5-16e (page 50)
 
 void FGPropagate::CalculatePQRdot(void)
 {
   const FGColumnVector3& vMoments = Aircraft->GetMoments(); // current moments
-  const FGMatrix33& Tl2b = GetTl2b();                       // local to body frame
-  const FGMatrix33& Tec2l = VState.vLocation.GetTec2l();    // ECEF to local frame
   const FGMatrix33& J = MassBalance->GetJ();                // inertia matrix
   const FGMatrix33& Jinv = MassBalance->GetJinv();          // inertia matrix inverse
-  const FGColumnVector3 vOmega( 0.0, 0.0, Inertial->omega() ); // earth rotation
 
-  // Inertial angular velocity measured in the body frame.
-  const FGColumnVector3 vPQRi = VState.vPQR + Tl2b*(Tec2l*vOmega);
-
-  // Compute body frame rotational accelerations based on the current body moments
+  // Compute body frame rotational accelerations based on the current body
+  // moments and the total inertial angular velocity expressed in the body
+  // frame.
   vPQRdot = Jinv*(vMoments - vPQRi*(J*vPQRi));
 }
 
@@ -337,18 +353,9 @@ void FGPropagate::CalculatePQRdot(void)
 
 void FGPropagate::CalculateQuatdot(void)
 {
-  const FGMatrix33& Tl2b = GetTl2b();                        // local to body frame
-  const FGMatrix33& Tb2l = GetTb2l();                        // body to local frame
-  double r = GetRadius();                                    // radius
-  if (r == 0.0) {cerr << "radius = 0 !" << endl; r = 1e-16;} // radius check
-  double rInv = 1.0/r;
-
-  // Compute vehicle velocity wrt EC frame, expressed in Local horizontal frame.
-  vVel = Tb2l * VState.vUVW;
-
-  FGColumnVector3 vOmegaLocal( rInv*vVel(eEast),
-                              -rInv*vVel(eNorth),
-                              -rInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
+  FGColumnVector3 vOmegaLocal( radInv*vVel(eEast),
+                              -radInv*vVel(eNorth),
+                              -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
   // Compute quaternion orientation derivative on current body rates
   vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*vOmegaLocal );
@@ -358,34 +365,20 @@ void FGPropagate::CalculateQuatdot(void)
 
 void FGPropagate::CalculateUVWdot(void)
 {
-  const FGMatrix33& Tl2b = GetTl2b();                        // local to body frame
-  const FGMatrix33& Tb2l = GetTb2l();                        // body to local frame
-  const FGMatrix33& Tl2ec = VState.vLocation.GetTl2ec();     // local to ECEF
-  const FGMatrix33& Tec2l = VState.vLocation.GetTec2l();     // ECEF to local frame
-  double r = GetRadius();                                    // radius
-  if (r == 0.0) {cerr << "radius = 0 !" << endl; r = 1e-16;} // radius check
-  double rInv = 1.0/r;
   double mass = MassBalance->GetMass();                      // mass
   const FGColumnVector3& vForces = Aircraft->GetForces();    // current forces
 
-  const FGColumnVector3 vGravAccel( 0.0, 0.0, Inertial->GetGAccel(r) );
-  const FGColumnVector3 vOmega( 0.0, 0.0, Inertial->omega() ); // earth rotation
-
-  // Compute vehicle velocity wrt EC frame, expressed in Local horizontal frame.
-  vVel = Tb2l * VState.vUVW;
+  const FGColumnVector3 vGravAccel( 0.0, 0.0, Inertial->GetGAccel(VehicleRadius) );
 
   // Begin to compute body frame accelerations based on the current body forces
-  vUVWdot = VState.vUVW*VState.vPQR + vForces/mass;
+  vUVWdot = vForces/mass - VState.vPQR * VState.vUVW;
 
   // Include Coriolis acceleration.
-  FGColumnVector3 ecVel = Tl2ec*vVel;
-  FGColumnVector3 ace = 2.0*vOmega*ecVel;
-  vUVWdot -= Tl2b*(Tec2l*ace);
+  vUVWdot -= 2.0 * (Tec2b *vOmega) * VState.vUVW;
 
   // Include Centrifugal acceleration.
   if (!GroundReactions->GetWOW()) {
-    FGColumnVector3 aeec = vOmega*(vOmega*VState.vLocation);
-    vUVWdot -= Tl2b*(Tec2l*aeec);
+    vUVWdot -= Tec2b*vOmega*(vOmega*VState.vLocation);
   }
 
   // Include Gravitation accel
@@ -396,12 +389,6 @@ void FGPropagate::CalculateUVWdot(void)
 
 void FGPropagate::CalculateLocationdot(void)
 {
-  const FGMatrix33& Tb2l = GetTb2l();                        // body to local frame
-  const FGMatrix33& Tl2ec = VState.vLocation.GetTl2ec();     // local to ECEF
-
-  // Compute vehicle velocity wrt EC frame, expressed in Local horizontal frame.
-  vVel = Tb2l * VState.vUVW;
-
   // Compute vehicle velocity wrt EC frame, expressed in EC frame
   vLocationDot = Tl2ec * vVel;
 }

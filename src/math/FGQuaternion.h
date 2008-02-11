@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.5 2008/01/13 18:56:31 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.6 2008/02/11 14:27:59 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -146,11 +146,13 @@ public:
   /// Destructor.
   ~FGQuaternion() {}
 
-  /** Quaternion 'velocity' for given angular rates.
+  /** Quaternion derivative for given angular rates.
       Computes the quaternion derivative which results from the given
       angular velocities
       @param PQR a constant reference to the body rate vector
-      @return the quaternion derivative */
+      @return the quaternion derivative
+      @see Stevens and Lewis, "Aircraft Control and Simulation", Second Edition,
+           Equation 1.3-36. */
   FGQuaternion GetQDot(const FGColumnVector3& PQR) const;
 
   /** Transformation matrix.

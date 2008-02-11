@@ -43,12 +43,13 @@ INCLUDES
 #include <initialization/FGInitialCondition.h>
 #include <math/FGLocation.h>
 #include <math/FGQuaternion.h>
+#include <math/FGMatrix33.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.15 2008/02/06 02:52:50 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.16 2008/02/11 14:27:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -87,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.15 2008/02/06 02:52:50 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.16 2008/02/11 14:27:59 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -357,12 +358,36 @@ struct VehicleState {
   const FGLocation& GetLocation(void) const { return VState.vLocation; }
 
   /** Retrieves the local-to-body transformation matrix.
+      The quaternion class, being the means by which the orientation of the
+      vehicle is stored, manages the local-to-body transformation matrix.
       @return a reference to the local-to-body transformation matrix.  */
   const FGMatrix33& GetTl2b(void) const { return VState.vQtrn.GetT(); }
 
   /** Retrieves the body-to-local transformation matrix.
+      The quaternion class, being the means by which the orientation of the
+      vehicle is stored, manages the body-to-local transformation matrix.
       @return a reference to the body-to-local matrix.  */
   const FGMatrix33& GetTb2l(void) const { return VState.vQtrn.GetTInv(); }
+
+  /** Retrieves the ECEF-to-body transformation matrix.
+      @return a reference to the ECEF-to-body transformation matrix.  */
+  const FGMatrix33& GetTec2b(void) const { return Tec2b; }
+
+  /** Retrieves the body-to-ECEF transformation matrix.
+      @return a reference to the body-to-ECEF matrix.  */
+  const FGMatrix33& GetTb2ec(void) const { return Tb2ec; }
+
+  /** Retrieves the ECEF-to-local transformation matrix.
+      Retrieves the ECEF-to-local transformation matrix. Note that the so-called
+      local from is also know as the NED frame (for North, East, Down).
+      @return a reference to the ECEF-to-local matrix.  */
+  const FGMatrix33& GetTec2l(void) const { return VState.vLocation.GetTec2l(); }
+
+  /** Retrieves the local-to-ECEF transformation matrix.
+      Retrieves the local-to-ECEF transformation matrix. Note that the so-called
+      local from is also know as the NED frame (for North, East, Down).
+      @return a reference to the local-to-ECEF matrix.  */
+  const FGMatrix33& GetTl2ec(void) const { return VState.vLocation.GetTl2ec(); }
 
   const VehicleState GetVState(void) const { return VState; }
 
@@ -419,9 +444,18 @@ private:
   FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot;
   FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
   FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;
+  FGColumnVector3 vPQRi;   // Inertial frame angular velocity
+  FGColumnVector3 vOmega;  // The Earth angular velocity vector
   FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
+  FGMatrix33 Tec2b;
+  FGMatrix33 Tb2ec;
+  FGMatrix33 Tl2b;   // local to body frame matrix copy for immediate local use
+  FGMatrix33 Tb2l;   // body to local frame matrix copy for immediate local use
+  FGMatrix33 Tl2ec;  // local to ECEF matrix copy for immediate local use
+  FGMatrix33 Tec2l;  // ECEF to local frame matrix copy for immediate local use
   
-  double RunwayRadius, SeaLevelRadius;
+  double RunwayRadius, SeaLevelRadius, VehicleRadius;
+  double radInv;
   int integrator_rotational_rate;
   int integrator_translational_rate;
   int integrator_rotational_position;
