@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.7 2008/01/21 13:48:40 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.8 2008/02/16 17:22:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -76,7 +76,7 @@ CLASS DOCUMENTATION
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.7 2008/01/21 13:48:40 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.8 2008/02/16 17:22:28 jberndt Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994
@@ -125,6 +125,7 @@ public:
   /// Gets the average wing chord
   double Getcbar(void) const { return cbar; }
   inline double GetWingIncidence(void) const { return WingIncidence; }
+  inline double GetWingIncidenceDeg(void) const { return WingIncidence*radtodeg; }
   inline double GetHTailArea(void) const { return HTailArea; }
   inline double GetHTailArm(void)  const { return HTailArm; }
   inline double GetVTailArea(void) const { return VTailArea; }

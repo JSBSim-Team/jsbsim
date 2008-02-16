@@ -80,7 +80,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.13 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.14 2008/02/16 17:22:28 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -167,7 +167,7 @@ bool FGAircraft::Load(Element* el)
   if (el->FindElement("chord"))
     cbar = el->FindElementValueAsNumberConvertTo("chord", "FT");
   if (el->FindElement("wing_incidence"))
-    WingIncidence = el->FindElementValueAsNumberConvertTo("wing_incidence", "DEG");
+    WingIncidence = el->FindElementValueAsNumberConvertTo("wing_incidence", "RAD");
   if (el->FindElement("htailarea"))
     HTailArea = el->FindElementValueAsNumberConvertTo("htailarea", "FT2");
   if (el->FindElement("htailarm"))
@@ -214,7 +214,8 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/Sw-sqft", this, &FGAircraft::GetWingArea);
   PropertyManager->Tie("metrics/bw-ft", this, &FGAircraft::GetWingSpan);
   PropertyManager->Tie("metrics/cbarw-ft", this, &FGAircraft::Getcbar);
-  PropertyManager->Tie("metrics/iw-deg", this, &FGAircraft::GetWingIncidence);
+  PropertyManager->Tie("metrics/iw-rad", this, &FGAircraft::GetWingIncidence);
+  PropertyManager->Tie("metrics/iw-deg", this, &FGAircraft::GetWingIncidenceDeg);
   PropertyManager->Tie("metrics/Sh-sqft", this, &FGAircraft::GetHTailArea);
   PropertyManager->Tie("metrics/lh-ft", this, &FGAircraft::GetHTailArm);
   PropertyManager->Tie("metrics/Sv-sqft", this, &FGAircraft::GetVTailArea);
@@ -248,6 +249,7 @@ void FGAircraft::unbind(void)
   PropertyManager->Untie("metrics/Sw-sqft");
   PropertyManager->Untie("metrics/bw-ft");
   PropertyManager->Untie("metrics/cbarw-ft");
+  PropertyManager->Untie("metrics/iw-rad");
   PropertyManager->Untie("metrics/iw-deg");
   PropertyManager->Untie("metrics/Sh-sqft");
   PropertyManager->Untie("metrics/lh-ft");
