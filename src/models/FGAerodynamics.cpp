@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.15 2008/01/01 15:52:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.16 2008/02/16 04:25:53 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -219,16 +219,16 @@ bool FGAerodynamics::Load(Element *element)
 
   if (temp_element = document->FindElement("alphalimits")) {
     scratch_unit = temp_element->GetAttributeValue("unit");
-    if (scratch_unit.empty()) scratch_unit = "DEG";
-    alphaclmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
-    alphaclmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
+    if (scratch_unit.empty()) scratch_unit = "RAD";
+    alphaclmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "RAD");
+    alphaclmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "RAD");
   }
 
   if (temp_element = document->FindElement("hysteresis_limits")) {
     scratch_unit = temp_element->GetAttributeValue("unit");
-    if (scratch_unit.empty()) scratch_unit = "DEG";
-    alphahystmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "DEG");
-    alphahystmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "DEG");
+    if (scratch_unit.empty()) scratch_unit = "RAD";
+    alphahystmin = temp_element->FindElementValueAsNumberConvertFromTo("min", scratch_unit, "RAD");
+    alphahystmax = temp_element->FindElementValueAsNumberConvertFromTo("max", scratch_unit, "RAD");
   }
 
   if (temp_element = document->FindElement("aero_ref_pt_shift_x")) {
@@ -348,11 +348,11 @@ void FGAerodynamics::bind(void)
   PropertyManager->Tie("aero/cl-squared", this,
                        &FGAerodynamics::GetClSquared);
   PropertyManager->Tie("aero/qbar-area", &qbar_area);
-  PropertyManager->Tie("aero/alpha-max-deg", this,
+  PropertyManager->Tie("aero/alpha-max-rad", this,
                        &FGAerodynamics::GetAlphaCLMax,
                        &FGAerodynamics::SetAlphaCLMax,
                        true);
-  PropertyManager->Tie("aero/alpha-min-deg", this,
+  PropertyManager->Tie("aero/alpha-min-rad", this,
                        &FGAerodynamics::GetAlphaCLMin,
                        &FGAerodynamics::SetAlphaCLMin,
                        true);
@@ -384,8 +384,8 @@ void FGAerodynamics::unbind(void)
   PropertyManager->Untie("forces/lod-norm");
   PropertyManager->Untie("aero/cl-squared");
   PropertyManager->Untie("aero/qbar-area");
-  PropertyManager->Untie("aero/alpha-max-deg");
-  PropertyManager->Untie("aero/alpha-min-deg");
+  PropertyManager->Untie("aero/alpha-max-rad");
+  PropertyManager->Untie("aero/alpha-min-rad");
   PropertyManager->Untie("aero/bi2vel");
   PropertyManager->Untie("aero/ci2vel");
   PropertyManager->Untie("aero/alpha-wing-rad");
