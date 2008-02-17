@@ -58,16 +58,34 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.5 2008/02/06 02:52:50 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.6 2008/02/17 18:24:32 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
+FGLocation::FGLocation(void)
+{
+    mCacheValid = false;
+    a = 20925646.3; // Earth semimajor axis in feet (6,378,137.0 meters)
+    b = 20855486.6; // Earth semiminor axis in feet (6,356,752.3142 meters)
+    e = 0.081819190842622; // Earth eccentricity
+    e2 = 0.00669437999014; // Earth eccentricity squared
+    eps2 = (a/b)*(a/b) - 1; //
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 FGLocation::FGLocation(double lon, double lat, double radius)
 {
   mCacheValid = false;
+
+  a = 20925646.3; // Earth semimajor axis in feet (6,378,137.0 meters)
+  b = 20855486.6; // Earth semiminor axis in feet (6,356,752.3142 meters)
+  e = 0.081819190842622; // Earth eccentricity
+  e2 = 0.00669437999014; // Earth eccentricity squared
+  eps2 = (a/b)*(a/b) - 1; //
 
   double sinLat = sin(lat);
   double cosLat = cos(lat);
@@ -186,35 +204,38 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   mTl2ec = mTec2l.Transposed();
 
+  // Calculate the geodetic latitude base on AIAA Journal of Guidance and Control paper,
+  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude",
+  // I. Sofair
+  {
+    double r0, c, p, q, s, t, u, v, w, z, b2, p2, u2;
+    double Ne, P, Q0, Q, signz0; 
+    r0 = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
+    p  = fabs(mECLoc(eZ))/eps2;
+    s  = (r0*r0)/(e2*eps2);
+    b2 = b*b;
+    p2 = p*p;
+    q  = p2 - b2 + s;
+    if (q>0)
+    {
+      u  = p/sqrt(q);
+      u2 = p2/q;
+      v  = b2*u2/q;
+      P  = 27.0*v*s/q;
+      Q0  = sqrt(P+1) + sqrt(P);
+             Q  = pow(Q0, 0.66666666667);
+      t  = (1.0 + Q + 1.0/Q)/6.0;
+      c  = sqrt(u2 - 1 + 2.0*t);
+      w  = (c - u)/2.0;
+      signz0 = mECLoc(eZ)>=0?1.0:-1.0;
+      z  = signz0*sqrt(q)*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+      Ne = a*sqrt(1+eps2*z*z/b2);
+      mGeodLat = asin((eps2+1.0)*(z/Ne));
+      // altitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a*a/Ne;
+    }
+  }
   // Mark the cached values as valid
   mCacheValid = true;
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGLocation::bind(FGPropertyManager* PropertyManager, const string& prefix) const
-{
-  PropertyManager->Tie(prefix + "lat-gc-rad", (FGLocation*)this,
-                       &FGLocation::GetLatitude);
-  PropertyManager->Tie(prefix + "lat-gc-deg", (FGLocation*)this,
-                       &FGLocation::GetLatitudeDeg);
-  PropertyManager->Tie(prefix + "long-gc-rad", (FGLocation*)this,
-                       &FGLocation::GetLongitude);
-  PropertyManager->Tie(prefix + "long-gc-deg", (FGLocation*)this,
-                       &FGLocation::GetLongitudeDeg);
-  PropertyManager->Tie(prefix + "radius-ft", (FGLocation*)this,
-                       &FGLocation::GetRadius);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGLocation::unbind(FGPropertyManager* PropertyManager, const string& prefix) const
-{
-  PropertyManager->Untie(prefix + "lat-gc-rad");
-  PropertyManager->Untie(prefix + "lat-gc-deg");
-  PropertyManager->Untie(prefix + "long-gc-rad");
-  PropertyManager->Untie(prefix + "long-gc-deg");
-  PropertyManager->Untie(prefix + "radius-ft");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

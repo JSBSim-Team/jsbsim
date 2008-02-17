@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.5 2008/02/06 02:52:50 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.6 2008/02/17 18:24:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.5 2008/02/06 02:52:50 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.6 2008/02/17 18:24:32 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,7 +143,7 @@ class FGLocation : virtual FGJSBBase
 {
 public:
   /** Default constructor. */
-  FGLocation() { mCacheValid = false; }
+  FGLocation(void);
 
   /** Constructor to set the longitude, latitude and the distance
       from the center of the earth.
@@ -204,11 +204,23 @@ public:
       -pi/2 <= lon <= pi/2. Latitude is positive north and negative south. */
   double GetLatitude() const { ComputeDerived(); return mLat; }
 
+  /** Get the geodetic latitude.
+      @return the geodetic latitude in rad of the location represented with this
+      class instance. The returned values are in the range between
+      -pi/2 <= lon <= pi/2. Latitude is positive north and negative south. */
+  double GetGeodLatitudeRad(void) const { ComputeDerived(); return mGeodLat; }
+
   /** Get the latitude.
       @return the latitude in deg of the location represented with this
-      class instance. The returned values are in the range between
+      class instance. The returned value is in the range between
       -90 <= lon <= 90. Latitude is positive north and negative south. */
   double GetLatitudeDeg() const { ComputeDerived(); return radtodeg*mLat; }
+
+  /** Get the geodetic latitude in degrees.
+      @return the geodetic latitude in degrees of the location represented by
+      this class instance. The returned value is in the range between
+      -90 <= lon <= 90. Latitude is positive north and negative south. */
+  double GetGeodLatitudeDeg(void) const { ComputeDerived(); return radtodeg*mGeodLat; }
 
   /** Set the latitude.
       @param latitude Latitude in rad to set.
@@ -376,14 +388,6 @@ public:
     return mECLoc;
   }
 
-  /** Ties into the property tree.
-      Ties the variables represented by this class into the property tree. */
-  void bind(FGPropertyManager*, const string&) const;
-
-  /** Remove from property tree.
-      Unties the variables represented by this class into the property tree. */
-  void unbind(FGPropertyManager*, const string&) const;
-
 private:
   /** Computation of derived values.
       This function re-computes the derived values like lat/lon and
@@ -414,10 +418,18 @@ private:
   mutable double mLon;
   mutable double mLat;
   mutable double mRadius;
+  mutable double mGeodLat;
 
   /** The cached rotation matrices from and to the associated frames. */
   mutable FGMatrix33 mTl2ec;
   mutable FGMatrix33 mTec2l;
+  
+  /* Terms for geodetic latitude calculation */
+  double a;    // Earth semimajor axis in feet (6,378,137.0 meters)
+  double b;    // Earth semiminor axis in feet (6,356,752.3142 meters)
+  double e;    // Earth eccentricity
+  double e2;   // Earth eccentricity squared
+  double eps2; //
 
   /** A data validity flag.
       This class implements caching of the derived values like the

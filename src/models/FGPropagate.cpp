@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.19 2008/02/17 14:49:20 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.20 2008/02/17 18:24:32 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,6 +485,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/long-gc-rad", this, &FGPropagate::GetLongitude, &FGPropagate::SetLongitude);
   PropertyManager->Tie("position/lat-gc-deg", this, &FGPropagate::GetLatitudeDeg, &FGPropagate::SetLatitudeDeg);
   PropertyManager->Tie("position/long-gc-deg", this, &FGPropagate::GetLongitudeDeg, &FGPropagate::SetLongitudeDeg);
+  PropertyManager->Tie("position/lat-geod-rad", this, &FGPropagate::GetGeodLatitudeRad);
+  PropertyManager->Tie("position/lat-geod-deg", this, &FGPropagate::GetGeodLatitudeDeg);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
@@ -533,6 +535,8 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("position/long-gc-rad");
   PropertyManager->Untie("position/lat-gc-deg");
   PropertyManager->Untie("position/long-gc-deg");
+  PropertyManager->Untie("position/lat-geod-rad");
+  PropertyManager->Untie("position/lat-geod-deg");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");

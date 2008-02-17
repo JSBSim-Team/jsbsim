@@ -38,7 +38,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGCondition.cpp,v 1.5 2007/12/30 15:31:30 jberndt Exp $";
+static const char *IdSrc = "$Id: FGCondition.cpp,v 1.6 2008/02/17 18:24:32 jberndt Exp $";
 static const char *IdHdr = ID_CONDITION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,7 +151,7 @@ void FGCondition::InitializeConditionals(void)
 
 FGCondition::~FGCondition(void)
 {
-  for (int i=0; i<conditions.size(); i++) delete conditions[i];
+  for (unsigned int i=0; i<conditions.size(); i++) delete conditions[i];
 
   Debug(1);
 }
@@ -168,14 +168,14 @@ bool FGCondition::Evaluate(void )
     if (Logic == eAND) {
 
       pass = true;
-      for (int i=0; i<conditions.size(); i++) {
+      for (unsigned int i=0; i<conditions.size(); i++) {
         if (!conditions[i]->Evaluate()) pass = false;
       }
 
     } else { // Logic must be eOR
 
       pass = false;
-      for (int i=0; i<conditions.size(); i++) {
+      for (unsigned int i=0; i<conditions.size(); i++) {
         if (conditions[i]->Evaluate()) pass = true;
       }
 
@@ -240,7 +240,7 @@ void FGCondition::PrintCondition(void )
     }
 
     cout << scratch << endl;
-    for (int i=0; i<conditions.size(); i++) conditions[i]->PrintCondition();
+    for (unsigned int i=0; i<conditions.size(); i++) conditions[i]->PrintCondition();
 
   } else {
     if (TestParam2 != 0L)
