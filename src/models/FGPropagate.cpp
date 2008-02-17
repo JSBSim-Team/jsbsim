@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.18 2008/02/11 14:27:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.19 2008/02/17 14:49:20 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,9 +149,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
   RunwayRadius = SeaLevelRadius;
   VehicleRadius = GetRadius();
-  if (VehicleRadius == 0.0)
-    {cerr << "radius = 0 !" << endl; VehicleRadius = 1e-16;} // radius check
-  double radInv = 1.0/VehicleRadius;
+  radInv = 1.0/VehicleRadius;
 
   // Set the position lat/lon/radius
   VState.vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
@@ -209,7 +207,12 @@ bool FGPropagate::Run(void)
   if (FDMExec->Holding()) return false;
 
   RecomputeRunwayRadius();
-  
+
+  // Calculate current aircraft radius from center of planet
+
+  VehicleRadius = GetRadius();
+  radInv = 1.0/VehicleRadius;
+
   // These local copies of the transformation matrices are for use this
   // pass through Run() only.
 

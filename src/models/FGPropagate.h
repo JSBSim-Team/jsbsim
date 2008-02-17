@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.16 2008/02/11 14:27:59 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.17 2008/02/17 14:49:20 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.16 2008/02/11 14:27:59 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.17 2008/02/17 14:49:20 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -350,7 +350,10 @@ struct VehicleState {
   double GetSeaLevelRadius(void) const { return SeaLevelRadius; }
   double GetTerrainElevationASL(void) const;
   double GetDistanceAGL(void)  const;
-  double GetRadius(void) const { return VState.vLocation.GetRadius(); }
+  double GetRadius(void) const {
+      if (VState.vLocation.GetRadius() == 0) return 1.0;
+      else return VState.vLocation.GetRadius();
+  }
   double GetLongitude(void) const { return VState.vLocation.GetLongitude(); }
   double GetLatitude(void) const { return VState.vLocation.GetLatitude(); }
   double GetLongitudeDeg(void) const { return VState.vLocation.GetLongitudeDeg(); }
