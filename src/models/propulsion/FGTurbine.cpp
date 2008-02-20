@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.9 2007/07/15 23:48:50 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.10 2008/02/20 23:31:23 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,10 +295,12 @@ double FGTurbine::Seize(void)
 
 double FGTurbine::Trim()
 {
-    double idlethrust, milthrust, thrust, tdiff;
+    double idlethrust, milthrust, thrust, tdiff, N2norm;
     idlethrust = MilThrust * IdleThrustLookup->GetValue();
     milthrust = (MilThrust - idlethrust) * MilThrustLookup->GetValue();
-    thrust = (idlethrust + (milthrust * ThrottlePos * ThrottlePos))
+    N2 = IdleN2 + ThrottlePos * N2_factor;
+    N2norm = (N2 - IdleN2) / N2_factor;
+    thrust = (idlethrust + (milthrust * N2norm * N2norm))
           * (1.0 - BleedDemand);
 
     if (AugMethod == 1) {
