@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.4 2006/08/30 12:04:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.5 2008/02/20 23:36:39 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,9 +55,14 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   Name = "FGInertial";
 
   // Defaults
-  RotationRate    = 0.00007272205217;
-  GM              = 14.06252720E15;
-  RadiusReference = 20925650.00;
+  RotationRate    = 0.00007292115;
+  GM              = 14.07644180E15;     // WGS84 value
+  RadiusReference = 20925650.00;        // Equatorial radius (WGS84)
+  C2_0            = -4.84165371736E-04; // WGS84 value for the C2,0 coefficient
+  J2              = 1.0826266836E-03;   // WGS84 value for J2
+  a               = 20925646.3255;      // WGS84 semimajor axis length in feet 
+  b               = 20855486.5951;      // WGS84 semiminor axis length in feet
+
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
 
@@ -84,6 +89,13 @@ bool FGInertial::Run(void)
   gAccel = GetGAccel(r);
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGInertial::GetGAccel(double r) const
+{
+  return GM/(r*r);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

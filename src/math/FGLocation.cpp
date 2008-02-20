@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.6 2008/02/17 18:24:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.7 2008/02/20 23:36:39 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,12 +67,7 @@ CLASS IMPLEMENTATION
 
 FGLocation::FGLocation(void)
 {
-    mCacheValid = false;
-    a = 20925646.3; // Earth semimajor axis in feet (6,378,137.0 meters)
-    b = 20855486.6; // Earth semiminor axis in feet (6,356,752.3142 meters)
-    e = 0.081819190842622; // Earth eccentricity
-    e2 = 0.00669437999014; // Earth eccentricity squared
-    eps2 = (a/b)*(a/b) - 1; //
+  mCacheValid = false;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,12 +75,6 @@ FGLocation::FGLocation(void)
 FGLocation::FGLocation(double lon, double lat, double radius)
 {
   mCacheValid = false;
-
-  a = 20925646.3; // Earth semimajor axis in feet (6,378,137.0 meters)
-  b = 20855486.6; // Earth semiminor axis in feet (6,356,752.3142 meters)
-  e = 0.081819190842622; // Earth eccentricity
-  e2 = 0.00669437999014; // Earth eccentricity squared
-  eps2 = (a/b)*(a/b) - 1; //
 
   double sinLat = sin(lat);
   double cosLat = cos(lat);
@@ -155,6 +144,20 @@ void FGLocation::SetRadius(double radius)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+void FGLocation::SetEllipse(double semimajor, double semiminor)
+{
+  a = semimajor;
+  b = semiminor;
+  a2 = a*a;
+  b2 = b*b;
+  e2 = 1.0 - b2/a2;
+  e = sqrt(e2);
+  eps2 = a2/b2 - 1.0;
+  f = 1.0 - b/a;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGLocation::ComputeDerivedUnconditional(void) const
 {
   // The radius is just the Euclidean norm of the vector.
@@ -205,35 +208,36 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   mTl2ec = mTec2l.Transposed();
 
   // Calculate the geodetic latitude base on AIAA Journal of Guidance and Control paper,
-  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude",
-  // I. Sofair
+  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude", and
+  // "Improved Method for Calculating Exact Geodetic Latitude and Altitude, Revisited",
+  // author: I. Sofair
+
+  double r0, c, p, q, s, t, u, v, w, z, p2, u2;
+  double Ne, P, Q0, Q, signz0, sqrt_q; 
+  r0 = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
+  p  = fabs(mECLoc(eZ))/eps2;
+  s  = (r0*r0)/(e2*eps2);
+  p2 = p*p;
+  q  = p2 - b2 + s;
+  sqrt_q = sqrt(q);
+  if (q>0)
   {
-    double r0, c, p, q, s, t, u, v, w, z, b2, p2, u2;
-    double Ne, P, Q0, Q, signz0; 
-    r0 = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
-    p  = fabs(mECLoc(eZ))/eps2;
-    s  = (r0*r0)/(e2*eps2);
-    b2 = b*b;
-    p2 = p*p;
-    q  = p2 - b2 + s;
-    if (q>0)
-    {
-      u  = p/sqrt(q);
-      u2 = p2/q;
-      v  = b2*u2/q;
-      P  = 27.0*v*s/q;
-      Q0  = sqrt(P+1) + sqrt(P);
-             Q  = pow(Q0, 0.66666666667);
-      t  = (1.0 + Q + 1.0/Q)/6.0;
-      c  = sqrt(u2 - 1 + 2.0*t);
-      w  = (c - u)/2.0;
-      signz0 = mECLoc(eZ)>=0?1.0:-1.0;
-      z  = signz0*sqrt(q)*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
-      Ne = a*sqrt(1+eps2*z*z/b2);
-      mGeodLat = asin((eps2+1.0)*(z/Ne));
-      // altitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a*a/Ne;
-    }
+    u  = p/sqrt_q;
+    u2 = p2/q;
+    v  = b2*u2/q;
+    P  = 27.0*v*s/q;
+    Q0 = sqrt(P+1) + sqrt(P);
+    Q  = pow(Q0, 0.66666666667);
+    t  = (1.0 + Q + 1.0/Q)/6.0;
+    c  = sqrt(u2 - 1 + 2.0*t);
+    w  = (c - u)/2.0;
+    signz0 = mECLoc(eZ)>=0?1.0:-1.0;
+    z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+    Ne = a*sqrt(1+eps2*z*z/b2);
+    mGeodLat = asin((eps2+1.0)*(z/Ne));
+    GeodeticAltitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
   }
+
   // Mark the cached values as valid
   mCacheValid = true;
 }

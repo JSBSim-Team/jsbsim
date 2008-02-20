@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.4 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.5 2008/02/20 23:36:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,8 +85,10 @@ public:
   double SLgravity(void) const {return gAccelReference;}
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
-  double GetGAccel(double r) const { return GM/(r*r); }
-  double RefRadius(void) const {return RadiusReference;}
+  double GetGAccel(double r) const;
+  double GetRefRadius(void) const {return RadiusReference;}
+  double GetSemimajor(void) const {return a;}
+  double GetSemiminor(void) const {return b;}
 
 private:
   double gAccel;
@@ -94,6 +96,10 @@ private:
   double RadiusReference;
   double RotationRate;
   double GM;
+  double C2_0; // WGS84 value for the C2,0 coefficient
+  double J2;   // WGS84 value for J2
+  double a;    // WGS84 semimajor axis length in feet 
+  double b;    // WGS84 semiminor axis length in feet
   void Debug(int from);
 };
 }

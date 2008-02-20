@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.21 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.22 2008/02/20 23:36:39 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -403,7 +403,7 @@ void FGAuxiliary::unbind(void)
 
 void FGAuxiliary::CalculateRelativePosition(void)
 { 
-  const double earth_radius_mt=6371000.0;
+  const double earth_radius_mt = Inertial->GetRefRadius()*fttom;
   lat_relative_position=(FDMExec->GetPropagate()->GetLatitude()  - FDMExec->GetIC()->GetLatitudeDegIC() *degtorad)*earth_radius_mt;
   lon_relative_position=(FDMExec->GetPropagate()->GetLongitude() - FDMExec->GetIC()->GetLongitudeDegIC()*degtorad)*earth_radius_mt;
   relative_position = sqrt(lat_relative_position*lat_relative_position + lon_relative_position*lon_relative_position);

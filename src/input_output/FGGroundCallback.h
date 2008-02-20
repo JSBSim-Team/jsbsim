@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.6 2007/09/05 11:56:13 jberndt Exp $"
+#define ID_GROUNDCALLBACK "$Id: FGGroundCallback.h,v 1.7 2008/02/20 23:36:38 jberndt Exp $"
 
 namespace JSBSim {
 
@@ -59,7 +59,7 @@ CLASS DOCUMENTATION
     ball formed earth.
 
     @author Mathias Froehlich
-    @version $Id: FGGroundCallback.h,v 1.6 2007/09/05 11:56:13 jberndt Exp $
+    @version $Id: FGGroundCallback.h,v 1.7 2008/02/20 23:36:38 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,16 @@ CLASS DECLARATION
 class FGGroundCallback : public FGJSBBase
 {
 public:
+  /** Default constructor.
+  Within this constructor, the reference radius is set to the WGS84 equatorial
+  radius. This constructor should really not be called, instead relying on the 
+  constructor that takes reference radius as an argument. */
   FGGroundCallback();
+
+  /** Constructor
+  This constructor accepts the reference radius in feet. This is the preferred  
+  constructor. */
+  FGGroundCallback(double ReferenceRadius);
   virtual ~FGGroundCallback();
 
   /** Compute the altitude above sealevel. */

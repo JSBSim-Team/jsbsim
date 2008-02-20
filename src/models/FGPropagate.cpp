@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.20 2008/02/17 18:24:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.21 2008/02/20 23:36:39 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,7 +96,6 @@ CLASS IMPLEMENTATION
 FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
   Name = "FGPropagate";
-//  vQtrndot.zero();
 
   last2_vPQRdot.InitMatrix();
   last_vPQRdot.InitMatrix();
@@ -133,10 +132,11 @@ bool FGPropagate::InitModel(void)
 {
   FGModel::InitModel();
 
-  SeaLevelRadius = Inertial->RefRadius();          // For initialization ONLY
+  SeaLevelRadius = Inertial->GetRefRadius();          // For initialization ONLY
   RunwayRadius   = SeaLevelRadius;
 
   VState.vLocation.SetRadius( SeaLevelRadius + 4.0 );
+  VState.vLocation.SetEllipse(Inertial->GetSemimajor(), Inertial->GetSemiminor());
   vOmega = FGColumnVector3( 0.0, 0.0, Inertial->omega() ); // Earth rotation vector
 
   return true;

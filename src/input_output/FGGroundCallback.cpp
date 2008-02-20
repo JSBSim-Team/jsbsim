@@ -41,7 +41,14 @@ namespace JSBSim {
 
 FGGroundCallback::FGGroundCallback()
 {
-  mReferenceRadius = 20925650.0;
+  mReferenceRadius = 20925650.0; // Sea level radius
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGGroundCallback::FGGroundCallback(double ReferenceRadius)
+{
+  mReferenceRadius = ReferenceRadius;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

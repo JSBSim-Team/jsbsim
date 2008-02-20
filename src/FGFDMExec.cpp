@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.44 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.45 2008/02/20 23:36:38 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,7 +226,7 @@ bool FGFDMExec::Allocate(void)
   Auxiliary       = new FGAuxiliary(this);
   Input           = new FGInput(this);
 
-  GroundCallback  = new FGGroundCallback();
+  GroundCallback  = new FGGroundCallback(Inertial->GetRefRadius());
   State           = new FGState(this); // This must be done here, as the FGState
                                        // class needs valid pointers to the above
                                        // model classes

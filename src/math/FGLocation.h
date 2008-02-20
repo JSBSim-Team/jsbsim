@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.6 2008/02/17 18:24:32 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.7 2008/02/20 23:36:39 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.6 2008/02/17 18:24:32 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.7 2008/02/20 23:36:39 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,6 +270,11 @@ public:
       The behavior of this function called with a negative argument is
       left as an exercise to the gentle reader ... */
   void SetRadius(double radius);
+
+  /** Sets the semimajor and semiminor axis lengths for this planet.
+      The eccentricity and flattening are calculated from the semimajor
+      and semiminor axis lengths */
+  void SetEllipse(double semimajor, double semiminor);
 
   /** Transform matrix from local horizontal to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from
@@ -419,17 +424,21 @@ private:
   mutable double mLat;
   mutable double mRadius;
   mutable double mGeodLat;
+  mutable double GeodeticAltitude;
 
   /** The cached rotation matrices from and to the associated frames. */
   mutable FGMatrix33 mTl2ec;
   mutable FGMatrix33 mTec2l;
   
-  /* Terms for geodetic latitude calculation */
+  /* Terms for geodetic latitude calculation. Values are from WGS84 model */
   double a;    // Earth semimajor axis in feet (6,378,137.0 meters)
   double b;    // Earth semiminor axis in feet (6,356,752.3142 meters)
+  double a2;
+  double b2;
   double e;    // Earth eccentricity
   double e2;   // Earth eccentricity squared
   double eps2; //
+  double f;    // Flattening
 
   /** A data validity flag.
       This class implements caching of the derived values like the

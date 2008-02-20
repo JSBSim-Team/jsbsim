@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.16 2007/09/03 03:48:07 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.17 2008/02/20 23:36:38 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -93,8 +93,8 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
   wdir=wmag=0;
   lastSpeedSet=setvt;
   lastWindSet=setwned;
-  sea_level_radius = FDMExec->GetInertial()->RefRadius();
-  radius_to_vehicle = FDMExec->GetInertial()->RefRadius();
+  sea_level_radius = FDMExec->GetInertial()->GetRefRadius();
+  radius_to_vehicle = FDMExec->GetInertial()->GetRefRadius();
   terrain_altitude = 0;
 
   targetNlfIC = 1.0;
