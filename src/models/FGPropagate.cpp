@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.21 2008/02/20 23:36:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.22 2008/02/27 03:27:28 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,6 +222,8 @@ bool FGPropagate::Run(void)
   Tec2l = Tl2ec.Transposed(); // ECEF to local frame transform
   Tec2b = Tl2b * Tec2l;       // ECEF to body frame transform
   Tb2ec = Tec2b.Transposed(); // body to ECEF frame tranform
+  Ti2ec = GetTi2ec();         // ECI to ECEF transform
+  Tec2i = Ti2ec.Transposed(); // ECEF to ECI frame transform
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
   vVel = Tb2l * VState.vUVW;
@@ -339,6 +341,7 @@ void FGPropagate::CalculatePQRdot(void)
   // Compute body frame rotational accelerations based on the current body
   // moments and the total inertial angular velocity expressed in the body
   // frame.
+
   vPQRdot = Jinv*(vMoments - vPQRi*(J*vPQRi));
 }
 
@@ -421,6 +424,20 @@ void FGPropagate::SetTerrainElevationASL(double tt)
 double FGPropagate::GetTerrainElevationASL(void) const
 {
   return FDMExec->GetGroundCallback()->GetTerrainGeoCentRadius()-SeaLevelRadius;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGMatrix33& FGPropagate::GetTi2ec(void) const
+{
+  return VState.vLocation.GetTi2ec(Inertial->GetEarthPositionAngle());
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGMatrix33& FGPropagate::GetTec2i(void) const
+{
+  return VState.vLocation.GetTec2i(Inertial->GetEarthPositionAngle());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

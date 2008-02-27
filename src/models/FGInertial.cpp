@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.5 2008/02/20 23:36:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.6 2008/02/27 03:27:28 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,9 +62,12 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
   J2              = 1.0826266836E-03;   // WGS84 value for J2
   a               = 20925646.3255;      // WGS84 semimajor axis length in feet 
   b               = 20855486.5951;      // WGS84 semiminor axis length in feet
+  earthPosAngle   = 0.0;
 
   gAccelReference = GM/(RadiusReference*RadiusReference);
   gAccel          = GM/(RadiusReference*RadiusReference);
+
+  bind();
 
   Debug(0);
 }
@@ -73,6 +76,7 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 
 FGInertial::~FGInertial(void)
 {
+  unbind();
   Debug(1);
 }
 
@@ -87,6 +91,7 @@ bool FGInertial::Run(void)
   // Gravitation accel
   double r = Propagate->GetRadius();
   gAccel = GetGAccel(r);
+  earthPosAngle += State->Getdt()*RotationRate;
 
   return false;
 }
@@ -96,6 +101,20 @@ bool FGInertial::Run(void)
 double FGInertial::GetGAccel(double r) const
 {
   return GM/(r*r);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInertial::bind(void)
+{
+  PropertyManager->Tie("position/epa-rad", this, &FGInertial::GetEarthPositionAngle);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGInertial::unbind(void)
+{
+  PropertyManager->Untie("position/epa-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

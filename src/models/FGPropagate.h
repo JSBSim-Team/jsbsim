@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.18 2008/02/17 18:24:32 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.19 2008/02/27 03:27:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.18 2008/02/17 18:24:32 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.19 2008/02/27 03:27:28 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -384,6 +384,14 @@ struct VehicleState {
       @return a reference to the body-to-ECEF matrix.  */
   const FGMatrix33& GetTb2ec(void) const { return Tb2ec; }
 
+  /** Retrieves the ECEF-to-ECI transformation matrix.
+      @return a reference to the ECEF-to-ECI transformation matrix.  */
+  const FGMatrix33& GetTec2i(void) const;
+
+  /** Retrieves the ECI-to-ECEF transformation matrix.
+      @return a reference to the ECI-to-ECEF matrix.  */
+  const FGMatrix33& GetTi2ec(void) const;
+
   /** Retrieves the ECEF-to-local transformation matrix.
       Retrieves the ECEF-to-local transformation matrix. Note that the so-called
       local from is also know as the NED frame (for North, East, Down).
@@ -460,6 +468,8 @@ private:
   FGMatrix33 Tb2l;   // body to local frame matrix copy for immediate local use
   FGMatrix33 Tl2ec;  // local to ECEF matrix copy for immediate local use
   FGMatrix33 Tec2l;  // ECEF to local frame matrix copy for immediate local use
+  FGMatrix33 Tec2i;  // ECEF to ECI frame matrix copy for immediate local use
+  FGMatrix33 Ti2ec;  // ECI to ECEF frame matrix copy for immediate local use
   
   double RunwayRadius, SeaLevelRadius, VehicleRadius;
   double radInv;

@@ -54,7 +54,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.22 2008/02/20 23:36:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.23 2008/02/27 03:27:27 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
   Name = "FGAuxiliary";
   vcas = veas = pt = tat = 0;
   psl = rhosl = 1;
-  earthPosAngle = 0.0;
   qbar = 0;
   qbarUW = 0.0;
   qbarUV = 0.0;
@@ -236,8 +235,6 @@ bool FGAuxiliary::Run()
 
   vPilotAccelN = vPilotAccel/Inertial->gravity();
 
-  earthPosAngle += State->Getdt()*Inertial->omega();
-
   // VRP computation
   const FGLocation& vLocation = Propagate->GetLocation();
   FGColumnVector3 vrpStructural = Aircraft->GetXYZvrp();
@@ -316,7 +313,6 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("accelerations/n-pilot-y-norm", this, eY, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/n-pilot-z-norm", this, eZ, (PMF)&FGAuxiliary::GetNpilot);
   PropertyManager->Tie("accelerations/Nz", this, &FGAuxiliary::GetNz);
-  PropertyManager->Tie("position/epa-rad", this, &FGAuxiliary::GetEarthPositionAngle);
   /* PropertyManager->Tie("atmosphere/headwind-fps", this, &FGAuxiliary::GetHeadWind, true);
   PropertyManager->Tie("atmosphere/crosswind-fps", this, &FGAuxiliary::GetCrossWind, true); */
   PropertyManager->Tie("aero/alpha-rad", this, (PF)&FGAuxiliary::Getalpha, &FGAuxiliary::Setalpha, true);
@@ -373,7 +369,6 @@ void FGAuxiliary::unbind(void)
   PropertyManager->Untie("accelerations/n-pilot-y-norm");
   PropertyManager->Untie("accelerations/n-pilot-z-norm");
   PropertyManager->Untie("accelerations/Nz");
-  PropertyManager->Untie("position/epa-rad");
   /* PropertyManager->Untie("atmosphere/headwind-fps");
   PropertyManager->Untie("atmosphere/crosswind-fps"); */
   PropertyManager->Untie("aero/qbar-psf");

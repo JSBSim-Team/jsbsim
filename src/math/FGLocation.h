@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.7 2008/02/20 23:36:39 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.8 2008/02/27 03:27:27 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.7 2008/02/20 23:36:39 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.8 2008/02/27 03:27:27 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -286,6 +286,24 @@ public:
       the earth centered frame to the local horizontal frame. */
   const FGMatrix33& GetTec2l(void) const { ComputeDerived(); return mTec2l; }
 
+  /** Transform matrix from inertial to earth centered frame.
+      Returns a const reference to the rotation matrix of the transform from
+      the inertial frame to the earth centered frame (ECI to ECEF). */
+  const FGMatrix33& GetTi2ec(double _epa) const {
+    epa = _epa;
+    ComputeDerived();
+    return mTi2ec;
+  }
+
+  /** Transform matrix from the earth centered to inertial frame.
+      Returns a const reference to the rotation matrix of the transform from
+      the earth centered frame to the inertial frame (ECEF to ECI). */
+  const FGMatrix33& GetTec2i(double _epa) const {
+    epa = _epa;
+    ComputeDerived();
+    return mTec2i;
+  }
+
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
       @parm lvec Vector in the local horizontal coordinate frame
@@ -425,10 +443,15 @@ private:
   mutable double mRadius;
   mutable double mGeodLat;
   mutable double GeodeticAltitude;
+  mutable double epa;
+  
+  double initial_longitude;
 
   /** The cached rotation matrices from and to the associated frames. */
   mutable FGMatrix33 mTl2ec;
   mutable FGMatrix33 mTec2l;
+  mutable FGMatrix33 mTi2ec;
+  mutable FGMatrix33 mTec2i;
   
   /* Terms for geodetic latitude calculation. Values are from WGS84 model */
   double a;    // Earth semimajor axis in feet (6,378,137.0 meters)

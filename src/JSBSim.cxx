@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.22 2008/01/20 19:10:04 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.23 2008/02/27 03:27:27 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -58,6 +58,7 @@
 #include <FDM/JSBSim/models/FGFCS.h>
 #include <FDM/JSBSim/models/FGPropagate.h>
 #include <FDM/JSBSim/models/FGAuxiliary.h>
+#include <FDM/JSBSim/models/FGInertial.h>
 #include <FDM/JSBSim/models/FGAtmosphere.h>
 #include <FDM/JSBSim/models/FGMassBalance.h>
 #include <FDM/JSBSim/models/FGAerodynamics.h>
@@ -160,6 +161,7 @@ FGJSBsim::FGJSBsim( double dt )
     Aircraft        = fdmex->GetAircraft();
     Propagate        = fdmex->GetPropagate();
     Auxiliary       = fdmex->GetAuxiliary();
+    Inertial        = fdmex->GetInertial();
     Aerodynamics    = fdmex->GetAerodynamics();
     GroundReactions = fdmex->GetGroundReactions();
 
@@ -704,7 +706,7 @@ bool FGJSBsim::copy_from_JSBsim()
 
     _set_Gamma_vert_rad( Auxiliary->GetGamma() );
 
-    _set_Earth_position_angle( Auxiliary->GetEarthPositionAngle() );
+    _set_Earth_position_angle( Inertial->GetEarthPositionAngle() );
 
     _set_Climb_Rate( Propagate->Gethdot() );
 

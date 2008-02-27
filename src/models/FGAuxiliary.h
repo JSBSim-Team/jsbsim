@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.6 2007/12/08 18:38:53 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.7 2008/02/27 03:27:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.6 2007/12/08 18:38:53 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.7 2008/02/27 03:27:28 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,7 +179,6 @@ public:
 
   double GetGamma(void)              const { return gamma;         }
   double GetGroundTrack(void)        const { return psigt;         }
-  double GetEarthPositionAngle(void) const { return earthPosAngle; }
 
   double GetHeadWind(void);
   double GetCrossWind(void);
@@ -241,7 +240,6 @@ private:
   double seconds_in_day;  // seconds since current GMT day began
   int    day_of_year;     // GMT day, 1 .. 366
 
-  double earthPosAngle;
   double hoverbcg, hoverbmac;
 
   // helper data, calculation of distance from initial position

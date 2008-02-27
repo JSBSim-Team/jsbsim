@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.5 2008/02/20 23:36:39 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.6 2008/02/27 03:27:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -85,6 +85,7 @@ public:
   double SLgravity(void) const {return gAccelReference;}
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
+  double GetEarthPositionAngle(void) const { return earthPosAngle; }
   double GetGAccel(double r) const;
   double GetRefRadius(void) const {return RadiusReference;}
   double GetSemimajor(void) const {return a;}
@@ -95,11 +96,16 @@ private:
   double gAccelReference;
   double RadiusReference;
   double RotationRate;
+  double earthPosAngle;
   double GM;
   double C2_0; // WGS84 value for the C2,0 coefficient
   double J2;   // WGS84 value for J2
   double a;    // WGS84 semimajor axis length in feet 
   double b;    // WGS84 semiminor axis length in feet
+
+  void bind(void);
+  void unbind(void);
+  
   void Debug(int from);
 };
 }
