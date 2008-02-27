@@ -55,13 +55,14 @@ INCLUDES
 #include "FGModel.h"
 #include <math/FGFunction.h>
 #include <math/FGColumnVector3.h>
+#include <math/FGMatrix33.h>
 #include <input_output/FGXMLFileRead.h>
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.10 2008/01/01 15:52:23 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.11 2008/02/27 04:18:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -89,7 +90,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.10 $
+    @Id $Revision: 1.11 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,6 +176,16 @@ public:
       coefficients */
   string GetCoefficientValues(string delimeter);
 
+  /** Calculates and returns the wind-to-body axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
+      */
+  FGMatrix33& GetTw2b(void);
+
+  /** Calculates and returns the body-to-wind axis transformation matrix.
+      @return a reference to the wind-to-body transformation matrix.
+      */
+  FGMatrix33& GetTb2w(void);
+
   vector <FGFunction*> * GetCoeff(void) const { return Coeff; }
 
 private:
@@ -190,6 +201,8 @@ private:
   FGColumnVector3 vLastFw;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vDeltaRP;
+  FGMatrix33 mTw2b;
+  FGMatrix33 mTb2w;
   double alphaclmax, alphaclmin;
   double alphahystmax, alphahystmin;
   double impending_stall, stall_hyst;

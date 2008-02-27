@@ -39,13 +39,13 @@ INCLUDES
 #include "FGAerodynamics.h"
 #include "FGPropagate.h"
 #include "FGAircraft.h"
-#include "FGState.h"
+#include "FGAuxiliary.h"
 #include "FGMassBalance.h"
 #include <input_output/FGPropertyManager.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.16 2008/02/16 04:25:53 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.17 2008/02/27 04:18:33 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -178,7 +178,7 @@ bool FGAerodynamics::Run(void)
   vFw(eDrag)*=-1; vFw(eLift)*=-1;
 
   // transform wind axis forces into body axes
-  vForces = State->GetTw2b()*vFw;
+  vForces = GetTw2b()*vFw;
 
   vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp() + vDeltaRP);
 
@@ -191,6 +191,75 @@ bool FGAerodynamics::Run(void)
   }
 
   return false;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// From Stevens and Lewis, "Aircraft Control and Simulation", 3rd Ed., the
+// transformation from body to wind axes is defined (where "a" is alpha and "B"
+// is beta):
+//
+//   cos(a)*cos(B)     sin(B)    sin(a)*cos(B)
+//  -cos(a)*sin(B)     cos(B)   -sin(a)*sin(B)
+//  -sin(a)              0       cos(a)
+//
+// The transform from wind to body axes is then,
+//
+//   cos(a)*cos(B)  -cos(a)*sin(B)  -sin(a)
+//          sin(B)          cos(B)     0
+//   sin(a)*cos(B)  -sin(a)*sin(B)   cos(a)
+
+FGMatrix33& FGAerodynamics::GetTw2b(void)
+{
+  double ca, cb, sa, sb;
+
+  double alpha = Auxiliary->Getalpha();
+  double beta  = Auxiliary->Getbeta();
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTw2b(1,1) = ca*cb;
+  mTw2b(1,2) = -ca*sb;
+  mTw2b(1,3) = -sa;
+  mTw2b(2,1) = sb;
+  mTw2b(2,2) = cb;
+  mTw2b(2,3) = 0.0;
+  mTw2b(3,1) = sa*cb;
+  mTw2b(3,2) = -sa*sb;
+  mTw2b(3,3) = ca;
+
+  return mTw2b;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+FGMatrix33& FGAerodynamics::GetTb2w(void)
+{
+  double alpha,beta;
+  double ca, cb, sa, sb;
+
+  alpha = Auxiliary->Getalpha();
+  beta  = Auxiliary->Getbeta();
+
+  ca = cos(alpha);
+  sa = sin(alpha);
+  cb = cos(beta);
+  sb = sin(beta);
+
+  mTb2w(1,1) = ca*cb;
+  mTb2w(1,2) = sb;
+  mTb2w(1,3) = sa*cb;
+  mTb2w(2,1) = -ca*sb;
+  mTb2w(2,2) = cb;
+  mTb2w(2,3) = -sa*sb;
+  mTb2w(3,1) = -sa;
+  mTb2w(3,2) = 0.0;
+  mTb2w(3,3) = ca;
+
+  return mTb2w;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

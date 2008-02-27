@@ -65,7 +65,6 @@ INCLUDES
 #include "FGExternalReactions.h"
 #include "FGBuoyantForces.h"
 #include "FGAerodynamics.h"
-#include <FGState.h>
 #include <FGFDMExec.h>
 #include "FGPropagate.h"
 #include <input_output/FGPropertyManager.h>
@@ -80,7 +79,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.14 2008/02/16 17:22:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.15 2008/02/27 04:18:33 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +139,7 @@ bool FGAircraft::Run(void)
 
   vNcg = vBodyAccel/Inertial->gravity();
 
-  vNwcg = State->GetTb2w() * vNcg;
+  vNwcg = Aerodynamics->GetTb2w() * vNcg;
   vNwcg(3) = -1*vNwcg(3) + 1;
 
   return false;

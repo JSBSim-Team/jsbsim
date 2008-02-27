@@ -60,7 +60,6 @@ INCLUDES
 #include <map>
 #include "FGJSBBase.h"
 #include <initialization/FGInitialCondition.h>
-#include <math/FGMatrix33.h>
 #include <math/FGColumnVector3.h>
 #include <math/FGQuaternion.h>
 #include "FGFDMExec.h"
@@ -77,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.10 2008/01/01 15:52:23 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.11 2008/02/27 04:18:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -93,7 +92,7 @@ CLASS DOCUMENTATION
     <h3>Properties</h3>
     @property sim-time-sec (read only) cumulative simulation in seconds.
     @author Jon S. Berndt
-    @version $Revision: 1.10 $
+    @version $Revision: 1.11 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,16 +148,6 @@ public:
     return sim_time;
   }
 
-  /** Calculates and returns the wind-to-body axis transformation matrix.
-      @return a reference to the wind-to-body transformation matrix.
-      */
-  FGMatrix33& GetTw2b(void);
-
-  /** Calculates and returns the body-to-wind axis transformation matrix.
-      @return a reference to the wind-to-body transformation matrix.
-      */
-  FGMatrix33& GetTb2w(void);
-
   /** Prints a summary of simulator state (speed, altitude,
       configuration, etc.)  */
 //  void ReportState(void);
@@ -168,8 +157,6 @@ private:
   double saved_dt;
 
   FGFDMExec* FDMExec;
-  FGMatrix33 mTw2b;
-  FGMatrix33 mTb2w;
 
   FGAircraft* Aircraft;
   FGPropagate* Propagate;
