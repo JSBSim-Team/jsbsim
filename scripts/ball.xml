@@ -5,5 +5,14 @@
     name="ball test">
   <description>Simplest of all tests</description>
   <use aircraft="ball" initialize="reset00"/>
-  <run start="0.0" end="5400" dt="0.0010"/>
+  <run start="0.0" end="5400" dt="0.00833333">
+    <event name="Initialize integrators">
+      <condition>sim-time-sec  ge  0.0</condition>
+      <set name="simulation/integrator/rate/rotational" value="2"/>
+      <set name="simulation/integrator/rate/translational" value="3"/>
+      <set name="simulation/integrator/position/rotational" value="2"/>
+      <set name="simulation/integrator/position/translational" value="4"/>
+    </event>
+  </run>
 </runscript>
+
