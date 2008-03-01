@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.8 2008/02/27 03:27:27 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.9 2008/03/01 01:25:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.8 2008/02/27 03:27:27 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.9 2008/03/01 01:25:12 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,15 +152,14 @@ public:
       @param distance from center of earth to vehicle in feet*/
   FGLocation(double lon, double lat, double radius);
 
-  /** Copy constructor. */
-  FGLocation(const FGColumnVector3& lv)
-    : mECLoc(lv), mCacheValid(false) {}
+  /** Column constructor. */
+  FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false) { }
 
   /** Copy constructor. */
   FGLocation(const FGLocation& l)
-    : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid) {
-    if (!mCacheValid)
-      return;
+    : mECLoc(l.mECLoc), mCacheValid(l.mCacheValid)
+  {
+//    if (!mCacheValid) return; // This doesn't seem right.
 
     mLon = l.mLon;
     mLat = l.mLat;
@@ -168,6 +167,17 @@ public:
 
     mTl2ec = l.mTl2ec;
     mTec2l = l.mTec2l;
+
+    a = l.a;
+    b = l.b;
+    a2 = l.a2;
+    b2 = l.b2;
+    e2 = l.e2;
+    e = l.e;
+    eps2 = l.eps2;
+    f = l.f;
+
+    initial_longitude = l.initial_longitude;
   }
 
   /** Get the longitude.
@@ -289,20 +299,12 @@ public:
   /** Transform matrix from inertial to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from
       the inertial frame to the earth centered frame (ECI to ECEF). */
-  const FGMatrix33& GetTi2ec(double _epa) const {
-    epa = _epa;
-    ComputeDerived();
-    return mTi2ec;
-  }
+  const FGMatrix33& GetTi2ec(double epa);
 
   /** Transform matrix from the earth centered to inertial frame.
       Returns a const reference to the rotation matrix of the transform from
       the earth centered frame to the inertial frame (ECEF to ECI). */
-  const FGMatrix33& GetTec2i(double _epa) const {
-    epa = _epa;
-    ComputeDerived();
-    return mTec2i;
-  }
+  const FGMatrix33& GetTec2i(double epa);
 
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
@@ -358,11 +360,22 @@ public:
     mCacheValid = false; return mECLoc.Entry(idx);
   }
 
-  const FGLocation& operator=(const FGLocation& l) {
+  const FGLocation& operator=(const FGColumnVector3& v)
+  {
+    mECLoc(eX) = v(eX);
+    mECLoc(eY) = v(eY);
+    mECLoc(eZ) = v(eZ);
+    mCacheValid = false;
+    ComputeDerived();
+    return *this;
+  }
+
+  const FGLocation& operator=(const FGLocation& l)
+  {
     mECLoc = l.mECLoc;
     mCacheValid = l.mCacheValid;
-    if (!mCacheValid)
-      return *this;
+
+//    if (!mCacheValid) return *this; // Why is this here for an assignment operator?
 
     mLon = l.mLon;
     mLat = l.mLat;
@@ -370,6 +383,17 @@ public:
 
     mTl2ec = l.mTl2ec;
     mTec2l = l.mTec2l;
+
+    a = l.a;
+    b = l.b;
+    a2 = l.a2;
+    b2 = l.b2;
+    e2 = l.e2;
+    e = l.e;
+    eps2 = l.eps2;
+    f = l.f;
+
+    initial_longitude = l.initial_longitude;
 
     return *this;
   }
@@ -443,7 +467,6 @@ private:
   mutable double mRadius;
   mutable double mGeodLat;
   mutable double GeodeticAltitude;
-  mutable double epa;
   
   double initial_longitude;
 

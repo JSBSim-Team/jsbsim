@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.6 2008/02/27 03:27:28 jberndt Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.7 2008/03/01 01:25:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,6 +86,7 @@ public:
   double gravity(void) const {return gAccel;}
   double omega(void) const {return RotationRate;}
   double GetEarthPositionAngle(void) const { return earthPosAngle; }
+  double GetEarthPositionAngleDeg(void) const { return earthPosAngle*radtodeg;}
   double GetGAccel(double r) const;
   double GetRefRadius(void) const {return RadiusReference;}
   double GetSemimajor(void) const {return a;}

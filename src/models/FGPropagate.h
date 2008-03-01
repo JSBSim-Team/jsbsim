@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.19 2008/02/27 03:27:28 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.20 2008/03/01 01:25:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.19 2008/02/27 03:27:28 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.20 2008/03/01 01:25:12 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -386,11 +386,11 @@ struct VehicleState {
 
   /** Retrieves the ECEF-to-ECI transformation matrix.
       @return a reference to the ECEF-to-ECI transformation matrix.  */
-  const FGMatrix33& GetTec2i(void) const;
+  const FGMatrix33& GetTec2i(void);
 
   /** Retrieves the ECI-to-ECEF transformation matrix.
       @return a reference to the ECI-to-ECEF matrix.  */
-  const FGMatrix33& GetTi2ec(void) const;
+  const FGMatrix33& GetTi2ec(void);
 
   /** Retrieves the ECEF-to-local transformation matrix.
       Retrieves the ECEF-to-local transformation matrix. Note that the so-called
@@ -459,6 +459,7 @@ private:
   FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot;
   FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
   FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;
+  FGColumnVector3 vLocation;
   FGColumnVector3 vPQRi;   // Inertial frame angular velocity
   FGColumnVector3 vOmega;  // The Earth angular velocity vector
   FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
@@ -470,6 +471,8 @@ private:
   FGMatrix33 Tec2l;  // ECEF to local frame matrix copy for immediate local use
   FGMatrix33 Tec2i;  // ECEF to ECI frame matrix copy for immediate local use
   FGMatrix33 Ti2ec;  // ECI to ECEF frame matrix copy for immediate local use
+  FGMatrix33 Ti2b;   // ECI to body frame rotation matrix
+  FGMatrix33 Tb2i;   // body to ECI frame rotation matrix
   
   double RunwayRadius, SeaLevelRadius, VehicleRadius;
   double radInv;

@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.8 2008/02/27 03:27:27 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.9 2008/03/01 01:25:12 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -68,6 +68,7 @@ CLASS IMPLEMENTATION
 FGLocation::FGLocation(void)
 {
   mCacheValid = false;
+  initial_longitude = 0.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +81,6 @@ FGLocation::FGLocation(double lon, double lat, double radius)
   double cosLat = cos(lat);
   double sinLon = sin(lon);
   double cosLon = cos(lon);
-  epa = 0.0;
   initial_longitude = lon;
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
@@ -150,6 +150,8 @@ void FGLocation::SetRadius(double radius)
 
 void FGLocation::SetEllipse(double semimajor, double semiminor)
 {
+  mCacheValid = false;
+
   a = semimajor;
   b = semiminor;
   a2 = a*a;
@@ -161,13 +163,37 @@ void FGLocation::SetEllipse(double semimajor, double semiminor)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// Compute the ECEF to ECI transformation matrix using Stevens and Lewis "Aircraft
+// Control and Simulation", second edition, eqn. 1.4-12, pg. 39
+
+const FGMatrix33& FGLocation::GetTec2i(double epa)
+{
+  double mu = epa - initial_longitude;
+  mTec2i = FGMatrix33( cos(mu), -sin(mu), 0.0,
+                       sin(mu),  cos(mu), 0.0,
+                            0.0,     0.0, 1.0 );
+  return mTec2i;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+const FGMatrix33& FGLocation::GetTi2ec(double epa)
+{
+  double mu = epa - initial_longitude;
+  mTi2ec = FGMatrix33( cos(mu), sin(mu), 0.0,
+                      -sin(mu), cos(mu), 0.0,
+                           0.0,      0.0, 1.0 );
+  return mTi2ec;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGLocation::ComputeDerivedUnconditional(void) const
 {
   // The radius is just the Euclidean norm of the vector.
   mRadius = mECLoc.Magnitude();
 
-  // The distance of the location to the y-axis, which is the axis
+  // The distance of the location to the Z-axis, which is the axis
   // through the poles.
   double rxy = sqrt(mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY));
 
@@ -211,16 +237,6 @@ void FGLocation::ComputeDerivedUnconditional(void) const
 
   mTl2ec = mTec2l.Transposed();
   
-  // Compute the ECEF to ECI transformation matrix using Stevens and Lewis "Aircraft
-  // Control and Simulation", second edition, eqn. 1.4-12, pg. 39
-  
-  double mu = epa + initial_longitude;
-  mTec2i = FGMatrix33(  cos(mu), sin(mu), 0.0,
-                       -sin(mu), cos(mu), 0.0,
-                            0.0,     0.0, 1.0 );
-
-  mTi2ec = mTec2i.Transposed();
-
   // Calculate the geodetic latitude base on AIAA Journal of Guidance and Control paper,
   // "Improved Method for Calculating Exact Geodetic Latitude and Altitude", and
   // "Improved Method for Calculating Exact Geodetic Latitude and Altitude, Revisited",

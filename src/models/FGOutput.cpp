@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.23 2008/01/08 12:57:02 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.24 2008/03/01 01:25:12 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -284,6 +284,8 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << "Beta (deg)" + delimeter;
       outstream << "Latitude (deg)" + delimeter;
       outstream << "Longitude (deg)" + delimeter;
+      outstream << "ECEF X (ft)" + delimeter + "ECEF Y (ft)" + delimeter + "ECEF Z (ft)" + delimeter;
+      outstream << "EPA (deg)" + delimeter;
       outstream << "Distance AGL (ft)" + delimeter;
       outstream << "Runway Radius (ft)";
     }
@@ -374,6 +376,8 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << Auxiliary->Getbeta(inDegrees) << delimeter;
     outstream << Propagate->GetLocation().GetLatitudeDeg() << delimeter;
     outstream << Propagate->GetLocation().GetLongitudeDeg() << delimeter;
+    outstream << ((FGColumnVector3)Propagate->GetLocation()).Dump(delimeter) << delimeter;
+    outstream << Inertial->GetEarthPositionAngleDeg() << delimeter;
     outstream << Propagate->GetDistanceAGL() << delimeter;
     outstream << Propagate->GetRunwayRadius();
   }

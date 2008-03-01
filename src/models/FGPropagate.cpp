@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.22 2008/02/27 03:27:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.23 2008/03/01 01:25:12 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,6 +224,8 @@ bool FGPropagate::Run(void)
   Tb2ec = Tec2b.Transposed(); // body to ECEF frame tranform
   Ti2ec = GetTi2ec();         // ECI to ECEF transform
   Tec2i = Ti2ec.Transposed(); // ECEF to ECI frame transform
+  Ti2b  = Tec2b*Ti2ec;        // ECI to body frame transform
+  Tb2i  = Ti2b.Transposed();  // body to ECI frame transform
 
   // Compute vehicle velocity wrt ECEF frame, expressed in Local horizontal frame.
   vVel = Tb2l * VState.vUVW;
@@ -288,18 +290,29 @@ bool FGPropagate::Run(void)
 
   // Propagate translational position
 
+  // The VState instance of the Location object vLocation stores the vehicle
+  // location expressed in the ECEF frame. The integation occurs in the 
+  // ECI frame, so the location must be rotated to the ECI frame. It is
+  // transformed back below.
+  vLocation = Tec2i * VState.vLocation;
+
   switch(integrator_translational_position) {
-  case eRectEuler:       VState.vLocation += dt*vLocationDot;
+  case eRectEuler:       vLocation += dt*vLocationDot;
     break;
-  case eTrapezoidal:     VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);
+  case eTrapezoidal:     vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);
     break;
-  case eAdamsBashforth2: VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
+  case eAdamsBashforth2: vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
     break;
-  case eAdamsBashforth3: VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
+  case eAdamsBashforth3: vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
     break;
   case eNone: // do nothing, freeze translational position
     break;
   }
+  
+  // The integration (propagation) of the vLocation object has taken place in
+  // in the ECI frame. We now store the converted version in ECEF frame back
+  // in the VState structure.
+  VState.vLocation = Ti2ec * vLocation;
 
   // Set past values
   
@@ -364,7 +377,7 @@ void FGPropagate::CalculateQuatdot(void)
                               -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
   // Compute quaternion orientation derivative on current body rates
-  vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*vOmegaLocal );
+  vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*vOmegaLocal);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -380,11 +393,11 @@ void FGPropagate::CalculateUVWdot(void)
   vUVWdot = vForces/mass - VState.vPQR * VState.vUVW;
 
   // Include Coriolis acceleration.
-  vUVWdot -= 2.0 * (Tec2b *vOmega) * VState.vUVW;
+  vUVWdot -= 2.0 * (Ti2b *vOmega) * VState.vUVW;
 
   // Include Centrifugal acceleration.
   if (!GroundReactions->GetWOW()) {
-    vUVWdot -= Tec2b*vOmega*(vOmega*VState.vLocation);
+    vUVWdot -= Ti2b*(vOmega*(vOmega*(Tec2i*VState.vLocation)));
   }
 
   // Include Gravitation accel
@@ -395,8 +408,18 @@ void FGPropagate::CalculateUVWdot(void)
 
 void FGPropagate::CalculateLocationdot(void)
 {
-  // Compute vehicle velocity wrt EC frame, expressed in EC frame
-  vLocationDot = Tl2ec * vVel;
+  // Compute vehicle inertial velocity wrt origin, expressed in ECI frame
+  vLocationDot = Tb2i * VState.vUVW + (vOmega * (Tec2i * VState.vLocation));
+
+  // At this point, the vLocationDot vector holds the inertial velocity of the
+  // vehicle expressed in the ECI frame.
+
+  // Now subtract off the effects of the planetary rotation for placement of
+  // the vehicle at the correct planet-relative longitude, effectively
+  // producing the vehicle velocity relative to the ECEF frame, expressed
+  // in the ECI frame.
+  FGColumnVector3 earth_rotation = vOmega * (Tec2i * VState.vLocation);
+  vLocationDot -= earth_rotation;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -428,14 +451,14 @@ double FGPropagate::GetTerrainElevationASL(void) const
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGMatrix33& FGPropagate::GetTi2ec(void) const
+const FGMatrix33& FGPropagate::GetTi2ec(void)
 {
   return VState.vLocation.GetTi2ec(Inertial->GetEarthPositionAngle());
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-const FGMatrix33& FGPropagate::GetTec2i(void) const
+const FGMatrix33& FGPropagate::GetTec2i(void)
 {
   return VState.vLocation.GetTec2i(Inertial->GetEarthPositionAngle());
 }
