@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.23 2008/03/01 01:25:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.24 2008/03/01 05:15:21 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -290,30 +290,19 @@ bool FGPropagate::Run(void)
 
   // Propagate translational position
 
-  // The VState instance of the Location object vLocation stores the vehicle
-  // location expressed in the ECEF frame. The integation occurs in the 
-  // ECI frame, so the location must be rotated to the ECI frame. It is
-  // transformed back below.
-  vLocation = Tec2i * VState.vLocation;
-
   switch(integrator_translational_position) {
-  case eRectEuler:       vLocation += dt*vLocationDot;
+  case eRectEuler:       VState.vLocation += dt*vLocationDot;
     break;
-  case eTrapezoidal:     vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);
+  case eTrapezoidal:     VState.vLocation += 0.5*dt*(vLocationDot + last_vLocationDot);
     break;
-  case eAdamsBashforth2: vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
+  case eAdamsBashforth2: VState.vLocation += dt*(1.5*vLocationDot - 0.5*last_vLocationDot);
     break;
-  case eAdamsBashforth3: vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
+  case eAdamsBashforth3: VState.vLocation += (1/12.0)*dt*(23.0*vLocationDot - 16.0*last_vLocationDot + 5.0*last2_vLocationDot);
     break;
   case eNone: // do nothing, freeze translational position
     break;
   }
   
-  // The integration (propagation) of the vLocation object has taken place in
-  // in the ECI frame. We now store the converted version in ECEF frame back
-  // in the VState structure.
-  VState.vLocation = Ti2ec * vLocation;
-
   // Set past values
   
   last2_vPQRdot = last_vPQRdot;
@@ -362,11 +351,6 @@ void FGPropagate::CalculatePQRdot(void)
 // Compute the quaternion orientation derivative
 //
 // vQtrndot is the quaternion derivative.
-// NOTE: ACCORDING TO STEVENS AND LEWIS, THIS EQUATION SHOULD CALCULATE THE
-// DERIVATIVE OF THE QUATERNION WHERE THE QUATERNION REPRESENTS THE BODY
-// FRAME ORIENTATION RELATIVE TO THE INERTIAL FRAME, AND WHERE THE ROTATIONAL
-// RATE VECTOR USED IN THE CALCULATION IS THE VEHICLE BODY RATE RELATIVE TO
-// THE INERTIAL FRAME, EXPRESSED IN THE BODY SYSTEM.
 // Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
 //            Second edition (2004), eqn 1.5-16b (page 50)
 
@@ -381,6 +365,10 @@ void FGPropagate::CalculateQuatdot(void)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// This set of calculations results in the body frame accelerations being
+// computed.
+// Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+//            Second edition (2004), eqn 1.5-16d (page 50)
 
 void FGPropagate::CalculateUVWdot(void)
 {
@@ -408,18 +396,18 @@ void FGPropagate::CalculateUVWdot(void)
 
 void FGPropagate::CalculateLocationdot(void)
 {
-  // Compute vehicle inertial velocity wrt origin, expressed in ECI frame
-  vLocationDot = Tb2i * VState.vUVW + (vOmega * (Tec2i * VState.vLocation));
+  // Transform the vehicle velocity relative to the ECEF frame, expressed
+  // in the body frame, to be expressed in the ECI (inertial) frame.
+  vLocationDot = Tb2ec * VState.vUVW;
 
-  // At this point, the vLocationDot vector holds the inertial velocity of the
-  // vehicle expressed in the ECI frame.
+  // Now, transform the velocity vector of the body relative to the origin (Earth
+  // center) to be expressed in the inertial frame, and add the vehicle velocity
+  // contribution due to the rotation of the planet. The above velocity is only
+  // relative to the rotating ECEF frame.
+  // Reference: See Stevens and Lewis, "Aircraft Control and Simulation", 
+  //            Second edition (2004), eqn 1.5-16c (page 50)
 
-  // Now subtract off the effects of the planetary rotation for placement of
-  // the vehicle at the correct planet-relative longitude, effectively
-  // producing the vehicle velocity relative to the ECEF frame, expressed
-  // in the ECI frame.
-  FGColumnVector3 earth_rotation = vOmega * (Tec2i * VState.vLocation);
-  vLocationDot -= earth_rotation;
+  vInertialVelocity = Tec2i * vLocationDot + (vOmega * (Tec2i * VState.vLocation));
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -511,6 +499,8 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("velocities/q-rad_sec", this, eQ, (PMF)&FGPropagate::GetPQR);
   PropertyManager->Tie("velocities/r-rad_sec", this, eR, (PMF)&FGPropagate::GetPQR);
 
+  PropertyManager->Tie("velocities/eci-velocity-mag-fps", this, &FGPropagate::GetInertialVelocityMagnitude);
+
   PropertyManager->Tie("accelerations/pdot-rad_sec2", this, eP, (PMF)&FGPropagate::GetPQRdot);
   PropertyManager->Tie("accelerations/qdot-rad_sec2", this, eQ, (PMF)&FGPropagate::GetPQRdot);
   PropertyManager->Tie("accelerations/rdot-rad_sec2", this, eR, (PMF)&FGPropagate::GetPQRdot);
@@ -563,6 +553,7 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("velocities/p-rad_sec");
   PropertyManager->Untie("velocities/q-rad_sec");
   PropertyManager->Untie("velocities/r-rad_sec");
+  PropertyManager->Untie("velocities/eci-velocity-mag-fps");
   PropertyManager->Untie("accelerations/udot-fps");
   PropertyManager->Untie("accelerations/vdot-fps");
   PropertyManager->Untie("accelerations/wdot-fps");

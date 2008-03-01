@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.20 2008/03/01 01:25:12 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.21 2008/03/01 05:15:21 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.20 2008/03/01 01:25:12 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.21 2008/03/01 05:15:21 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -252,6 +252,10 @@ struct VehicleState {
       @return The body frame velocity component.
   */
   double GetVel(int idx) const { return vVel(idx); }
+
+  /** Retrieves the total inertial velocity in ft/sec.
+  */
+  double GetInertialVelocityMagnitude(void) const { return vInertialVelocity.Magnitude(); }
 
   /** Returns the current altitude.
       Returns the current altitude. Specifically, this function returns the
@@ -456,6 +460,7 @@ private:
   struct VehicleState VState;
 
   FGColumnVector3 vVel;
+  FGColumnVector3 vInertialVelocity;
   FGColumnVector3 vPQRdot, last_vPQRdot, last2_vPQRdot;
   FGColumnVector3 vUVWdot, last_vUVWdot, last2_vUVWdot;
   FGColumnVector3 vLocationDot, last_vLocationDot, last2_vLocationDot;

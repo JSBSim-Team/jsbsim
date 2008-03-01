@@ -70,7 +70,7 @@ static const int endianTest = 1;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGOutput.cpp,v 1.24 2008/03/01 01:25:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGOutput.cpp,v 1.25 2008/03/01 05:15:21 jberndt Exp $";
 static const char *IdHdr = ID_OUTPUT;
 
 // (stolen from FGFS native_fdm.cxx)
@@ -239,6 +239,7 @@ void FGOutput::DelimitedOutput(string fname)
       outstream << delimeter;
       outstream << "q bar (psf)" + delimeter;
       outstream << "V_{Total} (ft/s)" + delimeter;
+      outstream << "V_{Inertial} (ft/s)" + delimeter;
       outstream << "UBody" + delimeter + "VBody" + delimeter + "WBody" + delimeter;
       outstream << "Aero V_{X Body} (ft/s)" + delimeter + "Aero V_{Y Body} (ft/s)" + delimeter + "Aero V_{Z Body} (ft/s)" + delimeter;
       outstream << "V_{North} (ft/s)" + delimeter + "V_{East} (ft/s)" + delimeter + "V_{Down} (ft/s)";
@@ -339,6 +340,7 @@ void FGOutput::DelimitedOutput(string fname)
     outstream << delimeter;
     outstream << Auxiliary->Getqbar() << delimeter;
     outstream << setprecision(12) << Auxiliary->GetVt() << delimeter;
+    outstream << Propagate->GetInertialVelocityMagnitude() << delimeter;
     outstream << setprecision(12) << Propagate->GetUVW().Dump(delimeter) << delimeter;
     outstream << Auxiliary->GetAeroUVW().Dump(delimeter) << delimeter;
     outstream << Propagate->GetVel().Dump(delimeter);
