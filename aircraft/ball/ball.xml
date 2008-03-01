@@ -68,12 +68,35 @@
             <retractable>0</retractable>
         </contact>
     </ground_reactions>
+    <external_reactions>
+      <property>fcs/parachute_reef_pos_norm</property> <!-- "Declare" the reefing term -->
+      <force name="parachute" frame="WIND">
+        <function>
+          <product>
+            <property>aero/qbar-psf</property>
+            <property>fcs/parachute_reef_pos_norm</property>
+            <value> 1.0 </value>  <!-- Full drag coefficient -->
+            <value> 20.0 </value> <!-- Full parachute area -->
+          </product>
+        </function>
+        <location>
+          <x>-1</x>
+          <y>0</y>
+          <z>0</z>
+        </location>
+        <direction>
+          <x>-1</x>
+          <y>0</y>
+          <z>0</z>
+        </direction>
+      </force>
+    </external_reactions>
     <propulsion>
     </propulsion>
-    <flight_control name="FGFCS">
-    </flight_control>
-    <aerodynamics>
 
+    <flight_control name="FGFCS"/>
+
+    <aerodynamics>
         <axis name="DRAG">
             <function name="aero/coefficient/CD">
                 <description>Drag</description>
