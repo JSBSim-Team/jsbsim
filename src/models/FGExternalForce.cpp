@@ -56,7 +56,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.5 2008/01/13 18:56:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.6 2008/03/01 03:16:34 jberndt Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -214,8 +214,8 @@ void FGExternalForce::Debug(int from)
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 0) { // Constructor
       cout << "    " << Name << endl;
-	  cout << "    Frame: " << Frame << endl;
-	  cout << "    Location: (" << vXYZn(eX) << ", " << vXYZn(eY) << ", " << vXYZn(eZ) << ")" << endl;
+      cout << "    Frame: " << Frame << endl;
+      cout << "    Location: (" << vXYZn(eX) << ", " << vXYZn(eY) << ", " << vXYZn(eZ) << ")" << endl;
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

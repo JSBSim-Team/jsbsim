@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.4 2008/01/16 03:48:44 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.5 2008/03/01 03:16:34 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,12 +157,12 @@ public:
   FGColumnVector3& GetBodyForces(void);
   double GetMagnitude(void) const {return magnitude;}
   double GetAzimuth(void) const {return azimuth;}
-  double GetX(void) const {return vDirection(0);}
-  double GetY(void) const {return vDirection(1);}
-  double GetZ(void) const {return vDirection(2);}
-  void SetX(double x) {vDirection(0) = x;}
-  void SetY(double y) {vDirection(1) = y;}
-  void SetZ(double z) {vDirection(2) = z;}
+  double GetX(void) const {return vDirection(eX);}
+  double GetY(void) const {return vDirection(eY);}
+  double GetZ(void) const {return vDirection(eZ);}
+  void SetX(double x) {vDirection(eX) = x;}
+  void SetY(double y) {vDirection(eY) = y;}
+  void SetZ(double z) {vDirection(eZ) = z;}
   
 private:
 
