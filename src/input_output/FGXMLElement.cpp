@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.17 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.18 2008/03/09 08:15:58 jberndt Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,7 +227,7 @@ double Element::GetAttributeValueAsNumber(string attr)
 {
   string attribute = GetAttributeValue(attr);
 
-  if (attribute.empty()) return 99e99;
+  if (attribute.empty()) return HUGE_VAL;
   else return (atof(attribute.c_str()));
 }
 
@@ -272,9 +272,11 @@ double Element::GetDataAsNumber(void)
 {
   if (data_lines.size() == 1) {
     return atof(data_lines[0].c_str());
+  } else if (data_lines.size() == 0) {
+    return HUGE_VAL;
   } else {
     cerr << "Attempting to get single data value from multiple lines in element " << name << endl;
-    return 0;
+    return HUGE_VAL;
   }
 }
 

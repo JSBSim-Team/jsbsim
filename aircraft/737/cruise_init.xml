@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<initialize name="cruise">
+  <!--
+    This file sets up the aircraft to start off
+    at cruise conditions.
+  -->
+  <vc unit="FT/SEC">     500.0  </vc>
+  <latitude unit="DEG">   47.0  </latitude>
+  <longitude unit="DEG"> 122.0  </longitude>
+  <phi unit="DEG">         0.0  </phi>
+  <gamma unit="DEG">       0.0  </gamma>
+  <psi unit="DEG">       225.0  </psi>
+  <altitude unit="FT"> 30000.0  </altitude>
+<!--  <running>                1    </running> -->
+  <trim_config>
+    <phi step_size="0.1"/>
+    <theta step_size="0.1"/>
+    <psi step_size="0.1"/>
+    <gamma> 0.0 </gamma>
+
+    <throttle_cmd step_size="0.2">  0.8 </throttle_cmd>
+
+    <output_file name="cruise_trim_data.txt"/>
+  </trim_config>
+</initialize>

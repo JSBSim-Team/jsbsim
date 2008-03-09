@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.16 2008/02/16 17:22:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.17 2008/03/09 08:15:59 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,6 +138,11 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
     cerr << "No feed tank specified in engine definition." << endl;
   }
 
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/engine[%d]/set-running", EngineNumber);
+  PropertyManager->Tie( property_name, (FGEngine*)this, &FGEngine::GetRunning,
+                                       &FGEngine::SetRunning );
+
   Debug(0);
 }
 
@@ -146,6 +151,9 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
 FGEngine::~FGEngine()
 {
   delete Thruster;
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/engine[%d]/set-running", EngineNumber);
+  PropertyManager->Untie( property_name );
   Debug(1);
 }
 

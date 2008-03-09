@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.21 2008/03/01 05:15:21 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.22 2008/03/09 08:15:59 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.21 2008/03/01 05:15:21 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.22 2008/03/09 08:15:59 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,13 @@ CLASS DECLARATION
 
 class FGPropagate : public FGModel {
 public:
-  /** Constructor
+  /** Constructor.
+      The constructor initializes several variables, and sets the initial set
+      of integrators to use as follows:
+      - integrator, rotational rate = Adams Bashforth 2
+      - integrator, translational rate = Adams Bashforth 2
+      - integrator, rotational position = Trapezoidal
+      - integrator, translational position = Trapezoidal
       @param Executive a pointer to the parent executive object */
   FGPropagate(FGFDMExec* Executive);
 
@@ -107,22 +113,29 @@ public:
   /// These define the indices use to select the various integrators.
   enum eIntegrateType {eNone = 0, eRectEuler, eTrapezoidal, eAdamsBashforth2, eAdamsBashforth3};
 
-/// State vector structure.
+/** The current vehicle state vector structure contains the translational and
+    angular position, and the translational and angular velocity. */
 struct VehicleState {
-  /// Represents the current location of the vehicle.
+  /** Represents the current location of the vehicle in Earth centered Earth
+      fixed (ECEF) frame.
+      @units ft */
   FGLocation vLocation;
-  /// The velocity vector of the vehicle in body frame.
+  /** The velocity vector of the vehicle with respect to the ECEF frame,
+      expressed in the body system.
+      @units ft/sec */
   FGColumnVector3 vUVW;
-  /// The angular velocity vector for the vehicle in body frame.
+  /** The angular velocity vector for the vehicle relative to the ECEF frame,
+      expressed in the body frame.
+      @units rad/sec */
   FGColumnVector3 vPQR;
-  /// Represents the current orientation of the vehicle.
+  /** The current orientation of the vehicle, that is, the orientation of the
+      body frame relative to the local, vehilce-carried, NED frame. */
   FGQuaternion vQtrn;
 };
 
   /** Initializes the FGPropagate class after instantiation and prior to first execution.
       The base class FGModel::InitModel is called first, initializing pointers to the 
-      other FGModel objects (and others).
-  */
+      other FGModel objects (and others).  */
   bool InitModel(void);
 
   /** Runs the Propagate model; called by the Executive.

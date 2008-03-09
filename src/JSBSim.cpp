@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.35 2008/01/17 04:32:41 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.36 2008/03/09 08:15:58 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -620,6 +620,18 @@ bool options(int count, char **arg)
   if ((ScriptName.size() > 0 && AircraftName.size() > 0) || (ScriptName.size() > 0 && ResetName.size() > 0)) {
     cerr << "You cannot specify an aircraft or initialization file with a script." << endl;
     result = false;
+  }
+  if (trim_analysis) {
+    if ( !ScriptName.empty() ) {
+      cerr << "You cannot use trim analysis with a script name on the command line." << endl;
+      cerr << "You can, however, do trim analysis from within a script." << endl;
+      result = false;
+    }
+    if (AircraftName.empty() || ResetName.empty()) {
+      cerr << "You must give both an aircraft name and an initialization file" << endl;
+      cerr << "name with the trim-analysis option." << endl;
+      result = false;
+    }
   }
   return result;
 

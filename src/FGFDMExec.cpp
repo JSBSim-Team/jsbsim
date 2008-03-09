@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.45 2008/02/20 23:36:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.46 2008/03/09 08:15:58 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -176,8 +176,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-  instance->Tie("simulation/do_trim", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
-  instance->Tie("simulation/do_old_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
+  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
+  instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   Constructing = false;
 }
@@ -186,8 +186,8 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 
 FGFDMExec::~FGFDMExec()
 {
-  instance->Untie("simulation/do_old_trim");
-  instance->Untie("simulation/do_trim");
+  instance->Untie("simulation/do_simple_trim");
+  instance->Untie("simulation/do_trim_analysis");
   instance->Untie("simulation/terminate");
 
   try {
@@ -367,8 +367,10 @@ bool FGFDMExec::Run(void)
 //    SlaveFDMList[i]->exec->Run();
   }
 
-  if (Script != 0) success = Script->RunScript(); // returns true if success
-                                                  // false if complete
+  // returns true if success
+  // false if complete
+  if (Script != 0 && !State->IntegrationSuspended()) success = Script->RunScript();
+
   while (model_iterator != 0L) {
     model_iterator->Run();
     model_iterator = model_iterator->NextModel;
@@ -813,10 +815,7 @@ void FGFDMExec::DoTrimAnalysis(int mode)
 
   FGTrimAnalysis trimAnalysis(this, (JSBSim::TrimAnalysisMode)mode);
 
-  // TODO: in future file trim01.xml in the selected aircraft path should be replaced
-  //       with an appropriate tag in the initialization file
-
-  if ( !trimAnalysis.Load(IC->GetInitFile()) ) {
+  if ( !trimAnalysis.Load(IC->GetInitFile(), false) ) {
     cerr << "A problem occurred with trim configuration file " << trimAnalysis.Load(IC->GetInitFile()) << endl;
     exit(-1);
   }
@@ -829,7 +828,7 @@ void FGFDMExec::DoTrimAnalysis(int mode)
   State->Setsim_time(saved_time);
 
   EnableOutput();
-  cout << "\n\n\n\n\n\nOutput::\n\n" << GetOutputFileName() << endl;
+  cout << "\nOutput: " << GetOutputFileName() << endl;
 
 }
 

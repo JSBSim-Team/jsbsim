@@ -62,6 +62,7 @@ INCLUDES
 #include <models/FGAerodynamics.h>
 #include <math/FGColumnVector3.h>
 #include <models/FGAuxiliary.h>
+#include <models/FGPropulsion.h>
 
 #include <vector>
 #include <map>
@@ -73,7 +74,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.5 2008/01/21 23:13:32 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.6 2008/03/09 08:15:58 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -116,7 +117,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.5 2008/01/21 23:13:32 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.6 2008/03/09 08:15:58 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -326,7 +327,7 @@ private:
 };
 
 
-class FGTrimAnalysis : public FGJSBBase
+class FGTrimAnalysis : public FGJSBBase, public FGXMLFileRead
 {
 private:
   vector<FGTrimAnalysisControl*> vTrimAnalysisControls;
@@ -363,7 +364,7 @@ private:
   vector<vector <double> > mCt, mCq, mRPM;
   vector<bool> hasThrustTrim, hasCmTrim;
 
-  string trim_id, trim_type;
+  string trim_id;
 
   // direct search stuff
   string search_type;
@@ -425,6 +426,8 @@ private:
 
 
   bool getSteadyState(int nrepeat);
+  bool InitializeTrimControl(double default_value, Element* el,
+                                           string unit, TaControl type);
 
 public:
   /** Initializes the trimming class

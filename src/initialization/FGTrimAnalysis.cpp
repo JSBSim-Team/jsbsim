@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.7 2008/01/21 23:13:32 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.8 2008/03/09 08:15:58 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -382,7 +382,7 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
   SetMode(tt); // creates vTrimAnalysisControls
   fdmex->SetTrimMode( (int)tt );
 
-  trim_id = "agodemar-trim"; trim_type = "UNKNOWN";
+  trim_id = "default-trim";
 
   // direct search stuff
   search_type = "Nelder-Mead";
@@ -398,8 +398,6 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
 
   Auxiliary    = fdmex->GetAuxiliary();
   Aerodynamics = fdmex->GetAerodynamics();
-  Atmosphere   = fdmex->GetAtmosphere();
-  Aircraft     = fdmex->GetAircraft();
   Propulsion   = fdmex->GetPropulsion();
   FCS          = fdmex->GetFCS();
 }
@@ -432,6 +430,8 @@ void FGTrimAnalysis::SetState(double u0, double v0, double w0, double p0, double
   _theta=theta0; _phi=phi0; _psi=psi0;
 }
 
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 void FGTrimAnalysis::SetEulerAngles(double phi, double theta, double psi)
 {
     // feed into private variables
@@ -440,6 +440,8 @@ void FGTrimAnalysis::SetEulerAngles(double phi, double theta, double psi)
     _psi = psi; _cpsi = cos(_psi); _spsi = sin(_psi);
 
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGTrimAnalysis::SetDottedValues(double udot, double vdot, double wdot, double pdot, double qdot, double rdot)
 {
@@ -452,10 +454,7 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
 {
     string name="", type="";
     string trimDef;
-    ifstream trim_file;
-    FGXMLParse trim_file_parser;
-    Element *document=0, *element=0, *trimCfg=0,
-            *search_element=0, *steps_element=0, *initial_values_element=0, *output_element=0;
+    Element *element=0, *trimCfg=0, *search_element=0, *output_element=0;
 
     string sep = "/";
 # ifdef macintosh
@@ -467,42 +466,29 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
     } else {
         trimDef = fname;
     }
-    trim_file.open(trimDef.c_str());
-    if ( !trim_file.is_open()) {
-        cerr << "Could not open trim configuration file: " << trimDef << endl;
-        return false;
-    }
-    readXML(trim_file, trim_file_parser);
-    document = trim_file_parser.GetDocument(); // document is the init-file containing
-                                               // trim description
-    trimCfg=document->FindElement("trim_config");
+
+    document = this->LoadXMLDocument(trimDef);
+
+    trimCfg = document->FindElement("trim_config");
     if (!trimCfg) {
         cerr << "File: " << trimDef << " does not contain a trim configuration tag" << endl;
         return false;
     }
 
-//    cout << ".................................." << endl;
-
     name = trimCfg->GetAttributeValue("name");
     trim_id = name;
-    type = trimCfg->GetAttributeValue("type");
-    trim_type = type;
 
     // First, find "search" element that specifies the type of cost function minimum search
 
     search_element = trimCfg->FindElement("search");
     if (!search_element) {
-        cerr << "No \"search\" element found in trim config file " << trimDef << endl;
-        cerr << "Setting search to default (Nelder-Mead algorithm)." << endl;
+        cerr << "Using the Nelder-Mead search algorithm (default)." << endl;
     } else {
         type = search_element->GetAttributeValue("type");
-        search_type = type;
-        if (search_type.empty()) {
-            cerr << "type must be specified in \"search\" element."<< endl;
-            cerr << "Setting default type (Nelder-Mead algorithm)" << endl;
-        }
+        if (type.size() > 0) search_type = type; // if search type is not set, default is already Nelder-Mead
         if (search_type == "Nelder-Mead") {
-            // read settings from search
+            // Read settings from search
+            // Note: all of these have defaults set above
             if ( search_element->FindElement("sigma_nm") )
                 sigma_nm = search_element->FindElementValueAsNumber("sigma_nm");
             if ( search_element->FindElement("alpha_nm") )
@@ -519,9 +505,6 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
         if ( search_element->FindElement("tolerance") ) {
             tolerance = search_element->FindElement("tolerance")->GetAttributeValueAsNumber("value");
         }
-        if (tolerance <= 0.0) {
-            tolerance = 0.00000001;
-        }
         if ( search_element->FindElement("max_iterations") ) {
             max_iterations = (unsigned int)search_element->FindElement("max_iterations")->GetAttributeValueAsNumber("value");
         }
@@ -530,217 +513,106 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
         }
     }
 
-    initial_values_element = trimCfg->FindElement("initial_values");
-    if (!initial_values_element) {
-        cerr << "No \"initial_values_element\" element found in trim config file " << trimDef << endl;
-        cerr << "Setting initial values to default." << endl;
-    } else {
-        double value=0.;
-        if (initial_values_element->FindElement("phi")) {
-            element = initial_values_element->FindElement("phi");
-            if ( element->GetAttributeValue("action")=="From-IC")
-                value = fdmex->GetIC()->GetPhiRadIC();
-            else
-                value = initial_values_element->FindElementValueAsNumberConvertTo("phi", "RAD");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taPhi) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-            // set normal load factor accordingly when trimming for turn
-            if ( ( fabs(_phi) < 89.5*(FGJSBBase::degtorad ) ) && ( mode == taTurn ))
+    // Initialize trim controls based on what is in the trim config file. This
+    // includes initial trim values (or defaults from the IC file) and step
+    // size values.
+
+    element = trimCfg->FindElement("phi");
+    if (element) {
+      double iv = fdmex->GetIC()->GetPhiRadIC();
+      if (InitializeTrimControl(iv, element, "RAD", JSBSim::taPhi)) {
+        if ( ( fabs(_phi) < 89.5*(FGJSBBase::degtorad ) ) && ( mode == taTurn ))
                 _targetNlf = 1./cos(_phi);
-        }
-        if (initial_values_element->FindElement("theta")) {
-            element = initial_values_element->FindElement("theta");
-            if ( element->GetAttributeValue("action")=="From-IC")
-                value = fdmex->GetIC()->GetThetaRadIC();
-            else
-                value = initial_values_element->FindElementValueAsNumberConvertTo("theta", "RAD");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taTheta) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
-        if (initial_values_element->FindElement("psi")) {
-            element = initial_values_element->FindElement("psi");
-            if ( element->GetAttributeValue("action")=="From-IC")
-                value = fdmex->GetIC()->GetPsiRadIC();
-            else
-                value = initial_values_element->FindElementValueAsNumberConvertTo("psi", "RAD");
-            for (vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taHeading) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
+      }
+    }
 
-        if (initial_values_element->FindElement("gamma")) {
-            element = initial_values_element->FindElement("gamma");
-            if ( element->GetAttributeValue("action")=="From-IC")
-                value = fdmex->GetIC()->GetFlightPathAngleRadIC();
-            else
-                value = initial_values_element->FindElementValueAsNumberConvertTo("gamma", "RAD");
-            _gamma = value;
-        }
+    element = trimCfg->FindElement("theta");
+    if (element) {
+      double iv = fdmex->GetIC()->GetThetaRadIC();
+      InitializeTrimControl(iv, element, "RAD", JSBSim::taTheta);
+    }
+    
+    element = trimCfg->FindElement("psi");
+    if (element) {
+      double iv = fdmex->GetIC()->GetPsiRadIC();
+      InitializeTrimControl(iv, element, "RAD", JSBSim::taHeading);
+    }
 
-        if (initial_values_element->FindElement("nlf")) {
-            element = initial_values_element->FindElement("nlf");
-            if ( element->GetAttributeValue("action")=="From-IC")
-                value = fdmex->GetIC()->GetTargetNlfIC();
-            else
-                value = initial_values_element->FindElementValueAsNumber("nlf");
+    element = trimCfg->FindElement("gamma");
+    if (element) {
+      if (element->FindElement("initial_value"))
+        _gamma = element->FindElementValueAsNumberConvertTo("initial_value", "RAD");
+      else
+        _gamma = fdmex->GetIC()->GetFlightPathAngleRadIC();
+    }
 
-            //_targetNlf = value;
-            CalculatePhiWFromTargetNlfTurn(value); //sets also _targetNlf
-        }
+    element = trimCfg->FindElement("nlf");
+    if (element) {
+      if (element->FindElement("initial_value"))
+        _targetNlf = element->FindElementValueAsNumberConvertTo("initial_value", "RAD");
+      else
+        _targetNlf = fdmex->GetIC()->GetTargetNlfIC();
 
-        if (initial_values_element->FindElement("throttle_cmd")) {
-            value = initial_values_element->FindElementValueAsNumber("throttle_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taThrottle) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
-        if (initial_values_element->FindElement("elevator_cmd")) {
-            value = initial_values_element->FindElementValueAsNumber("elevator_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taElevator) { // TODO handle taPitchTrim instead
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
-        if (initial_values_element->FindElement("rudder_cmd")) {
-            value = initial_values_element->FindElementValueAsNumber("rudder_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taRudder) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
-        if (initial_values_element->FindElement("aileron_cmd")) {
-            value = initial_values_element->FindElementValueAsNumber("aileron_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taAileron) {
-                        (*vi)->SetControlInitialValue(value);
-                        break;
-                    }
-            }
-        }
-    }// initial_values tag
+      CalculatePhiWFromTargetNlfTurn(_targetNlf);
+    }
 
-    steps_element = trimCfg->FindElement("steps");
-    if (!steps_element) {
-        cerr << "No \"steps\" element found in trim config file " << trimDef << endl;
-        cerr << "Setting steps to default." << endl;
-    } else {
-        double step=0.;
-        if (steps_element->FindElement("phi")) {
-            step = steps_element->FindElementValueAsNumberConvertTo("phi", "RAD");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taPhi) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("theta")) {
-            step = steps_element->FindElementValueAsNumberConvertTo("theta", "RAD");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taTheta) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("psi")) {
-            step = steps_element->FindElementValueAsNumberConvertTo("psi", "RAD");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taHeading) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("throttle_cmd")) {
-            step = steps_element->FindElementValueAsNumber("throttle_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taThrottle) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("elevator_cmd")) {
-            step = steps_element->FindElementValueAsNumber("elevator_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taElevator) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("rudder_cmd")) {
-            step = steps_element->FindElementValueAsNumber("rudder_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taRudder) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-        if (steps_element->FindElement("aileron_cmd")) {
-            step = steps_element->FindElementValueAsNumber("aileron_cmd");
-            for(vector<FGTrimAnalysisControl*>::iterator vi=vTrimAnalysisControls.begin();
-                vi!=vTrimAnalysisControls.end();vi++) {
-                    if ( (*vi)->GetControlType()==JSBSim::taAileron) {
-                        (*vi)->SetControlStep(step);
-                        break;
-                    }
-            }
-        }
-    }// steps tag
+    element = trimCfg->FindElement("throttle_cmd");
+    if (element) InitializeTrimControl(0, element, "", JSBSim::taThrottle);
+
+    element = trimCfg->FindElement("elevator_cmd");
+    if (element) InitializeTrimControl(0, element, "", JSBSim::taElevator);
+
+    element = trimCfg->FindElement("rudder_cmd");
+    if (element) InitializeTrimControl(0, element, "", JSBSim::taRudder);
+
+    element = trimCfg->FindElement("aileron_cmd");
+    if (element) InitializeTrimControl(0, element, "", JSBSim::taAileron);
 
     output_element = trimCfg->FindElement("output_file");
-    if (!output_element) {
-//        cerr << "No \"output_file\" element found in trim config file " << trimDef << endl;
-//        cerr << "No output of trim algorithm will be written." << endl;
-    } else {
+    if (output_element) {
         rf_name = output_element->GetAttributeValue("name");
         if (rf_name.empty()) {
             cerr << "name must be specified in output_file \"name\" attribute."<< endl;
-//            cerr << "Setting to null string." << endl;
         } else {
             if ( !SetResultsFile(rf_name) )
                 cerr << "Unable to use output file "<< rf_name << endl;
-//            else
-//                cout << "File "<< rf_name << " opened." << endl;
         }
     }
     return true;
 }
 
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bool FGTrimAnalysis::InitializeTrimControl(double default_value, Element* el,
+                                           string unit, TaControl type)
+{
+  Element* step_size_element=0;
+  Element* trim_config = el->GetParent();
+  string name = el->GetName();
+  double iv = 0.0;
+  double step = 0.1; // default step value
+
+  iv = default_value;
+  if (el->GetNumDataLines() != 0) {
+    if (unit.empty())
+      iv = trim_config->FindElementValueAsNumber(name);
+    else
+      iv = trim_config->FindElementValueAsNumberConvertTo(name, unit);
+  }
+  if (el->GetAttributeValueAsNumber("step_size") != HUGE_VAL)
+    step = el->GetAttributeValueAsNumber("step_size");
+
+  for (unsigned int i=0; i<vTrimAnalysisControls.size(); i++) {
+    if (vTrimAnalysisControls[i]->GetControlType() == type) {
+      vTrimAnalysisControls[i]->SetControlInitialValue(iv);
+      vTrimAnalysisControls[i]->SetControlStep(step);
+      break;
+    }
+  }
+
+  return (el->GetNumDataLines() > 0);
+}
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -754,7 +626,7 @@ void FGTrimAnalysis::TrimStats() {
 
 void FGTrimAnalysis::Report(void) {
 
-    cout << "------------------------------------------------------------------\n";
+    cout << "---------------------------------------------------------------------\n";
 
     cout << "Trim report: " << endl;
       cout << "\tTrim algorithm terminated with the following values:" << endl;
@@ -774,23 +646,22 @@ void FGTrimAnalysis::Report(void) {
       cout << endl;
 
       cout << "\t** Initial -> Final Conditions **" << endl;
-      cout << "\tAlpha IC: " << fdmex->GetIC()->GetAlphaDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetAuxiliary()->Getalpha()*57.3 << endl;
-      cout << "\tBeta  IC: " << fdmex->GetIC()->GetBetaDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetAuxiliary()->Getbeta()*57.3 << endl;
-      cout << "\tGamma IC: " << fdmex->GetIC()->GetFlightPathAngleDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetAuxiliary()->GetGamma()*57.3 << endl;
-      cout << "\tPhi IC  : " << fdmex->GetIC()->GetPhiDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(1)*57.3 <<endl;
-      cout << "\tTheta IC: " << fdmex->GetIC()->GetThetaDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(2)*57.3 <<endl;
-      cout << "\tPsi IC  : " << fdmex->GetIC()->GetPsiDegIC() << endl;
-      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(3)*57.3 <<endl;
+      cout << "\tAlpha IC: " << fdmex->GetIC()->GetAlphaDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << Auxiliary->Getalpha()*57.3 << " Degrees" << endl;
+      cout << "\tBeta  IC: " << fdmex->GetIC()->GetBetaDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << Auxiliary->Getbeta()*57.3 << " Degrees" << endl;
+      cout << "\tGamma IC: " << fdmex->GetIC()->GetFlightPathAngleDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << Auxiliary->GetGamma()*57.3 << " Degrees" << endl;
+      cout << "\tPhi IC  : " << fdmex->GetIC()->GetPhiDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(1)*57.3 << " Degrees" << endl;
+      cout << "\tTheta IC: " << fdmex->GetIC()->GetThetaDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(2)*57.3 << " Degrees" << endl;
+      cout << "\tPsi IC  : " << fdmex->GetIC()->GetPsiDegIC() << " Degrees" << endl;
+      cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(3)*57.3 << " Degrees" << endl;
       cout << endl;
-    cout << "------------------------------------------------------------------ \n\n";
+    cout << "--------------------------------------------------------------------- \n\n";
 
       fdmex->EnableOutput();
-
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1450,25 +1321,25 @@ bool FGTrimAnalysis::DoTrim(void) {
 
     double tMin,tMax;
     double throttle = 1.0;
-    for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
+    for (unsigned i=0;i<Propulsion->GetNumEngines();i++)
     {
-            tMin=Propulsion->GetEngine(i)->GetThrottleMin();
-            tMax=Propulsion->GetEngine(i)->GetThrottleMax();
-            FCS->SetThrottleCmd(i,tMin + throttle *(tMax-tMin));
-            if (Propulsion->GetEngine(i)->GetType()==FGEngine::etPiston)
-            {
-                FCS->SetMixtureCmd(i,0.87);
-            }
-            if (Propulsion->GetEngine(i)->GetType()==FGEngine::etTurbine)
-            {
-                FCS->SetMixtureCmd(i,0.87);
-                ((FGTurbine*)Propulsion->GetEngine(i))->SetCutoff(false);
-                ((FGTurbine*)Propulsion->GetEngine(i))->SetPhase(FGTurbine::tpRun); // tpStart
-            }
+        tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+        tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+        FCS->SetThrottleCmd(i,tMin + throttle *(tMax-tMin));
+        if (Propulsion->GetEngine(i)->GetType()==FGEngine::etPiston)
+        {
+            FCS->SetMixtureCmd(i,0.87);
+        }
+        if (Propulsion->GetEngine(i)->GetType()==FGEngine::etTurbine)
+        {
+            FCS->SetMixtureCmd(i,0.87);
+            ((FGTurbine*)Propulsion->GetEngine(i))->SetCutoff(false);
+            ((FGTurbine*)Propulsion->GetEngine(i))->SetPhase(FGTurbine::tpRun); // tpStart
+        }
 
-            FCS->Run(); // apply throttle change
-            Propulsion->GetSteadyState();
+        FCS->Run(); // apply throttle change
     }
+    Propulsion->GetSteadyState(); // GetSteadyState processes all engines
 
     //--------------------------------------------------------
 //    cout << "Trying to ensure active engine(s) ..." << endl;
@@ -1499,7 +1370,6 @@ bool FGTrimAnalysis::DoTrim(void) {
 //      cout << "Got running engine after " << engineStartCount << " attempts" << endl << endl;
     }
     //--------------------------------------------------------
-
 
     Propulsion->GetSteadyState();
 
@@ -1703,19 +1573,19 @@ bool FGTrimAnalysis::DoTrim(void) {
   if ( ( mode == taFull ) ||
        ( mode == taTurnFull ) )
   {
-      fdmex->GetFCS()->SetDeCmd( (*Sminimum)[1] ); // elevator
-      fdmex->GetFCS()->SetDaCmd( (*Sminimum)[2] ); // ailerons
-      fdmex->GetFCS()->SetDrCmd( (*Sminimum)[3] ); // rudder
+      FCS->SetDeCmd( (*Sminimum)[1] ); // elevator
+      FCS->SetDaCmd( (*Sminimum)[2] ); // ailerons
+      FCS->SetDrCmd( (*Sminimum)[3] ); // rudder
       double tMin,tMax;
-      for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++)
+      for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
       {
-              tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-              tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-              fdmex->GetFCS()->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
-              fdmex->GetFCS()->Run(); // apply throttle change
-              fdmex->GetPropulsion()->GetSteadyState();
+          tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+          tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+          FCS->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
+          FCS->Run(); // apply throttle change
       }
-      fdmex->GetFCS()->Run(); // apply throttle, yoke & pedal changes
+      Propulsion->GetSteadyState(); // GetSteadyState processes all engines
+      FCS->Run(); // apply throttle, yoke & pedal changes
 
       FGQuaternion quat( (*Sminimum)[4], (*Sminimum)[5], (*Sminimum)[6] ); // phi, theta, psi
       quat.Normalize();
@@ -1727,8 +1597,8 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
-      fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
-      fdmex->GetAuxiliary()->Setbeta ( _beta  );
+      Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
+      Auxiliary->Setbeta ( _beta  );
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
       /*      */
@@ -1739,17 +1609,17 @@ bool FGTrimAnalysis::DoTrim(void) {
 
   if ( mode == taLongitudinal )
   {
-      fdmex->GetFCS()->SetDeCmd( (*Sminimum)[1] ); // elevator
+      FCS->SetDeCmd( (*Sminimum)[1] ); // elevator
       double tMin,tMax;
-      for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++)
+      for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
       {
-              tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-              tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-              fdmex->GetFCS()->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
-              fdmex->GetFCS()->Run(); // apply throttle change
-              fdmex->GetPropulsion()->GetSteadyState();
+          tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+          tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+          FCS->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
+          FCS->Run(); // apply throttle change
       }
-      fdmex->GetFCS()->Run(); // apply throttle, yoke & pedal changes
+      Propulsion->GetSteadyState(); // GetSteadyState processes all engines
+      FCS->Run(); // apply throttle, yoke & pedal changes
 
       FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
@@ -1767,8 +1637,8 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
-      fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
-      fdmex->GetAuxiliary()->Setbeta ( _beta  );
+      Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
+      Auxiliary->Setbeta ( _beta  );
 
       fdmex->Run();
 
@@ -1776,20 +1646,20 @@ bool FGTrimAnalysis::DoTrim(void) {
 
   if ( mode == taFullWingsLevel)
   {
-      fdmex->GetFCS()->SetDeCmd( (*Sminimum)[1] ); // elevator
-      fdmex->GetFCS()->SetDaCmd( (*Sminimum)[2] ); // ailerons
-      fdmex->GetFCS()->SetDrCmd( (*Sminimum)[3] ); // rudder
+      FCS->SetDeCmd( (*Sminimum)[1] ); // elevator
+      FCS->SetDaCmd( (*Sminimum)[2] ); // ailerons
+      FCS->SetDrCmd( (*Sminimum)[3] ); // rudder
 
       double tMin,tMax;
-      for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++)
+      for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
       {
-              tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-              tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-              fdmex->GetFCS()->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
-              fdmex->GetFCS()->Run(); // apply throttle change
-              fdmex->GetPropulsion()->GetSteadyState();
+          tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+          tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+          FCS->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
+          FCS->Run(); // apply throttle change
       }
-      fdmex->GetFCS()->Run(); // apply throttle, yoke & pedal changes
+      Propulsion->GetSteadyState(); // GetSteadyState processes all engines
+      FCS->Run(); // apply throttle, yoke & pedal changes
 
       FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
@@ -1807,28 +1677,28 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
-      fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
-      fdmex->GetAuxiliary()->Setbeta ( _beta  );
+      Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
+      Auxiliary->Setbeta ( _beta  );
 
       fdmex->Run();
   }// end taFullWingsLevel
 
   if ( mode == taTurn )
   {
-      fdmex->GetFCS()->SetDeCmd( (*Sminimum)[1] ); // elevator
-      fdmex->GetFCS()->SetDaCmd( (*Sminimum)[2] ); // ailerons
-      fdmex->GetFCS()->SetDrCmd( (*Sminimum)[3] ); // rudder
+      FCS->SetDeCmd( (*Sminimum)[1] ); // elevator
+      FCS->SetDaCmd( (*Sminimum)[2] ); // ailerons
+      FCS->SetDrCmd( (*Sminimum)[3] ); // rudder
 
       double tMin,tMax;
-      for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++)
+      for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
       {
-              tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-              tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-              fdmex->GetFCS()->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
-              fdmex->GetFCS()->Run(); // apply throttle change
-              fdmex->GetPropulsion()->GetSteadyState();
+          tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+          tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+          FCS->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
+          FCS->Run(); // apply throttle change
       }
-      fdmex->GetFCS()->Run(); // apply throttle, yoke & pedal changes
+      Propulsion->GetSteadyState(); // GetSteadyState processes all engines
+      FCS->Run(); // apply throttle, yoke & pedal changes
 
       FGQuaternion quat( fdmex->GetIC()->GetPhiRadIC(), (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
@@ -1846,29 +1716,29 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
-      fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
-      fdmex->GetAuxiliary()->Setbeta ( 0.0  );
-      fdmex->GetAuxiliary()->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
+      Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
+      Auxiliary->Setbeta ( 0.0  );
+      Auxiliary->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
 
       fdmex->Run();
   }// end ta turn
 
   if ( mode == taPullup )
   {
-      fdmex->GetFCS()->SetDeCmd( (*Sminimum)[1] ); // elevator
-      fdmex->GetFCS()->SetDaCmd( (*Sminimum)[2] ); // ailerons
-      fdmex->GetFCS()->SetDrCmd( (*Sminimum)[3] ); // rudder
+      FCS->SetDeCmd( (*Sminimum)[1] ); // elevator
+      FCS->SetDaCmd( (*Sminimum)[2] ); // ailerons
+      FCS->SetDrCmd( (*Sminimum)[3] ); // rudder
 
       double tMin,tMax;
-      for(unsigned i=0;i<fdmex->GetPropulsion()->GetNumEngines();i++)
+      for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
       {
-              tMin=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-              tMax=fdmex->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-              fdmex->GetFCS()->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
-              fdmex->GetFCS()->Run(); // apply throttle change
-              fdmex->GetPropulsion()->GetSteadyState();
+          tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+          tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+          FCS->SetThrottleCmd(i,tMin + (*Sminimum)[0] *(tMax-tMin));
+          FCS->Run(); // apply throttle change
       }
-      fdmex->GetFCS()->Run(); // apply throttle, yoke & pedal changes
+      Propulsion->GetSteadyState(); // GetSteadyState processes all engines
+      FCS->Run(); // apply throttle, yoke & pedal changes
 
       FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPRadpsIC() ); // phi, theta, psi
       quat.Normalize();
@@ -1886,9 +1756,9 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
       fdmex->GetPropagate()->SetVState(vstate);
-      fdmex->GetAuxiliary()->Setalpha( _alpha ); // need to get Auxiliary updated
-      fdmex->GetAuxiliary()->Setbeta ( 0.0  );
-      fdmex->GetAuxiliary()->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
+      Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
+      Auxiliary->Setbeta ( 0.0  );
+      Auxiliary->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
 
       fdmex->Run();
   }//end taPullup
@@ -2908,8 +2778,10 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
 {
     double stheta,sphi,spsi;
     double ctheta,cphi,cpsi;
-
     double phiW = 0.;
+    FGPropulsion* Propulsion = FDMExec->GetPropulsion();
+    FGFCS* FCS = FDMExec->GetFCS();
+    FGAuxiliary* Auxiliary = FDMExec->GetAuxiliary();
 
     if ( ( trimMode == taTurn ) || ( trimMode == taTurnFull ) )//... Coordinated turn: p,q,r not zero, beta=0, gamma=0
     {
@@ -2928,30 +2800,29 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
     //-------------------------------------------------
 
     // make sure the engines are running
-    FGPropulsion* propulsion = FDMExec->GetPropulsion();
-    for (unsigned int i=0; i<propulsion->GetNumEngines(); i++) {
-       propulsion->GetEngine(i)->SetRunning(true);
+    for (unsigned int i=0; i<Propulsion->GetNumEngines(); i++) {
+       Propulsion->GetEngine(i)->SetRunning(true);
     }
 
     double tMin,tMax;
-    for(unsigned i=0;i<FDMExec->GetPropulsion()->GetNumEngines();i++)
+    for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
     {
-          tMin=FDMExec->GetPropulsion()->GetEngine(i)->GetThrottleMin();
-          tMax=FDMExec->GetPropulsion()->GetEngine(i)->GetThrottleMax();
-          FDMExec->GetFCS()->SetThrottleCmd(i,tMin + delta_cmd_T *(tMax-tMin));
-          FDMExec->GetFCS()->Run(); // apply throttle change
-          FDMExec->GetPropulsion()->GetSteadyState();
+      tMin=Propulsion->GetEngine(i)->GetThrottleMin();
+      tMax=Propulsion->GetEngine(i)->GetThrottleMax();
+      FCS->SetThrottleCmd(i,tMin + delta_cmd_T *(tMax-tMin));
+      FCS->Run(); // apply throttle change
     }
+    Propulsion->GetSteadyState(); // GetSteadyState processes all engines
 
     // apply commands
     // ToDo: apply aerosurface deflections,
     // to override control system authority
 
-    FDMExec->GetFCS()->SetDeCmd( delta_cmd_E ); // elevator
-    FDMExec->GetFCS()->SetDaCmd( delta_cmd_A ); // ailerons
-    FDMExec->GetFCS()->SetDrCmd( delta_cmd_R ); // rudder
+    FCS->SetDeCmd( delta_cmd_E ); // elevator
+    FCS->SetDaCmd( delta_cmd_A ); // ailerons
+    FCS->SetDrCmd( delta_cmd_R ); // rudder
 
-    FDMExec->GetFCS()->Run(); // apply yoke & pedal changes
+    FCS->Run(); // apply yoke & pedal changes
 
     //................................................
     // set also euler angles
@@ -2999,7 +2870,7 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
         gamma   = TrimAnalysis->GetGammaRad(); //0.0;
         vdownIC = TrimAnalysis->GetVtFps() * tan(gamma); //0.0;
     }
-    FDMExec->GetAuxiliary()->SetGamma(gamma);
+    Auxiliary->SetGamma(gamma);
 
     // euler angles from the IC
     double psiIC   = FDMExec->GetIC()->GetPsiRadIC(); // this is the desired ground track direction
@@ -3061,7 +2932,7 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
     double ua, va, wa;
     double adot, bdot;
 
-    FDMExec->GetAuxiliary()->SetVt(vtIC); // re-apply the desired velocity
+    Auxiliary->SetVt(vtIC); // re-apply the desired velocity
 
     if ((trimMode==taTurn)||(trimMode==taPullup))
     {
@@ -3111,7 +2982,7 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
       q = pqr(2);
       r = pqr(3);
 
-      FDMExec->GetAuxiliary()->SetGamma(0.);
+      Auxiliary->SetGamma(0.);
 
     }
     if ( trimMode == taPullup ) //... then p,q,r not zero
@@ -3142,17 +3013,17 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
     // now feed the above values into Auxiliary data structure
     //++++++++++++++++++++++++++++++++++++++++++++
 
-    FDMExec->GetAuxiliary()->Setalpha( alpha );
-    FDMExec->GetAuxiliary()->Setbeta ( beta  );
+    Auxiliary->Setalpha( alpha );
+    Auxiliary->Setbeta ( beta  );
 
-    if ((trimMode==taTurn)||(trimMode==taPullup)) FDMExec->GetAuxiliary()->Setbeta( 0.0 );
+    if ((trimMode==taTurn)||(trimMode==taPullup)) Auxiliary->Setbeta( 0.0 );
 
     // ensure zero rates
-    FDMExec->GetAuxiliary()->Setadot( 0.0 );
-    FDMExec->GetAuxiliary()->Setbdot( 0.0 );
+    Auxiliary->Setadot( 0.0 );
+    Auxiliary->Setbdot( 0.0 );
 
     // ToDo: take into account here the wind and other desired trim conditions
-    FDMExec->GetAuxiliary()->SetAeroPQR( FGColumnVector3(p,q,r)) ;
+    Auxiliary->SetAeroPQR( FGColumnVector3(p,q,r)) ;
 
     // note assumes that trim_mode is triggered
     // assumes that p=q=r=0, or set by the appropriate taTrimMode context
@@ -3163,16 +3034,16 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
     }
 
     JSBSim::FGColumnVector3 vUVWAero( ua,va,wa );
-    FDMExec->GetAuxiliary()->SetAeroUVW( vUVWAero );
+    Auxiliary->SetAeroUVW( vUVWAero );
 
-    FDMExec->GetAuxiliary()->Setqbar  ( qbar    );
-    FDMExec->GetAuxiliary()->SetqbarUV( qbarUV  );
-    FDMExec->GetAuxiliary()->SetqbarUW( qbarUW  );
+    Auxiliary->Setqbar  ( qbar    );
+    Auxiliary->SetqbarUV( qbarUV  );
+    Auxiliary->SetqbarUW( qbarUW  );
 
-    FDMExec->GetAuxiliary()->SetVt    ( vtIC    );
+    Auxiliary->SetVt    ( vtIC    );
 
-    FDMExec->GetAuxiliary()->SetMach  ( Mach    );
-    FDMExec->GetAuxiliary()->SetGamma ( gammaIC );
+    Auxiliary->SetMach  ( Mach    );
+    Auxiliary->SetGamma ( gammaIC );
 
     // note: do not Auxiliary->Run(), otherwise dotted values
     //       _and_ aerodynamic angles are recalculated !!!
@@ -3186,8 +3057,8 @@ void Objective::calculateDottedStates(double delta_cmd_T, double delta_cmd_E, do
     //++++++++++++++++++++++++++++++++++++++++++++
     // Recalculate propulsion forces & moments
     //++++++++++++++++++++++++++++++++++++++++++++
-    //FDMExec->GetPropulsion()->Run();
-    FDMExec->GetPropulsion()->GetSteadyState();
+    //Propulsion->Run();
+    Propulsion->GetSteadyState();
 
     //++++++++++++++++++++++++++++++++++++++++++++
     // Recalculate GroundReaction forces & moments

@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.8 2008/03/09 08:15:59 jberndt Exp $"
 
 using std::string;
 using std::vector;
@@ -96,7 +96,7 @@ CLASS DOCUMENTATION
     This base class contains methods and members common to all engines, such as
     logic to drain fuel from the appropriate tank, etc.
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.7 2007/02/05 13:23:40 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.8 2008/03/09 08:15:59 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,7 +125,7 @@ public:
   virtual double getFuelFlow_pph () const {return FuelFlow_pph;}
   virtual double GetThrust(void) { return Thrust; }
   virtual bool   GetStarved(void) { return Starved; }
-  virtual bool   GetRunning(void) { return Running; }
+  virtual bool   GetRunning(void) const { return Running; }
   virtual bool   GetCranking(void) { return Cranking; }
 
   virtual void SetStarved(bool tt) { Starved = tt; }

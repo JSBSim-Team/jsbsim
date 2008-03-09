@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.24 2008/03/01 05:15:21 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.25 2008/03/09 08:15:59 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -389,7 +389,8 @@ void FGPropagate::CalculateUVWdot(void)
   }
 
   // Include Gravitation accel
-  vUVWdot += Tl2b*vGravAccel;
+  FGColumnVector3 gravAccel = Tl2b*vGravAccel;
+  vUVWdot += gravAccel;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -397,7 +398,7 @@ void FGPropagate::CalculateUVWdot(void)
 void FGPropagate::CalculateLocationdot(void)
 {
   // Transform the vehicle velocity relative to the ECEF frame, expressed
-  // in the body frame, to be expressed in the ECI (inertial) frame.
+  // in the body frame, to be expressed in the ECEF frame.
   vLocationDot = Tb2ec * VState.vUVW;
 
   // Now, transform the velocity vector of the body relative to the origin (Earth

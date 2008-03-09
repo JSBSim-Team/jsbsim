@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.37 2008/01/20 17:46:49 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.38 2008/03/09 08:15:59 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -346,8 +346,8 @@ FGColumnVector3& FGLGear::Force(void)
 
     // Compute the forces in the wheel ground plane.
 
-    RollingForce = ((1.0 - TirePressureNorm) * 30
-                   + vLocalForce(eZ) * BrakeFCoeff) * (RollingWhlVel>=0?1.0:-1.0);
+    double sign = RollingWhlVel>0?1.0:(RollingWhlVel<0?-1.0:0.0);
+    RollingForce = ((1.0 - TirePressureNorm) * 30 + vLocalForce(eZ) * BrakeFCoeff) * sign;
     SideForce    = vLocalForce(eZ) * FCoeff;
 
     // Transform these forces back to the local reference frame.

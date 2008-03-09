@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.17 2008/02/20 23:36:38 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.18 2008/03/09 08:15:58 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -765,7 +765,6 @@ double FGInitialCondition::GetWindDirDegIC(void) const {
 
 bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 {
-  string resetDef;
   int n;
 
   string sep = "/";
@@ -774,21 +773,21 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
 # endif
 
   if( useStoredPath ) {
-    resetDef = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
+    init_file_name = fdmex->GetFullAircraftPath() + sep + rstfile + ".xml";
   } else {
-    resetDef = rstfile;
+    init_file_name = rstfile;
   }
 
-  document = LoadXMLDocument(resetDef);
+  document = LoadXMLDocument(init_file_name);
 
   // Make sure that the document is valid
   if (!document) {
-    cerr << "File: " << resetDef << " could not be read." << endl;
+    cerr << "File: " << init_file_name << " could not be read." << endl;
     exit(-1);
   }
 
   if (document->GetName() != string("initialize")) {
-    cerr << "File: " << resetDef << " is not a reset file." << endl;
+    cerr << "File: " << init_file_name << " is not a reset file." << endl;
     exit(-1);
   }
 
