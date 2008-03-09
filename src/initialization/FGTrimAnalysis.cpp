@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.8 2008/03/09 08:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.9 2008/03/09 17:43:33 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -540,18 +540,14 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
 
     element = trimCfg->FindElement("gamma");
     if (element) {
-      if (element->FindElement("initial_value"))
-        _gamma = element->FindElementValueAsNumberConvertTo("initial_value", "RAD");
-      else
-        _gamma = fdmex->GetIC()->GetFlightPathAngleRadIC();
+      _gamma = fdmex->GetIC()->GetFlightPathAngleRadIC();
+      if (element->GetNumDataLines() > 0) _gamma = element->GetDataAsNumber();
     }
 
     element = trimCfg->FindElement("nlf");
     if (element) {
-      if (element->FindElement("initial_value"))
-        _targetNlf = element->FindElementValueAsNumberConvertTo("initial_value", "RAD");
-      else
-        _targetNlf = fdmex->GetIC()->GetTargetNlfIC();
+      _targetNlf = fdmex->GetIC()->GetTargetNlfIC();
+      if (element->GetNumDataLines() > 0) _targetNlf = element->GetDataAsNumber();
 
       CalculatePhiWFromTargetNlfTurn(_targetNlf);
     }
@@ -1300,11 +1296,7 @@ bool FGTrimAnalysis::DoTrim(void) {
     // retrieve initial conditions
     fdmex->RunIC();
 
-    cout << endl;
-//    cout << "---------------------------------------------------------------------" << endl;
-    cout << "Numerical trim algorithm: constrained optimization of a cost function" << endl;
-//    cout << "---------------------------------------------------------------------" << endl;
-//    cout << endl;
+    cout << endl << "Numerical trim algorithm: constrained optimization of a cost function" << endl;
 
     Objective* obj_ptr = new Objective(this->fdmex, this, 999.0);
 //    cout << "Objective instantiated: "<< obj_ptr->Get_x_val() << endl;
@@ -1332,7 +1324,6 @@ bool FGTrimAnalysis::DoTrim(void) {
         }
         if (Propulsion->GetEngine(i)->GetType()==FGEngine::etTurbine)
         {
-            FCS->SetMixtureCmd(i,0.87);
             ((FGTurbine*)Propulsion->GetEngine(i))->SetCutoff(false);
             ((FGTurbine*)Propulsion->GetEngine(i))->SetPhase(FGTurbine::tpRun); // tpStart
         }
