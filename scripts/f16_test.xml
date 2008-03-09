@@ -28,5 +28,10 @@
       </condition>
       <set name="fcs/throttle-cmd-norm[0]" value="1.0" action="FG_RAMP" tc ="2"/>
     </event>
+    <event name="15-second control surface setting">
+      <condition> sim-time-sec >= 15.00 </condition>
+      <set name="fcs/elevator-cmd-norm" value="-0.05"/>
+      <notify/>
+    </event>
   </run>
 </runscript>

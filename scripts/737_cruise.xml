@@ -16,7 +16,7 @@
     <property value="0"> simulation/notify-time-trigger </property>
 
     <event name="Set engines running">
-      <condition> sim-time-sec le 0.00833333 </condition>
+      <condition> sim-time-sec le 0.1 </condition>
       <set name="propulsion/engine[0]/set-running" value="1"/>
       <set name="propulsion/engine[1]/set-running" value="1"/>
       <notify/>
@@ -46,7 +46,7 @@
     -->
     
     <event name="Trim">
-      <condition> sim-time-sec gt 0.00833333 </condition>
+      <condition> sim-time-sec gt 0.1 </condition>
         <set name="simulation/do_trim_analysis" value="0"/>
 <!--      <set name="simulation/do_simple_trim" value="0"/> -->
       <delay>5.0</delay>

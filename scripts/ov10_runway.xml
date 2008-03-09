@@ -10,7 +10,7 @@
     <event name="On-ground trim">
       <description>The aircraft is trimmed on-ground.</description>
       <condition>sim-time-sec ge 0.25</condition>
-      <set name="simulation/do_trim" value="2"/> <!-- on-ground trim -->
+      <set name="simulation/do_simple_trim" value="2"/> <!-- on-ground trim -->
       <notify/>
     </event>
 

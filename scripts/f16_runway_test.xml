@@ -5,10 +5,21 @@
     name="F-16 aircraft runway test">
   <description>This run is for testing an F-16 just sitting on the runway</description>
   <use aircraft="f16" initialize="reset00"/>
-  <run start="0.0" end="30" dt="0.00833333">
-    <event name="15-second check">
+  <run start="0.0" end="45" dt="0.00833333">
+
+    <event name="15-second control surface setting">
       <condition> sim-time-sec >= 15.00 </condition>
-      <notify> <property>aero/coefficient/CLDh</property> </notify>
+      <set name="fcs/elevator-cmd-norm" value="0.2"/>
+      <set name="fcs/aileron-cmd-norm" value="0.2"/>
+      <notify/>
     </event>
+
+    <event name="30-second control surface setting">
+      <condition> sim-time-sec >= 30.00 </condition>
+      <set name="fcs/elevator-cmd-norm" value="0.0"/>
+      <set name="fcs/aileron-cmd-norm" value="0.0"/>
+      <notify/>
+    </event>
+
   </run>
 </runscript>

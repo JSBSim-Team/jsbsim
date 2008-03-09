@@ -20,7 +20,7 @@
       <condition>
         sim-time-sec  gt  1.0
       </condition>
-      <set name="simulation/do_old_trim" value="0"/>
+      <set name="simulation/do_simple_trim" value="0"/>
       <notify/>
     </event>
     <event name="Hold heading and altitude">
