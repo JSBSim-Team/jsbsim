@@ -55,7 +55,7 @@ SENTRY
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.2 2007/09/03 03:48:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysisControl.cpp,v 1.3 2008/03/12 13:26:13 jberndt Exp $";
 static const char *IdHdr = ID_TRIMANALYSISCONTROL;
 
 /*****************************************************************************/
@@ -203,8 +203,8 @@ void FGTrimAnalysisControl::getState(void) {
   case taUdot: state_value=fdmex->GetPropagate()->GetUVWdot(1)-state_target; break;
   case taVdot: state_value=fdmex->GetPropagate()->GetUVWdot(2)-state_target; break;
   case taWdot: state_value=fdmex->GetPropagate()->GetUVWdot(3)-state_target; break;
-  case taQdot: state_value=fdmex->GetPropagate()->GetPQRdot(2)-state_target;break;
   case taPdot: state_value=fdmex->GetPropagate()->GetPQRdot(1)-state_target; break;
+  case taQdot: state_value=fdmex->GetPropagate()->GetPQRdot(2)-state_target;break;
   case taRdot: state_value=fdmex->GetPropagate()->GetPQRdot(3)-state_target; break;
   case taHmgt: state_value=computeHmgt()-state_target; break;
   case taNlf:  state_value=fdmex->GetAircraft()->GetNlf()-state_target; break;

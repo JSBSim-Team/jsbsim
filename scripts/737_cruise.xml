@@ -6,12 +6,28 @@
 
   <description>
     This is a very simple script that trims the aircraft with running
-    engines at altitude and runs out to 100 seconds.
+    engines at altitude and runs out to 100 seconds. Some state data
+    is printed out at ten second intervals. 
+    
+    There are two trimming algorithms that JSBSim uses:
+    
+    1) Classic trim
+    2) Direct Search trim
+    
+    For more information on the Direct Search trim, see, "A General
+    Solution to the Aircraft Trim Problem", by Agostino De Marco,
+    Eugene L. Duke, and Jon Berndt, AIAA 2007-6703.
+    
+    Both of these trim algorithms could theoretically be invoked
+    at the same time, but normally only one or the other will be
+    used at a time. In the script below, the engines are set running
+    and then the trim task is commanded by setting the selected
+    trim algorithm to "1".
   </description>
 
   <use aircraft="737" initialize="cruise_init"/>
 
-  <run start="0" end="50" dt="0.008333">
+  <run start="0" end="100" dt="0.008333">
 
     <property value="0"> simulation/notify-time-trigger </property>
 
@@ -23,7 +39,7 @@
     </event>
 
     <!--
-      For "do_simple_trim":
+      For "do_simple_trim" (Classic trim):
       0: Longitudinal
       1: Full
       2: Ground
@@ -32,7 +48,7 @@
       5: Turn
       6: None
       
-      For "do_trim_analysis":
+      For "do_trim_analysis" (Direct Search trim):
       0: Longitudinal
       1: Full
       2: FullWingsLevel
@@ -47,8 +63,8 @@
     
     <event name="Trim">
       <condition> sim-time-sec gt 0.1 </condition>
-        <set name="simulation/do_trim_analysis" value="0"/>
 <!--      <set name="simulation/do_simple_trim" value="0"/> -->
+      <set name="simulation/do_trim_analysis" value="1"/>
       <delay>5.0</delay>
       <notify>
         <property>propulsion/engine[0]/n2</property>
@@ -57,6 +73,7 @@
         <property>propulsion/engine[1]/thrust</property>
         <property>velocities/vc-kts</property>
         <property>velocities/vc-fps</property>
+        <property>velocities/vt-fps</property>
       </notify>
     </event>
 
@@ -70,6 +87,7 @@
         <property>position/h-agl-ft</property>
         <property>velocities/vc-kts</property>
         <property>velocities/vc-fps</property>
+        <property>velocities/vt-fps</property>
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="5" type="FG_DELTA"/>

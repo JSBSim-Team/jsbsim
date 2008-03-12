@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.18 2008/03/09 08:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.19 2008/03/12 13:26:13 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -813,6 +813,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetCrossWindKtsIC(document->FindElementValueAsNumberConvertTo("xwind", "KTS"));
   if (document->FindElement("vc"))
     SetVcalibratedKtsIC(document->FindElementValueAsNumberConvertTo("vc", "KTS"));
+  if (document->FindElement("vt"))
+    SetVtrueKtsIC(document->FindElementValueAsNumberConvertTo("vt", "KTS"));
   if (document->FindElement("mach"))
     SetMachIC(document->FindElementValueAsNumber("mach"));
   if (document->FindElement("phi"))

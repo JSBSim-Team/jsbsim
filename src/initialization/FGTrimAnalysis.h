@@ -74,7 +74,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.6 2008/03/09 08:15:58 jberndt Exp $"
+#define ID_FGTRIMANALYSIS "$Id: FGTrimAnalysis.h,v 1.7 2008/03/12 13:26:13 jberndt Exp $"
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
   #define snprintf _snprintf
@@ -117,7 +117,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Agostino De Marco
-    @version "$Id: FGTrimAnalysis.h,v 1.6 2008/03/09 08:15:58 jberndt Exp $"
+    @version "$Id: FGTrimAnalysis.h,v 1.7 2008/03/12 13:26:13 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,8 +349,6 @@ private:
 
   FGAuxiliary *        Auxiliary;
   FGAerodynamics *     Aerodynamics;
-  FGAtmosphere *       Atmosphere;
-  FGAircraft *         Aircraft;
   FGPropulsion *       Propulsion;
   FGFCS *              FCS;
 

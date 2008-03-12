@@ -33,42 +33,17 @@
   <phi unit="DEG">         0.0  </phi>
   <targetNlf>              1.0  </targetNlf>
   <running>                1.0  </running>
-  <trim_config name="trim01" type="FULL">
-    <!--
-      This tag sets up the trim parameters.
-    -->
-    <search type="Nelder-Mead">
-	  <sigma_nm> 0.5 </sigma_nm>
-	  <alpha_nm> 1.0 </alpha_nm>
-	  <beta_nm>  0.5 </beta_nm>
-	  <gamma_nm> 2.0 </gamma_nm>
-	  <tolerance value="0.000000001"/>
-	  <max_iterations value="4000"/>
-	  <stop_criterion type="Stop-On-Delta"/> <!-- "Stop-On-Delta", "Stop-On-Std" -->
-    </search>
+  <trim_config name="FULL"> <!-- This tag sets up the trim parameters.  -->
+    <phi step_size="0.3"/>
+    <theta step_size="0.3"/>
+    <psi step_size="0.3"/>
+    <gamma/>
 
-    <!-- action=From-IC takes the corrensponding value from the initialization file 
-         (the tag content is ignored) 
-    -->
-    <initial_values>
-	  <phi action="From-IC"/>
-	  <theta action="From-IC" unit="DEG"> 6.0 </theta>
-	  <psi action="From-IC"/>
-	  <throttle_cmd>  0.4  </throttle_cmd>
-	  <elevator_cmd> -0.5  </elevator_cmd>
-	  <rudder_cmd>   0.0  </rudder_cmd>
-	  <aileron_cmd>  0.0  </aileron_cmd>
-	  <gamma action="From-IC" unit="DEG"> -3.0 </gamma>
-    </initial_values>
-    <steps>
-	  <phi   unit="DEG"> 0.3 </phi>
-	  <theta unit="DEG"> 0.3 </theta>
-	  <psi   unit="DEG"> 0.3 </psi>
-	  <throttle_cmd> 0.2 </throttle_cmd>
-	  <elevator_cmd> 0.2 </elevator_cmd>
-	  <rudder_cmd>   0.2 </rudder_cmd>
-	  <aileron_cmd>  0.2 </aileron_cmd>
-    </steps>
+    <throttle_cmd step_size="0.2">  0.4 </throttle_cmd>
+    <elevator_cmd step_size="0.2"> -0.5 </elevator_cmd>
+    <rudder_cmd step_size="0.2">    0.0 </rudder_cmd>
+    <aileron_cmd step_size="0.2">   0.0 </aileron_cmd>
+
     <output_file name="trim_data.txt"/>
   </trim_config>
 </initialize>

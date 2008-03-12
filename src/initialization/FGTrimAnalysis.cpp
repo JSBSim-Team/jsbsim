@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.9 2008/03/09 17:43:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.10 2008/03/12 13:26:13 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -317,15 +317,15 @@ void Objective::Set_x_val(double new_x)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
-
+FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt)
+{
   SetDebug(2);
 
   N=0;
 
   trim_failed = true;
 
-  max_iterations=200;
+  max_iterations=2500;
   stop_criterion="Stop-On-Delta";
 
   Debug=0;DebugLevel=0;
@@ -339,26 +339,26 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
   ctrl_count=0;
   mode=tt;
   _targetNlf=1.0;
-  _targetNlf=fdmex->GetIC()->GetTargetNlfIC();
+  _targetNlf=fgic->GetTargetNlfIC();
 
-  _vtIC  = fdmex->GetIC()->GetVtrueFpsIC();
-  _hIC   = fdmex->GetIC()->GetAltitudeFtIC();
-  _gamma = fdmex->GetIC()->GetFlightPathAngleRadIC();
+  _vtIC  = fgic->GetVtrueFpsIC();
+  _hIC   = fgic->GetAltitudeFtIC();
+  _gamma = fgic->GetFlightPathAngleRadIC();
   _rocIC = _vtIC*cos(_gamma);
   _vdownIC = _rocIC;
 
   // state variables
-  _u       = fdmex->GetIC()->GetUBodyFpsIC();
-  _v       = fdmex->GetIC()->GetVBodyFpsIC();
-  _w       = fdmex->GetIC()->GetWBodyFpsIC();
-  _p       = fdmex->GetIC()->GetPRadpsIC();
-  _q       = fdmex->GetIC()->GetQRadpsIC();
-  _r       = fdmex->GetIC()->GetRRadpsIC();
-  _alpha   = fdmex->GetIC()->GetAlphaRadIC();
-  _beta    = fdmex->GetIC()->GetBetaRadIC();
-  _theta   = fdmex->GetIC()->GetThetaRadIC();
-  _phi     = fdmex->GetIC()->GetPhiRadIC();
-  _psiIC   = fdmex->GetIC()->GetPsiRadIC();
+  _u       = fgic->GetUBodyFpsIC();
+  _v       = fgic->GetVBodyFpsIC();
+  _w       = fgic->GetWBodyFpsIC();
+  _p       = fgic->GetPRadpsIC();
+  _q       = fgic->GetQRadpsIC();
+  _r       = fgic->GetRRadpsIC();
+  _alpha   = fgic->GetAlphaRadIC();
+  _beta    = fgic->GetBetaRadIC();
+  _theta   = fgic->GetThetaRadIC();
+  _phi     = fgic->GetPhiRadIC();
+  _psiIC   = fgic->GetPsiRadIC();
   _psi     = _psiIC;
   _psigtIC = _psi;
 
@@ -378,7 +378,6 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
   _sbeta = sin(_beta);
   _sphi = sin(_phi);
 
-
   SetMode(tt); // creates vTrimAnalysisControls
   fdmex->SetTrimMode( (int)tt );
 
@@ -388,13 +387,11 @@ FGTrimAnalysis::FGTrimAnalysis(FGFDMExec *FDMExec,TrimAnalysisMode tt) {
   search_type = "Nelder-Mead";
   sigma_nm = 0.5; alpha_nm = 1.0; beta_nm = 0.5; gamma_nm = 2.0;
   initial_step = 0.01;
-  tolerance = 1.0E-9;
+  tolerance = 1.0E-10; // 0.0000000001
   cost_function_value = 9999.0;
 
   rf_name = "";
   if (rf.is_open()) rf.close();
-
-  fgic         = fdmex->GetIC();
 
   Auxiliary    = fdmex->GetAuxiliary();
   Aerodynamics = fdmex->GetAerodynamics();
@@ -587,7 +584,7 @@ bool FGTrimAnalysis::InitializeTrimControl(double default_value, Element* el,
   Element* trim_config = el->GetParent();
   string name = el->GetName();
   double iv = 0.0;
-  double step = 0.1; // default step value
+  double step = 0.0; // default step value
 
   iv = default_value;
   if (el->GetNumDataLines() != 0) {
@@ -630,7 +627,8 @@ void FGTrimAnalysis::Report(void) {
            << "\tp, q, r       (rad/s): " << _p <<", "<< _q <<", "<< _r << endl
            << "\talpha, beta     (deg): " << _alpha*57.3 <<", "<< _beta*57.3 << endl
            << "\tphi, theta, psi (deg): " << _phi*57.3 <<", "<< _theta*57.3 << ", " << _psi*57.3 << endl
-           << endl;
+           << "\tCost function value  : " << cost_function_value << endl
+           << "\tCycles executed      : " << total_its << endl << endl;
 
       cout << "\tTrim variables adjusted:" << endl;
       for (unsigned int i=0; i<vTrimAnalysisControls.size();i++){
@@ -655,7 +653,7 @@ void FGTrimAnalysis::Report(void) {
       cout << "\tPsi IC  : " << fdmex->GetIC()->GetPsiDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(3)*57.3 << " Degrees" << endl;
       cout << endl;
-    cout << "--------------------------------------------------------------------- \n\n";
+      cout << "--------------------------------------------------------------------- \n\n";
 
       fdmex->EnableOutput();
 }
@@ -1122,17 +1120,14 @@ bool FGTrimAnalysis::ensureRunning()
     for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
     {
       if (!Propulsion->GetEngine(i)->GetRunning() ) {
-//          cout << "Engine " << i << " is not running ! "; //<< endl;
           Propulsion->GetEngine(i)->SetStarter( true );
           if ( Propulsion->GetEngine(i)->GetType() == JSBSim::FGEngine::etPiston )
           {
-//              cout << "It's a Piston type." << endl;
               FGPiston * Piston = (FGPiston*)Propulsion->GetEngine(i);
               Piston->SetMagnetos(3);
           }
           else if ( Propulsion->GetEngine(i)->GetType() == FGEngine::etTurbine )
           {
-//              cout << "It's a Turbine type. Calculating ..." << endl;
               FGTurbine * Turbine = (FGTurbine*)Propulsion->GetEngine(i);
               Turbine->SetCutoff(false);
               Turbine->SetStarter(true);
@@ -1142,7 +1137,6 @@ bool FGTrimAnalysis::ensureRunning()
           Propulsion->Run();
       } else {
           success = true; // at least one engine is found in a running state
-//          cout << "Now running." << endl;
           Propulsion->SetActiveEngine(i);
       }
     }
@@ -1159,17 +1153,14 @@ bool FGTrimAnalysis::ensureRunning(unsigned int i)
     if ( i < Propulsion->GetNumEngines() )
     {
       if (!Propulsion->GetEngine(i)->GetRunning() ) {
-//          cout << "Engine " << i << " is not running ! "; //<< endl;
           Propulsion->GetEngine(i)->SetStarter( true );
           if ( Propulsion->GetEngine(i)->GetType() == JSBSim::FGEngine::etPiston )
           {
-//              cout << "It's a Piston type." << endl;
               FGPiston * Piston = (FGPiston*)Propulsion->GetEngine(i);
               Piston->SetMagnetos(3);
           }
           else if ( Propulsion->GetEngine(i)->GetType() == FGEngine::etTurbine )
           {
-//              cout << "It's a Turbine type. Calculating ..." << endl;
               FGTurbine * Turbine = (FGTurbine*)Propulsion->GetEngine(i);
               Turbine->SetCutoff(false);
               Turbine->SetStarter(true);
@@ -1180,7 +1171,6 @@ bool FGTrimAnalysis::ensureRunning(unsigned int i)
 
       } else {
           success = true; // at least one engine is found in a running state
-//          cout << "Now running." << endl;
           Propulsion->SetActiveEngine(i);
       }
     }
@@ -1299,17 +1289,12 @@ bool FGTrimAnalysis::DoTrim(void) {
     cout << endl << "Numerical trim algorithm: constrained optimization of a cost function" << endl;
 
     Objective* obj_ptr = new Objective(this->fdmex, this, 999.0);
-//    cout << "Objective instantiated: "<< obj_ptr->Get_x_val() << endl;
-//    cout << endl;
 
     fdmex->SetTrimStatus( true );
 
     //###################################
     // run for a while
     //###################################
-
-//    cout << "Sim time:" << fdmex->GetState()->Getsim_time() << ", dt: " << fdmex->GetState()->Getdt() << endl;
-//    cout << "..." << endl;
 
     double tMin,tMax;
     double throttle = 1.0;
@@ -1333,7 +1318,6 @@ bool FGTrimAnalysis::DoTrim(void) {
     Propulsion->GetSteadyState(); // GetSteadyState processes all engines
 
     //--------------------------------------------------------
-//    cout << "Trying to ensure active engine(s) ..." << endl;
 
     for(unsigned i=0;i<Propulsion->GetNumEngines();i++)
     {
@@ -1346,31 +1330,20 @@ bool FGTrimAnalysis::DoTrim(void) {
 
       while ( !engine_started && (engineStartCount < n_attempts) )
       {
-//          cout << "\t\t\t\tattempt: " << engineStartCount << endl;
           engine_started = ensureRunning(i);
           fdmex->Run();
           engineStartCount++;
       }
-      // do not continue without engines
-      if ( Propulsion->GetActiveEngine()<0 ) {
-//          cout << "Active engine:" << Propulsion->GetActiveEngine() << endl;
-//          cout << "Failed to ensure a running engine after " << engineStartCount << " attempts" << endl << endl;
-          return false;
-      }
-//      cout << "Active engine: n. " << i << endl;
-//      cout << "Got running engine after " << engineStartCount << " attempts" << endl << endl;
+
     }
+
     //--------------------------------------------------------
 
     Propulsion->GetSteadyState();
 
     fdmex->SetDebugLevel(0); // 4
 
-//    cout << "Sim time:" << fdmex->GetState()->Getsim_time() << endl << endl;
-
-    fdmex->SetDebugLevel(0);
-
-    //#####################################################################################
+    //#########################################################################
 
     trim_failed=false;
 
@@ -1385,16 +1358,12 @@ bool FGTrimAnalysis::DoTrim(void) {
     fgic->SetRRadpsIC(0.0);
 
     if(mode == taPullup ) {
-//        cout << "Setting pitch rate and nlf... " << endl;
         setupPullup(); // also calls updateRates()
-//        cout << "pitch rate done ... " << endl;
-//        cout << "nlf done" << endl;
     } else if (mode == taTurn) {
         setupTurn(); // also calls updateRates()
     } else if (mode == taTurnFull) {
         setupTurn(); // also calls updateRates()
-    }
-    else {
+    } else {
         fgic->SetPRadpsIC(0.0);
         fgic->SetQRadpsIC(0.0);
         fgic->SetRRadpsIC(0.0);
@@ -1403,7 +1372,7 @@ bool FGTrimAnalysis::DoTrim(void) {
 
   // ** DO HERE THE TRIM ** //
 
-  //-----------------------------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // REMINDER:
   // n. of control variables for full trim (taFull): 7
   // ordering: the four commands first, then the three Euler angles,
@@ -1411,16 +1380,12 @@ bool FGTrimAnalysis::DoTrim(void) {
   // [4] phi, [5] theta, [6] psi (alias taHeading)
   //-----------------------------------------------------------------------------------------------------------------
 
-  int iter = 0;
-
   // re-run ICs
   fdmex->RunIC();
 
   // write trim results on file, rf=results file
   if ( rf.is_open() )
     rf <<
-      //"# iteration, dT, dE, dR, dA, f(), Delta_E_pos (deg), Delta_R_pos (deg), Delta_A_pos (deg), theta (deg), alpha (deg), beta (deg)"
-      //"# iteration, CostFunc, size, dT, dE, dA, dR, Psi (rad), Theta (rad), Phi (rad)"
       "# iteration, costf, dT, dE, dA, dR, Phi (rad), Theta (rad), Psi (rad), uDot (fps2), vDot (fps2), wDot (fps2), pDot (rad/s2), qDot (rad/s2), rDot (rad/s2), u (fps), v (fps), w (fps), p (rad/s), q (rad/s), r (rad/s), alpha (rad), beta (rad), alphaDot (rad/s), betaDot (rad/s), Thrust"
       << endl;
 
@@ -1459,32 +1424,22 @@ bool FGTrimAnalysis::DoTrim(void) {
 
   if ( GetMode()==taLongitudinal ) {
       NMS.SetFcnName(find_CostFunctionLongitudinal);
-//      cout << "\n\n>>>> LONGITUDINAL TRIM <<<<\n";
   }
   if ( GetMode()==taFull ) {
       NMS.SetFcnName(find_CostFunctionFull);
-//      cout << "\n\n>>>> FULL TRIM <<<<\n";
   }
   if ( GetMode()==taFullWingsLevel ) {
       NMS.SetFcnName(find_CostFunctionFullWingsLevel);
-//      cout << "\n\n>>>> FULL TRIM WINGS-LEVEL <<<<\n";
   }
   if ( GetMode()==taTurn ) {
       NMS.SetFcnName(find_CostFunctionFullCoordinatedTurn);
-//      cout << "\n\n>>>> FULL TRIM COORDINATED TURN <<<<\n";
   }
   if ( GetMode()==taTurnFull ) {
       NMS.SetFcnName(find_CostFunctionFullTurn);
-//      cout << "\n\n>>>> FULL TRIM TURN <<<<\n";
   }
   if ( GetMode()==taPullup ) {
       NMS.SetFcnName(find_CostFunctionPullUp);
-//      cout << "\n\n>>>> TRIM PULLUP <<<<\n";
   }
-
-//  cout.setf(ios::scientific);
-//  cout << "Tolerance: " << tolerance << endl;
-//  cout.setf(ios::fixed);
 
   //-----------------------------------------
   // initialize simplex (n+1 conditions)
@@ -1517,11 +1472,7 @@ bool FGTrimAnalysis::DoTrim(void) {
     }// this complets the k-th n-ple
   }// this completes the (N+1) n-ples
 
-//  cout << "... Initial simplex :"<< endl << ss.str() << endl;
-
   NMS.ReadInFile(ss); // assign the initial combinations of parameters
-
-//  cout << ".......................................................\n";
 
   /*
   If Stop_on_std is set to false in an NMSearch, the standard-deviation test is used until that test is met.
@@ -1555,10 +1506,6 @@ bool FGTrimAnalysis::DoTrim(void) {
   NMS.GetMinVal(SMinVal);
   Scalls = NMS.GetFunctionCalls();
 
-//  cout << "\nMinimum point found: \n" << *Sminimum;
-//  cout << "\nValue: \n" << SMinVal <<  " in ";
-//  cout << Scalls << " function calls." << endl << endl;
-
   // Apply the set of controls found by the minimization procedure
 
   if ( ( mode == taFull ) ||
@@ -1580,8 +1527,6 @@ bool FGTrimAnalysis::DoTrim(void) {
 
       FGQuaternion quat( (*Sminimum)[4], (*Sminimum)[5], (*Sminimum)[6] ); // phi, theta, psi
       quat.Normalize();
-
-//      cout << "IC reset ..." << endl;
 
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
@@ -1616,8 +1561,6 @@ bool FGTrimAnalysis::DoTrim(void) {
       quat.Normalize();
 
       // enforce the current state to IC object
-
-//      cout << "IC reset ..." << endl;
 
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
@@ -1658,7 +1601,6 @@ bool FGTrimAnalysis::DoTrim(void) {
       //...
       // enforce the current state to IC object
 
-//      cout << "IC reset ..." << endl;
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
@@ -1697,7 +1639,6 @@ bool FGTrimAnalysis::DoTrim(void) {
       //...
       // enforce the current state to IC object
 
-//      cout << "IC reset ..." << endl;
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
@@ -1737,7 +1678,6 @@ bool FGTrimAnalysis::DoTrim(void) {
       //...
       // enforce the current state to IC object
 
-//      cout << "IC reset ..." << endl;
       fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
@@ -1759,12 +1699,13 @@ bool FGTrimAnalysis::DoTrim(void) {
 
   //-----------------------------------------------------------------------------------------------------------------
 
+  total_its = NMS.GetFunctionCalls();
+
   if( !trim_failed ) {
-    total_its=N;
-    if (debug_lvl > 0)
-        cout << endl << "  Trim successful" << endl;
+    if (debug_lvl > 0) {
+      cout << endl << "  Trim successful. (Cost function value: " << cost_function_value << ")" << endl;
+    }
   } else {
-    total_its=N;
     if (debug_lvl > 0)
         cout << endl << "  Trim failed" << endl;
   }
