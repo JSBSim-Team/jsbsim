@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.10 2008/03/12 13:26:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.11 2008/03/13 04:53:42 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -1865,9 +1865,7 @@ double Objective::myCostFunctionFull(Vector<double> & x) // x variations come fr
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n"; //26
 
         // this really goes into the integration process
         FDMExec->GetPropagate()->SetVState( VState );
@@ -1877,7 +1875,7 @@ double Objective::myCostFunctionFull(Vector<double> & x) // x variations come fr
 
         TrimAnalysis->SetCostFunctionValue(f);
     }
-
+ 
     return f;
 }
 
@@ -2029,9 +2027,7 @@ double Objective::myCostFunctionFullWingsLevel(Vector<double> & x) // x variatio
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n";  // 26
 
         // this influences really into the further integration process
         FDMExec->GetPropagate()->SetVState( VState );
@@ -2187,9 +2183,7 @@ double Objective::myCostFunctionLongitudinal(Vector<double> & x)
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n";  // 26
 
         FDMExec->GetPropagate()->SetVState( VState ); // ?? is this really necessary
 
@@ -2357,9 +2351,7 @@ double Objective::myCostFunctionFullCoordinatedTurn(Vector<double> & x)
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n";  // 26
 
         FDMExec->GetPropagate()->SetVState( VState ); // ?? is this really necessary
 
@@ -2525,9 +2517,7 @@ double Objective::myCostFunctionFullTurn(Vector<double> & x)
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n";  // 
 
         FDMExec->GetPropagate()->SetVState( VState ); // ?? is this really necessary
 
@@ -2685,9 +2675,7 @@ double Objective::myCostFunctionPullUp(Vector<double> & x)
             << FDMExec->GetAuxiliary()->Getadot() << ", "           // 24
             << FDMExec->GetAuxiliary()->Getbdot() << ", "           // 25
 
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << ", "  // 26
-            << FDMExec->GetPropulsion()->GetEngine(0)->GetPowerAvailable()  // 27
-            << ", " << TrimAnalysis->GetCostFunctionValue() << "\n";  // 28
+            << FDMExec->GetPropulsion()->GetEngine(0)->GetThrust() << "\n";  // 26
 
         FDMExec->GetPropagate()->SetVState( VState ); // ?? is this really necessary
 

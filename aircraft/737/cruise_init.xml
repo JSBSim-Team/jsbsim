@@ -4,23 +4,23 @@
     This file sets up the aircraft to start off
     at cruise conditions.
   -->
-  <altitude unit="FT"> 30000.0  </altitude>
-  <vt unit="FT/SEC">     750.0  </vt>
-  <gamma unit="DEG">       0.0  </gamma>
-  <latitude unit="DEG">   47.0  </latitude>
-  <longitude unit="DEG"> 122.0  </longitude>
-  <phi unit="DEG">         0.0  </phi>
-  <psi unit="DEG">       225.0  </psi>
-  <beta unit="DEG">        0.0  </beta>
+  <altitude unit="FT"> 30000.0 </altitude>
+  <vt unit="FT/SEC">     750.0 </vt>
+  <gamma unit="DEG">       0.0 </gamma>
+  <latitude unit="DEG">   47.0 </latitude>
+  <longitude unit="DEG"> 122.0 </longitude>
+  <phi unit="DEG">         0.0 </phi>
+  <psi unit="DEG">       225.0 </psi>
+  <beta unit="DEG">        0.0 </beta>
   <trim_config>
     <phi/>
+    <theta step_size="0.4"/>
     <psi/>
     <gamma/>
-    <theta step_size="0.4"/>
     <throttle_cmd step_size="0.4"> 0.6 </throttle_cmd>
     <elevator_cmd step_size="0.3"> 0.0 </elevator_cmd>
     <aileron_cmd step_size="0.1">  0.0 </aileron_cmd>
     <rudder_cmd step_size="0.1">   0.0 </rudder_cmd>
-    <output_file name="cruise_trim_data.txt"/>
+    <output_file name="cruise_trim_data.csv"/>
   </trim_config>
 </initialize>
