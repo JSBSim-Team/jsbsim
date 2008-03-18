@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.12 2007/10/17 01:07:16 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.13 2008/03/18 01:23:23 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -257,6 +257,8 @@ FGPiston::FGPiston(FGFDMExec* exec, Element* el, int engine_number)
 
 FGPiston::~FGPiston()
 {
+  delete Lookup_Combustion_Efficiency;
+  delete Power_Mixture_Correlation;
   Debug(1); // Call Debug() routine from constructor if needed
 }
 

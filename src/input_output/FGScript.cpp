@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.24 2008/01/05 19:53:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.25 2008/03/18 01:23:23 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,6 +92,9 @@ FGScript::~FGScript()
     delete local_properties[i];
 
   local_properties.clear();
+
+  for (i=0; i<Events.size(); i++)
+    delete Events[i].Condition;
   Debug(1);
 }
 
@@ -287,6 +290,8 @@ bool FGScript::LoadScript( string script )
       set_element = event_element->FindNextElement("set");
     }
     Events.push_back(*newEvent);
+    delete newEvent;
+
     event_element = run_element->FindNextElement("event");
   }
 

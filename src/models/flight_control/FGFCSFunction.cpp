@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.5 2007/09/19 01:33:46 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCSFunction.cpp,v 1.6 2008/03/18 01:23:23 jberndt Exp $";
 static const char *IdHdr = ID_FCSFUNCTION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,7 @@ FGFCSFunction::FGFCSFunction(FGFCS* fcs, Element* element) : FGFCSComponent(fcs,
 
 FGFCSFunction::~FGFCSFunction()
 {
+  delete function;
   Debug(1);
 }
 
