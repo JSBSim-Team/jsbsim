@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.25 2008/03/18 01:23:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.26 2008/03/20 23:21:08 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,25 +361,29 @@ bool FGScript::RunScript(void)
       for (i=0; i<iEvent->SetValue.size(); i++) {
         if (iEvent->Transiting[i]) {
           iEvent->TimeSpan = currentTime - iEvent->StartTime;
-          switch (iEvent->Action[i]) {
-          case FG_RAMP:
-            if (iEvent->TimeSpan <= iEvent->TC[i]) {
-              newSetValue = iEvent->TimeSpan/iEvent->TC[i] * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
-            } else {
+          if (iEvent->Functions[i] == 0) {
+            switch (iEvent->Action[i]) {
+            case FG_RAMP:
+              if (iEvent->TimeSpan <= iEvent->TC[i]) {
+                newSetValue = iEvent->TimeSpan/iEvent->TC[i] * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
+              } else {
+                newSetValue = iEvent->newValue[i];
+                iEvent->Transiting[i] = false;
+              }
+              break;
+            case FG_STEP:
               newSetValue = iEvent->newValue[i];
               iEvent->Transiting[i] = false;
+              break;
+            case FG_EXP:
+              newSetValue = (1 - exp( -iEvent->TimeSpan/iEvent->TC[i] )) * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
+              break;
+            default:
+              cerr << "Invalid Action specified" << endl;
+              break;
             }
-            break;
-          case FG_STEP:
-            newSetValue = iEvent->newValue[i];
-            iEvent->Transiting[i] = false;
-            break;
-          case FG_EXP:
-            newSetValue = (1 - exp( -iEvent->TimeSpan/iEvent->TC[i] )) * iEvent->ValueSpan[i] + iEvent->OriginalValue[i];
-            break;
-          default:
-            cerr << "Invalid Action specified" << endl;
-            break;
+          } else { // Set the new value based on a function
+            newSetValue = iEvent->Functions[i]->GetValue();
           }
           iEvent->SetParam[i]->setDoubleValue(newSetValue);
         }
