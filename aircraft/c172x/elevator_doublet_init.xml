@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<initialize name="Elevator doublet init">
+  <!--
+    This file sets up the aircraft at 4000
+	feet on a heading of 200 degrees.
+  -->
+  <vt unit="KTS">         96.0  </vt>
+  <latitude unit="DEG">   47.0  </latitude>
+  <longitude unit="DEG"> 122.0  </longitude>
+  <psi unit="DEG">       200.0  </psi>
+  <altitude unit="FT">  2000.0  </altitude>
+  <gamma unit="DEG">       0.0  </gamma>
+</initialize>

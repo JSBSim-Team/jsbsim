@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172 elevator doublet">
+  <!--
+    This run is for testing the C172 at altitude with an elevator doublet applied
+  -->
+
+  <use aircraft="c172x" initialize="elevator_doublet_init"/>
+  <run start="0.0" end="30" dt="0.0083333">
+
+    <property> simulation/notify-time-trigger </property>
+    <property value="1"> simulation/run_id </property>
+
+<!--
+      For "do_simple_trim" (Classic trim):
+      0: Longitudinal
+      1: Full
+      2: Ground
+      3: Pullup
+      4: Custom
+      5: Turn
+      6: None
+-->
+    <event name="Trim">
+      <description>Trim at the initial conditions state</description>
+      <condition>
+        sim-time-sec gt 1.0
+      </condition>
+      <set name="simulation/do_simple_trim" value="1"/>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>velocities/vt-fps</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+      </notify>
+    </event>
+
+    <event name="Elevator doublet" persistent="true">
+      <description> Do an elevator doublet from between
+                    5 and 7 seconds. </description>
+      <condition>
+        sim-time-sec ge 5
+        sim-time-sec le 7
+      </condition>
+      <set name="fcs/elevator-cmd-norm">
+        <function>
+          <sin>
+            <product>
+              <difference>
+                <property> sim-time-sec </property>
+                <value> 5 </value>
+              </difference>
+	      <value> 3.1415927 </value>
+	    </product>
+          </sin>
+        </function>
+      </set>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>velocities/vt-fps</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+      </notify>
+    </event>
+  </run>
+</runscript>
