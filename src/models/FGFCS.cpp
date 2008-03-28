@@ -1,6 +1,6 @@
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- Module:       FGFCS.cpp
+ Module:       FGFCS.cpp 
  Author:       Jon Berndt
  Date started: 12/12/98
  Purpose:      Model the flight controls
@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.37 2008/01/23 23:54:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.38 2008/03/28 00:55:28 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
