@@ -2,7 +2,6 @@ SUBDIRS =		\
 	737		\
 	A320		\
 	B747		\
-	LM		\
 	OV10		\
 	SGS		\
 	T37		\
@@ -26,8 +25,7 @@ SUBDIRS =		\
 	paraglider	\
 	sgs126		\
 	shuttle		\
+	Submarine_Scout \
 	t6texan2	\
 	x24b
 
-EXTRA_DIST = \
-	aircraft_template.xml

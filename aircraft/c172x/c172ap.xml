@@ -35,7 +35,7 @@
   <property>ap/airspeed_hold</property>
   <property>ap/throttle-cmd-norm</property>
 
-  <property value="0.5"> ap/heading-roll-error-lag-c1 </property>
+  <property value="0.5"> ap/hdg-roll-err-c1 </property>
 
 <!--  <property>attitude/sensor/phi-rad</property> -->
 
@@ -123,7 +123,7 @@ ROLL CHANNEL
 
   <lag_filter name="fcs/heading-roll-error-lag">
     <input> fcs/heading-command </input>
-    <c1> ap/heading-roll-error-lag-c1 </c1>
+    <c1> ap/hdg-roll-err-c1 </c1>
   </lag_filter>
 
   <summer name="fcs/heading-roll-error">
@@ -162,7 +162,6 @@ ROLL CHANNEL
 
   <switch name="fcs/roll-command-selector">
     <default value="0.0"/>
-<!--    <test value="fcs/heading-error-summer"> -->
     <test value="fcs/heading-pi-controller">
       ap/heading_hold == 1
     </test>
@@ -171,6 +170,7 @@ ROLL CHANNEL
     </test>
     <output>ap/aileron_cmd</output>
   </switch>
+
 </channel>
 <!--
 =====================================================

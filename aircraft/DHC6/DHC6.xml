@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2003-01-01 </filecreationdate>
-        <version> $Id: DHC6.xml,v 1.14 2006/02/26 17:26:35 jberndt Exp $ </version>
+        <version> $Id: DHC6.xml,v 1.15 2008/04/01 02:08:26 jberndt Exp $ </version>
         <description> DeHavilland DHC-6 </description>
     </fileheader>
 
@@ -178,7 +178,7 @@
     </propulsion>
     <flight_control name="FCS: DHC-6 Twin Otter">
         <channel name="Pitch">
-            <summer name="Pitch Trim Sum">
+            <summer name="fcs/pitch-trim-sum">
                 <input>fcs/elevator-cmd-norm</input>
                 <input>fcs/pitch-trim-cmd-norm</input>
                 <clipto>
@@ -187,7 +187,7 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Elevator Control">
+            <aerosurface_scale name="fcs/elevator-control">
                 <input>fcs/pitch-trim-sum</input>
                 <range>
                     <min>-0.454</min>
@@ -197,7 +197,7 @@
             </aerosurface_scale>
         </channel>
         <channel name="Roll">
-            <summer name="Roll Trim Sum">
+            <summer name="fcs/roll-trim-sum">
                 <input>fcs/aileron-cmd-norm</input>
                 <input>fcs/roll-trim-cmd-norm</input>
                 <clipto>
@@ -206,7 +206,7 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Left Aileron Control">
+            <aerosurface_scale name="fcs/left-aileron-control">
                 <input>fcs/roll-trim-sum</input>
                 <range>
                     <min>-0.28</min>
@@ -215,7 +215,7 @@
                 <output>fcs/left-aileron-pos-rad</output>
             </aerosurface_scale>
 
-            <aerosurface_scale name="Right Aileron Control">
+            <aerosurface_scale name="fcs/right-aileron-control">
                 <input>-fcs/roll-trim-sum</input>
                 <range>
                     <min>-0.28</min>
@@ -225,7 +225,7 @@
             </aerosurface_scale>
         </channel>
         <channel name="Yaw">
-            <summer name="Rudder Command Sum">
+            <summer name="fcs/rudder-command-sum">
                 <input>fcs/rudder-cmd-norm</input>
                 <input>fcs/yaw-trim-cmd-norm</input>
                 <clipto>
@@ -234,7 +234,7 @@
                 </clipto>
             </summer>
 
-            <aerosurface_scale name="Rudder Control">
+            <aerosurface_scale name="fcs/rudder-control">
                 <input>fcs/rudder-command-sum</input>
                 <range>
                     <min>-0.28</min>
@@ -244,7 +244,7 @@
             </aerosurface_scale>
         </channel>
         <channel name="Flaps">
-            <kinematic name="flaps-control">
+            <kinematic name="fcs/flaps-control">
                 <input>fcs/flap-cmd-norm</input>
                 <traverse>
                     <setting>
@@ -267,7 +267,7 @@
                 <output>fcs/flap-pos-deg</output>
             </kinematic>
 
-            <aerosurface_scale name="Flap Position Normalizer">
+            <aerosurface_scale name="fcs/flap-position-normalizer">
               <input>fcs/flap-pos-deg</input>
               <domain>
                 <min>0</min>  <!-- Flaps actual minimum position -->
@@ -282,7 +282,7 @@
 
         </channel>
         <channel name="Speedbrake">
-            <kinematic name="Speedbrake Control">
+            <kinematic name="fcs/speedbrake-control">
                 <input>fcs/speedbrake-cmd-norm</input>
                 <traverse>
                     <setting>

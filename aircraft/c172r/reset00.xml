@@ -11,6 +11,6 @@
   <longitude> 122.0 </longitude>
   <phi>         0.0 </phi>
   <theta>       0.0 </theta>
-  <psi>       150.0 </psi>
-  <altitude>   4.7  </altitude>
+  <psi>       330.0 </psi>
+  <altitude>   4.45  </altitude>
 </initialize>

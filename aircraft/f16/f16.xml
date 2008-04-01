@@ -7,7 +7,7 @@
     <fileheader>
         <author> Erik Hofman </author>
         <filecreationdate> 2001-01-01 </filecreationdate>
-        <version> $Revision: 1.63 $ </version>
+        <version> $Revision: 1.64 $ </version>
         <description> Models an F-16A Block-32 (Basic US configuration) </description>
         <reference refID="ISBN 0-7232-3458-2" author="William Green" title="General Dynamics F-16 Dash-1" date="1987"/>
         <reference refID="NASA TP-1538" author="" title="wind tunnel data" date="12/1979"/>
@@ -280,7 +280,7 @@
             </summer>
 
             <summer name="bias-to-zero">
-              <input>accelerations/n-pilot-z-norm</input>
+              <input>accelerations/Nz</input>
               <bias> -1 </bias>
             </summer>
 
@@ -302,6 +302,7 @@
 
             <pid name="g-load-pid">
               <input>fcs/g-load-error</input>
+              <trigger>gear/unit[0]/WOW</trigger>
               <kp> 0.660000 </kp>
               <ki> 0.005000 </ki>
               <kd> 0.000 </kd>
@@ -342,8 +343,9 @@
             </pure_gain>
 
             <integrator name="roll rate i">
-                <input>fcs/roll-trim-error</input>
-                <c1>0.05</c1>
+              <input>fcs/roll-trim-error</input>
+              <trigger>gear/unit[0]/WOW</trigger>
+              <c1>0.05</c1>
             </integrator>
 
             <lead_lag_filter name="roll rate d">
@@ -404,8 +406,9 @@
             </pure_gain>
 
             <integrator name="yaw rate i">
-                <input>fcs/yaw-trim-error</input>
-                <c1>0.05</c1>
+              <input>fcs/yaw-trim-error</input>
+              <trigger>gear/unit[0]/WOW</trigger>
+              <c1>0.05</c1>
             </integrator>
 
             <lead_lag_filter name="yaw rate d">
@@ -1509,6 +1512,7 @@
     <property> propulsion/total-fuel-lbs </property>
     <property> flight-path/gamma-rad </property>
     <property> accelerations/n-pilot-z-norm </property>
+    <property> accelerations/Nz </property>
     <rates> ON </rates>
     <velocities> ON </velocities>
     <forces> ON </forces>
