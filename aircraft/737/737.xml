@@ -12,7 +12,7 @@
         <description> Models a Boeing 737. </description>
         <license>
           <licenseName>GPL (General Public License)</licenseName>
-          <licenseURL>http://www.gnu.org/gpl</licenseURL>
+          <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
         </license>
         <note>
           This model was created using publicly available data, publicly available
