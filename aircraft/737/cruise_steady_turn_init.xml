@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<initialize name="cruise with steady turn">
+  <!--
+    This file sets up the aircraft to start off
+    at cruise conditions, but in a steady turn
+  -->
+  <altitude unit="FT"> 25000.0 </altitude>
+  <vt unit="FT/SEC">     750.0 </vt>
+  <gamma unit="DEG">       0.0 </gamma>
+  <latitude unit="DEG">   47.0 </latitude>
+  <longitude unit="DEG"> 122.0 </longitude>
+  <phi unit="DEG">        30.0 </phi>
+  <psi unit="DEG">         0.0 </psi>
+</initialize>
