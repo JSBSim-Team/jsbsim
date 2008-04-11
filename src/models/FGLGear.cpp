@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.38 2008/03/09 08:15:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.39 2008/04/11 16:23:12 andgi Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,14 @@ FGLGear::FGLGear(Element* el, FGFDMExec* fdmex, int number) : Exec(fdmex),
 
   name = el->GetAttributeValue("name");
   sContactType = el->GetAttributeValue("type");
+  if (sContactType == "BOGEY") {
+    eContactType = ctBOGEY;
+  } else if (sContactType == "STRUCTURE") {
+    eContactType = ctSTRUCTURE;
+  } else {
+    eContactType = ctUNKNOWN;
+  }
+
   if (el->FindElement("spring_coeff"))
     kSpring = el->FindElementValueAsNumberConvertTo("spring_coeff", "LBS/FT");
   if (el->FindElement("damping_coeff"))
@@ -268,6 +276,7 @@ FGLGear::FGLGear(const FGLGear& lgear)
   sSteerType      = lgear.sSteerType;
   sRetractable    = lgear.sRetractable;
   sContactType    = lgear.sContactType;
+  eContactType    = lgear.eContactType;
   sBrakeGroup     = lgear.sBrakeGroup;
   eSteerType      = lgear.eSteerType;
   eBrakeGrp       = lgear.eBrakeGrp;
@@ -679,7 +688,7 @@ double FGLGear::GetGearUnitPos(void)
 void FGLGear::bind(void)
 {
   char property_name[80];
-  if (sContactType == "BOGEY") {
+  if (eContactType == ctBOGEY) {
     snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
     Exec->GetPropertyManager()->Tie( property_name, &WheelSlip );
     snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
@@ -703,7 +712,7 @@ void FGLGear::bind(void)
 void FGLGear::unbind(void)
 {
   char property_name[80];
-  if (sContactType == "BOGEY") {
+  if (eContactType == ctBOGEY) {
     snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
     Exec->GetPropertyManager()->Untie( property_name );
     snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
@@ -781,7 +790,7 @@ void FGLGear::Debug(int from)
       cout << "      Damping Constant: " << bDamp         << endl;
       cout << "      Dynamic Friction: " << dynamicFCoeff << endl;
       cout << "      Static Friction:  " << staticFCoeff  << endl;
-      if (sContactType == "BOGEY") {
+      if (eContactType == ctBOGEY) {
         cout << "      Rolling Friction: " << rollingFCoeff << endl;
         cout << "      Steering Type:    " << sSteerType    << endl;
         cout << "      Grouping:         " << sBrakeGroup   << endl;

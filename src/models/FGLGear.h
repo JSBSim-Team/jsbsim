@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.17 2008/01/20 17:46:49 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.18 2008/04/11 16:23:12 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -159,7 +159,7 @@ CLASS DOCUMENTATION
     in body frame.</li>
     </ol>
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.17 2008/01/20 17:46:49 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.18 2008/04/11 16:23:12 andgi Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -179,6 +179,8 @@ public:
   enum BrakeGroup {bgNone=0, bgLeft, bgRight, bgCenter, bgNose, bgTail };
   /// Steering group membership enumerators
   enum SteerType {stSteer, stFixed, stCaster};
+  /// Contact point type
+  enum ContactType {ctBOGEY, ctSTRUCTURE, ctUNKNOWN};
   /// Report type enumerators
   enum ReportType {erNone=0, erTakeoff, erLand};
   /** Constructor
@@ -255,7 +257,7 @@ public:
   inline double GetWheelSlipAngle(void)    { return WheelSlip;       }
   double GetWheelVel(int axis)             { return vWhlVelVec(axis);}
 
-  bool IsBogey(void) {return (sContactType == string("BOGEY"));}
+  bool IsBogey(void) {return (eContactType == ctBOGEY);}
 
   void bind(void);
   void unbind(void);
@@ -315,8 +317,9 @@ private:
   string sRetractable;
   string sContactType;
 
-  BrakeGroup eBrakeGrp;
-  SteerType  eSteerType;
+  BrakeGroup  eBrakeGrp;
+  ContactType eContactType;
+  SteerType   eSteerType;
   double  maxSteerAngle;
   double RFRV;  // Rolling force relaxation velocity
   double SFRV;  // Side force relaxation velocity
