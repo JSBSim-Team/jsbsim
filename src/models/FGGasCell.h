@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ------------- Copyright (C) 2006  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2008  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.3 2008/02/06 02:52:50 jberndt Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.4 2008/04/13 15:14:22 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -133,7 +133,6 @@ public:
 
   void Calculate(double dt);
   int GetType(void) {return Type;}
-  bool GetSelected(void) {return Selected;}
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 
@@ -156,15 +155,15 @@ private:
   typedef vector <FGFunction*> CoeffArray;
   CoeffArray HeatTransferCoeff;
   // Variables
-  double Pressure;        // [lbs/ft²]
-  double Contents;        // [mol]
-  double Volume;          // [ft³]
-  double Temperature;     // [Rankine]
-  double Buoyancy;        // [lbs] Note: Does not include the weight of the gas itself.
-  double ValveOpen;       // 0 <= ValveOpen <= 1.
-  FGMatrix33 gasCellJ;    // [slug foot²]
+  double Pressure;         // [lbs/ft²]
+  double Contents;         // [mol]
+  double Volume;           // [ft³]
+  double dVolumeIdeal;     // [ft³]
+  double Temperature;      // [Rankine]
+  double Buoyancy;         // [lbs] Note: Does not include the weight of the gas itself.
+  double ValveOpen;        // 0 <= ValveOpen <= 1.
+  FGMatrix33 gasCellJ;     // [slug foot²]
 
-  bool  Selected;
   FGAuxiliary* Auxiliary;
   FGAtmosphere* Atmosphere;
   FGPropertyManager* PropertyManager;

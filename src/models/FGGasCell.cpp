@@ -4,7 +4,7 @@
  Author:       Anders Gidenstam
  Date started: 01/21/2006
 
- ------------- Copyright (C) 2006  Anders Gidenstam (anders(at)gidenstam.org) --
+ ----- Copyright (C) 2006 - 2008  Anders Gidenstam (anders(at)gidenstam.org) --
 
  This program is free software; you can redistribute it and/or modify it under
  the terms of the GNU Lesser General Public License as published by the Free Software
@@ -49,7 +49,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.3 2008/01/24 19:56:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.4 2008/04/13 15:14:22 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -74,7 +74,7 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
   gasCellJ = FGMatrix33();
 
   Buoyancy = MaxVolume = MaxOverpressure = Temperature = Pressure =
-    Contents = Volume = 0.0;
+    Contents = Volume = dVolumeIdeal = 0.0;
   Xradius = Yradius = Zradius = Xwidth = Ywidth = Zwidth = 0.0;
   ValveCoefficient = ValveOpen = 0.0;
   CellNum = num;
@@ -193,8 +193,6 @@ FGGasCell::FGGasCell(FGFDMExec* exec, Element* el, int num) : FGForce(exec)
 
   Volume = Contents * R * Temperature / Pressure;
 
-  Selected = true;
-
   // Bind relevant properties
   char property_name[80];
   snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/max_volume-ft3",
@@ -280,6 +278,9 @@ void FGGasCell::Calculate(double dt)
   const double AirDensity     = Atmosphere->GetDensity();      // [slug/ft³]
   const double g = Inertial->gravity();                        // [lbs/slug]
 
+  const double OldTemperature = Temperature;
+  const double OldPressure    = Pressure;
+
   //-- Gas temperature --
 
   if (HeatTransferCoeff.size() > 0) {
@@ -291,22 +292,20 @@ void FGGasCell::Calculate(double dt)
     for (i = 0; i < HeatTransferCoeff.size(); i++) {
       dU += HeatTransferCoeff[i]->GetValue();
     }
-
-    Temperature += dU * dt / (Cv_gas() * Contents * R);
+    // Don't include dt when accounting for adiabatic expansion/contraction.
+    // The rate of adiabatic cooling looks about right: ~5.4 Rankine/1000ft. 
+    Temperature +=
+      (dU * dt - Pressure * dVolumeIdeal) / (Cv_gas() * Contents * R);
   } else {
-    // No simulation of slow temperature changes.
+    // No simulation of complex temperature changes.
     // Note: Making the gas cell behave adiabatically might be a better
     // option.
     Temperature = AirTemperature;
   }
 
+  //-- Pressure --
   const double IdealPressure = Contents * R * Temperature / MaxVolume;
-
-  //-- Automatic safety valving. --
   if (IdealPressure > AirPressure + MaxOverpressure) {
-    // Gas is automatically valved. Valving capacity is assumed to be infinite.
-    // FIXME: This could/should be replaced by damage to the gas cell envelope.
-    Contents = (AirPressure + MaxOverpressure) * MaxVolume / (R * Temperature);
     Pressure = AirPressure + MaxOverpressure;
   } else {
     Pressure = max(IdealPressure, AirPressure);
@@ -320,21 +319,34 @@ void FGGasCell::Calculate(double dt)
   if ((ValveCoefficient > 0.0) && (ValveOpen > 0.0)) {
     // First compute the difference in pressure between the gas in the
     // cell and the air above it.
+    // FixMe: CellHeight should depend on current volume.
     const double CellHeight = 2 * Zradius + Zwidth;                   // [ft]
     const double GasMass    = Contents * M_gas();                     // [slug]
     const double GasVolume  = Contents * R * Temperature / Pressure;  // [ft³]
     const double GasDensity = GasMass / GasVolume;
     const double DeltaPressure =
-      Pressure + CellHeight * g * (AirDensity - GasDensity) -
-      AirPressure;
+      Pressure + CellHeight * g * (AirDensity - GasDensity) - AirPressure;
     const double VolumeValved =
       ValveOpen * ValveCoefficient * DeltaPressure * dt;
-    Contents = max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
+    Contents =
+      max(0.0, Contents - Pressure * VolumeValved / (R * Temperature));
   }
+
+  //-- Automatic safety valving. --
+  if (Contents * R * Temperature / MaxVolume > AirPressure + MaxOverpressure) {
+    // Gas is automatically valved. Valving capacity is assumed to be infinite.
+    // FIXME: This could/should be replaced by damage to the gas cell envelope.
+    Contents =
+      (AirPressure + MaxOverpressure) * MaxVolume / (R * Temperature);
+  }
+
+  //-- Volume --
+  Volume = Contents * R * Temperature / Pressure;
+  dVolumeIdeal =
+    Contents * R * (Temperature / Pressure - OldTemperature / OldPressure);
 
   //-- Current buoyancy --
   // The buoyancy is computed using the atmospheres local density.
-  Volume   = Contents * R * Temperature / Pressure;
   Buoyancy = Volume * AirDensity * g;
   
   // Note: This is gross buoyancy. The weight of the gas itself is not deducted
@@ -343,7 +355,8 @@ void FGGasCell::Calculate(double dt)
 
   // Compute the inertia of the gas cell.
   // Consider the gas cell as a shape of uniform density.
-  // FIXME: If the cell isn't ellipsoid or cylindrical the inertia will be wrong.
+  // FIXME: If the cell isn't ellipsoid or cylindrical the inertia will
+  //        be wrong.
   gasCellJ = FGMatrix33();
   const double mass = Contents * M_gas();
   double Ixx, Iyy, Izz;
