@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.46 2008/03/09 08:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.47 2008/04/14 04:08:18 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -158,10 +158,13 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
     debug_lvl = 1;
   }
 
-  if (Root == 0)  master= new FGPropertyManager;
-  else            master = Root;
+  if (Root == 0) {
+    if (master == 0)
+      master = new FGPropertyManager;
+    Root = master;
+  }
 
-  instance = master->GetNode("/fdm/jsbsim",IdFDM,true);
+  instance = Root->GetNode("/fdm/jsbsim",IdFDM,true);
   Debug(0);
   // this is to catch errors in binding member functions to the property tree.
   try {
@@ -544,7 +547,7 @@ bool FGFDMExec::LoadModel(string model, bool addModelToPath)
 
   struct PropertyCatalogStructure masterPCS;
   masterPCS.base_string = "";
-  masterPCS.node = (FGPropertyManager*)master;
+  masterPCS.node = (FGPropertyManager*)Root;
 
   BuildPropertyCatalog(&masterPCS);
 
