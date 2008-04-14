@@ -3,52 +3,23 @@
   <xs:annotation>
     <xs:documentation> The JSBSim v2.0 configuration file format (JSBSim-ML) is the medium for describing 
       aircraft flight characteristics to the JSBSim code. For more information about JSBSim, see the
-      web site at: www.jsbsim.org.
-    </xs:documentation>
-    <xs:documentation>
+      web site at: <a href="http://www.jsbsim.org">www.jsbsim.org</a>.
+      <p/>
       The config file format stores and conveys the characteristics of any unique aircraft to the JSBSim
       executable. The information that is specified in the configuration file includes:
-    </xs:documentation>
-    <xs:documentation>
-      - Administrative
-    </xs:documentation>
-    <xs:documentation>
-      - Geometric and measurement
-    </xs:documentation>
-    <xs:documentation>
-      - Mass and weight/balance
-    </xs:documentation>
-    <xs:documentation>
-      - Buoyant forces
-    </xs:documentation>
-    <xs:documentation>
-      - Ground contact
-    </xs:documentation>
-    <xs:documentation>
-      - External reactions
-    </xs:documentation>
-    <xs:documentation>
-      - Propulsion
-    </xs:documentation>
-    <xs:documentation>
-      - Systems
-    </xs:documentation>
-    <xs:documentation>
-      - Autopilot
-    </xs:documentation>
-    <xs:documentation>
-      - Flight control
-    </xs:documentation>
-    <xs:documentation>
-      - Aerodynamics
-    </xs:documentation>
-    <xs:documentation>
-      - Input
-    </xs:documentation>
-    <xs:documentation>
-      - Output
-    </xs:documentation>
-    <xs:documentation>
+      <ul>
+        <li>Administrative</li>
+        <li>Geometric and measurement</li>
+        <li>Mass and weight/balance</li>
+        <li>Buoyant forces</li>
+        <li>Ground reactions</li>
+        <li>External reactions</li>
+        <li>Propulsion</li>
+        <li>Systems, Autopilot, and Flight Control</li>
+        <li>Aerodynamics</li>
+        <li>Input/Output</li>
+      </ul>
+      <p/>
       The basic structure of the configuration file at the highest level is shown beginning with the
       fdm_config element definition.
     </xs:documentation>
@@ -108,7 +79,7 @@
       </xs:attribute>
       <xs:attribute name="version" use="required">
         <xs:annotation>
-          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.25 $", so that
+          <xs:documentation>Often, the version may initially be simply specified as "\$Revision: 1.26 $", so that
             a configuration management tool such as cvs can automatically generate revision numbers.</xs:documentation>
         </xs:annotation>
         <xs:simpleType>
@@ -224,7 +195,7 @@
         </xs:element>
         <xs:element name="version" type="xs:string" minOccurs="0" maxOccurs="1">
           <xs:annotation>
-            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.25 $".</xs:documentation>
+            <xs:documentation>The version number in the form #.#, or #.#.#, etc. This can also simply be a cvs keyword, such as "\$Revision: 1.26 $".</xs:documentation>
           </xs:annotation>
         </xs:element>
         <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1">
@@ -598,16 +569,16 @@
       of component definitions.
     </xs:documentation></xs:annotation>
     <xs:complexType>
-        <xs:sequence>
-          <xs:element minOccurs="0" maxOccurs="unbounded" ref="property" />
-          <xs:element minOccurs="0" maxOccurs="unbounded" ref="sensor" />
-          <xs:element minOccurs="0" maxOccurs="unbounded" ref="channel" />
-        </xs:sequence>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="property" />
+      <xs:element ref="sensor" />
+      <xs:element ref="channel" />
+    </xs:choice>
       <xs:attribute name="name" use="optional" type="xs:string"/>
       <xs:attribute name="file" use="optional" type="xs:string"/>
     </xs:complexType>
   </xs:element>
-
+  
   <!-- AUTOPILOT SECTION -->
   <xs:element name="autopilot">
     <xs:annotation>
