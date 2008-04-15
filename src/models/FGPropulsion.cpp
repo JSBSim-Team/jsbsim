@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.19 2008/01/21 13:48:40 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.20 2008/04/15 11:49:09 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -571,6 +571,18 @@ void FGPropulsion::bind(void)
                         &FGPropulsion::SetRefuel, true);
   PropertyManager->Tie("propulsion/fuel_dump", this, &FGPropulsion::GetFuelDump,
                         &FGPropulsion::SetFuelDump, true);
+  PropertyManager->Tie("forces/fbx-prop-lbs", this,1,
+                       (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fby-prop-lbs", this,2,
+                       (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("forces/fbz-prop-lbs", this,3,
+                       (PMF)&FGPropulsion::GetForces);
+  PropertyManager->Tie("moments/l-prop-lbsft", this,1,
+                       (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/m-prop-lbsft", this,2,
+                       (PMF)&FGPropulsion::GetMoments);
+  PropertyManager->Tie("moments/n-prop-lbsft", this,3,
+                       (PMF)&FGPropulsion::GetMoments);
 
 }
 
@@ -592,6 +604,13 @@ void FGPropulsion::unbind(void)
   PropertyManager->Untie("propulsion/total-fuel-lbs");
   PropertyManager->Untie("propulsion/refuel");
   PropertyManager->Untie("propulsion/fuel_dump");
+
+  PropertyManager->Untie("forces/fbx-prop-lbs");
+  PropertyManager->Untie("forces/fby-prop-lbs");
+  PropertyManager->Untie("forces/fbz-prop-lbs");
+  PropertyManager->Untie("moments/l-prop-lbsft");
+  PropertyManager->Untie("moments/m-prop-lbsft");
+  PropertyManager->Untie("moments/n-prop-lbsft");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
