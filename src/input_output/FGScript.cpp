@@ -60,7 +60,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGScript.cpp,v 1.26 2008/03/20 23:21:08 jberndt Exp $";
+static const char *IdSrc = "$Id: FGScript.cpp,v 1.27 2008/04/15 04:33:25 jberndt Exp $";
 static const char *IdHdr = ID_FGSCRIPT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -246,7 +246,14 @@ bool FGScript::LoadScript( string script )
       notify_property_element = notify_element->FindElement("property");
       while (notify_property_element) {
         notifyPropertyName = notify_property_element->GetDataLine();
-        newEvent->NotifyProperties.push_back( PropertyManager->GetNode(notifyPropertyName) );
+        if (PropertyManager->GetNode(notifyPropertyName)) {
+          newEvent->NotifyProperties.push_back( PropertyManager->GetNode(notifyPropertyName) );
+        } else {
+          cout << endl << fgred << "  Could not find the property named "
+               << notifyPropertyName << " in script" << endl << "  \""
+               << ScriptName << "\". This unknown property will not be "
+               << "echoed for notification." << reset << endl;
+        }
         notify_property_element = notify_element->FindNextElement("property");
       }
     }
