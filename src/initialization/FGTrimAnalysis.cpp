@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.11 2008/03/13 04:53:42 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrimAnalysis.cpp,v 1.12 2008/04/15 11:50:50 jberndt Exp $";
 static const char *IdHdr = ID_FGTRIMANALYSIS;
 
 
@@ -515,37 +515,24 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
     // size values.
 
     element = trimCfg->FindElement("phi");
-    if (element) {
-      double iv = fdmex->GetIC()->GetPhiRadIC();
-      if (InitializeTrimControl(iv, element, "RAD", JSBSim::taPhi)) {
-        if ( ( fabs(_phi) < 89.5*(FGJSBBase::degtorad ) ) && ( mode == taTurn ))
+    InitializeTrimControl(fgic->GetPhiRadIC(), element, "RAD", JSBSim::taPhi);
+    if ( ( fabs(_phi) < 89.5*(FGJSBBase::degtorad ) ) && ( mode == taTurn ))
                 _targetNlf = 1./cos(_phi);
-      }
-    }
 
     element = trimCfg->FindElement("theta");
-    if (element) {
-      double iv = fdmex->GetIC()->GetThetaRadIC();
-      InitializeTrimControl(iv, element, "RAD", JSBSim::taTheta);
-    }
+    InitializeTrimControl(fgic->GetThetaRadIC(), element, "RAD", JSBSim::taTheta);
     
     element = trimCfg->FindElement("psi");
-    if (element) {
-      double iv = fdmex->GetIC()->GetPsiRadIC();
-      InitializeTrimControl(iv, element, "RAD", JSBSim::taHeading);
-    }
+    InitializeTrimControl(fgic->GetPsiRadIC(), element, "RAD", JSBSim::taHeading);
 
     element = trimCfg->FindElement("gamma");
-    if (element) {
-      _gamma = fdmex->GetIC()->GetFlightPathAngleRadIC();
+    _gamma = fgic->GetFlightPathAngleRadIC();
+    if (element)
       if (element->GetNumDataLines() > 0) _gamma = element->GetDataAsNumber();
-    }
 
     element = trimCfg->FindElement("nlf");
     if (element) {
-      _targetNlf = fdmex->GetIC()->GetTargetNlfIC();
       if (element->GetNumDataLines() > 0) _targetNlf = element->GetDataAsNumber();
-
       CalculatePhiWFromTargetNlfTurn(_targetNlf);
     }
 
@@ -580,21 +567,24 @@ bool FGTrimAnalysis::Load(string fname, bool useStoredPath)
 bool FGTrimAnalysis::InitializeTrimControl(double default_value, Element* el,
                                            string unit, TaControl type)
 {
-  Element* step_size_element=0;
-  Element* trim_config = el->GetParent();
-  string name = el->GetName();
+  Element *step_size_element=0, *trim_config=0;
   double iv = 0.0;
   double step = 0.0; // default step value
+  bool set_override = false;
 
   iv = default_value;
-  if (el->GetNumDataLines() != 0) {
-    if (unit.empty())
-      iv = trim_config->FindElementValueAsNumber(name);
-    else
-      iv = trim_config->FindElementValueAsNumberConvertTo(name, unit);
+
+  if (el != 0) {
+    string name = el->GetName();
+    trim_config = el->GetParent();
+    set_override = el->GetNumDataLines() != 0;
+    if (set_override) {
+      if (unit.empty()) iv = trim_config->FindElementValueAsNumber(name);
+      else              iv = trim_config->FindElementValueAsNumberConvertTo(name, unit);
+    }
+    if (el->GetAttributeValueAsNumber("step_size") != HUGE_VAL)
+      step = el->GetAttributeValueAsNumber("step_size");
   }
-  if (el->GetAttributeValueAsNumber("step_size") != HUGE_VAL)
-    step = el->GetAttributeValueAsNumber("step_size");
 
   for (unsigned int i=0; i<vTrimAnalysisControls.size(); i++) {
     if (vTrimAnalysisControls[i]->GetControlType() == type) {
@@ -604,7 +594,7 @@ bool FGTrimAnalysis::InitializeTrimControl(double default_value, Element* el,
     }
   }
 
-  return (el->GetNumDataLines() > 0);
+  return set_override;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -640,17 +630,17 @@ void FGTrimAnalysis::Report(void) {
       cout << endl;
 
       cout << "\t** Initial -> Final Conditions **" << endl;
-      cout << "\tAlpha IC: " << fdmex->GetIC()->GetAlphaDegIC() << " Degrees" << endl;
+      cout << "\tAlpha IC: " << fgic->GetAlphaDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << Auxiliary->Getalpha()*57.3 << " Degrees" << endl;
-      cout << "\tBeta  IC: " << fdmex->GetIC()->GetBetaDegIC() << " Degrees" << endl;
+      cout << "\tBeta  IC: " << fgic->GetBetaDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << Auxiliary->Getbeta()*57.3 << " Degrees" << endl;
-      cout << "\tGamma IC: " << fdmex->GetIC()->GetFlightPathAngleDegIC() << " Degrees" << endl;
+      cout << "\tGamma IC: " << fgic->GetFlightPathAngleDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << Auxiliary->GetGamma()*57.3 << " Degrees" << endl;
-      cout << "\tPhi IC  : " << fdmex->GetIC()->GetPhiDegIC() << " Degrees" << endl;
+      cout << "\tPhi IC  : " << fgic->GetPhiDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(1)*57.3 << " Degrees" << endl;
-      cout << "\tTheta IC: " << fdmex->GetIC()->GetThetaDegIC() << " Degrees" << endl;
+      cout << "\tTheta IC: " << fgic->GetThetaDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(2)*57.3 << " Degrees" << endl;
-      cout << "\tPsi IC  : " << fdmex->GetIC()->GetPsiDegIC() << " Degrees" << endl;
+      cout << "\tPsi IC  : " << fgic->GetPsiDegIC() << " Degrees" << endl;
       cout << "\t   Final: " << fdmex->GetPropagate()->GetEuler(3)*57.3 << " Degrees" << endl;
       cout << endl;
       cout << "--------------------------------------------------------------------- \n\n";
@@ -1528,7 +1518,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       FGQuaternion quat( (*Sminimum)[4], (*Sminimum)[5], (*Sminimum)[6] ); // phi, theta, psi
       quat.Normalize();
 
-      fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
+      fgic->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       FGPropagate::VehicleState vstate = fdmex->GetPropagate()->GetVState();
       vstate.vQtrn = FGQuaternion(_phi,_theta,_psi);
@@ -1557,12 +1547,12 @@ bool FGTrimAnalysis::DoTrim(void) {
       Propulsion->GetSteadyState(); // GetSteadyState processes all engines
       FCS->Run(); // apply throttle, yoke & pedal changes
 
-      FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
+      FGQuaternion quat( 0, (*Sminimum)[2], fgic->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
 
       // enforce the current state to IC object
 
-      fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
+      fgic->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
       //       which means that we populate IC private variables with our set of values
@@ -1595,13 +1585,13 @@ bool FGTrimAnalysis::DoTrim(void) {
       Propulsion->GetSteadyState(); // GetSteadyState processes all engines
       FCS->Run(); // apply throttle, yoke & pedal changes
 
-      FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
+      FGQuaternion quat( 0, (*Sminimum)[2], fgic->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
 
       //...
       // enforce the current state to IC object
 
-      fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
+      fgic->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
       //       which means that we populate IC private variables with our set of values
@@ -1633,13 +1623,13 @@ bool FGTrimAnalysis::DoTrim(void) {
       Propulsion->GetSteadyState(); // GetSteadyState processes all engines
       FCS->Run(); // apply throttle, yoke & pedal changes
 
-      FGQuaternion quat( fdmex->GetIC()->GetPhiRadIC(), (*Sminimum)[2], fdmex->GetIC()->GetPsiRadIC() ); // phi, theta, psi
+      FGQuaternion quat( fgic->GetPhiRadIC(), (*Sminimum)[2], fgic->GetPsiRadIC() ); // phi, theta, psi
       quat.Normalize();
 
       //...
       // enforce the current state to IC object
 
-      fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
+      fgic->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
       //       which means that we populate IC private variables with our set of values
@@ -1650,7 +1640,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       fdmex->GetPropagate()->SetVState(vstate);
       Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
       Auxiliary->Setbeta ( 0.0  );
-      Auxiliary->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
+      Auxiliary->SetGamma( fgic->GetFlightPathAngleRadIC() );
 
       fdmex->Run();
   }// end ta turn
@@ -1672,13 +1662,13 @@ bool FGTrimAnalysis::DoTrim(void) {
       Propulsion->GetSteadyState(); // GetSteadyState processes all engines
       FCS->Run(); // apply throttle, yoke & pedal changes
 
-      FGQuaternion quat( 0, (*Sminimum)[2], fdmex->GetIC()->GetPRadpsIC() ); // phi, theta, psi
+      FGQuaternion quat( 0, (*Sminimum)[2], fgic->GetPRadpsIC() ); // phi, theta, psi
       quat.Normalize();
 
       //...
       // enforce the current state to IC object
 
-      fdmex->GetIC()->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
+      fgic->ResetIC(_u, _v, _w, _p, _q, _r, _alpha, _beta, _phi, _theta, _psi, _gamma);
 
       // NOTE: _do not_ fdmex->RunIC() here ! We just reset the state
       //       which means that we populate IC private variables with our set of values
@@ -1689,7 +1679,7 @@ bool FGTrimAnalysis::DoTrim(void) {
       fdmex->GetPropagate()->SetVState(vstate);
       Auxiliary->Setalpha( _alpha ); // need to get Auxiliary updated
       Auxiliary->Setbeta ( 0.0  );
-      Auxiliary->SetGamma( fdmex->GetIC()->GetFlightPathAngleRadIC() );
+      Auxiliary->SetGamma( fgic->GetFlightPathAngleRadIC() );
 
       fdmex->Run();
   }//end taPullup
@@ -2258,7 +2248,7 @@ double Objective::myCostFunctionFullCoordinatedTurn(Vector<double> & x)
     double psiIC   = FDMExec->GetIC()->GetPsiRadIC();
     double phiIC   = FDMExec->GetIC()->GetPhiRadIC();
 
-    phi   = TrimAnalysis->GetPhiRad(); // this one is calculated by sutupTurnPhi() above
+    phi   = TrimAnalysis->GetPhiRad(); // this one is calculated by setupTurnPhi() above
 
     TrimAnalysis->SetEulerAngles(phi, theta, psi); // recalculates sin and cosines
 
