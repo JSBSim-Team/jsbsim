@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.16 2008/01/17 03:56:06 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.17 2008/04/15 11:52:54 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,12 +74,13 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates the Flight Control System (FCS) functionality.
-    This class owns and contains the list of FGFCSComponents
-    that define the control system for this aircraft. The config file for the
-    aircraft contains a description of the control path that starts at an input
-    or command and ends at an effector, e.g. an aerosurface. The FCS components
-    which comprise the control laws for an axis are defined sequentially in
-    the configuration file. For instance, for the X-15:
+    This class also encapsulates the identical "system" and "autopilot" capability.
+    FGFCS owns and contains the list of FGFCSComponents
+    that define a system or systems for the modeled aircraft. The config file
+    for the aircraft contains a description of the control path that starts at
+    an input or command and ends at an effector, e.g. an aerosurface. The FCS
+    components which comprise the control laws for an axis are defined
+    sequentially in the configuration file. For instance, for the X-15:
 
     @code
     <flight_control name="X-15 SAS">
@@ -173,18 +174,19 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.16 $
-    @see FGFCSComponent
-    @see Element
+    @version $Revision: 1.17 $
+    @see FGActuator
+    @see FGDeadBand
+    @see FGFCSFunction
+    @see FGFilter
     @see FGGain
+    @see FGKinemat
+    @see FGPID
+    @see FGSensor
     @see FGSummer
     @see FGSwitch
-    @see FGFCSFunction
-    @see FGCondition
-    @see FGGradient
-    @see FGFilter
-    @see FGDeadBand
-    @see FGKinemat
+    @see FGFCSComponent
+    @see Element
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
