@@ -39,6 +39,7 @@ INCLUDES
 
 #undef MAX_ENGINES
 #include <Aircraft/aircraft.hxx>
+#include "math/FGColumnVector3.h"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 DEFINITIONS
@@ -86,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.5 2007/03/19 15:26:41 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.6 2008/04/15 11:52:25 jberndt Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -263,8 +264,16 @@ private:
 
     SGPropertyNode_ptr slaved;
 
+    double last_hook_tip[3];
+    double last_hook_root[3];
+    JSBSim::FGColumnVector3 hook_root_struct;
+    double hook_length;
+    bool got_wire;
+
     void init_gear(void);
     void update_gear(void);
+
+    void update_external_forces(double t_off);
 
 };
 
