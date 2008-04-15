@@ -49,7 +49,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.4 2008/04/13 15:14:22 andgi Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.5 2008/04/15 22:09:57 andgi Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -294,8 +294,10 @@ void FGGasCell::Calculate(double dt)
     }
     // Don't include dt when accounting for adiabatic expansion/contraction.
     // The rate of adiabatic cooling looks about right: ~5.4 Rankine/1000ft. 
-    Temperature +=
-      (dU * dt - Pressure * dVolumeIdeal) / (Cv_gas() * Contents * R);
+    if (Contents > 0) {
+      Temperature +=
+        (dU * dt - Pressure * dVolumeIdeal) / (Cv_gas() * Contents * R);
+    }
   } else {
     // No simulation of complex temperature changes.
     // Note: Making the gas cell behave adiabatically might be a better
