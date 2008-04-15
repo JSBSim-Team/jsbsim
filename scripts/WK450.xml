@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://jsbsim.sourceforge.net/JSBSimScript.xsl"?>
+<runscript xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://jsbsim.sf.net/JSBSimScript.xsd"
+    name="C172-01A takeoff run">
+  <!--
+    This run is for testing the WK450 altitude hold autopilot
+  -->
+
+  <use aircraft="WK450" initialize="WK450_Initial_Conditions"/>
+  <run start="0.0" end="2000" dt="0.0083333">
+
+    <property> simulation/notify-time-trigger </property>
+    <property> simulation/run_id </property>
+
+    <event>
+      <description> initialize the run id </description>
+      <condition> sim-time-sec >= 0.00 </condition>
+      <set name="simulation/run_id" value="1"/>
+      <notify/>
+    </event>
+
+    <event name="engine start">
+      <description>Start the engine</description>
+      <condition>
+        sim-time-sec >= 10.0
+      </condition>
+      <set name="fcs/throttle-cmd-norm" value="0.94" action="FG_RAMP" tc ="0.5"/>
+      <set name="fcs/mixture-cmd-norm" value="0.87" action="FG_RAMP" tc ="0.5"/>
+      <set name="propulsion/magneto_cmd" value="3"/>
+      <set name="propulsion/starter_cmd" value="1"/>
+      <notify>
+        <property>simulation/run_id</property>
+      </notify>
+    </event>
+
+    <event name="Set heading hold">
+      <description>Set Heading when 5 ft AGL is reached</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 5
+      </condition>
+      <set name="ap/heading_setpoint" value="200"/>
+      <set name="ap/attitude_hold" value="0"/>
+      <set name="ap/heading_hold" value="1"/>
+    </event>
+
+    <event name="Set autopilot for 20 ft.">
+      <description>Set Autopilot for 20 ft</description>
+      <notify/>
+      <condition>
+        aero/qbar-psf >= 4
+      </condition>
+      <set name="ap/altitude_setpoint" value="100.0"/>
+      <set name="ap/altitude_hold" value="1"/>
+      <set name="fcs/flap-cmd-norm" value=".33"/>
+    </event>
+
+    <event name="Set autopilot for 1500 ft.">
+      <description>Set Autopilot for 1500 ft</description>
+      <notify/>
+      <condition>
+        aero/qbar-psf > 5
+      </condition>
+      <set name="ap/altitude_setpoint" value="1500.0"/>
+    </event>
+
+    <event name="Adjust throttle/flaps">
+      <description>Remove flaps at 50 ft</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 100
+      </condition>
+      <set name="fcs/mixture-cmd-norm" value="0.69" action="FG_EXP" tc ="400.0"/>
+      <set name="fcs/flap-cmd-norm" value="0"/>
+    </event>
+
+    <event name="Time Notify" persistent="true">
+      <description>Output message at 1 minute intervals</description>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>position/h-agl-ft</property>
+      </notify>
+      <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
+      <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
+    </event>
+
+    <event name="Set heading hold">
+      <description>Set Heading when 1500 ft AGL is reached</description>
+      <notify/>
+      <condition>
+        position/h-agl-ft >= 1499
+      </condition>
+      <set name="ap/heading_setpoint" value="20"/>
+    </event>
+
+  </run>
+</runscript>

@@ -1,10 +1,9 @@
 EXTRA_DIST = \
-  B747-1.xml \
   B747_script1.xml \
-  StellarJ_Fly.xml \
   T37.xml \
   T38.xml \
-  ball.xml \
+  ball_chute.xml \
+  ball_orbit.xml \
   blank.xml \
   c1721.xml \
   c1722.xml \

@@ -8,7 +8,7 @@
   -->
 
   <use aircraft="c172x" initialize="elevator_doublet_init"/>
-  <run start="0.0" end="30" dt="0.0083333">
+  <run start="0.0" end="40" dt="0.0083333">
 
     <property> simulation/notify-time-trigger </property>
     <property value="1"> simulation/run_id </property>
@@ -53,8 +53,8 @@
                 <property> sim-time-sec </property>
                 <value> 5 </value>
               </difference>
-	      <value> 3.1415927 </value>
-	    </product>
+              <value> 3.1415927 </value>
+            </product>
           </sin>
         </function>
       </set>
@@ -66,5 +66,52 @@
         <property>attitude/psi-rad</property>
       </notify>
     </event>
+
+    <event name="Re-Trim at 20 seconds">
+      <description>Trim at the initial conditions state</description>
+      <condition>
+        sim-time-sec gt 20.0
+      </condition>
+      <set name="simulation/do_simple_trim" value="1"/>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>velocities/vt-fps</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+      </notify>
+    </event>
+
+    <event name="Aileron doublet" persistent="true">
+      <description>
+        Do an elevator doublet from between
+        25 and 27 seconds.
+      </description>
+      <condition>
+        sim-time-sec ge 25
+        sim-time-sec le 27
+      </condition>
+      <set name="fcs/aileron-cmd-norm">
+        <function>
+          <sin>
+            <product>
+              <difference>
+                <property> sim-time-sec </property>
+                <value> 25 </value>
+              </difference>
+              <value> 3.1415927 </value>
+            </product>
+          </sin>
+        </function>
+      </set>
+      <notify>
+        <property>velocities/vc-kts</property>
+        <property>velocities/vt-fps</property>
+        <property>attitude/phi-rad</property>
+        <property>attitude/theta-rad</property>
+        <property>attitude/psi-rad</property>
+      </notify>
+    </event>
+
   </run>
 </runscript>

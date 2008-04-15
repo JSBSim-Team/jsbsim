@@ -14,15 +14,7 @@
     1) Classic trim
     2) Direct Search trim
     
-    For more information on the Direct Search trim, see, "A General
-    Solution to the Aircraft Trim Problem", by Agostino De Marco,
-    Eugene L. Duke, and Jon Berndt, AIAA 2007-6703.
-    
-    Both of these trim algorithms could theoretically be invoked
-    at the same time, but normally only one or the other will be
-    used at a time. In the script below, the engines are set running
-    and then the trim task is commanded by setting the selected
-    trim algorithm to "1".
+    This script ONLY uses the classic trim method at this time.
   </description>
 
   <use aircraft="737" initialize="cruise_steady_turn_init"/> 
@@ -47,7 +39,7 @@
       4: Custom
       5: Turn
       6: None
-      
+
       For "do_trim_analysis" (Direct Search trim):
       0: Longitudinal
       1: Full
@@ -58,13 +50,14 @@
       6: Ground
       7: Custom
       8: None
-      
     -->
     
     <event name="Trim">
-      <condition> sim-time-sec gt 0.1 </condition>
+      <condition>
+        sim-time-sec gt 0.1
+      </condition>
       <set name="simulation/do_simple_trim" value="5"/>
-      <!--<set name="simulation/do_trim_analysis" value="5"/>--> 
+      <!--<set name="simulation/do_trim_analysis" value="3"/>-->
       <delay>5.0</delay>
       <notify>
         <property>propulsion/engine[0]/n2</property>
