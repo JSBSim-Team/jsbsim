@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.9 2008/03/01 01:25:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.10 2008/04/16 13:18:59 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,6 +69,14 @@ FGLocation::FGLocation(void)
 {
   mCacheValid = false;
   initial_longitude = 0.0;
+  a = 0.0;
+  b = 0.0;
+  a2 = 0.0;
+  b2 = 0.0;
+  e2 = 1.0;
+  e = 1.0;
+  eps2 = -1.0;
+  f = 1.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +90,14 @@ FGLocation::FGLocation(double lon, double lat, double radius)
   double sinLon = sin(lon);
   double cosLon = cos(lon);
   initial_longitude = lon;
+  a = 0.0;
+  b = 0.0;
+  a2 = 0.0;
+  b2 = 0.0;
+  e2 = 1.0;
+  e = 1.0;
+  eps2 = -1.0;
+  f = 1.0;
   mECLoc = FGColumnVector3( radius*cosLat*cosLon,
                             radius*cosLat*sinLon,
                             radius*sinLat );
@@ -242,29 +258,31 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // "Improved Method for Calculating Exact Geodetic Latitude and Altitude, Revisited",
   // author: I. Sofair
 
-  double c, p, q, s, t, u, v, w, z, p2, u2;
-  double Ne, P, Q0, Q, signz0, sqrt_q; 
-  p  = fabs(mECLoc(eZ))/eps2;
-  s  = (mRadius*mRadius)/(e2*eps2);
-  p2 = p*p;
-  q  = p2 - b2 + s;
-  sqrt_q = sqrt(q);
-  if (q>0)
-  {
-    u  = p/sqrt_q;
-    u2 = p2/q;
-    v  = b2*u2/q;
-    P  = 27.0*v*s/q;
-    Q0 = sqrt(P+1) + sqrt(P);
-    Q  = pow(Q0, 0.66666666667);
-    t  = (1.0 + Q + 1.0/Q)/6.0;
-    c  = sqrt(u2 - 1 + 2.0*t);
-    w  = (c - u)/2.0;
-    signz0 = mECLoc(eZ)>=0?1.0:-1.0;
-    z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
-    Ne = a*sqrt(1+eps2*z*z/b2);
-    mGeodLat = asin((eps2+1.0)*(z/Ne));
-    GeodeticAltitude = mRadius*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
+  if (a != 0.0 && b != 0.0) {
+    double c, p, q, s, t, u, v, w, z, p2, u2;
+    double Ne, P, Q0, Q, signz0, sqrt_q; 
+    p  = fabs(mECLoc(eZ))/eps2;
+    s  = (mRadius*mRadius)/(e2*eps2);
+    p2 = p*p;
+    q  = p2 - b2 + s;
+    sqrt_q = sqrt(q);
+    if (q>0)
+    {
+      u  = p/sqrt_q;
+      u2 = p2/q;
+      v  = b2*u2/q;
+      P  = 27.0*v*s/q;
+      Q0 = sqrt(P+1) + sqrt(P);
+      Q  = pow(Q0, 0.66666666667);
+      t  = (1.0 + Q + 1.0/Q)/6.0;
+      c  = sqrt(u2 - 1 + 2.0*t);
+      w  = (c - u)/2.0;
+      signz0 = mECLoc(eZ)>=0?1.0:-1.0;
+      z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
+      Ne = a*sqrt(1+eps2*z*z/b2);
+      mGeodLat = asin((eps2+1.0)*(z/Ne));
+      GeodeticAltitude = mRadius*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
+    }
   }
 
   // Mark the cached values as valid
