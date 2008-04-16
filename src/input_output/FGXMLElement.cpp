@@ -59,7 +59,7 @@ FORWARD DECLARATIONS
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.18 2008/03/09 08:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: FGXMLElement.cpp,v 1.19 2008/04/16 18:24:01 dpculp Exp $";
 static const char *IdHdr = ID_XMLELEMENT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -143,6 +143,8 @@ Element::Element(string nm)
   convert["N/M2"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["N/M2"];
   convert["LBS/FT2"]["PA"] = convert["LBS/FT2"]["N/M2"];
   convert["PA"]["LBS/FT2"] = 1.0/convert["LBS/FT2"]["PA"];
+  // Mass flow
+  convert["KG/MIN"]["LBS/MIN"] = convert["KG"]["LBS"];
 
   // Length
   convert["M"]["M"] = 1.00;
@@ -195,8 +197,10 @@ Element::Element(string nm)
   convert["PA"]["PA"] = 1.0;
   convert["N/M2"]["N/M2"] = 1.00;
   convert["LBS/FT2"]["LBS/FT2"] = 1.00;
-  // Flow rate
+  // Mass flow
   convert["LBS/SEC"]["LBS/SEC"] = 1.00;
+  convert["KG/MIN"]["KG/MIN"] = 1.0;
+  convert["LBS/MIN"]["LBS/MIN"] = 1.0;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

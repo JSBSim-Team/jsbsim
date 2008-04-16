@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.8 2006/11/20 13:59:49 jberndt Exp $"
+#define ID_XMLELEMENT "$Id: FGXMLElement.h,v 1.9 2008/04/16 18:24:01 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -108,6 +108,7 @@ CLASS DOCUMENTATION
     - convert["N"]["LBS"] = 0.22482;
     - convert["LBS"]["N"] = 1.0/convert["N"]["LBS"];
     - convert["KTS"]["FT/SEC"] = ktstofps;
+    - convert["KG/MIN"]["LBS/MIN"] = convert["KG"]["LBS"];
 
     - convert["M"]["M"] = 1.00;
     - convert["FT"]["FT"] = 1.00;
@@ -131,6 +132,8 @@ CLASS DOCUMENTATION
     - convert["WATTS"]["WATTS"] = 1.00;
     - convert["KTS"]["KTS"] = 1.0;
     - convert["FT/SEC"]["FT/SEC"] = 1.0;
+    - convert["KG/MIN"]["KG/MIN"] = 1.0;
+    - convert["LBS/MIN"]["LBS/MIN"] = 1.0;
 
     Where:
     - N = newtons
@@ -141,13 +144,14 @@ CLASS DOCUMENTATION
     - FT = feet
     - FT2 = feet squared
     - SEC = seconds
+    - MIN = minutes
     - SLUG = slug
     - DEG = degrees
     - RAD = radians
     - WATTS = watts
 
     @author Jon S. Berndt
-    @version $Id: FGXMLElement.h,v 1.8 2006/11/20 13:59:49 jberndt Exp $
+    @version $Id: FGXMLElement.h,v 1.9 2008/04/16 18:24:01 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

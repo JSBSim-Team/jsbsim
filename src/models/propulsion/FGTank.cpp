@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.4 2006/08/30 12:04:39 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.5 2008/04/16 18:24:02 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el)
   Area = 1.0;
   Temperature = -9999.0;
   Auxiliary = exec->GetAuxiliary();
-  Radius = Capacity = Contents = 0.0;
+  Radius = Capacity = Contents = Standpipe = 0.0;
 
   type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
@@ -81,6 +81,8 @@ FGTank::FGTank(FGFDMExec* exec, Element* el)
     Contents = el->FindElementValueAsNumberConvertTo("contents", "LBS");
   if (el->FindElement("temperature"))
     Temperature = el->FindElementValueAsNumber("temperature");
+  if (el->FindElement("standpipe"))
+    Standpipe = el->FindElementValueAsNumber("standpipe");
 
   Selected = true;
 

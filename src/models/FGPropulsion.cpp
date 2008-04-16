@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.20 2008/04/15 11:49:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.21 2008/04/16 18:24:01 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -77,6 +77,7 @@ FGPropulsion::FGPropulsion(FGFDMExec* exec) : FGModel(exec)
   ActiveEngine = -1; // -1: ALL, 0: Engine 1, 1: Engine 2 ...
   tankJ.InitMatrix();
   refuel = dump = false;
+  DumpRate = 0.0;
   fuel_freeze = false;
   TotalFuelQuantity = 0.0;
   IsBound =
@@ -270,6 +271,11 @@ bool FGPropulsion::Load(Element* el)
 
   CalculateTankInertias();
   if (!ThrottleAdded) FCS->AddThrottle(); // need to have at least one throttle
+
+  // Process fuel dump rate
+  if (el->FindElement("dump-rate"))
+    DumpRate = el->FindElementValueAsNumberConvertTo("dump-rate", "LBS/MIN");
+
 
   return true;
 }
@@ -531,8 +537,22 @@ void FGPropulsion::DoRefuel(double time_slice)
 
 void FGPropulsion::DumpFuel(double time_slice)
 {
-  double dump_rate = 41.67 * time_slice;   // 41.67 lbs/sec = 2500 lbs/min
-  Transfer(0, -1, dump_rate);
+  unsigned int i;
+  int TanksDumping = 0;
+
+  for (i=0; i<numTanks; i++) {
+    if (Tanks[i]->GetContents() > Tanks[i]->GetStandpipe()) ++TanksDumping;
+  }
+
+  if (TanksDumping == 0) return;
+
+  double dump_rate_per_tank = DumpRate / 60.0 * time_slice / TanksDumping;  
+
+  for (i=0; i<numTanks; i++) {
+    if (Tanks[i]->GetContents() > Tanks[i]->GetStandpipe()) {
+      Transfer(i, -1, dump_rate_per_tank);
+    }
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

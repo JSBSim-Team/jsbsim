@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.4 2006/08/30 12:04:39 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.5 2008/04/16 18:24:02 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -112,6 +112,7 @@ Configuration File Format
   CAPACITY    \<capacity>
   CONTENTS    \<contents>
   TEMPERATURE \<fuel temperature>
+  STANDPIPE   \<standpipe>
 \</AC_TANK>
 </pre>
 Definition of the tank configuration file parameters:
@@ -124,6 +125,7 @@ Definition of the tank configuration file parameters:
 <b>CAPACITY</b> - Capacity in pounds.
 <b>CONTENTS</b> - Initial contents in pounds.
 <b>TEMPERATURE</b> - Initial temperature in degrees Fahrenheit.
+<b>STANDPIPE<b> - Minimum contents (pounds) to which tank can dump.
 </pre>
   */
 
@@ -145,12 +147,14 @@ public:
   double GetContents(void) {return Contents;}
   double GetTemperature_degC(void) {return Temperature;}
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
+  double GetStandpipe(void) {return Standpipe;}
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
   double GetXYZ(int idx) {return vXYZ(idx);}
 
   double Fill(double amount);
   void SetContents(double amount);
   void SetTemperature(double temp) { Temperature = temp; }
+  void SetStandpipe(double amount) { Standpipe = amount; }
 
   enum TankType {ttUNKNOWN, ttFUEL, ttOXIDIZER};
 
@@ -163,7 +167,8 @@ private:
   double PctFull;
   double Contents;
   double Area;
-  double Temperature;      
+  double Temperature;  
+  double Standpipe;    
   bool  Selected;
   FGAuxiliary* Auxiliary;
   void Debug(int from);
