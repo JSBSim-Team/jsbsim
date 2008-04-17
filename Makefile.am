@@ -1,7 +1,7 @@
 EXTRA_DIST = \
-	autogen.sh aircraft engine scripts systems JSBSim.xsd JSBSim.xsl JSBSim.vcproj JSBSim.dox
+	autogen.sh JSBSim.xsd JSBSim.xsl JSBSim.vcproj JSBSim.dox
 
-SUBDIRS	= src
+SUBDIRS	= src systems aircraft engine scripts
 
 dist-hook:
 	(cd $(top_srcdir))
