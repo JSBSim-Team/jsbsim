@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.24 2008/04/15 11:52:25 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.25 2008/04/17 00:56:49 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -471,7 +471,7 @@ void FGJSBsim::update( double dt )
 
     for ( i=0; i < multiloop; i++ ) {
       fdmex->Run();
-      update_external_forces(i * State->Getdt());
+      update_external_forces(State->Getsim_time() + i * State->Getdt());      
     }
 
     FGJSBBase::Message* msg;
@@ -1155,6 +1155,38 @@ inline static double sqr(double x)
     return x * x;
 }
 
+static double angle_diff(double a, double b)
+{
+    double diff = fabs(a - b);
+    if (diff > 180) diff = 360 - diff;
+    
+    return diff;
+}
+
+static void check_hook_solution(const FGColumnVector3& ground_normal_body, double E, double hook_length, double sin_fi_guess, double cos_fi_guess, double* sin_fis, double* cos_fis, double* fis, int* points)
+{
+    FGColumnVector3 tip(-hook_length * cos_fi_guess, 0, hook_length * sin_fi_guess);
+    double dist = dot3(tip, ground_normal_body);
+    if (fabs(dist + E) < 0.0001) {
+	sin_fis[*points] = sin_fi_guess;
+	cos_fis[*points] = cos_fi_guess;
+	fis[*points] = atan2(sin_fi_guess, cos_fi_guess) * SG_RADIANS_TO_DEGREES;
+	(*points)++;
+    } 
+}
+
+
+static void check_hook_solution(const FGColumnVector3& ground_normal_body, double E, double hook_length, double sin_fi_guess, double* sin_fis, double* cos_fis, double* fis, int* points)
+{
+    if (sin_fi_guess >= -1 && sin_fi_guess <= 1) {
+	double cos_fi_guess = sqrt(1 - sqr(sin_fi_guess));
+	check_hook_solution(ground_normal_body, E, hook_length, sin_fi_guess, cos_fi_guess, sin_fis, cos_fis, fis, points);
+	if (fabs(cos_fi_guess) > SG_EPSILON) {
+	    check_hook_solution(ground_normal_body, E, hook_length, sin_fi_guess, -cos_fi_guess, sin_fis, cos_fis, fis, points);
+	}
+    }
+}
+
 void FGJSBsim::update_external_forces(double t_off)
 {
     const FGMatrix33& Tb2l = Propagate->GetTb2l();
@@ -1174,9 +1206,13 @@ void FGJSBsim::update_external_forces(double t_off)
     double fi_min = fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-min-deg", -18);
     double fi_max = fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-max-deg", 30);
     double fi = fgGetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-norm") * (fi_max - fi_min) + fi_min;
-    double cos_fi = 0;
-    double sin_fi = 0;
-    bool got_trig = false;
+    double cos_fi = cos(fi * SG_DEGREES_TO_RADIANS);
+    double sin_fi = sin(fi * SG_DEGREES_TO_RADIANS);
+
+    FGColumnVector3 hook_tip_body = hook_root_body;
+    hook_tip_body(1) -= hook_length * cos_fi;
+    hook_tip_body(3) += hook_length * sin_fi;    
+    bool hook_tip_valid = true;
     
     double contact[3];
     double ground_normal[3];
@@ -1187,45 +1223,53 @@ void FGJSBsim::update_external_forces(double t_off)
 
     if (!got_wire) {
         bool got = get_agl_ft(t_off, hook_area[1], 0, contact, ground_normal, ground_vel, &ground_type, &ground_material, &root_agl_ft);
-
-        if (got && root_agl_ft < hook_length) {
+        if (got && root_agl_ft > 0 && root_agl_ft < hook_length) {
             FGColumnVector3 ground_normal_body = Tl2b * (Tec2l * FGColumnVector3(ground_normal[0], ground_normal[1], ground_normal[2]));
             FGColumnVector3 contact_body = Tl2b * Location.LocationToLocal(FGColumnVector3(contact[0], contact[1], contact[2]));
             double D = -dot3(contact_body, ground_normal_body);
 
-            // hook tip: hx - l cos, hy, hz + l sin
-            // on ground:  - n0 l cos + n2 l sin + E = 0
-        
-            double E = D + dot3(hook_root_body, ground_normal_body);
-            // x = sin,  cos = rt(1-x2)
-            // n2 l x - n0 l rt(1-x2) = -D
-        
-            // n0 l rt(1-x^) = E + n2 l x
-            // n0^ l ^ (1-x^) = E^ + 2 n2 l E x + n2^ l^ x^
-            // n0^ l^ - n0^ l^ x^ = E^ + 2 n2 l E x + n2^ l^ x^
-            // l^ (n2^ + n0^) x^ + 2 n2 l E x + E^ - n0^ l^
-        	
-            // a = l^ (n0^ + n2^)
-            // b = 2 n2 l E
-            // c = E^ - n0^ l^
-            double a = sqr(hook_length) * (sqr(ground_normal_body(1)) + sqr(ground_normal_body(3)));
-            double b = 2 * E * ground_normal_body(3) * hook_length;
-            double c = sqr(E) - sqr(ground_normal_body(1) * hook_length);	
+	    // check hook tip agl against same ground plane
+	    double hook_tip_agl_ft = dot3(hook_tip_body, ground_normal_body) + D;
+	    if (hook_tip_agl_ft < 0) {
 
-            double disc = sqr(b) - 4 * a * c;
-            if (disc >= 0) {
-        	sin_fi = (-b - sqrt(disc)) / (2 * a);
-        	if (sin_fi < 0) sin_fi = (-b + sqrt(disc)) / (2 * a);
-        	if (fabs(sin_fi) < 1) {
-        	    cos_fi = sqrt(1 - sqr(sin_fi));
-        	    double fi2 = atan2(sin_fi, cos_fi) * SG_RADIANS_TO_DEGREES;
-        	    if (fi2 < fi) {
-                        fi = fi2;
-        		got_trig = true;
-        	    }
+        	// hook tip: hx - l cos, hy, hz + l sin
+        	// on ground:  - n0 l cos + n2 l sin + E = 0
+
+        	double E = D + dot3(hook_root_body, ground_normal_body);
+
+        	// substitue x = sin fi, cos fi = sqrt(1 - x * x)
+		// and rearrange to get a quadratic with coeffs:
+        	double a = sqr(hook_length) * (sqr(ground_normal_body(1)) + sqr(ground_normal_body(3)));
+        	double b = 2 * E * ground_normal_body(3) * hook_length;
+        	double c = sqr(E) - sqr(ground_normal_body(1) * hook_length);	
+
+        	double disc = sqr(b) - 4 * a * c;
+        	if (disc >= 0) {
+		    double delta = sqrt(disc) / (2 * a);
+		
+		    // allow 4 solutions for safety, should never happen
+		    double sin_fis[4];
+		    double cos_fis[4];
+		    double fis[4];
+		    int points = 0;
+		
+        	    double sin_fi_guess = -b / (2 * a) - delta;
+		    check_hook_solution(ground_normal_body, E, hook_length, sin_fi_guess, sin_fis, cos_fis, fis, &points);
+		    check_hook_solution(ground_normal_body, E, hook_length, sin_fi_guess + 2 * delta, sin_fis, cos_fis, fis, &points);
+		
+		    if (points == 2) {
+			double diff1 = angle_diff(fi, fis[0]);
+			double diff2 = angle_diff(fi, fis[1]);
+			int point = diff1 < diff2 ? 0 : 1;
+			fi = fis[point];
+			sin_fi = sin_fis[point];
+			cos_fi = cos_fis[point];
+			hook_tip_body(1) = hook_root_body(1) - hook_length * cos_fi;
+			hook_tip_body(3) = hook_root_body(3) + hook_length * sin_fi;
+		    }
         	}
-            }
-        }
+    	    }
+	}
     } else {
         FGColumnVector3 hook_root_vel = Propagate->GetVel() + (Tb2l * (Propagate->GetPQR() *  hook_root_body));
         double wire_ends_ec[2][3];
@@ -1236,7 +1280,6 @@ void FGJSBsim::update_external_forces(double t_off)
         FGColumnVector3 rel_vel = hook_root_vel - (wire_vel_1 + wire_vel_2) / 2;
         if (rel_vel.Magnitude() < 3) {
             got_wire = false;
-std::cerr << "Released wire!" << std::endl;
             release_wire();
             fgSetDouble("/fdm/jsbsim/external_reactions/hook/magnitude", 0.0);
         } else {
@@ -1248,7 +1291,6 @@ std::cerr << "Released wire!" << std::endl;
             if (cos_fi < 0) cos_fi = -cos_fi;
             sin_fi = sqrt(1 - sqr(cos_fi));
             fi = atan2(sin_fi, cos_fi) * SG_RADIANS_TO_DEGREES;
-            got_trig = true;
         
             fgSetDouble("/fdm/jsbsim/external_reactions/hook/x", -cos_fi);
             fgSetDouble("/fdm/jsbsim/external_reactions/hook/y", 0);
@@ -1257,14 +1299,6 @@ std::cerr << "Released wire!" << std::endl;
         }
     }
 
-    if (!got_trig) {
-        cos_fi = cos(fi * SG_DEGREES_TO_RADIANS);
-        sin_fi = sin(fi * SG_DEGREES_TO_RADIANS);
-    }
-
-    FGColumnVector3 hook_tip_body = hook_root_body;
-    hook_tip_body(1) -= hook_length * cos_fi;
-    hook_tip_body(3) += hook_length * sin_fi;    
     FGColumnVector3 hook_tip = Location.LocalToLocation(Tb2l * hook_tip_body);
 
     hook_area[0][0] = hook_tip(1);
@@ -1284,7 +1318,6 @@ std::cerr << "Released wire!" << std::endl;
         // Returns true if we caught one.
         if (caught_wire_ft(t_off, hook_area)) {
                 got_wire = true;
-std::cerr << "Caught wire!" << std::endl;
         }
     }
     
@@ -1297,11 +1330,5 @@ std::cerr << "Caught wire!" << std::endl;
     last_hook_root[2] = hook_area[1][2];
     
     fgSetDouble("/fdm/jsbsim/systems/hook/tailhook-pos-deg", fi);
-
-
-bool got = get_agl_ft(t_off, contact, 0, contact, ground_normal, ground_vel, &ground_type, &ground_material, &root_agl_ft);
-fgSetDouble("/fdm/jsbsim/systems/hook/contact-agl-ft", root_agl_ft);
-got = get_agl_ft(t_off, hook_area[0], 0, contact, ground_normal, ground_vel, &ground_type, &ground_material, &root_agl_ft);
-fgSetDouble("/fdm/jsbsim/systems/hook/tailhook-tip-agl-ft", root_agl_ft);
-
 }
+
