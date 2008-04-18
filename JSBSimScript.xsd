@@ -34,12 +34,13 @@
       specified, and the integration timestep size (the inverse of the integration frequency). 
       Note that the start time will almost always be 0.0, and so the end time merely specifies
       the duration of the run.
-      </xs:documentation></xs:annotation>
+    </xs:documentation></xs:annotation>
     <xs:complexType>
-      <xs:sequence minOccurs="0">
-        <xs:element ref="event" maxOccurs="unbounded"/>
+      <xs:sequence>
+        <xs:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="event" minOccurs="1" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="start" type="xs:decimal" use="required"/>
+      <xs:attribute name="start" type="xs:decimal" use="optional"/>
       <xs:attribute name="end" type="xs:decimal" use="required"/>
       <xs:attribute name="dt" type="xs:decimal" use="required"/>
     </xs:complexType>
@@ -133,13 +134,16 @@
     </xs:documentation></xs:annotation>
   </xs:element> 
   
-  <xs:element name="property" type="xs:string">
+  <xs:element name="property">
     <xs:annotation><xs:documentation>
       A "property" is a JSBSim simulation parameter that represents any of a number of 
       things, from engine throttle settings, to aircraft rotation rates, to the simulation time.
       To see a list of properties that are available for an individual aircraft, one can provide
       the "--catalog" option to the JSBSim standalone program.
     </xs:documentation></xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
   </xs:element>
   
   <xs:element name="set">
