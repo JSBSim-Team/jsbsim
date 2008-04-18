@@ -56,7 +56,8 @@ Will compile the various classes, and link the library. Finally :
 $ make install
 
 Unless specified otherwise (with --prefix configure option), this will
-install 'JSBSim.a' into '/usr/local/lib'.
+install JSBSim libraries into '/usr/local/lib' and JSBSim headers
+into '/usr/local/include/JSBSim'.
 
 
 3) Contact
