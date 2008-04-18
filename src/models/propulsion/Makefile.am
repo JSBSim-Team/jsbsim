@@ -1,10 +1,12 @@
-noinst_LIBRARIES = libPropulsion.a
+includedir = @includedir@/JSBSim/models/propulsion
 
-libPropulsion_a_SOURCES = FGElectric.cpp FGEngine.cpp FGForce.cpp FGNozzle.cpp \
+noinst_LTLIBRARIES = libPropulsion.la
+
+libPropulsion_la_SOURCES = FGElectric.cpp FGEngine.cpp FGForce.cpp FGNozzle.cpp \
                          FGPiston.cpp FGPropeller.cpp FGRocket.cpp FGRotor.cpp \
                          FGTank.cpp FGThruster.cpp FGTurbine.cpp FGTurboProp.cpp
 
-noinst_HEADERS =  FGElectric.h FGEngine.h FGForce.h FGNozzle.h FGPiston.h \
+include_HEADERS = FGElectric.h FGEngine.h FGForce.h FGNozzle.h FGPiston.h \
                   FGPropeller.h FGRocket.h FGRotor.h FGTank.h FGThruster.h \
                   FGTurbine.h FGTurboProp.h
 

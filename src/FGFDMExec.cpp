@@ -73,13 +73,13 @@ INCLUDES
 #include <models/FGInput.h>
 #include <models/FGOutput.h>
 #include <initialization/FGInitialCondition.h>
-#include <initialization/FGTrimAnalysis.h>
+//#include <initialization/FGTrimAnalysis.h> // Remove until later
 #include <input_output/FGPropertyManager.h>
 #include <input_output/FGScript.h>
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.47 2008/04/14 04:08:18 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.48 2008/04/18 12:15:52 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,7 +179,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 
   Constructing = true;
   typedef int (FGFDMExec::*iPMF)(void) const;
-  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
+//  instance->Tie("simulation/do_trim_analysis", this, (iPMF)0, &FGFDMExec::DoTrimAnalysis);
   instance->Tie("simulation/do_simple_trim", this, (iPMF)0, &FGFDMExec::DoTrim);
   instance->Tie("simulation/terminate", (int *)&Terminate);
   Constructing = false;
@@ -804,7 +804,7 @@ void FGFDMExec::DoTrim(int mode)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*
 void FGFDMExec::DoTrimAnalysis(int mode)
 {
   double saved_time;
@@ -834,7 +834,7 @@ void FGFDMExec::DoTrimAnalysis(int mode)
   cout << "\nOutput: " << GetOutputFileName() << endl;
 
 }
-
+*/
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void FGFDMExec::UseAtmosphereMSIS(void)

@@ -1,11 +1,13 @@
-noinst_LIBRARIES = libFlightControl.a
+includedir = @includedir@/JSBSim/models/flight_control
 
-libFlightControl_a_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
+noinst_LTLIBRARIES = libFlightControl.la
+
+libFlightControl_la_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
                             FGFilter.cpp FGGain.cpp FGGradient.cpp FGKinemat.cpp \
                             FGSummer.cpp FGSwitch.cpp FGFCSFunction.cpp FGSensor.cpp \
                             FGPID.cpp FGActuator.cpp
 
-noinst_HEADERS = FGDeadBand.h FGFCSComponent.h FGFilter.h \
+include_HEADERS = FGDeadBand.h FGFCSComponent.h FGFilter.h \
                  FGGain.h FGGradient.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h
 

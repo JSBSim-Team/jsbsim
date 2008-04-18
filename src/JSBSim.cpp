@@ -40,7 +40,7 @@ INCLUDES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include <FGFDMExec.h>
-#include <initialization/FGTrimAnalysis.h>
+//#include <initialization/FGTrimAnalysis.h>
 
 #if !defined(__GNUC__) && !defined(sgi) && !defined(_MSC_VER)
 #  include <time>
@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.36 2008/03/09 08:15:58 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.37 2008/04/18 12:15:53 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -81,8 +81,6 @@ bool play_nice;
 bool suspend;
 bool catalog;
 
-bool trim_analysis;
-unsigned int trim_type=0;
 double end_time = -1.0;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -235,8 +233,6 @@ int main(int argc, char* argv[])
 {
   // *** INITIALIZATIONS *** //
 
-  trim_analysis = false;
-
   ScriptName = "";
   AircraftName = "";
   ResetName = "";
@@ -323,33 +319,6 @@ int main(int argc, char* argv[])
       exit(-1);
     }
 
-    // *** TRIM THE AIRCRAFT *** //
-/*
-    JSBSim::FGTrim fgt(FDMExec, JSBSim::tFull);
-    if ( !fgt.DoTrim() ) {
-      cout << "Trim failed, continuing ..." << endl;
-    }
-    fgt.Report();
-*/
-
-    if ( trim_analysis ) {
-
-      JSBSim::FGTrimAnalysis myfgta(FDMExec, (JSBSim::TrimAnalysisMode)trim_type);
-
-      if ( !myfgta.Load(ResetName) ) {
-        cerr << "A problem occurred with configuration file \"" << ResetName << "\"" << endl;
-        exit(-1);
-      }
-
-      FDMExec->GetState()->Setdt(0.00833333);
-      FDMExec->GetState()->SuspendIntegration();
-
-      if ( !myfgta.DoTrim() ) {
-        cout << "Trim Failed" << endl;
-      }
-      myfgta.Report();
-   }
-
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
     FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
@@ -404,16 +373,6 @@ int main(int argc, char* argv[])
   tzset(); 
   current_seconds = initial_seconds = getcurrentseconds();
 
-  if (( end_time != -1.0 )) {
-      result=true;
-      FDMExec->GetState()->ResumeIntegration();
-      FDMExec->GetState()->Setdt(0.00833333);
-      cout << "Enforcing time integration after trim... " << endl
-           << "Time: " << FDMExec->GetState()->Getsim_time() << ", dt: " << FDMExec->GetState()->Getdt()
-           << endl;
-      cout << "Integrating until time: " << end_time << " (sec)" << endl;
-  }
-
   // *** CYCLIC EXECUTION LOOP, AND MESSAGE READING *** //
   while (result) {
     while (FDMExec->SomeMessages()) {
@@ -445,12 +404,6 @@ int main(int argc, char* argv[])
       if ( ! realtime ) {         // ------------ RUNNING IN BATCH MODE
 
         result = FDMExec->Run();
-
-        if ( trim_analysis ) {
-            if ( FDMExec->GetSimTime() > end_time ) break;
-
-            result = 1; // enforce the loop [FDMExec->Run() might return 0]
-        }
 
         if (play_nice) sim_nsleep(sleep_nseconds);
 
@@ -578,17 +531,6 @@ bool options(int count, char **arg)
         exit(1);
       }
 
-    } else if (argument.find("--trim-analysis") != string::npos) {
-      trim_analysis = true;
-      n = argument.find("=")+1;
-      if (n > 0) {
-        string s = argument.substr(argument.find("=")+1);
-        trim_type = atoi(s.c_str());
-      } else {
-        cerr << "  Trim type not valid or not understood." << endl << endl;
-        exit(1);
-      }
-
     } else if (argument.find("--end-time") != string::npos) {
       n = argument.find("=")+1;
       if (n > 0) {
@@ -621,18 +563,7 @@ bool options(int count, char **arg)
     cerr << "You cannot specify an aircraft or initialization file with a script." << endl;
     result = false;
   }
-  if (trim_analysis) {
-    if ( !ScriptName.empty() ) {
-      cerr << "You cannot use trim analysis with a script name on the command line." << endl;
-      cerr << "You can, however, do trim analysis from within a script." << endl;
-      result = false;
-    }
-    if (AircraftName.empty() || ResetName.empty()) {
-      cerr << "You must give both an aircraft name and an initialization file" << endl;
-      cerr << "name with the trim-analysis option." << endl;
-      result = false;
-    }
-  }
+
   return result;
 
 }
@@ -655,7 +586,6 @@ void PrintHelp(void)
     cout << "    --initfile=<filename>  specifies an initilization file" << endl;
     cout << "    --catalog specifies that all properties for this aircraft model should be printed" << endl << endl;
 
-    cout << "    --trim-analysis=<type (int)> specifies the kind of trim" << endl;
     cout << "    --end-time=<time (double)> specifies the sim end time" << endl << endl;
 
   cout << "  NOTE: There can be no spaces around the = sign when" << endl;

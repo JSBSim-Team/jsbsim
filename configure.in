@@ -77,7 +77,7 @@ src/models/propulsion/Makefile \
 src/models/flight_control/Makefile \
 src/input_output/Makefile \
 src/math/Makefile \
-src/math/direct_search/Makefile \
+dnl src/math/direct_search/Makefile \
 src/simgear/Makefile \
 src/simgear/props/Makefile \
 src/simgear/xml/Makefile \

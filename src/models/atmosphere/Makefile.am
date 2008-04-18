@@ -1,7 +1,9 @@
-noinst_LIBRARIES = libAtmosphere.a
+includedir = @includedir@/JSBSim/models/atmosphere
 
-libAtmosphere_a_SOURCES = FGMSIS.cpp FGMSISData.cpp FGMars.cpp
+noinst_LTLIBRARIES = libAtmosphere.la
 
-noinst_HEADERS = FGMSIS.h FGMars.h
+libAtmosphere_la_SOURCES = FGMSIS.cpp FGMSISData.cpp FGMars.cpp
+
+include_HEADERS = FGMSIS.h FGMars.h
 
 INCLUDES = -I$(top_srcdir)/src -I../../

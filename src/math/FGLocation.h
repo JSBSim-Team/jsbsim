@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.9 2008/03/01 01:25:12 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.10 2008/04/18 12:15:55 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.9 2008/03/01 01:25:12 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.10 2008/04/18 12:15:55 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,7 +153,17 @@ public:
   FGLocation(double lon, double lat, double radius);
 
   /** Column constructor. */
-  FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false) { }
+  FGLocation(const FGColumnVector3& lv) : mECLoc(lv), mCacheValid(false)
+  {
+    a = 0.0;
+    b = 0.0;
+    a2 = 0.0;
+    b2 = 0.0;
+    e2 = 1.0;
+    e = 1.0;
+    eps2 = -1.0;
+    f = 1.0;
+  }
 
   /** Copy constructor. */
   FGLocation(const FGLocation& l)

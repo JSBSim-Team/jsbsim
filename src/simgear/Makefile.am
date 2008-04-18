@@ -1,3 +1,5 @@
+includedir = @includedir@/JSBSim/simgear
+
 SUBDIRS = props xml
 
-noinst_HEADERS = compiler.h
+include_HEADERS = compiler.h

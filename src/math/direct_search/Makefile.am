@@ -1,8 +1,10 @@
+includedir = @includedir@/JSBSim/math/direct_search
+
 AM_CPPFLAGS = -DOLD_LIBC -DAGO_DIRECTSEARCH
 
-noinst_LIBRARIES = libdirect_search.a
+noinst_LTLIBRARIES = libdirect_search.la
 
-libdirect_search_a_SOURCES = CompassSearch.cc \
+libdirect_search_la_SOURCES = CompassSearch.cc \
                              CoordinateSearch.cc \
                              DirectSearch.cc \
                              EdHJSearch.cc \
@@ -16,7 +18,7 @@ libdirect_search_a_SOURCES = CompassSearch.cc \
                              SimplexSearch.cc \
                              objective.cc
 
-noinst_HEADERS = CompassSearch.h \
+include_HEADERS = CompassSearch.h \
                  CoordinateSearch.h \
                  DirectSearch.h \
                  Dyn_alloc.h \

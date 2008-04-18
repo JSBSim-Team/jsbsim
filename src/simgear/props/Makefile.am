@@ -1,7 +1,9 @@
-noinst_LIBRARIES = libProperties.a
+includedir = @includedir@/JSBSim/simgear/props
 
-libProperties_a_SOURCES = props.cxx
+noinst_LTLIBRARIES = libProperties.la
 
-noinst_HEADERS = props.hxx SGReferenced.hxx  SGSharedPtr.hxx
+libProperties_la_SOURCES = props.cxx
+
+include_HEADERS = props.hxx SGReferenced.hxx  SGSharedPtr.hxx
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/simgear
