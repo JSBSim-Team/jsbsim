@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFilter.cpp,v 1.9 2007/11/14 04:15:17 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFilter.cpp,v 1.10 2008/04/18 13:33:23 jberndt Exp $";
 static const char *IdHdr = ID_FILTER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,10 @@ FGFilter::FGFilter(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
   DynamicFilter = false;
 
   C[1] = C[2] = C[3] = C[4] = C[5] = C[6] = 0.0;
-  for (int i=0; i<7; i++) PropertyNode[i] = 0L;
+  for (int i=0; i<7; i++) {
+    PropertySign[i] = 1.0;
+    PropertyNode[i] = 0L;
+  }
 
   if      (Type == "LAG_FILTER")          FilterType = eLag        ;
   else if (Type == "LEAD_LAG_FILTER")     FilterType = eLeadLag    ;

@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGain.cpp,v 1.13 2007/09/18 03:18:29 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGain.cpp,v 1.14 2008/04/18 13:33:23 jberndt Exp $";
 static const char *IdHdr = ID_GAIN;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -130,6 +130,8 @@ FGGain::FGGain(FGFCS* fcs, Element* element) : FGFCSComponent(fcs, element)
 
 FGGain::~FGGain()
 {
+  delete Table;
+
   Debug(1);
 }
 
