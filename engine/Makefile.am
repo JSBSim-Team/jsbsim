@@ -1,29 +1,24 @@
 EXTRA_DIST = \
 	CFM56.xml \
-	CFM56_5_sim.xml \
-	CFM56_nozzle.xml \
-	CFM56_sim.xml \
+	CFM56_5.xml \
+	CFM56.xml \
 	GE-CF6-80C2-B1F.xml \
-	F100-PW-229_sim.xml \
-	F119-PW1_sim.xml \
-	J69-T25_sim.xml \
+	F119-PW1.xml \
+	J69-T25.xml \
 	J85-GE-5.xml \
-	J85-GE-5_sim.xml \
-	J85_nozzle.xml \
+	J85-GE-5.xml \
 	LM_descent_nozzle.xml \
 	LMdescent.xml \
-	PT6A-68_sim.xml \
-	PW125B_sim.xml \
-	T76_sim.xml \
-	Tay-620_sim.xml \
-	Tay-651_sim.xml \
+	PT6A-68.xml \
+	PW125B.xml \
+	T76.xml \
+	Tay-651.xml \
 	XLR99.xml \
 	direct.xml \
 	engIO360C.xml \
 	engIO470D.xml \
 	engIO540AB1A5.xml \
 	eng_io320.xml \
-	low_bypass_turbofan.xml \
 	prop30FP2B.xml \
 	propC10v.xml \
 	propC6v.xml \
