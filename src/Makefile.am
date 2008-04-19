@@ -23,7 +23,6 @@ libJSBSim_la_LIBADD = \
 	models/propulsion/libPropulsion.la \
 	input_output/libInputOutput.la \
 	math/libMath.la \
-	math/direct_search/libdirect_search.la \
 	simgear/props/libProperties.la \
 	simgear/xml/libExpat.la
 
