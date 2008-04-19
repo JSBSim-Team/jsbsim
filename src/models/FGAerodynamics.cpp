@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.17 2008/02/27 04:18:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.18 2008/04/19 17:26:33 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 const unsigned NAxes=6;
@@ -61,12 +61,21 @@ FGAerodynamics::FGAerodynamics(FGFDMExec* FDMExec) : FGModel(FDMExec)
 {
   Name = "FGAerodynamics";
 
-  AxisIdx["DRAG"]  = 0;
-  AxisIdx["SIDE"]  = 1;
-  AxisIdx["LIFT"]  = 2;
-  AxisIdx["ROLL"]  = 3;
-  AxisIdx["PITCH"] = 4;
-  AxisIdx["YAW"]   = 5;
+  AxisIdx["DRAG"]   = 0;
+  AxisIdx["SIDE"]   = 1;
+  AxisIdx["LIFT"]   = 2;
+  AxisIdx["ROLL"]   = 3;
+  AxisIdx["PITCH"]  = 4;
+  AxisIdx["YAW"]    = 5;
+
+  AxisIdx["AXIAL"]  = 0;
+  AxisIdx["NORMAL"] = 2;
+
+  AxisIdx["X"] = 0;
+  AxisIdx["Y"] = 1;
+  AxisIdx["Z"] = 2;
+
+  axisType = atNone;
 
   Coeff = new CoeffArray[6];
 
@@ -143,42 +152,58 @@ bool FGAerodynamics::Run(void)
     }
   }
 
-  vLastFw = vFw;
   vFw.InitMatrix();
+  vFnative.InitMatrix();
 
   // Tell the variable functions to cache their values, so while the aerodynamic
   // functions are being calculated for each axis, these functions do not get
   // calculated each time, but instead use the values that have already
   // been calculated for this frame.
+
   for (i=0; i<variables.size(); i++) variables[i]->cacheValue(true);
 
   for (axis_ctr = 0; axis_ctr < 3; axis_ctr++) {
     for (ctr=0; ctr < Coeff[axis_ctr].size(); ctr++) {
-      vFw(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
+      vFnative(axis_ctr+1) += Coeff[axis_ctr][ctr]->GetValue();
     }
   }
 
-  // Calculate aerodynamic reference point shift, if any
-  if (AeroRPShift) {
-    vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar()*12.0;
+  // Note that we still need to convert to wind axes here, because it is
+  // used in the L/D calculation, and we still may want to look at Lift
+  // and Drag.
+
+  switch (axisType) {
+    case atBodyXYZ:       // Forces already in body axes; no manipulation needed
+      vFw = GetTb2w()*vFnative;
+      vForces = vFnative;
+      break;
+    case atLiftDrag:      // Copy forces into wind axes
+      vFw = vFnative;
+      vFw(eDrag)*=-1; vFw(eLift)*=-1;
+      vForces = GetTw2b()*vFw;
+      break;
+    case atAxialNormal:   // Convert native forces into Axial|Normal|Side system
+      vFw = GetTb2w()*vFnative;
+      vFnative(eX)*=-1; vFnative(eZ)*=-1;
+      vForces = vFnative;
+      break;
+    default:
+      cerr << endl << "  A proper axis type has NOT been selected. Check "
+                   << "your aerodynamics definition." << endl;
+      exit(-1);
   }
 
-  // calculate lift coefficient squared
+  // Calculate aerodynamic reference point shift, if any
+  if (AeroRPShift) vDeltaRP(eX) = AeroRPShift->GetValue()*Aircraft->Getcbar()*12.0;
+
+  // Calculate lift coefficient squared
   if ( Auxiliary->Getqbar() > 0) {
     clsq = vFw(eLift) / (Aircraft->GetWingArea()*Auxiliary->Getqbar());
     clsq *= clsq;
   }
 
-  if ( vFw(eDrag)  > 0) {
-    lod = vFw(eLift) / vFw(eDrag);
-  }
-
-  //correct signs of drag and lift to wind axes convention
-  //positive forward, right, down
-  vFw(eDrag)*=-1; vFw(eLift)*=-1;
-
-  // transform wind axis forces into body axes
-  vForces = GetTw2b()*vFw;
+  // Calculate lift Lift over Drag
+  if ( fabs(vFw(eDrag)) > 0.0) lod = fabs( vFw(eLift) / vFw(eDrag) );
 
   vDXYZcg = MassBalance->StructuralToBody(Aircraft->GetXYZrp() + vDeltaRP);
 
@@ -271,8 +296,6 @@ bool FGAerodynamics::Load(Element *element)
   string fname="", file="";
   Element *temp_element, *axis_element, *function_element;
 
-  Debug(2);
-
   string separator = "/";
 #ifdef macintosh
   separator = ";";
@@ -285,6 +308,10 @@ bool FGAerodynamics::Load(Element *element)
   } else {
     document = element;
   }
+
+  DetermineAxisSystem(); // Detemine if Lift/Side/Drag, etc. is used.
+
+  Debug(2);
 
   if (temp_element = document->FindElement("alphalimits")) {
     scratch_unit = temp_element->GetAttributeValue("unit");
@@ -325,6 +352,54 @@ bool FGAerodynamics::Load(Element *element)
   }
 
   return true;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+// This private class function checks to verify consistency in the choice of
+// aerodynamic axes used in the config file. One set of LIFT|DRAG|SIDE, or 
+// X|Y|Z, or AXIAL|NORMAL|SIDE must be chosen; mixed system axes are not allowed.
+// Note that if the "SIDE" axis specifier is entered first in a config file, 
+// a warning message will be given IF the AXIAL|NORMAL specifiers are also given.
+// This is OK, and the warning is due to the SIDE specifier used for both
+// the Lift/Drag and Axial/Normal axis systems.
+
+void FGAerodynamics::DetermineAxisSystem()
+{
+  Element* axis_element = document->FindElement("axis");
+  string axis;
+  while (axis_element) {
+    axis = axis_element->GetAttributeValue("name");
+    if (axis == "LIFT" || axis == "DRAG" || axis == "SIDE") {
+      if (axisType == atNone) axisType = atLiftDrag;
+      else if (axisType != atLiftDrag) {
+        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+                     << " aircraft config file." << endl;
+      }
+    } else if (axis == "AXIAL" || axis == "NORMAL") {
+      if (axisType == atNone) axisType = atAxialNormal;
+      else if (axisType != atAxialNormal) {
+        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+                     << " aircraft config file." << endl;
+      }
+    } else if (axis == "X" || axis == "Y" || axis == "Z") {
+      if (axisType == atNone) axisType = atBodyXYZ;
+      else if (axisType != atBodyXYZ) {
+        cerr << endl << "  Mixed aerodynamic axis systems have been used in the"
+                     << " aircraft config file." << endl;
+      }
+    } else if (axis != "ROLL" && axis != "PITCH" && axis != "YAW") { // error
+      cerr << endl << "  An unknown axis type, " << axis << " has been specified"
+                   << " in the aircraft configuration file." << endl;
+      exit(-1);
+    }
+    axis_element = document->FindNextElement("axis");
+  }
+  if (axisType == atNone) {
+    axisType = atLiftDrag;
+    cerr << endl << "  The aerodynamic axis system has been set by default"
+                 << " to the Lift/Side/Drag system." << endl;
+  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -487,7 +562,17 @@ void FGAerodynamics::Debug(int from)
 
   if (debug_lvl & 1) { // Standard console startup message output
     if (from == 2) { // Loader
-      cout << endl << "  Aerodynamics: " << endl;
+      switch (axisType) {
+        case (atLiftDrag):
+          cout << endl << "  Aerodynamics (Lift|Side|Drag axes):" << endl << endl;
+          break;
+        case (atAxialNormal):
+          cout << endl << "  Aerodynamics (Axial|Side|Normal axes):" << endl << endl;
+          break;
+        case (atBodyXYZ):
+          cout << endl << "  Aerodynamics (X|Y|Z axes):" << endl << endl;
+          break;
+      }
     }
   }
   if (debug_lvl & 2 ) { // Instantiation/Destruction notification

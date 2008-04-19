@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.11 2008/02/27 04:18:33 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.12 2008/04/19 17:26:33 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,7 +90,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.11 $
+    @Id $Revision: 1.12 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,16 +189,17 @@ public:
   vector <FGFunction*> * GetCoeff(void) const { return Coeff; }
 
 private:
+  enum eAxisType {atNone, atLiftDrag, atAxialNormal, atBodyXYZ} axisType;
   typedef map<string,int> AxisIndex;
   AxisIndex AxisIdx;
   FGFunction* AeroRPShift;
   vector <FGFunction*> variables;
   typedef vector <FGFunction*> CoeffArray;
   CoeffArray* Coeff;
+  FGColumnVector3 vFnative;
   FGColumnVector3 vFw;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
-  FGColumnVector3 vLastFw;
   FGColumnVector3 vDXYZcg;
   FGColumnVector3 vDeltaRP;
   FGMatrix33 mTw2b;
@@ -210,6 +211,7 @@ private:
   double clsq, lod, qbar_area;
 
   typedef double (FGAerodynamics::*PMF)(int) const;
+  void DetermineAxisSystem(void);
   void bind(void);
   void unbind(void);
 
