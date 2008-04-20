@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.37 2008/04/18 12:15:53 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.38 2008/04/20 14:13:40 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -88,6 +88,7 @@ FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 bool options(int, char**);
+void unbind();
 void PrintHelp(void);
 
 #if defined(__BORLANDC__) || defined(_MSC_VER) || defined(__MINGW32__)
@@ -296,24 +297,21 @@ int main(int argc, char* argv[])
                                RootDir + "systems",
                                AircraftName)) {
       cerr << "  JSBSim could not be started" << endl << endl;
-      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      unbind();
       delete FDMExec;
       exit(-1);
     }
 
     if (catalog) {
       FDMExec->PrintPropertyCatalog();
-      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      unbind();
       delete FDMExec;
       return 0;
     }
 
     JSBSim::FGInitialCondition *IC = FDMExec->GetIC();
     if ( ! IC->Load(ResetName)) {
-      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      unbind();
       delete FDMExec;
       cerr << "Initialization unsuccessful" << endl;
       exit(-1);
@@ -321,8 +319,7 @@ int main(int argc, char* argv[])
 
   } else {
     cout << "  No Aircraft, Script, or Reset information given" << endl << endl;
-    FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-    FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+    unbind();
     delete FDMExec;
     exit(-1);
   }
@@ -331,8 +328,7 @@ int main(int argc, char* argv[])
   if (!LogDirectiveName.empty()) {
     if (!FDMExec->SetOutputDirectives(LogDirectiveName)) {
       cout << "Output directives not properly set" << endl;
-      FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-      FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+      unbind();
       delete FDMExec;
       exit(-1);
     }
@@ -447,12 +443,19 @@ int main(int argc, char* argv[])
   cout << "End: " << s << " (HH:MM:SS)" << endl;
 
   // CLEAN UP
-  FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
-  FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
+  unbind();
 
   delete FDMExec;
 
   return 0;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void unbind()
+{
+  FDMExec->GetPropertyManager()->Untie("simulation/frame_start_time");
+  FDMExec->GetPropertyManager()->Untie("simulation/cycle_duration");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -567,6 +570,8 @@ bool options(int count, char **arg)
   return result;
 
 }
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void PrintHelp(void)
 {

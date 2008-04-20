@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.39 2008/04/11 16:23:12 andgi Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.40 2008/04/20 14:13:41 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -419,7 +419,12 @@ FGColumnVector3& FGLGear::Force(void)
   }
 
   ReportTakeoffOrLanding();
-  CrashDetect();
+
+  // Require both WOW and LastWOW to be true before checking crash conditions
+  // to allow the WOW flag to be used in terminating a scripted run.
+  if (WOW && lastWOW) CrashDetect();
+
+  lastWOW = WOW;
 
   return vForce;
 }
@@ -505,6 +510,7 @@ void FGLGear::ResetReporting(void)
     FirstContact = false;
     StartedGroundRun = false;
     LandingReported = false;
+    TakeoffReported = true;
     LandingDistanceTraveled = 0.0;
     MaximumStrutForce = MaximumStrutTravel = 0.0;
   }
@@ -544,25 +550,31 @@ void FGLGear::ReportTakeoffOrLanding(void)
 {
   double deltaT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 
-  if (FirstContact) LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
+  if (FirstContact)
+    LandingDistanceTraveled += Auxiliary->GetVground()*deltaT;
 
   if (StartedGroundRun) {
      TakeoffDistanceTraveled50ft += Auxiliary->GetVground()*deltaT;
     if (WOW) TakeoffDistanceTraveled += Auxiliary->GetVground()*deltaT;
   }
 
-  if (ReportEnable && Auxiliary->GetVground() <= 0.05 && !LandingReported) {
+  if ( ReportEnable
+       && Auxiliary->GetVground() <= 0.05
+       && !LandingReported
+       && Exec->GetGroundReactions()->GetWOW())
+  {
     if (debug_lvl > 0) Report(erLand);
   }
 
-  if (ReportEnable && !TakeoffReported &&
-     (vLocalGear(eZ) - Propagate->GetDistanceAGL()) < -50.0)
+  if ( ReportEnable
+       && !TakeoffReported
+       && (Propagate->GetDistanceAGL() - vLocalGear(eZ)) > 50.0
+       && !Exec->GetGroundReactions()->GetWOW())
   {
     if (debug_lvl > 0) Report(erTakeoff);
   }
 
   if (lastWOW != WOW) PutMessage("GEAR_CONTACT: " + name, WOW);
-  lastWOW = WOW;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
