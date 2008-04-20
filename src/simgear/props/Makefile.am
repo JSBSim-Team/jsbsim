@@ -1,9 +1,18 @@
 includedir = @includedir@/JSBSim/simgear/props
 
+LIBRARY_SOURCES = props.cxx
+
+LIBRARY_INCLUDES = props.hxx SGReferenced.hxx  SGSharedPtr.hxx
+
+if BUILD_LIBRARIES
 noinst_LTLIBRARIES = libProperties.la
-
-libProperties_la_SOURCES = props.cxx
-
-include_HEADERS = props.hxx SGReferenced.hxx  SGSharedPtr.hxx
+include_HEADERS = $(LIBRARY_INCLUDES)
+libProperties_la_SOURCES = $(LIBRARY_SOURCES)
+libProperties_la_CXXFLAGS = $(AM_CXXFLAGS)
+else
+noinst_LIBRARIES = libProperties.a
+noinst_HEADERS = $(LIBRARY_INCLUDES)
+libProperties_a_SOURCES = $(LIBRARY_SOURCES)
+endif
 
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/src/simgear

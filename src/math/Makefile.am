@@ -2,14 +2,23 @@ includedir = @includedir@/JSBSim/math
 
 ###SUBDIRS = direct_search
 
-noinst_LTLIBRARIES = libMath.la
-
-libMath_la_SOURCES = FGColumnVector3.cpp FGFunction.cpp FGLocation.cpp FGMatrix33.cpp \
+LIBRARY_SOURCES = FGColumnVector3.cpp FGFunction.cpp FGLocation.cpp FGMatrix33.cpp \
                     FGPropertyValue.cpp FGQuaternion.cpp FGRealValue.cpp FGTable.cpp \
                     FGCondition.cpp
 
-include_HEADERS = FGColumnVector3.h FGFunction.h FGLocation.h FGMatrix33.h \
+LIBRARY_INCLUDES = FGColumnVector3.h FGFunction.h FGLocation.h FGMatrix33.h \
                  FGParameter.h FGPropertyValue.h FGQuaternion.h FGRealValue.h FGTable.h \
                  FGCondition.h
+
+if BUILD_LIBRARIES
+noinst_LTLIBRARIES = libMath.la
+include_HEADERS = $(LIBRARY_INCLUDES)
+libMath_la_SOURCES = $(LIBRARY_SOURCES)
+libMath_la_CXXFLAGS = $(AM_CXXFLAGS)
+else
+noinst_LIBRARIES = libMath.a
+noinst_HEADERS = $(LIBRARY_INCLUDES)
+libMath_a_SOURCES = $(LIBRARY_SOURCES)
+endif
 
 INCLUDES = -I$(top_srcdir)/src -I../

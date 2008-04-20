@@ -51,7 +51,18 @@ necessary Makefiles. Next :
 
 $ make
 
-Will compile the various classes, and link the library. Finally :
+Will compile the various classes, and build the JSBSim application.
+
+
+3) Building JSBSim libraries
+----------------------------
+
+By default, the JSBSim libraries are not built. To build and install
+the libraries, use:
+
+$ ./autogen --enable-libraries [--disable-static] [--enable-shared]
+
+The configure options can be used to select what libraries to build.
 
 $ make install
 
@@ -60,7 +71,7 @@ install JSBSim libraries into '/usr/local/lib' and JSBSim headers
 into '/usr/local/include/JSBSim'.
 
 
-3) Contact
+4) Contact
 ----------
 
 For more information on JSBSim contact Jon Berndt at jon@jsbsim.org.

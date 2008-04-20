@@ -1,14 +1,23 @@
 includedir = @includedir@/JSBSim/models/flight_control
 
-noinst_LTLIBRARIES = libFlightControl.la
-
-libFlightControl_la_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
+LIBRARY_SOURCES = FGDeadBand.cpp FGFCSComponent.cpp \
                             FGFilter.cpp FGGain.cpp FGGradient.cpp FGKinemat.cpp \
                             FGSummer.cpp FGSwitch.cpp FGFCSFunction.cpp FGSensor.cpp \
                             FGPID.cpp FGActuator.cpp
 
-include_HEADERS = FGDeadBand.h FGFCSComponent.h FGFilter.h \
+LIBRARY_INCLUDES = FGDeadBand.h FGFCSComponent.h FGFilter.h \
                  FGGain.h FGGradient.h FGKinemat.h FGSummer.h FGSwitch.h FGFCSFunction.h \
                  FGSensor.h FGPID.h FGActuator.h
+
+if BUILD_LIBRARIES
+noinst_LTLIBRARIES = libFlightControl.la
+include_HEADERS = $(LIBRARY_INCLUDES)
+libFlightControl_la_SOURCES = $(LIBRARY_SOURCES)
+libFlightControl_la_CXXFLAGS = $(AM_CXXFLAGS)
+else
+noinst_LIBRARIES = libFlightControl.a
+noinst_HEADERS = $(LIBRARY_INCLUDES)
+libFlightControl_a_SOURCES = $(LIBRARY_SOURCES)
+endif
 
 INCLUDES = -I$(top_srcdir)/src -I../../

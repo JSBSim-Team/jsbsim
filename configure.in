@@ -6,6 +6,13 @@ AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE(JSBSim, 1.0)
 
+AC_ARG_ENABLE([libraries],
+    [AS_HELP_STRING([--enable-libraries],
+        [build JSBSim libraries [default=no]])],
+     [build_libraries=$enableval],
+     [build_libraries=no])
+AM_CONDITIONAL(BUILD_LIBRARIES, test "x$build_libraries" = xyes)
+
 dnl Checks for programs.
 AC_DISABLE_SHARED
 AC_PROG_CPP
