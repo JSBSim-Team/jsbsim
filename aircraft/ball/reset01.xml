@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <initialize name="reset00">
   <!--
-    This file sets up the cannonball
-    to fire north to check coriolis acceleration.
+    This file sets up the cannonball to fire.
   -->
   <ubody unit="FT/SEC">  500.0  </ubody>
   <vbody unit="FT/SEC">    0.0  </vbody>

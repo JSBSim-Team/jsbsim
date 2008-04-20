@@ -14,7 +14,7 @@
     <metrics>
         <wingarea unit="FT2"> 1 </wingarea>
         <wingspan unit="FT"> 1 </wingspan>
-        <chord unit="FT"> 0 </chord>
+        <chord unit="FT"> 1 </chord>
         <htailarea unit="FT2"> 0 </htailarea>
         <htailarm unit="FT"> 0 </htailarm>
         <vtailarea unit="FT2"> 0 </vtailarea>
@@ -52,7 +52,7 @@
     </mass_balance>
 
     <ground_reactions>
-        <contact type="BOGEY" name="NOSE_CONTACT">
+        <contact type="BOGEY" name="CONTACT">
             <location unit="IN">
                 <x> 0 </x>
                 <y> 0 </y>
@@ -68,8 +68,11 @@
             <retractable>0</retractable>
         </contact>
     </ground_reactions>
+
     <external_reactions>
-      <property>fcs/parachute_reef_pos_norm</property> <!-- "Declare" the reefing term -->
+      <!-- "Declare" the reefing term -->
+      <property>fcs/parachute_reef_pos_norm</property>
+
       <force name="parachute" frame="WIND">
         <function>
           <product>
@@ -79,11 +82,19 @@
             <value> 20.0 </value> <!-- Full parachute area -->
           </product>
         </function>
-        <location>
+        <!-- The location below is in structural frame (x positive
+             aft), so this location describes a point 1 foot forward
+             of the origin. In this case, the origin is the center. -->
+        <location unit="FT">
           <x>-1</x>
           <y>0</y>
           <z>0</z>
         </location>
+        <!-- The direction describes a unit vector. In this case, since
+             the selected frame is the WIND frame, the "-1" x component
+             describes a direction exactly opposite of the direction
+             into the wind vector. That is, the direction specified below
+             is the direction that the drag force acts in. -->
         <direction>
           <x>-1</x>
           <y>0</y>
@@ -91,8 +102,8 @@
         </direction>
       </force>
     </external_reactions>
-    <propulsion>
-    </propulsion>
+
+    <propulsion/>
 
     <flight_control name="FGFCS"/>
 
@@ -108,7 +119,9 @@
             </function>
         </axis>
     </aerodynamics>
-    <output name="JSBBallOut.csv" type="CSV" rate="1">
+
+    <output name="JSBBallOut.csv" type="CSV" rate="10">
+        <property> gear/unit[0]/WOW </property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
