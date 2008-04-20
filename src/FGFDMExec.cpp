@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.48 2008/04/18 12:15:52 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.49 2008/04/20 12:43:59 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,7 +190,7 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 FGFDMExec::~FGFDMExec()
 {
   instance->Untie("simulation/do_simple_trim");
-  instance->Untie("simulation/do_trim_analysis");
+//  instance->Untie("simulation/do_trim_analysis");
   instance->Untie("simulation/terminate");
 
   try {
