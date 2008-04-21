@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.2 2008/01/24 19:55:04 jberndt Exp $";
+static const char *IdSrc = "$Id: FGBuoyantForces.cpp,v 1.3 2008/04/21 16:50:43 andgi Exp $";
 static const char *IdHdr = ID_BUOYANTFORCES;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -148,12 +148,7 @@ FGColumnVector3& FGBuoyantForces::GetGasMassMoment(void)
 {
   vXYZgasCell_arm.InitMatrix();
   for (unsigned int i = 0; i < Cells.size(); i++) {
-    vXYZgasCell_arm(eX) +=
-      Cells[i]->GetXYZ(eX) * Cells[i]->GetMass()*slugtolb;
-    vXYZgasCell_arm(eY) +=
-      Cells[i]->GetXYZ(eY) * Cells[i]->GetMass()*slugtolb;
-    vXYZgasCell_arm(eZ) +=
-      Cells[i]->GetXYZ(eZ) * Cells[i]->GetMass()*slugtolb;
+    vXYZgasCell_arm += Cells[i]->GetMassMoment();
   }
   return vXYZgasCell_arm;
 }

@@ -66,13 +66,15 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.4 2008/04/13 15:14:22 andgi Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.5 2008/04/21 16:50:43 andgi Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 namespace JSBSim {
+
+class FGBallonet;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DOCUMENTATION
@@ -81,7 +83,7 @@ CLASS DOCUMENTATION
 /** Models a gas cell.
     @author Anders Gidenstam
 
-Configuration File Format
+<h2>Configuration File Format</h2>
 @code
 <buoyant_forces>
   <gas_cell type="{HYDROGEN | HELIUM | AIR}">
@@ -98,50 +100,149 @@ Configuration File Format
     <valve_coefficient unit="M4*SEC/KG"> ... </valve_coefficient>
 
     <fullness> ... </fullness>  
+
     <heat>
-      {heat transfer coefficients} [lb ft / (s R)]
+      {heat transfer coefficients} [lbs ft / sec]
     </heat>
+
+    <ballonet>
+      <location unit="M">
+        <x> ... </x>
+        <y> ... </y>
+        <z> ... </z>
+      </location>
+
+      <x_width unit="M"> ... </x_width>
+      <y_radius unit="M"> ... </y_radius>
+      <z_radius unit="M"> ... </z_radius>
+      <max_overpressure unit="Pa"> 300.0 </max_overpressure>
+      <valve_coefficient unit="M4*SEC/KG"> ... </valve_coefficient>
+
+      <fullness> ... </fullness>  
+      <heat>
+       {heat transfer coefficients} [lb ft / (sec Rankine)]
+      </heat>
+      <blower_input>
+       {input air flow function} [ft^3 / sec]
+      </blower_input>
+    </ballonet>
   </gas_cell>
 </buoyant_forces>
 @endcode
 Definition of the gas cell configuration file parameters:
-- <b>type</b> - One of HYDROGEN, HELIUM or AIR.
-- <b>location</b> - Location of cell center in the aircraft's structural frame.
-                  Currently this is were the forces of the cell is applied.
-- <b>{x|y|z}_radius</b> - Radius along in the respective direction (both ends).
-- <b>{x|y|z}_width</b> - Width in the respective direction.
-- <b>NOTE:</b> A 'x', 'y', 'z'-radius/width combination must be specified.
-- <b>fullness</b> - Initial fullness of the cell, normally [0,1],
-                  values >1 initialize the cell at pressure.
-- <b>max_overpressure</b> - Maximum cell overpressure (excess is automatically
-                          valved off).
-- <b>valve_coefficient</b> - Capacity of the manual valve. The valve is
-                           considered to be located at the top of the cell. 
-- <b>NOTE:</b> The valve coefficient determine the gas flow out of the cell
-according to: dVolume/dt = ValveCoefficient * DeltaPressure;
+- <b>type</b> -
+    One of HYDROGEN, HELIUM or AIR.
+- <b>location</b> -
+    Location of cell center in the aircraft's structural frame.
+    Currently this is were the forces of the cell is applied.
+- <b>{x|y|z}_radius</b> -
+    Radius along in the respective direction (both ends).
+- <b>{x|y|z}_width</b> -
+    Width in the respective direction.
+    <b>NOTE:</b> A 'x', 'y', 'z'-radius/width combination must be specified.
+- <b>fullness</b> -
+    Initial fullness of the cell, normally [0,1],
+    values >1 initialize the cell at pressure.
+- <b>max_overpressure</b> -
+    Maximum cell overpressure (excess is automatically valved off).
+- <b>valve_coefficient</b> -
+    Capacity of the manual valve. The valve is
+    considered to be located at the top of the cell.
+    The valve coefficient determine the flow out
+    of the cell according to:
+    <i>dVolume/dt = ValveCoefficient * DeltaPressure</i>.
+- <b>heat</b> -
+    Zero or more FGFunction:s describing the heat flow from
+    the atmosphere into the gas cell.
+    Unit: [lb ft / (sec Rankine)].
+    If there are no heat transfer functions at all the gas cell
+    temperature will equal that of the surrounding atmosphere.
+    A constant function returning 0 results in adiabatic behaviour.
+- <b>ballonet</b> -
+    Zero or more ballonets, i.e. air bags inside the gas cell.
+    Ballonets are used to maintain the volume of the gas cell
+    and keep its internal pressure higher than that of the
+    surrounding environment.
+  - <b>location</b> -
+      Location of ballonet center in the aircraft's structural frame.
+  - <b>{x|y|z}_radius</b> -
+      Radius along in the respective direction (both ends).
+  - <b>{x|y|z}_width</b> -
+      Width in the respective direction.
+  - <b>max_overpressure</b> -
+      Maximum ballonet overpressure (excess is automatically valved off).
+  - <b>valve_coefficient</b> -
+      Capacity of the exit valve between the ballonet
+      and the atmosphere. The valve coefficient
+      determine the flow out of the cell according to:
+      <i>dVolume/dt = ValveCoefficient * DeltaPressure</i>.
+  - <b>heat</b> -
+      Zero or more FGFunction:s describing the heat flow from
+      the enclosing gas cell into the ballonet.
+      Unit: [lb ft / (sec Rankine)]
+  - <b>blower_input</b> -
+      One FGFunction describing the air flow into the
+      ballonet. Unit: [ft<sup>3</sup> / sec] (at the temperature and
+      pressure of the ballonet.)
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS DECLARATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
-
 class FGGasCell : public FGForce
 {
 public:
+  /** Constructor
+      @param exec Executive a pointer to the parent executive object
+      @param num  Gas cell index number. */
   FGGasCell(FGFDMExec* exec, Element* el, int num);
   ~FGGasCell();
 
+  /** Runs the gas cell model; called by BuoyantForces
+   */
   void Calculate(double dt);
-  int GetType(void) {return Type;}
+
+  /** Get the index of this gas cell
+      @return gas cell index. */
+  int GetIndex(void) {return CellNum;}
+
+  /** Get the center of gravity location of the gas cell
+      (including any ballonets)
+      @return CoG location in the structural frame. */
   const FGColumnVector3& GetXYZ(void) {return vXYZ;}
+
+  /** Get the center of gravity location of the gas cell
+      (including any ballonets)
+      @return CoG location in the structural frame. */
   double GetXYZ(int idx) {return vXYZ(idx);}
 
-  double GetMass() {return Contents * M_gas();}   // [slug]
-  FGMatrix33& GetInertia(void) {return gasCellJ;} // [slug foot淫
+  /** Get the current mass of the gas cell (including any ballonets)
+      @return gas mass in slug. */
+  double GetMass(void) {return Mass;}
+
+  /** Get the moments of inertia of the gas cell (including any ballonets)
+      @return moments of inertia matrix in slug ft<sup>2</sup>. */
+  FGMatrix33& GetInertia(void) {return gasCellJ;}
+
+  /** Get the moment due to mass of the gas cell (including any ballonets)
+
+      Note that the buoyancy of the gas cell is handled separately by the
+      FGForce part and not included here.
+      @return moment vector in lbs ft. */
+  FGColumnVector3& GetMassMoment(void) {return gasCellM;}
+
+  /** Get the current gas temperature inside the gas cell
+      @return gas temperature in Rankine. */
+  double GetTemperature(void) {return Temperature;}
+
+  /** Get the current gas pressure inside the gas cell
+      @return gas pressure in lbs / ft<sup>2</sup>. */
+  double GetPressure(void) {return Pressure;}
+
+private:
 
   enum GasType {ttUNKNOWN, ttHYDROGEN, ttHELIUM, ttAIR};
 
-private:
   GasType Type;
   string type;
   int CellNum;
@@ -154,20 +255,26 @@ private:
   double ValveCoefficient;          // [ft^4 sec / slug]
   typedef vector <FGFunction*> CoeffArray;
   CoeffArray HeatTransferCoeff;
+  typedef vector <FGBallonet*> BallonetArray;
+  BallonetArray Ballonet;
   // Variables
-  double Pressure;         // [lbs/ft淫
-  double Contents;         // [mol]
-  double Volume;           // [ft設
-  double dVolumeIdeal;     // [ft設
-  double Temperature;      // [Rankine]
-  double Buoyancy;         // [lbs] Note: Does not include the weight of the gas itself.
-  double ValveOpen;        // 0 <= ValveOpen <= 1.
-  FGMatrix33 gasCellJ;     // [slug foot淫
+  double Pressure;          // [lbs/ft淫
+  double Contents;          // [mol]
+  double Volume;            // [ft設
+  double dVolumeIdeal;      // [ft設
+  double Temperature;       // [Rankine]
+  double Buoyancy;          // [lbs] Note: Gross lift.
+                            // Does not include the weight of the gas itself.
+  double ValveOpen;         // 0 <= ValveOpen <= 1 (or higher).
+  double Mass;              // [slug]
+  FGMatrix33 gasCellJ;      // [slug foot淫
+  FGColumnVector3 gasCellM; // [lbs ft]
 
   FGAuxiliary* Auxiliary;
   FGAtmosphere* Atmosphere;
   FGPropertyManager* PropertyManager;
   FGInertial* Inertial;
+  FGMassBalance* MassBalance;
   void Debug(int from);
 
   /* Constants. */
@@ -189,7 +296,7 @@ private:
     }
   }
 
-  double Cv_gas() {                             // [??]
+  double Cv_gas() {               // [??]
     switch (Type) {
     case ttHYDROGEN:
       return 5.0/2.0;
@@ -202,6 +309,81 @@ private:
     }
   }
 
+};
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/** Models a ballonet inside a gas cell.
+    Models a ballonet inside a gas cell.
+    Not intended to be used outside FGGasCell.
+    See FGGasCell for the configuration file format.
+    @author Anders Gidenstam
+*/
+class FGBallonet : public FGJSBBase
+{
+public:
+  FGBallonet(FGFDMExec* exec, Element* el, int num, FGGasCell* parent);
+  ~FGBallonet();
+
+  /** Runs the ballonet model; called by FGGasCell
+   */
+  void Calculate(double dt);
+
+
+  /** Get the center of gravity location of the ballonet
+      @return CoG location in the structural frame. */
+  const FGColumnVector3& GetXYZ(void) {return vXYZ;}
+  /** Get the center of gravity location of the ballonet
+      @return CoG location in the structural frame. */
+  double GetXYZ(int idx) {return vXYZ(idx);}
+
+  /** Get the current mass of the ballonets
+      @return mass in slug. */
+  double GetMass(void) {return Contents * M_air;}
+
+  /** Get the moments of inertia of the ballonet
+      @return moments of inertia matrix in slug ft<sup>2</sup>. */
+  FGMatrix33& GetInertia(void) {return ballonetJ;}
+
+  /** Get the current volume of the ballonet
+      @return volume in ft<sup>3</sup>. */
+  double GetVolume(void) {return Volume;}
+  /** Get the current heat flow into the ballonet
+      @return heat flow in lbs ft / sec. */
+  double GetHeatFlow(void) {return dU;}             // [lbs ft / sec]
+
+private:
+  int CellNum;
+  // Structural constants
+  double MaxVolume;                 // [ft設
+  double MaxOverpressure;           // [lbs/ft淫
+  FGColumnVector3 vXYZ;             // [in]
+  double Xradius, Yradius, Zradius; // [ft]
+  double Xwidth, Ywidth, Zwidth;    // [ft]
+  double ValveCoefficient;          // [ft^4 sec / slug]
+  typedef vector <FGFunction*> CoeffArray;
+  CoeffArray HeatTransferCoeff;     // [lbs ft / sec]
+  FGFunction* BlowerInput;          // [ft^3 / sec]
+  FGGasCell* Parent;
+  // Variables
+  double Pressure;         // [lbs/ft淫
+  double Contents;         // [mol]
+  double Volume;           // [ft設
+  double dVolumeIdeal;     // [ft設
+  double dU;               // [lbs ft / sec]
+  double Temperature;      // [Rankine]
+  double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
+  FGMatrix33 ballonetJ;     // [slug foot淫
+
+  FGAuxiliary* Auxiliary;
+  FGAtmosphere* Atmosphere;
+  FGPropertyManager* PropertyManager;
+  FGInertial* Inertial;
+  void Debug(int from);
+
+  /* Constants. */
+  const static double R;          // [lbs ft/(mol Rankine)]
+  const static double M_air;      // [slug/mol]
+  const static double Cv_air;     // [??]
 };
 }
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
