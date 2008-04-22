@@ -1,37 +1,46 @@
 <?xml version="1.0"?>
 <runscript name="take-off test">
-  <!--
-    This run is for testing lighter-than-air aircraft.
-  -->
+ <!--
+   This run is for testing lighter-than-air aircraft.
+ -->
 
-  <use aircraft="Submarine_Scout" initialize="reset00"/>
-  <run start="0.0" end="2600" dt="0.00833333">
+ <use aircraft="Submarine_Scout" initialize="reset00"/>
+ <run start="0.0" end="2600" dt="0.00833333">
 
-   <event name="Trim">
+  <event name="Trim">
       <notify/>
       <condition>
-        sim-time-sec >= 10.0
+        sim-time-sec >= 0.0
       </condition>
       <set name="fcs/static-trim-cmd-norm"
-           value="0.70"
+           value="0.50"
            action="FG_RAMP" tc ="55.0"/>
-    </event>
-
-   <event name="Drop ballast">
+  </event>
+  <event name="Set ballonet valves">
       <notify/>
       <condition>
-        sim-time-sec >= 100.0
+        sim-time-sec >= 0.0
       </condition>
-      <set name="inertia/pointmass-weight-lbs"
-           value="1000.0"
-           action="FG_RAMP" tc ="20.0"/>
-    </event>
+      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+           value="0.15"/>
+      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+           value="0.05"/>
+  </event>
+  <event name="Drop ballast">
+      <notify/>
+      <condition>
+        sim-time-sec >= 60.0
+      </condition>
+      <set name="inertia/pointmass-weight-lbs[0]"
+           value="740.0"
+           action="FG_RAMP" tc ="30.0"/>
+  </event>
 
-    <event name="engine start">
+  <event name="engine start">
       <description>Start the engine</description>
       <notify/>
       <condition>
-        position/h-agl-ft >= 100
+        sim-time-sec >= 120.0
       </condition>
       <set name="fcs/throttle-cmd-norm"
            value="0.3" action="FG_RAMP" tc ="0.5"/>
@@ -39,40 +48,68 @@
            value="0.87" action="FG_RAMP" tc ="0.5"/>
       <set name="propulsion/magneto_cmd"    value="3"/>
       <set name="propulsion/starter_cmd"    value="1"/>
-    </event>
+  </event>
 
-    <event name="yaw damper">
+  <event name="Set ballonet valves">
+      <notify/>
+      <condition>
+        sim-time-sec >= 150.0
+      </condition>
+      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+           value="0.10"/>
+      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+           value="0.10"/>
+  </event>
+
+  <event name="yaw damper">
       <description>Rudder yaw damper</description>
       <notify/>
       <condition>
-        sim-time-sec >= 750
+        sim-time-sec >= 200
       </condition>
       <set name="ap/yaw-damper-active"      value="1"/>
       <set name="fcs/elevator-cmd-norm"     value="-0.4"/>
-    </event>
+  </event>
 
-    <event name="pitch hold">
+  <event name="pitch hold">
       <description>Pitch hold</description>
       <notify/>
       <condition>
-        sim-time-sec >= 800
+        sim-time-sec >= 200
       </condition>
       <set name="ap/pitch-hold-active"      value="0"/>
-      <set name="ap/pitch-setpoint-degrees" value="2"/>
-    </event>
-
-    <!-- event name="level out">
+      <set name="ap/pitch-setpoint-degrees" value="0"/>
+      <set name="fcs/elevator-cmd-norm"
+           value="-0.0"
+           action="FG_RAMP" tc ="1.0"/>
+  </event>
+  <event name="level out 1">
       <description>Level out</description>
       <notify/>
       <condition>
-        sim-time-sec >= 1500
+        sim-time-sec >= 500
       </condition>
       <set name="fcs/elevator-cmd-norm"
-           value="0.635"
-           action="FG_RAMP" tc ="30.0"/>
-    </event -->
+           value="0.05"
+           action="FG_RAMP" tc ="60.0"/>
+      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+           value="0.06"/>
+      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+           value="0.14"/>
+  </event>
+  <event name="level out 2">
+      <description>Level out</description>
+      <notify/>
+      <condition>
+        sim-time-sec >= 560
+      </condition>
+      <set name="buoyant_forces/gas-cell/ballonet[0]/valve_open"
+           value="0.10"/>
+      <set name="buoyant_forces/gas-cell/ballonet[1]/valve_open"
+           value="0.10"/>
+  </event>
 
-    <event name="Start turn">
+  <event name="Start turn">
       <notify/>
       <condition>
         sim-time-sec >= 1695.0
@@ -81,9 +118,9 @@
            value="0.3"/>
       <set name="ap/yaw-damper-active"
            value="0"/>
-    </event>
+  </event>
 
-    <event name="Neutral rudder">
+  <event name="Neutral rudder">
       <notify/>
       <condition>
         sim-time-sec >= 1700.0
@@ -91,44 +128,40 @@
       <set name="fcs/rudder-cmd-norm"
            value="-0.2"/>
        <set name="fcs/elevator-cmd-norm"
-           value="0.2"
+           value="0.07"
            action="FG_RAMP" tc ="30.0"/>
-   </event>
+  </event>
 
-    <event name="Opposite rudder">
+  <event name="Opposite rudder">
       <notify/>
       <condition>
         sim-time-sec >= 1770.0
       </condition>
       <set name="fcs/rudder-cmd-norm"
-           value="-1.0"/>
-    </event>
+           value="-0.5"/>
+  </event>
 
-    <event name="Neutral rudder">
+  <event name="Neutral rudder">
       <notify/>
       <condition>
-        sim-time-sec >= 1810.0
+        sim-time-sec >= 1780.0
       </condition>
       <set name="fcs/rudder-cmd-norm"
            value="0.0"/>
       <set name="ap/yaw-damper-active"
            value="1"/>
-       <set name="fcs/elevator-cmd-norm"
-           value="0.45"
-           action="FG_RAMP" tc ="60.0"/>
-    </event>
+  </event>
 
-    <event name="Time Notify" type="FG_DELTA" persistent="true">
+  <event name="Time Notify" type="FG_DELTA" persistent="true">
       <description>Output message at 100 second intervals</description>
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
-        <property>inertia/pointmass-weight-lbs</property>
-        <property>buoyant_forces/gas-cell/buoyancy-lbs</property>
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>
-    </event>
+  </event>
 
-  </run>
+ </run>
+
 </runscript>
