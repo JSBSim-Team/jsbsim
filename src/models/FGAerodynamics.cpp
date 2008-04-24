@@ -45,12 +45,8 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.18 2008/04/19 17:26:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.19 2008/04/24 12:01:48 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
-
-const unsigned NAxes=6;
-const char* AxisNames[] = { "drag", "side-force", "lift", "rolling-moment",
-                            "pitching-moment","yawing-moment" };
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
