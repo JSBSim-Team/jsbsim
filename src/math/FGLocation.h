@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.10 2008/04/18 12:15:55 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.11 2008/04/25 11:51:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.10 2008/04/18 12:15:55 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.11 2008/04/25 11:51:44 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -241,6 +241,9 @@ public:
       this class instance. The returned value is in the range between
       -90 <= lon <= 90. Latitude is positive north and negative south. */
   double GetGeodLatitudeDeg(void) const { ComputeDerived(); return radtodeg*mGeodLat; }
+
+  /** Gets the geodetic altitude in feet. */
+  double GetGeodAltitude(void) const { return GeodeticAltitude;}
 
   /** Set the latitude.
       @param latitude Latitude in rad to set.
