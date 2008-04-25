@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- $Id: Submarine_Scout.xml,v 1.3 2008/04/22 00:39:50 andgi Exp $ -->
+<!-- $Id: Submarine_Scout.xml,v 1.4 2008/04/25 23:40:09 andgi Exp $ -->
 <!--
 
   Submarine Scout airship flight model for JSBSim.
@@ -36,7 +36,7 @@
    <licenseName>GPL</licenseName>
   </license>
   <filecreationdate>2007-02-11</filecreationdate>
-  <version>$Id: Submarine_Scout.xml,v 1.3 2008/04/22 00:39:50 andgi Exp $</version>
+  <version>$Id: Submarine_Scout.xml,v 1.4 2008/04/25 23:40:09 andgi Exp $</version>
 
   <reference refID="Freeman:1932:Akron"
              author="Hugh B. Freeman"
@@ -65,7 +65,7 @@
   <documentation>
    NOTE: The center of the bow of the envelope is the origo of
          the body coordinate system.
- 	x/y/z = back/right/up
+         x/y/z = back/right/up
   </documentation>
 
   <documentation>
@@ -108,13 +108,13 @@
     Turning circle          40 seconds minimum, 230 diameter
   </documentation>
 
-  <wingarea unit="M2">  210.0 </wingarea>            <!-- Guess. -->
-  <wingspan unit="FT">   30.0 </wingspan>            <!-- Guess. -->
-  <chord unit="M">        0.0 </chord>               <!-- Totally off! -->
-  <htailarea unit="M2"> 25.270 </htailarea>
-  <htailarm unit="M">   34.1 </htailarm>             <!-- From where?! -->
-  <vtailarea unit="M2"> 12.635 </vtailarea>
-  <vtailarm unit="M">    0.0 </vtailarm>             <!-- From where?! -->
+  <wingarea unit="M2">  65.0 </wingarea>  <!-- Cross-sectional area.-->
+  <wingspan unit="M">    9.1 </wingspan>  <!-- Envelope diameter. -->
+  <chord unit="M">      43.7 </chord>     <!-- Envelope length. -->
+  <htailarea unit="M2"> 25.27 </htailarea>
+  <htailarm unit="M">   12.15 </htailarm> <!-- From CG. -->
+  <vtailarea unit="M2"> 12.64 </vtailarea>
+  <vtailarm unit="M">   12.15 </vtailarm> <!-- From CG. -->
   <!-- Total gas volume vol = 70000 ft^3 = 1982.2 m^3 -->
 
   <!-- Aerodynamic Reference Point. -->
