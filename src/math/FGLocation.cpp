@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.10 2008/04/16 13:18:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.11 2008/04/26 00:20:48 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -259,10 +259,11 @@ void FGLocation::ComputeDerivedUnconditional(void) const
   // author: I. Sofair
 
   if (a != 0.0 && b != 0.0) {
-    double c, p, q, s, t, u, v, w, z, p2, u2;
+    double c, p, q, s, t, u, v, w, z, p2, u2, r02, r0;
     double Ne, P, Q0, Q, signz0, sqrt_q; 
     p  = fabs(mECLoc(eZ))/eps2;
-    s  = (mRadius*mRadius)/(e2*eps2);
+    r02 = mECLoc(eX)*mECLoc(eX) + mECLoc(eY)*mECLoc(eY);
+    s  = r02/(e2*eps2);
     p2 = p*p;
     q  = p2 - b2 + s;
     sqrt_q = sqrt(q);
@@ -281,7 +282,8 @@ void FGLocation::ComputeDerivedUnconditional(void) const
       z  = signz0*sqrt_q*(w+sqrt(sqrt(t*t+v)-u*w-0.5*t-0.25));
       Ne = a*sqrt(1+eps2*z*z/b2);
       mGeodLat = asin((eps2+1.0)*(z/Ne));
-      GeodeticAltitude = mRadius*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
+      r0 = sqrt(r02);
+      GeodeticAltitude = r0*cos(mGeodLat) + mECLoc(eZ)*sin(mGeodLat) - a2/Ne;
     }
   }
 
