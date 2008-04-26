@@ -58,7 +58,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGLocation.cpp,v 1.11 2008/04/26 00:20:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLocation.cpp,v 1.12 2008/04/26 16:44:28 jberndt Exp $";
 static const char *IdHdr = ID_LOCATION;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,6 +160,23 @@ void FGLocation::SetRadius(double radius)
     mECLoc(eX) = radius;
   else
     mECLoc *= radius/rold;
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+void FGLocation::SetPosition(double lon, double lat, double radius)
+{
+  mCacheValid = false;
+
+  double sinLat = sin(lat);
+  double cosLat = cos(lat);
+  double sinLon = sin(lon);
+  double cosLon = cos(lon);
+  initial_longitude = lon;
+  mECLoc = FGColumnVector3( radius*cosLat*cosLon,
+                            radius*cosLat*sinLon,
+                            radius*sinLat );
+  ComputeDerived();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

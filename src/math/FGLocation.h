@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.11 2008/04/25 11:51:44 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.12 2008/04/26 16:44:28 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.11 2008/04/25 11:51:44 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.12 2008/04/26 16:44:28 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -190,6 +190,54 @@ public:
     initial_longitude = l.initial_longitude;
   }
 
+  /** Set the longitude.
+      @param longitude Longitude in rad to set.
+      Sets the longitude of the location represented with this class
+      instance to the value of the given argument. The value is meant
+      to be in rad. The latitude and the radius value are preserved
+      with this call with the exception of radius being equal to
+      zero. If the radius is previously set to zero it is changed to be
+      equal to 1.0 past this call. Longitude is positive east and negative west. */
+  void SetLongitude(double longitude);
+
+  /** Set the latitude.
+      @param latitude Latitude in rad to set.
+      Sets the latitude of the location represented with this class
+      instance to the value of the given argument. The value is meant
+      to be in rad. The longitude and the radius value are preserved
+      with this call with the exception of radius being equal to
+      zero. If the radius is previously set to zero it is changed to be
+      equal to 1.0 past this call.
+      Latitude is positive north and negative south.
+      The arguments should be within the bounds of -pi/2 <= lat <= pi/2.
+      The behavior of this function with arguments outside this range is
+      left as an exercise to the gentle reader ... */
+  void SetLatitude(double latitude);
+
+  /** Set the distance from the center of the earth.
+      @param radius Radius in ft to set.
+      Sets the radius of the location represented with this class
+      instance to the value of the given argument. The value is meant
+      to be in ft. The latitude and longitude values are preserved
+      with this call with the exception of radius being equal to
+      zero. If the radius is previously set to zero, latitude and
+      longitude is set equal to zero past this call.
+      The argument should be positive.
+      The behavior of this function called with a negative argument is
+      left as an exercise to the gentle reader ... */
+  void SetRadius(double radius);
+
+  /** Sets the longitude, latitude and the distance from the center of the earth.
+      @param lon longitude in radians
+      @param lat GEOCENTRIC latitude in radians
+      @param distance from center of earth to vehicle in feet*/
+  void SetPosition(double lon, double lat, double radius);
+
+  /** Sets the semimajor and semiminor axis lengths for this planet.
+      The eccentricity and flattening are calculated from the semimajor
+      and semiminor axis lengths */
+  void SetEllipse(double semimajor, double semiminor);
+
   /** Get the longitude.
       @return the longitude in rad of the location represented with this
       class instance. The returned values are in the range between
@@ -201,16 +249,6 @@ public:
       class instance. The returned values are in the range between
       -180 <= lon <= 180.  Longitude is positive east and negative west. */
   double GetLongitudeDeg() const { ComputeDerived(); return radtodeg*mLon; }
-
-  /** Set the longitude.
-      @param longitude Longitude in rad to set.
-      Sets the longitude of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in rad. The latitude and the radius value are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero it is changed to be
-      equal to 1.0 past this call. Longitude is positive east and negative west. */
-  void SetLongitude(double longitude);
 
   /** Get the sine of Longitude. */
   double GetSinLongitude() const { ComputeDerived(); return -mTec2l(2,1); }
@@ -245,20 +283,6 @@ public:
   /** Gets the geodetic altitude in feet. */
   double GetGeodAltitude(void) const { return GeodeticAltitude;}
 
-  /** Set the latitude.
-      @param latitude Latitude in rad to set.
-      Sets the latitude of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in rad. The longitude and the radius value are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero it is changed to be
-      equal to 1.0 past this call.
-      Latitude is positive north and negative south.
-      The arguments should be within the bounds of -pi/2 <= lat <= pi/2.
-      The behavior of this function with arguments outside this range is
-      left as an exercise to the gentle reader ... */
-  void SetLatitude(double latitude);
-
   /** Get the sine of Latitude. */
   double GetSinLatitude() const { ComputeDerived(); return -mTec2l(3,3); }
 
@@ -280,24 +304,6 @@ public:
       instance to the center of the earth in ft. The radius value is
       always positive. */
   double GetRadius() const { ComputeDerived(); return mRadius; }
-
-  /** Set the distance from the center of the earth.
-      @param radius Radius in ft to set.
-      Sets the radius of the location represented with this class
-      instance to the value of the given argument. The value is meant
-      to be in ft. The latitude and longitude values are preserved
-      with this call with the exception of radius being equal to
-      zero. If the radius is previously set to zero, latitude and
-      longitude is set equal to zero past this call.
-      The argument should be positive.
-      The behavior of this function called with a negative argument is
-      left as an exercise to the gentle reader ... */
-  void SetRadius(double radius);
-
-  /** Sets the semimajor and semiminor axis lengths for this planet.
-      The eccentricity and flattening are calculated from the semimajor
-      and semiminor axis lengths */
-  void SetEllipse(double semimajor, double semiminor);
 
   /** Transform matrix from local horizontal to earth centered frame.
       Returns a const reference to the rotation matrix of the transform from

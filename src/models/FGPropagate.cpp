@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.25 2008/03/09 08:15:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.26 2008/04/26 16:44:28 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +152,7 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
   radInv = 1.0/VehicleRadius;
 
   // Set the position lat/lon/radius
-  VState.vLocation = FGLocation( FGIC->GetLongitudeRadIC(),
+  VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
                           FGIC->GetLatitudeRadIC(),
                           FGIC->GetAltitudeFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
 
@@ -518,6 +518,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/long-gc-deg", this, &FGPropagate::GetLongitudeDeg, &FGPropagate::SetLongitudeDeg);
   PropertyManager->Tie("position/lat-geod-rad", this, &FGPropagate::GetGeodLatitudeRad);
   PropertyManager->Tie("position/lat-geod-deg", this, &FGPropagate::GetGeodLatitudeDeg);
+  PropertyManager->Tie("position/geod-alt-ft", this, &FGPropagate::GetGeodeticAltitude);
   PropertyManager->Tie("position/h-agl-ft", this,  &FGPropagate::GetDistanceAGL, &FGPropagate::SetDistanceAGL);
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
@@ -569,6 +570,7 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("position/long-gc-deg");
   PropertyManager->Untie("position/lat-geod-rad");
   PropertyManager->Untie("position/lat-geod-deg");
+  PropertyManager->Untie("position/alt-geod-ft");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");
