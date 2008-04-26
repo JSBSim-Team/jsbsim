@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.26 2008/04/26 16:44:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.27 2008/04/26 17:36:00 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,6 +108,8 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
   last2_vLocationDot.InitMatrix();
   last_vLocationDot.InitMatrix();
   vLocationDot.InitMatrix();
+
+  vOmegaLocal.InitMatrix();
 
   integrator_rotational_rate = eAdamsBashforth2;
   integrator_translational_rate = eAdamsBashforth2;
@@ -356,9 +358,9 @@ void FGPropagate::CalculatePQRdot(void)
 
 void FGPropagate::CalculateQuatdot(void)
 {
-  FGColumnVector3 vOmegaLocal( radInv*vVel(eEast),
-                              -radInv*vVel(eNorth),
-                              -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
+  vOmegaLocal.InitMatrix( radInv*vVel(eEast),
+                         -radInv*vVel(eNorth),
+                         -radInv*vVel(eEast)*VState.vLocation.GetTanLatitude() );
 
   // Compute quaternion orientation derivative on current body rates
   vQtrndot = VState.vQtrn.GetQDot( VState.vPQR - Tl2b*vOmegaLocal);
@@ -570,7 +572,7 @@ void FGPropagate::unbind(void)
   PropertyManager->Untie("position/long-gc-deg");
   PropertyManager->Untie("position/lat-geod-rad");
   PropertyManager->Untie("position/lat-geod-deg");
-  PropertyManager->Untie("position/alt-geod-ft");
+  PropertyManager->Untie("position/geod-alt-ft");
   PropertyManager->Untie("position/h-agl-ft");
   PropertyManager->Untie("position/radius-to-vehicle-ft");
   PropertyManager->Untie("metrics/runway-radius");

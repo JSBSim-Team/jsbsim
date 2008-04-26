@@ -50,7 +50,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.6 2008/04/21 16:50:43 andgi Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.7 2008/04/26 17:36:00 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -399,7 +399,7 @@ void FGGasCell::Calculate(double dt)
   // Note: This is gross buoyancy. The weight of the gas itself and
   // any ballonets is not deducted here as the effects of the gas mass
   // is handled by FGMassBalance.
-  vFn = FGColumnVector3(0.0, 0.0, - Buoyancy);
+  vFn.InitMatrix(0.0, 0.0, - Buoyancy);
 
   // Compute the inertia of the gas cell.
   // Consider the gas cell as a shape of uniform density.

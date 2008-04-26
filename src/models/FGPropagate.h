@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.23 2008/04/26 16:44:28 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.24 2008/04/26 17:36:01 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.23 2008/04/26 16:44:28 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.24 2008/04/26 17:36:01 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -482,6 +482,7 @@ private:
   FGColumnVector3 vLocation;
   FGColumnVector3 vPQRi;   // Inertial frame angular velocity
   FGColumnVector3 vOmega;  // The Earth angular velocity vector
+  FGColumnVector3 vOmegaLocal;  // The local frame angular velocity vector
   FGQuaternion vQtrndot, last_vQtrndot, last2_vQtrndot;
   FGMatrix33 Tec2b;
   FGMatrix33 Tb2ec;

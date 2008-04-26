@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.40 2008/04/20 14:13:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.41 2008/04/26 17:36:00 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,8 +315,6 @@ FGLGear::~FGLGear()
 
 FGColumnVector3& FGLGear::Force(void)
 {
-  FGColumnVector3 normal, cvel;
-  FGLocation contact, gearLoc;
   double t = Exec->GetState()->Getsim_time();
   dT = State->Getdt()*Exec->GetGroundReactions()->GetRate();
 

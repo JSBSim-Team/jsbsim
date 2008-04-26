@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.24 2008/02/27 04:18:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.25 2008/04/26 17:36:00 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,6 @@ bool FGAuxiliary::Run()
   const FGColumnVector3& vUVW = Propagate->GetUVW();
   const FGColumnVector3& vUVWdot = Propagate->GetUVWdot();
   const FGColumnVector3& vVel = Propagate->GetVel();
-  FGColumnVector3 vAircraftAccel;
 
   p = Atmosphere->GetPressure();
   rhosl = Atmosphere->GetDensitySL();
