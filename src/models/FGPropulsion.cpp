@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.21 2008/04/16 18:24:01 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.22 2008/04/27 13:56:44 dpculp Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -259,7 +259,7 @@ bool FGPropulsion::Load(Element* el)
 
   Element* tank_element = el->FindElement("tank");
   while (tank_element) {
-    Tanks.push_back(new FGTank(FDMExec, tank_element));
+    Tanks.push_back(new FGTank(FDMExec, tank_element, numTanks));
     if (Tanks.back()->GetType() == FGTank::ttFUEL) numFuelTanks++;
     else if (Tanks.back()->GetType() == FGTank::ttOXIDIZER) numOxiTanks++;
     else {cerr << "Unknown tank type specified." << endl; return false;}

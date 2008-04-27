@@ -48,14 +48,15 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.5 2008/04/16 18:24:02 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.6 2008/04/27 13:56:44 dpculp Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CLASS IMPLEMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-FGTank::FGTank(FGFDMExec* exec, Element* el)
+FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
+                  : TankNumber(tank_number)
 {
   string token;
   Element* element;
@@ -63,6 +64,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el)
   Temperature = -9999.0;
   Auxiliary = exec->GetAuxiliary();
   Radius = Capacity = Contents = Standpipe = 0.0;
+  PropertyManager = exec->GetPropertyManager();
 
   type = el->GetAttributeValue("type");
   if      (type == "FUEL")     Type = ttFUEL;
@@ -93,6 +95,11 @@ FGTank::FGTank(FGFDMExec* exec, Element* el)
     PctFull  = 0;
   }
 
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/tank[%d]/contents-lbs", TankNumber);
+  PropertyManager->Tie( property_name, (FGTank*)this, &FGTank::GetContents,
+                                       &FGTank::SetContents );
+
   if (Temperature != -9999.0)  Temperature = FahrenheitToCelsius(Temperature);
   Area = 40.0 * pow(Capacity/1975, 0.666666667);
 
@@ -103,6 +110,9 @@ FGTank::FGTank(FGFDMExec* exec, Element* el)
 
 FGTank::~FGTank()
 {
+  char property_name[80];
+  snprintf(property_name, 80, "propulsion/tank[%d]/contents-lbs", TankNumber);
+  PropertyManager->Untie( property_name );
   Debug(1);
 }
 

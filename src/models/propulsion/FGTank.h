@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.5 2008/04/16 18:24:02 dpculp Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.6 2008/04/27 13:56:44 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -136,7 +136,7 @@ CLASS DECLARATION
 class FGTank : public FGJSBBase
 {
 public:
-  FGTank(FGFDMExec* exec, Element* el);
+  FGTank(FGFDMExec* exec, Element* el, int tank_number);
   ~FGTank();
 
   double Drain(double);
@@ -144,7 +144,7 @@ public:
   int GetType(void) {return Type;}
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
-  double GetContents(void) {return Contents;}
+  double GetContents(void) const {return Contents;}
   double GetTemperature_degC(void) {return Temperature;}
   double GetTemperature(void) {return CelsiusToFahrenheit(Temperature);}
   double GetStandpipe(void) {return Standpipe;}
@@ -160,6 +160,7 @@ public:
 
 private:
   TankType Type;
+  int TankNumber;
   string type;
   FGColumnVector3 vXYZ;
   double Capacity;
@@ -171,6 +172,7 @@ private:
   double Standpipe;    
   bool  Selected;
   FGAuxiliary* Auxiliary;
+  FGPropertyManager* PropertyManager;
   void Debug(int from);
 };
 }
