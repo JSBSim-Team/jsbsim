@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.6 2008/04/27 13:56:44 dpculp Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.7 2008/04/29 04:38:47 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
   if (el->FindElement("temperature"))
     Temperature = el->FindElementValueAsNumber("temperature");
   if (el->FindElement("standpipe"))
-    Standpipe = el->FindElementValueAsNumber("standpipe");
+    Standpipe = el->FindElementValueAsNumberConvertTo("standpipe", "LBS");
 
   Selected = true;
 
