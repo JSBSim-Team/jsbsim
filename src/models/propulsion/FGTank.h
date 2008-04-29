@@ -70,7 +70,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_TANK "$Id: FGTank.h,v 1.7 2008/04/29 04:38:48 jberndt Exp $"
+#define ID_TANK "$Id: FGTank.h,v 1.8 2008/04/29 12:09:42 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -181,9 +181,27 @@ public:
   /// Destructor
   ~FGTank();
 
-  double Drain(double);
+  /** Removes fuel from the tank.
+      This function removes fuel from a tank. If the tank empties, it is
+      deselected.
+      @param used the amount of fuel used in lbs.
+      @return the remaining contents of the tank in lbs.
+  */
+  double Drain(double used);
+
+  /** Performs local, tanks-specific calculations, such as fuel temperature.
+      This function calculates the temperature of the fuel in the tank.
+      @param dt the time step for this model.
+      @return the current temperature in degrees Celsius.
+  */
   double Calculate(double dt);
+
+  /** Retrieves the type of tank: Fuel or Oxidizer.
+      @return the tank type, 0 for undefined, 1 for fuel, and 2 for oxidizer.
+
+  */
   int GetType(void) {return Type;}
+
   bool GetSelected(void) {return Selected;}
   double GetPctFull(void) {return PctFull;}
   double GetContents(void) const {return Contents;}

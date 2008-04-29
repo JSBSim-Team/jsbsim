@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.7 2008/04/29 04:38:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.8 2008/04/29 12:09:41 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -120,17 +120,20 @@ FGTank::~FGTank()
 
 double FGTank::Drain(double used)
 {
-  double shortage = Contents - used;
+  double remaining = Contents - used;
 
-  if (shortage >= 0) {
+  if (remaining >= 0) { // Reduce contents by amount used.
+
     Contents -= used;
     PctFull = 100.0*Contents/Capacity;
-  } else {
+
+  } else { // This tank must be empty.
+
     Contents = 0.0;
     PctFull = 0.0;
     Selected = false;
   }
-  return shortage;
+  return remaining;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -173,11 +176,11 @@ double FGTank::Calculate(double dt)
   double TempFlowFactor = 1.115;      // Watts/sqft/C
   double TAT = Auxiliary->GetTAT_C();
   double Tdiff = TAT - Temperature;
-  double dT = 0.0;                    // Temp change due to one surface
+  double dTemp = 0.0;                 // Temp change due to one surface
   if (fabs(Tdiff) > 0.1) {
-    dT = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
+    dTemp = (TempFlowFactor * Area * Tdiff * dt) / (Contents * HeatCapacity);
   }
-  return Temperature += (dT + dT);    // For now, assume upper/lower the same
+  return Temperature += (dTemp + dTemp);    // For now, assume upper/lower the same
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
