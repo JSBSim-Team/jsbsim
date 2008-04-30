@@ -46,7 +46,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ROCKET "$Id: FGRocket.h,v 1.5 2007/02/13 06:19:00 jberndt Exp $"
+#define ID_ROCKET "$Id: FGRocket.h,v 1.6 2008/04/30 22:38:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -90,8 +90,8 @@ CLASS DOCUMENTATION
     normalized thrust value looks roughly like this:
 
 <pre>    
-  <thrust_table name="propulsion/thrust_time" type="internal">
-    <tableData>
+ \<thrust_table name="propulsion/thrust_time" type="internal">
+   \<tableData>
       0.0   0.00
       0.2   0.91
       8.0   0.97
@@ -114,8 +114,8 @@ CLASS DOCUMENTATION
     112.0   0.46
     120.0   0.09
     132.0   0.00
-    </tableData>
-  </thrust_table>
+   \</tableData>
+ \</thrust_table>
 </pre>
 
 The left column is time, the right column is normalized thrust. Inside the
@@ -125,7 +125,7 @@ for the rocket engine to be throttle up to 1. At that time, the solid rocket
 fuel begins burning and thrust is provided.
 
     @author Jon S. Berndt
-    $Id: FGRocket.h,v 1.5 2007/02/13 06:19:00 jberndt Exp $
+    $Id: FGRocket.h,v 1.6 2008/04/30 22:38:14 dpculp Exp $
     @see FGNozzle,
     FGThruster,
     FGForce,

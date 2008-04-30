@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ELECTRIC "$Id: FGElectric.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $";
+#define ID_ELECTRIC "$Id: FGElectric.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,13 +57,15 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models and electric motor.
+/** Models an electric motor.
     FGElectric models an electric motor based on the configuration file
-    POWER_WATTS parameter.  The throttle controls motor output linearly from
-    zero to POWER_WATTS.  This power value (converted internally to horsepower)
-    is then used by FGPropeller to apply torque to the propeller.
+    \<power> parameter.  The throttle controls motor output linearly from
+    zero to \<power>.  This power value (converted internally to horsepower)
+    is then used by FGPropeller to apply torque to the propeller.  At present
+    there is no battery model available, so this motor does not consume any
+    energy.  There is no internal friction.
     @author David Culp
-    @version "$Id: FGElectric.h,v 1.4 2006/08/30 12:04:38 jberndt Exp $"
+    @version "$Id: FGElectric.h,v 1.5 2008/04/30 22:38:14 dpculp Exp $"
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

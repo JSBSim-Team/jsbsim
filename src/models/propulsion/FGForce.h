@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FORCE "$Id: FGForce.h,v 1.10 2008/01/08 12:57:03 jberndt Exp $"
+#define ID_FORCE "$Id: FGForce.h,v 1.11 2008/04/30 22:38:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -195,7 +195,7 @@ other hand, will require it to be be called only once.</p>
 
 <p>Retrieval of the computed forces and moments is done as detailed above.</p>
 <br>
-<blockquote>
+<pre>
     <p><i>CAVEAT: If the custom system is used to compute
     the wind-to-body transform, then the sign of the sideslip
     angle must be reversed when calling SetAnglesToBody().
@@ -203,8 +203,8 @@ other hand, will require it to be be called only once.</p>
     hand rule. Using the custom transform type this way
     should not be necessary, as it is already provided as a built
     in type (and the sign differences are correctly accounted for).</i>
-    <br></p>
-</blockquote>
+    </p>
+</pre>
 
 <h4>Use as a Base Type</h4>
 
@@ -215,7 +215,7 @@ and vMn, the moments, can be made directly. Otherwise, the usage is similar.<br>
 <br><br></p>
 
     @author Tony Peden
-    @version $Id: FGForce.h,v 1.10 2008/01/08 12:57:03 jberndt Exp $
+    @version $Id: FGForce.h,v 1.11 2008/04/30 22:38:14 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.9 2007/08/15 03:54:01 jberndt Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.10 2008/04/30 22:38:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -57,13 +57,59 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Propeller modeling class.
-    FGPropeller models a propeller given the tabular data for Ct and Cp
-    indexed by advance ratio "J". The data for the propeller is
-    stored in a config file named "prop_name.xml". The propeller config file
-    is referenced from the main aircraft config file in the "Propulsion" section.
-    See the constructor for FGPropeller to see what is read in and what should
-    be stored in the config file.<br>
+/** FGPropeller models a propeller given the tabular data for Ct and Cp,
+    indexed by the advance ratio "J". 
+
+<h3>Configuration File Format:</h3>
+@code
+<propeller name="{string}">
+  <ixx> {number} </ixx>
+  <diameter unit="IN"> {number} </diameter>
+  <numblades> {number} </numblades>
+  <gearratio> {number} </gearratio>
+  <minpitch> {number} </minpitch>
+  <maxpitch> {number} </maxpitch>
+  <minrpm> {number} </minrpm>
+  <maxrpm> {number} </maxrpm>
+  <reversepitch> {number} </reversepitch>
+  <sense> {1 | -1} </sense>
+  <p_factor> {number} </p_factor>
+
+  <table name="C_THRUST" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
+  <table name="C_POWER" type="internal">
+    <tableData>
+      {numbers}
+    </tableData>
+  </table>
+
+</propeller>
+@endcode
+
+<h3>Configuration Parameters:</h3>
+<pre>
+    \<ixx>           - Propeller rotational inertia.
+    \<diameter>      - Propeller disk diameter.
+    \<numblades>     - Number of blades.
+    \<gearratio>     - Ratio of (engine rpm) / (prop rpm).
+    \<minpitch>      - Minimum blade pitch angle.
+    \<maxpitch>      - Maximum blade pitch angle.
+    \<minrpm>        - Minimum rpm target for constant speed propeller.
+    \<maxrpm>        - Maximum rpm target for constant speed propeller.
+    \<reversepitch>  - Blade pitch angle for reverse.
+    \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
+                        -1=anti-clockwise as viewed from cockpit).
+    \<p_factor>      - P factor. 
+</pre>
+
+    Two tables are needed. One for coefficient of thrust (Ct) and one for
+    coefficient of power (Cp).  
+    <br>
+
     Several references were helpful, here:<ul>
     <li>Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
      Wiley & Sons, 1979 ISBN 0-471-03032-5</li>
@@ -73,7 +119,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.9 2007/08/15 03:54:01 jberndt Exp $
+    @version $Id: FGPropeller.h,v 1.10 2008/04/30 22:38:14 dpculp Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -87,7 +133,8 @@ class FGPropeller : public FGThruster {
 public:
   /** Constructor for FGPropeller.
       @param exec a pointer to the main executive object
-      @param el a pointer to the thruster config file XML element*/
+      @param el a pointer to the thruster config file XML element
+      @param num the number of this propeller */
   FGPropeller(FGFDMExec* exec, Element* el, int num = 0);
 
   /// Destructor for FGPropeller - deletes the FGTable objects

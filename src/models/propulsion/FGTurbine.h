@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.7 2006/08/30 12:04:39 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.8 2008/04/30 22:38:15 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,52 +82,69 @@ CLASS DOCUMENTATION
     Ignition is assumed to be on anytime the Cutoff control is set to false,
     therefore a seperate ignition system is not modeled.
 
-Configuration File Format
+<h3>Configuration File Format:</h3>
+@code
+ <turbine_engine name="{string}">
+  <milthrust unit="{LBS | N}"> {number} </milthrust>
+  <maxthrust unit="{LBS | N}"> {number} </maxthrust>
+  <bypassratio> {number} </bypassratio>
+  <bleed> {number} </bleed>
+  <tsfc> {number} </tsfc>
+  <atsfc> {number} </atsfc>
+  <idlen1> {number} </idlen1>
+  <idlen2> {number} </idlen2>
+  <maxn1> {number} </maxn1>
+  <maxn2> {number} </maxn2>
+  <augmented> {0 | 1} </augmented>
+  <augmethod> {0 | 1 | 2} </augmethod>
+  <injected> {0 | 1} </injected>
+ </turbine_engine>
+@endcode
+
+<h3>Definition of the turbine engine configuration file parameters:</h3>
+
 <pre>
-\<FG_TURBINE NAME="<name>">
-  MILTHRUST   \<thrust>
-  MAXTHRUST   \<thrust>
-  BYPASSRATIO \<bypass ratio>
-  TSFC        \<thrust specific fuel consumption>
-  ATSFC       \<afterburning thrust specific fuel consumption>
-  IDLEN1      \<idle N1>
-  IDLEN2      \<idle N2>
-  MAXN1       \<max N1>
-  MAXN2       \<max N2>
-  AUGMENTED   \<0|1>
-  AUGMETHOD   \<0|1>
-  INJECTED    \<0|1>
-  ...
-\</FG_TURBINE>
+  milthrust   - Maximum thrust, static, at sea level.
+  maxthrust   - Afterburning thrust, static, at sea level.
+  bypassratio - Ratio of bypass air flow to core air flow.
+  bleed       - Thrust reduction factor due to losses (0.0 to 1.0).
+  tsfc        - Thrust-specific fuel consumption at cruise, lbm/hr/lbf
+  atsfc       - Afterburning TSFC, lbm/hr/lbf
+  idlen1      - Fan rotor rpm (% of max) at idle
+  idlen2      - Core rotor rpm (% of max) at idle
+  maxn1       - Fan rotor rpm (% of max) at full throttle 
+  maxn2       - Core rotor rpm (% of max) at full throttle
+  augmented
+              0 = afterburner not installed
+              1 = afterburner installed
+  augmethod
+              0 = afterburner activated by property /engines/engine[n]/augmentation
+              1 = afterburner activated by pushing throttle above 99% position
+              2 = throttle range is expanded in the FCS, and values above 1.0 are afterburner range
+  injected
+              0 = Water injection not installed
+              1 = Water injection installed
 </pre>
-Definition of the turbine engine configuration file parameters:
+
+<h3>NOTES:</h3>  
 <pre>
-<b>MILTHRUST</b> - Maximum thrust, static, at sea level, lbf.
-<b>MAXTHRUST</b> - Afterburning thrust, static, at sea level, lbf
-[this value will be ignored when AUGMENTED is zero (false)].
-<b>BYPASSRATIO</b> - Ratio of bypass air flow to core air flow.
-<b>TSFC</b> - Thrust-specific fuel consumption, lbm/hr/lbf
-[i.e. fuel flow divided by thrust].
-<b>ATSFC</b> - Afterburning TSFC, lbm/hr/lbf
-[this value will be ignored when AUGMENTED is zero (false)]
-<b>IDLEN1</b> - Fan rotor rpm (% of max) at idle
-<b>IDLEN2</b> - Core rotor rpm (% of max) at idle
-<b>MAXN1</b> - Fan rotor rpm (% of max) at full throttle [not always 100!]
-<b>MAXN2</b> - Core rotor rpm (% of max) at full throttle [not always 100!]
-<b>AUGMENTED</b>
-  0 == afterburner not installed
-  1 == afterburner installed
-<b>AUGMETHOD</b>
-  0 == afterburner activated by property /engines/engine[n]/augmentation
-  1 == afterburner activated by pushing throttle above 99% position
-  2 == throttle range is expanded in the FCS, and values above 1.0 are afterburner range
-  [this item will be ignored when AUGMENTED == 0]
-<b>INJECTED</b>
-  0 == Water injection not installed
-  1 == Water injection installed
+    Bypass ratio is used only to estimate engine acceleration time.  The
+    effect of bypass ratio on engine efficiency is already included in
+    the TSFC value.  Feel free to set this parameter (even for turbojets) to
+    whatever value gives a desired spool-up rate. Default value is 0.
+
+    The bleed factor is multiplied by thrust to give a resulting thrust
+    after losses.  This can represent losses due to bleed, or any other cause.
+    Default value is 0.  A common value would be 0.04.
+
+    Nozzle position, for variable area exhaust nozzles, is provided for users
+    needing to drive a nozzle gauge or animate a virtual nozzle.
+
+    This model can only be used with the "direct" thruster.  See the file:
+    /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.7 2006/08/30 12:04:39 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.8 2008/04/30 22:38:15 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -140,7 +157,7 @@ public:
   /** Constructor
       @param Executive pointer to executive structure
       @param el pointer to the XML element representing the turbine engine
-      @param engine_number engine number*/
+      @param engine_number engine number  */
   FGTurbine(FGFDMExec* Executive, Element *el, int engine_number);
   /// Destructor
   ~FGTurbine();
@@ -151,6 +168,12 @@ public:
   double CalcFuelNeed(void);
   double GetPowerAvailable(void);
   double GetThrust(void) const {return Thrust;}
+  /** A lag filter.
+      Used to control the rate at which values are allowed to change.
+      @param var a pointer to a variable of type double
+      @param target the desired (target) value
+      @param accel the rate, per second, the value may increase
+      @param decel the rate, per second, the value may decrease    */
   double Seek(double* var, double target, double accel, double decel);
 
   phaseType GetPhase(void) { return phase; }

@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_THRUSTER "$Id: FGThruster.h,v 1.9 2006/08/30 12:04:39 jberndt Exp $"
+#define ID_THRUSTER "$Id: FGThruster.h,v 1.10 2008/04/30 22:38:15 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,8 +61,19 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Base class for specific thrusting devices such as propellers, nozzles, etc.
+
+<h3>reverser angle:</h3>
+
+    "Reverser angle" as used here is a way to manipulate the thrust vector,
+    along the thrust axis ONLY, during run time.  This should not be confused
+    with a thrust vectoring nozzle.  The angle is defined in radians, and is
+    used thus:  Final_thrust = cosine( reverser_angle ) * unmodified_thrust.  
+    Therefore a reverser angle of 0 results in no change, and a reverser angle
+    of 3.14 (pi) results in a completely reversed thrust vector.  An angle of
+    1.57 (pi/2) results in no thrust at all.
+ 
     @author Jon Berndt
-    @version $Id: FGThruster.h,v 1.9 2006/08/30 12:04:39 jberndt Exp $
+    @version $Id: FGThruster.h,v 1.10 2008/04/30 22:38:15 dpculp Exp $
     */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

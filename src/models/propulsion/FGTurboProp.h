@@ -46,7 +46,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGTable.h>
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.5 2006/08/30 12:04:39 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.6 2008/04/30 22:38:15 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -58,8 +58,33 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Turboprop engine model.
-
+/** Turboprop engine model.  For an example of this model in use see the file:
+    engine/engtm601.xml
+ <h3>Configuration parameters:</h3>
+<pre>
+milthrust   [LBS]
+idlen1      [%]
+maxn1       [%]
+betarangeend[%]
+    if ThrottleCmd < betarangeend/100.0 then engine power=idle, propeller pitch
+    is controled by ThrottleCmd (between MINPITCH and  REVERSEPITCH).
+    if ThrottleCmd > betarangeend/100.0 then engine power increases up to max reverse power
+reversemaxpower [%]
+    max engine power in reverse mode
+maxpower    [HP]
+psfc power specific fuel consumption [pph/HP] for N1=100%
+n1idle_max_delay [-] time constant for N1 change
+maxstartenginetime [sec]
+    after this time the automatic starting cycle is interrupted when the engine
+    doesn't start (0=automatic starting not present)
+startern1   [%]
+    when starting starter spin up engine to this spin
+ielumaxtorque [lb.ft]
+    if torque>ielumaxtorque limiters decrease the throttle
+    (ielu = Integrated Electronic Limiter Unit)
+itt_delay [-] time constant for ITT change
+    (ITT = Inter Turbine Temperature)
+</pre>
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -165,8 +190,8 @@ private:
 
   double Idle_Max_Delay;       // time delay for exponencial
   double MaxPower;             // max engine power [HP]
-  double StarterN1;	           // rotates of generator maked by starter [%]
-  double MaxStartingTime;	     // maximal time for start [s] (-1 means not used)
+  double StarterN1;	       // rotates of generator maked by starter [%]
+  double MaxStartingTime;      // maximal time for start [s] (-1 means not used)
   double Prop_RPM;             // propeller RPM
   double Velocity;
   double rho;
@@ -174,9 +199,9 @@ private:
 
   double Eng_HP;               // current engine power
 
-  double StartTime;	           // engine strating time [s] (0 when start button pushed)
+  double StartTime;	       // engine strating time [s] (0 when start button pushed)
 
-  double  ITT_Delay;	         // time delay for exponencial grow of ITT
+  double  ITT_Delay;	       // time delay for exponencial grow of ITT
   double  Eng_ITT_degC;
   double  Eng_Temperature;     // temperature inside engine
 
@@ -195,7 +220,7 @@ private:
   void unbind(void);
   void Debug(int from);
 
-  FGTable* ITT_N1; // ITT temperature depending on throttle command
+  FGTable* ITT_N1;             // ITT temperature depending on throttle command
   FGTable* EnginePowerRPM_N1;
   FGTable* EnginePowerVC;
 };
