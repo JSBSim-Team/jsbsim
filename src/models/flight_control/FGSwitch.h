@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SWITCH "$Id: FGSwitch.h,v 1.10 2007/12/30 15:31:31 jberndt Exp $"
+#define ID_SWITCH "$Id: FGSwitch.h,v 1.11 2008/05/01 01:03:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -122,8 +122,9 @@ output property of the component, addressed by the property, ap/roll-ap-autoswit
 is 0.0.  If or when the attitude hold switch is selected (property
 ap/attitude_hold takes the value 1), the value of the switch component will be
 whatever value fcs/roll-ap-error-summer is.
+
 @author Jon S. Berndt
-@version $Id: FGSwitch.h,v 1.10 2007/12/30 15:31:31 jberndt Exp $
+@version $Id: FGSwitch.h,v 1.11 2008/05/01 01:03:14 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ACTUATOR "$Id: FGActuator.h,v 1.7 2008/01/14 13:45:12 jberndt Exp $"
+#define ID_ACTUATOR "$Id: FGActuator.h,v 1.8 2008/05/01 01:03:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
 Syntax:
 
 @code
-<actuator name=”name”>
+<actuator name="name">
   <input> {[-]property} </input>
   <lag> number </lag>
   <rate_limit> number <rate_limit>
@@ -96,7 +96,7 @@ Syntax:
 Example:
 
 @code
-<actuator name=”fcs/gimbal_pitch_position”>
+<actuator name="fcs/gimbal_pitch_position">
   <input> fcs/gimbal_pitch_command </input>
   <lag> 60 </lag>
   <rate_limit> 0.085 <rate_limit> <!-- 5 degrees/sec -->
@@ -111,7 +111,7 @@ Example:
 @endcode
 
 @author Jon S. Berndt
-@version $Revision: 1.7 $
+@version $Revision: 1.8 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

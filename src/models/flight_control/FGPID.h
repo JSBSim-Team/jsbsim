@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PID "$Id: FGPID.h,v 1.3 2007/11/13 12:35:55 jberndt Exp $"
+#define ID_PID "$Id: FGPID.h,v 1.4 2008/05/01 01:03:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -69,8 +69,29 @@ CLASS DOCUMENTATION
 
 /** Encapsulates a PID control component for the flight control system.
 
+<h3>Configuration Format:</h3>
+
+@code
+<pid name="{string}">
+  <kp> {number} </kp>
+  <ki> {number} </ki>
+  <kd> {number} </kd>
+  <trigger> {string} </trigger>
+</pid>
+@endcode
+
+<h3>Configuration Parameters:</h3>
+<pre>
+
+  kp      - Proportional constant, default value 0.
+  ki      - Integrative constant, default value 0.
+  kd      - Derivative constant, default value 0.
+  trigger - Property which is used to sense wind-up, optional.
+
+</pre>
+
     @author Jon S. Berndt
-    @version $Revision: 1.3 $
+    @version $Revision: 1.4 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

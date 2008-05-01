@@ -44,7 +44,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SENSOR "$Id: FGSensor.h,v 1.9 2007/02/24 18:52:44 jberndt Exp $"
+#define ID_SENSOR "$Id: FGSensor.h,v 1.10 2008/05/01 01:03:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,10 +63,10 @@ CLASS DOCUMENTATION
 Syntax:
 
 @code
-<sensor name=”name”>
+<sensor name="name">
   <input> property </input>
   <lag> number </lag>
-  <noise variation=”PERCENT|ABSOLUTE”> number </noise>
+  <noise variation="PERCENT|ABSOLUTE"> number </noise>
   <quantization name="name">
     <bits> number </bits>
     <min> number </min>
@@ -80,10 +80,10 @@ Syntax:
 Example:
 
 @code
-<sensor name=”aero/sensor/qbar”>
+<sensor name="aero/sensor/qbar">
   <input> aero/qbar </input>
   <lag> 0.5 </lag>
-  <noise variation=”PERCENT”> 2 </noise>
+  <noise variation="PERCENT"> 2 </noise>
   <quantization name="aero/sensor/quantized/qbar">
     <bits> 12 </bits>
     <min> 0 </min>
@@ -104,7 +104,7 @@ even varying all the way from 0.95 to 1.05 in adjacent frames - whatever the del
 time.
 
 @author Jon S. Berndt
-@version $Revision: 1.9 $
+@version $Revision: 1.10 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

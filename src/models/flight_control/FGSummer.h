@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_SUMMER "$Id: FGSummer.h,v 1.4 2006/08/30 12:04:35 jberndt Exp $"
+#define ID_SUMMER "$Id: FGSummer.h,v 1.5 2008/05/01 01:03:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -72,31 +72,45 @@ CLASS DOCUMENTATION
     The Summer component sums two or more inputs. These can be pilot control
     inputs or state variables, and a bias can also be added in using the BIAS
     keyword.  The form of the summer component specification is:
-<pre>
-    \<COMPONENT NAME="name" TYPE="SUMMER">
-      INPUT \<property>
-      INPUT \<property>
-      [BIAS \<value>]
-      [?]
-      [CLIPTO \<min> \<max> 1]
-      [OUTPUT \<property>]
-    \</COMPONENT>
-</pre>
+@code
+    <summer name="{string}">
+      <input> {string} </input>
+      <input> {string} </input>
+      <bias> {number} </bias>
+      <clipto>
+         <min> {number} </min>
+         <max> {number} </max>
+      </clipto>
+      <output> {string} </output>
+    </summer>
+@endcode
+
     Note that in the case of an input property the property name may be
     immediately preceded by a minus sign. Here's an example of a summer
     component specification:
+
+@code
+    <summer name="Roll A/P Error summer">
+      <input> velocities/p-rad_sec </input>
+      <input> -fcs/roll-ap-wing-leveler </input>
+      <input> fcs/roll-ap-error-integrator </input>
+      <clipto>
+         <min> -1 </min>
+         <max>  1 </max> 
+      </clipto>
+    </summer>
+@endcode
+
 <pre>
-    \<COMPONENT NAME="Roll A/P Error summer" TYPE="SUMMER">
-      INPUT  velocities/p-rad_sec
-      INPUT -fcs/roll-ap-wing-leveler
-      INPUT  fcs/roll-ap-error-integrator
-      CLIPTO -1 1
-    \</COMPONENT>
+    Notes:
+
+    There can be only one BIAS statement per component.
+
+    There may be any number of inputs.
 </pre>
-    Note that there can be only one BIAS statement per component.
 
     @author Jon S. Berndt
-    @version $Id: FGSummer.h,v 1.4 2006/08/30 12:04:35 jberndt Exp $
+    @version $Id: FGSummer.h,v 1.5 2008/05/01 01:03:14 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,7 +122,7 @@ class FGSummer  : public FGFCSComponent
 public:
   /** Constructor.
       @param fcs a pointer to the parent FGFCS object.
-      @param AC_cfg a pointer to the configuration file object. */
+      @param element a pointer to the configuration file node. */
   FGSummer(FGFCS* fcs, Element* element);
   /// Destructor
   ~FGSummer();
