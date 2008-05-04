@@ -226,7 +226,6 @@ public:
    * an error.
    *
    * @see #startXML
-   * @see #error
    */
   virtual void endXML () {}
 
