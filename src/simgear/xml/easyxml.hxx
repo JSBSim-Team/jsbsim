@@ -72,7 +72,7 @@ public:
   /** Look up the index of an attribute by name.
    *
    * Attribute names must be unique.  This method will return
-   * an index that can be used with the {@link #getValue(const char *)}
+   * an index that can be used with the <tt>getValue(const char *name)</tt>
    * method if the attribute is found.
    *
    * @param name The name of the attribute.
@@ -92,7 +92,7 @@ public:
   /** Look up the value of an attribute by name.
    *
    * This method provides a convenient short-cut to invoking
-   * {@link #findAttribute} and {@link #getValue(const char *)}.
+   * {@link #findAttribute} and <tt>getValue(const char *name)</tt>.
    *
    * @param name The name of the attribute to look up.
    * @return The attribute's value as a string, or 0 if no
@@ -194,7 +194,7 @@ private:
  * the methods do nothing; the application must subclass the visitor
  * and override the methods for the events it's interested in.
  * All applications are required to provide an implementation
- * for the {@link #error} callback.
+ * for the error callback.
  */
 
 class XMLVisitor
