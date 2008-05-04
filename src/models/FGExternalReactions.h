@@ -50,7 +50,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.3 2008/01/13 18:56:32 jberndt Exp $"
+#define ID_EXTERNALREACTIONS "$Id: FGExternalReactions.h,v 1.4 2008/05/04 18:22:54 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,12 +82,12 @@ CLASS DOCUMENTATION
   <!-- Interface properties, a.k.a. property declarations -->
   <property> ... </property>
     
-  <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
+  <force name="name" frame="BODY | LOCAL | WIND" unit="unit">
     ...
   </force>
 
   <!-- Additional force definitions may follow -->
-  <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
+  <force name="name" frame="BODY | LOCAL | WIND" unit="unit">
     ...
   </force>
 

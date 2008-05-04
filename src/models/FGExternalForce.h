@@ -51,7 +51,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.5 2008/03/01 03:16:34 jberndt Exp $"
+#define ID_EXTERNALFORCE "$Id: FGExternalForce.h,v 1.6 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -86,19 +86,19 @@ CLASS DOCUMENTATION
     Here is the XML definition of a force (optional items are in []):
     
     @code
-    <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
+    <force name="name" frame="BODY | LOCAL | WIND">
       
       [<function> ... </function>]
 
-      <location unit="units"> <!-- location -->
-        <x> value </x>
-        <y> value </y>
-        <z> value </z>
+      <location unit="{IN | M}"> 
+        <x> {number} </x>
+        <y> {number} </y>
+        <z> {number} </z>
       </location>
-      [<direction> <!-- optional for initial direction vector -->
-        <x> value </x>
-        <y> value </y>
-        <z> value </z>
+      [<direction> <!-- optional initial direction vector -->
+        <x> {number} </x>
+        <y> {number} </y>
+        <z> {number} </z>
       </direction>]
     </force>
     @endcode

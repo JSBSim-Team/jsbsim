@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.24 2008/04/26 17:36:01 jberndt Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.25 2008/05/04 18:22:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.24 2008/04/26 17:36:01 jberndt Exp $
+    @version $Id: FGPropagate.h,v 1.25 2008/05/04 18:22:55 dpculp Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -118,15 +118,15 @@ public:
 struct VehicleState {
   /** Represents the current location of the vehicle in Earth centered Earth
       fixed (ECEF) frame.
-      @units ft */
+      units ft */
   FGLocation vLocation;
   /** The velocity vector of the vehicle with respect to the ECEF frame,
       expressed in the body system.
-      @units ft/sec */
+      units ft/sec */
   FGColumnVector3 vUVW;
   /** The angular velocity vector for the vehicle relative to the ECEF frame,
       expressed in the body frame.
-      @units rad/sec */
+      units rad/sec */
   FGColumnVector3 vPQR;
   /** The current orientation of the vehicle, that is, the orientation of the
       body frame relative to the local, vehilce-carried, NED frame. */
@@ -149,7 +149,7 @@ struct VehicleState {
       In other words, vVel(1) is Vnorth. Various convenience enumerators are defined
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eNorth=1, eEast=2, eDown=3.
-      @units ft/sec
+      units ft/sec
       @return The vehicle velocity vector with respect to the Earth centered frame,
               expressed in Local horizontal frame.
   */
@@ -162,7 +162,7 @@ struct VehicleState {
       In other words, vUVW(1) is Vx. Various convenience enumerators are defined
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eX=1, eY=2, eZ=3.
-      @units ft/sec
+      units ft/sec
       @return The body frame vehicle velocity vector in ft/sec.
   */
   const FGColumnVector3& GetUVW(void) const { return VState.vUVW; }
@@ -176,7 +176,7 @@ struct VehicleState {
       In other words, vUVWdot(1) is Ax. Various convenience enumerators are defined
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eX=1, eY=2, eZ=3.
-      @units ft/sec^2
+      units ft/sec^2
       @return Body axis translational acceleration in ft/sec^2.
   */
   const FGColumnVector3& GetUVWdot(void) const { return vUVWdot; }
@@ -190,7 +190,7 @@ struct VehicleState {
       In other words, vPQR(1) is P. Various convenience enumerators are defined
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eP=1, eQ=2, eR=3.
-      @units rad/sec
+      units rad/sec
       @return The body frame angular rates in rad/sec.
   */
   const FGColumnVector3& GetPQR(void) const {return VState.vPQR;}
@@ -205,7 +205,7 @@ struct VehicleState {
       In other words, vPQRdot(1) is Pdot. Various convenience enumerators are defined
       in FGJSBBase. The relevant enumerators for the vector returned by this call are,
       eP=1, eQ=2, eR=3.
-      @units rad/sec^2
+      units rad/sec^2
       @return The angular acceleration vector.
   */
   const FGColumnVector3& GetPQRdot(void) const {return vPQRdot;}
@@ -219,7 +219,7 @@ struct VehicleState {
       In other words, the returned vector item with subscript (1) is Phi.
       Various convenience enumerators are defined in FGJSBBase. The relevant
       enumerators for the vector returned by this call are, ePhi=1, eTht=2, ePsi=3.
-      @units radians
+      units radians
       @return The Euler angle vector, where the first item in the
               vector is the angle about the X axis, the second is the
               angle about the Y axis, and the third item is the angle
@@ -234,7 +234,7 @@ struct VehicleState {
       In other words, GetUVW(1) returns Vx. Various convenience enumerators
       are defined in FGJSBBase. The relevant enumerators for the velocity
       returned by this call are, eX=1, eY=2, eZ=3.
-      @units ft/sec
+      units ft/sec
       @param idx the index of the velocity component desired (1-based).
       @return The body frame velocity component.
   */
@@ -247,7 +247,7 @@ struct VehicleState {
       1-based. In other words, GetUVWdot(1) returns Ax. Various convenience
       enumerators are defined in FGJSBBase. The relevant enumerators for the
       acceleration returned by this call are, eX=1, eY=2, eZ=3.
-      @units ft/sec^2
+      units ft/sec^2
       @param idx the index of the acceleration component desired (1-based).
       @return The body frame acceleration component.
   */
@@ -260,7 +260,7 @@ struct VehicleState {
       is 1-based. In other words, GetVel(1) returns Vnorth. Various convenience
       enumerators are defined in FGJSBBase. The relevant enumerators for the
       velocity returned by this call are, eNorth=1, eEast=2, eDown=3.
-      @units ft/sec
+      units ft/sec
       @param idx the index of the velocity component desired (1-based).
       @return The body frame velocity component.
   */
@@ -273,7 +273,7 @@ struct VehicleState {
   /** Returns the current altitude.
       Returns the current altitude. Specifically, this function returns the
       difference between the distance to the center of the Earth, and sea level.
-      @units ft
+      units ft
       @return The current altitude above sea level in feet.
   */
   double Geth(void)   const { return VState.vLocation.GetRadius() - SeaLevelRadius; }
@@ -281,7 +281,7 @@ struct VehicleState {
   /** Returns the current altitude.
       Returns the curren altitude. Specifically, this function returns the
       difference between the distance to the center of the Earth, and sea level.
-      @units meters
+      units meters
       @return The current altitude above sea level in meters.
   */
   double Gethmeters(void) const { return Geth()*fttom;}
@@ -293,7 +293,7 @@ struct VehicleState {
       is 1-based. In other words, GetPQR(1) returns P (roll rate). Various
       convenience enumerators are defined in FGJSBBase. The relevant enumerators
       for the angular velocity returned by this call are, eP=1, eQ=2, eR=3.
-      @units rad/sec
+      units rad/sec
       @param axis the index of the angular velocity component desired (1-based).
       @return The body frame angular velocity component.
   */
@@ -307,7 +307,7 @@ struct VehicleState {
       GetPQRdot(1) returns Pdot (roll acceleration). Various convenience
       enumerators are defined in FGJSBBase. The relevant enumerators for the
       angular acceleration returned by this call are, eP=1, eQ=2, eR=3.
-      @units rad/sec^2
+      units rad/sec^2
       @param axis the index of the angular acceleration component desired (1-based).
       @return The body frame angular acceleration component.
   */
@@ -320,7 +320,7 @@ struct VehicleState {
       Phi. Various convenience enumerators are defined in FGJSBBase. The
       relevant enumerators for the Euler angle returned by this call are,
       ePhi=1, eTht=2, ePsi=3 (e.g. GetEuler(eTht) returns Theta).
-      @units radians
+      units radians
       @return An Euler angle.
   */
   double GetEuler(int axis) const { return VState.vQtrn.GetEuler(axis); }
@@ -332,7 +332,7 @@ struct VehicleState {
       with subscript (1) is Phi. Various convenience enumerators are defined in
       FGJSBBase. The relevant enumerators for the Euler angle referred to in this
       call are, ePhi=1, eTht=2, ePsi=3 (e.g. GetCosEuler(eTht) returns cos(theta)).
-      @units none
+      units none
       @return The cosine of an Euler angle.
   */
   double GetCosEuler(int idx) const { return VState.vQtrn.GetCosEuler(idx); }
@@ -344,14 +344,14 @@ struct VehicleState {
       with subscript (1) is Phi. Various convenience enumerators are defined in
       FGJSBBase. The relevant enumerators for the Euler angle referred to in this
       call are, ePhi=1, eTht=2, ePsi=3 (e.g. GetSinEuler(eTht) returns sin(theta)).
-      @units none
+      units none
       @return The sine of an Euler angle.
   */
   double GetSinEuler(int idx) const { return VState.vQtrn.GetSinEuler(idx); }
 
   /** Returns the current altitude rate.
       Returns the current altitude rate (rate of climb).
-      @units ft/sec
+      units ft/sec
       @return The current rate of change in altitude.
   */
   double Gethdot(void) const { return -vVel(eDown); }
@@ -359,7 +359,7 @@ struct VehicleState {
   /** Returns the "constant" RunwayRadius.
       The RunwayRadius parameter is set by the calling application or set to
       sea level if JSBSim is running in standalone mode.
-      @units feet
+      units feet
       @return distance of the runway from the center of the earth.
       */
   double GetRunwayRadius(void) const;

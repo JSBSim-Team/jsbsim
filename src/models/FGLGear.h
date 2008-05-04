@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.20 2008/04/26 19:16:16 jberndt Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.21 2008/05/04 18:22:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -78,7 +78,7 @@ CLASS DOCUMENTATION
     are the parameters that can be specified in the config file for modeling
     landing gear:
     <p>
-    <b><u>Physical Characteristics</u></b><br>
+    <h3>Physical Characteristics</h3>
     <ol>
     <li>X, Y, Z location, in inches in structural coordinate frame</li>
     <li>Spring constant, in lbs/ft</li>
@@ -86,7 +86,7 @@ CLASS DOCUMENTATION
     <li>Dynamic Friction Coefficient</li>
     <li>Static Friction Coefficient</li>
     </ol></p><p>
-    <b><u>Operational Properties</b></u><br>
+    <h3>Operational Properties</h3>
     <ol>
     <li>Name</li>
     <li>Steerability attribute {one of STEERABLE | FIXED | CASTERED}</li>
@@ -94,7 +94,7 @@ CLASS DOCUMENTATION
     <li>Max Steer Angle, in degrees</li>
     </ol></p>
     <p>
-    <b><u>Algorithm and Approach to Modeling</u></b><br>
+    <h3>Algorithm and Approach to Modeling</h3>
     <ol>
     <li>Find the location of the uncompressed landing gear relative to the CG of
     the aircraft. Remember, the structural coordinate frame that the aircraft is
@@ -158,8 +158,39 @@ CLASS DOCUMENTATION
     (radius to wheel crossed into the wheel force). Both of these operands are
     in body frame.</li>
     </ol>
+
+    <h3>Configuration File Format:</h3>
+@code
+        <contact type="{BOGEY | STRUCTURE}" name="{string}">
+            <location unit="{IN | M}">
+                <x> {number} </x>
+                <y> {number} </y>
+                <z> {number} </z>
+            </location>
+            <static_friction> {number} </static_friction>
+            <dynamic_friction> {number} </dynamic_friction>
+            <rolling_friction> {number} </rolling_friction>
+            <spring_coeff unit="{LBS/FT | N/M}"> {number} </spring_coeff>
+            <damping_coeff unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff>
+            <damping_coeff_rebound unit="{LBS/FT/SEC | N/M/SEC}"> {number} </damping_coeff_rebound>
+            <max_steer unit="DEG"> {number | 0 | 360} </max_steer>
+            <brake_group> {NONE | LEFT | RIGHT | CENTER | NOSE | TAIL} </brake_group>
+            <retractable>{0 | 1}</retractable>
+            <table type="{CORNERING_COEFF}">
+            </table>
+            <relaxation_velocity>
+               <rolling unit="{FT/SEC | KTS | M/S}"> {number} </rolling>
+               <side unit="{FT/SEC | KTS | M/S}"> {number} </side>
+            </relaxation_velocity>
+            <force_lag_filter>
+               <rolling> {number} </rolling>
+               <side> {number} </side>
+            </force_lag_filter>
+            <wheel_slip_filter> {number} </wheel_slip_filter>  
+        </contact>
+@endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.20 2008/04/26 19:16:16 jberndt Exp $
+    @version $Id: FGLGear.h,v 1.21 2008/05/04 18:22:55 dpculp Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -186,7 +217,8 @@ public:
   /** Constructor
       @param el a pointer to the XML element that contains the CONTACT info.
       @param Executive a pointer to the parent executive object
-      @param File a pointer to the config file instance */
+      @param number integer identifier for this instance of FGLGear
+  */
   FGLGear(Element* el, FGFDMExec* Executive, int number);
   /** Constructor
       @param lgear a reference to an existing FGLGear object     */

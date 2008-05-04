@@ -32,7 +32,7 @@
     <!-- Interface properties, a.k.a. property declarations -->
     <property> ... </property>
       
-    <force name="name" frame="BODY|LOCAL|WIND" unit="unit">
+    <force name="name" frame="BODY|LOCAL|WIND">
       
       <function> ... </function>
 
@@ -56,7 +56,7 @@
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.6 2008/03/01 03:16:34 jberndt Exp $";
+static const char *IdSrc = "$Id: FGExternalForce.cpp,v 1.7 2008/05/04 18:22:53 dpculp Exp $";
 static const char *IdHdr = ID_EXTERNALFORCE;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

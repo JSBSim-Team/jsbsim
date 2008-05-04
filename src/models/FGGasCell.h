@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_GASCELL "$Id: FGGasCell.h,v 1.5 2008/04/21 16:50:43 andgi Exp $"
+#define ID_GASCELL "$Id: FGGasCell.h,v 1.6 2008/05/04 18:22:54 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -83,42 +83,36 @@ CLASS DOCUMENTATION
 /** Models a gas cell.
     @author Anders Gidenstam
 
-<h2>Configuration File Format</h2>
+<h3>Configuration File Format:</h3>
 @code
 <buoyant_forces>
   <gas_cell type="{HYDROGEN | HELIUM | AIR}">
-    <location unit="M">
-      <x> ... </x>
-      <y> ... </y>
-      <z> ... </z>
+    <location unit="{M | IN}">
+      <x> {number} </x>
+      <y> {number} </y>
+      <z> {number} </z>
     </location>
-
-    <x_width unit="M"> ... </x_width>
-    <y_radius unit="M"> ... </y_radius>
-    <z_radius unit="M"> ... </z_radius>
-    <max_overpressure unit="Pa"> 0.0 </max_overpressure>
-    <valve_coefficient unit="M4*SEC/KG"> ... </valve_coefficient>
-
-    <fullness> ... </fullness>  
-
+    <x_width unit="{M | IN}"> {number} </x_width>
+    <y_radius unit="{M | IN}"> {number} </y_radius>
+    <z_radius unit="{M | IN}"> {number} </z_radius>
+    <max_overpressure unit="{PA | PSI}"> {number} </max_overpressure>
+    <valve_coefficient unit="{M4*SEC/KG | FT4*SEC/SLUG}"> {number} </valve_coefficient>
+    <fullness> {number} </fullness>  
     <heat>
       {heat transfer coefficients} [lbs ft / sec]
     </heat>
-
     <ballonet>
-      <location unit="M">
-        <x> ... </x>
-        <y> ... </y>
-        <z> ... </z>
+      <location unit="{M | IN}">
+        <x> {number} </x>
+        <y> {number} </y>
+        <z> {number} </z>
       </location>
-
-      <x_width unit="M"> ... </x_width>
-      <y_radius unit="M"> ... </y_radius>
-      <z_radius unit="M"> ... </z_radius>
-      <max_overpressure unit="Pa"> 300.0 </max_overpressure>
-      <valve_coefficient unit="M4*SEC/KG"> ... </valve_coefficient>
-
-      <fullness> ... </fullness>  
+      <x_width unit="{M | IN}"> {number} </x_width>
+      <y_radius unit="{M | IN}"> {number} </y_radius>
+      <z_radius unit="{M | IN}"> {number} </z_radius>
+      <max_overpressure unit="{PA | PSI}"> {number} </max_overpressure>
+      <valve_coefficient unit="{M4*SEC/KG | FT4*SEC/SLUG}"> {number} </valve_coefficient>
+      <fullness> {number} </fullness>  
       <heat>
        {heat transfer coefficients} [lb ft / (sec Rankine)]
       </heat>
@@ -129,6 +123,7 @@ CLASS DOCUMENTATION
   </gas_cell>
 </buoyant_forces>
 @endcode
+
 Definition of the gas cell configuration file parameters:
 - <b>type</b> -
     One of HYDROGEN, HELIUM or AIR.
@@ -194,6 +189,7 @@ class FGGasCell : public FGForce
 public:
   /** Constructor
       @param exec Executive a pointer to the parent executive object
+      @param el   Pointer to configuration file XML node
       @param num  Gas cell index number. */
   FGGasCell(FGFDMExec* exec, Element* el, int num);
   ~FGGasCell();
@@ -247,8 +243,8 @@ private:
   string type;
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft³]
-  double MaxOverpressure;           // [lbs/ft²]
+  double MaxVolume;                 // [ftï¿½]
+  double MaxOverpressure;           // [lbs/ftï¿½]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
@@ -258,16 +254,16 @@ private:
   typedef vector <FGBallonet*> BallonetArray;
   BallonetArray Ballonet;
   // Variables
-  double Pressure;          // [lbs/ft²]
+  double Pressure;          // [lbs/ftï¿½]
   double Contents;          // [mol]
-  double Volume;            // [ft³]
-  double dVolumeIdeal;      // [ft³]
+  double Volume;            // [ftï¿½]
+  double dVolumeIdeal;      // [ftï¿½]
   double Temperature;       // [Rankine]
   double Buoyancy;          // [lbs] Note: Gross lift.
                             // Does not include the weight of the gas itself.
   double ValveOpen;         // 0 <= ValveOpen <= 1 (or higher).
   double Mass;              // [slug]
-  FGMatrix33 gasCellJ;      // [slug foot²]
+  FGMatrix33 gasCellJ;      // [slug footï¿½]
   FGColumnVector3 gasCellM; // [lbs ft]
 
   FGAuxiliary* Auxiliary;
@@ -354,8 +350,8 @@ public:
 private:
   int CellNum;
   // Structural constants
-  double MaxVolume;                 // [ft³]
-  double MaxOverpressure;           // [lbs/ft²]
+  double MaxVolume;                 // [ftï¿½]
+  double MaxOverpressure;           // [lbs/ftï¿½]
   FGColumnVector3 vXYZ;             // [in]
   double Xradius, Yradius, Zradius; // [ft]
   double Xwidth, Ywidth, Zwidth;    // [ft]
@@ -365,14 +361,14 @@ private:
   FGFunction* BlowerInput;          // [ft^3 / sec]
   FGGasCell* Parent;
   // Variables
-  double Pressure;         // [lbs/ft²]
+  double Pressure;         // [lbs/ftï¿½]
   double Contents;         // [mol]
-  double Volume;           // [ft³]
-  double dVolumeIdeal;     // [ft³]
+  double Volume;           // [ftï¿½]
+  double dVolumeIdeal;     // [ftï¿½]
   double dU;               // [lbs ft / sec]
   double Temperature;      // [Rankine]
   double ValveOpen;        // 0 <= ValveOpen <= 1 (or higher).
-  FGMatrix33 ballonetJ;     // [slug foot²]
+  FGMatrix33 ballonetJ;     // [slug footï¿½]
 
   FGAuxiliary* Auxiliary;
   FGAtmosphere* Atmosphere;

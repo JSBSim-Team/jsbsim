@@ -57,7 +57,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.8 2008/02/16 17:22:28 jberndt Exp $"
+#define ID_AIRCRAFT "$Id: FGAircraft.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -70,13 +70,35 @@ CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 /** Encapsulates an Aircraft and its systems.
-    Owns all the parts (other classes) which make up this aircraft. This includes
+<p> Owns all the parts (other classes) which make up this aircraft. This includes
     the Engines, Tanks, Propellers, Nozzles, Aerodynamic and Mass properties,
     landing gear, etc. These constituent parts may actually run as separate
     JSBSim models themselves, but the responsibility for initializing them and
     for retrieving their force and moment contributions falls to FGAircraft.
+<p> The \<metrics> section of the aircraft configuration file is read here, and
+    the metrical information is held by this class.
+<h3>Configuration File Format for \<metrics> Section:</h3>
+@code
+    <metrics>
+        <wingarea unit="{FT2 | M2}"> {number} </wingarea>
+        <wingspan unit="{FT | M}"> {number} </wingspan>
+        <chord unit="{FT | M}"> {number} </chord>
+        <htailarea unit="{FT2 | M2}"> {number} </htailarea>
+        <htailarm unit="{FT | M}"> {number} </htailarm>
+        <vtailarea unit="{FT2 | M}"> {number} </vtailarea>
+        <vtailarm unit="{FT | M}"> {number} </vtailarm>
+        <wing_incidence unit="{RAD | DEG}"> {number} </wing_incidence>
+        <location name="{AERORP | EYEPOINT | VRP}" unit="{IN | M}">
+            <x> {number} </x>
+            <y> {number} </y>
+            <z> {number} </z>
+        </location>
+        {other location blocks}
+    </metrics>
+@endcode
+
     @author Jon S. Berndt
-    @version $Id: FGAircraft.h,v 1.8 2008/02/16 17:22:28 jberndt Exp $
+    @version $Id: FGAircraft.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $
     @see Cooke, Zyda, Pratt, and McGhee, "NPSNET: Flight Simulation Dynamic Modeling
 	   Using Quaternions", Presence, Vol. 1, No. 4, pp. 404-420  Naval Postgraduate
 	   School, January 1994

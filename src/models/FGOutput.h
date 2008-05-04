@@ -64,7 +64,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_OUTPUT "$Id: FGOutput.h,v 1.9 2007/11/12 13:13:34 jberndt Exp $"
+#define ID_OUTPUT "$Id: FGOutput.h,v 1.10 2008/05/04 18:22:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -80,29 +80,39 @@ CLASS DOCUMENTATION
     OUTPUT section definition
 
     The following specifies the way that JSBSim writes out data.
-
+<pre>
     NAME is the filename you want the output to go to
 
     TYPE can be:
       CSV         Comma separated data. If a filename is supplied then the
-                  data goes to that file. If COUT or cout is specified, the
+                  data goes to that file. If "COUT" or "cout" is specified, the
                   data goes to stdout. If the filename is a null filename the
                   data goes to stdout, as well.
-      SOCKET    Will eventually send data to a socket output, where NAME
+      SOCKET      Will eventually send data to a socket output, where NAME
                   would then be the IP address of the machine the data should
                   be sent to. DON'T USE THIS YET!
       FLIGHTGEAR  A socket is created for sending binary data packets to
                   an external instance of FlightGear for visuals.  Parameters
-                  defining the socket are given on the <output> line.
+                  defining the socket are given on the \<output> line.
+      TABULAR     Columnar data. NOT IMPLEMENTED YET!
+      TERMINAL    Output to terminal. NOT IMPLEMENTED YET!
+      NONE        Specifies to do nothing. This setting makes it easy to turn on and
+                  off the data output without having to mess with anything else.
 
-  e.g. -   <output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"></output>
-
-      TABULAR   Columnar data. NOT IMPLEMENTED YET!
-      TERMINAL  Output to terminal. NOT IMPLEMENTED YET!
-      NONE      Specifies to do nothing. THis setting makes it easy to turn on and
-                off the data output without having to mess with anything else.
-
-    The arguments that can be supplied, currently, are
+      Examples:
+</pre>
+@code
+	<output name="localhost" type="FLIGHTGEAR" port="5500" protocol="tcp" rate="10"></output>
+@endcode
+@code
+	<output name="B737_datalog.csv" type="CSV" rate="20">
+	   <property> velocities/vc-kts </property>
+	   <velocities> ON </velocities>
+	</output>
+@endcode
+<br>
+<pre>
+    The arguments that can be supplied, currently, are:
 
     RATE_IN_HZ  An integer rate in times-per-second that the data is output. This
                 value may not be *exactly* what you want, due to the dependence
@@ -110,22 +120,22 @@ CLASS DOCUMENTATION
 
     The following parameters tell which subsystems of data to output:
 
-    SIMULATION       ON|OFF
-    ATMOSPHERE       ON|OFF
-    MASSPROPS        ON|OFF
-    AEROSURFACES     ON|OFF
-    RATES            ON|OFF
-    VELOCITIES       ON|OFF
-    FORCES           ON|OFF
-    MOMENTS          ON|OFF
-    POSITION         ON|OFF
-    COEFFICIENTS     ON|OFF
-    GROUND_REACTIONS ON|OFF
-    FCS              ON|OFF
-    PROPULSION       ON|OFF
-
+    simulation       ON|OFF
+    atmosphere       ON|OFF
+    massprops        ON|OFF
+    aerosurfaces     ON|OFF
+    rates            ON|OFF
+    velocities       ON|OFF
+    forces           ON|OFF
+    moments          ON|OFF
+    position         ON|OFF
+    coefficients     ON|OFF
+    ground_reactions ON|OFF
+    fcs              ON|OFF
+    propulsion       ON|OFF
+</pre>
     NOTE that Time is always output with the data.
-    @version $Id: FGOutput.h,v 1.9 2007/11/12 13:13:34 jberndt Exp $
+    @version $Id: FGOutput.h,v 1.10 2008/05/04 18:22:55 dpculp Exp $
  */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

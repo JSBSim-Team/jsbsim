@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.14 2008/04/16 18:24:01 dpculp Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.15 2008/05/04 18:22:55 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -77,14 +77,31 @@ CLASS DOCUMENTATION
 /** Propulsion management class.
     The Propulsion class is the container for the entire propulsion system, which is
     comprised of engines, and tanks. Once the Propulsion class gets the config file,
-    it reads in information which is specific to a type of engine. Then:
+    it reads in the \<propulsion> section. Then:
 
     -# The appropriate engine type instance is created
     -# At least one tank object is created, and is linked to an engine.
 
-    At Run time each engines Calculate() method is called.
+    At Run time each engine's Calculate() method is called.
+
+    <h3>Configuration File Format:</h3>
+
+  @code
+    <propulsion>
+        <engine file="{string}">
+          ... see FGEngine, FGThruster, and class for engine type ...
+        </engine>
+        ... more engines ...
+        <tank type="{FUEL | OXIDIZER}"> 
+          ... see FGTank ...
+        </tank>
+        ... more tanks ...
+        <dump-rate unit="{LBS/MIN | KG/MIN}"> {number} </dump-rate>
+    </propulsion>
+  @endcode
+
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.14 2008/04/16 18:24:01 dpculp Exp $
+    @version $Id: FGPropulsion.h,v 1.15 2008/05/04 18:22:55 dpculp Exp $
     @see
     FGEngine
     FGTank

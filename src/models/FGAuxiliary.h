@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.8 2008/04/26 17:36:00 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.8 2008/04/26 17:36:00 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +200,7 @@ public:
   void SetAB    (double t1, double t2) { alpha=t1; beta=t2; }
   void SetGamma (double tt)            { gamma = tt;        }
 
-// Time routines, SET and GET functions
+// Time routines, SET and GET functions, used by FGMSIS atmosphere
 
   void SetDayOfYear    (int doy)    { day_of_year = doy;    }
   void SetSecondsInDay (double sid) { seconds_in_day = sid; }

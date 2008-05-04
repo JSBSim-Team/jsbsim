@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.13 2008/01/20 17:46:49 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.14 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -61,9 +61,9 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Models the standard atmosphere.
+/** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.13 2008/01/20 17:46:49 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.14 2008/05/04 18:22:53 dpculp Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -165,6 +165,7 @@ public:
       increases counterclockwise. The wind heading is returned in radians.*/
   inline double GetWindPsi(void) const { return psiw; }
 
+  /** Turbulence models available: ttStandard, ttBerndt, ttCulp, ttNone */
   inline void   SetTurbType(tType tt) {turbType = tt;}
   inline tType  GetTurbType() const {return turbType;}
 

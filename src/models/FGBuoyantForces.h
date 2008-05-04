@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.3 2008/04/21 16:50:43 andgi Exp $"
+#define ID_BUOYANTFORCES "$Id: FGBuoyantForces.h,v 1.4 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -95,7 +95,7 @@ CLASS DOCUMENTATION
         <valve_coefficient unit="M4*SEC/KG"> 0.015 </valve_coefficient>
       </gas_cell>
       
-      ...
+      ... {other gass cells} ...
       
     </buoyant_forces>
     @endcode
@@ -103,7 +103,7 @@ CLASS DOCUMENTATION
     See FGGasCell for the full configuration file format for gas cells.
 
     @author Anders Gidenstam, Jon S. Berndt
-    @Id $Revision: 1.3 $
+    @version $Id: FGBuoyantForces.h,v 1.4 2008/05/04 18:22:53 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

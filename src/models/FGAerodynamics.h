@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.12 2008/04/19 17:26:33 jberndt Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.13 2008/05/04 18:22:53 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -82,15 +82,44 @@ CLASS DOCUMENTATION
 
     @code
     <aerodynamics>
-       <axis name="{LIFT|DRAG|SIDE|ROLL|PITCH|YAW}">
+       <alphalimits unit="{RAD | DEG}">
+         <min> {number} </min>
+         <max> {number} </max>
+       </alphalimits>
+       <hysteresis_limits unit="{RAD | DEG}">
+         <min> {number} </min>
+         <max> {number} </max>
+       </hysteresis_limits>
+       <aero_ref_pt_shift_x>  
+         <function>
+           {function contents}
+         </function> 
+       </aero_ref_pt_shift_x>  
+       <function>
+         {function contents}
+       </function>
+       <axis name="{LIFT | DRAG | SIDE | ROLL | PITCH | YAW}">
          {force coefficient definitions}
        </axis>
        {additional axis definitions}
     </aerodynamics>
     @endcode
 
+    Optionally two other coordinate systems may be used.<br><br>
+    1) Body coordinate system:
+    @code
+       <axis name="{X | Y | Z}">
+    @endcode
+    <br>
+    2) Axial-Normal coordinate system:
+    @code
+       <axis name="{AXIAL | NORMAL}">
+    @endcode
+    <br>
+    Systems may NOT be combined, or a load error will occur.
+
     @author Jon S. Berndt, Tony Peden
-    @Id $Revision: 1.12 $
+    @version $Revision: 1.13 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

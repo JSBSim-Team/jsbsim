@@ -54,7 +54,7 @@ INCLUDES
 #include <math/FGColumnVector3.h>
 #include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.9 2007/12/30 14:53:08 jberndt Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.10 2008/05/04 18:22:54 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -66,7 +66,21 @@ namespace JSBSim {
 CLASS DOCUMENTATION
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/** Manages ground reactions modeling.
+/** Manages ground reactions modeling. Maintains a list of landing gear and
+    ground contact points, all instances of FGLGear.  Sums their forces and
+    moments so that these may be provided to FGPropagate.  Parses the 
+    \<ground_reactions> section of the aircraft configuration file.
+ <h3>Configuration File Format of \<ground_reactions> Section:</h3>
+@code
+    <ground_reactions>
+        <contact>
+           ... {see FGLGear for specifics of this format}
+        </contact>
+        ... {more contacts}
+    </ground_reactions>
+@endcode   
+
+
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
