@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.25 2008/04/26 17:36:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.26 2008/05/04 20:09:41 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -258,7 +258,7 @@ bool FGAuxiliary::Run()
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAuxiliary::GetHeadWind(void)
+double FGAuxiliary::GetHeadWind(void) const
 {
   double psiw,vw;
 
@@ -270,7 +270,7 @@ double FGAuxiliary::GetHeadWind(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-double FGAuxiliary::GetCrossWind(void)
+double FGAuxiliary::GetCrossWind(void) const
 {
   double psiw,vw;
 

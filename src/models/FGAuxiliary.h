@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.10 2008/05/04 20:09:41 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.9 2008/05/04 18:22:53 dpculp Exp $
+    @version $Id: FGAuxiliary.h,v 1.10 2008/05/04 20:09:41 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,14 +123,28 @@ public:
 // GET functions
 
   // Atmospheric parameters GET functions
+  /** Returns Calibrated airspeed in feet/second.*/
   double GetVcalibratedFPS(void) const { return vcas; }
+  /** Returns Calibrated airspeed in knots.*/
   double GetVcalibratedKTS(void) const { return vcas*fpstokts; }
+  /** Returns equivalent airspeed in feet/second. */
   double GetVequivalentFPS(void) const { return veas; }
+  /** Returns equivalent airspeed in knots. */
   double GetVequivalentKTS(void) const { return veas*fpstokts; }
 
-  // total pressure above is freestream total pressure for subsonic only
-  // for supersonic it is the 1D total pressure behind a normal shock
+  /** Returns the total pressure.
+      Total pressure is freestream total pressure for
+      subsonic only. For supersonic it is the 1D total pressure
+      behind a normal shock. */
   double GetTotalPressure(void) const { return pt; }
+
+  /** Returns the total temperature.
+    The total temperature ("tat", isentropic flow) is calculated:
+    @code
+    tat = sat*(1 + 0.2*Mach*Mach)
+    @endcode
+    (where "sat" is standard temperature) */
+
   double GetTotalTemperature(void) const { return tat; }
   double GetTAT_C(void) const { return tatc; }
 
@@ -180,8 +194,8 @@ public:
   double GetGamma(void)              const { return gamma;         }
   double GetGroundTrack(void)        const { return psigt;         }
 
-  double GetHeadWind(void);
-  double GetCrossWind(void);
+  double GetHeadWind(void) const;
+  double GetCrossWind(void) const;
 
 // SET functions
 
