@@ -66,7 +66,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ENGINE "$Id: FGEngine.h,v 1.8 2008/03/09 08:15:59 jberndt Exp $"
+#define ID_ENGINE "$Id: FGEngine.h,v 1.9 2008/05/04 18:51:41 dpculp Exp $"
 
 using std::string;
 using std::vector;
@@ -94,9 +94,47 @@ CLASS DOCUMENTATION
 
 /** Base class for all engines.
     This base class contains methods and members common to all engines, such as
-    logic to drain fuel from the appropriate tank, etc.
+    logic to drain fuel from the appropriate tank, etc. 
+    <br>
+    <h3>Configuration File Format:</h3>
+@code
+        <engine file="{string}">
+            <location unit="{IN | M}">
+                <x> {number} </x>
+                <y> {number} </y>
+                <z> {number} </z>
+            </location>
+            <!-- optional orientation definition -->
+            <orient unit="{RAD | DEG}">
+                <roll>  {number} </roll>
+                <pitch> {number} </pitch>
+                <yaw> {number} </yaw>
+            </orient>
+            <feed> {integer} </feed>
+            ... optional more feed tank index numbers ... 
+            <thruster file="{string}">
+                <location unit="{IN | M}">
+                    <x> {number} </x>
+                    <y> {number} </y>
+                    <z> {number} </z>
+                </location>
+                <orient unit="{RAD | DEG}">
+                    <roll> {number} </roll>
+                    <pitch> {number} </pitch>
+                    <yaw> {number} </yaw>
+                </orient>
+            </thruster>
+        </engine>
+@endcode
+<pre>
+    NOTES:
+	Engines feed from all tanks equally.
+
+	Not all thruster types can be matched with a given engine type.  See the class
+	documentation for engine and thruster classes.
+</pre>     
     @author Jon S. Berndt
-    @version $Id: FGEngine.h,v 1.8 2008/03/09 08:15:59 jberndt Exp $
+    @version $Id: FGEngine.h,v 1.9 2008/05/04 18:51:41 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
