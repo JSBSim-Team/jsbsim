@@ -49,7 +49,7 @@ SENTRY
   DEFINITIONS
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.6 2008/02/11 14:27:59 jberndt Exp $"
+#define ID_QUATERNION "$Id: FGQuaternion.h,v 1.7 2008/05/04 19:20:45 dpculp Exp $"
 
 namespace JSBSim {
 
@@ -168,7 +168,7 @@ public:
   /** Retrieves the Euler angles.
       @return a reference to the triad of euler angles corresponding
       to this quaternion rotation.
-      @units radians  */
+      units radians  */
   const FGColumnVector3& GetEuler(void) const {
     ComputeDerived();
     return mEulerAngles;
@@ -176,7 +176,7 @@ public:
 
   /** Retrieves the Euler angles.
       @param i the euler angle index.
-      @units radians.
+      units radians.
       @return a reference to the i-th euler angles corresponding
       to this quaternion rotation.
    */
@@ -189,7 +189,7 @@ public:
       @param i the euler angle index.
       @return a reference to the i-th euler angles corresponding
       to this quaternion rotation.
-      @units degrees */
+      units degrees */
   double GetEulerDeg(int i) const {
     ComputeDerived();
     return radtodeg*mEulerAngles(i);
@@ -240,8 +240,8 @@ public:
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
 
-      This function is just a shortcut for the @ref double
-      operator()(unsigned int idx) const function. It is
+      This function is just a shortcut for the <tt>double
+      operator()(unsigned int idx) const</tt> function. It is
       used internally to access the elements in a more convenient way.
 
       Note that the index given in the argument is unchecked.
@@ -255,8 +255,8 @@ public:
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
 
-      This function is just a shortcut for the @ref double&
-      operator()(unsigned int idx) function. It is
+      This function is just a shortcut for the <tt>double&
+      operator()(unsigned int idx)</tt> function. It is
       used internally to access the elements in a more convenient way.
 
       Note that the index given in the argument is unchecked.
@@ -484,7 +484,7 @@ private:
 /** Scalar multiplication.
 
     @param scalar scalar value to multiply with.
-    @param p Vector to multiply.
+    @param q Vector to multiply.
 
     Multiply the Vector with a scalar value.
 */

@@ -84,7 +84,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.7 2008/02/11 14:27:59 jberndt Exp $"
+#define ID_COLUMNVECTOR3 "$Id: FGColumnVector3.h,v 1.8 2008/05/04 19:20:45 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,7 +98,7 @@ CLASS DOCUMENTATION
 
 /** This class implements a 3 element column vector.
     @author Jon S. Berndt, Tony Peden, et. al.
-    @version $Id: FGColumnVector3.h,v 1.7 2008/02/11 14:27:59 jberndt Exp $
+    @version $Id: FGColumnVector3.h,v 1.8 2008/05/04 19:20:45 dpculp Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,8 +155,8 @@ public:
       @param idx the component index.
       Return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-      This function is just a shortcut for the @ref double
-      operator()(unsigned int idx) const function. It is
+      This function is just a shortcut for the <tt>double
+      operator()(unsigned int idx) const</tt> function. It is
       used internally to access the elements in a more convenient way.
       Note that the index given in the argument is unchecked.   */
   double Entry(unsigned int idx) const { return data[idx-1]; }
@@ -165,8 +165,8 @@ public:
       @param idx the component index.
       Return a reference to the vector entry at the given index.
       Indices are counted starting with 1.
-      This function is just a shortcut for the @ref double&
-      operator()(unsigned int idx) function. It is
+      This function is just a shortcut for the <tt>double&
+      operator()(unsigned int idx)</tt> function. It is
       used internally to access the elements in a more convenient way.
       Note that the index given in the argument is unchecked.   */
   double& Entry(unsigned int idx) { return data[idx-1]; }
@@ -213,7 +213,7 @@ public:
   FGColumnVector3 operator/(const double scalar) const;
 
   /** Cross product multiplication.
-      @param v vector to multiply with.
+      @param V vector to multiply with.
       @return The resulting vector from the cross product multiplication.
       Compute and return the cross product of the current vector with
       the given argument.   */

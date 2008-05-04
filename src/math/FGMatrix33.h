@@ -83,7 +83,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.3 2006/08/30 12:04:34 jberndt Exp $"
+#define ID_MATRIX33 "$Id: FGMatrix33.h,v 1.4 2008/05/04 19:20:45 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -216,8 +216,8 @@ public:
   }
 
   /** Read access the entries of the matrix.
-      This function is just a shortcut for the @ref double&
-      operator()(unsigned int row, unsigned int col) function. It is
+      This function is just a shortcut for the <tt>double&
+      operator()(unsigned int row, unsigned int col)</tt> function. It is
       used internally to access the elements in a more convenient way.
 
       Note that the indices given in the arguments are unchecked.
@@ -233,8 +233,8 @@ public:
   }
 
   /** Write access the entries of the matrix.
-      This function is just a shortcut for the @ref double&
-      operator()(unsigned int row, unsigned int col) function. It is
+      This function is just a shortcut for the <tt>double&
+      operator()(unsigned int row, unsigned int col)</tt> function. It is
       used internally to access the elements in a more convenient way.
 
       Note that the indices given in the arguments are unchecked.

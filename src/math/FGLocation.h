@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LOCATION "$Id: FGLocation.h,v 1.12 2008/04/26 16:44:28 jberndt Exp $"
+#define ID_LOCATION "$Id: FGLocation.h,v 1.13 2008/05/04 19:20:45 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -132,7 +132,7 @@ CLASS DOCUMENTATION
     @see W. C. Durham "Aircraft Dynamics & Control", section 2.2
 
     @author Mathias Froehlich
-    @version $Id: FGLocation.h,v 1.12 2008/04/26 16:44:28 jberndt Exp $
+    @version $Id: FGLocation.h,v 1.13 2008/05/04 19:20:45 dpculp Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -149,7 +149,7 @@ public:
       from the center of the earth.
       @param lon longitude
       @param lat GEOCENTRIC latitude
-      @param distance from center of earth to vehicle in feet*/
+      @param radius distance from center of earth to vehicle in feet*/
   FGLocation(double lon, double lat, double radius);
 
   /** Column constructor. */
@@ -230,7 +230,7 @@ public:
   /** Sets the longitude, latitude and the distance from the center of the earth.
       @param lon longitude in radians
       @param lat GEOCENTRIC latitude in radians
-      @param distance from center of earth to vehicle in feet*/
+      @param radius distance from center of earth to vehicle in feet*/
   void SetPosition(double lon, double lat, double radius);
 
   /** Sets the semimajor and semiminor axis lengths for this planet.
@@ -327,7 +327,7 @@ public:
 
   /** Conversion from Local frame coordinates to a location in the
       earth centered and fixed frame.
-      @parm lvec Vector in the local horizontal coordinate frame
+      @param lvec Vector in the local horizontal coordinate frame
       @return The location in the earth centered and fixed frame */
   FGLocation LocalToLocation(const FGColumnVector3& lvec) const {
     ComputeDerived(); return mTl2ec*lvec + mECLoc;
@@ -335,7 +335,7 @@ public:
 
   /** Conversion from a location in the earth centered and fixed frame
       to local horizontal frame coordinates.
-      @parm ecvec Vector in the earth centered and fixed frame
+      @param ecvec Vector in the earth centered and fixed frame
       @return The vector in the local horizontal coordinate frame */
   FGColumnVector3 LocationToLocal(const FGColumnVector3& ecvec) const {
     ComputeDerived(); return mTec2l*(ecvec - mECLoc);
@@ -361,8 +361,8 @@ public:
       @param idx the component index.
       @return the value of the matrix entry at the given index.
       Indices are counted starting with 1.
-      This function is just a shortcut for the @ref double
-      operator()(unsigned int idx) const function. It is
+      This function is just a shortcut for the <tt>double
+      operator()(unsigned int idx) const</tt> function. It is
       used internally to access the elements in a more convenient way.
       Note that the index given in the argument is unchecked. */
   double Entry(unsigned int idx) const { return mECLoc.Entry(idx); }
