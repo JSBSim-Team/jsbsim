@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.49 2008/04/20 12:43:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.50 2008/05/11 16:35:43 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -382,6 +382,7 @@ bool FGFDMExec::Run(void)
   Frame++;
   if (!Holding()) State->IncrTime();
   if (Terminate) success = false;
+
   return (success);
 }
 

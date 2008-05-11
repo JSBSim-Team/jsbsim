@@ -63,7 +63,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: JSBSim.cpp,v 1.39 2008/04/26 17:36:00 jberndt Exp $";
+static const char *IdSrc = "$Id: JSBSim.cpp,v 1.40 2008/05/11 16:35:44 jberndt Exp $";
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 GLOBAL DATA
@@ -350,22 +350,7 @@ int main(int argc, char* argv[])
   }
 
   result = FDMExec->Run();  // MAKE AN INITIAL RUN
-/*
-  JSBSim::FGColumnVector3 positionVector(
-    -2413526.0 / 0.3048, 3772067.0 / 0.3048, 4526612.0 / 0.3048);
-  JSBSim::FGLocation location(positionVector);
-  location.SetEllipse(20925646.3255, 20855486.5951);
 
-  std::cout 
-    << "  Longitude (deg): " << location.GetLongitudeDeg() << endl
-    << "  Geocentric Latitude (deg): " << location.GetLatitudeDeg() << endl
-    << "  Geodetic Latitude (deg): " << location.GetGeodLatitudeDeg() << endl
-    << "  Geodetic Altitude (M): " << location.GetGeodAltitude() * 0.3048 << endl
-    << "  Radius (M): " << location.GetRadius() * 0.3048 << endl
-    << std::endl;
-
-  exit(0);
-*/
   if (suspend) FDMExec->Hold();
 
   JSBSim::FGJSBBase::Message* msg;

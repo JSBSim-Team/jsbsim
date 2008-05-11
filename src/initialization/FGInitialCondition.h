@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.11 2008/01/13 18:56:31 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.12 2008/05/11 16:35:44 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.11 2008/01/13 18:56:31 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.12 2008/05/11 16:35:44 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +243,9 @@ public:
   /** Resets the IC data structure to new values
       @param u, v, w, ... **/
   void ResetIC(double u0, double v0, double w0, double p0, double q0, double r0,
-               double alpha0, double beta0, double phi0, double theta0, double psi0, double gamma0);
+               double alpha0, double beta0, double phi0, double theta0, double psi0,
+               double latitudeRad0, double longitudeRad0, double altitudeAGL0,
+               double gamma0);
 
   /** Sets the roll angle initial condition in degrees.
       @param phi roll angle in degrees */
@@ -628,6 +630,7 @@ private:
   bool getMachFromVcas(double *Mach,double vcas);
 
   double GammaEqOfTheta(double Theta);
+  void InitializeIC(void);
   double GammaEqOfAlpha(double Alpha);
   double calcVcas(double Mach);
   void calcUVWfromNED(void);

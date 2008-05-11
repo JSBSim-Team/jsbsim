@@ -71,39 +71,16 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.19 2008/03/12 13:26:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.20 2008/05/11 16:35:44 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
 
-FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec)
+FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
 {
-  vt=vc=ve=vg=0;
-  mach=0;
-  alpha=beta=gamma=0;
-  theta=phi=psi=0;
-  altitude=hdot=0;
-  latitude=longitude=0;
-  u=v=w=0;
-  p=q=r=0;
-  uw=vw=ww=0;
-  vnorth=veast=vdown=0;
-  wnorth=weast=wdown=0;
-  whead=wcross=0;
-  wdir=wmag=0;
-  lastSpeedSet=setvt;
-  lastWindSet=setwned;
-  sea_level_radius = FDMExec->GetInertial()->GetRefRadius();
-  radius_to_vehicle = FDMExec->GetInertial()->GetRefRadius();
-  terrain_altitude = 0;
-
-  targetNlfIC = 1.0;
-
-  salpha=sbeta=stheta=sphi=spsi=sgamma=0;
-  calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
+  InitializeIC();
 
   if(FDMExec != NULL ) {
-    fdmex=FDMExec;
     fdmex->GetPropagate()->Seth(altitude);
     fdmex->GetAtmosphere()->Run();
     PropertyManager=fdmex->GetPropertyManager();
@@ -125,14 +102,24 @@ FGInitialCondition::~FGInitialCondition()
 
 //******************************************************************************
 
-void FGInitialCondition::ResetIC(double u0, double v0, double w0, double p0, double q0, double r0,
-                                 double alpha0, double beta0, double phi0, double theta0, double psi0, double gamma0)
+void FGInitialCondition::ResetIC(double u0, double v0, double w0,
+                                 double p0, double q0, double r0,
+                                 double alpha0, double beta0,
+                                 double phi0, double theta0, double psi0,
+                                 double latRad0, double lonRad0, double altAGLFt0,
+                                 double gamma0)
 {
+  InitializeIC();
 
-  u=u0; v=v0; w=w0;
-  p=p0; q=q0; r=r0;
-  alpha=alpha0; beta=beta0; gamma=gamma0;
-  theta=theta0; phi=phi0; psi=psi0;
+  u = u0;  v = v0;  w = w0;
+  p = p0;  q = q0;  r = r0;
+  alpha = alpha0;  beta = beta0;
+  phi = phi0;  theta = theta0;  psi = psi0;
+  gamma = gamma0;
+
+  latitude = latRad0;
+  longitude = lonRad0;
+  SetAltitudeAGLFtIC(altAGLFt0);
 
   cphi   = cos(phi);   sphi   = sin(phi);   // phi, rad
   ctheta = cos(theta); stheta = sin(theta); // theta, rad
@@ -151,6 +138,34 @@ void FGInitialCondition::ResetIC(double u0, double v0, double w0, double p0, dou
 
   uw=_vWIND_NED(1); vw=_vWIND_NED(2); ww=_vWIND_NED(3);
 
+}
+
+//******************************************************************************
+
+void FGInitialCondition::InitializeIC(void)
+{
+  vt=vc=ve=vg=0;
+  mach=0;
+  alpha=beta=gamma=0;
+  theta=phi=psi=0;
+  altitude=hdot=0;
+  latitude=longitude=0;
+  u=v=w=0;
+  p=q=r=0;
+  uw=vw=ww=0;
+  vnorth=veast=vdown=0;
+  wnorth=weast=wdown=0;
+  whead=wcross=0;
+  wdir=wmag=0;
+  lastSpeedSet=setvt;
+  lastWindSet=setwned;
+  radius_to_vehicle = sea_level_radius = fdmex->GetInertial()->GetRefRadius();
+  terrain_altitude = 0;
+
+  targetNlfIC = 1.0;
+
+  salpha=sbeta=stheta=sphi=spsi=sgamma=0;
+  calpha=cbeta=ctheta=cphi=cpsi=cgamma=1;
 }
 
 //******************************************************************************

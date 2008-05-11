@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.27 2008/04/26 17:36:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.28 2008/05/11 16:35:44 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -150,13 +150,14 @@ void FGPropagate::SetInitialState(const FGInitialCondition *FGIC)
 {
   SeaLevelRadius = FGIC->GetSeaLevelRadiusFtIC();
   RunwayRadius = SeaLevelRadius;
-  VehicleRadius = GetRadius();
-  radInv = 1.0/VehicleRadius;
 
   // Set the position lat/lon/radius
   VState.vLocation.SetPosition( FGIC->GetLongitudeRadIC(),
                           FGIC->GetLatitudeRadIC(),
                           FGIC->GetAltitudeFtIC() + FGIC->GetSeaLevelRadiusFtIC() );
+
+  VehicleRadius = GetRadius();
+  radInv = 1.0/VehicleRadius;
 
   // Set the Orientation from the euler angles
   VState.vQtrn = FGQuaternion( FGIC->GetPhiRadIC(),
