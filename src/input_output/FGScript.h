@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FGSCRIPT "$Id: FGScript.h,v 1.10 2007/10/25 11:41:22 jberndt Exp $"
+#define ID_FGSCRIPT "$Id: FGScript.h,v 1.11 2008/05/11 18:15:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -157,7 +157,7 @@ CLASS DOCUMENTATION
     comes the &quot;run&quot; section, where the conditions are
     described in &quot;event&quot; clauses.</p>
     @author Jon S. Berndt
-    @version "$Id: FGScript.h,v 1.10 2007/10/25 11:41:22 jberndt Exp $"
+    @version "$Id: FGScript.h,v 1.11 2008/05/11 18:15:52 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -183,6 +183,10 @@ public:
       scripting is enabled.
       @return false if script should exit (i.e. if time limits are violated */
   bool RunScript(void);
+
+  void ResetEvents(void) {
+    for (int i=0; i<Events.size(); i++) Events[i].reset();
+  }
 
 private:
   enum eAction {
@@ -229,6 +233,13 @@ private:
       Name = "";
       StartTime = 0.0;
       TimeSpan = 0.0;
+    }
+
+    void reset(void) {
+      Triggered = false;
+      PrevTriggered = false;
+      Notified = false;
+      StartTime = 0.0;
     }
   };
 

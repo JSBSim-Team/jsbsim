@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.38 2008/05/11 16:35:44 jberndt Exp $"
+#define ID_FDMEXEC "$Id: FGFDMExec.h,v 1.39 2008/05/11 18:15:52 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -167,7 +167,7 @@ CLASS DOCUMENTATION
                                 property actually maps toa function call of DoTrim().
 
     @author Jon S. Berndt
-    @version $Revision: 1.38 $
+    @version $Revision: 1.39 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -292,6 +292,8 @@ public:
   inline FGGroundCallback* GetGroundCallback(void) {return GroundCallback;}
   /// Returns the FGState pointer.
   inline FGState* GetState(void)              {return State;}
+  /// Retrieves the script object
+  inline FGScript* GetScript(void) {return Script;}
   // Returns a pointer to the FGInitialCondition object
   inline FGInitialCondition* GetIC(void)      {return IC;}
   // Returns a pointer to the FGTrim object
