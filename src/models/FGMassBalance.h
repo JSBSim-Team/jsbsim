@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.8 2008/05/04 18:22:55 dpculp Exp $"
+#define ID_MASSBALANCE "$Id: FGMassBalance.h,v 1.9 2008/05/12 04:37:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONSS
@@ -167,9 +167,6 @@ public:
   FGMatrix33& GetJinv(void) {return mJinv;}
   void SetAircraftBaseInertias(FGMatrix33 BaseJ) {baseJ = BaseJ;}
 
-  void bind(void);
-  void unbind(void);
-
 private:
   double Weight;
   double EmptyWeight;
@@ -196,6 +193,7 @@ private:
 
   vector <struct PointMass*> PointMasses;
 
+  void bind(void);
   void Debug(int from);
 };
 }

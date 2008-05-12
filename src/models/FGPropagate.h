@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.25 2008/05/04 18:22:55 dpculp Exp $"
+#define ID_PROPAGATE "$Id: FGPropagate.h,v 1.26 2008/05/12 04:37:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -88,7 +88,7 @@ CLASS DOCUMENTATION
     @endcode
 
     @author Jon S. Berndt, Mathias Froehlich
-    @version $Id: FGPropagate.h,v 1.25 2008/05/04 18:22:55 dpculp Exp $
+    @version $Id: FGPropagate.h,v 1.26 2008/05/12 04:37:13 jberndt Exp $
   */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -465,9 +465,6 @@ struct VehicleState {
   void CalculateLocationdot(void);
   void CalculateUVWdot(void);
 
-  void bind(void);
-  void unbind(void);
-
 private:
 
 // state vector
@@ -502,6 +499,7 @@ private:
   int integrator_rotational_position;
   int integrator_translational_position;
 
+  void bind(void);
   void Debug(int from);
 };
 }

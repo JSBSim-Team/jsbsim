@@ -61,7 +61,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGEngine.cpp,v 1.17 2008/03/09 08:15:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGEngine.cpp,v 1.18 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_ENGINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -151,9 +151,6 @@ FGEngine::FGEngine(FGFDMExec* exec, Element* engine_element, int engine_number)
 FGEngine::~FGEngine()
 {
   delete Thruster;
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/engine[%d]/set-running", EngineNumber);
-  PropertyManager->Untie( property_name );
   Debug(1);
 }
 

@@ -56,7 +56,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFCS.cpp,v 1.39 2008/05/11 00:23:59 dpculp Exp $";
+static const char *IdSrc = "$Id: FGFCS.cpp,v 1.40 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_FCS;
 
 #if defined(WIN32) && !defined(__CYGWIN__)
@@ -90,12 +90,6 @@ FGFCS::FGFCS(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGFCS::~FGFCS()
 {
-  if (PropertyManager->HasNode("fcs")) unbind( PropertyManager->GetNode("fcs") );
-  if (PropertyManager->HasNode("ap")) unbind( PropertyManager->GetNode("ap") );
-  if (PropertyManager->HasNode("systems")) unbind( PropertyManager->GetNode("systems") );
-  PropertyManager->Untie( "gear/gear-cmd-norm" );
-  PropertyManager->Untie( "gear/gear-pos-norm" );
-
   ThrottleCmd.clear();
   ThrottlePos.clear();
   MixtureCmd.clear();
@@ -889,20 +883,6 @@ void FGFCS::bindModel(void)
     if (GroundReactions->GetGearUnit(i)->GetSteerable()) {
       snprintf(tmp,80,"fcs/steer-pos-deg[%u]",i);
       PropertyManager->Tie( tmp, this, i, &FGFCS::GetSteerPosDeg, &FGFCS::SetSteerPosDeg);
-    }
-  }
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGFCS::unbind(FGPropertyManager *node)
-{
-  int N = node->nChildren();
-  for (int i=0; i<N; i++) {
-    if (node->getChild(i)->nChildren() ) {
-      unbind( (FGPropertyManager*)node->getChild(i) );
-    } else if ( node->getChild(i)->isTied() ) {
-      node->getChild(i)->untie();
     }
   }
 }

@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.12 2008/05/11 16:35:44 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.13 2008/05/12 04:37:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -193,7 +193,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.12 2008/05/11 16:35:44 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.13 2008/05/12 04:37:10 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -639,11 +639,9 @@ private:
   bool findInterval(double x,double guess);
   bool solve(double *y, double x);
   void bind(void);
-  void unbind(void);
   void Debug(int from);
 
   string init_file_name;
-
 };
 }
 #endif

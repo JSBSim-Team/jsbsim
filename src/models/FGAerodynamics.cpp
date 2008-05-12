@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.19 2008/04/24 12:01:48 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAerodynamics.cpp,v 1.20 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_AERODYNAMICS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,8 +105,6 @@ FGAerodynamics::~FGAerodynamics()
     delete variables[i];
 
   delete AeroRPShift;
-
-  unbind();
 
   Debug(1);
 }
@@ -506,31 +504,6 @@ void FGAerodynamics::bind(void)
                         &FGAerodynamics::GetStallWarn);
   PropertyManager->Tie("aero/stall-hyst-norm", this,
                         &FGAerodynamics::GetHysteresisParm);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAerodynamics::unbind(void)
-{
-  PropertyManager->Untie("forces/fbx-aero-lbs");
-  PropertyManager->Untie("forces/fby-aero-lbs");
-  PropertyManager->Untie("forces/fbz-aero-lbs");
-  PropertyManager->Untie("moments/l-aero-lbsft");
-  PropertyManager->Untie("moments/m-aero-lbsft");
-  PropertyManager->Untie("moments/n-aero-lbsft");
-  PropertyManager->Untie("forces/fwx-aero-lbs");
-  PropertyManager->Untie("forces/fwy-aero-lbs");
-  PropertyManager->Untie("forces/fwz-aero-lbs");
-  PropertyManager->Untie("forces/lod-norm");
-  PropertyManager->Untie("aero/cl-squared");
-  PropertyManager->Untie("aero/qbar-area");
-  PropertyManager->Untie("aero/alpha-max-rad");
-  PropertyManager->Untie("aero/alpha-min-rad");
-  PropertyManager->Untie("aero/bi2vel");
-  PropertyManager->Untie("aero/ci2vel");
-  PropertyManager->Untie("aero/alpha-wing-rad");
-  PropertyManager->Untie("aero/stall-hyst-norm");
-  PropertyManager->Untie("systems/stall-warn-norm");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

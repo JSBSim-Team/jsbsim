@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.41 2008/04/26 17:36:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.42 2008/05/12 04:37:12 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -307,7 +307,6 @@ FGLGear::FGLGear(const FGLGear& lgear)
 
 FGLGear::~FGLGear()
 {
-  unbind();
   Debug(1);
 }
 
@@ -715,28 +714,6 @@ void FGLGear::bind(void)
     Exec->GetPropertyManager()->Tie( property_name, &GearPos );
   }
 
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGLGear::unbind(void)
-{
-  char property_name[80];
-  if (eContactType == ctBOGEY) {
-    snprintf(property_name, 80, "gear/unit[%d]/slip-angle-deg", GearNumber);
-    Exec->GetPropertyManager()->Untie( property_name );
-    snprintf(property_name, 80, "gear/unit[%d]/WOW", GearNumber);
-    Exec->GetPropertyManager()->Untie( property_name );
-    snprintf(property_name, 80, "gear/unit[%d]/wheel-speed-fps", GearNumber);
-    Exec->GetPropertyManager()->Untie( property_name );
-    snprintf(property_name, 80, "gear/unit[%d]/z-position", GearNumber);
-    Exec->GetPropertyManager()->Untie( property_name );
-  }
-
-  if( isRetractable ) {
-    snprintf(property_name, 80, "gear/unit[%d]/pos-norm", GearNumber);
-    Exec->GetPropertyManager()->Untie( property_name );
-  }
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

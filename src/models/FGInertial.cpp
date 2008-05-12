@@ -42,7 +42,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInertial.cpp,v 1.6 2008/02/27 03:27:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInertial.cpp,v 1.7 2008/05/12 04:37:12 jberndt Exp $";
 static const char *IdHdr = ID_INERTIAL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -76,7 +76,6 @@ FGInertial::FGInertial(FGFDMExec* fgex) : FGModel(fgex)
 
 FGInertial::~FGInertial(void)
 {
-  unbind();
   Debug(1);
 }
 
@@ -108,13 +107,6 @@ double FGInertial::GetGAccel(double r) const
 void FGInertial::bind(void)
 {
   PropertyManager->Tie("position/epa-rad", this, &FGInertial::GetEarthPositionAngle);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGInertial::unbind(void)
-{
-  PropertyManager->Untie("position/epa-rad");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.22 2008/04/27 13:56:44 dpculp Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.23 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -98,7 +98,6 @@ FGPropulsion::~FGPropulsion()
   Engines.clear();
   for (unsigned int i=0; i<Tanks.size(); i++) delete Tanks[i];
   Tanks.clear();
-  unbind();
   Debug(1);
 }
 
@@ -604,33 +603,6 @@ void FGPropulsion::bind(void)
   PropertyManager->Tie("moments/n-prop-lbsft", this,3,
                        (PMF)&FGPropulsion::GetMoments);
 
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropulsion::unbind(void)
-{
-  if (!IsBound) return;
-
-  if (HaveTurbineEngine) {
-    PropertyManager->Untie("propulsion/starter_cmd");
-    PropertyManager->Untie("propulsion/cutoff_cmd");
-  }
-  if (HavePistonEngine) {
-    PropertyManager->Untie("propulsion/starter_cmd");
-    PropertyManager->Untie("propulsion/magneto_cmd");
-  }
-  PropertyManager->Untie("propulsion/active_engine");
-  PropertyManager->Untie("propulsion/total-fuel-lbs");
-  PropertyManager->Untie("propulsion/refuel");
-  PropertyManager->Untie("propulsion/fuel_dump");
-
-  PropertyManager->Untie("forces/fbx-prop-lbs");
-  PropertyManager->Untie("forces/fby-prop-lbs");
-  PropertyManager->Untie("forces/fbz-prop-lbs");
-  PropertyManager->Untie("moments/l-prop-lbsft");
-  PropertyManager->Untie("moments/m-prop-lbsft");
-  PropertyManager->Untie("moments/n-prop-lbsft");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

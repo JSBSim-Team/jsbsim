@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.15 2008/05/04 18:22:55 dpculp Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.16 2008/05/12 04:37:13 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +101,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.15 2008/05/04 18:22:55 dpculp Exp $
+    @version $Id: FGPropulsion.h,v 1.16 2008/05/12 04:37:13 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -199,9 +199,6 @@ public:
   void SetFuelFreeze(bool f);
   FGMatrix33& CalculateTankInertias(void);
 
-  void bind();
-  void unbind();
-
 private:
   vector <FGEngine*>   Engines;
   vector <FGTank*>     Tanks;
@@ -229,6 +226,7 @@ private:
   bool HaveRocketEngine;
   bool HaveElectricEngine;
 
+  void bind();
   void Debug(int from);
 };
 }

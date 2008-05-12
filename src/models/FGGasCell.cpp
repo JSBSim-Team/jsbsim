@@ -50,7 +50,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.7 2008/04/26 17:36:00 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGasCell.cpp,v 1.8 2008/05/12 04:37:12 jberndt Exp $";
 static const char *IdHdr = ID_GASCELL;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -253,38 +253,11 @@ FGGasCell::~FGGasCell()
 {
   unsigned int i;
 
-  for (i = 0; i < HeatTransferCoeff.size(); i++) {
-    delete HeatTransferCoeff[i];
-  }
+  for (i = 0; i < HeatTransferCoeff.size(); i++) delete HeatTransferCoeff[i];
   HeatTransferCoeff.clear();
-  for (i = 0; i < Ballonet.size(); i++) {
-    delete Ballonet[i];
-  }
-  Ballonet.clear();
 
-  // Release relevant properties
-  char property_name[80];
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/max_volume-ft3",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/temp-R",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/pressure-psf",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/volume-ft3",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/buoyancy-lbs",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/contents-mol",
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80, "buoyant_forces/gas-cell[%d]/valve_open",
-           CellNum);
-  PropertyManager->Untie( property_name );
+  for (i = 0; i < Ballonet.size(); i++) delete Ballonet[i];
+  Ballonet.clear();
 
   Debug(1);
 }
@@ -727,45 +700,11 @@ FGBallonet::~FGBallonet()
 {
   unsigned int i;
 
-  for (i = 0; i < HeatTransferCoeff.size(); i++) {
-    delete HeatTransferCoeff[i];
-  }
+  for (i = 0; i < HeatTransferCoeff.size(); i++) delete HeatTransferCoeff[i];
   HeatTransferCoeff.clear();
+
   delete BlowerInput;
   BlowerInput = NULL;
-
-  // Release relevant properties
-  char property_name[80];
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/max_volume-ft3",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/temp-R",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/pressure-psf",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/volume-ft3",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/contents-mol",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
-  snprintf(property_name, 80,
-           "buoyant_forces/gas-cell[%d]/ballonet[%d]/valve_open",
-           Parent->GetIndex(),
-           CellNum);
-  PropertyManager->Untie( property_name );
 
   Debug(1);
 }

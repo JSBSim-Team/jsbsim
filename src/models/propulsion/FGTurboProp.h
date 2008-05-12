@@ -46,7 +46,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGTable.h>
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.6 2008/04/30 22:38:15 dpculp Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.7 2008/05/12 04:37:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -217,7 +217,6 @@ private:
   void SetDefaults(void);
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(void);
-  void unbind(void);
   void Debug(int from);
 
   FGTable* ITT_N1;             // ITT temperature depending on throttle command

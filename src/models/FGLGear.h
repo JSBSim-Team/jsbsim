@@ -53,7 +53,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_LGEAR "$Id: FGLGear.h,v 1.21 2008/05/04 18:22:55 dpculp Exp $"
+#define ID_LGEAR "$Id: FGLGear.h,v 1.22 2008/05/12 04:37:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -190,7 +190,7 @@ CLASS DOCUMENTATION
         </contact>
 @endcode
     @author Jon S. Berndt
-    @version $Id: FGLGear.h,v 1.21 2008/05/04 18:22:55 dpculp Exp $
+    @version $Id: FGLGear.h,v 1.22 2008/05/12 04:37:12 jberndt Exp $
     @see Richard E. McFarland, "A Standard Kinematic Model for Flight Simulation at
      NASA-Ames", NASA CR-2497, January 1975
     @see Barnes W. McCormick, "Aerodynamics, Aeronautics, and Flight Mechanics",
@@ -291,7 +291,6 @@ public:
   double GetGearUnitPos(void);
 
   void bind(void);
-  void unbind(void);
 
 private:
   int GearNumber;

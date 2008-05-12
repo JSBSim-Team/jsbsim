@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.7 2007/05/18 03:17:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.8 2008/05/12 04:37:14 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -505,21 +505,6 @@ void FGTurboProp::bindmodel()
   PropertyManager->Tie( property_name, &Reversed);
 
 }
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGTurboProp::unbind()
-{
-  char property_name[80];
-
-  snprintf(property_name, 80, "propulsion/engine[%u]/n1", EngineNumber);
-  PropertyManager->Untie(property_name);
-  snprintf(property_name, 80, "propulsion/engine[%u]/n2", EngineNumber);
-  PropertyManager->Untie(property_name);
-  snprintf(property_name, 80, "propulsion/engine[%u]/reverser", EngineNumber);
-  PropertyManager->Untie(property_name);
-}
-
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //    The bitmasked value choices are as follows:

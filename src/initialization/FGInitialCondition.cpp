@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.20 2008/05/11 16:35:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.21 2008/05/12 04:37:10 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -96,7 +96,6 @@ FGInitialCondition::FGInitialCondition(FGFDMExec *FDMExec) : fdmex(FDMExec)
 
 FGInitialCondition::~FGInitialCondition()
 {
-  unbind();
   Debug(1);
 }
 
@@ -1027,59 +1026,6 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetRRadpsIC,
                        &FGInitialCondition::SetRRadpsIC,
                        true);
-
-}
-
-//******************************************************************************
-
-void FGInitialCondition::unbind(void)
-{
-  PropertyManager->Untie("ic/vc-kts");
-  PropertyManager->Untie("ic/ve-kts");
-  PropertyManager->Untie("ic/vg-kts");
-  PropertyManager->Untie("ic/vt-kts");
-  PropertyManager->Untie("ic/mach");
-  PropertyManager->Untie("ic/roc-fpm");
-  PropertyManager->Untie("ic/gamma-deg");
-  PropertyManager->Untie("ic/alpha-deg");
-  PropertyManager->Untie("ic/beta-deg");
-  PropertyManager->Untie("ic/theta-deg");
-  PropertyManager->Untie("ic/phi-deg");
-  PropertyManager->Untie("ic/psi-true-deg");
-  PropertyManager->Untie("ic/lat-gc-deg");
-  PropertyManager->Untie("ic/long-gc-deg");
-  PropertyManager->Untie("ic/h-sl-ft");
-  PropertyManager->Untie("ic/h-agl-ft");
-  PropertyManager->Untie("ic/sea-level-radius-ft");
-  PropertyManager->Untie("ic/terrain-altitude-ft");
-  PropertyManager->Untie("ic/vg-fps");
-  PropertyManager->Untie("ic/vt-fps");
-  PropertyManager->Untie("ic/vw-bx-fps");
-  PropertyManager->Untie("ic/vw-by-fps");
-  PropertyManager->Untie("ic/vw-bz-fps");
-  PropertyManager->Untie("ic/vw-north-fps");
-  PropertyManager->Untie("ic/vw-east-fps");
-  PropertyManager->Untie("ic/vw-down-fps");
-  PropertyManager->Untie("ic/vw-mag-fps");
-  PropertyManager->Untie("ic/vw-dir-deg");
-
-  PropertyManager->Untie("ic/roc-fps");
-
-  PropertyManager->Untie("ic/u-fps");
-  PropertyManager->Untie("ic/v-fps");
-  PropertyManager->Untie("ic/w-fps");
-
-  PropertyManager->Untie("ic/gamma-rad");
-  PropertyManager->Untie("ic/alpha-rad");
-  PropertyManager->Untie("ic/theta-rad");
-  PropertyManager->Untie("ic/beta-rad");
-  PropertyManager->Untie("ic/phi-rad");
-  PropertyManager->Untie("ic/psi-true-rad");
-  PropertyManager->Untie("ic/lat-gc-rad");
-  PropertyManager->Untie("ic/long-gc-rad");
-  PropertyManager->Untie("ic/p-rad_sec");
-  PropertyManager->Untie("ic/q-rad_sec");
-  PropertyManager->Untie("ic/r-rad_sec");
 
 }
 

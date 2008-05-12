@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.13 2008/05/04 18:22:53 dpculp Exp $"
+#define ID_AERODYNAMICS "$Id: FGAerodynamics.h,v 1.14 2008/05/12 04:37:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -119,7 +119,7 @@ CLASS DOCUMENTATION
     Systems may NOT be combined, or a load error will occur.
 
     @author Jon S. Berndt, Tony Peden
-    @version $Revision: 1.13 $
+    @version $Revision: 1.14 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,7 +242,6 @@ private:
   typedef double (FGAerodynamics::*PMF)(int) const;
   void DetermineAxisSystem(void);
   void bind(void);
-  void unbind(void);
 
   void Debug(int from);
 };

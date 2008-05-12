@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.8 2008/04/30 22:38:15 dpculp Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.9 2008/05/12 04:37:14 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -144,7 +144,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.8 2008/04/30 22:38:15 dpculp Exp $"
+    @version "$Id: FGTurbine.h,v 1.9 2008/05/12 04:37:14 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -270,7 +270,6 @@ private:
   void SetDefaults(void);
   bool Load(FGFDMExec *exec, Element *el);
   void bindmodel(void);
-  void unbind(void);
   void Debug(int from);
 
 };

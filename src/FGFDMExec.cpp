@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.50 2008/05/11 16:35:43 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.51 2008/05/12 04:37:09 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,10 +100,11 @@ void checkTied ( FGPropertyManager *node )
 
   for (int i=0; i<N; i++) {
     if (node->getChild(i)->nChildren() ) {
+      cout << "Untieing " << node->getChild(i)->getName() << " property branch." << endl;
       checkTied( (FGPropertyManager*)node->getChild(i) );
     } else if ( node->getChild(i)->isTied() ) {
       name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();
-      cerr << name << " is tied" << endl;
+      node->Untie(name);
     }
   }
 }
@@ -189,13 +190,9 @@ FGFDMExec::FGFDMExec(FGPropertyManager* root) : Root(root)
 
 FGFDMExec::~FGFDMExec()
 {
-  instance->Untie("simulation/do_simple_trim");
-//  instance->Untie("simulation/do_trim_analysis");
-  instance->Untie("simulation/terminate");
-
   try {
-    DeAllocate();
     checkTied( instance );
+    DeAllocate();
     if (Root == 0)  delete master;
   } catch ( string msg ) {
     cout << "Caught error: " << msg << endl;

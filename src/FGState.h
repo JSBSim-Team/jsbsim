@@ -76,7 +76,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_STATE "$Id: FGState.h,v 1.11 2008/02/27 04:18:33 jberndt Exp $"
+#define ID_STATE "$Id: FGState.h,v 1.12 2008/05/12 04:37:10 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -92,7 +92,7 @@ CLASS DOCUMENTATION
     <h3>Properties</h3>
     @property sim-time-sec (read only) cumulative simulation in seconds.
     @author Jon S. Berndt
-    @version $Revision: 1.11 $
+    @version $Revision: 1.12 $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,7 +169,6 @@ private:
   FGPropertyManager* PropertyManager;
 
   void bind();
-  void unbind();
 
   void Debug(int from);
 };

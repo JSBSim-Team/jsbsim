@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.10 2008/05/04 20:09:41 jberndt Exp $"
+#define ID_AUXILIARY "$Id: FGAuxiliary.h,v 1.11 2008/05/12 04:37:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -100,7 +100,7 @@ CLASS DOCUMENTATION
     The radius R is calculated below in the vector vToEyePt.
 
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAuxiliary.h,v 1.10 2008/05/04 20:09:41 jberndt Exp $
+    @version $Id: FGAuxiliary.h,v 1.11 2008/05/12 04:37:11 jberndt Exp $
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,9 +228,6 @@ public:
 
   void SetAeroPQR(FGColumnVector3 tt) { vAeroPQR = tt; }
 
-  void bind(void);
-  void unbind(void);
-
 private:
   double vcas, veas;
   double rhosl, rho, p, psl, pt, tat, sat, tatc; // Don't add a getter for pt!
@@ -265,6 +262,7 @@ private:
 
   void CalculateRelativePosition(void);
 
+  void bind(void);
   void Debug(int from);
 };
 

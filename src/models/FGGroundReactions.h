@@ -54,7 +54,7 @@ INCLUDES
 #include <math/FGColumnVector3.h>
 #include <input_output/FGXMLElement.h>
 
-#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.10 2008/05/04 18:22:54 dpculp Exp $"
+#define ID_GROUNDREACTIONS "$Id: FGGroundReactions.h,v 1.11 2008/05/12 04:37:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -110,14 +110,12 @@ public:
       @return a pointer to the FGLGear instance of the gear unit requested */
   inline FGLGear* GetGearUnit(int gear) { return lGear[gear]; }
 
-  void bind(void);
-  void unbind(void);
-
 private:
   vector <FGLGear*> lGear;
   FGColumnVector3 vForces;
   FGColumnVector3 vMoments;
 
+  void bind(void);
   void Debug(int from);
 };
 }

@@ -43,7 +43,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.16 2008/01/03 06:28:47 jberndt Exp $";
+static const char *IdSrc = "$Id: FGGroundReactions.cpp,v 1.17 2008/05/12 04:37:12 jberndt Exp $";
 static const char *IdHdr = ID_GROUNDREACTIONS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -67,7 +67,6 @@ FGGroundReactions::~FGGroundReactions(void)
   for (unsigned int i=0; i<lGear.size();i++) delete lGear[i];
   lGear.clear();
 
-  unbind();
   Debug(1);
 }
 
@@ -213,19 +212,6 @@ void FGGroundReactions::bind(void)
   PropertyManager->Tie("forces/fbx-gear-lbs", this, eX, (PMF)&FGGroundReactions::GetForces);
   PropertyManager->Tie("forces/fby-gear-lbs", this, eY, (PMF)&FGGroundReactions::GetForces);
   PropertyManager->Tie("forces/fbz-gear-lbs", this, eZ, (PMF)&FGGroundReactions::GetForces);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGGroundReactions::unbind(void)
-{
-  PropertyManager->Untie("gear/num-units");
-  PropertyManager->Untie("moments/l-gear-lbsft");
-  PropertyManager->Untie("moments/m-gear-lbsft");
-  PropertyManager->Untie("moments/n-gear-lbsft");
-  PropertyManager->Untie("forces/fbx-gear-lbs");
-  PropertyManager->Untie("forces/fby-gear-lbs");
-  PropertyManager->Untie("forces/fbz-gear-lbs");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

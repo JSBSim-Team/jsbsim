@@ -51,7 +51,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGState.cpp,v 1.8 2008/02/27 04:18:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGState.cpp,v 1.9 2008/05/12 04:37:10 jberndt Exp $";
 static const char *IdHdr = ID_STATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -88,7 +88,6 @@ FGState::FGState(FGFDMExec* fdex)
 
 FGState::~FGState()
 {
-  unbind();
   Debug(1);
 }
 
@@ -134,13 +133,6 @@ void FGState::Initialize(FGInitialCondition *FGIC)
 void FGState::bind(void)
 {
   PropertyManager->Tie("sim-time-sec", this, &FGState::Getsim_time);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGState::unbind(void)
-{
-  PropertyManager->Untie("sim-time-sec");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

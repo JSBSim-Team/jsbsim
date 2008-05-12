@@ -55,7 +55,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.26 2008/05/04 20:09:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAuxiliary.cpp,v 1.27 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_AUXILIARY;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,7 +95,6 @@ FGAuxiliary::FGAuxiliary(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAuxiliary::~FGAuxiliary()
 {
-  unbind();
   Debug(1);
 }
 
@@ -336,62 +335,6 @@ void FGAuxiliary::bind(void)
   PropertyManager->Tie("position/distance-from-start-lon-mt", this, &FGAuxiliary::GetLongitudeRelativePosition);
   PropertyManager->Tie("position/distance-from-start-lat-mt", this, &FGAuxiliary::GetLatitudeRelativePosition);
   PropertyManager->Tie("position/distance-from-start-mag-mt", this, &FGAuxiliary::GetDistanceRelativePosition);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAuxiliary::unbind(void)
-{
-  PropertyManager->Untie("propulsion/tat-r");
-  PropertyManager->Untie("propulsion/tat-c");
-  PropertyManager->Untie("propulsion/pt-lbs_sqft");
-  PropertyManager->Untie("velocities/vc-fps");
-  PropertyManager->Untie("velocities/vc-kts");
-  PropertyManager->Untie("velocities/ve-fps");
-  PropertyManager->Untie("velocities/ve-kts");
-  PropertyManager->Untie("velocities/machU");
-  PropertyManager->Untie("velocities/p-aero-rad_sec");
-  PropertyManager->Untie("velocities/q-aero-rad_sec");
-  PropertyManager->Untie("velocities/r-aero-rad_sec");
-  PropertyManager->Untie("velocities/phidot-rad_sec");
-  PropertyManager->Untie("velocities/thetadot-rad_sec");
-  PropertyManager->Untie("velocities/psidot-rad_sec");
-  PropertyManager->Untie("velocities/u-aero-fps");
-  PropertyManager->Untie("velocities/v-aero-fps");
-  PropertyManager->Untie("velocities/w-aero-fps");
-  PropertyManager->Untie("velocities/vt-fps");
-  PropertyManager->Untie("velocities/mach");
-  PropertyManager->Untie("velocities/vg-fps");
-  PropertyManager->Untie("accelerations/a-pilot-x-ft_sec2");
-  PropertyManager->Untie("accelerations/a-pilot-y-ft_sec2");
-  PropertyManager->Untie("accelerations/a-pilot-z-ft_sec2");
-  PropertyManager->Untie("accelerations/n-pilot-x-norm");
-  PropertyManager->Untie("accelerations/n-pilot-y-norm");
-  PropertyManager->Untie("accelerations/n-pilot-z-norm");
-  PropertyManager->Untie("accelerations/Nz");
-  /* PropertyManager->Untie("atmosphere/headwind-fps");
-  PropertyManager->Untie("atmosphere/crosswind-fps"); */
-  PropertyManager->Untie("aero/qbar-psf");
-  PropertyManager->Untie("aero/qbarUW-psf");
-  PropertyManager->Untie("aero/qbarUV-psf");
-  PropertyManager->Untie("aero/alpha-rad");
-  PropertyManager->Untie("aero/beta-rad");
-  PropertyManager->Untie("aero/alpha-deg");
-  PropertyManager->Untie("aero/beta-deg");
-  PropertyManager->Untie("aero/alphadot-rad_sec");
-  PropertyManager->Untie("aero/betadot-rad_sec");
-  PropertyManager->Untie("aero/mag-beta-rad");
-  PropertyManager->Untie("aero/alphadot-deg_sec");
-  PropertyManager->Untie("aero/betadot-deg_sec");
-  PropertyManager->Untie("aero/mag-beta-deg");
-  PropertyManager->Untie("aero/h_b-cg-ft");
-  PropertyManager->Untie("aero/h_b-mac-ft");
-  PropertyManager->Untie("flight-path/gamma-rad");
-  PropertyManager->Untie("flight-path/psi-gt-rad");
-
-  PropertyManager->Untie("position/distance-from-start-lat-mt");
-  PropertyManager->Untie("position/distance-from-start-lon-mt");
-  PropertyManager->Untie("position/distance-from-start-mag-mt");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

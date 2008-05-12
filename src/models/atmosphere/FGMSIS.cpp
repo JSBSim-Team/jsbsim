@@ -66,7 +66,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.6 2007/01/15 23:11:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMSIS.cpp,v 1.7 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_MSIS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -103,7 +103,6 @@ MSIS::MSIS(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 
 MSIS::~MSIS()
 {
-  unbind();
   Debug(1);
 }
 

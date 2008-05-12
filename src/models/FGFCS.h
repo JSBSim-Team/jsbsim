@@ -59,7 +59,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_FCS "$Id: FGFCS.h,v 1.17 2008/04/15 11:52:54 jberndt Exp $"
+#define ID_FCS "$Id: FGFCS.h,v 1.18 2008/05/12 04:37:11 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -174,7 +174,7 @@ CLASS DOCUMENTATION
     @property gear/gear-pos-norm
 
     @author Jon S. Berndt
-    @version $Revision: 1.17 $
+    @version $Revision: 1.18 $
     @see FGActuator
     @see FGDeadBand
     @see FGFCSFunction
@@ -562,7 +562,6 @@ private:
   void bind(void);
   void bindModel(void);
   void bindThrottle(unsigned int);
-  void unbind(FGPropertyManager *node);
   void Debug(int from);
 };
 }

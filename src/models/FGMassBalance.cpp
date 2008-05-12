@@ -45,7 +45,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.12 2008/01/24 19:55:05 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMassBalance.cpp,v 1.13 2008/05/12 04:37:12 jberndt Exp $";
 static const char *IdHdr = ID_MASSBALANCE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,15 +73,9 @@ FGMassBalance::FGMassBalance(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGMassBalance::~FGMassBalance()
 {
-  char tmp[80];
-  unbind();
-  for (unsigned int i=0; i<PointMasses.size(); i++) {
-    snprintf(tmp, 80, "inertia/pointmass-weight-lbs[%u]", i);
-    PropertyManager->Untie(tmp);
-  }
-
   for (unsigned int i=0; i<PointMasses.size(); i++) delete PointMasses[i];
   PointMasses.clear();
+
   Debug(1);
 }
 
@@ -306,17 +300,6 @@ void FGMassBalance::bind(void)
                        (PMF)&FGMassBalance::GetXYZcg);
   PropertyManager->Tie("inertia/cg-z-in", this,3,
                        (PMF)&FGMassBalance::GetXYZcg);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGMassBalance::unbind(void)
-{
-  PropertyManager->Untie("inertia/mass-slugs");
-  PropertyManager->Untie("inertia/weight-lbs");
-  PropertyManager->Untie("inertia/cg-x-in");
-  PropertyManager->Untie("inertia/cg-y-in");
-  PropertyManager->Untie("inertia/cg-z-in");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.28 2008/05/11 16:35:44 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.29 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,7 +124,6 @@ FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGPropagate::~FGPropagate(void)
 {
-  unbind();
   Debug(1);
 }
 
@@ -542,52 +541,6 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("simulation/integrator/rate/translational", &integrator_translational_rate);
   PropertyManager->Tie("simulation/integrator/position/rotational", &integrator_rotational_position);
   PropertyManager->Tie("simulation/integrator/position/translational", &integrator_translational_position);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGPropagate::unbind(void)
-{
-  PropertyManager->Untie("velocities/v-north-fps");
-  PropertyManager->Untie("velocities/v-east-fps");
-  PropertyManager->Untie("velocities/v-down-fps");
-  PropertyManager->Untie("velocities/h-dot-fps");
-  PropertyManager->Untie("velocities/u-fps");
-  PropertyManager->Untie("velocities/v-fps");
-  PropertyManager->Untie("velocities/w-fps");
-  PropertyManager->Untie("velocities/p-rad_sec");
-  PropertyManager->Untie("velocities/q-rad_sec");
-  PropertyManager->Untie("velocities/r-rad_sec");
-  PropertyManager->Untie("velocities/eci-velocity-mag-fps");
-  PropertyManager->Untie("accelerations/udot-fps");
-  PropertyManager->Untie("accelerations/vdot-fps");
-  PropertyManager->Untie("accelerations/wdot-fps");
-  PropertyManager->Untie("accelerations/pdot-rad_sec2");
-  PropertyManager->Untie("accelerations/qdot-rad_sec2");
-  PropertyManager->Untie("accelerations/rdot-rad_sec2");
-  PropertyManager->Untie("position/h-sl-ft");
-  PropertyManager->Untie("position/h-sl-meters");
-  PropertyManager->Untie("position/lat-gc-rad");
-  PropertyManager->Untie("position/long-gc-rad");
-  PropertyManager->Untie("position/lat-gc-deg");
-  PropertyManager->Untie("position/long-gc-deg");
-  PropertyManager->Untie("position/lat-geod-rad");
-  PropertyManager->Untie("position/lat-geod-deg");
-  PropertyManager->Untie("position/geod-alt-ft");
-  PropertyManager->Untie("position/h-agl-ft");
-  PropertyManager->Untie("position/radius-to-vehicle-ft");
-  PropertyManager->Untie("metrics/runway-radius");
-  PropertyManager->Untie("attitude/phi-rad");
-  PropertyManager->Untie("attitude/theta-rad");
-  PropertyManager->Untie("attitude/psi-rad");
-  PropertyManager->Untie("attitude/roll-rad");
-  PropertyManager->Untie("attitude/pitch-rad");
-  PropertyManager->Untie("attitude/heading-true-rad");
-  PropertyManager->Untie("position/terrain-elevation-asl-ft");
-  PropertyManager->Untie("simulation/integrator/rate/rotational");
-  PropertyManager->Untie("simulation/integrator/rate/translational");
-  PropertyManager->Untie("simulation/integrator/position/rotational");
-  PropertyManager->Untie("simulation/integrator/position/translational");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

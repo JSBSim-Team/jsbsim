@@ -48,7 +48,7 @@ using namespace std;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTable.cpp,v 1.15 2007/02/25 13:52:57 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTable.cpp,v 1.16 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_TABLE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -300,11 +300,6 @@ double** FGTable::Allocate(void)
 
 FGTable::~FGTable()
 {
-  if (!Name.empty() && !internal) {
-    string tmp = PropertyManager->mkPropertyName(Name, false); // Allow upper case
-    PropertyManager->Untie(tmp);
-  }
-
   if (nTables > 0) {
     for (unsigned int i=0; i<nTables; i++) delete Tables[i];
     Tables.clear();

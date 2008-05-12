@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.18 2008/01/21 13:44:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAtmosphere.cpp,v 1.19 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_ATMOSPHERE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,7 +102,6 @@ FGAtmosphere::FGAtmosphere(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAtmosphere::~FGAtmosphere()
 {
-  unbind();
   Debug(1);
 }
 
@@ -558,38 +557,6 @@ void FGAtmosphere::bind(void)
                                                           (PMFd)&FGAtmosphere::SetGustNED);
   PropertyManager->Tie("atmosphere/wind-from-cw", this, &FGAtmosphere::GetWindFromClockwise,
                                                         &FGAtmosphere::SetWindFromClockwise);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAtmosphere::unbind(void)
-{
-  PropertyManager->Untie("atmosphere/T-R");
-  PropertyManager->Untie("atmosphere/rho-slugs_ft3");
-  PropertyManager->Untie("atmosphere/P-psf");
-  PropertyManager->Untie("atmosphere/a-fps");
-  PropertyManager->Untie("atmosphere/T-sl-R");
-  PropertyManager->Untie("atmosphere/rho-sl-slugs_ft3");
-  PropertyManager->Untie("atmosphere/P-sl-psf");
-  PropertyManager->Untie("atmosphere/a-sl-fps");
-  PropertyManager->Untie("atmosphere/delta-T");
-  PropertyManager->Untie("atmosphere/T-sl-dev-F");
-  PropertyManager->Untie("atmosphere/density-altitude");
-  PropertyManager->Untie("atmosphere/theta");
-  PropertyManager->Untie("atmosphere/sigma");
-  PropertyManager->Untie("atmosphere/delta");
-  PropertyManager->Untie("atmosphere/a-ratio");
-  PropertyManager->Untie("atmosphere/psiw-rad");
-  PropertyManager->Untie("atmosphere/p-turb-rad_sec");
-  PropertyManager->Untie("atmosphere/q-turb-rad_sec");
-  PropertyManager->Untie("atmosphere/r-turb-rad_sec");
-  PropertyManager->Untie("atmosphere/turb-rate");
-  PropertyManager->Untie("atmosphere/turb-gain");
-  PropertyManager->Untie("atmosphere/turb-rhythmicity");
-  PropertyManager->Untie("atmosphere/gust-north-fps");
-  PropertyManager->Untie("atmosphere/gust-east-fps");
-  PropertyManager->Untie("atmosphere/gust-down-fps");
-  PropertyManager->Untie("atmosphere/wind-from-cw");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

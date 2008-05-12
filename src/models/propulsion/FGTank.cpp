@@ -48,7 +48,7 @@ using std::cout;
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTank.cpp,v 1.8 2008/04/29 12:09:41 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTank.cpp,v 1.9 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_TANK;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,9 +110,6 @@ FGTank::FGTank(FGFDMExec* exec, Element* el, int tank_number)
 
 FGTank::~FGTank()
 {
-  char property_name[80];
-  snprintf(property_name, 80, "propulsion/tank[%d]/contents-lbs", TankNumber);
-  PropertyManager->Untie( property_name );
   Debug(1);
 }
 

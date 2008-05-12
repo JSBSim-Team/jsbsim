@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGMars.cpp,v 1.5 2007/01/15 23:11:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGMars.cpp,v 1.6 2008/05/12 04:37:13 jberndt Exp $";
 static const char *IdHdr = ID_MARS;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,6 @@ FGMars::FGMars(FGFDMExec* fdmex) : FGAtmosphere(fdmex)
 /*
 FGMars::~FGMars()
 {
-  unbind();
   Debug(1);
 }
 */

@@ -79,7 +79,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.15 2008/02/27 04:18:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGAircraft.cpp,v 1.16 2008/05/12 04:37:11 jberndt Exp $";
 static const char *IdHdr = ID_AIRCRAFT;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +106,6 @@ FGAircraft::FGAircraft(FGFDMExec* fdmex) : FGModel(fdmex)
 
 FGAircraft::~FGAircraft()
 {
-  unbind();
   Debug(1);
 }
 
@@ -239,41 +238,6 @@ void FGAircraft::bind(void)
   PropertyManager->Tie("metrics/visualrefpoint-x-in", this, eX, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-y-in", this, eY, (PMF)&FGAircraft::GetXYZvrp);
   PropertyManager->Tie("metrics/visualrefpoint-z-in", this, eZ, (PMF)&FGAircraft::GetXYZvrp);
-}
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void FGAircraft::unbind(void)
-{
-  PropertyManager->Untie("metrics/Sw-sqft");
-  PropertyManager->Untie("metrics/bw-ft");
-  PropertyManager->Untie("metrics/cbarw-ft");
-  PropertyManager->Untie("metrics/iw-rad");
-  PropertyManager->Untie("metrics/iw-deg");
-  PropertyManager->Untie("metrics/Sh-sqft");
-  PropertyManager->Untie("metrics/lh-ft");
-  PropertyManager->Untie("metrics/Sv-sqft");
-  PropertyManager->Untie("metrics/lv-ft");
-  PropertyManager->Untie("metrics/lh-norm");
-  PropertyManager->Untie("metrics/lv-norm");
-  PropertyManager->Untie("metrics/vbarh-norm");
-  PropertyManager->Untie("metrics/vbarv-norm");
-  PropertyManager->Untie("moments/l-total-lbsft");
-  PropertyManager->Untie("moments/m-total-lbsft");
-  PropertyManager->Untie("moments/n-total-lbsft");
-  PropertyManager->Untie("forces/fbx-total-lbs");
-  PropertyManager->Untie("forces/fby-total-lbs");
-  PropertyManager->Untie("forces/fbz-total-lbs");
-  PropertyManager->Untie("forces/hold-down");
-  PropertyManager->Untie("metrics/aero-rp-x-in");
-  PropertyManager->Untie("metrics/aero-rp-y-in");
-  PropertyManager->Untie("metrics/aero-rp-z-in");
-  PropertyManager->Untie("metrics/eyepoint-x-in");
-  PropertyManager->Untie("metrics/eyepoint-y-in");
-  PropertyManager->Untie("metrics/eyepoint-z-in");
-  PropertyManager->Untie("metrics/visualrefpoint-x-in");
-  PropertyManager->Untie("metrics/visualrefpoint-y-in");
-  PropertyManager->Untie("metrics/visualrefpoint-z-in");
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

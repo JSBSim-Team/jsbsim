@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INERTIAL "$Id: FGInertial.h,v 1.8 2008/05/04 18:22:54 dpculp Exp $"
+#define ID_INERTIAL "$Id: FGInertial.h,v 1.9 2008/05/12 04:37:12 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -106,8 +106,6 @@ private:
   double b;    // WGS84 semiminor axis length in feet
 
   void bind(void);
-  void unbind(void);
-  
   void Debug(int from);
 };
 }
