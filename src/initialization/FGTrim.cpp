@@ -62,7 +62,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTrim.cpp,v 1.6 2006/08/30 12:04:33 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTrim.cpp,v 1.7 2008/05/16 04:04:30 jberndt Exp $";
 static const char *IdHdr = ID_TRIM;
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +80,7 @@ FGTrim::FGTrim(FGFDMExec *FDMExec,TrimMode tt) {
   fgic=fdmex->GetIC();
   total_its=0;
   trimudot=true;
-  gamma_fallback=true;
+  gamma_fallback=false;
   axis_count=0;
   mode=tt;
   xlo=xhi=alo=ahi=0.0;
@@ -633,7 +633,7 @@ void FGTrim::SetMode(TrimMode tt) {
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tWdot,tAlpha ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tUdot,tThrottle ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tQdot,tPitchTrim ));
-        TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
+        //TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tHmgt,tBeta ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tVdot,tPhi ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tPdot,tAileron ));
         TrimAxes.push_back(new FGTrimAxis(fdmex,fgic,tRdot,tRudder ));

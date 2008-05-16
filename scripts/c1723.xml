@@ -80,6 +80,8 @@
       <notify>
         <property>velocities/vc-kts</property>
         <property>position/h-agl-ft</property>
+        <property>position/lat-geod-deg</property>
+        <property>position/geod-alt-ft</property>
       </notify>
       <condition> sim-time-sec >= simulation/notify-time-trigger </condition>
       <set name="simulation/notify-time-trigger" value="60" type="FG_DELTA"/>

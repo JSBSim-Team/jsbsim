@@ -47,7 +47,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPiston.cpp,v 1.13 2008/03/18 01:23:23 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPiston.cpp,v 1.14 2008/05/16 04:04:31 jberndt Exp $";
 static const char *IdHdr = ID_PISTON;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -310,6 +310,23 @@ double FGPiston::Calculate(void)
   PowerAvailable = (HP * hptoftlbssec) - Thruster->GetPowerRequired();
 
   return Thruster->Calculate(PowerAvailable);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+double FGPiston::CalcFuelNeed(void)
+{
+  return FuelFlow_gph / 3600 * 6 * State->Getdt() * Propulsion->GetRate();
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int FGPiston::InitRunning(void) {
+  Magnetos=3;
+  //Thruster->SetRPM( 1.1*IdleRPM/Thruster->GetGearRatio() );
+  Thruster->SetRPM( 1000 );
+  Running=true;
+  return 1;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -827,11 +844,4 @@ void FGPiston::Debug(int from)
     }
   }
 }
-
-double
-FGPiston::CalcFuelNeed(void)
-{
-  return FuelFlow_gph / 3600 * 6 * State->Getdt() * Propulsion->GetRate();
-}
-
 } // namespace JSBSim

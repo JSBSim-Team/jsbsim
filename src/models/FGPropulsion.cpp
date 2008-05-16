@@ -57,7 +57,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.23 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropulsion.cpp,v 1.24 2008/05/16 04:04:30 jberndt Exp $";
 static const char *IdHdr = ID_PROPULSION;
 
 extern short debug_lvl;
@@ -176,25 +176,16 @@ bool FGPropulsion::GetSteadyState(void)
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool FGPropulsion::ICEngineStart(void)
+void FGPropulsion::InitRunning(int n)
 {
-  int j;
+  n=0;
 
-  vForces.InitMatrix();
-  vMoments.InitMatrix();
-
-  for (unsigned int i=0; i<numEngines; i++) {
-    Engines[i]->SetTrimMode(true);
-    j=0;
-    while (!Engines[i]->GetRunning() && j < 2000) {
-      Engines[i]->Calculate();
-      j++;
-    }
-    vForces  += Engines[i]->GetBodyForces();  // sum body frame forces
-    vMoments += Engines[i]->GetMoments();     // sum body frame moments
-    Engines[i]->SetTrimMode(false);
+  for(unsigned int i=0; i<GetNumEngines(); i++) {
+    FCS->SetThrottleCmd(i,1);
+    FCS->SetMixtureCmd(i,1);
+    GetEngine(i)->InitRunning();
   }
-  return true;
+  GetSteadyState();
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -545,7 +536,7 @@ void FGPropulsion::DumpFuel(double time_slice)
 
   if (TanksDumping == 0) return;
 
-  double dump_rate_per_tank = DumpRate / 60.0 * time_slice / TanksDumping;  
+  double dump_rate_per_tank = DumpRate / 60.0 * time_slice / TanksDumping;
 
   for (i=0; i<numTanks; i++) {
     if (Tanks[i]->GetContents() > Tanks[i]->GetStandpipe()) {
@@ -572,7 +563,7 @@ void FGPropulsion::bind(void)
   typedef int (FGPropulsion::*iPMF)(void) const;
 
   IsBound = true;
-
+  PropertyManager->Tie("propulsion/set-running", this, (iPMF)0, &FGPropulsion::InitRunning, true);
   if (HaveTurbineEngine) {
     PropertyManager->Tie("propulsion/starter_cmd", this, (iPMF)0, &FGPropulsion::SetStarter,  true);
     PropertyManager->Tie("propulsion/cutoff_cmd", this,  (iPMF)0, &FGPropulsion::SetCutoff,   true);

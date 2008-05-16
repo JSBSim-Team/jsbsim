@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.26 2008/04/17 12:37:17 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.27 2008/05/16 04:04:28 jberndt Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -316,9 +316,9 @@ void FGJSBsim::init()
       Atmosphere->UseInternal();
     }
 
-    fgic->SetVnorthFpsIC( wind_from_north->getDoubleValue() );
-    fgic->SetVeastFpsIC( wind_from_east->getDoubleValue() );
-    fgic->SetVdownFpsIC( wind_from_down->getDoubleValue() );
+    fgic->SetVNorthFpsIC( wind_from_north->getDoubleValue() );
+    fgic->SetVEastFpsIC( wind_from_east->getDoubleValue() );
+    fgic->SetVDownFpsIC( wind_from_down->getDoubleValue() );
 
     //Atmosphere->SetExTemperature(get_Static_temperature());
     //Atmosphere->SetExPressure(get_Static_pressure());
@@ -993,9 +993,9 @@ void FGJSBsim::set_Velocities_Local( double north, double east, double down )
     FGInterface::set_Velocities_Local(north, east, down);
 
     update_ic();
-    fgic->SetVnorthFpsIC(north);
-    fgic->SetVeastFpsIC(east);
-    fgic->SetVdownFpsIC(down);
+    fgic->SetVNorthFpsIC(north);
+    fgic->SetVEastFpsIC(east);
+    fgic->SetVDownFpsIC(down);
     needTrim=true;
 }
 

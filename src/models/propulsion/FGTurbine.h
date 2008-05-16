@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.9 2008/05/12 04:37:14 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -144,7 +144,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.9 2008/05/12 04:37:14 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,6 +205,7 @@ public:
   void SetBleedDemand(double bleedDemand) {BleedDemand = bleedDemand;}
   void SetReverse(bool reversed) { Reversed = reversed; }
   void SetCutoff(bool cutoff) { Cutoff = cutoff; }
+  int InitRunning(void);
 
   string GetEngineLabels(string delimeter);
   string GetEngineValues(string delimeter);

@@ -46,7 +46,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGTable.h>
 
-#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.7 2008/05/12 04:37:14 jberndt Exp $"
+#define ID_TURBOPROP "$Id: FGTurboProp.h,v 1.8 2008/05/16 04:04:32 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -146,7 +146,7 @@ public:
 
   inline void SetGeneratorPower(bool gp) { GeneratorPower=gp; }
   inline void SetCondition(bool c) { Condition=c; }
-
+  int InitRunning(void);
   string GetEngineLabels(string delimeter);  // added from Turbine 0.9.6
   string GetEngineValues(string delimeter);  // added from Turbine 0.9.6
 

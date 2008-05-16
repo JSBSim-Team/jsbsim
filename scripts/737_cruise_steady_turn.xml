@@ -8,13 +8,6 @@
     This is a very simple script that trims the aircraft with running
     engines at altitude and runs out to 100 seconds. Some state data
     is printed out at ten second intervals. 
-    
-    There are two trimming algorithms that JSBSim uses:
-    
-    1) Classic trim
-    2) Direct Search trim
-    
-    This script ONLY uses the classic trim method at this time.
   </description>
 
   <use aircraft="737" initialize="cruise_steady_turn_init"/> 
@@ -39,17 +32,6 @@
       4: Custom
       5: Turn
       6: None
-
-      For "do_trim_analysis" (Direct Search trim):
-      0: Longitudinal
-      1: Full
-      2: FullWingsLevel
-      3: Turn
-      4: Pullup
-      5: TurnFull
-      6: Ground
-      7: Custom
-      8: None
     -->
     
     <event name="Trim">
@@ -57,7 +39,6 @@
         sim-time-sec gt 0.1
       </condition>
       <set name="simulation/do_simple_trim" value="5"/>
-      <!--<set name="simulation/do_trim_analysis" value="3"/>-->
       <delay>5.0</delay>
       <notify>
         <property>propulsion/engine[0]/n2</property>

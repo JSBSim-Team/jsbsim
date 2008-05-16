@@ -7,6 +7,7 @@ SUBDIRS =		\
 	T37		\
 	T38		\
 	X15		\
+	ball \
 	c172p		\
 	c172r		\
 	c172x		\

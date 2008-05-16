@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.11 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.12 2008/05/16 04:04:31 jberndt Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -498,6 +498,18 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name, &N2);
   snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
   PropertyManager->Tie( property_name, this, &FGTurbine::GetThrust);
+}
+
+//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+int FGTurbine::InitRunning(void) {
+  State->SuspendIntegration();
+  Cutoff=false;
+  Running=true;  
+  N2=16.0;
+  Calculate();
+  State->ResumeIntegration();
+  return phase==tpRun;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

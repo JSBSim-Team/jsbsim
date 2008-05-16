@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.21 2008/05/12 04:37:10 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.22 2008/05/16 04:04:28 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -328,6 +328,65 @@ void FGInitialCondition::SetWBodyFpsIC(double tt) {
   lastSpeedSet=setuvw;
 }
 
+
+//******************************************************************************
+
+void FGInitialCondition::SetVNorthFpsIC(double tt) {
+  double ua,va,wa;
+  double vxz;
+  vnorth = tt;
+  calcUVWfromNED();
+  ua = u + uw; va = v + vw; wa = w + ww;
+  vt = sqrt( ua*ua + va*va + wa*wa );
+  alpha = beta = 0;
+  vxz = sqrt( u*u + w*w );
+  if( w != 0 ) alpha = atan2( w, u );
+  if( vxz != 0 ) beta = atan2( v, vxz );
+  mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+  vc=calcVcas(mach);
+  ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+  lastSpeedSet=setned;
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetVEastFpsIC(double tt) {
+  double ua,va,wa;
+  double vxz;
+  veast = tt;
+  calcUVWfromNED();
+  ua = u + uw; va = v + vw; wa = w + ww;
+  vt = sqrt( ua*ua + va*va + wa*wa );
+  alpha = beta = 0;
+  vxz = sqrt( u*u + w*w );
+  if( w != 0 ) alpha = atan2( w, u );
+  if( vxz != 0 ) beta = atan2( v, vxz );
+  mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+  vc=calcVcas(mach);
+  ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+  lastSpeedSet=setned;
+}
+
+//******************************************************************************
+
+void FGInitialCondition::SetVDownFpsIC(double tt) {
+  double ua,va,wa;
+  double vxz;
+  vdown = tt;
+  calcUVWfromNED();
+  ua = u + uw; va = v + vw; wa = w + ww;
+  vt = sqrt( ua*ua + va*va + wa*wa );
+  alpha = beta = 0;
+  vxz = sqrt( u*u + w*w );
+  if( w != 0 ) alpha = atan2( w, u );
+  if( vxz != 0 ) beta = atan2( v, vxz );
+  mach=vt/fdmex->GetAtmosphere()->GetSoundSpeed();
+  vc=calcVcas(mach);
+  ve=vt*sqrt(fdmex->GetAtmosphere()->GetDensityRatio());
+  SetClimbRateFpsIC(-1*vdown);
+  lastSpeedSet=setned;
+}
+
 //******************************************************************************
 
 double FGInitialCondition::GetUBodyFpsIC(void) const {
@@ -514,34 +573,6 @@ void FGInitialCondition::calcUVWfromNED(void) {
   w=vnorth*( cphi*stheta*cpsi + sphi*spsi ) +
      veast*( cphi*stheta*spsi - sphi*cpsi ) +
      vdown*cphi*ctheta;
-}
-
-//******************************************************************************
-
-void FGInitialCondition::SetVnorthFpsIC(double tt) {
-  vnorth=tt;
-  calcUVWfromNED();
-  vt=sqrt(u*u + v*v + w*w);
-  lastSpeedSet=setned;
-}
-
-//******************************************************************************
-
-void FGInitialCondition::SetVeastFpsIC(double tt) {
-  veast=tt;
-  calcUVWfromNED();
-  vt=sqrt(u*u + v*v + w*w);
-  lastSpeedSet=setned;
-}
-
-//******************************************************************************
-
-void FGInitialCondition::SetVdownFpsIC(double tt) {
-  vdown=tt;
-  calcUVWfromNED();
-  vt=sqrt(u*u + v*v + w*w);
-  SetClimbRateFpsIC(-1*vdown);
-  lastSpeedSet=setned;
 }
 
 //******************************************************************************
@@ -811,6 +842,12 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetVBodyFpsIC(document->FindElementValueAsNumberConvertTo("vbody", "FT/SEC"));
   if (document->FindElement("wbody"))
     SetWBodyFpsIC(document->FindElementValueAsNumberConvertTo("wbody", "FT/SEC"));
+  if (document->FindElement("vnorth"))
+    SetVNorthFpsIC(document->FindElementValueAsNumberConvertTo("vnorth", "FT/SEC"));
+  if (document->FindElement("veast"))
+    SetVEastFpsIC(document->FindElementValueAsNumberConvertTo("veast", "FT/SEC"));
+  if (document->FindElement("vnorth"))
+    SetVDownFpsIC(document->FindElementValueAsNumberConvertTo("vdown", "FT/SEC"));
   if (document->FindElement("latitude"))
     SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
   if (document->FindElement("longitude"))
@@ -983,7 +1020,18 @@ void FGInitialCondition::bind(void){
                        &FGInitialCondition::GetWBodyFpsIC,
                        &FGInitialCondition::SetWBodyFpsIC,
                        true);
-
+  PropertyManager->Tie("ic/vn-fps", this,
+                       &FGInitialCondition::GetVNorthFpsIC,
+                       &FGInitialCondition::SetVNorthFpsIC,
+                       true);
+  PropertyManager->Tie("ic/ve-fps", this,
+                       &FGInitialCondition::GetVEastFpsIC,
+                       &FGInitialCondition::SetVEastFpsIC,
+                       true);
+  PropertyManager->Tie("ic/vd-fps", this,
+                       &FGInitialCondition::GetVDownFpsIC,
+                       &FGInitialCondition::SetVDownFpsIC,
+                       true);
   PropertyManager->Tie("ic/gamma-rad", this,
                        &FGInitialCondition::GetFlightPathAngleRadIC,
                        &FGInitialCondition::SetFlightPathAngleRadIC,

@@ -50,7 +50,7 @@ DEFINITIONS
 GLOBAL DATA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-static const char *IdSrc = "$Id: FGLGear.cpp,v 1.42 2008/05/12 04:37:12 jberndt Exp $";
+static const char *IdSrc = "$Id: FGLGear.cpp,v 1.43 2008/05/16 04:04:30 jberndt Exp $";
 static const char *IdHdr = ID_LGEAR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -476,6 +476,9 @@ void FGLGear::ComputeSlipAngle(void)
 
 void FGLGear::ComputeSteeringAngle(void)
 {
+  double casterLocalFrameAngleRad = 0.0;
+  double casterAngle = 0.0;
+
   switch (eSteerType) {
   case stSteer:
     SteerAngle = degtorad * FCS->GetSteerPosDeg(GearNumber);
@@ -488,6 +491,8 @@ void FGLGear::ComputeSteeringAngle(void)
     // to the actual velocity vector of the wheel, given aircraft velocity vector
     // and omega.
     SteerAngle = 0.0;
+    casterLocalFrameAngleRad = acos(vWhlVelVec(eX)/vWhlVelVec.Magnitude());
+    casterAngle = casterLocalFrameAngleRad - Propagate->GetEuler(ePsi);
     break;
   default:
     cerr << "Improper steering type membership detected for this gear." << endl;

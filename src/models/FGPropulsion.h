@@ -62,7 +62,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.16 2008/05/12 04:37:13 jberndt Exp $"
+#define ID_PROPULSION "$Id: FGPropulsion.h,v 1.17 2008/05/16 04:04:31 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -101,7 +101,7 @@ CLASS DOCUMENTATION
   @endcode
 
     @author Jon S. Berndt
-    @version $Id: FGPropulsion.h,v 1.16 2008/05/12 04:37:13 jberndt Exp $
+    @version $Id: FGPropulsion.h,v 1.17 2008/05/16 04:04:31 jberndt Exp $
     @see
     FGEngine
     FGTank
@@ -163,9 +163,8 @@ public:
   /** Loops the engines until thrust output steady (used for trimming) */
   bool GetSteadyState(void);
 
-  /** starts the engines in IC mode (dt=0).  All engine-specific setup must
-      be done before calling this (i.e. magnetos, starter engage, etc.) */
-  bool ICEngineStart(void);
+  /** Sets up the engines as running */
+  void InitRunning(int n);
 
   string GetPropulsionStrings(string delimeter);
   string GetPropulsionValues(string delimeter);

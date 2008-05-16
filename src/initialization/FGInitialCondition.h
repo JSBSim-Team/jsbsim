@@ -56,7 +56,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.13 2008/05/12 04:37:10 jberndt Exp $"
+#define ID_INITIALCONDITION "$Id: FGInitialCondition.h,v 1.14 2008/05/16 04:04:29 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -128,6 +128,9 @@ CLASS DOCUMENTATION
    - ubody (velocity, ft/sec)
    - vbody (velocity, ft/sec)
    - wbody (velocity, ft/sec)
+   - vnorth (velocity, ft/sec)
+   - veast (velocity, ft/sec)
+   - vdown (velocity, ft/sec)
    - latitude (position, degrees)
    - longitude (position, degrees)
    - phi (orientation, degrees)
@@ -180,6 +183,9 @@ CLASS DOCUMENTATION
    @property ic/u-fps (read/write) Body frame x-axis velocity initial condition in feet/second
    @property ic/v-fps (read/write) Body frame y-axis velocity initial condition in feet/second
    @property ic/w-fps (read/write) Body frame z-axis velocity initial condition in feet/second
+   @property ic/vn-fps (read/write) Local frame x-axis (north) velocity initial condition in feet/second
+   @property ic/ve-fps (read/write) Local frame y-axis (east) velocity initial condition in feet/second
+   @property ic/vd-fps (read/write) Local frame z-axis (down) velocity initial condition in feet/second
    @property ic/gamma-rad (read/write) Flight path angle initial condition in radians
    @property ic/alpha-rad (read/write) Angle of attack initial condition in radians
    @property ic/theta-rad (read/write) Pitch angle initial condition in radians
@@ -193,7 +199,7 @@ CLASS DOCUMENTATION
    @property ic/r-rad_sec (read/write) Yaw rate initial condition in radians/second
 
    @author Tony Peden
-   @version "$Id: FGInitialCondition.h,v 1.13 2008/05/12 04:37:10 jberndt Exp $"
+   @version "$Id: FGInitialCondition.h,v 1.14 2008/05/16 04:04:29 jberndt Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -381,15 +387,15 @@ public:
 
   /** Sets the initial local axis north velocity.
       @param vn Initial north velocity in feet/second */
-  void SetVnorthFpsIC(double vn);
+  void SetVNorthFpsIC(double vn);
 
   /** Sets the initial local axis east velocity.
       @param ve Initial east velocity in feet/second */
-  void SetVeastFpsIC(double ve);
+  void SetVEastFpsIC(double ve);
 
   /** Sets the initial local axis down velocity.
       @param vd Initial down velocity in feet/second */
-  void SetVdownFpsIC(double vd);
+  void SetVDownFpsIC(double vd);
 
   /** Sets the initial roll rate.
       @param P Initial roll rate in radians/second */
@@ -488,6 +494,18 @@ public:
   /** Gets the initial body axis Z velocity.
       @return Initial body axis Z velocity in feet/second. */
   double GetWBodyFpsIC(void) const;
+
+  /** Gets the initial local frame X (North) velocity.
+      @return Initial local frame X (North) axis velocity in feet/second. */
+  double GetVNorthFpsIC(void) const {return vnorth;};
+
+  /** Gets the initial local frame Y (East) velocity.
+      @return Initial local frame Y (East) axis velocity in feet/second. */
+  double GetVEastFpsIC(void) const {return veast;};
+
+  /** Gets the initial local frame Z (Down) velocity.
+      @return Initial local frame Z (Down) axis velocity in feet/second. */
+  double GetVDownFpsIC(void) const {return vdown;};
 
   /** Gets the initial body axis roll rate.
       @return Initial body axis roll rate in radians/second */

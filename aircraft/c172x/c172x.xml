@@ -5,12 +5,11 @@
     xsi:noNamespaceSchemaLocation="http://jsbsim.sourceforge.net/JSBSim.xsd">
     <fileheader>
         <author>Tony Peden</author>
-        <license>
-            <licenseName>GPL</licenseName>
-            <licenseURL>http://www.gnu.org/licenses/gpl.html</licenseURL>
-        </license>
+        <license
+            licenseName="GPL"
+            licenseURL="http://www.gnu.org/licenses/gpl.html"/>
         <filecreationdate>1999-01-01</filecreationdate>
-        <version>$Revision: 1.72 $</version>
+        <version>$Revision: 1.73 $</version>
         <description>Models a 1997 Cessna 172R.</description>
     </fileheader>
     <metrics>
@@ -1054,11 +1053,11 @@
         </axis>
 
     </aerodynamics>
-
+<!--
     <input port="1137"/>
+-->
     <output name="JSBout172B.csv" type="CSV" rate="40">
         <property> aero/qbar-psf </property>
-      <!-- <property> fcs/aero/sensor/qbar-psf </property> -->
         <property> attitude/phi-rad </property>
         <property> fcs/attitude/sensor/phi-rad </property>
         <property> position/h-sl-ft </property>
@@ -1084,6 +1083,7 @@
         <property> aero/coefficient/CDDf           </property>
         <property> aero/coefficient/CmDf           </property>
         <property> fcs/elevator-pos-rad            </property>
+        <property> simulation/cycle_duration </property>
         <rates> ON </rates>
         <velocities> ON </velocities>
         <forces> ON </forces>
@@ -1094,9 +1094,8 @@
         <aerosurfaces> OFF </aerosurfaces>
         <fcs> OFF </fcs>
         <ground_reactions> ON </ground_reactions>
-        <property> simulation/cycle_duration </property>
     </output>
-
+<!---
     <output name="localhost" type="SOCKET" port="1138" rate="20">
         <simulation> OFF </simulation>
         <atmosphere> OFF </atmosphere>
@@ -1132,5 +1131,6 @@
         <ground_reactions> OFF </ground_reactions>
         <coefficients> OFF </coefficients>
     </output> 
+    -->
 </fdm_config>
 

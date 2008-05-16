@@ -49,7 +49,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.8 2008/05/12 04:37:14 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurboProp.cpp,v 1.9 2008/05/16 04:04:32 jberndt Exp $";
 static const char *IdHdr = ID_TURBOPROP;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -490,6 +490,15 @@ string FGTurboProp::GetEngineValues(string delimeter)
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+int FGTurboProp::InitRunning(void) {
+  State->SuspendIntegration();
+  Cutoff=false;
+  Running=true;  
+  N2=16.0;
+  Calculate();
+  State->ResumeIntegration();
+  return phase==tpRun;
+}
 
 void FGTurboProp::bindmodel()
 {
