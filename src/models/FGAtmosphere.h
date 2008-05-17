@@ -49,7 +49,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.15 2008/05/12 04:37:11 jberndt Exp $"
+#define ID_ATMOSPHERE "$Id: FGAtmosphere.h,v 1.16 2008/05/17 06:22:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -63,7 +63,7 @@ CLASS DOCUMENTATION
 
 /** Models the 1976 Standard Atmosphere.
     @author Tony Peden, Jon Berndt
-    @version $Id: FGAtmosphere.h,v 1.15 2008/05/12 04:37:11 jberndt Exp $
+    @version $Id: FGAtmosphere.h,v 1.16 2008/05/17 06:22:24 jberndt Exp $
     @see Anderson, John D. "Introduction to Flight, Third Edition", McGraw-Hill,
          1989, ISBN 0-07-001641-0
 */
@@ -153,7 +153,7 @@ public:
   inline FGColumnVector3& GetWindNED(void) { return vWindNED; }
 
   /// Sets gust components in NED frame.
-  inline void SetGustNED(int idx, double gust) { vGustNED(idx)=gust; cout << vGustNED(idx) << endl; }
+  inline void SetGustNED(int idx, double gust) { vGustNED(idx)=gust;}
 
   /// Retrieves the gust components in NED frame.
   inline double GetGustNED(int idx) const {return vGustNED(idx);}

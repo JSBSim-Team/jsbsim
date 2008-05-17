@@ -48,7 +48,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.6 2007/03/19 15:26:42 jberndt Exp $"
+#define ID_PROPERTYMANAGER "$Id: FGPropertyManager.h,v 1.7 2008/05/17 06:22:24 jberndt Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -563,7 +563,7 @@ class FGPropertyManager : public SGPropertyNode, public FGJSBBase
      * @param setter The object's setter method, or 0 if the value is
      *        unmodifiable.
      * @param useDefault true if the setter should be invoked with any existing
-     *        property value should be; false if the old value should be
+     *        property value should there be one; false if the old value should be
      *        discarded; defaults to true.
      */
     template <class T, class V> inline void

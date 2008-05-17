@@ -79,7 +79,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.51 2008/05/12 04:37:09 jberndt Exp $";
+static const char *IdSrc = "$Id: FGFDMExec.cpp,v 1.52 2008/05/17 06:22:23 jberndt Exp $";
 static const char *IdHdr = ID_FDMEXEC;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -100,7 +100,7 @@ void checkTied ( FGPropertyManager *node )
 
   for (int i=0; i<N; i++) {
     if (node->getChild(i)->nChildren() ) {
-      cout << "Untieing " << node->getChild(i)->getName() << " property branch." << endl;
+//      cout << "Untieing " << node->getChild(i)->getName() << " property branch." << endl;
       checkTied( (FGPropertyManager*)node->getChild(i) );
     } else if ( node->getChild(i)->isTied() ) {
       name = ((FGPropertyManager*)node->getChild(i))->GetFullyQualifiedName();

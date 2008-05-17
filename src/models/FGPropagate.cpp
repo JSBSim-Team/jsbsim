@@ -86,7 +86,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.29 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropagate.cpp,v 1.30 2008/05/17 06:22:24 jberndt Exp $";
 static const char *IdHdr = ID_PROPAGATE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,6 +95,7 @@ CLASS IMPLEMENTATION
 
 FGPropagate::FGPropagate(FGFDMExec* fdmex) : FGModel(fdmex)
 {
+  Debug(0);
   Name = "FGPropagate";
 
   last2_vPQRdot.InitMatrix();
@@ -525,7 +526,7 @@ void FGPropagate::bind(void)
   PropertyManager->Tie("position/radius-to-vehicle-ft", this, &FGPropagate::GetRadius);
   PropertyManager->Tie("position/terrain-elevation-asl-ft", this,
                           &FGPropagate::GetTerrainElevationASL,
-                          &FGPropagate::SetTerrainElevationASL);
+                          &FGPropagate::SetTerrainElevationASL, false);
 
   PropertyManager->Tie("metrics/runway-radius", this, &FGPropagate::GetRunwayRadius);
 
