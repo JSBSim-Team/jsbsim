@@ -46,7 +46,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.12 2008/05/16 04:04:31 jberndt Exp $";
+static const char *IdSrc = "$Id: FGTurbine.cpp,v 1.13 2008/05/17 19:09:48 dpculp Exp $";
 static const char *IdHdr = ID_TURBINE;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -205,7 +205,12 @@ double FGTurbine::Run()
   }
 
   if ((Injected == 1) && Injection) {
-    thrust = thrust * InjectionLookup->GetValue();
+    InjectionTimer += dt;
+    if (InjectionTimer < InjectionTime) {
+       thrust = thrust * InjectionLookup->GetValue();
+    } else {
+       Injection = false;
+    }
   }
 
   ConsumeFuel();
@@ -374,6 +379,8 @@ void FGTurbine::SetDefaults(void)
   Augmented = 0;
   AugMethod = 0;
   Injected = 0;
+  InjectionTime = 0.0;
+  InjectionTimer = 0.0;
   BleedDemand = 0.0;
   ThrottlePos = 0.0;
   AugmentCmd = 0.0;
@@ -425,6 +432,8 @@ bool FGTurbine::Load(FGFDMExec* exec, Element *el)
     AugMethod = (int)el->FindElementValueAsNumber("augmethod");
   if (el->FindElement("injected"))
     Injected = (int)el->FindElementValueAsNumber("injected");
+  if (el->FindElement("injection-time"))
+    InjectionTime = el->FindElementValueAsNumber("injection-time");
 
   Element *function_element;
   string name;
@@ -498,6 +507,9 @@ void FGTurbine::bindmodel()
   PropertyManager->Tie( property_name, &N2);
   snprintf(property_name, 80, "propulsion/engine[%u]/thrust", EngineNumber);
   PropertyManager->Tie( property_name, this, &FGTurbine::GetThrust);
+  snprintf(property_name, 80, "propulsion/engine[%u]/injection_cmd", EngineNumber);
+  PropertyManager->Tie( property_name, (FGTurbine*)this, 
+                        &FGTurbine::GetInjection, &FGTurbine::SetInjection);
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

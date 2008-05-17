@@ -18,7 +18,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
-// $Id: JSBSim.cxx,v 1.27 2008/05/16 04:04:28 jberndt Exp $
+// $Id: JSBSim.cxx,v 1.28 2008/05/17 19:09:48 dpculp Exp $
 
 
 #ifdef HAVE_CONFIG_H
@@ -554,7 +554,7 @@ bool FGJSBsim::copy_to_JSBsim()
         FGTurbine* eng = (FGTurbine*)Propulsion->GetEngine(i);
         eng->SetAugmentation( globals->get_controls()->get_augmentation(i) );
         eng->SetReverse( globals->get_controls()->get_reverser(i) );
-        eng->SetInjection( globals->get_controls()->get_water_injection(i) );
+        //eng->SetInjection( globals->get_controls()->get_water_injection(i) );
         eng->SetCutoff( globals->get_controls()->get_cutoff(i) );
         eng->SetIgnition( globals->get_controls()->get_ignition(i) );
         break;

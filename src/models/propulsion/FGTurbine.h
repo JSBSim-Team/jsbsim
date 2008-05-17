@@ -45,7 +45,7 @@ INCLUDES
 #include <input_output/FGXMLElement.h>
 #include <math/FGFunction.h>
 
-#define ID_TURBINE "$Id: FGTurbine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $"
+#define ID_TURBINE "$Id: FGTurbine.h,v 1.11 2008/05/17 19:09:48 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -98,6 +98,7 @@ CLASS DOCUMENTATION
   <augmented> {0 | 1} </augmented>
   <augmethod> {0 | 1 | 2} </augmethod>
   <injected> {0 | 1} </injected>
+  <injection-time> {number} </injection-time>
  </turbine_engine>
 @endcode
 
@@ -124,6 +125,7 @@ CLASS DOCUMENTATION
   injected
               0 = Water injection not installed
               1 = Water injection installed
+  injection-time - Time, in seconds, of water injection duration 
 </pre>
 
 <h3>NOTES:</h3>  
@@ -144,7 +146,7 @@ CLASS DOCUMENTATION
     /engine/direct.xml
 </pre>
     @author David P. Culp
-    @version "$Id: FGTurbine.h,v 1.10 2008/05/16 04:04:31 jberndt Exp $"
+    @version "$Id: FGTurbine.h,v 1.11 2008/05/17 19:09:48 dpculp Exp $"
 */
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -254,6 +256,8 @@ private:
   double InletPosition;
   double NozzlePosition;
   double correctedTSFC;
+  double InjectionTimer;
+  double InjectionTime;
 
   double Off(void);
   double Run();
