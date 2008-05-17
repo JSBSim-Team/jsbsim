@@ -5,7 +5,7 @@
     name="C310-01A takeoff run">
     
   <description>For testing autopilot capability</description>
-  <use aircraft="c310" initialize="Ellington"/>
+  <use aircraft="c310" initialize="ellington"/>
   
   <run start="0.0" end="3600" dt="0.00833333">
   
