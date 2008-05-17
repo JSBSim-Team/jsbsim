@@ -87,7 +87,7 @@ CLASS DOCUMENTATION
     documentation for main for direction on running JSBSim apart from FlightGear.
     @author Curtis L. Olson (original)
     @author Tony Peden (Maintained and refined)
-    @version $Id: JSBSim.hxx,v 1.6 2008/04/15 11:52:25 jberndt Exp $
+    @version $Id: JSBSim.hxx,v 1.7 2008/05/17 02:32:17 dpculp Exp $
     @see main in file JSBSim.cpp (use main() wrapper for standalone usage)
 */
 
@@ -221,7 +221,8 @@ private:
     JSBSim::FGPropagate*    Propagate;
     JSBSim::FGAuxiliary*    Auxiliary;
     JSBSim::FGAerodynamics* Aerodynamics;
-    JSBSim::FGGroundReactions *GroundReactions;
+    JSBSim::FGGroundReactions* GroundReactions;
+    JSBSim::FGInertial*     Inertial;
 
     int runcount;
     double trim_elev;
