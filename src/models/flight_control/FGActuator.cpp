@@ -41,7 +41,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGActuator.cpp,v 1.6 2007/03/03 03:39:59 jberndt Exp $";
+static const char *IdSrc = "$Id: FGActuator.cpp,v 1.7 2008/05/25 14:32:18 jberndt Exp $";
 static const char *IdHdr = ID_ACTUATOR;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,10 +104,16 @@ bool FGActuator::Run(void )
   dt = fcs->GetDt();
 
   Input = InputNodes[0]->getDoubleValue() * InputSigns[0];
-  Output = Input; // perfect actuator
 
   if (fail_zero) Input = 0;
   if (fail_hardover) Input =  clipmax*fabs(Input)/Input;
+
+  Output = Input; // Perfect actuator. At this point, if no failures are present
+                  // and no subsequent lag, limiting, etc. is done, the output
+                  // is simply the input. If any further processing is done
+                  // (below) such as lag, rate limiting, hysteresis, etc., then
+                  // the Input will be further processed and the eventual Output
+                  // will be overwritten from this perfect value.
 
   if (lag != 0.0)              Lag();        // models actuator lag
   if (rate_limit != 0)         RateLimit();  // limit the actuator rate
