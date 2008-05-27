@@ -44,7 +44,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.15 2008/05/12 04:37:13 jberndt Exp $";
+static const char *IdSrc = "$Id: FGPropeller.cpp,v 1.16 2008/05/27 15:56:14 dpculp Exp $";
 static const char *IdHdr = ID_PROPELLER;
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,6 +71,7 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   Feathered = false;
   Reverse_coef = 0.0;
   GearRatio = 1.0;
+  CtFactor = CpFactor = 1.0;
 
   if (prop_element->FindElement("ixx"))
     Ixx = prop_element->FindElementValueAsNumberConvertTo("ixx", "SLUG*FT2");
@@ -114,6 +115,10 @@ FGPropeller::FGPropeller(FGFDMExec* exec, Element* prop_element, int num)
   if (P_Factor < 0) {
     cerr << "P-Factor value in config file must be greater than zero" << endl;
   }
+  if (prop_element->FindElement("ct_factor"))
+    SetCtFactor( prop_element->FindElementValueAsNumber("ct_factor") );
+  if (prop_element->FindElement("cp_factor"))
+    SetCpFactor( prop_element->FindElementValueAsNumber("cp_factor") );
 
   Type = ttPropeller;
   RPM = 0;
@@ -169,6 +174,7 @@ double FGPropeller::Calculate(double PowerAvailable)
 
   if (MaxPitch == MinPitch)  ThrustCoeff = cThrust->GetValue(J);
   else                       ThrustCoeff = cThrust->GetValue(J, Pitch);
+  ThrustCoeff *= CtFactor;
 
   if (P_Factor > 0.0001) {
     alpha = fdmex->GetAuxiliary()->Getalpha();
@@ -258,6 +264,7 @@ double FGPropeller::GetPowerRequired(void)
     }
     cPReq = cPower->GetValue(J, Pitch);
   }
+  cPReq *= CpFactor;
 
   if (RPS > 0) {
     PowerRequired = cPReq*RPS*RPS*RPS*D5*rho;

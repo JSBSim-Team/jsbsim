@@ -45,7 +45,7 @@ INCLUDES
 DEFINITIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-#define ID_PROPELLER "$Id: FGPropeller.h,v 1.10 2008/04/30 22:38:14 dpculp Exp $"
+#define ID_PROPELLER "$Id: FGPropeller.h,v 1.11 2008/05/27 15:56:14 dpculp Exp $"
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 FORWARD DECLARATIONS
@@ -74,6 +74,8 @@ CLASS DOCUMENTATION
   <reversepitch> {number} </reversepitch>
   <sense> {1 | -1} </sense>
   <p_factor> {number} </p_factor>
+  <ct_factor> {number} </ct_factor>
+  <cp_factor> {number} </cp_factor>
 
   <table name="C_THRUST" type="internal">
     <tableData>
@@ -103,7 +105,9 @@ CLASS DOCUMENTATION
     \<reversepitch>  - Blade pitch angle for reverse.
     \<sense>         - Direction of rotation (1=clockwise as viewed from cockpit,
                         -1=anti-clockwise as viewed from cockpit).
-    \<p_factor>      - P factor. 
+    \<p_factor>      - P factor.
+    \<ct_factor>     - A multiplier for the coefficients of thrust.
+    \<cp_factor>     - A multiplier for the coefficients of power.
 </pre>
 
     Two tables are needed. One for coefficient of thrust (Ct) and one for
@@ -119,7 +123,7 @@ CLASS DOCUMENTATION
     <li>Various NACA Technical Notes and Reports</li>
     </ul>
     @author Jon S. Berndt
-    @version $Id: FGPropeller.h,v 1.10 2008/04/30 22:38:14 dpculp Exp $
+    @version $Id: FGPropeller.h,v 1.11 2008/05/27 15:56:14 dpculp Exp $
     @see FGEngine
     @see FGThruster
 */
@@ -165,6 +169,12 @@ public:
   /// Sets the P-Factor constant
   void SetPFactor(double pf) {P_Factor = pf;}
 
+  /// Sets coefficient of thrust multiplier
+  void SetCtFactor(double ctf) {CtFactor = ctf;}
+
+  /// Sets coefficient of power multiplier
+  void SetCpFactor(double cpf) {CpFactor = cpf;}
+
   /** Sets the rotation sense of the propeller.
       @param s this value should be +/- 1 ONLY. +1 indicates clockwise rotation as
                viewed by someone standing behind the engine looking forward into
@@ -179,6 +189,12 @@ public:
 
   /// Retrieves the propeller moment of inertia
   double GetIxx(void)           { return Ixx;           }
+
+  /// Retrieves the coefficient of thrust multiplier
+  double GetCtFactor(void)      { return CtFactor;      }
+
+  /// Retrieves the coefficient of power multiplier
+  double GetCpFactor(void)      { return CpFactor;      }
 
   /// Retrieves the propeller diameter
   double GetDiameter(void)      { return Diameter;      }
@@ -238,6 +254,8 @@ private:
   FGColumnVector3 vTorque;
   FGTable *cThrust;
   FGTable *cPower;
+  double CtFactor;
+  double CpFactor;
   void Debug(int from);
   double ReversePitch; // Pitch, when fully reversed
   bool   Reversed;		 // true, when propeller is reversed
