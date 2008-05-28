@@ -71,7 +71,7 @@ INCLUDES
 
 namespace JSBSim {
 
-static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.22 2008/05/16 04:04:28 jberndt Exp $";
+static const char *IdSrc = "$Id: FGInitialCondition.cpp,v 1.23 2008/05/28 00:09:02 jberndt Exp $";
 static const char *IdHdr = ID_INITIALCONDITION;
 
 //******************************************************************************
@@ -390,7 +390,7 @@ void FGInitialCondition::SetVDownFpsIC(double tt) {
 //******************************************************************************
 
 double FGInitialCondition::GetUBodyFpsIC(void) const {
-    if(lastSpeedSet == setvg )
+    if (lastSpeedSet == setvg || lastSpeedSet == setned)
       return u;
     else
       return vt*calpha*cbeta - uw;
@@ -399,7 +399,7 @@ double FGInitialCondition::GetUBodyFpsIC(void) const {
 //******************************************************************************
 
 double FGInitialCondition::GetVBodyFpsIC(void) const {
-    if( lastSpeedSet == setvg )
+    if (lastSpeedSet == setvg || lastSpeedSet == setned)
       return v;
     else {
       return vt*sbeta - vw;
@@ -409,7 +409,7 @@ double FGInitialCondition::GetVBodyFpsIC(void) const {
 //******************************************************************************
 
 double FGInitialCondition::GetWBodyFpsIC(void) const {
-    if( lastSpeedSet == setvg )
+    if (lastSpeedSet == setvg || lastSpeedSet == setned)
       return w;
     else
       return vt*salpha*cbeta -ww;
@@ -836,6 +836,12 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     exit(-1);
   }
 
+  if (document->FindElement("latitude"))
+    SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
+  if (document->FindElement("longitude"))
+    SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
+  if (document->FindElement("altitude"))
+    SetAltitudeFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   if (document->FindElement("ubody"))
     SetUBodyFpsIC(document->FindElementValueAsNumberConvertTo("ubody", "FT/SEC"));
   if (document->FindElement("vbody"))
@@ -846,14 +852,8 @@ bool FGInitialCondition::Load(string rstfile, bool useStoredPath)
     SetVNorthFpsIC(document->FindElementValueAsNumberConvertTo("vnorth", "FT/SEC"));
   if (document->FindElement("veast"))
     SetVEastFpsIC(document->FindElementValueAsNumberConvertTo("veast", "FT/SEC"));
-  if (document->FindElement("vnorth"))
+  if (document->FindElement("vdown"))
     SetVDownFpsIC(document->FindElementValueAsNumberConvertTo("vdown", "FT/SEC"));
-  if (document->FindElement("latitude"))
-    SetLatitudeDegIC(document->FindElementValueAsNumberConvertTo("latitude", "DEG"));
-  if (document->FindElement("longitude"))
-    SetLongitudeDegIC(document->FindElementValueAsNumberConvertTo("longitude", "DEG"));
-  if (document->FindElement("altitude"))
-    SetAltitudeFtIC(document->FindElementValueAsNumberConvertTo("altitude", "FT"));
   if (document->FindElement("winddir"))
     SetWindDirDegIC(document->FindElementValueAsNumberConvertTo("winddir", "DEG"));
   if (document->FindElement("vwind"))
